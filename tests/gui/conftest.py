@@ -66,27 +66,24 @@ def pytest_addoption(parser):
                     help='admin credentials in form: -u username password',
                     metavar=('username', 'password'), dest='admin')
 
-    group.addoption('--providers-names', nargs='+', default=['p1'],
+    group.addoption('--providers-names', nargs='+',
                     help='List of providers names separated with space')
-    group.addoption('--providers-aliases',  nargs='+', default=['p1'],
-                    help='List of providers names separated with space')
-    group.addoption('--providers-hostnames',  nargs='+', default=['p1'],
-                    help='List of providers names separated with space')
-    group.addoption('--providers-ips', nargs='+', default=['p1'],
-                    help='List of providers names separated with space')
-    group.addoption('--providers-containers-id',  nargs='+', default=['p1'],
-                    help='List of providers names separated with space')
+    group.addoption('--providers-aliases',  nargs='+',
+                    help='List of providers aliases separated with space')
+    group.addoption('--providers-hostnames',  nargs='+',
+                    help='List of providers hostnames separated with space')
+    group.addoption('--providers-ips', nargs='+',
+                    help='List of providers ips separated with space')
+    group.addoption('--providers-containers-id',  nargs='+',
+                    help='List of providers containers ids separated with space')
 
-    group.addoption('--zone-name', action="store", default='onezone',
-                    help='Zone\'s name')
-    group.addoption('--zone-alias', action="store", default='onezone',
-                    help='Zone\'s alias')
-    group.addoption('--zone-hostname',  action="store", default='onezone',
-                    help='Zone\'s hostname')
-    group.addoption('--zone-ip', action="store", default=['p1'],
-                    help='List of providers names separated with space')
-    group.addoption('--zone-container-id',  action="store", default='onezone',
-                    help='Zone\'s hostname')
+    group.addoption('--zone-name', action="store", help='Zone\'s name')
+    group.addoption('--zone-alias', action="store", help='Zone\'s alias')
+    group.addoption('--zone-hostname',  action="store",  help='Zone\'s hostname')
+    group.addoption('--zone-ip', action="store",
+                    help='Zone\'s ip')
+    group.addoption('--zone-container-id',  action="store",
+                    help='Zone\'s container id')
 
 
 @fixture(scope='session')
