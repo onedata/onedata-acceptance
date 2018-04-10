@@ -1,0 +1,8 @@
+pytest==3.0.6
+pytest-bdd==2.18.1
+git+git://github.com/bwalkowi/pytest-selenium-multi@orig-master
+git+git://github.com/bwalkowi/pytest-xvfb-recorder.git@master
+decorator==4.0.11
+certifi==2017.7.27.1
+urllib3==1.22
+pyyaml==3.12
