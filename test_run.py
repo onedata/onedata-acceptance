@@ -191,7 +191,6 @@ test_runner_pod = '''{{
                 {{
                     "name": "test-runer",
                     "image": "{image}",
-                    "tty": true,
                     "stdin": true, 
                     "imagePullPolicy": "IfNotPresent",
                     "workingDir": "{script_dir}",
@@ -219,11 +218,7 @@ test_runner_pod = '''{{
                         "mountPath": "/etc/passwd",
                         "name": "etc-passwd",
                         "readOnly": true
-                    }},
-                    {{
-                        "mountPath": "/tmp/.docker",
-                        "name": "docker",
-                    }},
+                    }}
                     ]
                 }}
             ],
@@ -250,12 +245,6 @@ test_runner_pod = '''{{
                 "name": "etc-passwd",
                 "hostPath": {{
                     "path": "/etc/passwd"
-                }}
-            }},
-            {{ 
-                "name": "docker",
-                "hostPath": {{
-                    "path": "{docker_path}"
                 }}
             }}
             ]
@@ -292,11 +281,7 @@ minikube_script_dir = script_dir.replace(user_config.host_home(),
 test_runner_pod = test_runner_pod.format(command=command,
                                          script_dir=script_dir,
                                          minikube_script_dir=minikube_script_dir,
-                                         image=args.image,
-                                         docker_path=(
-                                             os.path.join(os.path.expanduser('~'),
-                                                          '.docker'))
-                                         )
+                                         image=args.image)
 
 cmd = ["kubectl"] + ["run"] + ["-i"] + ["--rm"] + ["--restart=Never"] + \
       ["test-runner"] + ["--overrides={}".format(test_runner_pod)] + \
