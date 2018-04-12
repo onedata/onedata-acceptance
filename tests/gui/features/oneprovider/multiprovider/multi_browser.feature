@@ -22,7 +22,7 @@ Feature: Oneprovider functionality using multiple providers and multiple browser
     And users of [browser1, browser2] logged as [user1, user2] to Onezone service
     And users of [browser1, browser2] expanded the "go to your files" Onezone sidebar panel
     And users of [browser1, browser2] clicked on ["oneprovider-1", "oneprovider-2"] provider in expanded "GO TO YOUR FILES" Onezone panel
-    And users of [browser1, browser2] clicked on the "Go to your files" button in provider popup
+    And users of [browser1, browser2] clicked on "Go to your files" button in provider popup
     And users of [browser1, browser2] seen that Oneprovider session has started
 
 
