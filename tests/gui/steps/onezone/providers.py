@@ -114,6 +114,15 @@ def wt_click_on_btn_in_provider_popup(selenium, browser_id, btn,
                                     hosts)
 
 
+@given(parsers.re('users? of (?P<browser_id_list>.*) clicked on '
+                  '"(?P<btn_name>.+?)" button in provider popup'))
+def g_click_on_go_to_files_provider(selenium, browser_id_list, btn_name, oz_page):
+    for browser_id in parse_seq(browser_id_list):
+        driver = selenium[browser_id]
+        popup = oz_page(driver)['world map'].get_provider_with_displayed_popup()
+        getattr(popup, btn_name.lower().replace(' ', '_')).click()
+
+
 @when(parsers.parse(r'user of {browser_id} unsets provider named "{provider}" '
                     r'from home by clicking on home icon in that provider '
                     r'record in expanded "GO TO YOUR FILES" Onezone panel'))

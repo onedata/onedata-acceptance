@@ -63,7 +63,7 @@ def deregister_provider_in_op_panel_using_gui(selenium, user, provider_name,
                                  provider_name, onepanel, hosts)
     wt_click_on_btn_in_content(selenium, user, "Deregister provider", content,
                                onepanel)
-    click_on_btn_in_popup(selenium, user, "Yes, deregister", popup, popups)
+    wt_click_on_btn_in_popup(selenium, user, "Yes, deregister", popup, popups)
     notify_visible_with_text(selenium, user, "info",
                              ".*[Pp]rovider.*deregistered.*")
 
