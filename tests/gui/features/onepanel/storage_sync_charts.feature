@@ -65,7 +65,9 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
           Max depth: 3
 
     # check inserted number display on chart
-    And user of browser1 is idle for 40 seconds
+    And user of browser1 sees [Storage synchronization] navigation tabs for space "space7"
+    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space7"
+    And user of browser1 is idle for 20 seconds
     Then user of browser1 sees that number of inserted files for "space7" shown on Synchronization files processing charts equals 502 in Spaces page in Onepanel
 
     # configure update parameters

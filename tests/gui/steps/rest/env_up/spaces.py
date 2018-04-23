@@ -277,7 +277,7 @@ def _init_storage(owner_credentials, space_name, hosts, storage_conf):
                 response = http_put(ip=provider_hostname, port=OP_REST_PORT,
                                     path='/cdmi/' + path, headers=headers, 
                                     auth=auth, data=data)
-            except (HTTPNotFound, HTTPBadRequest):
+            except (HTTPNotFound, HTTPBadRequest, HTTPError):
                 # because user may not yet exist in provider first call
                 # will fail, as such wait some time and try again
                 time.sleep(1)

@@ -109,12 +109,18 @@ class SyncChart(PageObject):
     def _get_chart_bar_values(bars):
         return sum(int(bar.get_attribute('ct:value')) for bar in bars)
 
+class NavigationHeader(PageObject):
+    storage_synchronization = NamedButton('li', text='Storage synchronization')
+    files_popularity = NamedButton('li', text='Files popularity')
+    auto_cleaning = NamedButton('li', text='Auto cleaning')
 
 class SpaceRecord(PageObject, ExpandableMixin):
     name = id = Label('.item-icon-container + .one-label')
     toolbar = Button('.collapsible-toolbar-toggle')
     info = WebItem('.space-info', cls=SpaceInfo)
     sync_chart = WebItem('.space-sync-chart-base', cls=SyncChart)
+
+    navigation = WebItem('.space-tabs ul.nav-tabs', cls=NavigationHeader)
 
     _toggle = WebElement('.one-collapsible-list-item-header')
 
