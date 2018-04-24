@@ -12,7 +12,7 @@ from pytest_bdd import parsers, given, when, then
 from itertools import izip_longest
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.utils.generic import repeat_failed, parse_seq
+from tests.gui.utils.generic import repeat_failed, parse_seq, transform
 
 
 @when(parsers.parse('user of {browser_id} sees that provider popup for '
@@ -64,10 +64,10 @@ def assert_provider_hostname_matches_known_domain(selenium, browser_id,
 
 @when(parsers.parse('user of {browser_id} sees that hostname in displayed '
                     'provider popup matches test hostname of provider '
-                    '"{provider}" domain'))
+                    '"{provider}"'))
 @then(parsers.parse('user of {browser_id} sees that hostname in displayed '
                     'provider popup matches test hostname of provider '
-                    '"{provider}" domain'))
+                    '"{provider}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_provider_hostname_matches_test_hostname(selenium, browser_id,
                                                    provider, hosts, oz_page):
@@ -86,7 +86,7 @@ def _click_on_btn_in_provider_popup(driver, btn, provider, oz_page, hosts):
     provider = hosts[provider]['name']
     prov = oz_page(driver)['world map'].get_provider_with_displayed_popup()
     assert provider == prov.name, err_msg.format(prov.name, provider)
-    getattr(prov, btn.lower().replace(' ', '_')).click()
+    getattr(prov, transform(btn)).click()
 
 
 @given(parsers.re(r'users? of (?P<browser_id_list>.+?) clicked on the '
@@ -120,7 +120,7 @@ def g_click_on_go_to_files_provider(selenium, browser_id_list, btn_name, oz_page
     for browser_id in parse_seq(browser_id_list):
         driver = selenium[browser_id]
         popup = oz_page(driver)['world map'].get_provider_with_displayed_popup()
-        getattr(popup, btn_name.lower().replace(' ', '_')).click()
+        getattr(popup, transform(btn_name)).click()
 
 
 @when(parsers.parse(r'user of {browser_id} unsets provider named "{provider}" '

@@ -85,6 +85,9 @@ def pytest_addoption(parser):
     group.addoption('--zone-container-id',  action="store",
                     help='Zone\'s container id')
 
+    group.addoption('--add-test-domain', action="store_true",
+                    help='If set test domain is added to /etc/hosts')
+
 
 @fixture(scope='session')
 def numerals():
@@ -131,7 +134,8 @@ def hosts(request):
 
         add_host('oneprovider', provider_alias, provider_name,
                  provider_hostname, provider_ip, provider_container_id)
-        add_etc_hosts_entries(provider_ip, "{}.test".format(provider_hostname))
+        if request.config.getoption('--add-test-domain'):
+            add_etc_hosts_entries(provider_ip, "{}.test".format(provider_hostname))
 
     add_host('onezone', request.config.getoption('--zone-alias'),
              request.config.getoption('--zone-name'),

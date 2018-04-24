@@ -109,24 +109,28 @@ def deactivate_request_subdomain_toggle(selenium, browser_id, onepanel):
                                    .uncheck())
 
 
-@when(parsers.re('user of (?P<browser_id>.+?) types test hostname of '
-                 '"(?P<provider>.+?)" to Domain input box in modify provider '
-                 'details form in Provider panel'))
-@then(parsers.re('user of (?P<browser_id>.+?) types test hostname of '
-                 '"(?P<provider>.+?)" to Domain input box in modify provider '
-                 'details form in Provider panel'))
+matcher_wt_enter_test_domain_in_deployment_step2 = \
+    parsers.re('user of (?P<browser_id>.+?) types test hostname of '
+               '"(?P<provider>.+?)" to Domain input box in modify provider '
+               'details form in Provider panel')
+
+
+@when(matcher_wt_enter_test_domain_in_deployment_step2)
+@then(matcher_wt_enter_test_domain_in_deployment_step2)
 def wt_enter_test_domain_in_deployment_step2(selenium, browser_id, provider,
                                              hosts, onepanel):
     onepanel(selenium[browser_id]).content.provider.form.domain = \
         "{}.test".format(hosts[provider]['hostname'])
 
 
-@when(parsers.re('user of (?P<browser_id>.+?) sees that Domain attribute '
-                 'is equal to test hostname of "(?P<provider>.+?)" in '
-                 'Provider panel'))
-@then(parsers.re('user of (?P<browser_id>.+?) sees that Domain attribute '
-                 'is equal to test hostname of "(?P<provider>.+?)" in '
-                 'Provider panel'))
+matcher_wt_assert_value_of_provider_domain = \
+    parsers.re('user of (?P<browser_id>.+?) sees that Domain attribute '
+               'is equal to test hostname of "(?P<provider>.+?)" in '
+               'Provider panel')
+
+
+@when(matcher_wt_assert_value_of_provider_domain)
+@then(matcher_wt_assert_value_of_provider_domain)
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_value_of_provider_domain(selenium, browser_id, provider, hosts,
                                        onepanel):

@@ -5,18 +5,16 @@ Important notes
 with build-in selenium Firefox driver
 
 
+
 GUI acceptance/BDD tests
 ========================
 
-GUI acceptance/BDD test can be run in few ways:
-1. Using ``./test_run.py`` (from onedata repo root dir) - to start headless tests inside Docker on existing Onedata
-   installation or start new Onedata environment - mainly for Continuous Integration.
-2. Using ``py.test`` - to start non-headless tests on local machine - mainly for use Behaviour Driven Development
-   or debugging. It also can be used to create screencasts.
+GUI acceptance/BDD test can be run in few ways using ``./test_run.py``:
+ 1. Headless tests inside Pod on existing Onedata installation
+ 2. Headless tests inside Pod on new Onedata environment
+ 3. Non-headless tests on local machine
 
-If in doubt, simply use: ``make test_gui`` :)
-
-1. Headless tests in Docker (CI)
+1. Headless tests in Pod starting new Onedata installation
 --------------------------------
 
 ### Headless with automatic env_up environment set up
@@ -26,7 +24,7 @@ dir with configurations). Setting up environment can take some time.
 
 Example: (invoke from onedata repo root dir)
 ```
-./test_run.py -t tests/gui -i onedata/gui_builder:latest --test-type gui --driver=Firefox --self-contained-html --enable-logs
+./test_run.py -t tests/gui -i onedata/gui_builder:latest --test-type gui --driver=Chrome
 ```
 
 Used parameters:
@@ -40,40 +38,22 @@ Used parameters:
 * ``--xvfb`` - starts xvfb, necessary if used with headless tests
 * ``--xvfb-recording=<all|none|failed>`` - optional, record all or none or failed tests as movies and save them to <logdir>/movies
 * ``--no-mosaic-filter`` - optional, if set videos of tests using multiple browsers will be recorded as different video for each browser (mosaic video created by default) 
+* ``--keywords`` - run only tests matching given string expression (``py.test`` option)
 
 
-### Headless with automatic getting_started environment set up
-
-```
-./test_run.py --getting-started -t tests/gui --test-type gui -vvv --driver=Chrome -i onedata/gui_builder:latest --self-contained-html --xvfb --xvfb-recording=failed
-```
-
-Used parameters:
-
-* ``--getting-started`` - set up new getting started environment
-
-
-### Headless using existing Onedata installation
-
-Using this method, the tests will be run using URL provided with ``--base-url=<url>`` parameter,
-which should be url provided by starting environment for oz from env.json.
-The URL should be a main application address of Onezone.
+2. Headless tests in Pod using existing Onedata installation
 
 Example: (invoke from onedata repo root dir)
 ```
-./test_run.py -t tests/gui -i onedata/gui_builder:latest --test-type gui --driver=Firefox --copy-etc-hosts --base-url=https://oz.1485165366.dev --self-contained-html --onezone-host z1 172.19.0.2 --oneprovider-host p1 172.19.0.3 --oz-panel-host z1 172.19.0.2:9443 --op-panel-host p1 172.19.0.3:9443
+./test_run.py -t tests/gui --test-type gui --driver=Chrome -i onedata/acceptance_gui:latest -no-clean
 ```
 
 New parameters:
 
-* ``--copy-etc-hosts`` - optional, use if want to copy local contents of ``/etc/hosts`` file to docker, because some domains are defined locally
-* ``--onezone-host z1 172.19.0.2`` - alias and ip of zone service
-* ``--oneprovider-host p1 172.19.0.3`` - alias and ip of provider service
-* ``--oz-panel-host z1 172.19.0.2:9443`` - alias and ip of zone onepanel service
-* ``--op-panel-host p1 172.19.0.3:9443`` - alias and ip of provider panel service
+* ``--no-clean`` - prevents deleting environment after tests
 
 
-2. Non-headless using local machine (BDD)
+3. Non-headless using local machine (BDD)
 -----------------------------------------------------
 
 These tests will be run using ``py.test`` runner on local machine.
@@ -95,15 +75,12 @@ A browser selected for tests (with ``--driver``) should be also installed.
 
 Example: (invoke from onedata repo root dir)
 ```
-py.test --test-type=gui tests/gui --driver=Firefox --base-url=https://veilfsdev.com --self-contained-html --onezone-host z1 172.19.0.2 --oneprovider-host p1 172.19.0.3 --oz-panel-host z1 172.19.0.2:9443 --op-panel-host p1 172.19.0.3:9443 --no-xvfb
+./test_run.py -t tests/gui --test-type gui --driver=Chrome -i onedata/acceptance_gui:lates --local
 ```
 
-### Non-headless with automatic getting_started environment setup
+New parameters:
 
-Example: (invoke from onedata repo root dir)
-```
-py.test tests/gui --test-type gui -vvv --driver=Chrome --getting-started
-```
+* ``--local`` - starts tests on host instead of starting them in pod
 
 Test reports
 ============

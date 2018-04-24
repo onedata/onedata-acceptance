@@ -9,6 +9,10 @@ __license__ = "This software is released under the MIT license cited in " \
 
 
 from functools import partial
+try:
+    from itertools import izip
+except ImportError:
+    izip = zip
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import WebItemsSequence, WebItem
@@ -36,7 +40,7 @@ class _Breadcrumbs(PageObject):
         i, dir1, dir2 = None, None, None
         err_msg = '{dir} not found on {idx}th position in {item}'
 
-        for i, (dir1, dir2) in enumerate(zip(path, breadcrumbs)):
+        for i, (dir1, dir2) in enumerate(izip(path, breadcrumbs)):
             assert dir1 == dir2.text, err_msg.format(dir=dir1, idx=i, item=self)
 
         dir2.click()

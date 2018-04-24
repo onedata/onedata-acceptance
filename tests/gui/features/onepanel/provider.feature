@@ -52,7 +52,7 @@ Feature: Provider management in Onepanel GUI
     And user of browser2 expands submenu of space named "space1" by clicking on space record in expanded "DATA SPACE MANAGEMENT" Onezone panel
     And user of browser2 clicks on provider named "pro1" in submenu of space named "space1" in expanded "DATA SPACE MANAGEMENT" Onezone panel
     And user of browser2 sees that provider popup for provider named "pro1" has appeared on world map
-    And user of browser2 sees that hostname in displayed provider popup matches test hostname of provider "oneprovider-1" domain
+    And user of browser2 sees that hostname in displayed provider popup matches test hostname of provider "oneprovider-1"
 
     # restore provider details
     And user of browser1 clicks on Modify provider details button in provider page in Onepanel

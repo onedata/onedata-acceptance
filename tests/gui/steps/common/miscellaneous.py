@@ -14,9 +14,6 @@ from selenium.webdriver.common.keys import Keys
 
 from tests.gui.utils.generic import repeat_failed, transform
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.utils.acceptance_utils import list_parser
-
-from selenium.webdriver.support.ui import WebDriverWait as Wait
 
 
 @repeat_failed(attempts=WAIT_FRONTEND)

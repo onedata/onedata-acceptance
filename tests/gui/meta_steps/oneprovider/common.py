@@ -17,7 +17,7 @@ def go_to_tab_in_provider(browser_id_list, tab_name, selenium):
 
 
 def navigate_to_tab_in_op_using_gui(selenium, user, oz_page, provider,
-                                    main_menu_tab):
+                                    main_menu_tab, hosts):
     panel_name = button_name = "GO TO YOUR FILES"
     item_type = "provider"
     title = selenium[user].title
@@ -29,11 +29,11 @@ def navigate_to_tab_in_op_using_gui(selenium, user, oz_page, provider,
                                                     oz_page, hosts)
         wt_click_on_provider_in_go_to_your_files_oz_panel(selenium, user,
                                                           provider,
-                                                          oz_page)
+                                                          oz_page, hosts)
         assert_provider_popup_has_appeared_on_map(selenium, user, provider,
                                                   oz_page)
         wt_click_on_btn_in_provider_popup(selenium, user, button_name, provider,
-                                          oz_page)
+                                          oz_page, hosts)
         wt_wait_for_op_session_to_start(selenium, user)
 
     wt_click_on_the_given_main_menu_tab(selenium, user, main_menu_tab)

@@ -111,7 +111,7 @@ def remove_provider_support_for_space_in_oz_using_gui(selenium, user, oz_page,
                                      panel_name, oz_page, hosts)
     click_on_unsupport_space_for_supporting_provider(selenium, user,
                                                      provider_name, space_name,
-                                                     oz_page)
+                                                     oz_page, hosts)
     wt_wait_for_modal_to_appear(selenium, user, modal_name, tmp_memory)
     select_option_with_text_in_modal(user, option_name, tmp_memory)
     assert_btn_in_modal_is_enabled(user, "yes", tmp_memory)
@@ -217,7 +217,7 @@ def assert_there_are_no_spaces_in_oz_gui(selenium, user, oz_page, space_list):
     for space_name in parse_seq(space_list):
         assert_there_is_no_item_named_in_oz_panel_list(selenium, user,
                                                        item_type, space_name,
-                                                       panel_name, oz_page)
+                                                       panel_name, oz_page, hosts)
 
 
 def assert_spaces_have_been_renamed_in_oz_gui(selenium, user, oz_page,
@@ -234,7 +234,8 @@ def assert_spaces_have_been_renamed_in_oz_gui(selenium, user, oz_page,
                                                     oz_page, hosts)
         assert_there_is_no_item_named_in_oz_panel_list(selenium, user,
                                                        item_type, space_name,
-                                                       panel_name, oz_page)
+                                                       panel_name, oz_page,
+                                                       hosts)
 
 
 def assert_space_is_home_space_in_oz_gui(selenium, user, oz_page, space_name):
@@ -244,7 +245,7 @@ def assert_space_is_home_space_in_oz_gui(selenium, user, oz_page, space_name):
     refresh_site(selenium, user)
     wt_expand_oz_panel(selenium, user, panel_name, oz_page)
     assert_item_is_home_item_in_oz_panel(selenium, user, item_type, space_name,
-                                         panel_name, oz_page)
+                                         panel_name, oz_page, hosts)
 
 
 def assert_there_is_no_provider_for_space_in_oz_gui(selenium, user, oz_page,

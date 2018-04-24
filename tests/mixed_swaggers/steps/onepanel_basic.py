@@ -188,7 +188,7 @@ def assert_there_is_no_provider_in_oz(client, request, user, provider_name,
         from tests.gui.meta_steps.onezone.provider import \
                                     assert_there_is_no_provider_in_oz_gui
         assert_there_is_no_provider_in_oz_gui(
-            selenium, user, oz_page, provider_name)
+            selenium, user, oz_page, provider_name, hosts)
     else:
         raise NoSuchClientException("Client: {} not found.".format(client))
 
@@ -535,7 +535,7 @@ def assert_space_content_in_op(client, request, config, selenium, user,
                                                 assert_space_content_in_op_gui
         assert_space_content_in_op_gui(config, selenium, user, op_page,
                                        tmp_memory, tmpdir, space_name, oz_page,
-                                       host)
+                                       host, hosts)
     elif client == "rest":
         from tests.mixed_swaggers.utils.oneprovider.data import \
                                                 assert_space_content_in_op_rest

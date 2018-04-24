@@ -178,7 +178,7 @@ def remove_provider_support_for_space_in_oz(client, request, user,
         remove_provider_support_for_space_in_oz_using_gui(selenium, user,
                                                           oz_page, space_name,
                                                           provider_name,
-                                                          tmp_memory,hosts)
+                                                          tmp_memory, hosts)
     else:
         raise NoSuchClientException("Client: {} not found.".format(client))
 

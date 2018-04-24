@@ -127,7 +127,8 @@ def assert_directory_structure_in_op(client, selenium, user, op_page, oz_page,
 
     if client == "web gui":
         assert_space_content_in_op_gui(config, selenium, user, op_page, 
-                                       tmp_memory, tmpdir, space, oz_page, host)
+                                       tmp_memory, tmpdir, space, oz_page, host,
+                                       hosts)
     elif client == "rest":
         assert_space_content_in_op_rest(user, users, hosts, config, space, 
                                         spaces, host)

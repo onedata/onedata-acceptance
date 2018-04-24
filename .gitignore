@@ -5,6 +5,7 @@
 
 test-reports/*
 
+tests/.pytest_cache/
 tests/env_up/logs
 tests/acceptance/logs
 tests/performance/logs

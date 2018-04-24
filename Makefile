@@ -32,10 +32,7 @@ checkout_getting_started:
 
 RECORDING_OPTION   ?= failed
 BROWSER            ?= Chrome
-SCENARIO           ?= 2_0_oneprovider_onezone
-ZONE_NAME          ?= z1
-PROVIDERS_NAMES    ?= p1
-ENV_FILE           ?= tests/gui/environments/1oz_1op_batch_conf_on.yaml
+ENV_FILE           ?= tests/gui/environments/1oz_1op_deployed.yaml
 
 
 test_gui_packages_one_env:

@@ -54,6 +54,6 @@ def screens():
     return [0]
 
 
-# scenarios('../features/onezone/space/creation.feature')
+scenarios('../features/onezone/space/creation.feature')
 scenarios('../features/onezone/space/basic_management.feature')
-# scenarios('../features/onezone/space/multiple_spaces_management.feature')
+scenarios('../features/onezone/space/multiple_spaces_management.feature')

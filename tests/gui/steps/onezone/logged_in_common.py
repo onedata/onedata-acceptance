@@ -104,7 +104,8 @@ def click_on_btn_in_oz_panel(selenium, browser_id, btn, oz_panel, oz_page):
                  r'"(?P<oz_panel>GROUP MANAGEMENT)" Onezone panel'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_there_is_item_named_in_oz_panel_list(selenium, browser_id, item_type,
-                                                item_name, oz_panel, oz_page, hosts):
+                                                item_name, oz_panel, oz_page,
+                                                hosts):
     driver = selenium[browser_id]
     if item_type == 'provider':
         item_name = hosts[item_name]['name']

@@ -46,61 +46,61 @@ def horizontal_line():
 
 
 def run_onenv_command(command, args=None):
-    cmd = ["./onenv", command]
+    cmd = ['./onenv', command]
 
     if args:
         cmd.extend(args)
 
     horizontal_line()
-    print("Running command: {}".format(cmd))
-    proc = Popen(cmd, stdout=PIPE, stderr=PIPE, cwd="one_env")
+    print('Running command: {}'.format(cmd))
+    proc = Popen(cmd, stdout=PIPE, stderr=PIPE, cwd='one_env')
     output, err = proc.communicate()
 
-    sys.stdout.write(output.decode("utf-8"))
-    sys.stderr.write(err.decode("utf-8"))
+    sys.stdout.write(output.decode('utf-8'))
+    sys.stderr.write(err.decode('utf-8'))
 
     return output
 
 
 def parse_pods_cfg(pods_cfg):
-    zone_config = {'name': "['--zone-name']",
-                   'ip':  "['--zone-ip']",
-                   'domain': "['--zone-hostname']",
-                   'alias': "['--zone-alias']",
-                   'container_id': "['--zone-container-id']"}
+    zone_config = {'name': ["--zone-name"],
+                   'ip':  ["--zone-ip"],
+                   'domain': ["--zone-hostname"],
+                   'alias': ["--zone-alias"],
+                   'container_id': ["--zone-container-id"]}
 
-    providers_config = {'name': "['--providers-names']",
-                        'ip': "['--providers-ips']",
-                        'domain': "['--providers-hostnames']",
-                        'alias': "['--providers-aliases']",
-                        'container_id': "['--providers-containers-id']"}
+    providers_config = {'name': ["--providers-names"],
+                        'ip': ["--providers-ips"],
+                        'domain': ["--providers-hostnames"],
+                        'alias': ["--providers-aliases"],
+                        'container_id': ["--providers-containers-id"]}
 
     for pod, pod_cfg in pods_cfg.items():
         if pod_cfg['service-type'] == 'onezone':
             for opt in zone_config:
                 if opt == 'alias':
-                    zone_config[opt] += " + ['{}']".format(
-                        service_name_to_alias_mapping(pod))
+                    zone_config[opt] += ["{}".format(
+                        service_name_to_alias_mapping(pod))]
                 else:
-                    zone_config[opt] += " + ['{}']".format(pod_cfg[opt])
+                    zone_config[opt] += ["{}".format(pod_cfg[opt])]
         else:
             for opt in providers_config:
                 if opt == 'alias':
-                    providers_config[opt] += " + ['{}']".format(
-                        service_name_to_alias_mapping(pod))
+                    providers_config[opt] += ["{}".format(
+                        service_name_to_alias_mapping(pod))]
                 else:
-                    providers_config[opt] += " + ['{}']".format(pod_cfg[opt])
+                    providers_config[opt] += ["{}".format(pod_cfg[opt])]
 
-    zone_conf = ""
+    zone_conf = []
     zone_params = list(zone_config.values())
     for param in zone_params[:-1]:
-        zone_conf += "{} + ".format(param)
+        zone_conf += param
     zone_conf += zone_params[-1]
 
-    providers_conf = ""
+    providers_conf = []
     providers_params = list(providers_config.values())
     for param in providers_params[:-1]:
-        providers_conf += "{} + ".format(param)
+        providers_conf += param
     providers_conf += providers_params[-1]
 
     return zone_conf, providers_conf
@@ -134,23 +134,29 @@ parser.add_argument(
 parser.add_argument(
     '--test-type', '-tt',
     action='store',
-    default="acceptance",
-    help="Type of test (acceptance, env_up, performance, packaging, gui)",
+    default='acceptance',
+    help='Type of test (acceptance, env_up, performance, packaging, gui)',
     dest='test_type')
 
 parser.add_argument(
     '--env-file', '-e',
     action='store',
-    default=None,
-    help="path to description of test environment in .json file",
+    default='tests/gui/environments/1oz_1op_deployed.yaml',
+    help='Path to description of test environment in .yaml file',
     dest='env_file')
 
 parser.add_argument(
-    '--keywords', '-k',
-    action='store',
-    default='',
-    help="path to description of test environment in .yaml file",
-    dest='keywords')
+    '--no-clean', '-n',
+    action='store_false',
+    help='If present prevents cleaning environment created by one-env',
+    dest='clean')
+
+parser.add_argument(
+    '--local', '-l',
+    action='store_true',
+    help='If present runs test on host',
+    dest='local')
+
 
 
 [args, pass_args] = parser.parse_known_args()
@@ -170,19 +176,10 @@ if {shed_privileges}:
     os.setregid({gid}, {gid})
     os.setreuid({uid}, {uid})
 
-command = ['py.test'] + ['--test-type={test_type}'] + ['{test_dir}'] + {args} + {keywords} + {env_file} + {zone_conf} + {providers_conf} + ['--junitxml={report_path}']  
+command = ['py.test'] + ['--test-type={test_type}'] + ['{test_dir}'] + {args} + {zone_conf} + {providers_conf} + ['--junitxml={report_path}'] + ['--add-test-domain']  
 ret = subprocess.call(command)
 sys.exit(ret)
 '''
-
-additional_code = ''
-
-additional_code += """
-with open('/etc/sudoers.d/all', 'w+') as file:
-    file.write('''
-ALL       ALL = (ALL) NOPASSWD: ALL
-''')
-"""
 
 test_runner_pod = '''{{
         "apiVersion": "v1",
@@ -251,46 +248,61 @@ test_runner_pod = '''{{
         }}
 }}'''
 
-run_onenv_command("up", ["-f", "{}".format(
-    os.path.join(script_dir, args.env_file))])
-run_onenv_command("wait")
+up_arguments = []
+if args.clean:
+    up_arguments.extend(['-f'])
+up_arguments.extend(['{}'.format(os.path.join(script_dir, args.env_file))])
+run_onenv_command('up', up_arguments)
 
-status_output = run_onenv_command("status")
-status_output = yaml.load(status_output.decode("utf-8"))
-pods_cfg = status_output["pods"]
+run_onenv_command('wait')
+
+status_output = run_onenv_command('status')
+status_output = yaml.load(status_output.decode('utf-8'))
+pods_cfg = status_output['pods']
 
 oz_conf, ops_conf = parse_pods_cfg(pods_cfg)
 
-command = command.format(args=pass_args,
-                         uid=os.geteuid(),
-                         gid=os.getegid(),
-                         test_dir=args.test_dir,
-                         shed_privileges=(platform.system() == "Linux"),
-                         report_path=args.report_path,
-                         test_type=args.test_type,
-                         additional_code=additional_code,
-                         env_file="[]",
-                         zone_conf=oz_conf,
-                         providers_conf=ops_conf,
-                         keywords=["-k={}".format(
-                             args.keywords)] if args.keywords else [])
-command = command.replace("\n", r"\n").replace("\"", "\'")
+if args.local:
+    cmd = ['python2', '-m', 'py.test', '--test-type={}'.format(args.test_type), args.test_dir,
+           '--junitxml={}'.format(args.report_path)]
+    cmd.extend(pass_args + oz_conf + ops_conf)
+    print(cmd)
 
-minikube_script_dir = script_dir.replace(user_config.host_home(),
-                                         user_config.get("kubeHostHomeDir"))
-test_runner_pod = test_runner_pod.format(command=command,
-                                         script_dir=script_dir,
-                                         minikube_script_dir=minikube_script_dir,
-                                         image=args.image)
+else:
+    additional_code = '''
+with open('/etc/sudoers.d/all', 'w+') as file:
+    file.write("""
+ALL       ALL = (ALL) NOPASSWD: ALL
+""")
+    '''
 
-cmd = ["kubectl"] + ["run"] + ["-i"] + ["--rm"] + ["--restart=Never"] + \
-      ["test-runner"] + ["--overrides={}".format(test_runner_pod)] + \
-      ["--image={}".format(args.image)] + ["--"] + ["python"] + ["-c"] + \
-      ["\"{}\"".format(command)]
+    command = command.format(args=pass_args,
+                             uid=os.geteuid(),
+                             gid=os.getegid(),
+                             test_dir=args.test_dir,
+                             shed_privileges=(platform.system() == 'Linux'),
+                             report_path=args.report_path,
+                             test_type=args.test_type,
+                             additional_code=additional_code,
+                             zone_conf=oz_conf,
+                             providers_conf=ops_conf)
+    command = command.replace('\n', r'\n').replace('\"', '\'')
+
+    minikube_script_dir = script_dir.replace(user_config.host_home(),
+                                             user_config.get('kubeHostHomeDir'))
+    test_runner_pod = test_runner_pod.format(command=command,
+                                             script_dir=script_dir,
+                                             minikube_script_dir=minikube_script_dir,
+                                             image=args.image)
+
+    cmd = ['kubectl', 'run', '-i', '--rm', '--restart=Never', 'test-runner',
+           '--overrides={}'.format(test_runner_pod), '--image={}'.format(args.image),
+           '--', 'python', '-c', '"{}"'.format(command)]
 
 ret = call(cmd, stdin=None, stderr=None, stdout=None)
 
-run_onenv_command("clean")
+if args.clean:
+    run_onenv_command('clean')
 
 if ret != 0 and not skipped_test_exists(args.report_path):
     ret = 0

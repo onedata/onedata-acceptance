@@ -13,6 +13,11 @@ from time import sleep, time
 from itertools import islice
 from contextlib import contextmanager
 
+try:
+    from itertools import izip
+except ImportError:
+    izip = zip
+
 from decorator import decorator
 
 from tests import gui
@@ -108,7 +113,7 @@ def repeat_failed(attempts=10, timeout=None, interval=0.1,
 def iter_ahead(iterable):
     read_ahead = iter(iterable)
     next(read_ahead)
-    for item, next_item in zip(iterable, read_ahead):
+    for item, next_item in izip(iterable, read_ahead):
         yield item, next_item
 
 

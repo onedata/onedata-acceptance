@@ -76,9 +76,9 @@ def _create_user(zone_hostname, admin_credentials, username, options):
                          'userRole': options.get('user role', 'regular')}
     # if user already exist (possible remnants of previous tests) skip test
     try:
-        http_get(ip=zone_hostname, port=PANEL_REST_PORT,
-                 path=get_panel_rest_path('users', username),
-                 auth=(admin_credentials.username, admin_credentials.password))
+        resp = http_get(ip=zone_hostname, port=PANEL_REST_PORT,
+                        path=get_panel_rest_path('users', username),
+                        auth=(admin_credentials.username, admin_credentials.password))
     except HTTPNotFound:
         http_post(ip=zone_hostname, port=PANEL_REST_PORT,
                   path=get_panel_rest_path('users'),
@@ -100,7 +100,13 @@ def _create_user(zone_hostname, admin_credentials, username, options):
     except HTTPError:
         skip('failed to create "{}" user'.format(username))
     else:
-        skip('"{}" user already exist'.format(username))
+        if True:
+            user_id = resp['userId']
+            _rm_user(zone_hostname, admin_credentials,
+                     UserCred(username=username, password=password, id=user_id),
+                     False)
+        else:
+            skip('"{}" user already exist'.format(username))
 
 
 def _configure_user(zone_hostname, user_cred, options):
@@ -154,4 +160,3 @@ def _create_token(zone_hostname, username, password):
                       path=get_zone_rest_path('user', 'client_tokens'),
                       auth=(username, password))
     return json.loads(response.content)['token']
-    
