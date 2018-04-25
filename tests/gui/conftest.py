@@ -109,6 +109,12 @@ def add_etc_hosts_entries(service_ip, service_host):
         service_ip, service_host), shell=True)
 
 
+def docker_exec(container_id, command):
+    cmd = ['docker', 'exec', container_id]
+    cmd.extend(['sh', '-c', command])
+    sp.call(cmd, stdin=None, stderr=None, stdout=None)
+
+
 @fixture(scope='session')
 def hosts(request):
     """Dict to use to store ip addresses of services."""
@@ -124,6 +130,9 @@ def hosts(request):
                                                          PANEL_REST_PORT)}
                     }
 
+    set_debug_cmd = r'echo {{\"debug\": true}} > ' \
+                    r'/var/lib/{}_worker/gui_static/app-config.json'
+
     for provider_name, provider_alias, provider_hostname, provider_ip, \
         provider_container_id in \
         zip(request.config.getoption('--providers-names'),
@@ -136,12 +145,16 @@ def hosts(request):
                  provider_hostname, provider_ip, provider_container_id)
         if request.config.getoption('--add-test-domain'):
             add_etc_hosts_entries(provider_ip, "{}.test".format(provider_hostname))
+        docker_exec(provider_container_id, set_debug_cmd.format('op'))
 
+    zone_container_id = request.config.getoption('--zone-container-id')
     add_host('onezone', request.config.getoption('--zone-alias'),
              request.config.getoption('--zone-name'),
              request.config.getoption('--zone-hostname'),
              request.config.getoption('--zone-ip'),
-             request.config.getoption('--zone-container-id'))
+             zone_container_id)
+    docker_exec(zone_container_id, set_debug_cmd.format('oz'))
+
     return h
 
 

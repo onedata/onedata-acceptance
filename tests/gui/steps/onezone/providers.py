@@ -114,9 +114,20 @@ def wt_click_on_btn_in_provider_popup(selenium, browser_id, btn,
                                     hosts)
 
 
-@given(parsers.re('users? of (?P<browser_id_list>.*) clicked on '
+@given(parsers.re('users? of (?P<browser_id_list>.*) clicked on the '
                   '"(?P<btn_name>.+?)" button in provider popup'))
 def g_click_on_go_to_files_provider(selenium, browser_id_list, btn_name, oz_page):
+    for browser_id in parse_seq(browser_id_list):
+        driver = selenium[browser_id]
+        popup = oz_page(driver)['world map'].get_provider_with_displayed_popup()
+        getattr(popup, transform(btn_name)).click()
+
+
+@when(parsers.re('users? of (?P<browser_id_list>.*) clicks on the '
+                 '"(?P<btn_name>.+?)" button in provider popup'))
+@then(parsers.re('users? of (?P<browser_id_list>.*) clicks on the '
+                 '"(?P<btn_name>.+?)" button in provider popup'))
+def wt_click_on_go_to_files_provider(selenium, browser_id_list, btn_name, oz_page):
     for browser_id in parse_seq(browser_id_list):
         driver = selenium[browser_id]
         popup = oz_page(driver)['world map'].get_provider_with_displayed_popup()
