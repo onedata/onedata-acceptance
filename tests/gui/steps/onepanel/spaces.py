@@ -14,7 +14,8 @@ from pytest_bdd import when, then, parsers
 
 from tests.gui.conftest import (WAIT_FRONTEND, WAIT_BACKEND,
                                 SELENIUM_IMPLICIT_WAIT)
-from tests.gui.utils.generic import repeat_failed, transform, implicit_wait
+from tests.gui.utils.generic import (repeat_failed, transform, implicit_wait,
+                                     parse_seq)
 
 
 @when(parsers.parse('user of {browser_id} selects "{storage}" from storage '
@@ -347,3 +348,29 @@ def assert_correct_number_displayed_on_sync_charts(selenium, browser_id,
     assert displayed_num == num, \
         ('displayed {} as number of {} files on sync chart instead of '
          'expected {}'.format(displayed_num, bar_type, num))
+
+matcher_are_nav_tabs_for_space_displayed = parsers.parse(
+    'user of {browser_id} sees {tab_list} navigation tabs for space "{space_name}"')
+@when(matcher_are_nav_tabs_for_space_displayed)
+@then(matcher_are_nav_tabs_for_space_displayed)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def are_nav_tabs_for_space_displayed(selenium, browser_id, tab_list, space_name,
+                                     onepanel):
+    nav = onepanel(selenium[browser_id]).content.spaces.spaces[space_name].navigation
+    
+    for tab in parse_seq(tab_list):
+        assert getattr(nav, transform(tab, strip_char='"')) is not None, \
+            'no navigation tab {} found'.format(tab)
+
+
+matcher_click_on_navigation_tab_in_space = parsers.parse(
+    'user of {browser_id} clicks on {tab_name} navigation '
+    'tab in space "{space_name}"')
+@when(matcher_click_on_navigation_tab_in_space)
+@then(matcher_click_on_navigation_tab_in_space)
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_navigation_tab_in_space(browser_id, tab_name, onepanel, selenium,
+                                     space_name, tmp_memory):
+    nav = onepanel(selenium[browser_id]).content.spaces.spaces[space_name].navigation
+    tab = getattr(nav, transform(tab_name, strip_char='"'))
+    tab()

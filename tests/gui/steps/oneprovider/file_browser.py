@@ -243,9 +243,9 @@ def select_files_from_file_list_using_ctrl(browser_id, item_list,
                                            tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
     with browser.select_files() as selector:
-        selector.ctrl_down()
+        selector.ctrl_or_cmd_down()
         _select_files(browser, selector, item_list)
-        selector.ctrl_up()
+        selector.ctrl_or_cmd_down()
 
 
 @when(parsers.parse('user of {browser_id} deselects {item_list} '
@@ -256,9 +256,9 @@ def select_files_from_file_list_using_ctrl(browser_id, item_list,
 def deselect_items_from_file_browser(browser_id, item_list, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
     with browser.select_files() as selector:
-        selector.ctrl_down()
+        selector.ctrl_or_cmd_down()
         _deselect_files(browser, selector, item_list)
-        selector.ctrl_up()
+        selector.ctrl_or_cmd_down()
 
 
 def _select_files(browser, selector, item_list):

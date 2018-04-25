@@ -205,8 +205,11 @@ def assert_metadata_in_op_gui(selenium, browser_id, path, tmp_memory, op_page,
     if tab_name == 'basic':
         (attr, val) = val.split('=')
         if res == 'fails':
-            assert_there_is_no_such_meta_record(browser_id, attr, item_name, 
-                                                tmp_memory)
+            file_browser = tmp_memory[browser_id]['file_browser']
+            metadata_row = file_browser.get_metadata_for(item_name)
+            if not metadata_row.is_resource_load_error():
+                assert_there_is_no_such_meta_record(browser_id, attr, item_name, 
+                                                    tmp_memory)
         else:
             assert_there_is_such_meta_record(browser_id, attr, val, item_name, 
                                              tmp_memory)

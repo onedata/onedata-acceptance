@@ -26,3 +26,6 @@ oneprovider_meta/oneprovider/DEBIAN/control
 
 # OSX
 .DS_Store
+
+# VSCode
+.vscode
