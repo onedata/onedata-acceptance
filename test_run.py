@@ -158,7 +158,6 @@ parser.add_argument(
     dest='local')
 
 
-
 [args, pass_args] = parser.parse_known_args()
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -263,10 +262,10 @@ pods_cfg = status_output['pods']
 oz_conf, ops_conf = parse_pods_cfg(pods_cfg)
 
 if args.local:
-    cmd = ['python2', '-m', 'py.test', '--test-type={}'.format(args.test_type), args.test_dir,
-           '--junitxml={}'.format(args.report_path)]
+    # TODO: change this after python3 will be used in tests
+    cmd = ['python2.7', '-m', 'py.test', '--test-type={}'.format(args.test_type),
+           args.test_dir, '--junitxml={}'.format(args.report_path)]
     cmd.extend(pass_args + oz_conf + ops_conf)
-    print(cmd)
 
 else:
     additional_code = '''

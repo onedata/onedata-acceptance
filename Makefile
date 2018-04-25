@@ -36,7 +36,7 @@ ENV_FILE           ?= tests/gui/environments/1oz_1op_deployed.yaml
 
 
 test_gui_packages_one_env:
-	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i onedata/acceptance_gui:latest --xvfb --xvfb-recording=${RECORDING_OPTION} --env-file=${ENV_FILE} --keywords=${KEYWORDS}
+	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i onedata/acceptance_gui:latest --xvfb --xvfb-recording=${RECORDING_OPTION} --env-file=${ENV_FILE} -k=${KEYWORDS}
 
 ##
 ## Build python REST clients generated from swaggers. (used in mixed tests)
