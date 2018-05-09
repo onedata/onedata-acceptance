@@ -19,12 +19,12 @@ export ONEDATA_GIT_URL
 
 branch = $(shell git rev-parse --abbrev-ref HEAD)
 submodules:
-	./onedata_submodules.sh init ${submodule}
-	./onedata_submodules.sh update ${submodule}
+	git submodule init ${submodule}
+	git submodule update ${submodule}
 
 checkout_getting_started:
-	./onedata_submodules.sh init getting_started
-	./onedata_submodules.sh update --remote getting_started
+	git submodule init getting_started
+	git submodule update --remote getting_started
 
 ##
 ## Test
@@ -33,10 +33,11 @@ checkout_getting_started:
 RECORDING_OPTION   ?= failed
 BROWSER            ?= Chrome
 ENV_FILE           ?= tests/gui/environments/1oz_1op_deployed.yaml
-
+OZ_IMAGE           ?=
+OP_IMAGE           ?=
 
 test_gui_packages_one_env:
-	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i onedata/acceptance_gui:latest --xvfb --xvfb-recording=${RECORDING_OPTION} --env-file=${ENV_FILE} -k=${KEYWORDS}
+	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i onedata/acceptance_gui:latest --xvfb --xvfb-recording=${RECORDING_OPTION} --env-file=${ENV_FILE} -k=${KEYWORDS} --oz-image=${OZ_IMAGE} --op-image=${OP_IMAGE}
 
 ##
 ## Build python REST clients generated from swaggers. (used in mixed tests)

@@ -100,13 +100,7 @@ def _create_user(zone_hostname, admin_credentials, username, options):
     except HTTPError:
         skip('failed to create "{}" user'.format(username))
     else:
-        if True:
-            user_id = resp['userId']
-            _rm_user(zone_hostname, admin_credentials,
-                     UserCred(username=username, password=password, id=user_id),
-                     False)
-        else:
-            skip('"{}" user already exist'.format(username))
+        skip('"{}" user already exist'.format(username))
 
 
 def _configure_user(zone_hostname, user_cred, options):

@@ -10,14 +10,14 @@ GUI acceptance/BDD tests
 ========================
 
 GUI acceptance/BDD test can be run in few ways using ``./test_run.py``:
- 1. Headless tests inside Pod on existing Onedata installation
- 2. Headless tests inside Pod on new Onedata environment
- 3. Non-headless tests on local machine
+ 1. Headless tests inside Pod on new Onedata environment
+ 2. Tests using existing Onedata installation or starting new preserving Onedata installation after tests 
+    1. Headless tests inside Pod
+    2. Non-headless tests on local machine
 
-1. Headless tests in Pod starting new Onedata installation
---------------------------------
 
-### Headless with automatic env_up environment set up
+Headless with automatic one-env environment set up
+=====================================================
 
 Using this method, the Onedata environment will be set up automatically with OZ and OP (for details see ``environments``
 dir with configurations). Setting up environment can take some time.
@@ -41,19 +41,31 @@ Used parameters:
 * ``--keywords`` - run only tests matching given string expression (``py.test`` option)
 
 
-2. Headless tests in Pod using existing Onedata installation
+Preserving Onedata installation after tests
+=====================================================
+
+Using this method, existing Onedata installation will be used. If there is no running Onedata installation it will be 
+set up automatically. Installation is not destroyed after tests in this method.
+
+To start Onedata installation navigate to one_env directory and run
+ ```
+ ./onenv up -f ../tests/gui/environments/<env_file>
+ ```
+Where ``env_file`` is one of the yamls describing the environment.
+
+2.1. Headless tests in Pod
+-----------------------------------------------------
 
 Example: (invoke from onedata repo root dir)
 ```
-./test_run.py -t tests/gui --test-type gui --driver=Chrome -i onedata/acceptance_gui:latest -no-clean
+./test_run.py -t tests/gui --test-type gui --driver=Chrome -i onedata/acceptance_gui:latest --no-clean
 ```
 
 New parameters:
 
 * ``--no-clean`` - prevents deleting environment after tests
 
-
-3. Non-headless using local machine (BDD)
+2.2. Non-headless using local machine (BDD)
 -----------------------------------------------------
 
 These tests will be run using ``py.test`` runner on local machine.
@@ -67,11 +79,9 @@ pip install -r tests/gui/requirements.txt
 
 Additional applications required in system:
 
-* xclip
+* xclip (Linux) or pbcopy (OSX)
 
 A browser selected for tests (with ``--driver``) should be also installed.
-
-### Non-headless using existing Onedata installation
 
 Example: (invoke from onedata repo root dir)
 ```
@@ -80,7 +90,10 @@ Example: (invoke from onedata repo root dir)
 
 New parameters:
 
-* ``--local`` - starts tests on host instead of starting them in pod
+* ``--local`` - starts tests on host instead of starting them in pod.
+* ``--add-test-domain`` - when running tests on local machine option for adding entries to ``/etc/hosts`` is turned off by default. This may
+cause that some test will fail. You can enable adding entries to ``/etc/hosts`` using ``-add-test-domain`` option or add entries manually.
+
 
 Test reports
 ============

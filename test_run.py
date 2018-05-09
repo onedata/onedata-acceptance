@@ -63,33 +63,33 @@ def run_onenv_command(command, args=None):
 
 
 def parse_pods_cfg(pods_cfg):
-    zone_config = {'name': ["--zone-name"],
-                   'ip':  ["--zone-ip"],
-                   'domain': ["--zone-hostname"],
-                   'alias': ["--zone-alias"],
-                   'container_id': ["--zone-container-id"]}
+    zone_config = {'name': ['--zone-name'],
+                   'ip':  ['--zone-ip'],
+                   'domain': ['--zone-hostname'],
+                   'alias': ['--zone-alias'],
+                   'container_id': ['--zone-container-id']}
 
-    providers_config = {'name': ["--providers-names"],
-                        'ip': ["--providers-ips"],
-                        'domain': ["--providers-hostnames"],
-                        'alias': ["--providers-aliases"],
-                        'container_id': ["--providers-containers-id"]}
+    providers_config = {'name': ['--providers-names'],
+                        'ip': ['--providers-ips'],
+                        'domain': ['--providers-hostnames'],
+                        'alias': ['--providers-aliases'],
+                        'container_id': ['--providers-containers-id']}
 
     for pod, pod_cfg in pods_cfg.items():
         if pod_cfg['service-type'] == 'onezone':
             for opt in zone_config:
                 if opt == 'alias':
-                    zone_config[opt] += ["{}".format(
+                    zone_config[opt] += ['{}'.format(
                         service_name_to_alias_mapping(pod))]
                 else:
-                    zone_config[opt] += ["{}".format(pod_cfg[opt])]
+                    zone_config[opt] += ['{}'.format(pod_cfg[opt])]
         else:
             for opt in providers_config:
                 if opt == 'alias':
-                    providers_config[opt] += ["{}".format(
+                    providers_config[opt] += ['{}'.format(
                         service_name_to_alias_mapping(pod))]
                 else:
-                    providers_config[opt] += ["{}".format(pod_cfg[opt])]
+                    providers_config[opt] += ['{}'.format(pod_cfg[opt])]
 
     zone_conf = []
     zone_params = list(zone_config.values())
@@ -156,6 +156,18 @@ parser.add_argument(
     action='store_true',
     help='If present runs test on host',
     dest='local')
+
+parser.add_argument(
+    '--oz-image',
+    action='store',
+    help='Onezone image to use in tests',
+    dest='oz_image')
+
+parser.add_argument(
+    '--op-image',
+    action='store',
+    help='Oneprovider image to use in tests',
+    dest='op_image')
 
 
 [args, pass_args] = parser.parse_known_args()
@@ -248,6 +260,10 @@ test_runner_pod = '''{{
 }}'''
 
 up_arguments = []
+if args.op_image:
+    up_arguments.extend(['-pi', args.op_image])
+if args.oz_image:
+    up_arguments.extend(['-zi', args.oz_image])
 if args.clean:
     up_arguments.extend(['-f'])
 up_arguments.extend(['{}'.format(os.path.join(script_dir, args.env_file))])
