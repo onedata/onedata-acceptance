@@ -169,6 +169,12 @@ parser.add_argument(
     help='Oneprovider image to use in tests',
     dest='op_image')
 
+parser.add_argument(
+    '--sources', '-s',
+    action='store_true',
+    help='If present run environment using sources',
+    dest='sources')
+
 
 [args, pass_args] = parser.parse_known_args()
 
@@ -266,6 +272,8 @@ if args.oz_image:
     up_arguments.extend(['-zi', args.oz_image])
 if args.clean:
     up_arguments.extend(['-f'])
+if args.sources:
+    up_arguments.extend(['-s'])
 up_arguments.extend(['{}'.format(os.path.join(script_dir, args.env_file))])
 run_onenv_command('up', up_arguments)
 
