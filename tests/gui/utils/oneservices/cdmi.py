@@ -5,6 +5,10 @@ from base64 import b64encode
 
 import requests
 
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+
 
 __author__ = "Bartosz Walkowicz, Michal Stanisz"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
