@@ -13,6 +13,37 @@ GIT_URL := $(shell if [ "${GIT_URL}" = "file:/" ]; then echo 'ssh://git@git.plgr
 ONEDATA_GIT_URL := $(shell if [ "${ONEDATA_GIT_URL}" = "" ]; then echo ${GIT_URL}; else echo ${ONEDATA_GIT_URL}; fi)
 export ONEDATA_GIT_URL
 
+
+##
+## Artifacts
+##
+
+artifact: artifact_appmock artifact_oneclient artifact_op_worker \
+    artifact_oz_worker artifact_cluster_manager artifact_cluster_worker \
+    artifact_onepanel
+
+artifact_appmock:
+	$(call unpack, appmock)
+
+artifact_oneclient:
+	$(call unpack, oneclient)
+
+artifact_op_worker:
+	$(call unpack, op_worker)
+
+artifact_oz_worker:
+	$(call unpack, oz_worker)
+
+artifact_cluster_manager:
+	$(call unpack, cluster_manager)
+
+artifact_cluster_worker:
+	$(call unpack, cluster_worker)
+
+artifact_onepanel:
+	$(call unpack, onepanel)
+
+
 ##
 ## Submodules
 ##
@@ -33,8 +64,8 @@ checkout_getting_started:
 RECORDING_OPTION   ?= failed
 BROWSER            ?= Chrome
 ENV_FILE           ?= tests/gui/environments/1oz_1op_deployed.yaml
-OZ_IMAGE           ?=
-OP_IMAGE           ?=
+OZ_IMAGE           ?= ""
+OP_IMAGE           ?= ""
 
 test_gui_packages_one_env:
 	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i onedata/acceptance_gui:latest --xvfb --xvfb-recording=${RECORDING_OPTION} --env-file=${ENV_FILE} -k=${KEYWORDS} --oz-image=${OZ_IMAGE} --op-image=${OP_IMAGE}

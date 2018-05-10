@@ -10,6 +10,10 @@ from itertools import chain
 
 import requests
 
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+
 from tests import (OZ_REST_PATH_PREFIX, PANEL_REST_PATH_PREFIX, DEFAULT_HEADERS,
                    PROVIDER_REST_PATH_PREFIX)
 from .exceptions import raise_http_exception

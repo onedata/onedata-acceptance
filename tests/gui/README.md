@@ -16,8 +16,7 @@ GUI acceptance/BDD test can be run in few ways using ``./test_run.py``:
     2. Non-headless tests on local machine
 
 
-Headless with automatic one-env environment set up
-=====================================================
+# 1. Headless with automatic one-env environment set up
 
 Using this method, the Onedata environment will be set up automatically with OZ and OP (for details see ``environments``
 dir with configurations). Setting up environment can take some time.
@@ -41,11 +40,11 @@ Used parameters:
 * ``--keywords`` - run only tests matching given string expression (``py.test`` option)
 
 
-Preserving Onedata installation after tests
-=====================================================
+# 2. Tests using existing Onedata installation
+
 
 Using this method, existing Onedata installation will be used. If there is no running Onedata installation it will be 
-set up automatically. Installation is not destroyed after tests in this method.
+set up automatically.
 
 To start Onedata installation navigate to one_env directory and run
  ```
@@ -53,12 +52,12 @@ To start Onedata installation navigate to one_env directory and run
  ```
 Where ``env_file`` is one of the yamls describing the environment.
 
-2.1. Headless tests in Pod
+2.1. Headless tests inside Pod
 -----------------------------------------------------
 
 Example: (invoke from onedata repo root dir)
 ```
-./test_run.py -t tests/gui --test-type gui --driver=Chrome -i onedata/acceptance_gui:latest --no-clean
+./test_run.py -t tests/gui --test-type gui --driver=Chrome -i onedata/acceptance_gui:latest --no-clean --xvfb --xvfb-recording=failed
 ```
 
 New parameters:
@@ -85,12 +84,13 @@ A browser selected for tests (with ``--driver``) should be also installed.
 
 Example: (invoke from onedata repo root dir)
 ```
-./test_run.py -t tests/gui --test-type gui --driver=Chrome -i onedata/acceptance_gui:lates --local
+./test_run.py -t tests/gui --test-type gui --driver=Chrome -i onedata/acceptance_gui:lates --local --update-etc-hosts --xvfb --xvfb-recording=failed
 ```
 
 New parameters:
 
 * ``--local`` - starts tests on host instead of starting them in pod.
+* ``--update-etc-hosts`` - adds entries to ``/etc/hosts`` for all pods in deployment. When using this option script has to be run with root privileges.   
 * ``--add-test-domain`` - when running tests on local machine option for adding entries to ``/etc/hosts`` is turned off by default. This may
 cause that some test will fail. You can enable adding entries to ``/etc/hosts`` using ``-add-test-domain`` option or add entries manually.
 

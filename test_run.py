@@ -158,16 +158,23 @@ parser.add_argument(
     dest='local')
 
 parser.add_argument(
-    '--oz-image',
+    '--oz-image', '-zi',
     action='store',
     help='Onezone image to use in tests',
     dest='oz_image')
 
 parser.add_argument(
-    '--op-image',
+    '--op-image', '-pi',
     action='store',
     help='Oneprovider image to use in tests',
     dest='op_image')
+
+parser.add_argument(
+    '--update-etc-hosts', '-uh',
+    action='store_true',
+    help='If present adds entries to /etc/hosts for all zone and provider nodes '
+         'in current deployment',
+    dest='update_etc_hosts')
 
 parser.add_argument(
     '--sources', '-s',
@@ -278,6 +285,9 @@ up_arguments.extend(['{}'.format(os.path.join(script_dir, args.env_file))])
 run_onenv_command('up', up_arguments)
 
 run_onenv_command('wait')
+
+if args.update_etc_hosts:
+    call(['python', 'scripts/update_etc_hosts.py'], cwd='one_env')
 
 status_output = run_onenv_command('status')
 status_output = yaml.load(status_output.decode('utf-8'))
