@@ -183,18 +183,6 @@ def join_space_in_oz_using_gui(selenium, user_list, oz_page, tmp_memory,
         wt_wait_for_modal_to_disappear(selenium, user, tmp_memory)
 
 
-def remove_space_in_oz_using_gui():
-    pytest.skip("This feature is not supported yet")
-
-
-def delete_users_from_space_in_oz_using_gui():
-    pytest.skip("This feature is not supported yet")
-
-
-def add_users_to_space_in_oz_using_gui():
-    pytest.skip("This feature is not supported yet")
-
-
 def assert_spaces_have_appeared_in_oz_gui(selenium, user, oz_page, space_list,
                                           hosts):
     panel_name = "DATA SPACE MANAGEMENT"

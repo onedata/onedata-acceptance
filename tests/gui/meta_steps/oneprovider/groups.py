@@ -63,10 +63,6 @@ def fail_to_see_groups_using_op_gui(selenium, user, op_page, group_list):
         is_not_present_in_group_list(selenium, user, group, op_page)
 
 
-def remove_groups_using_op_gui(selenium, user, op_page, group_list):
-    pytest.skip("Remove group feature is not supported yet")
-
-
 def leave_groups_using_op_gui(selenium, user, op_page, group_list, tmp_memory):
     wt_click_on_the_given_main_menu_tab(selenium, user, 'groups')
     modal_name = "Leave the group"
@@ -216,8 +212,3 @@ def fail_to_rename_groups_using_op_gui(selenium, user, op_page, group_list,
         press_enter_on_active_element(selenium, user)
         notify_visible_with_text(selenium, user, 'error', regexp)
         wt_wait_for_modal_to_disappear(selenium, user, tmp_memory)
-
-
-def fail_to_remove_groups_using_op_gui(selenium, user, op_page, group_list, 
-                                       tmp_memory):
-    pytest.skip("Remove group feature is not supported yet")

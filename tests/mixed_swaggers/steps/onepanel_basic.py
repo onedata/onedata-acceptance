@@ -20,12 +20,12 @@ from tests.mixed_swaggers.utils.common import NoSuchClientException
 def change_user_password_in_oz_panel(client, request, user, new_password, host,
                                      selenium, onepage, users, hosts, popups):
 
-    if client == "web gui":
+    if client.lower() == "web gui":
         from tests.gui.meta_steps.onepanel.account_management import \
                                     change_user_password_in_oz_panel_using_gui
         change_user_password_in_oz_panel_using_gui(selenium, user, onepage,
                                                    users, new_password, popups)
-    elif client == "rest":
+    elif client.lower() == "rest":
         from tests.mixed_swaggers.utils.onepanel.account_management import \
                                     change_user_password_in_oz_panel_using_rest
         change_user_password_in_oz_panel_using_rest(user, new_password, host,
@@ -39,12 +39,12 @@ def change_user_password_in_oz_panel(client, request, user, new_password, host,
 def log_out_from_oz_panel(client, request, user, host, selenium, onepage,
                           panel_login_page, popups):
 
-    if client == "web gui":
+    if client.lower() == "web gui":
         from tests.gui.meta_steps.onepanel.account_management import \
                                     log_out_from_oz_panel_gui
         log_out_from_oz_panel_gui(user, selenium, onepage, panel_login_page,
                                   popups)
-    elif client == "rest":
+    elif client.lower() == "rest":
         pass
         # pytest.skip("This step is not required using {} client".format(client))
     else:
@@ -57,12 +57,12 @@ def log_out_from_oz_panel(client, request, user, host, selenium, onepage,
 def login_to_oz_panel_using_new_password(client, request, user, host, selenium,
                                          panel_login_page, hosts, password):
 
-    if client == "web gui":
+    if client.lower() == "web gui":
         from tests.gui.meta_steps.onepanel.account_management import \
                                     login_to_oz_panel_using_new_password_gui
         login_to_oz_panel_using_new_password_gui(selenium, user, password,
                                                  panel_login_page)
-    elif client == "rest":
+    elif client.lower() == "rest":
         from tests.mixed_swaggers.utils.onepanel.account_management import \
                                     login_to_oz_panel_using_new_password_rest
         login_to_oz_panel_using_new_password_rest(user, password, hosts,
@@ -84,12 +84,12 @@ def modify_provider_using_given_hostname_in_op_panel(client, request, user,
                                                      selenium, onepanel,
                                                      panel_login_page):
 
-    if client == "rest":
+    if client.lower() == "rest":
         from tests.mixed_swaggers.utils.onepanel.provider import \
                                     modify_provider_in_op_panel_using_rest
         modify_provider_in_op_panel_using_rest(user, users, host, hosts,
                                                new_provider_name, new_domain)
-    elif client == "web gui":
+    elif client.lower() == "web gui":
         from tests.gui.meta_steps.onepanel.provider import \
                                     modify_provider_in_op_panel_using_gui
         modify_provider_in_op_panel_using_gui(selenium, user, provider_name,
@@ -112,13 +112,13 @@ def modify_provider_using_known_hostname_in_op_panel(client, request, user,
                                                      hosts, selenium, onepanel,
                                                      panel_login_page):
 
-    if client == "rest":
+    if client.lower() == "rest":
         from tests.mixed_swaggers.utils.onepanel.provider import \
                                     modify_provider_in_op_panel_using_rest
         modify_provider_in_op_panel_using_rest(user, users, host, hosts,
                                                new_provider_name,
                                                hosts[provider])
-    elif client == "web gui":
+    elif client.lower() == "web gui":
         from tests.gui.meta_steps.onepanel.provider import \
                                     modify_provider_in_op_panel_using_gui
         modify_provider_in_op_panel_using_gui(selenium, user, provider_name,
@@ -138,13 +138,13 @@ def assert_provider_has_given_name_and_given_hostname_in_oz(client, request,
                                                             users, hosts,
                                                             selenium, oz_page):
 
-    if client == "rest":
+    if client.lower() == "rest":
         from tests.mixed_swaggers.utils.onezone.provider import \
                                 assert_provider_has_name_and_hostname_in_oz_rest
         assert_provider_has_name_and_hostname_in_oz_rest(user, users, host,
                                                          hosts, provider_name,
                                                          hostname)
-    elif client == "web gui":
+    elif client.lower() == "web gui":
         from tests.gui.meta_steps.onezone.provider import \
                                 assert_provider_has_name_and_hostname_in_oz_gui
         assert_provider_has_name_and_hostname_in_oz_gui(selenium, user, oz_page,
@@ -159,11 +159,11 @@ def assert_provider_has_given_name_and_given_hostname_in_oz(client, request,
 def deregister_provider_in_op_panel(client, request, user, host, hosts, 
                                     selenium, onepanel, popups, users):
 
-    if client == "rest":
+    if client.lower() == "rest":
         from tests.mixed_swaggers.utils.onepanel.provider import \
                                     deregister_provider_in_op_panel_using_rest
         deregister_provider_in_op_panel_using_rest(user, users, host, hosts)
-    elif client == "web gui":
+    elif client.lower() == "web gui":
         from tests.gui.meta_steps.onepanel.provider import \
                                     deregister_provider_in_op_panel_using_gui
         deregister_provider_in_op_panel_using_gui(selenium, user, host,
@@ -179,12 +179,12 @@ def assert_there_is_no_provider_in_oz(client, request, user, provider_name,
                                       host, hosts, users, selenium,
                                       oz_page):
 
-    if client == "rest":
+    if client.lower() == "rest":
         from tests.mixed_swaggers.utils.onezone.provider import \
                                     assert_there_is_no_provider_in_oz_rest
         assert_there_is_no_provider_in_oz_rest(user, users, host, hosts,
                                                provider_name)
-    elif client == "web gui":
+    elif client.lower() == "web gui":
         from tests.gui.meta_steps.onezone.provider import \
                                     assert_there_is_no_provider_in_oz_gui
         assert_there_is_no_provider_in_oz_gui(
@@ -202,12 +202,12 @@ def assert_provider_does_not_support_space_in_oz(client, request, user,
                                                  host, hosts, selenium,
                                                  oz_page, users):
 
-    if client == "rest":
+    if client.lower() == "rest":
         from tests.mixed_swaggers.utils.onezone.space_management import \
                             assert_provider_does_not_support_space_in_oz_rest
         assert_provider_does_not_support_space_in_oz_rest(
             user, users, host, hosts, space_name, provider_name)
-    elif client == "web gui":
+    elif client.lower() == "web gui":
         from tests.gui.meta_steps.onezone.spaces import \
                             assert_provider_does_not_support_space_in_oz_gui
         assert_provider_does_not_support_space_in_oz_gui(
@@ -255,11 +255,11 @@ def register_provider_in_op(client, request, user, host, hosts, users, selenium,
 
     """
 
-    if client == "rest":
+    if client.lower() == "rest":
         from tests.mixed_swaggers.utils.onepanel.provider import \
                                             register_provider_in_op_using_rest
         register_provider_in_op_using_rest(user, users, hosts, config)
-    elif client == "web gui":
+    elif client.lower() == "web gui":
         from tests.gui.meta_steps.onepanel.provider import \
                                             register_provider_in_op_using_gui
         register_provider_in_op_using_gui(selenium, user, onepanel, hosts,
@@ -281,12 +281,12 @@ def request_space_support(client, request, user, space_name,
                           tmp_memory, oz_page, modals, displays, clipboard,
                           supporting_user):
 
-    if client == "rest":
+    if client.lower() == "rest":
         from tests.mixed_swaggers.utils.onezone.space_management import \
                                             request_space_support_using_rest
         request_space_support_using_rest(user, users, space_name, host, hosts,
                                          tmp_memory, supporting_user)
-    elif client == "web gui":
+    elif client.lower() == "web gui":
         from tests.gui.meta_steps.onezone.spaces import \
                                             request_space_support_using_gui
         request_space_support_using_gui(selenium, user, oz_page,
@@ -322,12 +322,12 @@ def support_space_in_op_panel(client, request, user, selenium, tmp_memory,
 
     """
 
-    if client == "web gui":
+    if client.lower() == "web gui":
         from tests.gui.meta_steps.onepanel.spaces import \
                                         support_space_in_op_panel_using_gui
         support_space_in_op_panel_using_gui(selenium, user, config, onepanel,
                                             tmp_memory, space_name, host, hosts)
-    elif client == "rest":
+    elif client.lower() == "rest":
         from tests.mixed_swaggers.utils.onepanel.spaces import \
                                         support_space_in_op_panel_using_rest
         support_space_in_op_panel_using_rest(user, host, hosts, users,
@@ -349,14 +349,14 @@ def w_assert_space_is_supported_by_provider_in_oz(client, request, user,
                                                   host, selenium,
                                                   oz_page, hosts, users):
 
-    if client == "web gui":
+    if client.lower() == "web gui":
         from tests.gui.meta_steps.onezone.spaces import \
                                 assert_space_is_supported_by_provider_in_oz_gui
         assert_space_is_supported_by_provider_in_oz_gui(selenium, user, oz_page,
                                                         space_name,
                                                         provider_name, hosts,
                                                         with_refresh=True)
-    elif client == "rest":
+    elif client.lower() == "rest":
         from tests.mixed_swaggers.utils.onezone.space_management import \
                                 assert_space_is_supported_by_provider_in_oz_rest
         assert_space_is_supported_by_provider_in_oz_rest(user, users, host,
@@ -378,14 +378,14 @@ def revoke_space_support_in_op_panel(client, request, user, space_name,
                                      provider_name, host, selenium, onepanel,
                                      popups, modals, users, hosts):
 
-    if client == "web gui":
+    if client.lower() == "web gui":
         from tests.gui.meta_steps.onepanel.spaces import \
                                     revoke_space_support_in_op_panel_using_gui
         revoke_space_support_in_op_panel_using_gui(selenium, user,
                                                    provider_name, onepanel,
                                                    space_name, popups, modals,
                                                    hosts)
-    elif client == "rest":
+    elif client.lower() == "rest":
         from tests.mixed_swaggers.utils.onepanel.spaces import \
                                     revoke_space_support_in_op_panel_using_rest
         revoke_space_support_in_op_panel_using_rest(user, users, host, hosts,
@@ -446,13 +446,13 @@ def assert_proper_space_configuration_in_op_panel(client, request, user,
 
     """
 
-    if client == "web gui":
+    if client.lower() == "web gui":
         from tests.gui.meta_steps.onepanel.spaces import \
                             assert_proper_space_configuration_in_op_panel_gui
         assert_proper_space_configuration_in_op_panel_gui(selenium, user, space,
                                                           onepanel, sync_type,
                                                           config, host, hosts)
-    elif client == "rest":
+    elif client.lower() == "rest":
         from tests.mixed_swaggers.utils.onepanel.spaces import \
                             assert_proper_space_configuration_in_op_panel_rest
         assert_proper_space_configuration_in_op_panel_rest(space, user, users,
@@ -489,14 +489,14 @@ def configure_sync_parameters_for_space_in_op_panel(client, request, user,
 
     """
 
-    if client == "web gui":
+    if client.lower() == "web gui":
         from tests.gui.meta_steps.onepanel.spaces import \
                             configure_sync_parameters_for_space_in_op_panel_gui
         configure_sync_parameters_for_space_in_op_panel_gui(selenium, user,
                                                             space_name,
                                                             onepanel, popups,
                                                             config, sync_type)
-    elif client == "rest":
+    elif client.lower() == "rest":
         from tests.mixed_swaggers.utils.onepanel.spaces import \
                             configure_sync_parameters_for_space_in_op_panel_rest
         configure_sync_parameters_for_space_in_op_panel_rest(user, users, host,
@@ -530,13 +530,13 @@ def assert_space_content_in_op(client, request, config, selenium, user,
 
     """
 
-    if client == "web gui":
+    if client.lower() == "web gui":
         from tests.gui.meta_steps.oneprovider.data import \
                                                 assert_space_content_in_op_gui
         assert_space_content_in_op_gui(config, selenium, user, op_page,
                                        tmp_memory, tmpdir, space_name, oz_page,
                                        host, hosts)
-    elif client == "rest":
+    elif client.lower() == "rest":
         from tests.mixed_swaggers.utils.oneprovider.data import \
                                                 assert_space_content_in_op_rest
         assert_space_content_in_op_rest(user, users, hosts, config, space_name,
@@ -557,11 +557,11 @@ def rm_files_from_space_root_dir(user, src_path, space_name, tmp_memory):
 def copy_id_of_space(client, request, user, space_name, selenium, onepanel,
                      tmp_memory, users, hosts):
 
-    if client == "web gui":
+    if client.lower() == "web gui":
         from tests.gui.meta_steps.onepanel.spaces import \
                                                         copy_id_of_space_gui
         copy_id_of_space_gui(selenium, user, space_name, onepanel, tmp_memory)
-    elif client == "rest":
+    elif client.lower() == "rest":
         from tests.mixed_swaggers.utils.onezone.space_management import \
                                                         copy_id_of_space_rest
         copy_id_of_space_rest(user, users, hosts, space_name, tmp_memory)

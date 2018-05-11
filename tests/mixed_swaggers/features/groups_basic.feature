@@ -1,10 +1,5 @@
 Feature: Basic operations on groups
 
-  Examples:
-  | client1 | client2   |
-  | REST    | web GUI   |
-  | web GUI | REST      | 
-
   Background:
     Given initial users configuration in "z1" Onezone service:
             - user1
@@ -24,27 +19,42 @@ Feature: Basic operations on groups
     When using <client1>, user1 creates groups [group1, group2, group3] in "z1" Onezone service
     Then using <client2>, user1 sees that groups named [group1, group2, group3] has appeared in "z1" Onezone service
 
+  Examples:
+  | client1 | client2   |
+  | REST    | web GUI   |
+  | web GUI | REST      | 
 
-  Scenario Outline: User renames groups
+
+  Scenario Outline: User renames group
     When using <client2>, user1 creates group "group1" in "z1" Onezone service
     And using <client1>, user1 sees that group named "group1" has appeared in "z1" Onezone service
     And using <client1>, user1 renames group "group1" to "new_name1" in "z1" Onezone service
     Then using <client2>, user1 sees that group named "new_name1" has appeared in "z1" Onezone service
     And using <client2>, user1 does not see group named "group1" in "z1" Onezone service
 
-
-  Scenario Outline: User removes groups
-    When using <client1>, user1 creates group "group1" in "z1" Onezone service
-    And using <client2>, user1 sees that group named "group1" has appeared in "z1" Onezone service
-    And using <client2>, user1 removes group "group1" in "z1" Onezone service
-    Then using <client1>, user1 does not see group named "group1" in "z1" Onezone service
+  Examples:
+  | client1 | client2   |
+  | REST    | web GUI   |
+  | web GUI | REST      | 
 
 
-  Scenario Outline: User leaves groups
+  Scenario: User removes group
+    When using web GUI, user1 creates group "group1" in "z1" Onezone service
+    And using REST, user1 sees that group named "group1" has appeared in "z1" Onezone service
+    And using REST, user1 removes group "group1" in "z1" Onezone service
+    Then using web GUI, user1 does not see group named "group1" in "z1" Onezone service
+
+    
+  Scenario Outline: User leaves group
     When using <client1>, user1 creates group "group1" in "z1" Onezone service
     And using <client2>, user1 sees that group named "group1" has appeared in "z1" Onezone service
     And using <client2>, user1 leaves group "group1" in "z1" Onezone service
     Then using <client1>, user1 does not see group named "group1" in "z1" Onezone service
+
+  Examples:
+  | client1 | client2   |
+  | REST    | web GUI   |
+  | web GUI | REST      | 
 
 
   Scenario Outline: User joins a group to parent group
@@ -52,6 +62,11 @@ Feature: Basic operations on groups
     And using <client2>, user1 sees that groups named [parent, child] have appeared in "z1" Onezone service
     And using <client2>, user1 adds group "child" as subgroup to group "parent" in "z1" Onezone service
     Then using <client1>, user1 sees group "child" as subgroup to group "parent" in "z1" Onezone service
+
+  Examples:
+  | client1 | client2   |
+  | REST    | web GUI   |
+  | web GUI | REST      | 
 
 
   Scenario Outline: User removes group from parent group
@@ -62,3 +77,8 @@ Feature: Basic operations on groups
     And using <client2>, user1 sees group "child" as subgroup to group "parent" in "z1" Onezone service
     And using <client2>, user1 removes subgroup "child" from group "parent" in "z1" Onezone service
     Then using <client1>, user1 does not see group "child" as subgroup to group "parent" in "z1" Onezone service
+
+  Examples:
+  | client1 | client2   |
+  | REST    | web GUI   |
+  | web GUI | REST      | 

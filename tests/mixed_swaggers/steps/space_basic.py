@@ -22,11 +22,11 @@ from tests.mixed_swaggers.utils.common import NoSuchClientException
 def create_spaces_in_oz(client, user, space_list, host, hosts, users, selenium,
                         oz_page, request):
 
-    if client == "rest":
+    if client.lower() == "rest":
         from tests.mixed_swaggers.utils.onezone.space_management import \
                                                 create_spaces_in_oz_using_rest
         create_spaces_in_oz_using_rest(user, users, hosts, host, space_list)
-    elif client == "web gui":
+    elif client.lower() == "web gui":
         from tests.gui.meta_steps.onezone.spaces import \
                                                 create_spaces_in_oz_using_gui
         create_spaces_in_oz_using_gui(selenium, user, oz_page, space_list,
@@ -41,12 +41,12 @@ def create_spaces_in_oz(client, user, space_list, host, hosts, users, selenium,
 def leave_spaces_in_oz(client, request, user, space_list, host,
                        selenium, oz_page, tmp_memory, users, hosts, spaces):
 
-    if client == "rest":
+    if client.lower() == "rest":
         from tests.mixed_swaggers.utils.onezone.space_management import \
                                                 leave_spaces_in_oz_using_rest
         leave_spaces_in_oz_using_rest(user, users, host, hosts, space_list,
                                       spaces)
-    elif client == "web gui":
+    elif client.lower() == "web gui":
         from tests.gui.meta_steps.onezone.spaces import \
                                                 leave_spaces_in_oz_using_gui
         leave_spaces_in_oz_using_gui(selenium, user, space_list, oz_page,
@@ -62,12 +62,12 @@ def rename_spaces_in_oz(client, request, user, space_list, new_names_list,
                         host, selenium, oz_page, tmp_memory, users, hosts,
                         spaces):
 
-    if client == "rest":
+    if client.lower() == "rest":
         from tests.mixed_swaggers.utils.onezone.space_management import \
                                                 rename_spaces_in_oz_using_rest
         rename_spaces_in_oz_using_rest(user, users, host, hosts,
                                        space_list, new_names_list, spaces)
-    elif client == "web gui":
+    elif client.lower() == "web gui":
         from tests.gui.meta_steps.onezone.spaces import \
                                             rename_spaces_in_oz_using_gui
         rename_spaces_in_oz_using_gui(selenium, user, oz_page, space_list,
@@ -82,12 +82,12 @@ def rename_spaces_in_oz(client, request, user, space_list, new_names_list,
 def set_space_as_home_in_oz(client, request, user, space_name, host, selenium,
                             oz_page, users, hosts, spaces):
 
-    if client == "rest":
+    if client.lower() == "rest":
         from tests.mixed_swaggers.utils.onezone.space_management import \
                                             set_space_as_home_in_oz_using_rest
         set_space_as_home_in_oz_using_rest(user, users, host, hosts, space_name,
                                            spaces)
-    elif client == "web gui":
+    elif client.lower() == "web gui":
         from tests.gui.meta_steps.onezone.spaces import \
                                             set_space_as_home_in_oz_using_gui
         set_space_as_home_in_oz_using_gui(selenium, user, oz_page, space_name)
@@ -104,12 +104,12 @@ def set_space_as_home_in_oz(client, request, user, space_name, host, selenium,
 def remove_spaces_in_oz(client, request, user, space_list, host, users, hosts,
                         spaces):
 
-    if client == "rest":
+    if client.lower() == "rest":
         from tests.mixed_swaggers.utils.onezone.space_management import \
                                                 remove_spaces_in_oz_using_rest
         remove_spaces_in_oz_using_rest(user, users, host, hosts, space_list,
                                        spaces)
-    elif client == "web gui":
+    elif client.lower() == "web gui":
         from tests.gui.meta_steps.onezone.spaces import \
                                                 remove_space_in_oz_using_gui
         remove_space_in_oz_using_gui()
@@ -123,13 +123,13 @@ def remove_spaces_in_oz(client, request, user, space_list, host, users, hosts,
 def delete_users_from_space_in_oz(client, request, user_list, space_name, host,
                                   users, hosts, spaces, user):
 
-    if client == "rest":
+    if client.lower() == "rest":
         from tests.mixed_swaggers.utils.onezone.space_management import \
                                     delete_users_from_space_in_oz_using_rest
         delete_users_from_space_in_oz_using_rest(user_list, users, host,
                                                  hosts, space_name, spaces,
                                                  user)
-    elif client == "web gui":
+    elif client.lower() == "web gui":
         from tests.gui.meta_steps.onezone.spaces import \
                                     delete_users_from_space_in_oz_using_gui
         delete_users_from_space_in_oz_using_gui()
@@ -143,12 +143,12 @@ def delete_users_from_space_in_oz(client, request, user_list, space_name, host,
 def add_users_to_space_in_oz(client, request, user_list, space_name, host,
                              users, hosts, spaces, user):
 
-    if client == "rest":
+    if client.lower() == "rest":
         from tests.mixed_swaggers.utils.onezone.space_management import \
                                             add_users_to_space_in_oz_using_rest
         add_users_to_space_in_oz_using_rest(user_list, users, host, hosts,
                                             space_name, spaces, user)
-    elif client == "web gui":
+    elif client.lower() == "web gui":
         from tests.gui.meta_steps.onezone.spaces import \
                                             add_users_to_space_in_oz_using_gui
         add_users_to_space_in_oz_using_gui()
@@ -165,14 +165,14 @@ def remove_provider_support_for_space_in_oz(client, request, user,
                                             users, hosts, spaces,
                                             admin_credentials):
 
-    if client == "rest":
+    if client.lower() == "rest":
         from tests.mixed_swaggers.utils.onezone.space_management import \
                             remove_provider_support_for_space_in_oz_using_rest
         remove_provider_support_for_space_in_oz_using_rest(user, users, host,
                                                            hosts, provider_name,
                                                            space_name, spaces,
                                                            admin_credentials)
-    elif client == "web gui":
+    elif client.lower() == "web gui":
         from tests.gui.meta_steps.onezone.spaces import \
                             remove_provider_support_for_space_in_oz_using_gui
         remove_provider_support_for_space_in_oz_using_gui(selenium, user,
@@ -190,14 +190,14 @@ def invite_other_users_to_space(client, request, user, user_list, space_name,
                                 host, selenium, op_page, tmp_memory, users,
                                 hosts, spaces, displays, clipboard):
 
-    if client == "rest":
+    if client.lower() == "rest":
         from tests.mixed_swaggers.utils.onezone.space_management import \
                                         invite_otehr_users_to_space_using_rest
         invite_otehr_users_to_space_using_rest(user, users, host, hosts,
                                                space_name, spaces, tmp_memory,
                                                user_list)
 
-    elif client == "web gui":
+    elif client.lower() == "web gui":
         from tests.gui.meta_steps.onezone.spaces import \
                                         invite_other_users_to_space_using_gui
         invite_other_users_to_space_using_gui(selenium, user, space_name,
@@ -213,12 +213,12 @@ def invite_other_users_to_space(client, request, user, user_list, space_name,
 def join_space_in_oz(client, request, user_list, item_name, host, selenium,
                      oz_page, tmp_memory, users, hosts):
 
-    if client == "rest":
+    if client.lower() == "rest":
         from tests.mixed_swaggers.utils.onezone.space_management import \
                                                     join_space_in_oz_using_rest
         join_space_in_oz_using_rest(user_list, users, host, hosts, item_name,
                                     tmp_memory)
-    elif client == "web gui":
+    elif client.lower() == "web gui":
         from tests.gui.meta_steps.onezone.spaces import \
                                                     join_space_in_oz_using_gui
         join_space_in_oz_using_gui(selenium, user_list, oz_page, tmp_memory,
@@ -236,12 +236,12 @@ def join_space_in_oz(client, request, user_list, item_name, host, selenium,
 def assert_there_are_spaces_in_oz(client, request, user, space_list, selenium,
                                   oz_page, users, hosts, host):
 
-    if client == "web gui":
+    if client.lower() == "web gui":
         from tests.gui.meta_steps.onezone.spaces import \
                                         assert_spaces_have_appeared_in_oz_gui
         assert_spaces_have_appeared_in_oz_gui(selenium, user, oz_page,
                                               space_list, hosts)
-    elif client == "rest":
+    elif client.lower() == "rest":
         from tests.mixed_swaggers.utils.onezone.space_management import \
                                         assert_spaces_have_appeared_in_oz_rest
         assert_spaces_have_appeared_in_oz_rest(user, users, hosts, host,
@@ -256,12 +256,12 @@ def assert_there_are_spaces_in_oz(client, request, user, space_list, selenium,
 def assert_there_are_no_spaces_in_oz(client, request, user, space_list, host,
                                      selenium, oz_page, users, spaces, hosts):
 
-    if client == "rest":
+    if client.lower() == "rest":
         from tests.mixed_swaggers.utils.onezone.space_management import \
                                         assert_there_are_no_spaces_in_oz_rest
         assert_there_are_no_spaces_in_oz_rest(user, users, host, hosts,
                                               space_list, spaces)
-    elif client == "web gui":
+    elif client.lower() == "web gui":
         from tests.gui.meta_steps.onezone.spaces import \
                                         assert_there_are_no_spaces_in_oz_gui
         assert_there_are_no_spaces_in_oz_gui(selenium, user, oz_page,
@@ -277,13 +277,13 @@ def assert_spaces_have_been_renamed_in_oz(client, request, user, space_list,
                                           new_names_list, host, selenium,
                                           oz_page, users, hosts, spaces):
 
-    if client == "rest":
+    if client.lower() == "rest":
         from tests.mixed_swaggers.utils.onezone.space_management import \
                                     assert_spaces_have_been_renamed_in_oz_rest
         assert_spaces_have_been_renamed_in_oz_rest(user, users, host, hosts,
                                                    space_list, new_names_list,
                                                    spaces)
-    elif client == "web gui":
+    elif client.lower() == "web gui":
         from tests.gui.meta_steps.onezone.spaces import \
                                     assert_spaces_have_been_renamed_in_oz_gui
         assert_spaces_have_been_renamed_in_oz_gui(selenium, user, oz_page,
@@ -300,12 +300,12 @@ def assert_space_has_been_set_as_home_in_oz(client, request, user, space_name,
                                             host, selenium, oz_page, users,
                                             hosts, spaces):
 
-    if client == "rest":
+    if client.lower() == "rest":
         from tests.mixed_swaggers.utils.onezone.space_management import \
                                         assert_space_is_home_space_in_oz_rest
         assert_space_is_home_space_in_oz_rest(user, users, host, hosts,
                                               space_name, spaces)
-    elif client == "web gui":
+    elif client.lower() == "web gui":
         from tests.gui.meta_steps.onezone.spaces import \
                                         assert_space_is_home_space_in_oz_gui
         assert_space_is_home_space_in_oz_gui(selenium, user, oz_page,
@@ -324,14 +324,14 @@ def assert_there_is_no_provider_for_space_in_oz(client, request, user,
                                                 hosts, spaces,
                                                 admin_credentials):
 
-    if client == "rest":
+    if client.lower() == "rest":
         from tests.mixed_swaggers.utils.onezone.space_management import \
                             assert_there_is_no_provider_for_space_in_oz_rest
         assert_there_is_no_provider_for_space_in_oz_rest(user, users, host,
                                                          hosts, space_name,
                                                          spaces, providers_list,
                                                          admin_credentials)
-    elif client == "web gui":
+    elif client.lower() == "web gui":
         from tests.gui.meta_steps.onezone.spaces import \
                             assert_there_is_no_provider_for_space_in_oz_gui
         assert_there_is_no_provider_for_space_in_oz_gui(selenium, user, oz_page,
@@ -348,12 +348,12 @@ def assert_user_is_member_of_space(client, request, user, user_list,
                                    space_name, host, spaces, users, hosts,
                                    selenium, op_page):
 
-    if client == "rest":
+    if client.lower() == "rest":
         from tests.mixed_swaggers.utils.onezone.space_management import \
                                             assert_user_is_member_of_space_rest
         assert_user_is_member_of_space_rest(space_name, spaces, user, users,
                                             user_list, host, hosts)
-    elif client == "web gui":
+    elif client.lower() == "web gui":
         from tests.gui.meta_steps.onezone.spaces import \
                                             assert_user_is_member_of_space_gui
         assert_user_is_member_of_space_gui(selenium, user, space_name, op_page,
@@ -372,13 +372,13 @@ def assert_provider_has_given_name_and_known_hostname_in_oz(client, request,
                                                             users, hosts,
                                                             selenium, oz_page):
 
-        if client == "rest":
+        if client.lower() == "rest":
             from tests.mixed_swaggers.utils.onezone.provider import \
                                 assert_provider_has_name_and_hostname_in_oz_rest
             assert_provider_has_name_and_hostname_in_oz_rest(
                 user, users, host, hosts, provider_name,
                 hosts[provider])
-        elif client == "web gui":
+        elif client.lower() == "web gui":
             from tests.gui.meta_steps.onezone.provider import \
                                 assert_provider_has_name_and_hostname_in_oz_gui
             assert_provider_has_name_and_hostname_in_oz_gui(
