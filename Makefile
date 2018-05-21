@@ -75,11 +75,10 @@ OZ_IMAGE           ?= ""
 OP_IMAGE           ?= ""
 
 test_gui_packages_one_env:
-	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i onedata/acceptance_gui:latest --xvfb --xvfb-recording=${RECORDING_OPTION} --env-file=${ENV_FILE} -k=${KEYWORDS} --oz-image=${OZ_IMAGE} --op-image=${OP_IMAGE}
+	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i onedata/acceptance_gui:v2 --xvfb --xvfb-recording=${RECORDING_OPTION} --env-file=${ENV_FILE} -k=${KEYWORDS} --oz-image=${OZ_IMAGE} --op-image=${OP_IMAGE}  --reruns 1 --reruns-delay 10
 
 test_gui_sources_one_env:
-	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i onedata/acceptance_gui:latest --xvfb --xvfb-recording=${RECORDING_OPTION} --env-file=${ENV_FILE} --sources -k=${KEYWORDS} --oz-image=${OZ_IMAGE} --op-image=${OP_IMAGE}
-
+	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i onedata/acceptance_gui:v2 --xvfb --xvfb-recording=${RECORDING_OPTION} --env-file=${ENV_FILE} --sources -k=${KEYWORDS} --oz-image=${OZ_IMAGE} --op-image=${OP_IMAGE}  --reruns 1 --reruns-delay 10
 
 ##
 ## Build python REST clients generated from swaggers. (used in mixed tests)

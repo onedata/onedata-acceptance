@@ -2,7 +2,7 @@
 
 This is the code repository containing acceptance tests for Onedata. It uses 
 one_env for creating environment running on kubernetes. To start Onedata 
-installation navigate to one_env directory and run:
+deployment navigate to one_env directory and run:
 
  ```
  ./onenv up -f <env_file>

@@ -13,6 +13,7 @@ tests/gui/logs
 .cache
 tests/**/.cache
 tests/acceptance/profiling_data/
+tests/gui/tmp_files
 
 package
 pkg-list.json
