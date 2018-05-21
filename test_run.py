@@ -11,6 +11,7 @@ import argparse
 import os
 import platform
 import sys
+import re
 from subprocess import *
 import yaml
 
@@ -18,6 +19,7 @@ import glob
 import xml.etree.ElementTree as ElementTree
 import shutil
 import one_env.scripts.user_config as user_config
+from tests.conftest import map_test_type_to_logdir
 
 
 def service_name_to_alias_mapping(name):
@@ -104,6 +106,11 @@ def parse_pods_cfg(pods_cfg):
     providers_conf += providers_params[-1]
 
     return zone_conf, providers_conf
+
+
+def extract_number(filename):
+    s = re.findall("\d+\.\d+$", filename)
+    return float(s[0]) if s else -1
 
 
 parser = argparse.ArgumentParser(
@@ -333,6 +340,14 @@ ALL       ALL = (ALL) NOPASSWD: ALL
            '--', 'python', '-c', '"{}"'.format(command)]
 
 ret = call(cmd, stdin=None, stderr=None, stdout=None)
+
+logdir = map_test_type_to_logdir(args.test_type)
+if args.test_type in ['gui', 'mixed_swaggers']:
+    timestamped_logdirs = os.listdir(logdir)
+    latest_logdir = max(timestamped_logdirs, key=extract_number)
+    run_onenv_command('export', [os.path.join(logdir, latest_logdir)])
+else:
+    run_onenv_command('export', logdir)
 
 if args.clean:
     run_onenv_command('clean')

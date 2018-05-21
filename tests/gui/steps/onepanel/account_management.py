@@ -9,7 +9,7 @@ __license__ = ("This software is released under the MIT license cited in "
 
 
 from pytest_bdd import when, then, parsers
-
+from time import sleep
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.generic import repeat_failed, transform
 
@@ -20,7 +20,8 @@ from tests.gui.utils.generic import repeat_failed, transform
                     'button in main menu'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_user_account_btn_panel(selenium, browser_id, onepage):
-    onepage(selenium[browser_id]).account()
+    sleep(1)
+    onepage(selenium[browser_id]).account.click()
 
 
 @when(parsers.parse('user of {browser_id} clicks on {btn} button '

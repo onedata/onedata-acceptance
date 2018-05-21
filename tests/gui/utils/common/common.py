@@ -28,8 +28,8 @@ class BaseContent(PageObject):
 
 
 class OnePage(object):
-    service = Label('#main-menu-container .brand-info')
-    account = Button('.row-account-button')
+    service = Label('.brand-info')
+    account = WebElement('.user-account-button-main')
     content = WebItem('.col-content', cls=BaseContent)
     opened_tab = Label('#main-menu-container ul.main-menu '
                        'li.main-menu-item.active')
