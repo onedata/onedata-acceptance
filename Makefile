@@ -19,15 +19,7 @@ unpack = tar xzf $(1).tar.gz
 ## Artifacts
 ##
 
-artifact: artifact_appmock artifact_oneclient artifact_op_worker \
-    artifact_oz_worker artifact_cluster_manager artifact_cluster_worker \
-    artifact_onepanel
-
-artifact_appmock:
-	$(call unpack, appmock)
-
-artifact_oneclient:
-	$(call unpack, oneclient)
+artifact: artifact_op_worker artifact_oz_worker artifact_cluster_manager artifact_onepanel
 
 artifact_op_worker:
 	$(call unpack, op_worker)
@@ -38,17 +30,8 @@ artifact_oz_worker:
 artifact_cluster_manager:
 	$(call unpack, cluster_manager)
 
-artifact_cluster_worker:
-	$(call unpack, cluster_worker)
-
 artifact_onepanel:
 	$(call unpack, onepanel)
-
-artifact_oz_panel:
-	$(call unpack, oz_panel)
-
-artifact_op_panel:
-	$(call unpack, op_panel)
 
 
 ##
