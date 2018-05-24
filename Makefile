@@ -19,15 +19,7 @@ unpack = tar xzf $(1).tar.gz
 ## Artifacts
 ##
 
-artifact: artifact_appmock artifact_oneclient artifact_op_worker \
-    artifact_oz_worker artifact_cluster_manager artifact_cluster_worker \
-    artifact_onepanel
-
-artifact_appmock:
-	$(call unpack, appmock)
-
-artifact_oneclient:
-	$(call unpack, oneclient)
+artifact: artifact_op_worker artifact_oz_worker artifact_cluster_manager artifact_onepanel
 
 artifact_op_worker:
 	$(call unpack, op_worker)
@@ -38,17 +30,8 @@ artifact_oz_worker:
 artifact_cluster_manager:
 	$(call unpack, cluster_manager)
 
-artifact_cluster_worker:
-	$(call unpack, cluster_worker)
-
 artifact_onepanel:
 	$(call unpack, onepanel)
-
-artifact_oz_panel:
-	$(call unpack, oz_panel)
-
-artifact_op_panel:
-	$(call unpack, op_panel)
 
 
 ##
@@ -81,7 +64,7 @@ test_gui_sources_one_env:
 	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i onedata/acceptance_gui:v2 --xvfb --xvfb-recording=${RECORDING_OPTION} --env-file=${ENV_FILE} --sources -k=${KEYWORDS} --oz-image=${OZ_IMAGE} --op-image=${OP_IMAGE}  --reruns 1 --reruns-delay 10
 
 test_mixed_packages_swaggers:
-	${TEST_RUN} -t tests/mixed_swaggers/scenarios/${SUITE}.py --test-type mixed_swaggers -vvv --driver=${BROWSER} -i onedata/gui_builder:latest --xvfb --xvfb-recording=${RECORDING_OPTION} --env-file=${ENV_FILE} -k=${KEYWORDS} --oz-image=${OZ_IMAGE} --op-image=${OP_IMAGE}
+	${TEST_RUN} -t tests/mixed_swaggers/scenarios/${SUITE}.py --test-type mixed_swaggers -vvv --driver=${BROWSER} -i onedata/acceptance_gui:v2 --xvfb --xvfb-recording=${RECORDING_OPTION} --env-file=${ENV_FILE} -k=${KEYWORDS} --oz-image=${OZ_IMAGE} --op-image=${OP_IMAGE} --reruns 1 --reruns-delay 10
 
 ##
 ## Build python REST clients generated from swaggers. (used in mixed tests)

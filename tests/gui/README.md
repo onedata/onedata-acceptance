@@ -37,7 +37,7 @@ Used parameters:
 * ``--xvfb`` - starts xvfb, necessary if used with headless tests
 * ``--xvfb-recording=<all|none|failed>`` - optional, record all or none or failed tests as movies and save them to <logdir>/movies
 * ``--no-mosaic-filter`` - optional, if set videos of tests using multiple browsers will be recorded as different video for each browser (mosaic video created by default) 
-* ``--keywords`` - run only tests matching given string expression (``py.test`` option)
+* ``--sources`` - optional, if set starts Onedata environment using sources. Sources have to be located in appropriate directories.
 
 
 # 2. Tests using existing Onedata installation
