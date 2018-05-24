@@ -10,10 +10,15 @@ tests/env_up/logs
 tests/acceptance/logs
 tests/performance/logs
 tests/gui/logs
+tests/mixed_swaggers/logs
 .cache
 tests/**/.cache
 tests/acceptance/profiling_data/
 tests/gui/tmp_files
+tests/mixed_swaggers/cdmi_client/
+tests/mixed_swaggers/onepanel_client/
+tests/mixed_swaggers/onepprovider_client/
+tests/mixed_swaggers/onezone_client/
 
 package
 pkg-list.json

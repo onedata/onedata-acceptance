@@ -30,8 +30,8 @@ def navigate_to_tab_in_op_using_gui(selenium, user, oz_page, provider,
         wt_click_on_provider_in_go_to_your_files_oz_panel(selenium, user,
                                                           provider,
                                                           oz_page, hosts)
-        assert_provider_popup_has_appeared_on_map(selenium, user, provider,
-                                                  oz_page)
+        assert_popup_for_provider_has_appeared_on_map(selenium, user, provider,
+                                                      oz_page, hosts)
         wt_click_on_btn_in_provider_popup(selenium, user, button_name, provider,
                                           oz_page, hosts)
         wt_wait_for_op_session_to_start(selenium, user)

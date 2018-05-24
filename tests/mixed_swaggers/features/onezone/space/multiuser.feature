@@ -9,22 +9,22 @@ Feature: Multiuser
   | REST    | web GUI   | web GUI   |
 
   Background:
-    Given initial users configuration in "z1" Onezone service:
+    Given initial users configuration in "onezone" Onezone service:
             - user1
             - user2
-    And initial spaces configuration in "z1" Onezone service:
+    And initial spaces configuration in "onezone" Onezone service:
         space1:
             owner: user2
             providers:
-                - p1:
-                    storage: NFS
+                - oneprovider-1:
+                    storage: posix
                     size: 1000000
-    And opened browsers with [user1, user2] logged to [z1 onezone, z1 onezone] service
-    And opened p1 Oneprovider view in web GUI by user2
+    And opened browsers with [user1, user2] logged to [onezone onezone, onezone onezone] service
+    And opened oneprovider-1 Oneprovider view in web GUI by user2
     And opened "spaces" tab in web GUI by user2
 
   Scenario Outline: User invites other user to space using <client1>, that user joins to space using <client2> and using <client3> he sees that he has joined to new space
-    When using <client1>, user2 invites user1 to space named "space1" in "z1" Onezone service
-    And using <client2>, user1 joins to space using received space invitation token in "z1" Onezone service
-    Then using <client3>, user1 sees that space named "space1" has appeared in "z1" Onezone service
-    And using <client1>, user2 sees that user1 is member of "space1" in "z1" Onezone service
+    When using <client1>, user2 invites user1 to space named "space1" in "onezone" Onezone service
+    And using <client2>, user1 joins to space using received space invitation token in "onezone" Onezone service
+    Then using <client3>, user1 sees that space named "space1" has appeared in "onezone" Onezone service
+    And using <client1>, user2 sees that user1 is member of "space1" in "onezone" Onezone service

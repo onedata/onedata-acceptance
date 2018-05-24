@@ -11,6 +11,7 @@ import argparse
 import os
 import platform
 import sys
+import re
 from subprocess import *
 import yaml
 
@@ -18,6 +19,7 @@ import glob
 import xml.etree.ElementTree as ElementTree
 import shutil
 import one_env.scripts.user_config as user_config
+from tests.conftest import map_test_type_to_logdir
 
 
 def service_name_to_alias_mapping(name):
@@ -106,6 +108,11 @@ def parse_pods_cfg(pods_cfg):
     return zone_conf, providers_conf
 
 
+def extract_number(filename):
+    s = re.findall("\d+\.\d+$", filename)
+    return float(s[0]) if s else -1
+
+
 parser = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     description='Run Common Tests.')
@@ -176,6 +183,12 @@ parser.add_argument(
          'in current deployment',
     dest='update_etc_hosts')
 
+parser.add_argument(
+    '--sources', '-s',
+    action='store_true',
+    help='If present run environment using sources',
+    dest='sources')
+
 
 [args, pass_args] = parser.parse_known_args()
 
@@ -204,7 +217,7 @@ test_runner_pod = '''{{
         "spec": {{
             "containers": [
                 {{
-                    "name": "test-runer",
+                    "name": "test-runner",
                     "image": "{image}",
                     "stdin": true, 
                     "imagePullPolicy": "IfNotPresent",
@@ -273,6 +286,8 @@ if args.oz_image:
     up_arguments.extend(['-zi', args.oz_image])
 if args.clean:
     up_arguments.extend(['-f'])
+if args.sources:
+    up_arguments.extend(['-s'])
 up_arguments.extend(['{}'.format(os.path.join(script_dir, args.env_file))])
 run_onenv_command('up', up_arguments)
 
@@ -325,6 +340,14 @@ ALL       ALL = (ALL) NOPASSWD: ALL
            '--', 'python', '-c', '"{}"'.format(command)]
 
 ret = call(cmd, stdin=None, stderr=None, stdout=None)
+
+logdir = map_test_type_to_logdir(args.test_type)
+if args.test_type in ['gui', 'mixed_swaggers']:
+    timestamped_logdirs = os.listdir(logdir)
+    latest_logdir = max(timestamped_logdirs, key=extract_number)
+    run_onenv_command('export', [os.path.join(logdir, latest_logdir)])
+else:
+    run_onenv_command('export', logdir)
 
 if args.clean:
     run_onenv_command('clean')

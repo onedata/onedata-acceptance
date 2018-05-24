@@ -46,6 +46,23 @@ def wt_click_on_subitem_for_item(selenium, browser_id_list, sidebar,
 
 
 @when(parsers.re('users? of (?P<browser_id_list>.+?) clicks? on '
+                 '(?P<sub_item>.+?) item in submenu of item named '
+                 '"(?P<record>.+?)" in (?P<sidebar>CLUSTERS) sidebar in '
+                 'Onepanel'))
+@then(parsers.re('users? of (?P<browser_id_list>.+?) clicks? on '
+                 '(?P<sub_item>.+?) item in submenu of item named '
+                 '"(?P<record>.+?)" in (?P<sidebar>CLUSTERS) sidebar in '
+                 'Onepanel'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def wt_click_on_subitem_for_item_with_name(selenium, browser_id_list, sidebar,
+                                           sub_item, record, onepanel, hosts):
+    for browser_id in parse_seq(browser_id_list):
+        nav = getattr(onepanel(selenium[browser_id]).sidebar,
+                      transform(sidebar))
+        nav.items[record].submenu[sub_item].click()
+
+
+@when(parsers.re('users? of (?P<browser_id_list>.+?) clicks? on '
                  '"(?P<record>.+?)" item in (?P<sidebar>CLUSTERS) '
                  'sidebar in Onepanel'))
 @then(parsers.re('users? of (?P<browser_id_list>.+?) clicks? on '

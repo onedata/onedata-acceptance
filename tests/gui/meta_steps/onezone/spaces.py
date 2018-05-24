@@ -38,7 +38,7 @@ def create_spaces_in_oz_using_gui(selenium, user, oz_page, space_list, hosts):
         press_enter_on_active_element(selenium, user)
         assert_there_is_item_named_in_oz_panel_list(selenium, user, item_type,
                                                     space_name, panel_name,
-                                                    oz_page, hosts)
+                                                    oz_page)
 
 
 def leave_spaces_in_oz_using_gui(selenium, user, space_list, oz_page,
@@ -193,10 +193,11 @@ def assert_spaces_have_appeared_in_oz_gui(selenium, user, oz_page, space_list,
     for space_name in parse_seq(space_list):
         assert_there_is_item_named_in_oz_panel_list(selenium, user, item_type,
                                                     space_name, panel_name,
-                                                    oz_page, hosts)
+                                                    oz_page)
 
 
-def assert_there_are_no_spaces_in_oz_gui(selenium, user, oz_page, space_list):
+def assert_there_are_no_spaces_in_oz_gui(selenium, user, oz_page, space_list,
+                                         hosts):
     panel_name = "DATA SPACE MANAGEMENT"
     item_type = "space"
 
@@ -205,7 +206,8 @@ def assert_there_are_no_spaces_in_oz_gui(selenium, user, oz_page, space_list):
     for space_name in parse_seq(space_list):
         assert_there_is_no_item_named_in_oz_panel_list(selenium, user,
                                                        item_type, space_name,
-                                                       panel_name, oz_page, hosts)
+                                                       panel_name, oz_page,
+                                                       hosts)
 
 
 def assert_spaces_have_been_renamed_in_oz_gui(selenium, user, oz_page,
@@ -219,14 +221,15 @@ def assert_spaces_have_been_renamed_in_oz_gui(selenium, user, oz_page,
                                           parse_seq(new_names_list)):
         assert_there_is_item_named_in_oz_panel_list(selenium, user, item_type,
                                                     new_space_name, panel_name,
-                                                    oz_page, hosts)
+                                                    oz_page)
         assert_there_is_no_item_named_in_oz_panel_list(selenium, user,
                                                        item_type, space_name,
                                                        panel_name, oz_page,
                                                        hosts)
 
 
-def assert_space_is_home_space_in_oz_gui(selenium, user, oz_page, space_name):
+def assert_space_is_home_space_in_oz_gui(selenium, user, oz_page, space_name,
+                                         hosts):
     panel_name = "DATA SPACE MANAGEMENT"
     item_type = "space"
 
@@ -289,4 +292,4 @@ def assert_space_is_supported_by_provider_in_oz_gui(selenium, user, oz_page,
     expand_items_submenu_in_oz_panel(selenium, user, item_type, space_name,
                                      panel_name, oz_page, hosts)
     assert_supporting_providers_for_space_in_oz(selenium, user, space_name,
-                                                provider_name, oz_page)
+                                                provider_name, oz_page, hosts)

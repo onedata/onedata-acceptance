@@ -50,7 +50,8 @@ def pytest_configure(config):
     htmlpath = config.option.htmlpath
     if htmlpath is None:
         import os
-        logdir = make_logdir(map_test_type_to_logdir('gui'), 'report')
+        test_type = config.option.test_type
+        logdir = make_logdir(map_test_type_to_logdir(test_type), 'report')
         config.option.htmlpath = os.path.join(logdir, 'report.html')
 
 

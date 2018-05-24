@@ -73,6 +73,31 @@ def click_on_btn_in_oz_panel(selenium, browser_id, btn, oz_panel, oz_page):
                  r'(?P<item_type>provider) "(?P<item_name>.+?)" '
                  r'in expanded "(?P<oz_panel>GO TO YOUR FILES)" Onezone panel'))
 @when(parsers.re(r'user of (?P<browser_id>.+?) sees that (?P<item_type>provider) '
+                 r'"(?P<item_name>.+?)" has appeared in expanded '
+                 r'"(?P<oz_panel>GO TO YOUR FILES)" Onezone panel'))
+@then(parsers.re(r'user of (?P<browser_id>.+?) sees that (?P<item_type>provider) '
+                 r'"(?P<item_name>.+?)" has appeared in expanded '
+                 r'"(?P<oz_panel>GO TO YOUR FILES)" Onezone panel'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_there_is_item_with_known_name_in_oz_panel_list(selenium, browser_id,
+                                                          item_type, item_name,
+                                                          oz_panel, oz_page,
+                                                          hosts):
+    driver = selenium[browser_id]
+    item_name = hosts[item_name]['name']
+    items = getattr(oz_page(driver)[oz_panel], '{}s'.format(item_type))
+    assert item_name in items, \
+        'no {} named "{}" found in {} oz panel'.format(item_type, item_name,
+                                                       oz_panel)
+
+
+@when(parsers.re(r'user of (?P<browser_id>.+?) sees that there is '
+                 r'(?P<item_type>provider) named "(?P<item_name>.+?)" '
+                 r'in expanded "(?P<oz_panel>GO TO YOUR FILES)" Onezone panel'))
+@then(parsers.re(r'user of (?P<browser_id>.+?) sees that there is '
+                 r'(?P<item_type>provider) named "(?P<item_name>.+?)" '
+                 r'in expanded "(?P<oz_panel>GO TO YOUR FILES)" Onezone panel'))
+@when(parsers.re(r'user of (?P<browser_id>.+?) sees that (?P<item_type>provider) '
                  r'named "(?P<item_name>.+?)" has appeared in expanded '
                  r'"(?P<oz_panel>GO TO YOUR FILES)" Onezone panel'))
 @then(parsers.re(r'user of (?P<browser_id>.+?) sees that (?P<item_type>provider) '
@@ -104,11 +129,8 @@ def click_on_btn_in_oz_panel(selenium, browser_id, btn, oz_panel, oz_page):
                  r'"(?P<oz_panel>GROUP MANAGEMENT)" Onezone panel'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_there_is_item_named_in_oz_panel_list(selenium, browser_id, item_type,
-                                                item_name, oz_panel, oz_page,
-                                                hosts):
+                                                item_name, oz_panel, oz_page):
     driver = selenium[browser_id]
-    if item_type == 'provider':
-        item_name = hosts[item_name]['name']
     items = getattr(oz_page(driver)[oz_panel], '{}s'.format(item_type))
     assert item_name in items, \
         'no {} named "{}" found in {} oz panel'.format(item_type, item_name,

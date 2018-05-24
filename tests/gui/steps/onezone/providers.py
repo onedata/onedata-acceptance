@@ -22,8 +22,9 @@ from tests.gui.utils.generic import repeat_failed, parse_seq, transform
                     'provider named "{provider_name}" has appeared on '
                     'world map'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_provider_popup_has_appeared_on_map(selenium, browser_id,
-                                              provider_name, oz_page):
+def assert_popup_for_provider_with_name_has_appeared_on_map(selenium, browser_id,
+                                                            provider_name,
+                                                            oz_page):
     driver = selenium[browser_id]
     err_msg = 'Popup displayed for provider named "{}" ' \
               'instead of "{}"'
@@ -36,8 +37,8 @@ def assert_provider_popup_has_appeared_on_map(selenium, browser_id,
 @then(parsers.parse('user of {browser_id} sees that provider popup for '
                     'provider "{provider}" has appeared on world map'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_provider_popup_has_appeared_on_map(selenium, browser_id, provider,
-                                              oz_page, hosts):
+def assert_popup_for_provider_has_appeared_on_map(selenium, browser_id,
+                                                  provider, oz_page, hosts):
     driver = selenium[browser_id]
     provider_name = hosts[provider]['name']
     err_msg = 'Popup displayed for provider named "{}" ' \
@@ -270,6 +271,22 @@ def g_click_on_provider_in_go_to_your_files_oz_panel(selenium, browser_id_list,
 def wt_click_on_provider_in_go_to_your_files_oz_panel(selenium, browser_id,
                                                       provider, oz_page, hosts):
     provider = hosts[provider]['name']
+    (oz_page(selenium[browser_id])['go to your files']
+     .providers[provider]
+     .click())
+
+
+@when(parsers.parse('user of {browser_id} clicks on provider named '
+                    '"{provider}" in expanded "GO TO YOUR FILES" Onezone '
+                    'panel'))
+@then(parsers.parse('user of {browser_id} clicks on provider named '
+                    '"{provider}" in expanded "GO TO YOUR FILES" Onezone '
+                    'panel'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def wt_click_on_provider_with_name_in_go_to_your_files_oz_panel(selenium,
+                                                                browser_id,
+                                                                provider,
+                                                                oz_page):
     (oz_page(selenium[browser_id])['go to your files']
      .providers[provider]
      .click())
