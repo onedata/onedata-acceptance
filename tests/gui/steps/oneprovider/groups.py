@@ -123,7 +123,7 @@ def assert_item_appeared_in_groups_perm_table(selenium, browser_id, name,
                  r'permissions table in Groups tab'))
 @repeat_failed(timeout=WAIT_BACKEND, interval=1.5)
 def assert_item_disappeared_from_groups_perm_table(selenium, browser_id, name,
-                                              caption, op_page):
+                                                   caption, op_page):
     driver = selenium[browser_id]
     items = getattr(op_page(driver).groups.permission_table, caption.lower())
     items_names = {item.name for item in items}
