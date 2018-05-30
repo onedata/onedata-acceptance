@@ -86,22 +86,6 @@ Feature: Basic management of providers in Onezone GUI
     Then user of browser sees that space named "space1" in submenu of provider "oneprovider-1" in expanded "GO TO YOUR FILES" Onezone panel is set as home
 
 
-  Scenario: User can set Provider as Home provider (icon changes), and when he relogins, he will be redirected to Home provider automatically
-    When user of browser expands the "GO TO YOUR FILES" Onezone sidebar panel
-    And user of browser sees that there is provider "oneprovider-1" in expanded "GO TO YOUR FILES" Onezone panel
-    And user of browser sets provider "oneprovider-1" as home by clicking on home outline in that provider record in expanded "GO TO YOUR FILES" Onezone panel
-    And user of browser sees that provider "oneprovider-1" is set as home provider in expanded "GO TO YOUR FILES" Onezone panel
-
-    # logout
-    And user of browser expands account settings dropdown in "ACCOUNT MANAGE" Onezone top bar
-    And user of browser clicks on LOGOUT item in expanded settings dropdown in "ACCOUNT MANAGE" Onezone top bar
-    And user of browser should see that the page title contains "Onezone - Login"
-
-    # login again
-    And user of browser logs as user1 to Onezone service
-    Then user of browser sees that Oneprovider session has started
-
-
   Scenario: User sees that after unsupporting space, number displayed in space counter for given provider decreases
     When user of browser expands the "GO TO YOUR FILES" Onezone sidebar panel
     And user of browser sees that there is provider "oneprovider-1" in expanded "GO TO YOUR FILES" Onezone panel
