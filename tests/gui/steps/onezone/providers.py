@@ -8,7 +8,7 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 
-from pytest_bdd import parsers, given, when, then
+from tests.utils.acceptance_utils import *
 from itertools import izip_longest
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
@@ -276,12 +276,9 @@ def wt_click_on_provider_in_go_to_your_files_oz_panel(selenium, browser_id,
      .click())
 
 
-@when(parsers.parse('user of {browser_id} clicks on provider named '
-                    '"{provider}" in expanded "GO TO YOUR FILES" Onezone '
-                    'panel'))
-@then(parsers.parse('user of {browser_id} clicks on provider named '
-                    '"{provider}" in expanded "GO TO YOUR FILES" Onezone '
-                    'panel'))
+@wt(parsers.parse('user of {browser_id} clicks on provider named '
+                  '"{provider}" in expanded "GO TO YOUR FILES" Onezone '
+                  'panel'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def wt_click_on_provider_with_name_in_go_to_your_files_oz_panel(selenium,
                                                                 browser_id,

@@ -29,11 +29,11 @@ def assert_space_content_in_op_rest(user, users, hosts, config, space_name,
     children = [file.path for file in data_api.list_files(space_name)]
     cwd = '/' + space_name
     _check_files_tree(yaml.load(config), children, cwd, user, users, hosts,
-                      spaces, data_api)
+                      spaces, data_api, host)
 
 
 def _check_files_tree(subtree, children, cwd, user, users, hosts, spaces,
-                      data_api):
+                      data_api, provider):
     for item in subtree:
         try:
             [(item_name, item_desc)] = item.items()
@@ -64,10 +64,9 @@ def _check_files_tree(subtree, children, cwd, user, users, hosts, spaces,
                 else:
                     _check_files_tree(item_desc, item_children,
                                       os.path.join(cwd, item_name), user,
-                                      users, hosts, spaces, data_api)
+                                      users, hosts, spaces, data_api, provider)
             else:
-                cli = login_to_cdmi(user, users,
-                                    hosts['oneprovider-1']['hostname'])
+                cli = login_to_cdmi(user, users, hosts[provider]['hostname'])
                 dao = DataObjectApi(cli)
                 file_content = dao.read_data_object(os.path.join(cwd,
                                                                  item_name))

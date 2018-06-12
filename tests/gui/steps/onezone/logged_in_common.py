@@ -8,7 +8,7 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 
-from pytest_bdd import given, when, then, parsers
+from tests.utils.acceptance_utils import *
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import repeat_failed
@@ -72,12 +72,9 @@ def click_on_btn_in_oz_panel(selenium, browser_id, btn, oz_panel, oz_page):
 @then(parsers.re(r'user of (?P<browser_id>.+?) sees that there is '
                  r'(?P<item_type>provider) "(?P<item_name>.+?)" '
                  r'in expanded "(?P<oz_panel>GO TO YOUR FILES)" Onezone panel'))
-@when(parsers.re(r'user of (?P<browser_id>.+?) sees that (?P<item_type>provider) '
-                 r'"(?P<item_name>.+?)" has appeared in expanded '
-                 r'"(?P<oz_panel>GO TO YOUR FILES)" Onezone panel'))
-@then(parsers.re(r'user of (?P<browser_id>.+?) sees that (?P<item_type>provider) '
-                 r'"(?P<item_name>.+?)" has appeared in expanded '
-                 r'"(?P<oz_panel>GO TO YOUR FILES)" Onezone panel'))
+@wt(parsers.re(r'user of (?P<browser_id>.+?) sees that (?P<item_type>provider) '
+               r'"(?P<item_name>.+?)" has appeared in expanded '
+               r'"(?P<oz_panel>GO TO YOUR FILES)" Onezone panel'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_there_is_item_with_known_name_in_oz_panel_list(selenium, browser_id,
                                                           item_type, item_name,
