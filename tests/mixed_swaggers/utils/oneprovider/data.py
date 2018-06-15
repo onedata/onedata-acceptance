@@ -16,9 +16,9 @@ import os
 import pytest
 import json
 from tests.mixed_swaggers.cdmi_client import ContainerApi, DataObjectApi
-from tests.mixed_swaggers.onepprovider_client import DataApi
+from tests.mixed_swaggers.oneprovider_client import DataApi
 from tests.mixed_swaggers.cdmi_client.rest import ApiException as CdmiException
-from tests.mixed_swaggers.onepprovider_client.rest import ApiException as OPException
+from tests.mixed_swaggers.oneprovider_client.rest import ApiException as OPException
 
 
 def assert_space_content_in_op_rest(user, users, hosts, config, space_name,

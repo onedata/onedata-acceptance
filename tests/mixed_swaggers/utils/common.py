@@ -66,10 +66,10 @@ def login_to_cdmi(username, users, host):
 
 
 def login_to_provider(username, users, host):
-    from tests.mixed_swaggers.onepprovider_client.configuration import \
+    from tests.mixed_swaggers.oneprovider_client.configuration import \
                                                 Configuration as Conf_provider
-    from tests.mixed_swaggers.onepprovider_client import (ApiClient
-                                                          as ApiClient_provider)
+    from tests.mixed_swaggers.oneprovider_client import (ApiClient
+                                                         as ApiClient_provider)
     Conf_provider().verify_ssl = False
 
     client = ApiClient_provider(
