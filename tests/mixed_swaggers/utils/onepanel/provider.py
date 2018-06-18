@@ -39,18 +39,17 @@ def deregister_provider_in_op_panel_using_rest(user, users, provider_host,
 def register_provider_in_op_using_rest(user, users, hosts, config):
     options = yaml.load(config)
 
-    provider_name = options['provider name']
-    user_client = login_to_panel(user, users[user].password,
-                                 hosts[provider_name]['hostname'])
-
-    provider_api = OneproviderApi(user_client)
-
     try:
         provider = options['provider name']['of provider']
     except KeyError:
         provider_name = options['provider_name']
+
     else:
         provider_name = hosts[provider]['name']
+
+    user_client = login_to_panel(user, users[user].password,
+                                 provider_name)
+    provider_api = OneproviderApi(user_client)
 
     try:
         provider = options['domain']['of provider']
@@ -68,7 +67,7 @@ def register_provider_in_op_using_rest(user, users, hosts, config):
 
     provider_register_rq = \
         ProviderRegisterRequest(
-            name=options['provider name'],
+            name=provider_name,
             subdomain_delegation=False,
             domain=domain,
             onezone_domain_name=onezone_domain_name,
@@ -81,7 +80,7 @@ def register_provider_in_op_using_rest(user, users, hosts, config):
                 for storage_id in storages_ids}
 
     for storage_name, storage_options in options['storages'].items():
-        assert storage_name in storages, "No storage named: {} for provider {}"\
+        assert storage_name in storages, 'No storage named: {} for provider {}'\
             .format(storage_name, provider_name)
 
         for field in ('type', 'insecure', 'readonly'):

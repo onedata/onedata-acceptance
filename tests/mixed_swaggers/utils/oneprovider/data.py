@@ -16,9 +16,9 @@ import os
 import pytest
 import json
 from tests.mixed_swaggers.cdmi_client import ContainerApi, DataObjectApi
-from tests.mixed_swaggers.onepprovider_client import DataApi
+from tests.mixed_swaggers.oneprovider_client import DataApi
 from tests.mixed_swaggers.cdmi_client.rest import ApiException as CdmiException
-from tests.mixed_swaggers.onepprovider_client.rest import ApiException as OPException
+from tests.mixed_swaggers.oneprovider_client.rest import ApiException as OPException
 
 
 def assert_space_content_in_op_rest(user, users, hosts, config, space_name,
@@ -29,11 +29,11 @@ def assert_space_content_in_op_rest(user, users, hosts, config, space_name,
     children = [file.path for file in data_api.list_files(space_name)]
     cwd = '/' + space_name
     _check_files_tree(yaml.load(config), children, cwd, user, users, hosts,
-                      spaces, data_api)
+                      spaces, data_api, host)
 
 
 def _check_files_tree(subtree, children, cwd, user, users, hosts, spaces,
-                      data_api):
+                      data_api, provider):
     for item in subtree:
         try:
             [(item_name, item_desc)] = item.items()
@@ -64,9 +64,9 @@ def _check_files_tree(subtree, children, cwd, user, users, hosts, spaces,
                 else:
                     _check_files_tree(item_desc, item_children,
                                       os.path.join(cwd, item_name), user,
-                                      users, hosts, spaces, data_api)
+                                      users, hosts, spaces, data_api, provider)
             else:
-                cli = login_to_cdmi(user, users, hosts['p1']['hostname'])
+                cli = login_to_cdmi(user, users, hosts[provider]['hostname'])
                 dao = DataObjectApi(cli)
                 file_content = dao.read_data_object(os.path.join(cwd,
                                                                  item_name))
@@ -260,7 +260,7 @@ def assert_metadata_in_op_rest(user, users, host, hosts, cdmi, path, tab_name,
                                                                 val, tab_name)
     else:        
         metadata = metadata['onedata_{}'.format(tab_name.lower())]
-        if tab_name.lower() == "json":
+        if tab_name.lower() == 'json':
             assert val == json.dumps(metadata), \
                         '{} has no {} {} metadata'.format(path, val, tab_name)
         else:
@@ -277,19 +277,19 @@ def set_metadata_in_op_rest(user, users, host, hosts, cdmi, path, tab_name,
         attr = 'onedata_{}'.format(tab_name.lower())
         if tab_name.lower() == 'json':
             val = json.loads(val)
-    type = "container" if path.split('/')[-1].startswith('dir') else "object"
-    if type == "container":
+    type = 'container' if path.split('/')[-1].startswith('dir') else 'object'
+    if type == 'container':
         path += '/' 
-    content_type = "application/cdmi-{}".format(type)
+    content_type = 'application/cdmi-{}'.format(type)
     client.write_metadata(path, {attr : val}, content_type)
     
 
 def remove_all_metadata_in_op_rest(user, users, host, hosts, cdmi, path):
     client = cdmi(hosts[host]['hostname'], users[user].token)
-    type = "container" if path.split('/')[-1].startswith('dir') else "object"
-    if type == "container":
+    type = 'container' if path.split('/')[-1].startswith('dir') else 'object'
+    if type == 'container':
         path += '/' 
-    content_type = "application/cdmi-{}".format(type)
+    content_type = 'application/cdmi-{}'.format(type)
     client.write_metadata(path, {}, content_type)
 
 
@@ -306,7 +306,7 @@ def assert_no_such_metadata_in_op_rest(user, users, host, hosts, cdmi, path,
     except KeyError:
         pass
     else:
-        if tab_name.lower() == "json":
+        if tab_name.lower() == 'json':
             val = json.loads(val)
             for key in val:
                 assert key not in metadata or metadata[key] != val[key], \

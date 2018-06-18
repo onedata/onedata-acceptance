@@ -41,8 +41,8 @@ def wt_assert_value_of_provider_attribute(selenium, browser_id,
                  'equal to the (?P<prop>name|hostname) of "(?P<host>.*?)" '
                  'provider in Provider panel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_assert_value_of_provider_domain(selenium, browser_id, attr, prop, host,
-                                       hosts, onepanel):
+def wt_assert_value_of_provider_attribute_is_known(selenium, browser_id, attr,
+                                                   prop, host, hosts, onepanel):
     expected_val = hosts[host][prop]
     details = onepanel(selenium[browser_id]).content.provider.details
     displayed_val = getattr(details, transform(attr))

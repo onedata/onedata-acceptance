@@ -6,13 +6,13 @@ Feature: ACL basic tests using REST client and web GUI
   | web GUI | REST      |
 
   Background:
-    Given initial users configuration in "z1" Onezone service:
+    Given initial users configuration in "onezone" Onezone service:
             - user1
             - user2
-    And initial groups configuration in "z1" Onezone service:
+    And initial groups configuration in "onezone" Onezone service:
             group1:
                 owner: user1
-    And initial spaces configuration in "z1" Onezone service:
+    And initial spaces configuration in "onezone" Onezone service:
         space1:
             owner: user1
             users:
@@ -20,8 +20,8 @@ Feature: ACL basic tests using REST client and web GUI
             groups:
                 - group1
             providers:
-                - p1:
-                    storage: NFS
+                - oneprovider-1:
+                    storage: posix
                     size: 1000000
             storage:
                 defaults:
@@ -30,12 +30,12 @@ Feature: ACL basic tests using REST client and web GUI
                     - file1
                     - dir1
 
-    And opened browser with user1 logged to "z1 onezone" service
-    And opened p1 Oneprovider view in web GUI by user1
+    And opened browser with user1 logged to "onezone onezone" service
+    And opened oneprovider-1 Oneprovider view in web GUI by user1
 
   Scenario: User sets ACL with one entry
-    When using <client1>, user1 sets new ACE for <item> in space "space1" with <privileges> privileges set for <subject_type> <subject_name> in p1 Oneprovider
-    Then using <client2>, user1 sees that <item> in space "space1" has <privileges> privileges set for <subject_type> <subject_name> in first ACL record in p1 Oneprovider
+    When using <client1>, user1 sets new ACE for <item> in space "space1" with <privileges> privileges set for <subject_type> <subject_name> in oneprovider-1 Oneprovider
+    Then using <client2>, user1 sees that <item> in space "space1" has <privileges> privileges set for <subject_type> <subject_name> in first ACL record in oneprovider-1 Oneprovider
 
     Examples:
     | privileges            | subject_type  | subject_name  | item  |
@@ -46,9 +46,9 @@ Feature: ACL basic tests using REST client and web GUI
 
 
 #  Scenario: User sets ACL with two entries
-#    When using <client1>, user1 sets new ACE for <item> in space "space1" with [read acl, change acl] privileges set for user user1 in p1 Oneprovider
-#    And using <client1>, user1 sets new ACE for <item> in space "space1" with <privileges2> privileges set for <subject_type2> <subject_name2> in p1 Oneprovider
-#    Then using <client2>, user1 sees that <item> in space "space1" has <privileges> privileges set for <subject_type> <subject_name> in first ACL record in p1 Oneprovider
+#    When using <client1>, user1 sets new ACE for <item> in space "space1" with [read acl, change acl] privileges set for user user1 in oneprovider-1 Oneprovider
+#    And using <client1>, user1 sets new ACE for <item> in space "space1" with <privileges2> privileges set for <subject_type2> <subject_name2> in oneprovider-1 Oneprovider
+#    Then using <client2>, user1 sees that <item> in space "space1" has <privileges> privileges set for <subject_type> <subject_name> in first ACL record in oneprovider-1 Oneprovider
 #
 #    Examples:
 #    | privileges            | subject_type  | subject_name  | item  |

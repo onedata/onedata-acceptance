@@ -81,7 +81,7 @@ def assert_subgroups_using_op_gui(selenium, user, op_page, group_list, parent):
     wt_click_on_the_given_main_menu_tab(selenium, user, 'groups')
     select_group_from_sidebar_list(selenium, user, parent, op_page)
     for group in parse_seq(group_list):
-        assert_item_appeared_in_groups_perm_table(selenium, user, group, 
+        assert_item_appeared_in_groups_perm_table(selenium, user, group,
                                                   'GROUPS', op_page)
 
 
@@ -90,7 +90,7 @@ def fail_to_see_subgroups_using_op_gui(selenium, user, op_page,
     wt_click_on_the_given_main_menu_tab(selenium, user, 'groups')
     select_group_from_sidebar_list(selenium, user, parent, op_page)
     for group in parse_seq(group_list):
-        assert_item_disappeared_from_groups_perm_table(selenium, user, group, 
+        assert_item_disappeared_from_groups_perm_table(selenium, user, group,
                                                        'GROUPS', op_page)
 
 
