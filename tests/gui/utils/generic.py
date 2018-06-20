@@ -20,9 +20,11 @@ except ImportError:
 
 from decorator import decorator
 
+from pytest_bdd import when, then
 from tests import gui
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
+from functools import partial
 
 
 # RE_URL regexp is matched as shown below:
@@ -52,7 +54,7 @@ def parse_seq(seq, pattern=None, default=str):
         return [default(el.group()) for el in re.finditer(pattern, seq)]
     else:
         return [default(el.strip().strip('"'))
-                for el in seq.strip("[]").split(',') if el != ""]
+                for el in seq.strip('[]').split(',') if el != '']
 
 
 def upload_file_path(file_name):

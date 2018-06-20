@@ -2,7 +2,8 @@
 """
 
 from tests.gui.utils.core.base import PageObject
-from tests.gui.utils.core.web_elements import WebElement, Label, WebItemsSequence, WebItem
+from tests.gui.utils.core.web_elements import WebElement, \
+    TextLabelWebElement, WebItemsSequence, WebItem, ButtonWebItem
 from .modal import Modal
 
 __author__ = "Bartosz Walkowicz"
@@ -12,8 +13,8 @@ __license__ = "This software is released under the MIT license cited in " \
 
 
 class _Chunk(PageObject):
-    start = Label('.file-size .start')
-    end = Label('.file-size .end')
+    start = TextLabelWebElement('.file-size .start')
+    end = TextLabelWebElement('.file-size .end')
     _canvas = WebElement('canvas')
     _file_chunks = WebElement('.file-chunks')
 
@@ -41,18 +42,33 @@ class _Chunk(PageObject):
 
 
 class _DataDistributionRecord(PageObject):
-    name = id = Label('.provider-name', parent_name='given provider')
+    name = id = TextLabelWebElement('.provider-name',
+                                    parent_name='given provider')
     distribution = WebItem('.chunks', cls=_Chunk)
+    migrate = ButtonWebItem('.btn-migrate')
+    replicate = ButtonWebItem('.btn-replicate')
 
     def __str__(self):
         return 'provider record for "{item}" in ' \
                '{parent}'.format(item=self.name, parent=self.parent)
 
 
+class MigrationRecord(PageObject):
+    name = id = TextLabelWebElement('.item-label')
+
+    def select(self):
+        self.web_elem.click()
+
+    def __str__(self):
+        return 'provider record in migration menu in {}'.format(self.parent)
+
+
 class DataDistributionModal(Modal):
-    file_name = Label('.modal-row strong')
+    file_name = TextLabelWebElement('.modal-row strong')
     providers = WebItemsSequence('table.file-blocks-table tbody tr',
                                  cls=_DataDistributionRecord)
+    migrate = WebItemsSequence('.migrate-popover li.migrate-item',
+                               cls=MigrationRecord)
 
     def __str__(self):
         return 'Data distribution modal for "{}"'.format(self.file_name)

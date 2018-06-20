@@ -14,6 +14,7 @@ from .user_profile import UserProfile
 from .shares import SharesContentPage
 from .groups import GroupContentPage
 from .spaces import SpacesContentPage
+from .transfers import TransfersTab
 
 
 class OPLoggedIn(object):
@@ -23,7 +24,8 @@ class OPLoggedIn(object):
     tabs = {'data': DataTab,
             'shares': SharesContentPage,
             'groups': GroupContentPage,
-            'spaces': SpacesContentPage}
+            'spaces': SpacesContentPage,
+            'transfers': TransfersTab}
 
     def __init__(self, driver):
         self.web_elem = self.driver = driver

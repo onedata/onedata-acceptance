@@ -19,6 +19,7 @@ MAIN_MENU_TAB_TO_URL = {'spaces': 'spaces',
                         'groups': 'groups',
                         'data': 'data',
                         'shared': 'shares',
+                        'transfers': 'transfers',
                         'providers': 'providers'}
 
 

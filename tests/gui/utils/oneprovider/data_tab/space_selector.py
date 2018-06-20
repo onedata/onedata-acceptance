@@ -9,12 +9,18 @@ __license__ = "This software is released under the MIT license cited in " \
 
 
 from tests.gui.utils.core.base import PageObject, ExpandableMixin
-from tests.gui.utils.core.web_elements import Label, WebElement, WebItemsSequence
+from tests.gui.utils.core.web_elements import (Label, TextLabelWebElement,
+                                               WebItemsSequence, IconWebElement,
+                                               WebElement)
 
 
 class SpaceRecord(PageObject):
-    name = id = Label('.item-label', parent_name='given space record')
-    _icon = WebElement('.item-icon .one-icon')
+    name = id = TextLabelWebElement('.item-label',
+                                    parent_name='given space record')
+    _icon = IconWebElement('.item-icon .one-icon')
+
+    def select(self):
+        self.web_elem.click()
 
     def __str__(self):
         return '{name} in {parent}'.format(name=self.name, parent=self.parent)

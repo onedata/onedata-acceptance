@@ -10,7 +10,8 @@ __license__ = "This software is released under the MIT license cited in " \
 from functools import partial
 
 from .base import AbstractWebElement, AbstractWebItem
-from .web_objects import ButtonPageObject, PageObjectsSequence, ButtonWithTextPageObject
+from .web_objects import (ButtonPageObject, PageObjectsSequence,
+                          ButtonWithTextPageObject)
 from tests.gui.utils.generic import find_web_elem, find_web_elem_with_text, \
     repeat_failed
 
@@ -104,3 +105,27 @@ class WebItemsSequence(AbstractWebItem, WebElementsSequence):
         return seq if instance is None else PageObjectsSequence(instance.driver,
                                                                 seq, self.cls,
                                                                 instance)
+
+
+class TextLabelWebElement(WebElement):
+    item_not_found_msg = '{item} label not found in {parent}'
+
+    def __get__(self, instance, owner):
+        item = super(TextLabelWebElement, self).__get__(instance, owner)
+        return item.text if instance else item
+
+
+class ButtonWebItem(WebItem):
+    item_not_found_msg = '{text} btn not found in {parent}'
+
+    def __init__(self, *args, **kwargs):
+        super(ButtonWebItem, self).__init__(cls=ButtonPageObject, *args, **kwargs)
+
+    def __get__(self, instance, owner):
+        btn = super(ButtonWebItem, self).__get__(instance, owner)
+        btn.name = self.name
+        return btn
+
+
+class IconWebElement(WebElement):
+    item_not_found_msg = '{item} icon not found in {parent}'
