@@ -17,7 +17,8 @@ class TokenRecord(PageObject):
     remove = Button('.oneicon-remove')
 
 
-class AccessTokensPanel(OZPanel):
+class AccessTokensPage(OZPanel):
     tokens = WebItemsSequence('.tokens-list-item', cls=TokenRecord)
     create_new_access_token = NamedButton('.clickable',
                                           text='create new access token')
+    
