@@ -17,13 +17,13 @@ import yaml
 def support_space_in_op_panel_using_gui(selenium, user, config, onepanel,
                                         tmp_memory, space_name, provider_name,
                                         hosts):
-    sidebar = "Clusters"
-    sub_item = "Spaces"
-    input_box = "Size"
-    button = "MiB"
-    sync_type = "IMPORT"
-    notify_type = "info"
-    notify_text_regexp = ".*[Aa]dded.*support.*space.*"
+    sidebar = 'Clusters'
+    sub_item = 'Spaces'
+    input_box = 'Size'
+    button = 'MiB'
+    sync_type = 'IMPORT'
+    notify_type = 'info'
+    notify_text_regexp = '.*[Aa]dded.*support.*space.*'
 
     options = yaml.load(config)
 
@@ -63,12 +63,12 @@ def support_space_in_op_panel_using_gui(selenium, user, config, onepanel,
 def revoke_space_support_in_op_panel_using_gui(selenium, user, provider_name,
                                                onepanel, space_name, popups,
                                                modals, hosts):
-    sidebar = "Clusters"
-    sub_item = "Spaces"
-    option = "Revoke space support"
-    button = "Yes, revoke"
-    notify_type = "info"
-    notify_text_regexp = ".*[Ss]upport.*revoked.*"
+    sidebar = 'Clusters'
+    sub_item = 'Spaces'
+    option = 'Revoke space support'
+    button = 'Yes, revoke'
+    notify_type = 'info'
+    notify_text_regexp = '.*[Ss]upport.*revoked.*'
 
     wt_click_on_subitem_for_item(selenium, user, sidebar, sub_item,
                                  provider_name, onepanel, hosts)
@@ -82,8 +82,8 @@ def revoke_space_support_in_op_panel_using_gui(selenium, user, provider_name,
 def configure_sync_parameters_for_space_in_op_panel_gui(selenium, user, space,
                                                         onepanel, popups,
                                                         config, sync_type):
-    notify_type = "info"
-    notify_text_regexp = ".*[Cc]onfiguration.*space.*support.*changed.*"
+    notify_type = 'info'
+    notify_text_regexp = '.*[Cc]onfiguration.*space.*support.*changed.*'
 
     wt_expands_toolbar_icon_for_space_in_onepanel(selenium, user, space,
                                                   onepanel)
@@ -128,8 +128,8 @@ def copy_id_of_space_gui(selenium, user, space_name, onepanel, tmp_memory):
 def assert_proper_space_configuration_in_op_panel_gui(selenium, user, space,
                                                       onepanel, sync_type,
                                                       conf, provider_name, hosts):
-    sidebar = "Clusters"
-    sub_item = "Spaces"
+    sidebar = 'Clusters'
+    sub_item = 'Spaces'
     wt_click_on_subitem_for_item(selenium, user, sidebar, sub_item,
                                  provider_name, onepanel, hosts)
     wt_expand_space_item_in_spaces_page_op_panel(selenium, user, space,

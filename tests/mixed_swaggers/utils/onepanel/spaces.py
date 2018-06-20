@@ -27,7 +27,7 @@ attrs_mapping = {
 
 def revoke_space_support_in_op_panel_using_rest(user, users, provider_host,
                                                 hosts, space_name,
-                                                zone_host="z1"):
+                                                zone_host='onezone'):
     user_client_op = login_to_panel(user, users[user].password,
                                     hosts[provider_host]['hostname'])
     user_client_oz = login_to_oz(user, users[user].password,
@@ -39,7 +39,7 @@ def revoke_space_support_in_op_panel_using_rest(user, users, provider_host,
 
 
 def support_space_in_op_panel_using_rest(user, provider_host, hosts, users,
-                                         tmp_memory, config, space_name):
+                                         tmp_memory, config):
 
     user_client = login_to_panel(user, users[user].password,
                                  hosts[provider_host]['hostname'])
@@ -80,7 +80,7 @@ def configure_sync_parameters_for_space_in_op_panel_rest(user, users,
     user_client_op = login_to_panel(user, users[user].password,
                                     hosts[provider_host]['hostname'])
     user_client_oz = login_to_oz(user, users[user].password,
-                                 hosts['z1']['hostname'])
+                                 hosts['onezone']['hostname'])
 
     provider_api = OneproviderApi(user_client_op)
     options = yaml.load(conf)
@@ -91,7 +91,7 @@ def configure_sync_parameters_for_space_in_op_panel_rest(user, users,
         strategy = '_'.join(options['{} strategy'.
                             format(sync_type.capitalize())].lower().split())
 
-    if sync_type.lower() == "import":
+    if sync_type.lower() == 'import':
         storage_import = StorageImportDetails(strategy, options['Max depth'])
         space_modify_rq = SpaceModifyRequest(storage_import=storage_import)
     else:
@@ -111,7 +111,7 @@ def configure_sync_parameters_for_space_in_op_panel_rest(user, users,
 def assert_proper_space_configuration_in_op_panel_rest(space_name, user, users,
                                                        provider_host, hosts,
                                                        conf, sync_type,
-                                                       zone_host='z1'):
+                                                       zone_host='onezone'):
     user_client_op = login_to_panel(user, users[user].password,
                                     hosts[provider_host]['hostname'])
     user_client_oz = login_to_oz(user, users[user].password,

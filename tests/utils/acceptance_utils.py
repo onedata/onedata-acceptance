@@ -9,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in " \
 import time
 
 from pytest_bdd import parsers
-from pytest_bdd import when, then
+from pytest_bdd import when, then, given
 from functools import wraps
 import six
 import inspect
