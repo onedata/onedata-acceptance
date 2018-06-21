@@ -2,7 +2,7 @@
 """
 
 __author__ = "Bartosz Walkowicz Michal Stanisz"
-__copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
+__copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
@@ -21,12 +21,12 @@ class OZLoggedIn(object):
     _atlas = WebElement('.onezone-atlas')
     _panels = WebElementsSequence('.main-menu-content li.main-menu-item')
 
-    # TODO rearrange order to the same as in gui
-    # TODO find better name than panel(it's not panel anymore)
-    panels = {'spaces': SpacesPage,
-              'groups': GroupsPage,
-              'tokens': TokensPage,
-              'providers': ProvidersPage}
+    panels = {
+        'providers': ProvidersPage,
+        'tokens': TokensPage,
+        'spaces': SpacesPage,
+        'groups': GroupsPage,
+    }
 
     def __init__(self, driver):
         self.web_elem = driver
@@ -39,6 +39,7 @@ class OZLoggedIn(object):
         # TODO change below sleep to wait for page to load in login step
         # wait for oz page to load
         sleep(1)
+        # expand side panel
         ActionChains(self.web_elem).move_to_element(self._panels[0]).perform()
         # wait for side panel to expand so we can read panel name
         sleep(1)
@@ -47,8 +48,13 @@ class OZLoggedIn(object):
             item = item.replace('_', ' ').lower()
             for panel in self._panels:
                 if item == panel.text.lower():
-                    panel.click()
-            return cls(self.web_elem, self.web_elem, parent=self)
+                    # collapse side panel
+                    ActionChains(self.web_elem).move_to_element(
+                        self.web_elem.find_element_by_css_selector(
+                            '.row-heading .col-title')).perform()
+                    # wait for side panel to collapse
+                    sleep(1)
+                    return cls(self.web_elem, self.web_elem, parent=self)
 
         elif item == 'manage account':
             return ManageAccount(self.web_elem, self._manage_account, self)
