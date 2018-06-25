@@ -3,21 +3,19 @@ data tab in oneprovider web GUI.
 """
 
 __author__ = "Bartosz Walkowicz"
-__copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
+__copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 
 from tests.gui.utils.core.base import PageObject, ExpandableMixin
-from tests.gui.utils.core.web_elements import (Label, TextLabelWebElement,
-                                               WebItemsSequence, IconWebElement,
-                                               WebElement)
+from tests.gui.utils.core.web_elements import (Label, WebItemsSequence,
+                                               Icon, WebElement)
 
 
 class SpaceRecord(PageObject):
-    name = id = TextLabelWebElement('.item-label',
-                                    parent_name='given space record')
-    _icon = IconWebElement('.item-icon .one-icon')
+    name = id = Label('.item-label', parent_name='given space record')
+    _icon = Icon('.item-icon .one-icon')
 
     def select(self):
         self.web_elem.click()

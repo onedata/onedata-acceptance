@@ -166,7 +166,6 @@ Feature: Oneprovider transfers functionality using multiple browser instances
             oneprovider-1: entirely filled
             oneprovider-2: never synchronized
 
-
     And user of browser2 uses spaces select to change data space to "space1"
     # Wait to ensure synchronization between providers
     And user of browser2 is idle for 10 seconds
@@ -202,7 +201,6 @@ Feature: Oneprovider transfers functionality using multiple browser instances
     # Check transfer chart
     And user of browser1 expands first transfer record
     And user of browser1 sees that there is non-zero throughput in transfer chart
-
 
     And user of browser1 clicks on the "data" tab in main menu sidebar
     And user of browser1 uses spaces select to change data space to "space1"

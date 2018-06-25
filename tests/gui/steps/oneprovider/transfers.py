@@ -1,8 +1,8 @@
 """Steps for tests of Oneprovider transfers
 """
 
-__author__ = "Michal Stanisz"
-__copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
+__author__ = "Michal Stanisz, Michal Cwiertnia"
+__copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
@@ -10,7 +10,7 @@ import yaml
 from tests.gui.utils.common.modals import Modals as modals
 from tests.gui.utils.generic import repeat_failed
 from selenium.common.exceptions import StaleElementReferenceException
-from tests.utils.acceptance_utils import *
+from tests.utils.acceptance_utils import wt
 
 
 def _assert_transfer(transfer, item_type, desc, sufix, hosts):
@@ -96,21 +96,21 @@ def migrate_item(selenium, browser_id, source, target, hosts):
                ' to provider "(?P<provider>.*)"'))
 def replicate_item(selenium, browser_id, provider, hosts):
     provider_name = hosts[provider]['name']
-    (modals(selenium[browser_id]).
-     data_distribution.
-     providers[provider_name].
-     replicate())
+    (modals(selenium[browser_id])
+     .data_distribution
+     .providers[provider_name]
+     .replicate())
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees that item is never '
                'synchronized in provider "(?P<provider>.*)"'))
 def assert_item_never_synchronized(selenium, browser_id, provider, hosts):
     provider_name = hosts[provider]['name']
-    assert (modals(selenium[browser_id]).
-            data_distribution.
-            providers[provider_name].
-            distribution.
-            is_never_synchronized()), \
+    assert (modals(selenium[browser_id])
+            .data_distribution
+            .providers[provider_name]
+            .distribution
+            .is_never_synchronized()), \
         'Item is synchronized in provider {}'.format(provider_name)
 
 

@@ -1,17 +1,16 @@
 """Utils and fixtures to facilitate operations on transfers in Oneprovider GUI
 """
 
-__author__ = "Michal Stanisz"
-__copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
+__author__ = "Michal Stanisz, Michal Cwiertnia"
+__copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.oneprovider.data_tab.space_selector import SpaceRecord
-from tests.gui.utils.core.web_elements import (TextLabelWebElement, WebElement,
-                                               IconWebElement, WebItemsSequence,
-                                               ButtonWithTextPageObject,
-                                               WebItem)
+from tests.gui.utils.core.web_elements import (Label, WebElement,
+                                               Icon, WebItemsSequence,
+                                               ButtonWithTextPageObject)
 
 TransferStatusList = ['completed', 'skipped', 'cancelled', 'failed', 'active',
                       'invalidating', 'scheduled', 'enqueued']
@@ -19,12 +18,12 @@ TransferTypeList = ['migration', 'replication', 'invalidation']
 
 
 class TransferRecord(PageObject):
-    name = TextLabelWebElement('td:first-of-type')
-    username = TextLabelWebElement('td:nth-of-type(2)')
-    destination = TextLabelWebElement('td:nth-of-type(3)')
-    status_icon = IconWebElement('.cell-status')
-    type_icon = IconWebElement('.cell-type')
-    icon = IconWebElement('.transfer-file-icon')
+    name = Label('td:first-of-type')
+    username = Label('td:nth-of-type(2)')
+    destination = Label('td:nth-of-type(3)')
+    status_icon = Icon('.cell-status')
+    type_icon = Icon('.cell-type')
+    icon = Icon('.transfer-file-icon')
 
     def __init__(self, driver, web_elem, parent, **kwargs):
         super(TransferRecord, self).__init__(driver, web_elem, parent, **kwargs)
@@ -62,13 +61,13 @@ class TransferRecord(PageObject):
 
 
 class TransferRecordHistory(TransferRecord):
-    transferred = TextLabelWebElement('td:nth-of-type(6)')
-    total_files = TextLabelWebElement('td:nth-of-type(7)')
+    transferred = Label('td:nth-of-type(6)')
+    total_files = Label('td:nth-of-type(7)')
 
 
 class TransferRecordActive(TransferRecord):
-    transferred = TextLabelWebElement('td:nth-of-type(5)')
-    total_files = TextLabelWebElement('td:nth-of-type(6)')
+    transferred = Label('td:nth-of-type(5)')
+    total_files = Label('td:nth-of-type(6)')
 
 
 class TransferChart(PageObject):
@@ -76,7 +75,7 @@ class TransferChart(PageObject):
                               cls=ButtonWithTextPageObject)
     hour = WebItemsSequence('button.btn-default',
                               cls=ButtonWithTextPageObject)
-    active = TextLabelWebElement('button.btn-default.active')
+    active = Label('button.btn-default.active')
     # We take only last point in the chart
     _speed = WebElement(
         '.transfers-transfer-chart .ct-series line:last-of-type')
@@ -86,7 +85,7 @@ class TransferChart(PageObject):
 
 
 class TabHeader(PageObject):
-    name = TextLabelWebElement('.nav-link')
+    name = Label('.nav-link')
 
     def click(self):
         self.web_elem.click()

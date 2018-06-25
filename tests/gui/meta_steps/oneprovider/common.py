@@ -7,7 +7,7 @@ from tests.gui.steps.onezone.logged_in_common import *
 from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.oneprovider.common import *
 from tests.gui.steps.oneprovider_common import *
-from tests.utils.acceptance_utils import *
+from tests.utils.acceptance_utils import wt
 from tests.gui.steps.oneprovider.data_tab import (
     assert_file_browser_in_data_tab_in_op,
     click_tooltip_from_toolbar_in_data_tab_in_op,

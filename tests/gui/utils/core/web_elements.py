@@ -2,7 +2,7 @@
 """
 
 __author__ = "Bartosz Walkowicz"
-__copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
+__copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
@@ -70,6 +70,8 @@ NamedButton = partial(WebItemWithText, cls=ButtonWithTextPageObject)
 
 
 class Label(WebElement):
+    item_not_found_msg = '{item} label not found in {parent}'
+
     def __get__(self, instance, owner):
         item = super(Label, self).__get__(instance, owner)
         return item.text if instance else item
@@ -107,25 +109,5 @@ class WebItemsSequence(AbstractWebItem, WebElementsSequence):
                                                                 instance)
 
 
-class TextLabelWebElement(WebElement):
-    item_not_found_msg = '{item} label not found in {parent}'
-
-    def __get__(self, instance, owner):
-        item = super(TextLabelWebElement, self).__get__(instance, owner)
-        return item.text if instance else item
-
-
-class ButtonWebItem(WebItem):
-    item_not_found_msg = '{text} btn not found in {parent}'
-
-    def __init__(self, *args, **kwargs):
-        super(ButtonWebItem, self).__init__(cls=ButtonPageObject, *args, **kwargs)
-
-    def __get__(self, instance, owner):
-        btn = super(ButtonWebItem, self).__get__(instance, owner)
-        btn.name = self.name
-        return btn
-
-
-class IconWebElement(WebElement):
+class Icon(WebElement):
     item_not_found_msg = '{item} icon not found in {parent}'
