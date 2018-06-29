@@ -11,6 +11,7 @@ from tests.gui.utils.common.modals import Modals as modals
 from tests.gui.utils.generic import repeat_failed
 from selenium.common.exceptions import StaleElementReferenceException
 from tests.utils.acceptance_utils import wt
+from pytest_bdd import parsers
 
 
 def _assert_transfer(transfer, item_type, desc, sufix, hosts):
