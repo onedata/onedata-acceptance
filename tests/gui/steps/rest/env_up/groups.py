@@ -98,18 +98,18 @@ def _groups_creation(config, service, admin_credentials,
                 privileges = None
             else:
                 privileges = options['privileges']
-                
+
             child_id = groups[child_group]
 
             _add_child_group(zone_hostname, admin_credentials, group_id, 
                              child_id, privileges)
-            
+
 
 def _create_group(zone_hostname, owner_username, owner_password,
                   group_name, group_type='role'):
     group_properties = {'name': group_name, 'type': group_type}
     response = http_post(ip=zone_hostname, port=OZ_REST_PORT,
-                         path=get_zone_rest_path('groups'),
+                         path=get_zone_rest_path('user', 'groups'),
                          auth=(owner_username, owner_password),
                          data=json.dumps(group_properties))
     return response.headers['location'].split('/')[-1]
