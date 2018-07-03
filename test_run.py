@@ -217,7 +217,7 @@ test_runner_pod = '''{{
         "spec": {{
             "containers": [
                 {{
-                    "name": "test-runer",
+                    "name": "test-runner",
                     "image": "{image}",
                     "stdin": true, 
                     "imagePullPolicy": "IfNotPresent",

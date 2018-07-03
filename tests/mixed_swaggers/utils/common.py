@@ -29,7 +29,7 @@ def login_to_oz(username, password, host):
     configuration.username = username
     configuration.password = password
     configuration.verify_ssl = False
-    configuration.host = "https://{}:{}{}".format(host, OZ_REST_PORT,
+    configuration.host = 'https://{}:{}{}'.format(host, OZ_REST_PORT,
                                                   OZ_REST_PATH_PREFIX)
 
     return ApiClient_OZ(configuration=configuration)
@@ -45,7 +45,7 @@ def login_to_panel(username, password, host):
     Conf_panel().password = password
 
     client = ApiClient_panel(
-        host="https://{}:{}{}".format(host,
+        host='https://{}:{}{}'.format(host,
                                       PANEL_REST_PORT,
                                       PANEL_REST_PATH_PREFIX))
     return client
@@ -58,7 +58,7 @@ def login_to_cdmi(username, users, host):
     Conf_CDMI().verify_ssl = False
 
     client = ApiClient_CDMI(
-        host="https://{}:{}{}".format(host,
+        host='https://{}:{}{}'.format(host,
                                       OZ_REST_PORT,
                                       CDMI_REST_PATH_PREFIX),
         header_name = 'X-Auth-Token', header_value = users[username].token)
@@ -66,14 +66,14 @@ def login_to_cdmi(username, users, host):
 
 
 def login_to_provider(username, users, host):
-    from tests.mixed_swaggers.onepprovider_client.configuration import \
+    from tests.mixed_swaggers.oneprovider_client.configuration import \
                                                 Configuration as Conf_provider
-    from tests.mixed_swaggers.onepprovider_client import (ApiClient
-                                                          as ApiClient_provider)
+    from tests.mixed_swaggers.oneprovider_client import (ApiClient
+                                                         as ApiClient_provider)
     Conf_provider().verify_ssl = False
 
     client = ApiClient_provider(
-        host = "https://{}:{}{}".format(host,
+        host = 'https://{}:{}{}'.format(host,
                                       OZ_REST_PORT,
                                       PROVIDER_REST_PATH_PREFIX), 
         header_name = 'X-Auth-Token', header_value = users[username].token)

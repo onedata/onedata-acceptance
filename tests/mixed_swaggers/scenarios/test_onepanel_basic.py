@@ -64,6 +64,7 @@ scenarios('../features/onepanel/provider.feature')
 scenarios('../features/onepanel/spaces.feature')
 scenarios('../features/onepanel/storage_sync.feature')
 
+
 @fixture(scope='module')
 def screens():
     return [0, 1]
