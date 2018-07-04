@@ -5,13 +5,14 @@ from .base import PageObject
 from tests.gui.utils.generic import nth
 
 __author__ = "Bartosz Walkowicz"
-__copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
+__copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 
 class ButtonPageObject(PageObject):
     name = 'button'
+    item_not_found_msg = '{text} btn not found in {parent}'
 
     def __str__(self):
         return '{} btn in {}'.format(self.name, self.parent)

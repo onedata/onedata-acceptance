@@ -31,7 +31,7 @@ def login_to_oz_using_gui(host_list, selenium, driver, tmpdir, tmp_memory, xvfb,
 
     for user, host_name in zip(parse_seq(user_list),
                                parse_seq(host_list)):
-        if "panel" in host_name.lower().split():
+        if 'panel' in host_name.lower().split():
             g_login_to_panel_using_basic_auth(selenium, user, user,
                                               panel_login_page, users)
         else:
@@ -44,12 +44,14 @@ def login_to_oz_using_gui(host_list, selenium, driver, tmpdir, tmp_memory, xvfb,
         displays[browser] = displays[user]
 
 
-@given(parsers.re('opened (?P<provider>.*) Oneprovider view in web GUI by '
+@given(parsers.re('opened (?P<provider_list>.*) Oneprovider view in web GUI by '
                   '(users? of )?(?P<browser_id_list>.*)'))
-def go_to_provider(browser_id_list, provider, selenium, oz_page, hosts):
+def go_to_provider(browser_id_list, provider_list, selenium, oz_page, hosts):
     g_expand_oz_panel(selenium, browser_id_list, 'GO TO YOUR FILES', oz_page)
     g_click_on_provider_in_go_to_your_files_oz_panel(selenium, browser_id_list,
-                                                     provider, oz_page, hosts)
+                                                     provider_list, oz_page,
+                                                     hosts)
     g_click_on_btn_in_provider_popup(selenium, browser_id_list,
-                                     'go to your files', provider, oz_page, hosts)
+                                     'go to your files', provider_list, oz_page,
+                                     hosts)
     g_wait_for_op_session_to_start(selenium, browser_id_list)

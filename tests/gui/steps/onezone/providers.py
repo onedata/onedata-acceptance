@@ -3,7 +3,7 @@ providers management in onezone web GUI.
 """
 
 __author__ = "Bartosz Walkowicz"
-__copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
+__copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
@@ -92,12 +92,15 @@ def _click_on_btn_in_provider_popup(driver, btn, provider, oz_page, hosts):
 
 @given(parsers.re(r'users? of (?P<browser_id_list>.+?) clicked on the '
                   r'"(?P<btn>Go to your files|copy hostname)" button in '
-                  r'"(?P<provider>.+?)" provider\'s popup displayed '
+                  r'"(?P<provider_list>.+?)" provider\'s popup displayed '
                   r'on world map'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def g_click_on_btn_in_provider_popup(selenium, browser_id_list, btn,
-                                     provider, oz_page, hosts):
-    for browser_id in parse_seq(browser_id_list):
+                                     provider_list, oz_page, hosts):
+    browser_ids = parse_seq(browser_id_list)
+    providers = parse_seq(provider_list)
+    for browser_id, provider in izip_longest(browser_ids, providers,
+                                             fillvalue=providers[-1]):
         _click_on_btn_in_provider_popup(selenium[browser_id], btn,
                                         provider, oz_page, hosts)
 

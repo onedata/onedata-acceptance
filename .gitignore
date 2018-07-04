@@ -10,6 +10,7 @@ tests/env_up/logs
 tests/acceptance/logs
 tests/performance/logs
 tests/gui/logs
+tests/gui/upload_files/large_file.txt
 tests/mixed_swaggers/logs
 .cache
 tests/**/.cache

@@ -2,7 +2,7 @@
 """
 
 __author__ = "Bartosz Walkowicz"
-__copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
+__copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
@@ -10,7 +10,8 @@ __license__ = "This software is released under the MIT license cited in " \
 from functools import partial
 
 from .base import AbstractWebElement, AbstractWebItem
-from .web_objects import ButtonPageObject, PageObjectsSequence, ButtonWithTextPageObject
+from .web_objects import (ButtonPageObject, PageObjectsSequence,
+                          ButtonWithTextPageObject)
 from tests.gui.utils.generic import find_web_elem, find_web_elem_with_text, \
     repeat_failed
 
@@ -69,6 +70,8 @@ NamedButton = partial(WebItemWithText, cls=ButtonWithTextPageObject)
 
 
 class Label(WebElement):
+    item_not_found_msg = '{item} label not found in {parent}'
+
     def __get__(self, instance, owner):
         item = super(Label, self).__get__(instance, owner)
         return item.text if instance else item
@@ -104,3 +107,7 @@ class WebItemsSequence(AbstractWebItem, WebElementsSequence):
         return seq if instance is None else PageObjectsSequence(instance.driver,
                                                                 seq, self.cls,
                                                                 instance)
+
+
+class Icon(WebElement):
+    item_not_found_msg = '{item} icon not found in {parent}'

@@ -2,7 +2,7 @@
 """
 
 __author__ = "Bartosz Walkowicz"
-__copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
+__copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
@@ -14,6 +14,7 @@ from .user_profile import UserProfile
 from .shares import SharesContentPage
 from .groups import GroupContentPage
 from .spaces import SpacesContentPage
+from .transfers import TransfersTab
 
 
 class OPLoggedIn(object):
@@ -23,7 +24,8 @@ class OPLoggedIn(object):
     tabs = {'data': DataTab,
             'shares': SharesContentPage,
             'groups': GroupContentPage,
-            'spaces': SpacesContentPage}
+            'spaces': SpacesContentPage,
+            'transfers': TransfersTab}
 
     def __init__(self, driver):
         self.web_elem = self.driver = driver
