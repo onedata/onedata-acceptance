@@ -43,7 +43,7 @@ Feature: Oneprovider transfers functionality using multiple browser instances
             destination: oneprovider-2
             username: user1
             total files: 1
-            transferred: 45 MiB
+            transferred: 50 MiB
             type: replication
             status: completed
 
@@ -97,7 +97,7 @@ Feature: Oneprovider transfers functionality using multiple browser instances
             destination: oneprovider-2
             username: user1
             total files: 1
-            transferred: 45 MiB
+            transferred: 50 MiB
             type: replication
             status: completed
 
@@ -141,7 +141,7 @@ Feature: Oneprovider transfers functionality using multiple browser instances
             destination: oneprovider-2
             username: user1
             total files: 2
-            transferred: 45 MiB
+            transferred: 50 MiB
             type: migration
             status: completed
 
@@ -194,7 +194,7 @@ Feature: Oneprovider transfers functionality using multiple browser instances
             destination: oneprovider-2
             username: user1
             total files: 2
-            transferred: 45 MiB
+            transferred: 50 MiB
             type: migration
             status: completed
 

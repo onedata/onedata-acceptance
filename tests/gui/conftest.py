@@ -288,13 +288,15 @@ def popups():
     return Popups
 
 
-@fixture(scope='session')
+@fixture(scope='session', autouse=True)
 def large_file():
-    size = MEGABYTE * 50
-    content = ''.join(random.choice(string.ascii_uppercase + string.digits)
-                      for _ in range(size))
-    with open(os.path.join(UPLOAD_FILES_DIR, 'large_file.txt'), 'wb') as f:
-        f.write(content.encode('utf-8'))
+    large_file_path = os.path.join(UPLOAD_FILES_DIR, 'large_file.txt')
+    if not os.path.exists(large_file_path):
+        size = MEGABYTE * 50
+        content = ''.join(random.choice(string.ascii_uppercase + string.digits)
+                          for _ in range(size))
+        with open(large_file_path, 'wb') as f:
+            f.write(content.encode('utf-8'))
 
 
 @fixture(scope='module')
