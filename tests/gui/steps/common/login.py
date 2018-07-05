@@ -55,15 +55,15 @@ def wt_enter_text_to_field_in_login_form(selenium, browser_id, in_box,
             transform(in_box), text)
 
 
-@wt(parsers.parse('user of {browser_id} presses Sign in button '
-                  'in (Onepanel|Onezone) login page'))
+@wt(parsers.re('user of (?P<browser_id>.*) presses Sign in button '
+               'in (Onepanel|Onezone) login page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_press_sign_in_btn_on_login_page(selenium, browser_id, login_page):
     login_page(selenium[browser_id]).sign_in()
 
 
-@wt(parsers.parse('user of {browser_id} sees that he successfully '
-                  'logged in {service}'))
+@wt(parsers.re('user of (?P<browser_id>.*) sees that he successfully '
+               'logged in (?P<service>.*)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_successful_login(selenium, browser_id, onepage, service):
     logged_in_service = onepage(selenium[browser_id]).service
@@ -71,16 +71,16 @@ def wt_assert_successful_login(selenium, browser_id, onepage, service):
         'logged in {} instead of {}'.format(logged_in_service, service)
 
 
-@wt(parsers.parse('user of {browser_id} sees that he was logged out '
-                  'from (Onepanel|Onezone)'))
+@wt(parsers.re('user of (?P<browser_id>.*) sees that he was logged out '
+               'from (Onepanel|Onezone)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_login_page(selenium, browser_id, login_page):
     _ = login_page(selenium[browser_id]).header
 
 
-@wt(parsers.parse('user of {browser_id} sees error message '
-                  'about invalid credentials in (Onepanel|Onezone) '
-                  'login page'))
+@wt(parsers.re('user of (?P<browser_id>.*) sees error message '
+               'about invalid credentials in (Onepanel|Onezone) '
+               'login page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_err_msg_about_credentials(selenium, browser_id, login_page):
     assert login_page(selenium[browser_id]).err_msg, \

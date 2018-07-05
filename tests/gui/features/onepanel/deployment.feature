@@ -4,7 +4,7 @@ Feature: Deployment process using panel of zone and provider
   Scenario: Cluster deployment
     Given users opened [browser1, browser2] browsers' windows
     And users of [browser1, browser2] opened [onezone zone panel, oneprovider-1 provider panel] page
-    And users of [browser1, browser2] logged as [admin, admin] to Onepanel service
+    And users of [browser1, browser2] created admin accounts "admin:password"
 
     # step1 in zone and provider panels
     When user of browser1 clicks on Create new cluster button in welcome page in Onepanel
