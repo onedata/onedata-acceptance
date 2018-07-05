@@ -36,29 +36,23 @@ class OZLoggedIn(object):
 
     def __getitem__(self, item):
         item = item.lower()
-        # TODO change below sleep to wait for page to load in login step
-        # wait for oz page to load
-        sleep(1)
         # expand side panel
         ActionChains(self.web_elem).move_to_element(self._panels[0]).perform()
         # wait for side panel to expand so we can read panel name
-        sleep(1)
+        sleep(0.2)
         cls = self.panels.get(item, None)
         if cls:
             item = item.replace('_', ' ').lower()
             for panel in self._panels:
                 if item == panel.text.lower():
+                    # open page
+                    panel.click()
                     # collapse side panel
                     ActionChains(self.web_elem).move_to_element(
                         self.web_elem.find_element_by_css_selector(
                             '.row-heading .col-title')).perform()
                     # wait for side panel to collapse
-                    sleep(1)
+                    sleep(0.2)
                     return cls(self.web_elem, self.web_elem, parent=self)
-
-        elif item == 'manage account':
-            return ManageAccount(self.web_elem, self._manage_account, self)
-        elif item == 'world map':
-            return WorldMap(self.web_elem, self._atlas, self)
         else:
             raise RuntimeError('no "{}" on {} found'.format(item, str(self)))

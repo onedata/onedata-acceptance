@@ -8,20 +8,18 @@ from itertools import izip_longest
 from tests.gui.steps.common.browser_creation import \
     create_instances_of_webdriver
 from tests.gui.steps.oneprovider.common import g_wait_for_op_session_to_start
-from tests.gui.steps.onezone.login_page import g_login_to_zone_using_basic_auth
 from tests.gui.steps.onezone.providers import parse_seq
 from tests.gui.steps.common.url import g_open_onedata_service_page
-from tests.gui.steps.onepanel.login import g_login_to_panel_using_basic_auth
+from tests.gui.steps.common.login import g_login_using_basic_auth
 from tests.utils.acceptance_utils import list_parser
 
 
 @given(parsers.re('opened (?P<browser_id_list>.*) with (?P<user_list>.*) logged'
                   ' to (?P<host_list>.*) service'))
-def login_to_oz_using_gui(host_list, selenium, driver, tmpdir, tmp_memory, xvfb,
-                          driver_kwargs, driver_type, firefox_logging, displays,
-                          firefox_path, screen_width, screen_height, hosts,
-                          users, oz_login_page, browser_id_list, user_list,
-                          panel_login_page):
+def login_using_gui(host_list, selenium, driver, tmpdir, tmp_memory, xvfb,
+                    driver_kwargs, driver_type, firefox_logging, displays,
+                    firefox_path, screen_width, screen_height, hosts,
+                    users, login_page, browser_id_list, user_list):
     create_instances_of_webdriver(selenium, driver, user_list, tmpdir,
                                   tmp_memory, driver_kwargs, driver_type,
                                   firefox_logging, firefox_path, xvfb,
@@ -30,12 +28,7 @@ def login_to_oz_using_gui(host_list, selenium, driver, tmpdir, tmp_memory, xvfb,
 
     for user, host_name in zip(parse_seq(user_list),
                                parse_seq(host_list)):
-        if 'panel' in host_name.lower().split():
-            g_login_to_panel_using_basic_auth(selenium, user, user,
-                                              panel_login_page, users)
-        else:
-            g_login_to_zone_using_basic_auth(selenium, user, user,
-                                             oz_login_page, users)
+        g_login_using_basic_auth(selenium, user, user, login_page, users)
 
     for browser, user in zip(parse_seq(browser_id_list), parse_seq(user_list)):
         selenium[browser] = selenium[user]
@@ -45,8 +38,8 @@ def login_to_oz_using_gui(host_list, selenium, driver, tmpdir, tmp_memory, xvfb,
 
 def visit_op(selenium, browser_id, oz_page, provider_name):
     providers_panel = oz_page(selenium[browser_id])['providers']
-    providers_panel[provider_name].click()
-    providers_panel.popover.visit_provider_button()
+    providers_panel[provider_name]()
+    providers_panel.popover.visit_provider()
 
 
 @given(parsers.re('opened (?P<providers_list>.*) Oneprovider view in web GUI by '
@@ -55,6 +48,6 @@ def g_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts):
     providers_list = list_parser(providers_list)
     for browser_id, provider in izip_longest(list_parser(browser_id_list),
                                              providers_list,
-                                             fillvalue=providers_list[0]):
+                                             fillvalue=providers_list[-1]):
         visit_op(selenium, browser_id, oz_page, hosts[provider]['name'])
     g_wait_for_op_session_to_start(selenium, browser_id_list)

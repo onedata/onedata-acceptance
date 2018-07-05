@@ -1,4 +1,4 @@
-"""Utils and fixtures to facilitate operations on groups page in Onezone gui"""
+"""Utils to facilitate operations on groups page in Onezone gui"""
 
 __author__ = "Michal Stanisz"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
@@ -7,38 +7,28 @@ __license__ = "This software is released under the MIT license cited in " \
 
 
 from tests.gui.utils.core.base import PageObject
-from tests.gui.utils.core.web_elements import Input, Button, NamedButton, WebItemsSequence, Label, WebItem
+from tests.gui.utils.core.web_elements import (Button, NamedButton,
+                                               Label, WebItem, WebItemsSequence)
+from tests.gui.utils.onezone.generic_page import Element, GenericPage
 from .common import EditBox, InputBox
-
-
-class Group(PageObject):
-    name = Label('.one-label')
-    support_size = Label('.status-toolbar .oneicon-null') #!!!!!!
-    support_providers_number = Label('.status-toolbal .oneicon-provider') #!!!!!!!
 
 
 class GroupOverviewPage(PageObject):
     group_name = Label('.header-row .name-editor')
-    rename_button = Button('.header-row .oneicon-rename')
-    leave_group_button = NamedButton('.header-row button', text='Leave group')
-    edit_name_box = WebItem('.header-row .name-editor', cls=EditBox)
+    rename = Button('.header-row .oneicon-rename')
+    leave_group = NamedButton('.header-row button',
+                              text='Leave group')
+    edit_name_box = WebItem('.header-row .name-editor',
+                            cls=EditBox)
 
 
-class GroupsPage(PageObject):
-    name = id = Label('.row-heading .col-title')
-    get_started_button = NamedButton('.btn-default', text='Get started')
+class GroupsPage(GenericPage):
+    elements_list = WebItemsSequence('.sidebar-groups '
+                                     'li.one-list-item.clickable', cls=Element)
 
-    create_group_button = Button('.oneicon-add-filled')
-    join_group_button = Button('.oneicon-join-plug')
-
-    groups_list = WebItemsSequence('.sidebar-groups li.one-list-item.clickable', cls=Group)
+    create_group = Button('.oneicon-add-filled')
+    join_group = Button('.oneicon-join-plug')
 
     input_box = WebItem('.content-info-content-container', cls=InputBox)
-    group_overview_page = WebItem('.main-content', cls=GroupOverviewPage)
+    overview_page = WebItem('.main-content', cls=GroupOverviewPage)
 
-    def __getitem__(self, item):
-        item = item.lower()
-        for group in self.groups_list:
-            if group.name == item:
-                return group
-        raise RuntimeError('No group named "{}" found in Groups Page'.format(item))
