@@ -26,7 +26,7 @@ UserCred = namedtuple('UserCredentials', ['username', 'password', 'id', 'token']
 
 @given(parsers.parse('initial users configuration in "{host}" '
                      'Onezone service:\n{config}'))
-def users_creation(host, config, admin_credentials, hosts, users):
+def users_creation(host, config, admin_credentials, hosts, users, rm_users):
     zone_hostname = hosts[host]['hostname']
     users[admin_credentials.username] = _create_admin_in_zone(zone_hostname,
                                                               admin_credentials)
@@ -35,7 +35,7 @@ def users_creation(host, config, admin_credentials, hosts, users):
         username, options = _parse_user_info(user_config)
         try:
             user_cred = _create_user(zone_hostname, admin_credentials,
-                                     username, options)
+                                     username, options, rm_users)
             _configure_user(zone_hostname, user_cred, options)
         except Exception as ex:
             _rm_users(zone_hostname, admin_credentials, users_db)
@@ -68,18 +68,14 @@ def _parse_user_info(user_config):
         return username, options
 
 
-def _create_user(zone_hostname, admin_credentials, username, options):
+def _create_user(zone_hostname, admin_credentials, username, options, rm_users):
     password = options.get('password', 'password')
     generate_token = options.get('generate_token', True)
     user_conf_details = {'username': username,
                          'password': password,
                          'userRole': options.get('user role', 'regular')}
-    # if user already exist (possible remnants of previous tests) skip test
-    try:
-        resp = http_get(ip=zone_hostname, port=PANEL_REST_PORT,
-                        path=get_panel_rest_path('users', username),
-                        auth=(admin_credentials.username, admin_credentials.password))
-    except HTTPNotFound:
+
+    def _create_new_user():
         http_post(ip=zone_hostname, port=PANEL_REST_PORT,
                   path=get_panel_rest_path('users'),
                   auth=(admin_credentials.username, admin_credentials.password),
@@ -92,24 +88,37 @@ def _create_user(zone_hostname, admin_credentials, username, options):
                             path=get_zone_rest_path('user'),
                             auth=(username, password)).json()
         user_id = response['userId']
-        token = (_create_token(zone_hostname, username, password) 
+        token = (_create_token(zone_hostname, username, password)
                  if generate_token else None)
-        return UserCred(username=username, password=password, id=user_id, 
+        return UserCred(username=username, password=password, id=user_id,
                         token=token)
+
+    # if user already exist (possible remnants of previous tests) skip test
+    try:
+        resp = http_get(ip=zone_hostname, port=PANEL_REST_PORT,
+                        path=get_panel_rest_path('users', username),
+                        auth=(admin_credentials.username, admin_credentials.password)).json()
+    except HTTPNotFound:
+        return _create_new_user()
 
     except HTTPError:
         skip('failed to create "{}" user'.format(username))
     else:
-        skip('"{}" user already exist'.format(username))
+        if rm_users:
+            _rm_user(zone_hostname, admin_credentials,
+                     UserCred(username, password, resp['userId'], None), True)
+            return _create_new_user()
+        else:
+            skip('"{}" user already exist'.format(username))
 
 
 def _configure_user(zone_hostname, user_cred, options):
-    login = options.get('login', None)
-    if login:
+    alias = options.get('alias', None)
+    if alias:
         http_patch(ip=zone_hostname, port=OZ_REST_PORT,
-                    path=get_zone_rest_path('user'),
-                    auth=(user_cred.username, user_cred.password),
-                    data=json.dumps({'login': login}))
+                   path=get_zone_rest_path('user'),
+                   auth=(user_cred.username, user_cred.password),
+                   data=json.dumps({'alias': alias}))
 
 
 def _rm_users(zone_hostname, admin_credentials, users_db,

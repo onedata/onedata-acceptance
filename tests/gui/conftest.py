@@ -90,6 +90,9 @@ def pytest_addoption(parser):
 
     group.addoption('--add-test-domain', action="store_true",
                     help='If set test domain is added to /etc/hosts')
+    group.addoption('--rm-users', action='store_true',
+                    help='If present user will be recreated if it exists at '
+                         'the start of test')
 
 
 @fixture(scope='session')
@@ -159,6 +162,11 @@ def hosts(request):
     docker_exec(zone_container_id, set_debug_cmd.format('oz'))
 
     return h
+
+
+@fixture
+def rm_users(request):
+    return request.config.getoption('--rm-users')
 
 
 @fixture
