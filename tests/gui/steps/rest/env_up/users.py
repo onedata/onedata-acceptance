@@ -68,6 +68,26 @@ def _parse_user_info(user_config):
         return username, options
 
 
+def _create_new_user(zone_hostname, admin_credentials, username, password,
+                     user_conf_details, generate_token):
+    http_post(ip=zone_hostname, port=PANEL_REST_PORT,
+              path=get_panel_rest_path('users'),
+              auth=(admin_credentials.username, admin_credentials.password),
+              data=json.dumps(user_conf_details))
+
+    # user is created in zone panel and not zone itself
+    # so for them to be created also in zone
+    # login/rest call to zone using his credentials must be made
+    response = http_get(ip=zone_hostname, port=OZ_REST_PORT,
+                        path=get_zone_rest_path('user'),
+                        auth=(username, password)).json()
+    user_id = response['userId']
+    token = (_create_token(zone_hostname, username, password)
+             if generate_token else None)
+    return UserCred(username=username, password=password, id=user_id,
+                    token=token)
+
+
 def _create_user(zone_hostname, admin_credentials, username, options, rm_users):
     password = options.get('password', 'password')
     generate_token = options.get('generate_token', True)
@@ -75,31 +95,14 @@ def _create_user(zone_hostname, admin_credentials, username, options, rm_users):
                          'password': password,
                          'userRole': options.get('user role', 'regular')}
 
-    def _create_new_user():
-        http_post(ip=zone_hostname, port=PANEL_REST_PORT,
-                  path=get_panel_rest_path('users'),
-                  auth=(admin_credentials.username, admin_credentials.password),
-                  data=json.dumps(user_conf_details))
-
-        # user is created in zone panel and not zone itself
-        # so for them to be created also in zone
-        # login/rest call to zone using his credentials must be made
-        response = http_get(ip=zone_hostname, port=OZ_REST_PORT,
-                            path=get_zone_rest_path('user'),
-                            auth=(username, password)).json()
-        user_id = response['userId']
-        token = (_create_token(zone_hostname, username, password)
-                 if generate_token else None)
-        return UserCred(username=username, password=password, id=user_id,
-                        token=token)
-
     # if user already exist (possible remnants of previous tests) skip test
     try:
         resp = http_get(ip=zone_hostname, port=PANEL_REST_PORT,
                         path=get_panel_rest_path('users', username),
                         auth=(admin_credentials.username, admin_credentials.password)).json()
     except HTTPNotFound:
-        return _create_new_user()
+        return _create_new_user(zone_hostname, admin_credentials, username,
+                                password, user_conf_details, generate_token)
 
     except HTTPError:
         skip('failed to create "{}" user'.format(username))
@@ -107,7 +110,8 @@ def _create_user(zone_hostname, admin_credentials, username, options, rm_users):
         if rm_users:
             _rm_user(zone_hostname, admin_credentials,
                      UserCred(username, password, resp['userId'], None), True)
-            return _create_new_user()
+            return _create_new_user(zone_hostname, admin_credentials, username,
+                                    password, user_conf_details, generate_token)
         else:
             skip('"{}" user already exist'.format(username))
 

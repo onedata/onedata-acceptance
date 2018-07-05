@@ -91,8 +91,9 @@ def pytest_addoption(parser):
     group.addoption('--add-test-domain', action="store_true",
                     help='If set test domain is added to /etc/hosts')
     group.addoption('--rm-users', action='store_true',
-                    help='If present user will be recreated if it exists at '
-                         'the start of test')
+                    help='If set users created in previous tests will be '
+                         'removed if their names collide with the names '
+                         'of users that will be created in current test')
 
 
 @fixture(scope='session')
