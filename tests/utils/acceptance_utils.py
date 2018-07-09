@@ -2,7 +2,7 @@
 acceptance tests of onedata.
 """
 __author__ = "Jakub Kudzia, Piotr Ociepka"
-__copyright__ = "Copyright (C) 2015 ACK CYFRONET AGH"
+__copyright__ = "Copyright (C) 2015-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
@@ -17,20 +17,20 @@ from types import CodeType
 
 
 def list_parser(list):
-    return [el.strip() for el in list.strip("[]").split(',') if el != ""]
+    return [el.strip() for el in list.strip('[]').split(',') if el != '']
 
 
 def make_arg_list(arg):
-    return "[" + arg + "]"
+    return '[' + arg + ']'
 
 
 CO_ARG_NAMES = [
-    "co_argcount", "co_nlocals", "co_stacksize", "co_flags", "co_code",
-    "co_consts", "co_names", "co_varnames", "co_filename", "co_name",
-    "co_firstlineno", "co_lnotab", "co_freevars", "co_cellvars",
+    'co_argcount', 'co_nlocals', 'co_stacksize', 'co_flags', 'co_code',
+    'co_consts', 'co_names', 'co_varnames', 'co_filename', 'co_name',
+    'co_firstlineno', 'co_lnotab', 'co_freevars', 'co_cellvars',
 ]
 if six.PY3:
-    CO_ARG_NAMES.insert(1, "co_kwonlyargcount")
+    CO_ARG_NAMES.insert(1, 'co_kwonlyargcount')
 
 
 def wt(name, converters=None):

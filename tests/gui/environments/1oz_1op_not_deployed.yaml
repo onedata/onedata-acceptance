@@ -24,7 +24,10 @@ forceImagePull: true
 onezone:
   batchConfig: false
 
+oneprovidersPanelOverlayConfig: &oneprovidersPanelOverlayConfig |-
+  [{op_worker, [{soft_quota_limit_size, 0}]}].
 
 oneprovider-1:
   batchConfig: false
   addTestDomain: true
+  workerOverlayConfig: *oneprovidersPanelOverlayConfig

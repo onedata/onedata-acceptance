@@ -2,7 +2,7 @@
 """
 
 __author__ = "Jakub Liput"
-__copyright__ = "Copyright (C) 2016 ACK CYFRONET AGH"
+__copyright__ = "Copyright (C) 2016-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
@@ -19,6 +19,7 @@ MAIN_MENU_TAB_TO_URL = {'spaces': 'spaces',
                         'groups': 'groups',
                         'data': 'data',
                         'shared': 'shares',
+                        'transfers': 'transfers',
                         'providers': 'providers'}
 
 
