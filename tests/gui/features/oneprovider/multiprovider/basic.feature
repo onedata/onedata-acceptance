@@ -28,10 +28,7 @@ Feature: Oneprovider functionality using multiple providers
     And user opened browser window
     And user of browser opened onezone page
     And user of browser logged as user1 to Onezone service
-    And user of browser expanded the "go to your files" Onezone sidebar panel
-    And user of browser clicked on "oneprovider-1" provider in expanded "GO TO YOUR FILES" Onezone panel
-    And user of browser clicked on the "Go to your files" button in "oneprovider-1" provider's popup displayed on world map
-    And user of browser seen that Oneprovider session has started
+    And opened oneprovider-1 Oneprovider view in web GUI by user of browser
 
   Scenario: User creates space in one provider and sees that it was created also in other provider
     When user of browser clicks on the "spaces" tab in main menu sidebar

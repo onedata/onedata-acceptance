@@ -84,7 +84,7 @@ A browser selected for tests (with ``--driver``) should be also installed.
 
 Example: (invoke from onedata repo root dir)
 ```
-./test_run.py -t tests/gui --test-type gui --driver=Chrome -i onedata/acceptance_gui:lates --local --update-etc-hosts --xvfb --xvfb-recording=failed
+./test_run.py -t tests/gui --test-type gui --driver=Chrome -i onedata/acceptance_gui:latest --local --update-etc-hosts --xvfb --xvfb-recording=failed
 ```
 
 New parameters:

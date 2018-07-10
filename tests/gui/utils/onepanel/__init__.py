@@ -17,6 +17,7 @@ from .nodes import NodesContentPage
 from .provider import ProviderContentPage
 from .spaces import SpacesContentPage
 from .storages import StorageContentPage
+from .init_page import PanelInitPage
 
 
 class Sidebar(PageObject):
@@ -38,6 +39,7 @@ class Content(BaseContent):
 
 
 class Onepanel(OnePage):
+    init_page = WebItem('.container', cls=PanelInitPage)
     content = WebItem('.col-content', cls=Content)
     _main_sidebar = WebElement('#col-sidebar')
     _sub_sidebar = WebElement('#sidenav-sidebar')
