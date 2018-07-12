@@ -206,6 +206,12 @@ parser.add_argument(
     help='If present run environment using sources',
     dest='sources')
 
+parser.add_argument(
+    '--local_charts',
+    action='store_true',
+    help='If present local charts will be used',
+    dest='local_charts')
+
 
 [args, pass_args] = parser.parse_known_args()
 
@@ -263,6 +269,11 @@ test_runner_pod = '''{{
                         "mountPath": "/etc/passwd",
                         "name": "etc-passwd",
                         "readOnly": true
+                    }},
+                    {{
+                        "mountPath": "/root/.kube/config",
+                        "name": "kube-conf",
+                        "readOnly": true
                     }}
                     ]
                 }}
@@ -291,6 +302,12 @@ test_runner_pod = '''{{
                 "hostPath": {{
                     "path": "/etc/passwd"
                 }}
+            }},
+            {{ 
+                "name": "kube-conf",
+                "hostPath": {{
+                    "path": "{home}/.kube/config"
+                }}
             }}
             ]
         }}
@@ -318,6 +335,8 @@ if args.clean:
     up_arguments.extend(['-f'])
 if args.sources:
     up_arguments.extend(['-s'])
+if args.local_charts:
+    up_arguments.extend(['-l'])
 up_arguments.extend(['{}'.format(os.path.join(script_dir, args.env_file))])
 run_onenv_command('up', up_arguments)
 
@@ -363,7 +382,8 @@ ALL       ALL = (ALL) NOPASSWD: ALL
     test_runner_pod = test_runner_pod.format(command=command,
                                              script_dir=script_dir,
                                              minikube_script_dir=minikube_script_dir,
-                                             image=args.image)
+                                             image=args.image,
+                                             home=os.path.expanduser('~'))
 
     cmd = ['kubectl', 'run', '-i', '--rm', '--restart=Never', 'test-runner',
            '--overrides={}'.format(test_runner_pod), '--image={}'.format(args.image),
@@ -372,7 +392,7 @@ ALL       ALL = (ALL) NOPASSWD: ALL
 ret = call(cmd, stdin=None, stderr=None, stdout=None)
 
 logdir = map_test_type_to_logdir(args.test_type)
-if args.test_type in ['gui', 'mixed_swaggers']:
+if args.test_type in ['gui', 'mixed_swaggers', 'mixed_oneclient']:
     timestamped_logdirs = os.listdir(logdir)
     latest_logdir = max(timestamped_logdirs, key=extract_number)
     run_onenv_command('export', [os.path.join(logdir, latest_logdir)])

@@ -7,6 +7,7 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 import yaml
+from tests.utils.acceptance_utils import wt
 from pytest_bdd import when, then, given, parsers
 from tests.gui.utils.generic import parse_seq
 from tests.gui.steps.oneprovider.permissions import *
@@ -252,14 +253,16 @@ def see_items_in_op_gui(selenium, browser_id, path, subfiles, tmp_memory,
         assert_items_absence_in_file_browser(browser_id, subfiles, tmp_memory)
     else:
         assert_items_presence_in_file_browser(browser_id, subfiles, tmp_memory)
-   
 
-@then(parsers.re('user of (?P<browser_id>\w+) (?P<res>.*) to create '
-                 '(?P<item_type>directory|file) "(?P<name>.*)" in '
-                 '"(?P<path>.*)" in "(?P<space>.*)"'))
-def create_item_in_op_gui(selenium, browser_id, path, item_type, name, 
-                          tmp_memory, op_page, res, space):
 
+@wt(parsers.re('user of (?P<browser_id>\w+) (?P<res>.*) to create '
+               '(?P<item_type>directory|file) "(?P<name>[\w._-]+)" '
+               '(in "(?P<path>.*)" )?in "(?P<space>.*)"'))
+def create_item_in_op_gui(selenium, browser_id, item_type, name,
+                          tmp_memory, op_page, res, space, path):
+
+    # change None to empty string if path not given
+    path = path if path else ''
     item_name = _select_item(selenium, browser_id, space, op_page, tmp_memory, 
                              path)
     if path:
