@@ -60,7 +60,7 @@ class SpaceSupportAddForm(PageObject):
 
 class SpaceInfo(PageObject):
     space_name = Label('.space-name')
-    space_id = Label('.space-id')
+    space_id = Input('.space-info .content-row:nth-child(2) input[type=text]')
     storage_name = Label('.space--provider-storage')
     _import_strategy = WebElement('.space-import')
     _update_strategy = WebElement('.space-update')
