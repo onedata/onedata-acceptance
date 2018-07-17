@@ -19,7 +19,7 @@ import glob
 import xml.etree.ElementTree as ElementTree
 import shutil
 import one_env.scripts.user_config as user_config
-from tests.conftest import map_test_type_to_logdir
+from tests.test_type import map_test_type_to_logdir
 
 
 def service_name_to_alias_mapping(name):
