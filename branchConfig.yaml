@@ -3,7 +3,9 @@ default: develop
 
 branches:
   # Specification of branches from which docker images list will be pulled.
+  # Onezone packages plan
   onezone: current_branch
+  # Oneprovider packages plan
   onedata: current_branch
 
   # Specification of branches from which sources for components will be pulled.
