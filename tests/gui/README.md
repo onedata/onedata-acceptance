@@ -82,9 +82,14 @@ Additional applications required in system:
 
 A browser selected for tests (with ``--driver``) should be also installed.
 
-Example: (invoke from onedata repo root dir)
+Example for Linux: (invoke from onedata repo root dir)
 ```
-./test_run.py -t tests/gui --test-type gui --driver=Chrome -i onedata/acceptance_gui:latest --local --update-etc-hosts --xvfb --xvfb-recording=failed
+./test_run.py -t tests/gui --test-type gui --driver=Chrome -i onedata/acceptance_gui:latest --local --no-clean --update-etc-hosts --xvfb --xvfb-recording=failed
+```
+
+Example for OSX: (invoke from onedata repo root dir)
+```
+/test_run.py -t tests/gui --test-type gui --driver=Chrome -i onedata/acceptance_gui:latest --local --no-clean --no-xvfb
 ```
 
 New parameters:
@@ -92,7 +97,7 @@ New parameters:
 * ``--local`` - starts tests on host instead of starting them in pod.
 * ``--update-etc-hosts`` - adds entries to ``/etc/hosts`` for all pods in deployment. When using this option script has to be run with root privileges.   
 * ``--add-test-domain`` - when running tests on local machine option for adding entries to ``/etc/hosts`` is turned off by default. This may
-cause that some test will fail. You can enable adding entries to ``/etc/hosts`` using ``-add-test-domain`` option or add entries manually.
+cause that some test will fail. You can enable adding entries to ``/etc/hosts`` using ``--add-test-domain`` option or add entries manually.
 
 
 Test reports
