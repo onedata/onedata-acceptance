@@ -56,9 +56,9 @@ class SetupIP(PageObject):
         return str(self.parent)
 
 
-class Step4(PageObject):
+class StepWebCert(PageObject):
     next_step = Button('button.btn-cert-next')
-    lets_encrypt_toggle = Toggle('.one-way-toggle-control')
+    lets_encrypt_toggle = Toggle('.toggle-field-letsEncrypt.one-way-toggle')
 
     def __str__(self):
         return str(self.parent)
@@ -89,7 +89,7 @@ class Deployment(PageObject):
     step1 = WebItem(_deployment_step_css, cls=Step1)
     step2 = WebItem(_deployment_step_css, cls=Step2)
     setup_ip = WebItem(_deployment_step_css, cls=SetupIP)
-    step4 = WebItem(_deployment_step_css, cls=Step4)
+    webcertstep = WebItem(_deployment_step_css, cls=StepWebCert)
     step5 = WebItem(_deployment_step_css, cls=Step5)
     laststep = WebItem(_deployment_step_css, cls=LastStep)
 
