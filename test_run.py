@@ -312,7 +312,7 @@ if oz_image:
     up_arguments.extend(['-zi', oz_image])
 if op_image:
     info('Using oneprovider image: {}'.format(op_image))
-    up_arguments.extend(['-zi', op_image])
+    up_arguments.extend(['-pi', op_image])
 if args.clean:
     up_arguments.extend(['-f'])
 if args.sources:
