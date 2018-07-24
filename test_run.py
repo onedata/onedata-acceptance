@@ -120,11 +120,13 @@ def extract_number(filename):
 
 
 def parse_image(file_path, ):
-    with open(file_path, 'r') as images_cfg_file:
-        images = json.load(images_cfg_file)
-        image = images.get('git-branch')
-
-        return image
+    try:
+        with open(file_path, 'r') as images_cfg_file:
+            images = json.load(images_cfg_file)
+            image = images.get('git-branch')
+            return image
+    except FileNotFoundError:
+        return None
 
 
 parser = argparse.ArgumentParser(
@@ -294,15 +296,23 @@ test_runner_pod = '''{{
 }}'''
 
 up_arguments = []
-oz_image = parse_image(ZONE_IMAGES_CFG_PATH)
-op_image = parse_image(PROVIDER_IMAGES_CFG_PATH)
 
-info('Using following images: \n'
-     'oz-image: {}\n'
-     'op-image: {}'.format(oz_image, op_image))
+if args.oz_image:
+    oz_image = args.oz_image
+else:
+    oz_image = parse_image(ZONE_IMAGES_CFG_PATH)
 
-up_arguments.extend(['-pi', op_image])
-up_arguments.extend(['-zi', oz_image])
+if args.op_image:
+    op_image = args.op_image
+else:
+    op_image = parse_image(PROVIDER_IMAGES_CFG_PATH)
+
+if oz_image:
+    info('Using onezone image: {}'.format(oz_image))
+    up_arguments.extend(['-zi', oz_image])
+if op_image:
+    info('Using oneprovider image: {}'.format(op_image))
+    up_arguments.extend(['-pi', op_image])
 if args.clean:
     up_arguments.extend(['-f'])
 if args.sources:
