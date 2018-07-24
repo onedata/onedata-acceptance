@@ -12,6 +12,7 @@ from pytest_bdd import when, then, parsers
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.generic import repeat_failed, transform
+from tests.utils.acceptance_utils import wt
 
 
 @when(parsers.re('user of (?P<browser_id>.*?) sees that (?P<attr>ID|'
@@ -95,6 +96,14 @@ def wt_click_on_btn_in_modify_provider_detail_form(selenium, browser_id, onepane
 def click_discard_button_on_modal_in_provider_panel(selenium, browser_id, onepanel):
     driver = selenium[browser_id]
     onepanel(driver).discard_button()
+
+
+@wt(parsers.parse('user of {browser_id} clicks on Discard '
+                  'button in the configure web cert modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def wt_click_on_discard_btn_in_domain_change_modal(selenium, browser_id, onepanel,
+                                                   modals):
+    modals(selenium[browser_id]).configure_web_cert.discard()
 
 
 @when(parsers.parse('user of {browser_id} activates Request a subdomain toggle'))

@@ -10,6 +10,7 @@ from .login import LoginFormModal
 from .deploying_cluster import ClusterDeploymentModal
 from .revoke_space_support import RevokeSpaceSupportModal
 from .edit_permissions import EditPermissionsModal
+from .configure_web_cert import ConfigureWebCertModal
 from .remove import RemoveModal
 from .leave_group import LeaveGroupModal
 from .leave_parent import LeaveParentModal
@@ -30,6 +31,7 @@ class Modals(object):
                                    cls=RevokeSpaceSupportModal)
     login = WebItem('#login-form-modal', cls=LoginFormModal)
     edit_permissions = WebItem('#edit-permissions-modal', cls=EditPermissionsModal)
+    configure_web_cert = WebItem('#configure-web-cert-modal', cls=ConfigureWebCertModal)
 
     remove_group = WebItem('.remove-group-modal.modal.in .modal-dialog', cls=RemoveModal)
     leave_group = WebItem('.leave-group-modal.modal.in .modal-dialog', cls=LeaveGroupModal)
