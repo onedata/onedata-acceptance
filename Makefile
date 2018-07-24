@@ -84,3 +84,16 @@ build_swaggers:
 	cd onepanel_swagger && make python-client && cd generated/python && mv onepanel_client ../../../tests/mixed_swaggers
 	cd oneprovider_swagger && make python-client && cd generated/python && mv oneprovider_client ../../../tests/mixed_swaggers
 	cd cdmi_swagger && make python-client  && cd generated/python && mv cdmi_client ../../../tests/mixed_swaggers
+
+
+##
+## Clean
+##
+
+clean: clean_swaggers
+
+clean_swaggers:
+	rm -rf tests/mixed_swaggers/onezone_client
+	rm -rf tests/mixed_swaggers/onepanel_client
+	rm -rf tests/mixed_swaggers/oneprovider_client
+	rm -rf tests/mixed_swaggers/cdmi_client

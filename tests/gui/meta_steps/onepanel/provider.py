@@ -15,6 +15,7 @@ from tests.gui.steps.common.miscellaneous import *
 from tests.gui.steps.onepanel.deployment import *
 from tests.gui.steps.onepanel.login import *
 from tests.gui.steps.common.url import *
+from tests.gui.steps.onepanel.provider import wt_click_on_discard_btn_in_domain_change_modal
 import yaml
 
 
@@ -22,9 +23,10 @@ def modify_provider_with_given_name_in_op_panel_using_gui(selenium, user,
                                                           onepanel,
                                                           provider_name,
                                                           new_provider_name,
-                                                          need_auth, new_domain,
+                                                          new_domain,
                                                           panel_login_page,
-                                                          users, hosts):
+                                                          users, hosts,
+                                                          browser_id, modals):
     sidebar = 'CLUSTERS'
     sub_item = 'Provider'
     button = 'Modify provider details'
@@ -46,10 +48,8 @@ def modify_provider_with_given_name_in_op_panel_using_gui(selenium, user,
                                                    red_point_attr, onepanel)
     wt_click_on_btn_in_modify_provider_detail_form(selenium, user, onepanel)
     notify_visible_with_text(selenium, user, notify_type, notify_text_regexp)
-    if not need_auth:
-        assert_being_redirected_to_page('/login', selenium, user)
-        wt_login_to_panel_using_basic_auth(selenium, user, user,
-                                           panel_login_page, users)
+    wt_click_on_discard_btn_in_domain_change_modal(selenium, browser_id, onepanel,
+                                                   modals)
     wt_assert_value_of_provider_attribute(selenium, user, prov_name_attr,
                                           new_provider_name, onepanel)
     wt_assert_value_of_provider_attribute(selenium, user, red_point_attr,
@@ -133,7 +133,8 @@ def register_provider_in_op_using_gui(selenium, user, onepanel, hosts, config):
     #step3
     wt_click_setup_ip_in_deployment_setup_ip(selenium, user, onepanel)
 
-    #step4
+    # web cert step
+    wt_deactivate_lets_encrypt_toggle_in_deployment_step4(selenium, user, onepanel)
     wt_click_on_btn_in_deployment_step(selenium, user, 'Next step', webcertstep, 
                                        onepanel)
 
