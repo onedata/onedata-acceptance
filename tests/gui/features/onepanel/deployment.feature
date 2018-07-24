@@ -36,13 +36,19 @@ Feature: Deployment process using panel of zone and provider
     And user of browser1 clicks on "Setup IP addresses" button in deployment setup IP step
     And user of browser2 sees that IP address of "oneprovider-1" host is that of "oneprovider-1" in deployment setup IP step
     And user of browser2 clicks on "Setup IP addresses" button in deployment setup IP step
+
+    # web cert in zone panel
+    And user of browser1 deactivates lets encrypt toggle in web cert step of deployment process in Onepanel
+    And user of browser1 clicks on Next step button in web cert step of deployment process in Onepanel
+
+    # check config in zone panel
     And user of browser1 clicks on Manage the cluster button in last step of deployment process in Onepanel
     Then user of browser1 sees that [Database, Cluster Worker, Cluster Manager, Primary Cluster Manager] options are enabled for .*onezone.* host in Nodes page in Onepanel
     And user of browser1 sees that [Database, Cluster Worker, Cluster Manager, Primary Cluster Manager] options cannot be changed for .*onezone.* host in Nodes page in Onepanel
 
-
-    # step4 in provider panel
-    And user of browser2 clicks on Next step button in step 4 of deployment process in Onepanel
+    # web cert in provider panel
+    And user of browser2 deactivates lets encrypt toggle in web cert step of deployment process in Onepanel
+    And user of browser2 clicks on Next step button in web cert step of deployment process in Onepanel
 
     # step5 in provider panel
     And user of browser2 selects POSIX from storage selector in step 5 of deployment process in Onepanel
