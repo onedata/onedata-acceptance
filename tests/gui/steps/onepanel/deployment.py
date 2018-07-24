@@ -197,8 +197,6 @@ def wt_activate_lets_encrypt_toggle_in_deployment_step4(selenium, browser_id,
                  'in web cert step of deployment process in Onepanel'))
 def wt_deactivate_lets_encrypt_toggle_in_deployment_step4(selenium, browser_id,
                                                           onepanel):
-    import pdb
-    pdb.set_trace()
     (onepanel(selenium[browser_id])
         .content
         .deployment
