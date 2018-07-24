@@ -35,6 +35,7 @@ from tests.gui.steps.onezone.access_tokens import *
 from tests.gui.steps.onezone.data_space_management import *
 from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.manage_account import *
+from tests.gui.steps.onezone.groups import *
 
 from tests.gui.steps.oneprovider.common import *
 from tests.gui.steps.oneprovider.data_tab import *
@@ -65,3 +66,4 @@ scenarios('../features/onezone/access_tokens.feature')
 scenarios('../features/onezone/login_page.feature')
 scenarios('../features/onezone/providers.feature')
 scenarios('../features/onezone/user_alias.feature')
+scenarios('../features/onezone/groups.feature')
