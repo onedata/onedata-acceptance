@@ -77,7 +77,7 @@ def register_provider_in_op_using_gui(selenium, user, onepanel, hosts, config):
     record = 'New cluster'
     step2 = 'step 2'
     step3 = 'step 3'
-    step4 = 'step 4'
+    webcertstep = 'web cert step'
     step5 = 'step 5'
     storage_type_attr = 'Storage type'
     mount_point_attr = 'Mount point'
@@ -134,7 +134,7 @@ def register_provider_in_op_using_gui(selenium, user, onepanel, hosts, config):
     wt_click_setup_ip_in_deployment_setup_ip(selenium, user, onepanel)
 
     #step4
-    wt_click_on_btn_in_deployment_step(selenium, user, 'Next step', step4, 
+    wt_click_on_btn_in_deployment_step(selenium, user, 'Next step', webcertstep, 
                                        onepanel)
 
     #step5

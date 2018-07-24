@@ -19,7 +19,7 @@ unpack = tar xzf $(1).tar.gz
 ## Artifacts
 ##
 
-artifact: artifact_op_worker artifact_oz_worker artifact_cluster_manager artifact_onepanel
+artifact: artifact_op_worker artifact_oz_worker artifact_cluster_manager artifact_onepanel artifact_onezone artifact_onedata
 
 artifact_op_worker:
 	$(call unpack, op_worker)
@@ -33,6 +33,11 @@ artifact_cluster_manager:
 artifact_onepanel:
 	$(call unpack, onepanel)
 
+artifact_onezone:
+	$(call unpack, onezone)
+
+artifact_onedata:
+	$(call unpack, onedata)
 
 ##
 ## Submodules

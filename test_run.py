@@ -14,12 +14,18 @@ import sys
 import re
 from subprocess import *
 import yaml
+import json
 
 import glob
 import xml.etree.ElementTree as ElementTree
 import shutil
 import one_env.scripts.user_config as user_config
-from tests.conftest import map_test_type_to_logdir
+from one_env.scripts.console import info
+from tests.test_type import map_test_type_to_logdir
+
+
+ZONE_IMAGES_CFG_PATH = 'onezone_images/docker-dev-build-list.json'
+PROVIDER_IMAGES_CFG_PATH = 'oneprovider_images/docker-dev-build-list.json'
 
 
 def service_name_to_alias_mapping(name):
@@ -111,6 +117,16 @@ def parse_pods_cfg(pods_cfg):
 def extract_number(filename):
     s = re.findall("\d+\.\d+$", filename)
     return float(s[0]) if s else -1
+
+
+def parse_image(file_path, ):
+    try:
+        with open(file_path, 'r') as images_cfg_file:
+            images = json.load(images_cfg_file)
+            image = images.get('git-branch')
+            return image
+    except FileNotFoundError:
+        return None
 
 
 parser = argparse.ArgumentParser(
@@ -280,10 +296,23 @@ test_runner_pod = '''{{
 }}'''
 
 up_arguments = []
-if args.op_image:
-    up_arguments.extend(['-pi', args.op_image])
+
 if args.oz_image:
-    up_arguments.extend(['-zi', args.oz_image])
+    oz_image = args.oz_image
+else:
+    oz_image = parse_image(ZONE_IMAGES_CFG_PATH)
+
+if args.op_image:
+    op_image = args.op_image
+else:
+    op_image = parse_image(PROVIDER_IMAGES_CFG_PATH)
+
+if oz_image:
+    info('Using onezone image: {}'.format(oz_image))
+    up_arguments.extend(['-zi', oz_image])
+if op_image:
+    info('Using oneprovider image: {}'.format(op_image))
+    up_arguments.extend(['-pi', op_image])
 if args.clean:
     up_arguments.extend(['-f'])
 if args.sources:
