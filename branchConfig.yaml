@@ -1,5 +1,5 @@
 # Used when specific branch for given repo does not exist.
-default: develop
+default: release/18.07.0-alpha
 
 branches:
   # Specification of branches from which docker images list will be pulled.
