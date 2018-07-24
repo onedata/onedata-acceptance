@@ -37,8 +37,7 @@ Feature: Provider management in Onepanel GUI
     And user of browser1 types test hostname of "oneprovider-1" to Domain input box in modify provider details form in Provider panel
     And user of browser1 clicks on Modify provider details button in provider details form in Provider panel
     And user of browser1 sees an info notify with text matching to: .*[Pp]rovider.*data.*modified.*
-    And user of browser1 should be redirected to /login page
-    And user of browser1 logs as admin to Onepanel service
+    And user of browser1 clicks on Discard button in the configure web cert modal
     And user of browser1 sees that Provider name attribute is equal to "pro1" in Provider panel
     And user of browser1 sees that Domain attribute is equal to test hostname of "oneprovider-1" in Provider panel
 

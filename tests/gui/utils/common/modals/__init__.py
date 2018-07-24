@@ -10,6 +10,7 @@ from .login import LoginFormModal
 from .deploying_cluster import ClusterDeploymentModal
 from .revoke_space_support import RevokeSpaceSupportModal
 from .edit_permissions import EditPermissionsModal
+from .configure_web_cert import ConfigureWebCertModal
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
@@ -26,6 +27,7 @@ class Modals(object):
                                    cls=RevokeSpaceSupportModal)
     login = WebItem('#login-form-modal', cls=LoginFormModal)
     edit_permissions = WebItem('#edit-permissions-modal', cls=EditPermissionsModal)
+    configure_web_cert = WebItem('#configure-web-cert-modal', cls=ConfigureWebCertModal)
 
     def __init__(self, driver):
         self.driver = driver
