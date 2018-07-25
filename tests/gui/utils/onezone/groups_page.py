@@ -8,29 +8,38 @@ __license__ = "This software is released under the MIT license cited in " \
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (Button, NamedButton,
-                                               Label, WebItem, WebItemsSequence)
+                                               Label, WebItem, WebItemsSequence, Input)
 from tests.gui.utils.onezone.generic_page import Element, GenericPage
 from .common import EditBox, InputBox
 
+class Group(Element):
+    menu = Button('.collapsible-toolbar-toggle')
+    input_field = Input('input')
+    confirm_button = Button('.save-icon')
+    cancel_button = Button('.cancel-icon')
+    members = NamedButton('.one-list-level-2 .item-header', text='Members')
+    parents = NamedButton('.one-list-level-2 .item-header', text='Parents')
 
-class GroupOverviewPage(PageObject):
-    group_name = Label('.header-row .name-editor')
-    rename = Button('.header-row .oneicon-rename')
-    leave_group = NamedButton('.header-row button',
-                              text='Leave group')
-    edit_name_box = WebItem('.header-row .name-editor',
-                            cls=EditBox)
+# TODO: Can be removed?
+#class GroupOverviewPage(PageObject):
+#    group_name = Label('.header-row .name-editor')
+#    rename = Button('.header-row .oneicon-rename')
+#    leave_group = NamedButton('.header-row button',
+#                              text='Leave group')
+#    edit_name_box = WebItem('.header-row .name-editor',
+#                            cls=EditBox)
 
 
 class GroupsPage(GenericPage):
-    elements_list = WebItemsSequence('.sidebar-groups '
-                                     'li.one-list-item.clickable', cls=Element)
+    elements_list = WebItemsSequence('.sidebar-groups .one-list .one-list-item.clickable.ember-view', cls=Group)
 
     create_group = Button('.oneicon-add-filled')
     join_group = Button('.oneicon-join-plug')
 
+    group_menu = WebItemsSequence('div.webui-popover[style*=\'display: block;\'] ul li', cls=Element)
+
     input_box = WebItem('.content-info-content-container', cls=InputBox)
-    overview_page = WebItem('.main-content', cls=GroupOverviewPage)
+    # overview_page = WebItem('.main-content', cls=GroupOverviewPage)
 
     join_space = Button('.minimized-item.clickable.join-space-action .oneicon-space-join')
     menu_button = Button('.collapsible-toolbar-toggle ')
