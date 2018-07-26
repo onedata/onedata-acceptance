@@ -3,7 +3,7 @@ provider management in onepanel web GUI.
 """
 
 __author__ = "Bartosz Walkowicz"
-__copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
+__copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
@@ -12,6 +12,7 @@ from pytest_bdd import when, then, parsers
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.generic import repeat_failed, transform
+from tests.utils.acceptance_utils import wt
 
 
 @when(parsers.re('user of (?P<browser_id>.*?) sees that (?P<attr>ID|'
@@ -87,6 +88,22 @@ def wt_type_host_domain_to_in_box_in_provider_details_form(selenium, browser_id,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_btn_in_modify_provider_detail_form(selenium, browser_id, onepanel):
     onepanel(selenium[browser_id]).content.provider.form.modify_provider_details()
+
+
+@wt(parsers.parse('user of {browser_id} clicks on Discard '
+                  'button in the configure web cert modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def wt_click_on_discard_btn_in_domain_change_modal(selenium, browser_id, onepanel,
+                                                   modals):
+    # TODO: there is currently a bug in GUI - this modal does not appear sometimes
+    try:
+        modals(selenium[browser_id]).configure_web_cert.discard()
+    except RuntimeError as e:
+        import re
+        if re.match(r'no.*item found in modals', str(e)):
+            pass
+        else:
+            raise
 
 
 @when(parsers.parse('user of {browser_id} activates Request a subdomain toggle'))
