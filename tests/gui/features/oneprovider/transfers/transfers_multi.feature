@@ -193,7 +193,7 @@ Feature: Oneprovider transfers functionality using multiple browser instances
             name: dir1
             destination: oneprovider-2
             username: user1
-            total files: 2
+            total files: 3
             transferred: 50 MiB
             type: migration
             status: completed
@@ -208,7 +208,7 @@ Feature: Oneprovider transfers functionality using multiple browser instances
     And user of browser1 double clicks on item named "dir1" in file browser
     And user of browser1 refreshes site
     And user of browser1 sees file chunks for file "large_file.txt" as follows:
-            oneprovider-1: never synchronized
+            oneprovider-1: entirely empty
             oneprovider-2: entirely filled
     And user of browser1 sees file chunks for file "large_file(1).txt" as follows:
             oneprovider-1: entirely empty

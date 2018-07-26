@@ -39,10 +39,13 @@ def g_create_admin_in_panel(selenium, browser_id_list, onepanel, name, password)
 def wt_check_host_options_in_deployment_step1(selenium, browser_id, options,
                                               host_regexp, onepanel):
     options = [transform(option) for option in parse_seq(options)]
+    # without this, deployment failed randomly when launched locally
+    time.sleep(1)
     for host in onepanel(selenium[browser_id]).content.deployment.step1.hosts:
         if re.match(host_regexp, host.name):
             for option in options:
                 getattr(host, option).check()
+    time.sleep(1)
 
 
 @when(parsers.re('user of (?P<browser_id>.+?) types "(?P<text>.+?)" to '
@@ -82,10 +85,10 @@ def wt_type_property_to_in_box_in_deployment_step(selenium, browser_id, alias,
 
 
 @when(parsers.re('user of (?P<browser_id>.+?) clicks on (?P<btn>.+?) button '
-                 'in (?P<step>step 1|step 2|step 3|step 4|step 5|last step) of '
+                 'in (?P<step>step 1|step 2|step 3|web cert step|step 5|last step) of '
                  'deployment process in Onepanel'))
 @then(parsers.re('user of (?P<browser_id>.+?) clicks on (?P<btn>.+?) button '
-                 'in (?P<step>step 1|step 2|step 3|step 4|step 5|last step) of '
+                 'in (?P<step>step 1|step 2|step 3|web cert step|step 5|last step) of '
                  'deployment process in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_btn_in_deployment_step(selenium, browser_id, btn,
@@ -187,29 +190,29 @@ def wt_assert_ip_address_of_known_host_in_deployment_setup_ip(selenium, host,
 
 
 @when(parsers.re('user of (?P<browser_id>.*) activates lets encrypt toggle in '
-                 'step4 of deployment process in Onepanel'))
+                 'web cert step of deployment process in Onepanel'))
 @then(parsers.re('user of (?P<browser_id>.*) activates lets encrypt toggle in '
-                 'step4 of deployment process in Onepanel'))
+                 'web cert step of deployment process in Onepanel'))
 def wt_activate_lets_encrypt_toggle_in_deployment_step4(selenium, browser_id,
                                                         onepanel):
     (onepanel(selenium[browser_id])
         .content
         .deployment
-        .step4
+        .webcertstep
         .lets_encrypt_toggle
         .check())
 
 
 @when(parsers.re('user of (?P<browser_id>.*) deactivates lets encrypt toggle '
-                 'in step4 of deployment process in Onepanel'))
+                 'in web cert step of deployment process in Onepanel'))
 @then(parsers.re('user of (?P<browser_id>.*) deactivates lets encrypt toggle '
-                 'in step4 of deployment process in Onepanel'))
+                 'in web cert step of deployment process in Onepanel'))
 def wt_deactivate_lets_encrypt_toggle_in_deployment_step4(selenium, browser_id,
                                                           onepanel):
     (onepanel(selenium[browser_id])
         .content
         .deployment
-        .step4
+        .webcertstep
         .lets_encrypt_toggle
         .uncheck())
 
