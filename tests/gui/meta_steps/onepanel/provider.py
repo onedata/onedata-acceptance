@@ -3,7 +3,7 @@ using web GUI
 """
 
 __author__ = "Michal Cwiertnia"
-__copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
+__copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
@@ -15,7 +15,9 @@ from tests.gui.steps.common.miscellaneous import *
 from tests.gui.steps.onepanel.deployment import *
 from tests.gui.steps.onepanel.login import *
 from tests.gui.steps.common.url import *
-from tests.gui.steps.onepanel.provider import wt_click_on_discard_btn_in_domain_change_modal
+from tests.gui.steps.onepanel.provider import (
+    wt_click_on_discard_btn_in_domain_change_modal
+)
 import yaml
 
 

@@ -3,7 +3,7 @@ provider management in onepanel web GUI.
 """
 
 __author__ = "Bartosz Walkowicz"
-__copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
+__copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
@@ -106,8 +106,12 @@ def wt_click_on_discard_btn_in_domain_change_modal(selenium, browser_id, onepane
     # TODO: there is currently a bug in GUI - this modal does not appear sometimes
     try:
         modals(selenium[browser_id]).configure_web_cert.discard()
-    except RuntimeError:
-        pass
+    except RuntimeError as e:
+        import re
+        if re.match(r'no.*item found in modals', str(e)):
+            pass
+        else:
+            raise
 
 
 @when(parsers.parse('user of {browser_id} activates Request a subdomain toggle'))
