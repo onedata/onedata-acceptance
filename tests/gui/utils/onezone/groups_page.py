@@ -14,11 +14,9 @@ from .common import EditBox, InputBox
 
 class Group(Element):
     menu = Button('.collapsible-toolbar-toggle')
-    input_field = Input('input')
-    confirm_button = Button('.save-icon')
-    cancel_button = Button('.cancel-icon')
     members = NamedButton('.one-list-level-2 .item-header', text='Members')
     parents = NamedButton('.one-list-level-2 .item-header', text='Parents')
+    edit_box = WebItem('.name-editor', cls=EditBox)
 
 # TODO: Can be removed?
 #class GroupOverviewPage(PageObject):
@@ -38,7 +36,8 @@ class GroupsPage(GenericPage):
 
     group_menu = WebItemsSequence('div.webui-popover[style*=\'display: block;\'] ul li', cls=Element)
 
-    input_box = WebItem('.content-info-content-container', cls=InputBox)
+    input_box = WebItem('.content-info-content-container', cls=InputBox) 
+
     # overview_page = WebItem('.main-content', cls=GroupOverviewPage)
 
     join_space = Button('.minimized-item.clickable.join-space-action .oneicon-space-join')
