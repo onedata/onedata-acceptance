@@ -12,7 +12,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 class LeaveGroupModal(Modal):
     cancel = NamedButton('button', text='Cancel')
-    remove = NamedButton('button', text='Leave')
+    leave = NamedButton('button', text='Leave')
 
     def __str__(self):
         return 'Leave group modal'
