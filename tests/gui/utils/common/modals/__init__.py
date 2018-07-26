@@ -10,6 +10,9 @@ from .login import LoginFormModal
 from .deploying_cluster import ClusterDeploymentModal
 from .revoke_space_support import RevokeSpaceSupportModal
 from .edit_permissions import EditPermissionsModal
+from .remove_group import RemoveGroupModal
+from .leave_group import LeaveGroupModal
+from .error_modal import ErrorModal
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
@@ -26,6 +29,10 @@ class Modals(object):
                                    cls=RevokeSpaceSupportModal)
     login = WebItem('#login-form-modal', cls=LoginFormModal)
     edit_permissions = WebItem('#edit-permissions-modal', cls=EditPermissionsModal)
+
+    remove_group = WebItem('.remove-group-modal', cls=RemoveGroupModal)
+    leave_group = WebItem('.leave-group-modal', cls=LeaveGroupModal)
+    error = WebItem('.alert-global', cls=ErrorModal)
 
     def __init__(self, driver):
         self.driver = driver
