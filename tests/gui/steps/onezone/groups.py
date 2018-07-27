@@ -23,6 +23,14 @@ def click_button_in_panel(selenium, browser_id, operation, panel, oz_page):
         oz_page(selenium[browser_id])[panel].join_group.click()
 
 
+@wt(parsers.parse('user of {browser_id} creates "{group}" group'))
+def create_group(selenium, browser_id, group, oz_page):
+    page = oz_page(selenium[browser_id])['groups']
+    page.create_group.click()
+    page.input_box.value = group
+    page.input_box.confirm.click()
+
+
 @wt(parsers.parse('user of {browser_id} writes "{text}" '
                   'into group token text field'))
 @wt(parsers.parse('user of {browser_id} writes "{text}" '
