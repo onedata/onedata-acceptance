@@ -25,7 +25,7 @@ class Group(Element):
 class GroupDetailsPage(PageObject):
     members = WebItem('.content-groups-members', cls=GroupMembersPage)
     parents = WebItem('.content-groups-parents', cls=GroupParentsPage)
-
+    bulk_edit = NamedButton('button', text='Bulk edit')
 
 class GroupsPage(GenericPage):
     elements_list = WebItemsSequence('.sidebar-groups .one-list '
