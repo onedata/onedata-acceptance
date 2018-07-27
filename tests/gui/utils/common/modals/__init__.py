@@ -10,7 +10,7 @@ from .login import LoginFormModal
 from .deploying_cluster import ClusterDeploymentModal
 from .revoke_space_support import RevokeSpaceSupportModal
 from .edit_permissions import EditPermissionsModal
-from .remove_group import RemoveGroupModal
+from .remove import RemoveModal
 from .leave_group import LeaveGroupModal
 from .error_modal import ErrorModal
 
@@ -30,8 +30,9 @@ class Modals(object):
     login = WebItem('#login-form-modal', cls=LoginFormModal)
     edit_permissions = WebItem('#edit-permissions-modal', cls=EditPermissionsModal)
 
-    remove_group = WebItem('.remove-group-modal', cls=RemoveGroupModal)
+    remove_group = WebItem('.remove-group-modal', cls=RemoveModal)
     leave_group = WebItem('.leave-group-modal', cls=LeaveGroupModal)
+    remove_user = WebItem('.remove-user-modal', cls=RemoveModal)
     error = WebItem('.alert-global', cls=ErrorModal)
 
     def __init__(self, driver):

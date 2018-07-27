@@ -1,4 +1,4 @@
-"""Utils and fixtures to facilitate operations on remove group modal.
+"""Utils and fixtures to facilitate operations on remove group/user modal.
 """
 
 from tests.gui.utils.core.web_elements import NamedButton
@@ -10,9 +10,9 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 
-class RemoveGroupModal(Modal):
+class RemoveModal(Modal):
     cancel = NamedButton('button', text='Cancel')
     remove = NamedButton('button', text='Remove')
 
     def __str__(self):
-        return 'Remove group modal'
+        return 'Remove group/user modal'
