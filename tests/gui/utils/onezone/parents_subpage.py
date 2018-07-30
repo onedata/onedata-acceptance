@@ -14,6 +14,18 @@ from tests.gui.utils.onezone.generic_page import Element, GenericPage
 from .common import EditBox, InputBox
 
 
+class GroupParentsListHeader(PageObject):
+    search_bar = Input('input.form-control')
+    menu = Button('.collapsible-toolbar-toggle')
+
+
+class GroupParentsItemRow(PageObject):
+    name = id = Label('.one-label')
+    menu = Button('.collapsible-toolbar-toggle')
+
+
 class GroupParentsPage(PageObject):
-    # TODO
-    pass
+    header = WebItem('.main-content .sticky-element-container',
+                     cls=GroupParentsListHeader)
+    items = WebItemsSequence('.main-content > div > ul > li', 
+                             cls=GroupParentsItemRow)

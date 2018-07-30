@@ -15,6 +15,7 @@ from tests.gui.utils.onezone.members_subpage import GroupMembersPage
 from tests.gui.utils.onezone.parents_subpage import GroupParentsPage
 from .common import EditBox, InputBox
 
+
 class Group(Element):
     menu = Button('.collapsible-toolbar-toggle')
     members = NamedButton('.one-list-level-2 .item-header', text='Members')
@@ -26,6 +27,12 @@ class GroupDetailsPage(PageObject):
     members = WebItem('.content-groups-members', cls=GroupMembersPage)
     parents = WebItem('.content-groups-parents', cls=GroupParentsPage)
     bulk_edit = NamedButton('button', text='Bulk edit')
+    menu_button = Button('.collapsible-toolbar-toggle')
+
+
+class MenuItem(PageObject):
+    name = id = Label('a.clickable')    
+
 
 class GroupsPage(GenericPage):
     elements_list = WebItemsSequence('.sidebar-groups .one-list '
@@ -35,9 +42,9 @@ class GroupsPage(GenericPage):
     create_group = Button('.oneicon-add-filled')
     join_group = Button('.oneicon-join-plug')
 
-    group_menu = WebItemsSequence('div.webui-popover'
-                                  '[style*=\'display: block;\'] ul li', 
-                                  cls=Element)
+    menu = WebItemsSequence('div.webui-popover'
+                            '[style*=\'display: block;\'] ul li', 
+                            cls=MenuItem)
 
     input_box = WebItem('.content-info-content-container', cls=InputBox) 
 
