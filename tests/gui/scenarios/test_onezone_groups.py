@@ -54,5 +54,5 @@ def screens():
     return [0]
 
 
-scenarios('../features/onezone/groups.feature')
+scenarios('../features/onezone/groups_single_user.feature')
 
