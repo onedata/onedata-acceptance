@@ -51,12 +51,13 @@ def _find_groups(page, group):
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>do|dont) '
                'see group "(?P<group>.*)" on groups list'))
 def assert_group_exists(selenium, browser_id, option, group, oz_page):
-    groups_count = len(_find_groups(oz_page(selenium[browser_id])['groups'], group))
+    groups_count = len(_find_groups(oz_page(selenium[browser_id])['groups'],
+                                    group))
     if option == 'do':
         assert groups_count > 0, "no such group exists"
     else:
-        assert groups_count == 0, "such group exists"
-
+        assert groups_count == 0, "such group exists"            
+    
 
 @wt(parsers.parse('user of {browser_id} clicks on "{group}" group menu button'))
 def open_group_menu(selenium, browser_id, group, oz_page):
@@ -96,6 +97,7 @@ def click_modal_button(selenium, browser_id, button, modal, oz_page):
     modal = modal.lower().replace(' ', '_')
     getattr(getattr(modals(selenium[browser_id]), modal), button).click()
 
+
 @wt(parsers.parse('user of {browser_id} see that error modal with '
                   '"{text}" text appeared'))
 def assert_modal_appeared(selenium, browser_id, text, oz_page):
@@ -105,5 +107,68 @@ def assert_modal_appeared(selenium, browser_id, text, oz_page):
         assert False
 
 
+@wt(parsers.parse('user of {browser_id} clicks on '
+                  '"generate an invitation token" text in '
+                  '"{group}" members groups list'))
+def click_generate_token(selenium, browser_id, group, oz_page):
+    page = oz_page(selenium[browser_id])['groups']
+    page.elements_list[group].members.click()
+    page.main_page.members.groups.generate_token.click()
+
+
+@wt(parsers.parse('user of {browser_id} copies generated token'))
+def copy_token(selenium, browser_id, oz_page, tmp_memory):
+    token = oz_page(selenium[browser_id])['groups'].main_page.members.token.token
+    tmp_memory[browser_id]['token'] = token
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) goes to "(?P<group>.*)" '
+               '(?P<subpage>members|parents) subpage'))
+def go_to_page(selenium, browser_id, group, subpage, oz_page):
+    page = oz_page(selenium[browser_id])['groups']
+    page.elements_list[group].click()
+    getattr(page.elements_list[group], subpage).click()
+
+
+@wt(parsers.parse('user of {browser_id} pastes copied token into group '
+                  'token text field'))
+def paste_token(selenium, browser_id, oz_page, tmp_memory):
+    page = oz_page(selenium[browser_id])['groups']
+    page.input_box.value = tmp_memory[browser_id]['token']
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>do|dont) '
+               'see "(?P<child>.*)" as "(?P<parent>.*)" child'))
+def assert_child(selenium, browser_id, option, child, parent, oz_page):
+    page = oz_page(selenium[browser_id])['groups']
+    page.elements_list[parent].click()
+    page.elements_list[parent].members.click()
+    try:
+        page.main_page.members.groups.items[child]
+    except RuntimeError:
+        assert False if option == 'do' else True
+    assert option == 'do'
+
+@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>do|dont) '
+               'see "(?P<parent>.*)" as "(?P<child>.*)" parent'))
+def assert_parent(selenium, browser_id, option, parent, child, oz_page):
+    page = oz_page(selenium[browser_id])['groups']
+    page.elements_list[child].click()
+    page.elements_list[child].parents.click()
+    try:
+        page.main_page.parents.items[parent]
+    except RuntimeError:
+        assert False if option == 'do' else True
+    assert option == 'do'
+
+
+@wt(parsers.parse('user of {browser_id} gets "{group}" member invitation token'))
+def get_invitation_token(selenium, browser_id, group, oz_page, tmp_memory):
+    page = oz_page(selenium[browser_id])['groups']
+    page.elements_list[group].click()
+    page.main_page.menu_button.click()
+    page.menu['Invite user'].click()
+    token = page.main_page.members.token.token
+    tmp_memory[browser_id]['token'] = token
         
 
