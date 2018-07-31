@@ -51,8 +51,7 @@ from tests.gui.steps.oneprovider_common import *
 
 @fixture(scope='module')
 def screens():
-    return [0]
+    return [0, 1]
 
 
-scenarios('../features/onezone/groups_single_user.feature')
-
+scenarios('../features/onezone/groups_multiple_users.feature')
