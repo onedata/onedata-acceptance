@@ -32,3 +32,6 @@ class GroupsPage(GenericPage):
     input_box = WebItem('.content-info-content-container', cls=InputBox)
     overview_page = WebItem('.main-content', cls=GroupOverviewPage)
 
+    join_space = Button('.minimized-item.clickable.join-space-action .oneicon-space-join')
+    menu_button = Button('.collapsible-toolbar-toggle ')
+

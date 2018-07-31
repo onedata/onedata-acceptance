@@ -22,6 +22,8 @@ class Space(Element):
                            text='Overview')
     providers = NamedButton('.one-list-level-2 .item-header',
                             text='Providers')
+    members = NamedButton('.one-list-level-2 .item-header',
+                          text='Members')
 
 
 class Provider(Element):
@@ -44,6 +46,11 @@ class SpaceProvidersPage(PageObject):
     get_support = NamedButton('.open-add-storage', text='Get support')
 
 
+class SpaceMembersPage(PageObject):
+    menu_button = Button('.collapsible-toolbar-toggle')
+    input_box = WebItem('.invitation-token-presenter', cls=InputBox)
+
+
 class SpacesPage(GenericPage):
     create_space_button = Button('.oneicon-add-filled')
     join_space_button = Button('.oneicon-join-plug')
@@ -53,3 +60,7 @@ class SpacesPage(GenericPage):
 
     input_box = WebItem('.content-info-content-container', cls=InputBox)
     overview_page = WebItem('.main-content', cls=SpaceOverviewPage)
+
+    members_page = WebItem('.main-content', cls=SpaceMembersPage)
+    invite_user_button = Button('.minimized-item.clickable.invite-user .oneicon-user-add')
+    invite_group_button = Button('.minimized-item.clickable.invite-group .oneicon-group-invite')

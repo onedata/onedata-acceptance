@@ -1,4 +1,4 @@
-"""This module contains tests suite for space.
+"""This module contains test suite for space.
 """
 
 __author__ = "Agnieszka Warchol"
@@ -7,7 +7,7 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 from pytest import fixture
-from pytest_bdd import scenario, scenarios
+from pytest_bdd import scenarios
 
 from tests.gui.steps.rest.env_up.users import *
 from tests.gui.steps.rest.env_up.groups import *
@@ -33,6 +33,9 @@ from tests.gui.steps.onezone.access_tokens import *
 from tests.gui.steps.onezone.data_space_management import *
 from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.manage_account import *
+from tests.gui.steps.onezone.groups import *
+from tests.gui.steps.onezone.space import *
+from tests.gui.steps.onezone.multi_browser_space import *
 
 from tests.gui.steps.oneprovider.common import *
 from tests.gui.steps.oneprovider.data_tab import *
@@ -44,7 +47,9 @@ from tests.gui.steps.oneprovider.spaces import *
 
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
-from tests.gui.steps.space import *
+from tests.gui.steps.oneprovider.permissions import *
+
+from tests.gui.meta_steps.onezone.common import *
 
 
 @fixture(scope='module')
@@ -53,3 +58,5 @@ def screens():
 
 
 scenarios('../features/onezone/spaces.feature')
+scenarios('../features/onezone/spaces_multi_browser.feature')
+scenarios('../features/onezone/group_invitation_token.feature')
