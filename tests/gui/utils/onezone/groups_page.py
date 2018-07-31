@@ -46,6 +46,8 @@ class GroupsPage(GenericPage):
                             '[style*=\'display: block;\'] ul li', 
                             cls=MenuItem)
 
+    group_search_bar = Input('.one-sidebar li.one-list-item.search-bar-item')
+
     input_box = WebItem('.content-info-content-container', cls=InputBox) 
 
     main_page = WebItem('.col-content', cls=GroupDetailsPage)
