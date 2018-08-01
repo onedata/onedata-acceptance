@@ -28,12 +28,10 @@ Feature: Basic management of groups with one user in Onezone GUI
 
 
   Scenario: User renames group
-    # create new group
     When user of browser clicks on the create button in "groups" Onezone panel
     And user of browser writes "newgroup" into group name text field
     And user of browser clicks on confirmation button
 
-    # rename group
     And user of browser clicks on "Rename" button in "newgroup" group menu
     And user of browser writes "newname" into rename group text field
     And user of browser confirms group rename  
@@ -49,12 +47,10 @@ Feature: Basic management of groups with one user in Onezone GUI
 
 
   Scenario: User deletes group
-    # create new group
     When user of browser clicks on the create button in "groups" Onezone panel
     And user of browser writes "group" into group name text field
     And user of browser clicks on confirmation button
 
-    # delete group
     And user of browser clicks on "Remove" button in "group" group menu
     And user of browser clicks on "Remove" button in "REMOVE GROUP" modal
 
@@ -62,12 +58,10 @@ Feature: Basic management of groups with one user in Onezone GUI
 
 
   Scenario: User leaves group
-    # create new group
     When user of browser clicks on the create button in "groups" Onezone panel
     And user of browser writes "group" into group name text field
     And user of browser clicks on confirmation button
 
-    # leave group
     And user of browser clicks on "Leave" button in "group" group menu
     And user of browser clicks on "Leave" button in "LEAVE GROUP" modal
 
@@ -83,15 +77,12 @@ Feature: Basic management of groups with one user in Onezone GUI
 
 
   Scenario: User adds subgroup  
-    # create groups
     When user of browser creates "group1" group
     And user of browser creates "group2" group
 
-    # get invitation token
     And user of browser clicks on "generate an invitation token" text in "group2" members groups list
     And user of browser copies generated token
     
-    # join as subgroups
     And user of browser goes to "group1" parents subpage
     And user of browser pastes copied token into group token text field
     And user of browser clicks on confirmation button
@@ -101,14 +92,11 @@ Feature: Basic management of groups with one user in Onezone GUI
 
 
   Scenario: User tries to add group as its subgroup
-    # create group
     When user of browser creates "group" group
     
-    # get invitation token
     And user of browser clicks on "generate an invitation token" text in "group" members groups list
     And user of browser copies generated token
     
-    # join as subgroups
     And user of browser goes to "group" parents subpage
     And user of browser pastes copied token into group token text field
     And user of browser clicks on confirmation button
@@ -117,13 +105,10 @@ Feature: Basic management of groups with one user in Onezone GUI
 
 
   Scenario: User tries to join group he already is in
-    # create group
     When user of browser creates "group" group
 
-    # get invitation token
-    And user of browser gets "group" member invitation token
+    And user of browser gets "group" user invitation token
 
-    # join group
     And user of browser clicks on the join button in "groups" Onezone panel
     And user of browser pastes copied token into group token text field
     And user of browser clicks on confirmation button
