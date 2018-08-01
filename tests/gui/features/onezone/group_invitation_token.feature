@@ -31,3 +31,10 @@ Feature: Multi Browser invitation group to spaces
     And user of browser2 pastes Space invitation token to input
     And user of browser2 clicks Join the space button on Join to a space page
     Then user of browser2 sees "space1" has appeared on spaces
+
+  Scenario: Fail to join a space with invalid group invitation token
+    When user of browser2 clicks "group2" on groups on left menu
+    And user of browser2 clicks Join space on groups menu on left menu
+    And user of browser2 types "invalid token" to input
+    And user of browser2 clicks Join the space button on Join to a space page
+    Then user of browser2 sees error popup has appeared

@@ -27,3 +27,14 @@ Feature: Multi Browser basic management of spaces
     And user of browser2 pastes Space invitation token to input
     And user of browser2 clicks Join the space button on Join to a space page
     Then user of browser2 sees "space1" has appeared on spaces
+
+  Scenario: Join a space with user invitation token (with Get started button)
+    When user of browser1 clicks "space1" on spaces on left menu
+    And user of browser1 clicks Members of "space1" on left menu
+    And user of browser1 clicks Invite user on Menu of Members
+    And user of browser1 sends invitation token to "browser2"
+    And user of browser2 clicks Get started on spaces on left menu
+    And user of browser2 clicks join an existing space on No spaces page
+    And user of browser2 pastes Space invitation token to input
+    And user of browser2 clicks Join the space button on Join to a space page
+    Then user of browser2 sees "space1" has appeared on spaces

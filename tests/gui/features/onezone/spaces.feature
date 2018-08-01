@@ -18,12 +18,6 @@ Feature: Basic management of spaces
     And user of browser logged as user1 to Onezone service
 
 
-  Scenario: Create new space
-    When user of browser clicks create new space on spaces on left menu
-    And user of browser types "space" on input
-    And user of browser clicks on create new space button
-    Then user of browser sees "space" has appeared on spaces
-
   Scenario: Rename space
     When user of browser clicks "space1" on spaces on left menu
     And user of browser types "space2" on rename input
@@ -46,6 +40,17 @@ Feature: Basic management of spaces
     And user of browser clicks on leave space button
     And user of browser clicks on yes leave button
     Then user of browser sees "space" has disappeared on spaces
+
+  Scenario: Cancel leave space
+#    create new space
+    When user of browser clicks create new space on spaces on left menu
+    And user of browser types "space" on input
+    And user of browser clicks on create new space button
+#    leave space
+    And user of browser clicks "space" on spaces on left menu
+    And user of browser clicks on leave space button
+    And user of browser clicks on no stay here button
+    Then user of browser sees "space" has appeared on spaces
 
   Scenario: Set space as home space for user
     When user of browser clicks "space1" on spaces on left menu
@@ -73,5 +78,8 @@ Feature: Basic management of spaces
     And user of browser clicks on create new space button
     Then user of browser sees 0 B size of the "space"
 
-
-
+  Scenario: Fail to join a space with invalid user invitation token
+    When user of browser clicks Join some space using a space invitation token button
+    And user of browser types "invalid token" to input
+    And user of browser clicks Join the space button on Join to a space page
+    Then user of browser sees error popup has appeared
