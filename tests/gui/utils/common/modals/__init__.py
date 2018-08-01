@@ -12,6 +12,7 @@ from .revoke_space_support import RevokeSpaceSupportModal
 from .edit_permissions import EditPermissionsModal
 from .remove import RemoveModal
 from .leave_group import LeaveGroupModal
+from .leave_parent import LeaveParentModal
 from .error_modal import ErrorModal
 
 __author__ = "Bartosz Walkowicz"
@@ -32,6 +33,7 @@ class Modals(object):
 
     remove_group = WebItem('.remove-group-modal', cls=RemoveModal)
     leave_group = WebItem('.leave-group-modal', cls=LeaveGroupModal)
+    leave_parent = WebItem('.leave-parent-modal', cls=LeaveParentModal)
     remove_user = WebItem('.remove-user-modal', cls=RemoveModal)
     error = WebItem('.alert-global', cls=ErrorModal)
 
