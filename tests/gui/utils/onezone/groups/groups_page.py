@@ -1,6 +1,6 @@
 """Utils to facilitate operations on groups page in Onezone gui"""
 
-__author__ = "Michal Stanisz"
+__author__ = "Michal Stanisz, Lukasz Niemiec"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
@@ -11,9 +11,9 @@ from tests.gui.utils.core.web_elements import (Button, NamedButton,
                                                Label, WebItem, Input,
                                                WebItemsSequence)
 from tests.gui.utils.onezone.generic_page import Element, GenericPage
-from tests.gui.utils.onezone.members_subpage import GroupMembersPage
-from tests.gui.utils.onezone.parents_subpage import GroupParentsPage
-from .common import EditBox, InputBox
+from .members_subpage import GroupMembersPage
+from .parents_subpage import GroupParentsPage
+from tests.gui.utils.onezone.common import EditBox, InputBox
 
 
 class Group(Element):
@@ -26,12 +26,16 @@ class Group(Element):
 class GroupDetailsPage(PageObject):
     members = WebItem('.content-groups-members', cls=GroupMembersPage)
     parents = WebItem('.content-groups-parents', cls=GroupParentsPage)
+    error_label = Label('.text-center div h1')
     bulk_edit = NamedButton('button', text='Bulk edit')
     menu_button = Button('.collapsible-toolbar-toggle')
 
 
 class MenuItem(PageObject):
     name = id = Label('a.clickable')    
+
+    def __call__(self):
+        self.click()
 
 
 class GroupsPage(GenericPage):

@@ -15,8 +15,8 @@ from .leave_group import LeaveGroupModal
 from .leave_parent import LeaveParentModal
 from .error_modal import ErrorModal
 
-__author__ = "Bartosz Walkowicz"
-__copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
+__author__ = "Bartosz Walkowicz, Lukasz Niemiec"
+__copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
@@ -31,11 +31,11 @@ class Modals(object):
     login = WebItem('#login-form-modal', cls=LoginFormModal)
     edit_permissions = WebItem('#edit-permissions-modal', cls=EditPermissionsModal)
 
-    remove_group = WebItem('.remove-group-modal', cls=RemoveModal)
-    leave_group = WebItem('.leave-group-modal', cls=LeaveGroupModal)
-    leave_parent = WebItem('.leave-parent-modal', cls=LeaveParentModal)
-    remove_user = WebItem('.remove-user-modal', cls=RemoveModal)
-    error = WebItem('.alert-global', cls=ErrorModal)
+    remove_group = WebItem('.remove-group-modal.modal .modal-dialog', cls=RemoveModal)
+    leave_group = WebItem('.leave-group-modal.modal .modal-dialog', cls=LeaveGroupModal)
+    leave_parent = WebItem('.leave-parent-modal.modal .modal-dialog', cls=LeaveParentModal)
+    remove_user = WebItem('.remove-user-modal.modal .modal-dialog', cls=RemoveModal)
+    error = WebItem('.alert-global.modal .modal-dialog', cls=ErrorModal)
 
     def __init__(self, driver):
         self.driver = driver

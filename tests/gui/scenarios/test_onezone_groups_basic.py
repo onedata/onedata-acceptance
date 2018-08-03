@@ -53,5 +53,5 @@ from tests.gui.steps.oneprovider_common import *
 def screens():
     return [0]
 
-
-scenarios('../features/onezone/groups_single_user.feature')
+scenarios('../features/onezone/groups/groups_creation.feature')
+scenarios('../features/onezone/groups/groups_basic_operations.feature')

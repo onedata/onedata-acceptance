@@ -2,8 +2,8 @@
 Onezone GUI and single browser instance.
 """
 
-__author__ = "Bartosz Walkowicz"
-__copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
+__author__ = "Bartosz Walkowicz, Lukasz Niemiec"
+__copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
@@ -66,5 +66,12 @@ def test_user_sees_that_when_no_provider_is_working_appropriate_msg_is_shown():
 #scenarios('../features/onezone/login_page.feature')
 #scenarios('../features/onezone/providers.feature')
 #scenarios('../features/onezone/user_alias.feature')
-scenarios('../features/onezone/groups_single_user.feature')
-scenarios('../features/onezone/groups_multiple_users.feature')
+
+scenarios('../features/onezone/groups/groups_creation.feature')
+scenarios('../features/onezone/groups/groups_basic_operations.feature')
+scenarios('../features/onezone/groups/groups_join.feature')
+scenarios('../features/onezone/groups/'
+          'groups_multiple_users_with_single_group.feature')
+scenarios('../features/onezone/groups/groups_subgroup.feature')
+scenarios('../features/onezone/groups/'
+          'groups_multiple_users_with_multiple_groups.feature')

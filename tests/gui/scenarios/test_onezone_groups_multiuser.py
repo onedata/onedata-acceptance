@@ -54,4 +54,10 @@ def screens():
     return [0, 1]
 
 
-scenarios('../features/onezone/groups_multiple_users.feature')
+scenarios('../features/onezone/groups/groups_join.feature')
+scenarios('../features/onezone/groups/'
+          'groups_multiple_users_with_single_group.feature')
+scenarios('../features/onezone/groups/groups_subgroup.feature')
+scenarios('../features/onezone/groups/'
+          'groups_multiple_users_with_multiple_groups.feature')
+

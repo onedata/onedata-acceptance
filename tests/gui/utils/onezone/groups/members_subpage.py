@@ -11,7 +11,8 @@ from tests.gui.utils.core.web_elements import (Button, NamedButton,
                                                Label, WebItem, Input,
                                                WebItemsSequence)
 from tests.gui.utils.onezone.generic_page import Element, GenericPage
-from .common import EditBox, InputBox
+from tests.gui.utils.onezone.common import EditBox, InputBox
+
 
 class GroupMembersHeaderRow(PageObject):
     checkbox = Button('div.item-checkbox')
