@@ -63,7 +63,8 @@ def screens():
 # scenarios('../features/onezone/space/basic_management.feature')
 # scenarios('../features/onezone/space/multiple_spaces_management.feature')
 
-scenarios('../features/onezone/spaces.feature')
-scenarios('../features/onezone/spaces_multi_browser.feature')
-scenarios('../features/onezone/group_invitation_token.feature')
-scenarios('../features/onezone/create_new_space.feature')
+scenarios('../features/onezone/space/spaces.feature')
+scenarios('../features/onezone/space/spaces_multi_browser.feature')
+scenarios('../features/onezone/space/invite_group_to_space.feature')
+scenarios('../features/onezone/space/create_new_space.feature')
+scenarios('../features/onezone/space/no_supported_space.feature')

@@ -39,16 +39,28 @@ class SpaceOverviewPage(PageObject):
     edit_name_box = WebItem('.header-row .name-editor', cls=EditBox)
 
 
-class NoSpacesPage(PageObject):
-    create_a_space = Button('.info a[href="#/onedata/spaces/new"]')
-    join_existing_space = Button('.info a[href="#/onedata/spaces/join"]')
+class WelcomePage(PageObject):
+    create_a_space = NamedButton('.info .ember-view', text='Create a space')
+    join_existing_space = NamedButton('.info .ember-view', text='join an existing space')
+    join_group = NamedButton('.info .ember-view', text='join a group')
+
+
+class GetSupportPage(PageObject):
+    request_support_modal = NamedButton('.nav-link', text='Request support')
+    deploy_provider_modal = NamedButton('.nav-link', text='Deploy your own provider')
+    expose_existing_data_modal = NamedButton('.nav-link', text='Expose existing data collection')
+
+    token_textarea = Label('.active textarea')
+    copy_button = NamedButton('.active .copy-btn', text='Copy')
+    generate_another_token = NamedButton('.active .btn-get-token', text='Generate another token')
 
 
 class SpaceProvidersPage(PageObject):
     providers_list = WebItemsSequence('.space-providers-list '
                                       'li.one-collapsible-list-item',
                                       cls=Provider)
-    get_support = NamedButton('.open-add-storage', text='Get support')
+    get_support = NamedButton('button', text='Get support')
+    get_support_page = WebItem('.ember-view', cls=GetSupportPage)
 
 
 class SpaceMembersPage(PageObject):
@@ -66,8 +78,9 @@ class SpacesPage(GenericPage):
     input_box = WebItem('.content-info-content-container', cls=InputBox)
     overview_page = WebItem('.main-content', cls=SpaceOverviewPage)
 
+    providers_page = WebItem('.main-content', cls=SpaceProvidersPage)
     members_page = WebItem('.main-content', cls=SpaceMembersPage)
-    no_spaces_page = WebItem('.main-content', cls=NoSpacesPage)
+    welcome_page = WebItem('.main-content', cls=WelcomePage)
 
     invite_user = Button('.minimized-item.clickable.invite-user .oneicon-user-add')
     invite_group = Button('.minimized-item.clickable.invite-group .oneicon-group-invite')
