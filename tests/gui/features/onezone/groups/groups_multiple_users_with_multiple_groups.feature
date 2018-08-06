@@ -30,6 +30,9 @@ Feature: Basic management of groups with multiple users in Onezone GUI
   Scenario: Group leaves parent group
     When user of browser2 removes group "group1" from group "group2" parents list
 
+    And user of browser1 refreshes site
+    And user of browser2 refreshes site
+
     Then user of browser1 does not see "group2" as "group1" child
     And user of browser2 does not see "group1" as "group2" parent
 

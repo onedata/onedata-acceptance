@@ -34,6 +34,8 @@ Feature: Basic management of groups with multiple users in Onezone GUI
     And user of browser1 goes to group "group1" parents subpage
     And user of browser1 pastes copied token into group token text field
     And user of browser1 clicks on confirmation button
+
+    And user of browser1 refreshes site
     
     Then user of browser1 sees "group1" as "group3" child
     And user of browser1 sees "group3" as "group1" parent
@@ -46,6 +48,8 @@ Feature: Basic management of groups with multiple users in Onezone GUI
     And user of browser1 goes to group "group1" parents subpage
     And user of browser1 pastes copied token into group token text field
     And user of browser1 presses enter on keyboard
+
+    And user of browser1 refreshes site
     
     Then user of browser1 sees "group1" as "group3" child
     And user of browser1 sees "group3" as "group1" parent
@@ -55,6 +59,9 @@ Feature: Basic management of groups with multiple users in Onezone GUI
     When user of browser1 copies group "group1" group invitation token
     And user of browser1 sends copied token to user of browser2
     And user of browser2 adds group "group2" as subgroup using received token
+
+    And user of browser1 refreshes site
+    And user of browser2 refreshes site
 
     Then user of [browser1, browser2] sees group "group1" on groups list
     And user of browser2 sees group "group2" on groups list 

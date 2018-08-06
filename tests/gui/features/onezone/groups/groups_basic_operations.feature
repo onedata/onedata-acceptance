@@ -25,7 +25,9 @@ Feature: Basic management of groups with one user in Onezone GUI
   Scenario: User renames group using button to confirm
     When user of browser clicks on button "Rename" in group "group1" menu
     And user of browser writes "group2" into rename group text field
-    And user of browser confirms group rename  
+    And user of browser confirms group rename
+
+    And user of browser refreshes site
 
     Then user of browser sees group "group2" on groups list
     And user of browser does not see group "group1" on groups list
@@ -36,6 +38,8 @@ Feature: Basic management of groups with one user in Onezone GUI
     And user of browser writes "group2" into rename group text field
     And user of browser presses enter on keyboard 
 
+    And user of browser refreshes site
+
     Then user of browser sees group "group2" on groups list
     And user of browser does not see group "group1" on groups list
 
@@ -44,12 +48,16 @@ Feature: Basic management of groups with one user in Onezone GUI
     When user of browser clicks on button "Remove" in group "group1" menu
     And user of browser clicks on button "Remove" in modal "REMOVE GROUP"
 
+    And user of browser refreshes site
+
     Then user of browser does not see group "group1" on groups list
 
 
   Scenario: User leaves group
     When user of browser clicks on button "Leave" in group "group1" menu
     And user of browser clicks on button "Leave" in modal "LEAVE GROUP"
+
+    And user of browser refreshes site
 
     Then user of browser does not see group "group1" on groups list
 
@@ -68,7 +76,7 @@ Feature: Basic management of groups with one user in Onezone GUI
   Scenario: User tries to add group as its subgroup using enter to confirm
     When user of browser clicks on text "generate an invitation token" in group "group1" members groups list
     And user of browser copies generated token
-    
+
     And user of browser goes to group "group1" parents subpage
     And user of browser pastes copied token into group token text field
     And user of browser presses enter on keyboard
@@ -94,8 +102,11 @@ Feature: Basic management of groups with one user in Onezone GUI
     When user of browser goes to group "group1" main subpage
     And user of browser copies a first resource ID from URL
     And user of browser leaves group "group1"
+
     And user of browser refreshes site
+
     And user of browser changes webapp path to /#/onedata/groups concatenated with copied item
+
     Then user of browser see that page with text "RESOURCE NOT FOUND" appeared
 
 

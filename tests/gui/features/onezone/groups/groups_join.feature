@@ -125,5 +125,7 @@ Feature: Joining a group in Onezone GUI
     And user of browser1 sends copied ID to user of browser2
     And user of browser2 changes webapp path to /#/onedata/groups concatenated with received ID
 
+    And user of browser2 refreshes site
+
     Then user of browser2 see that page with text "RESOURCE NOT FOUND" appeared
 

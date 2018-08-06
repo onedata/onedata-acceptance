@@ -20,7 +20,7 @@ from selenium.webdriver.common.keys import Keys
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on the '
                '(?P<operation>create|join) button in '
                '"(?P<panel>.*)" Onezone panel'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(attempts=100, timeout=WAIT_FRONTEND)
 def click_create_or_join_group_button_in_panel(selenium, browser_id, operation, 
                                                panel, oz_page):
     button_name = operation + '_group'
@@ -28,7 +28,7 @@ def click_create_or_join_group_button_in_panel(selenium, browser_id, operation,
 
 
 @wt(parsers.parse('user of {browser_id} creates group "{group}"'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(attempts=100, timeout=WAIT_FRONTEND)
 def create_group(selenium, browser_id, group, oz_page):
     page = oz_page(selenium[browser_id])['groups']
     page.create_group()
@@ -38,7 +38,7 @@ def create_group(selenium, browser_id, group, oz_page):
 
 @wt(parsers.re('user of (?P<browser_id>.*) joins group using received token '
                   'and (?P<confirm_type>button|enter) to confirm'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(attempts=100, timeout=WAIT_FRONTEND)
 def join_group(selenium, browser_id, confirm_type, oz_page, tmp_memory):
     page = oz_page(selenium[browser_id])['groups']
     token = tmp_memory[browser_id]['mailbox']['token']
@@ -54,7 +54,7 @@ def join_group(selenium, browser_id, confirm_type, oz_page, tmp_memory):
 @wt(parsers.re('user of (?P<browser_id>.*) renames group "(?P<group>.*)" '
                   'to "(?P<new_group>.*)" using '
                   '(?P<confirm_type>button|enter) to confirm'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(attempts=100, timeout=WAIT_FRONTEND)
 def rename_group(selenium, browser_id, group, new_group, confirm_type, oz_page):
     page = oz_page(selenium[browser_id])['groups']
     page.elements_list[group]()
@@ -68,7 +68,7 @@ def rename_group(selenium, browser_id, group, new_group, confirm_type, oz_page):
 
 
 @wt(parsers.parse('user of {browser_id} leaves group "{group}"'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(attempts=100, timeout=WAIT_FRONTEND)
 def leave_group(selenium, browser_id, group, oz_page):
     page = oz_page(selenium[browser_id])['groups']
     page.elements_list[group]()
@@ -78,7 +78,7 @@ def leave_group(selenium, browser_id, group, oz_page):
 
 
 @wt(parsers.parse('user of {browser_id} removes group "{group}"'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(attempts=100, timeout=WAIT_FRONTEND)
 def remove_group(selenium, browser_id, group, oz_page):
     page = oz_page(selenium[browser_id])['groups']
     page.elements_list[group]()
@@ -88,7 +88,7 @@ def remove_group(selenium, browser_id, group, oz_page):
 
 
 @wt(parsers.parse('user of {browser_id} joins group "{group}" to space'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(attempts=100, timeout=WAIT_FRONTEND)
 def join_space(selenium, browser_id, group, token, oz_page, tmp_memory):
     page = oz_page(selenium[browser_id])['groups']
     page.elements_list[group]()
@@ -105,14 +105,14 @@ def join_space(selenium, browser_id, group, token, oz_page, tmp_memory):
                   'into group name text field'))
 @wt(parsers.parse('user of {browser_id} writes "{text}" '
                   'into space token text field'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(attempts=100, timeout=WAIT_FRONTEND)
 def input_name_or_token_into_input_box_on_main_groups_page(selenium, browser_id, 
                                                            text, oz_page):
     oz_page(selenium[browser_id])['groups'].input_box.value = text
 
 
 @wt(parsers.parse('user of {browser_id} clicks on confirmation button'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(attempts=100, timeout=WAIT_FRONTEND)
 def confirm_name_or_token_input_on_main_groups_page(selenium, browser_id, 
                                                     oz_page):
     oz_page(selenium[browser_id])['groups'].input_box.confirm()
@@ -124,7 +124,7 @@ def _find_groups(page, group_name):
 
 @wt(parsers.re('user of (?P<browser_ids>.*) (?P<option>does not see|sees) '
                'group "(?P<group>.*)" on groups list'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(attempts=100, timeout=WAIT_FRONTEND)
 def assert_group_exists(selenium, browser_ids, option, group, oz_page):
     for browser_id in parse_seq(browser_ids):
         groups_count = len(_find_groups(oz_page(selenium[browser_id])['groups'],
@@ -138,7 +138,7 @@ def assert_group_exists(selenium, browser_ids, option, group, oz_page):
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on button '
                '"(?P<option>Rename|Join space|Leave|Remove)" in group '
                '"(?P<group>.*)" menu'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(attempts=100, timeout=WAIT_FRONTEND)
 def click_on_group_menu_button(selenium, browser_id, option, group, oz_page):
     page = oz_page(selenium[browser_id])['groups']
     page.elements_list[group]()
@@ -148,7 +148,7 @@ def click_on_group_menu_button(selenium, browser_id, option, group, oz_page):
 
 @wt(parsers.parse('user of {browser_id} writes '
                   '"{text}" into rename group text field'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(attempts=100, timeout=WAIT_FRONTEND)
 def input_new_group_name_into_rename_group_inpux_box(selenium, browser_id, text,
                                                      oz_page):
     page = oz_page(selenium[browser_id])['groups']
@@ -156,13 +156,13 @@ def input_new_group_name_into_rename_group_inpux_box(selenium, browser_id, text,
     
 
 @wt(parsers.parse('user of {browser_id} confirms group rename'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(attempts=100, timeout=WAIT_FRONTEND)
 def confirm_group_rename(selenium, browser_id, oz_page):
     oz_page(selenium[browser_id])['groups'].elements_list[''].edit_box.confirm()
 
 
 @wt(parsers.parse('user of browser sees that create group button is inactive'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(attempts=100, timeout=WAIT_FRONTEND)
 def assert_create_button_inactive(selenium, browser_id, oz_page):
     page = oz_page(selenium[browser_id])['groups']
     assert not page.input_box.confirm.is_enabled(), ('"Create group" button '
@@ -171,7 +171,7 @@ def assert_create_button_inactive(selenium, browser_id, oz_page):
 
 @wt(parsers.parse('user of {browser_id} clicks on button "{button}" in '
                   'modal "{modal}"'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(attempts=100, timeout=WAIT_FRONTEND)
 def click_modal_button(selenium, browser_id, button, modal, oz_page):
     button = button.lower()
     modal = modal.lower().replace(' ', '_')
@@ -180,7 +180,7 @@ def click_modal_button(selenium, browser_id, button, modal, oz_page):
 
 @wt(parsers.parse('user of {browser_id} sees that error modal with '
                   'text "{text}" appeared'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(attempts=100, timeout=WAIT_FRONTEND)
 def assert_error_modal_with_text_appeared(selenium, browser_id, text, oz_page):
     message = 'Modal does not contain text "{}\"'.format(text) 
     assert text in modals(selenium[browser_id]).error.content, message
@@ -189,7 +189,7 @@ def assert_error_modal_with_text_appeared(selenium, browser_id, text, oz_page):
 @wt(parsers.parse('user of {browser_id} clicks on text '
                   '"generate an invitation token" in group '
                   '"{group}" members groups list'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(attempts=100, timeout=WAIT_FRONTEND)
 def click_generate_token_in_subgroups_list(selenium, browser_id, group, 
                                            oz_page):
     page = oz_page(selenium[browser_id])['groups']
@@ -201,7 +201,7 @@ def click_generate_token_in_subgroups_list(selenium, browser_id, group,
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on button '
                '"(?P<button>Invite group|Invite user)" in group '
                '"(?P<group_name>.*)" members menu'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(attempts=100, timeout=WAIT_FRONTEND)
 def generate_group_or_user_invitation_token(selenium, browser_id, button, 
                                             group_name, oz_page):
     page = oz_page(selenium[browser_id])['groups']
@@ -213,7 +213,7 @@ def generate_group_or_user_invitation_token(selenium, browser_id, button,
 
 @wt(parsers.parse('user of {browser_id} sees that area with '
                   'invitation token has appeared'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(attempts=100, timeout=WAIT_FRONTEND)
 def assert_token_area_appeared(selenium, browser_id, oz_page):
     page = oz_page(selenium[browser_id])['groups']
     try:
@@ -223,7 +223,7 @@ def assert_token_area_appeared(selenium, browser_id, oz_page):
 
 
 @wt(parsers.parse('user of {browser_id} sees non-empty token in token area'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(attempts=100, timeout=WAIT_FRONTEND)
 def assert_generated_token_is_present(selenium, browser_id, oz_page):
     page = oz_page(selenium[browser_id])['groups']
     try:
@@ -234,7 +234,7 @@ def assert_generated_token_is_present(selenium, browser_id, oz_page):
 
 
 @wt(parsers.parse('user of {browser_id} copies generated token'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(attempts=100, timeout=WAIT_FRONTEND)
 def copy_token(selenium, browser_id, oz_page, tmp_memory):
     
     oz_page(selenium[browser_id])['groups'].main_page.members.token.copy()
@@ -242,7 +242,7 @@ def copy_token(selenium, browser_id, oz_page, tmp_memory):
 
 @wt(parsers.re('user of (?P<browser_id>.*) goes to group "(?P<group>.*)" '
                '(?P<subpage>members|parents|main) subpage'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(attempts=100, timeout=WAIT_FRONTEND)
 def go_to_group_subpage(selenium, browser_id, group, subpage, oz_page):
     page = oz_page(selenium[browser_id])['groups']
     page.elements_list[group]()
@@ -252,7 +252,7 @@ def go_to_group_subpage(selenium, browser_id, group, subpage, oz_page):
 
 @wt(parsers.parse('user of {browser_id} pastes copied token into group '
                   'token text field'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(attempts=100, timeout=WAIT_FRONTEND)
 def input_token_into_token_input_field(selenium, browser_id, oz_page, 
                                        displays, clipboard):
     token = clipboard.paste(display=displays[browser_id])
@@ -262,7 +262,7 @@ def input_token_into_token_input_field(selenium, browser_id, oz_page,
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>does not see|sees) '
                '"(?P<child>.*)" as "(?P<parent>.*)" child'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(attempts=100, timeout=WAIT_FRONTEND)
 def assert_group_is_groups_child(selenium, browser_id, option, child, 
                                            parent, oz_page):
     page = oz_page(selenium[browser_id])['groups']
@@ -280,7 +280,7 @@ def assert_group_is_groups_child(selenium, browser_id, option, child,
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>does not see|sees) '
                '"(?P<parent>.*)" as "(?P<child>.*)" parent'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(attempts=100, timeout=WAIT_FRONTEND)
 def assert_group_is_groups_parent(selenium, browser_id, option, 
                                            parent, child, oz_page):
     page = oz_page(selenium[browser_id])['groups']
@@ -299,7 +299,7 @@ def assert_group_is_groups_parent(selenium, browser_id, option,
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>does not see|sees) '
                'user "(?P<username>.*)" on group "(?P<group_name>.*)" '
                'members list'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(attempts=100, timeout=WAIT_FRONTEND)
 def assert_member(selenium, browser_id, option, username, group_name, oz_page):
     page = oz_page(selenium[browser_id])['groups']
     page.elements_list[group_name]()
@@ -315,7 +315,7 @@ def assert_member(selenium, browser_id, option, username, group_name, oz_page):
 @wt(parsers.re('user of (?P<browser_id>.*) removes (?P<member_type>user|group) '
                '"(?P<name>.*)" from group '
                '"(?P<group>.*)" members'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(attempts=100, timeout=WAIT_FRONTEND)
 def remove_member_from_group(selenium, browser_id, name, member_type, group, 
                              oz_page):
     page = oz_page(selenium[browser_id])['groups']
@@ -331,7 +331,7 @@ def remove_member_from_group(selenium, browser_id, name, member_type, group,
 
 @wt(parsers.parse('user of {browser_id} removes group "{parent}" from '
                   'group "{child}" parents list'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(attempts=100, timeout=WAIT_FRONTEND)
 def leave_parent_group(selenium, browser_id, parent, child, oz_page):
     page = oz_page(selenium[browser_id])['groups']
     page.elements_list[child]()
@@ -343,7 +343,7 @@ def leave_parent_group(selenium, browser_id, parent, child, oz_page):
 
 @wt(parsers.parse('user of {browser_id} adds group "{group}" as subgroup '
                   'using received token'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(attempts=100, timeout=WAIT_FRONTEND)
 def add_group_as_subgroup(selenium, browser_id, group, oz_page, tmp_memory): 
     page = oz_page(selenium[browser_id])['groups']
     page.elements_list[group]()
@@ -357,7 +357,7 @@ def add_group_as_subgroup(selenium, browser_id, group, oz_page, tmp_memory):
 
 @wt(parsers.re('user of (?P<browser_id>.*) copies group "(?P<group>.*)" '
                '(?P<who>user|group) invitation token'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(attempts=100, timeout=WAIT_FRONTEND)
 def copy_invitation_token(selenium, browser_id, group, who, oz_page, tmp_memory):
     page = oz_page(selenium[browser_id])['groups']
     page.elements_list[group]()
@@ -368,7 +368,7 @@ def copy_invitation_token(selenium, browser_id, group, who, oz_page, tmp_memory)
 
 @wt(parsers.re('user of (?P<browser_id>.*) gets group "(?P<group>.*)" '
                '(?P<who>user|group) invitation token'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(attempts=100, timeout=WAIT_FRONTEND)
 def get_invitation_token(selenium, browser_id, group, who, oz_page, tmp_memory):
     page = oz_page(selenium[browser_id])['groups']
     page.elements_list[group]()
@@ -380,7 +380,7 @@ def get_invitation_token(selenium, browser_id, group, who, oz_page, tmp_memory):
 
 @wt(parsers.parse('user of {browser_id} see that page with text '
                   '"{text}" appeared'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(attempts=100, timeout=WAIT_FRONTEND)
 def assert_error_page_appeared(selenium, browser_id, text, oz_page):
     page = oz_page(selenium[browser_id])['groups']
     assert page.main_page.error_label == text
