@@ -9,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in " \
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (Button, NamedButton,
                                                WebItemsSequence, Label,
-                                               WebItem, Input)
+                                               WebItem)
 from tests.gui.utils.onezone.generic_page import Element, GenericPage
 from .common import EditBox, InputBox
 
@@ -76,8 +76,8 @@ class SpacesPage(GenericPage):
                                      'li.one-list-item.clickable', cls=Space)
 
     input_box = WebItem('.content-info-content-container', cls=InputBox)
-    overview_page = WebItem('.main-content', cls=SpaceOverviewPage)
 
+    overview_page = WebItem('.main-content', cls=SpaceOverviewPage)
     providers_page = WebItem('.main-content', cls=SpaceProvidersPage)
     members_page = WebItem('.main-content', cls=SpaceMembersPage)
     welcome_page = WebItem('.main-content', cls=WelcomePage)

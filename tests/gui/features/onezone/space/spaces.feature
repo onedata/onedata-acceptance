@@ -18,14 +18,21 @@ Feature: Basic management of spaces
     And user of browser logged as user1 to Onezone service
 
 
-  Scenario: Rename space
+  Scenario: Rename space (click on confirmation button)
     When user of browser clicks "space1" on spaces on left sidebar menu
     And user of browser types "space2" on rename input on overview page
     And user of browser clicks on confirmation button on overview page
     Then user of browser sees "space2" has appeared on spaces
     And user of browser sees "space1" has disappeared on spaces
 
-    Scenario: Cancel rename space
+  Scenario: Rename space (press Enter to confirm)
+    When user of browser clicks "space1" on spaces on left sidebar menu
+    And user of browser types "space2" on rename input on overview page
+    And user of browser presses enter on keyboard
+    Then user of browser sees "space2" has appeared on spaces
+    And user of browser sees "space1" has disappeared on spaces
+
+  Scenario: Cancel rename space
     When user of browser clicks "space1" on spaces on left sidebar menu
     And user of browser types "space2" on rename input on overview page
     And user of browser clicks on cancel button on overview page
@@ -90,6 +97,7 @@ Feature: Basic management of spaces
     When user of browser clicks "space1" on spaces on left sidebar menu
     And user of browser clicks Providers of "space1" on left sidebar menu
     Then user of browser sees "dev-oneprovider-krakow" is on the providers list
+    And user of browser sees length of providers list is equal number of supporting providers of "space1"
 
   Scenario: Generate different support tokens (space has arleady supported by one provider)
     When user of browser clicks "space1" on spaces on left sidebar menu
@@ -114,3 +122,4 @@ Feature: Basic management of spaces
     And user of browser clicks Get support button on providers page
     And user of browser clicks Copy button on Get support page
     Then user of browser sees copy token and token in input are the same
+    And user of browser sees non-empty copy token

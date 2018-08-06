@@ -33,5 +33,5 @@ Feature: Create new space
     When user of browser clicks Get started on spaces on left sidebar menu
     And user of browser clicks Create a space on Welcome page
     And user of browser types "space1" on input on create new space page
-    And user of browser presses enter on keyboard on create new space page
+    And user of browser presses enter on keyboard
     Then user of browser sees "space1" has appeared on spaces
