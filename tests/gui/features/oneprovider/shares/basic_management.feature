@@ -507,8 +507,8 @@ Feature: Basic share management in Oneprovider GUI
 
     # return to shared tab to see if share has been deleted
     And user of browser clicks on the "shared" tab in main menu sidebar
-    And user of browser is idle for 20 seconds
+    And user of browser is idle for 90 seconds
     And user of browser refreshes site
-    And user of browser is idle for 20 seconds
+    And user of browser is idle for 90 seconds
     And user of browser refreshes site
     Then user of browser sees that share named "share1" has disappeared from the shares list
