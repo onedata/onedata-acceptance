@@ -31,11 +31,11 @@ class Modals(object):
     login = WebItem('#login-form-modal', cls=LoginFormModal)
     edit_permissions = WebItem('#edit-permissions-modal', cls=EditPermissionsModal)
 
-    remove_group = WebItem('.remove-group-modal.modal .modal-dialog', cls=RemoveModal)
-    leave_group = WebItem('.leave-group-modal.modal .modal-dialog', cls=LeaveGroupModal)
-    leave_parent = WebItem('.leave-parent-modal.modal .modal-dialog', cls=LeaveParentModal)
-    remove_user = WebItem('.remove-user-modal.modal .modal-dialog', cls=RemoveModal)
-    error = WebItem('.alert-global.modal .modal-dialog', cls=ErrorModal)
+    remove_group = WebItem('.remove-group-modal.modal.in .modal-dialog', cls=RemoveModal)
+    leave_group = WebItem('.leave-group-modal.modal.in .modal-dialog', cls=LeaveGroupModal)
+    leave_parent = WebItem('.leave-parent-modal.modal.in .modal-dialog', cls=LeaveParentModal)
+    remove_user = WebItem('.remove-user-modal.modal.in .modal-dialog', cls=RemoveModal)
+    error = WebItem('.alert-global.modal.in .modal-dialog', cls=ErrorModal)
 
     def __init__(self, driver):
         self.driver = driver
