@@ -258,8 +258,8 @@ def see_items_in_op_gui(selenium, browser_id, path, subfiles, tmp_memory,
 @wt(parsers.re('user of (?P<browser_id>\w+) (?P<res>.*) to create '
                '(?P<item_type>directory|file) "(?P<name>[\w._-]+)" '
                '(in "(?P<path>.*)" )?in "(?P<space>.*)"'))
-def create_item_in_op_gui(selenium, browser_id, item_type, name,
-                          tmp_memory, op_page, res, space, path):
+def create_item_in_op_gui(selenium, browser_id, path, item_type, name,
+                          tmp_memory, op_page, res, space):
 
     # change None to empty string if path not given
     path = path if path else ''

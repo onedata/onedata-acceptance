@@ -190,7 +190,7 @@ def admin_credentials(request, users):
 def clients():
     """Mapping oneclient name to mount point and pod name 
     e.g. {client1: {
-        'mountpoint': /mnt/user1/,
+        'mountpoint': /mnt/oneclient/user1/,
         'pod_name: dev-oneclient-krakow-8545c5fc6d-f5jj8'}}"""
     return {}
 

@@ -39,7 +39,7 @@ def modify_provider_with_given_name_in_op_panel_using_gui(selenium, user,
     notify_text_regexp = '.*[Pp]rovider.*data.*modified.*'
 
     wt_click_on_subitem_for_item_with_name(selenium, user, sidebar, sub_item,
-                                           provider_name, onepanel, hosts)
+                                           provider_name, onepanel)
 
     wt_click_on_btn_in_content(selenium, user, button, content, onepanel)
     wt_type_val_to_in_box_in_provider_details_form(selenium, user,

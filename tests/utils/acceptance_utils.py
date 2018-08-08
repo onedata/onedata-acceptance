@@ -15,7 +15,6 @@ from pytest_bdd import when, then
 from functools import wraps
 from types import CodeType
 
-
 def list_parser(list):
     return [el.strip() for el in list.strip('[]').split(',') if el != '']
 
@@ -58,27 +57,29 @@ def wt(name, converters=None):
     return decorator
 
 
-def execute_command(cmd, error=None):
+def execute_command(cmd, error=None, should_fail=False):
     process = subprocess.Popen(cmd, stdout=subprocess.PIPE,
                                stderr=subprocess.PIPE)
     output, err = process.communicate()
-    if process.returncode:
+    if (process.returncode != 0) ^ should_fail:
         raise RuntimeError('{}: {}'.format(error, err) if error
-                           else 'Error when executing command '
-                                '"{}": {}'.format(' '.join(cmd), err))
+                           else 'Command did not fail: {}'.format(' '.join(cmd))
+                           if should_fail else 'Error when executing command '
+                           '"{}": {}'.format(' '.join(cmd), err))
     return output
 
 
 def get_pod_names_matching_regexp(regexp):
-    raw_json = execute_command(['kubectl', 'get', 'pods', '-o', 'json',
-                                '--field-selector=status.phase==Running'],
-                               error='Error when listing pods')
+    cmd = ['kubectl', 'get', 'pods'] + \
+          ['-o', 'json', '--field-selector=status.phase==Running']
+    raw_json = execute_command(cmd, error='Error when listing pods')
     parsed_json = json.loads(raw_json)
     pods_names = [pod['metadata']['name'] for pod in parsed_json['items']]
     return [name for name in pods_names if re.search(regexp, name)]
 
 
 def get_pod_ip(pod_name):
-    raw_json = execute_command(['kubectl', 'get', 'pod', pod_name, '-o', 'json'])
+    cmd = ['kubectl', 'get'] + ['pod', pod_name, '-o', 'json']
+    raw_json = execute_command(cmd)
     parsed_json = json.loads(raw_json)
     return parsed_json['status']['podIP']

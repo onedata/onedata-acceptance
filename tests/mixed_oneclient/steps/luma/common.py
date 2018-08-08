@@ -1,4 +1,4 @@
-"""This module contains gherkin for operations on LUMA.
+"""This module contains gherkin steps for operations on LUMA.
 """
 
 __author__ = "Michal Stanisz"

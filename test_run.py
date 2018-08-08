@@ -207,11 +207,10 @@ parser.add_argument(
     dest='sources')
 
 parser.add_argument(
-    '--local_charts',
-    action='store_true',
-    help='If present local charts will be used',
-    dest='local_charts')
-
+    '--timeout',
+    action='store',
+    help='onenv wait timeout',
+    dest='timeout')
 
 [args, pass_args] = parser.parse_known_args()
 
@@ -335,12 +334,11 @@ if args.clean:
     up_arguments.extend(['-f'])
 if args.sources:
     up_arguments.extend(['-s'])
-if args.local_charts:
-    up_arguments.extend(['-l'])
 up_arguments.extend(['{}'.format(os.path.join(script_dir, args.env_file))])
 run_onenv_command('up', up_arguments)
 
-run_onenv_command('wait')
+wait_args = ['--timeout', args.timeout] if args.timeout else []
+run_onenv_command('wait', wait_args)
 
 if args.update_etc_hosts:
     call(['python', 'scripts/update_etc_hosts.py'], cwd='one_env')

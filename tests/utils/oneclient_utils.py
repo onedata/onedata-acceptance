@@ -7,11 +7,18 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 from tests.utils.acceptance_utils import execute_command
+from tests.gui.utils.generic import repeat_failed
 
 
-def do_ls(path, pod_name, user):
-    list_ = execute_command(['kubectl', 'exec', pod_name, '--', 'runuser', '-l',
-                             user, '-c', 'ls -Ald {}'.format(path)]).split('\n')
+EXEC_CMD = ['kubectl', 'exec']
+
+
+@repeat_failed(timeout=60, interval=4)
+def do_ls(path, pod_name, should_fail=False, error=None, container=''):
+    cmd = ['ls', '-Ald', path]
+    exec_cmd = EXEC_CMD + ['-c', container] if container else EXEC_CMD
+    list_ = execute_command(exec_cmd + [pod_name, '--'] + cmd,
+                            should_fail=should_fail, error=error).split('\n')
     # remove empty strings
     list_ = [x for x in list_ if x]
     res = {}
@@ -25,36 +32,46 @@ def do_ls(path, pod_name, user):
 
 
 def do_mkdir(path, pod_name):
-    execute_command(['kubectl', 'exec', pod_name, '--', 'mkdir', '-p', path])
+    cmd = ['--', 'mkdir', '-p', path]
+    execute_command(EXEC_CMD + [pod_name] + cmd)
+
+
+def do_rm(path, pod_name, should_fail=False, recursive=False, force=False):
+    cmd = ['--', 'rm', ]
+    if recursive:
+        cmd += ['-r']
+    if force:
+        cmd += ['-f']
+    cmd += [path]
+    execute_command(EXEC_CMD + [pod_name] + cmd,
+                    should_fail=should_fail)
+
+
+def do_touch(path, pod_name):
+    cmd = ['touch', path]
+    execute_command(EXEC_CMD + [pod_name, '--'] + cmd)
+
+
+def do_cat(path, pod_name):
+    cmd = ['cat', path]
+    return execute_command(EXEC_CMD + [pod_name, '--'] + cmd)
 
 
 def do_chown(path, owner, pod_name):
-    execute_command(['kubectl', 'exec', pod_name, '--', 'chown', owner, path])
+    cmd = ['--', 'chown', owner, path]
+    execute_command(EXEC_CMD + [pod_name] + cmd)
 
 
-def create_users_in_oneclient_pods(config, pod_name):
-    for username, uid in config.items():
-        execute_command(['kubectl', 'exec', pod_name, '--',
-                         'useradd', '-u', str(uid), username],
-                        error='Error adding user in oneclient pod')
+def create_entities_in_oneclient_containers(config, pod_name, entity_type):
+    for name, _id in config.items():
+        cmd = ['--', '{}add'.format(entity_type), '-{}'.format(entity_type[0]),
+               str(_id), name]
+        execute_command(EXEC_CMD + [pod_name] + cmd,
+                        error='Error adding {} in oneclient pod {}'
+                        .format(entity_type, pod_name))
 
 
-def create_groups_in_oneclient_pods(config, pod_name):
-    for groupname, gid in config.items():
-        execute_command(['kubectl', 'exec', pod_name, '--',
-                         'groupadd', '-g', str(gid), groupname],
-                        error='Error adding group in oneclient pod')
-
-
-def mount_oneclient(mountpoint, pod_name, user, token, provider_ip):
-    execute_command(['kubectl', 'exec', pod_name, '--', 'runuser', '-l', user, '-c',
-                     'oneclient -i -H {provider_ip} -t {token} {mountpoint}'.format(
-                         provider_ip=provider_ip,
-                         token=token,
-                         mountpoint=mountpoint
-                     )])
-
-
-def create_file_as_user_using_oneclient(path, user, pod_name):
-    execute_command(['kubectl', 'exec', pod_name, '--', 'runuser', '-l', user,
-                     '-c', 'touch {}'.format(path)])
+def mount_oneclient(mountpoint, pod_name, token, provider_ip):
+    cmd = ['oneclient', '-i', '-H', provider_ip, '-t', token, mountpoint]
+    execute_command(EXEC_CMD + [pod_name, '--'] + cmd,
+                    error='Error mounting oneclient in {}'.format(mountpoint))

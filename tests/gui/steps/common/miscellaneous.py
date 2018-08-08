@@ -14,6 +14,7 @@ from selenium.webdriver.common.keys import Keys
 
 from tests.gui.utils.generic import repeat_failed, transform
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.utils.acceptance_utils import wt
 
 
 @repeat_failed(attempts=WAIT_FRONTEND)
@@ -47,10 +48,9 @@ def press_enter_on_active_element(selenium, browser_id):
     driver.switch_to.active_element.send_keys(Keys.RETURN)
 
 
-@when(parsers.re('user of (?P<browser_id>.+?) is idle for '
-                 '(?P<seconds>\d*\.?\d+([eE][-+]?\d+)?) seconds'))
-@then(parsers.re('user of (?P<browser_id>.+?) is idle for '
-                 '(?P<seconds>\d*\.?\d+([eE][-+]?\d+)?) seconds'))
+@wt(parsers.re('user of (?P<browser_id>.+?) is idle for '
+               '(?P<seconds>\d*\.?\d+([eE][-+]?\d+)?) seconds'))
+@wt(parsers.re('user .* waits for (?P<seconds>.*) seconds'))
 def wait_given_time(seconds):
     time.sleep(float(seconds))
 

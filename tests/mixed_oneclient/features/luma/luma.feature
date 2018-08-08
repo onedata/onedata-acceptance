@@ -38,7 +38,7 @@ Feature: LUMA acceptance tests
     And opened browser with user3 logged to "onezone onezone" service
     And opened oneprovider-1 Oneprovider view in web GUI by user3
 
-    And [user1, user2] mounted [client1, client2] to oneprovider-1
+    And [user1, user2] mounted [client1, client2] to oneprovider-1 on "oneclient-krakow"
 
   Scenario: LUMA test
     When using client1 user1 creates file "file_u1.txt" in space "space1"

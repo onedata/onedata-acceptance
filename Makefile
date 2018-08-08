@@ -61,6 +61,7 @@ BROWSER            ?= Chrome
 ENV_FILE           ?= tests/gui/environments/1oz_1op_deployed.yaml
 OZ_IMAGE           ?= ""
 OP_IMAGE           ?= ""
+TIMEOUT			   ?= 300
 
 test_gui_packages_one_env:
 	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i onedata/acceptance_gui:v2 --xvfb --xvfb-recording=${RECORDING_OPTION} --env-file=${ENV_FILE} -k=${KEYWORDS} --oz-image=${OZ_IMAGE} --op-image=${OP_IMAGE}  --reruns 1 --reruns-delay 10
@@ -73,6 +74,9 @@ test_mixed_packages_swaggers:
 
 test_mixed_sources_swaggers:
 	${TEST_RUN} -t tests/mixed_swaggers/scenarios/${SUITE}.py --test-type mixed_swaggers -vvv --driver=${BROWSER} -i onedata/acceptance_gui:v2 --xvfb --xvfb-recording=${RECORDING_OPTION} --env-file=${ENV_FILE} --sources -k=${KEYWORDS} --oz-image=${OZ_IMAGE} --op-image=${OP_IMAGE} --reruns 1 --reruns-delay 10
+
+test_mixed_oneclient:
+	${TEST_RUN} -t tests/mixed_oneclient/scenarios/${SUITE}.py --test-type mixed_oneclient -vvv --driver=${BROWSER} -i onedata/acceptance_gui:v3 --xvfb --xvfb-recording=${RECORDING_OPTION} --env-file=${ENV_FILE} -k=${KEYWORDS} --oz-image=${OZ_IMAGE} --op-image=${OP_IMAGE} --timeout ${TIMEOUT} --reruns 1 --reruns-delay 10
 
 
 ##
