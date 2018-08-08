@@ -3,7 +3,7 @@ basic operations in Onepanel using REST API mixed with web GUI.
 """
 
 __author__ = "Michal Cwiertnia"
-__copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
+__copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
@@ -80,7 +80,8 @@ def modify_provider_using_test_hostname_in_op_panel(client, request, user,
                                                     new_provider_name,
                                                     host, users, hosts,
                                                     selenium, onepanel,
-                                                    panel_login_page):
+                                                    panel_login_page,
+                                                    modals):
 
     test_domain = '{}.test'.format(hosts[provider_name]['hostname'])
 
@@ -94,8 +95,8 @@ def modify_provider_using_test_hostname_in_op_panel(client, request, user,
                                     modify_provider_with_given_name_in_op_panel_using_gui
         modify_provider_with_given_name_in_op_panel_using_gui(
             selenium, user, onepanel, hosts[provider_name]['name'],
-            new_provider_name, False, test_domain, panel_login_page, users,
-            hosts)
+            new_provider_name, test_domain, panel_login_page, users,
+            hosts, user, modals)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
@@ -108,7 +109,8 @@ def modify_provider_using_known_hostname_in_op_panel(client, request, user,
                                                      provider_name,
                                                      target_provider, host,
                                                      users, hosts, selenium,
-                                                     onepanel, panel_login_page):
+                                                     onepanel, panel_login_page,
+                                                     modals):
 
     if client.lower() == 'rest':
         from tests.mixed_swaggers.utils.onepanel.provider import \
@@ -121,8 +123,9 @@ def modify_provider_using_known_hostname_in_op_panel(client, request, user,
                                     modify_provider_with_given_name_in_op_panel_using_gui
         modify_provider_with_given_name_in_op_panel_using_gui(
             selenium, user, onepanel, provider_name,
-            hosts[target_provider]['name'], True,
-            hosts[target_provider]['hostname'], panel_login_page, users, hosts)
+            hosts[target_provider]['name'],
+            hosts[target_provider]['hostname'], panel_login_page, users, hosts,
+            user, modals)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
