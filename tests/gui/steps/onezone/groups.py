@@ -240,7 +240,6 @@ def assert_generated_token_is_present(selenium, browser_id, oz_page):
 @wt(parsers.parse('user of {browser_id} copies generated token'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def copy_token(selenium, browser_id, oz_page, tmp_memory):
-    
     oz_page(selenium[browser_id])['groups'].main_page.members.token.copy()
 
 

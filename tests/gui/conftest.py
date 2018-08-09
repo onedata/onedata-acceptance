@@ -30,7 +30,7 @@ SELENIUM_IMPLICIT_WAIT = 0
 
 # use this const when using: WebDriverWait(selenium, WAIT_FRONTEND).until(lambda s: ...)
 # when waiting for frontend changes
-WAIT_FRONTEND = 60
+WAIT_FRONTEND = 4
 
 # use this const when using: WebDriverWait(selenium, WAIT_BACKEND).until(lambda s: ...)
 # when waiting for backend changes
