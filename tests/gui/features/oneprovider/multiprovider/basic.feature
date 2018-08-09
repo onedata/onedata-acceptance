@@ -16,15 +16,15 @@ Feature: Oneprovider functionality using multiple providers
                   - oneprovider-2:
                       storage: posix
                       size: 1000000
-          space2:
-              owner: user1
-              providers:
-                  - oneprovider-1:
-                      storage: posix
-                      size: 1000000
-                  - oneprovider-2:
-                      storage: posix
-                      size: 1000000
+#          space2:
+#              owner: user1
+#              providers:
+#                  - oneprovider-1:
+#                      storage: posix
+#                      size: 1000000
+#                  - oneprovider-2:
+#                      storage: posix
+#                      size: 1000000
     And user opened browser window
     And user of browser opened onezone page
     And user of browser logged as user1 to Onezone service
@@ -41,12 +41,8 @@ Feature: Oneprovider functionality using multiple providers
     And user of browser sees that space named "multiprov" has appeared in the spaces list
 
     And user of browser clicks on the "providers" tab in main menu sidebar
-    And user of browser expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
-    And user of browser sees that there is space named "multiprov" in expanded "DATA SPACE MANAGEMENT" Onezone panel
-
-    And user of browser expands the "GO TO YOUR FILES" Onezone sidebar panel
-    And user of browser clicks on "oneprovider-2" provider in expanded "GO TO YOUR FILES" Onezone panel
-    And user of browser clicks on the "Go to your files" button in provider popup
+    And user of browser sees "multiprov" has appeared on spaces
+    And user of browser clicks on "oneprovider-2" provider on left sidebar menu
     And user of browser clicks on the "spaces" tab in main menu sidebar
     Then user of browser sees that space named "multiprov" has appeared in the spaces list
 
@@ -67,39 +63,36 @@ Feature: Oneprovider functionality using multiple providers
     And user of browser sees that space named "NewNameSpace" has appeared in the spaces list
 
     And user of browser clicks on the "providers" tab in main menu sidebar
-    And user of browser expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
-    And user of browser sees that there is space named "NewNameSpace" in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser sees that there is no space named "space1" in expanded "DATA SPACE MANAGEMENT" Onezone panel
+    And user of browser sees "NewNameSpace" has appeared on spaces
+    And user of browser sees "space1" has disappeared on spaces
 
-    And user of browser expands the "GO TO YOUR FILES" Onezone sidebar panel
-    And user of browser clicks on "oneprovider-2" provider in expanded "GO TO YOUR FILES" Onezone panel
-    And user of browser clicks on the "Go to your files" button in provider popup
+    And user of browser clicks on "oneprovider-2" provider on left sidebar menu
     And user of browser clicks on the "spaces" tab in main menu sidebar
+    And user of browser is idle for 90 seconds
+    And user of browser refreshes site
     And user of browser sees that space named "NewNameSpace" has appeared in the spaces list
     Then user of browser sees that space named "space1" has disappeared from the spaces list
 
-
-  Scenario: User leaves space in one provider and sees that it was leaved from also in other provider
-    When user of browser clicks on the "spaces" tab in main menu sidebar
-
-    And user of browser clicks on settings icon displayed for "space1" item on the spaces sidebar list
-    And user of browser clicks on the "LEAVE SPACE" item in settings dropdown for space named "space1"
-    And user of browser sees that "Leave a space" modal has appeared
-    And user of browser clicks "Yes" confirmation button in displayed modal
-    And user of browser sees an info notify with text matching to: .*space1.*left
-    And user of browser sees that the modal has disappeared
-    And user of browser refreshes site
-    And user of browser sees that space named "space1" has disappeared from the spaces list
-
-    And user of browser clicks on the "providers" tab in main menu sidebar
-    And user of browser expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
-    And user of browser sees that there is no space named "space1" in expanded "DATA SPACE MANAGEMENT" Onezone panel
-
-    And user of browser expands the "GO TO YOUR FILES" Onezone sidebar panel
-    And user of browser clicks on "oneprovider-2" provider in expanded "GO TO YOUR FILES" Onezone panel
-    And user of browser clicks on the "Go to your files" button in provider popup
-    And user of browser clicks on the "spaces" tab in main menu sidebar
-    Then user of browser sees that space named "space1" has disappeared from the spaces list
+# add second space to given or look for text this provider does not support any space
+#  Scenario: User leaves space in one provider and sees that it was leaved from also in other provider
+#    When user of browser clicks on the "spaces" tab in main menu sidebar
+#
+#    And user of browser clicks on settings icon displayed for "space1" item on the spaces sidebar list
+#    And user of browser clicks on the "LEAVE SPACE" item in settings dropdown for space named "space1"
+#    And user of browser sees that "Leave a space" modal has appeared
+#    And user of browser clicks "Yes" confirmation button in displayed modal
+#    And user of browser sees an info notify with text matching to: .*space1.*left
+#    And user of browser sees that the modal has disappeared
+#    And user of browser refreshes site
+#    And user of browser sees that space named "space1" has disappeared from the spaces list
+#
+#    And user of browser clicks on the "providers" tab in main menu sidebar
+#    And user of browser expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
+#    And user of browser sees that there is no space named "space1" in expanded "DATA SPACE MANAGEMENT" Onezone panel
+#
+#    And user of browser clicks on "oneprovider-2" provider on left sidebar menu
+#    And user of browser clicks on the "spaces" tab in main menu sidebar
+#    Then user of browser sees that space named "space1" has disappeared from the spaces list
 
 
   Scenario: User creates group in one provider and sees that it was created also in other provider
@@ -114,12 +107,9 @@ Feature: Oneprovider functionality using multiple providers
     And user of browser sees that group named "multiprov" has appeared in the groups list
 
     And user of browser clicks on the "providers" tab in main menu sidebar
-    And user of browser expands the "GROUP MANAGEMENT" Onezone sidebar panel
-    And user of browser sees that there is group named "multiprov" in expanded "GROUP MANAGEMENT" Onezone panel
+    And user of browser sees "multiprov" is in groups on left sidebar menu
 
-    And user of browser expands the "GO TO YOUR FILES" Onezone sidebar panel
-    And user of browser clicks on "oneprovider-2" provider in expanded "GO TO YOUR FILES" Onezone panel
-    And user of browser clicks on the "Go to your files" button in provider popup
+    And user of browser clicks on "oneprovider-2" provider on left sidebar menu
     And user of browser clicks on the "groups" tab in main menu sidebar
     Then user of browser sees that group named "multiprov" has appeared in the groups list
 
@@ -140,13 +130,10 @@ Feature: Oneprovider functionality using multiple providers
     And user of browser sees that group named "NewNameGroup" has appeared in the groups list
 
     And user of browser clicks on the "providers" tab in main menu sidebar
-    And user of browser expands the "GROUP MANAGEMENT" Onezone sidebar panel
-    And user of browser sees that there is group named "NewNameGroup" in expanded "GROUP MANAGEMENT" Onezone panel
-    And user of browser sees that there is no group named "group1" in expanded "GROUP MANAGEMENT" Onezone panel
+    And user of browser sees "NewNameGroup" is in groups on left sidebar menu
+    And user of browser sees "multiprov" is not in groups on left sidebar menu
 
-    And user of browser expands the "GO TO YOUR FILES" Onezone sidebar panel
-    And user of browser clicks on "oneprovider-2" provider in expanded "GO TO YOUR FILES" Onezone panel
-    And user of browser clicks on the "Go to your files" button in provider popup
+    And user of browser clicks on "oneprovider-2" provider on left sidebar menu
     And user of browser clicks on the "groups" tab in main menu sidebar
     And user of browser sees that group named "group1" has disappeared from the groups list
     Then user of browser sees that group named "NewNameGroup" has appeared in the groups list
@@ -164,14 +151,8 @@ Feature: Oneprovider functionality using multiple providers
     And user of browser sees that group named "group1" has disappeared from the groups list
 
     And user of browser clicks on the "providers" tab in main menu sidebar
-    And user of browser expands the "GROUP MANAGEMENT" Onezone sidebar panel
-    And user of browser sees that there is no group named "group1" in expanded "GROUP MANAGEMENT" Onezone panel
+    And user of browser sees "group1" is not in groups on left sidebar menu
 
-    And user of browser expands the "GO TO YOUR FILES" Onezone sidebar panel
-    And user of browser clicks on "oneprovider-2" provider in expanded "GO TO YOUR FILES" Onezone panel
-    And user of browser clicks on the "Go to your files" button in provider popup
+    And user of browser clicks on "oneprovider-2" provider on left sidebar menu
     And user of browser clicks on the "groups" tab in main menu sidebar
     Then user of browser sees that group named "group1" has disappeared from the groups list
-
-
-

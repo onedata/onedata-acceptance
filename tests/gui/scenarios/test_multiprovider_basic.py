@@ -36,6 +36,8 @@ from tests.gui.steps.onezone.access_tokens import *
 from tests.gui.steps.onezone.data_space_management import *
 from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.manage_account import *
+from tests.gui.steps.onezone.space import *
+from tests.gui.steps.onezone.multi_browser_space import *
 
 from tests.gui.steps.oneprovider.common import *
 from tests.gui.steps.oneprovider.data_tab import *
@@ -44,6 +46,7 @@ from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
+from tests.gui.steps.oneprovider.multiprovider import *
 
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
@@ -55,5 +58,5 @@ def screens():
     return [0]
 
 
-scenarios('../features/oneprovider/multiprovider/cdmi.feature')
+# scenarios('../features/oneprovider/multiprovider/cdmi.feature')
 scenarios('../features/oneprovider/multiprovider/basic.feature')
