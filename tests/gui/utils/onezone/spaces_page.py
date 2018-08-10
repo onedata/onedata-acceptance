@@ -15,6 +15,7 @@ from .common import EditBox, InputBox
 
 
 class Space(Element):
+    name = id = Label('.item-name')
     support_size = Label('.status-toolbar-icon:first-of-type')
     supporting_providers_number = Label('.status-toolbar-icon:last-of-type')
 
@@ -51,7 +52,7 @@ class GetSupportPage(PageObject):
     expose_existing_data_modal = NamedButton('.nav-link', text='Expose existing data collection')
 
     token_textarea = Label('.active textarea')
-    copy_button = NamedButton('.active .copy-btn', text='Copy')
+    copy_button = NamedButton('.tab-pane.active .copy-btn', text='Copy')
     generate_another_token = NamedButton('.active .btn-get-token', text='Generate another token')
 
 

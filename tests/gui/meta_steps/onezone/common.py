@@ -19,6 +19,7 @@ from tests.gui.conftest import WAIT_FRONTEND
 
 @given(parsers.re('opened (?P<browser_id_list>.*) with (?P<user_list>.*) logged'
                   ' to (?P<host_list>.*) service'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def login_using_gui(host_list, selenium, driver, tmpdir, tmp_memory, xvfb,
                     driver_kwargs, driver_type, firefox_logging, displays,
                     firefox_path, screen_width, screen_height, hosts,
@@ -45,12 +46,22 @@ def visit_op(selenium, browser_id, oz_page, provider_name):
     providers_panel.popover.visit_provider()
 
 
-@wt(parsers.re('users? of (?P<browser_id_list>.*) opened (?P<providers_list>.*) '
-               'Oneprovider view in web GUI'))
 @given(parsers.re('opened (?P<providers_list>.*) Oneprovider view in web GUI by '
                   '(users? of )?(?P<browser_id_list>.*)'))
 @repeat_failed(timeout=WAIT_FRONTEND * 50)
 def g_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts):
+    providers_list = list_parser(providers_list)
+    for browser_id, provider in izip_longest(list_parser(browser_id_list),
+                                             providers_list,
+                                             fillvalue=providers_list[-1]):
+        visit_op(selenium, browser_id, oz_page, hosts[provider]['name'])
+    g_wait_for_op_session_to_start(selenium, browser_id_list)
+
+
+@wt(parsers.re('users? of (?P<browser_id_list>.*) opened (?P<providers_list>.*) '
+               'Oneprovider view in web GUI'))
+@repeat_failed(timeout=WAIT_FRONTEND * 50)
+def wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts):
     providers_list = list_parser(providers_list)
     for browser_id, provider in izip_longest(list_parser(browser_id_list),
                                              providers_list,
