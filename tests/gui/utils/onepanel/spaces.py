@@ -132,7 +132,7 @@ class SpaceRecord(PageObject, ExpandableMixin):
                                    cls=ImportConfigurationForm)
     update_configuration = WebItem('.update-configuration-section',
                                    cls=UpdateConfigurationForm)
-    save_configuration = NamedButton('button', text='Save configuration')
+    save_configuration = Button('button.ready')
 
 
 class SpacesContentPage(PageObject):

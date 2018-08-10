@@ -190,10 +190,11 @@ def click_providers_of_space_on_left_sidebar_menu(selenium, browser_id, space_na
 
 @wt(parsers.parse('user of {browser_id} sees "{provider_name}" is on the providers list'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_check_if_providers_list_contains_provider(selenium, browser_id, provider_name, oz_page):
+def assert_check_if_providers_list_contains_provider(selenium, browser_id, provider_name, hosts, oz_page):
     driver = selenium[browser_id]
+    provider = hosts[provider_name]['name']
     providers_list = oz_page(driver)['spaces'].providers_page.providers_list
-    assert provider_name in providers_list
+    assert provider in providers_list
 
 
 @wt(parsers.parse('user of {browser_id} sees length of providers list is equal'
@@ -284,3 +285,15 @@ def reload_page(selenium, browser_id, oz_page):
 def assert_check_name_label_of_space_on_overview_page(selenium, browser_id, space_name, oz_page):
     driver = selenium[browser_id]
     assert oz_page(driver)['spaces'].overview_page.space_name == space_name
+
+
+@wt(parsers.parse('user of {browser_id} clicks Copy button to send to "{browser_list}" on Get support page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def send_copy_token_to_browser_from_get_support_page(selenium, browser_id, oz_page, displays,
+                                                     clipboard, browser_list, tmp_memory):
+    driver = selenium[browser_id]
+    oz_page(driver)['spaces'].providers_page.get_support_page.copy_button()
+
+    item = clipboard.paste(display=displays[browser_id])
+    for browser in parse_seq(browser_list):
+        tmp_memory[browser]['mailbox']['token'] = item

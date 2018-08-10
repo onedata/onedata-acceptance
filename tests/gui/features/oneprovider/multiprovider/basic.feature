@@ -87,8 +87,7 @@ Feature: Oneprovider functionality using multiple providers
 #    And user of browser sees that space named "space1" has disappeared from the spaces list
 #
 #    And user of browser clicks on the "providers" tab in main menu sidebar
-#    And user of browser expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
-#    And user of browser sees that there is no space named "space1" in expanded "DATA SPACE MANAGEMENT" Onezone panel
+#    And user of browser sees "space1" has appeared on spaces
 #
 #    And user of browser clicks on "oneprovider-2" provider on left sidebar menu
 #    And user of browser clicks on the "spaces" tab in main menu sidebar

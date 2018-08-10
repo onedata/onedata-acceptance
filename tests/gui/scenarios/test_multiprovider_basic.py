@@ -58,5 +58,5 @@ def screens():
     return [0]
 
 
-# scenarios('../features/oneprovider/multiprovider/cdmi.feature')
+scenarios('../features/oneprovider/multiprovider/cdmi.feature')
 scenarios('../features/oneprovider/multiprovider/basic.feature')

@@ -19,8 +19,6 @@ from tests.gui.meta_steps.onezone.common import visit_op
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_create_new_space_on_spaces_on_left_sidebar_menu(selenium, browser_id, provider_name, oz_page, hosts):
     driver = selenium[browser_id]
-    # provider = hosts[provider_name]['name']
-    # oz_page(driver)['providers'].elements_list[provider].click()
     visit_op(selenium, browser_id, oz_page, hosts[provider_name]['name'])
     g_wait_for_op_session_to_start(selenium, browser_id)
 

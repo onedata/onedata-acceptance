@@ -96,7 +96,7 @@ Feature: Basic management of spaces
   Scenario: Check list o providers on space
     When user of browser clicks "space1" on spaces on left sidebar menu
     And user of browser clicks Providers of "space1" on left sidebar menu
-    Then user of browser sees "dev-oneprovider-krakow" is on the providers list
+    Then user of browser sees "oneprovider-1" is on the providers list
     And user of browser sees length of providers list is equal number of supporting providers of "space1"
 
   Scenario: Generate different support tokens (space has arleady supported by one provider)
