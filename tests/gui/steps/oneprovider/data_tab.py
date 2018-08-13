@@ -7,11 +7,11 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-
 from itertools import izip
 
 import pytest
 from pytest_bdd import given, when, then, parsers
+from tests.utils.acceptance_utils import wt
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import (repeat_failed, parse_seq,
@@ -29,6 +29,26 @@ def change_space_view_in_data_tab_in_op(selenium, browser_id,
     selector = op_page(driver).data.sidebar.space_selector
     selector.expand()
     selector.spaces[space_name].click()
+
+
+@wt(parsers.parse('user of {browser_id} sees "{space_name}" is in spaces list on onepanel page'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_check_if_list_contains_space_in_data_tab_in_op(selenium, browser_id,
+                                                          space_name, op_page):
+    driver = selenium[browser_id]
+    selector = op_page(driver).data.sidebar.space_selector
+    selector.expand()
+    assert space_name in selector.spaces
+
+
+@wt(parsers.parse('user of {browser_id} sees "{space_name}" is not in spaces list on onepanel page'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_check_if_list_not_contain_space_in_data_tab_in_op(selenium, browser_id,
+                                                             space_name, op_page):
+    driver = selenium[browser_id]
+    selector = op_page(driver).data.sidebar.space_selector
+    selector.expand()
+    assert space_name not in selector.spaces
 
 
 @when(parsers.re(r'user of (?P<browser_id>.*?) clicks the button '
@@ -190,7 +210,7 @@ def wt_is_space_tree_root(selenium, browser_id, is_home, space_name, op_page):
                     'in data tab in Oneprovider page'))
 @then(parsers.parse('user of {browser_id} sees nonempty file browser '
                     'in data tab in Oneprovider page'))
-@repeat_failed(timeout=WAIT_BACKEND*2)
+@repeat_failed(timeout=WAIT_BACKEND * 2)
 def assert_nonempty_file_browser_in_data_tab_in_op(selenium, browser_id,
                                                    op_page, tmp_memory):
     driver = selenium[browser_id]
@@ -275,7 +295,7 @@ def resize_data_tab_sidebar(selenium, browser_id, direction, offset, op_page):
 
 @when(parsers.parse('user of {browser_id} waits for file upload to finish'))
 @then(parsers.parse('user of {browser_id} waits for file upload to finish'))
-@repeat_failed(timeout=WAIT_BACKEND*3)
+@repeat_failed(timeout=WAIT_BACKEND * 3)
 def wait_for_file_upload_to_finish(selenium, browser_id, op_page):
     driver = selenium[browser_id]
     uploader = op_page(driver).data.file_uploader
