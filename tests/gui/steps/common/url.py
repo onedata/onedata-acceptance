@@ -13,7 +13,6 @@ import re
 from pytest_bdd import given, when, then, parsers
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 from selenium.webdriver.support.expected_conditions import staleness_of
-from tests.utils.acceptance_utils import wt
 
 from tests.gui.utils.generic import parse_seq, repeat_failed, parse_url
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
@@ -22,20 +21,6 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 @given(parsers.parse("user of {browser_id_list} opened {hosts_list} page"))
 @given(parsers.parse("users of {browser_id_list} opened {hosts_list} page"))
 def g_open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
-    for browser_id, host in zip(parse_seq(browser_id_list),
-                                parse_seq(hosts_list)):
-        driver = selenium[browser_id]
-        host = host.split()
-        alias, service = host[0], '_'.join(host[1:])
-        if 'panel' in service:
-            driver.get('https://{}'.format(hosts[alias]['panel']['hostname']))
-        else:
-            driver.get('https://{}'.format(hosts[alias]['hostname']))
-
-
-@wt(parsers.parse("user of {browser_id_list} opens {hosts_list} page"))
-@wt(parsers.parse("users of {browser_id_list} opens {hosts_list} page"))
-def wt_open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
     for browser_id, host in zip(parse_seq(browser_id_list),
                                 parse_seq(hosts_list)):
         driver = selenium[browser_id]

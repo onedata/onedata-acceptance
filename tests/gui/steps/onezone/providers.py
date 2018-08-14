@@ -71,14 +71,11 @@ def assert_provider_hostname_matches_known_domain(selenium, browser_id,
                     '"{provider}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_provider_hostname_matches_test_hostname(selenium, browser_id,
-                                                   provider, hosts, oz_page,
-                                                   displays, clipboard):
+                                                   provider, hosts, oz_page):
     driver = selenium[browser_id]
+    prov = oz_page(driver)['world map'].get_provider_with_displayed_popup()
     expected_domain = "{}.test".format(hosts[provider]['hostname'])
-    page = oz_page(driver)['providers']
-    page.elements_list[0]()
-    page.popover.copy_hostname()
-    displayed_domain = clipboard.paste(display=displays[browser_id])
+    displayed_domain = prov.hostname
     assert displayed_domain == expected_domain, \
         'displayed {} provider hostname instead ' \
         'of expected {}'.format(displayed_domain, expected_domain)
@@ -307,25 +304,18 @@ def assert_list_of_providers_is_empty(selenium, browser_id, oz_page):
 
 
 @when(parsers.parse('user of {browser_id} sees that provider "{provider}" '
-                    'in Onezone panel is working'))
+                    'in expanded "GO TO YOUR FILES" Onezone panel is working'))
 @then(parsers.parse('user of {browser_id} sees that provider "{provider}" '
-                    'in Onezone panel is working'))
+                    'in expanded "GO TO YOUR FILES" Onezone panel is working'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_provider_working_in_oz_panel(selenium, browser_id,
                                         provider, oz_page, hosts):
     driver = selenium[browser_id]
     provider = hosts[provider]['name']
-    page = oz_page(driver)['providers']
-    try:
-        provider_record = page.elements_list[provider]
-    except RuntimeError:
-        assert False, 'no provider "{}" found on providers list'.format(provider)
-    else:
-        pass
-        # TODO: what is is_working() method?
-        # assert provider_record.is_working(), ('provider icon in GO TO YOUR '
-        #                                       'FILES oz panel for "{}" is not '
-        #                                       'green'.format(provider))
+    provider_record = oz_page(driver)['go to your files'].providers[provider]
+    assert provider_record.is_working(), ('provider icon in GO TO YOUR FILES '
+                                          'oz panel for "{}" is not green'
+                                          ''.format(provider))
 
 
 @when(parsers.parse('user of {browser_id} sees that provider named "{provider}" '

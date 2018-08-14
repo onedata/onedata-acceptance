@@ -11,7 +11,7 @@ from tests.gui.utils.core.web_elements import WebElement, WebElementsSequence
 from .common import OZPanel
 from .spaces_page import SpacesPage
 from .providers_page import ProvidersPage
-from .groups.groups_page import GroupsPage
+from .groups_page import GroupsPage
 from .tokens_page import TokensPage
 from selenium.webdriver.common.action_chains import ActionChains
 from time import sleep

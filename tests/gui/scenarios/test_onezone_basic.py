@@ -2,8 +2,8 @@
 Onezone GUI and single browser instance.
 """
 
-__author__ = "Bartosz Walkowicz, Lukasz Niemiec"
-__copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
+__author__ = "Bartosz Walkowicz"
+__copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
@@ -35,7 +35,6 @@ from tests.gui.steps.onezone.access_tokens import *
 from tests.gui.steps.onezone.data_space_management import *
 from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.manage_account import *
-from tests.gui.steps.onezone.groups import *
 
 from tests.gui.steps.oneprovider.common import *
 from tests.gui.steps.oneprovider.data_tab import *
@@ -62,16 +61,7 @@ def test_user_sees_that_when_no_provider_is_working_appropriate_msg_is_shown():
     pass
 
 
-#scenarios('../features/onezone/access_tokens.feature')
-#scenarios('../features/onezone/login_page.feature')
-#scenarios('../features/onezone/providers.feature')
-#scenarios('../features/onezone/user_alias.feature')
-
-scenarios('../features/onezone/groups/groups_creation.feature')
-scenarios('../features/onezone/groups/groups_basic_operations.feature')
-scenarios('../features/onezone/groups/groups_join.feature')
-scenarios('../features/onezone/groups/'
-          'groups_multiple_users_with_single_group.feature')
-scenarios('../features/onezone/groups/groups_subgroup.feature')
-scenarios('../features/onezone/groups/'
-          'groups_multiple_users_with_multiple_groups.feature')
+scenarios('../features/onezone/access_tokens.feature')
+scenarios('../features/onezone/login_page.feature')
+scenarios('../features/onezone/providers.feature')
+scenarios('../features/onezone/user_alias.feature')

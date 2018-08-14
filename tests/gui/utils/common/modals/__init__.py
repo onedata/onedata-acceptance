@@ -10,13 +10,9 @@ from .login import LoginFormModal
 from .deploying_cluster import ClusterDeploymentModal
 from .revoke_space_support import RevokeSpaceSupportModal
 from .edit_permissions import EditPermissionsModal
-from .remove import RemoveModal
-from .leave_group import LeaveGroupModal
-from .leave_parent import LeaveParentModal
-from .error_modal import ErrorModal
 
-__author__ = "Bartosz Walkowicz, Lukasz Niemiec"
-__copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
+__author__ = "Bartosz Walkowicz"
+__copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
@@ -30,12 +26,6 @@ class Modals(object):
                                    cls=RevokeSpaceSupportModal)
     login = WebItem('#login-form-modal', cls=LoginFormModal)
     edit_permissions = WebItem('#edit-permissions-modal', cls=EditPermissionsModal)
-
-    remove_group = WebItem('.remove-group-modal.modal.in .modal-dialog', cls=RemoveModal)
-    leave_group = WebItem('.leave-group-modal.modal.in .modal-dialog', cls=LeaveGroupModal)
-    leave_parent = WebItem('.leave-parent-modal.modal.in .modal-dialog', cls=LeaveParentModal)
-    remove_user = WebItem('.remove-user-modal.modal.in .modal-dialog', cls=RemoveModal)
-    error = WebItem('.alert-global.modal.in .modal-dialog', cls=ErrorModal)
 
     def __init__(self, driver):
         self.driver = driver

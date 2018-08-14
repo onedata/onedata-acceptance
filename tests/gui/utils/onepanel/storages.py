@@ -32,9 +32,9 @@ class StorageAddForm(PageObject):
 class StorageRecord(PageObject, ExpandableMixin):
     name = id = Label('.item-icon-container + .one-label')
     # TODO: add classes in GUI code or match by label text in tests
-    storage_type = Label('.item-table .content-row:nth-child(1) '
+    storage_type = Label('.item-table .content-row:nth-child(2) '
                          '.one-label')
-    mount_point = Label('.item-table .content-row:nth-child(4) '
+    mount_point = Label('.item-table .content-row:nth-child(5) '
                         '.one-label')
     _toggle = WebElement('.one-collapsible-list-item-header')
 

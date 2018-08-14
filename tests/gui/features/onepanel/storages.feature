@@ -7,7 +7,9 @@ Feature: Storage management using onepanel
 
     And users opened [browser1, browser2] browsers' windows
     And users of [browser1, browser2] opened [oneprovider-1 provider panel, onezone] page
-    And user of [browser1, browser2] logged as [admin, user1] to [Onepanel, Onezone] service
+    And user of browser1 logged as admin to Onepanel service
+    And user of browser2 seen "onezone" zone name in oz login page
+    And user of browser2 logged as user1 to Onezone service
     And directory tree structure on local file system:
           browser2:
               - dir1: 70
@@ -27,15 +29,19 @@ Feature: Storage management using onepanel
     And user of browser1 sees that "new_storage" Mount point is /volumes/storage in storages page in Onepanel
 
     # create space
-    And user of browser2 clicks create new space on spaces on left sidebar menu
-    And user of browser2 types "hello_world2" on input on create new space page
-    And user of browser2 clicks on create new space button
-    And user of browser2 sees "hello_world2" has appeared on spaces
+    And user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
+    And user of browser2 clicks on "Create new space" button in expanded "DATA SPACE MANAGEMENT" Onezone panel
+    And user of browser2 types "hello_world2" to space creation edit box in expanded "DATA SPACE MANAGEMENT" Onezone panel
+    And user of browser2 presses enter on keyboard
+    And user of browser2 sees that space named "hello_world2" has appeared in expanded "DATA SPACE MANAGEMENT" Onezone panel
 
     # receive support token
-    And user of browser2 clicks Providers of "hello_world2" on left sidebar menu
-    And user of browser2 clicks Get support button on providers page
-    And user of browser2 clicks Copy button on Get support page
+    And user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
+    And user of browser2 expands settings dropdown for space named "hello_world2" in expanded "DATA SPACE MANAGEMENT" Onezone panel by clicking on settings icon
+    And user of browser2 clicks on the "ADD STORAGE" item in settings dropdown for space named "hello_world2" in expanded "DATA SPACE MANAGEMENT" Onezone panel
+    And user of browser2 sees that modal "Add storage" has appeared
+    And user of browser2 sees non-empty token in "Add storage" modal
+    And user of browser2 copies token from "Add storage" modal
     And user of browser2 sends copied token to user of browser1
 
     # support space
@@ -49,11 +55,15 @@ Feature: Storage management using onepanel
     And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
     And user of browser1 sees that space support record for "hello_world2" has appeared in Spaces page in Onepanel
 
-    # go to provider
+    # confirm support of space
     And user of browser2 is idle for 2 seconds
     And user of browser2 refreshes site
-    And user of browser2 clicks Providers of "hello_world2" on left sidebar menu
-    And user of browser2 opened oneprovider-1 Oneprovider view in web GUI    
+    And user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
+    And user of browser2 expands submenu of space named "hello_world2" by clicking on space record in expanded "DATA SPACE MANAGEMENT" Onezone panel
+    And user of browser2 clicks on provider "oneprovider-1" in submenu of space named "hello_world2" in expanded "DATA SPACE MANAGEMENT" Onezone panel
+    And user of browser2 sees that provider popup for provider "oneprovider-1" has appeared on world map
+    And user of browser2 clicks on the "Go to your files" button in "oneprovider-1" provider's popup displayed on world map
+    And user of browser2 sees that Oneprovider session has started
 
     # create tmp dir and upload there 70 files
     And user of browser2 uses spaces select to change data space to "hello_world2"
@@ -70,6 +80,4 @@ Feature: Storage management using onepanel
     And user of browser2 sees that current working directory displayed in breadcrumbs is hello_world2/dir100
     And user of browser2 uses upload button in toolbar to upload files from local directory "dir1" to remote current dir
     And user of browser2 waits for file upload to finish
-
     Then user of browser2 sees that there are 70 items in file browser
-

@@ -111,7 +111,7 @@ def wt_assert_existence_of_space_support_record(selenium, browser_id,
                                                 space, onepanel):
     spaces = {space.name for space
               in onepanel(selenium[browser_id]).content.spaces.spaces}
-    assert any(s for s in spaces if s.startswith(space))
+    assert space in spaces, 'not found "{}" in spaces in Onepanel'.format(space)
 
 
 @when(parsers.parse('user of {browser_id} sees that list of supported spaces '
