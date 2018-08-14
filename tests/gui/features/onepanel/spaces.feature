@@ -3,10 +3,10 @@ Feature: Basic spaces management utilities using onepanel
   Background:
     Given users opened [browser1, browser2] browsers' windows
     And users of [browser1, browser2] opened [oneprovider-1 provider panel, onezone] page
-    And user of browser1 logged as admin to Onepanel service
-    And user of browser2 seen "onezone" zone name in oz login page
-    And user of browser2 logged as admin to Onezone service
-
+#    And user of browser1 logged as admin to Onepanel service
+#    And user of browser2 seen "onezone" zone name in oz login page
+#    And user of browser2 logged as admin to Onezone service
+    And user of [browser1, browser2] logged as [admin, admin] to [Onepanel, Onezone] service
 
   Scenario: Support space
     # create space
