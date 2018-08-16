@@ -35,9 +35,6 @@ from tests.gui.steps.onezone.access_tokens import *
 from tests.gui.steps.onezone.data_space_management import *
 from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.manage_account import *
-from tests.gui.steps.onezone.groups import *
-from tests.gui.steps.onezone.space import *
-from tests.gui.steps.onezone.multi_browser_space import *
 
 from tests.gui.steps.oneprovider.common import *
 from tests.gui.steps.oneprovider.data_tab import *
@@ -49,9 +46,6 @@ from tests.gui.steps.oneprovider.spaces import *
 
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
-from tests.gui.steps.oneprovider.permissions import *
-
-from tests.gui.meta_steps.onezone.common import *
 
 
 @fixture(scope='module')
@@ -59,13 +53,6 @@ def screens():
     return [0]
 
 
-# scenarios('../features/onezone/space/creation.feature')
-# scenarios('../features/onezone/space/basic_management.feature')
-# scenarios('../features/onezone/space/multiple_spaces_management.feature')
-
-scenarios('../features/onezone/space/spaces.feature')
-scenarios('../features/onezone/space/spaces_multi_browser.feature')
-scenarios('../features/onezone/space/invite_group_to_space.feature')
-scenarios('../features/onezone/space/create_new_space.feature')
-scenarios('../features/onezone/space/no_supported_space.feature')
-scenarios('../features/onezone/space/multi_spaces.feature')
+scenarios('../features/onezone/space/creation.feature')
+scenarios('../features/onezone/space/basic_management.feature')
+scenarios('../features/onezone/space/multiple_spaces_management.feature')

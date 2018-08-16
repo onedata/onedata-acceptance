@@ -3,22 +3,28 @@ Feature: Basic spaces management utilities using onepanel
   Background:
     Given users opened [browser1, browser2] browsers' windows
     And users of [browser1, browser2] opened [oneprovider-1 provider panel, onezone] page
-    And user of [browser1, browser2] logged as [admin, admin] to Onepanel service
-
+#    And user of browser1 logged as admin to Onepanel service
+#    And user of browser2 seen "onezone" zone name in oz login page
+#    And user of browser2 logged as admin to Onezone service
+    And user of [browser1, browser2] logged as [admin, admin] to [Onepanel, Onezone] service
 
   Scenario: Support space
     # create space
-    When user of browser2 clicks create new space on spaces on left sidebar menu
-    And user of browser2 types "helloworld" on input on create new space page
-    And user of browser2 clicks on create new space button
-    And user of browser2 sees "helloworld" has appeared on spaces
+    When user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
+    And user of browser2 sees that there is no space named "helloworld" in expanded "DATA SPACE MANAGEMENT" Onezone panel
+    And user of browser2 clicks on "Create new space" button in expanded "DATA SPACE MANAGEMENT" Onezone panel
+    And user of browser2 types "helloworld" to space creation edit box in expanded "DATA SPACE MANAGEMENT" Onezone panel
+    And user of browser2 presses enter on keyboard
+    And user of browser2 sees that space named "helloworld" has appeared in expanded "DATA SPACE MANAGEMENT" Onezone panel
 
     # receive support token
-    And user of browser2 clicks "helloworld" on spaces on left sidebar menu
-    And user of browser2 clicks Providers of "helloworld" on left sidebar menu
-    And user of browser2 clicks Get support button on providers page
-    And user of browser2 clicks Copy button to send to "browser1" on Get support page
-    And user of browser2 sees an info notify with text matching to: .*copied.*
+    And user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
+    And user of browser2 expands settings dropdown for space named "helloworld" in expanded "DATA SPACE MANAGEMENT" Onezone panel by clicking on settings icon
+    And user of browser2 clicks on the "ADD STORAGE" item in settings dropdown for space named "helloworld" in expanded "DATA SPACE MANAGEMENT" Onezone panel
+    And user of browser2 sees that modal "Add storage" has appeared
+    And user of browser2 sees non-empty token in "Add storage" modal
+    And user of browser2 copies token from "Add storage" modal
+    And user of browser2 sends copied token to user of browser1
 
     # support space
     And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
@@ -33,17 +39,17 @@ Feature: Basic spaces management utilities using onepanel
 
     # confirm support of space
     And user of browser2 refreshes site
-    And user of browser2 clicks "helloworld" on spaces on left sidebar menu
-    And user of browser2 clicks Providers of "helloworld" on left sidebar menu
-    And user of browser2 sees "oneprovider-1" is on the providers list
+    And user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
+    And user of browser2 expands submenu of space named "helloworld" by clicking on space record in expanded "DATA SPACE MANAGEMENT" Onezone panel
+    Then user of browser2 sees that list of supporting providers for space named "helloworld" in expanded "DATA SPACE MANAGEMENT" Onezone panel contains only: "oneprovider-1"
+
 
   Scenario: Revoke space support
     # assert space existence and support
-    When user of browser2 sees "helloworld" has appeared on spaces
-    And user of browser2 clicks "helloworld" on spaces on left sidebar menu
-    And user of browser2 clicks Providers of "helloworld" on left sidebar menu
-    And user of browser2 sees "oneprovider-1" is on the providers list
-    And user of browser2 sees length of providers list of "helloworld" is equal "1"
+    When user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
+    And user of browser2 sees that there is space named "helloworld" in expanded "DATA SPACE MANAGEMENT" Onezone panel
+    And user of browser2 expands submenu of space named "helloworld" by clicking on space record in expanded "DATA SPACE MANAGEMENT" Onezone panel
+    And user of browser2 sees that list of supporting providers for space named "helloworld" in expanded "DATA SPACE MANAGEMENT" Onezone panel contains only: "oneprovider-1"
 
     # unsupport space
     And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
@@ -54,6 +60,6 @@ Feature: Basic spaces management utilities using onepanel
 
     # confirm lack of support for space
     And user of browser2 refreshes site
-    And user of browser2 clicks "helloworld" on spaces on left sidebar menu
-    And user of browser2 clicks Providers of "helloworld" on left sidebar menu
-    And user of browser2 sees length of providers list of "helloworld" is equal "0"
+    And user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
+    And user of browser2 expands submenu of space named "helloworld" by clicking on space record in expanded "DATA SPACE MANAGEMENT" Onezone panel
+    Then user of browser2 sees that there is/are no supporting provider(s) "oneprovider-1" for space named "helloworld" in expanded "DATA SPACE MANAGEMENT" Onezone panel

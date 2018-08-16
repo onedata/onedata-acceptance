@@ -1,17 +1,16 @@
 """This module contains tests suite for basic operations using
-multiple provider instances and single browser instance.
+Onezone Groups GUI and single browser instance.
 """
 
-__author__ = "Bartosz Walkowicz"
-__copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
+__author__ = "Lukasz Niemiec"
+__copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 
-import pytest
+from pytest import fixture
 from pytest_bdd import scenario, scenarios
 
-from tests.gui.steps.rest.cdmi import *
 from tests.gui.steps.rest.env_up.users import *
 from tests.gui.steps.rest.env_up.groups import *
 from tests.gui.steps.rest.env_up.spaces import *
@@ -36,6 +35,7 @@ from tests.gui.steps.onezone.access_tokens import *
 from tests.gui.steps.onezone.data_space_management import *
 from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.manage_account import *
+from tests.gui.steps.onezone.groups import *
 
 from tests.gui.steps.oneprovider.common import *
 from tests.gui.steps.oneprovider.data_tab import *
@@ -47,13 +47,17 @@ from tests.gui.steps.oneprovider.spaces import *
 
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
-from tests.gui.meta_steps.onezone.common import *
 
 
-@pytest.fixture(scope='module')
+@fixture(scope='module')
 def screens():
-    return [0]
+    return [0, 1]
 
 
-scenarios('../features/oneprovider/multiprovider/cdmi.feature')
-scenarios('../features/oneprovider/multiprovider/basic.feature')
+scenarios('../features/onezone/groups/groups_join.feature')
+scenarios('../features/onezone/groups/'
+          'groups_multiple_users_with_single_group.feature')
+scenarios('../features/onezone/groups/groups_subgroup.feature')
+scenarios('../features/onezone/groups/'
+          'groups_multiple_users_with_multiple_groups.feature')
+
