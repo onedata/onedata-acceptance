@@ -34,6 +34,32 @@ def create_new_space_by_click_on_create_new_space_button(selenium, browser_id, o
     oz_page(driver)['spaces'].input_box.confirm()
 
 
+@wt(parsers.parse('user of {browser_id} creates space "{space_name}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def create_new_space(selenium, browser_id, space_name, oz_page):
+    page = oz_page(selenium[browser_id])['spaces']
+    page.create_space_button()
+    page.input_box.value = space_name
+    page.input_box.confirm()
+
+
+@wt(parsers.parse('user of {browser_id} sees that there is no supporting '
+                  'provider "{provider_name}" for space named "{space_name}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_no_provider_for_space(selenium, browser_id, provider_name, space_name, hosts, oz_page):
+    page = oz_page(selenium[browser_id])['spaces']
+    page.elements_list[space_name]()
+    page.elements_list[space_name].providers()
+    provider = hosts[provider_name]['name']
+    try:
+        page.providers_page.providers_list[provider]
+    except RuntimeError:
+        pass
+    else:
+        assert False, 'provider "{}" found on space "{}" providers list'\
+                      .format(provider, space_name)
+
+
 @wt(parsers.parse('user of {browser_id} presses enter on keyboard'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def press_enter_on_keyboard(selenium, browser_id):
@@ -296,22 +322,6 @@ def assert_check_name_label_of_space_on_overview_page(selenium, browser_id, spac
     assert oz_page(driver)['spaces'].overview_page.space_name == space_name
 
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> eee181b... Revert "VFS-4716 merge with branch VFS-4715"
-@wt(parsers.parse('user of {browser_id} clicks Copy button to send to "{browser_list}" on Get support page'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def send_copy_token_to_browser_from_get_support_page(selenium, browser_id, oz_page, displays,
-                                                     clipboard, browser_list, tmp_memory):
-    driver = selenium[browser_id]
-    oz_page(driver)['spaces'].providers_page.get_support_page.copy_button()
-
-    item = clipboard.paste(display=displays[browser_id])
-    for browser in parse_seq(browser_list):
-<<<<<<< HEAD
-        tmp_memory[browser]['mailbox']['token'] = item
-=======
 @wt(parsers.parse('user of {browser_id1} generates space support token for '
                   'space "{space_name}" and sends it to user of {browser_id2}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -325,7 +335,13 @@ def generate_and_send_support_token(selenium, browser_id1, space_name, oz_page,
     item = clipboard.paste(display=displays[browser_id1])
     tmp_memory[browser_id2]['mailbox']['token'] = item
 
->>>>>>> 81a99c9... VFS-4715 Two more tests from test_onepanel_basic should now work
-=======
+@wt(parsers.parse('user of {browser_id} clicks Copy button to send to "{browser_list}" on Get support page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def send_copy_token_to_browser_from_get_support_page(selenium, browser_id, oz_page, displays,
+                                                     clipboard, browser_list, tmp_memory):
+    driver = selenium[browser_id]
+    oz_page(driver)['spaces'].providers_page.get_support_page.copy_button()
+
+    item = clipboard.paste(display=displays[browser_id])
+    for browser in parse_seq(browser_list):
         tmp_memory[browser]['mailbox']['token'] = item
->>>>>>> eee181b... Revert "VFS-4716 merge with branch VFS-4715"
