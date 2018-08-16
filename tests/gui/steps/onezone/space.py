@@ -207,6 +207,15 @@ def assert_check_if_providers_list_contains_provider(selenium, browser_id, space
     assert len(providers_list) == number_of_providers
 
 
+@wt(parsers.parse('user of {browser_id} sees length of providers list of "{space_name}" is equal'
+                  ' "{number_of_providers}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_check_if_providers_list_contains_provider(selenium, browser_id, space_name, number_of_providers, oz_page):
+    driver = selenium[browser_id]
+    providers_list = oz_page(driver)['spaces'].providers_page.providers_list
+    assert len(providers_list) == int(number_of_providers)
+
+
 @wt(parsers.parse('user of {browser_id} clicks Get support button on providers page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_get_support_button_on_providers_page(selenium, browser_id, oz_page):
