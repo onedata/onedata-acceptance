@@ -12,6 +12,7 @@ from itertools import izip
 
 import pytest
 from pytest_bdd import given, when, then, parsers
+from tests.utils.acceptance_utils import wt
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import (repeat_failed, parse_seq,
@@ -29,6 +30,26 @@ def change_space_view_in_data_tab_in_op(selenium, browser_id,
     selector = op_page(driver).data.sidebar.space_selector
     selector.expand()
     selector.spaces[space_name].click()
+
+
+@wt(parsers.parse('user of {browser_id} sees "{space_name}" is in spaces list on onepanel page'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_check_if_list_contains_space_in_data_tab_in_op(selenium, browser_id,
+                                                          space_name, op_page):
+    driver = selenium[browser_id]
+    selector = op_page(driver).data.sidebar.space_selector
+    selector.expand()
+    assert space_name in selector.spaces
+
+
+@wt(parsers.parse('user of {browser_id} sees "{space_name}" is not in spaces list on onepanel page'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_check_if_list_not_contain_space_in_data_tab_in_op(selenium, browser_id,
+                                                             space_name, op_page):
+    driver = selenium[browser_id]
+    selector = op_page(driver).data.sidebar.space_selector
+    selector.expand()
+    assert space_name not in selector.spaces
 
 
 @when(parsers.re(r'user of (?P<browser_id>.*?) clicks the button '

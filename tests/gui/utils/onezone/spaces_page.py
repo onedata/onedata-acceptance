@@ -15,7 +15,7 @@ from .common import EditBox, InputBox
 
 
 class Space(Element):
-    name = id = Label('.item-name')
+    name = id = Label('.one-label')
     support_size = Label('.status-toolbar-icon:first-of-type')
     supporting_providers_number = Label('.status-toolbar-icon:last-of-type')
 
