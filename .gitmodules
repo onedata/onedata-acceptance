@@ -22,19 +22,3 @@
 	path = bamboos
 	url = ../bamboos.git
 	branch = develop
-[submodule "cluster_manager"]
-	path = cluster_manager
-	url = ../cluster-manager.git
-	branch = develop
-[submodule "op_worker"]
-	path = op_worker
-	url = ../op-worker.git
-	branch = develop
-[submodule "oz_worker"]
-	path = oz_worker
-	url = ../oz-worker.git
-	branch = develop
-[submodule "onepanel"]
-	path = onepanel
-	url = ../onepanel.git
-	branch = develop
