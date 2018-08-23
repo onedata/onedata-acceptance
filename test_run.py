@@ -75,23 +75,24 @@ def parse_pods_cfg(pods_cfg):
                    'ip':  ['--zone-ip'],
                    'domain': ['--zone-hostname'],
                    'alias': ['--zone-alias'],
-                   'container_id': ['--zone-container-id']}
+                   'container-id': ['--zone-container-id']}
 
     providers_config = {'name': ['--providers-names'],
                         'ip': ['--providers-ips'],
                         'domain': ['--providers-hostnames'],
                         'alias': ['--providers-aliases'],
-                        'container_id': ['--providers-containers-id']}
+                        'container-id': ['--providers-containers-id']}
 
     for pod, pod_cfg in pods_cfg.items():
-        if pod_cfg['service-type'] == 'onezone':
+        service_type = pod_cfg['service-type']
+        if service_type == 'onezone':
             for opt in zone_config:
                 if opt == 'alias':
                     zone_config[opt] += ['{}'.format(
                         service_name_to_alias_mapping(pod))]
                 else:
                     zone_config[opt] += ['{}'.format(pod_cfg[opt])]
-        else:
+        elif service_type == 'oneprovider':
             for opt in providers_config:
                 if opt == 'alias':
                     providers_config[opt] += ['{}'.format(

@@ -46,7 +46,7 @@ artifact_onedata:
 branch = $(shell git rev-parse --abbrev-ref HEAD)
 submodules:
 	git submodule init ${submodule}
-	git submodule update ${submodule}
+	git submodule update --init --recursive ${submodule}
 
 checkout_getting_started:
 	git submodule init getting_started
