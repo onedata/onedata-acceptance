@@ -86,7 +86,15 @@ def wt_type_host_domain_to_in_box_in_provider_details_form(selenium, browser_id,
                     'button in provider details form in Provider panel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_btn_in_modify_provider_detail_form(selenium, browser_id, onepanel):
-    onepanel(selenium[browser_id]).content.provider.form.modify_provider_details()
+    driver = selenium[browser_id]
+    onepanel(driver).content.provider.form.modify_provider_details()
+
+
+@when(parsers.parse('user of {browser_id} clicks Discard button on modal in Provider panel'))
+@then(parsers.parse('user of {browser_id} clicks Discard button on modal in Provider panel'))
+def debugger(selenium, browser_id, oz_page, onepanel):
+    driver = selenium[browser_id]
+    driver.find_element_by_css_selector('.modal-content .btn-toolbar button').click()
 
 
 @when(parsers.parse('user of {browser_id} activates Request a subdomain toggle'))

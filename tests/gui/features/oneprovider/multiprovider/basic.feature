@@ -67,7 +67,7 @@ Feature: Oneprovider functionality using multiple providers
     And user of browser clicks on the "providers" tab in main menu sidebar
     And user of browser clicks on "oneprovider-2" provider on left sidebar menu
     Then user of browser sees "NewNameSpace" is in spaces list on onepanel page
-    Then user of browser sees "space1" is not in spaces list on onepanel page
+    And user of browser sees "space1" is not in spaces list on onepanel page
 
 # add second space to given or look for text: this provider does not support any space
 #  Scenario: User leaves space in one provider and sees that it was leaved from also in other provider
