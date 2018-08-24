@@ -17,8 +17,8 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 def click_invite_user_on_menu_of_members(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
     elem = oz_page(driver)['spaces']
-    elem.members_page.menu_button()
-    elem.invite_user()
+    elem.menu_button()
+    elem.menu['Invite user'].click()
 
 
 @wt(parsers.parse('user of {browser_id} sends invitation {item_type} to "{browser_list}"'))
@@ -26,7 +26,7 @@ def click_invite_user_on_menu_of_members(selenium, browser_id, oz_page):
 def send_invitation_token_to_browser(selenium, browser_id, item_type, oz_page, displays,
                                      clipboard, browser_list, tmp_memory):
     driver = selenium[browser_id]
-    oz_page(driver)['spaces'].members_page.input_box.confirm()
+    oz_page(driver)['spaces'].members_page.token.copy()
 
     item = clipboard.paste(display=displays[browser_id])
     for browser in parse_seq(browser_list):
@@ -62,8 +62,8 @@ def click_join_the_space_button_on_join_to_space_page(selenium, browser_id, oz_p
 def click_invite_group_on_menu_of_members(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
     elem = oz_page(driver)['spaces']
-    elem.members_page.menu_button()
-    elem.invite_group()
+    elem.menu_button()
+    elem.menu['Invite group'].click()
 
 
 @wt(parsers.parse('user of {browser_id} clicks Join space on groups menu on left sidebar menu'))
@@ -72,7 +72,7 @@ def click_join_space_on_groups_menu_on_left_sidebar_menu(selenium, browser_id, o
     driver = selenium[browser_id]
     elem = oz_page(driver)['groups']
     elem.menu_button()
-    elem.join_space()
+    elem.menu['Join space'].click()
 
 
 @wt(parsers.parse('user of {browser_id} clicks "{group_name}" on groups on left sidebar menu'))

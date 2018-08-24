@@ -36,7 +36,7 @@ def create_new_space_by_click_on_create_new_space_button(selenium, browser_id, o
 
 @wt(parsers.parse('user of {browser_id} creates space "{space_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def create_new_space(selenium, browser_id, space_name, oz_page):
+def create_new_space_on_onezone_page(selenium, browser_id, space_name, oz_page):
     page = oz_page(selenium[browser_id])['spaces']
     page.create_space_button()
     page.input_box.value = space_name
@@ -56,8 +56,8 @@ def assert_no_provider_for_space(selenium, browser_id, provider_name, space_name
     except RuntimeError:
         pass
     else:
-        assert False, 'provider "{}" found on space "{}" providers list'\
-                      .format(provider, space_name)
+        assert False, 'provider "{}" found on space "{}" providers list' \
+            .format(provider, space_name)
 
 
 @wt(parsers.parse('user of {browser_id} presses enter on keyboard'))
@@ -303,15 +303,14 @@ def assert_check_if_copy_token_and_input_token_are_the_same(selenium, browser_id
 
 @wt(parsers.parse('user of {browser_id} sees non-empty copy token'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_check_if_copy_token_is_not_empty(selenium, browser_id, oz_page, tmp_memory):
-    driver = selenium[browser_id]
+def assert_check_if_copy_token_is_not_empty(selenium, browser_id, tmp_memory):
     token = tmp_memory[browser_id]['mailbox']['token']
     assert len(token) > 0
 
 
 @wt(parsers.parse('user of {browser_id} reloads page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def reload_page(selenium, browser_id, oz_page):
+def reload_page(selenium, browser_id):
     driver = selenium[browser_id]
     driver.refresh()
 
@@ -327,7 +326,7 @@ def assert_check_name_label_of_space_on_overview_page(selenium, browser_id, spac
                   'space "{space_name}" and sends it to user of {browser_id2}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def generate_and_send_support_token(selenium, browser_id1, space_name, oz_page,
-                           browser_id2, clipboard, displays, tmp_memory):
+                                    browser_id2, clipboard, displays, tmp_memory):
     page = oz_page(selenium[browser_id1])['spaces']
     page.elements_list[space_name]()
     page.elements_list[space_name].providers()

@@ -92,9 +92,9 @@ def wt_click_on_btn_in_modify_provider_detail_form(selenium, browser_id, onepane
 
 @when(parsers.parse('user of {browser_id} clicks Discard button on modal in Provider panel'))
 @then(parsers.parse('user of {browser_id} clicks Discard button on modal in Provider panel'))
-def debugger(selenium, browser_id, oz_page, onepanel):
+def click_discard_button_on_modal_in_provider_panel(selenium, browser_id, onepanel):
     driver = selenium[browser_id]
-    driver.find_element_by_css_selector('.modal-content .btn-toolbar button').click()
+    onepanel(driver).discard_button()
 
 
 @when(parsers.parse('user of {browser_id} activates Request a subdomain toggle'))
