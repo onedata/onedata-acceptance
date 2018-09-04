@@ -130,6 +130,16 @@ def parse_image(file_path, ):
         return None
 
 
+def export_logs():
+    logdir = map_test_type_to_logdir(args.test_type)
+    if args.test_type in ['gui', 'mixed_swaggers']:
+        timestamped_logdirs = os.listdir(logdir)
+        latest_logdir = max(timestamped_logdirs, key=extract_number)
+        logdir = os.path.join(logdir, latest_logdir)
+
+    run_onenv_command('export', [logdir])
+
+
 parser = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     description='Run Common Tests.')
@@ -331,6 +341,7 @@ status_output = yaml.load(status_output.decode('utf-8'))
 deployment_ready = status_output['ready']
 
 if not deployment_ready:
+    export_logs()
     sys.exit(1)
 
 pods_cfg = status_output['pods']
@@ -376,13 +387,7 @@ ALL       ALL = (ALL) NOPASSWD: ALL
 
 ret = call(cmd, stdin=None, stderr=None, stdout=None)
 
-logdir = map_test_type_to_logdir(args.test_type)
-if args.test_type in ['gui', 'mixed_swaggers']:
-    timestamped_logdirs = os.listdir(logdir)
-    latest_logdir = max(timestamped_logdirs, key=extract_number)
-    run_onenv_command('export', [os.path.join(logdir, latest_logdir)])
-else:
-    run_onenv_command('export', logdir)
+export_logs()
 
 if args.clean:
     run_onenv_command('clean')
