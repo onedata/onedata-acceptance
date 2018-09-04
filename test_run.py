@@ -328,6 +328,11 @@ if args.update_etc_hosts:
 
 status_output = run_onenv_command('status')
 status_output = yaml.load(status_output.decode('utf-8'))
+deployment_ready = status_output['ready']
+
+if not deployment_ready:
+    sys.exit(1)
+
 pods_cfg = status_output['pods']
 
 oz_conf, ops_conf = parse_pods_cfg(pods_cfg)
