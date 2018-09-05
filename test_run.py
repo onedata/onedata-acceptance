@@ -22,6 +22,7 @@ import shutil
 import one_env.scripts.user_config as user_config
 from one_env.scripts.console import info
 from tests.test_type import map_test_type_to_logdir
+from tests.utils.path_utils import make_logdir
 
 
 ZONE_IMAGES_CFG_PATH = 'onezone_images/docker-dev-build-list.json'
@@ -133,9 +134,13 @@ def parse_image(file_path, ):
 def export_logs():
     logdir = map_test_type_to_logdir(args.test_type)
     if args.test_type in ['gui', 'mixed_swaggers']:
-        timestamped_logdirs = os.listdir(logdir)
-        latest_logdir = max(timestamped_logdirs, key=extract_number)
-        logdir = os.path.join(logdir, latest_logdir)
+        if not os.path.isdir(logdir):
+            logdir = make_logdir(map_test_type_to_logdir(args.test_type),
+                                 'report')
+        else:
+            timestamped_logdirs = os.listdir(logdir)
+            latest_logdir = max(timestamped_logdirs, key=extract_number)
+            logdir = os.path.join(logdir, latest_logdir)
 
     run_onenv_command('export', [logdir])
 
