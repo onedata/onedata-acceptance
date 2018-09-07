@@ -13,6 +13,8 @@ from itertools import izip_longest
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import repeat_failed, parse_seq, transform
+from tests.gui.steps.oneprovider.common import g_wait_for_op_session_to_start
+from tests.gui.meta_steps.onezone.common import visit_op
 
 
 @when(parsers.parse('user of {browser_id} sees that provider popup for '
@@ -307,9 +309,9 @@ def assert_list_of_providers_is_empty(selenium, browser_id, oz_page):
 
 
 @when(parsers.parse('user of {browser_id} sees that provider "{provider}" '
-                    'in Onezone panel is working'))
+                    'in Onezone is working'))
 @then(parsers.parse('user of {browser_id} sees that provider "{provider}" '
-                    'in Onezone panel is working'))
+                    'in Onezone is working'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_provider_working_in_oz_panel(selenium, browser_id,
                                         provider, oz_page, hosts):
@@ -318,14 +320,13 @@ def assert_provider_working_in_oz_panel(selenium, browser_id,
     page = oz_page(driver)['providers']
     try:
         provider_record = page.elements_list[provider]
+        provider_record.click()
     except RuntimeError:
         assert False, 'no provider "{}" found on providers list'.format(provider)
     else:
         pass
-        # TODO: what is is_working() method?
-        # assert provider_record.is_working(), ('provider icon in GO TO YOUR '
-        #                                       'FILES oz panel for "{}" is not '
-        #                                       'green'.format(provider))
+        assert page.is_working(), ('provider icon in Onezone for "{}" '
+                                   'is not green'.format(provider))
 
 
 @when(parsers.parse('user of {browser_id} sees that provider named "{provider}" '

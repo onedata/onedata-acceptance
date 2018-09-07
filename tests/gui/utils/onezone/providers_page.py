@@ -9,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in " \
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (Button, NamedButton,
                                                WebItemsSequence, Label,
-                                               WebItem)
+                                               WebItem, WebElement)
 from tests.gui.utils.onezone.generic_page import Element, GenericPage
 
 
@@ -35,5 +35,10 @@ class ProviderPopover(PageObject):
 class ProvidersPage(GenericPage):
     popover = WebItem('.webui-popover .provider-place-drop',
                       cls=ProviderPopover)
+    _popover = WebElement('.webui-popover .provider-place-drop')
     elements_list = WebItemsSequence('.sidebar-providers '
                                      'li.one-list-item.clickable', cls=Provider)
+    icon = Button('.circle')
+
+    def is_working(self):
+        return 'online' in self._popover.get_attribute('class')

@@ -1,5 +1,9 @@
 Feature: Joining a group in Onezone GUI
 
+  Examples:
+    | option |
+    | enter  |
+    | button |
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -19,111 +23,80 @@ Feature: Joining a group in Onezone GUI
                       size: 1000000
 
     And users opened [browser1, browser2] browsers' windows
-    And user of [browser1, browser2] opened [onezone, onezone] page
+    And user of [browser1, browser2] opened [Onezone, Onezone] page
     And user of [browser1, browser2] logged as [user1, user2] to Onezone service
 
 
-  Scenario: User joins group using invitation token and using button to confirm
-    When user of browser1 copies group "group1" user invitation token
+  Scenario Outline: User joins group using invitation token
+    When user of browser1 clicks on Groups in the sidebar
+    And user of browser1 clicks "group1" on the groups list in the sidebar
+    And user of browser1 clicks Invite user on Menu of Members of Groups
+    And user of browser1 copies invitation token from Groups page
     And user of browser1 sends copied token to user of browser2
 
-    And user of browser2 joins group using received token and button to confirm
+    And user of browser2 clicks on Groups in the sidebar
+    And user of browser2 clicks on Join group button in groups sidebar
+    And user of browser2 pastes copied token into group token text field
+    And user of browser2 confirms using <option>
 
-    And user of browser1 refreshes site
-    And user of browser2 refreshes site
+    And users of browser1 refreshes site
 
     Then user of browser1 sees user "user2" on group "group1" members list
     And user of browser2 sees group "group1" on groups list
 
 
-  Scenario: User joins group using invitation token and using enter to confirm
-    When user of browser1 copies group "group1" user invitation token
+  Scenario Outline: User fails to join group using group invitation token
+    When user of browser1 clicks on Groups in the sidebar
+    And user of browser1 clicks "group1" on the groups list in the sidebar
+    And user of browser1 clicks Invite group on Menu of Members of Groups
+    And user of browser1 copies invitation token from Groups page
     And user of browser1 sends copied token to user of browser2
 
-    And user of browser2 joins group using received token and enter to confirm
-
-    And user of browser1 refreshes site
-    And user of browser2 refreshes site
-
-    Then user of browser1 sees user "user2" on group "group1" members list
-    And user of browser2 sees group "group1" on groups list
-
-
-  Scenario: User tries to join group using group invitation token and using button to confirm 
-    When user of browser1 copies group "group1" group invitation token
-    And user of browser1 sends copied token to user of browser2
-
-    And user of browser2 joins group using received token and button to confirm
+    And user of browser2 clicks on Groups in the sidebar
+    And user of browser2 clicks on Join group button in groups sidebar
+    And user of browser2 pastes copied token into group token text field
+    And user of browser2 confirms using <option>
 
     Then user of browser2 sees that error modal with text "joining the group failed" appeared
 
 
-  Scenario: User tries to join group using group invitation token and using enter to confirm 
-    When user of browser1 copies group "group1" group invitation token
-    And user of browser1 sends copied token to user of browser2
-
-    And user of browser2 joins group using received token and enter to confirm
-
-    Then user of browser2 sees that error modal with text "joining the group failed" appeared
-
-
-  Scenario: User tries to join group using incorrect token and using button to confirm
-    When user of browser1 clicks on the join button in "groups" Onezone panel
+  Scenario Outline: User fails to join group using incorrect token
+    When user of browser1 clicks on Groups in the sidebar
+    And user of browser1 clicks on Join group button in groups sidebar
     And user of browser1 writes "aaa" into group token text field
-    And user of browser1 clicks on confirmation button
-   
+    And user of browser1 confirms using <option>
+
     Then user of browser1 sees that error modal with text "joining the group failed" appeared
 
 
-  Scenario: User tries to join group using incorrect token and using enter to confirm
-    When user of browser1 clicks on the join button in "groups" Onezone panel
+  Scenario Outline: User fails to join group to space using incorrect token
+    When user of browser1 clicks on Groups in the sidebar
+    And user of browser1 clicks on button "Join space" in group "group1" menu
     And user of browser1 writes "aaa" into group token text field
-    And user of browser1 presses enter on keyboard
-    
-    Then user of browser1 sees that error modal with text "joining the group failed" appeared
-
-
-  Scenario: User tries to join group to space using incorrect token using button to confirm
-    When user of browser1 clicks on button "Join space" in group "group1" menu
-    And user of browser1 writes "aaa" into group token text field
-    And user of browser1 clicks on confirmation button
+    And user of browser1 confirms using <option>
 
     Then user of browser1 sees that error modal with text "joining space failed" appeared
 
 
-  Scenario: User tries to join group to space using incorrect token using enter to confirm
-    When user of browser1 clicks on button "Join space" in group "group1" menu
-    And user of browser1 writes "aaa" into group token text field
-    And user of browser1 presses enter on keyboard
+  Scenario Outline: User fails to join group he already belongs to
+    When user of browser1 clicks on Groups in the sidebar
+    And user of browser1 clicks "group1" on the groups list in the sidebar
+    And user of browser1 clicks Invite user on Menu of Members of Groups
+    And user of browser1 copies invitation token from Groups page
 
-    Then user of browser1 sees that error modal with text "joining space failed" appeared
-
-
-  Scenario: User tries to join group he already is in using button to confirm
-    When user of browser1 copies group "group1" user invitation token
-
-    And user of browser1 clicks on the join button in "groups" Onezone panel
+    And user of browser1 clicks on Join group button in groups sidebar
     And user of browser1 pastes copied token into group token text field
-    And user of browser1 clicks on confirmation button
+    And user of browser1 confirms using <option>
 
     Then user of browser1 sees that error modal with text "joining the group failed" appeared
 
 
-  Scenario: User tries to join group he already is in using enter to confirm
-    When user of browser1 copies group "group1" user invitation token
-
-    And user of browser1 clicks on the join button in "groups" Onezone panel
-    And user of browser1 pastes copied token into group token text field
-    And user of browser1 presses enter on keyboard
-
-    Then user of browser1 sees that error modal with text "joining the group failed" appeared
-
-
-  Scenario: User tries to view group he does not belong to
-    When user of browser1 goes to group "group1" main subpage
+  Scenario: User fails to view group he does not belong to
+    When user of browser1 clicks on Groups in the sidebar
+    And user of browser1 goes to group "group1" main subpage
     And user of browser1 copies a first resource ID from URL
     And user of browser1 sends copied ID to user of browser2
-    And user of browser2 changes webapp path to /#/onedata/groups concatenated with received ID
+    And user of browser2 changes webapp path to "/#/onedata/groups" concatenated with received ID
 
     And user of browser2 refreshes site
 

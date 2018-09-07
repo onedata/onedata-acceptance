@@ -37,8 +37,8 @@ from tests.gui.steps.onezone.access_tokens import *
 from tests.gui.steps.onezone.data_space_management import *
 from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.manage_account import *
-from tests.gui.steps.onezone.space import *
-from tests.gui.steps.onezone.multi_browser_space import *
+from tests.gui.steps.onezone.spaces import *
+from tests.gui.steps.onezone.multibrowser_spaces import *
 
 from tests.gui.steps.oneprovider.common import *
 from tests.gui.steps.oneprovider.data_tab import *

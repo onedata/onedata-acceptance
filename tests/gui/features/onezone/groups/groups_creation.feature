@@ -15,39 +15,28 @@ Feature: Basic creation/joining of groups with one user in Onezone GUI
                       size: 1000000
 
     And user opened browser window
-    And user of browser opened onezone page
+    And user of browser opened Onezone page
     And user of browser logged as user1 to Onezone service
 
 
-  Scenario: User creates group using button to confirm group name
-    When user of browser clicks on the create button in "groups" Onezone panel
+  Scenario Outline: User creates group
+    When user of browser clicks on Create group button in groups sidebar
     And user of browser writes "group1" into group name text field
-    And user of browser clicks on confirmation button
-
-    And user of browser refreshes site
-
+    And user of browser confirms using <option>
     Then user of browser sees group "group1" on groups list
 
+    Examples:
+      | option |
+      | enter  |
+      | button |
 
-  Scenario: User creates group using enter to confirm group name
-    When user of browser clicks on the create button in "groups" Onezone panel
-    And user of browser writes "group1" into group name text field
+  Scenario: User fails to create unnamed group using button to confirm group name
+    When user of browser clicks on Create group button in groups sidebar
+    Then user of browser sees that create group button is inactive
+
+
+  Scenario: User fails to create unnamed group using enter to confirm group name
+    When user of browser clicks on Create group button in groups sidebar
     And user of browser presses enter on keyboard
-
-    And user of browser refreshes site
-
-    Then user of browser sees group "group1" on groups list
-
-
-  Scenario: User tries to create unnamed group using button to confirm group name
-    When user of browser clicks on the create button in "groups" Onezone panel
-
-    Then user of browser sees that create group button is inactive 
-
-
-  Scenario: User tries to create unnamed group using enter to confirm group name
-    When user of browser clicks on the create button in "groups" Onezone panel
-    And user of browser presses enter on keyboard
-
     Then user of browser sees that error modal with text "creating group failed" appeared
 

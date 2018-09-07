@@ -16,6 +16,7 @@ from tests.gui.conftest import (WAIT_FRONTEND, WAIT_BACKEND,
                                 SELENIUM_IMPLICIT_WAIT)
 from tests.gui.utils.generic import (repeat_failed, transform, implicit_wait,
                                      parse_seq)
+from tests.utils.acceptance_utils import wt
 
 
 @when(parsers.parse('user of {browser_id} selects "{storage}" from storage '
@@ -111,7 +112,7 @@ def wt_assert_existence_of_space_support_record(selenium, browser_id,
                                                 space, onepanel):
     spaces = {space.name for space
               in onepanel(selenium[browser_id]).content.spaces.spaces}
-    assert any(s for s in spaces if s.startswith(space))
+    assert space in spaces, 'not found "{}" in spaces in Onepanel'.format(space)
 
 
 @when(parsers.parse('user of {browser_id} sees that list of supported spaces '
@@ -374,3 +375,17 @@ def click_on_navigation_tab_in_space(browser_id, tab_name, onepanel, selenium,
     nav = onepanel(selenium[browser_id]).content.spaces.spaces[space_name].navigation
     tab = getattr(nav, transform(tab_name, strip_char='"'))
     tab()
+
+
+@wt(parsers.parse('user of {browser_id} revokes all space supports'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def revoke_all_space_supports(selenium, browser_id, onepanel, popups, modals):
+    spaces_list = onepanel(selenium[browser_id]).content.spaces.spaces
+    option = 'Revoke space support'
+    button = 'Yes, revoke'
+    for space in spaces_list:
+        space.toolbar.click()
+        wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, browser_id,
+                                                   option, popups)
+        wt_clicks_on_btn_in_revoke_space_support(selenium, browser_id,
+                                                 button, modals)

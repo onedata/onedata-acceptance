@@ -5,7 +5,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
             - user1
 
     And users opened [browser1, browser2] browsers' windows
-    And users of [browser1, browser2] opened [oneprovider-1 provider panel, onezone] page
+    And users of [browser1, browser2] opened [oneprovider-1 provider panel, Onezone] page
     And user of [browser1, browser2] logged as [admin, user1] to Onepanel service
 
     And directory tree structure on local file system:
@@ -21,18 +21,23 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
 
   Scenario: User supports space with storage sync and enabled options: Mount in root
+    When user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+    And user of browser1 revokes all space supports
+
     # create space
-    When user of browser2 clicks create new space on spaces on left sidebar menu
-    And user of browser2 types "space2" on input on create new space page
-    And user of browser2 clicks on create new space button
-    And user of browser2 sees "space2" has appeared on spaces
+    And user of browser2 clicks on Create space button in spaces sidebar
+    And user of browser2 writes "space2" into space name text field
+    And user of browser2 clicks on Create new space button
+    And user of browser2 sees that "space2" has appeared on the spaces list in the sidebar
 
     # receive support token
-    And user of browser2 clicks "space2" on spaces on left sidebar menu
-    And user of browser2 clicks Providers of "space2" on left sidebar menu
+    And user of browser2 clicks "space2" on the spaces list in the sidebar
+    And user of browser2 clicks Providers of "space2" in the sidebar
     And user of browser2 clicks Get support button on providers page
-    And user of browser2 clicks Copy button to send to "browser1" on Get support page
+    And user of browser2 copies invitation token from Spaces page
     And user of browser2 sees an info notify with text matching to: .*copied.*
+    And user of browser2 sends copied token to user of browser1
+
 
     # copy files to provider storage
     And user of browser2 copies dir2 to provider's storage mount point
@@ -40,7 +45,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     # support space
     And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser1 clicks on Support space button in spaces page in Onepanel if there are some spaces already supported
-    And user of browser1 selects "posix" from storage selector in support space form in onepanel
+    And user of browser1 selects "posix" from storage selector in support space form in Onepanel
     And user of browser1 types received token to Support token field in support space form in Onepanel
     And user of browser1 types "1" to Size input field in support space form in Onepanel
     And user of browser1 selects GiB radio button in support space form in Onepanel
@@ -62,10 +67,10 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # confirm support of space and go to provider
     And user of browser2 refreshes site
-    And user of browser2 clicks "space2" on spaces on left sidebar menu
-    And user of browser2 clicks Providers of "space2" on left sidebar menu
+    And user of browser2 clicks "space2" on the spaces list in the sidebar
+    And user of browser2 clicks Providers of "space2" in the sidebar
     And user of browser2 sees "oneprovider-1" is on the providers list
-    And user of browser2 clicks on "oneprovider-1" provider on left sidebar menu
+    And user of browser2 opens oneprovider-1 Oneprovider view in web GUI
     And user of browser2 sees that Oneprovider session has started
     And user of browser2 uses spaces select to change data space to "space2"
 
@@ -138,25 +143,28 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
 
   Scenario: User supports space with storage sync and no enabled options
+    When user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+    And user of browser1 revokes all space supports
 
     # create space
-    When user of browser2 sees "space1" has disappeared on spaces
-    And user of browser2 clicks create new space on spaces on left sidebar menu
-    And user of browser2 types "space1" on input on create new space page
-    And user of browser2 clicks on create new space button
-    And user of browser2 sees "space1" has appeared on spaces
+    And user of browser2 sees that "space1" has disappeared on the spaces list in the sidebar
+    And user of browser2 clicks on Create space button in spaces sidebar
+    And user of browser2 writes "space1" into space name text field
+    And user of browser2 clicks on Create new space button
+    And user of browser2 sees that "space1" has appeared on the spaces list in the sidebar
 
     # receive support token
-    And user of browser2 clicks "space1" on spaces on left sidebar menu
-    And user of browser2 clicks Providers of "space1" on left sidebar menu
+    And user of browser2 clicks "space1" on the spaces list in the sidebar
+    And user of browser2 clicks Providers of "space1" in the sidebar
     And user of browser2 clicks Get support button on providers page
-    And user of browser2 clicks Copy button to send to "browser1" on Get support page
+    And user of browser2 copies invitation token from Spaces page
     And user of browser2 sees an info notify with text matching to: .*copied.*
+    And user of browser2 sends copied token to user of browser1
 
     # support space
     And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser1 clicks on Support space button in spaces page in Onepanel if there are some spaces already supported
-    And user of browser1 selects "posix" from storage selector in support space form in onepanel
+    And user of browser1 selects "posix" from storage selector in support space form in Onepanel
     And user of browser1 types received token to Support token field in support space form in Onepanel
     And user of browser1 types "1" to Size input field in support space form in Onepanel
     And user of browser1 selects GiB radio button in support space form in Onepanel
@@ -185,10 +193,10 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # confirm support of space and go to provider
     And user of browser2 refreshes site
-    And user of browser2 clicks "space1" on spaces on left sidebar menu
-    And user of browser2 clicks Providers of "space1" on left sidebar menu
+    And user of browser2 clicks "space1" on the spaces list in the sidebar
+    And user of browser2 clicks Providers of "space1" in the sidebar
     And user of browser2 sees "oneprovider-1" is on the providers list
-    And user of browser2 clicks on "oneprovider-1" provider on left sidebar menu
+    And user of browser2 opens oneprovider-1 Oneprovider view in web GUI
     And user of browser2 sees that Oneprovider session has started
     And user of browser2 uses spaces select to change data space to "space1"
 
@@ -261,25 +269,28 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
 
   Scenario: User supports space with storage sync and enabled options: Delete
+    When user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+    And user of browser1 revokes all space supports
 
     # create space
-    When user of browser2 sees "space3" has disappeared on spaces
-    And user of browser2 clicks create new space on spaces on left sidebar menu
-    And user of browser2 types "space3" on input on create new space page
-    And user of browser2 clicks on create new space button
-    And user of browser2 sees "space3" has appeared on spaces
+    And user of browser2 sees that "space3" has disappeared on the spaces list in the sidebar
+    And user of browser2 clicks on Create space button in spaces sidebar
+    And user of browser2 writes "space3" into space name text field
+    And user of browser2 clicks on Create new space button
+    And user of browser2 sees that "space3" has appeared on the spaces list in the sidebar
 
     # receive support token
-    And user of browser2 clicks "space3" on spaces on left sidebar menu
-    And user of browser2 clicks Providers of "space3" on left sidebar menu
+    And user of browser2 clicks "space3" on the spaces list in the sidebar
+    And user of browser2 clicks Providers of "space3" in the sidebar
     And user of browser2 clicks Get support button on providers page
-    And user of browser2 clicks Copy button to send to "browser1" on Get support page
+    And user of browser2 copies invitation token from Spaces page
     And user of browser2 sees an info notify with text matching to: .*copied.*
+    And user of browser2 sends copied token to user of browser1
 
     # support space
     And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser1 clicks on Support space button in spaces page in Onepanel if there are some spaces already supported
-    And user of browser1 selects "posix" from storage selector in support space form in onepanel
+    And user of browser1 selects "posix" from storage selector in support space form in Onepanel
     And user of browser1 types received token to Support token field in support space form in Onepanel
     And user of browser1 types "1" to Size input field in support space form in Onepanel
     And user of browser1 selects GiB radio button in support space form in Onepanel
@@ -308,10 +319,10 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # confirm support of space and go to provider
     And user of browser2 refreshes site
-    And user of browser2 clicks "space3" on spaces on left sidebar menu
-    And user of browser2 clicks Providers of "space3" on left sidebar menu
+    And user of browser2 clicks "space3" on the spaces list in the sidebar
+    And user of browser2 clicks Providers of "space3" in the sidebar
     And user of browser2 sees "oneprovider-1" is on the providers list
-    And user of browser2 clicks on "oneprovider-1" provider on left sidebar menu
+    And user of browser2 opens oneprovider-1 Oneprovider view in web GUI
     And user of browser2 sees that Oneprovider session has started
     And user of browser2 uses spaces select to change data space to "space3"
 
@@ -397,25 +408,28 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
 
   Scenario: User supports space with storage sync and enabled options: Write once
+    When user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+    And user of browser1 revokes all space supports
 
     # create space
-    When user of browser2 sees "space4" has disappeared on spaces
-    And user of browser2 clicks create new space on spaces on left sidebar menu
-    And user of browser2 types "space4" on input on create new space page
-    And user of browser2 clicks on create new space button
-    And user of browser2 sees "space4" has appeared on spaces
+    And user of browser2 sees that "space4" has disappeared on the spaces list in the sidebar
+    And user of browser2 clicks on Create space button in spaces sidebar
+    And user of browser2 writes "space4" into space name text field
+    And user of browser2 clicks on Create new space button
+    And user of browser2 sees that "space4" has appeared on the spaces list in the sidebar
 
     # receive support token
-    And user of browser2 clicks "space4" on spaces on left sidebar menu
-    And user of browser2 clicks Providers of "space4" on left sidebar menu
+    And user of browser2 clicks "space4" on the spaces list in the sidebar
+    And user of browser2 clicks Providers of "space4" in the sidebar
     And user of browser2 clicks Get support button on providers page
-    And user of browser2 clicks Copy button to send to "browser1" on Get support page
+    And user of browser2 copies invitation token from Spaces page
     And user of browser2 sees an info notify with text matching to: .*copied.*
+    And user of browser2 sends copied token to user of browser1
 
     # support space
     And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser1 clicks on Support space button in spaces page in Onepanel if there are some spaces already supported
-    And user of browser1 selects "posix" from storage selector in support space form in onepanel
+    And user of browser1 selects "posix" from storage selector in support space form in Onepanel
     And user of browser1 types received token to Support token field in support space form in Onepanel
     And user of browser1 types "1" to Size input field in support space form in Onepanel
     And user of browser1 selects GiB radio button in support space form in Onepanel
@@ -444,10 +458,10 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # confirm support of space and go to provider
     And user of browser2 refreshes site
-    And user of browser2 clicks "space4" on spaces on left sidebar menu
-    And user of browser2 clicks Providers of "space4" on left sidebar menu
+    And user of browser2 clicks "space4" on the spaces list in the sidebar
+    And user of browser2 clicks Providers of "space4" in the sidebar
     And user of browser2 sees "oneprovider-1" is on the providers list
-    And user of browser2 clicks on "oneprovider-1" provider on left sidebar menu
+    And user of browser2 opens oneprovider-1 Oneprovider view in web GUI
     And user of browser2 sees that Oneprovider session has started
     And user of browser2 uses spaces select to change data space to "space4"
 
@@ -521,25 +535,28 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
 
   Scenario: User supports space with storage sync and enabled options: Delete and Write once
+    When user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+    And user of browser1 revokes all space supports
 
     # create space
-    When user of browser2 sees "space5" has disappeared on spaces
-    And user of browser2 clicks create new space on spaces on left sidebar menu
-    And user of browser2 types "space5" on input on create new space page
-    And user of browser2 clicks on create new space button
-    And user of browser2 sees "space5" has appeared on spaces
+    And user of browser2 sees that "space5" has disappeared on the spaces list in the sidebar
+    And user of browser2 clicks on Create space button in spaces sidebar
+    And user of browser2 writes "space5" into space name text field
+    And user of browser2 clicks on Create new space button
+    And user of browser2 sees that "space5" has appeared on the spaces list in the sidebar
 
     # receive support token
-    And user of browser2 clicks "space5" on spaces on left sidebar menu
-    And user of browser2 clicks Providers of "space5" on left sidebar menu
+    And user of browser2 clicks "space5" on the spaces list in the sidebar
+    And user of browser2 clicks Providers of "space5" in the sidebar
     And user of browser2 clicks Get support button on providers page
-    And user of browser2 clicks Copy button to send to "browser1" on Get support page
+    And user of browser2 copies invitation token from Spaces page
     And user of browser2 sees an info notify with text matching to: .*copied.*
+    And user of browser2 sends copied token to user of browser1
 
     # support space
     And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser1 clicks on Support space button in spaces page in Onepanel if there are some spaces already supported
-    And user of browser1 selects "posix" from storage selector in support space form in onepanel
+    And user of browser1 selects "posix" from storage selector in support space form in Onepanel
     And user of browser1 types received token to Support token field in support space form in Onepanel
     And user of browser1 types "1" to Size input field in support space form in Onepanel
     And user of browser1 selects GiB radio button in support space form in Onepanel
@@ -568,10 +585,10 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # confirm support of space and go to provider
     And user of browser2 refreshes site
-    And user of browser2 clicks "space5" on spaces on left sidebar menu
-    And user of browser2 clicks Providers of "space5" on left sidebar menu
+    And user of browser2 clicks "space5" on the spaces list in the sidebar
+    And user of browser2 clicks Providers of "space5" in the sidebar
     And user of browser2 sees "oneprovider-1" is on the providers list
-    And user of browser2 clicks on "oneprovider-1" provider on left sidebar menu
+    And user of browser2 opens oneprovider-1 Oneprovider view in web GUI
     And user of browser2 sees that Oneprovider session has started
     And user of browser2 uses spaces select to change data space to "space5"
 
@@ -658,25 +675,28 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
 
   Scenario: User disables files update
+    When user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+    And user of browser1 revokes all space supports
 
     # create space
-    When user of browser2 sees "space6" has disappeared on spaces
-    And user of browser2 clicks create new space on spaces on left sidebar menu
-    And user of browser2 types "space6" on input on create new space page
-    And user of browser2 clicks on create new space button
-    And user of browser2 sees "space6" has appeared on spaces
+    And user of browser2 sees that "space6" has disappeared on the spaces list in the sidebar
+    And user of browser2 clicks on Create space button in spaces sidebar
+    And user of browser2 writes "space6" into space name text field
+    And user of browser2 clicks on Create new space button
+    And user of browser2 sees that "space6" has appeared on the spaces list in the sidebar
 
     # receive support token
-    And user of browser2 clicks "space6" on spaces on left sidebar menu
-    And user of browser2 clicks Providers of "space6" on left sidebar menu
+    And user of browser2 clicks "space6" on the spaces list in the sidebar
+    And user of browser2 clicks Providers of "space6" in the sidebar
     And user of browser2 clicks Get support button on providers page
-    And user of browser2 clicks Copy button to send to "browser1" on Get support page
+    And user of browser2 copies invitation token from Spaces page
     And user of browser2 sees an info notify with text matching to: .*copied.*
+    And user of browser2 sends copied token to user of browser1
 
     # support space
     And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser1 clicks on Support space button in spaces page in Onepanel if there are some spaces already supported
-    And user of browser1 selects "posix" from storage selector in support space form in onepanel
+    And user of browser1 selects "posix" from storage selector in support space form in Onepanel
     And user of browser1 types received token to Support token field in support space form in Onepanel
     And user of browser1 types "1" to Size input field in support space form in Onepanel
     And user of browser1 selects GiB radio button in support space form in Onepanel
@@ -705,10 +725,10 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # confirm support of space and go to provider
     And user of browser2 refreshes site
-    And user of browser2 clicks "space6" on spaces on left sidebar menu
-    And user of browser2 clicks Providers of "space6" on left sidebar menu
+    And user of browser2 clicks "space6" on the spaces list in the sidebar
+    And user of browser2 clicks Providers of "space6" in the sidebar
     And user of browser2 sees "oneprovider-1" is on the providers list
-    And user of browser2 clicks on "oneprovider-1" provider on left sidebar menu
+    And user of browser2 opens oneprovider-1 Oneprovider view in web GUI
     And user of browser2 sees that Oneprovider session has started
     And user of browser2 uses spaces select to change data space to "space6"
 

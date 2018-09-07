@@ -12,11 +12,13 @@ Feature: Basic management of spaces
 
 
     And user opened browser window
-    And user of browser opened onezone page
+    And user of browser opened Onezone page
     And user of browser logged as user1 to Onezone service
 
-  Scenario: Switch between spaces
-    When user of browser clicks "space1" on spaces on left sidebar menu
+
+  Scenario: User switches between spaces
+    When user of browser clicks on Spaces in the sidebar
+    And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser sees "space1" label on overview page
-    And user of browser clicks "space2" on spaces on left sidebar menu
+    And user of browser clicks "space2" on the spaces list in the sidebar
     Then user of browser sees "space2" label on overview page

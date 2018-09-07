@@ -10,8 +10,6 @@ from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (Button, NamedButton,
                                                Label, WebItem, Input,
                                                WebItemsSequence)
-from tests.gui.utils.onezone.generic_page import Element, GenericPage
-from tests.gui.utils.onezone.common import EditBox, InputBox
 
 
 class GroupMembersHeaderRow(PageObject):
@@ -56,7 +54,7 @@ class GroupMembersList(PageObject):
     header = WebItem('li.list-header-row', cls=GroupMembersHeaderRow)
     items = WebItemsSequence('.one-collapsible-list-item', 
                              cls=GroupMembersItemRow)
-    generate_token = Button('a')
+    generate_token = NamedButton('a', text='generate an invitation token')
 
 
 class InvitationTokenArea(PageObject):

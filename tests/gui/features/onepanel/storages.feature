@@ -6,7 +6,7 @@ Feature: Storage management using onepanel
             - user1
 
     And users opened [browser1, browser2] browsers' windows
-    And users of [browser1, browser2] opened [oneprovider-1 provider panel, onezone] page
+    And users of [browser1, browser2] opened [oneprovider-1 provider panel, Onezone] page
     And user of [browser1, browser2] logged as [admin, user1] to [Onepanel, Onezone] service
     And directory tree structure on local file system:
           browser2:
@@ -27,13 +27,13 @@ Feature: Storage management using onepanel
     And user of browser1 sees that "new_storage" Mount point is /volumes/storage in storages page in Onepanel
 
     # create space
-    And user of browser2 clicks create new space on spaces on left sidebar menu
-    And user of browser2 types "hello_world2" on input on create new space page
-    And user of browser2 clicks on create new space button
-    And user of browser2 sees "hello_world2" has appeared on spaces
+    And user of browser2 clicks on Create space button in spaces sidebar
+    And user of browser2 writes "hello_world2" into space name text field
+    And user of browser2 clicks on Create new space button
+    And user of browser2 sees that "hello_world2" has appeared on the spaces list in the sidebar
 
     # receive support token
-    And user of browser2 clicks Providers of "hello_world2" on left sidebar menu
+    And user of browser2 clicks Providers of "hello_world2" in the sidebar
     And user of browser2 clicks Get support button on providers page
     And user of browser2 clicks Copy button on Get support page
     And user of browser2 sends copied token to user of browser1
@@ -41,7 +41,7 @@ Feature: Storage management using onepanel
     # support space
     And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser1 clicks on Support space button in spaces page in Onepanel if there are some spaces already supported
-    And user of browser1 selects "new_storage" from storage selector in support space form in onepanel
+    And user of browser1 selects "new_storage" from storage selector in support space form in Onepanel
     And user of browser1 types received token to Support token field in support space form in Onepanel
     And user of browser1 types "1" to Size input field in support space form in Onepanel
     And user of browser1 selects GiB radio button in support space form in Onepanel
@@ -52,8 +52,8 @@ Feature: Storage management using onepanel
     # go to provider
     And user of browser2 is idle for 2 seconds
     And user of browser2 refreshes site
-    And user of browser2 clicks Providers of "hello_world2" on left sidebar menu
-    And user of browser2 opened oneprovider-1 Oneprovider view in web GUI    
+    And user of browser2 clicks Providers of "hello_world2" in the sidebar
+    And user of browser2 opens oneprovider-1 Oneprovider view in web GUI
 
     # create tmp dir and upload there 70 files
     And user of browser2 uses spaces select to change data space to "hello_world2"

@@ -5,11 +5,10 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (Button, NamedButton,
                                                WebItemsSequence, Label,
-                                               WebItem)
+                                               WebItem, WebElement)
 from tests.gui.utils.onezone.generic_page import Element, GenericPage
 from .common import EditBox, InputBox
 from groups.members_subpage import GroupMembersPage
@@ -19,6 +18,7 @@ class Space(Element):
     name = id = Label('.one-label')
     support_size = Label('.status-toolbar-icon:first-of-type')
     supporting_providers_number = Label('.status-toolbar-icon:last-of-type')
+    home_icon = WebElement('.status-toolbar-icon:first-of-type span')
 
     overview = NamedButton('.one-list-level-2 .item-header',
                            text='Overview')
@@ -26,6 +26,9 @@ class Space(Element):
                             text='Providers')
     members = NamedButton('.one-list-level-2 .item-header',
                           text='Members')
+
+    def is_home_icon(self):
+        return 'oneicon-home' in self.home_icon.get_attribute("class")
 
 
 class Provider(Element):
@@ -43,8 +46,8 @@ class SpaceOverviewPage(PageObject):
 
 class WelcomePage(PageObject):
     create_a_space = NamedButton('.info .ember-view', text='Create a space')
-    join_existing_space = NamedButton('.info .ember-view',
-                                      text='join an existing space')
+    join_an_existing_space = NamedButton('.info .ember-view',
+                                         text='join an existing space')
     join_group = NamedButton('.info .ember-view', text='join a group')
 
 
@@ -56,7 +59,7 @@ class GetSupportPage(PageObject):
                                              text='Expose existing data collection')
 
     token_textarea = Label('.active textarea')
-    copy_button = NamedButton('.tab-pane.active .copy-btn', text='Copy')
+    copy = NamedButton('.copy-btn', text='Copy')
     generate_another_token = NamedButton('.active .btn-get-token',
                                          text='Generate another token')
 
@@ -77,7 +80,8 @@ class MenuItem(PageObject):
 
 
 class SpacesPage(GenericPage):
-    create_space_button = Button('.one-sidebar-toolbar-button .oneicon-add-filled')
+    create_space_button = Button('.one-sidebar-toolbar-button '
+                                 '.oneicon-add-filled')
     join_space_button = Button('.oneicon-join-plug')
 
     elements_list = WebItemsSequence('.sidebar-spaces '

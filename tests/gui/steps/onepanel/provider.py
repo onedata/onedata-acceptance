@@ -91,8 +91,8 @@ def wt_click_on_btn_in_modify_provider_detail_form(selenium, browser_id, onepane
     onepanel(driver).content.provider.form.modify_provider_details()
 
 
-@when(parsers.parse('user of {browser_id} clicks Discard button on modal in Provider panel'))
-@then(parsers.parse('user of {browser_id} clicks Discard button on modal in Provider panel'))
+@wt(parsers.parse('user of {browser_id} clicks Discard button on modal '
+                  'in Provider panel'))
 def click_discard_button_on_modal_in_provider_panel(selenium, browser_id, onepanel):
     driver = selenium[browser_id]
     onepanel(driver).discard_button()

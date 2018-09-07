@@ -36,6 +36,8 @@ from tests.gui.steps.onezone.data_space_management import *
 from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.manage_account import *
 from tests.gui.steps.onezone.groups import *
+from tests.gui.steps.onezone.spaces import *
+from tests.gui.steps.onezone.multibrowser_spaces import *
 
 from tests.gui.steps.oneprovider.common import *
 from tests.gui.steps.oneprovider.data_tab import *
@@ -47,6 +49,8 @@ from tests.gui.steps.oneprovider.spaces import *
 
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
+from tests.gui.meta_steps.onezone import *
+from tests.gui.meta_steps.onezone.groups import *
 
 
 @fixture(scope='module')
@@ -61,11 +65,11 @@ def screens():
 def test_user_sees_that_when_no_provider_is_working_appropriate_msg_is_shown():
     pass
 
+# TODO rewrite scenarios to new gui
+# scenarios('../features/onezone/login_page.feature')
+# scenarios('../features/onezone/providers.feature')
+# scenarios('../features/onezone/user_alias.feature')
 
-#scenarios('../features/onezone/access_tokens.feature')
-#scenarios('../features/onezone/login_page.feature')
-#scenarios('../features/onezone/providers.feature')
-#scenarios('../features/onezone/user_alias.feature')
 
 scenarios('../features/onezone/groups/groups_creation.feature')
 scenarios('../features/onezone/groups/groups_basic_operations.feature')

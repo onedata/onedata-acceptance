@@ -46,8 +46,9 @@ class GroupsPage(GenericPage):
     create_group = Button('.oneicon-add-filled')
     join_group = Button('.oneicon-join-plug')
 
-    menu = WebItemsSequence('div.webui-popover'
-                            '[style*=\'display: block;\'] ul li', 
+    menu = WebItemsSequence('.webui-popover-content '
+                            '.one-collapsible-toolbar-popover '
+                            '.dropdown-menu .one-collapsible-toolbar-item',
                             cls=MenuItem)
 
     group_search_bar = Input('.one-sidebar li.one-list-item.search-bar-item')
@@ -56,6 +57,8 @@ class GroupsPage(GenericPage):
 
     main_page = WebItem('.col-content', cls=GroupDetailsPage)
 
-    join_space = Button('.minimized-item.clickable.join-space-action .oneicon-space-join')
-    menu_button = Button('.collapsible-toolbar-toggle ')
+    join_space = Button('.minimized-item.clickable.join-space-action '
+                        '.oneicon-space-join')
+    menu_button = Button('.with-menu .collapsible-toolbar-toggle ')
+    groups_menu_button = Button('.collapsible-toolbar-toggle ')
 

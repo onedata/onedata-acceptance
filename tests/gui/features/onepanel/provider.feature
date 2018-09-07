@@ -19,10 +19,7 @@ Feature: Provider management in Onepanel GUI
     And user of browser1 sees that Provider name attribute is equal to the name of "oneprovider-1" provider in Provider panel
     And user of browser1 sees that Domain attribute is equal to the hostname of "oneprovider-1" provider in Provider panel
 
-    And user of browser2 sees "space1" has appeared on spaces
-    And user of browser2 clicks "space1" on spaces on left sidebar menu
-    And user of browser2 clicks Providers of "space1" on left sidebar menu
-    And user of browser2 opened oneprovider-1 Oneprovider view in web GUI
+    And user of browser2 opens oneprovider-1 Oneprovider view in web GUI
     And user of browser2 sees that provider name displayed in Oneprovider page is equal to the name of "oneprovider-1" provider
 
     # modify provider details
@@ -42,10 +39,10 @@ Feature: Provider management in Onepanel GUI
     And user of browser2 is idle for 2 seconds
     Then user of browser2 sees that provider name displayed in Oneprovider page is equal to "pro1"
 
-    And user of browser2 opens onezone page
-    And user of browser2 sees "space1" has appeared on spaces
-    And user of browser2 clicks "space1" on spaces on left sidebar menu
-    And user of browser2 clicks Providers of "space1" on left sidebar menu
+    And user of browser2 opens Onezone page
+    And user of browser2 sees that "space1" has appeared on the spaces list in the sidebar
+    And user of browser2 clicks "space1" on the spaces list in the sidebar
+    And user of browser2 clicks Providers of "space1" in the sidebar
     And user of browser2 sees "pro1" is on the providers list
     And user of browser2 sees that hostname in displayed provider popup matches test hostname of provider "oneprovider-1"
 
@@ -59,9 +56,10 @@ Feature: Provider management in Onepanel GUI
 
 
   Scenario: User deregisters provider, registers it again and sees that provider is working
-    When user of browser2 clicks "space1" on spaces on left sidebar menu
-    And user of browser2 clicks Providers of "space1" on left sidebar menu
-    And user of browser2 sees that list of supporting providers for space named "space1" contains only: "oneprovider-1"
+    When user of browser2 clicks on Spaces in the sidebar
+    And user of browser2 clicks "space1" on the spaces list in the sidebar
+    And user of browser2 clicks Providers of "space1" in the sidebar
+    And user of browser2 sees "oneprovider-1" is on the providers list
     And using web gui, admin deregisters provider in "oneprovider-1" Oneprovider panel service
     And user of browser2 is idle for 8 seconds
 
@@ -80,8 +78,8 @@ Feature: Provider management in Onepanel GUI
 
     Then user of browser1 sees that [Database, Cluster Worker, Cluster Manager, Primary Cluster Manager] options are enabled for .*oneprovider.* host in Nodes page in Onepanel
     And user of browser1 sees that [Database, Cluster Worker, Cluster Manager, Primary Cluster Manager] options cannot be changed for .*oneprovider.* host in Nodes page in Onepanel
-    # NOTE: meta-steps have been changed to "normal" steps(located in tests/gui/steps/onezone/space.py).
-    Then user of browser2 opens onezone page
+    # NOTE: meta-steps have been changed to "normal" steps (located in tests/gui/steps/onezone/space.py).
+    Then user of browser2 opens Onezone page
     And user of browser2 sees that there is no supporting provider "oneprovider-1" for space named "space1"
     And user of browser2 creates space "helloworld"
     And user of browser2 generates space support token for space "helloworld" and sends it to user of browser1
@@ -91,7 +89,7 @@ Feature: Provider management in Onepanel GUI
 
     # check that provider is working
     And user of browser2 refreshes site
-    And user of browser2 sees that provider "oneprovider-1" in Onezone panel is working
-    And user of browser2 opened oneprovider-1 Oneprovider view in web GUI
+    And user of browser2 sees that provider "oneprovider-1" in Onezone is working
+    And user of browser2 opens oneprovider-1 Oneprovider view in web GUI
     And user of browser2 sees that Oneprovider session has started
 

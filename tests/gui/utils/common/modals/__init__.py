@@ -1,6 +1,6 @@
 """Utils for operations on modals in GUI tests
 """
-
+from tests.gui.utils.onezone.providers_page import ProviderPopover
 from .data_distribution import DataDistributionModal
 from .add_storage import AddStorage
 from tests.gui.utils.core.web_elements import WebItem
@@ -13,8 +13,10 @@ from .edit_permissions import EditPermissionsModal
 from .configure_web_cert import ConfigureWebCertModal
 from .remove import RemoveModal
 from .leave_group import LeaveGroupModal
+from .leave_space import LeaveSpaceModal
 from .leave_parent import LeaveParentModal
 from .error_modal import ErrorModal
+
 
 __author__ = "Bartosz Walkowicz, Lukasz Niemiec"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
@@ -30,14 +32,27 @@ class Modals(object):
     revoke_space_support = WebItem('.modal.in .modal-dialog',
                                    cls=RevokeSpaceSupportModal)
     login = WebItem('#login-form-modal', cls=LoginFormModal)
-    edit_permissions = WebItem('#edit-permissions-modal', cls=EditPermissionsModal)
-    configure_web_cert = WebItem('#configure-web-cert-modal', cls=ConfigureWebCertModal)
+    edit_permissions = WebItem('#edit-permissions-modal',
+                               cls=EditPermissionsModal)
+    configure_web_cert = WebItem('#configure-web-cert-modal',
+                                 cls=ConfigureWebCertModal)
 
-    remove_group = WebItem('.remove-group-modal.modal.in .modal-dialog', cls=RemoveModal)
-    leave_group = WebItem('.leave-group-modal.modal.in .modal-dialog', cls=LeaveGroupModal)
-    leave_parent = WebItem('.leave-parent-modal.modal.in .modal-dialog', cls=LeaveParentModal)
-    remove_user = WebItem('.remove-user-modal.modal.in .modal-dialog', cls=RemoveModal)
-    error = WebItem('.alert-global.modal.in .modal-dialog', cls=ErrorModal)
+    remove_group = WebItem('.group-remove-modal.modal.in .modal-dialog',
+                           cls=RemoveModal)
+    remove_group_member = WebItem('.remove-group-modal.modal.in .modal-dialog',
+                                  cls=RemoveModal)
+    leave_group = WebItem('.group-leave-modal.modal.in .modal-dialog',
+                          cls=LeaveGroupModal)
+    leave_parent = WebItem('.leave-parent-modal.modal.in .modal-dialog',
+                           cls=LeaveParentModal)
+    leave_space = WebItem('.popover-leave-space',
+                          cls=LeaveSpaceModal)
+    provider_popover = WebItem('.webui-popover .provider-place-drop',
+                               cls=ProviderPopover)
+    remove_user_member = WebItem('.remove-user-modal.modal.in .modal-dialog',
+                                 cls=RemoveModal)
+    error = WebItem('.alert-global.modal.in .modal-dialog',
+                    cls=ErrorModal)
 
     def __init__(self, driver):
         self.driver = driver
