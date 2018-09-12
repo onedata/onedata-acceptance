@@ -37,6 +37,15 @@ Feature: Deployment process using panel of zone and provider
     And user of browser2 sees that IP address of "oneprovider-1" host is that of "oneprovider-1" in deployment setup IP step
     And user of browser2 clicks on "Setup IP addresses" button in deployment setup IP step
 
+    # setup DNS in zone and provider panels
+    And user of browser2 clicks on "Perform check" button in DNS setup step
+    And user of browser2 clicks on Proceed button in DNS setup step
+    And user of browser2 clicks on Yes button in DNS setup step
+
+    And user of browser1 clicks on "Perform check" button in DNS setup step
+    And user of browser1 clicks on Proceed button in DNS setup step
+    And user of browser1 clicks on Yes button in DNS setup step
+
     # web cert in zone panel
     And user of browser1 deactivates lets encrypt toggle in web cert step of deployment process in Onepanel
     And user of browser1 clicks on Next step button in web cert step of deployment process in Onepanel

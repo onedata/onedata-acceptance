@@ -15,6 +15,7 @@ from pytest_bdd import when, then, parsers
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.generic import repeat_failed, parse_seq, transform
+from tests.gui.utils.generic import click_on_web_elem
 
 
 @when(parsers.parse('user of {browser_id} enables {options} options for '
@@ -114,6 +115,37 @@ def wt_await_finish_of_cluster_deployment(selenium, browser_id,
     else:
         raise RuntimeError('cluster deployment exceeded '
                            'time limit: {}'.format(timeout))
+
+
+@when(parsers.re('user of (?P<browser_id>.*) clicks on "Perform check" '
+                 'button in DNS setup step'))
+@then(parsers.re('user of (?P<browser_id>.*) clicks on "Perform check" '
+                 'button in DNS setup step'))
+def wt_click_perform_check_in_dns_setup_step(selenium, browser_id, onepanel):
+    btn = onepanel(selenium[browser_id]).content.deployment.setup_dns\
+        .perform_check
+    err_msg = 'cannot click on Perform check button in DNS setup step'
+    click_on_web_elem(selenium[browser_id], btn, err_msg)
+
+
+@when(parsers.re('user of (?P<browser_id>.*) clicks on Proceed '
+                 'button in DNS setup step'))
+@then(parsers.re('user of (?P<browser_id>.*) clicks on Proceed '
+                 'button in DNS setup step'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def wt_click_proceed_in_dns_setup_step(selenium, browser_id, onepanel):
+    driver = selenium[browser_id]
+    btn = onepanel(driver).content.deployment.setup_dns.proceed
+    err_msg = 'cannot click on Proceed button in DNS setup step'
+    click_on_web_elem(driver, btn, err_msg)
+
+
+@when(parsers.re('user of (?P<browser_id>.*) clicks on Yes '
+                 'button in DNS setup step'))
+@then(parsers.re('user of (?P<browser_id>.*) clicks on Yes '
+                 'button in DNS setup step'))
+def wt_click_proceed_in_dns_setup_step(selenium, browser_id, modals):
+    modals(selenium[browser_id]).dns_configuration_warning.yes()
 
 
 @when(parsers.re('user of (?P<browser_id>.*) clicks on "Setup IP addresses" '

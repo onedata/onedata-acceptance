@@ -10,7 +10,7 @@ __license__ = "This software is released under the MIT license cited in " \
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (WebItemsSequence, Label,
                                                Button, NamedButton,
-                                               Input, WebItem)
+                                               Input, WebItem, WebElement)
 from tests.gui.utils.common.common import Toggle
 from .storages import StorageContentPage
 from .nodes import HostRecord
@@ -56,6 +56,11 @@ class SetupIP(PageObject):
         return str(self.parent)
 
 
+class SetupDNS(PageObject):
+    perform_check = WebElement('.btn-perform-dns-check')
+    proceed = WebElement('.btn-dns-proceed')
+
+
 class StepWebCert(PageObject):
     next_step = Button('button.btn-cert-next')
     lets_encrypt_toggle = Toggle('.toggle-field-letsEncrypt.one-way-toggle')
@@ -88,6 +93,7 @@ class Deployment(PageObject):
     _deployment_step_css = '.steps-row + .row'
     step1 = WebItem(_deployment_step_css, cls=Step1)
     step2 = WebItem(_deployment_step_css, cls=Step2)
+    setup_dns = WebItem(_deployment_step_css, cls=SetupDNS)
     setup_ip = WebItem(_deployment_step_css, cls=SetupIP)
     webcertstep = WebItem(_deployment_step_css, cls=StepWebCert)
     step5 = WebItem(_deployment_step_css, cls=Step5)
