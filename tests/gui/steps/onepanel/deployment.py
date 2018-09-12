@@ -118,9 +118,9 @@ def wt_await_finish_of_cluster_deployment(selenium, browser_id,
 
 
 @when(parsers.re('user of (?P<browser_id>.*) clicks on "Perform check" '
-                 'button in DNS setup step'))
+                 'button in deployment setup DNS step'))
 @then(parsers.re('user of (?P<browser_id>.*) clicks on "Perform check" '
-                 'button in DNS setup step'))
+                 'button in deployment setup DNS step'))
 def wt_click_perform_check_in_dns_setup_step(selenium, browser_id, onepanel):
     btn = onepanel(selenium[browser_id]).content.deployment.setup_dns\
         .perform_check
@@ -129,9 +129,9 @@ def wt_click_perform_check_in_dns_setup_step(selenium, browser_id, onepanel):
 
 
 @when(parsers.re('user of (?P<browser_id>.*) clicks on Proceed '
-                 'button in DNS setup step'))
+                 'button in deployment setup DNS step'))
 @then(parsers.re('user of (?P<browser_id>.*) clicks on Proceed '
-                 'button in DNS setup step'))
+                 'button in deployment setup DNS step'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_proceed_in_dns_setup_step(selenium, browser_id, onepanel):
     driver = selenium[browser_id]
@@ -141,9 +141,9 @@ def wt_click_proceed_in_dns_setup_step(selenium, browser_id, onepanel):
 
 
 @when(parsers.re('user of (?P<browser_id>.*) clicks on Yes '
-                 'button in DNS setup step'))
+                 'button in warning modal in deployment setup DNS step'))
 @then(parsers.re('user of (?P<browser_id>.*) clicks on Yes '
-                 'button in DNS setup step'))
+                 'button in warning modal in deployment setup DNS step'))
 def wt_click_proceed_in_dns_setup_step(selenium, browser_id, modals):
     modals(selenium[browser_id]).dns_configuration_warning.yes()
 
