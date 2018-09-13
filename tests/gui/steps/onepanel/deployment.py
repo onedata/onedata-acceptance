@@ -120,20 +120,14 @@ def wt_await_finish_of_cluster_deployment(selenium, browser_id,
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on "Perform check" '
                'button in deployment setup DNS step'))
 def wt_click_perform_check_in_dns_setup_step(selenium, browser_id, onepanel):
-    btn = onepanel(selenium[browser_id]).content.deployment.setup_dns \
-        .perform_check
-    err_msg = 'cannot click on Perform check button in DNS setup step'
-    click_on_web_elem(selenium[browser_id], btn, err_msg)
+    onepanel(selenium[browser_id]).content.deployment.setup_dns.perform_check()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on Proceed '
                'button in deployment setup DNS step'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_proceed_in_dns_setup_step(selenium, browser_id, onepanel):
-    driver = selenium[browser_id]
-    btn = onepanel(driver).content.deployment.setup_dns.proceed
-    err_msg = 'cannot click on Proceed button in DNS setup step'
-    click_on_web_elem(driver, btn, err_msg)
+    onepanel(selenium[browser_id]).content.deployment.setup_dns.proceed()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on Yes '

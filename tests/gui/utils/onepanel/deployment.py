@@ -57,8 +57,8 @@ class SetupIP(PageObject):
 
 
 class SetupDNS(PageObject):
-    perform_check = WebElement('.btn-perform-dns-check')
-    proceed = WebElement('.btn-dns-proceed')
+    perform_check = Button('.btn-perform-dns-check')
+    proceed = Button('.btn-dns-proceed')
 
 
 class StepWebCert(PageObject):
