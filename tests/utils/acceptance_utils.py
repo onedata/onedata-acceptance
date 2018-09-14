@@ -15,6 +15,7 @@ from pytest_bdd import when, then
 from functools import wraps
 from types import CodeType
 
+
 def list_parser(list):
     return [el.strip() for el in list.strip('[]').split(',') if el != '']
 
@@ -62,13 +63,15 @@ def execute_command(cmd, error=None, should_fail=False):
                                stderr=subprocess.PIPE)
     output, err = process.communicate()
     if (process.returncode != 0) ^ should_fail:
-        raise RuntimeError('{}: {}'.format(error, err) if error
-                           else 'Command did not fail: {}'.format(' '.join(cmd))
+        raise RuntimeError('{}: {}; {}'.format(error, err, output) if error
+                           else 'Command did not fail: {}, Err: {}, Output: {}'
+                           .format(' '.join(cmd), err, output)
                            if should_fail else 'Error when executing command '
-                           '"{}": {}'.format(' '.join(cmd), err))
+                           '"{}": {}; {}'.format(' '.join(cmd), err, output))
     return output
 
 
+# TODO use onenv functions after change to python3
 def get_pod_names_matching_regexp(regexp):
     cmd = ['kubectl', 'get', 'pods'] + \
           ['-o', 'json', '--field-selector=status.phase==Running']

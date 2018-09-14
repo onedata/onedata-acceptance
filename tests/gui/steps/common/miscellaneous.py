@@ -50,7 +50,8 @@ def press_enter_on_active_element(selenium, browser_id):
 
 @wt(parsers.re('user of (?P<browser_id>.+?) is idle for '
                '(?P<seconds>\d*\.?\d+([eE][-+]?\d+)?) seconds'))
-@wt(parsers.re('user .* waits for (?P<seconds>.*) seconds'))
+@wt(parsers.re('user .* waits for (?P<seconds>\d*\.?\d+([eE][-+]?\d+)?) '
+               'seconds'))
 def wait_given_time(seconds):
     time.sleep(float(seconds))
 

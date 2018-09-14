@@ -67,3 +67,6 @@ MEGABYTE = 1024 * 1024
 
 # Append useful modules to the path
 sys.path = [PROJECT_DIR, DOCKER_DIR] + sys.path
+
+# Oneclient mountpath prefix
+ONECLIENT_MOUNTPATH_PREFIX = '/mnt/oneclient'

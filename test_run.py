@@ -209,7 +209,7 @@ parser.add_argument(
 parser.add_argument(
     '--timeout',
     action='store',
-    help='onenv wait timeout',
+    help='Onenv wait timeout',
     dest='timeout')
 
 [args, pass_args] = parser.parse_known_args()

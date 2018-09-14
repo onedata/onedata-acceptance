@@ -1,4 +1,4 @@
-"""This module contains tests suite for LUMA acceptance tests.
+"""This module contains tests suite for LUMA acceptance tests using multiple providers.
 """
 
 __author__ = "Michal Stanisz"
