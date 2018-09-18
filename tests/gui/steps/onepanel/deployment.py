@@ -132,7 +132,7 @@ def wt_click_proceed_in_dns_setup_step(selenium, browser_id, onepanel):
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on Yes '
                'button in warning modal in deployment setup DNS step'))
-def wt_click_proceed_in_dns_setup_step(selenium, browser_id, modals):
+def wt_click_yes_in_warning_modal_in_dns_setup_step(selenium, browser_id, modals):
     modals(selenium[browser_id]).dns_configuration_warning.yes()
 
 
