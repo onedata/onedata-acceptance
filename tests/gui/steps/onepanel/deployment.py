@@ -119,6 +119,7 @@ def wt_await_finish_of_cluster_deployment(selenium, browser_id,
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on "Perform check" '
                'button in deployment setup DNS step'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_perform_check_in_dns_setup_step(selenium, browser_id, onepanel):
     onepanel(selenium[browser_id]).content.deployment.setup_dns.perform_check()
 
@@ -132,7 +133,8 @@ def wt_click_proceed_in_dns_setup_step(selenium, browser_id, onepanel):
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on Yes '
                'button in warning modal in deployment setup DNS step'))
-def wt_click_proceed_in_dns_setup_step(selenium, browser_id, modals):
+@repeat_failed(timeout=WAIT_FRONTEND)
+def wt_click_yes_in_warning_modal_in_dns_setup_step(selenium, browser_id, modals):
     modals(selenium[browser_id]).dns_configuration_warning.yes()
 
 
