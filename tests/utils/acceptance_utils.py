@@ -1,18 +1,18 @@
 """This module implements some common basic functions and functionality for
 acceptance tests of onedata.
 """
-__author__ = "Jakub Kudzia, Piotr Ociepka"
+__author__ = "Jakub Kudzia, Piotr Ociepka, Michal Stanisz"
 __copyright__ = "Copyright (C) 2015-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-import time
-
-from pytest_bdd import parsers
-from pytest_bdd import when, then, given
-from functools import wraps
 import six
 import inspect
+import subprocess
+import json
+import re
+from pytest_bdd import when, then
+from functools import wraps
 from types import CodeType
 
 
@@ -56,3 +56,33 @@ def wt(name, converters=None):
         return tmp_fun()
 
     return decorator
+
+
+def execute_command(cmd, error=None, should_fail=False):
+    process = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE)
+    output, err = process.communicate()
+    if (process.returncode != 0) ^ should_fail:
+        raise RuntimeError('{}: {}; {}'.format(error, err, output) if error
+                           else 'Command did not fail: {}, Err: {}, Output: {}'
+                           .format(' '.join(cmd), err, output)
+                           if should_fail else 'Error when executing command '
+                           '"{}": {}; {}'.format(' '.join(cmd), err, output))
+    return output
+
+
+# TODO use onenv functions after change to python3
+def get_pod_names_matching_regexp(regexp):
+    cmd = ['kubectl', 'get', 'pods'] + \
+          ['-o', 'json', '--field-selector=status.phase==Running']
+    raw_json = execute_command(cmd, error='Error when listing pods')
+    parsed_json = json.loads(raw_json)
+    pods_names = [pod['metadata']['name'] for pod in parsed_json['items']]
+    return [name for name in pods_names if re.search(regexp, name)]
+
+
+def get_pod_ip(pod_name):
+    cmd = ['kubectl', 'get'] + ['pod', pod_name, '-o', 'json']
+    raw_json = execute_command(cmd)
+    parsed_json = json.loads(raw_json)
+    return parsed_json['status']['podIP']
