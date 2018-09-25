@@ -12,11 +12,11 @@ import requests
 
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-
 from tests import (OZ_REST_PATH_PREFIX, PANEL_REST_PATH_PREFIX, DEFAULT_HEADERS,
-                   PROVIDER_REST_PATH_PREFIX)
+                   PROVIDER_REST_PATH_PREFIX, LUMA_REST_PATH_PREFIX)
 from .exceptions import raise_http_exception
+
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 
 def get_zone_rest_path(*args):
@@ -29,6 +29,10 @@ def get_panel_rest_path(*args):
 
 def get_provider_rest_path(*args):
     return '/'.join(chain([PROVIDER_REST_PATH_PREFIX], args))
+
+
+def get_luma_rest_path(*args):
+    return '/'.join(chain([LUMA_REST_PATH_PREFIX], args))
 
 
 def http_get(ip, port, path, use_ssl=True, headers=None, verify=False,

@@ -12,6 +12,7 @@ tests/performance/logs
 tests/gui/logs
 tests/gui/upload_files/large_file.txt
 tests/mixed_swaggers/logs
+tests/mixed_oneclient/logs
 .cache
 tests/**/.cache
 tests/acceptance/profiling_data/

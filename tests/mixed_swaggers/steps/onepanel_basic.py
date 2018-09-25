@@ -226,7 +226,7 @@ def assert_provider_does_not_support_space_in_oz(client, request, user,
                  'provider in "(?P<host>.+?)" Onezone service with following '
                  'configuration:\n(?P<config>(.|\s)*)'))
 def register_provider_in_op(client, request, user, hosts, users, selenium,
-                            onepanel, config):
+                            onepanel, config, modals):
     """ Register provider according to given config.
 
     config should be in yaml format exactly as seen in panel, e.g.
@@ -266,7 +266,7 @@ def register_provider_in_op(client, request, user, hosts, users, selenium,
         from tests.gui.meta_steps.onepanel.provider import \
                                             register_provider_in_op_using_gui
         register_provider_in_op_using_gui(selenium, user, onepanel, hosts,
-                                          config)
+                                          config, modals)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
 

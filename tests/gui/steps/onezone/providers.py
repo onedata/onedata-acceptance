@@ -11,6 +11,7 @@ __license__ = ("This software is released under the MIT license cited in "
 from tests.utils.acceptance_utils import *
 from itertools import izip_longest
 
+from pytest_bdd import parsers, given
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import repeat_failed, parse_seq, transform
 
