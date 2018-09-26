@@ -7,6 +7,7 @@ from pytest_bdd import given, parsers
 from itertools import izip_longest
 from tests.gui.steps.common.browser_creation import \
     create_instances_of_webdriver
+from tests.gui.steps.common.miscellaneous import wait_given_time
 from tests.utils.acceptance_utils import wt
 from tests.gui.steps.oneprovider.common import g_wait_for_op_session_to_start
 from tests.gui.steps.onezone.providers import parse_seq
@@ -41,9 +42,11 @@ def login_using_gui(host_list, selenium, driver, tmpdir, tmp_memory, xvfb,
 
 
 def visit_op(selenium, browser_id, oz_page, provider_name, modals):
+    seconds = 10
+
     providers_panel = oz_page(selenium[browser_id])['providers']
     providers_panel[provider_name]()
-    providers_panel.icon()
+    wait_given_time(seconds)
     modals(selenium[browser_id]).provider_popover.visit_provider()
 
 
