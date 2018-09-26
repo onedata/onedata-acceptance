@@ -41,8 +41,6 @@ class Modals(object):
                                         cls=DNSConfigurationWarningModal)
     remove_group = WebItem('.group-remove-modal.modal.in .modal-dialog',
                            cls=RemoveModal)
-    remove_group_member = WebItem('.remove-group-modal.modal.in .modal-dialog',
-                                  cls=RemoveModal)
     leave_group = WebItem('.group-leave-modal.modal.in .modal-dialog',
                           cls=LeaveGroupModal)
     leave_parent = WebItem('.leave-parent-modal.modal.in .modal-dialog',
@@ -51,8 +49,8 @@ class Modals(object):
                           cls=LeaveSpaceModal)
     provider_popover = WebItem('.webui-popover .provider-place-drop',
                                cls=ProviderPopover)
-    remove_user_member = WebItem('.remove-user-modal.modal.in .modal-dialog',
-                                 cls=RemoveModal)
+    remove_member = WebItem('.remove-member.modal.in .modal-dialog',
+                            cls=RemoveModal)
     error = WebItem('.alert-global.modal.in .modal-dialog',
                     cls=ErrorModal)
 

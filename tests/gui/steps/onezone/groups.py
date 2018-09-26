@@ -282,7 +282,7 @@ def remove_member_from_group(selenium, browser_id, name, member_type, group,
     (getattr(page.main_page.members, list_name)
      .items[name].header.menu_button())
     page.menu['Remove this member']()
-    modal_name = 'remove_' + member_type + '_member'
+    modal_name = 'remove' + '_member'
     sleep(5)
     getattr(modals(selenium[browser_id]), modal_name).remove()
 
