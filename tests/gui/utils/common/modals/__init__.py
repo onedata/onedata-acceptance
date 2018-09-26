@@ -16,6 +16,7 @@ from .leave_group import LeaveGroupModal
 from .leave_space import LeaveSpaceModal
 from .leave_parent import LeaveParentModal
 from .error_modal import ErrorModal
+from .dns_configuration_warning import DNSConfigurationWarningModal
 
 
 __author__ = "Bartosz Walkowicz, Lukasz Niemiec"
@@ -36,7 +37,8 @@ class Modals(object):
                                cls=EditPermissionsModal)
     configure_web_cert = WebItem('#configure-web-cert-modal',
                                  cls=ConfigureWebCertModal)
-
+    dns_configuration_warning = WebItem('.new-cluster-dns-proceed-modal.modal',
+                                        cls=DNSConfigurationWarningModal)
     remove_group = WebItem('.group-remove-modal.modal.in .modal-dialog',
                            cls=RemoveModal)
     remove_group_member = WebItem('.remove-group-modal.modal.in .modal-dialog',

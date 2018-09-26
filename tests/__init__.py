@@ -26,6 +26,7 @@ PERFORMANCE_DIR = os.path.join(TEST_DIR, 'performance')
 PERFORMANCE_TEST_CONFIG = os.path.join(PERFORMANCE_DIR, 'test_config.json')
 GUI_DIR = os.path.join(TEST_DIR, 'gui')
 MIXED_SWAGGERS_DIR = os.path.join(TEST_DIR, 'mixed_swaggers')
+MIXED_ONECLIENT_DIR = os.path.join(TEST_DIR, 'mixed_oneclient')
 ACCEPTANCE_ENV_DIR = os.path.join(ACCEPTANCE_DIR, 'environments')
 GUI_ENV_DIR = os.path.join(GUI_DIR, 'environments')
 ACCEPTANCE_LOGDIR = os.path.join(ACCEPTANCE_DIR, 'logs')
@@ -34,6 +35,7 @@ PERFORMANCE_LOGDIR = os.path.join(PERFORMANCE_DIR, 'logs')
 PROFILING_LOGDIR = os.path.join(ACCEPTANCE_DIR, 'profiling_data')
 GUI_LOGDIR = os.path.join(GUI_DIR, 'logs')
 MIXED_SWAGGERS_LOGDIR = os.path.join(MIXED_SWAGGERS_DIR, 'logs')
+MIXED_ONECLIENT_LOGDIR = os.path.join(MIXED_ONECLIENT_DIR, 'logs')
 PERFORMANCE_ENV_DIR = os.path.join(PERFORMANCE_DIR, 'environments')
 PERFORMANCE_OUTPUT = os.path.join(PERFORMANCE_LOGDIR, 'performance.json')
 EXAMPLE_ENV_DIR = os.path.join(BAMBOOS_DIR, 'example_env')
@@ -53,9 +55,11 @@ PREPARE_ENV_ERROR_LOG_FILE = 'prepare_test_environment_error.log'
 OZ_REST_PORT = 443
 OP_REST_PORT = 443
 PANEL_REST_PORT = 9443
+LUMA_REST_PORT = 8080
 PANEL_REST_PATH_PREFIX = '/api/v3/onepanel'
 OZ_REST_PATH_PREFIX = '/api/v3/onezone'
 PROVIDER_REST_PATH_PREFIX = '/api/v3/oneprovider'
+LUMA_REST_PATH_PREFIX = '/api/v3/luma'
 CDMI_REST_PATH_PREFIX = '/cdmi'
 DEFAULT_HEADERS = {'content-type': 'application/json'}
 
@@ -63,3 +67,6 @@ MEGABYTE = 1024 * 1024
 
 # Append useful modules to the path
 sys.path = [PROJECT_DIR, DOCKER_DIR] + sys.path
+
+# Oneclient mountpath prefix
+ONECLIENT_MOUNTPATH_PREFIX = '/mnt/oneclient'

@@ -9,6 +9,7 @@ __license__ = ("This software is released under the MIT license cited in "
 
 
 from tests.utils.acceptance_utils import *
+from pytest_bdd import parsers
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.generic import repeat_failed, parse_seq, transform
@@ -51,7 +52,7 @@ def wt_click_on_subitem_for_item(selenium, browser_id_list, sidebar,
                'Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_subitem_for_item_with_name(selenium, browser_id_list, sidebar,
-                                           sub_item, record, onepanel, hosts):
+                                           sub_item, record, onepanel):
     for browser_id in parse_seq(browser_id_list):
         nav = getattr(onepanel(selenium[browser_id]).sidebar,
                       transform(sidebar))
