@@ -55,3 +55,4 @@ def screens():
 
 
 # scenarios('../features/oneprovider/groups/multi_browser.feature')
+scenarios('../features/pass.feature')

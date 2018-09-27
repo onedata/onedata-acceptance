@@ -57,3 +57,4 @@ def screens():
 
 # scenarios('../features/oneprovider/groups/creation.feature')
 # scenarios('../features/oneprovider/groups/basic_management.feature')
+scenarios('../features/pass.feature')
