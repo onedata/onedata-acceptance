@@ -63,7 +63,10 @@ Feature: Provider management in Onepanel GUI
 
 
   Scenario: User deregisters provider, registers it again and sees that provider is working
-    When user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
+    Given user of browser1 sees "oneprovider-1" provider in CLUSTERS sidebar in Onepanel
+
+    When user of browser2 refreshes site
+    And user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
     And user of browser2 expands submenu of space named "space1" by clicking on space record in expanded "DATA SPACE MANAGEMENT" Onezone panel
     And user of browser2 sees that list of supporting providers for space named "space1" in expanded "DATA SPACE MANAGEMENT" Onezone panel contains only: "oneprovider-1"
     And using web gui, admin deregisters provider in "oneprovider-1" Oneprovider panel service

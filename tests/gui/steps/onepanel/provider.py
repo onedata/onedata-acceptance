@@ -2,13 +2,14 @@
 provider management in onepanel web GUI.
 """
 
+
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 
-from pytest_bdd import when, then, parsers
+from pytest_bdd import when, then, parsers, given
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.generic import repeat_failed, transform
@@ -156,3 +157,35 @@ def wt_assert_value_of_provider_domain(selenium, browser_id, provider, hosts,
     assert displayed_val == expected_val, \
         ('displayed {} instead of expected {} as '
          'provider\'s domain'.format(displayed_val, expected_val))
+
+
+@given(parsers.re('user of (?P<browser_id>.+?) sees "(?P<provider>.+?)" '
+                  'provider in CLUSTERS sidebar in Onepanel'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def change_provider_name_if_name_is_different_than_given(selenium, browser_id,
+                                                         provider, hosts,
+                                                         onepanel,
+                                                         panel_login_page,
+                                                         users, modals):
+
+    nav = getattr(onepanel(selenium[browser_id]).sidebar, 'clusters')
+    nav.items[1].submenu['Provider'].click()
+
+    current_provider = (onepanel(selenium[browser_id])
+                        .content
+                        .provider
+                        .details
+                        .provider_name)
+    domain = hosts[provider]['hostname']
+    provider = hosts[provider]['name']
+    if current_provider != provider:
+        from tests.gui.meta_steps.onepanel.provider import \
+            modify_provider_with_given_name_in_op_panel_using_gui
+        modify_provider_with_given_name_in_op_panel_using_gui(selenium,
+                                                              browser_id,
+                                                              onepanel,
+                                                              current_provider,
+                                                              provider, domain,
+                                                              panel_login_page,
+                                                              users, hosts,
+                                                              browser_id, modals)
