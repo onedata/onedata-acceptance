@@ -40,7 +40,6 @@ from tests.gui.steps.onezone.access_tokens import *
 from tests.gui.steps.onezone.data_space_management import *
 from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.manage_account import *
-from tests.gui.steps.onezone.login_page import *
 
 from tests.gui.steps.oneprovider.permissions import *
 from tests.gui.steps.oneprovider.common import *
