@@ -55,5 +55,5 @@ def screens():
     return [0]
 
 
-scenarios('../features/oneprovider/groups/creation.feature')
-scenarios('../features/oneprovider/groups/basic_management.feature')
+# scenarios('../features/oneprovider/groups/creation.feature')
+# scenarios('../features/oneprovider/groups/basic_management.feature')

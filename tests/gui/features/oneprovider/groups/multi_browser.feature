@@ -25,6 +25,7 @@ Feature: Groups operations using multiple browsers in Oneprovider GUI
     And users of [browser1, browser2] clicked on the "groups" tab in main menu sidebar
 
 
+# todo rewrite test for new gui in onezone
   Scenario: User fails to view group, to which he does not belong to, using its ID in URL
     When user of browser1 selects "group1" from groups sidebar list
     And user of browser1 copies a first resource ID from URL
@@ -34,6 +35,7 @@ Feature: Groups operations using multiple browsers in Oneprovider GUI
     And user of browser2 does not see "group1" in groups list
 
 
+# todo rewrite test for new gui in onezone
   Scenario: User successfully invites other user to join his group (presses ENTER after entering token)
     # user1 generate group invitation token
     When user of browser1 clicks on settings icon displayed for "group1" item on the groups sidebar list
@@ -61,6 +63,7 @@ Feature: Groups operations using multiple browsers in Oneprovider GUI
     And user of browser1 sees that "user2" item has appeared on current USERS permissions table in Groups tab
 
 
+# todo rewrite test for new gui in onezone
   Scenario: User successfully invites other user to join his group (clicks JOIN confirmation button after entering token)
     # user1 generate group invitation token
     When user of browser1 clicks on settings icon displayed for "group1" item on the groups sidebar list

@@ -25,6 +25,7 @@ Feature: Basic spaces management in Oneprovider GUI
     And user of browser clicked on the "spaces" tab in main menu sidebar
 
 
+  # todo rewrite test for new gui in onezone
   Scenario: User successfully renames space (presses ENTER after entering space name)
     When user of browser clicks on settings icon displayed for "space1" item on the spaces sidebar list
     And user of browser clicks on the "RENAME" item in settings dropdown for space named "space1"
@@ -39,6 +40,7 @@ Feature: Basic spaces management in Oneprovider GUI
     And user of browser sees that space named "NewNameSpace" has appeared in the spaces list
 
 
+  # todo rewrite test for new gui in onezone
   Scenario: User successfully renames space (clicks OK confirmation button after entering space name)
     When user of browser clicks on settings icon displayed for "space1" item on the spaces sidebar list
     And user of browser clicks on the "RENAME" item in settings dropdown for space named "space1"
@@ -53,6 +55,7 @@ Feature: Basic spaces management in Oneprovider GUI
     And user of browser sees that space named "NewNameSpace" has appeared in the spaces list
 
 
+  # todo rewrite test for new gui in onezone
   Scenario: User fails to join to space because of using invalid token (presses ENTER after entering token)
     When user of browser clicks on the Join button in spaces sidebar header
     And user of browser sees that "Join a space" modal has appeared
@@ -63,6 +66,7 @@ Feature: Basic spaces management in Oneprovider GUI
     And user of browser sees that the modal has disappeared
 
 
+  # todo rewrite test for new gui in onezone
   Scenario: User fails to join to space because of using invalid token (clicks Join confirmation button after entering token)
     When user of browser clicks on the Join button in spaces sidebar header
     And user of browser sees that "Join a space" modal has appeared
@@ -73,6 +77,7 @@ Feature: Basic spaces management in Oneprovider GUI
     And user of browser sees that the modal has disappeared
 
 
+  # todo rewrite test for new gui in onezone
   Scenario: Switching between spaces
     When user of browser selects "space2" from spaces sidebar list
     And user of browser sees that space named "space2" is selected one in sidebar spaces list
@@ -80,6 +85,7 @@ Feature: Basic spaces management in Oneprovider GUI
     Then user of browser sees that space named "space1" is selected one in sidebar spaces list
 
 
+  # todo rewrite test for new gui in onezone
   Scenario: Check if "invite group" token box is not empty
     When user of browser clicks on settings icon displayed for "space1" item on the spaces sidebar list
     And user of browser clicks on the "INVITE GROUP" item in settings dropdown for space named "space1"
@@ -87,6 +93,7 @@ Feature: Basic spaces management in Oneprovider GUI
     Then user of browser sees non-empty token in active modal
 
 
+  # todo rewrite test for new gui in onezone
   Scenario: Check if "get support" token box is not empty
     When user of browser clicks on settings icon displayed for "space1" item on the spaces sidebar list
     And user of browser clicks on the "GET SUPPORT" item in settings dropdown for space named "space1"
@@ -94,6 +101,7 @@ Feature: Basic spaces management in Oneprovider GUI
     Then user of browser sees non-empty token in active modal
 
 
+  # todo rewrite test for new gui in onezone
   Scenario: Set given space as home
     When user of browser clicks on settings icon displayed for "space1" item on the spaces sidebar list
     And user of browser clicks on the "SET AS HOME" item in settings dropdown for space named "space1"
@@ -101,6 +109,7 @@ Feature: Basic spaces management in Oneprovider GUI
     And user of browser sees that space named "space1" is home space in spaces sidebar list
 
 
+  # todo rewrite test for new gui in onezone
   Scenario: User leaves given space
     When user of browser clicks on settings icon displayed for "space1" item on the spaces sidebar list
     And user of browser clicks on the "LEAVE SPACE" item in settings dropdown for space named "space1"

@@ -60,8 +60,6 @@ def screens():
 
 
 scenarios('../features/onezone/space/spaces.feature')
-scenarios('../features/onezone/space/spaces_multibrowser.feature')
-scenarios('../features/onezone/space/invite_group_to_space.feature')
 scenarios('../features/onezone/space/create_new_space.feature')
 scenarios('../features/onezone/space/no_supported_space.feature')
 scenarios('../features/onezone/space/multispace.feature')

@@ -19,6 +19,7 @@ Feature: Groups creation in Oneprovider GUI
     And user of browser clicked on the "groups" tab in main menu sidebar
 
 
+  # todo rewrite test for new gui in onezone
   Scenario: User creates new group (presses ENTER after entering group name)
     When user of browser clicks on the Create button in groups sidebar header
     And user of browser sees that "Create a new group" modal has appeared
@@ -30,6 +31,7 @@ Feature: Groups creation in Oneprovider GUI
     Then user of browser sees that group named "helloworld" has appeared in the groups list
 
 
+  # todo rewrite test for new gui in onezone
   Scenario: User creates new group (clicks CREATE confirmation button after entering group name)
     When user of browser clicks on the Create button in groups sidebar header
     And user of browser sees that "Create a new group" modal has appeared

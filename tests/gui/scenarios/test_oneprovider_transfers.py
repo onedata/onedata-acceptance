@@ -22,6 +22,7 @@ from tests.gui.steps.common.copy_paste import *
 from tests.gui.steps.common.local_file_system import *
 from tests.gui.steps.common.notifies import *
 from tests.gui.steps.common.miscellaneous import *
+from tests.gui.steps.common.login import *
 
 from tests.gui.steps.common import *
 from tests.gui.steps.modal import *
@@ -43,6 +44,11 @@ from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
 from tests.gui.steps.oneprovider.transfers import *
 from tests.gui.meta_steps.oneprovider.common import *
+
+from tests.gui.steps.modal import *
+from tests.gui.steps.oneprovider_common import *
+from tests.gui.meta_steps.onezone.common import *
+from tests.gui.meta_steps.oneprovider.data import *
 
 
 @pytest.fixture(scope='module')

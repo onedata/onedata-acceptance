@@ -19,6 +19,7 @@ Feature: Spaces creation in Oneprovider GUI
     And user of browser clicked on the "spaces" tab in main menu sidebar
 
 
+  # todo rewrite test for new gui in onezone
   Scenario: User successfully creates new space with specified name (presses ENTER after entering space name)
     When user of browser clicks on the Create button in spaces sidebar header
     And user of browser sees that "Create a new space" modal has appeared
@@ -30,6 +31,7 @@ Feature: Spaces creation in Oneprovider GUI
     Then user of browser sees that space named "helloworld" has appeared in the spaces list
 
 
+  # todo rewrite test for new gui in onezone
   Scenario: User successfully creates new space with specified name (clicks CREATE confirmation button after entering space name)
     When user of browser clicks on the Create button in spaces sidebar header
     And user of browser sees that "Create a new space" modal has appeared

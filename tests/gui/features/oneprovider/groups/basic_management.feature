@@ -22,6 +22,7 @@ Feature: Basic groups management in Oneprovider GUI
     And user of browser clicked on the "groups" tab in main menu sidebar
 
 
+  # todo rewrite test for new gui in onezone
   Scenario: User receives group invitation token
     When user of browser clicks on settings icon displayed for "group1" item on the groups sidebar list
     And user of browser clicks on the "INVITE GROUP" item in settings dropdown for group named "group1"
@@ -29,6 +30,7 @@ Feature: Basic groups management in Oneprovider GUI
     Then user of browser sees non-empty token in active modal
 
 
+  # todo rewrite test for new gui in onezone
   Scenario: User fails to join group to space because of using invalid token (presses ENTER after entering token)
     When user of browser clicks on settings icon displayed for "group1" item on the groups sidebar list
     And user of browser clicks on the "JOIN SPACE" item in settings dropdown for group named "group1"
@@ -40,6 +42,7 @@ Feature: Basic groups management in Oneprovider GUI
     And user of browser sees that the modal has disappeared
 
 
+  # todo rewrite test for new gui in onezone
   Scenario: User fails to join group to space because of using invalid token (clicks Join confirmation button after entering token)
     When user of browser clicks on settings icon displayed for "group1" item on the groups sidebar list
     And user of browser clicks on the "JOIN SPACE" item in settings dropdown for group named "group1"
@@ -51,6 +54,7 @@ Feature: Basic groups management in Oneprovider GUI
     And user of browser sees that the modal has disappeared
 
 
+  # todo rewrite test for new gui in onezone
   Scenario: User fails to join group as subgroup because of using invalid token (presses ENTER after entering token)
     When user of browser clicks on settings icon displayed for "group1" item on the groups sidebar list
     And user of browser clicks on the "JOIN AS SUBGROUP" item in settings dropdown for group named "group1"
@@ -62,6 +66,7 @@ Feature: Basic groups management in Oneprovider GUI
     And user of browser sees that the modal has disappeared
 
 
+  # todo rewrite test for new gui in onezone
   Scenario: User fails to join group as subgroup because of using invalid token (clicks Join confirmation button after entering token)
     When user of browser clicks on settings icon displayed for "group1" item on the groups sidebar list
     And user of browser clicks on the "JOIN AS SUBGROUP" item in settings dropdown for group named "group1"
@@ -73,6 +78,7 @@ Feature: Basic groups management in Oneprovider GUI
     And user of browser sees that the modal has disappeared
 
 
+  # todo rewrite test for new gui in onezone
   Scenario: User fails to join to group because of using invalid token (presses ENTER after entering token)
     When user of browser clicks on the Join button in groups sidebar header
     And user of browser sees that "Join a group" modal has appeared
@@ -83,6 +89,7 @@ Feature: Basic groups management in Oneprovider GUI
     And user of browser sees that the modal has disappeared
 
 
+  # todo rewrite test for new gui in onezone
   Scenario: User fails to join to group because of using invalid token (clicks Join confirmation button after entering token)
     When user of browser clicks on the Join button in groups sidebar header
     And user of browser sees that "Join a group" modal has appeared
@@ -93,6 +100,7 @@ Feature: Basic groups management in Oneprovider GUI
     And user of browser sees that the modal has disappeared
 
 
+  # todo rewrite test for new gui in onezone
   Scenario: User successfully renames group (presses ENTER after entering group name)
     When user of browser clicks on settings icon displayed for "group1" item on the groups sidebar list
     And user of browser clicks on the "RENAME" item in settings dropdown for group named "group1"
@@ -107,6 +115,7 @@ Feature: Basic groups management in Oneprovider GUI
     And user of browser sees that group named "NewNameGroup" has appeared in the groups list
 
 
+  # todo rewrite test for new gui in onezone
   Scenario: User successfully renames group (clicks OK after entering group name)
     When user of browser clicks on settings icon displayed for "group1" item on the groups sidebar list
     And user of browser clicks on the "RENAME" item in settings dropdown for group named "group1"
@@ -121,6 +130,7 @@ Feature: Basic groups management in Oneprovider GUI
     And user of browser sees that group named "NewNameGroup" has appeared in the groups list
 
 
+  # todo rewrite test for new gui in onezone
   Scenario: User can leave existing group
     When user of browser clicks on settings icon displayed for "group1" item on the groups sidebar list
     And user of browser clicks on the "LEAVE THIS GROUP" item in settings dropdown for group named "group1"
@@ -132,6 +142,7 @@ Feature: Basic groups management in Oneprovider GUI
     And user of browser sees that group named "group1" has disappeared from the groups list
 
 
+  # todo rewrite test for new gui in onezone
   Scenario: User fails to view group after leaving it
     When user of browser selects "group1" from groups sidebar list
     And user of browser copies a first resource ID from URL
