@@ -1,6 +1,6 @@
 """Utils for operations on modals in GUI tests
 """
-from tests.gui.utils.onezone.providers_page import ProviderPopover
+from tests.gui.utils.onezone.data_page import ProviderPopover
 from .data_distribution import DataDistributionModal
 from .add_storage import AddStorage
 from tests.gui.utils.core.web_elements import WebItem

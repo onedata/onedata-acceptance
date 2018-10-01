@@ -32,7 +32,7 @@ class ProviderPopover(PageObject):
                                  text='Visit provider')
 
 
-class ProvidersPage(GenericPage):
+class DataPage(GenericPage):
     popover = WebItem('.webui-popover .provider-place-drop',
                       cls=ProviderPopover)
     _popover = WebElement('.webui-popover .provider-place-drop')

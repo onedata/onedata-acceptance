@@ -10,7 +10,7 @@ __license__ = "This software is released under the MIT license cited in " \
 from tests.gui.utils.core.web_elements import WebElement, WebElementsSequence
 from .common import OZPanel
 from .spaces_page import SpacesPage
-from .providers_page import ProvidersPage
+from .data_page import DataPage
 from .groups.groups_page import GroupsPage
 from .tokens_page import TokensPage
 from selenium.webdriver.common.action_chains import ActionChains
@@ -22,7 +22,7 @@ class OZLoggedIn(object):
     _panels = WebElementsSequence('.main-menu-content li.main-menu-item')
 
     panels = {
-        'providers': ProvidersPage,
+        'data': DataPage,
         'tokens': TokensPage,
         'spaces': SpacesPage,
         'groups': GroupsPage,

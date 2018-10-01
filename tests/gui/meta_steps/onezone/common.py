@@ -1,6 +1,7 @@
 """This module contains meta steps for common operations in Onezone
 using web GUI
 """
+import time
 
 from pytest_bdd import given, parsers
 
@@ -42,11 +43,12 @@ def login_using_gui(host_list, selenium, driver, tmpdir, tmp_memory, xvfb,
 
 
 def visit_op(selenium, browser_id, oz_page, provider_name, modals):
-    seconds = 10
+    timeout = 10
+    driver = selenium[browser_id]
 
-    providers_panel = oz_page(selenium[browser_id])['providers']
+    providers_panel = oz_page(driver)['data']
     providers_panel[provider_name]()
-    wait_given_time(seconds)
+    wait_given_time(timeout)
     modals(selenium[browser_id]).provider_popover.visit_provider()
 
 
