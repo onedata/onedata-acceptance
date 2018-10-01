@@ -22,13 +22,13 @@ Feature: Basic creation/joining of groups with one user in Onezone GUI
   Scenario Outline: User creates group
     When user of browser clicks on Create group button in groups sidebar
     And user of browser writes "group1" into group name text field
-    And user of browser confirms using <option>
+    And user of browser confirms using <confirmation_method>
     Then user of browser sees group "group1" on groups list
 
     Examples:
-      | option |
-      | enter  |
-      | button |
+      | confirmation_method |
+      | enter               |
+      | button              |
 
   Scenario: User fails to create unnamed group using button to confirm group name
     When user of browser clicks on Create group button in groups sidebar

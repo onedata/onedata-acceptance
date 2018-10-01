@@ -1,9 +1,9 @@
 Feature: Joining a group in Onezone GUI
 
   Examples:
-    | option |
-    | enter  |
-    | button |
+    | confirmation_method |
+    | enter               |
+    | button              |
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -37,7 +37,7 @@ Feature: Joining a group in Onezone GUI
     And user of browser2 clicks on Groups in the sidebar
     And user of browser2 clicks on Join group button in groups sidebar
     And user of browser2 pastes copied token into group token text field
-    And user of browser2 confirms using <option>
+    And user of browser2 confirms using <confirmation_method>
 
     And users of browser1 refreshes site
 
@@ -55,7 +55,7 @@ Feature: Joining a group in Onezone GUI
     And user of browser2 clicks on Groups in the sidebar
     And user of browser2 clicks on Join group button in groups sidebar
     And user of browser2 pastes copied token into group token text field
-    And user of browser2 confirms using <option>
+    And user of browser2 confirms using <confirmation_method>
 
     Then user of browser2 sees that error modal with text "joining the group failed" appeared
 
@@ -64,7 +64,7 @@ Feature: Joining a group in Onezone GUI
     When user of browser1 clicks on Groups in the sidebar
     And user of browser1 clicks on Join group button in groups sidebar
     And user of browser1 writes "aaa" into group token text field
-    And user of browser1 confirms using <option>
+    And user of browser1 confirms using <confirmation_method>
 
     Then user of browser1 sees that error modal with text "joining the group failed" appeared
 
@@ -73,7 +73,7 @@ Feature: Joining a group in Onezone GUI
     When user of browser1 clicks on Groups in the sidebar
     And user of browser1 clicks on button "Join space" in group "group1" menu
     And user of browser1 writes "aaa" into group token text field
-    And user of browser1 confirms using <option>
+    And user of browser1 confirms using <confirmation_method>
 
     Then user of browser1 sees that error modal with text "joining space failed" appeared
 
@@ -86,7 +86,7 @@ Feature: Joining a group in Onezone GUI
 
     And user of browser1 clicks on Join group button in groups sidebar
     And user of browser1 pastes copied token into group token text field
-    And user of browser1 confirms using <option>
+    And user of browser1 confirms using <confirmation_method>
 
     Then user of browser1 sees that error modal with text "joining the group failed" appeared
 

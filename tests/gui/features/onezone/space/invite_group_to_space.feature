@@ -34,13 +34,13 @@ Feature: Multi Browser invitation group to spaces
     And user of browser2 clicks "group2" on the groups list in the sidebar
     And user of browser2 clicks Join space on the groups list in the sidebar
     And user of browser2 pastes Space invitation token into space token text field
-    And user of browser2 confirms join the space using <option>
+    And user of browser2 confirms join the space using <confirmation_method>
     Then user of browser2 sees that "space1" has appeared on the spaces list in the sidebar
 
     Examples:
-    | option |
-    | enter  |
-    | button |
+      | confirmation_method |
+      | enter               |
+      | button              |
 
 
   Scenario: User fails to join a space with invalid group invitation token

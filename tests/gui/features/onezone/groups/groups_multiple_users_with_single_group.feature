@@ -26,14 +26,14 @@ Feature: Basic management of groups with multiple users in Onezone GUI
 
 
   Scenario Outline: User renames group with others users
-    When user of browser1 renames group "group1" to "group2" using <option> to confirm
+    When user of browser1 renames group "group1" to "group2" using <confirmation_method> to confirm
     Then users of [browser1, browser2] sees group "group2" on groups list
     And users of [browser1, browser2] does not see group "group1" on groups list
 
     Examples:
-      | option |
-      | enter  |
-      | button |
+      | confirmation_method |
+      | enter               |
+      | button              |
 
 
   Scenario: User removes group with others users

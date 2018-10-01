@@ -26,13 +26,13 @@ Feature: Multi Browser basic management of spaces
     And user of browser1 sends invitation token to "browser2"
     And user of browser2 clicks Join some space using a space invitation token button
     And user of browser2 pastes Space invitation token into space token text field
-    And user of browser2 confirms join the space using <option>
+    And user of browser2 confirms join the space using <confirmation_method>
     Then user of browser2 sees that "space1" has appeared on the spaces list in the sidebar
 
     Examples:
-    | option |
-    | enter  |
-    | button |
+      | confirmation_method |
+      | enter               |
+      | button              |
 
 
   Scenario: User successfully joins space using invitation token (with Get started button)

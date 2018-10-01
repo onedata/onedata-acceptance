@@ -357,7 +357,7 @@ def assert_error_page_appeared(selenium, browser_id, text, oz_page):
     assert page.main_page.error_label == text
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) confirms rename the group '
+@wt(parsers.re('user of (?P<browser_id>.*) confirms group rename '
                'using (?P<option>.*)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_rename_the_group(selenium, browser_id, option, oz_page):

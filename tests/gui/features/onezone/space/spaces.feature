@@ -22,14 +22,14 @@ Feature: Basic management of spaces
     When user of browser clicks on Spaces in the sidebar
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser writes "space2" into rename space text field
-    And user of browser confirms rename the space using <option>
+    And user of browser confirms rename the space using <confirmation_method>
     Then user of browser sees that "space2" has appeared on the spaces list in the sidebar
     And user of browser sees that "space1" has disappeared on the spaces list in the sidebar
 
     Examples:
-    | option |
-    | enter  |
-    | button |
+      | confirmation_method |
+      | enter               |
+      | button              |
 
 
   Scenario: User successfully cancels rename space

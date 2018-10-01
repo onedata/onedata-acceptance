@@ -25,14 +25,14 @@ Feature: Basic management of groups with one user in Onezone GUI
   Scenario Outline: User renames group
     When user of browser clicks on button "Rename" in group "group1" menu
     And user of browser writes "group2" into rename group text field
-    And user of browser confirms rename the group using <option>
+    And user of browser confirms group rename using <confirmation_method>
     Then user of browser sees group "group2" on groups list
     And user of browser does not see group "group1" on groups list
 
     Examples:
-    | option |
-    | enter  |
-    | button |
+      | confirmation_method |
+      | enter               |
+      | button              |
 
 
   Scenario: User removes group
@@ -53,14 +53,14 @@ Feature: Basic management of groups with one user in Onezone GUI
 
     And user of browser goes to group "group1" parents subpage
     And user of browser pastes copied token into group token text field
-    And user of browser confirms using <option>
+    And user of browser confirms using <confirmation_method>
 
     Then user of browser sees that error modal with text "joining group as subgroup failed" appeared
 
     Examples:
-    | option |
-    | enter  |
-    | button |
+      | confirmation_method |
+      | enter               |
+      | button              |
 
 
   Scenario: User generates group invitation token
