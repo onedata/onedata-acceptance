@@ -29,6 +29,8 @@ Feature: Provider management in Onepanel
 
 
   Scenario Outline: User deregisters provider and registers it again
+    Given using web GUI, admin sees "oneprovider-1" provider in CLUSTERS sidebar in Onepanel
+    And using web GUI, user1 refreshes site
     When using <client2>, user1 sees provider "oneprovider-1" with hostname matches that of "oneprovider-1" provider in "onezone" Onezone service
     And using <client1>, admin deregisters provider in "oneprovider-1" Oneprovider panel service
     And using <client2>, user1 is idle for 8 seconds
