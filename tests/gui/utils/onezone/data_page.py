@@ -36,7 +36,7 @@ class DataPage(GenericPage):
     popover = WebItem('.webui-popover .provider-place-drop',
                       cls=ProviderPopover)
     _popover = WebElement('.webui-popover .provider-place-drop')
-    elements_list = WebItemsSequence('.sidebar-providers '
+    elements_list = WebItemsSequence('.sidebar-data '
                                      'li.one-list-item.clickable', cls=Provider)
     icon = Button('.circle')
 

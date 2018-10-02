@@ -48,8 +48,18 @@ def visit_op(selenium, browser_id, oz_page, provider_name, modals):
 
     providers_panel = oz_page(driver)['data']
     providers_panel[provider_name]()
-    wait_given_time(timeout)
-    modals(selenium[browser_id]).provider_popover.visit_provider()
+
+    limit = time.time() + timeout
+    while time.time() < limit:
+        try:
+            modals(selenium[browser_id]).provider_popover.visit_provider()
+        except RuntimeError:
+            break
+        else:
+            time.sleep(1)
+            continue
+    else:
+        raise RuntimeError('no modal found')
 
 
 def g_wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts, modals):
