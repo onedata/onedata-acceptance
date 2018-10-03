@@ -1,6 +1,7 @@
 """This module contains gherkin steps to run acceptance tests featuring groups
 management in onezone web GUI
 """
+import time
 
 __author__ = "Michal Stanisz, Lukasz Niemiec"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
@@ -13,7 +14,6 @@ from tests.gui.utils.common.modals import Modals as modals
 from tests.gui.utils.generic import repeat_failed, parse_seq
 from tests.gui.conftest import WAIT_FRONTEND
 from selenium.webdriver.common.keys import Keys
-from time import sleep
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 
 
@@ -22,7 +22,7 @@ from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_create_or_join_group_button_in_panel(selenium, browser_id, operation,
                                                oz_page):
-    button_name = str(operation).lower() + '_group'
+    button_name = '{}_group'.format(operation.lower())
     getattr(oz_page(selenium[browser_id])['groups'], button_name)()
 
 
@@ -84,9 +84,9 @@ def assert_group_exists(selenium, browser_ids, option, group, oz_page):
         groups_count = len(_find_groups(oz_page(selenium[browser_id])['groups'],
                                         group))
         if option == 'does not see':
-            assert groups_count == 0, "such group exists"
+            assert groups_count == 0, 'group "{}" found'.format(group)
         else:
-            assert groups_count > 0, "no such group exists"
+            assert groups_count == 1, 'group "{}" not found'.format(group)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on button '
@@ -139,7 +139,6 @@ def click_modal_button(selenium, browser_id, button, modal, oz_page):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_error_modal_with_text_appeared(selenium, browser_id, text, oz_page):
     message = 'Modal does not contain text "{}"'.format(text)
-    sleep(5)
     assert text in modals(selenium[browser_id]).error.content, message
 
 
@@ -229,11 +228,11 @@ def assert_group_is_groups_child(selenium, browser_id, option, child,
     try:
         page.main_page.members.groups.items[child]
     except RuntimeError:
-        assert option == 'does not see', ("\"{}\" is \"{}\" child"
-                                          .format(child, parent))
+        assert (option == 'does not see',
+                '"{}" is "{}" child'.format(child, parent))
     else:
-        assert option == 'sees', ("\"{}\" is not \"{}\" child"
-                                  .format(child, parent))
+        assert (option == 'sees',
+                '"{}" is not "{}" child'.format(child, parent))
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>does not see|sees) '
@@ -247,11 +246,11 @@ def assert_group_is_groups_parent(selenium, browser_id, option,
     try:
         page.main_page.parents.items[parent]
     except RuntimeError:
-        assert option == 'does not see', ("\"{}\" is \"{}\" parent"
-                                          .format(parent, child))
+        assert (option == 'does not see',
+                '"{}" is "{}" parent'.format(parent, child))
     else:
-        assert option == 'sees', ("\"{}\" is not \"{}\" parent"
-                                  .format(parent, child))
+        assert (option == 'sees',
+                '"{}" is not "{}" parent'.format(parent, child))
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>does not see|sees) user '
@@ -264,9 +263,13 @@ def assert_member(selenium, browser_id, option, username, group_name, oz_page):
     try:
         page.main_page.members.users.items[username]
     except RuntimeError:
-        assert option == 'does not see'
+        assert (option == 'does not see',
+                'user "{}" found on group "{}" members list'.format(username,
+                                                                    group_name))
     else:
-        assert option == 'sees'
+        assert (option == 'sees',
+                'user "{}" not found on group "{}" members list'
+                .format(username, group_name))
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) removes (?P<member_type>user|group) '
@@ -282,9 +285,20 @@ def remove_member_from_group(selenium, browser_id, name, member_type, group,
     (getattr(page.main_page.members, list_name)
      .items[name].header.menu_button())
     page.menu['Remove this member']()
-    modal_name = 'remove' + '_member'
-    sleep(5)
-    getattr(modals(selenium[browser_id]), modal_name).remove()
+    modal_name = 'remove_member'
+
+    timeout = 5
+    limit = time.time() + timeout
+    while time.time() < limit:
+        try:
+            getattr(modals(selenium[browser_id]), modal_name).remove()
+        except RuntimeError:
+            time.sleep(1)
+            continue
+        else:
+            break
+    else:
+        raise RuntimeError('no modal found')
 
 
 @wt(parsers.parse('user of {browser_id} removes group "{parent}" from '
@@ -296,8 +310,19 @@ def leave_parent_group(selenium, browser_id, parent, child, oz_page):
     page.elements_list[child].parents()
     page.main_page.parents.items[parent].menu()
     page.menu['Leave parent group']()
-    sleep(5)
-    modals(selenium[browser_id]).leave_parent.leave()
+
+    timeout = 5
+    limit = time.time() + timeout
+    while time.time() < limit:
+        try:
+            modals(selenium[browser_id]).leave_parent.leave()
+        except RuntimeError:
+            time.sleep(1)
+            continue
+        else:
+            break
+    else:
+        raise RuntimeError('no modal found')
 
 
 @wt(parsers.parse('user of {browser_id} adds group "{group}" as subgroup '
@@ -344,7 +369,7 @@ def get_invitation_token(selenium, browser_id, group, who, oz_page, tmp_memory):
 def click_invite_group_on_menu_of_members(selenium, browser_id, who, where,
                                           oz_page):
     driver = selenium[browser_id]
-    elem = oz_page(driver)[str(where).lower()]
+    elem = oz_page(driver)[where.lower()]
     elem.menu_button()
     elem.menu['Invite ' + who].click()
 
@@ -354,7 +379,8 @@ def click_invite_group_on_menu_of_members(selenium, browser_id, who, where,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_error_page_appeared(selenium, browser_id, text, oz_page):
     page = oz_page(selenium[browser_id])['groups']
-    assert page.main_page.error_label == text
+    assert (page.main_page.error_label == text,
+            'page with text "{}" not found'.format(text))
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) confirms group rename '

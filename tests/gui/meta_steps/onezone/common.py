@@ -54,10 +54,10 @@ def visit_op(selenium, browser_id, oz_page, provider_name, modals):
         try:
             modals(selenium[browser_id]).provider_popover.visit_provider()
         except RuntimeError:
-            break
-        else:
             time.sleep(1)
             continue
+        else:
+            break
     else:
         raise RuntimeError('no modal found')
 

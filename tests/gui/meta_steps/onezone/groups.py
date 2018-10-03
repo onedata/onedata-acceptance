@@ -21,7 +21,7 @@ from tests.gui.steps.common.miscellaneous import *
                '(?P<confirm_type>.*) to confirm'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def rename_group(selenium, browser_id, group, new_group, confirm_type, oz_page):
-    option = "Rename"
+    option = 'Rename'
     text = new_group
 
     click_on_group_menu_button(selenium, browser_id, option, group, oz_page)
@@ -38,7 +38,7 @@ def rename_group(selenium, browser_id, group, new_group, confirm_type, oz_page):
 @wt(parsers.parse('user of {browser_id} leaves group "{group}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def leave_group(selenium, browser_id, group, oz_page):
-    option = "Leave"
+    option = 'Leave'
     modal = "LEAVE GROUP"
 
     click_on_group_menu_button(selenium, browser_id, option, group, oz_page)
@@ -48,7 +48,7 @@ def leave_group(selenium, browser_id, group, oz_page):
 @wt(parsers.parse('user of {browser_id} removes group "{group}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def remove_group(selenium, browser_id, group, oz_page):
-    option = "Remove"
+    option = 'Remove'
     modal = "REMOVE GROUP"
 
     click_on_group_menu_button(selenium, browser_id, option, group, oz_page)
@@ -58,7 +58,7 @@ def remove_group(selenium, browser_id, group, oz_page):
 @wt(parsers.parse('user of {browser_id} creates group "{group}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_group(selenium, browser_id, group, oz_page):
-    operation = "Create"
+    operation = 'Create'
     name = group
 
     click_create_or_join_group_button_in_panel(selenium, browser_id, operation,

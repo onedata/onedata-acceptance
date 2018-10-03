@@ -64,8 +64,8 @@ def assert_no_provider_for_space(selenium, browser_id, provider_name,
     except RuntimeError:
         pass
     else:
-        assert False, 'provider "{}" found on space "{}" providers list' \
-            .format(provider, space_name)
+        assert (False, 'provider "{}" found on space "{}" providers list'
+                .format(provider, space_name))
 
 
 @wt(parsers.parse('user of {browser_id} sees that "{space_name}" has appeared '
@@ -74,7 +74,8 @@ def assert_no_provider_for_space(selenium, browser_id, provider_name,
 def assert_new_created_space_has_appeared_on_spaces(selenium, browser_id,
                                                     space_name, oz_page):
     driver = selenium[browser_id]
-    assert space_name in oz_page(driver)['spaces'].elements_list
+    assert (space_name in oz_page(driver)['spaces'].elements_list,
+            'space "{}" not found'.format(space_name))
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
@@ -143,7 +144,8 @@ def click_confirm_or_cancel_button_on_leave_space_page(selenium, browser_id,
 def assert_space_has_disappeared_on_spaces(selenium, browser_id, space_name,
                                            oz_page):
     driver = selenium[browser_id]
-    assert space_name not in oz_page(driver)['spaces'].elements_list
+    assert (space_name not in oz_page(driver)['spaces'].elements_list,
+            'space "{}" found'.format(space_name))
 
 
 @wt(parsers.parse('user of {browser_id} clicks on toggle default space'))
@@ -162,7 +164,8 @@ def assert_home_space_has_appeared_on_spaces_on_left_sidebar_menu(selenium,
                                                                   space_name,
                                                                   oz_page):
     driver = selenium[browser_id]
-    assert oz_page(driver)['spaces'].elements_list[space_name].is_home_icon()
+    assert (oz_page(driver)['spaces'].elements_list[space_name].is_home_icon(),
+            'home of space "{}" not found'.format(space_name))
 
 
 @wt(parsers.parse('user of {browser_id} sees that home of "{space_name}" '
@@ -173,7 +176,8 @@ def assert_home_space_has_disappeared_on_spaces_on_left_sidebar_menu(selenium,
                                                                      space_name,
                                                                      oz_page):
     driver = selenium[browser_id]
-    assert not oz_page(driver)['spaces'].elements_list[space_name].is_home_icon()
+    assert (not oz_page(driver)['spaces'].elements_list[space_name].is_home_icon(),
+            'home of space "{}" found'.format(space_name))
 
 
 @wt(parsers.parse('user of {browser_id} sees {number} number of supporting '
@@ -182,8 +186,11 @@ def assert_home_space_has_disappeared_on_spaces_on_left_sidebar_menu(selenium,
 def assert_number_of_supporting_providers_of_space(selenium, browser_id,
                                                    number, space_name, oz_page):
     driver = selenium[browser_id]
-    assert number == oz_page(driver)['spaces'].elements_list[space_name] \
-        .supporting_providers_number
+    assert (number == oz_page(driver)['spaces']
+            .elements_list[space_name]
+            .supporting_providers_number,
+            'number of supporting providers is not equal {}'.format(number))
+
 
 
 @wt(parsers.parse('user of {browser_id} sees {number} size of '
@@ -192,8 +199,10 @@ def assert_number_of_supporting_providers_of_space(selenium, browser_id,
 def assert_size_of_space_on_left_sidebar_menu(selenium, browser_id, number,
                                               space_name, oz_page):
     driver = selenium[browser_id]
-    assert number == oz_page(driver)['spaces'].elements_list[space_name] \
-        .support_size
+    assert (number == oz_page(driver)['spaces']
+            .elements_list[space_name]
+            .support_size,
+            'size of space "{}" is not equal {}'.format(space_name, number))
 
 
 @wt(parsers.re(
@@ -236,42 +245,46 @@ def type_token_to_input_on_join_to_a_space_page(selenium, browser_id,
 @wt(parsers.parse('user of {browser_id} sees that error popup has appeared'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_error_popup_has_appeared(selenium, browser_id):
-    assert "failed" in modals(selenium[browser_id]).error.content
+    assert ("failed" in modals(selenium[browser_id]).error.content,
+            'error popup not found')
 
 
 @wt(parsers.parse('user of {browser_id} sees "{provider}" is on '
                   'the providers list'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_if_providers_list_contains_provider(selenium, browser_id, provider,
-                                               hosts, oz_page):
+def assert_providers_list_contains_provider(selenium, browser_id, provider,
+                                            hosts, oz_page):
     driver = selenium[browser_id]
     if provider in hosts:
         provider = hosts[provider]['name']
     providers_list = oz_page(driver)['spaces'].providers_page.providers_list
-    assert provider in providers_list
+    assert provider in providers_list, 'provider "{}" not found'.format(provider)
 
 
 @wt(parsers.parse('user of {browser_id} sees that length of providers list '
                   'equals number of supporting providers of "{space_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_if_providers_list_contains_provider(selenium, browser_id,
-                                               space_name, oz_page):
+def assert_length_of_providers_list(selenium, browser_id, space_name, oz_page):
     driver = selenium[browser_id]
     providers_list = oz_page(driver)['spaces'].providers_page.providers_list
     number_of_providers = int(oz_page(driver)['spaces']
                               .elements_list[space_name]
                               .supporting_providers_number)
-    assert len(providers_list) == number_of_providers
+    assert (len(providers_list) == number_of_providers,
+            'length of providers list is not equal to number of supporting '
+            'providers of space "{}"'.format(space_name))
 
 
 @wt(parsers.parse('user of {browser_id} sees that length of providers list of '
                   '"{space_name}" equals "{number_of_providers}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_if_providers_list_contains_provider(selenium, browser_id, space_name,
-                                               number_of_providers, oz_page):
+def assert_length_of_providers_list_of_space(selenium, browser_id, space_name,
+                                             number_of_providers, oz_page):
     driver = selenium[browser_id]
     providers_list = oz_page(driver)['spaces'].providers_page.providers_list
-    assert len(providers_list) == int(number_of_providers)
+    assert (len(providers_list) == int(number_of_providers),
+            'length of providers list of space "{}" is not equal {}'
+            .format(space_name, number_of_providers))
 
 
 @wt(parsers.parse('user of {browser_id} clicks Get support button '
@@ -328,31 +341,31 @@ def click_generate_another_token_on_request_support_page(selenium, browser_id,
 @wt(parsers.parse('user of {browser_id} sees that another token is different '
                   'than first one'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_if_two_tokens_are_different(selenium, browser_id, oz_page, displays,
+def assert_two_tokens_are_different(selenium, browser_id, oz_page, displays,
                                        clipboard, tmp_memory):
     driver = selenium[browser_id]
     first_token = tmp_memory[browser_id]['mailbox']['token']
     oz_page(driver)['spaces'].providers_page.get_support_page.copy()
 
     second_token = clipboard.paste(display=displays[browser_id])
-    assert first_token != second_token
+    assert first_token != second_token, 'two tokens are the same'
 
 
 @wt(parsers.parse('user of {browser_id} sees copy token and token '
                   'in support token text field are the same'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_if_copy_token_and_input_token_are_the_same(selenium, browser_id,
+def assert_copy_token_and_input_token_are_the_same(selenium, browser_id,
                                                       oz_page, tmp_memory):
     driver = selenium[browser_id]
     first_token = tmp_memory[browser_id]['mailbox']['token']
     second_token = oz_page(driver)['spaces'].providers_page.get_support_page \
         .token_textarea
-    assert first_token == second_token
+    assert first_token == second_token, 'two tokens are not the same'
 
 
 @wt(parsers.parse('user of {browser_id} sees non-empty copy token'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_if_copy_token_is_not_empty(selenium, browser_id, tmp_memory):
+def assert_copy_token_is_not_empty(selenium, browser_id, tmp_memory):
     token = tmp_memory[browser_id]['mailbox']['token']
     assert len(token) > 0, 'token is empty, while it should be non-empty'
 
@@ -363,7 +376,8 @@ def assert_if_copy_token_is_not_empty(selenium, browser_id, tmp_memory):
 def assert_name_label_of_space_on_overview_page(selenium, browser_id,
                                                 space_name, oz_page):
     driver = selenium[browser_id]
-    assert oz_page(driver)['spaces'].overview_page.space_name == space_name
+    assert (oz_page(driver)['spaces'].overview_page.space_name == space_name,
+            'space "{}" not found on overview page'.format(space_name))
 
 
 @wt(parsers.parse('user of {browser_id1} generates space support token for '

@@ -44,7 +44,7 @@ Feature: Oneprovider functionality using multiple providers
     And user of browser sees "multiprov" is in spaces list on Oneprovider page
 
     # check space in second provider
-    And user of browser clicks on the "providers" tab in main menu sidebar
+    And user of browser opens Onezone page
     And user of browser opens oneprovider-2 Oneprovider view in web GUI
     And user of browser sees that Oneprovider session has started
     Then user of browser sees "multiprov" is in spaces list on Oneprovider page
@@ -65,7 +65,7 @@ Feature: Oneprovider functionality using multiple providers
     And user of browser sees "space1" is not in spaces list on Oneprovider page
 
     # check space in second provider
-    And user of browser clicks on the "providers" tab in main menu sidebar
+    And user of browser opens Onezone page
     And user of browser opens oneprovider-2 Oneprovider view in web GUI
     And user of browser sees that Oneprovider session has started
     Then user of browser sees "NewNameSpace" is in spaces list on Oneprovider page
@@ -82,6 +82,6 @@ Feature: Oneprovider functionality using multiple providers
     And user of browser sees "space1" is not in spaces list on Oneprovider page
 
     # check space in first provider
-    And user of browser clicks on the "providers" tab in main menu sidebar
+    And user of browser opens Onezone page
     And user of browser opens oneprovider-2 Oneprovider view in web GUI
     Then user of browser sees "space1" is not in spaces list on Oneprovider page
