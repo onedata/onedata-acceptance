@@ -31,9 +31,9 @@ Firefox.log_types = ['browser']
 @given(parsers.parse("users opened {browser_id_list} browsers' windows"))
 def create_instances_of_webdriver(selenium, driver, browser_id_list, tmpdir,
                                   tmp_memory, driver_kwargs, driver_type,
-                                  firefox_logging, firefox_path,
-                                  xvfb, xvfb_recorder,
-                                  screen_width, screen_height, displays):
+                                  firefox_logging, firefox_path, xvfb,
+                                  screen_width, screen_height, displays,
+                                  request):
 
     for browser_id, display in zip(parse_seq(browser_id_list), cycle(xvfb)):
         if browser_id in selenium:
@@ -74,6 +74,14 @@ def create_instances_of_webdriver(selenium, driver, browser_id_list, tmpdir,
 
             displays[browser_id] = display
             selenium[browser_id] = browser
+
+    def fin():
+        for browser_id in parse_seq(browser_id_list):
+            with open('/tmp/browser.logs', 'a+') as f:
+
+                f.write(str(selenium[browser_id].get_log('browser')))
+                f.write('\n')
+    request.addfinalizer(fin)
 
 
 # TODO: configure different window sizes for responsiveness tests: https://jira.plgrid.pl/jira/browse/VFS-2205

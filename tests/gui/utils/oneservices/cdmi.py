@@ -1,10 +1,8 @@
 """Utils for managing REST API for CDMI service
 """
 
-import requests
 import json
 from tests import OP_REST_PORT
-from tests.gui.steps.rest.exceptions import raise_http_exception
 from tests.gui.steps.rest.utils import (http_get, http_put)
 
 __author__ = "Bartosz Walkowicz, Michal Stanisz"

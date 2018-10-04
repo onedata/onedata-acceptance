@@ -9,7 +9,7 @@ __license__ = ("This software is released under the MIT license cited in "
 
 
 from tests.utils.acceptance_utils import *
-from pytest_bdd import parsers, given
+from pytest_bdd import parsers
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.generic import repeat_failed, parse_seq, transform
@@ -44,15 +44,6 @@ def wt_click_on_subitem_for_item(selenium, browser_id_list, sidebar,
         nav = getattr(onepanel(selenium[browser_id]).sidebar,
                       transform(sidebar))
         nav.items[record].submenu[sub_item].click()
-
-
-@given(parsers.re('users? of (?P<browser_id_list>.+?) clicks? on '
-                  '(?P<sub_item>.+?) item in submenu of "(?P<record>.+?)" '
-                  'item in (?P<sidebar>CLUSTERS) sidebar in Onepanel'))
-def g_click_on_subitem_for_item(selenium, browser_id_list, sidebar,
-                                sub_item, record, onepanel, hosts):
-    wt_click_on_subitem_for_item(selenium, browser_id_list, sidebar,
-                                 sub_item, record, onepanel, hosts)
 
 
 @wt(parsers.re('users? of (?P<browser_id_list>.+?) clicks? on '

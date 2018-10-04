@@ -24,19 +24,19 @@ MOUNT_POINT = '/volumes/storage'
 def _docker_cp(tmpdir, browser_id, src_path, hosts, dst_path=None):
     src_path = os.path.join(str(tmpdir), browser_id, src_path)
     if dst_path:
-        cmd = ['docker', 'exec', hosts[PROVIDER_CONTAINER_NAME]['container_id'],
+        cmd = ['docker', 'exec', hosts[PROVIDER_CONTAINER_NAME]['container-id'],
                'mkdir', '-p', dst_path]
         subprocess.call(cmd)
     else:
         dst_path = MOUNT_POINT
 
-    cmd = ["docker", "cp", src_path, "{0}:{1}".format(hosts[PROVIDER_CONTAINER_NAME]['container_id'],
+    cmd = ["docker", "cp", src_path, "{0}:{1}".format(hosts[PROVIDER_CONTAINER_NAME]['container-id'],
                                                       dst_path)]
     subprocess.check_call(cmd)
 
 
 def _docker_rm(path, hosts):
-    cmd = ['docker', 'exec', hosts[PROVIDER_CONTAINER_NAME]['container_id'], 'rm', '-rf', path]
+    cmd = ['docker', 'exec', hosts[PROVIDER_CONTAINER_NAME]['container-id'], 'rm', '-rf', path]
     subprocess.check_call(cmd)
 
 

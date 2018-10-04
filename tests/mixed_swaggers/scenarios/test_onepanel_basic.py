@@ -5,9 +5,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-
-from pytest import fixture
-from pytest_bdd import scenario, scenarios
+from pytest_bdd import scenarios
 
 from tests.gui.steps.rest.env_up.users import *
 from tests.gui.steps.rest.env_up.groups import *

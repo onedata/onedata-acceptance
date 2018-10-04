@@ -6,12 +6,14 @@ __copyright__ = "Copyright (C) 2015-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+import time
+
 import six
 import inspect
 import subprocess
 import json
 import re
-from pytest_bdd import when, then
+from pytest_bdd import when, then, parsers
 from functools import wraps
 from types import CodeType
 
@@ -86,3 +88,19 @@ def get_pod_ip(pod_name):
     raw_json = execute_command(cmd)
     parsed_json = json.loads(raw_json)
     return parsed_json['status']['podIP']
+
+
+@wt(parsers.parse('{user} waits {seconds} second'))
+@wt(parsers.parse('{user} waits {seconds} seconds'))
+def user_wait_default(user, seconds):
+    time.sleep(int(seconds))
+
+
+@wt(parsers.parse('last operation by {user} succeeds'))
+def success(user, users):
+    assert not users[user].last_operation_failed
+
+
+@wt(parsers.parse('last operation by {user} fails'))
+def failure(user, users):
+    assert users[user].last_operation_failed

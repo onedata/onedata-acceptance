@@ -1,0 +1,62 @@
+global:
+  # TODO: Find a way to eliminate necessity for region and tld values
+  # to make deployment cluster independent
+   region: cluster
+   tld: local
+   imagePullPolicy: IfNotPresent
+
+
+groups:
+  - &group1
+    name: group1
+
+
+users:
+  - &user1
+    name: user1
+    password: password
+    groups:
+      - group: *group1
+
+    luma:
+      - provider: oneprovider-1
+        storages:
+          - name: posix
+            uid: 45148
+            gid: 45148
+      - provider: oneprovider-2
+        storages:
+          - name: nfs
+            uid: 45148
+            gid: 45148
+  - &user2
+    name: user2
+    password: password
+    groups:
+      - group: *group1
+
+    luma:
+      - provider: oneprovider-1
+        storages:
+          - name: nfs
+            uid: 45151
+            gid: 45151
+      - provider: oneprovider-2
+        storages:
+          - name: nfs
+            uid: 45151
+            gid: 45151
+
+
+spaces:
+  - name: space1
+    user: *user1
+    groups:
+      - group: *group1
+    supports:
+    - provider: "oneprovider-1"
+      storage_name: "nfs"
+      size: '1000000000'
+    - provider: "oneprovider-2"
+      storage_name: "nfs"
+      size: '1000000000'

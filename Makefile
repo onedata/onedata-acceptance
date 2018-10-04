@@ -58,26 +58,30 @@ checkout_getting_started:
 
 RECORDING_OPTION   ?= failed
 BROWSER            ?= Chrome
-ENV_FILE           ?= tests/gui/environments/1oz_1op_deployed.yaml
 OZ_IMAGE           ?= ""
 OP_IMAGE           ?= ""
 TIMEOUT			   ?= 300
 
+# TODO: image
 test_gui_packages_one_env:
-	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i onedata/acceptance_gui:v4 --xvfb --xvfb-recording=${RECORDING_OPTION} --env-file=${ENV_FILE} -k=${KEYWORDS} --oz-image=${OZ_IMAGE} --op-image=${OP_IMAGE}  --reruns 1 --reruns-delay 10
+	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i docker.onedata.org/acceptance_gui:one_env_test --xvfb --xvfb-recording=${RECORDING_OPTION} -k=${KEYWORDS} --oz-image=${OZ_IMAGE} --op-image=${OP_IMAGE}  --reruns 1 --reruns-delay 10
 
+# TODO: image
 test_gui_sources_one_env:
-	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i onedata/acceptance_gui:v4 --xvfb --xvfb-recording=${RECORDING_OPTION} --env-file=${ENV_FILE} --sources -k=${KEYWORDS} --oz-image=${OZ_IMAGE} --op-image=${OP_IMAGE}  --reruns 1 --reruns-delay 10
+	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i docker.onedata.org/acceptance_gui:one_env_test --xvfb --xvfb-recording=${RECORDING_OPTION} --sources -k=${KEYWORDS} --oz-image=${OZ_IMAGE} --op-image=${OP_IMAGE}  --reruns 1 --reruns-delay 10
 
 test_mixed_packages_swaggers:
-	${TEST_RUN} -t tests/mixed_swaggers/scenarios/${SUITE}.py --test-type mixed_swaggers -vvv --driver=${BROWSER} -i onedata/acceptance_gui:v4 --xvfb --xvfb-recording=${RECORDING_OPTION} --env-file=${ENV_FILE} -k=${KEYWORDS} --oz-image=${OZ_IMAGE} --op-image=${OP_IMAGE} --reruns 1 --reruns-delay 10
+	${TEST_RUN} -t tests/mixed_swaggers/scenarios/${SUITE}.py --test-type mixed_swaggers -vvv --driver=${BROWSER} -i docker.onedata.org/acceptance_gui:one_env_test --xvfb --xvfb-recording=${RECORDING_OPTION} --env-file=${ENV_FILE} -k=${KEYWORDS} --oz-image=${OZ_IMAGE} --op-image=${OP_IMAGE} --reruns 0 --reruns-delay 10
 
 test_mixed_sources_swaggers:
-	${TEST_RUN} -t tests/mixed_swaggers/scenarios/${SUITE}.py --test-type mixed_swaggers -vvv --driver=${BROWSER} -i onedata/acceptance_gui:v4 --xvfb --xvfb-recording=${RECORDING_OPTION} --env-file=${ENV_FILE} --sources -k=${KEYWORDS} --oz-image=${OZ_IMAGE} --op-image=${OP_IMAGE} --reruns 1 --reruns-delay 10
+	${TEST_RUN} -t tests/mixed_swaggers/scenarios/${SUITE}.py --test-type mixed_swaggers -vvv --driver=${BROWSER} -i docker.onedata.org/acceptance_gui:one_env_test --xvfb --xvfb-recording=${RECORDING_OPTION} --env-file=${ENV_FILE} --sources -k=${KEYWORDS} --oz-image=${OZ_IMAGE} --op-image=${OP_IMAGE} --reruns 1 --reruns-delay 10
 
 test_mixed_oneclient:
-	${TEST_RUN} -t tests/mixed_oneclient/scenarios/${SUITE}.py --test-type mixed_oneclient -vvv --driver=${BROWSER} -i onedata/acceptance_gui:v4 --xvfb --xvfb-recording=${RECORDING_OPTION} --env-file=${ENV_FILE} -k=${KEYWORDS} --oz-image=${OZ_IMAGE} --op-image=${OP_IMAGE} --timeout ${TIMEOUT} --reruns 1 --reruns-delay 10
+	${TEST_RUN} -t tests/mixed_oneclient/scenarios/${SUITE}.py --test-type mixed_oneclient -vvv --driver=${BROWSER} -i docker.onedata.org/acceptance_gui:one_env_test --xvfb --xvfb-recording=${RECORDING_OPTION} --env-file=${ENV_FILE} -k=${KEYWORDS} --oz-image=${OZ_IMAGE} --op-image=${OP_IMAGE} --timeout ${TIMEOUT} --reruns 1 --reruns-delay 10
 
+# TODO: IMAGE
+test_oneclient_pkg:
+	${TEST_RUN} --test-type acceptance -vvv --test-dir tests/acceptance/scenarios/${SUITE}.py -i docker.onedata.org/worker:one_env_test -k=${KEYWORDS} --oz-image=${OZ_IMAGE} --op-image=${OP_IMAGE}
 
 ##
 ## Build python REST clients generated from swaggers. (used in mixed tests)
