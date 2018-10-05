@@ -45,6 +45,9 @@ def pytest_addoption(parser):
     parser.addoption('--sources', action='store_true',
                      help='If present run environment using sources')
 
+    parser.addoption('--timeout', action='store',
+                     help='onenv wait timeout')
+
     group = parser.getgroup('onedata', description='option specific '
                                                    'to onedata tests')
 
