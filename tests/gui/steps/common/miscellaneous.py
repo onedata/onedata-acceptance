@@ -12,7 +12,8 @@ from pytest_bdd import given, when, then, parsers
 
 from selenium.webdriver.common.keys import Keys
 
-from tests.gui.utils.generic import repeat_failed, transform
+from tests.gui.utils.generic import transform
+from tests.utils.utils import repeat_failed
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.utils.acceptance_utils import wt
 

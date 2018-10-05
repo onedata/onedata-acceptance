@@ -7,7 +7,8 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 
-from tests.gui.utils.generic import parse_seq, repeat_failed
+from tests.gui.utils.generic import parse_seq
+from tests.utils.utils import repeat_failed
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 
 from selenium.webdriver.support.ui import WebDriverWait as Wait

@@ -9,7 +9,7 @@ __license__ = ("This software is released under the MIT license cited in "
 
 from pytest_bdd import when, given, then, parsers
 from tests.gui.conftest import WAIT_BACKEND
-from tests.gui.utils.generic import repeat_failed
+from tests.utils.utils import repeat_failed
 from tests.gui.meta_steps.oneprovider.data import assert_space_content_in_op_gui
 from tests.mixed_swaggers.utils.common import NoSuchClientException
 

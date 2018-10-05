@@ -12,7 +12,8 @@ import string
 import pytest
 from pytest_bdd import parsers, when, then
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.utils.generic import repeat_failed, parse_seq
+from tests.gui.utils.generic import parse_seq
+from tests.utils.utils import repeat_failed
 
 
 def _get_index(selenium, browser_id, num, modals, numerals):

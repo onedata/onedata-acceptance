@@ -198,7 +198,7 @@ if {shed_privileges}:
     os.setregid({gid}, {gid})
     os.setreuid({uid}, {uid})
 
-command = ['python'] + ['-m'] + ['py.test'] + ['--test-type={test_type}'] + ['{test_dir}'] + {args} + {env_file} + {local_charts_path} + {no_clean} + ['--oz-image={oz_image}'] + ['--op-image={op_image}'] + ['--junitxml={report_path}'] + ['--add-test-domain']  
+command = ['python'] + ['-m'] + ['py.test'] + ['--test-type={test_type}'] + ['{test_dir}'] + {args} + {env_file} + {local_charts_path} + {no_clean} + {timeout} + ['--oz-image={oz_image}'] + ['--op-image={op_image}'] + ['--junitxml={report_path}'] + ['--add-test-domain']  
 ret = subprocess.call(command)
 sys.exit(ret)
 '''
@@ -241,9 +241,10 @@ ALL       ALL = (ALL) NOPASSWD: ALL
                              no_clean=['--no-clean'] if not args.clean else [],
                              env_file=['--env-file={}'.format(args.env_file)]
                              if args.env_file else [],
+                             timeout=['--timeout={}'.format(args.timeout)]
+                             if args.timeout else [],
                              oz_image=oz_image if oz_image else '',
                              op_image=op_image if op_image else '')
-
     kube_config_path = os.path.expanduser(args.kube_config_path)
     minikube_config_path = os.path.expanduser(args.minikube_config_path)
     run_params = ['--shm-size=128m']

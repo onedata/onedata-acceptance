@@ -5,8 +5,8 @@ __copyright__ = "Copyright (C) 2016-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-from tests import *
-from tests.gui.utils.generic import repeat_failed
+
+from tests.utils.utils import repeat_failed
 from tests.utils.net_utils import (http_post, get_zone_rest_path)
 
 import json

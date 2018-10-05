@@ -14,8 +14,8 @@ from pytest_bdd import when, then, parsers
 
 from tests.gui.conftest import (WAIT_FRONTEND, WAIT_BACKEND,
                                 SELENIUM_IMPLICIT_WAIT)
-from tests.gui.utils.generic import (repeat_failed, transform, implicit_wait,
-                                     parse_seq)
+from tests.gui.utils.generic import (transform, implicit_wait, parse_seq)
+from tests.utils.utils import repeat_failed
 
 
 @when(parsers.parse('user of {browser_id} selects "{storage}" from storage '

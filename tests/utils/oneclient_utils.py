@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 import os
 from tests.utils.acceptance_utils import execute_command
-from tests.gui.utils.generic import repeat_failed
+from tests.utils.utils import repeat_failed
 
 
 EXEC_CMD = ['kubectl', 'exec']

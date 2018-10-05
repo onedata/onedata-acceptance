@@ -14,7 +14,8 @@ from datetime import datetime
 from pytest_bdd import when, then, parsers
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.utils.generic import parse_seq, repeat_failed
+from tests.gui.utils.generic import parse_seq
+from tests.utils.utils import repeat_failed
 
 
 @when(parsers.parse('user of {browser_id} sees "{msg}" '

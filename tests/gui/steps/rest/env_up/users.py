@@ -18,7 +18,7 @@ from tests import OZ_REST_PORT, PANEL_REST_PORT
 from ..utils import (http_get, http_post, http_delete, http_patch,
                      get_panel_rest_path, get_zone_rest_path)
 from ..exceptions import HTTPError, HTTPNotFound
-from tests.gui.utils.generic import repeat_failed
+from tests.utils.utils import repeat_failed
 
 
 UserCred = namedtuple('UserCredentials', ['username', 'password', 'id', 'token'])
