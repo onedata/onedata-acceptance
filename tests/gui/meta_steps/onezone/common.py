@@ -8,14 +8,13 @@ from pytest_bdd import given, parsers
 from itertools import izip_longest
 from tests.gui.steps.common.browser_creation import \
     create_instances_of_webdriver
-from tests.gui.steps.common.miscellaneous import wait_given_time
 from tests.utils.acceptance_utils import wt
 from tests.gui.steps.oneprovider.common import g_wait_for_op_session_to_start
 from tests.gui.steps.onezone.providers import parse_seq
 from tests.gui.steps.common.url import g_open_onedata_service_page
 from tests.gui.steps.common.login import g_login_using_basic_auth
 from tests.utils.acceptance_utils import list_parser
-from tests.gui.utils.generic import repeat_failed
+from tests.gui.utils.generic import repeat_failed, repeat_limit
 from tests.gui.conftest import WAIT_FRONTEND
 
 
@@ -42,32 +41,21 @@ def login_using_gui(host_list, selenium, driver, tmpdir, tmp_memory, xvfb,
         g_login_using_basic_auth(selenium, user, user, login_page, users)
 
 
-def visit_op(selenium, browser_id, oz_page, provider_name, modals):
-    timeout = 10
+@repeat_failed(timeout=WAIT_FRONTEND)
+def visit_op(selenium, browser_id, oz_page, provider_name, modals, tmp_memory):
     driver = selenium[browser_id]
 
     providers_panel = oz_page(driver)['data']
     providers_panel[provider_name]()
-
-    limit = time.time() + timeout
-    while time.time() < limit:
-        try:
-            modals(selenium[browser_id]).provider_popover.visit_provider()
-        except RuntimeError:
-            time.sleep(1)
-            continue
-        else:
-            break
-    else:
-        raise RuntimeError('no modal found')
+    modals(selenium[browser_id]).provider_popover.visit_provider()
 
 
-def g_wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts, modals):
+def g_wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts, modals, tmp_memory):
     providers_list = list_parser(providers_list)
     for browser_id, provider in izip_longest(list_parser(browser_id_list),
                                              providers_list,
                                              fillvalue=providers_list[-1]):
-        visit_op(selenium, browser_id, oz_page, hosts[provider]['name'], modals)
+        visit_op(selenium, browser_id, oz_page, hosts[provider]['name'], modals, tmp_memory)
     g_wait_for_op_session_to_start(selenium, browser_id_list)
 
 
@@ -75,12 +63,12 @@ def g_wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts, mod
     parsers.re('opened (?P<providers_list>.*) Oneprovider view in web GUI by '
                '(users? of )?(?P<browser_id_list>.*)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def g_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts, modals):
-    g_wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts, modals)
+def g_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts, modals, tmp_memory):
+    g_wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts, modals, tmp_memory)
 
 
 @wt(parsers.re('users? of (?P<browser_id_list>.*) opens? '
                '(?P<providers_list>.*) Oneprovider view in web GUI'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts, modals):
-    g_wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts, modals)
+def wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts, modals, tmp_memory):
+    g_wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts, modals, tmp_memory)

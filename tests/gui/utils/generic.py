@@ -206,3 +206,17 @@ def redirect_display(new_display):
 
 def transform(val, strip_char=None):
     return val.strip(strip_char).lower().replace(' ', '_')
+
+
+def repeat_limit(fun, timeout_seconds, exception_name):
+    limit = time() + timeout_seconds
+    while time() < limit:
+        try:
+            fun()
+        except RuntimeError:
+            sleep(1)
+            continue
+        else:
+            break
+    else:
+        raise RuntimeError(exception_name)

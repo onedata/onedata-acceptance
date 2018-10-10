@@ -3,6 +3,9 @@ management in onezone web GUI
 """
 import time
 
+from tests.gui.steps.modal import wt_wait_for_modal_to_appear, \
+    wt_wait_for_modal_to_disappear
+
 __author__ = "Michal Stanisz, Lukasz Niemiec"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
@@ -273,11 +276,10 @@ def assert_member(selenium, browser_id, option, username, group_name, oz_page):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) removes (?P<member_type>user|group) '
-               '"(?P<name>.*)" from group '
-               '"(?P<group>.*)" members'))
+               '"(?P<name>.*)" from group "(?P<group>.*)" members'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def remove_member_from_group(selenium, browser_id, name, member_type, group,
-                             oz_page):
+                             oz_page, tmp_memory):
     page = oz_page(selenium[browser_id])['groups']
     page.elements_list[group]()
     page.elements_list[group].members()
@@ -285,44 +287,27 @@ def remove_member_from_group(selenium, browser_id, name, member_type, group,
     (getattr(page.main_page.members, list_name)
      .items[name].header.menu_button())
     page.menu['Remove this member']()
-    modal_name = 'remove_member'
 
-    timeout = 5
-    limit = time.time() + timeout
-    while time.time() < limit:
-        try:
-            getattr(modals(selenium[browser_id]), modal_name).remove()
-        except RuntimeError:
-            time.sleep(1)
-            continue
-        else:
-            break
-    else:
-        raise RuntimeError('no modal found')
+    modal_name = "Remove member"
+    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
+    getattr(modals(selenium[browser_id]), modal_name).remove()
+    wt_wait_for_modal_to_disappear(selenium, browser_id, tmp_memory)
 
 
 @wt(parsers.parse('user of {browser_id} removes group "{parent}" from '
                   'group "{child}" parents list'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def leave_parent_group(selenium, browser_id, parent, child, oz_page):
+def leave_parent_group(selenium, browser_id, parent, child, oz_page, tmp_memory):
     page = oz_page(selenium[browser_id])['groups']
     page.elements_list[child]()
     page.elements_list[child].parents()
     page.main_page.parents.items[parent].menu()
     page.menu['Leave parent group']()
 
-    timeout = 5
-    limit = time.time() + timeout
-    while time.time() < limit:
-        try:
-            modals(selenium[browser_id]).leave_parent.leave()
-        except RuntimeError:
-            time.sleep(1)
-            continue
-        else:
-            break
-    else:
-        raise RuntimeError('no modal found')
+    modal_name = "Remove member"
+    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
+    modals(selenium[browser_id]).leave_parent.leave()
+    wt_wait_for_modal_to_disappear(selenium, browser_id, tmp_memory)
 
 
 @wt(parsers.parse('user of {browser_id} adds group "{group}" as subgroup '
