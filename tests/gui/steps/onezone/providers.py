@@ -14,8 +14,6 @@ from itertools import izip_longest
 from pytest_bdd import parsers, given
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import repeat_failed, parse_seq, transform
-from tests.gui.steps.oneprovider.common import g_wait_for_op_session_to_start
-from tests.gui.meta_steps.onezone.common import visit_op
 
 
 @when(parsers.parse('user of {browser_id} sees that provider popup for '

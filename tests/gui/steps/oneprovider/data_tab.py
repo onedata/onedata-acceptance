@@ -162,10 +162,8 @@ def change_cwd_using_dir_tree_in_data_tab_in_op(selenium, browser_id,
         cwd.click()
 
 
-@when(
-    parsers.parse('user of {browser_id} does not see {path} in directory tree'))
-@then(
-    parsers.parse('user of {browser_id} does not see {path} in directory tree'))
+@when(parsers.parse('user of {browser_id} does not see {path} in directory tree'))
+@then(parsers.parse('user of {browser_id} does not see {path} in directory tree'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_absence_of_path_in_dir_tree(selenium, browser_id, path, op_page):
     driver = selenium[browser_id]

@@ -20,7 +20,7 @@ from tests.gui.utils.generic import parse_seq, repeat_failed, parse_url
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 
 
-def g_wt_open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
+def open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
     for browser_id, host in zip(parse_seq(browser_id_list),
                                 parse_seq(hosts_list)):
         driver = selenium[browser_id]
@@ -35,13 +35,13 @@ def g_wt_open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts)
 @given(parsers.parse("user of {browser_id_list} opened {hosts_list} page"))
 @given(parsers.parse("users of {browser_id_list} opened {hosts_list} page"))
 def g_open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
-    g_wt_open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts)
+    open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts)
 
 
 @wt(parsers.re('users? of (?P<browser_id_list>.+) opens '
                '(?P<hosts_list>.+) page'))
 def wt_open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
-    g_wt_open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts)
+    open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts)
 
 
 @when(parsers.re('user of (?P<browser_id>.+) should be '

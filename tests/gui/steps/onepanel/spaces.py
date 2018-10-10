@@ -377,7 +377,7 @@ def click_on_navigation_tab_in_space(browser_id, tab_name, onepanel, selenium,
     tab()
 
 
-@wt(parsers.parse('user of {browser_id} revokes all space supports'))
+@wt(parsers.parse('user of {browser_id} revokes all spaces supports'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def revoke_all_space_supports(selenium, browser_id, onepanel, popups, modals):
     spaces_list = onepanel(selenium[browser_id]).content.spaces.spaces

@@ -65,10 +65,11 @@ def screens():
 def test_user_sees_that_when_no_provider_is_working_appropriate_msg_is_shown():
     pass
 
-# TODO rewrite scenarios to new gui
+# TODO: rewrite scenarios to new gui: https://jira.plgrid.pl/jira/browse/VFS-4950
 # scenarios('../features/onezone/login_page.feature')
 # scenarios('../features/onezone/providers.feature')
 # scenarios('../features/onezone/user_alias.feature')
+# scenarios('../features/onezone/access_tokens.feature')
 
 
 scenarios('../features/onezone/groups/groups_creation.feature')

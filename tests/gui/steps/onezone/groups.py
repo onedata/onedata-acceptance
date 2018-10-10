@@ -1,10 +1,6 @@
 """This module contains gherkin steps to run acceptance tests featuring groups
 management in onezone web GUI
 """
-import time
-
-from tests.gui.steps.modal import wt_wait_for_modal_to_appear, \
-    wt_wait_for_modal_to_disappear
 
 __author__ = "Michal Stanisz, Lukasz Niemiec"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
@@ -18,6 +14,9 @@ from tests.gui.utils.generic import repeat_failed, parse_seq
 from tests.gui.conftest import WAIT_FRONTEND
 from selenium.webdriver.common.keys import Keys
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
+
+from tests.gui.steps.modal import wt_wait_for_modal_to_appear, \
+    wt_wait_for_modal_to_disappear
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on (?P<operation>Create|Join) '

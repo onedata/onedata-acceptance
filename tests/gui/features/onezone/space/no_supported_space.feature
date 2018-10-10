@@ -24,7 +24,7 @@ Feature: Basic management of spaces
     Then user of browser sees that another token is different than first one
 
 
-  Scenario: User generates different expose exisitng data tokens (space has no support)
+  Scenario: User generates different expose existing data tokens (space has no support)
     When user of browser clicks on Spaces in the sidebar
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Providers of "space1" in the sidebar

@@ -22,7 +22,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
   Scenario: User supports space with storage sync and enabled options: Mount in root
     When user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of browser1 revokes all space supports
+    And user of browser1 revokes all spaces supports
 
     # create space
     And user of browser2 clicks on Create space button in spaces sidebar
@@ -144,7 +144,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
   Scenario: User supports space with storage sync and no enabled options
     When user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of browser1 revokes all space supports
+    And user of browser1 revokes all spaces supports
 
     # create space
     And user of browser2 sees that "space1" has disappeared on the spaces list in the sidebar
@@ -270,7 +270,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
   Scenario: User supports space with storage sync and enabled options: Delete
     When user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of browser1 revokes all space supports
+    And user of browser1 revokes all spaces supports
 
     # create space
     And user of browser2 sees that "space3" has disappeared on the spaces list in the sidebar
@@ -409,7 +409,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
   Scenario: User supports space with storage sync and enabled options: Write once
     When user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of browser1 revokes all space supports
+    And user of browser1 revokes all spaces supports
 
     # create space
     And user of browser2 sees that "space4" has disappeared on the spaces list in the sidebar
@@ -536,7 +536,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
   Scenario: User supports space with storage sync and enabled options: Delete and Write once
     When user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of browser1 revokes all space supports
+    And user of browser1 revokes all spaces supports
 
     # create space
     And user of browser2 sees that "space5" has disappeared on the spaces list in the sidebar
@@ -676,7 +676,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
   Scenario: User disables files update
     When user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of browser1 revokes all space supports
+    And user of browser1 revokes all spaces supports
 
     # create space
     And user of browser2 sees that "space6" has disappeared on the spaces list in the sidebar

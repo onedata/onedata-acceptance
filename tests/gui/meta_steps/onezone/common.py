@@ -14,7 +14,7 @@ from tests.gui.steps.onezone.providers import parse_seq
 from tests.gui.steps.common.url import g_open_onedata_service_page
 from tests.gui.steps.common.login import g_login_using_basic_auth
 from tests.utils.acceptance_utils import list_parser
-from tests.gui.utils.generic import repeat_failed, repeat_limit
+from tests.gui.utils.generic import repeat_failed
 from tests.gui.conftest import WAIT_FRONTEND
 
 
@@ -50,25 +50,30 @@ def visit_op(selenium, browser_id, oz_page, provider_name, modals, tmp_memory):
     modals(selenium[browser_id]).provider_popover.visit_provider()
 
 
-def g_wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts, modals, tmp_memory):
+def g_wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts,
+                  modals, tmp_memory):
     providers_list = list_parser(providers_list)
     for browser_id, provider in izip_longest(list_parser(browser_id_list),
                                              providers_list,
                                              fillvalue=providers_list[-1]):
-        visit_op(selenium, browser_id, oz_page, hosts[provider]['name'], modals, tmp_memory)
+        visit_op(selenium, browser_id, oz_page, hosts[provider]['name'],
+                 modals, tmp_memory)
     g_wait_for_op_session_to_start(selenium, browser_id_list)
 
 
-@given(
-    parsers.re('opened (?P<providers_list>.*) Oneprovider view in web GUI by '
-               '(users? of )?(?P<browser_id_list>.*)'))
+@given(parsers.re('opened (?P<providers_list>.*) Oneprovider view in web GUI by '
+                  '(users? of )?(?P<browser_id_list>.*)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def g_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts, modals, tmp_memory):
-    g_wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts, modals, tmp_memory)
+def g_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts,
+               modals, tmp_memory):
+    g_wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts,
+                  modals, tmp_memory)
 
 
 @wt(parsers.re('users? of (?P<browser_id_list>.*) opens? '
                '(?P<providers_list>.*) Oneprovider view in web GUI'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts, modals, tmp_memory):
-    g_wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts, modals, tmp_memory)
+def wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts,
+                modals, tmp_memory):
+    g_wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts,
+                  modals, tmp_memory)
