@@ -55,7 +55,4 @@ def screens():
     return [0]
 
 
-# todo rewrite test for new gui in onezone
-# scenarios('../features/oneprovider/groups/creation.feature')
-# scenarios('../features/oneprovider/groups/basic_management.feature')
 scenarios('../features/pass.feature')
