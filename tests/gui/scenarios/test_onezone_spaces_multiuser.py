@@ -36,6 +36,8 @@ from tests.gui.steps.onezone.data_space_management import *
 from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.manage_account import *
 from tests.gui.steps.onezone.groups import *
+from tests.gui.steps.onezone.spaces import *
+from tests.gui.steps.onezone.multibrowser_spaces import *
 
 from tests.gui.steps.oneprovider.common import *
 from tests.gui.steps.oneprovider.data_tab import *
@@ -57,5 +59,5 @@ def screens():
     return [0, 1]
 
 
-scenarios('../features/onezone/space/multi_browser.feature')
-scenarios('../features/onezone/space/access_to_space.feature')
+scenarios('../features/onezone/space/spaces_multibrowser.feature')
+scenarios('../features/onezone/space/invite_group_to_space.feature')

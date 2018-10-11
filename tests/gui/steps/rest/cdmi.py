@@ -13,7 +13,7 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 
-@wt(parsers.parse('using cdmi api {user} writes "{text}" to "{path}" starting '
+@wt(parsers.parse('using CDMI API {user} writes "{text}" to "{path}" starting '
                   'at offset {offset:d} in "{provider}" provider'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def partial_write_to_file_using_cdmi(user, text, path, offset, provider, cdmi,
@@ -22,7 +22,7 @@ def partial_write_to_file_using_cdmi(user, text, path, offset, provider, cdmi,
     client.write_to_file(path, text, offset)
 
 
-@wt(parsers.parse('using cdmi api {user} reads from "{path}" in range {start:d}'
+@wt(parsers.parse('using CDMI API {user} reads from "{path}" in range {start:d}'
                   ' to {end:d} in "{provider}" provider'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def partial_read_from_file_using_cdmi(user, path, start, end, provider, cdmi,

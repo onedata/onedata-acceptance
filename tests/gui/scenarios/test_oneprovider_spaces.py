@@ -54,5 +54,4 @@ def screens():
     return [0]
 
 
-scenarios('../features/oneprovider/spaces/creation.feature')
-scenarios('../features/oneprovider/spaces/basic_management.feature')
+scenarios('../features/pass.feature')

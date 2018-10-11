@@ -22,7 +22,7 @@ def _login_using_basic_auth(login_page, username, password):
 
 
 @given(parsers.re('users? of (?P<browser_id_list>.*) logged '
-                  'as (?P<user_id_list>.*) to (Onepanel|Onezone) service'))
+                  'as (?P<user_id_list>.*) to (.*) service'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def g_login_using_basic_auth(selenium, browser_id_list, user_id_list,
                              login_page, users):

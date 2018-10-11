@@ -1,6 +1,12 @@
 """Utils for operations on modals in GUI tests
 """
 
+__author__ = "Bartosz Walkowicz, Lukasz Niemiec"
+__copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
+__license__ = "This software is released under the MIT license cited in " \
+              "LICENSE.txt"
+
+from tests.gui.utils.onezone.data_page import ProviderPopover
 from .data_distribution import DataDistributionModal
 from .add_storage import AddStorage
 from tests.gui.utils.core.web_elements import WebItem
@@ -11,12 +17,12 @@ from .deploying_cluster import ClusterDeploymentModal
 from .revoke_space_support import RevokeSpaceSupportModal
 from .edit_permissions import EditPermissionsModal
 from .configure_web_cert import ConfigureWebCertModal
+from .remove import RemoveModal
+from .leave_group import LeaveGroupModal
+from .leave_space import LeaveSpaceModal
+from .leave_parent import LeaveParentModal
+from .error_modal import ErrorModal
 from .dns_configuration_warning import DNSConfigurationWarningModal
-
-__author__ = "Bartosz Walkowicz"
-__copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
-__license__ = "This software is released under the MIT license cited in " \
-              "LICENSE.txt"
 
 
 class Modals(object):
@@ -27,10 +33,26 @@ class Modals(object):
     revoke_space_support = WebItem('.modal.in .modal-dialog',
                                    cls=RevokeSpaceSupportModal)
     login = WebItem('#login-form-modal', cls=LoginFormModal)
-    edit_permissions = WebItem('#edit-permissions-modal', cls=EditPermissionsModal)
-    configure_web_cert = WebItem('#configure-web-cert-modal', cls=ConfigureWebCertModal)
+    edit_permissions = WebItem('#edit-permissions-modal',
+                               cls=EditPermissionsModal)
+    configure_web_cert = WebItem('#configure-web-cert-modal',
+                                 cls=ConfigureWebCertModal)
     dns_configuration_warning = WebItem('.new-cluster-dns-proceed-modal.modal',
                                         cls=DNSConfigurationWarningModal)
+    remove_group = WebItem('.group-remove-modal.modal.in .modal-dialog',
+                           cls=RemoveModal)
+    leave_group = WebItem('.group-leave-modal.modal.in .modal-dialog',
+                          cls=LeaveGroupModal)
+    leave_parent = WebItem('.leave-parent-modal.modal.in .modal-dialog',
+                           cls=LeaveParentModal)
+    leave_space = WebItem('.popover-leave-space',
+                          cls=LeaveSpaceModal)
+    provider_popover = WebItem('.webui-popover .provider-place-drop',
+                               cls=ProviderPopover)
+    remove_member = WebItem('.remove-member.modal.in .modal-dialog',
+                            cls=RemoveModal)
+    error = WebItem('.alert-global.modal.in .modal-dialog',
+                    cls=ErrorModal)
 
     def __init__(self, driver):
         self.driver = driver

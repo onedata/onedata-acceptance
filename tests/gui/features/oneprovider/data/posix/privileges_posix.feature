@@ -22,10 +22,7 @@ Feature: Oneprovider POSIX privileges GUI tests
     And user opened browser window
     And user of browser opened onezone page
     And user of browser logged as user1 to Onezone service
-    And user of browser expanded the "go to your files" Onezone sidebar panel
-    And user of browser clicked on "oneprovider-1" provider in expanded "GO TO YOUR FILES" Onezone panel
-    And user of browser clicked on the "Go to your files" button in "oneprovider-1" provider's popup displayed on world map
-    And user of browser seen that Oneprovider session has started
+    And opened oneprovider-1 Oneprovider view in web GUI by user of browser
 
 
   Scenario: User sees that new file default permission code is 664
@@ -52,7 +49,7 @@ Feature: Oneprovider POSIX privileges GUI tests
 
 
   Scenario: User sees that new directory default permission code is 775
-    
+
 	# Create directory
     When user of browser uses spaces select to change data space to "space1"
     And user of browser sees file browser in data tab in Oneprovider page
@@ -87,7 +84,7 @@ Feature: Oneprovider POSIX privileges GUI tests
     And user of browser sets "775" permission code in active modal
     And user of browser presses enter on keyboard
     And user of browser sees that the modal has disappeared
-    
+
 	# Check permission code
     Then user of browser selects "file1" item(s) from file browser with pressed ctrl
     And user of browser clicks the button from top menu bar with tooltip "Change element permissions"
@@ -112,7 +109,7 @@ Feature: Oneprovider POSIX privileges GUI tests
     And user of browser sets "775" permission code in active modal
     And user of browser clicks "Ok" confirmation button in displayed modal
     And user of browser sees that the modal has disappeared
-    
+
 	# Check permission code
     Then user of browser selects "file1" item(s) from file browser with pressed ctrl
     And user of browser clicks the button from top menu bar with tooltip "Change element permissions"
@@ -136,7 +133,7 @@ Feature: Oneprovider POSIX privileges GUI tests
     And user of browser sets "664" permission code in active modal
     And user of browser presses enter on keyboard
     And user of browser sees that the modal has disappeared
-    
+
 	# Check permission code
     Then user of browser selects "dir1" item(s) from file browser with pressed ctrl
     And user of browser clicks the button from top menu bar with tooltip "Change element permissions"
@@ -161,7 +158,7 @@ Feature: Oneprovider POSIX privileges GUI tests
     And user of browser sets "664" permission code in active modal
     And user of browser clicks "OK" confirmation button in displayed modal
     And user of browser sees that the modal has disappeared
-    
+
 	# Check permission code
     Then user of browser selects "dir1" item(s) from file browser with pressed ctrl
     And user of browser clicks the button from top menu bar with tooltip "Change element permissions"
@@ -186,7 +183,7 @@ Feature: Oneprovider POSIX privileges GUI tests
     And user of browser sets "220" permission code in active modal
     And user of browser presses enter on keyboard
     And user of browser sees that the modal has disappeared
-    
+
 	# Fail to download file
     And user of browser double clicks on item named "file1" in file browser
     Then user of browser sees that "Cannot download file" modal has appeared
@@ -207,12 +204,12 @@ Feature: Oneprovider POSIX privileges GUI tests
     And user of browser sets "553" permission code in active modal
     And user of browser presses enter on keyboard
     And user of browser sees that the modal has disappeared
-    
+
 	# Fail to upload file
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser uses upload button in toolbar to upload file "20B-0.txt" to current dir
     Then user of browser sees an error notify with text matching to: .*failed.*
-    
+
 
   Scenario: User fails to create file because of lack in privileges
 
@@ -227,7 +224,7 @@ Feature: Oneprovider POSIX privileges GUI tests
     And user of browser sets "553" permission code in active modal
     And user of browser presses enter on keyboard
     And user of browser sees that the modal has disappeared
-    
+
 	# Fail to create file
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser clicks the button from top menu bar with tooltip "Create file"
@@ -237,7 +234,7 @@ Feature: Oneprovider POSIX privileges GUI tests
     And user of browser presses enter on keyboard
     Then user of browser sees an error notify with text matching to: .*[Aa]ccess denied.*
     And user of browser sees that the modal has disappeared
-    
+
 
   Scenario: User fails to remove file because of lack in privileges
 
@@ -253,7 +250,7 @@ Feature: Oneprovider POSIX privileges GUI tests
     And user of browser sets "553" permission code in active modal
     And user of browser presses enter on keyboard
     And user of browser sees that the modal has disappeared
-    
+
 	# Fail to remove file
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser selects "file11" item(s) from file browser with pressed ctrl
@@ -278,8 +275,8 @@ Feature: Oneprovider POSIX privileges GUI tests
     And user of browser sets "553" permission code in active modal
     And user of browser presses enter on keyboard
     And user of browser sees that the modal has disappeared
-    
-	# Fail to rename file    
+
+	# Fail to rename file
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser selects "file11" item(s) from file browser with pressed ctrl
     And user of browser clicks the button from top menu bar with tooltip "Rename element"
@@ -305,7 +302,7 @@ Feature: Oneprovider POSIX privileges GUI tests
     And user of browser sets "553" permission code in active modal
     And user of browser presses enter on keyboard
     And user of browser sees that the modal has disappeared
-    
+
 	# Fail to remove directory
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser selects "dir12" item(s) from file browser with pressed ctrl
@@ -317,7 +314,7 @@ Feature: Oneprovider POSIX privileges GUI tests
 
 
   Scenario: User fails to remove directory containing file because of lack in privileges
-    
+
 	# Change permission code
     When user of browser uses spaces select to change data space to "space1"
     And user of browser sees file browser in data tab in Oneprovider page
@@ -330,8 +327,8 @@ Feature: Oneprovider POSIX privileges GUI tests
     And user of browser sets "553" permission code in active modal
     And user of browser presses enter on keyboard
     And user of browser sees that the modal has disappeared
-    
-	# Fail to remove directory    
+
+	# Fail to remove directory
     And user of browser selects "dir1" item(s) from file browser with pressed ctrl
     And user of browser clicks the button from top menu bar with tooltip "Remove element"
     And user of browser sees that "Remove files" modal has appeared
@@ -374,7 +371,7 @@ Feature: Oneprovider POSIX privileges GUI tests
 
 
   Scenario: User fails to change permission code to incorrect one (2 char, clicks confirmation button after entering permission code)
-    
+
 	# Fail to change permission code
     When user of browser uses spaces select to change data space to "space1"
     And user of browser sees file browser in data tab in Oneprovider page

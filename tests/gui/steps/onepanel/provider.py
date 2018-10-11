@@ -87,7 +87,31 @@ def wt_type_host_domain_to_in_box_in_provider_details_form(selenium, browser_id,
                     'button in provider details form in Provider panel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_btn_in_modify_provider_detail_form(selenium, browser_id, onepanel):
-    onepanel(selenium[browser_id]).content.provider.form.modify_provider_details()
+    driver = selenium[browser_id]
+    onepanel(driver).content.provider.form.modify_provider_details()
+
+
+@wt(parsers.parse('user of {browser_id} clicks Discard button on modal '
+                  'in Provider panel'))
+def click_discard_button_on_modal_in_provider_panel(selenium, browser_id, onepanel):
+    driver = selenium[browser_id]
+    onepanel(driver).discard_button()
+
+
+@wt(parsers.parse('user of {browser_id} clicks on Discard '
+                  'button in the configure web cert modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def wt_click_on_discard_btn_in_domain_change_modal(selenium, browser_id, onepanel,
+                                                   modals):
+    # TODO: will be fixed when VFS-4798 will be integrated
+    try:
+        modals(selenium[browser_id]).configure_web_cert.discard()
+    except RuntimeError as e:
+        import re
+        if re.match(r'no.*item found in modals', str(e)):
+            pass
+        else:
+            raise
 
 
 @wt(parsers.parse('user of {browser_id} clicks on Discard '
