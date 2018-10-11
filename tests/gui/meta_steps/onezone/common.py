@@ -42,22 +42,26 @@ def login_using_gui(host_list, selenium, driver, tmpdir, tmp_memory, xvfb,
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def visit_op(selenium, browser_id, oz_page, provider_name, modals, tmp_memory):
+def visit_op(selenium, browser_id, oz_page, provider_name, modals):
     driver = selenium[browser_id]
-
     providers_panel = oz_page(driver)['data']
     providers_panel[provider_name]()
-    modals(selenium[browser_id]).provider_popover.visit_provider()
+    click_visit_provider(driver, modals)
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_visit_provider(driver, modals):
+    modals(driver).provider_popover.visit_provider()
 
 
 def g_wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts,
-                  modals, tmp_memory):
+                  modals):
     providers_list = list_parser(providers_list)
     for browser_id, provider in izip_longest(list_parser(browser_id_list),
                                              providers_list,
                                              fillvalue=providers_list[-1]):
         visit_op(selenium, browser_id, oz_page, hosts[provider]['name'],
-                 modals, tmp_memory)
+                 modals)
     g_wait_for_op_session_to_start(selenium, browser_id_list)
 
 
@@ -65,15 +69,15 @@ def g_wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts,
                   '(users? of )?(?P<browser_id_list>.*)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def g_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts,
-               modals, tmp_memory):
+               modals):
     g_wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts,
-                  modals, tmp_memory)
+                  modals)
 
 
 @wt(parsers.re('users? of (?P<browser_id_list>.*) opens? '
                '(?P<providers_list>.*) Oneprovider view in web GUI'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts,
-                modals, tmp_memory):
+                modals):
     g_wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts,
-                  modals, tmp_memory)
+                  modals)
