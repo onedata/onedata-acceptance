@@ -276,7 +276,6 @@ def assert_member(selenium, browser_id, option, username, group_name, oz_page):
 
 @wt(parsers.re('user of (?P<browser_id>.*) removes (?P<member_type>user|group) '
                '"(?P<name>.*)" from group "(?P<group>.*)" members'))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def remove_member_from_group(selenium, browser_id, name, member_type, group,
                              oz_page, tmp_memory):
     page = oz_page(selenium[browser_id])['groups']
@@ -289,13 +288,11 @@ def remove_member_from_group(selenium, browser_id, name, member_type, group,
 
     modal_name = "Remove member"
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    getattr(modals(selenium[browser_id]), modal_name).remove()
-    wt_wait_for_modal_to_disappear(selenium, browser_id, tmp_memory)
+    modals(selenium[browser_id]).remove_member.remove()
 
 
 @wt(parsers.parse('user of {browser_id} removes group "{parent}" from '
                   'group "{child}" parents list'))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def leave_parent_group(selenium, browser_id, parent, child, oz_page, tmp_memory):
     page = oz_page(selenium[browser_id])['groups']
     page.elements_list[child]()
@@ -303,10 +300,9 @@ def leave_parent_group(selenium, browser_id, parent, child, oz_page, tmp_memory)
     page.main_page.parents.items[parent].menu()
     page.menu['Leave parent group']()
 
-    modal_name = "Remove member"
+    modal_name = "leave parent group"
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     modals(selenium[browser_id]).leave_parent.leave()
-    wt_wait_for_modal_to_disappear(selenium, browser_id, tmp_memory)
 
 
 @wt(parsers.parse('user of {browser_id} adds group "{group}" as subgroup '
