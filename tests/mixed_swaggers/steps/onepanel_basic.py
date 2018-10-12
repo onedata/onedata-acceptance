@@ -1,9 +1,6 @@
 """This module contains gherkin steps to run acceptance tests featuring
 basic operations in Onepanel using REST API mixed with web GUI.
 """
-from tests.gui.steps.common.url import refresh_site
-from tests.gui.steps.onezone.logged_in_common import wt_expand_oz_panel
-from tests.mixed_swaggers.onezone_client import ProviderApi
 
 __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
@@ -14,7 +11,7 @@ from pytest_bdd import when, given, then, parsers
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.utils.generic import repeat_failed
 from tests.gui.meta_steps.oneprovider.data import assert_space_content_in_op_gui
-from tests.mixed_swaggers.utils.common import NoSuchClientException, login_to_oz
+from tests.mixed_swaggers.utils.common import NoSuchClientException
 
 
 @when(parsers.re('using (?P<client>.*), (?P<user>.+?) changes his '
@@ -585,8 +582,10 @@ def remove_spaces_in_oz(client, request, user, seconds):
 
 @given(parsers.re('using web GUI, (?P<user>.+?) sees "(?P<provider>.+?)" '
                   'provider in CLUSTERS sidebar in Onepanel'))
-def see_provider_in_cluster_sidebar_in_onepanel(user, provider, selenium, hosts, onepanel, panel_login_page, users, modals):
-    from tests.gui.steps.onepanel.provider import \
+def see_provider_in_cluster_sidebar_in_onepanel(user, provider, selenium, hosts,
+                                                onepanel, panel_login_page,
+                                                users, modals):
+    from tests.gui.meta_steps.onepanel.provider import \
         change_provider_name_if_name_is_different_than_given
     change_provider_name_if_name_is_different_than_given(selenium, user,
                                                          provider, hosts,

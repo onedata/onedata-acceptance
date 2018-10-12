@@ -161,3 +161,33 @@ def register_provider_in_op_using_gui(selenium, user, onepanel, hosts, config, m
                                        onepanel)
     wt_click_on_btn_in_deployment_step(selenium, user, 'Manage the cluster',
                                        last_step, onepanel)
+
+
+@given(parsers.re('user of (?P<browser_id>.+?) sees "(?P<provider>.+?)" '
+                  'provider in CLUSTERS sidebar in Onepanel'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def change_provider_name_if_name_is_different_than_given(selenium, browser_id,
+                                                         provider, hosts,
+                                                         onepanel,
+                                                         panel_login_page,
+                                                         users, modals):
+
+    nav = getattr(onepanel(selenium[browser_id]).sidebar, 'clusters')
+    nav.items[1].submenu['Provider'].click()
+
+    current_provider = (onepanel(selenium[browser_id])
+                        .content
+                        .provider
+                        .details
+                        .provider_name)
+    domain = hosts[provider]['hostname']
+    provider = hosts[provider]['name']
+    if current_provider != provider:
+        modify_provider_with_given_name_in_op_panel_using_gui(selenium,
+                                                              browser_id,
+                                                              onepanel,
+                                                              current_provider,
+                                                              provider, domain,
+                                                              panel_login_page,
+                                                              users, hosts,
+                                                              browser_id, modals)
