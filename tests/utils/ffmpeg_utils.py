@@ -1,4 +1,9 @@
-"""This module implements utility functions for management of ffmpeg."""
+"""This module implements utility functions for management of ffmpeg.
+
+Useful resources and tutorials used to create this module:
+- How to capture desktop using ffmpeg: https://trac.ffmpeg.org/wiki/Capture/Desktop
+- How to create mosaic out of several input videos: https://trac.ffmpeg.org/wiki/Create%20a%20mosaic%20out%20of%20several%20input%20videos
+"""
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
