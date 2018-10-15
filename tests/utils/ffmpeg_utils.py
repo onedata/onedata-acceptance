@@ -46,8 +46,6 @@ def start_recording(movie_dir, movie_name, displays, screen_width,
 def stop_recording(proc):
     with _suppress(IOError, errnos=(errno.EINVAL, errno.EPIPE)):
         proc.communicate(input=b'q')
-        if not proc.stdin.closed:
-            proc.stdin.close()
 
 
 # ============================================================================

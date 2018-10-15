@@ -26,7 +26,7 @@ def start_session(display, screens, screen_width, screen_height, screen_depth):
         proc = sp.Popen(cmd, stdout=dev_null, stderr=dev_null, close_fds=True)
 
     # let Xvfb start
-    time.sleep(0.1)
+    time.sleep(0.5)
     if proc.poll() is not None:
         raise RuntimeError('Xvfb did not start')
 
