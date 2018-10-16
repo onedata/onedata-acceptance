@@ -13,6 +13,7 @@ def map_test_type_to_logdir(test_type):
         'acceptance': ACCEPTANCE_LOGDIR,
         'performance': PERFORMANCE_LOGDIR,
         'mixed_swaggers': MIXED_SWAGGERS_LOGDIR,
+        'mixed_oneclient': MIXED_ONECLIENT_LOGDIR,
         'gui': GUI_LOGDIR
     }.get(test_type, ACCEPTANCE_LOGDIR)
 
