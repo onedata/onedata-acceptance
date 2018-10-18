@@ -115,7 +115,7 @@ class NavigationHeader(PageObject):
     auto_cleaning = NamedButton('li', text='Auto cleaning')
 
 class SpaceRecord(PageObject, ExpandableMixin):
-    name = id = Label('.item-icon-container + .one-label')
+    name = id = Label('.item-icon-container + .one-label .item-name')
     toolbar = Button('.collapsible-toolbar-toggle')
     info = WebItem('.space-info', cls=SpaceInfo)
     sync_chart = WebItem('.space-sync-chart-base', cls=SyncChart)
@@ -132,7 +132,7 @@ class SpaceRecord(PageObject, ExpandableMixin):
                                    cls=ImportConfigurationForm)
     update_configuration = WebItem('.update-configuration-section',
                                    cls=UpdateConfigurationForm)
-    save_configuration = NamedButton('button', text='Save configuration')
+    save_configuration = Button('button.ready')
 
 
 class SpacesContentPage(PageObject):

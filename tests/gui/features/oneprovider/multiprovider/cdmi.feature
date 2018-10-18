@@ -41,7 +41,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And user of browser clicks "Close" confirmation button in displayed modal
     And user of browser sees that the modal has disappeared
 
-    And using cdmi api user1 writes "ABCD" to "/space1/20B-0.txt" starting at offset 20 in "oneprovider-2" provider
+    And using CDMI API user1 writes "ABCD" to "/space1/20B-0.txt" starting at offset 20 in "oneprovider-2" provider
     And user of browser is idle for 90 seconds
     And user of browser refreshes site
     And user of browser sees file browser in data tab in Oneprovider page
@@ -73,7 +73,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And user of browser clicks "Close" confirmation button in displayed modal
     And user of browser sees that the modal has disappeared
 
-    And using cdmi api user1 writes "ABCD" to "/space1/20B-0.txt" starting at offset 20 in "oneprovider-1" provider
+    And using CDMI API user1 writes "ABCD" to "/space1/20B-0.txt" starting at offset 20 in "oneprovider-1" provider
     And user of browser is idle for 90 seconds
     And user of browser refreshes site
     And user of browser sees file browser in data tab in Oneprovider page
@@ -106,7 +106,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And user of browser clicks "Close" confirmation button in displayed modal
     And user of browser sees that the modal has disappeared
 
-    And using cdmi api user1 reads from "/space1/20B-0.txt" in range 10 to 20 in "oneprovider-2" provider
+    And using CDMI API user1 reads from "/space1/20B-0.txt" in range 10 to 20 in "oneprovider-2" provider
     And user of browser is idle for 90 seconds
     And user of browser refreshes site
     And user of browser sees file browser in data tab in Oneprovider page
@@ -136,7 +136,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And user of browser clicks "Close" confirmation button in displayed modal
     And user of browser sees that the modal has disappeared
 
-    And using cdmi api user1 writes "ABCD" to "/space1/20B-0.txt" starting at offset 40 in "oneprovider-1" provider
+    And using CDMI API user1 writes "ABCD" to "/space1/20B-0.txt" starting at offset 40 in "oneprovider-1" provider
     And user of browser is idle for 90 seconds
     And user of browser refreshes site
     And user of browser sees file browser in data tab in Oneprovider page
@@ -158,7 +158,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And user of browser sees an info notify with text matching to: .*[Cc]ompleted upload.*1.*
     And user of browser sees that item named "20B-0.txt" has appeared in file browser
 
-    And using cdmi api user1 writes "ABCD" to "/space1/20B-0.txt" starting at offset 20 in "oneprovider-1" provider
+    And using CDMI API user1 writes "ABCD" to "/space1/20B-0.txt" starting at offset 20 in "oneprovider-1" provider
     And user of browser is idle for 90 seconds
     And user of browser refreshes site
     And user of browser sees file browser in data tab in Oneprovider page
