@@ -4,6 +4,7 @@ Define fixtures used in web GUI acceptance/behavioral tests.
 
 import os
 import re
+import yaml
 import errno
 import random
 import string
@@ -101,6 +102,11 @@ def pytest_addoption(parser):
                              help='turn off mosaic filter if recording tests '
                                   'with multiple browsers')
 
+    one_env_group = parser.getgroup('one_env', description='option specific'
+                                                           'to one_env')
+    one_env_group.addoption('--deployment-data-path', action='store',
+                            help='Path to deployment data')
+
 
 @fixture(scope='session')
 def numerals():
@@ -128,6 +134,29 @@ def docker_exec(container_id, command):
     sp.call(cmd, stdin=None, stderr=None, stdout=None)
 
 
+def set_debug(container_id, service_name, service_type, sources_data=None):
+    if sources_data:
+        set_debug_fmt = (r'echo {{\"debug\": true}} > '
+                         r'{}')
+        app_cfg_fmt = '_build/default/rel/{}/data/gui_static/app-config.json'
+        worker_name = ('op-worker' if 'provider' in service_type else
+                       'oz-worker')
+        app_cfg_path = app_cfg_fmt.format(worker_name.replace('-', '_'))
+        for pod_name, pod_cfg in sources_data.items():
+            if service_name in pod_name:
+                worker_path = pod_cfg.get(worker_name)
+                set_debug_cmd = set_debug_fmt.format(os.path.join(worker_path,
+                                                                  app_cfg_path))
+                docker_exec(container_id, set_debug_cmd)
+
+    else:
+        set_debug_fmt = (r'echo {{\"debug\": true}} > '
+                         r'/var/lib/{}_worker/gui_static/app-config.json')
+        set_debug_cmd = set_debug_fmt.format('op' if 'provider' in
+                                                     service_type else 'oz')
+        docker_exec(container_id, set_debug_cmd)
+
+
 @fixture(scope='session')
 def hosts(request):
     """Dict to use to store ip addresses of services."""
@@ -143,8 +172,12 @@ def hosts(request):
                                                          PANEL_REST_PORT)}
                     }
 
-    set_debug_cmd = r'echo {{\"debug\": true}} > ' \
-                    r'/var/lib/{}_worker/gui_static/app-config.json'
+    sources_data = None
+    deployment_data_path = request.config.getoption('--deployment-data-path')
+    if deployment_data_path:
+        with open(deployment_data_path, 'r') as deployment_data_file:
+            deployment_data = yaml.load(deployment_data_file)
+            sources_data = deployment_data.get('sources')
 
     for provider_name, provider_alias, provider_hostname, provider_ip, \
         provider_container_id in \
@@ -158,15 +191,17 @@ def hosts(request):
                  provider_hostname, provider_ip, provider_container_id)
         if request.config.getoption('--add-test-domain'):
             add_etc_hosts_entries(provider_ip, "{}.test".format(provider_hostname))
-        docker_exec(provider_container_id, set_debug_cmd.format('op'))
+        set_debug(provider_container_id, provider_name, 'oneprovider',
+                  sources_data)
 
     zone_container_id = request.config.getoption('--zone-container-id')
+    zone_name = request.config.getoption('--zone-name')
     add_host('onezone', request.config.getoption('--zone-alias'),
-             request.config.getoption('--zone-name'),
+             zone_name,
              request.config.getoption('--zone-hostname'),
              request.config.getoption('--zone-ip'),
              zone_container_id)
-    docker_exec(zone_container_id, set_debug_cmd.format('oz'))
+    set_debug(zone_container_id, zone_name, 'onezone', sources_data)
 
     return h
 
