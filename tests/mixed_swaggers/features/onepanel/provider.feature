@@ -21,6 +21,8 @@ Feature: Provider management in Onepanel
 
 
   Scenario Outline: User changes provider name and domain using <client2> and he sees in <client1> that they have changed
+    Given using web GUI, admin sees "oneprovider-1" provider in CLUSTERS sidebar in Onepanel
+    And using web GUI, user1 refreshes site
     When using <client2>, user1 sees provider "oneprovider-1" with hostname matches that of "oneprovider-1" provider in "onezone" Onezone service
     And using <client1>, admin modifies provider "oneprovider-1" changing his name to "pro1" and domain to test domain in "oneprovider-1" Oneprovider panel service
     And using <client2>, user1 is idle for 8 seconds
