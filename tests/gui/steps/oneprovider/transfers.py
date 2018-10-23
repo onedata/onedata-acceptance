@@ -39,9 +39,9 @@ def assert_ongoing_transfer(selenium, browser_id, item_type, desc, hosts,
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees (?P<item_type>file|directory)'
                ' in ended transfers:\n(?P<desc>(.|\s)*)'))
-@repeat_failed(interval=0.5, timeout=40)
+@repeat_failed(interval=0.5, timeout=90)
 def assert_ended_transfer(selenium, browser_id, item_type, desc, hosts,
-                             op_page):
+                          op_page):
     transfer = op_page(selenium[browser_id]).transfers.ended[0]
     _assert_transfer(transfer, item_type, desc, 'ended', hosts)
 
