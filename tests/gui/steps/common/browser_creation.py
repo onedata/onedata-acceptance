@@ -31,7 +31,8 @@ Firefox.log_types = ['browser']
 @given(parsers.parse("users opened {browser_id_list} browsers' windows"))
 def create_instances_of_webdriver(selenium, driver, browser_id_list, tmpdir,
                                   tmp_memory, driver_kwargs, driver_type,
-                                  firefox_logging, firefox_path, xvfb,
+                                  firefox_logging, firefox_path,
+                                  xvfb, xvfb_recorder,
                                   screen_width, screen_height, displays):
 
     for browser_id, display in zip(parse_seq(browser_id_list), cycle(xvfb)):
