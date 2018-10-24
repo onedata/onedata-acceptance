@@ -22,6 +22,10 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
 
   Scenario: User supports space with storage sync and enabled options: Mount in root
+    Given user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+    And user of browser1 revokes all spaces supports
+    And user of browser2 refreshes site
+
     # create space
     When user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
     And user of browser2 sees that there is no space named "space2" in expanded "DATA SPACE MANAGEMENT" Onezone panel
@@ -145,6 +149,9 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
 
   Scenario: User supports space with storage sync and no enabled options
+    Given user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+    And user of browser1 revokes all spaces supports
+    And user of browser2 refreshes site
 
     # create space
     When user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
@@ -273,6 +280,9 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
 
   Scenario: User supports space with storage sync and enabled options: Delete
+    Given user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+    And user of browser1 revokes all spaces supports
+    And user of browser2 refreshes site
 
     # create space
     When user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
@@ -414,6 +424,9 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
 
   Scenario: User supports space with storage sync and enabled options: Write once
+    Given user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+    And user of browser1 revokes all spaces supports
+    And user of browser2 refreshes site
 
     # create space
     When user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
@@ -543,6 +556,9 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
 
   Scenario: User supports space with storage sync and enabled options: Delete and Write once
+    Given user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+    And user of browser1 revokes all spaces supports
+    And user of browser2 refreshes site
 
     # create space
     When user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
@@ -685,6 +701,9 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
 
   Scenario: User disables files update
+    Given user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+    And user of browser1 revokes all spaces supports
+    And user of browser2 refreshes site
 
     # create space
     When user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel

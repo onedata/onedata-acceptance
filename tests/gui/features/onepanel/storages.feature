@@ -16,6 +16,10 @@ Feature: Storage management using onepanel
 
 
   Scenario: User uploads files on freshly supported space on newly created storage
+    Given user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+    And user of browser1 revokes all spaces supports
+    And user of browser2 refreshes site
+
     # create new_storage POSIX storage
     When user of browser1 clicks on Storages item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser1 clicks on Add storage button in storages page in Onepanel

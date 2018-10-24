@@ -9,6 +9,10 @@ Feature: Basic spaces management utilities using onepanel
 
 
   Scenario: Support space
+    Given user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+    And user of browser1 revokes all spaces supports
+    And user of browser2 refreshes site
+
     # create space
     When user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
     And user of browser2 sees that there is no space named "helloworld" in expanded "DATA SPACE MANAGEMENT" Onezone panel

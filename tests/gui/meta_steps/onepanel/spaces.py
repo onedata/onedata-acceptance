@@ -136,3 +136,18 @@ def assert_proper_space_configuration_in_op_panel_gui(selenium, user, space,
                                                  onepanel)
     wt_assert_proper_space_configuration_in_panel(selenium, user, sync_type,
                                                   space, conf, onepanel)
+
+
+@given(parsers.parse('user of {browser_id} revokes all spaces supports'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def revoke_all_space_supports(selenium, browser_id, onepanel, popups, modals):
+    spaces_list = onepanel(selenium[browser_id]).content.spaces.spaces
+    option = 'Revoke space support'
+    button = 'Yes, revoke'
+
+    for space in spaces_list:
+        space.toolbar.click()
+        wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, browser_id,
+                                                   option, popups)
+        wt_clicks_on_btn_in_revoke_space_support(selenium, browser_id,
+                                                 button, modals)
