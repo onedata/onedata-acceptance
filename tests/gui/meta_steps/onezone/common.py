@@ -22,10 +22,11 @@ def login_to_oz_using_gui(host_list, selenium, driver, tmpdir, tmp_memory, xvfb,
                           driver_kwargs, driver_type, firefox_logging, displays,
                           firefox_path, screen_width, screen_height, hosts,
                           users, oz_login_page, browser_id_list, user_list,
-                          panel_login_page):
+                          panel_login_page, xvfb_recorder):
     create_instances_of_webdriver(selenium, driver, user_list, tmpdir,
                                   tmp_memory, driver_kwargs, driver_type,
-                                  firefox_logging, firefox_path, xvfb,
+                                  firefox_logging, firefox_path,
+                                  xvfb, xvfb_recorder,
                                   screen_width, screen_height, displays)
     g_open_onedata_service_page(selenium, user_list, host_list, hosts)
 

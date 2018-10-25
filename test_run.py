@@ -19,8 +19,11 @@ import json
 import glob
 import xml.etree.ElementTree as ElementTree
 import shutil
+
+sys.path.append(os.path.abspath('one_env/scripts'))
 import one_env.scripts.user_config as user_config
 from one_env.scripts.console import info
+from one_env.scripts.deployment_data import deployment_data_path
 from tests.test_type import map_test_type_to_logdir
 from tests.utils.path_utils import make_logdir
 
@@ -133,7 +136,7 @@ def parse_image(file_path, ):
 
 def export_logs():
     logdir = map_test_type_to_logdir(args.test_type)
-    if args.test_type in ['gui', 'mixed_swaggers']:
+    if args.test_type in ['gui', 'mixed_swaggers', 'mixed_oneclient']:
         if not os.path.isdir(logdir):
             logdir = make_logdir(map_test_type_to_logdir(args.test_type),
                                  'report')
@@ -221,6 +224,11 @@ parser.add_argument(
     help='If present run environment using sources',
     dest='sources')
 
+parser.add_argument(
+    '--timeout',
+    action='store',
+    help='Onenv wait timeout',
+    dest='timeout')
 
 [args, pass_args] = parser.parse_known_args()
 
@@ -239,7 +247,7 @@ if {shed_privileges}:
     os.setregid({gid}, {gid})
     os.setreuid({uid}, {uid})
 
-command = ['py.test'] + ['--test-type={test_type}'] + ['{test_dir}'] + {args} + {zone_conf} + {providers_conf} + ['--junitxml={report_path}'] + ['--add-test-domain']  
+command = ['py.test'] + ['--test-type={test_type}'] + ['{test_dir}'] + {args} + {deployment_data_path} + {zone_conf} + {providers_conf} + ['--junitxml={report_path}'] + ['--add-test-domain']  
 ret = subprocess.call(command)
 sys.exit(ret)
 '''
@@ -278,6 +286,16 @@ test_runner_pod = '''{{
                         "mountPath": "/etc/passwd",
                         "name": "etc-passwd",
                         "readOnly": true
+                    }},
+                    {{
+                        "mountPath": "/root/.kube/config",
+                        "name": "kube-conf",
+                        "readOnly": true
+                    }},
+                    {{
+                        "mountPath": "{home}/.one-env",
+                        "name": "one-env-data",
+                        "readOnly": true
                     }}
                     ]
                 }}
@@ -305,6 +323,18 @@ test_runner_pod = '''{{
                 "name": "etc-passwd",
                 "hostPath": {{
                     "path": "/etc/passwd"
+                }}
+            }},
+            {{ 
+                "name": "kube-conf",
+                "hostPath": {{
+                    "path": "{minikube_home}/.kube/config"
+                }}
+            }},
+            {{ 
+                "name": "one-env-data",
+                "hostPath": {{
+                    "path": "{minikube_home}/.one-env"
                 }}
             }}
             ]
@@ -334,9 +364,11 @@ if args.clean:
 if args.sources:
     up_arguments.extend(['-s'])
 up_arguments.extend(['{}'.format(os.path.join(script_dir, args.env_file))])
+
 run_onenv_command('up', up_arguments)
 
-run_onenv_command('wait')
+wait_args = ['--timeout', args.timeout] if args.timeout else []
+run_onenv_command('wait', wait_args)
 
 if args.update_etc_hosts:
     call(['python', 'scripts/update_etc_hosts.py'], cwd='one_env')
@@ -352,11 +384,15 @@ if not deployment_ready:
 pods_cfg = status_output['pods']
 
 oz_conf, ops_conf = parse_pods_cfg(pods_cfg)
+deployment_data = (['--deployment-data-path={}'.format(deployment_data_path())]
+                   if args.sources else [])
 
 if args.local:
     # TODO: change this after python3 will be used in tests
     cmd = ['python2.7', '-m', 'py.test', '--test-type={}'.format(args.test_type),
            args.test_dir, '--junitxml={}'.format(args.report_path)]
+    if deployment_data:
+        cmd.extend(deployment_data)
     cmd.extend(pass_args + oz_conf + ops_conf)
 
 else:
@@ -376,15 +412,19 @@ ALL       ALL = (ALL) NOPASSWD: ALL
                              test_type=args.test_type,
                              additional_code=additional_code,
                              zone_conf=oz_conf,
-                             providers_conf=ops_conf)
+                             providers_conf=ops_conf,
+                             deployment_data_path=deployment_data)
     command = command.replace('\n', r'\n').replace('\"', '\'')
 
+    kube_host_home_dir = user_config.get('kubeHostHomeDir')
     minikube_script_dir = script_dir.replace(user_config.host_home(),
-                                             user_config.get('kubeHostHomeDir'))
+                                             kube_host_home_dir)
     test_runner_pod = test_runner_pod.format(command=command,
                                              script_dir=script_dir,
                                              minikube_script_dir=minikube_script_dir,
-                                             image=args.image)
+                                             image=args.image,
+                                             home=os.path.expanduser('~'),
+                                             minikube_home=kube_host_home_dir)
 
     cmd = ['kubectl', 'run', '-i', '--rm', '--restart=Never', 'test-runner',
            '--overrides={}'.format(test_runner_pod), '--image={}'.format(args.image),

@@ -11,6 +11,7 @@ from .deploying_cluster import ClusterDeploymentModal
 from .revoke_space_support import RevokeSpaceSupportModal
 from .edit_permissions import EditPermissionsModal
 from .configure_web_cert import ConfigureWebCertModal
+from .dns_configuration_warning import DNSConfigurationWarningModal
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
@@ -28,6 +29,8 @@ class Modals(object):
     login = WebItem('#login-form-modal', cls=LoginFormModal)
     edit_permissions = WebItem('#edit-permissions-modal', cls=EditPermissionsModal)
     configure_web_cert = WebItem('#configure-web-cert-modal', cls=ConfigureWebCertModal)
+    dns_configuration_warning = WebItem('.new-cluster-dns-proceed-modal.modal',
+                                        cls=DNSConfigurationWarningModal)
 
     def __init__(self, driver):
         self.driver = driver

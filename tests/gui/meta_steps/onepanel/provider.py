@@ -39,7 +39,7 @@ def modify_provider_with_given_name_in_op_panel_using_gui(selenium, user,
     notify_text_regexp = '.*[Pp]rovider.*data.*modified.*'
 
     wt_click_on_subitem_for_item_with_name(selenium, user, sidebar, sub_item,
-                                           provider_name, onepanel, hosts)
+                                           provider_name, onepanel)
 
     wt_click_on_btn_in_content(selenium, user, button, content, onepanel)
     wt_type_val_to_in_box_in_provider_details_form(selenium, user,
@@ -74,7 +74,7 @@ def deregister_provider_in_op_panel_using_gui(selenium, user, provider_name,
                              '.*[Pp]rovider.*deregistered.*')
 
 
-def register_provider_in_op_using_gui(selenium, user, onepanel, hosts, config):
+def register_provider_in_op_using_gui(selenium, user, onepanel, hosts, config, modals):
     sidebar = 'CLUSTERS'
     record = 'New cluster'
     step2 = 'step 2'
@@ -134,6 +134,11 @@ def register_provider_in_op_using_gui(selenium, user, onepanel, hosts, config):
 
     #step3
     wt_click_setup_ip_in_deployment_setup_ip(selenium, user, onepanel)
+
+    # dns setup
+    wt_click_perform_check_in_dns_setup_step(selenium, user, onepanel)
+    wt_click_proceed_in_dns_setup_step(selenium, user, onepanel)
+    wt_click_yes_in_warning_modal_in_dns_setup_step(selenium, user, modals)
 
     # web cert step
     wt_deactivate_lets_encrypt_toggle_in_deployment_step4(selenium, user, onepanel)

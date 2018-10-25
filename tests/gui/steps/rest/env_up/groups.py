@@ -106,7 +106,7 @@ def _groups_creation(config, service, admin_credentials,
             
 
 def _create_group(zone_hostname, owner_username, owner_password,
-                  group_name, group_type='role'):
+                  group_name, group_type='team'):
     group_properties = {'name': group_name, 'type': group_type}
     response = http_post(ip=zone_hostname, port=OZ_REST_PORT,
                          path=get_zone_rest_path('groups'),
