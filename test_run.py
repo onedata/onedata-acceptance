@@ -25,6 +25,7 @@ import one_env.scripts.user_config as user_config
 from one_env.scripts.console import info
 from one_env.scripts.deployment_data import deployment_data_path
 from tests.test_type import map_test_type_to_logdir
+from tests.utils.path_utils import make_logdir
 
 
 ZONE_IMAGES_CFG_PATH = 'onezone_images/docker-dev-build-list.json'
@@ -131,6 +132,20 @@ def parse_image(file_path, ):
             return image
     except FileNotFoundError:
         return None
+
+
+def export_logs():
+    logdir = map_test_type_to_logdir(args.test_type)
+    if args.test_type in ['gui', 'mixed_swaggers', 'mixed_oneclient']:
+        if not os.path.isdir(logdir):
+            logdir = make_logdir(map_test_type_to_logdir(args.test_type),
+                                 'report')
+        else:
+            timestamped_logdirs = os.listdir(logdir)
+            latest_logdir = max(timestamped_logdirs, key=extract_number)
+            logdir = os.path.join(logdir, latest_logdir)
+
+    run_onenv_command('export', [logdir])
 
 
 parser = argparse.ArgumentParser(
@@ -360,6 +375,12 @@ if args.update_etc_hosts:
 
 status_output = run_onenv_command('status')
 status_output = yaml.load(status_output.decode('utf-8'))
+deployment_ready = status_output['ready']
+
+if not deployment_ready:
+    export_logs()
+    sys.exit(1)
+
 pods_cfg = status_output['pods']
 
 oz_conf, ops_conf = parse_pods_cfg(pods_cfg)
@@ -411,13 +432,7 @@ ALL       ALL = (ALL) NOPASSWD: ALL
 
 ret = call(cmd, stdin=None, stderr=None, stdout=None)
 
-logdir = map_test_type_to_logdir(args.test_type)
-if args.test_type in ['gui', 'mixed_swaggers', 'mixed_oneclient']:
-    timestamped_logdirs = os.listdir(logdir)
-    latest_logdir = max(timestamped_logdirs, key=extract_number)
-    run_onenv_command('export', [os.path.join(logdir, latest_logdir)])
-else:
-    run_onenv_command('export', logdir)
+export_logs()
 
 if args.clean:
     run_onenv_command('clean')
