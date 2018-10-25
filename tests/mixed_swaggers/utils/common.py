@@ -10,6 +10,7 @@ __license__ = ("This software is released under the MIT license cited in "
 from tests import (OZ_REST_PATH_PREFIX, OZ_REST_PORT, PANEL_REST_PORT,
                    PANEL_REST_PATH_PREFIX, PROVIDER_REST_PATH_PREFIX,
                    CDMI_REST_PATH_PREFIX)
+from pytest_bdd import given, parsers
 
 
 class NoSuchClientException(Exception):
@@ -84,3 +85,8 @@ def send_copied_item_to_other_users_rest(sender, receiver, item_type,
                                          tmp_memory):
     tmp_memory[receiver]['mailbox'][item_type.lower()] = \
         tmp_memory[sender][item_type]
+
+
+@given(parsers.re('using web GUI, (?P<user>.+?) refreshes site'))
+def refresh_site(selenium, user):
+    selenium[user].refresh()

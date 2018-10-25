@@ -580,8 +580,8 @@ def remove_spaces_in_oz(client, request, user, seconds):
     wait_given_time(seconds)
 
 
-@given(parsers.re('using web GUI, (?P<user>.+?) sees "(?P<provider>.+?)" '
-                  'provider in CLUSTERS sidebar in Onepanel'))
+@given(parsers.re('using web GUI, (?P<user>.+?) changes provider name to '
+                  'name of "(?P<provider>.+?)" in Onepanel'))
 def see_provider_in_cluster_sidebar_in_onepanel(user, provider, selenium, hosts,
                                                 onepanel, panel_login_page,
                                                 users, modals):
@@ -592,8 +592,3 @@ def see_provider_in_cluster_sidebar_in_onepanel(user, provider, selenium, hosts,
                                                          onepanel,
                                                          panel_login_page,
                                                          users, modals)
-
-
-@given(parsers.re('using web GUI, (?P<user>.+?) refreshes site'))
-def refresh_site(selenium, user):
-    selenium[user].refresh()
