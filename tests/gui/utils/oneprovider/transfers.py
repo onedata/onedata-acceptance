@@ -13,8 +13,8 @@ from tests.gui.utils.core.web_elements import (Label, WebElement,
                                                ButtonWithTextPageObject)
 
 TransferStatusList = ['completed', 'skipped', 'cancelled', 'failed', 'active',
-                      'invalidating', 'scheduled', 'enqueued']
-TransferTypeList = ['migration', 'replication', 'invalidation']
+                      'evicting', 'scheduled', 'enqueued']
+TransferTypeList = ['migration', 'replication', 'eviction']
 
 
 class TransferRecord(PageObject):
