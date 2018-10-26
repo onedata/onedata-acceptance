@@ -8,7 +8,7 @@ Feature: Account management in Onepanel
   Background:
     Given initial users configuration in "onezone" Onezone service:
             - admin2:
-                password: passwd
+                password: passwddd
                 user role: admin
     And opened browser with admin2 logged to "onezone panel" service
 

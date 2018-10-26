@@ -37,12 +37,12 @@ def change_user_password_in_oz_panel(client, request, user, new_password, host,
 @when(parsers.re('using (?P<client>.*), (?P<user>.+?) logs out from '
                  '"(?P<host>.+?)" Onezone panel service'))
 def log_out_from_oz_panel(client, request, user, host, selenium, onepage,
-                          panel_login_page, popups):
+                          login_page, popups):
 
     if client.lower() == 'web gui':
         from tests.gui.meta_steps.onepanel.account_management import \
                                     log_out_from_oz_panel_gui
-        log_out_from_oz_panel_gui(user, selenium, onepage, panel_login_page,
+        log_out_from_oz_panel_gui(user, selenium, onepage, login_page,
                                   popups)
     elif client.lower() == 'rest':
         pass
@@ -55,13 +55,13 @@ def log_out_from_oz_panel(client, request, user, host, selenium, onepage,
                  'logs in to "(?P<host>.+?)" Onezone panel service using '
                  'password "(?P<password>.+?)"'))
 def login_to_oz_panel_using_new_password(client, request, user, host, selenium,
-                                         panel_login_page, hosts, password):
+                                         login_page, hosts, password):
 
     if client.lower() == 'web gui':
         from tests.gui.meta_steps.onepanel.account_management import \
                                     login_to_oz_panel_using_new_password_gui
         login_to_oz_panel_using_new_password_gui(selenium, user, password,
-                                                 panel_login_page)
+                                                 login_page)
     elif client.lower() == 'rest':
         from tests.mixed_swaggers.utils.onepanel.account_management import \
                                     login_to_oz_panel_using_new_password_rest
