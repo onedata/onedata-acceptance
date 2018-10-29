@@ -157,6 +157,12 @@ def cp_part_of_url(selenium, browser_id, item, displays, clipboard):
                    display=displays[browser_id])
 
 
+@given(parsers.parse('using web GUI, {browser_id} refreshes site'))
+@given(parsers.parse('user of {browser_id} refreshes site'))
+def g_refresh_site(selenium, browser_id):
+    selenium[browser_id].refresh()
+
+
 @when(parsers.parse('user of {browser_id} refreshes site'))
 @then(parsers.parse('user of {browser_id} refreshes site'))
 def refresh_site(selenium, browser_id):

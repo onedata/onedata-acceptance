@@ -85,8 +85,3 @@ def send_copied_item_to_other_users_rest(sender, receiver, item_type,
                                          tmp_memory):
     tmp_memory[receiver]['mailbox'][item_type.lower()] = \
         tmp_memory[sender][item_type]
-
-
-@given(parsers.re('using web GUI, (?P<user>.+?) refreshes site'))
-def refresh_site(selenium, user):
-    selenium[user].refresh()
