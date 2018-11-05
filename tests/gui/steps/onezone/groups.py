@@ -199,7 +199,7 @@ def copy_token(selenium, browser_id, oz_page):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) goes to group "(?P<group>.*)" '
-               '(?P<subpage>members|parents|main) subpage'))
+               '(?P<subpage>members|hierarchy|parents|main) subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def go_to_group_subpage(selenium, browser_id, group, subpage, oz_page):
     page = oz_page(selenium[browser_id])['groups']
@@ -382,3 +382,45 @@ def confirm_add_group(selenium, browser_id, option, oz_page):
     else:
         confirm_name_or_token_input_on_main_groups_page(selenium, browser_id,
                                                         oz_page)
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) clicks on active group trigger '
+               'in hierarchy subpage'))
+def click_on_group_trigger(selenium, browser_id, oz_page):
+    (oz_page(selenium[browser_id])['groups'].main_page.hierarchy
+     .click_trigger(selenium[browser_id]))
+
+
+@wt(parsers.parse('user of {browser_id} clicks on "{option}" '
+                  'in group hierarchy menu'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_option_in_group_hierarchy_menu(selenium, browser_id, option):
+    driver = selenium[browser_id]
+    modals(driver).group_hierarchy_menu.options[option].click()
+
+
+@wt(parsers.parse('user of {browser_id} writes "{group_name}" '
+                  'into group name text field in create child group modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def write_name_group_in_create_new_child_group_modal(selenium, browser_id,
+                                                     group_name):
+    driver = selenium[browser_id]
+    modals(driver).create_child_group.input_name = group_name
+
+
+@wt(parsers.parse('user of {browser_id} confirms create new child group '
+                  'in create child group modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def confirm_create_new_child_group_in_modal(selenium, browser_id):
+    driver = selenium[browser_id]
+    modals(driver).create_child_group.create()
+
+
+@wt(parsers.parse('user of {browser_id} sees "{child_group}" as a children '
+                  'of "{parent_group}" in hierarchy subpage'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_list_of_children_contains_group(selenium, browser_id, oz_page,
+                                           child_group, parent_group):
+    children = (oz_page(selenium[browser_id])['groups'].main_page.hierarchy
+                .children_groups)
+    assert child_group in children

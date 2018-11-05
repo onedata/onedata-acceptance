@@ -10,6 +10,7 @@ from tests.gui.utils.onezone.data_page import ProviderPopover
 from .data_distribution import DataDistributionModal
 from .add_storage import AddStorage
 from tests.gui.utils.core.web_elements import WebItem
+from tests.gui.utils.common.modals.create_child_group import CreateChildGroup
 
 from .data_distribution import DataDistributionModal
 from .login import LoginFormModal
@@ -23,6 +24,7 @@ from .leave_space import LeaveSpaceModal
 from .leave_parent import LeaveParentModal
 from .error_modal import ErrorModal
 from .dns_configuration_warning import DNSConfigurationWarningModal
+from .groups_hierarchy_menu import GroupHierarchyMenu
 
 
 class Modals(object):
@@ -53,6 +55,9 @@ class Modals(object):
                             cls=RemoveModal)
     error = WebItem('.alert-global.modal.in .modal-dialog',
                     cls=ErrorModal)
+    group_hierarchy_menu = WebItem('.group-actions.one-webui-popover',
+                                   cls=GroupHierarchyMenu)
+    create_child_group = WebItem('.modal-dialog', cls=CreateChildGroup)
 
     def __init__(self, driver):
         self.driver = driver
