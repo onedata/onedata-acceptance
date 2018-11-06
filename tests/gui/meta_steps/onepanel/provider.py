@@ -163,8 +163,8 @@ def register_provider_in_op_using_gui(selenium, user, onepanel, hosts, config, m
                                        last_step, onepanel)
 
 
-@given(parsers.re('user of (?P<browser_id>.+?) changes provider name to '
-                  'name of "(?P<provider>.+?)" in Onepanel'))
+@given(parsers.re('provider name set to name of "(?P<provider>.+?)" '
+                  '(?P<by>by user of|by) (?P<browser_id>.+?) in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_provider_name_if_name_is_different_than_given(selenium, browser_id,
                                                          provider, hosts,

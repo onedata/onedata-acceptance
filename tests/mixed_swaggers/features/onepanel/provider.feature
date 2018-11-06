@@ -21,9 +21,9 @@ Feature: Provider management in Onepanel
 
 
   Scenario Outline: User changes provider name and domain using <client2> and he sees in <client1> that they have changed
-    Given using web GUI, admin changes provider name to name of "oneprovider-1" in Onepanel
-    And using web GUI, user1 refreshes site
-    When using <client2>, user1 sees provider "oneprovider-1" with hostname matches that of "oneprovider-1" provider in "onezone" Onezone service
+    Given provider name set to name of "oneprovider-1" by admin in Onepanel
+    When using web GUI, user1 refreshes site
+    And using <client2>, user1 sees provider "oneprovider-1" with hostname matches that of "oneprovider-1" provider in "onezone" Onezone service
     And using <client1>, admin modifies provider "oneprovider-1" changing his name to "pro1" and domain to test domain in "oneprovider-1" Oneprovider panel service
     And using <client2>, user1 is idle for 8 seconds
     Then using <client2>, user1 sees provider named "pro1" with test hostname of provider "oneprovider-1" in "onezone" Onezone service
@@ -31,9 +31,9 @@ Feature: Provider management in Onepanel
 
 
   Scenario Outline: User deregisters provider and registers it again
-    Given using web GUI, admin changes provider name to name of "oneprovider-1" in Onepanel
-    And using web GUI, user1 refreshes site
-    When using <client2>, user1 sees provider "oneprovider-1" with hostname matches that of "oneprovider-1" provider in "onezone" Onezone service
+    Given provider name set to name of "oneprovider-1" by admin in Onepanel
+    When using web GUI, user1 refreshes site
+    And using <client2>, user1 sees provider "oneprovider-1" with hostname matches that of "oneprovider-1" provider in "onezone" Onezone service
     And using <client1>, admin deregisters provider in "oneprovider-1" Oneprovider panel service
     And using <client2>, user1 is idle for 8 seconds
     Then using <client2>, user1 sees that provider "oneprovider-1" has been deregistered in "onezone" Onezone service

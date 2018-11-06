@@ -578,17 +578,3 @@ def copy_id_of_space(client, request, user, space_name, selenium, onepanel,
 def remove_spaces_in_oz(client, request, user, seconds):
     from tests.gui.steps.common.miscellaneous import wait_given_time
     wait_given_time(seconds)
-
-
-@given(parsers.re('using web GUI, (?P<user>.+?) changes provider name to '
-                  'name of "(?P<provider>.+?)" in Onepanel'))
-def see_provider_in_cluster_sidebar_in_onepanel(user, provider, selenium, hosts,
-                                                onepanel, panel_login_page,
-                                                users, modals):
-    from tests.gui.meta_steps.onepanel.provider import \
-        change_provider_name_if_name_is_different_than_given
-    change_provider_name_if_name_is_different_than_given(selenium, user,
-                                                         provider, hosts,
-                                                         onepanel,
-                                                         panel_login_page,
-                                                         users, modals)

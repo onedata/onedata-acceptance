@@ -16,7 +16,10 @@ Feature: Provider management in Onepanel GUI
     And opened [browser1, browser2] with [admin, user1] logged to [oneprovider-1 provider panel, onezone] service
 
   Scenario: User changes provider name and domain
-    When user of browser1 clicks on Provider item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+    Given provider name set to name of "oneprovider-1" by user of browser1 in Onepanel
+    When user of browser2 refreshes site
+
+    And user of browser1 clicks on Provider item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser1 sees that Provider name attribute is equal to the name of "oneprovider-1" provider in Provider panel
     And user of browser1 sees that Domain attribute is equal to the hostname of "oneprovider-1" provider in Provider panel
 
@@ -63,9 +66,9 @@ Feature: Provider management in Onepanel GUI
 
 
   Scenario: User deregisters provider, registers it again and sees that provider is working
-    Given user of browser1 changes provider name to name of "oneprovider-1" in Onepanel
-    And user of browser2 refreshes site
-    When user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
+    Given provider name set to name of "oneprovider-1" by user of browser1 in Onepanel
+    When user of browser2 refreshes site
+    And user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
     And user of browser2 expands submenu of space named "space1" by clicking on space record in expanded "DATA SPACE MANAGEMENT" Onezone panel
     And user of browser2 sees that list of supporting providers for space named "space1" in expanded "DATA SPACE MANAGEMENT" Onezone panel contains only: "oneprovider-1"
     And using web gui, admin deregisters provider in "oneprovider-1" Oneprovider panel service

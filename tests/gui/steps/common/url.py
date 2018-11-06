@@ -16,6 +16,7 @@ from selenium.webdriver.support.expected_conditions import staleness_of
 
 from tests.gui.utils.generic import parse_seq, repeat_failed, parse_url
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.utils.acceptance_utils import wt
 
 
 @given(parsers.parse("user of {browser_id_list} opened {hosts_list} page"))
@@ -157,14 +158,8 @@ def cp_part_of_url(selenium, browser_id, item, displays, clipboard):
                    display=displays[browser_id])
 
 
-@given(parsers.parse('using web GUI, {browser_id} refreshes site'))
-@given(parsers.parse('user of {browser_id} refreshes site'))
-def g_refresh_site(selenium, browser_id):
-    selenium[browser_id].refresh()
-
-
-@when(parsers.parse('user of {browser_id} refreshes site'))
-@then(parsers.parse('user of {browser_id} refreshes site'))
+@wt(parsers.parse('using web GUI, {browser_id} refreshes site'))
+@wt(parsers.parse('user of {browser_id} refreshes site'))
 def refresh_site(selenium, browser_id):
     selenium[browser_id].refresh()
 
