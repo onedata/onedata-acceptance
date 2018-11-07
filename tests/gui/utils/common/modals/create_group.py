@@ -11,10 +11,10 @@ from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.web_elements import Input, NamedButton
 
 
-class CreateChildGroup(Modal):
+class CreateGroup(Modal):
     input_name = Input('.create-relative-group-name')
     create = NamedButton('button', text='Create')
     cancel = NamedButton('button', text='Cancel')
 
     def __str__(self):
-        return 'Create child group'
+        return 'Create group'

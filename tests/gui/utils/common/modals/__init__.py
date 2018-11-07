@@ -10,7 +10,7 @@ from tests.gui.utils.onezone.data_page import ProviderPopover
 from .data_distribution import DataDistributionModal
 from .add_storage import AddStorage
 from tests.gui.utils.core.web_elements import WebItem
-from tests.gui.utils.common.modals.create_child_group import CreateChildGroup
+from tests.gui.utils.common.modals.create_group import CreateGroup
 
 from .data_distribution import DataDistributionModal
 from .login import LoginFormModal
@@ -43,6 +43,8 @@ class Modals(object):
                                         cls=DNSConfigurationWarningModal)
     remove_group = WebItem('.group-remove-modal.modal.in .modal-dialog',
                            cls=RemoveModal)
+    remove_subgroup = WebItem('.remove-relation-modal.modal.in .modal-dialog',
+                              cls=RemoveModal)
     leave_group = WebItem('.group-leave-modal.modal.in .modal-dialog',
                           cls=LeaveGroupModal)
     leave_parent = WebItem('.leave-parent-modal.modal.in .modal-dialog',
@@ -57,7 +59,9 @@ class Modals(object):
                     cls=ErrorModal)
     group_hierarchy_menu = WebItem('.group-actions.one-webui-popover',
                                    cls=GroupHierarchyMenu)
-    create_child_group = WebItem('.modal-dialog', cls=CreateChildGroup)
+    relation_menu = WebItem('.line-actions.one-webui-popover',
+                            cls=GroupHierarchyMenu)
+    create_group = WebItem('.modal-dialog', cls=CreateGroup)
 
     def __init__(self, driver):
         self.driver = driver
