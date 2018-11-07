@@ -27,7 +27,7 @@ Feature: Provider management in Onepanel
     And using <client1>, admin modifies provider "oneprovider-1" changing his name to "pro1" and domain to test domain in "oneprovider-1" Oneprovider panel service
     And using <client2>, user1 is idle for 8 seconds
     Then using <client2>, user1 sees provider named "pro1" with test hostname of provider "oneprovider-1" in "onezone" Onezone service
-#    And using <client1>, admin modifies provider named "pro1" changing his name and domain to match that of "oneprovider-1" provider in "oneprovider-1" Oneprovider panel service
+    And using <client1>, admin modifies provider named "pro1" changing his name and domain to match that of "oneprovider-1" provider in "oneprovider-1" Oneprovider panel service
 
 
   Scenario Outline: User deregisters provider and registers it again

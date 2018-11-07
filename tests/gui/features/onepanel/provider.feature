@@ -57,12 +57,12 @@ Feature: Provider management in Onepanel GUI
     And user of browser2 sees that hostname in displayed provider popup matches test hostname of provider "oneprovider-1"
 
     # restore provider details
-#    And user of browser1 clicks on Modify provider details button in provider page in Onepanel
-#    And user of browser1 types name of "oneprovider-1" provider to Provider name input box in modify provider details form in Provider panel
-#    And user of browser1 types hostname of "oneprovider-1" provider to Domain input box in modify provider details form in Provider panel
-#    And user of browser1 clicks on Modify provider details button in provider details form in Provider panel
-#    And user of browser1 sees an info notify with text matching to: .*[Pp]rovider.*data.*modified.*
-#    And user of browser1 is idle for 2 seconds
+    And user of browser1 clicks on Modify provider details button in provider page in Onepanel
+    And user of browser1 types name of "oneprovider-1" provider to Provider name input box in modify provider details form in Provider panel
+    And user of browser1 types hostname of "oneprovider-1" provider to Domain input box in modify provider details form in Provider panel
+    And user of browser1 clicks on Modify provider details button in provider details form in Provider panel
+    And user of browser1 sees an info notify with text matching to: .*[Pp]rovider.*data.*modified.*
+    And user of browser1 is idle for 2 seconds
 
 
   Scenario: User deregisters provider, registers it again and sees that provider is working
