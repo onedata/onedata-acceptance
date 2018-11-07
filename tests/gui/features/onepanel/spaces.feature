@@ -9,8 +9,11 @@ Feature: Basic spaces management utilities using onepanel
 
 
   Scenario: Support space
+    Given there are no spaces supported in Onepanel used by user of browser1
+    When user of browser2 refreshes site
+
     # create space
-    When user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
+    And user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
     And user of browser2 sees that there is no space named "helloworld" in expanded "DATA SPACE MANAGEMENT" Onezone panel
     And user of browser2 clicks on "Create new space" button in expanded "DATA SPACE MANAGEMENT" Onezone panel
     And user of browser2 types "helloworld" to space creation edit box in expanded "DATA SPACE MANAGEMENT" Onezone panel

@@ -52,6 +52,7 @@ from tests.gui.steps.oneprovider_common import *
 
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.onepanel.provider import *
+from tests.gui.meta_steps.onepanel.spaces import *
 
 from tests.mixed_swaggers.steps.onepanel_basic import *
 from tests.mixed_swaggers.steps.space_basic import *
