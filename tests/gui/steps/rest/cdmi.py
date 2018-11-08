@@ -4,7 +4,7 @@
 from pytest_bdd import parsers, then, when
 
 from tests.gui.conftest import WAIT_BACKEND
-from tests.gui.utils.generic import repeat_failed
+from tests.utils.utils import repeat_failed
 from tests.utils.acceptance_utils import wt
 
 __author__ = "Bartek Walkowicz"

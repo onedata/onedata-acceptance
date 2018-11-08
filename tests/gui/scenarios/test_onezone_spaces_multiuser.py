@@ -52,6 +52,8 @@ from tests.gui.steps.oneprovider.permissions import *
 
 from tests.gui.meta_steps.onezone.common import *
 
+from tests.utils.acceptance_utils import *
+
 
 @fixture(scope='module')
 def screens():

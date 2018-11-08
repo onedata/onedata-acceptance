@@ -14,7 +14,8 @@ from pytest_bdd import given, when, then, parsers
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 from selenium.webdriver.support.expected_conditions import staleness_of
 
-from tests.gui.utils.generic import parse_seq, repeat_failed, parse_url
+from tests.gui.utils.generic import parse_seq, parse_url
+from tests.utils.utils import repeat_failed
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.utils.acceptance_utils import wt
 

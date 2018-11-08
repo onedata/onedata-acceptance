@@ -9,6 +9,7 @@ __license__ = ("This software is released under the MIT license cited in "
 
 
 from pytest_bdd import parsers, when, then
+
 from tests.gui.steps.common import *
 
 @when(parsers.parse('user of {browser_id} clicks on the join button in "{panel}" Onezone panel'))

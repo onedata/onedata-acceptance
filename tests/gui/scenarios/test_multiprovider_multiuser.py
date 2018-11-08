@@ -49,6 +49,8 @@ from tests.gui.steps.oneprovider.spaces import *
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
 
+from tests.utils.acceptance_utils import *
+
 
 @pytest.fixture(scope='module')
 def screens():

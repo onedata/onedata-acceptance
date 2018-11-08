@@ -45,6 +45,8 @@ from tests.gui.steps.oneprovider.transfers import *
 from tests.gui.meta_steps.oneprovider.common import *
 from tests.gui.meta_steps.onezone.common import *
 
+from tests.utils.acceptance_utils import *
+
 
 @pytest.fixture(scope='module')
 def screens():
