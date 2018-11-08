@@ -7,6 +7,9 @@ Feature: Basic spaces management utilities using onepanel
 
 
   Scenario: Support space
+    Given there are no spaces supported in Onepanel used by user of browser1
+    When user of browser2 refreshes site
+
     # create space
     When user of browser2 clicks on Create space button in spaces sidebar
     And user of browser2 writes "helloworld" into space name text field

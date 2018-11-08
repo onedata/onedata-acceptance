@@ -57,7 +57,7 @@ from tests.gui.meta_steps.onezone.common import *
 
 from tests.mixed_swaggers.steps.onepanel_basic import *
 from tests.mixed_swaggers.steps.space_basic import *
-
+from tests.mixed_swaggers.utils.common import *
 
 scenarios('../features/onepanel/account_management.feature')
 scenarios('../features/onepanel/provider.feature')
