@@ -1,5 +1,14 @@
-from environment import docker
+"""This module contains utility functions for running commands in docker
+"""
+__author__ = "Jakub Kudzia"
+__copyright__ = "Copyright (C) 2016-2018 ACK CYFRONET AGH"
+__license__ = "This software is released under the MIT license cited in " \
+              "LICENSE.txt"
+
+
 import subprocess
+
+from environment import docker
 
 
 def run_cmd(username, client, cmd, detach=False, output=False, error=False):

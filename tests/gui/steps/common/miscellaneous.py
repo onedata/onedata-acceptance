@@ -9,7 +9,6 @@ __license__ = ("This software is released under the MIT license cited in "
 import time
 
 from pytest_bdd import given, when, then, parsers
-
 from selenium.webdriver.common.keys import Keys
 
 from tests.gui.utils.generic import transform
@@ -47,14 +46,6 @@ def type_item_into_active_element(selenium, browser_id, item_type,
 def press_enter_on_active_element(selenium, browser_id):
     driver = selenium[browser_id]
     driver.switch_to.active_element.send_keys(Keys.RETURN)
-
-
-@wt(parsers.re('user of (?P<browser_id>.+?) is idle for '
-               '(?P<seconds>\d*\.?\d+([eE][-+]?\d+)?) seconds'))
-@wt(parsers.re('user .* waits for (?P<seconds>\d*\.?\d+([eE][-+]?\d+)?) '
-               'seconds'))
-def wait_given_time(seconds):
-    time.sleep(float(seconds))
 
 
 @when(parsers.parse('user of {browser_id} should see that the page title '

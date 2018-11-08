@@ -11,7 +11,6 @@ __license__ = ("This software is released under the MIT license cited in "
 import re
 
 from pytest_bdd import when, then, parsers
-
 from selenium.common.exceptions import (NoSuchElementException,
                                         StaleElementReferenceException)
 from selenium.webdriver.support.expected_conditions import staleness_of

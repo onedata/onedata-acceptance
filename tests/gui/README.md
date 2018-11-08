@@ -43,8 +43,7 @@ Used parameters:
 # 2. Tests using existing Onedata installation
 
 
-Using this method, existing Onedata installation will be used. If there is no running Onedata installation it will be 
-set up automatically.
+Using this method, existing Onedata installation will be used.
 
 To start Onedata installation navigate to one_env directory and run
  ```

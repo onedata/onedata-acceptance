@@ -39,6 +39,15 @@ artifact_onezone:
 artifact_onedata:
 	$(call unpack, onedata)
 
+artifact_luma_docker_build:
+	$(call unpack, luma_docker_build)
+
+artifact_rest_cli_docker_build:
+	$(call unpack, rest_cli_docker_build)
+
+artifact_oneclient_docker_build:
+	$(call unpack, oneclient_docker_build)
+
 ##
 ## Submodules
 ##
@@ -60,38 +69,41 @@ RECORDING_OPTION   ?= failed
 BROWSER            ?= Chrome
 OZ_IMAGE           ?= ""
 OP_IMAGE           ?= ""
+OC_IMAGE           ?= ""
+REST_CLI_IMAGE     ?= ""
+LUMA_IMAGE         ?= ""
 TIMEOUT			   ?= 300
+LOCAL_CHARTS_PATH  ?= ""
 
-# TODO: image
-test_gui_packages_one_env:
-	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i docker.onedata.org/acceptance_gui:one_env_test --xvfb --xvfb-recording=${RECORDING_OPTION} -k=${KEYWORDS} --oz-image=${OZ_IMAGE} --op-image=${OP_IMAGE}  --reruns 1 --reruns-delay 10
+test_gui_pkg:
+	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i onedata/acceptance_gui:v5 --xvfb --xvfb-recording=${RECORDING_OPTION} \
+	-k=${KEYWORDS} --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} --reruns 1 --reruns-delay 10
 
-# TODO: image
-test_gui_sources_one_env:
-	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i docker.onedata.org/acceptance_gui:one_env_test --xvfb --xvfb-recording=${RECORDING_OPTION} --sources -k=${KEYWORDS} --oz-image=${OZ_IMAGE} --op-image=${OP_IMAGE}  --reruns 1 --reruns-delay 10
+test_gui_src:
+	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i onedata/acceptance_gui:v5 --xvfb --xvfb-recording=${RECORDING_OPTION} --sources \
+	 -k=${KEYWORDS} --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} --reruns 1 --reruns-delay 10
 
-test_mixed_packages_swaggers:
-	${TEST_RUN} -t tests/mixed_swaggers/scenarios/${SUITE}.py --test-type mixed_swaggers -vvv --driver=${BROWSER} -i docker.onedata.org/acceptance_gui:one_env_test --xvfb --xvfb-recording=${RECORDING_OPTION} --env-file=${ENV_FILE} -k=${KEYWORDS} --oz-image=${OZ_IMAGE} --op-image=${OP_IMAGE} --reruns 0 --reruns-delay 10
+test_mixed_pkg:
+	${TEST_RUN} -t tests/mixed/scenarios/${SUITE}.py --test-type mixed -vvv --driver=${BROWSER} -i onedata/acceptance_gui:v5 --xvfb --xvfb-recording=${RECORDING_OPTION} \
+	 --env-file=${ENV_FILE} -k=${KEYWORDS} --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} --reruns 0 --reruns-delay 10
 
-test_mixed_sources_swaggers:
-	${TEST_RUN} -t tests/mixed_swaggers/scenarios/${SUITE}.py --test-type mixed_swaggers -vvv --driver=${BROWSER} -i docker.onedata.org/acceptance_gui:one_env_test --xvfb --xvfb-recording=${RECORDING_OPTION} --env-file=${ENV_FILE} --sources -k=${KEYWORDS} --oz-image=${OZ_IMAGE} --op-image=${OP_IMAGE} --reruns 1 --reruns-delay 10
+test_mixed_src:
+	${TEST_RUN} -t tests/mixed/scenarios/${SUITE}.py --test-type mixed -vvv --driver=${BROWSER} -i onedata/acceptance_gui:v5 --xvfb --xvfb-recording=${RECORDING_OPTION} \
+	--env-file=${ENV_FILE} --sources -k=${KEYWORDS} --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} --reruns 1 --reruns-delay 10
 
-test_mixed_oneclient:
-	${TEST_RUN} -t tests/mixed_oneclient/scenarios/${SUITE}.py --test-type mixed_oneclient -vvv --driver=${BROWSER} -i docker.onedata.org/acceptance_gui:one_env_test --xvfb --xvfb-recording=${RECORDING_OPTION} --env-file=${ENV_FILE} -k=${KEYWORDS} --oz-image=${OZ_IMAGE} --op-image=${OP_IMAGE} --timeout ${TIMEOUT} --reruns 1 --reruns-delay 10
-
-# TODO: IMAGE
 test_oneclient_pkg:
-	${TEST_RUN} --test-type acceptance -vvv --test-dir tests/acceptance/scenarios/${SUITE}.py -i docker.onedata.org/worker:one_env_test -k=${KEYWORDS} --oz-image=${OZ_IMAGE} --op-image=${OP_IMAGE}
+	${TEST_RUN} --test-type oneclient -vvv --test-dir tests/oneclient/scenarios/${SUITE}.py -i onedata/acceptance_mixed:v5 -k=${KEYWORDS} \
+	 --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH}
 
 ##
 ## Build python REST clients generated from swaggers. (used in mixed tests)
 ##
 
 build_swaggers:
-	cd onezone_swagger && make python-client && cd generated/python && mv onezone_client ../../../tests/mixed_swaggers
-	cd onepanel_swagger && make python-client && cd generated/python && mv onepanel_client ../../../tests/mixed_swaggers
-	cd oneprovider_swagger && make python-client && cd generated/python && mv oneprovider_client ../../../tests/mixed_swaggers
-	cd cdmi_swagger && make python-client  && cd generated/python && mv cdmi_client ../../../tests/mixed_swaggers
+	cd onezone_swagger && make python-client && cd generated/python && mv onezone_client ../../../tests/mixed
+	cd onepanel_swagger && make python-client && cd generated/python && mv onepanel_client ../../../tests/mixed
+	cd oneprovider_swagger && make python-client && cd generated/python && mv oneprovider_client ../../../tests/mixed
+	cd cdmi_swagger && make python-client  && cd generated/python && mv cdmi_client ../../../tests/mixed
 
 
 ##
@@ -101,7 +113,7 @@ build_swaggers:
 clean: clean_swaggers
 
 clean_swaggers:
-	rm -rf tests/mixed_swaggers/onezone_client
-	rm -rf tests/mixed_swaggers/onepanel_client
-	rm -rf tests/mixed_swaggers/oneprovider_client
-	rm -rf tests/mixed_swaggers/cdmi_client
+	rm -rf tests/mixed/onezone_client
+	rm -rf tests/mixed/onepanel_client
+	rm -rf tests/mixed/oneprovider_client
+	rm -rf tests/mixed/cdmi_client

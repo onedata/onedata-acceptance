@@ -1,5 +1,4 @@
-"""This package contains modules with utility functions for acceptance, acceptance
-and performance tests.
+"""This package contains modules with utility functions for oneclient tests.
 """
 __author__ = "Jakub Kudzia"
 __copyright__ = "Copyright (C) 2016-2018 ACK CYFRONET AGH"

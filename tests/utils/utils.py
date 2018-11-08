@@ -1,7 +1,18 @@
+"""This module contains utility functions to be used in acceptance tests."""
+import logging
+import traceback
+
+__author__ = "Jakub Kudzia"
+__copyright__ = "Copyright (C) 2016-2018 ACK CYFRONET AGH"
+__license__ = "This software is released under the MIT license cited in " \
+              "LICENSE.txt"
+
+
 import traceback
 import logging
-from decorator import decorator
 from time import time, sleep
+
+from decorator import decorator
 
 
 def log_exception():

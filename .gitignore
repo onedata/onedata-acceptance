@@ -7,20 +7,19 @@ test-reports/*
 
 tests/.pytest_cache/
 tests/env_up/logs
-tests/acceptance/logs
+tests/oneclient/logs
 tests/performance/logs
 tests/gui/logs
 tests/gui/upload_files/large_file.txt
-tests/mixed_swaggers/logs
-tests/mixed_oneclient/logs
+tests/mixed/logs
 .cache
 tests/**/.cache
-tests/acceptance/profiling_data/
+tests/oneclient/profiling_data/
 tests/gui/tmp_files
-tests/mixed_swaggers/cdmi_client/
-tests/mixed_swaggers/onepanel_client/
-tests/mixed_swaggers/oneprovider_client/
-tests/mixed_swaggers/onezone_client/
+tests/mixed/cdmi_client/
+tests/mixed/onepanel_client/
+tests/mixed/oneprovider_client/
+tests/mixed/onezone_client/
 
 package
 pkg-list.json

@@ -13,9 +13,10 @@ import json
 from pytest_bdd import given, parsers
 
 from tests import OZ_REST_PORT, PANEL_REST_PORT, OP_REST_PORT
-from ..utils import (http_get, http_post, http_put, get_panel_rest_path, 
-                     get_zone_rest_path, get_provider_rest_path)
-from ..exceptions import HTTPNotFound, HTTPError, HTTPBadRequest
+from tests.utils.rest_utils import (http_get, http_post, http_put,
+                                    get_panel_rest_path, get_zone_rest_path,
+                                    get_provider_rest_path)
+from tests.utils.http_exceptions import HTTPNotFound, HTTPError, HTTPBadRequest
 from tests.utils.utils import repeat_failed
 
 

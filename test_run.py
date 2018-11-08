@@ -7,71 +7,72 @@ All paths used are relative to script's path, not to the running user's CWD.
 Run the script with -h flag to learn about script's running options.
 """
 
-import argparse
+import re
 import os
-import platform
 import sys
-from subprocess import *
 import json
-
 import glob
+import platform
+import argparse
+from subprocess import *
 import xml.etree.ElementTree as ElementTree
+
+from one_env.scripts import user_config
 from one_env.scripts.console import info
-from tests.test_type import map_test_type_to_logdir
-from environment import docker, dockers_config
+from bamboos.docker.environment import docker
 from one_env.scripts.update_etc_hosts import update_etc_hosts
 
 
 ZONE_IMAGES_CFG_PATH = 'onezone_images/docker-dev-build-list.json'
 PROVIDER_IMAGES_CFG_PATH = 'oneprovider_images/docker-dev-build-list.json'
+CLIENT_IMAGES_CFG_PATH = 'oneclient_images/oc-docker-dev-build-list.json'
+LUMA_IMAGES_CFG_PATH = 'luma_images/luma-docker-build-report.json'
+REST_CLI_IMAGES_CFG_PATH = 'rest_cli_images/rest-cli-docker-build-report.json'
 
 
-def skipped_test_exists(junit_report_path):
+def load_test_report(junit_report_path):
     reports = glob.glob(junit_report_path)
     # if there are many reports, check only the last one
     if reports:
         reports.sort()
         tree = ElementTree.parse(reports[-1])
         testsuite = tree.getroot()
-        if testsuite.attrib['skips'] != '0':
-            return True
+        return testsuite
+
+
+def skipped_test_exists(testsuite):
+    if testsuite.attrib['skips'] != '0':
+        return True
     return False
 
 
-def parse_image_for_service(file_path, ):
+def env_errors_exists(testsuite):
+    testcases = testsuite.findall('testcase')
+
+    for testcase in testcases:
+        skipped = testcase.find('skipped')
+        if skipped is not None:
+            if re.match('.*environment error.*', skipped.attrib['message'],
+                        re.I):
+                return True
+    return False
+
+
+def parse_image_for_service(file_path):
     try:
         with open(file_path, 'r') as images_cfg_file:
             images = json.load(images_cfg_file)
-            image = images.get('git-branch')
+            image = images.get('git-commit')
             return image
     except FileNotFoundError:
         return None
-
-
-def parse_images():
-    if args.oz_image:
-        oz_image = args.oz_image
-    else:
-        oz_image = parse_image_for_service(ZONE_IMAGES_CFG_PATH)
-
-    if args.op_image:
-        op_image = args.op_image
-    else:
-        op_image = parse_image_for_service(PROVIDER_IMAGES_CFG_PATH)
-
-    if oz_image:
-        info('Using onezone image: {}'.format(oz_image))
-    if op_image:
-        info('Using oneprovider image: {}'.format(op_image))
-
-    return oz_image, op_image
 
 
 def clean_env():
     docker.run(tty=True,
                rm=True,
                interactive=True,
-               name='test-runner',
+               name='onenv-clean',
                workdir=os.path.join(script_dir, 'one_env'),
                reflect=reflect,
                volumes=[(os.path.join(os.path.expanduser('~'),
@@ -97,7 +98,7 @@ parser.add_argument(
 parser.add_argument(
     '--test-dir', '-t',
     action='store',
-    default='tests/acceptance',
+    default='tests/oneclient',
     help='Test dir to run.',
     dest='test_dir')
 
@@ -111,8 +112,8 @@ parser.add_argument(
 parser.add_argument(
     '--test-type', '-tt',
     action='store',
-    default='acceptance',
-    help='Type of test (acceptance, env_up, performance, packaging, gui)',
+    default='oneclient',
+    help='Type of test (oneclient, env_up, performance, packaging, gui)',
     dest='test_type')
 
 parser.add_argument(
@@ -137,13 +138,36 @@ parser.add_argument(
     '--oz-image', '-zi',
     action='store',
     help='Onezone image to use in tests',
+    default=parse_image_for_service(ZONE_IMAGES_CFG_PATH),
     dest='oz_image')
 
 parser.add_argument(
     '--op-image', '-pi',
     action='store',
     help='Oneprovider image to use in tests',
+    default=parse_image_for_service(PROVIDER_IMAGES_CFG_PATH),
     dest='op_image')
+
+parser.add_argument(
+    '--oc-image', '-ci',
+    action='store',
+    help='Oneclient image to use in tests',
+    default=parse_image_for_service(CLIENT_IMAGES_CFG_PATH),
+    dest='oc_image')
+
+parser.add_argument(
+    '--rest-cli-image', '-ri',
+    action='store',
+    help='Rest cli image to use in tests',
+    default=parse_image_for_service(REST_CLI_IMAGES_CFG_PATH),
+    dest='rest_cli_image')
+
+parser.add_argument(
+    '--luma-image', '-li',
+    action='store',
+    help='Luma image to use in tests',
+    default=parse_image_for_service(LUMA_IMAGES_CFG_PATH),
+    dest='luma_image')
 
 parser.add_argument(
     '--update-etc-hosts', '-uh',
@@ -178,23 +202,35 @@ parser.add_argument(
     help='Onenv wait timeout',
     dest='timeout')
 
+parser.add_argument(
+    '--privileged',
+    action='store_true',
+    help='Specifies if kubernetes pod should be run in privileged mode. '
+         'This option is useful when using minikube with hypervisor.')
+
 [args, pass_args] = parser.parse_known_args()
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
 command = '''
-import os, subprocess, sys, stat
+import os, subprocess, sys, stat, shutil
 
 {additional_code}
 
 if {shed_privileges}:
+    kube_path = '/tmp/.kube'
+    if not os.path.exists(kube_path):
+        os.makedirs(kube_path)
+    shutil.copyfile(os.path.join('{home}', '.kube/config'), 
+                    os.path.join(kube_path, 'config'))
     os.environ['HOME'] = '/tmp'
     docker_gid = os.stat('/var/run/docker.sock').st_gid
     os.chmod('/etc/resolv.conf', 0o666)
     os.chmod('/etc/hosts', 0o666)
     os.setgroups([docker_gid])
-    os.setregid({gid}, {gid})
-    os.setreuid({uid}, {uid})
+    if not {privileged}:
+        os.setregid({gid}, {gid})
+        os.setreuid({uid}, {uid})
 
 command = ['python'] + ['-m'] + ['py.test'] + ['--test-type={test_type}'] + ['{test_dir}'] + {args} + {env_file} + {local_charts_path} + {no_clean} + {timeout} + ['--oz-image={oz_image}'] + ['--op-image={op_image}'] + ['--junitxml={report_path}'] + ['--add-test-domain']  
 ret = subprocess.call(command)
@@ -202,7 +238,21 @@ sys.exit(ret)
 '''
 
 
-oz_image, op_image = parse_images()
+oz_image, op_image, rest_cli_image = (args.oz_image, args.op_image,
+                                      args.rest_cli_image)
+if oz_image:
+    info('Using onezone image: {}'.format(oz_image))
+if op_image:
+    info('Using oneprovider image: {}'.format(op_image))
+if rest_cli_image:
+    info('Using rest cli image: {}'.format(rest_cli_image))
+
+if args.test_type in ['oneclient', 'mixed']:
+    oc_image, luma_image = args.oc_image, args.luma_image
+    if oc_image:
+        info('Using oneclient image: {}'.format(oc_image))
+    if luma_image:
+        info('Using luma image: {}'.format(luma_image))
 
 if args.update_etc_hosts:
     update_etc_hosts()
@@ -215,7 +265,7 @@ if args.local:
     ret = call(cmd, stdin=None, stderr=None, stdout=None)
 
 else:
-    if args.test_type in ['gui', 'mixed_swaggers']:
+    if args.test_type in ['gui', 'mixed']:
         additional_code = '''
 with open('/etc/sudoers.d/all', 'w+') as file:
     file.write("""
@@ -242,7 +292,9 @@ ALL       ALL = (ALL) NOPASSWD: ALL
                              timeout=['--timeout={}'.format(args.timeout)]
                              if args.timeout else [],
                              oz_image=oz_image if oz_image else '',
-                             op_image=op_image if op_image else '')
+                             op_image=op_image if op_image else '',
+                             home=user_config.host_home(),
+                             privileged=args.privileged)
     kube_config_path = os.path.expanduser(args.kube_config_path)
     minikube_config_path = os.path.expanduser(args.minikube_config_path)
     run_params = ['--shm-size=128m']
@@ -250,29 +302,148 @@ ALL       ALL = (ALL) NOPASSWD: ALL
                ('/var/run/docker.sock', 'rw'),
                ((os.path.join(os.path.expanduser('~'), '.minikube')), 'ro')]
 
+    test_runner_pod = '''
+{{
+    "apiVersion": "v1",
+    "spec": {{
+        "securityContext": {{
+            "privileged": {privileged}
+        }},
+        "containers": [
+            {{
+                "name": "test-runner",
+                "image": "{image}",
+                "stdin": true,
+                "imagePullPolicy": "IfNotPresent",
+                "workingDir": "{script_dir}",
+                "command" : [
+                    "python"
+                ],
+                "args": [
+                    "-c",
+                    "{command}"
+                ],
+                "volumeMounts": [
+                {{
+                    "mountPath": "{script_dir}",
+                    "name": "script-dir"
+                }},
+                {{
+                    "mountPath": "/var/run/docker.sock",
+                    "name": "docker-sock"
+                }},
+                {{
+                    "mountPath": "/dev/shm",
+                    "name": "shm"
+                }},
+                {{
+                    "mountPath": "/etc/passwd",
+                    "name": "etc-passwd",
+                    "readOnly": true
+                }},
+                {{
+                    "mountPath": "{home}/.kube/config",
+                    "name": "kube-conf",
+                    "readOnly": true
+                }},                
+                {{
+                    "mountPath": "{home}/.minikube",
+                    "name": "minikube-conf",
+                    "readOnly": true
+                }},                
+                {{
+                    "mountPath": "/tmp/.one-env",
+                    "name": "one-env-data"
+                }}
+                ]
+            }}
+        ],
+        "volumes": [
+        {{
+            "name": "script-dir",
+            "hostPath": {{
+                "path": "{minikube_script_dir}"
+            }}
+        }},
+        {{
+            "name": "docker-sock",
+            "hostPath": {{
+                "path": "/var/run/docker.sock"
+            }}
+        }},
+        {{
+            "name": "shm",
+            "hostPath": {{
+                "path": "/dev/shm"
+            }}
+        }},
+        {{
+            "name": "etc-passwd",
+            "hostPath": {{
+                "path": "/etc/passwd"
+            }}
+        }},
+        {{
+            "name": "kube-conf",
+            "hostPath": {{
+                "path": "{minikube_home}/.kube/config"
+            }}
+        }},       
+        {{
+            "name": "minikube-conf",
+            "hostPath": {{
+                "path": "{minikube_home}/.minikube"
+            }}
+        }},       
+        {{
+            "name": "one-env-data",
+            "hostPath": {{
+                "path": "{minikube_home}/.one-env"
+            }}
+        }}
+        ]
+    }}
+}}
+'''
+    command = command.replace('\n', r'\n').replace('\"', '\'')
+    try:
+        kube_host_home_dir = user_config.get('kubeHostHomeDir')
+    except FileNotFoundError:
+        kube_host_home_dir = os.path.expanduser('~')
+
+    minikube_script_dir = script_dir.replace(user_config.host_home(),
+                                             kube_host_home_dir)
+    privileged = 'true' if args.privileged else 'false'
+    test_runner_pod = test_runner_pod.format(command=command,
+                                             script_dir=script_dir,
+                                             minikube_script_dir=minikube_script_dir,
+                                             image=args.image,
+                                             home=os.path.expanduser('~'),
+                                             minikube_home=kube_host_home_dir,
+                                             privileged=privileged)
+
+    cmd = ['kubectl', 'run', '-i', '--rm', '--restart=Never',
+           'test-runner', '--overrides={}'.format(test_runner_pod),
+           '--image={}'.format(args.image), '--', 'python', '-c',
+           '"{}"'.format(command)]
+
     if args.clean:
         clean_env()
 
-    ret = docker.run(tty=True,
-                     rm=True,
-                     interactive=True,
-                     name='test-runner',
-                     workdir=script_dir,
-                     reflect=reflect,
-                     volumes=[(os.path.join(os.path.expanduser('~'),
-                                            '.docker'), '/tmp/.docker', 'rw'),
-                              (kube_config_path, '/tmp/.kube/config', 'rw'),
-                              (minikube_config_path, '/tmp/.minikube/config', 'rw'),
-                              (os.path.join(os.path.expanduser('~'),
-                                            '.one-env'), '/tmp/.one-env', 'rw')],
-                     image=args.image,
-                     command=['python', '-c', command],
-                     run_params=run_params)
+    ret = call(cmd, stdin=None, stderr=None, stdout=None)
 
     if args.clean:
         clean_env()
 
-if ret != 0 and not skipped_test_exists(args.report_path):
+    delete_test_runner_cmd = ['kubectl', 'delete', 'pod', 'test-runner']
+    call(delete_test_runner_cmd, stdin=None, stderr=None, stdout=None)
+
+report = load_test_report(args.report_path)
+
+if ret != 0 and not skipped_test_exists(report):
     ret = 0
+
+if env_errors_exists(report):
+    ret = 1
 
 sys.exit(ret)

@@ -7,15 +7,13 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 import time
-
-import six
 import inspect
+import six
 import subprocess
-import json
-import re
-from pytest_bdd import when, then, parsers
 from functools import wraps
 from types import CodeType
+
+from pytest_bdd import when, then, parsers
 
 
 def list_parser(list):
@@ -73,27 +71,14 @@ def execute_command(cmd, error=None, should_fail=False):
     return output
 
 
-# TODO use onenv functions after change to python3
-def get_pod_names_matching_regexp(regexp):
-    cmd = ['kubectl', 'get', 'pods'] + \
-          ['-o', 'json', '--field-selector=status.phase==Running']
-    raw_json = execute_command(cmd, error='Error when listing pods')
-    parsed_json = json.loads(raw_json)
-    pods_names = [pod['metadata']['name'] for pod in parsed_json['items']]
-    return [name for name in pods_names if re.search(regexp, name)]
-
-
-def get_pod_ip(pod_name):
-    cmd = ['kubectl', 'get'] + ['pod', pod_name, '-o', 'json']
-    raw_json = execute_command(cmd)
-    parsed_json = json.loads(raw_json)
-    return parsed_json['status']['podIP']
-
-
-@wt(parsers.parse('{user} waits {seconds} second'))
-@wt(parsers.parse('{user} waits {seconds} seconds'))
-def user_wait_default(user, seconds):
-    time.sleep(int(seconds))
+@wt(parsers.re('user of (?P<browser_id>.+?) is idle for '
+               '(?P<seconds>\d*\.?\d+([eE][-+]?\d+)?) seconds'))
+@wt(parsers.re('user .* waits for (?P<seconds>\d*\.?\d+([eE][-+]?\d+)?) '
+               'seconds'))
+@wt(parsers.re('(?P<user>.+?) waits (?P<seconds>\d*\.?\d+([eE][-+]?\d+)?) '
+               'seconds?'))
+def wait_given_time(seconds):
+    time.sleep(float(seconds))
 
 
 @wt(parsers.parse('last operation by {user} succeeds'))

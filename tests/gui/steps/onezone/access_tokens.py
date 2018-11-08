@@ -8,13 +8,13 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 
+import time
+
 from pytest_bdd import given, when, then, parsers
 
 from tests.gui.conftest import WAIT_BACKEND, SELENIUM_IMPLICIT_WAIT
 from tests.gui.utils.generic import implicit_wait
 from tests.utils.utils import repeat_failed
-
-import time
 
 
 def _click_on_btn_for_token(driver, oz_page, ordinal, btn):

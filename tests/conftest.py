@@ -1,5 +1,5 @@
 """
-Definitions of fixtures used in env_up, acceptance and performance tests.
+Definitions of fixtures used in acceptance tests.
 """
 __author__ = "Jakub Kudzia, Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2016-2018 ACK CYFRONET AGH"
@@ -7,31 +7,29 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 
-import yaml
-import pytest
+import os
+import re
 import subprocess as sp
 
+import yaml
+import pytest
+
 from environment import docker
-from tests.utils.path_utils import (get_file_name, absolute_path_to_env_file)
-from tests.test_type import *
+from tests.utils.path_utils import (get_file_name, absolute_path_to_env_file,
+                                    make_logdir)
 from tests.utils.user_utils import User
-from tests.utils.onenv_utils import (run_onenv_command, create_groups,
-                                     create_users, init_helm,
-                                     client_alias_to_pod_mapping)
-
-
-def service_name_to_alias_mapping(name):
-    return [val for key, val in
-            {'oneprovider-krakow': 'oneprovider-1',
-             'oneprovider-paris': 'oneprovider-2',
-             'oneprovider-lisbon': 'oneprovider-3',
-             'onezone': 'onezone'}.items() if key.lower() in name][0]
+from tests.utils.onenv_utils import (run_onenv_command, init_helm,
+                                     client_alias_to_pod_mapping,
+                                     service_name_to_alias_mapping,
+                                     deployment_data_path)
+from tests import (CONFIG_FILES, PANEL_REST_PORT, ENV_DIRS, SCENARIO_DIRS,
+                   LANDSCAPE_DIRS, LOGDIRS)
 
 
 def pytest_addoption(parser):
-    parser.addoption('--test-type', action='store', default='acceptance',
-                     help='type of test (acceptance, env_up,'
-                          'performance, packaging, gui)')
+    parser.addoption('--test-type', action='store', default='oneclient',
+                     help='type of test (oneclient, env_up, '
+                          'packaging, gui)')
 
     parser.addoption('--ignore-xfail', action='store_true',
                      help='Ignores xfail mark')
@@ -42,6 +40,12 @@ def pytest_addoption(parser):
                                                         'to use in tests')
     parser.addoption('--op-image', action='store', help='oneprovider image'
                                                         'to use in tests')
+    parser.addoption('--oc-image', action='store', help='oneclient image'
+                                                        'to use in tests')
+    parser.addoption('--luma-image', action='store', help='luma image'
+                                                          'to use in tests')
+    parser.addoption('--rest-cli-image', action='store',
+                     help='rest cli image to use in tests')
     parser.addoption('--sources', action='store_true',
                      help='If present run environment using sources')
 
@@ -66,7 +70,7 @@ def pytest_generate_tests(metafunc):
     if metafunc.config.option.test_type:
         test_type = metafunc.config.option.test_type
 
-        if test_type in ['gui', 'mixed_swaggers']:
+        if test_type in ['gui', 'mixed']:
             env_file = metafunc.config.getoption('env_file')
             if env_file:
                 metafunc.parametrize('env_description_file', [env_file],
@@ -75,13 +79,13 @@ def pytest_generate_tests(metafunc):
                 metafunc.parametrize('env_description_file',
                                      ['1oz_1op_deployed'], scope='session')
 
-        if test_type in ['acceptance', 'performance']:
+        if test_type == 'oneclient':
             env_file = metafunc.config.getoption('env_file')
             if env_file:
                 metafunc.parametrize('env_description_file', [env_file],
                                      scope='module')
             else:
-                with open(map_test_type_to_test_config_file(test_type), 'r') as f:
+                with open(CONFIG_FILES.get(test_type), 'r') as f:
                     test_config = yaml.load(f)
 
                 test_file = metafunc.module.__name__.split('.')[-1]
@@ -140,17 +144,31 @@ def add_etc_hosts_entries(service_ip, service_host):
         service_ip, service_host), shell=True)
 
 
-def configure_os(service_conf, pod_name, os_configs):
-    os_conf_name = service_conf.get('os-config')
-    if os_conf_name:
-        os_config = os_configs.get(os_conf_name)
-        create_users(pod_name, os_config.get('users'))
-        create_groups(pod_name, os_config.get('groups'))
+def set_debug(container_id, service_name, service_type, sources_data=None):
+    if sources_data:
+        set_debug_fmt = (r'echo {{\"debug\": true}} > '
+                         r'{}')
+        app_cfg_fmt = '_build/default/rel/{}/data/gui_static/app-config.json'
+        worker_name = ('op-worker' if 'provider' in service_type else
+                       'oz-worker')
+        app_cfg_path = app_cfg_fmt.format(worker_name.replace('-', '_'))
+        for pod_name, pod_cfg in sources_data.items():
+            if service_name in pod_name:
+                worker_path = pod_cfg.get(worker_name)
+                set_debug_cmd = set_debug_fmt.format(os.path.join(worker_path,
+                                                                  app_cfg_path))
+                docker.exec_(container_id, set_debug_cmd)
+
+    else:
+        set_debug_fmt = (r'echo {{\"debug\": true}} > '
+                         r'/var/lib/{}_worker/gui_static/app-config.json')
+        set_debug_cmd = set_debug_fmt.format('op' if 'provider' in
+                                                     service_type else 'oz')
+        docker.exec_(container_id, set_debug_cmd)
 
 
-def parse_oz_op_cfg(pod_name, pod_cfg, service_type, add_test_domain, hosts):
-    set_debug_cmd = r'echo {{\"debug\": true}} > ' \
-                    r'/var/lib/{}_worker/gui_static/app-config.json'
+def parse_oz_op_cfg(pod_name, pod_cfg, service_type, add_test_domain, hosts,
+                    sources_data):
     alias = service_name_to_alias_mapping(pod_name)
     name, hostname, ip, container_id = (pod_cfg.get('name'),
                                         pod_cfg.get('domain'),
@@ -165,12 +183,9 @@ def parse_oz_op_cfg(pod_name, pod_cfg, service_type, add_test_domain, hosts):
                         {'hostname': '{}:{}'.format(hostname,
                                                     PANEL_REST_PORT)}
                     }
-    if service_type == 'onezone':
-        docker.exec_(container_id, set_debug_cmd.format('oz'))
-    else:
-        if add_test_domain:
-            add_etc_hosts_entries(ip, '{}.test'.format(hostname))
-        docker.exec_(container_id, set_debug_cmd.format('op'))
+    set_debug(container_id, name, service_type, sources_data)
+    if add_test_domain and service_type == 'oneprovider':
+        add_etc_hosts_entries(ip, '{}.test'.format(hostname))
 
 
 def parse_client_cfg(pod_name, pod_cfg, hosts):
@@ -185,12 +200,19 @@ def parse_client_cfg(pod_name, pod_cfg, hosts):
 
 
 def parse_hosts_cfg(pods_cfg, hosts, request):
+    sources_data = {}
+    data_path = deployment_data_path()
+    if os.path.isfile(data_path):
+        with open(data_path, 'r') as deployment_data_file:
+            deployment_data = yaml.load(deployment_data_file)
+            sources_data = deployment_data.get('sources')
+
     for pod_name, pod_cfg in pods_cfg.items():
         service_type = pod_cfg['service-type']
         if service_type in ['onezone', 'oneprovider']:
             parse_oz_op_cfg(pod_name, pod_cfg, service_type,
                             request.config.getoption('--add-test-domain'),
-                            hosts)
+                            hosts, sources_data)
 
         elif service_type == 'oneclient':
             parse_client_cfg(pod_name, pod_cfg, hosts)
@@ -210,7 +232,7 @@ def parse_users_cfg(patch_path, users, hosts):
 
 @pytest.fixture(scope='module', autouse=True)
 def env_description_abs_path(request, env_description_file):
-    env_dir = map_test_type_to_env_dir(get_test_type(request))
+    env_dir = ENV_DIRS.get(get_test_type(request))
     absolute_path = absolute_path_to_env_file(env_dir, env_description_file)
     return absolute_path
 
@@ -222,29 +244,29 @@ def env_desc(env_description_abs_path, hosts, request, users):
     """
     test_type = get_test_type(request)
 
-    if test_type in ['gui', 'mixed_swaggers']:
+    if test_type in ['gui', 'mixed']:
         # For now gui tests do not use onenv patch
-        start_environment(env_description_abs_path, request, hosts,
-                          {}, '', users)
+        start_environment(env_description_abs_path, request, hosts, '',
+                          users, env_description_abs_path)
         return ''
 
-    if test_type in ['acceptance', 'performance']:
+    if test_type == 'oneclient':
         with open(env_description_abs_path, 'r') as env_desc_file:
             env_desc = yaml.load(env_desc_file)
 
             scenario = env_desc.get('scenario')
-            scenarios_dir_path = map_test_type_to_scenario_dir(
+            scenarios_dir_path = SCENARIO_DIRS.get(
                 get_test_type(request))
             scenario_path = os.path.abspath(
                 os.path.join(scenarios_dir_path, scenario))
 
             patch = env_desc.get('patch')
-            patch_dir_path = map_test_type_to_landscape_dir(
+            patch_dir_path = LANDSCAPE_DIRS.get(
                 get_test_type(request))
             patch_path = os.path.join(patch_dir_path, patch)
 
-            start_environment(scenario_path, request, hosts, env_desc,
-                              patch_path, users)
+            start_environment(scenario_path, request, hosts, patch_path, users,
+                              env_description_abs_path)
         return env_desc
 
 
@@ -253,17 +275,29 @@ def parse_up_args(request, scenario_path):
 
     oz_image = request.config.getoption('--oz-image')
     op_image = request.config.getoption('--op-image')
+    oc_image = request.config.getoption('--oc-image')
+    luma_image = request.config.getoption('--luma-image')
+    rest_cli_image = request.config.getoption('--rest-cli-image')
     sources = request.config.getoption('--sources')
+    timeout = request.config.getoption('--timeout')
     local_charts_path = request.config.getoption('--local-charts-path')
 
     if oz_image:
         up_args.extend(['-zi', oz_image])
     if op_image:
         up_args.extend(['-pi', op_image])
+    if oc_image:
+        up_args.extend(['-ci', oc_image])
+    if luma_image:
+        up_args.extend(['-li', luma_image])
+    if rest_cli_image:
+        up_args.extend(['-ri', rest_cli_image])
     if sources:
         up_args.append('-s')
     if local_charts_path:
         up_args.extend(['-lcp', local_charts_path])
+    if timeout:
+        up_args.extend(['--timeout', timeout])
 
     up_args.extend(['{}'.format(scenario_path)])
     return up_args
@@ -280,23 +314,35 @@ def parse_patch_args(request, patch_path):
     return patch_args
 
 
-def start_environment(scenario_path, request, hosts, env_desc, patch_path,
-                      users):
+def parse_wait_args(request):
+    wait_args = []
+
+    timeout = request.config.getoption('--timeout')
+    if timeout:
+        wait_args.extend(['--timeout', timeout])
+    return wait_args
+
+
+def start_environment(scenario_path, request, hosts, patch_path,
+                      users, env_description_abs_path):
     init_helm()
     clean = False if request.config.getoption('--no-clean') else True
 
     if clean:
         up_args = parse_up_args(request, scenario_path)
-        run_onenv_command('up', up_args)
-        run_onenv_command('wait')
+        _, ret = run_onenv_command('up', up_args)
+        if ret != 0:
+            handle_env_init_error(request, env_description_abs_path, 'up')
 
-    status_output = run_onenv_command('status')
+        wait_args = parse_wait_args(request)
+        run_onenv_command('wait', wait_args)
+
+    status_output, _ = run_onenv_command('status')
     status_output = yaml.load(status_output.decode('utf-8'))
 
     env_ready = status_output.get('ready')
     if not env_ready:
-        run_onenv_command('clean')
-        exit(1)
+        handle_env_init_error(request, env_description_abs_path, 'status')
 
     pods_cfg = status_output['pods']
     parse_hosts_cfg(pods_cfg, hosts, request)
@@ -307,14 +353,47 @@ def start_environment(scenario_path, request, hosts, env_desc, patch_path,
         run_onenv_command('patch', patch_args)
         run_onenv_command('wait')
 
+    if patch_path:
         parse_users_cfg(patch_path, users, hosts)
 
     test_type = get_test_type(request)
-    if test_type in ['acceptance', 'performance'] and clean:
+    if test_type == 'oneclient' and clean:
         def fin():
             run_onenv_command('clean')
 
         request.addfinalizer(fin)
+
+
+def handle_env_init_error(request, env_description_abs_path, command):
+    export_logs(request, env_description_abs_path)
+    run_onenv_command('clean')
+    pytest.skip('Environment error: Onenv command {} failed'.format(command))
+
+
+def get_test_type(request):
+    return request.config.getoption('test_type')
+
+
+def extract_timestamp(filename):
+    s = re.findall('\d+\.\d+$', filename)
+    return float(s[0]) if s else -1
+
+
+def export_logs(request, env_description_abs_path=None):
+    test_type = get_test_type(request)
+    logdir_path = LOGDIRS.get(test_type)
+
+    if test_type == 'oneclient':
+        feature_name = request.module.__name__.split('.')[-1]
+        test_path = os.path.join(get_file_name(env_description_abs_path),
+                                 feature_name)
+        logdir_path = make_logdir(logdir_path, test_path)
+    else:
+        timestamped_logdirs = os.listdir(logdir_path)
+        latest_logdir = max(timestamped_logdirs, key=extract_timestamp)
+        logdir_path = os.path.join(logdir_path, latest_logdir)
+
+    run_onenv_command('export', [logdir_path])
 
 
 @pytest.fixture()

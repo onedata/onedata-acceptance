@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 import os
+
 from tests.utils.acceptance_utils import execute_command
 from tests.utils.utils import repeat_failed
 

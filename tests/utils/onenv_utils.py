@@ -1,6 +1,5 @@
 """This file contains utility functions for operation using onenv tool."""
 
-
 __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
@@ -8,10 +7,12 @@ __license__ = "This software is released under the MIT license cited in " \
 
 
 import os
-import yaml
 import re
 import sys
+import collections
 import subprocess as sp
+
+import yaml
 import urllib3
 from kubernetes import client, config
 
@@ -20,7 +21,7 @@ from kubernetes import client, config
 # one-env submodule
 
 def client_alias_to_pod_mapping():
-    prov_clients_mapping = {}
+    prov_clients_mapping = collections.defaultdict(list)
     client_alias_mapping = {}
     pods_list = list_pods()
     clients_pods = [pod for pod in pods_list
@@ -28,10 +29,7 @@ def client_alias_to_pod_mapping():
     for client_pod in clients_pods:
         provider = get_client_provider_host(client_pod)
         provider_alias = service_name_to_alias_mapping(provider)
-        if provider_alias in prov_clients_mapping:
-            prov_clients_mapping[provider_alias].append(client_pod)
-        else:
-            prov_clients_mapping[provider_alias] = [client_pod]
+        prov_clients_mapping[provider_alias].append(client_pod)
 
     i = 1
     for prov_alias in sorted(list(prov_clients_mapping.keys())):
@@ -100,58 +98,7 @@ def run_onenv_command(command, args=None):
     sys.stdout.write(output.decode('utf-8'))
     sys.stderr.write(err.decode('utf-8'))
 
-    return output
-
-
-def create_users(pod_name, users):
-    """Creates system users on pod specified by 'pod'."""
-
-    def _user_exists(user, pod_name):
-        command = ['id', '-u', user]
-        ret = sp.call(cmd_exec(pod_name, command))
-
-        if ret == 1:
-            return False
-        elif ret == 0:
-            return True
-
-    for user in users:
-        user_exists = _user_exists(user, pod_name)
-
-        if user_exists:
-            print('Skipping creation of user {} - user already exists in {}.'
-                  .format(user, pod_name))
-        else:
-            uid = str(hash(user) % 50000 + 10000)
-            command = ['adduser', '--disabled-password', '--gecos', '""',
-                       '--uid', uid, user]
-            assert 0 is sp.call(cmd_exec(pod_name, command))
-
-
-def create_groups(pod_name, groups):
-    """Creates system groups on docker specified by 'container'."""
-
-    def _group_exists(group, pod_name):
-        command = ['grep', '-q', group, '/etc/group']
-        ret = sp.call(cmd_exec(pod_name, command))
-
-        if ret == 1:
-            return False
-        elif ret == 0:
-            return True
-
-    for group in groups:
-        group_exists = _group_exists(group, pod_name)
-        if group_exists:
-            print('Skipping creation of group {} - group already exists in {}.'
-                  .format(group, pod_name))
-        else:
-            gid = str(hash(group) % 50000 + 10000)
-            command = ['groupadd', '-g', gid, group]
-            assert 0 is sp.call(cmd_exec(pod_name, command))
-        for user in groups[group]:
-            command = ['usermod', '-a', '-G', group, user]
-            assert 0 is sp.call(cmd_exec(pod_name, command))
+    return output, proc.returncode
 
 
 def get_kube_client():
@@ -178,6 +125,10 @@ def cmd_exec(pod, command):
 
 def get_name(component):
     return component.metadata.name
+
+
+def get_ip(pod):
+    return pod.status.pod_ip
 
 
 def is_pod(pod):
@@ -221,3 +172,21 @@ def one_env_directory():
 
 def host_home():
     return os.path.expanduser('~')
+
+
+def deployments_directory():
+    return os.path.join(one_env_directory(), 'deployments')
+
+
+def current_deployment_dir():
+    all_deployments = os.listdir(deployments_directory())
+    all_deployments.sort()
+    if len(all_deployments) == 0:
+        print 'There are no deployments'
+        sys.exit(1)
+    else:
+        return os.path.join(deployments_directory(), all_deployments[-1])
+
+
+def deployment_data_path():
+    return os.path.join(current_deployment_dir(), 'deployment_data.yml')

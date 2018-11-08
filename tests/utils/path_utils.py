@@ -102,4 +102,4 @@ def absolute_path_to_env_file(dir, file):
 
 def escape_path(path):
     """Returns path with escaped space and apostrophe"""
-    return path.replace('\'', '\\\'').replace(' ', '\ ')
+    return path.replace("'", "\\'").replace(' ', '\ ')

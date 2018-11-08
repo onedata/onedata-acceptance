@@ -12,9 +12,9 @@ import time
 import subprocess
 import os.path
 
-from tests.gui.utils.generic import parse_seq, suppress
-
 from pytest_bdd import given, when, then, parsers
+
+from tests.gui.utils.generic import parse_seq, suppress
 
 
 PROVIDER_CONTAINER_NAME = 'oneprovider-1'

@@ -9,8 +9,10 @@ __license__ = "This software is released under the MIT license cited in " \
 import re
 import random
 import string
+
 import pytest
 from pytest_bdd import parsers, when, then
+
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed

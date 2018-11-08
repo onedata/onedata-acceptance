@@ -6,10 +6,11 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 
-from tests.utils.utils import repeat_failed
-from tests.utils.net_utils import (http_post, get_zone_rest_path)
-
 import json
+
+from tests import OZ_REST_PORT
+from tests.utils.utils import repeat_failed
+from tests.utils.rest_utils import (http_post, get_zone_rest_path)
 
 
 class User:

@@ -50,6 +50,8 @@ from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
 
+from tests.utils.acceptance_utils import *
+
 
 @pytest.fixture(scope='module')
 def screens():

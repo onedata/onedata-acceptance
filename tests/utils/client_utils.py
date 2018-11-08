@@ -1,10 +1,21 @@
+"""This module contains utility functions for using client instances under
+tests. Client is started in docker during env_up, acceptance and performance
+tests.
+"""
+__author__ = "Jakub Kudzia, Michal Cwiertnia"
+__copyright__ = "Copyright (C) 2016-2018 ACK CYFRONET AGH"
+__license__ = "This software is released under the MIT license cited in " \
+              "LICENSE.txt"
+
+
 import os
 import time
-import rpyc
-import pytest
 import errno
 import stat as stat_lib
 import hashlib
+
+import rpyc
+import pytest
 
 from docker_utils import run_cmd
 from environment import docker
@@ -53,8 +64,8 @@ class Client:
             cmd = ('mkdir -p {mount_path}'
                    ' && export ONECLIENT_PROVIDER_HOST={op_domain}'
                    ' && echo {token} > {token_path}'
-                   ' && oneclient --log-dir /tmp {mode} --insecure {mount_path} '
-                   '--token $(cat {token_path})'
+                   ' && oneclient --log-dir /tmp {mode} --insecure '
+                   '{mount_path} --token "$(cat {token_path})"'
                    ' 2>&1').format(mount_path=self.mount_path,
                                    op_domain=hosts[self.provider]['hostname'],
                                    token=access_token,
@@ -90,7 +101,7 @@ class Client:
 
     def _start_rpyc_server(self, user_name):
         """start rpc server on client docker"""
-        cmd = '/usr/local/bin/rpyc_classic.py'
+        cmd = '/usr/local/bin/rpyc_classic.py --host 0.0.0.0'
         run_cmd(user_name, self.docker_id, cmd, detach=True)
         pid = run_cmd(user_name,
                       self.docker_id,
@@ -154,7 +165,6 @@ def mount_users(clients, user_names, mount_paths, client_hosts,
                 client_instances, tokens, hosts, request, users, env_desc):
     params = zip(user_names, mount_paths, client_instances, client_hosts,
                  tokens)
-
     for (username, mount_path, client_instance, client_host, token) in params:
         user = users.get(username)
         if not user:
@@ -175,13 +185,13 @@ def mount_users(clients, user_names, mount_paths, client_hosts,
 
         if ret != 0 and access_token != BAD_TOKEN:
             clean_mount_path(username, client)
-            pytest.fail('Error mounting client')
+            pytest.skip('Environment error: error mounting client')
 
         if access_token != BAD_TOKEN:
             try:
                 clean_spaces(client)
             except AssertionError:
-                pytest.fail('Failed to clean spaces')
+                pytest.skip('Environment error: failed to clean spaces')
 
         if ret == 0:
             user.mark_last_operation_succeeded()
@@ -318,7 +328,6 @@ def truncate(client, file_path, size):
 def write(client, text, file_path, mode='w'):
     with client.rpyc_connection.builtins.open(file_path, mode) as f:
         f.write(text)
-        print listxattr(client, file_path)
 
 
 def read(client, file_path, mode='r'):
