@@ -70,7 +70,7 @@ ONECLIENT_MOUNTPATH_PREFIX = '/mnt/oneclient'
 ENV_DIRS = {
     'oneclient': ONECLIENT_ENV_DIR,
     'gui': GUI_ENV_DIR,
-    'mixed': GUI_ENV_DIR
+    'mixed': MIXED_ENV_DIR
 }
 
 LOGDIRS = {
