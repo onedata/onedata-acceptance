@@ -18,3 +18,4 @@ class CreateGroup(Modal):
 
     def __str__(self):
         return 'Create group'
+

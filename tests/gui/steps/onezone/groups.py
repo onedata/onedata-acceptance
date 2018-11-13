@@ -388,8 +388,9 @@ def confirm_add_group(selenium, browser_id, option, oz_page):
                '"(?P<group_name>.*)" menu button in hierarchy subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_group_trigger(selenium, browser_id, oz_page, group_name):
-    (oz_page(selenium[browser_id])['groups'].main_page.hierarchy
-     .groups[group_name].click_group_menu_button(selenium[browser_id]))
+    driver = selenium[browser_id]
+    (oz_page(driver)['groups'].main_page.hierarchy.groups[group_name]
+     .click_group_menu_button(driver))
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on group '
@@ -397,8 +398,9 @@ def click_on_group_trigger(selenium, browser_id, oz_page, group_name):
                'in hierarchy subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_group_trigger(selenium, browser_id, oz_page, group_name, relation):
-    (oz_page(selenium[browser_id])['groups'].main_page.hierarchy
-     .groups[group_name].click_relation_menu_button(selenium[browser_id], relation))
+    driver = selenium[browser_id]
+    (oz_page(driver)['groups'].main_page.hierarchy.groups[group_name]
+     .click_relation_menu_button(driver, relation))
 
 
 @wt(parsers.parse('user of {browser_id} clicks on "{option}" '

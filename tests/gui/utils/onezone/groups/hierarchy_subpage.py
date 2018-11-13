@@ -8,8 +8,8 @@ __license__ = "This software is released under the MIT license cited in " \
 
 
 from tests.gui.utils.core.base import PageObject
-from tests.gui.utils.core.web_elements import Label, WebElement, \
-    WebItemsSequence, Button
+from tests.gui.utils.core.web_elements import (Label, WebElement,
+                                               WebItemsSequence, Button)
 from selenium.webdriver import ActionChains
 
 
@@ -26,8 +26,6 @@ class Group(PageObject):
 
     def click_group_menu_button(self, driver):
         ActionChains(driver).move_to_element(self.group).perform()
-
-        ActionChains(driver).move_to_element(self.group_menu_button).perform()
         self.group_menu_button.click()
 
     def click_relation_menu_button(self, driver, relation):
@@ -50,3 +48,4 @@ class GroupHierarchyPage(PageObject):
     parents = WebItemsSequence('.content-groups-hierarchy .parents '
                                '.group-boxes-container .group-box',
                                cls=Group)
+

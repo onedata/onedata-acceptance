@@ -24,3 +24,4 @@ class GroupHierarchyMenu(Modal):
 
     def __str__(self):
         return 'Group hierarchy menu'
+
