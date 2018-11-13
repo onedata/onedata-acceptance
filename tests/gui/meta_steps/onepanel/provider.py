@@ -168,7 +168,7 @@ def register_provider_in_op_using_gui(selenium, user, onepanel, hosts, config, m
 def change_provider_name_if_name_is_different_than_given(selenium, browser_id,
                                                          provider, hosts,
                                                          onepanel,
-                                                         panel_login_page,
+                                                         login_page,
                                                          users, modals):
     sub_item = 'Provider'
     record = 1
@@ -190,6 +190,6 @@ def change_provider_name_if_name_is_different_than_given(selenium, browser_id,
                                                               onepanel,
                                                               current_provider,
                                                               provider, domain,
-                                                              panel_login_page,
+                                                              login_page,
                                                               users, hosts,
                                                               browser_id, modals)
