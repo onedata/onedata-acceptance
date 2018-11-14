@@ -165,15 +165,9 @@ def onepanel():
 
 
 @fixture(scope='session')
-def oz_login_page():
-    from tests.gui.utils import OnezoneLoginPage
-    return OnezoneLoginPage
-
-
-@fixture(scope='session')
-def panel_login_page():
-    from tests.gui.utils import OnepanelLoginPage
-    return OnepanelLoginPage
+def login_page():
+    from tests.gui.utils import LoginPage
+    return LoginPage
 
 
 @fixture(scope='session')

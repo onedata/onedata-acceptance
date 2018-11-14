@@ -10,20 +10,18 @@ __license__ = ("This software is released under the MIT license cited in "
 
 import re
 
-from pytest_bdd import when, then, parsers
+from pytest_bdd import parsers
 from selenium.common.exceptions import (NoSuchElementException,
                                         StaleElementReferenceException)
 from selenium.webdriver.support.expected_conditions import staleness_of
-
-from tests.gui.utils.generic import suppress
 from tests.utils.utils import repeat_failed
+from tests.utils.acceptance_utils import wt
+from tests.gui.utils.generic import suppress
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 
 
-@when(parsers.parse('user of {browser_id} sees an {notify_type} notify '
-                    'with text matching to: {text_regexp}'))
-@then(parsers.parse('user of {browser_id} sees an {notify_type} notify '
-                    'with text matching to: {text_regexp}'))
+@wt(parsers.parse('user of {browser_id} sees an {notify_type} notify '
+                  'with text matching to: {text_regexp}'))
 @repeat_failed(timeout=2 * WAIT_BACKEND)
 def notify_visible_with_text(selenium, browser_id, notify_type, text_regexp):
     driver = selenium[browser_id]
@@ -36,8 +34,7 @@ def notify_visible_with_text(selenium, browser_id, notify_type, text_regexp):
                                                       text_regexp)
 
 
-@when(parsers.parse('user of {browser_id} closes all notifies'))
-@then(parsers.parse('user of {browser_id} closes all notifies'))
+@wt(parsers.parse('user of {browser_id} closes all notifies'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def close_visible_notifies(selenium, browser_id):
     driver = selenium[browser_id]

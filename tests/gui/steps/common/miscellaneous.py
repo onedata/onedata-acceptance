@@ -75,3 +75,8 @@ def wt_click_on_btn_in_popup(selenium, browser_id, btn, popup, popups):
 def g_click_on_btn_in_popup(selenium, browser_id, btn, popup, popups):
     getattr(popups(selenium[browser_id]),
             transform(popup)).buttons[btn].click()
+
+
+@wt(parsers.re('pass'))
+def pass_test():
+    pass

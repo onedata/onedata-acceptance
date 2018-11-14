@@ -132,20 +132,21 @@ def click_on_unsupport_space_for_supporting_provider(selenium, browser_id,
     space_item.providers[provider].unsupport_space()
 
 
-@when(parsers.parse('user of {browser_id} sees that list of supporting '
-                    'providers for space named "{name}" in expanded "DATA '
-                    'SPACE MANAGEMENT" Onezone panel contains only: '
-                    '{providers_list}'))
-@then(parsers.parse('user of {browser_id} sees that list of supporting '
-                    'providers for space named "{name}" in expanded "DATA '
-                    'SPACE MANAGEMENT" Onezone panel contains only: '
-                    '{providers_list}'))
+@when(parsers.re('user of (?P<browser_id>.*) sees that list of supporting '
+                 'providers for space named "(?P<name>.*)"( in expanded "DATA '
+                 'SPACE MANAGEMENT" Onezone panel)? contains only: '
+                 '(?P<providers_list>.*)'))
+@then(parsers.re('user of (?P<browser_id>.*) sees that list of supporting '
+                 'providers for space named "(?P<name>.*)"( in expanded "DATA '
+                 'SPACE MANAGEMENT" Onezone panel)? contains only: '
+                 '(?P<providers_list>.*)'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_supporting_providers_for_space_in_oz(selenium, browser_id, name,
                                                 providers_list, oz_page, hosts):
     driver = selenium[browser_id]
-    space_item = oz_page(driver)['data space management'].spaces[name]
-    displayed_providers = {provider.name for provider in space_item.providers}
+    oz_page(driver)['spaces'].elements_list[name]()
+    providers = oz_page(driver)['spaces'].providers_page.providers_list
+    displayed_providers = {provider.name for provider in providers}
     expected_providers = set([hosts[p]['name'] for p in parse_seq(providers_list)])
     assert displayed_providers == expected_providers, \
         ('expected only {} as supporting providers, '
@@ -162,7 +163,7 @@ def assert_supporting_providers_for_space_in_oz(selenium, browser_id, name,
 def assert_no_such_supporting_providers_for_space(selenium, browser_id, space,
                                                   providers_list, oz_page, hosts):
     driver = selenium[browser_id]
-    space_item = oz_page(driver)['data space management'].spaces[space]
+    space_item = oz_page(driver)['spaces'].elements_list[space]
     displayed_providers = {provider.name for provider in space_item.providers}
     err_msg = 'space named "{}" has supporting provider named "{{}}" ' \
               'while it should not have'.format(space)

@@ -5,10 +5,9 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
             - user1
 
     And users opened [browser1, browser2] browsers' windows
-    And users of [browser1, browser2] opened [oneprovider-1 provider panel, onezone] page
-    And user of browser1 logged as admin to Onepanel service
-    And user of browser2 seen "onezone" zone name in oz login page
-    And user of browser2 logged as user1 to Onezone service
+    And users of [browser1, browser2] opened [oneprovider-1 provider panel, Onezone] page
+    And user of [browser1, browser2] logged as [admin, user1] to Onepanel service
+
     And directory tree structure on local file system:
           browser2:
               - dir1: 5
@@ -26,20 +25,16 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     When user of browser2 refreshes site
 
     # create space
-    And user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
-    And user of browser2 sees that there is no space named "space2" in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 clicks on "Create new space" button in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 types "space2" to space creation edit box in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 presses enter on keyboard
-    And user of browser2 sees that space named "space2" has appeared in expanded "DATA SPACE MANAGEMENT" Onezone panel
+    And user of browser2 clicks on Create space button in spaces sidebar
+    And user of browser2 writes "space2" into space name text field
+    And user of browser2 clicks on Create new space button
+    And user of browser2 sees that "space2" has appeared on the spaces list in the sidebar
 
     # receive support token
-    And user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
-    And user of browser2 expands settings dropdown for space named "space2" in expanded "DATA SPACE MANAGEMENT" Onezone panel by clicking on settings icon
-    And user of browser2 clicks on the "ADD STORAGE" item in settings dropdown for space named "space2" in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 sees that modal "Add storage" has appeared
-    And user of browser2 sees non-empty token in "Add storage" modal
-    And user of browser2 copies token from "Add storage" modal
+    And user of browser2 clicks "space2" on the spaces list in the sidebar
+    And user of browser2 clicks Providers of "space2" in the sidebar
+    And user of browser2 clicks Get support button on providers page
+    And user of browser2 copies invitation token from Spaces page
     And user of browser2 sees an info notify with text matching to: .*copied.*
     And user of browser2 sends copied token to user of browser1
 
@@ -49,7 +44,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     # support space
     And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser1 clicks on Support space button in spaces page in Onepanel if there are some spaces already supported
-    And user of browser1 selects "posix" from storage selector in support space form in onepanel
+    And user of browser1 selects "posix" from storage selector in support space form in Onepanel
     And user of browser1 types received token to Support token field in support space form in Onepanel
     And user of browser1 types "1" to Size input field in support space form in Onepanel
     And user of browser1 selects GiB radio button in support space form in Onepanel
@@ -71,11 +66,10 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # confirm support of space and go to provider
     And user of browser2 refreshes site
-    And user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
-    And user of browser2 expands submenu of space named "space2" by clicking on space record in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 clicks on provider "oneprovider-1" in submenu of space named "space2" in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 sees that provider popup for provider "oneprovider-1" has appeared on world map
-    And user of browser2 clicks on the "Go to your files" button in "oneprovider-1" provider's popup displayed on world map
+    And user of browser2 clicks "space2" on the spaces list in the sidebar
+    And user of browser2 clicks Providers of "space2" in the sidebar
+    And user of browser2 sees "oneprovider-1" is on the providers list
+    And user of browser2 opens oneprovider-1 Oneprovider view in web GUI
     And user of browser2 sees that Oneprovider session has started
     And user of browser2 uses spaces select to change data space to "space2"
 
@@ -152,27 +146,24 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     When user of browser2 refreshes site
 
     # create space
-    And user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
-    And user of browser2 sees that there is no space named "space1" in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 clicks on "Create new space" button in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 types "space1" to space creation edit box in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 presses enter on keyboard
-    And user of browser2 sees that space named "space1" has appeared in expanded "DATA SPACE MANAGEMENT" Onezone panel
+    And user of browser2 sees that "space1" has disappeared on the spaces list in the sidebar
+    And user of browser2 clicks on Create space button in spaces sidebar
+    And user of browser2 writes "space1" into space name text field
+    And user of browser2 clicks on Create new space button
+    And user of browser2 sees that "space1" has appeared on the spaces list in the sidebar
 
     # receive support token
-    And user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
-    And user of browser2 expands settings dropdown for space named "space1" in expanded "DATA SPACE MANAGEMENT" Onezone panel by clicking on settings icon
-    And user of browser2 clicks on the "ADD STORAGE" item in settings dropdown for space named "space1" in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 sees that modal "Add storage" has appeared
-    And user of browser2 sees non-empty token in "Add storage" modal
-    And user of browser2 copies token from "Add storage" modal
+    And user of browser2 clicks "space1" on the spaces list in the sidebar
+    And user of browser2 clicks Providers of "space1" in the sidebar
+    And user of browser2 clicks Get support button on providers page
+    And user of browser2 copies invitation token from Spaces page
     And user of browser2 sees an info notify with text matching to: .*copied.*
     And user of browser2 sends copied token to user of browser1
 
     # support space
     And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser1 clicks on Support space button in spaces page in Onepanel if there are some spaces already supported
-    And user of browser1 selects "posix" from storage selector in support space form in onepanel
+    And user of browser1 selects "posix" from storage selector in support space form in Onepanel
     And user of browser1 types received token to Support token field in support space form in Onepanel
     And user of browser1 types "1" to Size input field in support space form in Onepanel
     And user of browser1 selects GiB radio button in support space form in Onepanel
@@ -201,11 +192,10 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # confirm support of space and go to provider
     And user of browser2 refreshes site
-    And user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
-    And user of browser2 expands submenu of space named "space1" by clicking on space record in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 clicks on provider "oneprovider-1" in submenu of space named "space1" in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 sees that provider popup for provider "oneprovider-1" has appeared on world map
-    And user of browser2 clicks on the "Go to your files" button in "oneprovider-1" provider's popup displayed on world map
+    And user of browser2 clicks "space1" on the spaces list in the sidebar
+    And user of browser2 clicks Providers of "space1" in the sidebar
+    And user of browser2 sees "oneprovider-1" is on the providers list
+    And user of browser2 opens oneprovider-1 Oneprovider view in web GUI
     And user of browser2 sees that Oneprovider session has started
     And user of browser2 uses spaces select to change data space to "space1"
 
@@ -282,27 +272,24 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     When user of browser2 refreshes site
 
     # create space
-    And user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
-    And user of browser2 sees that there is no space named "space3" in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 clicks on "Create new space" button in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 types "space3" to space creation edit box in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 presses enter on keyboard
-    And user of browser2 sees that space named "space3" has appeared in expanded "DATA SPACE MANAGEMENT" Onezone panel
+    And user of browser2 sees that "space3" has disappeared on the spaces list in the sidebar
+    And user of browser2 clicks on Create space button in spaces sidebar
+    And user of browser2 writes "space3" into space name text field
+    And user of browser2 clicks on Create new space button
+    And user of browser2 sees that "space3" has appeared on the spaces list in the sidebar
 
     # receive support token
-    And user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
-    And user of browser2 expands settings dropdown for space named "space3" in expanded "DATA SPACE MANAGEMENT" Onezone panel by clicking on settings icon
-    And user of browser2 clicks on the "ADD STORAGE" item in settings dropdown for space named "space3" in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 sees that modal "Add storage" has appeared
-    And user of browser2 sees non-empty token in "Add storage" modal
-    And user of browser2 copies token from "Add storage" modal
+    And user of browser2 clicks "space3" on the spaces list in the sidebar
+    And user of browser2 clicks Providers of "space3" in the sidebar
+    And user of browser2 clicks Get support button on providers page
+    And user of browser2 copies invitation token from Spaces page
     And user of browser2 sees an info notify with text matching to: .*copied.*
     And user of browser2 sends copied token to user of browser1
 
     # support space
     And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser1 clicks on Support space button in spaces page in Onepanel if there are some spaces already supported
-    And user of browser1 selects "posix" from storage selector in support space form in onepanel
+    And user of browser1 selects "posix" from storage selector in support space form in Onepanel
     And user of browser1 types received token to Support token field in support space form in Onepanel
     And user of browser1 types "1" to Size input field in support space form in Onepanel
     And user of browser1 selects GiB radio button in support space form in Onepanel
@@ -331,11 +318,10 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # confirm support of space and go to provider
     And user of browser2 refreshes site
-    And user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
-    And user of browser2 expands submenu of space named "space3" by clicking on space record in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 clicks on provider "oneprovider-1" in submenu of space named "space3" in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 sees that provider popup for provider "oneprovider-1" has appeared on world map
-    And user of browser2 clicks on the "Go to your files" button in "oneprovider-1" provider's popup displayed on world map
+    And user of browser2 clicks "space3" on the spaces list in the sidebar
+    And user of browser2 clicks Providers of "space3" in the sidebar
+    And user of browser2 sees "oneprovider-1" is on the providers list
+    And user of browser2 opens oneprovider-1 Oneprovider view in web GUI
     And user of browser2 sees that Oneprovider session has started
     And user of browser2 uses spaces select to change data space to "space3"
 
@@ -425,27 +411,24 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     When user of browser2 refreshes site
 
     # create space
-    And user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
-    And user of browser2 sees that there is no space named "space4" in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 clicks on "Create new space" button in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 types "space4" to space creation edit box in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 presses enter on keyboard
-    And user of browser2 sees that space named "space4" has appeared in expanded "DATA SPACE MANAGEMENT" Onezone panel
+    And user of browser2 sees that "space4" has disappeared on the spaces list in the sidebar
+    And user of browser2 clicks on Create space button in spaces sidebar
+    And user of browser2 writes "space4" into space name text field
+    And user of browser2 clicks on Create new space button
+    And user of browser2 sees that "space4" has appeared on the spaces list in the sidebar
 
     # receive support token
-    And user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
-    And user of browser2 expands settings dropdown for space named "space4" in expanded "DATA SPACE MANAGEMENT" Onezone panel by clicking on settings icon
-    And user of browser2 clicks on the "ADD STORAGE" item in settings dropdown for space named "space4" in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 sees that modal "Add storage" has appeared
-    And user of browser2 sees non-empty token in "Add storage" modal
-    And user of browser2 copies token from "Add storage" modal
+    And user of browser2 clicks "space4" on the spaces list in the sidebar
+    And user of browser2 clicks Providers of "space4" in the sidebar
+    And user of browser2 clicks Get support button on providers page
+    And user of browser2 copies invitation token from Spaces page
     And user of browser2 sees an info notify with text matching to: .*copied.*
     And user of browser2 sends copied token to user of browser1
 
     # support space
     And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser1 clicks on Support space button in spaces page in Onepanel if there are some spaces already supported
-    And user of browser1 selects "posix" from storage selector in support space form in onepanel
+    And user of browser1 selects "posix" from storage selector in support space form in Onepanel
     And user of browser1 types received token to Support token field in support space form in Onepanel
     And user of browser1 types "1" to Size input field in support space form in Onepanel
     And user of browser1 selects GiB radio button in support space form in Onepanel
@@ -474,11 +457,10 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # confirm support of space and go to provider
     And user of browser2 refreshes site
-    And user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
-    And user of browser2 expands submenu of space named "space4" by clicking on space record in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 clicks on provider "oneprovider-1" in submenu of space named "space4" in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 sees that provider popup for provider "oneprovider-1" has appeared on world map
-    And user of browser2 clicks on the "Go to your files" button in "oneprovider-1" provider's popup displayed on world map
+    And user of browser2 clicks "space4" on the spaces list in the sidebar
+    And user of browser2 clicks Providers of "space4" in the sidebar
+    And user of browser2 sees "oneprovider-1" is on the providers list
+    And user of browser2 opens oneprovider-1 Oneprovider view in web GUI
     And user of browser2 sees that Oneprovider session has started
     And user of browser2 uses spaces select to change data space to "space4"
 
@@ -556,27 +538,24 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     When user of browser2 refreshes site
 
     # create space
-    And user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
-    And user of browser2 sees that there is no space named "space5" in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 clicks on "Create new space" button in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 types "space5" to space creation edit box in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 presses enter on keyboard
-    And user of browser2 sees that space named "space5" has appeared in expanded "DATA SPACE MANAGEMENT" Onezone panel
+    And user of browser2 sees that "space5" has disappeared on the spaces list in the sidebar
+    And user of browser2 clicks on Create space button in spaces sidebar
+    And user of browser2 writes "space5" into space name text field
+    And user of browser2 clicks on Create new space button
+    And user of browser2 sees that "space5" has appeared on the spaces list in the sidebar
 
     # receive support token
-    And user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
-    And user of browser2 expands settings dropdown for space named "space5" in expanded "DATA SPACE MANAGEMENT" Onezone panel by clicking on settings icon
-    And user of browser2 clicks on the "ADD STORAGE" item in settings dropdown for space named "space5" in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 sees that modal "Add storage" has appeared
-    And user of browser2 sees non-empty token in "Add storage" modal
-    And user of browser2 copies token from "Add storage" modal
+    And user of browser2 clicks "space5" on the spaces list in the sidebar
+    And user of browser2 clicks Providers of "space5" in the sidebar
+    And user of browser2 clicks Get support button on providers page
+    And user of browser2 copies invitation token from Spaces page
     And user of browser2 sees an info notify with text matching to: .*copied.*
     And user of browser2 sends copied token to user of browser1
 
     # support space
     And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser1 clicks on Support space button in spaces page in Onepanel if there are some spaces already supported
-    And user of browser1 selects "posix" from storage selector in support space form in onepanel
+    And user of browser1 selects "posix" from storage selector in support space form in Onepanel
     And user of browser1 types received token to Support token field in support space form in Onepanel
     And user of browser1 types "1" to Size input field in support space form in Onepanel
     And user of browser1 selects GiB radio button in support space form in Onepanel
@@ -605,11 +584,10 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # confirm support of space and go to provider
     And user of browser2 refreshes site
-    And user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
-    And user of browser2 expands submenu of space named "space5" by clicking on space record in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 clicks on provider "oneprovider-1" in submenu of space named "space5" in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 sees that provider popup for provider "oneprovider-1" has appeared on world map
-    And user of browser2 clicks on the "Go to your files" button in "oneprovider-1" provider's popup displayed on world map
+    And user of browser2 clicks "space5" on the spaces list in the sidebar
+    And user of browser2 clicks Providers of "space5" in the sidebar
+    And user of browser2 sees "oneprovider-1" is on the providers list
+    And user of browser2 opens oneprovider-1 Oneprovider view in web GUI
     And user of browser2 sees that Oneprovider session has started
     And user of browser2 uses spaces select to change data space to "space5"
 
@@ -700,27 +678,24 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     When user of browser2 refreshes site
 
     # create space
-    And user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
-    And user of browser2 sees that there is no space named "space6" in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 clicks on "Create new space" button in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 types "space6" to space creation edit box in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 presses enter on keyboard
-    And user of browser2 sees that space named "space6" has appeared in expanded "DATA SPACE MANAGEMENT" Onezone panel
+    And user of browser2 sees that "space6" has disappeared on the spaces list in the sidebar
+    And user of browser2 clicks on Create space button in spaces sidebar
+    And user of browser2 writes "space6" into space name text field
+    And user of browser2 clicks on Create new space button
+    And user of browser2 sees that "space6" has appeared on the spaces list in the sidebar
 
     # receive support token
-    And user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
-    And user of browser2 expands settings dropdown for space named "space6" in expanded "DATA SPACE MANAGEMENT" Onezone panel by clicking on settings icon
-    And user of browser2 clicks on the "ADD STORAGE" item in settings dropdown for space named "space6" in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 sees that modal "Add storage" has appeared
-    And user of browser2 sees non-empty token in "Add storage" modal
-    And user of browser2 copies token from "Add storage" modal
+    And user of browser2 clicks "space6" on the spaces list in the sidebar
+    And user of browser2 clicks Providers of "space6" in the sidebar
+    And user of browser2 clicks Get support button on providers page
+    And user of browser2 copies invitation token from Spaces page
     And user of browser2 sees an info notify with text matching to: .*copied.*
     And user of browser2 sends copied token to user of browser1
 
     # support space
     And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser1 clicks on Support space button in spaces page in Onepanel if there are some spaces already supported
-    And user of browser1 selects "posix" from storage selector in support space form in onepanel
+    And user of browser1 selects "posix" from storage selector in support space form in Onepanel
     And user of browser1 types received token to Support token field in support space form in Onepanel
     And user of browser1 types "1" to Size input field in support space form in Onepanel
     And user of browser1 selects GiB radio button in support space form in Onepanel
@@ -749,11 +724,10 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # confirm support of space and go to provider
     And user of browser2 refreshes site
-    And user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
-    And user of browser2 expands submenu of space named "space6" by clicking on space record in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 clicks on provider "oneprovider-1" in submenu of space named "space6" in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 sees that provider popup for provider "oneprovider-1" has appeared on world map
-    And user of browser2 clicks on the "Go to your files" button in "oneprovider-1" provider's popup displayed on world map
+    And user of browser2 clicks "space6" on the spaces list in the sidebar
+    And user of browser2 clicks Providers of "space6" in the sidebar
+    And user of browser2 sees "oneprovider-1" is on the providers list
+    And user of browser2 opens oneprovider-1 Oneprovider view in web GUI
     And user of browser2 sees that Oneprovider session has started
     And user of browser2 uses spaces select to change data space to "space6"
 

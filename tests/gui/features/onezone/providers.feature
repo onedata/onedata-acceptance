@@ -15,7 +15,7 @@ Feature: Basic management of providers in Onezone GUI
                       size: 1000000
 
     And user opened browser window
-    And user of browser opened onezone page
+    And user of browser opened Onezone page
     And user of browser logged as user1 to Onezone service
 
 

@@ -4,7 +4,7 @@ Feature: Account management in Onepanel GUI
   Background:
     Given initial users configuration in "onezone" Onezone service:
             - admin2:
-                password: passwd
+                password: password
                 user role: admin
 
     And user opened browser window
