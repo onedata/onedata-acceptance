@@ -2,8 +2,6 @@
 using web GUI
 """
 
-import time
-
 from pytest_bdd import given, parsers
 
 from itertools import izip_longest
