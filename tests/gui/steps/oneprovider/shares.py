@@ -12,7 +12,7 @@ import re
 from pytest_bdd import when, then, parsers
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
-from tests.gui.utils.generic import repeat_failed
+from tests.utils.utils import repeat_failed
 
 
 def _is_share_present_in_sidebar(driver, op_page, share_name):

@@ -19,25 +19,21 @@ BAMBOOS_DIR = os.path.join(PROJECT_DIR, 'bamboos')
 DOCKER_DIR = os.path.join(BAMBOOS_DIR, 'docker')
 TEST_DIR = os.path.join(PROJECT_DIR, 'tests')
 UTILS_DIR = os.path.join(TEST_DIR, 'utils')
-ACCEPTANCE_DIR = os.path.join(TEST_DIR, 'acceptance')
-ACCEPTANCE_TEST_CONFIG = os.path.join(ACCEPTANCE_DIR, 'test_config.json')
+ONECLIENT_DIR = os.path.join(TEST_DIR, 'oneclient')
+ONECLIENT_TEST_CONFIG = os.path.join(ONECLIENT_DIR, 'test_config.yaml')
 ENV_UP_DIR = os.path.join(TEST_DIR, 'env_up')
-PERFORMANCE_DIR = os.path.join(TEST_DIR, 'performance')
-PERFORMANCE_TEST_CONFIG = os.path.join(PERFORMANCE_DIR, 'test_config.json')
 GUI_DIR = os.path.join(TEST_DIR, 'gui')
-MIXED_SWAGGERS_DIR = os.path.join(TEST_DIR, 'mixed_swaggers')
-MIXED_ONECLIENT_DIR = os.path.join(TEST_DIR, 'mixed_oneclient')
-ACCEPTANCE_ENV_DIR = os.path.join(ACCEPTANCE_DIR, 'environments')
+MIXED_DIR = os.path.join(TEST_DIR, 'mixed')
+ONECLIENT_ENV_DIR = os.path.join(ONECLIENT_DIR, 'environments')
+ONECLIENT_SCENARIO_DIR = os.path.join(ONECLIENT_ENV_DIR, 'scenarios')
+ONECLIENT_LANDSCAPE_DIR = os.path.join(ONECLIENT_ENV_DIR, 'patches')
 GUI_ENV_DIR = os.path.join(GUI_DIR, 'environments')
-ACCEPTANCE_LOGDIR = os.path.join(ACCEPTANCE_DIR, 'logs')
+MIXED_ENV_DIR = os.path.join(MIXED_DIR, 'environments')
+ONECLIENT_LOGDIR = os.path.join(ONECLIENT_DIR, 'logs')
 ENV_UP_LOGDIR = os.path.join(ENV_UP_DIR, 'logs')
-PERFORMANCE_LOGDIR = os.path.join(PERFORMANCE_DIR, 'logs')
-PROFILING_LOGDIR = os.path.join(ACCEPTANCE_DIR, 'profiling_data')
+PROFILING_LOGDIR = os.path.join(ONECLIENT_DIR, 'profiling_data')
 GUI_LOGDIR = os.path.join(GUI_DIR, 'logs')
-MIXED_SWAGGERS_LOGDIR = os.path.join(MIXED_SWAGGERS_DIR, 'logs')
-MIXED_ONECLIENT_LOGDIR = os.path.join(MIXED_ONECLIENT_DIR, 'logs')
-PERFORMANCE_ENV_DIR = os.path.join(PERFORMANCE_DIR, 'environments')
-PERFORMANCE_OUTPUT = os.path.join(PERFORMANCE_LOGDIR, 'performance.json')
+MIXED_LOGDIR = os.path.join(MIXED_DIR, 'logs')
 EXAMPLE_ENV_DIR = os.path.join(BAMBOOS_DIR, 'example_env')
 PROVIDER_CERT_DIR = os.path.join('root', 'bin', 'node', 'etc', 'certs')
 PROVIDER_KEY_FILE = 'ozp_key.pem'
@@ -70,3 +66,27 @@ sys.path = [PROJECT_DIR, DOCKER_DIR] + sys.path
 
 # Oneclient mountpath prefix
 ONECLIENT_MOUNTPATH_PREFIX = '/mnt/oneclient'
+
+ENV_DIRS = {
+    'oneclient': ONECLIENT_ENV_DIR,
+    'gui': GUI_ENV_DIR,
+    'mixed': MIXED_ENV_DIR
+}
+
+LOGDIRS = {
+    'oneclient': ONECLIENT_LOGDIR,
+    'mixed': MIXED_LOGDIR,
+    'gui': GUI_LOGDIR
+}
+
+CONFIG_FILES = {
+    'oneclient': ONECLIENT_TEST_CONFIG
+}
+
+SCENARIO_DIRS = {
+    'oneclient': ONECLIENT_SCENARIO_DIR
+}
+
+LANDSCAPE_DIRS = {
+    'oneclient': ONECLIENT_LANDSCAPE_DIR
+}

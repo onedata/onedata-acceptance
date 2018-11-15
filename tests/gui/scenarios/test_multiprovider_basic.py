@@ -54,6 +54,8 @@ from tests.gui.meta_steps.onezone.common import *
 
 from tests.gui.meta_steps.onezone.groups import *
 
+from tests.utils.acceptance_utils import *
+
 
 @pytest.fixture(scope='module')
 def screens():

@@ -8,10 +8,13 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 
-from pytest_bdd import when, then, parsers
 from time import sleep
+
+from pytest_bdd import when, then, parsers
+
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.utils.generic import repeat_failed, transform
+from tests.gui.utils.generic import transform
+from tests.utils.utils import repeat_failed
 
 
 @when(parsers.parse('user of {browser_id} clicks on user account '

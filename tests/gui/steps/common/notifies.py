@@ -14,8 +14,9 @@ from pytest_bdd import parsers
 from selenium.common.exceptions import (NoSuchElementException,
                                         StaleElementReferenceException)
 from selenium.webdriver.support.expected_conditions import staleness_of
+from tests.utils.utils import repeat_failed
 from tests.utils.acceptance_utils import wt
-from tests.gui.utils.generic import suppress, repeat_failed
+from tests.gui.utils.generic import suppress
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 
 
