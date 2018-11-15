@@ -8,6 +8,8 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 
+import yaml
+
 from tests.gui.steps.onepanel.common import *
 from tests.gui.steps.onepanel.provider import *
 from tests.gui.steps.common.notifies import *
@@ -17,7 +19,6 @@ from tests.gui.steps.common.url import *
 from tests.gui.steps.onepanel.provider import (
     wt_click_on_discard_btn_in_domain_change_modal
 )
-import yaml
 
 
 def modify_provider_with_given_name_in_op_panel_using_gui(selenium, user,
@@ -160,3 +161,36 @@ def register_provider_in_op_using_gui(selenium, user, onepanel, hosts, config, m
                                        onepanel)
     wt_click_on_btn_in_deployment_step(selenium, user, 'Manage the cluster',
                                        last_step, onepanel)
+
+
+@given(parsers.re('provider name set to name of "(?P<provider>.+?)" '
+                  '(?P<by>by user of|by) (?P<browser_id>.+?) in Onepanel'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def change_provider_name_if_name_is_different_than_given(selenium, browser_id,
+                                                         provider, hosts,
+                                                         onepanel,
+                                                         panel_login_page,
+                                                         users, modals):
+    sub_item = 'Provider'
+    record = 1
+    sidebar = 'CLUSTERS'
+
+    wt_click_on_subitem_for_item_with_name(selenium, browser_id, sidebar,
+                                           sub_item, record, onepanel)
+
+    current_provider = (onepanel(selenium[browser_id])
+                        .content
+                        .provider
+                        .details
+                        .provider_name)
+    domain = hosts[provider]['hostname']
+    provider = hosts[provider]['name']
+    if current_provider != provider:
+        modify_provider_with_given_name_in_op_panel_using_gui(selenium,
+                                                              browser_id,
+                                                              onepanel,
+                                                              current_provider,
+                                                              provider, domain,
+                                                              panel_login_page,
+                                                              users, hosts,
+                                                              browser_id, modals)

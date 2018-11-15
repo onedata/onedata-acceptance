@@ -1,0 +1,11 @@
+scenario: "1oz_1op_1oc/ceph_s3_nfs_swift.yaml"
+patch: "1op/1user_multistorage.yaml"
+
+
+oneclient:
+  oneclient-1:
+    clients:
+      client1:
+        provider: "oneprovider-1"
+        mode: directio
+        default timeout: 10

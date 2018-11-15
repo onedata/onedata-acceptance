@@ -8,10 +8,6 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 from pytest_bdd import parsers
-from tests.gui.utils.generic import repeat_failed
-from tests.utils.acceptance_utils import wt
-from tests.gui.conftest import WAIT_FRONTEND
-from selenium.webdriver.common.keys import Keys
 from tests.gui.steps.onezone.groups import *
 from tests.gui.steps.common.miscellaneous import *
 

@@ -13,7 +13,8 @@ import time
 from pytest_bdd import when, then, parsers, given
 
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.utils.generic import repeat_failed, parse_seq, transform
+from tests.gui.utils.generic import parse_seq, transform
+from tests.utils.utils import repeat_failed
 from tests.gui.utils.generic import click_on_web_elem
 from tests.utils.acceptance_utils import wt
 

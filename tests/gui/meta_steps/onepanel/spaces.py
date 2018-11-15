@@ -8,10 +8,11 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 
+import yaml
+
 from tests.gui.steps.onepanel.common import *
 from tests.gui.steps.common.notifies import *
 from tests.gui.steps.onepanel.spaces import *
-import yaml
 
 
 def support_space_in_op_panel_using_gui(selenium, user, config, onepanel,
@@ -136,3 +137,27 @@ def assert_proper_space_configuration_in_op_panel_gui(selenium, user, space,
                                                  onepanel)
     wt_assert_proper_space_configuration_in_panel(selenium, user, sync_type,
                                                   space, conf, onepanel)
+
+
+@given(parsers.parse('there are no spaces supported in Onepanel used '
+                     'by user of {browser_id}'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def revoke_all_space_supports(selenium, browser_id, onepanel, popups,
+                              modals, hosts):
+    sidebar = 'CLUSTERS'
+    sub_item = 'Spaces'
+    record = 'oneprovider-1'
+
+    spaces_list = onepanel(selenium[browser_id]).content.spaces.spaces
+    option = 'Revoke space support'
+    button = 'Yes, revoke'
+
+    wt_click_on_subitem_for_item(selenium, browser_id, sidebar, sub_item,
+                                 record, onepanel, hosts)
+
+    for space in spaces_list:
+        space.toolbar.click()
+        wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, browser_id,
+                                                   option, popups)
+        wt_clicks_on_btn_in_revoke_space_support(selenium, browser_id,
+                                                 button, modals)
