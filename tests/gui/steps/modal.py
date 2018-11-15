@@ -15,10 +15,10 @@ from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.common.keys import Keys
-
 from pytest_bdd import parsers, given, when, then
 
-from tests.gui.utils.generic import click_on_web_elem, repeat_failed
+from tests.gui.utils.generic import click_on_web_elem
+from tests.utils.utils import repeat_failed
 
 
 in_type_to_id = {'username': 'login-form-username-input',

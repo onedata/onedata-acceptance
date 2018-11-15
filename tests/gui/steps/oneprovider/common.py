@@ -10,7 +10,8 @@ import time
 
 from pytest_bdd import given, parsers, when, then
 
-from tests.gui.utils.generic import parse_seq, repeat_failed
+from tests.gui.utils.generic import parse_seq
+from tests.utils.utils import repeat_failed
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_url
 

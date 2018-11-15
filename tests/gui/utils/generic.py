@@ -9,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 import re
 import os
-from time import sleep, time
+from time import sleep
 from itertools import islice
 from contextlib import contextmanager
 
@@ -17,8 +17,6 @@ try:
     from itertools import izip
 except ImportError:
     izip = zip
-
-from decorator import decorator
 
 from pytest_bdd import when, then
 from tests import gui
@@ -74,42 +72,6 @@ def implicit_wait(driver, timeout, prev_timeout):
         yield
     finally:
         driver.implicitly_wait(prev_timeout)
-
-
-def repeat_failed(attempts=10, timeout=None, interval=0.1,
-                  exceptions=(Exception,)):
-    """Returns wrapper on function, which keeps calling it until timeout or
-    for attempts times in case of failure (exception).
-
-    :param attempts: maximum num of attempts, defaults to 10
-    :type attempts: int
-    :param interval: time between subsequent calls
-    :type interval: float
-    :param timeout: time limit of now when to stop repeating fun,
-                    if set alongside attempts take precedence
-    :type timeout: float | None
-    :param exceptions: in case of which consider failure of call
-    :type exceptions: list[Exception]
-    :return: wrapper decorator
-    """
-
-    @decorator
-    def wrapper(fun, *args, **kwargs):
-        now = time()
-        limit, i = (now + timeout, now) if timeout else (attempts, 0)
-
-        while i < limit:
-            try:
-                result = fun(*args, **kwargs)
-            except exceptions:
-                sleep(interval)
-                i = time() if timeout else i+1
-                continue
-            else:
-                return result
-        return fun(*args, **kwargs)
-
-    return wrapper
 
 
 def iter_ahead(iterable):

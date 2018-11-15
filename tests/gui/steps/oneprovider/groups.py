@@ -11,7 +11,8 @@ __license__ = ("This software is released under the MIT license cited in "
 from pytest_bdd import when, then, parsers
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.utils.generic import repeat_failed, suppress
+from tests.gui.utils.generic import suppress
+from tests.utils.utils import repeat_failed
 
 
 def _is_group_present_in_sidebar(driver, op_page, group_name):

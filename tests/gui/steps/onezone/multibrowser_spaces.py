@@ -9,7 +9,8 @@ __license__ = ("This software is released under the MIT license cited in "
 
 from pytest_bdd import parsers
 from tests.utils.acceptance_utils import wt
-from tests.gui.utils.generic import parse_seq, repeat_failed
+from tests.utils.utils import repeat_failed
+from tests.gui.utils.generic import parse_seq
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 

@@ -1,0 +1,25 @@
+scenario: "1oz_1op_2oc/nfs.yaml"
+patch: "1op/2user_nfs.yaml"
+
+
+oneclient:
+  oneclient-1:
+    clients:
+      client11:
+        provider: "oneprovider-1"
+        mode: directio
+        default timeout: 5
+      client12:
+        provider: "oneprovider-1"
+        mode: directio
+        default timeout: 5
+  oneclient-2:
+    clients:
+      client21:
+        provider: "oneprovider-1"
+        mode: directio
+        default timeout: 5
+      client22:
+        provider: "oneprovider-1"
+        mode: directio
+        default timeout: 5
