@@ -8,15 +8,16 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 from pytest_bdd import parsers
+from tests.utils.utils import repeat_failed
 from tests.utils.acceptance_utils import wt
 from tests.gui.utils.common.modals import Modals as modals
-from tests.gui.utils.generic import repeat_failed, parse_seq
+from tests.gui.utils.generic import parse_seq
 from tests.gui.conftest import WAIT_FRONTEND
 from selenium.webdriver.common.keys import Keys
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 
-from tests.gui.steps.modal import wt_wait_for_modal_to_appear, \
-    wt_wait_for_modal_to_disappear
+from tests.gui.steps.modal import (wt_wait_for_modal_to_appear,
+                                   wt_wait_for_modal_to_disappear)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on (?P<operation>Create|Join) '

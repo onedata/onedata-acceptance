@@ -52,6 +52,8 @@ from tests.gui.meta_steps.onezone.common import *
 
 from . import BROWSER
 
+from tests.utils.acceptance_utils import *
+
 
 @fixture(scope='module')
 def screens():

@@ -7,11 +7,13 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 import yaml
-from tests.gui.utils.common.modals import Modals as modals
-from tests.gui.utils.generic import repeat_failed
+
 from selenium.common.exceptions import StaleElementReferenceException
-from tests.utils.acceptance_utils import wt
 from pytest_bdd import parsers
+
+from tests.gui.utils.common.modals import Modals as modals
+from tests.utils.utils import repeat_failed
+from tests.utils.acceptance_utils import wt
 
 
 def _assert_transfer(transfer, item_type, desc, sufix, hosts):

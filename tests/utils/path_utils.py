@@ -1,7 +1,7 @@
 """This file contains utility functions for operation on file paths.
 """
 __author__ = "Jakub Kudzia"
-__copyright__ = "Copyright (C) 2016 ACK CYFRONET AGH"
+__copyright__ = "Copyright (C) 2016-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
@@ -55,7 +55,7 @@ def get_json_files(dir, relative=False):
     Returns list of files' absolute paths"""
     jsons = []
     for file in os.listdir(dir):
-        if file.endswith(".json"):
+        if file.endswith('.json'):
             if not relative:
                 jsons.append(os.path.join(dir, file))
             else:
@@ -87,12 +87,19 @@ def ensure_json(file):
     return file
 
 
+def ensure_yaml(file):
+    """Ensures that file has .yaml extension."""
+    if os.path.splitext(file)[1] != '.yaml':
+        file = '.'.join([file, 'yaml'])
+    return file
+
+
 def absolute_path_to_env_file(dir, file):
     """Returns absolute path to environment file from dir. Ensures that file
     has .json extension"""
-    return os.path.join(dir, ensure_json(file))
+    return os.path.join(dir, ensure_yaml(file))
 
 
 def escape_path(path):
     """Returns path with escaped space and apostrophe"""
-    return path.replace("'", "\\'").replace(" ", "\ ")
+    return path.replace("'", "\\'").replace(' ', '\ ')

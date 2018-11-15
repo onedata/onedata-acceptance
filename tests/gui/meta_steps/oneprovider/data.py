@@ -7,6 +7,7 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 import yaml
+
 from tests.utils.acceptance_utils import wt
 from pytest_bdd import when, then, given, parsers
 from tests.gui.utils.generic import parse_seq

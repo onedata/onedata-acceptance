@@ -8,10 +8,11 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 
+import yaml
+
 from tests.gui.steps.onepanel.common import *
 from tests.gui.steps.common.notifies import *
 from tests.gui.steps.onepanel.spaces import *
-import yaml
 
 
 def support_space_in_op_panel_using_gui(selenium, user, config, onepanel,

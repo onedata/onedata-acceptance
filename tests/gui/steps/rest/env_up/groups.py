@@ -12,7 +12,7 @@ import json
 from pytest_bdd import given, parsers
 
 from tests import OZ_REST_PORT
-from ..utils import (http_post, http_put, get_zone_rest_path)
+from tests.utils.rest_utils import (http_post, http_put, get_zone_rest_path)
 
 
 @given(parsers.parse('initial groups configuration in "{service}" '

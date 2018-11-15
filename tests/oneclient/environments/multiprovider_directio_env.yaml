@@ -1,0 +1,17 @@
+scenario: "1oz_2op_2oc/nfs_posix_luma.yaml"
+patch: "luma_nfs.yaml"
+
+
+oneclient:
+  oneclient-1:
+    clients:
+      client11:
+        provider: "oneprovider-1"
+        mode: directio
+        default timeout: 40
+  oneclient-2:
+    clients:
+      client21:
+        provider: "oneprovider-2"
+        mode: directio
+        default timeout: 40

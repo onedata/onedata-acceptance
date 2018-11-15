@@ -1,11 +1,11 @@
 """This module contains meta steps for common operations in Onezone
 using web GUI
 """
-import time
 
 from pytest_bdd import given, parsers
 
 from itertools import izip_longest
+from tests.utils.utils import repeat_failed
 from tests.gui.steps.common.browser_creation import \
     create_instances_of_webdriver
 from tests.utils.acceptance_utils import wt
@@ -14,7 +14,6 @@ from tests.gui.steps.onezone.providers import parse_seq
 from tests.gui.steps.common.url import g_open_onedata_service_page
 from tests.gui.steps.common.login import g_login_using_basic_auth
 from tests.utils.acceptance_utils import list_parser
-from tests.gui.utils.generic import repeat_failed
 from tests.gui.conftest import WAIT_FRONTEND
 
 

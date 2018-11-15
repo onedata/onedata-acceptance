@@ -1,0 +1,17 @@
+scenario: "1oz_2op_2oc/nfs.yaml"
+patch: "2op/2user_posix_1space.yaml"
+
+
+oneclient:
+  oneclient-1:
+    clients:
+      client11:
+        provider: "oneprovider-1"
+        mode: proxyio
+        default timeout: 40
+  oneclient-2:
+    clients:
+      client21:
+        provider: "oneprovider-2"
+        mode: proxyio
+        default timeout: 40

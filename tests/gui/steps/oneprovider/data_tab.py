@@ -14,8 +14,8 @@ from pytest_bdd import given, when, then, parsers
 from tests.utils.acceptance_utils import wt
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.utils.generic import (repeat_failed, parse_seq,
-                                     upload_file_path, transform)
+from tests.gui.utils.generic import (parse_seq, upload_file_path, transform)
+from tests.utils.utils import repeat_failed
 
 
 @when(parsers.parse('user of {browser_id} uses spaces select to change '
