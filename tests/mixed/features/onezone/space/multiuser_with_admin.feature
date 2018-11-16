@@ -6,7 +6,7 @@ Feature: Multiuser with admin
     Given initial users configuration in "onezone" Onezone service:
             - user1
             - admin2:
-                password: passwddd
+                password: password
                 user role: admin
     And initial spaces configuration in "onezone" Onezone service:
         space1:
