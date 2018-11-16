@@ -30,7 +30,7 @@ Feature: Joining a group in Onezone GUI
   Scenario Outline: User joins group using invitation token
     When user of browser1 clicks on Groups in the sidebar
     And user of browser1 clicks "group1" on the groups list in the sidebar
-    And user of browser1 clicks Invite user on Menu of Members of Groups
+    And user of browser1 clicks on button "Invite user using token" in group "group1" members menu
     And user of browser1 copies invitation token from modal
     And user of browser1 closes modal "Invite user using token"
     And user of browser1 sends copied token to user of browser2
@@ -49,7 +49,7 @@ Feature: Joining a group in Onezone GUI
   Scenario Outline: User fails to join group using group invitation token
     When user of browser1 clicks on Groups in the sidebar
     And user of browser1 clicks "group1" on the groups list in the sidebar
-    And user of browser1 clicks Invite group on Menu of Members of Groups
+    And user of browser1 clicks on button "Invite group using token" in group "group1" members menu
     And user of browser1 copies invitation token from modal
     And user of browser1 closes modal "Invite group using token"
     And user of browser1 sends copied token to user of browser2
@@ -83,7 +83,7 @@ Feature: Joining a group in Onezone GUI
   Scenario Outline: User fails to join group he already belongs to
     When user of browser1 clicks on Groups in the sidebar
     And user of browser1 clicks "group1" on the groups list in the sidebar
-    And user of browser1 clicks Invite user on Menu of Members of Groups
+    And user of browser1 clicks on button "Invite user using token" in group "group1" members menu
     And user of browser1 copies invitation token from modal
     And user of browser1 closes modal "Invite user using token"
 

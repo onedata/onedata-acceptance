@@ -276,7 +276,10 @@ def remove_member_from_group(selenium, browser_id, name, member_type, group,
      .items[name].header.click_menu(selenium[browser_id]))
     page.menu['Remove this member']()
 
-    modal_name = "remove user from group"
+    if member_type == 'user':
+        modal_name = 'remove user from group'
+    else:
+        modal_name = 'remove subgroup from group'
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     modals(selenium[browser_id]).remove_member.remove()
 
