@@ -71,10 +71,7 @@ def assert_non_empty_token_in_add_storage_modal(browser_id, tmp_memory):
 
 def _find_modal(driver, modal_name):
     def _find():
-        if (modal_name == "remove user from group"
-                or modal_name == "leave parent group"
-                or modal_name == "invite group using token"
-                or modal_name == "invite user using token"):
+        if 'group' in modal_name or 'token' in modal_name:
             modals = driver.find_elements_by_css_selector('.modal, '
                                                           '.modal .modal-header h1')
         else:

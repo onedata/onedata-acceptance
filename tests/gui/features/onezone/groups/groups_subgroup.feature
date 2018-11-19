@@ -37,7 +37,6 @@ Feature: Basic management of groups with multiple users in Onezone GUI
     And user of browser1 confirms using <confirmation_method>
 
     Then user of browser1 sees "group1" as "group3" child
-#    And user of browser1 sees "group3" as "group1" parent
 
     Examples:
       | confirmation_method |

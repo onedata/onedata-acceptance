@@ -37,7 +37,7 @@ Feature: Basic management of groups with multiple users in Onezone GUI
   Scenario: Child group is removed from children list
     When user of browser1 removes group "group2" from group "group1" members
     Then user of browser1 does not see "group2" as "group1" child
-    And user of browser2 does not see "group1" as "group2" parent
+    And user of browser2 does not see group "group1" on groups list
 
 
   Scenario: Child group is removed
