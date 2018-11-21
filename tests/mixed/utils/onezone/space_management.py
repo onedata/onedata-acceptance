@@ -112,7 +112,7 @@ def add_users_to_space_in_oz_using_rest(user_list, users, zone_name, hosts,
     space_api = SpaceApi(user_client)
 
     for user in parse_seq(user_list):
-        space_api.add_user_to_space(spaces[space_name], users[user].id)
+        space_api.add_space_user(spaces[space_name], users[user].id)
 
 
 def invite_otehr_users_to_space_using_rest(user, users, zone_name, hosts,
