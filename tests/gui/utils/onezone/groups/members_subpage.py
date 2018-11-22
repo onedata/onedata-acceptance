@@ -6,10 +6,12 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+from selenium.webdriver import ActionChains
+
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (Button, NamedButton,
                                                Label, WebItem, Input,
-                                               WebItemsSequence)
+                                               WebItemsSequence, WebElement)
 
 
 class GroupMembersHeaderRow(PageObject):
@@ -57,6 +59,27 @@ class GroupMembersList(PageObject):
     generate_token = NamedButton('a', text='generate an invitation token')
 
 
+class MembershipElement(PageObject):
+    name = id = Label('.record-name')
+
+
+class MembershipRelation(PageObject):
+    line = id = WebElement('.line')
+    relation_menu_button = Button('.actions-trigger')
+
+    def click_relation_menu_button(self, driver):
+        ActionChains(driver).move_to_element(self.line).perform()
+        self.relation_menu_button()
+
+
+class MembershipRow(PageObject):
+    name = id = Label('div')
+    elements = WebItemsSequence('.membership-row-element.membership-block',
+                                cls=MembershipElement)
+    relations = WebItemsSequence('.membership-row-element.membership-relation',
+                                 cls=MembershipRelation)
+
+
 class InvitationTokenArea(PageObject):
     token = Input('textarea')
     copy = NamedButton('button', text='Copy')
@@ -68,5 +91,10 @@ class GroupMembersPage(PageObject):
     groups = WebItem('.row:nth-of-type(2) > ul', cls=GroupMembersList)
     users = WebItem('.row:nth-of-type(3) > ul', cls=GroupMembersList)
     token = WebItem('.invitation-token-presenter', cls=InvitationTokenArea)
+    show_view_option = Button('.view-tools-toggle')
+    effective_button = NamedButton('.direct-selector button', text='Effective')
+    memberships_button = NamedButton('.mode-selector button', text='Memberships')
+    memberships = WebItemsSequence('.membership-visualiser .membership-row',
+                                   cls=MembershipRow)
 
 

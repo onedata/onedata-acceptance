@@ -157,6 +157,110 @@ def click_generate_token_in_subgroups_list(selenium, browser_id, group,
     page.main_page.members.groups.generate_token()
 
 
+@wt(parsers.parse('user of {browser_id} clicks user "{user}" '
+                  'in group "{group}" members users list'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_user_in_members_users_list(selenium, browser_id, user, group,
+                                     oz_page):
+    driver = selenium[browser_id]
+    oz_page(driver)['groups'].main_page.members.users.items[user].click()
+
+
+@wt(parsers.parse('user of {browser_id} clicks show view option '
+                  'in members subpage'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_show_view_option(selenium, browser_id, oz_page):
+    driver = selenium[browser_id]
+    oz_page(driver)['groups'].main_page.members.show_view_option()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) clicks '
+               '(?P<mode>effective|memberships) view mode in members subpage'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_mode_view_in_members_subpage(selenium, browser_id, mode, oz_page):
+    mode = mode + '_button'
+    driver = selenium[browser_id]
+    getattr(oz_page(driver)['groups']
+            .main_page.members, mode).click()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) sees (?P<member_type>user|group) '
+               '"(?P<member_name>.*)" is member of group "(?P<group_name>.*)" '
+               'in memberships mode'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_member_is_member_of_group_in_memberships(selenium, browser_id,
+                                                    member_name, group_name,
+                                                    member_type, oz_page):
+    driver = selenium[browser_id]
+    records = oz_page(driver)['groups'].main_page.members.memberships
+
+    for record in records:
+        if member_name in record.elements and group_name in record.elements:
+            member_index = record.elements.index(member_name)
+            group_index = record.elements.index(group_name)
+            if member_index + 1 == group_index:
+                if member_type != 'user':
+                    return
+                elif member_index == 0:
+                    return
+
+    assert False
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) does not see '
+               '(?P<member_type>user|group) "(?P<member_name>.*)" is '
+               'member of group "(?P<group_name>.*)" in memberships mode'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_member_is_not_member_of_group_in_memberships(selenium, browser_id,
+                                                        member_name, group_name,
+                                                        member_type, oz_page):
+    driver = selenium[browser_id]
+    records = oz_page(driver)['groups'].main_page.members.memberships
+
+    for record in records:
+        if member_name in record.elements and group_name in record.elements:
+            member_index = record.elements.index(member_name)
+            group_index = record.elements.index(group_name)
+            if member_index + 1 == group_index:
+                if member_type != 'user':
+                    assert False
+                elif member_index == 0:
+                    assert False
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) sees (?P<number>.*) '
+               'membership rows in memberships mode'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_count_membership_rows(selenium, browser_id, number, oz_page):
+    driver = selenium[browser_id]
+    records = oz_page(driver)['groups'].main_page.members.memberships
+    assert len(records) == int(number)
+
+
+@wt(parsers.parse('user of {browser_id} clicks on member "{member_name}" '
+                  'relation menu button to group "{group_name}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_relation_menu_button(selenium, browser_id, member_name,
+                               group_name, oz_page):
+    driver = selenium[browser_id]
+    records = oz_page(driver)['groups'].main_page.members.memberships
+    for record in records:
+        if member_name in record.elements and group_name in record.elements:
+            member_index = record.elements.index(member_name)
+            group_index = record.elements.index(group_name)
+            if member_index + 1 == group_index:
+                record.relations[member_index].click_relation_menu_button(driver)
+                break
+
+
+@wt(parsers.parse('user of {browser_id} clicks on "{option}" '
+                  'in membership relation menu'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_option_in_relation_menu_button(selenium, browser_id, option):
+    driver = selenium[browser_id]
+    modals(driver).membership_relation_menu.options[option].click()
+
+
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on button '
                '"(?P<button>Invite group|Invite user)" in group '
                '"(?P<group_name>.*)" members menu'))
