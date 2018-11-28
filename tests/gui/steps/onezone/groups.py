@@ -91,9 +91,9 @@ def assert_group_exists(selenium, browser_ids, option, group, oz_page):
             assert groups_count == 1, 'group "{}" not found'.format(group)
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) clicks on button '
+@wt(parsers.re('user of (?P<browser_id>.*) clicks on '
                '"(?P<option>Rename|Join space|Join as subgroup|Leave|Remove)" '
-               'in group "(?P<group>.*)" menu'))
+               'button in group "(?P<group>.*)" menu'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_group_menu_button(selenium, browser_id, option, group, oz_page):
     page = oz_page(selenium[browser_id])['groups']
@@ -127,7 +127,7 @@ def assert_create_button_inactive(selenium, browser_id, oz_page):
                                                      'is enabled')
 
 
-@wt(parsers.parse('user of {browser_id} clicks on button "{button}" in '
+@wt(parsers.parse('user of {browser_id} clicks on "{button}" button in '
                   'modal "{modal}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_modal_button(selenium, browser_id, button, modal, oz_page):
@@ -156,9 +156,9 @@ def click_generate_token_in_subgroups_list(selenium, browser_id, group,
     page.main_page.members.groups.generate_token()
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) clicks on button '
+@wt(parsers.re('user of (?P<browser_id>.*) clicks on '
                '"(?P<button>Invite group using token|Invite user using token)" '
-               'in (?P<where>group|space) "(?P<name>.*)" members menu'))
+               'button in (?P<where>group|space) "(?P<name>.*)" members menu'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def generate_group_or_user_invitation_token(selenium, browser_id, button,
                                             name, where, oz_page):

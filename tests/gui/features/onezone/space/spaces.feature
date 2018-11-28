@@ -50,7 +50,7 @@ Feature: Basic management of spaces
 
     # leave space
     And user of browser clicks "space2" on the spaces list in the sidebar
-    And user of browser clicks on button "Leave space" in space menu
+    And user of browser clicks on "Leave space" button in space menu
     And user of browser clicks on yes button
     Then user of browser sees that "space2" has disappeared on the spaces list in the sidebar
 
@@ -64,7 +64,7 @@ Feature: Basic management of spaces
 
     # leave space
     And user of browser clicks "space2" on the spaces list in the sidebar
-    And user of browser clicks on button "Leave space" in space menu
+    And user of browser clicks on "Leave space" button in space menu
     And user of browser clicks on no button
     Then user of browser sees that "space2" has appeared on the spaces list in the sidebar
 
@@ -72,16 +72,16 @@ Feature: Basic management of spaces
   Scenario: User successfully sets space as home space
     When user of browser clicks on Spaces in the sidebar
     And user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks on button "Toggle default space" in space menu
+    And user of browser clicks on "Toggle default space" button in space menu
     Then user of browser sees that home of "space1" has appeared in the sidebar
 
 
   Scenario: User successfully unsets space as home space
     When user of browser clicks on Spaces in the sidebar
     And user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks on button "Toggle default space" in space menu
+    And user of browser clicks on "Toggle default space" button in space menu
     And user of browser sees that home of "space1" has appeared in the sidebar
-    And user of browser clicks on button "Toggle default space" in space menu
+    And user of browser clicks on "Toggle default space" button in space menu
     Then user of browser sees that home of "space1" has disappeared in the sidebar
 
 
