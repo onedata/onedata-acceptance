@@ -29,6 +29,7 @@ ONECLIENT_SCENARIO_DIR = os.path.join(ONECLIENT_ENV_DIR, 'scenarios')
 ONECLIENT_LANDSCAPE_DIR = os.path.join(ONECLIENT_ENV_DIR, 'patches')
 GUI_ENV_DIR = os.path.join(GUI_DIR, 'environments')
 MIXED_ENV_DIR = os.path.join(MIXED_DIR, 'environments')
+MIXED_SCENARIO_DIR = os.path.join(MIXED_ENV_DIR, 'scenarios')
 ONECLIENT_LOGDIR = os.path.join(ONECLIENT_DIR, 'logs')
 ENV_UP_LOGDIR = os.path.join(ENV_UP_DIR, 'logs')
 PROFILING_LOGDIR = os.path.join(ONECLIENT_DIR, 'profiling_data')
@@ -84,7 +85,8 @@ CONFIG_FILES = {
 }
 
 SCENARIO_DIRS = {
-    'oneclient': ONECLIENT_SCENARIO_DIR
+    'oneclient': ONECLIENT_SCENARIO_DIR,
+    'mixed': MIXED_SCENARIO_DIR
 }
 
 LANDSCAPE_DIRS = {

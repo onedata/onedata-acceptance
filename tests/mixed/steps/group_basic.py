@@ -7,11 +7,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-
-from pytest_bdd import when, given, then, parsers
-
-from tests.gui.utils.generic import parse_seq
-from tests.mixed.utils.onezone.group_management import *
+from tests.mixed.steps.rest.onezone.group_management import *
 from tests.mixed.utils.common import NoSuchClientException
 from tests.gui.meta_steps.oneprovider.groups import *
 

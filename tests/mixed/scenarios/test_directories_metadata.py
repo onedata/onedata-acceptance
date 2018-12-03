@@ -1,7 +1,8 @@
-"""Test suite for mixed metadata management tests
+"""Test suite for mixed directories metadata management tests
 """
-__author__ = "Michal Stanisz"
-__copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
+
+__author__ = "Michal Stanisz, Michal Cwiertnia"
+__copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
@@ -21,5 +22,7 @@ from tests.gui.meta_steps.onezone.common import *
 
 from tests.gui.conftest import *
 
+from tests.oneclient.steps.auth_steps import *
 
-scenarios('../features/metadata_basic.feature')
+
+scenarios('../features/oneprovider/directories_metadata.feature')

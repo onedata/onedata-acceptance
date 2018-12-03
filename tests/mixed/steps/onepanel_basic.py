@@ -7,11 +7,10 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-from pytest_bdd import when, given, then, parsers
+from pytest_bdd import when, then, parsers
 
 from tests.gui.conftest import WAIT_BACKEND
 from tests.utils.utils import repeat_failed
-from tests.gui.meta_steps.oneprovider.data import assert_space_content_in_op_gui
 from tests.mixed.utils.common import NoSuchClientException
 
 
@@ -27,7 +26,7 @@ def change_user_password_in_oz_panel(client, request, user, new_password, host,
         change_user_password_in_oz_panel_using_gui(selenium, user, onepage,
                                                    users, new_password, popups)
     elif client.lower() == 'rest':
-        from tests.mixed.utils.onepanel.account_management import \
+        from tests.mixed.steps.rest.onepanel.account_management import \
                                     change_user_password_in_oz_panel_using_rest
         change_user_password_in_oz_panel_using_rest(user, new_password, host,
                                                     users, hosts)
@@ -64,7 +63,7 @@ def login_to_oz_panel_using_new_password(client, request, user, host, selenium,
         login_to_oz_panel_using_new_password_gui(selenium, user, password,
                                                  panel_login_page)
     elif client.lower() == 'rest':
-        from tests.mixed.utils.onepanel.account_management import \
+        from tests.mixed.steps.rest.onepanel.account_management import \
                                     login_to_oz_panel_using_new_password_rest
         login_to_oz_panel_using_new_password_rest(user, password, hosts,
                                                   host)
@@ -87,7 +86,7 @@ def modify_provider_using_test_hostname_in_op_panel(client, request, user,
     test_domain = '{}.test'.format(hosts[provider_name]['hostname'])
 
     if client.lower() == 'rest':
-        from tests.mixed.utils.onepanel.provider import \
+        from tests.mixed.steps.rest.onepanel.provider import \
                                     modify_provider_in_op_panel_using_rest
         modify_provider_in_op_panel_using_rest(user, users, host, hosts,
                                                new_provider_name, test_domain)
@@ -114,7 +113,7 @@ def modify_provider_using_known_hostname_in_op_panel(client, request, user,
                                                      modals):
 
     if client.lower() == 'rest':
-        from tests.mixed.utils.onepanel.provider import \
+        from tests.mixed.steps.rest.onepanel.provider import \
                                     modify_provider_in_op_panel_using_rest
         modify_provider_in_op_panel_using_rest(user, users, host, hosts,
                                                hosts[target_provider]['name'],
@@ -142,7 +141,7 @@ def assert_provider_has_given_name_and_test_hostname_in_oz(client, request, user
     test_domain = '{}.test'.format(hosts[provider]['hostname'])
 
     if client.lower() == 'rest':
-        from tests.mixed.utils.onezone.provider import \
+        from tests.mixed.steps.rest.onezone.provider import \
                                 assert_provider_has_name_and_hostname_in_oz_rest
         assert_provider_has_name_and_hostname_in_oz_rest(user, users, host,
                                                          hosts, provider_name,
@@ -164,7 +163,7 @@ def deregister_provider_in_op_panel(client, request, user, host, hosts,
                                     selenium, onepanel, popups, users):
 
     if client.lower() == 'rest':
-        from tests.mixed.utils.onepanel.provider import \
+        from tests.mixed.steps.rest.onepanel.provider import \
                                     deregister_provider_in_op_panel_using_rest
         deregister_provider_in_op_panel_using_rest(user, users, host, hosts)
     elif client.lower() == 'web gui':
@@ -184,7 +183,7 @@ def assert_there_is_no_provider_in_oz(client, request, user, provider_name,
                                       oz_page):
 
     if client.lower() == 'rest':
-        from tests.mixed.utils.onezone.provider import \
+        from tests.mixed.steps.rest.onezone.provider import \
                                     assert_there_is_no_provider_in_oz_rest
         assert_there_is_no_provider_in_oz_rest(user, users, host, hosts,
                                                provider_name)
@@ -207,7 +206,7 @@ def assert_provider_does_not_support_space_in_oz(client, request, user,
                                                  oz_page, users):
 
     if client.lower() == 'rest':
-        from tests.mixed.utils.onezone.space_management import \
+        from tests.mixed.steps.rest.onezone.space_management import \
                             assert_provider_does_not_support_space_in_oz_rest
         assert_provider_does_not_support_space_in_oz_rest(
             user, users, host, hosts, space_name, provider_name)
@@ -260,7 +259,7 @@ def register_provider_in_op(client, request, user, hosts, users, selenium,
     """
 
     if client.lower() == 'rest':
-        from tests.mixed.utils.onepanel.provider import \
+        from tests.mixed.steps.rest.onepanel.provider import \
                                             register_provider_in_op_using_rest
         register_provider_in_op_using_rest(user, users, hosts, config)
     elif client.lower() == 'web gui':
@@ -286,7 +285,7 @@ def request_space_support(client, request, user, space_name,
                           supporting_user):
 
     if client.lower() == 'rest':
-        from tests.mixed.utils.onezone.space_management import \
+        from tests.mixed.steps.rest.onezone.space_management import \
                                             request_space_support_using_rest
         request_space_support_using_rest(user, users, space_name, host, hosts,
                                          tmp_memory, supporting_user)
@@ -332,7 +331,7 @@ def support_space_in_op_panel(client, request, user, selenium, tmp_memory,
         support_space_in_op_panel_using_gui(selenium, user, config, onepanel,
                                             tmp_memory, space_name, host, hosts)
     elif client.lower() == 'rest':
-        from tests.mixed.utils.onepanel.spaces import \
+        from tests.mixed.steps.rest.onepanel.spaces import \
                                         support_space_in_op_panel_using_rest
         support_space_in_op_panel_using_rest(user, host, hosts, users,
                                              tmp_memory, config)
@@ -361,7 +360,7 @@ def w_assert_space_is_supported_by_provider_in_oz(client, request, user,
                                                         provider_name, hosts,
                                                         with_refresh=True)
     elif client.lower() == 'rest':
-        from tests.mixed.utils.onezone.space_management import \
+        from tests.mixed.steps.rest.onezone.space_management import \
                                 assert_space_is_supported_by_provider_in_oz_rest
         assert_space_is_supported_by_provider_in_oz_rest(user, users, host,
                                                          hosts, space_name,
@@ -390,7 +389,7 @@ def revoke_space_support_in_op_panel(client, request, user, space_name,
                                                    space_name, popups, modals,
                                                    hosts)
     elif client.lower() == 'rest':
-        from tests.mixed.utils.onepanel.spaces import \
+        from tests.mixed.steps.rest.onepanel.spaces import \
                                     revoke_space_support_in_op_panel_using_rest
         revoke_space_support_in_op_panel_using_rest(user, users, host, hosts,
                                                     space_name)
@@ -458,7 +457,7 @@ def assert_proper_space_configuration_in_op_panel(client, request, user,
                                                           onepanel, sync_type,
                                                           config, host, hosts)
     elif client.lower() == 'rest':
-        from tests.mixed.utils.onepanel.spaces import \
+        from tests.mixed.steps.rest.onepanel.spaces import \
                             assert_proper_space_configuration_in_op_panel_rest
         assert_proper_space_configuration_in_op_panel_rest(space, user, users,
                                                            host, hosts,
@@ -502,7 +501,7 @@ def configure_sync_parameters_for_space_in_op_panel(client, request, user,
                                                             onepanel, popups,
                                                             config, sync_type)
     elif client.lower() == 'rest':
-        from tests.mixed.utils.onepanel.spaces import \
+        from tests.mixed.steps.rest.onepanel.spaces import \
                             configure_sync_parameters_for_space_in_op_panel_rest
         configure_sync_parameters_for_space_in_op_panel_rest(user, users, host,
                                                              hosts, config,
@@ -542,7 +541,7 @@ def assert_space_content_in_op(client, request, config, selenium, user,
                                        tmp_memory, tmpdir, space_name, oz_page,
                                        host, hosts)
     elif client.lower() == 'rest':
-        from tests.mixed.utils.oneprovider.data import \
+        from tests.mixed.steps.rest.oneprovider.data import \
                                                 assert_space_content_in_op_rest
         assert_space_content_in_op_rest(user, users, hosts, config, space_name,
                                         spaces, host)
@@ -567,7 +566,7 @@ def copy_id_of_space(client, request, user, space_name, selenium, onepanel,
                                                         copy_id_of_space_gui
         copy_id_of_space_gui(selenium, user, space_name, onepanel, tmp_memory)
     elif client.lower() == 'rest':
-        from tests.mixed.utils.onezone.space_management import \
+        from tests.mixed.steps.rest.onezone.space_management import \
                                                         copy_id_of_space_rest
         copy_id_of_space_rest(user, users, hosts, space_name, tmp_memory)
     else:

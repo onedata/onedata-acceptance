@@ -242,17 +242,22 @@ oz_image, op_image, rest_cli_image = (args.oz_image, args.op_image,
                                       args.rest_cli_image)
 if oz_image:
     info('Using onezone image: {}'.format(oz_image))
+    docker.pull_image(oz_image)
 if op_image:
     info('Using oneprovider image: {}'.format(op_image))
+    docker.pull_image(op_image)
 if rest_cli_image:
     info('Using rest cli image: {}'.format(rest_cli_image))
+    docker.pull_image(rest_cli_image)
 
 if args.test_type in ['oneclient', 'mixed']:
     oc_image, luma_image = args.oc_image, args.luma_image
     if oc_image:
         info('Using oneclient image: {}'.format(oc_image))
+        docker.pull_image(oc_image)
     if luma_image:
         info('Using luma image: {}'.format(luma_image))
+        docker.pull_image(luma_image)
 
 if args.update_etc_hosts:
     update_etc_hosts()
@@ -261,7 +266,7 @@ if args.local:
     # TODO: change this after python3 will be used in tests
     cmd = ['python2.7', '-m', 'py.test',
            '--test-type={}'.format(args.test_type),
-           args.test_dir, '--junitxml={}'.format(args.report_path)]
+           args.test_dir, '--junitxml={}'.format(args.report_path)] + pass_args
     ret = call(cmd, stdin=None, stderr=None, stdout=None)
 
 else:
@@ -313,7 +318,8 @@ ALL       ALL = (ALL) NOPASSWD: ALL
             {{
                 "name": "test-runner",
                 "image": "{image}",
-                "stdin": true,
+                "stdin": {stdin},
+                "tty": {tty},
                 "imagePullPolicy": "IfNotPresent",
                 "workingDir": "{script_dir}",
                 "command" : [
@@ -413,6 +419,13 @@ ALL       ALL = (ALL) NOPASSWD: ALL
 
     minikube_script_dir = script_dir.replace(user_config.host_home(),
                                              kube_host_home_dir)
+    if sys.__stdin__.isatty():
+        stdin = 'true'
+        tty = 'true'
+    else:
+        stdin = 'false'
+        tty = 'false'
+
     privileged = 'true' if args.privileged else 'false'
     test_runner_pod = test_runner_pod.format(command=command,
                                              script_dir=script_dir,
@@ -420,9 +433,11 @@ ALL       ALL = (ALL) NOPASSWD: ALL
                                              image=args.image,
                                              home=os.path.expanduser('~'),
                                              minikube_home=kube_host_home_dir,
-                                             privileged=privileged)
+                                             privileged=privileged,
+                                             stdin=stdin,
+                                             tty=tty)
 
-    cmd = ['kubectl', 'run', '-i', '--rm', '--restart=Never',
+    cmd = ['kubectl', 'run', '-it', '--rm', '--restart=Never',
            'test-runner', '--overrides={}'.format(test_runner_pod),
            '--image={}'.format(args.image), '--', 'python', '-c',
            '"{}"'.format(command)]

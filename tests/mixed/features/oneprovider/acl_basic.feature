@@ -1,14 +1,19 @@
-Feature: ACL basic tests using REST client and web GUI     
+Feature: ACL basic tests
     
   Examples:
-  | client1 | client2   |
-  | REST    | web GUI   |
-  | web GUI | REST      |
+  | client1   | client2   | host1         | host2         |
+  | REST      | web GUI   | oneprovider-1 | oneprovider-1 |
+  | web GUI   | REST      | oneprovider-1 | oneprovider-1 |
+  | REST      | oneclient | oneprovider-1 | client1       |
+  | oneclient | REST      | client1       | oneprovider-1 |
+  | oneclient | web GUI   | client1       | oneprovider-1 |
+  | web GUI   | oneclient | oneprovider-1 | client1       |
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
             - user1
             - user2
+    And user1 mounts oneclient in /home/user1/onedata using token
     And initial groups configuration in "onezone" Onezone service:
             group1:
                 owner: user1
@@ -34,8 +39,8 @@ Feature: ACL basic tests using REST client and web GUI
     And opened oneprovider-1 Oneprovider view in web GUI by user1
 
   Scenario: User sets ACL with one entry
-    When using <client1>, user1 sets new ACE for <item> in space "space1" with <privileges> privileges set for <subject_type> <subject_name> in oneprovider-1 Oneprovider
-    Then using <client2>, user1 sees that <item> in space "space1" has <privileges> privileges set for <subject_type> <subject_name> in first ACL record in oneprovider-1 Oneprovider
+    When using <client1>, user1 sets new ACE for <item> in space "space1" with <privileges> privileges set for <subject_type> <subject_name> in <host1>
+    Then using <client2>, user1 sees that <item> in space "space1" has <privileges> privileges set for <subject_type> <subject_name> in first ACL record in <host2>
 
     Examples:
     | privileges            | subject_type  | subject_name  | item  |
@@ -46,9 +51,9 @@ Feature: ACL basic tests using REST client and web GUI
 
 
 #  Scenario: User sets ACL with two entries
-#    When using <client1>, user1 sets new ACE for <item> in space "space1" with [read acl, change acl] privileges set for user user1 in oneprovider-1 Oneprovider
-#    And using <client1>, user1 sets new ACE for <item> in space "space1" with <privileges2> privileges set for <subject_type2> <subject_name2> in oneprovider-1 Oneprovider
-#    Then using <client2>, user1 sees that <item> in space "space1" has <privileges> privileges set for <subject_type> <subject_name> in first ACL record in oneprovider-1 Oneprovider
+#    When using <client1>, user1 sets new ACE for <item> in space "space1" with [read acl, change acl] privileges set for user user1 in <host1>
+#    And using <client1>, user1 sets new ACE for <item> in space "space1" with <privileges2> privileges set for <subject_type2> <subject_name2> in <host1>
+#    Then using <client2>, user1 sees that <item> in space "space1" has <privileges> privileges set for <subject_type> <subject_name> in first ACL record <host2>
 #
 #    Examples:
 #    | privileges            | subject_type  | subject_name  | item  |

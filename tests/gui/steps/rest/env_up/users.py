@@ -20,9 +20,11 @@ from tests.utils.rest_utils import (http_get, http_post, http_delete,
                                     get_zone_rest_path)
 from tests.utils.http_exceptions import HTTPError, HTTPNotFound
 from tests.utils.utils import repeat_failed
+from tests.utils.user_utils import User
 
 
-UserCred = namedtuple('UserCredentials', ['username', 'password', 'id', 'token'])
+# UserCred = namedtuple('UserCredentials', ['username', 'password', 'id',
+#                                           'token', 'clients'])
 
 
 @given(parsers.parse('initial users configuration in "{host}" '
@@ -57,7 +59,7 @@ def _create_admin_in_zone(zone_hostname, admin_credentials):
                         auth=(username, password)).json()
     admin_id = response['userId']
     token = _create_token(zone_hostname, username, password)
-    return UserCred(username, password, admin_id, token)
+    return User(username, password, token, admin_id)
 
 
 def _parse_user_info(user_config):
@@ -85,8 +87,8 @@ def _create_new_user(zone_hostname, admin_credentials, username, password,
     user_id = response['userId']
     token = (_create_token(zone_hostname, username, password)
              if generate_token else None)
-    return UserCred(username=username, password=password, id=user_id,
-                    token=token)
+    return User(username=username, password=password, id=user_id,
+                token=token)
 
 
 def _create_user(zone_hostname, admin_credentials, username, options, rm_users):
@@ -110,7 +112,8 @@ def _create_user(zone_hostname, admin_credentials, username, options, rm_users):
     else:
         if rm_users:
             _rm_user(zone_hostname, admin_credentials,
-                     UserCred(username, password, resp['userId'], None), True)
+                     User(username, password, None, resp['userId']),
+                     True)
             return _create_new_user(zone_hostname, admin_credentials, username,
                                     password, user_conf_details, generate_token)
         else:

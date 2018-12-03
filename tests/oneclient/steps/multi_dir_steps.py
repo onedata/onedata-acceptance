@@ -11,6 +11,8 @@ import errno
 
 from pytest_bdd import parsers, when
 
+# TODO: move to acceptance utils
+from tests.gui.utils.generic import parse_seq
 from tests.utils.acceptance_utils import wt, list_parser
 from tests.utils.utils import assert_generic, assert_
 from tests.utils.client_utils import mkdir, rmdir, ls, rm, cp
@@ -115,14 +117,16 @@ def delete_parents(user, paths, client_node, users):
         assert_(client.perform, condition)
 
 
-def list_dir_base(user, dir, client_node, users, should_fail=False):
+def list_dirs_base(user, dir, client_node, users, should_fail=False):
     user = users[user]
     client = user.clients[client_node]
     path = client.absolute_path(dir)
+    path_content = []
 
     def condition():
         try:
-            ls(client, path=path)
+            content = ls(client, path=path)
+            path_content.extend(content)
         except OSError as ex:
             if ex.errno == errno.EPERM:
                 return True if should_fail else False
@@ -131,16 +135,18 @@ def list_dir_base(user, dir, client_node, users, should_fail=False):
             return False if should_fail else True
 
     assert_generic(client.perform, should_fail, condition)
+    return path_content
 
 
-@wt(parsers.re('(?P<user>\w+) can list (?P<dir>.*) on (?P<client_node>.*)'))
+@wt(parsers.re('(?P<user>\w+) can list (?P<dir>.*) on '
+               '(?P<client_node>.*)'))
 def list_dir(user, dir, client_node, users):
-    list_dir_base(user, dir, client_node, users)
+    list_dirs_base(user, dir, client_node, users)
 
 
 @wt(parsers.re('(?P<user>\w+) can\'t list (?P<dir>.*) on (?P<client_node>.*)'))
 def cannot_list_dir(user, dir, client_node, users):
-    list_dir_base(user, dir, client_node, users, should_fail=True)
+    list_dirs_base(user, dir, client_node, users, should_fail=True)
 
 
 @when(parsers.re('(?P<user>\w+) copies directory (?P<dir1>.*) to (?P<dir2>.*) '
