@@ -348,9 +348,10 @@ def start_environment(scenario_path, request, hosts, patch_path,
 
     if clean:
         up_args = parse_up_args(request, scenario_path)
-        _, ret = run_onenv_command('up', up_args)
+        output, ret = run_onenv_command('up', up_args)
         if ret != 0:
-            handle_env_init_error(request, env_description_abs_path, 'up')
+            handle_env_init_error(request, env_description_abs_path, 'up',
+                                  output)
 
         wait_args = parse_wait_args(request)
         run_onenv_command('wait', wait_args)
@@ -360,7 +361,8 @@ def start_environment(scenario_path, request, hosts, patch_path,
 
     env_ready = status_output.get('ready')
     if not env_ready:
-        handle_env_init_error(request, env_description_abs_path, 'status')
+        handle_env_init_error(request, env_description_abs_path, 'status',
+                              env_ready)
 
     pods_cfg = status_output['pods']
     parse_hosts_cfg(pods_cfg, hosts, request)
@@ -382,10 +384,12 @@ def start_environment(scenario_path, request, hosts, patch_path,
         request.addfinalizer(fin)
 
 
-def handle_env_init_error(request, env_description_abs_path, command):
+def handle_env_init_error(request, env_description_abs_path, command, output):
     export_logs(request, env_description_abs_path)
     run_onenv_command('clean')
-    pytest.skip('Environment error: Onenv command {} failed'.format(command))
+    pytest.skip('Environment error: Onenv command {} failed.'
+                'Captured stdout: {}.'
+                .format(command, output))
 
 
 def get_test_type(request):

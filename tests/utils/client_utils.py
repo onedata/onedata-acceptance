@@ -13,7 +13,6 @@ import time
 import errno
 import stat as stat_lib
 import hashlib
-import contextlib
 
 import rpyc
 import pytest

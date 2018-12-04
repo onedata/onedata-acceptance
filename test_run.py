@@ -68,6 +68,11 @@ def parse_image_for_service(file_path):
         return None
 
 
+def delete_test_runner_pod():
+    delete_test_runner_cmd = ['kubectl', 'delete', 'pod', 'test-runner']
+    call(delete_test_runner_cmd, stdin=None, stderr=None, stdout=None)
+
+
 def clean_env():
     docker.run(tty=True,
                rm=True,
@@ -444,14 +449,13 @@ ALL       ALL = (ALL) NOPASSWD: ALL
 
     if args.clean:
         clean_env()
+    delete_test_runner_pod()
 
     ret = call(cmd, stdin=None, stderr=None, stdout=None)
 
     if args.clean:
         clean_env()
-
-    delete_test_runner_cmd = ['kubectl', 'delete', 'pod', 'test-runner']
-    call(delete_test_runner_cmd, stdin=None, stderr=None, stdout=None)
+    delete_test_runner_pod()
 
 report = load_test_report(args.report_path)
 
