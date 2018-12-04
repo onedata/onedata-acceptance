@@ -82,3 +82,4 @@ scenarios('../features/onezone/groups/'
 scenarios('../features/onezone/groups/groups_subgroup.feature')
 scenarios('../features/onezone/groups/'
           'groups_multiple_users_with_multiple_groups.feature')
+scenarios('../features/onezone/groups/groups_hierarchy.feature')

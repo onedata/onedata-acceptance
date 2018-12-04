@@ -8,7 +8,7 @@ Feature: Basic spaces management utilities using onepanel
   Background:
     Given initial users configuration in "onezone" Onezone service:
         - admin2:
-            password: passwd
+            password: password
             user role: admin
         - user1
     And opened browsers with [admin, user1] logged to [oneprovider-1 provider panel, onezone onezone] service

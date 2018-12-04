@@ -3,12 +3,23 @@ using web GUI
 """
 
 import yaml
+from pytest_bdd import given, parsers
 
-from tests.gui.steps.onezone.logged_in_common import *
-from tests.gui.steps.onezone.providers import *
-from tests.gui.steps.oneprovider.common import *
-from tests.gui.steps.oneprovider_common import *
-from tests.utils.acceptance_utils import wt
+from tests.gui.steps.oneprovider.common import wt_wait_for_op_session_to_start
+from tests.gui.steps.oneprovider.transfers import (
+    replicate_item,
+    assert_item_never_synchronized,
+    migrate_item)
+from tests.gui.steps.oneprovider_common import (
+    g_click_on_the_given_main_menu_tab,
+    wt_click_on_the_given_main_menu_tab)
+from tests.gui.steps.onezone.logged_in_common import (
+    wt_expand_oz_panel,
+    assert_there_is_item_with_known_name_in_oz_panel_list)
+from tests.gui.steps.onezone.providers import (
+    wt_click_on_provider_in_go_to_your_files_oz_panel,
+    assert_popup_for_provider_has_appeared_on_map,
+    wt_click_on_btn_in_provider_popup)
 from tests.gui.steps.oneprovider.data_tab import (
     assert_file_browser_in_data_tab_in_op,
     click_tooltip_from_toolbar_in_data_tab_in_op,
@@ -23,8 +34,8 @@ from tests.gui.steps.modal import (wt_wait_for_modal_to_appear,
                                    wt_click_on_confirmation_btn_in_modal,
                                    wt_wait_for_modal_to_disappear,
                                    activate_input_box_in_modal)
-from tests.gui.steps.oneprovider.transfers import *
 from tests.gui.steps.common.miscellaneous import type_string_into_active_element
+from tests.utils.acceptance_utils import wt
 
 
 @given(parsers.re('opened "(?P<tab_name>spaces)" tab in web GUI by '
@@ -80,7 +91,7 @@ def meta_replicate_item(selenium, browser_id, name, tmp_memory,
 @wt(parsers.re('user of (?P<browser_id>.*) sees file chunks for file '
                '"(?P<file_name>.*)" as follows:\n(?P<desc>(.|\s)*)'))
 def assert_file_chunks(selenium, browser_id, file_name, desc, tmp_memory,
-                       op_page, hosts):
+                       op_page, hosts, modals):
     tooltip = 'Show data distribution'
     modal_name = 'Data distribution'
     assert_file_browser_in_data_tab_in_op(selenium, browser_id, op_page,
