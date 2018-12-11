@@ -93,7 +93,7 @@ def assert_group_exists(selenium, browser_ids, option, group, oz_page):
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on '
                '"(?P<option>Rename|Join space|Join as subgroup|Leave|Remove)" '
-               'button in group "(?P<group>.*)" menu'))
+               'button in group "(?P<group>.*)" menu in the sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_group_menu_button(selenium, browser_id, option, group, oz_page):
     page = oz_page(selenium[browser_id])['groups']
@@ -158,7 +158,8 @@ def click_generate_token_in_subgroups_list(selenium, browser_id, group,
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on '
                '"(?P<button>Invite group using token|Invite user using token)" '
-               'button in (?P<where>group|space) "(?P<name>.*)" members menu'))
+               'button in (?P<type>users|groups) list menu in '
+               '(?P<where>group|space) "(?P<name>.*)" members view'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def generate_group_or_user_invitation_token(selenium, browser_id, button,
                                             name, where, oz_page):
@@ -199,8 +200,8 @@ def copy_token(selenium, browser_id):
     modals(selenium[browser_id]).invite_using_token.copy()
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) closes modal '
-               '"Invite (?P<who>user|group) using token"'))
+@wt(parsers.re('user of (?P<browser_id>.*) closes '
+               '"Invite (?P<who>user|group) using token" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def copy_token(selenium, browser_id):
     modals(selenium[browser_id]).invite_using_token.close()

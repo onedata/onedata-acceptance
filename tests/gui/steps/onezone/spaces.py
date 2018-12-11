@@ -386,7 +386,7 @@ def generate_and_send_support_token(selenium, browser_id1, space_name, oz_page,
     page.elements_list[space_name]()
     page.elements_list[space_name].providers()
     page.providers_page.get_support()
-    page.providers_page.get_support_page.copy()
+    copy_token(selenium, browser_id1, oz_page)
     item = clipboard.paste(display=displays[browser_id1])
     tmp_memory[browser_id2]['mailbox']['token'] = item
 
