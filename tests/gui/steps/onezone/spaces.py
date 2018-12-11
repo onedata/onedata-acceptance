@@ -80,7 +80,7 @@ def assert_new_created_space_has_appeared_on_spaces(selenium, browser_id,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
-               '(?P<option>Spaces|Groups|Providers) in the sidebar'))
+               '(?P<option>Data|Tokens|Spaces|Groups) in the sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_spaces_in_the_sidebar(selenium, browser_id, option, oz_page):
     driver = selenium[browser_id]
@@ -191,7 +191,6 @@ def assert_number_of_supporting_providers_of_space(selenium, browser_id,
             .elements_list[space_name]
             .supporting_providers_number,
             'number of supporting providers is not equal {}'.format(number))
-
 
 
 @wt(parsers.parse('user of {browser_id} sees {number} size of '

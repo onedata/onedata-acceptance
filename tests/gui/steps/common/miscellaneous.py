@@ -55,7 +55,7 @@ def press_enter_on_active_element(selenium, browser_id):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def title_contains(selenium, browser_id, text):
     page_title = selenium[browser_id].title
-    assert page_title == text, \
+    assert text in page_title, \
         'page title is {} instead of expected {}'.format(page_title, text)
 
 

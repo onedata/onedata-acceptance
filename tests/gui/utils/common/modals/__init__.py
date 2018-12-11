@@ -6,7 +6,6 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-from tests.gui.utils.onezone.data_page import ProviderPopover
 from .data_distribution import DataDistributionModal
 from .add_storage import AddStorage
 from tests.gui.utils.core.web_elements import WebItem
@@ -23,6 +22,7 @@ from .leave_space import LeaveSpaceModal
 from .leave_parent import LeaveParentModal
 from .error_modal import ErrorModal
 from .dns_configuration_warning import DNSConfigurationWarningModal
+from .provider_popover import ProviderPopover
 
 
 class Modals(object):
