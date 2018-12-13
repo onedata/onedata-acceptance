@@ -6,22 +6,31 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+from selenium.webdriver import ActionChains
+
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (Button, NamedButton,
                                                Label, WebItem, Input,
-                                               WebItemsSequence)
+                                               WebItemsSequence, WebElement)
 
 
 class GroupMembersHeaderRow(PageObject):
     checkbox = Button('div.item-checkbox')
     search_bar = Input('input.form-control')
+    menu_button = Button('li.list-header-row '
+                         '.collapsible-toolbar-toggle.btn-menu-toggle')
 
 
 class GroupMembersItemHeader(PageObject):
     checkbox = Button('div.item-checkbox')
+    user = WebElement('.header-content-container')
     menu_button = Button('.collapsible-toolbar-toggle')
     save_button = NamedButton('.btn-toolbar .btn-sm', text='Save')
     reset_button = NamedButton('.btn-toolbar .btn-danger', text='Reset')
+
+    def click_menu(self, driver):
+        ActionChains(driver).move_to_element(self.user).perform()
+        self.menu_button.click()
 
 
 class Privilege(PageObject):
@@ -57,16 +66,7 @@ class GroupMembersList(PageObject):
     generate_token = NamedButton('a', text='generate an invitation token')
 
 
-class InvitationTokenArea(PageObject):
-    token = Input('textarea')
-    copy = NamedButton('button', text='Copy')
-    generate = Button('.btn-get-token')
-    close = Button('.oneicon-close')
-
-
 class GroupMembersPage(PageObject):
     groups = WebItem('.row:nth-of-type(2) > ul', cls=GroupMembersList)
     users = WebItem('.row:nth-of-type(3) > ul', cls=GroupMembersList)
-    token = WebItem('.invitation-token-presenter', cls=InvitationTokenArea)
-
 

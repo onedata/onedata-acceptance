@@ -30,7 +30,7 @@ Feature: Basic management of groups hierarchy with one user in Onezone GUI
     And user of browser clicks on "Add child group" in group hierarchy menu
     And user of browser clicks on "Create new group" in group hierarchy menu
     And user of browser writes "group4" into group name text field in create group modal
-    And user of browser clicks on button "Create" in modal "CREATE GROUP"
+    And user of browser clicks on "Create" button in modal "CREATE GROUP"
     Then user of browser sees "group4" as a child of "group1" in hierarchy subpage
 
 
@@ -40,7 +40,7 @@ Feature: Basic management of groups hierarchy with one user in Onezone GUI
     And user of browser clicks on "Add parent group" in group hierarchy menu
     And user of browser clicks on "Create new group" in group hierarchy menu
     And user of browser writes "group4" into group name text field in create group modal
-    And user of browser clicks on button "Create" in modal "CREATE GROUP"
+    And user of browser clicks on "Create" button in modal "CREATE GROUP"
     And user of browser clicks show parent groups in hierarchy subpage
     Then user of browser sees "group4" as a parent of "group1" in hierarchy subpage
 
@@ -49,7 +49,7 @@ Feature: Basic management of groups hierarchy with one user in Onezone GUI
     When user of browser goes to group "group2" hierarchy subpage
     And user of browser clicks on group "group3" menu button in hierarchy subpage
     And user of browser clicks on "Remove" in group hierarchy menu
-    And user of browser clicks on button "Remove" in modal "REMOVE GROUP"
+    And user of browser clicks on "Remove" button in modal "REMOVE GROUP"
     Then user of browser does not see "group3" as a child of "group2" in hierarchy subpage
     And user of browser does not see group "group3" on groups list
 
@@ -59,7 +59,7 @@ Feature: Basic management of groups hierarchy with one user in Onezone GUI
     And user of browser clicks show parent groups in hierarchy subpage
     And user of browser clicks on group "group1" menu button in hierarchy subpage
     And user of browser clicks on "Remove" in group hierarchy menu
-    And user of browser clicks on button "Remove" in modal "REMOVE GROUP"
+    And user of browser clicks on "Remove" button in modal "REMOVE GROUP"
     Then user of browser does not see "group1" as a parent of "group2" in hierarchy subpage
     And user of browser does not see group "group1" on groups list
 
@@ -68,7 +68,7 @@ Feature: Basic management of groups hierarchy with one user in Onezone GUI
     When user of browser goes to group "group1" hierarchy subpage
     And user of browser clicks on group "group2" menu button to parent relation in hierarchy subpage
     And user of browser clicks on "Remove relation" in relation menu
-    And user of browser clicks on button "Remove" in modal "REMOVE SUBGROUP"
+    And user of browser clicks on "Remove" button in modal "REMOVE MEMBER"
     Then user of browser does not see "group2" as a child of "group1" in hierarchy subpage
 
 
@@ -77,6 +77,6 @@ Feature: Basic management of groups hierarchy with one user in Onezone GUI
     And user of browser clicks show parent groups in hierarchy subpage
     And user of browser clicks on group "group1" menu button to child relation in hierarchy subpage
     And user of browser clicks on "Remove relation" in relation menu
-    And user of browser clicks on button "Remove" in modal "REMOVE SUBGROUP"
+    And user of browser clicks on "Remove" button in modal "REMOVE MEMBER"
     Then user of browser does not see "group1" as a parent of "group2" in hierarchy subpage
 

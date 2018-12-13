@@ -23,6 +23,7 @@ from .leave_group import LeaveGroupModal
 from .leave_space import LeaveSpaceModal
 from .leave_parent import LeaveParentModal
 from .error_modal import ErrorModal
+from .invite_using_token import InviteUsingTokenModal
 from .dns_configuration_warning import DNSConfigurationWarningModal
 from .groups_hierarchy_menu import GroupHierarchyMenu
 
@@ -43,20 +44,21 @@ class Modals(object):
                                         cls=DNSConfigurationWarningModal)
     remove_group = WebItem('.group-remove-modal.modal.in .modal-dialog',
                            cls=RemoveModal)
-    remove_subgroup = WebItem('.remove-relation-modal.modal.in .modal-dialog',
-                              cls=RemoveModal)
-    leave_group = WebItem('.group-leave-modal.modal.in .modal-dialog',
+    leave_group = WebItem('.leave-modal.modal.in .modal-dialog',
                           cls=LeaveGroupModal)
     leave_parent = WebItem('.leave-parent-modal.modal.in .modal-dialog',
                            cls=LeaveParentModal)
-    leave_space = WebItem('.popover-leave-space',
+    leave_space = WebItem('.modal-dialog',
                           cls=LeaveSpaceModal)
     provider_popover = WebItem('.webui-popover .provider-place-drop',
                                cls=ProviderPopover)
-    remove_member = WebItem('.remove-member.modal.in .modal-dialog',
+    remove_member = WebItem('.remove-relation-modal.modal.in .modal-dialog',
                             cls=RemoveModal)
     error = WebItem('.alert-global.modal.in .modal-dialog',
                     cls=ErrorModal)
+    invite_using_token = WebItem('.invite-using-token-modal.modal.in '
+                                 '.modal-dialog',
+                                 cls=InviteUsingTokenModal)
     group_hierarchy_menu = WebItem('.group-actions.one-webui-popover',
                                    cls=GroupHierarchyMenu)
     relation_menu = WebItem('.line-actions.one-webui-popover',
