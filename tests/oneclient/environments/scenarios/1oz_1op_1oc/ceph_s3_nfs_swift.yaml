@@ -24,10 +24,10 @@ onedataCli: false
 # Determines if oneclients should start.
 oneclients: true
 
-oneclientImage: "docker.onedata.org/oneclient-dev:ID-3c60ebb24b"
+oneclientImage: "docker.onedata.org/oneclient-dev:ID-a6af7ae291"
 
 # Onedata rest client image to use.
-onedataCliImage: "docker.onedata.org/rest-cli:ID-e5fb6602e4"
+onedataCliImage: "docker.onedata.org/rest-cli:ID-ce4dc2f486"
 
 # Luma image to use.
 lumaImage: "docker.onedata.org/luma:ID-8e2da56615"
@@ -71,10 +71,15 @@ onezone:
 oneprovider-1:
   workerOverlayConfig: *oneprovidersWorkerOverlayConfig
 
+  batchConfig:
+    createUsers: false
+
   oneclient:
     users: []
+    directIO:
+      nfs:
+        enabled: true
     wait_for_oneprovider:
       enabled: false
 
-    batchConfig:
-      createUsers: false
+
