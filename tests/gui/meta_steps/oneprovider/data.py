@@ -6,12 +6,10 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import os
+
 import yaml
 
-from tests.utils.acceptance_utils import wt
-from pytest_bdd import when, then, given, parsers
-from tests.gui.utils.generic import parse_seq
-from tests.gui.steps.oneprovider.permissions import *
 from tests.gui.steps.oneprovider.file_browser import *
 from tests.gui.steps.oneprovider.data_tab import *
 from tests.gui.steps.common.miscellaneous import *
@@ -23,42 +21,8 @@ from tests.gui.meta_steps.oneprovider.common import (
     navigate_to_tab_in_op_using_gui)
 
 
-@when(parsers.re('user of (?P<browser_id>\w+) adds ACE with (?P<priv>.*)'
-                 ' privileges? set for (?P<type>.*?) (?P<name>.*)'))
-def set_acl_entry_in_op_gui(selenium, browser_id, priv, type, name, modals, 
-                            numerals):
-    add_acl(selenium, browser_id, modals)
-    select_acl_subject_type(selenium, browser_id, type, 'last', numerals, modals)
-    select_acl_subject(selenium, browser_id, name, 'last', numerals,  modals)
-    select_acl_options(selenium, browser_id, priv, modals, 'last', numerals)
-
-
-def open_acl_modal(selenium, browser_id, path, space, op_page, tmp_memory, 
-                   modals):
-    modal_name = "Edit permissions"
-    tooltip = "Change element permissions"
-    _select_item(selenium, browser_id, space, op_page, tmp_memory, path) 
-    click_tooltip_from_toolbar_in_data_tab_in_op(selenium, browser_id, tooltip, 
-                                                 op_page)
-    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    select_permission_type(selenium, browser_id, "ACL", modals)
-
-
-@when(parsers.re('user of (?P<browser_id>\w+) sets (?P<path>.*) ACL '
-                 '(?P<priv>.*) privileges for (?P<type>.*) (?P<name>.*)'
-                 ' in "(?P<space>.*)"'))
-def grant_acl_privileges_in_op_gui(selenium, browser_id, path, priv, type, name,
-                                 op_page, tmp_memory, modals, space, numerals):
-    open_acl_modal(selenium, browser_id, path, space, op_page, tmp_memory, 
-                   modals)
-    set_acl_entry_in_op_gui(selenium, browser_id, priv, type, name, modals, 
-                            numerals)
-    wt_click_on_confirmation_btn_in_modal(selenium, browser_id, "Ok", tmp_memory)
-    wt_wait_for_modal_to_disappear(selenium, browser_id, tmp_memory)
-
-
-@then(parsers.re('user of (?P<browser_id>\w+) (?P<res>.*) to rename "(?P<path>.*)"'
-                 ' to "(?P<new_name>.*)" in "(?P<space>.*)"'))
+@then(parsers.re('user of (?P<browser_id>\w+) (?P<res>.*) to rename '
+                 '"(?P<path>.*)" to "(?P<new_name>.*)" in "(?P<space>.*)"'))
 def rename_item(selenium, browser_id, path, new_name, tmp_memory, op_page, 
                 res, space):
     modal_name = "Rename file or directory"
@@ -83,8 +47,8 @@ def rename_item(selenium, browser_id, path, new_name, tmp_memory, op_page,
     wt_wait_for_modal_to_disappear(selenium, browser_id, tmp_memory)
 
 
-@then(parsers.re('user of (?P<browser_id>\w+) (?P<res>.*) to remove "(?P<path>.*)"'
-                 ' in "(?P<space>.*)"'))
+@then(parsers.re('user of (?P<browser_id>\w+) (?P<res>.*) to remove '
+                 '"(?P<path>.*)" in "(?P<space>.*)"'))
 def remove_item_in_op_gui(selenium, browser_id, path, tmp_memory, op_page, 
                           res, space):
     modal_name = "Remove files"
@@ -98,59 +62,23 @@ def remove_item_in_op_gui(selenium, browser_id, path, tmp_memory, op_page,
     click_tooltip_from_toolbar_in_data_tab_in_op(selenium, browser_id, tooltip, 
                                                  op_page)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    wt_click_on_confirmation_btn_in_modal(selenium, browser_id, 'YES', tmp_memory)
+    wt_click_on_confirmation_btn_in_modal(selenium, browser_id, 'YES',
+                                          tmp_memory)
 
     if res == 'fails':
-        notify_visible_with_text(selenium, browser_id, 'error', '.*not.*removed.*')
+        notify_visible_with_text(selenium, browser_id, 'error',
+                                 '.*not.*removed.*')
     else:
         notify_visible_with_text(selenium, browser_id, 'info', '.*removed.*')
     wt_wait_for_modal_to_disappear(selenium, browser_id, tmp_memory)
 
 
-@then(parsers.re('user of (?P<browser_id>\w+) (?P<res>.*) to read "(?P<path>.*)"'
-                 ' ACL in "(?P<space>.*)"'))
-def read_items_acl(selenium, browser_id, path, tmp_memory, op_page, res, 
-                   space, modals):
-    open_acl_modal(selenium, browser_id, path, space, op_page, tmp_memory, 
-                   modals)
-    if res == "fails":
-        assert_amount_of_acls(selenium, browser_id, modals, 0)
-    else:
-        assert_amount_of_acls(selenium, browser_id, modals, 1)
-    wt_click_on_confirmation_btn_in_modal(selenium, browser_id, "Cancel", 
-                                          tmp_memory)
-    wt_wait_for_modal_to_disappear(selenium, browser_id, tmp_memory)
-
-
-@then(parsers.re('user of (?P<browser_id>\w+) sees that (?P<path>.*?) in space '
-                 '"(?P<space>\w+)" (has|have) (?P<priv>.*) privileges? set for '
-                 '(?P<type>.*?) (?P<name>.*) in (?P<num>.*) ACL record'))
-def assert_ace_in_op_gui(selenium, browser_id, priv, type, name, num, space, 
-                         path, op_page, tmp_memory, modals, numerals):
-    selenium[browser_id].refresh()
-    open_acl_modal(selenium, browser_id, path, space, op_page, tmp_memory, 
-                   modals)
-    assert_acl_subject(selenium, browser_id, modals, num, numerals, type, name)
-    assert_set_acl_privileges(selenium, browser_id, modals, num, numerals, priv)
-    wt_click_on_confirmation_btn_in_modal(selenium, browser_id, "Cancel", 
-                                          tmp_memory)
-
-
-@then(parsers.re('user of (?P<browser_id>\w+) (?P<res>.*) to change "(?P<path>.*)"'
-                 ' ACL in "(?P<space>.*)"'))
-def change_acl_privileges(selenium, browser_id, path, tmp_memory, op_page, res, 
-                          space, modals):
-    open_acl_modal(selenium, browser_id, path, space, op_page, tmp_memory, 
-                   modals)
-    wt_click_on_confirmation_btn_in_modal(selenium, browser_id, "Ok", tmp_memory)
-    if res == 'fails':
-        notify_visible_with_text(selenium, browser_id, 'error', '.*failed.*')
-        wt_click_on_confirmation_btn_in_modal(selenium, browser_id, "Cancel", 
-                                              tmp_memory)
-    else:
-        notify_visible_with_text(selenium, browser_id, 'info', 
-                                 '.*permissions.*set.*')
-    wt_wait_for_modal_to_disappear(selenium, browser_id, tmp_memory)
+def remove_dir_and_parents_in_op_gui(selenium, browser_id, path, tmp_memory,
+                                     op_page, res, space):
+    item_name = _select_item(selenium, browser_id, space, op_page, tmp_memory,
+                             path)
+    remove_item_in_op_gui(selenium, browser_id, item_name, tmp_memory, op_page,
+                          res, space)
 
 
 @when(parsers.re('user of (?P<browser_id>\w+) (?P<res>.*) to write '
@@ -187,7 +115,8 @@ def set_metadata_in_op_gui(selenium, browser_id, path, tmp_memory, op_page,
         notify_visible_with_text(selenium, browser_id, 'error', '.*Cannot.*'
                                  'save.*metadata.*')
     else:
-        notify_visible_with_text(selenium, browser_id, 'info', '.*successfully.*')
+        notify_visible_with_text(selenium, browser_id, 'info',
+                                 '.*successfully.*')
     click_tooltip_from_toolbar_in_data_tab_in_op(selenium, browser_id, tooltip, 
                                                  op_page)
 
@@ -331,6 +260,31 @@ def assert_space_content_in_op_gui(config, selenium, user, op_page, tmp_memory,
                       op_page, tmpdir)
 
 
+def see_num_of_items_in_path_in_op_gui(selenium, user, tmp_memory, op_page,
+                                       path, space, num, oz_page, provider,
+                                       hosts):
+    tab_name = 'data'
+
+    navigate_to_tab_in_op_using_gui(selenium, user, oz_page, provider,
+                                    tab_name, hosts)
+    _select_item(selenium, user, space, op_page, tmp_memory, path)
+    refresh_site(selenium, user)
+    assert_file_browser_in_data_tab_in_op(selenium, user, op_page, tmp_memory)
+    assert_num_of_files_are_displayed_in_file_browser(user, num, tmp_memory)
+
+
+def assert_file_content_in_op_gui(text, path, space, selenium, user, users,
+                                  provider, hosts, oz_page, op_page,
+                                  tmp_memory, tmpdir):
+    tab_name = 'data'
+
+    navigate_to_tab_in_op_using_gui(selenium, user, oz_page, provider,
+                                    tab_name, hosts)
+    item_name = _select_item(selenium, user, space, op_page, tmp_memory, path)
+    double_click_on_item_in_file_browser(user, item_name, tmp_memory)
+    has_downloaded_file_content(user, item_name, text, tmpdir)
+
+
 def create_directory_structure_in_op_gui(selenium, user, op_page, config, space,
                                          tmp_memory):
     items = yaml.load(config)
@@ -350,7 +304,6 @@ def _create_item(selenium, browser_id, name, content, cwd, space, tmp_memory,
                     op_page)
 
 
-
 def _create_content(selenium, browser_id, content, cwd, space, tmp_memory, 
                     op_page):
     for item in content:
@@ -363,14 +316,42 @@ def _create_content(selenium, browser_id, content, cwd, space, tmp_memory,
                      tmp_memory, op_page)
 
 
+def upload_file_to_op_gui(path, selenium, browser_id, space, op_page,
+                          tmp_memory):
+    item_name, path = get_item_name_and_containing_dir_path(path)
+    go_to_path(selenium, browser_id, space, op_page, tmp_memory, path)
+    upload_file_to_cwd_in_data_tab(selenium, browser_id, item_name, op_page)
+    notify_visible_with_text(selenium, browser_id, 'info',
+                             '.*[Cc]ompleted upload.*')
+
+
+def assert_mtime_not_earlier_than_op_gui(path, selenium, time, browser_id,
+                                         space, op_page, tmp_memory):
+    item_name = _select_item(selenium, browser_id, space, op_page, tmp_memory,
+                             path)
+    assert_item_in_file_browser_is_of_mdate(browser_id, item_name, time,
+                                            tmp_memory)
+
+
 def _select_item(selenium, browser_id, space, op_page, tmp_memory, path):
+    item_name, path = get_item_name_and_containing_dir_path(path)
+    go_to_path(selenium, browser_id, space, op_page, tmp_memory, path)
+    select_files_from_file_list_using_ctrl(browser_id, item_name, tmp_memory)
+    return item_name
+
+
+def go_to_path(selenium, browser_id, space, op_page, tmp_memory, path):
     change_space_view_in_data_tab_in_op(selenium, browser_id, space, op_page)
-    assert_file_browser_in_data_tab_in_op(selenium, browser_id, op_page, 
+
+    refresh_site(selenium, browser_id)
+    change_cwd_using_dir_tree_in_data_tab_in_op(selenium, browser_id, path,
+                                                op_page)
+    assert_file_browser_in_data_tab_in_op(selenium, browser_id, op_page,
                                           tmp_memory)
+
+
+def get_item_name_and_containing_dir_path(path):
     path_list = path.strip('\"').split('/')
     item_name = path_list.pop()
     path = '/'.join(path_list)
-    change_cwd_using_dir_tree_in_data_tab_in_op(selenium, browser_id, path,
-                                                op_page)
-    select_files_from_file_list_using_ctrl(browser_id, item_name, tmp_memory)
-    return item_name
+    return item_name, path

@@ -18,7 +18,7 @@ def create(user, dirs, users):
 
 
 @wt(parsers.re('(?P<user>\w+) fails to create directories (?P<dirs>.*)'))
-def create(user, dirs, users):
+def cannot_create(user, dirs, users):
     multi_dir_steps.fail_to_create(user, dirs, 'client1', users)
 
 

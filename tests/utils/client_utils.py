@@ -372,6 +372,10 @@ def getxattr(client, file, name):
     return xattrs[name]
 
 
+def get_all_xattr(client, file):
+    return client.rpyc_connection.modules.xattr.xattr(file)
+
+
 def listxattr(client, file):
     xattrs = client.rpyc_connection.modules.xattr.xattr(file)
     return xattrs.list()
@@ -380,6 +384,14 @@ def listxattr(client, file):
 def removexattr(client, file, name):
     xattrs = client.rpyc_connection.modules.xattr.xattr(file)
     del xattrs[name]
+
+
+def clear_xattr(client, file):
+    xattrs = client.rpyc_connection.modules.xattr.xattr(file)
+    try:
+        xattrs.clear()
+    except KeyError:
+        pass
 
 
 def execute(client, command, output=False):

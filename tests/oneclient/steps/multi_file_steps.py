@@ -16,28 +16,39 @@ import pytest
 import jsondiff
 from pytest_bdd import parsers, then, when
 
-from tests.utils.acceptance_utils import wt, list_parser, make_arg_list
+from tests.utils.acceptance_utils import (wt, list_parser, make_arg_list,
+                                          compare, time_attr)
 from tests.utils.utils import assert_, assert_generic
 from tests.utils.client_utils import (stat, ls, mv, osrename, create_file, rm,
                                       chmod, touch, setxattr, getxattr,
-                                      removexattr, listxattr)
+                                      removexattr, listxattr, get_all_xattr,
+                                      clear_xattr)
 from tests.utils.docker_utils import run_cmd
+
+
+def create_base(user, files, client_node, users, should_fail=False):
+    files = list_parser(files)
+    user = users[user]
+    client = user.clients[client_node]
+
+    for file_name in files:
+        path = client.absolute_path(file_name)
+
+        def condition():
+            create_file(client, path)
+        assert_generic(client.perform, should_fail, condition)
 
 
 @wt(parsers.re('(?P<user>\w+) creates regular files (?P<files>.*) '
                'on (?P<client_node>.*)'))
 def create_reg_file(user, files, client_node, users):
-    user = users[user]
-    client = user.clients[client_node]
-    files = list_parser(files)
+    create_base(user, files, client_node, users)
 
-    for file in files:
-        file_path = client.absolute_path(file)
 
-        def condition():
-            create_file(client, file_path)
-
-        assert_(client.perform, condition)
+@wt(parsers.re('(?P<user>\w+) fails to create regular files (?P<files>.*) '
+               'on (?P<client_node>.*)'))
+def create_reg_file_fail(user, files, client_node, users):
+    create_base(user, files, client_node, users, should_fail=True)
 
 
 @wt(parsers.re('(?P<user>\w+) creates child files of (?P<parent_dir>.*) '
@@ -412,6 +423,19 @@ def set_xattr(user, file, name, value, client_node, users):
     assert_(client.perform, condition)
 
 
+@wt(parsers.re('(?P<user>\w+) removes all extended attributes '
+               'from (?P<file>\w+) on (?P<client_node>.*)'))
+def remove_all_xattr(user, file, client_node, users):
+    user = users[user]
+    client = user.clients[client_node]
+    file_path = client.absolute_path(file)
+
+    def condition():
+        clear_xattr(client, file_path)
+
+    assert_(client.perform, condition)
+
+
 @wt(parsers.re('(?P<user>\w+) removes extended attribute (?P<name>[.\w]+) '
                'from (?P<file>\w+) on (?P<client_node>.*)'))
 def remove_xattr(user, file, name, client_node, users):
@@ -516,28 +540,10 @@ def record_stats(user, files, client_node, users):
         client.file_stats[file_path] = stat(client, file_path)
 
 
-###############################################################################
+def get_metadata(user, path, client_node, users):
+    user = users[user]
+    client = user.clients[client_node]
+    file_path = client.absolute_path(path)
 
-def time_attr(parameter):
-    return {
-        'access': 'st_atime',
-        'modification': 'st_mtime',
-        'status-change': 'st_ctime'
-    }[parameter]
-
-
-def compare(val1, val2, comparator):
-    if comparator == 'equal':
-        return val1 == val2
-    elif comparator == 'not equal':
-        return val1 != val2
-    elif comparator == 'greater':
-        return val1 > val2
-    elif comparator == 'less':
-        return val1 < val2
-    elif comparator == 'not greater':
-        return val1 <= val2
-    elif comparator == 'not less':
-        return val1 >= val2
-    else:
-        raise ValueError('Wrong argument comparator to function compare')
+    xattr_value = get_all_xattr(client, file_path)
+    return xattr_value

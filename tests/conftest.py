@@ -71,15 +71,20 @@ def pytest_generate_tests(metafunc):
         test_type = metafunc.config.option.test_type
 
         if test_type in ['gui', 'mixed']:
+            if test_type == 'mixed':
+                default_env_file = '1oz_1op_1oc'
+            else:
+                default_env_file = '1oz_1op_deployed'
+
             env_file = metafunc.config.getoption('env_file')
             if env_file:
                 metafunc.parametrize('env_description_file', [env_file],
                                      scope='session')
             else:
                 metafunc.parametrize('env_description_file',
-                                     ['1oz_1op_deployed'], scope='session')
+                                     [default_env_file], scope='session')
 
-        if test_type == 'oneclient':
+        elif test_type == 'oneclient':
             env_file = metafunc.config.getoption('env_file')
             if env_file:
                 metafunc.parametrize('env_description_file', [env_file],
@@ -244,29 +249,42 @@ def env_desc(env_description_abs_path, hosts, request, users):
     """
     test_type = get_test_type(request)
 
-    if test_type in ['gui', 'mixed']:
+    if test_type in ['gui']:
         # For now gui tests do not use onenv patch
         start_environment(env_description_abs_path, request, hosts, '',
                           users, env_description_abs_path)
         return ''
 
-    if test_type == 'oneclient':
+    elif test_type == 'mixed':
         with open(env_description_abs_path, 'r') as env_desc_file:
             env_desc = yaml.load(env_desc_file)
 
-            scenario = env_desc.get('scenario')
-            scenarios_dir_path = SCENARIO_DIRS.get(
-                get_test_type(request))
-            scenario_path = os.path.abspath(
-                os.path.join(scenarios_dir_path, scenario))
+        scenario = env_desc.get('scenario')
+        scenarios_dir_path = SCENARIO_DIRS.get(get_test_type(request))
+        scenario_path = os.path.abspath(os.path.join(scenarios_dir_path,
+                                                     scenario))
+    
+        start_environment(scenario_path, request, hosts, '',
+                          users, env_description_abs_path)
+        return env_desc
 
-            patch = env_desc.get('patch')
-            patch_dir_path = LANDSCAPE_DIRS.get(
-                get_test_type(request))
-            patch_path = os.path.join(patch_dir_path, patch)
+    elif test_type == 'oneclient':
+        with open(env_description_abs_path, 'r') as env_desc_file:
+            env_desc = yaml.load(env_desc_file)
 
-            start_environment(scenario_path, request, hosts, patch_path, users,
-                              env_description_abs_path)
+        scenario = env_desc.get('scenario')
+        scenarios_dir_path = SCENARIO_DIRS.get(
+            get_test_type(request))
+        scenario_path = os.path.abspath(
+            os.path.join(scenarios_dir_path, scenario))
+
+        patch = env_desc.get('patch')
+        patch_dir_path = LANDSCAPE_DIRS.get(
+            get_test_type(request))
+        patch_path = os.path.join(patch_dir_path, patch)
+
+        start_environment(scenario_path, request, hosts, patch_path, users,
+                          env_description_abs_path)
         return env_desc
 
 
@@ -330,9 +348,10 @@ def start_environment(scenario_path, request, hosts, patch_path,
 
     if clean:
         up_args = parse_up_args(request, scenario_path)
-        _, ret = run_onenv_command('up', up_args)
+        output, ret = run_onenv_command('up', up_args)
         if ret != 0:
-            handle_env_init_error(request, env_description_abs_path, 'up')
+            handle_env_init_error(request, env_description_abs_path, 'up',
+                                  output)
 
         wait_args = parse_wait_args(request)
         run_onenv_command('wait', wait_args)
@@ -342,7 +361,8 @@ def start_environment(scenario_path, request, hosts, patch_path,
 
     env_ready = status_output.get('ready')
     if not env_ready:
-        handle_env_init_error(request, env_description_abs_path, 'status')
+        handle_env_init_error(request, env_description_abs_path, 'status',
+                              env_ready)
 
     pods_cfg = status_output['pods']
     parse_hosts_cfg(pods_cfg, hosts, request)
@@ -364,10 +384,12 @@ def start_environment(scenario_path, request, hosts, patch_path,
         request.addfinalizer(fin)
 
 
-def handle_env_init_error(request, env_description_abs_path, command):
+def handle_env_init_error(request, env_description_abs_path, command, output):
     export_logs(request, env_description_abs_path)
     run_onenv_command('clean')
-    pytest.skip('Environment error: Onenv command {} failed'.format(command))
+    pytest.skip('Environment error: Onenv command {} failed.'
+                'Captured stdout: {}.'
+                .format(command, output))
 
 
 def get_test_type(request):

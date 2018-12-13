@@ -17,7 +17,7 @@ Feature: Provider management in Onepanel
                 - oneprovider-1:
                     storage: posix
                     size: 1000000
-    And opened browsers with [admin, user1] logged to [oneprovider-1 provider panel, onezone onezone] service
+    And opened browsers with [admin, user1] logged to [oneprovider-1 provider panel, onezone] service
 
 
   Scenario Outline: User changes provider name and domain using <client2> and he sees in <client1> that they have changed

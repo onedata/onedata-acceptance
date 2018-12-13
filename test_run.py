@@ -17,10 +17,10 @@ import argparse
 from subprocess import *
 import xml.etree.ElementTree as ElementTree
 
-from one_env.scripts.utils import one_env_dir
-from one_env.scripts.utils.one_env_dir import user_config
-from one_env.scripts.utils.terminal import info
 from bamboos.docker.environment import docker
+from one_env.scripts.utils import one_env_dir
+from one_env.scripts.utils.terminal import info
+from one_env.scripts.utils.one_env_dir import user_config
 from one_env.scripts.onenv_hosts import update_etc_hosts
 
 
@@ -69,6 +69,11 @@ def parse_image_for_service(file_path):
         return None
 
 
+def delete_test_runner_pod():
+    delete_test_runner_cmd = ['kubectl', 'delete', 'pod', 'test-runner']
+    call(delete_test_runner_cmd, stdin=None, stderr=None, stdout=None)
+
+
 def clean_env():
     docker.run(tty=True,
                rm=True,
@@ -85,8 +90,6 @@ def clean_env():
                image=args.image,
                command=['./onenv', 'clean'],
                envs={'HOME': '/tmp'})
-    delete_test_runner_cmd = ['kubectl', 'delete', 'pod', 'test-runner']
-    call(delete_test_runner_cmd, stdin=None, stderr=None, stdout=None)
 
 
 parser = argparse.ArgumentParser(
@@ -320,7 +323,8 @@ ALL       ALL = (ALL) NOPASSWD: ALL
             {{
                 "name": "test-runner",
                 "image": "{image}",
-                "stdin": true,
+                "stdin": {stdin},
+                "tty": {tty},
                 "imagePullPolicy": "IfNotPresent",
                 "workingDir": "{script_dir}",
                 "command" : [
@@ -420,6 +424,13 @@ ALL       ALL = (ALL) NOPASSWD: ALL
 
     minikube_script_dir = script_dir.replace(one_env_dir.get_host_home(),
                                              kube_host_home_dir)
+    if sys.__stdin__.isatty():
+        stdin = 'true'
+        tty = 'true'
+    else:
+        stdin = 'false'
+        tty = 'false'
+
     privileged = 'true' if args.privileged else 'false'
     test_runner_pod = test_runner_pod.format(command=command,
                                              script_dir=script_dir,
@@ -427,20 +438,24 @@ ALL       ALL = (ALL) NOPASSWD: ALL
                                              image=args.image,
                                              home=os.path.expanduser('~'),
                                              minikube_home=kube_host_home_dir,
-                                             privileged=privileged)
+                                             privileged=privileged,
+                                             stdin=stdin,
+                                             tty=tty)
 
-    cmd = ['kubectl', 'run', '-i', '--rm', '--restart=Never',
+    cmd = ['kubectl', 'run', '-it', '--rm', '--restart=Never',
            'test-runner', '--overrides={}'.format(test_runner_pod),
            '--image={}'.format(args.image), '--', 'python', '-c',
            '"{}"'.format(command)]
 
     if args.clean:
         clean_env()
+    delete_test_runner_pod()
 
     ret = call(cmd, stdin=None, stderr=None, stdout=None)
 
     if args.clean:
         clean_env()
+    delete_test_runner_pod()
 
 report = load_test_report(args.report_path)
 

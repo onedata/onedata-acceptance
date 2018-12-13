@@ -41,9 +41,9 @@ def select_permission_type(selenium, browser_id, permission_type, modals):
                     '"{perm}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_permission(selenium, browser_id, perm, modals):
-    perm_value = modals(selenium[browser_id]).edit_permissions.posix.value 
-    assert perm_value == perm, "POSIX permission value {} instead of'\
-                               ' expected {}".format(perm_value, perm)
+    perm_value = modals(selenium[browser_id]).edit_permissions.posix.value
+    assert perm_value == perm, ('POSIX permission value {} instead of'
+                                ' expected {}'.format(perm_value, perm))
 
 
 @when(parsers.parse('user of {browser_id} sets "{perm}" permission code in '

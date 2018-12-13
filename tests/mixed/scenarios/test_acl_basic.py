@@ -1,5 +1,6 @@
 """Test suite for mixed ACL management tests
 """
+
 __author__ = "Michal Stanisz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
@@ -51,5 +52,7 @@ from tests.mixed.steps.data_basic import *
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.onezone.common import *
 
+from tests.oneclient.steps.auth_steps import *
 
-scenarios('../features/acl_basic.feature')
+
+scenarios('../features/oneprovider/acl_basic.feature')

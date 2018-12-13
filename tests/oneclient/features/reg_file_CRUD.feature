@@ -1,7 +1,7 @@
 Feature: Regular_file_CRUD
 
   Background:
-    Given user1 mounts oneclient in /home/user1/onedata using token
+    Given oneclient mounted in /home/user1/onedata using token by user1
 
     
   Scenario: Create regular file
