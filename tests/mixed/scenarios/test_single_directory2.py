@@ -1,8 +1,8 @@
-"""Test suite for mixed files times tests
+"""Test suite for mixed single directory tests 2
 """
 
-__author__ = "Michal Cwiertnia"
-__copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
+__author__ = "Michal Stanisz, Michal Cwiertnia"
+__copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
@@ -54,13 +54,4 @@ from tests.gui.meta_steps.onezone.common import *
 from tests.oneclient.steps.auth_steps import *
 
 
-@pytest.mark.xfail(reason='Timestamps do not change during renaming '
-                          'directory using GUI, VFS-3520')
-@scenario('../features/oneprovider/files_times.feature',
-          'User renames file using <client2> and using <client1> he sees that '
-          'status-change time has changed')
-def test_rename_directory_and_check_status_change_time():
-    pass
-
-
-scenarios('../features/oneprovider/files_times.feature')
+scenarios('../features/oneprovider/single_directory2.feature')

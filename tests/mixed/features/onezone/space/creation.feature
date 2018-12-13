@@ -9,7 +9,7 @@ Feature: Creation
   Background:
     Given initial users configuration in "onezone" Onezone service:
             - user1
-    And opened browser with user1 logged to "onezone onezone" service
+    And opened browser with user1 logged to "onezone" service
 
 
   Scenario Outline: User creates space using <client1> and using <client2> he sees that it has appeared

@@ -13,7 +13,8 @@ from functools import partial
 import yaml
 
 from tests.gui.utils.generic import parse_seq
-from tests.mixed.utils.data import check_files_tree, create_content, assert_ace, get_acl_metadata
+from tests.mixed.utils.data import (check_files_tree, create_content,
+                                    assert_ace, get_acl_metadata)
 from tests.oneclient.steps import (multi_dir_steps, multi_reg_file_steps,
                                    multi_file_steps)
 

@@ -30,7 +30,7 @@ Feature: LUMA acceptance tests
         storage_name: posix
         storage_type: posix
     
-    And opened browser with user3 logged to "onezone onezone" service
+    And opened browser with user3 logged to "onezone" service
     And opened oneprovider-1 Oneprovider view in web GUI by user3
 
     And [user1, user2] mounted clients to oneprovider-1 on client_host

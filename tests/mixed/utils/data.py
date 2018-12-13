@@ -13,6 +13,13 @@ from tests.gui.utils.oneservices.cdmi import get_item_type
 
 
 def check_files_tree(subtree, children, cwd, ls_fun, assert_file_content_fun):
+    """This function recursively checks files tree:
+        - for directory it checks if all elements listed in children are
+        present. Then if any directory listed in children has description of
+        its file tree, function make recursive call for that subdirectory.
+        - for file if description is specified function checks if content
+        of file is the same as provided
+    """
     for item in subtree:
         try:
             [(item_name, item_desc)] = item.items()

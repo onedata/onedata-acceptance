@@ -1,13 +1,13 @@
 Feature: Directories multiclient tests
 
   Examples:
-  | client1   | client2   | host1         | host2         |
-  | REST      | web GUI   | oneprovider-1 | oneprovider-1 |
-  | web GUI	  | REST	  | oneprovider-1 | oneprovider-1 |
-  | oneclient | REST      | client1       | oneprovider-1 |
-  | REST      | oneclient | oneprovider-1 | client2       |
-  | oneclient | web GUI   | client1       | oneprovider-1 |
-  | web GUI   | oneclient | oneprovider-1 | client2       |
+  | client1    | client2    |
+  | REST       | web GUI    |
+  | web GUI	   | REST	    |
+  | oneclient1 | REST       |
+  | REST       | oneclient2 |
+  | oneclient1 | web GUI    |
+  | web GUI    | oneclient2 |
 
 
   Background:
@@ -23,27 +23,27 @@ Feature: Directories multiclient tests
                 - oneprovider-1:
                     storage: posix
                     size: 1000000
-    And [user1, user2] mount oneclients [client1, client2] in
-      [/home/user1/onedata, /home/user2/onedata] on client_hosts
-      [oneclient-1, oneclient-2] respectively,
-      using [token, token]
+    And oneclients [client1, client2]
+      mounted in [/home/user1/onedata, /home/user2/onedata]
+      on client_hosts [oneclient-1, oneclient-2] respectively,
+      using [token, token] by [user1, user2]
     And opened browser with [user1, user2] logged to [onezone, onezone] service
     And opened [oneprovider-1, oneprovider-1] Oneprovider view in web GUI by [user1, user2]
 
 
   Scenario Outline: User1 creates directory using <client1> and user2 removes it using <client2>
-    When using <client1>, user1 succeeds to create directory named "dir1" in "space1" in <host1>
-    And using <client2>, user2 succeeds to see item named "dir1" in "space1" in <host2>
-    And using <client2>, user2 succeeds to remove directory (rmdir) named "dir1" in "space1" in <host2>
-    Then using <client2>, user2 fails to see item named "dir1" in "space1" in <host2>
-    And using <client1>, user1 fails to see item named "dir1" in "space1" in <host1>
+    When using <client1>, user1 succeeds to create directory named "dir1" in "space1" in oneprovider-1
+    And using <client2>, user2 succeeds to see item named "dir1" in "space1" in oneprovider-1
+    And using <client2>, user2 succeeds to remove directory (rmdir) named "dir1" in "space1" in oneprovider-1
+    Then using <client2>, user2 fails to see item named "dir1" in "space1" in oneprovider-1
+    And using <client1>, user1 fails to see item named "dir1" in "space1" in oneprovider-1
 
 
   Scenario Outline: User1 creates directory using <client1> and user2 renames it using <client2>
-    When using <client1>, user1 succeeds to create directory named "dir1" in "space1" in <host1>
-    And using <client2>, user2 succeeds to see item named "dir1" in "space1" in <host2>
-    And using <client2>, user2 renames item named "dir1" to "dir2" in "space1" in <host2>
-    Then using <client2>, user2 fails to see item named "dir1" in "space1" in <host2>
-    And using <client1>, user1 fails to see item named "dir1" in "space1" in <host1>
-    And using <client2>, user2 succeeds to see item named "dir2" in "space1" in <host2>
-    And using <client1>, user1 succeeds to see item named "dir2" in "space1" in <host1>
+    When using <client1>, user1 succeeds to create directory named "dir1" in "space1" in oneprovider-1
+    And using <client2>, user2 succeeds to see item named "dir1" in "space1" in oneprovider-1
+    And using <client2>, user2 renames item named "dir1" to "dir2" in "space1" in oneprovider-1
+    Then using <client2>, user2 fails to see item named "dir1" in "space1" in oneprovider-1
+    And using <client1>, user1 fails to see item named "dir1" in "space1" in oneprovider-1
+    And using <client2>, user2 succeeds to see item named "dir2" in "space1" in oneprovider-1
+    And using <client1>, user1 succeeds to see item named "dir2" in "space1" in oneprovider-1
