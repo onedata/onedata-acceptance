@@ -85,6 +85,8 @@ def clean_env():
                image=args.image,
                command=['./onenv', 'clean'],
                envs={'HOME': '/tmp'})
+    delete_test_runner_cmd = ['kubectl', 'delete', 'pod', 'test-runner']
+    call(delete_test_runner_cmd, stdin=None, stderr=None, stdout=None)
 
 
 parser = argparse.ArgumentParser(
@@ -245,17 +247,22 @@ oz_image, op_image, rest_cli_image = (args.oz_image, args.op_image,
                                       args.rest_cli_image)
 if oz_image:
     info('Using onezone image: {}'.format(oz_image))
+    docker.pull_image(oz_image)
 if op_image:
     info('Using oneprovider image: {}'.format(op_image))
+    docker.pull_image(op_image)
 if rest_cli_image:
     info('Using rest cli image: {}'.format(rest_cli_image))
+    docker.pull_image(rest_cli_image)
 
 if args.test_type in ['oneclient', 'mixed']:
     oc_image, luma_image = args.oc_image, args.luma_image
     if oc_image:
         info('Using oneclient image: {}'.format(oc_image))
+        docker.pull_image(oc_image)
     if luma_image:
         info('Using luma image: {}'.format(luma_image))
+        docker.pull_image(luma_image)
 
 if args.update_etc_hosts:
     update_etc_hosts()
@@ -268,15 +275,12 @@ if args.local:
     ret = call(cmd, stdin=None, stderr=None, stdout=None)
 
 else:
-    if args.test_type in ['gui', 'mixed']:
-        additional_code = '''
+    additional_code = '''
 with open('/etc/sudoers.d/all', 'w+') as file:
     file.write("""
 ALL       ALL = (ALL) NOPASSWD: ALL
 """)
-    '''
-    else:
-        additional_code = ''
+'''
 
     command = command.format(args=pass_args,
                              uid=os.geteuid(),
@@ -437,9 +441,6 @@ ALL       ALL = (ALL) NOPASSWD: ALL
 
     if args.clean:
         clean_env()
-
-    delete_test_runner_cmd = ['kubectl', 'delete', 'pod', 'test-runner']
-    call(delete_test_runner_cmd, stdin=None, stderr=None, stdout=None)
 
 report = load_test_report(args.report_path)
 
