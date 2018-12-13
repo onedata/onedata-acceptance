@@ -17,10 +17,11 @@ import argparse
 from subprocess import *
 import xml.etree.ElementTree as ElementTree
 
-from one_env.scripts import user_config
-from one_env.scripts.console import info
 from bamboos.docker.environment import docker
-from one_env.scripts.update_etc_hosts import update_etc_hosts
+from one_env.scripts.utils import one_env_dir
+from one_env.scripts.utils.terminal import info
+from one_env.scripts.utils.one_env_dir import user_config
+from one_env.scripts.onenv_hosts import update_etc_hosts
 
 
 ZONE_IMAGES_CFG_PATH = 'onezone_images/docker-dev-build-list.json'
@@ -76,6 +77,8 @@ def delete_test_runner_pod():
 def clean_env():
     docker.run(tty=True,
                rm=True,
+               user=os.geteuid(),
+               group=os.getegid(),
                interactive=True,
                name='onenv-clean',
                workdir=os.path.join(script_dir, 'one_env'),
@@ -275,15 +278,12 @@ if args.local:
     ret = call(cmd, stdin=None, stderr=None, stdout=None)
 
 else:
-    if args.test_type in ['gui', 'mixed']:
-        additional_code = '''
+    additional_code = '''
 with open('/etc/sudoers.d/all', 'w+') as file:
     file.write("""
 ALL       ALL = (ALL) NOPASSWD: ALL
 """)
-    '''
-    else:
-        additional_code = ''
+'''
 
     command = command.format(args=pass_args,
                              uid=os.geteuid(),
@@ -303,7 +303,7 @@ ALL       ALL = (ALL) NOPASSWD: ALL
                              if args.timeout else [],
                              oz_image=oz_image if oz_image else '',
                              op_image=op_image if op_image else '',
-                             home=user_config.host_home(),
+                             home=one_env_dir.get_host_home(),
                              privileged=args.privileged)
     kube_config_path = os.path.expanduser(args.kube_config_path)
     minikube_config_path = os.path.expanduser(args.minikube_config_path)
@@ -422,7 +422,7 @@ ALL       ALL = (ALL) NOPASSWD: ALL
     except FileNotFoundError:
         kube_host_home_dir = os.path.expanduser('~')
 
-    minikube_script_dir = script_dir.replace(user_config.host_home(),
+    minikube_script_dir = script_dir.replace(one_env_dir.get_host_home(),
                                              kube_host_home_dir)
     if sys.__stdin__.isatty():
         stdin = 'true'
