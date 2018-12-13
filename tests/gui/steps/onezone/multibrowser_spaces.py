@@ -8,20 +8,12 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 from pytest_bdd import parsers
+
 from tests.utils.acceptance_utils import wt
 from tests.utils.utils import repeat_failed
 from tests.gui.utils.generic import parse_seq
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
-
-
-@wt(parsers.parse('user of {browser_id} clicks Invite user on Menu of Members'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_invite_user_on_menu_of_members(selenium, browser_id, oz_page):
-    driver = selenium[browser_id]
-    elem = oz_page(driver)['spaces']
-    elem.menu_button()
-    elem.menu['Invite user'].click()
 
 
 @wt(parsers.parse('user of {browser_id} sends invitation {item_type} '
@@ -30,9 +22,6 @@ def click_invite_user_on_menu_of_members(selenium, browser_id, oz_page):
 def send_invitation_token_to_browser(selenium, browser_id, item_type, oz_page,
                                      displays, clipboard, browser_list,
                                      tmp_memory):
-    driver = selenium[browser_id]
-    oz_page(driver)['spaces'].members_page.token.copy()
-
     item = clipboard.paste(display=displays[browser_id])
     for browser in parse_seq(browser_list):
         tmp_memory[browser]['mailbox'][item_type.lower()] = item
@@ -68,17 +57,6 @@ def click_join_the_space_button_on_join_to_space_page(selenium, browser_id,
                                                       oz_page):
     driver = selenium[browser_id]
     oz_page(driver)['spaces'].input_box.confirm()
-
-
-@wt(parsers.parse('user of {browser_id} clicks Join space '
-                  'on the groups list in the sidebar'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_join_space_on_groups_menu_on_left_sidebar_menu(selenium, browser_id,
-                                                         oz_page):
-    driver = selenium[browser_id]
-    elem = oz_page(driver)['groups']
-    elem.groups_menu_button()
-    elem.join_space.click()
 
 
 @wt(parsers.parse('user of {browser_id} clicks "{group_name}" '
