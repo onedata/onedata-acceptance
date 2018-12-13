@@ -56,7 +56,7 @@ def press_enter_on_active_element(selenium, browser_id):
 def title_contains(selenium, browser_id, text):
     page_title = selenium[browser_id].title
     assert text in page_title, \
-        'page title is {} instead of expected {}'.format(page_title, text)
+        '{} page title should contain {}'.format(page_title, text)
 
 
 @when(parsers.re('users? of (?P<browser_id_list>.*) clicks on '

@@ -16,7 +16,7 @@ from tests.utils.acceptance_utils import *
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.utils import repeat_failed
-from tests.utils.acceptance_utils import wt
+from tests.gui.meta_steps.onezone.common import click_visit_provider
 
 
 @when(parsers.parse('user of {browser_id} sees that provider popup for '
@@ -198,7 +198,7 @@ def assert_no_provider_popup_on_world_map(selenium, browser_id, modals):
     try:
         modals(driver).provider_popover
     except RuntimeError:
-        assert False, 'found provider popover on world map'
+        assert True, 'found provider popover on world map'
 
 
 @when(parsers.re(r'user of (?P<browser_id>.+?) clicks on '
@@ -376,7 +376,6 @@ def click_on_provider_in_data_sidebar(selenium, browser_id, oz_page,
                   'on provider popover'))
 def click_on_visit_provider_in_provider_popover(selenium, browser_id, modals):
     driver = selenium[browser_id]
-    from tests.gui.meta_steps.onezone.common import click_visit_provider
     click_visit_provider(driver, modals)
 
 
@@ -398,8 +397,8 @@ def assert_home_space_has_appeared_on_provider_on_left_sidebar_menu(selenium,
                                                                     hosts):
     driver = selenium[browser_id]
     provider = hosts[provider]['name']
-    assert (oz_page(driver)['data'].elements_list[provider].is_home_icon(),
-            'home of provider "{}" not found'.format(provider))
+    assert (oz_page(driver)['data'].elements_list[provider].is_home_icon()), \
+        ('home of provider "{}" not found'.format(provider))
 
 
 @wt(parsers.parse('user of {browser_id} sees that spaces counter for '
@@ -418,7 +417,7 @@ def assert_number_of_supported_spaces_in_data_sidebar(selenium, browser_id,
 
 @wt(parsers.parse('user of {browser_id} sees that length of spaces list on '
                   'provider popover is {number}'))
-def assert_spaces_list_in_provider_popover(selenium, browser_id,
+def assert_len_of_spaces_list_in_provider_popover(selenium, browser_id,
                                            number, modals):
     driver = selenium[browser_id]
     spaces_list = modals(driver).provider_popover.spaces_list
