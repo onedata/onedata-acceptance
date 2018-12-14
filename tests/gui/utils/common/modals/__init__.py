@@ -46,7 +46,7 @@ class Modals(object):
                           cls=LeaveGroupModal)
     leave_parent = WebItem('.leave-parent-modal.modal.in .modal-dialog',
                            cls=LeaveParentModal)
-    leave_space = WebItem('.popover-leave-space',
+    leave_space = WebItem('.modal-dialog',
                           cls=LeaveSpaceModal)
     provider_popover = WebItem('.webui-popover .provider-place-drop',
                                cls=ProviderPopover)

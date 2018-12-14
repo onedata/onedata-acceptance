@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in " \
 from selenium.webdriver import ActionChains
 
 from tests.gui.utils.core.base import PageObject
+from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.core.web_elements import (Button, NamedButton,
                                                Label, WebItem, Input,
                                                WebItemsSequence, WebElement)
@@ -28,15 +29,15 @@ class GroupMembersItemHeader(PageObject):
 
 class Privilege(PageObject):
     name = id = Label('label')
-    toggle = Button('.one-way-toggle-control')
+    toggle = Toggle('.one-way-toggle')
 
 
 class PrivilegeGroup(PageObject):
     name = id = Label('div.tree-item-content-container > '
                       'div.one-tree-item-content > label')
-    toggle = Button('div.tree-item-content-container > '
-                    'div.one-tree-item-content > div > div > '
-                    'div.one-way-toggle-control')
+    toggle = Toggle('div.tree-item-content-container > '
+                    'div.one-tree-item-content > div > '
+                    'div.one-way-toggle')
     privileges = WebItemsSequence('div > div.one-tree > ul > li', cls=Privilege)
     show_hide_button = Button('.tree-circle')
 
@@ -50,6 +51,7 @@ class GroupMembersItemRow(PageObject):
     privileges = WebItemsSequence('.one-collapsible-list-item-content '
                                   '.form.ember-view > div > ul > li', 
                                   cls=PrivilegeGroup)
+    alert = WebElement('.alert.forbidden strong')
 
 
 class GroupMembersList(PageObject):

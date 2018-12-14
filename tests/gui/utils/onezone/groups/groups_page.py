@@ -56,6 +56,7 @@ class GroupsPage(GenericPage):
     input_box = WebItem('.content-info-content-container', cls=InputBox) 
 
     main_page = WebItem('.col-content', cls=GroupDetailsPage)
+    members_page = WebItem('.main-content', cls=GroupMembersPage)
 
     join_space = Button('.minimized-item.clickable.join-space-action '
                         '.oneicon-space-join')

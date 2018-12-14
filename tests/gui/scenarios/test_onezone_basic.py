@@ -36,6 +36,7 @@ from tests.gui.steps.onezone.data_space_management import *
 from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.manage_account import *
 from tests.gui.steps.onezone.groups import *
+from tests.gui.steps.onezone.members import *
 from tests.gui.steps.onezone.spaces import *
 from tests.gui.steps.onezone.multibrowser_spaces import *
 
@@ -83,4 +84,6 @@ scenarios('../features/onezone/groups/groups_subgroup.feature')
 scenarios('../features/onezone/groups/'
           'groups_multiple_users_with_multiple_groups.feature')
 scenarios('../features/onezone/groups/groups_memberships.feature')
+scenarios('../features/onezone/groups/groups_memberships_multibrowser.feature')
+scenarios('../features/onezone/groups/groups_memberships_privileges.feature')
 
