@@ -39,15 +39,15 @@ def click_mode_view_in_members_subpage(selenium, browser_id, mode,
     getattr(oz_page(driver)[where].members_page, mode).click()
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) sees (?P<member_type>user|group) '
-               '"(?P<member_name>.*)" is member of '
-               '(?P<parent_type>space|group) "(?P<parent_name>.*)" '
+@wt(parsers.re('user of (?P<browser_id>.*) sees "(?P<member_name>.*)" '
+               '(?P<member_type>user|group) is member of '
+               '"(?P<parent_name>.*)" (?P<parent_type>space|group) '
                'in (?P<where>space|group) memberships mode'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_member_is_member_of_parent_in_memberships(selenium, browser_id,
                                                      member_name, parent_name,
-                                                     member_type, oz_page,
-                                                     where):
+                                                     member_type, parent_type,
+                                                     oz_page, where):
     driver = selenium[browser_id]
     where = where + 's'
     records = oz_page(driver)[where].members_page.memberships
@@ -61,19 +61,19 @@ def assert_member_is_member_of_parent_in_memberships(selenium, browser_id,
                     return
                 elif member_index == 0:
                     return
-
-    assert False
+    raise RuntimeError('not found "{}" {} as a member of "{}" {}'.format(
+        member_name, member_type, parent_name, parent_type))
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) does not see '
-               '(?P<member_type>user|group) "(?P<member_name>.*)" is '
-               'member of (?P<parent_type>space|group) "(?P<parent_name>.*)" '
+               '"(?P<member_name>.*)" (?P<member_type>user|group) is '
+               'member of "(?P<parent_name>.*)" (?P<parent_type>space|group) '
                'in (?P<where>space|group) memberships mode'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_member_is_not_member_of_group_in_memberships(selenium, browser_id,
                                                         member_name, where,
                                                         parent_name, oz_page,
-                                                        member_type):
+                                                        member_type, parent_type):
     driver = selenium[browser_id]
     where = where + 's'
     records = oz_page(driver)[where].members_page.memberships
@@ -84,9 +84,13 @@ def assert_member_is_not_member_of_group_in_memberships(selenium, browser_id,
             group_index = record.elements.index(parent_name)
             if member_index + 1 == group_index:
                 if member_type != 'user':
-                    assert False
+                    raise RuntimeError(
+                        'found "{}" {} as a member of "{}" {}'.format(
+                            member_name, member_type, parent_name, parent_type))
                 elif member_index == 0:
-                    assert False
+                    raise RuntimeError(
+                        'found "{}" {} as a member of "{}" {}'.format(
+                            member_name, member_type, parent_name, parent_type))
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees (?P<number>.*) '
@@ -96,13 +100,16 @@ def assert_count_membership_rows(selenium, browser_id, number, oz_page, where):
     driver = selenium[browser_id]
     where = where + 's'
     records = oz_page(driver)[where].members_page.memberships
+    count_records = len(records)
 
-    assert len(records) == int(number)
+    assert count_records == int(number), ('found {} membership rows '
+                                          'instead of {}'.format(number,
+                                                                 count_records))
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) clicks on member '
-               '"(?P<member_name>.*)" relation menu button to '
-               '(?P<where>space|group) "(?P<name>.*)"'))
+@wt(parsers.re('user of (?P<browser_id>.*) clicks on "(?P<member_name>.*)" '
+               'member relation menu button to '
+               '"(?P<name>.*)" (?P<where>space|group)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_relation_menu_button(selenium, browser_id, member_name,
                                name, oz_page, where):
@@ -126,9 +133,9 @@ def click_option_in_relation_menu_button(selenium, browser_id, option):
     modals(driver).membership_relation_menu.options[option].click()
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) clicks (?P<member_type>user|group) '
-               '"(?P<member_name>.*)" in (?P<where>space|group) "(?P<name>.*)" '
-               'members (?P<list_type>users|groups) list'))
+@wt(parsers.re('user of (?P<browser_id>.*) clicks "(?P<member_name>.*)" '
+               '(?P<member_type>user|group) in "(?P<name>.*)" '
+               '(?P<where>space|group) members (?P<list_type>users|groups) list'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_user_in_members_users_list(selenium, browser_id, member_name,
                                      oz_page, where, list_type):
@@ -138,8 +145,8 @@ def click_user_in_members_users_list(selenium, browser_id, member_name,
      .items[member_name].click())
 
 
-@wt(parsers.parse('user of {browser_id} clicks on text '
-                  '"generate an invitation token" in group '
+@wt(parsers.parse('user of {browser_id} clicks on '
+                  '"generate an invitation token" text in group '
                   '"{group}" members groups list'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_generate_token_in_subgroups_list(selenium, browser_id, group,
@@ -150,46 +157,55 @@ def click_generate_token_in_subgroups_list(selenium, browser_id, group,
     page.main_page.members.groups.generate_token()
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) clicks on button '
-               '"(?P<button>Invite group|Invite user)" in group '
-               '"(?P<group_name>.*)" members menu'))
+@wt(parsers.re('user of (?P<browser_id>.*) clicks on '
+               '"(?P<button>Invite group using token|Invite user using token)" '
+               'button in (?P<type>users|groups) list menu in '
+               '"(?P<name>.*)" (?P<where>group|space) members view'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def generate_group_or_user_invitation_token(selenium, browser_id, button,
-                                            group_name, oz_page):
-    page = oz_page(selenium[browser_id])['groups']
-    page.elements_list[group_name]()
-    page.elements_list[group_name]()
-    page.main_page.menu_button()
-    page.menu[button]()
+                                            name, where, oz_page):
+    driver = selenium[browser_id]
+    page = oz_page(driver)[where + 's']
+    page.elements_list[name]()
+
+    member = button.split()[1] + 's'
+    if where == 'group':
+        getattr(page.main_page.members, member).header.menu_button()
+    else:
+        getattr(page.members_page, member).header.menu_button()
+    page.menu[button].click()
 
 
-@wt(parsers.parse('user of {browser_id} sees that area with '
-                  'invitation token has appeared'))
+@wt(parsers.re('user of (?P<browser_id>.*) sees that area with '
+               '(?P<who>user|group) invitation token has appeared'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_token_area_appeared(selenium, browser_id, oz_page):
-    page = oz_page(selenium[browser_id])['groups']
-    try:
-        page.members_page.token
-    except RuntimeError:
-        assert False, 'Token area has not appeared'
+def assert_token_area_appeared(selenium, browser_id, who, tmp_memory):
+    modal_name = 'invite {} using token'.format(who)
+    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
 
 
 @wt(parsers.parse('user of {browser_id} sees non-empty token in token area'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_generated_token_is_present(selenium, browser_id, oz_page):
-    page = oz_page(selenium[browser_id])['groups']
+def assert_generated_token_is_present(selenium, browser_id):
     try:
-        text = page.members_page.token.token
+        text = modals(selenium[browser_id]).invite_using_token.token
         assert len(text) > 0, 'Token is empty, while it should be non-empty'
     except RuntimeError:
-        assert False, 'No token area found on page'
+        raise RuntimeError('No token area found on page')
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) copies invitation token '
-               'from Groups page'))
+               'from modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def copy_token(selenium, browser_id, oz_page):
-    oz_page(selenium[browser_id])['groups'].members_page.token.copy()
+def copy_token(selenium, browser_id):
+    modals(selenium[browser_id]).invite_using_token.copy()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) closes '
+               '"Invite (?P<who>user|group) using token" modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def close_invite_token_modal(selenium, browser_id):
+    modals(selenium[browser_id]).invite_using_token.close()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>does not see|sees) '
@@ -204,76 +220,69 @@ def assert_group_is_groups_child(selenium, browser_id, option, child,
     try:
         page.members_page.groups.items[child]
     except RuntimeError:
-        assert (option == 'does not see',
-                '"{}" is "{}" child'.format(child, parent))
+        assert option == 'does not see', '"{}" is "{}" child'.format(child,
+                                                                     parent)
     else:
-        assert (option == 'sees',
-                '"{}" is not "{}" child'.format(child, parent))
+        assert option == 'sees', '"{}" is not "{}" child'.format(child, parent)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>does not see|sees) '
-               '"(?P<parent>.*)" as "(?P<child>.*)" parent'))
+               '"(?P<username>.*)" user on "(?P<group_name>.*)" '
+               'group members list'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_group_is_groups_parent(selenium, browser_id, option,
-                                  parent, child, oz_page):
-    page = oz_page(selenium[browser_id])['groups']
-    page.elements_list[child]()
-    page.elements_list[child].parents()
-    try:
-        page.main_page.parents.items[parent]
-    except RuntimeError:
-        assert (option == 'does not see',
-                '"{}" is "{}" parent'.format(parent, child))
-    else:
-        assert (option == 'sees',
-                '"{}" is not "{}" parent'.format(parent, child))
-
-
-@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>does not see|sees) user '
-               '"(?P<username>.*)" on group "(?P<group_name>.*)" members list'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_member(selenium, browser_id, option, username, group_name, oz_page):
-    page = oz_page(selenium[browser_id])['groups']
+def assert_user_is_in_group_members_list(selenium, browser_id, option,
+                                         username, group_name, oz_page):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['groups']
     page.elements_list[group_name]()
     page.elements_list[group_name].members()
     try:
-        page.members_page.users.items[username]
+        page.main_page.members.users.items[username]
     except RuntimeError:
-        assert (option == 'does not see',
-                'user "{}" found on group "{}" members list'.format(username,
-                                                                    group_name))
+        assert option == 'does not see', \
+            'user "{}" found on group "{}" members list'.format(username,
+                                                                group_name)
     else:
-        assert (option == 'sees',
-                'user "{}" not found on group "{}" members list'
-                .format(username, group_name))
+        assert option == 'sees', \
+            'user "{}" not found on group "{}" members list'.format(username,
+                                                                    group_name)
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) removes (?P<member_type>user|group) '
-               '"(?P<name>.*)" from group "(?P<group>.*)" members'))
+@wt(parsers.re('user of (?P<browser_id>.*) removes "(?P<name>.*)" '
+               '(?P<member_type>user|group) from "(?P<group>.*)" group members'))
 def remove_member_from_group(selenium, browser_id, name, member_type, group,
                              oz_page, tmp_memory):
     page = oz_page(selenium[browser_id])['groups']
     page.elements_list[group]()
     page.elements_list[group].members()
     list_name = member_type + 's'
-    (getattr(page.members_page, list_name)
-     .items[name].header.menu_button())
+    (getattr(page.main_page.members, list_name)
+     .items[name].header.click_menu(selenium[browser_id]))
     page.menu['Remove this member']()
 
-    modal_name = "Remove member"
+    if member_type == 'user':
+        modal_name = 'remove user from group'
+    else:
+        modal_name = 'remove subgroup from group'
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     modals(selenium[browser_id]).remove_member.remove()
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) copies group "(?P<group>.*)" '
+@wt(parsers.re('user of (?P<browser_id>.*) copies "(?P<group>.*)" '
                '(?P<who>user|group) invitation token'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def copy_invitation_token(selenium, browser_id, group, who, oz_page):
+def copy_invitation_token(selenium, browser_id, group, who, oz_page,
+                          tmp_memory):
     page = oz_page(selenium[browser_id])['groups']
     page.elements_list[group]()
-    page.main_page.menu_button()
-    page.menu['Invite ' + who]()
-    page.members_page.token.copy()
+
+    getattr(page.main_page.members, who + 's').header.menu_button()
+    button = 'Invite {} using token'.format(who)
+    page.menu[button].click()
+
+    wt_wait_for_modal_to_appear(selenium, browser_id, button, tmp_memory)
+    modals(selenium[browser_id]).invite_using_token.copy()
+    modals(selenium[browser_id]).invite_using_token.close()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) gets group "(?P<group>.*)" '
@@ -356,9 +365,9 @@ def assert_privilege_toggle_is_checked_for_group(selenium, browser_id, option,
     is_checked = (members_list.items[member_name].privileges[option]
                   .toggle.is_checked())
     if is_positive == 'is':
-        assert is_checked
+        assert is_checked, 'found that toggle is unchecked'
     else:
-        assert not is_checked
+        assert not is_checked, 'found that toggle is checked'
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks (?P<option>Save|Cancel) '
@@ -405,4 +414,6 @@ def see_insufficient_permissions_alert(selenium, browser_id, oz_page,
     member_type = member_type + 's'
 
     members_list = getattr(oz_page(driver)[where].members_page, member_type)
-    assert alert_text in members_list.items[member_name].alert.text
+    assert alert_text in members_list.items[member_name].alert.text, \
+        'not found alert with {} text'.format(alert_text)
+

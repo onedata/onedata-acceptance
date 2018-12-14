@@ -22,7 +22,7 @@ Feature: Multi Browser basic management of spaces
   Scenario Outline: User successfully joins space using invitation token
     When user of browser1 clicks "space1" on the spaces list in the sidebar
     And user of browser1 clicks Members of "space1" in the sidebar
-    And user of browser1 clicks on "Invite user using token" button in users list menu in space "space1" members view
+    And user of browser1 clicks on "Invite user using token" button in users list menu in "space1" space members view
     And user of browser1 copies invitation token from modal
     And user of browser1 sends invitation token to "browser2"
     And user of browser1 closes "Invite group using token" modal
@@ -40,7 +40,7 @@ Feature: Multi Browser basic management of spaces
   Scenario: User successfully joins space using invitation token (with Get started button)
     When user of browser1 clicks "space1" on the spaces list in the sidebar
     And user of browser1 clicks Members of "space1" in the sidebar
-    And user of browser1 clicks on "Invite user using token" button in users list menu in space "space1" members view
+    And user of browser1 clicks on "Invite user using token" button in users list menu in "space1" space members view
     And user of browser1 copies invitation token from modal
     And user of browser1 sends invitation token to "browser2"
     And user of browser1 closes "Invite group using token" modal

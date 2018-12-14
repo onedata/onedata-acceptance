@@ -164,20 +164,6 @@ def input_token_into_token_input_field(selenium, browser_id, oz_page,
     page.input_box.value = token
 
 
-@wt(parsers.parse('user of {browser_id} removes group "{parent}" from '
-                  'group "{child}" parents list'))
-def leave_parent_group(selenium, browser_id, parent, child, oz_page, tmp_memory):
-    page = oz_page(selenium[browser_id])['groups']
-    page.elements_list[child]()
-    page.elements_list[child].parents()
-    page.main_page.parents.items[parent].menu()
-    page.menu['Leave parent group']()
-
-    modal_name = "leave parent group"
-    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    modals(selenium[browser_id]).leave_parent.leave()
-
-
 @wt(parsers.parse('user of {browser_id} adds group "{group}" as subgroup '
                   'using received token'))
 @repeat_failed(timeout=WAIT_FRONTEND)

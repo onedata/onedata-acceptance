@@ -38,10 +38,10 @@ Feature: Basic management of spaces memberships in Onezone GUI
     And user of browser1 clicks show view option in space members subpage
     And user of browser1 clicks effective view mode in space members subpage
     And user of browser1 clicks memberships view mode in space members subpage
-    And user of browser1 clicks user "user1" in space "space3" members users list
-    And user of browser1 clicks on member "user1" relation menu button to space "space3"
+    And user of browser1 clicks "user1" user in "space3" space members users list
+    And user of browser1 clicks on "user1" member relation menu button to "space3" space
     And user of browser1 clicks on "Remove relation" in space membership relation menu
-    And user of browser1 clicks on button "Leave" in modal "LEAVE SPACE"
+    And user of browser1 clicks on "Leave" button in modal "LEAVE SPACE"
     Then user of browser1 sees that "space3" has disappeared on the spaces list in the sidebar
 
 
@@ -52,20 +52,20 @@ Feature: Basic management of spaces memberships in Onezone GUI
     And user of browser1 clicks show view option in space members subpage
     And user of browser1 clicks effective view mode in space members subpage
     And user of browser1 clicks memberships view mode in space members subpage
-    And user of browser1 clicks user "user1" in space "space1" members users list
+    And user of browser1 clicks "user1" user in "space1" space members users list
     And user of browser1 sees 2 membership rows in space memberships mode
-    And user of browser1 clicks on member "group1" relation menu button to space "space1"
+    And user of browser1 clicks on "group1" member relation menu button to "space1" space
     And user of browser1 clicks on "Remove relation" in space membership relation menu
-    And user of browser1 clicks on button "Remove" in modal "REMOVE MEMBER"
+    And user of browser1 clicks on "Remove" button in modal "REMOVE MEMBER"
     Then user of browser1 sees 1 membership rows in space memberships mode
-    And user of browser1 does not see group "group1" is member of space "space1" in space memberships mode
+    And user of browser1 does not see "group1" group is member of "space1" space in space memberships mode
 
 
   Scenario: User removes relation between group and space (effect)
     When user of browser2 clicks on Spaces in the sidebar
     And user of browser2 clicks "space2" on the spaces list in the sidebar
     And user of browser2 clicks Members of "space2" in the sidebar
-    And user of browser2 clicks group "group2" in space "space2" members groups list
+    And user of browser2 clicks "group2" group in "space2" space members groups list
     And user of browser2 expands "Group management" privilege for "group2" group in space members subpage
     And user of browser2 checks "Remove group" privilege toggle in "Group management" for "group2" group in space members subpage
     And user of browser2 clicks Save button for "group2" group in space members subpage
@@ -76,8 +76,8 @@ Feature: Basic management of spaces memberships in Onezone GUI
     And user of browser1 clicks show view option in space members subpage
     And user of browser1 clicks effective view mode in space members subpage
     And user of browser1 clicks memberships view mode in space members subpage
-    And user of browser1 clicks user "user1" in space "space2" members users list
-    And user of browser1 clicks on member "group2" relation menu button to space "space2"
+    And user of browser1 clicks "user1" user in "space2" space members users list
+    And user of browser1 clicks on "group2" member relation menu button to "space2" space
     And user of browser1 clicks on "Remove relation" in space membership relation menu
-    And user of browser1 clicks on button "Remove" in modal "REMOVE MEMBER"
+    And user of browser1 clicks on "Remove" button in modal "REMOVE MEMBER"
     Then user of browser1 sees that "space2" has disappeared on the spaces list in the sidebar

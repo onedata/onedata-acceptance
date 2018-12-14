@@ -30,7 +30,7 @@ Feature: Joining a group in Onezone GUI
   Scenario Outline: User joins group using invitation token
     When user of browser1 clicks on Groups in the sidebar
     And user of browser1 clicks "group1" on the groups list in the sidebar
-    And user of browser1 clicks on "Invite user using token" button in users list menu in group "group1" members view
+    And user of browser1 clicks on "Invite user using token" button in users list menu in "group1" group members view
     And user of browser1 copies invitation token from modal
     And user of browser1 closes "Invite user using token" modal
     And user of browser1 sends copied token to user of browser2
@@ -42,14 +42,14 @@ Feature: Joining a group in Onezone GUI
 
     And users of browser1 refreshes site
 
-    Then user of browser1 sees user "user2" on group "group1" members list
+    Then user of browser1 sees "user2" user on "group1" group members list
     And user of browser2 sees group "group1" on groups list
 
 
   Scenario Outline: User fails to join group using group invitation token
     When user of browser1 clicks on Groups in the sidebar
     And user of browser1 clicks "group1" on the groups list in the sidebar
-    And user of browser1 clicks on "Invite group using token" button in groups list menu in group "group1" members view
+    And user of browser1 clicks on "Invite group using token" button in groups list menu in "group1" group members view
     And user of browser1 copies invitation token from modal
     And user of browser1 closes "Invite group using token" modal
     And user of browser1 sends copied token to user of browser2
@@ -83,7 +83,7 @@ Feature: Joining a group in Onezone GUI
   Scenario Outline: User fails to join group he already belongs to
     When user of browser1 clicks on Groups in the sidebar
     And user of browser1 clicks "group1" on the groups list in the sidebar
-    And user of browser1 clicks on "Invite user using token" button in users list menu in group "group1" members view
+    And user of browser1 clicks on "Invite user using token" button in users list menu in "group1" group members view
     And user of browser1 copies invitation token from modal
     And user of browser1 closes "Invite user using token" modal
 

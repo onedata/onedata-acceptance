@@ -29,14 +29,14 @@ Feature: Basic management of groups memberships in Onezone GUI
     And user of browser clicks show view option in group members subpage
     And user of browser clicks effective view mode in group members subpage
     And user of browser clicks memberships view mode in group members subpage
-    And user of browser clicks user "user1" in group "group1" members users list
+    And user of browser clicks "user1" user in "group1" group members users list
 
     Then user of browser sees 3 membership rows in group memberships mode
-    And user of browser sees user "user1" is member of group "group1" in group memberships mode
-    And user of browser sees user "user1" is member of group "group2" in group memberships mode
-    And user of browser sees user "user1" is member of group "group3" in group memberships mode
-    And user of browser sees group "group2" is member of group "group1" in group memberships mode
-    And user of browser sees group "group3" is member of group "group2" in group memberships mode
+    And user of browser sees "user1" user is member of "group1" group in group memberships mode
+    And user of browser sees "user1" user is member of "group2" group in group memberships mode
+    And user of browser sees "user1" user is member of "group3" group in group memberships mode
+    And user of browser sees "group2" group is member of "group1" group in group memberships mode
+    And user of browser sees "group3" group is member of "group2" group in group memberships mode
 
 
   Scenario: User removes relation between user and group in members subpage
@@ -44,15 +44,15 @@ Feature: Basic management of groups memberships in Onezone GUI
     And user of browser clicks show view option in group members subpage
     And user of browser clicks effective view mode in group members subpage
     And user of browser clicks memberships view mode in group members subpage
-    And user of browser clicks user "user1" in group "group1" members users list
-    And user of browser sees 3 membership rows in memberships mode
+    And user of browser clicks "user1" user in "group1" group members users list
+    And user of browser sees 3 membership rows in group memberships mode
 
-    And user of browser clicks on member "user1" relation menu button to group "group1"
+    And user of browser clicks on "user1" member relation menu button to "group1" group
     And user of browser clicks on "Remove relation" in group membership relation menu
-    And user of browser clicks on button "Leave" in modal "LEAVE GROUP"
+    And user of browser clicks on "Leave" button in modal "LEAVE GROUP"
 
-    Then user of browser sees 2 membership rows in memberships mode
-    And user of browser does not see user "user1" is member of group "group1" in memberships mode
+    Then user of browser sees 2 membership rows in group memberships mode
+    And user of browser does not see "user1" user is member of "group1" group in memberships mode
 
 
   Scenario: User removes relation between two groups (direct)
@@ -60,13 +60,13 @@ Feature: Basic management of groups memberships in Onezone GUI
     And user of browser clicks show view option in group members subpage
     And user of browser clicks effective view mode in group members subpage
     And user of browser clicks memberships view mode in group members subpage
-    And user of browser clicks user "user1" in group "group2" members users list
+    And user of browser clicks "user1" user in "group2" group members users list
     And user of browser sees 2 membership rows in group memberships mode
 
-    And user of browser clicks on member "group3" relation menu button to group "group2"
+    And user of browser clicks on "group3" member relation menu button to "group2" group
     And user of browser clicks on "Remove relation" in group membership relation menu
-    And user of browser clicks on button "Remove" in modal "REMOVE MEMBER"
+    And user of browser clicks on "Remove" button in modal "REMOVE MEMBER"
 
     Then user of browser sees 1 membership rows in group memberships mode
-    And user of browser does not see group "group3" is member of group "group2" in group memberships mode
+    And user of browser does not see "group3" group is member of "group2" group in group memberships mode
 
