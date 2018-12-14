@@ -12,23 +12,22 @@ from tests.gui.utils.core.web_elements import (Button, NamedButton,
                                                WebItemsSequence)
 from tests.gui.utils.onezone.generic_page import Element, GenericPage
 from .members_subpage import GroupMembersPage
-from .parents_subpage import GroupParentsPage
+from .hierarchy_subpage import GroupHierarchyPage
 from tests.gui.utils.onezone.common import EditBox, InputBox
 
 
 class Group(Element):
     menu = Button('.collapsible-toolbar-toggle')
     members = NamedButton('.one-list-level-2 .item-header', text='Members')
-    parents = NamedButton('.one-list-level-2 .item-header', text='Parents')
+    hierarchy = NamedButton('.one-list-level-2 .item-header', text='Hierarchy')
     edit_box = WebItem('.name-editor', cls=EditBox)
 
 
 class GroupDetailsPage(PageObject):
     members = WebItem('.content-groups-members', cls=GroupMembersPage)
-    parents = WebItem('.content-groups-parents', cls=GroupParentsPage)
+    hierarchy = WebItem('.content-groups-hierarchy', cls=GroupHierarchyPage)
     error_label = Label('.text-center div h1')
     bulk_edit = NamedButton('button', text='Bulk edit')
-    menu_button = Button('.collapsible-toolbar-toggle')
 
 
 class MenuItem(PageObject):
@@ -60,6 +59,4 @@ class GroupsPage(GenericPage):
 
     join_space = Button('.minimized-item.clickable.join-space-action '
                         '.oneicon-space-join')
-    menu_button = Button('.with-menu .collapsible-toolbar-toggle ')
-    groups_menu_button = Button('.collapsible-toolbar-toggle ')
 

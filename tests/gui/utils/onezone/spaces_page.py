@@ -36,12 +36,9 @@ class Provider(Element):
 
 
 class SpaceOverviewPage(PageObject):
-    space_name = Label('.header-row .name-editor')
-    rename = Button('.header-row .oneicon-rename')
-    set_default_space = NamedButton('.header-row button',
-                                    text='Toggle default space')
-    leave_space = NamedButton('.header-row button', text='Leave space')
-    edit_name_box = WebItem('.header-row .name-editor', cls=EditBox)
+    space_name = Label('.with-menu .one-label')
+    rename = Button('.edit-icon')
+    edit_name_box = WebItem('.editor', cls=EditBox)
 
 
 class WelcomePage(PageObject):

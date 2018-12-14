@@ -74,7 +74,7 @@ Feature: Oneprovider functionality using multiple providers
   Scenario: User leaves space in one provider and sees that it was leaved from also in other provider
     # leave space in onezone
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks on leave space button
+    And user of browser clicks on "Leave space" button in space menu
     And user of browser clicks on yes button
 
     # check space in first provider

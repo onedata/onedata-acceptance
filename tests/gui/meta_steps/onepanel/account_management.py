@@ -9,7 +9,7 @@ __license__ = ("This software is released under the MIT license cited in "
 
 
 from tests.gui.steps.onepanel.account_management import *
-from tests.gui.steps.onepanel.login import *
+from tests.gui.steps.common.login import *
 from tests.gui.steps.common.notifies import *
 
 
@@ -35,26 +35,24 @@ def change_user_password_in_oz_panel_using_gui(selenium, user, onepage, users,
 
 
 def login_to_oz_panel_using_new_password_gui(selenium, user, password,
-                                             panel_login_page):
-    # TODO: uncomment after VFS-3674 will be resolved - authentication succeeded
-    # popup is not displayed in GUI after logging out
-    # notify_type = 'info'
-    # notify_text_regexp = '.*[Aa]uthentication.*succeeded.*'
+                                             login_page):
+    notify_type = 'info'
+    notify_text_regexp = '.*[Aa]uthentication.*succeeded.*'
 
-    wt_enter_text_to_field_in_panel_login_form(selenium, user, 'username', user,
-                                               panel_login_page)
-    wt_enter_text_to_field_in_panel_login_form(selenium, user, 'password',
-                                               password, panel_login_page)
-    wt_press_sign_in_btn_on_panel_login_page(selenium, user,
-                                             panel_login_page)
-    # notify_visible_with_text(selenium, user, notify_type, notify_text_regexp)
+    wt_enter_text_to_field_in_login_form(selenium, user, 'Username', user,
+                                         login_page)
+    wt_enter_text_to_field_in_login_form(selenium, user, 'Password', password,
+                                         login_page)
+    wt_press_sign_in_btn_on_login_page(selenium, user, login_page)
+
+    notify_visible_with_text(selenium, user, notify_type, notify_text_regexp)
 
 
-def log_out_from_oz_panel_gui(username, selenium, onepage, panel_login_page,
+def log_out_from_oz_panel_gui(username, selenium, onepage, login_page,
                               popups):
     button_name = 'Logout'
 
     wt_click_on_user_account_btn_panel(selenium, username, onepage)
     wt_click_option_in_user_account_popover(selenium, username, button_name,
                                             popups)
-    wt_assert_panel_login_page(selenium, username, panel_login_page)
+    wt_assert_login_page(selenium, username, login_page)

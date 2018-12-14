@@ -124,11 +124,15 @@ def click_cancel_rename_button_on_overview_page(selenium, browser_id, oz_page):
     oz_page(driver)['spaces'].overview_page.edit_name_box.cancel()
 
 
-@wt(parsers.parse('user of {browser_id} clicks on leave space button'))
+@wt(parsers.re('user of (?P<browser_id>.*) clicks on '
+               '"(?P<button>Leave space|Toggle default space)" button '
+               'in space menu'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_leave_space_button_on_overview_page(selenium, browser_id, oz_page):
+def click_on_option_in_menu(selenium, browser_id, button, oz_page):
     driver = selenium[browser_id]
-    oz_page(driver)['spaces'].overview_page.leave_space()
+    page = oz_page(driver)['spaces']
+    page.menu_button()
+    page.menu[button].click()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
@@ -147,14 +151,6 @@ def assert_space_has_disappeared_on_spaces(selenium, browser_id, space_name,
     driver = selenium[browser_id]
     assert (space_name not in oz_page(driver)['spaces'].elements_list,
             'space "{}" found'.format(space_name))
-
-
-@wt(parsers.parse('user of {browser_id} clicks on toggle default space'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_toggle_default_space_button_on_overview_page(selenium, browser_id,
-                                                       oz_page):
-    driver = selenium[browser_id]
-    oz_page(driver)['spaces'].overview_page.set_default_space()
 
 
 @wt(parsers.parse('user of {browser_id} sees that home of "{space_name}" '
@@ -191,7 +187,6 @@ def assert_number_of_supporting_providers_of_space(selenium, browser_id,
             .elements_list[space_name]
             .supporting_providers_number,
             'number of supporting providers is not equal {}'.format(number))
-
 
 
 @wt(parsers.parse('user of {browser_id} sees {number} size of '
@@ -391,7 +386,7 @@ def generate_and_send_support_token(selenium, browser_id1, space_name, oz_page,
     page.elements_list[space_name]()
     page.elements_list[space_name].providers()
     page.providers_page.get_support()
-    page.providers_page.get_support_page.copy()
+    copy_token(selenium, browser_id1, oz_page)
     item = clipboard.paste(display=displays[browser_id1])
     tmp_memory[browser_id2]['mailbox']['token'] = item
 

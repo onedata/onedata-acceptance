@@ -18,13 +18,20 @@ from tests.gui.utils.core.web_elements import (Button, NamedButton,
 class GroupMembersHeaderRow(PageObject):
     checkbox = Button('div.item-checkbox')
     search_bar = Input('input.form-control')
+    menu_button = Button('li.list-header-row '
+                         '.collapsible-toolbar-toggle.btn-menu-toggle')
 
 
 class GroupMembersItemHeader(PageObject):
     checkbox = Button('div.item-checkbox')
+    user = WebElement('.header-content-container')
     menu_button = Button('.collapsible-toolbar-toggle')
     save_button = NamedButton('.btn-toolbar .btn-sm', text='Save')
     reset_button = NamedButton('.btn-toolbar .btn-danger', text='Reset')
+
+    def click_menu(self, driver):
+        ActionChains(driver).move_to_element(self.user).perform()
+        self.menu_button.click()
 
 
 class Privilege(PageObject):
