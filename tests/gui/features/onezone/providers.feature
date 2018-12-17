@@ -7,8 +7,6 @@ Feature: Basic management of providers in Onezone GUI
     And initial spaces configuration in "onezone" Onezone service:
           space1:
               owner: user1
-              home space for:
-                  - user1
               providers:
                   - oneprovider-1:
                       storage: posix
@@ -54,6 +52,7 @@ Feature: Basic management of providers in Onezone GUI
   Scenario: User sees that home space of provider should have "cloud with home" icon
     When user of browser clicks on Data in the main menu
     And user of browser clicks on provider "oneprovider-1" in data sidebar
+    And user of browser clicks on Toggle home provider button on provider popover
     Then user of browser sees that home of "oneprovider-1" has appeared in the data sidebar
 
 

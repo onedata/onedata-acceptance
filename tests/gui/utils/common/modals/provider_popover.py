@@ -21,6 +21,8 @@ class ProviderPopover(PageObject):
     copy_hostname = Button('.provider-host-copy-btn .oneicon-clipboard-copy')
     spaces_list = WebItemsSequence('.spaces-list li.provider-place-drop-space',
                                    cls=Space)
+    toggle_home_provider = NamedButton('.btn-container .btn-toggle-default',
+                                       text='Toggle home provider')
     visit_provider = NamedButton('.btn-container .btn-go-to-files',
                                  text='Visit provider')
 

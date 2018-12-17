@@ -372,11 +372,13 @@ def click_on_provider_in_data_sidebar(selenium, browser_id, oz_page,
     oz_page(driver)['data'].elements_list[provider]()
 
 
-@wt(parsers.parse('user of {browser_id} clicks on Visit provider button '
-                  'on provider popover'))
-def click_on_visit_provider_in_provider_popover(selenium, browser_id, modals):
+@wt(parsers.re('user of (?P<browser_id>.+?) clicks on '
+               '(?P<option>Visit provider|Toggle home provider) button '
+               'on provider popover'))
+def click_on_visit_provider_in_provider_popover(selenium, browser_id, option,
+                                                modals):
     driver = selenium[browser_id]
-    click_visit_provider(driver, modals)
+    getattr(modals(driver).provider_popover, transform(option)).click()
 
 
 @wt(parsers.parse('user of {browser_id} sees "{space_name}" is '
