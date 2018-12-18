@@ -48,11 +48,11 @@ Feature: ACL subdirectories privileges tests using sigle browser in Oneprovider 
     Then user of browser <result> to rename "dir1/dir2" to "new_name" in "space1"
 
     Examples:
-    | result   |  privileges                                                   |
-    | succeeds |  [delete subdirectory, traverse directory, add subdirectory]  |
-    | fails    |  all except [add subdirectory]                                |
-    | fails    |  all except [delete subdirectory]                             |
-    | fails    |  all except [traverse directory]                              |
+    | result   |  privileges                                                              |
+    | succeeds |  [list files, delete subdirectory, traverse directory, add subdirectory] |
+    | fails    |  all except [add subdirectory]                                           |
+    | fails    |  all except [delete subdirectory]                                        |
+    | fails    |  all except [traverse directory]                                         |
         
         
   Scenario Outline: Rename subfile
@@ -60,11 +60,11 @@ Feature: ACL subdirectories privileges tests using sigle browser in Oneprovider 
     Then user of browser <result> to rename "dir1/file1" to "new_name" in "space1"
 
     Examples:
-    | result   |  privileges                                               | 
-    | succeeds |  [delete subdirectory, traverse directory, add files]     |
-    | fails    |  all except [add files]                                   |
-    | fails    |  all except [delete subdirectory]                         |
-    | fails    |  all except [traverse directory]                          |
+    | result   |  privileges                                                       |
+    | succeeds |  [list files, delete subdirectory, traverse directory, add files] |
+    | fails    |  all except [add files]                                           |
+    | fails    |  all except [delete subdirectory]                                 |
+    | fails    |  all except [traverse directory]                                  |
         
         
   Scenario Outline: Remove non-empty directory
@@ -85,10 +85,10 @@ Feature: ACL subdirectories privileges tests using sigle browser in Oneprovider 
     Then user of browser <result> to remove "dir1/dir2" in "space1"
 
     Examples:
-    | result   |  privileges                                   |       
-    | succeeds |  [delete subdirectory, traverse directory]    |
-    | fails    |  all except [traverse directory]              |
-    | fails    |  all except [delete subdirectory]             |
+    | result   |  privileges                                            |
+    | succeeds |  [delete subdirectory, traverse directory, list files] |
+    | fails    |  all except [traverse directory]                       |
+    | fails    |  all except [delete subdirectory]                      |
         
         
   Scenario Outline: Remove subfile
@@ -96,7 +96,7 @@ Feature: ACL subdirectories privileges tests using sigle browser in Oneprovider 
     Then user of browser <result> to remove "dir1/file1" in "space1"
 
     Examples:
-    | result   |  privileges                                   |        
-    | succeeds |  [delete subdirectory, traverse directory]    |
-    | fails    |  all except [traverse directory]              |
-    | fails    |  all except [delete subdirectory]             |
+    | result   |  privileges                                            |
+    | succeeds |  [delete subdirectory, traverse directory, list files] |
+    | fails    |  all except [traverse directory]                       |
+    | fails    |  all except [delete subdirectory]                      |
