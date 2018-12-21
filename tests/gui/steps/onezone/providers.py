@@ -198,7 +198,9 @@ def assert_no_provider_popup_on_world_map(selenium, browser_id, modals):
     try:
         modals(driver).provider_popover
     except RuntimeError:
-        assert True, 'found provider popover on world map'
+        pass
+    else:
+        raise RuntimeError('found provider popover on world map')
 
 
 @when(parsers.re(r'user of (?P<browser_id>.+?) clicks on '
@@ -399,8 +401,8 @@ def assert_home_space_has_appeared_on_provider_on_left_sidebar_menu(selenium,
                                                                     hosts):
     driver = selenium[browser_id]
     provider = hosts[provider]['name']
-    assert (oz_page(driver)['data'].elements_list[provider].is_home_icon()), \
-        ('home of provider "{}" not found'.format(provider))
+    assert oz_page(driver)['data'].elements_list[provider].is_home_icon(), \
+        'home of provider "{}" not found'.format(provider)
 
 
 @wt(parsers.parse('user of {browser_id} sees that spaces counter for '

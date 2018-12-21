@@ -14,6 +14,14 @@ Feature: Basic management of providers in Onezone GUI
                   - oneprovider-1:
                       storage: posix
                       size: 1000000
+          space2:
+              owner: user1
+              home space for:
+                  - user1
+              providers:
+                  - oneprovider-1:
+                      storage: posix
+                      size: 1000000
 
     And users opened [browser1, browser2] browsers' windows
     And users of [browser1, browser2] opened [Onezone, oneprovider-1 provider panel] page
@@ -21,39 +29,14 @@ Feature: Basic management of providers in Onezone GUI
 
 
   Scenario: User sees that after unsupporting space, number displayed in space counter for given provider decreases
-     # create space
-    When user of browser1 clicks on Create space button in spaces sidebar
-    And user of browser1 writes "helloworld" into space name text field
-    And user of browser1 clicks on Create new space button
-    And user of browser1 sees that "helloworld" has appeared on the spaces list in the sidebar
-
-    # receive support token
-    And user of browser1 clicks "helloworld" on the spaces list in the sidebar
-    And user of browser1 clicks Providers of "helloworld" in the sidebar
-    And user of browser1 clicks Get support button on providers page
-    And user of browser1 clicks Copy button on Get support page
-    And user of browser1 sees an info notify with text matching to: .*copied.*
-    And user of browser1 sends copied token to user of browser2
-
-    # support space
-    And user of browser2 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of browser2 clicks on Support space button in spaces page in Onepanel if there are some spaces already supported
-    And user of browser2 selects "posix" from storage selector in support space form in Onepanel
-    And user of browser2 types received token to Support token field in support space form in Onepanel
-    And user of browser2 types "1" to Size input field in support space form in Onepanel
-    And user of browser2 selects GiB radio button in support space form in Onepanel
-    And user of browser2 clicks on Support space button in support space form in Onepanel
-    And user of browser2 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
-    And user of browser2 sees that space support record for "helloworld" has appeared in Spaces page in Onepanel
-
-    And user of browser1 clicks on Data in the main menu
+    When user of browser1 clicks on Data in the main menu
     And user of browser1 clicks on provider "oneprovider-1" in data sidebar
     And user of browser1 sees that spaces counter for "oneprovider-1" provider displays 2 in data sidebar
     And user of browser1 sees that length of spaces list on provider popover is 2
 
     # unsupport space
     And user of browser2 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of browser2 expands toolbar for "helloworld" space record in Spaces page in Onepanel
+    And user of browser2 expands toolbar for "space2" space record in Spaces page in Onepanel
     And user of browser2 clicks on Revoke space support option in space's toolbar in Onepanel
     And user of browser2 clicks on Yes, revoke button in REVOKE SPACE SUPPORT modal in Onepanel
     And user of browser2 sees an info notify with text matching to: .*[Ss]upport.*revoked.*
