@@ -290,6 +290,7 @@ def wt_copy_space_id_in_spaces_page_in_onepanel(selenium, browser_id,
 def wt_expands_toolbar_icon_for_space_in_onepanel(selenium, browser_id,
                                                   space, onepanel):
     record = onepanel(selenium[browser_id]).content.spaces.spaces[space]
+    record.click()
     record.toolbar.click()
 
 

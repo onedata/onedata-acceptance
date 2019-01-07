@@ -6,6 +6,9 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+from time import sleep
+
+from selenium.webdriver.common.action_chains import ActionChains
 
 from tests.gui.utils.core.web_elements import WebElement, WebElementsSequence
 from .common import OZPanel
@@ -13,13 +16,13 @@ from .spaces_page import SpacesPage
 from .data_page import DataPage
 from .groups.groups_page import GroupsPage
 from .tokens_page import TokensPage
-from selenium.webdriver.common.action_chains import ActionChains
-from time import sleep
+from .manage_account_page import ManageAccountPage
 
 
 class OZLoggedIn(object):
     _atlas = WebElement('.onezone-atlas')
     _panels = WebElementsSequence('.main-menu-content li.main-menu-item')
+    _profile = WebElement('.app-layout')
 
     panels = {
         'data': DataPage,
@@ -54,5 +57,7 @@ class OZLoggedIn(object):
                     # wait for side panel to collapse
                     sleep(0.2)
                     return cls(self.web_elem, self.web_elem, parent=self)
+        elif item == 'profile':
+            return ManageAccountPage(self.web_elem, self._profile, self)
         else:
             raise RuntimeError('no "{}" on {} found'.format(item, str(self)))

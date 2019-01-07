@@ -15,7 +15,7 @@ Feature: Create new space
 
 
   Scenario Outline: User creates new space (with new space button in the sidebar)
-    When user of browser clicks on Spaces in the sidebar
+    When user of browser clicks on Spaces in the main menu
     And user of browser clicks on Create space button in spaces sidebar
     And user of browser writes "space1" into space name text field
     And user of browser confirms create new space using <confirmation_method>

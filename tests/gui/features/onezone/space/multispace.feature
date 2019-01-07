@@ -17,7 +17,7 @@ Feature: Basic management of spaces
 
 
   Scenario: User switches between spaces
-    When user of browser clicks on Spaces in the sidebar
+    When user of browser clicks on Spaces in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser sees "space1" label on overview page
     And user of browser clicks "space2" on the spaces list in the sidebar

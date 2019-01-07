@@ -7,15 +7,15 @@ __license__ = "This software is released under the MIT license cited in " \
 
 
 from tests.gui.utils.core.web_elements import (Button, NamedButton,
-                                               WebItemsSequence, WebItem)
+                                               WebItemsSequence, Label)
 from tests.gui.utils.onezone.generic_page import Element, GenericPage
-from .common import InputBox
 
 
 class TokensPage(GenericPage):
     create_token = Button('.oneicon-add-filled')
-    remove_token = NamedButton('.header-row button', text='Remove')
+    remove_token = NamedButton('button.delete-token', text='Remove')
     copy_token = Button('.copy-btn')
     elements_list = WebItemsSequence('.sidebar-tokens '
                                      'li.one-list-item.clickable', cls=Element)
-    input_box = WebItem('.content-info-content-container', cls=InputBox)
+    token = Label('.content-info-content-container '
+                  '.token-textarea.form-control')

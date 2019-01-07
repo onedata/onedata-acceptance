@@ -6,7 +6,6 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-from tests.gui.utils.onezone.data_page import ProviderPopover
 from .data_distribution import DataDistributionModal
 from .add_storage import AddStorage
 from tests.gui.utils.core.web_elements import WebItem
@@ -25,6 +24,7 @@ from .leave_parent import LeaveParentModal
 from .error_modal import ErrorModal
 from .invite_using_token import InviteUsingTokenModal
 from .dns_configuration_warning import DNSConfigurationWarningModal
+from .provider_popover import ProviderPopover
 from .groups_hierarchy_menu import GroupHierarchyMenu
 
 
