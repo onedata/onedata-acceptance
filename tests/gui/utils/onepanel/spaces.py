@@ -152,9 +152,9 @@ class NavigationHeader(PageObject):
 
 class SpaceRecord(PageObject, ExpandableMixin):
     name = id = Label('.item-icon-container + .one-label .item-name')
-    record = WebElement('div')
     toolbar = Button('.collapsible-toolbar-toggle')
 
+    _toolbar = WebElement('.one-collapsible-toolbar')
     _toggle = WebElement('.one-collapsible-list-item-header')
 
     def is_expanded(self):
@@ -162,7 +162,7 @@ class SpaceRecord(PageObject, ExpandableMixin):
                              self._toggle.get_attribute('class')))
 
     def expand_menu(self, driver):
-        ActionChains(driver).move_to_element(self.record).perform()
+        ActionChains(driver).move_to_element(self._toolbar).perform()
         self.toolbar.click()
 
 

@@ -46,23 +46,23 @@ Feature: Basic spaces management utilities using onepanel
     And user of browser2 expands submenu of space named "helloworld" by clicking on space record in expanded "DATA SPACE MANAGEMENT" Onezone panel
     Then user of browser2 sees that list of supporting providers for space named "helloworld" in expanded "DATA SPACE MANAGEMENT" Onezone panel contains only: "oneprovider-1"
 
-# TODO: fix the test (expnad toolbar)
-#  Scenario: Revoke space support
-#    # assert space existence and support
-#    When user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
-#    And user of browser2 sees that there is space named "helloworld" in expanded "DATA SPACE MANAGEMENT" Onezone panel
-#    And user of browser2 expands submenu of space named "helloworld" by clicking on space record in expanded "DATA SPACE MANAGEMENT" Onezone panel
-#    And user of browser2 sees that list of supporting providers for space named "helloworld" in expanded "DATA SPACE MANAGEMENT" Onezone panel contains only: "oneprovider-1"
-#
-#    # unsupport space
-#    And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-#    And user of browser1 expands toolbar for "helloworld" space record in Spaces page in Onepanel
-#    And user of browser1 clicks on Revoke space support option in space's toolbar in Onepanel
-#    And user of browser1 clicks on Yes, revoke button in REVOKE SPACE SUPPORT modal in Onepanel
-#    And user of browser1 sees an info notify with text matching to: .*[Ss]upport.*revoked.*
-#
-#    # confirm lack of support for space
-#    And user of browser2 refreshes site
-#    And user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
-#    And user of browser2 expands submenu of space named "helloworld" by clicking on space record in expanded "DATA SPACE MANAGEMENT" Onezone panel
-#    Then user of browser2 sees that there is/are no supporting provider(s) "oneprovider-1" for space named "helloworld" in expanded "DATA SPACE MANAGEMENT" Onezone panel
+
+  Scenario: Revoke space support
+    # assert space existence and support
+    When user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
+    And user of browser2 sees that there is space named "helloworld" in expanded "DATA SPACE MANAGEMENT" Onezone panel
+    And user of browser2 expands submenu of space named "helloworld" by clicking on space record in expanded "DATA SPACE MANAGEMENT" Onezone panel
+    And user of browser2 sees that list of supporting providers for space named "helloworld" in expanded "DATA SPACE MANAGEMENT" Onezone panel contains only: "oneprovider-1"
+
+    # unsupport space
+    And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+    And user of browser1 expands toolbar for "helloworld" space record in Spaces page in Onepanel
+    And user of browser1 clicks on Revoke space support option in space's toolbar in Onepanel
+    And user of browser1 clicks on Yes, revoke button in REVOKE SPACE SUPPORT modal in Onepanel
+    And user of browser1 sees an info notify with text matching to: .*[Ss]upport.*revoked.*
+
+    # confirm lack of support for space
+    And user of browser2 refreshes site
+    And user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
+    And user of browser2 expands submenu of space named "helloworld" by clicking on space record in expanded "DATA SPACE MANAGEMENT" Onezone panel
+    Then user of browser2 sees that there is/are no supporting provider(s) "oneprovider-1" for space named "helloworld" in expanded "DATA SPACE MANAGEMENT" Onezone panel
