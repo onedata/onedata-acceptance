@@ -345,13 +345,13 @@ def wt_clicks_on_configure_to_enable(selenium, browser_id, onepanel):
 
 
 @when(parsers.parse('user of {browser_id} clicks '
-                    'setting in Spaces page in Onepanel'))
+                    'settings in Storage synchronization in Spaces page'))
 @then(parsers.parse('user of {browser_id} clicks '
-                    'setting in Spaces page in Onepanel'))
+                    'settings in Storage synchronization in Spaces page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_clicks_on_option_in_spaces_page(selenium, browser_id, onepanel):
     space = onepanel(selenium[browser_id]).content.spaces.space
-    space.sync_chart.setting()
+    space.sync_chart.settings()
 
 
 @when(parsers.re(r'user of (?P<browser_id>.*?) sees that number of '

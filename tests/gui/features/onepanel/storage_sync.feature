@@ -104,7 +104,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # configure update parameters
     And user of browser1 clicks on "Storage synchronization" navigation tab in space "space2"
-    And user of browser1 clicks setting in Spaces page in Onepanel
+    And user of browser1 clicks settings in Storage synchronization in Spaces page
     And user of browser1 selects Simple scan strategy from strategy selector in UPDATE CONFIGURATION in "space2" record in Spaces page in Onepanel
     And user of browser1 types "3" to Max depth input field in UPDATE CONFIGURATION in "space2" record in Spaces page in Onepanel
     And user of browser1 types "1" to Scan interval input field in UPDATE CONFIGURATION in "space2" record in Spaces page in Onepanel
@@ -233,7 +233,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # configure update parameters
     And user of browser1 clicks on "Storage synchronization" navigation tab in space "space1"
-    And user of browser1 clicks setting in Spaces page in Onepanel
+    And user of browser1 clicks settings in Storage synchronization in Spaces page
     And user of browser1 selects Simple scan strategy from strategy selector in UPDATE CONFIGURATION in "space1" record in Spaces page in Onepanel
     And user of browser1 types "3" to Max depth input field in UPDATE CONFIGURATION in "space1" record in Spaces page in Onepanel
     And user of browser1 types "1" to Scan interval input field in UPDATE CONFIGURATION in "space1" record in Spaces page in Onepanel
@@ -362,7 +362,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # configure update parameters
     And user of browser1 clicks on "Storage synchronization" navigation tab in space "space3"
-    And user of browser1 clicks setting in Spaces page in Onepanel
+    And user of browser1 clicks settings in Storage synchronization in Spaces page
     And user of browser1 selects Simple scan strategy from strategy selector in UPDATE CONFIGURATION in "space3" record in Spaces page in Onepanel
     And user of browser1 types "3" to Max depth input field in UPDATE CONFIGURATION in "space3" record in Spaces page in Onepanel
     And user of browser1 types "1" to Scan interval input field in UPDATE CONFIGURATION in "space3" record in Spaces page in Onepanel
@@ -504,7 +504,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # configure update parameters
     And user of browser1 clicks on "Storage synchronization" navigation tab in space "space4"
-    And user of browser1 clicks setting in Spaces page in Onepanel
+    And user of browser1 clicks settings in Storage synchronization in Spaces page
     And user of browser1 selects Simple scan strategy from strategy selector in UPDATE CONFIGURATION in "space4" record in Spaces page in Onepanel
     And user of browser1 types "3" to Max depth input field in UPDATE CONFIGURATION in "space4" record in Spaces page in Onepanel
     And user of browser1 types "1" to Scan interval input field in UPDATE CONFIGURATION in "space4" record in Spaces page in Onepanel
@@ -634,7 +634,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # configure update parameters
     And user of browser1 clicks on "Storage synchronization" navigation tab in space "space5"
-    And user of browser1 clicks setting in Spaces page in Onepanel
+    And user of browser1 clicks settings in Storage synchronization in Spaces page
     And user of browser1 selects Simple scan strategy from strategy selector in UPDATE CONFIGURATION in "space5" record in Spaces page in Onepanel
     And user of browser1 types "3" to Max depth input field in UPDATE CONFIGURATION in "space5" record in Spaces page in Onepanel
     And user of browser1 types "1" to Scan interval input field in UPDATE CONFIGURATION in "space5" record in Spaces page in Onepanel
@@ -777,7 +777,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # configure update parameters
     And user of browser1 clicks on "Storage synchronization" navigation tab in space "space6"
-    And user of browser1 clicks setting in Spaces page in Onepanel
+    And user of browser1 clicks settings in Storage synchronization in Spaces page
     And user of browser1 selects Simple scan strategy from strategy selector in UPDATE CONFIGURATION in "space6" record in Spaces page in Onepanel
     And user of browser1 types "3" to Max depth input field in UPDATE CONFIGURATION in "space6" record in Spaces page in Onepanel
     And user of browser1 types "1" to Scan interval input field in UPDATE CONFIGURATION in "space6" record in Spaces page in Onepanel
@@ -814,7 +814,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # disable files update
     And user of browser1 clicks on "Storage synchronization" navigation tab in space "space6"
-    And user of browser1 clicks setting in Spaces page in Onepanel
+    And user of browser1 clicks settings in Storage synchronization in Spaces page
     And user of browser1 selects Disabled strategy from strategy selector in UPDATE CONFIGURATION in "space6" record in Spaces page in Onepanel
     And user of browser1 clicks on Save configuration button in "space6" record in Spaces page in Onepanel
     And user of browser1 sees an info notify with text matching to: .*[Cc]onfiguration.*space.*support.*changed.*
