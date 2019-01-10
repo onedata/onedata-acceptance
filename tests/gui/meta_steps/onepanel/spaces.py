@@ -94,11 +94,12 @@ def configure_sync_parameters_for_space_in_op_panel_gui(selenium, user, space,
     options = yaml.load(config)
     storage_import = options['{} strategy'.format(sync_type.capitalize())]
     wt_select_strategy_in_conf_in_space_record(selenium, user, storage_import,
-                                               sync_type, space, onepanel)
+                                               sync_type, onepanel)
 
     if storage_import.lower() == 'disabled':
-        wt_clicks_on_save_config_btn_in_space_record(selenium, user, space,
-                                                     onepanel)
+        button = 'Save configuration'
+        wt_clicks_on_button_in_space_record(selenium, user, onepanel,
+                                            button)
         return
 
     for field, input_box in zip(('Max depth', 'Scan interval [s]'),
@@ -106,16 +107,16 @@ def configure_sync_parameters_for_space_in_op_panel_gui(selenium, user, space,
         val = str(options.get(field, None))
         if val:
             wt_type_text_to_input_box_in_conf_in_space_record(
-                selenium, user, val, input_box, sync_type, space, onepanel)
+                selenium, user, val, input_box, sync_type, onepanel)
 
     for field in ('Write once', 'Delete enabled'):
         val = options.get(field, None)
         if val:
             wt_enable_option_box_in_conf_in_space_record(
-                selenium, user, field, space, onepanel)
+                selenium, user, field, onepanel)
 
-    wt_clicks_on_save_config_btn_in_space_record(selenium, user, space,
-                                                 onepanel)
+    button = 'Save configuration'
+    wt_clicks_on_button_in_space_record(selenium, user, onepanel, button)
     notify_visible_with_text(selenium, user, notify_type, notify_text_regexp)
 
 
