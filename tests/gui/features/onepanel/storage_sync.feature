@@ -60,7 +60,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser1 selects Simple scan strategy from strategy selector in IMPORT CONFIGURATION in support space form in Onepanel
     And user of browser1 types "2" to Max depth input field in IMPORT CONFIGURATION in support space form in Onepanel
     And user of browser1 clicks on Support space button in support space form in Onepanel
-    And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
+#    And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
     And user of browser1 sees that space support record for "space2" has appeared in Spaces page in Onepanel
 
     # confirm correct import configuration
@@ -177,7 +177,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser1 types "1" to Size input field in support space form in Onepanel
     And user of browser1 selects GiB radio button in support space form in Onepanel
     And user of browser1 clicks on Support space button in support space form in Onepanel
-    And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
+#    And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
     And user of browser1 sees that space support record for "space1" has appeared in Spaces page in Onepanel
 
     # copy files to provider storage
@@ -306,7 +306,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser1 types "1" to Size input field in support space form in Onepanel
     And user of browser1 selects GiB radio button in support space form in Onepanel
     And user of browser1 clicks on Support space button in support space form in Onepanel
-    And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
+#    And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
     And user of browser1 sees that space support record for "space3" has appeared in Spaces page in Onepanel
 
     # copy files to provider storage
@@ -448,7 +448,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser1 types "1" to Size input field in support space form in Onepanel
     And user of browser1 selects GiB radio button in support space form in Onepanel
     And user of browser1 clicks on Support space button in support space form in Onepanel
-    And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
+#    And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
     And user of browser1 sees that space support record for "space4" has appeared in Spaces page in Onepanel
 
     # copy files to provider storage
@@ -578,7 +578,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser1 types "1" to Size input field in support space form in Onepanel
     And user of browser1 selects GiB radio button in support space form in Onepanel
     And user of browser1 clicks on Support space button in support space form in Onepanel
-    And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
+#    And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
     And user of browser1 sees that space support record for "space5" has appeared in Spaces page in Onepanel
 
     # copy files to provider storage
@@ -721,7 +721,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser1 types "1" to Size input field in support space form in Onepanel
     And user of browser1 selects GiB radio button in support space form in Onepanel
     And user of browser1 clicks on Support space button in support space form in Onepanel
-    And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
+#    And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
     And user of browser1 sees that space support record for "space6" has appeared in Spaces page in Onepanel
 
     # copy files to provider storage
