@@ -15,7 +15,7 @@ Feature: Basic management of spaces
 
 
   Scenario: User generates different support tokens (space has no support)
-    When user of browser clicks on Spaces in the sidebar
+    When user of browser clicks on Spaces in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Providers of "space1" in the sidebar
     And user of browser clicks Get support button on providers page
@@ -25,7 +25,7 @@ Feature: Basic management of spaces
 
 
   Scenario: User generates different expose existing data tokens (space has no support)
-    When user of browser clicks on Spaces in the sidebar
+    When user of browser clicks on Spaces in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Providers of "space1" in the sidebar
     And user of browser clicks Get support button on providers page

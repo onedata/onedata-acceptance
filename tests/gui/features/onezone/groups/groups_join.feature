@@ -28,14 +28,14 @@ Feature: Joining a group in Onezone GUI
 
 
   Scenario Outline: User joins group using invitation token
-    When user of browser1 clicks on Groups in the sidebar
+    When user of browser1 clicks on Groups in the main menu
     And user of browser1 clicks "group1" on the groups list in the sidebar
     And user of browser1 clicks on "Invite user using token" button in users list menu in "group1" group members view
     And user of browser1 copies invitation token from modal
     And user of browser1 closes "Invite user using token" modal
     And user of browser1 sends copied token to user of browser2
 
-    And user of browser2 clicks on Groups in the sidebar
+    And user of browser2 clicks on Groups in the main menu
     And user of browser2 clicks on Join group button in groups sidebar
     And user of browser2 pastes copied token into group token text field
     And user of browser2 confirms using <confirmation_method>
@@ -47,14 +47,14 @@ Feature: Joining a group in Onezone GUI
 
 
   Scenario Outline: User fails to join group using group invitation token
-    When user of browser1 clicks on Groups in the sidebar
+    When user of browser1 clicks on Groups in the main menu
     And user of browser1 clicks "group1" on the groups list in the sidebar
     And user of browser1 clicks on "Invite group using token" button in groups list menu in "group1" group members view
     And user of browser1 copies invitation token from modal
     And user of browser1 closes "Invite group using token" modal
     And user of browser1 sends copied token to user of browser2
 
-    And user of browser2 clicks on Groups in the sidebar
+    And user of browser2 clicks on Groups in the main menu
     And user of browser2 clicks on Join group button in groups sidebar
     And user of browser2 pastes copied token into group token text field
     And user of browser2 confirms using <confirmation_method>
@@ -63,7 +63,7 @@ Feature: Joining a group in Onezone GUI
 
 
   Scenario Outline: User fails to join group using incorrect token
-    When user of browser1 clicks on Groups in the sidebar
+    When user of browser1 clicks on Groups in the main menu
     And user of browser1 clicks on Join group button in groups sidebar
     And user of browser1 writes "aaa" into group token text field
     And user of browser1 confirms using <confirmation_method>
@@ -72,7 +72,7 @@ Feature: Joining a group in Onezone GUI
 
 
   Scenario Outline: User fails to join group to space using incorrect token
-    When user of browser1 clicks on Groups in the sidebar
+    When user of browser1 clicks on Groups in the main menu
     And user of browser1 clicks on "Join space" button in group "group1" menu in the sidebar
     And user of browser1 writes "aaa" into group token text field
     And user of browser1 confirms using <confirmation_method>
@@ -81,7 +81,7 @@ Feature: Joining a group in Onezone GUI
 
 
   Scenario Outline: User fails to join group he already belongs to
-    When user of browser1 clicks on Groups in the sidebar
+    When user of browser1 clicks on Groups in the main menu
     And user of browser1 clicks "group1" on the groups list in the sidebar
     And user of browser1 clicks on "Invite user using token" button in users list menu in "group1" group members view
     And user of browser1 copies invitation token from modal
@@ -95,7 +95,7 @@ Feature: Joining a group in Onezone GUI
 
 
   Scenario: User fails to view group he does not belong to
-    When user of browser1 clicks on Groups in the sidebar
+    When user of browser1 clicks on Groups in the main menu
     And user of browser1 goes to group "group1" main subpage
     And user of browser1 copies a first resource ID from URL
     And user of browser1 sends copied ID to user of browser2
