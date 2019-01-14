@@ -55,8 +55,8 @@ def support_space_in_op_panel_using_gui(selenium, user, config, onepanel,
                 'Max depth', sync_type, onepanel)
 
     wt_click_on_btn_in_space_support_add_form(selenium, user, onepanel)
-    # notify_visible_with_text(selenium, user, notify_type,
-    #                          notify_text_regexp)
+    notify_visible_with_text(selenium, user, notify_type,
+                             notify_text_regexp)
     wt_assert_existence_of_space_support_record(selenium, user, space_name,
                                                 onepanel)
 
