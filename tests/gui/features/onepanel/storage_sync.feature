@@ -187,7 +187,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # configure import parameters
     And user of browser1 clicks on "Storage synchronization" navigation tab in space "space1"
-    And user of browser1 clicks on Configure to enable button in "space1" record in Spaces page in Onepanel
+    And user of browser1 clicks on Configure button in "space1" record in Spaces page in Onepanel
     And user of browser1 selects Simple scan strategy from strategy selector in IMPORT CONFIGURATION in "space1" record in Spaces page in Onepanel
     And user of browser1 types "2" to Max depth input field in IMPORT CONFIGURATION in "space1" record in Spaces page in Onepanel
     And user of browser1 clicks on Start synchronization button in "space1" record in Spaces page in Onepanel
@@ -316,7 +316,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # configure import parameters
     And user of browser1 clicks on "Storage synchronization" navigation tab in space "space3"
-    And user of browser1 clicks on Configure to enable button in "space3" record in Spaces page in Onepanel
+    And user of browser1 clicks on Configure button in "space3" record in Spaces page in Onepanel
     And user of browser1 selects Simple scan strategy from strategy selector in IMPORT CONFIGURATION in "space3" record in Spaces page in Onepanel
     And user of browser1 types "2" to Max depth input field in IMPORT CONFIGURATION in "space3" record in Spaces page in Onepanel
     And user of browser1 clicks on Start synchronization button in "space3" record in Spaces page in Onepanel
@@ -458,7 +458,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # configure import parameters
     And user of browser1 clicks on "Storage synchronization" navigation tab in space "space4"
-    And user of browser1 clicks on Configure to enable button in "space4" record in Spaces page in Onepanel
+    And user of browser1 clicks on Configure button in "space4" record in Spaces page in Onepanel
     And user of browser1 selects Simple scan strategy from strategy selector in IMPORT CONFIGURATION in "space4" record in Spaces page in Onepanel
     And user of browser1 types "2" to Max depth input field in IMPORT CONFIGURATION in "space4" record in Spaces page in Onepanel
     And user of browser1 clicks on Start synchronization button in "space4" record in Spaces page in Onepanel
@@ -588,7 +588,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # configure import parameters
     And user of browser1 clicks on "Storage synchronization" navigation tab in space "space5"
-    And user of browser1 clicks on Configure to enable button in "space5" record in Spaces page in Onepanel
+    And user of browser1 clicks on Configure button in "space5" record in Spaces page in Onepanel
     And user of browser1 selects Simple scan strategy from strategy selector in IMPORT CONFIGURATION in "space5" record in Spaces page in Onepanel
     And user of browser1 types "2" to Max depth input field in IMPORT CONFIGURATION in "space5" record in Spaces page in Onepanel
     And user of browser1 clicks on Start synchronization button in "space5" record in Spaces page in Onepanel
@@ -731,7 +731,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # configure import parameters
     And user of browser1 clicks on "Storage synchronization" navigation tab in space "space6"
-    And user of browser1 clicks on Configure to enable button in "space6" record in Spaces page in Onepanel
+    And user of browser1 clicks on Configure button in "space6" record in Spaces page in Onepanel
     And user of browser1 selects Simple scan strategy from strategy selector in IMPORT CONFIGURATION in "space6" record in Spaces page in Onepanel
     And user of browser1 types "2" to Max depth input field in IMPORT CONFIGURATION in "space6" record in Spaces page in Onepanel
     And user of browser1 clicks on Start synchronization button in "space6" record in Spaces page in Onepanel

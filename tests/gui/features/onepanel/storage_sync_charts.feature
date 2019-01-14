@@ -52,7 +52,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # configure import parameters
     And user of browser1 clicks on "Storage synchronization" navigation tab in space "space7"
-    And user of browser1 clicks on Configure to enable button in "space7" record in Spaces page in Onepanel
+    And user of browser1 clicks on Configure button in "space7" record in Spaces page in Onepanel
     And user of browser1 selects Simple scan strategy from strategy selector in IMPORT CONFIGURATION in "space7" record in Spaces page in Onepanel
     And user of browser1 types "3" to Max depth input field in IMPORT CONFIGURATION in "space7" record in Spaces page in Onepanel
     And user of browser1 clicks on Start synchronization button in "space7" record in Spaces page in Onepanel

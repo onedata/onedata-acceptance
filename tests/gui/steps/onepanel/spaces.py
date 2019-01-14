@@ -333,10 +333,10 @@ def wt_clicks_on_btn_in_revoke_space_support(selenium, browser_id,
 
 
 @when(parsers.parse('user of {browser_id} clicks on '
-                    'Configure to enable button in "{space}" '
+                    'Configure button in "{space}" '
                     'record in Spaces page in Onepanel'))
 @then(parsers.parse('user of {browser_id} clicks on '
-                    'Configure to enable button in "{space}" '
+                    'Configure button in "{space}" '
                     'record in Spaces page in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_clicks_on_configure_to_enable(selenium, browser_id, onepanel):
