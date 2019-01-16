@@ -25,7 +25,7 @@ from .error_modal import ErrorModal
 from .invite_using_token import InviteUsingTokenModal
 from .dns_configuration_warning import DNSConfigurationWarningModal
 from .provider_popover import ProviderPopover
-from .relation_membership_menu import MembershipRelationMenu
+from .membership_relation_menu import MembershipRelationMenu
 from .groups_hierarchy_menu import GroupHierarchyMenu
 
 

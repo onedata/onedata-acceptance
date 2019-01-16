@@ -18,7 +18,6 @@ Feature: Basic management of groups hierarchy with one user in Onezone GUI
           group3:
             owner: user1
 
-
     And user opened browser window
     And user of browser opened Onezone page
     And user of browser logged as user1 to Onezone service

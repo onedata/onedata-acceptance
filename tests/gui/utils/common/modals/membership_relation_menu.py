@@ -1,5 +1,5 @@
-"""Utils and fixtures to facilitate operations on group relation
-membership menu modal.
+"""Utils and fixtures to facilitate operations on group membership
+relation menu modal.
 """
 
 __author__ = "Agnieszka Warchol"

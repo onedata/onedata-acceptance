@@ -1,4 +1,4 @@
-Feature: Basic management of groups memberships in Onezone GUI
+Feature: Multi Browser basic management of groups memberships in Onezone GUI
 
 
   Background:
@@ -34,7 +34,7 @@ Feature: Basic management of groups memberships in Onezone GUI
     And user of browser2 clicks Save button for "group1" group in group members subpage
 
     And user of browser1 goes to group "group4" members subpage
-    And user of browser1 clicks show view option in group members subpage
+    And user of browser1 clicks show view expand button in group members subpage header
     And user of browser1 clicks effective view mode in group members subpage
     And user of browser1 clicks memberships view mode in group members subpage
     And user of browser1 clicks "user1" user in "group4" group members users list
@@ -44,5 +44,5 @@ Feature: Basic management of groups memberships in Onezone GUI
     And user of browser1 clicks on "Remove relation" in group membership relation menu
     And user of browser1 clicks on "Remove" button in modal "REMOVE MEMBER"
 
-    Then user of browser1 sees 1 membership rows in group memberships mode
-    And user of browser1 does not see "group2" group is member of "group3" group in group memberships mode
+    Then user of browser1 sees 1 membership row in group memberships mode
+    And user of browser1 does not see that "group2" group is member of "group3" group in group memberships mode

@@ -1,4 +1,4 @@
-Feature: Basic management of groups memberships in Onezone GUI
+Feature: Basic management of groups privileges in Onezone GUI
 
 
   Background:
@@ -27,7 +27,7 @@ Feature: Basic management of groups memberships in Onezone GUI
     And user of browser logged as user1 to Onezone service
 
 
-  Scenario: User sees and modifies privileges to group, which is nested to his parent group
+  Scenario: User sees and modifies privileges to group, which is nested in his parent group
     When user of browser goes to group "group1" members subpage
     And user of browser clicks "group2" group in "group1" group members groups list
     And user of browser sees that "User management" is not checked for "group2" group in group members subpage
@@ -70,7 +70,7 @@ Feature: Basic management of groups memberships in Onezone GUI
     And user of browser clicks Save button for "user1" user in group members subpage
 
     And user of browser goes to group "group1" members subpage
-    And user of browser clicks show view option in group members subpage
+    And user of browser clicks show view expand button in group members subpage header
     And user of browser clicks effective view mode in group members subpage
     And user of browser clicks memberships view mode in group members subpage
     And user of browser clicks "user1" user in "group1" group members users list
@@ -88,7 +88,7 @@ Feature: Basic management of groups memberships in Onezone GUI
     And user of browser clicks Save button for "user1" user in group members subpage
 
     And user of browser goes to group "group1" members subpage
-    And user of browser clicks show view option in group members subpage
+    And user of browser clicks show view expand button in group members subpage header
     And user of browser clicks effective view mode in group members subpage
     And user of browser clicks memberships view mode in group members subpage
     And user of browser clicks "user1" user in "group1" group members users list
@@ -96,8 +96,8 @@ Feature: Basic management of groups memberships in Onezone GUI
     And user of browser clicks on "group4" member relation menu button to "group1" group
     And user of browser clicks on "Remove relation" in group membership relation menu
     And user of browser clicks on "Remove" button in modal "REMOVE MEMBER"
-    Then user of browser sees 1 membership rows in space memberships mode
-    And user of browser does not see "group4" group is member of "group1" group in group memberships mode
+    Then user of browser sees 1 membership row in space memberships mode
+    And user of browser does not see that "group4" group is member of "group1" group in group memberships mode
 
 
   Scenario: User removes relation with privilege "Leave parent group" and without "Remove child group"
@@ -108,7 +108,7 @@ Feature: Basic management of groups memberships in Onezone GUI
     And user of browser clicks Save button for "user1" user in group members subpage
 
     And user of browser goes to group "group1" members subpage
-    And user of browser clicks show view option in group members subpage
+    And user of browser clicks show view expand button in group members subpage header
     And user of browser clicks effective view mode in group members subpage
     And user of browser clicks memberships view mode in group members subpage
     And user of browser clicks "user1" user in "group1" group members users list
@@ -116,5 +116,5 @@ Feature: Basic management of groups memberships in Onezone GUI
     And user of browser clicks on "group4" member relation menu button to "group1" group
     And user of browser clicks on "Remove relation" in group membership relation menu
     And user of browser clicks on "Remove" button in modal "REMOVE MEMBER"
-    Then user of browser sees 1 membership rows in space memberships mode
-    And user of browser does not see "group4" group is member of "group1" group in group memberships mode
+    Then user of browser sees 1 membership row in space memberships mode
+    And user of browser does not see that "group4" group is member of "group1" group in group memberships mode
