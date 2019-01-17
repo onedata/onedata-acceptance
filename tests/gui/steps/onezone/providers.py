@@ -16,6 +16,7 @@ from tests.utils.acceptance_utils import *
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.utils import repeat_failed
+from tests.gui.meta_steps.onezone.common import click_visit_provider
 
 
 @when(parsers.parse('user of {browser_id} sees that provider popup for '
@@ -27,12 +28,12 @@ from tests.utils.utils import repeat_failed
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_popup_for_provider_with_name_has_appeared_on_map(selenium, browser_id,
                                                             provider_name,
-                                                            oz_page):
+                                                            modals):
     driver = selenium[browser_id]
     err_msg = 'Popup displayed for provider named "{}" ' \
               'instead of "{}"'
-    prov = oz_page(driver)['world map'].get_provider_with_displayed_popup()
-    assert provider_name == prov.name, err_msg.format(prov.name, provider_name)
+    prov = modals(driver).provider_popover.provider_name
+    assert provider_name == prov, err_msg.format(prov, provider_name)
 
 
 @when(parsers.parse('user of {browser_id} sees that provider popup for '
@@ -41,13 +42,13 @@ def assert_popup_for_provider_with_name_has_appeared_on_map(selenium, browser_id
                     'provider "{provider}" has appeared on world map'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_popup_for_provider_has_appeared_on_map(selenium, browser_id,
-                                                  provider, oz_page, hosts):
+                                                  provider, hosts, modals):
     driver = selenium[browser_id]
-    provider_name = hosts[provider]['name']
     err_msg = 'Popup displayed for provider named "{}" ' \
               'instead of "{}"'
-    prov = oz_page(driver)['world map'].get_provider_with_displayed_popup()
-    assert provider_name == prov.name, err_msg.format(prov.name, provider_name)
+    prov = modals(driver).provider_popover.provider_name
+    provider_name = hosts[provider]['name']
+    assert provider_name == prov, err_msg.format(prov, provider_name)
 
 
 @when(parsers.parse('user of {browser_id} sees that hostname in displayed '
@@ -74,11 +75,14 @@ def assert_provider_hostname_matches_known_domain(selenium, browser_id,
                     '"{provider}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_provider_hostname_matches_test_hostname(selenium, browser_id,
-                                                   provider, hosts, oz_page):
+                                                   provider, hosts, oz_page,
+                                                   displays, clipboard):
     driver = selenium[browser_id]
-    prov = oz_page(driver)['world map'].get_provider_with_displayed_popup()
     expected_domain = "{}.test".format(hosts[provider]['hostname'])
-    displayed_domain = prov.hostname
+    page = oz_page(driver)['data']
+    page.elements_list[0]()
+    page.popover.copy_hostname()
+    displayed_domain = clipboard.paste(display=displays[browser_id])
     assert displayed_domain == expected_domain, \
         'displayed {} provider hostname instead ' \
         'of expected {}'.format(displayed_domain, expected_domain)
@@ -187,6 +191,18 @@ def assert_no_provider_popup_next_to_provider_circle(selenium, browser_id,
                                             ''.format(ordinal))
 
 
+@wt(parsers.re(r'user of (?P<browser_id>.+?) does not see provider popover '
+               r'on Onezone world map'))
+def assert_no_provider_popup_on_world_map(selenium, browser_id, modals):
+    driver = selenium[browser_id]
+    try:
+        modals(driver).provider_popover
+    except RuntimeError:
+        pass
+    else:
+        raise RuntimeError('found provider popover on world map')
+
+
 @when(parsers.re(r'user of (?P<browser_id>.+?) clicks on '
                  r'(?P<ordinal>1st|2nd|3rd|\d*?[4567890]th|\d*?11th|'
                  r'\d*?12th|\d*?13th|\d*?[^1]1st|\d*?[^1]2nd|\d*?[^1]3rd) '
@@ -199,6 +215,13 @@ def assert_no_provider_popup_next_to_provider_circle(selenium, browser_id,
 def click_on_provider_circle(selenium, browser_id, ordinal, oz_page):
     driver = selenium[browser_id]
     oz_page(driver)['world map'].providers[int(ordinal[:-2]) - 1].click()
+
+
+@wt(parsers.re(r'user of (?P<browser_id>.+?) clicks on the other provider '
+               r'circle on Onezone world map'))
+def click_other_provider_icons(selenium, browser_id, oz_page):
+    driver = selenium[browser_id]
+    oz_page(driver)['data'].icons[0].icon()
 
 
 @when(parsers.re(r'user of (?P<browser_id>.+?) sees that provider popup has '
@@ -219,11 +242,10 @@ def assert_provider_popup_next_to_provider_circle(selenium, browser_id,
                                         ''.format(ordinal))
 
 
-@when(parsers.parse('user of {browser_id} clicks on Onezone world map'))
-@then(parsers.parse('user of {browser_id} clicks on Onezone world map'))
+@wt(parsers.parse('user of {browser_id} clicks on Onezone world map'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_world_map(selenium, browser_id, oz_page):
-    oz_page(selenium[browser_id])['world map'].click()
+    oz_page(selenium[browser_id])['data'].map_point.click()
 
 
 @when(parsers.parse('user of {browser_id} sees that the list of spaces '
@@ -307,18 +329,24 @@ def assert_list_of_providers_is_empty(selenium, browser_id, oz_page):
 
 
 @when(parsers.parse('user of {browser_id} sees that provider "{provider}" '
-                    'in expanded "GO TO YOUR FILES" Onezone panel is working'))
+                    'in Onezone is working'))
 @then(parsers.parse('user of {browser_id} sees that provider "{provider}" '
-                    'in expanded "GO TO YOUR FILES" Onezone panel is working'))
+                    'in Onezone is working'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_provider_working_in_oz_panel(selenium, browser_id,
                                         provider, oz_page, hosts):
     driver = selenium[browser_id]
     provider = hosts[provider]['name']
-    provider_record = oz_page(driver)['go to your files'].providers[provider]
-    assert provider_record.is_working(), ('provider icon in GO TO YOUR FILES '
-                                          'oz panel for "{}" is not green'
-                                          ''.format(provider))
+    page = oz_page(driver)['data']
+    try:
+        provider_record = page.elements_list[provider]
+        provider_record.click()
+    except RuntimeError:
+        assert False, 'no provider "{}" found on providers list'.format(provider)
+    else:
+        pass
+        assert page.is_working(), ('provider icon in Onezone for "{}" '
+                                   'is not green'.format(provider))
 
 
 @when(parsers.parse('user of {browser_id} sees that provider named "{provider}" '
@@ -334,3 +362,69 @@ def assert_provider_not_working_in_oz_panel(selenium, browser_id,
     assert provider_record.is_not_working(), ('provider icon in GO TO YOUR FILES '
                                               'oz panel for "{}" is not gray'
                                               ''.format(provider))
+
+
+@wt(parsers.parse('user of {browser_id} clicks on provider "{provider}" '
+                  'in data sidebar'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def click_on_provider_in_data_sidebar(selenium, browser_id, oz_page,
+                                      provider, hosts):
+    driver = selenium[browser_id]
+    provider = hosts[provider]['name']
+    oz_page(driver)['data'].elements_list[provider]()
+
+
+@wt(parsers.re('user of (?P<browser_id>.+?) clicks on '
+               '(?P<option>Visit provider|Toggle home provider) button '
+               'on provider popover'))
+def click_on_visit_provider_in_provider_popover(selenium, browser_id, option,
+                                                modals):
+    driver = selenium[browser_id]
+    getattr(modals(driver).provider_popover, transform(option)).click()
+
+
+@wt(parsers.parse('user of {browser_id} sees "{space_name}" is '
+                  'on the spaces list on provider popover'))
+def assert_space_is_in_spaces_list_in_provider_popover(selenium, browser_id,
+                                                       space_name, modals):
+    driver = selenium[browser_id]
+    spaces_list = modals(driver).provider_popover.spaces_list
+    assert space_name in spaces_list
+
+
+@wt(parsers.parse('user of {browser_id} sees that home of "{provider}" has '
+                  'appeared in the data sidebar'))
+def assert_home_space_has_appeared_on_provider_on_left_sidebar_menu(selenium,
+                                                                    browser_id,
+                                                                    provider,
+                                                                    oz_page,
+                                                                    hosts):
+    driver = selenium[browser_id]
+    provider = hosts[provider]['name']
+    assert oz_page(driver)['data'].elements_list[provider].is_home_icon(), \
+        'home of provider "{}" not found'.format(provider)
+
+
+@wt(parsers.parse('user of {browser_id} sees that spaces counter for '
+                  '"{provider}" provider displays {number} in data sidebar'))
+def assert_number_of_supported_spaces_in_data_sidebar(selenium, browser_id,
+                                                      oz_page, provider,
+                                                      number, hosts):
+    driver = selenium[browser_id]
+    provider = hosts[provider]['name']
+    supported_spaces_number = (oz_page(driver)['data']
+                               .elements_list[provider]
+                               .supported_spaces_number)
+    assert number == supported_spaces_number, ('number of supported spaces '
+                                               'is not equal {}'.format(number))
+
+
+@wt(parsers.parse('user of {browser_id} sees that length of spaces list on '
+                  'provider popover is {number}'))
+def assert_len_of_spaces_list_in_provider_popover(selenium, browser_id,
+                                           number, modals):
+    driver = selenium[browser_id]
+    spaces_list = modals(driver).provider_popover.spaces_list
+    assert int(number) == len(spaces_list), ('number of supported spaces '
+                                             'is not equal {}'.format(number))
+

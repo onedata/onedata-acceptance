@@ -15,7 +15,6 @@ from tests.gui.steps.onepanel.provider import *
 from tests.gui.steps.common.notifies import *
 from tests.gui.steps.common.miscellaneous import *
 from tests.gui.steps.onepanel.deployment import *
-from tests.gui.steps.onepanel.login import *
 from tests.gui.steps.common.url import *
 from tests.gui.steps.onepanel.provider import (
     wt_click_on_discard_btn_in_domain_change_modal
@@ -169,7 +168,7 @@ def register_provider_in_op_using_gui(selenium, user, onepanel, hosts, config, m
 def change_provider_name_if_name_is_different_than_given(selenium, browser_id,
                                                          provider, hosts,
                                                          onepanel,
-                                                         panel_login_page,
+                                                         login_page,
                                                          users, modals):
     sub_item = 'Provider'
     record = 1
@@ -191,6 +190,6 @@ def change_provider_name_if_name_is_different_than_given(selenium, browser_id,
                                                               onepanel,
                                                               current_provider,
                                                               provider, domain,
-                                                              panel_login_page,
+                                                              login_page,
                                                               users, hosts,
                                                               browser_id, modals)

@@ -18,9 +18,9 @@ from tests.gui.steps.common.copy_paste import *
 from tests.gui.steps.common.local_file_system import *
 from tests.gui.steps.common.notifies import *
 from tests.gui.steps.common.miscellaneous import *
+from tests.gui.steps.common.login import *
 
 from tests.gui.steps.onepanel.account_management import *
-from tests.gui.steps.onepanel.login import *
 from tests.gui.steps.onepanel.nodes import *
 from tests.gui.steps.onepanel.provider import *
 from tests.gui.steps.onepanel.common import *
@@ -34,7 +34,6 @@ from tests.gui.steps.onezone.access_tokens import *
 from tests.gui.steps.onezone.data_space_management import *
 from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.manage_account import *
-from tests.gui.steps.onezone.login_page import *
 
 from tests.gui.steps.oneprovider.common import *
 from tests.gui.steps.oneprovider.data_tab import *

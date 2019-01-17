@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 
 from tests.gui.utils.core.base import PageObject
-from tests.gui.utils.core.web_elements import WebItem, Label, WebElement
+from tests.gui.utils.core.web_elements import WebItem, Label, WebElement, Button
 
 from tests.gui.utils.common.common import OnePage, BaseContent
 from .clusters import ClustersSidebar, WelcomePage
@@ -17,6 +17,7 @@ from .nodes import NodesContentPage
 from .provider import ProviderContentPage
 from .spaces import SpacesContentPage
 from .storages import StorageContentPage
+from .init_page import PanelInitPage
 
 
 class Sidebar(PageObject):
@@ -38,9 +39,11 @@ class Content(BaseContent):
 
 
 class Onepanel(OnePage):
+    init_page = WebItem('.container', cls=PanelInitPage)
     content = WebItem('.col-content', cls=Content)
     _main_sidebar = WebElement('#col-sidebar')
     _sub_sidebar = WebElement('#sidenav-sidebar')
+    discard_button = Button('.modal-content .btn-toolbar button')
 
     @property
     def sidebar(self):

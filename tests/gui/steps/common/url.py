@@ -11,27 +11,37 @@ __license__ = ("This software is released under the MIT license cited in "
 import re
 
 from pytest_bdd import given, when, then, parsers
+from tests.utils.acceptance_utils import wt
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 from selenium.webdriver.support.expected_conditions import staleness_of
 
 from tests.gui.utils.generic import parse_seq, parse_url
 from tests.utils.utils import repeat_failed
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.utils.acceptance_utils import wt
 
 
-@given(parsers.parse("user of {browser_id_list} opened {hosts_list} page"))
-@given(parsers.parse("users of {browser_id_list} opened {hosts_list} page"))
-def g_open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
+def open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
     for browser_id, host in zip(parse_seq(browser_id_list),
                                 parse_seq(hosts_list)):
         driver = selenium[browser_id]
-        host = host.split()
+        host = host.lower().split()
         alias, service = host[0], '_'.join(host[1:])
         if 'panel' in service:
             driver.get('https://{}'.format(hosts[alias]['panel']['hostname']))
         else:
             driver.get('https://{}'.format(hosts[alias]['hostname']))
+
+
+@given(parsers.parse("user of {browser_id_list} opened {hosts_list} page"))
+@given(parsers.parse("users of {browser_id_list} opened {hosts_list} page"))
+def g_open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
+    open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts)
+
+
+@wt(parsers.re('users? of (?P<browser_id_list>.+) opens '
+               '(?P<hosts_list>.+) page'))
+def wt_open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
+    open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts)
 
 
 @when(parsers.re('user of (?P<browser_id>.+) should be '
@@ -97,9 +107,9 @@ def open_received_url(selenium, browser_id, tmp_memory, base_url):
 
 
 @when(parsers.re(r'user of (?P<browser_id>.*?) changes webapp path to '
-                 r'(?P<path>.+?) concatenated with copied item'))
+                 r'"?(?P<path>.+?)"? concatenated with copied item'))
 @then(parsers.re(r'user of (?P<browser_id>.*?) changes webapp path to '
-                 r'(?P<path>.+?) concatenated with copied item'))
+                 r'"?(?P<path>.+?)"? concatenated with copied item'))
 def change_app_path_with_copied_item(selenium, browser_id, path,
                                      displays, clipboard):
     driver = selenium[browser_id]
@@ -113,9 +123,9 @@ def change_app_path_with_copied_item(selenium, browser_id, path,
 
 
 @when(parsers.re(r'user of (?P<browser_id>.*?) changes webapp path to '
-                 r'(?P<path>.+?) concatenated with received (?P<item>.*)'))
+                 r'"?(?P<path>.+?)"? concatenated with received (?P<item>.*)'))
 @then(parsers.re(r'user of (?P<browser_id>.*?) changes webapp path to '
-                 r'(?P<path>.+?) concatenated with received (?P<item>.*)'))
+                 r'"?(?P<path>.+?)"? concatenated with received (?P<item>.*)'))
 def change_app_path_with_recv_item(selenium, browser_id, path,
                                    tmp_memory, item):
     driver = selenium[browser_id]
@@ -159,10 +169,11 @@ def cp_part_of_url(selenium, browser_id, item, displays, clipboard):
                    display=displays[browser_id])
 
 
-@wt(parsers.parse('using web GUI, {browser_id} refreshes site'))
-@wt(parsers.parse('user of {browser_id} refreshes site'))
-def refresh_site(selenium, browser_id):
-    selenium[browser_id].refresh()
+@wt(parsers.parse('using web GUI, {browser_id_list} refreshes site'))
+@wt(parsers.re('users? of (?P<browser_id_list>.*?) refreshes site'))
+def refresh_site(selenium, browser_id_list):
+    for browser_id in parse_seq(browser_id_list):
+        selenium[browser_id].refresh()
 
 
 @when(parsers.parse('user of {browser_id} refreshes webapp'))

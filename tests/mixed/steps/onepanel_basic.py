@@ -37,12 +37,12 @@ def change_user_password_in_oz_panel(client, request, user, new_password, host,
 @when(parsers.re('using (?P<client>.*), (?P<user>.+?) logs out from '
                  '"(?P<host>.+?)" Onezone panel service'))
 def log_out_from_oz_panel(client, request, user, host, selenium, onepage,
-                          panel_login_page, popups):
+                          login_page, popups):
 
     if client.lower() == 'web gui':
         from tests.gui.meta_steps.onepanel.account_management import \
                                     log_out_from_oz_panel_gui
-        log_out_from_oz_panel_gui(user, selenium, onepage, panel_login_page,
+        log_out_from_oz_panel_gui(user, selenium, onepage, login_page,
                                   popups)
     elif client.lower() == 'rest':
         pass
@@ -55,13 +55,13 @@ def log_out_from_oz_panel(client, request, user, host, selenium, onepage,
                  'logs in to "(?P<host>.+?)" Onezone panel service using '
                  'password "(?P<password>.+?)"'))
 def login_to_oz_panel_using_new_password(client, request, user, host, selenium,
-                                         panel_login_page, hosts, password):
+                                         login_page, hosts, password):
 
     if client.lower() == 'web gui':
         from tests.gui.meta_steps.onepanel.account_management import \
                                     login_to_oz_panel_using_new_password_gui
         login_to_oz_panel_using_new_password_gui(selenium, user, password,
-                                                 panel_login_page)
+                                                 login_page)
     elif client.lower() == 'rest':
         from tests.mixed.steps.rest.onepanel.account_management import \
                                     login_to_oz_panel_using_new_password_rest
@@ -80,7 +80,7 @@ def modify_provider_using_test_hostname_in_op_panel(client, request, user,
                                                     new_provider_name,
                                                     host, users, hosts,
                                                     selenium, onepanel,
-                                                    panel_login_page,
+                                                    login_page,
                                                     modals):
 
     test_domain = '{}.test'.format(hosts[provider_name]['hostname'])
@@ -95,7 +95,7 @@ def modify_provider_using_test_hostname_in_op_panel(client, request, user,
                                     modify_provider_with_given_name_in_op_panel_using_gui
         modify_provider_with_given_name_in_op_panel_using_gui(
             selenium, user, onepanel, hosts[provider_name]['name'],
-            new_provider_name, test_domain, panel_login_page, users,
+            new_provider_name, test_domain, login_page, users,
             hosts, user, modals)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
@@ -109,7 +109,7 @@ def modify_provider_using_known_hostname_in_op_panel(client, request, user,
                                                      provider_name,
                                                      target_provider, host,
                                                      users, hosts, selenium,
-                                                     onepanel, panel_login_page,
+                                                     onepanel, login_page,
                                                      modals):
 
     if client.lower() == 'rest':
@@ -124,7 +124,7 @@ def modify_provider_using_known_hostname_in_op_panel(client, request, user,
         modify_provider_with_given_name_in_op_panel_using_gui(
             selenium, user, onepanel, provider_name,
             hosts[target_provider]['name'],
-            hosts[target_provider]['hostname'], panel_login_page, users, hosts,
+            hosts[target_provider]['hostname'], login_page, users, hosts,
             user, modals)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))

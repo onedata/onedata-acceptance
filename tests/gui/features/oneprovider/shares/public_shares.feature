@@ -23,10 +23,7 @@ Feature: Basic data tab operations on public shares in file browser
     And users opened [browser1, browser2] browsers' windows
     And user of browser1 opened onezone page
     And user of browser1 logged as user1 to Onezone service
-    And user of browser1 expanded the "go to your files" Onezone sidebar panel
-    And user of browser1 clicked on "oneprovider-1" provider in expanded "GO TO YOUR FILES" Onezone panel
-    And user of browser1 clicked on the "Go to your files" button in "oneprovider-1" provider's popup displayed on world map
-    And user of browser1 seen that Oneprovider session has started
+    And opened oneprovider-1 Oneprovider view in web GUI by user of browser1
 
 
   Scenario: User views and downloads files from public share

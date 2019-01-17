@@ -22,5 +22,10 @@ class OZPanel(PageObject, ExpandableMixin):
 
 class EditBox(PageObject):
     value = Input('input')
-    confirm = Button('.oneicon-checkbox-check')
-    cancel = Button('.oneicon-checkbox-x')
+    confirm = Button('.save-icon')
+    cancel = Button('.cancel-icon')
+
+
+class InputBox(PageObject):
+    value = Input('input')
+    confirm = Button('button')

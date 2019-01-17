@@ -10,8 +10,8 @@ __license__ = "This software is released under the MIT license cited in " \
 
 from functools import partial
 
-from tests.gui.utils.core.web_elements import (WebItemsSequence, Label,
-                                               WebElement, Button, WebItem)
+from tests.gui.utils.core.web_elements import (WebItemsSequence, Label, Input,
+                                               WebElement, NamedButton, WebItem)
 from tests.gui.utils.core.web_objects import ButtonWithTextPageObject
 from tests.gui.utils.core.base import PageObject, ExpandableMixin
 
@@ -78,3 +78,17 @@ class _DropdownSelector(PageObject, ExpandableMixin):
 
 Toggle = partial(WebItem, cls=_Toggle)
 DropdownSelector = partial(WebItem, cls=_DropdownSelector)
+
+
+class LoginPage(object):
+    header = Label('.row-login-header')
+    username = Input('input[placeholder="Username"]')
+    password = Input('input[placeholder="Password"]')
+    sign_in = NamedButton('button', text='Sign in')
+    err_msg = Label('.login-error-message')
+
+    def __init__(self, driver):
+        self.web_elem = self.driver = driver
+
+    def __str__(self):
+        return 'Onezone Login page'

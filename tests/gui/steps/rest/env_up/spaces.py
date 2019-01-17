@@ -123,7 +123,7 @@ def _create_and_configure_spaces(config, zone_name, admin_credentials, hosts,
 def _create_space(zone_hostname, owner_username, owner_password, space_name):
     space_properties = {'name': space_name}
     response = http_post(ip=zone_hostname, port=OZ_REST_PORT,
-                         path=get_zone_rest_path('spaces'),
+                         path=get_zone_rest_path('user', 'spaces'),
                          auth=(owner_username, owner_password),
                          data=json.dumps(space_properties))
     return response.headers['location'].split('/')[-1]

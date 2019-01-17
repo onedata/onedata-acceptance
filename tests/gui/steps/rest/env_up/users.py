@@ -41,13 +41,13 @@ def users_creation(host, config, admin_credentials, hosts, users, rm_users):
             raise ex
         else:
             users[username] = users_db[username] = user_cred
-    
+
     yield
 
     _rm_users(zone_hostname, admin_credentials, users_db)
 
 
-@repeat_failed(attempts=5)
+@repeat_failed(attempts=30, interval=5)
 def _create_admin_in_zone(zone_hostname, admin_credentials):
     username, password = admin_credentials.username, admin_credentials.password
     response = http_get(ip=zone_hostname, port=OZ_REST_PORT,

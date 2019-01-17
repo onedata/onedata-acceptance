@@ -4,7 +4,7 @@ Feature: Deployment process using panel of zone and provider
   Scenario: Cluster deployment
     Given users opened [browser1, browser2] browsers' windows
     And users of [browser1, browser2] opened [onezone zone panel, oneprovider-1 provider panel] page
-    And users of [browser1, browser2] logged as [admin, admin] to Onepanel service
+    And users of [browser1, browser2] created admin accounts "admin:password"
 
     # step1 in zone and provider panels
     When user of browser1 clicks on Create new cluster button in welcome page in Onepanel
@@ -72,5 +72,5 @@ Feature: Deployment process using panel of zone and provider
     And user of browser2 clicks on Finish button in step 5 of deployment process in Onepanel
     And user of browser2 sees an info notify with text matching to: .*[Ss]torage.*added.*
     And user of browser2 clicks on Manage the cluster button in last step of deployment process in Onepanel
-    Then user of browser2 sees that [Database, Cluster Worker, Cluster Manager, Primary Cluster Manager] options are enabled for .*oneprovider.* host in Nodes page in Onepanel
+    And user of browser2 sees that [Database, Cluster Worker, Cluster Manager, Primary Cluster Manager] options are enabled for .*oneprovider.* host in Nodes page in Onepanel
     And user of browser2 sees that [Database, Cluster Worker, Cluster Manager, Primary Cluster Manager] options cannot be changed for .*oneprovider.* host in Nodes page in Onepanel
