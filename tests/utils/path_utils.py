@@ -103,3 +103,8 @@ def absolute_path_to_env_file(dir, file):
 def escape_path(path):
     """Returns path with escaped space and apostrophe"""
     return path.replace("'", "\\'").replace(' ', '\ ')
+
+
+def get_first_path_element(path):
+    """Returns first element in path"""
+    return next(elem for elem in path.split(os.path.sep) if elem)

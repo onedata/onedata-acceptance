@@ -51,11 +51,11 @@ Feature: ACL subdirectories privileges tests using multiple browsers in Oneprovi
     Then user of browser2 <result> to rename "dir1/dir2" to "new_name" in "space1"
 
     Examples:
-    | result   |  privileges                                                   |
-    | succeeds |  [delete subdirectory, traverse directory, add subdirectory]  |
-    | fails    |  all except [add subdirectory]                                |
-    | fails    |  all except [delete subdirectory]                             |
-    | fails    |  all except [traverse directory]                              |
+    | result   |  privileges                                                              |
+    | succeeds |  [list files, delete subdirectory, traverse directory, add subdirectory] |
+    | fails    |  all except [add subdirectory]                                           |
+    | fails    |  all except [delete subdirectory]                                        |
+    | fails    |  all except [traverse directory]                                         |
         
         
   Scenario Outline: Rename subfile
@@ -63,11 +63,11 @@ Feature: ACL subdirectories privileges tests using multiple browsers in Oneprovi
     Then user of browser2 <result> to rename "dir1/file1" to "new_name" in "space1"
 
     Examples:
-    | result   |  privileges                                               | 
-    | succeeds |  [delete subdirectory, traverse directory, add files]     |
-    | fails    |  all except [add files]                                   |
-    | fails    |  all except [delete subdirectory]                         |
-    | fails    |  all except [traverse directory]                          |
+    | result   |  privileges                                                       |
+    | succeeds |  [list files, delete subdirectory, traverse directory, add files] |
+    | fails    |  all except [add files]                                           |
+    | fails    |  all except [delete subdirectory]                                 |
+    | fails    |  all except [traverse directory]                                  |
         
         
   Scenario Outline: Remove non-empty directory
@@ -88,18 +88,18 @@ Feature: ACL subdirectories privileges tests using multiple browsers in Oneprovi
     Then user of browser2 <result> to remove "dir1/dir2" in "space1"
 
     Examples:
-    | result   |  privileges                                   |       
-    | succeeds |  [delete subdirectory, traverse directory]    |
-    | fails    |  all except [traverse directory]              |
-    | fails    |  all except [delete subdirectory]             |
-        
+    | result   |  privileges                                            |
+    | succeeds |  [delete subdirectory, traverse directory, list files] |
+    | fails    |  all except [traverse directory]                       |
+    | fails    |  all except [delete subdirectory]                      |
+
         
   Scenario Outline: Remove subfile
     When user of browser1 sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
     Then user of browser2 <result> to remove "dir1/file1" in "space1"
 
     Examples:
-    | result   |  privileges                                   |        
-    | succeeds |  [delete subdirectory, traverse directory]    |
-    | fails    |  all except [traverse directory]              |
-    | fails    |  all except [delete subdirectory]             |
+    | result   |  privileges                                            |
+    | succeeds |  [delete subdirectory, traverse directory, list files] |
+    | fails    |  all except [traverse directory]                       |
+    | fails    |  all except [delete subdirectory]                      |

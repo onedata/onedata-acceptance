@@ -3,7 +3,7 @@ using REST API.
 """
 
 from tests.mixed.utils.common import login_to_oz
-from tests.mixed.utils.onezone.common import get_provider_with_name
+from tests.mixed.steps.rest.onezone.common import get_provider_with_name
 from tests.mixed.onezone_client import ProviderApi
 
 

@@ -1,10 +1,10 @@
 Feature: Multiprovider_replication
 
   Background:
-    Given [user1, user2] mount oneclients [client11, client21] in
-      [/home/user1/onedata, /home/user2/onedata] on client_hosts
-      [oneclient-1, oneclient-2] respectively,
-      using [token, token]
+    Given oneclients [client11, client21]
+      mounted in [/home/user1/onedata, /home/user2/onedata]
+      on client_hosts [oneclient-1, oneclient-2] respectively,
+      using [token, token] by [user1, user2]
 
 
   Scenario: Create files on one provider and see them on the other provider

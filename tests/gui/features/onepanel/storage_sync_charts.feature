@@ -51,28 +51,26 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 copies dir1 to dir0 directory of "space7" space
 
     # configure import parameters
-    And user of browser1 expands toolbar for "space7" space record in Spaces page in Onepanel
-    And user of browser1 clicks on Configure data synchronization option in space's toolbar in Onepanel
+    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space7"
+    And user of browser1 clicks on Configure button in "space7" record in Spaces page in Onepanel
     And user of browser1 selects Simple scan strategy from strategy selector in IMPORT CONFIGURATION in "space7" record in Spaces page in Onepanel
     And user of browser1 types "3" to Max depth input field in IMPORT CONFIGURATION in "space7" record in Spaces page in Onepanel
-    And user of browser1 clicks on Save configuration button in "space7" record in Spaces page in Onepanel
+    And user of browser1 clicks on Start synchronization button in "space7" record in Spaces page in Onepanel
     And user of browser1 sees an info notify with text matching to: .*[Cc]onfiguration.*space.*support.*changed.*
 
     # confirm correct import configuration
-    And user of browser1 expands "space7" record on spaces list in Spaces page in Onepanel
     And user of browser1 sees that Import strategy configuration for "space7" is as follow:
           Import strategy: Simple scan
           Max depth: 3
 
     # check inserted number display on chart
-    And user of browser1 sees [Storage synchronization] navigation tabs for space "space7"
     And user of browser1 clicks on "Storage synchronization" navigation tab in space "space7"
     And user of browser1 is idle for 20 seconds
     Then user of browser1 sees that number of inserted files for "space7" shown on Synchronization files processing charts equals 502 in Spaces page in Onepanel
 
     # configure update parameters
-    And user of browser1 expands toolbar for "space7" space record in Spaces page in Onepanel
-    And user of browser1 clicks on Configure data synchronization option in space's toolbar in Onepanel
+    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space7"
+    And user of browser1 clicks settings in Storage synchronization in Spaces page
     And user of browser1 selects Simple scan strategy from strategy selector in UPDATE CONFIGURATION in "space7" record in Spaces page in Onepanel
     And user of browser1 types "3" to Max depth input field in UPDATE CONFIGURATION in "space7" record in Spaces page in Onepanel
     And user of browser1 types "1" to Scan interval input field in UPDATE CONFIGURATION in "space7" record in Spaces page in Onepanel
@@ -81,7 +79,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser1 sees an info notify with text matching to: .*[Cc]onfiguration.*space.*support.*changed.*
 
     # confirm correct update configuration
-    And user of browser1 expands "space7" record on spaces list in Spaces page in Onepanel
     And user of browser1 sees that Update strategy configuration for "space7" is as follow:
           Update strategy: Simple scan
           Max depth: 3
@@ -93,7 +90,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 copies dir2 to dir0 directory of "space7" space
 
     # check inserted and updated number display on chart
-    And user of browser1 is idle for 40 seconds
+    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space7"
     Then user of browser1 sees that number of inserted files for "space7" shown on Synchronization files processing charts equals 201 in Spaces page in Onepanel
     And user of browser1 sees that number of updated files for "space7" shown on Synchronization files processing charts equals 1 in Spaces page in Onepanel
 
@@ -104,6 +101,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser1 sees that number of updated files for "space7" shown on Synchronization files processing charts equals 1 in Spaces page in Onepanel
 
     # revoke space support
+    And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser1 expands toolbar for "space7" space record in Spaces page in Onepanel
     And user of browser1 clicks on Revoke space support option in space's toolbar in Onepanel
     And user of browser1 clicks on Yes, revoke button in REVOKE SPACE SUPPORT modal in Onepanel

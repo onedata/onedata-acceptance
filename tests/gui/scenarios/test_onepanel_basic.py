@@ -60,8 +60,6 @@ from tests.mixed.steps.space_basic import *
 
 from tests.utils.acceptance_utils import *
 
-from tests.utils.acceptance_utils import *
-
 
 @fixture(scope='module')
 def screens():

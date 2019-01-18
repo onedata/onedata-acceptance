@@ -13,10 +13,10 @@ from tests.utils.client_utils import mount_users, ls
 from tests.utils.acceptance_utils import list_parser
 
 
-@given(parsers.re('(?P<user_names>.*) mount oneclients (?P<client_instances>.*) in\n' 
-                  '(?P<mount_paths>.*) on client_hosts\n' 
-                  '(?P<client_hosts>.*) respectively,\n' 
-                  'using (?P<tokens>.*)'))
+@given(parsers.re('oneclients (?P<client_instances>.*)\n'
+                  'mounted in (?P<mount_paths>.*)\n'
+                  'on client_hosts (?P<client_hosts>.*) respectively,\n'
+                  'using (?P<tokens>.*) by (?P<user_names>.*)'))
 def multi_mount(user_names, client_instances, mount_paths, client_hosts,
                 tokens, clients, hosts, request, users, env_desc):
     mount_users(clients, list_parser(user_names), list_parser(mount_paths),

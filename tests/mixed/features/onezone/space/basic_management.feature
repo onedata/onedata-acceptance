@@ -11,7 +11,7 @@ Feature: Basic management
                 - oneprovider-1:
                     storage: posix
                     size: 1000000
-    And opened browser with user1 logged to "onezone onezone" service
+    And opened browser with user1 logged to "onezone" service
 
 
   Scenario Outline: User leaves space using <client1> and using <client2> he sees that it has been left

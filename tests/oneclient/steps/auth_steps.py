@@ -12,8 +12,8 @@ from tests.utils.client_utils import mount_users
 from tests.utils.acceptance_utils import wt, make_arg_list
 
 
-@given(parsers.re('(?P<user>\w+) mounts oneclient in (?P<mount_path>.*) '
-                  'using (?P<token>.*)'))
+@given(parsers.re('oneclient mounted in (?P<mount_path>.*) '
+                  'using (?P<token>(token|bad token)) by (?P<user>\w+)'))
 def default_mount(user, mount_path, token, request, hosts, users,
                   clients, env_desc):
     mount_users(clients, [user], [mount_path], ['oneclient-1'],

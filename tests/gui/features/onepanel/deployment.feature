@@ -40,7 +40,6 @@ Feature: Deployment process using panel of zone and provider
     # setup DNS in zone and provider panels
     And user of browser2 clicks on "Perform check" button in deployment setup DNS step
     And user of browser2 clicks on Proceed button in deployment setup DNS step
-    And user of browser2 clicks on Yes button in warning modal in deployment setup DNS step
 
     And user of browser1 clicks on "Perform check" button in deployment setup DNS step
     And user of browser1 clicks on Proceed button in deployment setup DNS step

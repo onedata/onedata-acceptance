@@ -12,9 +12,9 @@ from tests.mixed.onezone_client import (UserApi, SpaceCreateRequest,
                                         SpaceApi, DefaultSpace,
                                         SpaceInviteToken, ProviderApi)
 from tests.mixed.utils.common import login_to_oz
-from tests.mixed.utils.onezone.common import (get_user_space_with_name,
-                                              get_provider_with_name,
-                                              get_space_with_name)
+from tests.mixed.steps.rest.onezone.common import (get_user_space_with_name,
+                                                   get_provider_with_name,
+                                                   get_space_with_name)
 from tests.gui.utils.generic import parse_seq
 
 
@@ -208,10 +208,10 @@ def assert_there_is_no_provider_for_space_in_oz_rest(user, users, zone_name,
 
     for provider_alias in parse_seq(providers_alias_list):
         provider_name = hosts[provider_alias]['name']
+        assert_msg = ('Space {} is supported by provider {} while it should '
+                      'not be'.format(space_name, provider_name))
         assert (get_provider_with_name(admin_client, provider_name) not in
-                space_providers.providers), 'Space {} is supported by ' \
-                    'provider {} while it should not be'.format(space_name,
-                                                                provider_name)
+                space_providers.providers), assert_msg
 
 
 def assert_user_is_member_of_space_rest(space_name, spaces, user, users,
