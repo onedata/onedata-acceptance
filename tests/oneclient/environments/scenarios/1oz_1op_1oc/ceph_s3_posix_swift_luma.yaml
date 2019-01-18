@@ -73,6 +73,9 @@ onezone:
 oneprovider-1:
   workerOverlayConfig: *oneprovidersWorkerOverlayConfig
 
+  wait-for-onezone:
+    enabled: false
+
   batchConfig:
     createUsers: false
 
