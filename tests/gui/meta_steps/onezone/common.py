@@ -82,3 +82,15 @@ def wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts,
                 modals):
     g_wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts,
                   modals)
+
+
+def search_for_members(records, member_name, parent_name, fun):
+    for record in records:
+        if member_name in record.elements and parent_name in record.elements:
+            member_index = record.elements.index(member_name)
+            parent_index = record.elements.index(parent_name)
+            if member_index + 1 == parent_index:
+                if fun(record, member_index):
+                    return True
+    return False
+

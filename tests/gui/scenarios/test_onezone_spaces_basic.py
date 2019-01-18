@@ -37,6 +37,7 @@ from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.manage_account import *
 from tests.gui.steps.onezone.groups import *
 from tests.gui.steps.onezone.spaces import *
+from tests.gui.steps.onezone.members import *
 from tests.gui.steps.onezone.multibrowser_spaces import *
 
 from tests.gui.steps.oneprovider.common import *
@@ -65,3 +66,4 @@ scenarios('../features/onezone/space/spaces.feature')
 scenarios('../features/onezone/space/create_new_space.feature')
 scenarios('../features/onezone/space/no_supported_space.feature')
 scenarios('../features/onezone/space/multispace.feature')
+scenarios('../features/onezone/space/spaces_memberships.feature')

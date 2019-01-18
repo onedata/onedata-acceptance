@@ -14,5 +14,8 @@ class LeaveSpaceModal(Modal):
     no = NamedButton('button', text='No, stay here')
     yes = NamedButton('button', text='Yes, leave')
 
+    cancel = NamedButton('button', text='Cancel')
+    leave = NamedButton('button', text='Leave')
+
     def __str__(self):
         return 'Leave space modal'
