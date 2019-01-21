@@ -40,9 +40,8 @@ Feature: Joining a group in Onezone GUI
     And user of browser2 pastes copied token into group token text field
     And user of browser2 confirms using <confirmation_method>
 
-    And users of browser1 refreshes site
-
-    Then user of browser1 sees "user2" user on "group1" group members list
+    And user of browser1 is idle for 4 seconds
+    Then user of browser1 sees user "user2" on group "group1" members list
     And user of browser2 sees group "group1" on groups list
 
 
@@ -100,8 +99,6 @@ Feature: Joining a group in Onezone GUI
     And user of browser1 copies a first resource ID from URL
     And user of browser1 sends copied ID to user of browser2
     And user of browser2 changes webapp path to "/#/onedata/groups" concatenated with received ID
-
-    And user of browser2 refreshes site
 
     Then user of browser2 see that page with text "RESOURCE NOT FOUND" appeared
 
