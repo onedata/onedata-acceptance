@@ -75,8 +75,8 @@ def assert_no_provider_for_space(selenium, browser_id, provider_name,
 def assert_new_created_space_has_appeared_on_spaces(selenium, browser_id,
                                                     space_name, oz_page):
     driver = selenium[browser_id]
-    assert (space_name in oz_page(driver)['spaces'].elements_list,
-            'space "{}" not found'.format(space_name))
+    assert space_name in oz_page(driver)['spaces'].elements_list, \
+        'space "{}" not found'.format(space_name)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
@@ -149,8 +149,8 @@ def click_confirm_or_cancel_button_on_leave_space_page(selenium, browser_id,
 def assert_space_has_disappeared_on_spaces(selenium, browser_id, space_name,
                                            oz_page):
     driver = selenium[browser_id]
-    assert (space_name not in oz_page(driver)['spaces'].elements_list,
-            'space "{}" found'.format(space_name))
+    assert space_name not in oz_page(driver)['spaces'].elements_list, \
+        'space "{}" found'.format(space_name)
 
 
 @wt(parsers.parse('user of {browser_id} sees that home of "{space_name}" '
