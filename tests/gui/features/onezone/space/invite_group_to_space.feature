@@ -76,6 +76,6 @@ Feature: Multi Browser invitation group to spaces
     And user of browser1 clicks on confirmation button on overview page
 
     # user2 sees space has different name
-    And user of browser2 refreshes site
+    And user of browser1 is idle for 4 seconds
     Then user of browser2 sees that "space1" has disappeared on the spaces list in the sidebar
     And user of browser2 sees that "space2" has appeared on the spaces list in the sidebar
