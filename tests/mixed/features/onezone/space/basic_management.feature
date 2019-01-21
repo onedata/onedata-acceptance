@@ -11,7 +11,7 @@ Feature: Basic management
                 - oneprovider-1:
                     storage: posix
                     size: 1000000
-    And opened browser with user1 logged to "onezone onezone" service
+    And opened browsers with [admin, user1] logged to [oneprovider-1 provider panel, onezone onezone] service
 
 
   Scenario Outline: User leaves space using <client1> and using <client2> he sees that it has been left
@@ -45,7 +45,7 @@ Feature: Basic management
 
 
   Scenario Outline: User unsupport space using <client1> and using <client2> he sees that it has been unsupported
-    When using <client1>, user1 removes support from provider "oneprovider-1" for space named "space1" in "onezone" Onezone service
+    When using <client1>, admin removes support from provider "oneprovider-1" for space named "space1" in "onezone" Onezone service
     Then using <client2>, user1 sees that there is no supporting provider "oneprovider-1" for space named "space1" in "onezone" Onezone service
 
   Examples:

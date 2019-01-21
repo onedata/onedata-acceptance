@@ -183,10 +183,12 @@ def assert_home_space_has_disappeared_on_spaces_on_left_sidebar_menu(selenium,
 def assert_number_of_supporting_providers_of_space(selenium, browser_id,
                                                    number, space_name, oz_page):
     driver = selenium[browser_id]
-    assert (number == oz_page(driver)['spaces']
-            .elements_list[space_name]
-            .supporting_providers_number,
-            'number of supporting providers is not equal {}'.format(number))
+    supporting_providers_number = (oz_page(driver)['spaces']
+                                   .elements_list[space_name]
+                                   .supporting_providers_number)
+    assert number == int(supporting_providers_number), \
+        ('found {} supporting providers instead of {}'
+         .format(supporting_providers_number, number))
 
 
 @wt(parsers.parse('user of {browser_id} sees {number} size of '
