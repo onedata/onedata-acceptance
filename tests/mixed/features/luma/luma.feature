@@ -1,14 +1,19 @@
 Feature: LUMA acceptance tests
 
+  Examples:
+  | client1    | client2    | client3 |
+  | oneclient1 | oneclient2 | web GUI |
+
+
   Background:
-    Given there are client hosts:
-        client_host: oneclient-krakow
-    
-    And initial users configuration in "onezone" Onezone service:
+    Given initial users configuration in "onezone" Onezone service:
             - user1
             - user2
             - user3
-    
+    And oneclients [client1, client2]
+      mounted in [/home/user1/onedata, /home/user2/onedata]
+      on client_hosts [oneclient-1, oneclient-1] respectively,
+      using [token, token] by [user1, user2]
     And initial spaces configuration in "onezone" Onezone service:
         space1:
             owner: user1
@@ -19,7 +24,6 @@ Feature: LUMA acceptance tests
                 - oneprovider-1:
                     storage: posix
                     size: 1000000
-
     And created LUMA mappings:
         users:
             user1: 1001
@@ -29,40 +33,39 @@ Feature: LUMA acceptance tests
             space1: 2000
         storage_name: posix
         storage_type: posix
-    
     And opened browser with user3 logged to "onezone onezone" service
     And opened oneprovider-1 Oneprovider view in web GUI by user3
 
-    And [user1, user2] mounted clients to oneprovider-1 on client_host
 
   Scenario: Users create files using web gui an clients and they see that ownership is correctly mapped
-    When using client_host user1 succeeds to create file "file_u1.txt" in space "space1"
-    And using client_host user2 succeeds to create file "file_u2.txt" in space "space1"
-    And user of browser succeeds to create file "file_u3.txt" in "space1"
+    When using <client1>, user1 succeeds to create file named "file_u1.txt" in "space1" in oneprovider-1
+    And using <client2>, user2 succeeds to create file named "file_u2.txt" in "space1" in oneprovider-1
+    And using <client3>, user3 succeeds to create file named "file_u3.txt" in "space1" in oneprovider-1
 
-    Then using client_host user1 sees "[file_u1.txt, file_u2.txt, file_u3.txt]" in space "space1"
-    And using client_host user2 sees "[file_u1.txt, file_u2.txt, file_u3.txt]" in space "space1"
+    Then using <client1>, user1 succeeds to see items named "[file_u1.txt, file_u2.txt, file_u3.txt]" in "space1" in oneprovider-1
+    And using <client2>, user2 succeeds to see items named "[file_u1.txt, file_u2.txt, file_u3.txt]" in "space1" in oneprovider-1
+
+    And using <client1>, user1 sees that "file_u1.txt" in space "space1" has:
+        uid: 1001
+        gid: 2000
+
+    And using <client1>, user1 sees that "file_u2.txt" in space "space1" has:
+        uid: 1002
+        gid: 2000
+
+    And using <client1>, user1 sees that "file_u3.txt" in space "space1" has:
+        uid: 1003
+        gid: 2000
+
+    And using <client2>, user2 sees that "file_u1.txt" in space "space1" has:
+        uid: 1001
+        gid: 2000
+
+    And using <client2>, user2 sees that "file_u2.txt" in space "space1" has:
+        uid: 1002
+        gid: 2000
+
+    And using <client2>, user2 sees that "file_u3.txt" in space "space1" has:
+        uid: 1003
+        gid: 2000
     
-    And using client_host user1 sees that "file_u1.txt" in space "space1" has:
-        owner_name: 1001
-        owner_group: 2000
-
-    And using client_host user1 sees that "file_u2.txt" in space "space1" has:
-        owner_name: 1002
-        owner_group: 2000
-
-    And using client_host user1 sees that "file_u3.txt" in space "space1" has:
-        owner_name: 1003
-        owner_group: 2000
-
-    And using client_host user2 sees that "file_u1.txt" in space "space1" has:
-        owner_name: 1001
-        owner_group: 2000
-
-    And using client_host user2 sees that "file_u2.txt" in space "space1" has:
-        owner_name: 1002
-        owner_group: 2000
-
-    And using client_host user2 sees that "file_u3.txt" in space "space1" has:
-        owner_name: 1003
-        owner_group: 2000

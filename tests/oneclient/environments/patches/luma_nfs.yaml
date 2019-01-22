@@ -6,6 +6,9 @@ global:
    imagePullPolicy: IfNotPresent
 
 
+lumaJobEnabled: true
+
+
 groups:
   - &group1
     name: group1

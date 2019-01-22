@@ -1,21 +1,19 @@
-"""Utils and fixtures to facilitate data operations in Oneprovider
-using REST API.
+"""Utils to facilitate data operations in Oneprovider using REST API.
 """
 
 __author__ = "Michal Cwiertnia, Michal Stanisz"
-__copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
+__copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 
 import os
 import json
+from functools import partial
 from datetime import datetime
 
 import yaml
 import pytest
-from functools import partial
-from pytest_bdd import when, then, given, parsers
 
 from tests.mixed.oneprovider_client.api_client import ApiException
 from tests.utils.http_exceptions import HTTPError
@@ -102,11 +100,16 @@ def create_file_in_op_rest(user, users, host, hosts, path, result):
         do_api.create_data_object(path, '')
 
 
-def remove_file_in_op_rest(user, users, host, hosts, path):
+def remove_file_in_op_rest(user, users, host, hosts, path, result):
     client = login_to_cdmi(user, users, hosts[host]['hostname'])
 
     do_api = DataObjectApi(client)
-    do_api.delete_data_object(path)
+    if result == 'fails':
+        with pytest.raises(CdmiException,
+                           message='Removing file did not fail'):
+            do_api.delete_data_object(path)
+    else:
+        do_api.delete_data_object(path)
 
 
 def see_items_in_op_rest(user, users, host, hosts, path_list, result, space):
@@ -175,11 +178,11 @@ def assert_metadata_in_op_rest(user, users, host, hosts, cdmi, path, tab_name,
     else:        
         metadata = metadata['onedata_{}'.format(tab_name.lower())]
         if tab_name.lower() == 'json':
-            assert val == json.dumps(metadata), \
-                        '{} has no {} {} metadata'.format(path, val, tab_name)
+            assert val == json.dumps(metadata), ('{} has no {} {} metadata'
+                                                 .format(path, val, tab_name))
         else:
-            assert val == metadata, \
-                        '{} has no {} {} metadata'.format(path, val, tab_name)
+            assert val == metadata, ('{} has no {} {} metadata'
+                                     .format(path, val, tab_name))
 
 
 def set_metadata_in_op_rest(user, users, host, hosts, cdmi, path, tab_name, 
@@ -215,8 +218,9 @@ def assert_no_such_metadata_in_op_rest(user, users, host, hosts, cdmi, path,
         if tab_name.lower() == 'json':
             val = json.loads(val)
             for key in val:
-                assert key not in metadata or metadata[key] != val[key], \
-                    'There is {} {} metadata'.format(val, tab_name)
+                assert (key not in metadata or
+                        metadata[key] != val[key]), ('There is {} {} metadata'
+                                                     .format(val, tab_name))
         else:
             assert val != metadata, 'There is {} {} metadata'.format(val, 
                                                                      tab_name)

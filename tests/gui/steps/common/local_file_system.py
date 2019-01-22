@@ -45,10 +45,10 @@ def create_dir_tree_structure_on_local_fs(structure, tmpdir):
         home_dir = tmpdir.join(user)
         with suppress(OSError):
             home_dir.mkdir()
-        mkdirs(home_dir, home_dir_content)
+        _mkdirs(home_dir, home_dir_content)
 
 
-def mkdirs(cwd, dir_content=None):
+def _mkdirs(cwd, dir_content=None):
     if not dir_content:
         return
 
@@ -66,15 +66,15 @@ def mkdirs(cwd, dir_content=None):
                 new_dir = cwd.join(name)
                 new_dir.mkdir()
                 new_dir.chmod(PERMS_777)
-                mkdirs(new_dir, content)
+                _mkdirs(new_dir, content)
             else:
-                mkfile(cwd.join(name), content)
+                _mkfile(cwd.join(name), content)
     else:
         for i in xrange(files_num):
-            mkfile(cwd.join('file{}.txt'.format(i)))
+            _mkfile(cwd.join('file{}.txt'.format(i)))
 
 
-def mkfile(file_, file_content=None):
+def _mkfile(file_, file_content=None):
     if not file_content:
         file_content = '1' * 10
 

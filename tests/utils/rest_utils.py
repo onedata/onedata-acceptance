@@ -12,7 +12,8 @@ import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 from tests import (OZ_REST_PATH_PREFIX, PANEL_REST_PATH_PREFIX, DEFAULT_HEADERS,
-                   PROVIDER_REST_PATH_PREFIX, LUMA_REST_PATH_PREFIX)
+                   PROVIDER_REST_PATH_PREFIX, LUMA_REST_PATH_PREFIX,
+                   TOKEN_DISPENSER_PATH_PREFIX)
 from .http_exceptions import raise_http_exception
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
@@ -32,6 +33,10 @@ def get_provider_rest_path(*args):
 
 def get_luma_rest_path(*args):
     return '/'.join(chain([LUMA_REST_PATH_PREFIX], args))
+
+
+def get_token_dispenser_rest_path(*args):
+    return '/'.join(chain([TOKEN_DISPENSER_PATH_PREFIX], args))
 
 
 def http_get(ip, port, path, use_ssl=True, headers=None, verify=False,

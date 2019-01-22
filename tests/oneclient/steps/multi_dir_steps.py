@@ -11,8 +11,6 @@ import errno
 
 from pytest_bdd import parsers, when
 
-# TODO: move to acceptance utils
-from tests.gui.utils.generic import parse_seq
 from tests.utils.acceptance_utils import wt, list_parser
 from tests.utils.utils import assert_generic, assert_
 from tests.utils.client_utils import mkdir, rmdir, ls, rm, cp

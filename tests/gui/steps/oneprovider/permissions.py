@@ -51,7 +51,7 @@ def check_permission(selenium, browser_id, perm, modals):
 @then(parsers.parse('user of {browser_id} sets "{perm}" permission code in '
                     'active modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def set_permission(selenium, browser_id, perm, modals, result='succeeds'):
+def set_permission(selenium, browser_id, perm, modals):
     modals(selenium[browser_id]).edit_permissions.posix.value = perm
 
 

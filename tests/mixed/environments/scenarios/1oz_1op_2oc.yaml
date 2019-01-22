@@ -34,7 +34,7 @@ lumaImage: "docker.onedata.org/luma:ID-8e2da56615"
 
 # When enabled, onezoneImage and oneproviderImage will be pulled before every
 # deployment. If disabled, they will only be pulled if not existent.
-forceImagePull: false
+forceImagePull: true
 
 createSpaces: false
 
@@ -74,5 +74,5 @@ oneprovider-1:
     wait_for_oneprovider:
       enabled: false
 
-    batchConfig:
-      createUsers: false
+  batchConfig:
+    createUsers: false

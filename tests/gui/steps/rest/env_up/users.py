@@ -23,10 +23,6 @@ from tests.utils.utils import repeat_failed
 from tests.utils.user_utils import User
 
 
-# UserCred = namedtuple('UserCredentials', ['username', 'password', 'id',
-#                                           'token', 'clients'])
-
-
 @given(parsers.parse('initial users configuration in "{host}" '
                      'Onezone service:\n{config}'))
 def users_creation(host, config, admin_credentials, hosts, users, rm_users):

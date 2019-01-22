@@ -1,5 +1,5 @@
 # Name of the scenario to run
-scenario: "scenario-1oz-3op-luma"
+scenario: "scenario-1oz-3op-data-sync"
 
 # Determines if onedata components should be started from pre-compiled sources
 # or pre-installed packages inside dockers. When enabled, sources are expected
@@ -10,12 +10,12 @@ sources: false
 # be based off onedata/worker image (it contains all the machinery to run the
 # application from sources - images based off onedata-worker are images with
 # -dev suffix).
-onezoneImage: "docker.onedata.org/onezone:ID-c2c540e7b2"
+onezoneImage: "docker.onedata.org/onezone-dev:develop"
 
 # Oneprovider image to use. Note that if 'sources' option is enabled, it must
 # be based off onedata/worker image (images based off onedata-worker are
 # images with -dev suffix).
-oneproviderImage: "docker.onedata.org/oneprovider:ID-ee0d8a8568"
+oneproviderImage: "docker.onedata.org/oneprovider-dev:develop"
 
 # Determines if luma should start.
 luma: true
@@ -27,7 +27,7 @@ onedataCli: true
 oneclients: true
 
 # Oneclient image to use.
-oneclientImage: "docker.onedata.org/oneclient:ID-9c4bb62304"
+oneclientImage: "docker.onedata.org/oneclient-dev:ID-3c60ebb24b"
 
 # Onedata rest client image to use.
 onedataCliImage: "docker.onedata.org/rest-cli:ID-e5fb6602e4"
@@ -46,3 +46,79 @@ forceImagePull: true
 # space configuration please refer to one of MyValues.yaml file in
 # scenario directory.
 createSpaces: true
+
+
+os-config:
+  cfg1: &cfg1
+    users:
+      - joe
+      - marie
+      - karen
+      - rob
+    groups:
+      space1:
+        - joe
+        - marie
+        - karen
+        - rob
+      fuse:
+        - joe
+        - marie
+        - karen
+        - rob
+  services:
+    oneprovider-1: *cfg1
+    oneprovider-2: *cfg1
+    oneprovider-3: *cfg1
+    oneclient-1: *cfg1
+    oneclient-2: *cfg1
+    oneclient-3: *cfg1
+
+oneprovidersWorkerOverlayConfig: &oneprovidersWorkerOverlayConfig |-
+  [{op_worker, [{soft_quota_limit_size, 0}]}].
+
+onezone:
+  batchConfig:
+    createUsers: false
+
+oneprovider-1:
+  workerOverlayConfig: *oneprovidersWorkerOverlayConfig
+
+  oneclient:
+    users: []
+    directIO:
+      nfs:
+        enabled: false
+    wait_for_oneprovider:
+      enabled: false
+
+  batchConfig:
+    createUsers: false
+
+oneprovider-2:
+  workerOverlayConfig: *oneprovidersWorkerOverlayConfig
+
+  oneclient:
+    users: []
+    directIO:
+      nfs:
+        enabled: false
+    wait_for_oneprovider:
+      enabled: false
+
+  batchConfig:
+    createUsers: false
+
+oneprovider-3:
+  workerOverlayConfig: *oneprovidersWorkerOverlayConfig
+
+  oneclient:
+    users: []
+    directIO:
+      nfs:
+        enabled: false
+    wait_for_oneprovider:
+      enabled: false
+
+  batchConfig:
+    createUsers: false

@@ -17,10 +17,11 @@ import argparse
 from subprocess import *
 import xml.etree.ElementTree as ElementTree
 
-from one_env.scripts import user_config
-from one_env.scripts.console import info
 from bamboos.docker.environment import docker
-from one_env.scripts.update_etc_hosts import update_etc_hosts
+from one_env.scripts.utils import one_env_dir
+from one_env.scripts.utils.terminal import info
+from one_env.scripts.utils.one_env_dir import user_config
+from one_env.scripts.onenv_hosts import update_etc_hosts
 
 
 ZONE_IMAGES_CFG_PATH = 'onezone_images/docker-dev-build-list.json'
@@ -68,9 +69,16 @@ def parse_image_for_service(file_path):
         return None
 
 
+def delete_test_runner_pod():
+    delete_test_runner_cmd = ['kubectl', 'delete', 'pod', 'test-runner']
+    call(delete_test_runner_cmd, stdin=None, stderr=None, stdout=None)
+
+
 def clean_env():
     docker.run(tty=True,
                rm=True,
+               user=os.geteuid(),
+               group=os.getegid(),
                interactive=True,
                name='onenv-clean',
                workdir=os.path.join(script_dir, 'one_env'),
@@ -232,7 +240,7 @@ if {shed_privileges}:
         os.setregid({gid}, {gid})
         os.setreuid({uid}, {uid})
 
-command = ['python'] + ['-m'] + ['py.test'] + ['--test-type={test_type}'] + ['{test_dir}'] + {args} + {env_file} + {local_charts_path} + {no_clean} + {timeout} + ['--oz-image={oz_image}'] + ['--op-image={op_image}'] + ['--junitxml={report_path}'] + ['--add-test-domain']  
+command = ['python'] + ['-m'] + ['py.test'] + ['--test-type={test_type}'] + ['{test_dir}'] + {args} + {env_file} + {local_charts_path} + {no_clean} + {timeout} + {images_opt} + ['--junitxml={report_path}'] + ['--add-test-domain']  
 ret = subprocess.call(command)
 sys.exit(ret)
 '''
@@ -240,24 +248,33 @@ sys.exit(ret)
 
 oz_image, op_image, rest_cli_image = (args.oz_image, args.op_image,
                                       args.rest_cli_image)
+
+images_cfg = []
 if oz_image:
     info('Using onezone image: {}'.format(oz_image))
     docker.pull_image(oz_image)
+    images_cfg.append("['--oz-image={}']".format(oz_image))
 if op_image:
     info('Using oneprovider image: {}'.format(op_image))
     docker.pull_image(op_image)
+    images_cfg.append("['--op-image={}']".format(op_image))
 if rest_cli_image:
     info('Using rest cli image: {}'.format(rest_cli_image))
     docker.pull_image(rest_cli_image)
+    images_cfg.append("['--rest-cli-image={}']".format(rest_cli_image))
 
 if args.test_type in ['oneclient', 'mixed']:
     oc_image, luma_image = args.oc_image, args.luma_image
     if oc_image:
         info('Using oneclient image: {}'.format(oc_image))
         docker.pull_image(oc_image)
+        images_cfg.append("['--oc-image={}']".format(oc_image))
     if luma_image:
         info('Using luma image: {}'.format(luma_image))
         docker.pull_image(luma_image)
+        images_cfg.append("['--luma-image={}']".format(luma_image))
+
+images_opt = ' + '.join(images_cfg)
 
 if args.update_etc_hosts:
     update_etc_hosts()
@@ -270,15 +287,12 @@ if args.local:
     ret = call(cmd, stdin=None, stderr=None, stdout=None)
 
 else:
-    if args.test_type in ['gui', 'mixed']:
-        additional_code = '''
+    additional_code = '''
 with open('/etc/sudoers.d/all', 'w+') as file:
     file.write("""
 ALL       ALL = (ALL) NOPASSWD: ALL
 """)
-    '''
-    else:
-        additional_code = ''
+'''
 
     command = command.format(args=pass_args,
                              uid=os.geteuid(),
@@ -296,9 +310,8 @@ ALL       ALL = (ALL) NOPASSWD: ALL
                              if args.env_file else [],
                              timeout=['--timeout={}'.format(args.timeout)]
                              if args.timeout else [],
-                             oz_image=oz_image if oz_image else '',
-                             op_image=op_image if op_image else '',
-                             home=user_config.host_home(),
+                             images_opt=images_opt,
+                             home=one_env_dir.get_host_home(),
                              privileged=args.privileged)
     kube_config_path = os.path.expanduser(args.kube_config_path)
     minikube_config_path = os.path.expanduser(args.minikube_config_path)
@@ -417,7 +430,7 @@ ALL       ALL = (ALL) NOPASSWD: ALL
     except FileNotFoundError:
         kube_host_home_dir = os.path.expanduser('~')
 
-    minikube_script_dir = script_dir.replace(user_config.host_home(),
+    minikube_script_dir = script_dir.replace(one_env_dir.get_host_home(),
                                              kube_host_home_dir)
     if sys.__stdin__.isatty():
         stdin = 'true'
@@ -444,14 +457,13 @@ ALL       ALL = (ALL) NOPASSWD: ALL
 
     if args.clean:
         clean_env()
+    delete_test_runner_pod()
 
     ret = call(cmd, stdin=None, stderr=None, stdout=None)
 
     if args.clean:
         clean_env()
-
-    delete_test_runner_cmd = ['kubectl', 'delete', 'pod', 'test-runner']
-    call(delete_test_runner_cmd, stdin=None, stderr=None, stdout=None)
+    delete_test_runner_pod()
 
 report = load_test_report(args.report_path)
 

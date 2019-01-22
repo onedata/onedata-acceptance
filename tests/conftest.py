@@ -179,7 +179,8 @@ def parse_oz_op_cfg(pod_name, pod_cfg, service_type, add_test_domain, hosts,
                                         pod_cfg.get('domain'),
                                         pod_cfg.get('ip'),
                                         pod_cfg.get('container-id'))
-    hosts[alias] = {'service-type': service_type,
+    hosts[alias] = {'pod-name': pod_name,
+                    'service-type': service_type,
                     'name': name,
                     'hostname': hostname,
                     'ip': ip,
@@ -232,6 +233,16 @@ def parse_users_cfg(patch_path, users, hosts):
             user_name = user_cfg.get('name')
             password = user_cfg.get('password')
             new_user = users[user_name] = User(user_name, password)
+            idps = user_cfg.get('idps', {})
+            for idp_type in idps.keys():
+                new_user.idps.append(idp_type)
+                if idp_type == 'keycloak':
+                    global_cfg = patch_cfg.get('global')
+                    keycloak_suffix = (global_cfg
+                                       .get('keycloakInstance', {})
+                                       .get('idpName'))
+                    new_user.keycloak_name = ('keycloak-{}'
+                                              .format(keycloak_suffix))
             new_user.token = new_user.create_token(hosts['onezone']['ip'])
 
 
@@ -263,9 +274,17 @@ def env_desc(env_description_abs_path, hosts, request, users):
         scenarios_dir_path = SCENARIO_DIRS.get(get_test_type(request))
         scenario_path = os.path.abspath(os.path.join(scenarios_dir_path,
                                                      scenario))
+
+        patch = env_desc.get('patch')
+        if patch:
+            patch_dir_path = LANDSCAPE_DIRS.get(get_test_type(request))
+            patch_path = os.path.join(patch_dir_path, patch)
     
-        start_environment(scenario_path, request, hosts, '',
-                          users, env_description_abs_path)
+            start_environment(scenario_path, request, hosts, patch_path,
+                              users, env_description_abs_path)
+        else:
+            start_environment(scenario_path, request, hosts, '',
+                              users, env_description_abs_path)
         return env_desc
 
     elif test_type == 'oneclient':
@@ -348,9 +367,10 @@ def start_environment(scenario_path, request, hosts, patch_path,
 
     if clean:
         up_args = parse_up_args(request, scenario_path)
-        _, ret = run_onenv_command('up', up_args)
+        output, ret = run_onenv_command('up', up_args)
         if ret != 0:
-            handle_env_init_error(request, env_description_abs_path, 'up')
+            handle_env_init_error(request, env_description_abs_path, 'up',
+                                  output)
 
         wait_args = parse_wait_args(request)
         run_onenv_command('wait', wait_args)
@@ -360,7 +380,8 @@ def start_environment(scenario_path, request, hosts, patch_path,
 
     env_ready = status_output.get('ready')
     if not env_ready:
-        handle_env_init_error(request, env_description_abs_path, 'status')
+        handle_env_init_error(request, env_description_abs_path, 'status',
+                              env_ready)
 
     pods_cfg = status_output['pods']
     parse_hosts_cfg(pods_cfg, hosts, request)
@@ -368,8 +389,10 @@ def start_environment(scenario_path, request, hosts, patch_path,
 
     if patch_path and clean:
         patch_args = parse_patch_args(request, patch_path)
-        run_onenv_command('patch', patch_args)
-        run_onenv_command('wait')
+        with open(patch_path, 'r') as patch_file:
+            if patch_file.get('deploy'):
+                run_onenv_command('patch', patch_args)
+                run_onenv_command('wait')
 
     if patch_path:
         parse_users_cfg(patch_path, users, hosts)
@@ -382,10 +405,12 @@ def start_environment(scenario_path, request, hosts, patch_path,
         request.addfinalizer(fin)
 
 
-def handle_env_init_error(request, env_description_abs_path, command):
+def handle_env_init_error(request, env_description_abs_path, command, output):
     export_logs(request, env_description_abs_path)
     run_onenv_command('clean')
-    pytest.skip('Environment error: Onenv command {} failed'.format(command))
+    pytest.skip('Environment error: Onenv command {} failed.'
+                'Captured stdout: {}.'
+                .format(command, output))
 
 
 def get_test_type(request):
