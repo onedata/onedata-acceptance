@@ -389,10 +389,8 @@ def start_environment(scenario_path, request, hosts, patch_path,
 
     if patch_path and clean:
         patch_args = parse_patch_args(request, patch_path)
-        with open(patch_path, 'r') as patch_file:
-            if patch_file.get('deploy'):
-                run_onenv_command('patch', patch_args)
-                run_onenv_command('wait')
+        run_onenv_command('patch', patch_args)
+        run_onenv_command('wait')
 
     if patch_path:
         parse_users_cfg(patch_path, users, hosts)
