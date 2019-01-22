@@ -24,7 +24,7 @@ onedataCli: false
 # Determines if oneclients should start.
 oneclients: true
 
-oneclientImage: "docker.onedata.org/oneclient:ID-a6af7ae291"
+oneclientImage: "docker.onedata.org/oneclient-dev:ID-a6af7ae291"
 
 # Onedata rest client image to use.
 onedataCliImage: "docker.onedata.org/rest-cli:ID-ce4dc2f486"
@@ -70,6 +70,9 @@ onezone:
 
 oneprovider-1:
   workerOverlayConfig: *oneprovidersWorkerOverlayConfig
+
+  wait-for-onezone:
+    enabled: false
 
   batchConfig:
     createUsers: false

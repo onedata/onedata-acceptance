@@ -33,7 +33,7 @@ Feature: LUMA acceptance tests
             space1: 2000
         storage_name: posix
         storage_type: posix
-    And opened browser with user3 logged to "onezone onezone" service
+    And opened browser with user3 logged to "onezone" service
     And opened oneprovider-1 Oneprovider view in web GUI by user3
 
 
@@ -68,4 +68,3 @@ Feature: LUMA acceptance tests
     And using <client2>, user2 sees that "file_u3.txt" in space "space1" has:
         uid: 1003
         gid: 2000
-    

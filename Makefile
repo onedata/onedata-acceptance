@@ -39,6 +39,9 @@ artifact_onezone:
 artifact_onedata:
 	$(call unpack, onedata)
 
+artifact_oneclient:
+	$(call unpack, oneclient)
+
 artifact_luma_docker_build:
 	$(call unpack, luma_docker_build)
 

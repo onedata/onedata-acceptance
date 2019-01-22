@@ -20,8 +20,8 @@ import xml.etree.ElementTree as ElementTree
 from bamboos.docker.environment import docker
 from one_env.scripts.utils import one_env_dir
 from one_env.scripts.utils.terminal import info
-from one_env.scripts.utils.one_env_dir import user_config
 from one_env.scripts.onenv_hosts import update_etc_hosts
+from one_env.scripts.utils.one_env_dir import user_config
 
 
 ZONE_IMAGES_CFG_PATH = 'onezone_images/docker-dev-build-list.json'
@@ -239,16 +239,14 @@ if {shed_privileges}:
     if not {privileged}:
         os.setregid({gid}, {gid})
         os.setreuid({uid}, {uid})
-
+        
 command = ['python'] + ['-m'] + ['py.test'] + ['--test-type={test_type}'] + ['{test_dir}'] + {args} + {env_file} + {local_charts_path} + {no_clean} + {timeout} + {images_opt} + ['--junitxml={report_path}'] + ['--add-test-domain']  
 ret = subprocess.call(command)
 sys.exit(ret)
 '''
 
-
 oz_image, op_image, rest_cli_image = (args.oz_image, args.op_image,
                                       args.rest_cli_image)
-
 images_cfg = []
 if oz_image:
     info('Using onezone image: {}'.format(oz_image))
@@ -273,7 +271,6 @@ if args.test_type in ['oneclient', 'mixed']:
         info('Using luma image: {}'.format(luma_image))
         docker.pull_image(luma_image)
         images_cfg.append("['--luma-image={}']".format(luma_image))
-
 images_opt = ' + '.join(images_cfg)
 
 if args.update_etc_hosts:
