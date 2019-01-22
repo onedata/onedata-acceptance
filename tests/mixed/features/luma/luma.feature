@@ -1,4 +1,4 @@
-Feature: LUMA acceptance tests
+  Feature: LUMA acceptance tests
 
   Examples:
   | client1    | client2    | client3 |
@@ -45,26 +45,10 @@ Feature: LUMA acceptance tests
     Then using <client1>, user1 succeeds to see items named "[file_u1.txt, file_u2.txt, file_u3.txt]" in "space1" in oneprovider-1
     And using <client2>, user2 succeeds to see items named "[file_u1.txt, file_u2.txt, file_u3.txt]" in "space1" in oneprovider-1
 
-    And using <client1>, user1 sees that "file_u1.txt" in space "space1" has:
-        uid: 1001
-        gid: 2000
+    And using <client1>, user1 sees that owner's uid and gid for "file_u1.txt" in space "space1" are equal to 1001 and 2000
+    And using <client1>, user1 sees that owner's uid and gid for "file_u2.txt" in space "space1" are equal to 1002 and 2000
+    And using <client1>, user1 sees that owner's uid and gid for "file_u3.txt" in space "space1" are equal to 1003 and 2000
 
-    And using <client1>, user1 sees that "file_u2.txt" in space "space1" has:
-        uid: 1002
-        gid: 2000
-
-    And using <client1>, user1 sees that "file_u3.txt" in space "space1" has:
-        uid: 1003
-        gid: 2000
-
-    And using <client2>, user2 sees that "file_u1.txt" in space "space1" has:
-        uid: 1001
-        gid: 2000
-
-    And using <client2>, user2 sees that "file_u2.txt" in space "space1" has:
-        uid: 1002
-        gid: 2000
-
-    And using <client2>, user2 sees that "file_u3.txt" in space "space1" has:
-        uid: 1003
-        gid: 2000
+    And using <client2>, user2 sees that owner's uid and gid for "file_u1.txt" in space "space1" are equal to 1001 and 2000
+    And using <client2>, user2 sees that owner's uid and gid for "file_u2.txt" in space "space1" are equal to 1002 and 2000
+    And using <client2>, user2 sees that owner's uid and gid for "file_u3.txt" in space "space1" are equal to 1003 and 2000

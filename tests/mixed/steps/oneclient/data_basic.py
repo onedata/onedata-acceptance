@@ -199,12 +199,6 @@ def grant_acl_privileges_in_op_oneclient(user, users, host, path, priv,
                                users)
 
 
-def assert_file_ownership_in_op_oneclient(user, path, host, users, desc, res):
-    desc = yaml.load(desc)
-    multi_file_steps.assert_file_ownership(user, path, res, desc['uid'],
-                                           desc['gid'], host, users)
-
-
 def remove_file_in_op_oneclient(user, path, host, users, res):
     if res == 'fails':
         multi_file_steps.delete_file_fail(user, path, host, users)

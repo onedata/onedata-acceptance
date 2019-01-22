@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import tests.oneclient.steps.multi_file_steps
 from tests.mixed.steps.oneclient.data_basic import *
 from tests.mixed.steps.rest.oneprovider.data import *
 from tests.gui.meta_steps.oneprovider.data import *
@@ -605,17 +606,17 @@ def set_posix_permissions_in_op(client, user, item_path, space, mode, result,
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
-@wt(parsers.re('using (?P<client>.*), (?P<user>\w+) sees that '
-               '"(?P<path>.*)" in space "(?P<space>[\w-]+)" '
-               '(?P<res>has|has not):\n'
-               '(?P<description>(.|\s)+)'))
-def assert_file_stats(client, user, path, description, space, res, users):
+@wt(parsers.re('using (?P<client>.*), (?P<user>\w+) sees that owner\'s uid '
+               'and gid for "(?P<path>.*)" in space "(?P<space>[\w-]+)" '
+               'are (?P<res>equal|not equal) to (?P<uid>[\d]+) and '
+               '(?P<gid>[\d]+)'))
+def assert_file_stats(client, user, path, space, uid, gid, res, users):
     full_path = '{}/{}'.format(space, path)
     client_lower = client.lower()
     if 'oneclient' in client_lower:
         oneclient_host = client_lower.replace('oneclient', 'client')
-        assert_file_ownership_in_op_oneclient(user, full_path, oneclient_host,
-                                              users, description, res)
+        multi_file_steps.assert_file_ownership(user, full_path, res, uid, gid,
+                                               oneclient_host, users)
     else:
         raise NoSuchClientException('Client: {} not found'.format(client))
 

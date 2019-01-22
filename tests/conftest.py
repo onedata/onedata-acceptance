@@ -275,16 +275,8 @@ def env_desc(env_description_abs_path, hosts, request, users):
         scenario_path = os.path.abspath(os.path.join(scenarios_dir_path,
                                                      scenario))
 
-        patch = env_desc.get('patch')
-        if patch:
-            patch_dir_path = LANDSCAPE_DIRS.get(get_test_type(request))
-            patch_path = os.path.join(patch_dir_path, patch)
-    
-            start_environment(scenario_path, request, hosts, patch_path,
-                              users, env_description_abs_path)
-        else:
-            start_environment(scenario_path, request, hosts, '',
-                              users, env_description_abs_path)
+        start_environment(scenario_path, request, hosts, '', users,
+                          env_description_abs_path)
         return env_desc
 
     elif test_type == 'oneclient':
