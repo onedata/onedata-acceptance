@@ -180,9 +180,9 @@ def wt_enable_option_box_in_conf_in_space_support_form(selenium, browser_id,
                  r'in Spaces page in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_select_strategy_in_conf_in_space_record(selenium, browser_id, strategy,
-                                               conf, space, onepanel):
-    config = getattr(onepanel(selenium[browser_id]).content.spaces.
-                     spaces[space], conf.lower() + '_configuration')
+                                               conf, onepanel):
+    config = getattr(onepanel(selenium[browser_id]).content.spaces.space.
+                     sync_chart, conf.lower() + '_configuration')
     strategy_selector = config.strategy_selector
     strategy_selector.expand()
     strategy_selector.options[strategy].click()
@@ -199,9 +199,9 @@ def wt_select_strategy_in_conf_in_space_record(selenium, browser_id, strategy,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_type_text_to_input_box_in_conf_in_space_record(selenium, browser_id,
                                                       text, input_box, conf,
-                                                      space, onepanel):
-    config = getattr(onepanel(selenium[browser_id]).content.spaces.
-                     spaces[space], conf.lower() + '_configuration')
+                                                      onepanel):
+    config = getattr(onepanel(selenium[browser_id]).content.spaces.space.
+                     sync_chart, conf.lower() + '_configuration')
     setattr(config, transform(input_box), text)
 
 
@@ -215,21 +215,21 @@ def wt_type_text_to_input_box_in_conf_in_space_record(selenium, browser_id,
                  r'in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_enable_option_box_in_conf_in_space_record(selenium, browser_id,
-                                                 toggle, space, onepanel):
-    config = (onepanel(selenium[browser_id]).content.spaces.
-              spaces[space].update_configuration)
+                                                 toggle, onepanel):
+    config = (onepanel(selenium[browser_id]).content.spaces.space.
+              sync_chart.update_configuration)
     getattr(config, transform(toggle)).check()
 
 
-@when(parsers.parse('user of {browser_id} clicks on Save configuration '
+@when(parsers.parse('user of {browser_id} clicks on {button} '
                     'button in "{space}" record in Spaces page in Onepanel'))
-@then(parsers.parse('user of {browser_id} clicks on Save configuration '
+@then(parsers.parse('user of {browser_id} clicks on {button} '
                     'button in "{space}" record in Spaces page in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_clicks_on_save_config_btn_in_space_record(selenium, browser_id,
-                                                 space, onepanel):
-    (onepanel(selenium[browser_id]).content.spaces.
-     spaces[space].save_configuration())
+def wt_clicks_on_button_in_space_record(selenium, browser_id, onepanel, button):
+    driver = selenium[browser_id]
+    sync_chart = onepanel(driver).content.spaces.space.sync_chart
+    getattr(sync_chart, transform(button)).click()
 
 
 @when(parsers.parse('user of {browser_id} expands "{space}" record on '
@@ -239,7 +239,7 @@ def wt_clicks_on_save_config_btn_in_space_record(selenium, browser_id,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_expand_space_item_in_spaces_page_op_panel(selenium, browser_id,
                                                  space, onepanel):
-    onepanel(selenium[browser_id]).content.spaces.spaces[space].expand()
+    onepanel(selenium[browser_id]).content.spaces.spaces[space].click()
 
 
 @when(parsers.parse('user of {browser_id} sees that {sync_type} strategy '
@@ -261,8 +261,12 @@ def wt_assert_proper_space_configuration_in_panel(selenium, browser_id,
         Delete enabled: false
 
     """
-    info = onepanel(selenium[browser_id]).content.spaces.spaces[space_name].info
-    displayed_conf = getattr(info, sync_type.lower() + '_strategy')
+
+    driver = selenium[browser_id]
+    space = onepanel(driver).content.spaces.space
+    space.navigation.overview()
+    displayed_conf = getattr(space.overview, sync_type.lower() + '_strategy')
+
     for attr, val in yaml.load(conf).items():
         displayed_val = displayed_conf[attr]
         assert str(val).lower() == displayed_val.lower(), \
@@ -278,8 +282,8 @@ def wt_assert_proper_space_configuration_in_panel(selenium, browser_id,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_copy_space_id_in_spaces_page_in_onepanel(selenium, browser_id,
                                                 space, onepanel, tmp_memory):
-    record = onepanel(selenium[browser_id]).content.spaces.spaces[space]
-    tmp_memory['spaces'][space] = record.info.space_id
+    record = onepanel(selenium[browser_id]).content.spaces.space
+    tmp_memory['spaces'][space] = record.overview.space_id
 
 
 @when(parsers.parse('user of {browser_id} expands toolbar for "{space}" '
@@ -289,9 +293,8 @@ def wt_copy_space_id_in_spaces_page_in_onepanel(selenium, browser_id,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_expands_toolbar_icon_for_space_in_onepanel(selenium, browser_id,
                                                   space, onepanel):
-    record = onepanel(selenium[browser_id]).content.spaces.spaces[space]
-    record.click()
-    record.toolbar.click()
+    driver = selenium[browser_id]
+    onepanel(driver).content.spaces.spaces[space].expand_menu(driver)
 
 
 @when(parsers.re(r"user of (?P<browser_id>.*?) clicks on "
@@ -330,6 +333,28 @@ def wt_clicks_on_btn_in_revoke_space_support(selenium, browser_id,
         modal.no()
 
 
+@when(parsers.parse('user of {browser_id} clicks on '
+                    'Configure button in "{space}" '
+                    'record in Spaces page in Onepanel'))
+@then(parsers.parse('user of {browser_id} clicks on '
+                    'Configure button in "{space}" '
+                    'record in Spaces page in Onepanel'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def wt_clicks_on_configure(selenium, browser_id, onepanel):
+    (onepanel(selenium[browser_id]).content.spaces.space
+     .sync_chart.configure())
+
+
+@when(parsers.parse('user of {browser_id} clicks '
+                    'settings in Storage synchronization in Spaces page'))
+@then(parsers.parse('user of {browser_id} clicks '
+                    'settings in Storage synchronization in Spaces page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def wt_clicks_on_option_in_spaces_page(selenium, browser_id, onepanel):
+    space = onepanel(selenium[browser_id]).content.spaces.space
+    space.sync_chart.settings()
+
+
 @when(parsers.re(r'user of (?P<browser_id>.*?) sees that number of '
                  r'(?P<bar_type>inserted|updated|deleted) files for '
                  r'"(?P<space_name>.*?)" shown on Synchronization files '
@@ -342,10 +367,9 @@ def wt_clicks_on_btn_in_revoke_space_support(selenium, browser_id,
                  r'in Spaces page in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_correct_number_displayed_on_sync_charts(selenium, browser_id,
-                                                   bar_type, space_name,
-                                                   onepanel, num):
+                                                   bar_type, onepanel, num):
     num = int(num)
-    record = onepanel(selenium[browser_id]).content.spaces.spaces[space_name]
+    record = onepanel(selenium[browser_id]).content.spaces.space
     displayed_num = getattr(record.sync_chart, bar_type)
     assert displayed_num == num, \
         ('displayed {} as number of {} files on sync chart instead of '
@@ -371,22 +395,8 @@ matcher_click_on_navigation_tab_in_space = parsers.parse(
 @when(matcher_click_on_navigation_tab_in_space)
 @then(matcher_click_on_navigation_tab_in_space)
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_navigation_tab_in_space(browser_id, tab_name, onepanel, selenium,
-                                     space_name, tmp_memory):
-    nav = onepanel(selenium[browser_id]).content.spaces.spaces[space_name].navigation
-    tab = getattr(nav, transform(tab_name, strip_char='"'))
-    tab()
+def click_on_navigation_tab_in_space(browser_id, tab_name, onepanel, selenium):
+    nav = onepanel(selenium[browser_id]).content.spaces.space.navigation
+    tab = transform(tab_name, strip_char='"')
+    getattr(nav, tab).click()
 
-
-@wt(parsers.parse('user of {browser_id} revokes all spaces supports'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def revoke_all_space_supports(selenium, browser_id, onepanel, popups, modals):
-    spaces_list = onepanel(selenium[browser_id]).content.spaces.spaces
-    option = 'Revoke space support'
-    button = 'Yes, revoke'
-    for space in spaces_list:
-        space.toolbar.click()
-        wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, browser_id,
-                                                   option, popups)
-        wt_clicks_on_btn_in_revoke_space_support(selenium, browser_id,
-                                                 button, modals)

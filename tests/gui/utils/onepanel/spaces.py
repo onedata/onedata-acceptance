@@ -9,6 +9,8 @@ __license__ = "This software is released under the MIT license cited in " \
 
 import re
 
+from selenium.webdriver import ActionChains
+
 from tests.gui.utils.common.common import Toggle, DropdownSelector
 from tests.gui.utils.core.base import PageObject, ExpandableMixin
 from tests.gui.utils.core.web_elements import (Label, NamedButton, Button,
@@ -31,6 +33,7 @@ DEFAULT_UPDATE_STRATEGY_CONFIG = {'Update strategy': 'Simple scan',
 class ImportConfigurationForm(PageObject):
     strategy_selector = DropdownSelector('.ember-basic-dropdown')
     max_depth = Input('.field-import_generic-maxDepth')
+    synchronize_acl = Toggle('.toggle-field-import_generic-syncAcl')
 
 
 class UpdateConfigurationForm(PageObject):
@@ -39,6 +42,7 @@ class UpdateConfigurationForm(PageObject):
     scan_interval = Input('.field-update_generic-scanInterval')
     write_once = Toggle('.toggle-field-update_generic-writeOnce')
     delete_enabled = Toggle('.toggle-field-update_generic-deleteEnable')
+    synchronize_acl = Toggle('toggle-field-update_generic-syncAcl')
 
 
 class SpaceSupportAddForm(PageObject):
@@ -61,7 +65,7 @@ class SpaceSupportAddForm(PageObject):
 class SpaceInfo(PageObject):
     space_name = Label('.space-name')
     space_id = Input('.space-info .content-row:nth-child(2) input[type=text]')
-    storage_name = Label('.space--provider-storage')
+    storage_name = Label('.space-provider-storage')
     _import_strategy = WebElement('.space-import')
     _update_strategy = WebElement('.space-update')
     _mount_in_root = WebElement('.space-mountInRoot')
@@ -89,9 +93,25 @@ class SpaceInfo(PageObject):
 
 
 class SyncChart(PageObject):
-    _inserted = WebElementsSequence('g.ct-series-0 line')
-    _updated = WebElementsSequence('g.ct-series-1 line')
-    _deleted = WebElementsSequence('g.ct-series-2 line')
+    configure = NamedButton('button', text='Configure')
+    settings = Button('.oneicon-settings')
+
+    import_configuration = WebItem('.storage-import-update-form '
+                                   '.import-configuration-section',
+                                   cls=ImportConfigurationForm)
+    update_configuration = WebItem('.storage-import-update-form '
+                                   '.update-configuration-section',
+                                   cls=UpdateConfigurationForm)
+
+    start_synchronization = NamedButton('button', text='Start synchronization')
+    save_configuration = NamedButton('button', text='Save configuration')
+
+    _inserted = WebElementsSequence('.space-sync-chart-operations '
+                                    'g.ct-series-0 line')
+    _updated = WebElementsSequence('.space-sync-chart-operations '
+                                   'g.ct-series-1 line')
+    _deleted = WebElementsSequence('.space-sync-chart-operations '
+                                   'g.ct-series-2 line')
 
     @property
     def inserted(self):
@@ -99,40 +119,61 @@ class SyncChart(PageObject):
 
     @property
     def updated(self):
-        return self._get_chart_bar_values(self._inserted)
+        return self._get_chart_bar_values(self._updated)
 
     @property
     def deleted(self):
-        return self._get_chart_bar_values(self._inserted)
+        return self._get_chart_bar_values(self._deleted)
 
     @staticmethod
     def _get_chart_bar_values(bars):
         return sum(int(bar.get_attribute('ct:value')) for bar in bars)
 
+
+class FilePopularity(PageObject):
+    enable_file_popularity = Toggle('.one-way-toggle-control')
+
+    lastOpenHourWeightGroup = Input('.lastOpenHourWeightGroup input')
+    avgOpenCountPerDayWeightGroup = Input('.avgOpenCountPerDayWeightGroup '
+                                          'input')
+    maxAvgOpenCountPerDayGroup = Input('.maxAvgOpenCountPerDayGroup input')
+
+
+class AutoCleaning(PageObject):
+    enable_auto_cleaning = Toggle('.one-way-toggle-control')
+
+
 class NavigationHeader(PageObject):
+    overview = NamedButton('li', text='Overview')
     storage_synchronization = NamedButton('li', text='Storage synchronization')
-    files_popularity = NamedButton('li', text='Files popularity')
-    auto_cleaning = NamedButton('li', text='Auto cleaning')
+    files_popularity = NamedButton('li', text='File-popularity')
+    auto_cleaning = NamedButton('li', text='Auto-cleaning')
+
 
 class SpaceRecord(PageObject, ExpandableMixin):
     name = id = Label('.item-icon-container + .one-label .item-name')
     toolbar = Button('.collapsible-toolbar-toggle')
-    info = WebItem('.space-info', cls=SpaceInfo)
-    sync_chart = WebItem('.space-sync-chart-base', cls=SyncChart)
 
-    navigation = WebItem('.space-tabs ul.nav-tabs', cls=NavigationHeader)
-
+    _toolbar = WebElement('.one-collapsible-toolbar')
     _toggle = WebElement('.one-collapsible-list-item-header')
 
     def is_expanded(self):
         return bool(re.match(r'.*\b(?<!-)opened\b.*',
                              self._toggle.get_attribute('class')))
 
-    import_configuration = WebItem('.import-configuration-section',
-                                   cls=ImportConfigurationForm)
-    update_configuration = WebItem('.update-configuration-section',
-                                   cls=UpdateConfigurationForm)
-    save_configuration = Button('button.ready')
+    def expand_menu(self, driver):
+        ActionChains(driver).move_to_element(self._toolbar).perform()
+        self.toolbar.click()
+
+
+class Space(PageObject):
+    toolbar = Button('.collapsible-toolbar-toggle')
+    navigation = WebItem('.space-tabs ul.nav-tabs', cls=NavigationHeader)
+
+    overview = WebItem('.tab-pane.active', cls=SpaceInfo)
+    sync_chart = WebItem('.tab-pane.active', cls=SyncChart)
+    files_popularity = WebItem('.tab-pane.active', cls=FilePopularity)
+    auto_cleaning = WebItem('.tab-pane.active', cls=AutoCleaning)
 
 
 class SpacesContentPage(PageObject):
@@ -142,3 +183,4 @@ class SpacesContentPage(PageObject):
     form = WebItem('.support-space-form', cls=SpaceSupportAddForm)
     cancel_supporting_space = NamedButton('.btn-support-space',
                                           text='Cancel supporting space')
+    space = WebItem('.content-clusters-spaces', cls=Space)

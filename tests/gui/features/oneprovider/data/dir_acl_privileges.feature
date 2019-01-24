@@ -35,10 +35,10 @@ Feature: ACL directories privileges tests using sigle browser in Oneprovider GUI
     Then user of browser <result> to create directory "subdir" in "dir1" in "space1"
 
     Examples:
-    | result   |  privileges                               |            
-    | succeeds |  [add subdirectory, traverse directory]   |
-    | fails    |  all except [add subdirectory]            |
-    | fails    |  all except [traverse directory]          |
+    | result   |  privileges                                         |
+    | succeeds |  [list files, add subdirectory, traverse directory] |
+    | fails    |  all except [add subdirectory]                      |
+    | fails    |  all except [traverse directory]                    |
 
 
   Scenario Outline: Create file in directory
@@ -46,10 +46,10 @@ Feature: ACL directories privileges tests using sigle browser in Oneprovider GUI
     Then user of browser <result> to create file "subfile" in "dir1" in "space1"
 
     Examples:
-    | result   |  privileges                       |                        
-    | succeeds |  [add files, traverse directory]  |
-    | fails    |  all except [add files]           |
-    | fails    |  all except [traverse directory]  |
+    | result   |  privileges                                  |
+    | succeeds |  [list files, add files, traverse directory] |
+    | fails    |  all except [add files]                      |
+    | fails    |  all except [traverse directory]             |
 
 
   Scenario Outline: Rename directory

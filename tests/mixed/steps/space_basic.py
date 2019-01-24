@@ -23,7 +23,7 @@ def create_spaces_in_oz(client, user, space_list, host, hosts, users, selenium,
                         oz_page, request):
 
     if client.lower() == 'rest':
-        from tests.mixed.utils.onezone.space_management import \
+        from tests.mixed.steps.rest.onezone.space_management import \
                                                 create_spaces_in_oz_using_rest
         create_spaces_in_oz_using_rest(user, users, hosts, host, space_list)
     elif client.lower() == 'web gui':
@@ -42,7 +42,7 @@ def leave_spaces_in_oz(client, request, user, space_list, host,
                        selenium, oz_page, tmp_memory, users, hosts, spaces):
 
     if client.lower() == 'rest':
-        from tests.mixed.utils.onezone.space_management import \
+        from tests.mixed.steps.rest.onezone.space_management import \
                                                 leave_spaces_in_oz_using_rest
         leave_spaces_in_oz_using_rest(user, users, host, hosts, space_list,
                                       spaces)
@@ -63,7 +63,7 @@ def rename_spaces_in_oz(client, request, user, space_list, new_names_list,
                         spaces):
 
     if client.lower() == 'rest':
-        from tests.mixed.utils.onezone.space_management import \
+        from tests.mixed.steps.rest.onezone.space_management import \
                                                 rename_spaces_in_oz_using_rest
         rename_spaces_in_oz_using_rest(user, users, host, hosts,
                                        space_list, new_names_list, spaces)
@@ -83,7 +83,7 @@ def set_space_as_home_in_oz(client, request, user, space_name, host, selenium,
                             oz_page, users, hosts, spaces):
 
     if client.lower() == 'rest':
-        from tests.mixed.utils.onezone.space_management import \
+        from tests.mixed.steps.rest.onezone.space_management import \
                                             set_space_as_home_in_oz_using_rest
         set_space_as_home_in_oz_using_rest(user, users, host, hosts, space_name,
                                            spaces)
@@ -105,7 +105,7 @@ def remove_spaces_in_oz(client, request, user, space_list, host, users, hosts,
                         spaces):
 
     if client.lower() == 'rest':
-        from tests.mixed.utils.onezone.space_management import \
+        from tests.mixed.steps.rest.onezone.space_management import \
                                                 remove_spaces_in_oz_using_rest
         remove_spaces_in_oz_using_rest(user, users, host, hosts, space_list,
                                        spaces)
@@ -124,7 +124,7 @@ def delete_users_from_space_in_oz(client, request, user_list, space_name, host,
                                   users, hosts, spaces, user):
 
     if client.lower() == 'rest':
-        from tests.mixed.utils.onezone.space_management import \
+        from tests.mixed.steps.rest.onezone.space_management import \
                                     delete_users_from_space_in_oz_using_rest
         delete_users_from_space_in_oz_using_rest(user_list, users, host,
                                                  hosts, space_name, spaces,
@@ -144,7 +144,7 @@ def add_users_to_space_in_oz(client, request, user_list, space_name, host,
                              users, hosts, spaces, user):
 
     if client.lower() == 'rest':
-        from tests.mixed.utils.onezone.space_management import \
+        from tests.mixed.steps.rest.onezone.space_management import \
                                             add_users_to_space_in_oz_using_rest
         add_users_to_space_in_oz_using_rest(user_list, users, host, hosts,
                                             space_name, spaces, user)
@@ -166,7 +166,7 @@ def remove_provider_support_for_space_in_oz(client, request, user,
                                             admin_credentials):
 
     if client.lower() == 'rest':
-        from tests.mixed.utils.onezone.space_management import \
+        from tests.mixed.steps.rest.onezone.space_management import \
                             remove_provider_support_for_space_in_oz_using_rest
         remove_provider_support_for_space_in_oz_using_rest(user, users, host,
                                                            hosts, provider_name,
@@ -191,7 +191,7 @@ def invite_other_users_to_space(client, request, user, user_list, space_name,
                                 hosts, spaces, displays, clipboard):
 
     if client.lower() == 'rest':
-        from tests.mixed.utils.onezone.space_management import \
+        from tests.mixed.steps.rest.onezone.space_management import \
                                         invite_otehr_users_to_space_using_rest
         invite_otehr_users_to_space_using_rest(user, users, host, hosts,
                                                space_name, spaces, tmp_memory,
@@ -214,7 +214,7 @@ def join_space_in_oz(client, request, user_list, item_name, host, selenium,
                      oz_page, tmp_memory, users, hosts):
 
     if client.lower() == 'rest':
-        from tests.mixed.utils.onezone.space_management import \
+        from tests.mixed.steps.rest.onezone.space_management import \
                                                     join_space_in_oz_using_rest
         join_space_in_oz_using_rest(user_list, users, host, hosts, item_name,
                                     tmp_memory)
@@ -242,7 +242,7 @@ def assert_there_are_spaces_in_oz(client, request, user, space_list, selenium,
         assert_spaces_have_appeared_in_oz_gui(selenium, user, oz_page,
                                               space_list, hosts)
     elif client.lower() == 'rest':
-        from tests.mixed.utils.onezone.space_management import \
+        from tests.mixed.steps.rest.onezone.space_management import \
                                         assert_spaces_have_appeared_in_oz_rest
         assert_spaces_have_appeared_in_oz_rest(user, users, hosts, host,
                                                space_list)
@@ -257,7 +257,7 @@ def assert_there_are_no_spaces_in_oz(client, request, user, space_list, host,
                                      selenium, oz_page, users, spaces, hosts):
 
     if client.lower() == 'rest':
-        from tests.mixed.utils.onezone.space_management import \
+        from tests.mixed.steps.rest.onezone.space_management import \
                                         assert_there_are_no_spaces_in_oz_rest
         assert_there_are_no_spaces_in_oz_rest(user, users, host, hosts,
                                               space_list, spaces)
@@ -278,7 +278,7 @@ def assert_spaces_have_been_renamed_in_oz(client, request, user, space_list,
                                           oz_page, users, hosts, spaces):
 
     if client.lower() == 'rest':
-        from tests.mixed.utils.onezone.space_management import \
+        from tests.mixed.steps.rest.onezone.space_management import \
                                     assert_spaces_have_been_renamed_in_oz_rest
         assert_spaces_have_been_renamed_in_oz_rest(user, users, host, hosts,
                                                    space_list, new_names_list,
@@ -301,7 +301,7 @@ def assert_space_has_been_set_as_home_in_oz(client, request, user, space_name,
                                             hosts, spaces):
 
     if client.lower() == 'rest':
-        from tests.mixed.utils.onezone.space_management import \
+        from tests.mixed.steps.rest.onezone.space_management import \
                                         assert_space_is_home_space_in_oz_rest
         assert_space_is_home_space_in_oz_rest(user, users, host, hosts,
                                               space_name, spaces)
@@ -325,7 +325,7 @@ def assert_there_is_no_provider_for_space_in_oz(client, request, user,
                                                 admin_credentials):
 
     if client.lower() == 'rest':
-        from tests.mixed.utils.onezone.space_management import \
+        from tests.mixed.steps.rest.onezone.space_management import \
                             assert_there_is_no_provider_for_space_in_oz_rest
         assert_there_is_no_provider_for_space_in_oz_rest(user, users, host,
                                                          hosts, space_name,
@@ -349,7 +349,7 @@ def assert_user_is_member_of_space(client, request, user, user_list,
                                    selenium, op_page):
 
     if client.lower() == 'rest':
-        from tests.mixed.utils.onezone.space_management import \
+        from tests.mixed.steps.rest.onezone.space_management import \
                                             assert_user_is_member_of_space_rest
         assert_user_is_member_of_space_rest(space_name, spaces, user, users,
                                             user_list, host, hosts)
@@ -375,7 +375,7 @@ def assert_provider_has_given_name_and_known_hostname_in_oz(client, user,
         provider_name = hosts[provider_name]['name']
 
         if client.lower() == 'rest':
-            from tests.mixed.utils.onezone.provider import \
+            from tests.mixed.steps.rest.onezone.provider import \
                                 assert_provider_has_name_and_hostname_in_oz_rest
             assert_provider_has_name_and_hostname_in_oz_rest(
                 user, users, host, hosts, provider_name,

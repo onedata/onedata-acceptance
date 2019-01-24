@@ -8,13 +8,13 @@ __license__ = ("This software is released under the MIT license cited in "
 
 
 import pytest
-from pytest_bdd import when, given, then, parsers
+from pytest_bdd import when, then, parsers
 
 from tests.gui.utils.generic import parse_seq
 from tests.mixed.onezone_client.rest import ApiException
 from tests.mixed.onezone_client import UserApi, GroupCreateRequest, GroupApi
 from tests.mixed.utils.common import login_to_oz
-from tests.mixed.utils.onezone.common import get_group
+from tests.mixed.steps.rest.onezone.common import get_group
 
 
 @when(parsers.re('(?P<user>\w+) creates groups? (?P<group_list>.*) using '

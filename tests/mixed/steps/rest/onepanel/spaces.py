@@ -11,7 +11,7 @@ __license__ = ("This software is released under the MIT license cited in "
 import yaml
 
 from tests.mixed.utils.common import (login_to_panel, login_to_oz)
-from tests.mixed.utils.onezone.common import get_space_with_name
+from tests.mixed.steps.rest.onezone.common import get_space_with_name
 from tests.mixed.onepanel_client import (OneproviderApi,
                                          StorageUpdateDetails,
                                          SpaceModifyRequest,

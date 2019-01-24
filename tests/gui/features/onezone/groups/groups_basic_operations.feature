@@ -48,7 +48,7 @@ Feature: Basic management of groups with one user in Onezone GUI
 
 
   Scenario Outline: User fails to add group as its subgroup
-    When user of browser clicks on text "generate an invitation token" in group "group1" members groups list
+    When user of browser clicks on "generate an invitation token" text in group "group1" members groups list
     And user of browser copies invitation token from modal
     And user of browser closes "Invite group using token" modal
 
@@ -65,14 +65,14 @@ Feature: Basic management of groups with one user in Onezone GUI
 
 
   Scenario: User generates group invitation token
-    When user of browser clicks on "Invite group using token" button in groups list menu in group "group1" members view
+    When user of browser clicks on "Invite group using token" button in groups list menu in "group1" group members view
     And user of browser sees that area with group invitation token has appeared
 
     Then user of browser sees non-empty token in token area
 
 
   Scenario: User generates user invitation token
-    When user of browser clicks on "Invite user using token" button in users list menu in group "group1" members view
+    When user of browser clicks on "Invite user using token" button in users list menu in "group1" group members view
     And user of browser sees that area with user invitation token has appeared
 
     Then user of browser sees non-empty token in token area

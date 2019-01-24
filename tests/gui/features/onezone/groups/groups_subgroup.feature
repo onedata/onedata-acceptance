@@ -28,7 +28,7 @@ Feature: Basic management of groups with multiple users in Onezone GUI
 
 
   Scenario Outline: Single user adds subgroup
-    When user of browser1 clicks on "Invite group using token" button in groups list menu in group "group3" members view
+    When user of browser1 clicks on "Invite group using token" button in groups list menu in "group3" group members view
     And user of browser1 copies invitation token from modal
     And user of browser1 closes "Invite group using token" modal
 
@@ -45,7 +45,7 @@ Feature: Basic management of groups with multiple users in Onezone GUI
 
 
   Scenario: User adds subgroup
-    When user of browser1 copies group "group1" group invitation token
+    When user of browser1 copies "group1" group invitation token
     And user of browser1 sends copied token to user of browser2
     And user of browser2 adds group "group2" as subgroup using received token
 

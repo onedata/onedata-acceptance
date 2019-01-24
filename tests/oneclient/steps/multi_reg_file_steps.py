@@ -105,12 +105,15 @@ def read_text(user, text, file, client_node, users):
     user = users[user]
     client = user.clients[client_node]
     file_path = client.absolute_path(file)
+    t = []
 
     def condition():
         read_text = read(client, file_path)
         assert read_text == text
+        t.append(read_text)
 
     assert_(client.perform, condition)
+    return t[0]
 
 
 @wt(parsers.re('(?P<user>\w+) reads "(?P<text>.*)" from previously '
