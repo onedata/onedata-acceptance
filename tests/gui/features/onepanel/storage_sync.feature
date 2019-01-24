@@ -22,10 +22,9 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
   Scenario: User supports space with storage sync and enabled options: Mount in root
     Given there are no spaces supported in Onepanel used by user of browser1
-    When user of browser2 refreshes site
 
     # create space
-    And user of browser2 clicks on Create space button in spaces sidebar
+    When user of browser2 clicks on Create space button in spaces sidebar
     And user of browser2 writes "space2" into space name text field
     And user of browser2 clicks on Create new space button
     And user of browser2 sees that "space2" has appeared on the spaces list in the sidebar
@@ -65,7 +64,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
           Max depth: 2
 
     # confirm support of space and go to provider
-    And user of browser2 refreshes site
     And user of browser2 clicks "space2" on the spaces list in the sidebar
     And user of browser2 clicks Providers of "space2" in the sidebar
     And user of browser2 sees "oneprovider-1" is on the providers list
@@ -143,10 +141,9 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
   Scenario: User supports space with storage sync and no enabled options
     Given there are no spaces supported in Onepanel used by user of browser1
-    When user of browser2 refreshes site
 
     # create space
-    And user of browser2 sees that "space1" has disappeared on the spaces list in the sidebar
+    When user of browser2 sees that "space1" has disappeared on the spaces list in the sidebar
     And user of browser2 clicks on Create space button in spaces sidebar
     And user of browser2 writes "space1" into space name text field
     And user of browser2 clicks on Create new space button
@@ -190,7 +187,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
           Max depth: 2
 
     # confirm support of space and go to provider
-    And user of browser2 refreshes site
     And user of browser2 clicks "space1" on the spaces list in the sidebar
     And user of browser2 clicks Providers of "space1" in the sidebar
     And user of browser2 sees "oneprovider-1" is on the providers list
@@ -268,10 +264,9 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
   Scenario: User supports space with storage sync and enabled options: Delete
     Given there are no spaces supported in Onepanel used by user of browser1
-    When user of browser2 refreshes site
 
     # create space
-    And user of browser2 sees that "space3" has disappeared on the spaces list in the sidebar
+    When user of browser2 sees that "space3" has disappeared on the spaces list in the sidebar
     And user of browser2 clicks on Create space button in spaces sidebar
     And user of browser2 writes "space3" into space name text field
     And user of browser2 clicks on Create new space button
@@ -315,7 +310,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
           Max depth: 2
 
     # confirm support of space and go to provider
-    And user of browser2 refreshes site
     And user of browser2 clicks "space3" on the spaces list in the sidebar
     And user of browser2 clicks Providers of "space3" in the sidebar
     And user of browser2 sees "oneprovider-1" is on the providers list
@@ -406,10 +400,9 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
   Scenario: User supports space with storage sync and enabled options: Write once
     Given there are no spaces supported in Onepanel used by user of browser1
-    When user of browser2 refreshes site
 
     # create space
-    And user of browser2 sees that "space4" has disappeared on the spaces list in the sidebar
+    When user of browser2 sees that "space4" has disappeared on the spaces list in the sidebar
     And user of browser2 clicks on Create space button in spaces sidebar
     And user of browser2 writes "space4" into space name text field
     And user of browser2 clicks on Create new space button
@@ -453,7 +446,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
           Max depth: 2
 
     # confirm support of space and go to provider
-    And user of browser2 refreshes site
     And user of browser2 clicks "space4" on the spaces list in the sidebar
     And user of browser2 clicks Providers of "space4" in the sidebar
     And user of browser2 sees "oneprovider-1" is on the providers list
@@ -532,10 +524,9 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
   Scenario: User supports space with storage sync and enabled options: Delete and Write once
     Given there are no spaces supported in Onepanel used by user of browser1
-    When user of browser2 refreshes site
 
     # create space
-    And user of browser2 sees that "space5" has disappeared on the spaces list in the sidebar
+    When user of browser2 sees that "space5" has disappeared on the spaces list in the sidebar
     And user of browser2 clicks on Create space button in spaces sidebar
     And user of browser2 writes "space5" into space name text field
     And user of browser2 clicks on Create new space button
@@ -579,7 +570,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
           Max depth: 2
 
     # confirm support of space and go to provider
-    And user of browser2 refreshes site
     And user of browser2 clicks "space5" on the spaces list in the sidebar
     And user of browser2 clicks Providers of "space5" in the sidebar
     And user of browser2 sees "oneprovider-1" is on the providers list
@@ -671,10 +661,9 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
   Scenario: User disables files update
     Given there are no spaces supported in Onepanel used by user of browser1
-    When user of browser2 refreshes site
 
     # create space
-    And user of browser2 sees that "space6" has disappeared on the spaces list in the sidebar
+    When user of browser2 sees that "space6" has disappeared on the spaces list in the sidebar
     And user of browser2 clicks on Create space button in spaces sidebar
     And user of browser2 writes "space6" into space name text field
     And user of browser2 clicks on Create new space button
@@ -718,7 +707,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
           Max depth: 2
 
     # confirm support of space and go to provider
-    And user of browser2 refreshes site
     And user of browser2 clicks "space6" on the spaces list in the sidebar
     And user of browser2 clicks Providers of "space6" in the sidebar
     And user of browser2 sees "oneprovider-1" is on the providers list

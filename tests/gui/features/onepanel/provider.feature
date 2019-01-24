@@ -18,9 +18,8 @@ Feature: Provider management in Onepanel GUI
 
   Scenario: User changes provider name and domain
     Given provider name set to name of "oneprovider-1" by user of browser1 in Onepanel
-    When user of browser2 refreshes site
 
-    And user of browser1 clicks on Provider item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+    When user of browser1 clicks on Provider item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser1 sees that Provider name attribute is equal to the name of "oneprovider-1" provider in Provider panel
     And user of browser1 sees that Domain attribute is equal to the hostname of "oneprovider-1" provider in Provider panel
 
@@ -62,7 +61,6 @@ Feature: Provider management in Onepanel GUI
 
   Scenario: User deregisters provider, registers it again and sees that provider is working
     Given provider name set to name of "oneprovider-1" by user of browser1 in Onepanel
-    When user of browser2 refreshes site
 
     And user of browser2 clicks on Data in the main menu
     And user of browser2 clicks "space1" on the spaces list in the sidebar
@@ -98,7 +96,6 @@ Feature: Provider management in Onepanel GUI
             size: 10000000
 
     # check that provider is working
-    And user of browser2 refreshes site
     And user of browser2 sees that provider "oneprovider-1" in Onezone is working
     And user of browser2 opens oneprovider-1 Oneprovider view in web GUI
     And user of browser2 sees that Oneprovider session has started

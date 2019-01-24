@@ -15,7 +15,6 @@ Feature: Storage management using onepanel
 
   Scenario: User uploads files on freshly supported space on newly created storage
     Given there are no spaces supported in Onepanel used by user of browser1
-    When user of browser2 refreshes site
 
     # create new_storage POSIX storage
     And user of browser1 clicks on Clusters in the main menu
