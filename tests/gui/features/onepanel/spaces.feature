@@ -8,7 +8,6 @@ Feature: Basic spaces management utilities using onepanel
 
   Scenario: Support space
     Given there are no spaces supported in Onepanel used by user of browser1
-    When user of browser2 refreshes site
 
     # create space
     When user of browser2 clicks on Create space button in spaces sidebar
@@ -36,7 +35,6 @@ Feature: Basic spaces management utilities using onepanel
     And user of browser1 sees that space support record for "helloworld" has appeared in Spaces page in Onepanel
 
     # confirm support of space
-    And user of browser2 refreshes site
     And user of browser2 clicks "helloworld" on the spaces list in the sidebar
     And user of browser2 clicks Providers of "helloworld" in the sidebar
     And user of browser2 sees "oneprovider-1" is on the providers list
@@ -58,7 +56,6 @@ Feature: Basic spaces management utilities using onepanel
     And user of browser1 sees an info notify with text matching to: .*[Ss]upport.*revoked.*
 
     # confirm lack of support for space
-    And user of browser2 refreshes site
     And user of browser2 clicks "helloworld" on the spaces list in the sidebar
     And user of browser2 clicks Providers of "helloworld" in the sidebar
     And user of browser2 sees that length of providers list of "helloworld" equals "0"
