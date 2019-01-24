@@ -106,4 +106,6 @@ class GroupMembersPage(PageObject):
     memberships = WebItemsSequence('.membership-visualiser .membership-row',
                                    cls=MembershipRow)
 
+    alert = WebElement('.alert.forbidden strong')
+
 

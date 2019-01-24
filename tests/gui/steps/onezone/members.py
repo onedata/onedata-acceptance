@@ -404,14 +404,27 @@ def expand_privilege_for_member(selenium, browser_id, privilege_name, oz_page,
                'for "(?P<member_name>.*)" (?P<member_type>user|group) '
                'in (?P<where>space|group) members subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def see_insufficient_permissions_alert(selenium, browser_id, oz_page,
-                                       where, member_name, member_type,
-                                       alert_text):
+def see_insufficient_permissions_alert_for_member(selenium, browser_id, oz_page,
+                                                  where, member_name,
+                                                  member_type, alert_text):
     driver = selenium[browser_id]
     where = where + 's'
     member_type = member_type + 's'
 
     members_list = getattr(oz_page(driver)[where].members_page, member_type)
     alert = members_list.items[member_name].alert.text
+    assert alert_text in alert, 'not found alert with {} text'.format(alert_text)
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) sees '
+               '(?P<alert_text>Insufficient permissions) alert '
+               'in (?P<where>space|group) members subpage'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def see_insufficient_permissions_alert(selenium, browser_id, oz_page,
+                                       where, alert_text):
+    driver = selenium[browser_id]
+    where = where + 's'
+
+    alert = oz_page(driver)[where].members_page.alert.text
     assert alert_text in alert, 'not found alert with {} text'.format(alert_text)
 
