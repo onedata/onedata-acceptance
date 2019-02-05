@@ -22,6 +22,7 @@ from tests.gui.steps.common.local_file_system import *
 from tests.gui.steps.common.notifies import *
 from tests.gui.steps.common.miscellaneous import *
 from tests.gui.steps.common.login import *
+from tests.gui.steps.common.docker import *
 
 from tests.gui.steps.onepanel.account_management import *
 from tests.gui.steps.onepanel.nodes import *
@@ -61,15 +62,6 @@ from tests.gui.meta_steps.onezone.common import *
 @fixture(scope='module')
 def screens():
     return [0]
-
-
-@pytest.mark.skip('it collides with deregister provider test, '
-                  'so skip it on getting started for now)')
-@scenario('../features/onezone/providers.feature',
-          'User sees that when no provider is working appropriate msg is shown')
-def test_user_sees_that_when_no_provider_is_working_appropriate_msg_is_shown():
-    pass
-
 
 scenarios('../features/onezone/login_page.feature')
 scenarios('../features/onezone/providers.feature')
