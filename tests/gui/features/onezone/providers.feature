@@ -108,9 +108,9 @@ Feature: Basic management of providers in Onezone GUI
     And user of browser expands submenu of provider "oneprovider-1" by clicking on cloud in provider record in expanded "GO TO YOUR FILES" Onezone panel
     And user of browser sees that spaces counter for "oneprovider-1" match number of displayed supported spaces in expanded submenu of given provider in expanded "GO TO YOUR FILES" Onezone panel
 
-
-  Scenario: User sees that when no provider is working appropriate msg is shown
-    Given there are no working provider(s) named "oneprovider-1"
-    When user of browser expands the "GO TO YOUR FILES" Onezone sidebar panel
-    Then user of browser sees that provider "oneprovider-1" in expanded "GO TO YOUR FILES" Onezone panel is not working
-    And user of browser sees alert with title "All your providers are offline" on world map in Onezone gui
+# TODO VFS-5244 fix kill_providers() and change alert text
+#  Scenario: User sees that when no provider is working appropriate msg is shown
+#    Given there are no working provider(s) named oneprovider-1
+#    When user of browser expands the "GO TO YOUR FILES" Onezone sidebar panel
+#    Then user of browser sees that provider "oneprovider-1" in expanded "GO TO YOUR FILES" Onezone panel is not working
+#    And user of browser sees alert with title "All your providers are offline" on world map in Onezone gui
