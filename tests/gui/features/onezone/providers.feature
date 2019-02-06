@@ -55,9 +55,9 @@ Feature: Basic management of providers in Onezone GUI
     And user of browser clicks on Toggle home provider button on provider popover
     Then user of browser sees that home of "oneprovider-1" has appeared in the data sidebar
 
-
-  Scenario: User sees that when no provider is working appropriate msg is shown
-    Given there are no working provider(s) named "oneprovider-1"
-    When user of browser expands the "GO TO YOUR FILES" Onezone sidebar panel
-    Then user of browser sees that provider "oneprovider-1" in expanded "GO TO YOUR FILES" Onezone panel is not working
-    And user of browser sees alert with title "All your providers are offline" on world map in Onezone gui
+# TODO VFS-5244 fix kill_providers() and change alert text
+#  Scenario: User sees that when no provider is working appropriate msg is shown
+#    Given there are no working provider(s) named oneprovider-1
+#    When user of browser expands the "GO TO YOUR FILES" Onezone sidebar panel
+#    Then user of browser sees that provider "oneprovider-1" in expanded "GO TO YOUR FILES" Onezone panel is not working
+#    And user of browser sees alert with title "All your providers are offline" on world map in Onezone gui

@@ -87,7 +87,7 @@ def wt_rm_files_to_space_root_dir(src_path, space, tmp_memory, hosts):
 
 
 @given(parsers.parse('there is no working provider named {provider_list}'))
-@given(parsers.parse('there are no working providers named {provider_list}'))
+@given(parsers.parse('there are no working provider(s) named {provider_list}'))
 def kill_providers(persistent_environment, provider_list):
     kill_cmd = ['docker', 'kill']
     inspect_cmd = ['docker', 'inspect', '-f', '{{.State.Running}}']
