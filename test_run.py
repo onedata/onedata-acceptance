@@ -307,7 +307,7 @@ ALL       ALL = (ALL) NOPASSWD: ALL
                              if args.env_file else [],
                              timeout=['--timeout={}'.format(args.timeout)]
                              if args.timeout else [],
-                             images_opt=images_opt,
+                             images_opt=images_opt if images_opt else [],
                              home=one_env_dir.get_host_home(),
                              privileged=args.privileged)
     kube_config_path = os.path.expanduser(args.kube_config_path)
