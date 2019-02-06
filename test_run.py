@@ -86,9 +86,11 @@ def clean_env():
                volumes=[(os.path.join(os.path.expanduser('~'),
                                       '.docker'), '/tmp/.docker', 'rw'),
                         (kube_config_path, '/tmp/.kube/config', 'rw'),
-                        (minikube_config_path, '/tmp/.minikube/config', 'rw')],
+                        (minikube_config_path, '/tmp/.minikube/config', 'rw'),
+                        (os.path.join(os.path.expanduser('~'), '.one-env'),
+                         '/tmp/.one-env', 'rw')],
                image=args.image,
-               command=['./onenv', 'clean'],
+               command=['./onenv', 'clean', '-a', '-v'],
                envs={'HOME': '/tmp'})
 
 
@@ -307,7 +309,7 @@ ALL       ALL = (ALL) NOPASSWD: ALL
                              if args.env_file else [],
                              timeout=['--timeout={}'.format(args.timeout)]
                              if args.timeout else [],
-                             images_opt=images_opt,
+                             images_opt=images_opt if images_opt else [],
                              home=one_env_dir.get_host_home(),
                              privileged=args.privileged)
     kube_config_path = os.path.expanduser(args.kube_config_path)
