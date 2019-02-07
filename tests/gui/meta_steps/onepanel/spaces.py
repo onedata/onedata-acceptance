@@ -94,11 +94,12 @@ def configure_sync_parameters_for_space_in_op_panel_gui(selenium, user, space,
     options = yaml.load(config)
     storage_import = options['{} strategy'.format(sync_type.capitalize())]
     wt_select_strategy_in_conf_in_space_record(selenium, user, storage_import,
-                                               sync_type, space, onepanel)
+                                               sync_type, onepanel)
 
     if storage_import.lower() == 'disabled':
-        wt_clicks_on_save_config_btn_in_space_record(selenium, user, space,
-                                                     onepanel)
+        button = 'Save configuration'
+        wt_clicks_on_button_in_space_record(selenium, user, onepanel,
+                                            button)
         return
 
     for field, input_box in zip(('Max depth', 'Scan interval [s]'),
@@ -106,16 +107,16 @@ def configure_sync_parameters_for_space_in_op_panel_gui(selenium, user, space,
         val = str(options.get(field, None))
         if val:
             wt_type_text_to_input_box_in_conf_in_space_record(
-                selenium, user, val, input_box, sync_type, space, onepanel)
+                selenium, user, val, input_box, sync_type, onepanel)
 
     for field in ('Write once', 'Delete enabled'):
         val = options.get(field, None)
         if val:
             wt_enable_option_box_in_conf_in_space_record(
-                selenium, user, field, space, onepanel)
+                selenium, user, field, onepanel)
 
-    wt_clicks_on_save_config_btn_in_space_record(selenium, user, space,
-                                                 onepanel)
+    button = 'Save configuration'
+    wt_clicks_on_button_in_space_record(selenium, user, onepanel, button)
     notify_visible_with_text(selenium, user, notify_type, notify_text_regexp)
 
 
@@ -148,15 +149,15 @@ def revoke_all_space_supports(selenium, browser_id, onepanel, popups,
     sub_item = 'Spaces'
     record = 'oneprovider-1'
 
-    spaces_list = onepanel(selenium[browser_id]).content.spaces.spaces
     option = 'Revoke space support'
     button = 'Yes, revoke'
 
     wt_click_on_subitem_for_item(selenium, browser_id, sidebar, sub_item,
                                  record, onepanel, hosts)
-
+    spaces_list = onepanel(selenium[browser_id]).content.spaces.spaces
     for space in spaces_list:
-        space.toolbar.click()
+        wt_expands_toolbar_icon_for_space_in_onepanel(selenium, browser_id,
+                                                      space.name, onepanel)
         wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, browser_id,
                                                    option, popups)
         wt_clicks_on_btn_in_revoke_space_support(selenium, browser_id,

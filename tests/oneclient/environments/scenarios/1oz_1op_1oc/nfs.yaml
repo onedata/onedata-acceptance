@@ -24,10 +24,10 @@ onedataCli: false
 # Determines if oneclients should start.
 oneclients: true
 
-oneclientImage: "docker.onedata.org/oneclient-dev:ID-3c60ebb24b"
+oneclientImage: "docker.onedata.org/oneclient-dev:ID-a6af7ae291"
 
 # Onedata rest client image to use.
-onedataCliImage: "docker.onedata.org/rest-cli:ID-e5fb6602e4"
+onedataCliImage: "docker.onedata.org/rest-cli:ID-ce4dc2f486"
 
 # Luma image to use.
 lumaImage: "docker.onedata.org/luma:ID-8e2da56615"
@@ -39,21 +39,20 @@ forceImagePull: true
 createSpaces: false
 
 os-config:
-  configs:
-    cfg1: &cfg1
-      users:
+  cfg1: &cfg1
+    users:
+      - user1
+      - user2
+    groups:
+      space1:
         - user1
         - user2
-      groups:
-        space1:
-          - user1
-          - user2
-        space2:
-          - user1
-          - user2
-        fuse:
-          - user1
-          - user2
+      space2:
+        - user1
+        - user2
+      fuse:
+        - user1
+        - user2
 
   services:
     oneprovider-1: *cfg1
@@ -72,10 +71,13 @@ onezone:
 oneprovider-1:
   workerOverlayConfig: *oneprovidersWorkerOverlayConfig
 
+  batchConfig:
+    createUsers: false
+
   oneclient:
     users: []
     wait_for_oneprovider:
       enabled: false
-
-    batchConfig:
-      createUsers: false
+    directIO:
+      nfs:
+        enabled: true

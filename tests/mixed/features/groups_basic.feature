@@ -11,7 +11,7 @@ Feature: Basic operations on groups
                     storage: posix
                     size: 1000000
                 
-    And opened browser with user1 logged to "onezone onezone" service
+    And opened browser with user1 logged to "onezone" service
 
 
   Scenario Outline: User creates groups

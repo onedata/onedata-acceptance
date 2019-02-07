@@ -14,7 +14,7 @@ Feature: Multiuser operations on groups using REST API and web GUI
                     storage: posix
                     size: 1000000
 
-    And opened browser with [user1, user2] logged to [onezone onezone, onezone onezone] service
+    And opened browser with [user1, user2] logged to [onezone, onezone] service
 
 
   Scenario Outline: User joins group

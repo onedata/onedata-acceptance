@@ -16,6 +16,13 @@ from types import CodeType
 from pytest_bdd import when, then, parsers
 
 
+TIME_ATTR_MAPPING = {
+    'access': 'atime',
+    'modification': 'mtime',
+    'status-change': 'ctime'
+}
+
+
 def list_parser(list):
     return [el.strip() for el in list.strip('[]').split(',') if el != '']
 
@@ -89,3 +96,24 @@ def success(user, users):
 @wt(parsers.parse('last operation by {user} fails'))
 def failure(user, users):
     assert users[user].last_operation_failed
+
+
+def time_attr(parameter, prefix='st'):
+    return '{}_{}'.format(prefix, TIME_ATTR_MAPPING[parameter])
+
+
+def compare(val1, val2, comparator):
+    if comparator == 'equal':
+        return val1 == val2
+    elif comparator == 'not equal':
+        return val1 != val2
+    elif comparator == 'greater':
+        return val1 > val2
+    elif comparator == 'less':
+        return val1 < val2
+    elif comparator == 'not greater':
+        return val1 <= val2
+    elif comparator == 'not less':
+        return val1 >= val2
+    else:
+        raise ValueError('Wrong argument comparator to function compare')

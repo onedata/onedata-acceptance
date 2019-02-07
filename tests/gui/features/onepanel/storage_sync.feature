@@ -97,8 +97,8 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sees that content of downloaded file "file1.txt" is equal to: "22222"
 
     # configure update parameters
-    And user of browser1 expands toolbar for "space2" space record in Spaces page in Onepanel
-    And user of browser1 clicks on Configure data synchronization option in space's toolbar in Onepanel
+    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space2"
+    And user of browser1 clicks settings in Storage synchronization in Spaces page
     And user of browser1 selects Simple scan strategy from strategy selector in UPDATE CONFIGURATION in "space2" record in Spaces page in Onepanel
     And user of browser1 types "3" to Max depth input field in UPDATE CONFIGURATION in "space2" record in Spaces page in Onepanel
     And user of browser1 types "1" to Scan interval input field in UPDATE CONFIGURATION in "space2" record in Spaces page in Onepanel
@@ -106,7 +106,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser1 sees an info notify with text matching to: .*[Cc]onfiguration.*space.*support.*changed.*
 
     # confirm correct update configuration
-    And user of browser1 expands "space2" record on spaces list in Spaces page in Onepanel
     And user of browser1 sees that Update strategy configuration for "space2" is as follow:
           Update strategy: Simple scan
           Max depth: 3
@@ -135,6 +134,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sees that there are 10 items in file browser
 
     # revoke space support
+    And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser1 expands toolbar for "space2" space record in Spaces page in Onepanel
     And user of browser1 clicks on Revoke space support option in space's toolbar in Onepanel
     And user of browser1 clicks on Yes, revoke button in REVOKE SPACE SUPPORT modal in Onepanel
@@ -177,15 +177,14 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 copies dir2 to the root directory of "space1" space
 
     # configure import parameters
-    And user of browser1 expands toolbar for "space1" space record in Spaces page in Onepanel
-    And user of browser1 clicks on Configure data synchronization option in space's toolbar in Onepanel
+    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space1"
+    And user of browser1 clicks on Configure button in "space1" record in Spaces page in Onepanel
     And user of browser1 selects Simple scan strategy from strategy selector in IMPORT CONFIGURATION in "space1" record in Spaces page in Onepanel
     And user of browser1 types "2" to Max depth input field in IMPORT CONFIGURATION in "space1" record in Spaces page in Onepanel
-    And user of browser1 clicks on Save configuration button in "space1" record in Spaces page in Onepanel
+    And user of browser1 clicks on Start synchronization button in "space1" record in Spaces page in Onepanel
     And user of browser1 sees an info notify with text matching to: .*[Cc]onfiguration.*space.*support.*changed.*
 
     # confirm correct import configuration
-    And user of browser1 expands "space1" record on spaces list in Spaces page in Onepanel
     And user of browser1 sees that Import strategy configuration for "space1" is as follow:
           Import strategy: Simple scan
           Max depth: 2
@@ -223,8 +222,8 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sees that content of downloaded file "file1.txt" is equal to: "22222"
 
     # configure update parameters
-    And user of browser1 expands toolbar for "space1" space record in Spaces page in Onepanel
-    And user of browser1 clicks on Configure data synchronization option in space's toolbar in Onepanel
+    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space1"
+    And user of browser1 clicks settings in Storage synchronization in Spaces page
     And user of browser1 selects Simple scan strategy from strategy selector in UPDATE CONFIGURATION in "space1" record in Spaces page in Onepanel
     And user of browser1 types "3" to Max depth input field in UPDATE CONFIGURATION in "space1" record in Spaces page in Onepanel
     And user of browser1 types "1" to Scan interval input field in UPDATE CONFIGURATION in "space1" record in Spaces page in Onepanel
@@ -232,7 +231,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser1 sees an info notify with text matching to: .*[Cc]onfiguration.*space.*support.*changed.*
 
     # confirm correct update configuration
-    And user of browser1 expands "space1" record on spaces list in Spaces page in Onepanel
     And user of browser1 sees that Update strategy configuration for "space1" is as follow:
           Update strategy: Simple scan
           Max depth: 3
@@ -261,6 +259,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sees that there are 10 items in file browser
 
     # revoke space support
+    And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser1 expands toolbar for "space1" space record in Spaces page in Onepanel
     And user of browser1 clicks on Revoke space support option in space's toolbar in Onepanel
     And user of browser1 clicks on Yes, revoke button in REVOKE SPACE SUPPORT modal in Onepanel
@@ -303,15 +302,14 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 copies dir2 to the root directory of "space3" space
 
     # configure import parameters
-    And user of browser1 expands toolbar for "space3" space record in Spaces page in Onepanel
-    And user of browser1 clicks on Configure data synchronization option in space's toolbar in Onepanel
+    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space3"
+    And user of browser1 clicks on Configure button in "space3" record in Spaces page in Onepanel
     And user of browser1 selects Simple scan strategy from strategy selector in IMPORT CONFIGURATION in "space3" record in Spaces page in Onepanel
     And user of browser1 types "2" to Max depth input field in IMPORT CONFIGURATION in "space3" record in Spaces page in Onepanel
-    And user of browser1 clicks on Save configuration button in "space3" record in Spaces page in Onepanel
+    And user of browser1 clicks on Start synchronization button in "space3" record in Spaces page in Onepanel
     And user of browser1 sees an info notify with text matching to: .*[Cc]onfiguration.*space.*support.*changed.*
 
     # confirm correct import configuration
-    And user of browser1 expands "space3" record on spaces list in Spaces page in Onepanel
     And user of browser1 sees that Import strategy configuration for "space3" is as follow:
           Import strategy: Simple scan
           Max depth: 2
@@ -349,8 +347,8 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sees that content of downloaded file "file1.txt" is equal to: "22222"
 
     # configure update parameters
-    And user of browser1 expands toolbar for "space3" space record in Spaces page in Onepanel
-    And user of browser1 clicks on Configure data synchronization option in space's toolbar in Onepanel
+    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space3"
+    And user of browser1 clicks settings in Storage synchronization in Spaces page
     And user of browser1 selects Simple scan strategy from strategy selector in UPDATE CONFIGURATION in "space3" record in Spaces page in Onepanel
     And user of browser1 types "3" to Max depth input field in UPDATE CONFIGURATION in "space3" record in Spaces page in Onepanel
     And user of browser1 types "1" to Scan interval input field in UPDATE CONFIGURATION in "space3" record in Spaces page in Onepanel
@@ -359,7 +357,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser1 sees an info notify with text matching to: .*[Cc]onfiguration.*space.*support.*changed.*
 
     # confirm correct update configuration
-    And user of browser1 expands "space3" record on spaces list in Spaces page in Onepanel
     And user of browser1 sees that Update strategy configuration for "space3" is as follow:
           Update strategy: Simple scan
           Max depth: 3
@@ -400,6 +397,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sees item(s) named "dir22" in file browser
 
     # revoke space support
+    And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser1 expands toolbar for "space3" space record in Spaces page in Onepanel
     And user of browser1 clicks on Revoke space support option in space's toolbar in Onepanel
     And user of browser1 clicks on Yes, revoke button in REVOKE SPACE SUPPORT modal in Onepanel
@@ -442,15 +440,14 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 copies dir2 to the root directory of "space4" space
 
     # configure import parameters
-    And user of browser1 expands toolbar for "space4" space record in Spaces page in Onepanel
-    And user of browser1 clicks on Configure data synchronization option in space's toolbar in Onepanel
+    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space4"
+    And user of browser1 clicks on Configure button in "space4" record in Spaces page in Onepanel
     And user of browser1 selects Simple scan strategy from strategy selector in IMPORT CONFIGURATION in "space4" record in Spaces page in Onepanel
     And user of browser1 types "2" to Max depth input field in IMPORT CONFIGURATION in "space4" record in Spaces page in Onepanel
-    And user of browser1 clicks on Save configuration button in "space4" record in Spaces page in Onepanel
+    And user of browser1 clicks on Start synchronization button in "space4" record in Spaces page in Onepanel
     And user of browser1 sees an info notify with text matching to: .*[Cc]onfiguration.*space.*support.*changed.*
 
     # confirm correct import configuration
-    And user of browser1 expands "space4" record on spaces list in Spaces page in Onepanel
     And user of browser1 sees that Import strategy configuration for "space4" is as follow:
           Import strategy: Simple scan
           Max depth: 2
@@ -488,8 +485,8 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sees that content of downloaded file "file1.txt" is equal to: "22222"
 
     # configure update parameters
-    And user of browser1 expands toolbar for "space4" space record in Spaces page in Onepanel
-    And user of browser1 clicks on Configure data synchronization option in space's toolbar in Onepanel
+    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space4"
+    And user of browser1 clicks settings in Storage synchronization in Spaces page
     And user of browser1 selects Simple scan strategy from strategy selector in UPDATE CONFIGURATION in "space4" record in Spaces page in Onepanel
     And user of browser1 types "3" to Max depth input field in UPDATE CONFIGURATION in "space4" record in Spaces page in Onepanel
     And user of browser1 types "1" to Scan interval input field in UPDATE CONFIGURATION in "space4" record in Spaces page in Onepanel
@@ -498,7 +495,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser1 sees an info notify with text matching to: .*[Cc]onfiguration.*space.*support.*changed.*
 
     # confirm correct update configuration
-    And user of browser1 expands "space4" record on spaces list in Spaces page in Onepanel
     And user of browser1 sees that Update strategy configuration for "space4" is as follow:
           Update strategy: Simple scan
           Max depth: 3
@@ -527,6 +523,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sees that there are 10 items in file browser
 
     # revoke space support
+    And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser1 expands toolbar for "space4" space record in Spaces page in Onepanel
     And user of browser1 clicks on Revoke space support option in space's toolbar in Onepanel
     And user of browser1 clicks on Yes, revoke button in REVOKE SPACE SUPPORT modal in Onepanel
@@ -569,15 +566,14 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 copies dir2 to the root directory of "space5" space
 
     # configure import parameters
-    And user of browser1 expands toolbar for "space5" space record in Spaces page in Onepanel
-    And user of browser1 clicks on Configure data synchronization option in space's toolbar in Onepanel
+    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space5"
+    And user of browser1 clicks on Configure button in "space5" record in Spaces page in Onepanel
     And user of browser1 selects Simple scan strategy from strategy selector in IMPORT CONFIGURATION in "space5" record in Spaces page in Onepanel
     And user of browser1 types "2" to Max depth input field in IMPORT CONFIGURATION in "space5" record in Spaces page in Onepanel
-    And user of browser1 clicks on Save configuration button in "space5" record in Spaces page in Onepanel
+    And user of browser1 clicks on Start synchronization button in "space5" record in Spaces page in Onepanel
     And user of browser1 sees an info notify with text matching to: .*[Cc]onfiguration.*space.*support.*changed.*
 
     # confirm correct import configuration
-    And user of browser1 expands "space5" record on spaces list in Spaces page in Onepanel
     And user of browser1 sees that Import strategy configuration for "space5" is as follow:
           Import strategy: Simple scan
           Max depth: 2
@@ -615,8 +611,8 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sees that content of downloaded file "file1.txt" is equal to: "22222"
 
     # configure update parameters
-    And user of browser1 expands toolbar for "space5" space record in Spaces page in Onepanel
-    And user of browser1 clicks on Configure data synchronization option in space's toolbar in Onepanel
+    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space5"
+    And user of browser1 clicks settings in Storage synchronization in Spaces page
     And user of browser1 selects Simple scan strategy from strategy selector in UPDATE CONFIGURATION in "space5" record in Spaces page in Onepanel
     And user of browser1 types "3" to Max depth input field in UPDATE CONFIGURATION in "space5" record in Spaces page in Onepanel
     And user of browser1 types "1" to Scan interval input field in UPDATE CONFIGURATION in "space5" record in Spaces page in Onepanel
@@ -626,7 +622,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser1 sees an info notify with text matching to: .*[Cc]onfiguration.*space.*support.*changed.*
 
     # confirm correct update configuration
-    And user of browser1 expands "space5" record on spaces list in Spaces page in Onepanel
     And user of browser1 sees that Update strategy configuration for "space5" is as follow:
           Update strategy: Simple scan
           Max depth: 3
@@ -667,6 +662,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sees item(s) named "dir22" in file browser
 
     # revoke space support
+    And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser1 expands toolbar for "space5" space record in Spaces page in Onepanel
     And user of browser1 clicks on Revoke space support option in space's toolbar in Onepanel
     And user of browser1 clicks on Yes, revoke button in REVOKE SPACE SUPPORT modal in Onepanel
@@ -709,15 +705,14 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 copies dir2 to the root directory of "space6" space
 
     # configure import parameters
-    And user of browser1 expands toolbar for "space6" space record in Spaces page in Onepanel
-    And user of browser1 clicks on Configure data synchronization option in space's toolbar in Onepanel
+    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space6"
+    And user of browser1 clicks on Configure button in "space6" record in Spaces page in Onepanel
     And user of browser1 selects Simple scan strategy from strategy selector in IMPORT CONFIGURATION in "space6" record in Spaces page in Onepanel
     And user of browser1 types "2" to Max depth input field in IMPORT CONFIGURATION in "space6" record in Spaces page in Onepanel
-    And user of browser1 clicks on Save configuration button in "space6" record in Spaces page in Onepanel
+    And user of browser1 clicks on Start synchronization button in "space6" record in Spaces page in Onepanel
     And user of browser1 sees an info notify with text matching to: .*[Cc]onfiguration.*space.*support.*changed.*
 
     # confirm correct import configuration
-    And user of browser1 expands "space6" record on spaces list in Spaces page in Onepanel
     And user of browser1 sees that Import strategy configuration for "space6" is as follow:
           Import strategy: Simple scan
           Max depth: 2
@@ -755,8 +750,8 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sees that content of downloaded file "file1.txt" is equal to: "22222"
 
     # configure update parameters
-    And user of browser1 expands toolbar for "space6" space record in Spaces page in Onepanel
-    And user of browser1 clicks on Configure data synchronization option in space's toolbar in Onepanel
+    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space6"
+    And user of browser1 clicks settings in Storage synchronization in Spaces page
     And user of browser1 selects Simple scan strategy from strategy selector in UPDATE CONFIGURATION in "space6" record in Spaces page in Onepanel
     And user of browser1 types "3" to Max depth input field in UPDATE CONFIGURATION in "space6" record in Spaces page in Onepanel
     And user of browser1 types "1" to Scan interval input field in UPDATE CONFIGURATION in "space6" record in Spaces page in Onepanel
@@ -764,7 +759,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser1 sees an info notify with text matching to: .*[Cc]onfiguration.*space.*support.*changed.*
 
     # confirm correct update configuration
-    And user of browser1 expands "space6" record on spaces list in Spaces page in Onepanel
     And user of browser1 sees that Update strategy configuration for "space6" is as follow:
           Update strategy: Simple scan
           Max depth: 3
@@ -793,14 +787,13 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sees that there are 10 items in file browser
 
     # disable files update
-    And user of browser1 expands toolbar for "space6" space record in Spaces page in Onepanel
-    And user of browser1 clicks on Configure data synchronization option in space's toolbar in Onepanel
+    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space6"
+    And user of browser1 clicks settings in Storage synchronization in Spaces page
     And user of browser1 selects Disabled strategy from strategy selector in UPDATE CONFIGURATION in "space6" record in Spaces page in Onepanel
     And user of browser1 clicks on Save configuration button in "space6" record in Spaces page in Onepanel
     And user of browser1 sees an info notify with text matching to: .*[Cc]onfiguration.*space.*support.*changed.*
 
     # confirm correct update configuration
-    And user of browser1 expands "space6" record on spaces list in Spaces page in Onepanel
     And user of browser1 sees that Update strategy configuration for "space6" is as follow:
           Update strategy: Disabled
 
@@ -818,6 +811,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     Then user of browser2 does not see any item(s) named "dir1" in file browser
 
     # revoke space support
+    And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser1 expands toolbar for "space6" space record in Spaces page in Onepanel
     And user of browser1 clicks on Revoke space support option in space's toolbar in Onepanel
     And user of browser1 clicks on Yes, revoke button in REVOKE SPACE SUPPORT modal in Onepanel

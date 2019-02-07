@@ -1,12 +1,12 @@
-"""Test suite for mixed data management tests
+"""Test suite for mixed single file tests
 """
-__author__ = "Michal Stanisz"
-__copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
+
+__author__ = "Michal Stanisz, Michal Cwiertnia"
+__copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-
-from pytest_bdd import scenarios
+from pytest_bdd import scenario, scenarios
 
 from tests.gui.steps.rest.env_up.users import *
 from tests.gui.steps.rest.env_up.groups import *
@@ -50,5 +50,7 @@ from tests.mixed.steps.data_basic import *
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.onezone.common import *
 
+from tests.oneclient.steps.auth_steps import *
 
-scenarios('../features/data_basic.feature')
+
+scenarios('../features/oneprovider/single_file.feature')
