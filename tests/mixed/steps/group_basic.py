@@ -9,7 +9,6 @@ __license__ = ("This software is released under the MIT license cited in "
 
 from tests.mixed.steps.rest.onezone.group_management import *
 from tests.mixed.utils.common import NoSuchClientException
-from tests.gui.meta_steps.oneprovider.groups import *
 from tests.gui.meta_steps.onezone.groups import *
 
 
@@ -194,7 +193,7 @@ def invite_to_group(client, user1, user2, group, host, hosts,
     if client.lower() == 'rest':
         create_group_token_using_rest(user1, user2, group, tmp_memory, users, hosts, host)
     elif client.lower() == 'web gui':
-        create_group_token_using_op_gui(selenium, user1, user2, oz_page, group,
+        create_group_token_to_invite_user_using_op_gui(selenium, user1, user2, oz_page, group,
                                      tmp_memory, displays, clipboard)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
@@ -253,15 +252,18 @@ def fail_to_remove_groups(client, user, group_list, request, host, hosts, users,
 @when(parsers.re('using (?P<client>.*), (?P<user>\w+) fails to join'
                  ' groups? (?P<group_list>.*?) as subgroup to group '
                  '"(?P<parent>.*?)" in "(?P<host>.*)" Onezone service'))
+@then(parsers.re('using (?P<client>.*), (?P<user>\w+) fails to join'
+                 ' groups? (?P<group_list>.*?) as subgroup to group '
+                 '"(?P<parent>.*?)" in "(?P<host>.*)" Onezone service'))
 def fail_to_add_subgroups(client, user, group_list, host, hosts, users, 
-                          selenium, op_page, parent, tmp_memory, displays, 
+                          selenium, oz_page, parent, tmp_memory, displays,
                           clipboard):
 
     if client.lower() == 'rest':
         fail_to_add_subgroups_using_rest(user, users, hosts, group_list,
                                          parent, host)
     elif client.lower() == 'web gui':
-        fail_to_add_subgroups_using_op_gui(selenium, user, op_page, parent,
+        fail_to_add_subgroups_using_op_gui(selenium, user, oz_page, parent,
                                            group_list, tmp_memory, displays,
                                            clipboard)
     else:

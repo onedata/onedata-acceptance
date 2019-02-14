@@ -83,14 +83,18 @@ def revoke_space_support_in_op_panel_using_gui(selenium, user, provider_name,
 def configure_sync_parameters_for_space_in_op_panel_gui(selenium, user, space,
                                                         onepanel, popups,
                                                         config, sync_type):
+    tab_name = 'Storage synchronization'
     notify_type = 'info'
     notify_text_regexp = '.*[Cc]onfiguration.*space.*support.*changed.*'
+    button = 'Configure'
 
-    wt_expands_toolbar_icon_for_space_in_onepanel(selenium, user, space,
-                                                  onepanel)
-    wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, user,
-                                               'Configure data synchronization',
-                                               popups)
+    click_on_navigation_tab_in_space(user, tab_name, onepanel, selenium)
+
+    try:
+        wt_clicks_on_option_in_spaces_page(selenium, user, onepanel)
+    except RuntimeError:
+        wt_clicks_on_button_in_space_record(selenium, user, onepanel, button)
+
     options = yaml.load(config)
     storage_import = options['{} strategy'.format(sync_type.capitalize())]
     wt_select_strategy_in_conf_in_space_record(selenium, user, storage_import,
@@ -98,8 +102,13 @@ def configure_sync_parameters_for_space_in_op_panel_gui(selenium, user, space,
 
     if storage_import.lower() == 'disabled':
         button = 'Save configuration'
-        wt_clicks_on_button_in_space_record(selenium, user, onepanel,
-                                            button)
+        try:
+            wt_clicks_on_button_in_space_record(selenium, user, onepanel,
+                                                button)
+        except RuntimeError:
+            button = 'Start synchronization'
+            wt_clicks_on_button_in_space_record(selenium, user, onepanel,
+                                                button)
         return
 
     for field, input_box in zip(('Max depth', 'Scan interval [s]'),
@@ -116,7 +125,13 @@ def configure_sync_parameters_for_space_in_op_panel_gui(selenium, user, space,
                 selenium, user, field, onepanel)
 
     button = 'Save configuration'
-    wt_clicks_on_button_in_space_record(selenium, user, onepanel, button)
+    try:
+        wt_clicks_on_button_in_space_record(selenium, user, onepanel,
+                                            button)
+    except RuntimeError:
+        button = 'Start synchronization'
+        wt_clicks_on_button_in_space_record(selenium, user, onepanel,
+                                            button)
     notify_visible_with_text(selenium, user, notify_type, notify_text_regexp)
 
 

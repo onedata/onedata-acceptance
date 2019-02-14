@@ -8,7 +8,8 @@ __license__ = ("This software is released under the MIT license cited in "
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (Label, Button,
-                                               WebItemsSequence, NamedButton)
+                                               WebItemsSequence, NamedButton,
+                                               Input)
 
 
 class Space(PageObject):
@@ -18,6 +19,7 @@ class Space(PageObject):
 
 class ProviderPopover(PageObject):
     provider_name = id = Label('.provider-label')
+    provider_hostname = Input('.provider-host-text')
     copy_hostname = Button('.provider-host-copy-btn .oneicon-clipboard-copy')
     spaces_list = WebItemsSequence('.spaces-list li.provider-place-drop-space',
                                    cls=Space)

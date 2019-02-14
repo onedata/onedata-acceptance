@@ -57,11 +57,10 @@ def assert_popup_for_provider_has_appeared_on_map(selenium, browser_id,
                     'provider popup matches that of "{host}" provider'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_provider_hostname_matches_known_domain(selenium, browser_id,
-                                                  host, oz_page, hosts):
+                                                  host, oz_page, hosts, modals):
     driver = selenium[browser_id]
-    prov = oz_page(driver)['world map'].get_provider_with_displayed_popup()
+    displayed_domain = modals(driver).provider_popover.provider_hostname
     domain = hosts[host]['hostname']
-    displayed_domain = prov.hostname
     assert displayed_domain == domain, \
         'displayed {} provider hostname instead ' \
         'of expected {}'.format(displayed_domain, domain)
@@ -76,13 +75,10 @@ def assert_provider_hostname_matches_known_domain(selenium, browser_id,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_provider_hostname_matches_test_hostname(selenium, browser_id,
                                                    provider, hosts, oz_page,
-                                                   displays, clipboard):
+                                                   modals):
     driver = selenium[browser_id]
+    displayed_domain = modals(driver).provider_popover.provider_hostname
     expected_domain = "{}.test".format(hosts[provider]['hostname'])
-    page = oz_page(driver)['data']
-    page.elements_list[0]()
-    page.popover.copy_hostname()
-    displayed_domain = clipboard.paste(display=displays[browser_id])
     assert displayed_domain == expected_domain, \
         'displayed {} provider hostname instead ' \
         'of expected {}'.format(displayed_domain, expected_domain)
@@ -364,14 +360,32 @@ def assert_provider_not_working_in_oz_panel(selenium, browser_id,
                                               ''.format(provider))
 
 
+def click_on_provider_in_data_sidebar_with_provider_name(selenium, browser_id,
+                                                         oz_page, provider_name):
+    driver = selenium[browser_id]
+    oz_page(driver)['data'].elements_list[provider_name]()
+
+
 @wt(parsers.parse('user of {browser_id} clicks on provider "{provider}" '
                   'in data sidebar'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_on_provider_in_data_sidebar(selenium, browser_id, oz_page,
                                       provider, hosts):
+    provider = hosts[provider]['name']
+    click_on_provider_in_data_sidebar(selenium, browser_id, oz_page,
+                                      provider)
+
+
+@wt(parsers.parse('user of {browser_id} sees that "{provider}" provider is in '
+                  'providers list in data sidebar'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_provider_in_providers_list_in_data_sidebar(selenium, browser_id,
+                                                      oz_page, provider, hosts):
     driver = selenium[browser_id]
     provider = hosts[provider]['name']
-    oz_page(driver)['data'].elements_list[provider]()
+    providers_list = oz_page(driver)['data'].elements_list
+    assert not provider in providers_list, ('{} is in providers list '
+                                            'in data sidebar'.format(provider))
 
 
 @wt(parsers.re('user of (?P<browser_id>.+?) clicks on '

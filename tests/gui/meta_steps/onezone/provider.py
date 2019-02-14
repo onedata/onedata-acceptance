@@ -7,52 +7,45 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-from tests.gui.steps.onezone.logged_in_common import *
 from tests.gui.steps.common.url import refresh_site
 from tests.gui.steps.onezone.providers import (
     assert_provider_hostname_matches_test_hostname,
-    assert_popup_for_provider_with_name_has_appeared_on_map,
     assert_provider_hostname_matches_known_domain,
-    wt_click_on_provider_with_name_in_go_to_your_files_oz_panel)
+    click_on_provider_in_data_sidebar_with_provider_name,
+    assert_provider_in_providers_list_in_data_sidebar)
+from tests.gui.steps.onezone.spaces import click_on_spaces_in_the_sidebar
 
 
 def assert_provider_has_name_and_hostname_in_oz_gui(selenium, user, oz_page,
-                                                    provider_name, domain_provider,
-                                                    hosts,
-                                                    with_refresh=False,
+                                                    provider_name,
+                                                    domain_provider, hosts,
+                                                    modals, with_refresh=False,
                                                     test_domain=False):
-    panel_name = "GO TO YOUR FILES"
-    item_type = "provider"
+    option = 'Data'
 
     if with_refresh:
         refresh_site(selenium, user)
-    wt_expand_oz_panel(selenium, user, panel_name, oz_page)
-    assert_there_is_item_named_in_oz_panel_list(selenium, user, item_type,
-                                                provider_name, panel_name,
-                                                oz_page)
-    wt_click_on_provider_with_name_in_go_to_your_files_oz_panel(selenium, user,
-                                                                provider_name,
-                                                                oz_page)
-    assert_popup_for_provider_with_name_has_appeared_on_map(selenium, user,
-                                                            provider_name,
-                                                            oz_page)
+
+    click_on_spaces_in_the_sidebar(selenium, user, option, oz_page)
+    click_on_provider_in_data_sidebar_with_provider_name(selenium, user,
+                                                         oz_page, provider_name)
+
     if test_domain:
         assert_provider_hostname_matches_test_hostname(selenium, user,
                                                        domain_provider, hosts,
-                                                       oz_page)
+                                                       oz_page, modals)
     else:
         assert_provider_hostname_matches_known_domain(selenium, user,
                                                       domain_provider, oz_page,
-                                                      hosts)
+                                                      hosts, modals)
 
 
 def assert_there_is_no_provider_in_oz_gui(selenium, user, oz_page,
                                           provider_name, hosts):
-    panel_name = "GO TO YOUR FILES"
-    item_type = "provider"
+    option = 'Data'
 
     refresh_site(selenium, user)
-    wt_expand_oz_panel(selenium, user, panel_name, oz_page)
-    assert_there_is_no_item_named_in_oz_panel_list(selenium, user, item_type,
-                                                   provider_name, panel_name,
-                                                   oz_page, hosts)
+    click_on_spaces_in_the_sidebar(selenium, user, option, oz_page)
+    assert_provider_in_providers_list_in_data_sidebar(selenium, user, oz_page,
+                                                      provider_name, hosts)
+

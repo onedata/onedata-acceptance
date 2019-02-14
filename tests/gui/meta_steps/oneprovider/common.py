@@ -5,7 +5,7 @@ using web GUI
 import yaml
 from pytest_bdd import given, parsers
 
-from tests.gui.steps.oneprovider.common import wt_wait_for_op_session_to_start
+from tests.gui.meta_steps.onezone.common import g_wt_visit_op
 from tests.gui.steps.oneprovider.transfers import (
     replicate_item,
     assert_item_never_synchronized,
@@ -13,13 +13,6 @@ from tests.gui.steps.oneprovider.transfers import (
 from tests.gui.steps.oneprovider_common import (
     g_click_on_the_given_main_menu_tab,
     wt_click_on_the_given_main_menu_tab)
-from tests.gui.steps.onezone.logged_in_common import (
-    wt_expand_oz_panel,
-    assert_there_is_item_with_known_name_in_oz_panel_list)
-from tests.gui.steps.onezone.providers import (
-    wt_click_on_provider_in_go_to_your_files_oz_panel,
-    assert_popup_for_provider_has_appeared_on_map,
-    wt_click_on_btn_in_provider_popup)
 from tests.gui.steps.oneprovider.data_tab import (
     assert_file_browser_in_data_tab_in_op,
     click_tooltip_from_toolbar_in_data_tab_in_op,
@@ -45,26 +38,12 @@ def go_to_tab_in_provider(browser_id_list, tab_name, selenium):
 
 
 def navigate_to_tab_in_op_using_gui(selenium, user, oz_page, provider,
-                                    main_menu_tab, hosts):
-    panel_name = button_name = 'GO TO YOUR FILES'
-    item_type = 'provider'
+                                    main_menu_tab, hosts, modals):
     title = selenium[user].title
 
     if 'onezone' in title.lower():
-        wt_expand_oz_panel(selenium, user, panel_name, oz_page)
-        assert_there_is_item_with_known_name_in_oz_panel_list(selenium, user,
-                                                              item_type,
-                                                              provider,
-                                                              panel_name,
-                                                              oz_page, hosts)
-        wt_click_on_provider_in_go_to_your_files_oz_panel(selenium, user,
-                                                          provider,
-                                                          oz_page, hosts)
-        assert_popup_for_provider_has_appeared_on_map(selenium, user, provider,
-                                                      oz_page, hosts)
-        wt_click_on_btn_in_provider_popup(selenium, user, button_name, provider,
-                                          oz_page, hosts)
-        wt_wait_for_op_session_to_start(selenium, user)
+        g_wt_visit_op(selenium, oz_page, user, provider, hosts,
+                      modals)
 
     wt_click_on_the_given_main_menu_tab(selenium, user, main_menu_tab)
 

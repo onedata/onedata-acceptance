@@ -15,6 +15,7 @@ from tests.utils.acceptance_utils import wt
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.common.modals import Modals as modals
 from tests.gui.meta_steps.onezone.common import search_for_members
+from tests.gui.utils.generic import transform
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks show view expand button in '
@@ -146,14 +147,14 @@ def click_element_in_members_list(selenium, browser_id, member_name,
 
 @wt(parsers.parse('user of {browser_id} clicks on '
                   '"generate an invitation token" text in group '
-                  '"{group}" members groups list'))
+                  '"{group}" members {member} list'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_generate_token_in_subgroups_list(selenium, browser_id, group,
-                                           oz_page):
+                                           oz_page, member):
     page = oz_page(selenium[browser_id])['groups']
     page.elements_list[group]()
     page.elements_list[group].members()
-    page.main_page.members.groups.generate_token()
+    getattr(page.main_page.members, member).generate_token()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on "(?P<button>.*)" button '
@@ -199,10 +200,11 @@ def copy_token_from_modal(selenium, browser_id):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) closes '
-               '"Invite (?P<who>user|group) using token" modal'))
+               '"(?P<modal>.*)" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def close_invite_token_modal(selenium, browser_id):
-    modals(selenium[browser_id]).invite_using_token.close()
+def close_modal(selenium, browser_id, modal):
+    modal = transform(modal)
+    getattr(modals(selenium[browser_id]), modal).close()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>does not see|sees) '

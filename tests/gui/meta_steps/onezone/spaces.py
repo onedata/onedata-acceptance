@@ -9,23 +9,12 @@ __license__ = ("This software is released under the MIT license cited in "
 
 import pytest
 
-from tests.gui.steps.onezone.data_space_management import *
-from tests.gui.steps.common.miscellaneous import *
-from tests.gui.steps.modal import *
-from tests.gui.steps.oneprovider.spaces import *
 from tests.gui.steps.common.notifies import *
 from tests.gui.steps.common.copy_paste import *
-from tests.gui.steps.onezone.logged_in_common import *
-from tests.gui.steps.onezone.data_space_management import \
-    type_text_into_space_creation_edit_box_in_oz
-from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.common.url import refresh_site
-from tests.gui.utils.generic import parse_seq
-from tests.gui.steps.onezone.providers import assert_list_of_providers_is_empty
 from tests.gui.steps.onezone.spaces import *
 from tests.gui.steps.onepanel.common import wt_click_on_sidebar_item
 from tests.gui.steps.onepanel.spaces import *
-from tests.gui.steps.onezone.groups import *
 from tests.gui.steps.onezone.multibrowser_spaces import *
 from tests.gui.steps.onezone.members import *
 
@@ -107,6 +96,7 @@ def invite_other_users_to_space_using_gui(selenium, user,
     where = 'space'
     item_type = 'space invitation token'
     member = 'users'
+    modal = 'Invite using token'
 
     click_space_on_spaces_on_left_sidebar_menu(selenium, user, option,
                                                space_name, oz_page)
@@ -119,30 +109,29 @@ def invite_other_users_to_space_using_gui(selenium, user,
     send_invitation_token_to_browser(selenium, user, item_type, oz_page,
                                      displays, clipboard, user_list,
                                      tmp_memory)
-    close_invite_token_modal(selenium, user)
+    close_modal(selenium, user, modal)
 
 
 def request_space_support_using_gui(selenium, user, oz_page, space_name,
                                     tmp_memory, modals, displays,
                                     clipboard, receiver):
-    panel_name = "DATA SPACE MANAGEMENT"
-    option_name = "ADD STORAGE"
-    notify_type = "info"
-    notify_text_regexp = ".*copied.*to.*clipboard.*"
-    item_type = "token"
+    where = 'Spaces'
+    option = 'Providers'
+    notify_type = 'info'
+    text_regexp = '.*copied.*'
+    item_type = 'token'
 
-    wt_expand_oz_panel(selenium, user, panel_name, oz_page)
-    expand_settings_dropdown_for_space_in_oz(selenium, user, space_name,
-                                             oz_page)
-    click_on_settings_option_for_space_in_oz(selenium, user, option_name,
-                                             space_name, oz_page)
-
-    wait_for_add_storage_modal_to_appear(selenium, user, tmp_memory, modals)
-    assert_non_empty_token_in_add_storage_modal(user, tmp_memory)
-    cp_token_from_add_storage_modal(user, tmp_memory)
-    notify_visible_with_text(selenium, user, notify_type, notify_text_regexp)
-    send_copied_item_to_other_users(user, item_type, receiver, tmp_memory,
-                                    displays, clipboard)
+    click_on_spaces_in_the_sidebar(selenium, user, where, oz_page)
+    click_space_on_spaces_on_left_sidebar_menu(selenium, user, where.lower(),
+                                               space_name, oz_page)
+    click_on_members_of_space_on_left_sidebar_menu(selenium, user,
+                                                   space_name, option, oz_page)
+    click_get_support_button_on_providers_page(selenium, user, oz_page)
+    click_copy_button_on_request_support_page(selenium, user, oz_page,
+                                              displays, clipboard, tmp_memory)
+    notify_visible_with_text(selenium, user, notify_type, text_regexp)
+    send_copied_item_to_other_users(user, item_type, receiver,
+                                    tmp_memory, displays, clipboard)
 
 
 def join_space_in_oz_using_gui(selenium, user_list, oz_page, tmp_memory,
@@ -213,30 +202,32 @@ def assert_user_is_member_of_space_gui(selenium, user, space_name, oz_page,
 def assert_provider_does_not_support_space_in_oz_gui(selenium, user, oz_page,
                                                      space_name, provider_name,
                                                      hosts):
-    spaces_panel_name = "DATA SPACE MANAGEMENT"
-    providers_panel_name = "GO TO YOUR FILES"
-    item_type = "space"
+    where = 'spaces'
+    option = 'Providers'
+    number_of_providers = 0
 
+    click_space_on_spaces_on_left_sidebar_menu(selenium, user, where,
+                                               space_name, oz_page)
+    click_on_members_of_space_on_left_sidebar_menu(selenium, user,
+                                                   space_name, option, oz_page)
     refresh_site(selenium, user)
-    wt_expand_oz_panel(selenium, user, spaces_panel_name, oz_page)
-    expand_items_submenu_in_oz_panel(selenium, user, item_type, space_name,
-                                     spaces_panel_name, oz_page, hosts)
-    assert_no_such_supporting_providers_for_space(selenium, user, space_name,
-                                                  provider_name, oz_page, hosts)
-    wt_expand_oz_panel(selenium, user, providers_panel_name, oz_page)
-    assert_list_of_providers_is_empty(selenium, user, oz_page)
+    assert_no_provider_for_space(selenium, user, provider_name,
+                                 space_name, hosts, oz_page)
+    assert_length_of_providers_list_of_space(selenium, user, space_name,
+                                             number_of_providers, oz_page)
 
 
 def assert_space_is_supported_by_provider_in_oz_gui(selenium, user, oz_page,
                                                     space_name, provider_name,
-                                                    hosts, with_refresh=False):
-    panel_name = "DATA SPACE MANAGEMENT"
-    item_type = "space"
+                                                    hosts):
+    where = 'Spaces'
+    option = 'Providers'
 
-    if with_refresh:
-        refresh_site(selenium, user)
-    wt_expand_oz_panel(selenium, user, panel_name, oz_page)
-    expand_items_submenu_in_oz_panel(selenium, user, item_type, space_name,
-                                     panel_name, oz_page, hosts)
-    assert_supporting_providers_for_space_in_oz(selenium, user, space_name,
-                                                provider_name, oz_page, hosts)
+    click_on_spaces_in_the_sidebar(selenium, user, where, oz_page)
+    click_space_on_spaces_on_left_sidebar_menu(selenium, user, where.lower(),
+                                               space_name, oz_page)
+    click_on_members_of_space_on_left_sidebar_menu(selenium, user,
+                                                   space_name, option, oz_page)
+    assert_providers_list_contains_provider(selenium, user, provider_name,
+                                            hosts, oz_page)
+

@@ -28,7 +28,7 @@ Feature: Multi Browser invitation group to spaces
     And user of browser1 clicks Members of "space1" in the sidebar
     And user of browser1 clicks on "Invite group using token" button in groups list menu in "space1" space members view
     And user of browser1 copies invitation token from modal
-    And user of browser1 closes "Invite group using token" modal
+    And user of browser1 closes "Invite using token" modal
     And user of browser1 sends copied token to user of browser2
 
     And user of browser2 clicks on Groups in the main menu
@@ -60,7 +60,7 @@ Feature: Multi Browser invitation group to spaces
     And user of browser1 clicks Members of "space1" in the sidebar
     And user of browser1 clicks on "Invite group using token" button in groups list menu in "space1" space members view
     And user of browser1 copies invitation token from modal
-    And user of browser1 closes "Invite group using token" modal
+    And user of browser1 closes "Invite using token" modal
     And user of browser1 sends copied token to user of browser2
 
     And user of browser2 clicks on Groups in the main menu

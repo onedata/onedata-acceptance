@@ -248,11 +248,12 @@ def _check_files_tree(subtree, user, tmp_memory, cwd, selenium, op_page,
 
 
 def assert_space_content_in_op_gui(config, selenium, user, op_page, tmp_memory,
-                                   tmpdir, space_name, oz_page, provider, hosts):
+                                   tmpdir, space_name, oz_page, provider,
+                                   hosts, modals):
     tab_name = 'data'
 
     navigate_to_tab_in_op_using_gui(selenium, user, oz_page, provider, tab_name,
-                                    hosts)
+                                    hosts, modals)
     refresh_site(selenium, user)
     change_space_view_in_data_tab_in_op(selenium, user, space_name, op_page)
     assert_file_browser_in_data_tab_in_op(selenium, user, op_page, tmp_memory)

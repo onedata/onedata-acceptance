@@ -136,7 +136,7 @@ def modify_provider_using_known_hostname_in_op_panel(client, request, user,
 def assert_provider_has_given_name_and_test_hostname_in_oz(client, request, user,
                                                            provider_name, provider,
                                                            host, users, hosts,
-                                                           selenium, oz_page):
+                                                           selenium, oz_page, modals):
 
     test_domain = '{}.test'.format(hosts[provider]['hostname'])
 
@@ -151,7 +151,7 @@ def assert_provider_has_given_name_and_test_hostname_in_oz(client, request, user
                                 assert_provider_has_name_and_hostname_in_oz_gui
         assert_provider_has_name_and_hostname_in_oz_gui(selenium, user, oz_page,
                                                         provider_name, provider,
-                                                        hosts, with_refresh=True,
+                                                        hosts, modals, with_refresh=True,
                                                         test_domain=True)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
@@ -357,8 +357,7 @@ def w_assert_space_is_supported_by_provider_in_oz(client, request, user,
                                 assert_space_is_supported_by_provider_in_oz_gui
         assert_space_is_supported_by_provider_in_oz_gui(selenium, user, oz_page,
                                                         space_name,
-                                                        provider_name, hosts,
-                                                        with_refresh=True)
+                                                        provider_name, hosts)
     elif client.lower() == 'rest':
         from tests.mixed.steps.rest.onezone.space_management import \
                                 assert_space_is_supported_by_provider_in_oz_rest
@@ -514,10 +513,10 @@ def configure_sync_parameters_for_space_in_op_panel(client, request, user,
 @when(parsers.re('using (?P<client>.*), (?P<user>.+?) sees that '
                  'content for "(?P<space_name>.+?)" in "(?P<host>.+?)" '
                  'Oneprovider service is as follow:\n(?P<config>(.|\s)*)'))
-@repeat_failed(timeout=WAIT_BACKEND, interval=1.5)
+@repeat_failed(timeout=2 * WAIT_BACKEND, interval=0.5)
 def assert_space_content_in_op(client, request, config, selenium, user,
                                op_page, tmp_memory, tmpdir, users, hosts,
-                               space_name, spaces, host, oz_page):
+                               space_name, spaces, host, oz_page, modals):
     """ Assert space has given content in provider.
 
      space content format given in yaml is as follow:
@@ -539,7 +538,7 @@ def assert_space_content_in_op(client, request, config, selenium, user,
                                                 assert_space_content_in_op_gui
         assert_space_content_in_op_gui(config, selenium, user, op_page,
                                        tmp_memory, tmpdir, space_name, oz_page,
-                                       host, hosts)
+                                       host, hosts, modals)
     elif client.lower() == 'rest':
         from tests.mixed.steps.rest.oneprovider.data import \
                                                 assert_space_content_in_op_rest
