@@ -38,7 +38,7 @@ def create_spaces_in_oz(client, user, space_list, host, hosts, users, selenium,
                  'named (?P<space_list>.+?) in "(?P<host>.+?)" Onezone '
                  'service'))
 def leave_spaces_in_oz(client, request, user, space_list, host,
-                       selenium, oz_page, tmp_memory, users, hosts, spaces):
+                       selenium, oz_page, users, hosts, spaces):
 
     if client.lower() == 'rest':
         from tests.mixed.steps.rest.onezone.space_management import \
@@ -57,8 +57,7 @@ def leave_spaces_in_oz(client, request, user, space_list, host,
                  'named (?P<space_list>.+?) to (?P<new_names_list>.+?) '
                  'in "(?P<host>.+?)" Onezone service'))
 def rename_spaces_in_oz(client, request, user, space_list, new_names_list,
-                        host, selenium, oz_page, tmp_memory, users, hosts,
-                        spaces):
+                        host, selenium, oz_page, users, hosts, spaces):
 
     if client.lower() == 'rest':
         from tests.mixed.steps.rest.onezone.space_management import \
@@ -159,8 +158,7 @@ def add_users_to_space_in_oz(client, request, user_list, space_name, host,
                  '"(?P<space_name>.+?)" in "(?P<host>.+?)" Onezone service'))
 def remove_provider_support_for_space_in_oz(client, request, user,
                                             provider_name, space_name, host,
-                                            selenium, oz_page, tmp_memory,
-                                            users, hosts, spaces,
+                                            selenium, users, hosts, spaces,
                                             admin_credentials, onepanel,
                                             popups):
 
@@ -185,7 +183,7 @@ def remove_provider_support_for_space_in_oz(client, request, user,
                  '(?P<user_list>.+?) to space named "(?P<space_name>.+?)" in '
                  '"(?P<host>.+?)" Onezone service'))
 def invite_other_users_to_space(client, request, user, user_list, space_name,
-                                host, selenium, op_page, tmp_memory, users,
+                                host, selenium, tmp_memory, users,
                                 hosts, spaces, displays, clipboard, oz_page):
 
     if client.lower() == 'rest':
@@ -366,7 +364,8 @@ def assert_provider_has_given_name_and_known_hostname_in_oz(client, user,
                                                             provider_name,
                                                             provider, host,
                                                             users, hosts,
-                                                            selenium, oz_page, modals):
+                                                            selenium, oz_page,
+                                                            modals):
 
         provider_name = hosts[provider_name]['name']
 

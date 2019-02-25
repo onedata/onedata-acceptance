@@ -58,6 +58,7 @@ def remove_group(selenium, browser_id, group, oz_page):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_groups_using_op_gui(selenium, browser_id, group_list, oz_page):
     operation = 'Create'
+
     for group in parse_seq(group_list):
         click_create_or_join_group_button_in_panel(selenium, browser_id,
                                                    operation, oz_page)
@@ -70,13 +71,14 @@ def create_groups_using_op_gui(selenium, browser_id, group_list, oz_page):
 
 def see_groups_using_op_gui(selenium, user, oz_page, group_list):
     option = 'sees'
+
     for group in parse_seq(group_list):
         assert_group_exists(selenium, user, option, group, oz_page)
 
 
-def rename_groups_using_op_gui(selenium, user, oz_page, group_list, new_names,
-                               tmp_memory):
+def rename_groups_using_op_gui(selenium, user, oz_page, group_list, new_names):
     confirm_type = 'enter'
+
     for group, new_name in zip(parse_seq(group_list), parse_seq(new_names)):
         rename_group(selenium, user, group, new_name, confirm_type,
                      oz_page)
@@ -85,16 +87,17 @@ def rename_groups_using_op_gui(selenium, user, oz_page, group_list, new_names,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def fail_to_see_groups_using_op_gui(selenium, user, oz_page, group_list):
     option = 'does not see'
+
     for group in parse_seq(group_list):
         assert_group_exists(selenium, user, option, group, oz_page)
 
 
-def leave_groups_using_op_gui(selenium, user, oz_page, group_list, tmp_memory):
+def leave_groups_using_op_gui(selenium, user, oz_page, group_list):
     for group in parse_seq(group_list):
         leave_group(selenium, user, group, oz_page)
 
 
-def assert_subgroups_using_op_gui(selenium, user, oz_page, group_list, parent):
+def _select_mode_view_in_members_subpage(selenium, user, oz_page, parent):
     where = 'group'
     direct_selector = 'effective'
     mode_selector = 'memberships'
@@ -109,31 +112,24 @@ def assert_subgroups_using_op_gui(selenium, user, oz_page, group_list, parent):
                                        oz_page, where)
     click_element_in_members_list(selenium, user, user,
                                   oz_page, where, list_type)
+
+
+def assert_subgroups_using_op_gui(selenium, user, oz_page, group_list, parent):
+    where = 'group'
+
+    _select_mode_view_in_members_subpage(selenium, user, oz_page, parent)
     for group in parse_seq(group_list):
         assert_element_is_member_of_parent_in_memberships(selenium, user,
-                                                          group,
-                                                          parent,
-                                                          where,
-                                                          where,
+                                                          group, parent,
+                                                          where, where,
                                                           oz_page, where)
 
 
 def fail_to_see_subgroups_using_op_gui(selenium, user, oz_page,
                                        group_list, parent):
     where = 'group'
-    direct_selector = 'effective'
-    mode_selector = 'memberships'
-    list_type = 'users'
-    subpage = 'members'
 
-    go_to_group_subpage(selenium, user, parent, subpage, oz_page)
-    click_show_view_option(selenium, user, oz_page, where)
-    click_mode_view_in_members_subpage(selenium, user, direct_selector,
-                                       oz_page, where)
-    click_mode_view_in_members_subpage(selenium, user, mode_selector,
-                                       oz_page, where)
-    click_element_in_members_list(selenium, user, user,
-                                  oz_page, where, list_type)
+    _select_mode_view_in_members_subpage(selenium, user, oz_page, parent)
     for group in parse_seq(group_list):
         assert_element_is_not_member_of_parent_in_memberships(selenium, user,
                                                               group, where,
@@ -182,8 +178,8 @@ def create_group_token_to_invite_group_using_op_gui(selenium, user, user2,
 @then(parsers.re('(?P<user>\w+) joins group he was invited to using '
                  'Oneprovider web GUI'))
 def join_group_using_op_gui(selenium, user, oz_page, tmp_memory):
-
     confirm_type = 'enter'
+
     join_group(selenium, user, confirm_type, oz_page, tmp_memory)
 
 
@@ -200,18 +196,18 @@ def add_subgroups_using_op_gui(selenium, user, oz_page, parent, group_list,
 def remove_subgroups_using_op_gui(selenium, user, oz_page, group_list,
                                   tmp_memory, parent):
     member_type = 'group'
+
     for child in parse_seq(group_list):
         remove_member_from_group(selenium, user, child, member_type, parent,
                                  oz_page, tmp_memory)
 
 
 def fail_to_rename_groups_using_op_gui(selenium, user, oz_page, group_list,
-                                       new_names, tmp_memory):
+                                       new_names):
     text = 'failed'
 
     for group, new_name in zip(parse_seq(group_list), parse_seq(new_names)):
-        rename_groups_using_op_gui(selenium, user, oz_page, group, new_name,
-                                   tmp_memory)
+        rename_groups_using_op_gui(selenium, user, oz_page, group, new_name)
         assert_error_modal_with_text_appeared(selenium, user, text, oz_page)
 
 
@@ -224,6 +220,7 @@ def fail_to_add_subgroups_using_op_gui(selenium, user, oz_page, parent,
     for child in parse_seq(group_list):
         error = 'joining group as subgroup failed'
         modal = 'error'
+
         add_group_as_subgroup(selenium, user, child, oz_page, tmp_memory)
         assert_error_modal_with_text_appeared(selenium, user, error,
                                               oz_page)

@@ -199,8 +199,7 @@ def copy_token_from_modal(selenium, browser_id):
     modals(selenium[browser_id]).invite_using_token.copy()
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) closes '
-               '"(?P<modal>.*)" modal'))
+@wt(parsers.re('user of (?P<browser_id>.*) closes "(?P<modal>.*)" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def close_modal(selenium, browser_id, modal):
     modal = transform(modal)

@@ -16,7 +16,6 @@ from tests.utils.acceptance_utils import *
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.utils import repeat_failed
-from tests.gui.meta_steps.onezone.common import click_visit_provider
 
 
 @when(parsers.parse('user of {browser_id} sees that provider popup for '
@@ -57,13 +56,13 @@ def assert_popup_for_provider_has_appeared_on_map(selenium, browser_id,
                     'provider popup matches that of "{host}" provider'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_provider_hostname_matches_known_domain(selenium, browser_id,
-                                                  host, oz_page, hosts, modals):
+                                                  host, hosts, modals):
     driver = selenium[browser_id]
     displayed_domain = modals(driver).provider_popover.provider_hostname
     domain = hosts[host]['hostname']
     assert displayed_domain == domain, \
-        'displayed {} provider hostname instead ' \
-        'of expected {}'.format(displayed_domain, domain)
+        ('displayed {} provider hostname instead of expected {}'
+         .format(displayed_domain, domain))
 
 
 @when(parsers.parse('user of {browser_id} sees that hostname in displayed '
@@ -74,14 +73,13 @@ def assert_provider_hostname_matches_known_domain(selenium, browser_id,
                     '"{provider}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_provider_hostname_matches_test_hostname(selenium, browser_id,
-                                                   provider, hosts, oz_page,
-                                                   modals):
+                                                   provider, hosts, modals):
     driver = selenium[browser_id]
     displayed_domain = modals(driver).provider_popover.provider_hostname
     expected_domain = "{}.test".format(hosts[provider]['hostname'])
     assert displayed_domain == expected_domain, \
-        'displayed {} provider hostname instead ' \
-        'of expected {}'.format(displayed_domain, expected_domain)
+        ('displayed {} provider hostname instead of expected {}'
+         .format(displayed_domain, expected_domain))
 
 
 def _click_on_btn_in_provider_popup(driver, btn, provider, oz_page, hosts):
@@ -384,7 +382,7 @@ def assert_provider_in_providers_list_in_data_sidebar(selenium, browser_id,
     driver = selenium[browser_id]
     provider = hosts[provider]['name']
     providers_list = oz_page(driver)['data'].elements_list
-    assert not provider in providers_list, ('{} is in providers list '
+    assert provider not in providers_list, ('{} is in providers list '
                                             'in data sidebar'.format(provider))
 
 

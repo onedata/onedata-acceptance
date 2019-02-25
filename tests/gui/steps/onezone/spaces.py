@@ -90,8 +90,8 @@ def click_on_spaces_in_the_sidebar(selenium, browser_id, option, oz_page):
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks "(?P<name>.*?)" '
                'on the (?P<option>spaces|groups) list in the sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_space_on_spaces_on_left_sidebar_menu(selenium, browser_id, option,
-                                               name, oz_page):
+def click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option,
+                                                name, oz_page):
     driver = selenium[browser_id]
     oz_page(driver)[option].elements_list[name].click()
 

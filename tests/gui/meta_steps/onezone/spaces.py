@@ -31,26 +31,27 @@ def create_spaces_in_oz_using_gui(selenium, user, oz_page, space_list):
 
 
 def leave_spaces_in_oz_using_gui(selenium, user, space_list, oz_page):
-    option = 'spaces'
-    button = 'Leave space'
-    button_name = 'yes'
+    where = 'spaces'
+    option = 'Leave space'
+    confirmation_button = 'yes'
 
     for space_name in parse_seq(space_list):
-        click_space_on_spaces_on_left_sidebar_menu(selenium, user, option,
-                                                   space_name, oz_page)
-        click_on_option_in_menu(selenium, user, button, oz_page)
+        click_element_on_lists_on_left_sidebar_menu(selenium, user, where,
+                                                    space_name, oz_page)
+        click_on_option_in_menu(selenium, user, option, oz_page)
         click_confirm_or_cancel_button_on_leave_space_page(selenium, user,
-                                                           button_name)
+                                                           confirmation_button)
 
 
 def rename_spaces_in_oz_using_gui(selenium, user, oz_page, space_list,
                                   new_names_list):
     where = 'spaces'
     option = 'enter'
+
     for space_name, new_space_name in zip(parse_seq(space_list),
                                           parse_seq(new_names_list)):
-        click_space_on_spaces_on_left_sidebar_menu(selenium, user, where,
-                                                   space_name, oz_page)
+        click_element_on_lists_on_left_sidebar_menu(selenium, user, where,
+                                                    space_name, oz_page)
         type_space_name_on_rename_space_input_on_overview_page(selenium,
                                                                user,
                                                                new_space_name,
@@ -61,8 +62,9 @@ def rename_spaces_in_oz_using_gui(selenium, user, oz_page, space_list,
 def set_space_as_home_in_oz_using_gui(selenium, user, oz_page, space_name):
     where = 'spaces'
     button = 'Toggle default space'
-    click_space_on_spaces_on_left_sidebar_menu(selenium, user, where,
-                                               space_name, oz_page)
+
+    click_element_on_lists_on_left_sidebar_menu(selenium, user, where,
+                                                space_name, oz_page)
     click_on_option_in_menu(selenium, user, button, oz_page)
 
 
@@ -72,7 +74,7 @@ def remove_provider_support_for_space_in_oz_using_gui(selenium, user,
     sidebar = 'CLUSTERS'
     record = 'Spaces'
     option = 'Revoke space support'
-    button = 'Yes, revoke'
+    confirmation_button = 'Yes, revoke'
     notify_type = 'info'
     text_regexp = '.*[Ss]upport.*revoked.*'
 
@@ -82,7 +84,7 @@ def remove_provider_support_for_space_in_oz_using_gui(selenium, user,
     wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, user,
                                                option, popups)
     wt_clicks_on_btn_in_revoke_space_support(selenium, user,
-                                             button, modals)
+                                             confirmation_button, modals)
     notify_visible_with_text(selenium, user, notify_type, text_regexp)
 
 
@@ -98,8 +100,8 @@ def invite_other_users_to_space_using_gui(selenium, user,
     member = 'users'
     modal = 'Invite using token'
 
-    click_space_on_spaces_on_left_sidebar_menu(selenium, user, option,
-                                               space_name, oz_page)
+    click_element_on_lists_on_left_sidebar_menu(selenium, user, option,
+                                                space_name, oz_page)
     click_on_members_of_space_on_left_sidebar_menu(selenium, user,
                                                    space_name, option_in_space,
                                                    oz_page)
@@ -113,8 +115,7 @@ def invite_other_users_to_space_using_gui(selenium, user,
 
 
 def request_space_support_using_gui(selenium, user, oz_page, space_name,
-                                    tmp_memory, modals, displays,
-                                    clipboard, receiver):
+                                    tmp_memory, displays, clipboard, receiver):
     where = 'Spaces'
     option = 'Providers'
     notify_type = 'info'
@@ -122,8 +123,8 @@ def request_space_support_using_gui(selenium, user, oz_page, space_name,
     item_type = 'token'
 
     click_on_spaces_in_the_sidebar(selenium, user, where, oz_page)
-    click_space_on_spaces_on_left_sidebar_menu(selenium, user, where.lower(),
-                                               space_name, oz_page)
+    click_element_on_lists_on_left_sidebar_menu(selenium, user, where.lower(),
+                                                space_name, oz_page)
     click_on_members_of_space_on_left_sidebar_menu(selenium, user,
                                                    space_name, option, oz_page)
     click_get_support_button_on_providers_page(selenium, user, oz_page)
@@ -182,6 +183,7 @@ def assert_space_is_home_space_in_oz_gui(selenium, user, oz_page, space_name):
 def assert_there_is_no_provider_for_space_in_oz_gui(selenium, user, oz_page,
                                                     space_name):
     number = 0
+
     assert_number_of_supporting_providers_of_space(selenium, user,
                                                    number, space_name, oz_page)
 
@@ -190,11 +192,11 @@ def assert_user_is_member_of_space_gui(selenium, user, space_name, oz_page,
                                        user_list):
     where = 'Members'
     option = 'sees'
+
     click_on_members_of_space_on_left_sidebar_menu(selenium, user,
                                                    space_name, where, oz_page)
 
     for username in parse_seq(user_list):
-
         assert_user_is_in_space_members_list(selenium, user, option,
                                              username, space_name, oz_page)
 
@@ -206,8 +208,8 @@ def assert_provider_does_not_support_space_in_oz_gui(selenium, user, oz_page,
     option = 'Providers'
     number_of_providers = 0
 
-    click_space_on_spaces_on_left_sidebar_menu(selenium, user, where,
-                                               space_name, oz_page)
+    click_element_on_lists_on_left_sidebar_menu(selenium, user, where,
+                                                space_name, oz_page)
     click_on_members_of_space_on_left_sidebar_menu(selenium, user,
                                                    space_name, option, oz_page)
     refresh_site(selenium, user)
@@ -224,8 +226,8 @@ def assert_space_is_supported_by_provider_in_oz_gui(selenium, user, oz_page,
     option = 'Providers'
 
     click_on_spaces_in_the_sidebar(selenium, user, where, oz_page)
-    click_space_on_spaces_on_left_sidebar_menu(selenium, user, where.lower(),
-                                               space_name, oz_page)
+    click_element_on_lists_on_left_sidebar_menu(selenium, user, where.lower(),
+                                                space_name, oz_page)
     click_on_members_of_space_on_left_sidebar_menu(selenium, user,
                                                    space_name, option, oz_page)
     assert_providers_list_contains_provider(selenium, user, provider_name,
