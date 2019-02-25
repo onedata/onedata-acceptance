@@ -15,6 +15,10 @@ from tests.gui.utils.core.web_objects import ButtonWithTextPageObject
 
 class WelcomePage(PageObject):
     create_new_cluster = NamedButton('button', text='Create new cluster')
+    create_onezone_cluster = NamedButton('.btn-primary',
+                                         text='Create Onezone cluster')
+    create_oneprovider_cluster = NamedButton('.btn-primary',
+                                             text='Create Oneprovider cluster')
 
 
 class ClusterRecord(ButtonWithTextPageObject):

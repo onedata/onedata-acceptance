@@ -184,8 +184,8 @@ def add_group_as_subgroup(selenium, browser_id, group, oz_page, tmp_memory):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_error_page_appeared(selenium, browser_id, text, oz_page):
     page = oz_page(selenium[browser_id])['groups']
-    assert (page.main_page.error_label == text,
-            'page with text "{}" not found'.format(text))
+    assert page.main_page.error_label == text, \
+        'page with text "{}" not found'.format(text)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) confirms group rename '

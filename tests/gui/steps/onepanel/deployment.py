@@ -155,6 +155,7 @@ def wt_click_yes_in_warning_modal_in_dns_setup_step(selenium, browser_id, modals
                  'button in deployment setup IP step'))
 @then(parsers.re('user of (?P<browser_id>.*) clicks on "Setup IP addresses" '
                  'button in deployment setup IP step'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_setup_ip_in_deployment_setup_ip(selenium, browser_id, onepanel):
     (onepanel(selenium[browser_id])
             .content
@@ -200,6 +201,7 @@ def wt_assert_ip_address_in_deployment_setup_ip(selenium, browser_id, onepanel,
 @then(parsers.re('user of (?P<browser_id>.*) sees that IP address of '
                  '"(?P<host>.*)" host is that of "(?P<ip_host>.*)" in'
                  ' deployment setup IP step'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_ip_address_of_known_host_in_deployment_setup_ip(selenium, host,
                                                               browser_id, hosts,
                                                               onepanel, ip_host):
@@ -244,7 +246,7 @@ def wt_deactivate_lets_encrypt_toggle_in_deployment_step4(selenium, browser_id,
                     'selector in step 5 of deployment process in Onepanel'))
 @then(parsers.parse('user of {browser_id} selects {storage_type} from storage '
                     'selector in step 5 of deployment process in Onepanel'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+
 def wt_select_storage_type_in_deployment_step5(selenium, browser_id,
                                                storage_type, onepanel):
     storage_selector = (onepanel(selenium[browser_id]).content.deployment
@@ -316,3 +318,29 @@ def wt_assert_storage_attr_in_deployment_step5(selenium, browser_id, st,
     displayed_val = getattr(storages[st], transform(attr)).lower()
     assert displayed_val == val.lower(), \
         'expected {} as storage attribute; got {}'.format(displayed_val, val)
+
+
+@wt(parsers.re('user of (?P<browser_id>.*?) types received registration token '
+               'in step 2 of deployment process in Onepanel'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def wt_type_registration_token_in_step2(selenium, browser_id, onepanel, tmp_memory):
+
+    onepanel(selenium[browser_id]).content.deployment.step2.token = tmp_memory[browser_id]['mailbox']['token']
+
+
+@wt(parsers.re('user of (?P<browser_id>.*?) clicks proceed button in step 2 '
+               'of deployment process in Onepanel'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def wt_click_proceed_button_in_step2(selenium, browser_id, onepanel, tmp_memory):
+    onepanel(selenium[browser_id]).content.deployment.step2.proceed()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*?) clicks on link to go '
+               'to Standalone Onepanel interface in last step '
+               'of deployment process in Onepanel'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def wt_go_to_standalone_onepanel_interface(selenium, browser_id, onepanel):
+    onepanel(selenium[browser_id]).content.deployment.laststep.link()
+
+
+

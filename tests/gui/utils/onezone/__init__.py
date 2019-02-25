@@ -16,6 +16,7 @@ from .spaces_page import SpacesPage
 from .data_page import DataPage
 from .groups.groups_page import GroupsPage
 from .tokens_page import TokensPage
+from .clusters_page import ClustersPage
 from .manage_account_page import ManageAccountPage
 
 
@@ -29,6 +30,7 @@ class OZLoggedIn(object):
         'tokens': TokensPage,
         'spaces': SpacesPage,
         'groups': GroupsPage,
+        'clusters': ClustersPage
     }
 
     def __init__(self, driver):
