@@ -263,11 +263,11 @@ def assert_space_content_in_op_gui(config, selenium, user, op_page, tmp_memory,
 
 def see_num_of_items_in_path_in_op_gui(selenium, user, tmp_memory, op_page,
                                        path, space, num, oz_page, provider,
-                                       hosts):
+                                       hosts, modals):
     tab_name = 'data'
 
     navigate_to_tab_in_op_using_gui(selenium, user, oz_page, provider,
-                                    tab_name, hosts)
+                                    tab_name, hosts, modals)
     _select_item(selenium, user, space, op_page, tmp_memory, path)
     refresh_site(selenium, user)
     assert_file_browser_in_data_tab_in_op(selenium, user, op_page, tmp_memory)
@@ -276,11 +276,11 @@ def see_num_of_items_in_path_in_op_gui(selenium, user, tmp_memory, op_page,
 
 def assert_file_content_in_op_gui(text, path, space, selenium, user, users,
                                   provider, hosts, oz_page, op_page,
-                                  tmp_memory, tmpdir):
+                                  tmp_memory, tmpdir, modals):
     tab_name = 'data'
 
     navigate_to_tab_in_op_using_gui(selenium, user, oz_page, provider,
-                                    tab_name, hosts)
+                                    tab_name, hosts, modals)
     item_name = _select_item(selenium, user, space, op_page, tmp_memory, path)
     double_click_on_item_in_file_browser(user, item_name, tmp_memory)
     has_downloaded_file_content(user, item_name, text, tmpdir)
