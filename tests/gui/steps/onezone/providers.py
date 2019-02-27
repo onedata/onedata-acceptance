@@ -407,6 +407,7 @@ def assert_space_is_in_spaces_list_in_provider_popover(selenium, browser_id,
 
 @wt(parsers.parse('user of {browser_id} sees that home of "{provider}" has '
                   'appeared in the data sidebar'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_home_space_has_appeared_on_provider_on_left_sidebar_menu(selenium,
                                                                     browser_id,
                                                                     provider,
