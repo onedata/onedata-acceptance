@@ -44,7 +44,7 @@ Feature: Basic management
   | REST    | web GUI   |
 
 
-  Scenario Outline: User unsupport space using <client1> and using <client2> he sees that it has been unsupported
+  Scenario Outline: Admin unsupport space using <client1> and using <client2> he sees that it has been unsupported
     When using <client1>, admin removes support from provider "oneprovider-1" for space named "space1" in "onezone" Onezone service
     Then using <client2>, user1 sees that there is no supporting provider "oneprovider-1" for space named "space1" in "onezone" Onezone service
 

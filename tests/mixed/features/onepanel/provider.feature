@@ -20,7 +20,6 @@ Feature: Provider management in Onepanel
     And opened browsers with [admin, user1] logged to [oneprovider-1 provider panel, onezone] service
 
 
-#  TODO: VFS-5149 rewrite test to new gui
   Scenario Outline: User changes provider name and domain using <client2> and he sees in <client1> that they have changed
     Given provider name set to name of "oneprovider-1" by admin in Onepanel
     When using web GUI, user1 refreshes site
@@ -31,7 +30,6 @@ Feature: Provider management in Onepanel
     And using <client1>, admin modifies provider named "pro1" changing his name and domain to match that of "oneprovider-1" provider in "oneprovider-1" Oneprovider panel service
 
 
-#  TODO: VFS-5149 rewrite test to new gui
   Scenario Outline: User deregisters provider and registers it again
     Given provider name set to name of "oneprovider-1" by admin in Onepanel
     When using web GUI, user1 refreshes site

@@ -7,8 +7,6 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-import pytest
-
 from tests.gui.steps.common.notifies import *
 from tests.gui.steps.common.copy_paste import *
 from tests.gui.steps.common.url import refresh_site
@@ -17,6 +15,7 @@ from tests.gui.steps.onepanel.common import wt_click_on_sidebar_item
 from tests.gui.steps.onepanel.spaces import *
 from tests.gui.steps.onezone.multibrowser_spaces import *
 from tests.gui.steps.onezone.members import *
+from tests.gui.steps.common.miscellaneous import close_modal
 
 
 def create_spaces_in_oz_using_gui(selenium, user, oz_page, space_list):
@@ -111,7 +110,7 @@ def invite_other_users_to_space_using_gui(selenium, user,
     send_invitation_token_to_browser(selenium, user, item_type, oz_page,
                                      displays, clipboard, user_list,
                                      tmp_memory)
-    close_modal(selenium, user, modal)
+    close_modal(selenium, user, modal, modals)
 
 
 def request_space_support_using_gui(selenium, user, oz_page, space_name,
@@ -215,8 +214,6 @@ def assert_provider_does_not_support_space_in_oz_gui(selenium, user, oz_page,
     refresh_site(selenium, user)
     assert_no_provider_for_space(selenium, user, provider_name,
                                  space_name, hosts, oz_page)
-    assert_length_of_providers_list_of_space(selenium, user, space_name,
-                                             number_of_providers, oz_page)
 
 
 def assert_space_is_supported_by_provider_in_oz_gui(selenium, user, oz_page,

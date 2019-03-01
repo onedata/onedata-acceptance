@@ -374,11 +374,12 @@ def click_on_provider_in_data_sidebar(selenium, browser_id, oz_page,
                                       provider)
 
 
-@wt(parsers.parse('user of {browser_id} sees that "{provider}" provider is in '
-                  'providers list in data sidebar'))
+@wt(parsers.parse('user of {browser_id} sees that "{provider}" provider is not '
+                  'in providers list in data sidebar'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_provider_in_providers_list_in_data_sidebar(selenium, browser_id,
-                                                      oz_page, provider, hosts):
+def assert_provider_is_not_in_providers_list_in_data_sidebar(selenium, browser_id,
+                                                             oz_page, provider,
+                                                             hosts):
     driver = selenium[browser_id]
     provider = hosts[provider]['name']
     providers_list = oz_page(driver)['data'].elements_list

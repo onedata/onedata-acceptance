@@ -12,7 +12,7 @@ from tests.gui.steps.onezone.providers import (
     assert_provider_hostname_matches_test_hostname,
     assert_provider_hostname_matches_known_domain,
     click_on_provider_in_data_sidebar_with_provider_name,
-    assert_provider_in_providers_list_in_data_sidebar)
+    assert_provider_is_not_in_providers_list_in_data_sidebar)
 from tests.gui.steps.onezone.spaces import click_on_spaces_in_the_sidebar
 
 
@@ -46,6 +46,7 @@ def assert_there_is_no_provider_in_oz_gui(selenium, user, oz_page,
 
     refresh_site(selenium, user)
     click_on_spaces_in_the_sidebar(selenium, user, option, oz_page)
-    assert_provider_in_providers_list_in_data_sidebar(selenium, user, oz_page,
-                                                      provider_name, hosts)
+    assert_provider_is_not_in_providers_list_in_data_sidebar(selenium, user,
+                                                             oz_page,
+                                                             provider_name, hosts)
 

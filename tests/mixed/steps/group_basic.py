@@ -2,8 +2,8 @@
 basic operation on groups using web GUI and swagger.
 """
 
-__author__ = "Michal Stanisz"
-__copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
+__author__ = "Michal Stanisz, Agnieszka Warchol"
+__copyright__ = "Copyright (C) 2017-2019 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
@@ -84,12 +84,12 @@ def fail_to_see_groups(client, user, group_list, host, hosts, users,
 @then(parsers.re('using (?P<client>.*), (?P<user>\w+) removes groups? '
                  '(?P<group_list>.*) in "(?P<host>.*)" Onezone service'))
 def remove_groups(client, user, group_list, host, hosts, users, selenium, 
-                  op_page):
+                  oz_page):
     
     if client.lower() == 'rest':
         remove_groups_using_rest(user, users, hosts, group_list, host)
     elif client.lower() == 'web gui':
-        remove_groups_using_op_gui(selenium, user, op_page, group_list)
+        remove_group(selenium, user, group_list, oz_page)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
@@ -251,12 +251,9 @@ def fail_to_remove_groups(client, user, group_list, request, host, hosts, users,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>\w+) fails to join'
-                 ' groups? (?P<group_list>.*?) as subgroup to group '
-                 '"(?P<parent>.*?)" in "(?P<host>.*)" Onezone service'))
-@then(parsers.re('using (?P<client>.*), (?P<user>\w+) fails to join'
-                 ' groups? (?P<group_list>.*?) as subgroup to group '
-                 '"(?P<parent>.*?)" in "(?P<host>.*)" Onezone service'))
+@wt(parsers.re('using (?P<client>.*), (?P<user>\w+) fails to join'
+               ' groups? (?P<group_list>.*?) as subgroup to group '
+               '"(?P<parent>.*?)" in "(?P<host>.*)" Onezone service'))
 def fail_to_add_subgroups(client, user, group_list, host, hosts, users, 
                           selenium, oz_page, parent, tmp_memory, displays,
                           clipboard):

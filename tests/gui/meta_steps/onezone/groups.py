@@ -44,14 +44,15 @@ def leave_group(selenium, browser_id, group, oz_page):
     click_modal_button(selenium, browser_id, option, modal, oz_page)
 
 
-@wt(parsers.parse('user of {browser_id} removes group "{group}"'))
+@wt(parsers.parse('user of {browser_id} removes group "{group_list}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def remove_group(selenium, browser_id, group, oz_page):
+def remove_group(selenium, browser_id, group_list, oz_page):
     option = 'Remove'
     modal = "REMOVE GROUP"
 
-    click_on_group_menu_button(selenium, browser_id, option, group, oz_page)
-    click_modal_button(selenium, browser_id, option, modal, oz_page)
+    for group in group_list:
+        click_on_group_menu_button(selenium, browser_id, option, group, oz_page)
+        click_modal_button(selenium, browser_id, option, modal, oz_page)
 
 
 @wt(parsers.parse('user of {browser_id} creates group "{group_list}"'))
@@ -148,15 +149,13 @@ def _create_group_token(selenium, user, user2, oz_page, name,
     click_on_option_in_members_list_menu(selenium, user, button,
                                          name, where, member, oz_page)
     copy_token_from_modal(selenium, user)
-    close_modal(selenium, user, modal)
+    close_modal(selenium, user, modal, modals)
     send_copied_item_to_other_users(user, item_type, user2,
                                     tmp_memory, displays, clipboard)
 
 
-@when(parsers.re('(?P<user>\w+) invites (?P<user2>\w+) to group '
-                 '"(?P<group_name>.*)" using Oneprovider web GUI'))
-@then(parsers.re('(?P<user>\w+) invites (?P<user2>\w+) to group '
-                 '"(?P<name>.*)" using Oneprovider web GUI'))
+@wt(parsers.re('(?P<user>\w+) invites (?P<user2>\w+) to group '
+               '"(?P<name>.*)" using Oneprovider web GUI'))
 def create_group_token_to_invite_user_using_op_gui(selenium, user, user2,
                                                    oz_page, name, tmp_memory,
                                                    displays, clipboard):
@@ -173,10 +172,8 @@ def create_group_token_to_invite_group_using_op_gui(selenium, user, user2,
                         tmp_memory, displays, clipboard, member)
 
 
-@when(parsers.re('(?P<user>\w+) joins group he was invited to using '
-                 'Oneprovider web GUI'))
-@then(parsers.re('(?P<user>\w+) joins group he was invited to using '
-                 'Oneprovider web GUI'))
+@wt(parsers.re('(?P<user>\w+) joins group he was invited to using '
+               'Oneprovider web GUI'))
 def join_group_using_op_gui(selenium, user, oz_page, tmp_memory):
     confirm_type = 'enter'
 
@@ -224,5 +221,5 @@ def fail_to_add_subgroups_using_op_gui(selenium, user, oz_page, parent,
         add_group_as_subgroup(selenium, user, child, oz_page, tmp_memory)
         assert_error_modal_with_text_appeared(selenium, user, error,
                                               oz_page)
-        close_modal(selenium, user, modal)
+        close_modal(selenium, user, modal, modals)
 

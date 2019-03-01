@@ -86,14 +86,17 @@ def configure_sync_parameters_for_space_in_op_panel_gui(selenium, user, space,
     tab_name = 'Storage synchronization'
     notify_type = 'info'
     notify_text_regexp = '.*[Cc]onfiguration.*space.*support.*changed.*'
-    button = 'Configure'
+    configure_button = 'Configure'
+    button = ('Start synchronization' if sync_type == 'IMPORT'
+              else 'Save configuration')
 
     click_on_navigation_tab_in_space(user, tab_name, onepanel, selenium)
 
-    try:
+    if sync_type == 'IMPORT':
+        wt_clicks_on_button_in_space_record(selenium, user, onepanel,
+                                            configure_button)
+    else:
         wt_clicks_on_option_in_spaces_page(selenium, user, onepanel)
-    except RuntimeError:
-        wt_clicks_on_button_in_space_record(selenium, user, onepanel, button)
 
     options = yaml.load(config)
     storage_import = options['{} strategy'.format(sync_type.capitalize())]
@@ -101,14 +104,7 @@ def configure_sync_parameters_for_space_in_op_panel_gui(selenium, user, space,
                                                sync_type, onepanel)
 
     if storage_import.lower() == 'disabled':
-        button = 'Save configuration'
-        try:
-            wt_clicks_on_button_in_space_record(selenium, user, onepanel,
-                                                button)
-        except RuntimeError:
-            button = 'Start synchronization'
-            wt_clicks_on_button_in_space_record(selenium, user, onepanel,
-                                                button)
+        wt_clicks_on_button_in_space_record(selenium, user, onepanel, button)
         return
 
     for field, input_box in zip(('Max depth', 'Scan interval [s]'),
@@ -124,14 +120,7 @@ def configure_sync_parameters_for_space_in_op_panel_gui(selenium, user, space,
             wt_enable_option_box_in_conf_in_space_record(
                 selenium, user, field, onepanel)
 
-    button = 'Save configuration'
-    try:
-        wt_clicks_on_button_in_space_record(selenium, user, onepanel,
-                                            button)
-    except RuntimeError:
-        button = 'Start synchronization'
-        wt_clicks_on_button_in_space_record(selenium, user, onepanel,
-                                            button)
+    wt_clicks_on_button_in_space_record(selenium, user, onepanel, button)
     notify_visible_with_text(selenium, user, notify_type, notify_text_regexp)
 
 

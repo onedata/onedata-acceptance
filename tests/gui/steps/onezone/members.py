@@ -15,7 +15,6 @@ from tests.utils.acceptance_utils import wt
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.common.modals import Modals as modals
 from tests.gui.meta_steps.onezone.common import search_for_members
-from tests.gui.utils.generic import transform
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks show view expand button in '
@@ -197,13 +196,6 @@ def assert_generated_token_is_present(selenium, browser_id):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def copy_token_from_modal(selenium, browser_id):
     modals(selenium[browser_id]).invite_using_token.copy()
-
-
-@wt(parsers.re('user of (?P<browser_id>.*) closes "(?P<modal>.*)" modal'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def close_modal(selenium, browser_id, modal):
-    modal = transform(modal)
-    getattr(modals(selenium[browser_id]), modal).close()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>does not see|sees) '
