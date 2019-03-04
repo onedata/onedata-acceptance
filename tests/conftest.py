@@ -390,14 +390,14 @@ def start_environment(scenario_path, request, hosts, patch_path,
     test_type = get_test_type(request)
     if test_type == 'oneclient' and clean:
         def fin():
-            run_onenv_command('clean')
+            run_onenv_command('clean', ['-a', '-v'])
 
         request.addfinalizer(fin)
 
 
 def handle_env_init_error(request, env_description_abs_path, command, output):
     export_logs(request, env_description_abs_path)
-    run_onenv_command('clean')
+    run_onenv_command('clean', ['-a', '-v'])
     pytest.skip('Environment error: Onenv command {} failed.'
                 'Captured stdout: {}.'
                 .format(command, output))

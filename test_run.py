@@ -86,9 +86,11 @@ def clean_env():
                volumes=[(os.path.join(os.path.expanduser('~'),
                                       '.docker'), '/tmp/.docker', 'rw'),
                         (kube_config_path, '/tmp/.kube/config', 'rw'),
-                        (minikube_config_path, '/tmp/.minikube/config', 'rw')],
+                        (minikube_config_path, '/tmp/.minikube/config', 'rw'),
+                        (os.path.join(os.path.expanduser('~'), '.one-env'),
+                         '/tmp/.one-env', 'rw')],
                image=args.image,
-               command=['./onenv', 'clean'],
+               command=['./onenv', 'clean', '-a', '-v'],
                envs={'HOME': '/tmp'})
 
 
