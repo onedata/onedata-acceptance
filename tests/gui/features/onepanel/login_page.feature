@@ -8,7 +8,7 @@ Feature: Scenarios featuring login page to Onepanel GUI
 
   Scenario: User successfully login to Zone panel
     Given user of browser logged as admin to Onepanel service
-    Then user of browser sees that he successfully logged in zone panel
+    Then user of browser sees that he successfully logged in Onezone panel
 
 
   Scenario: User fails to login because of invalid credentials

@@ -179,6 +179,6 @@ def refresh_site(selenium, browser_id_list):
 @when(parsers.parse('user of {browser_id} refreshes webapp'))
 @then(parsers.parse('user of {browser_id} refreshes webapp'))
 @repeat_failed(timeout=WAIT_FRONTEND, exceptions=AttributeError)
-def refresh_site(selenium, browser_id):
+def refresh_webapp(selenium, browser_id):
     driver = selenium[browser_id]
     driver.get(parse_url(driver.current_url).group('base_url'))

@@ -23,7 +23,7 @@ Feature: Deployment process using panel of zone and provider
     And user of browser1 waits 60 seconds for cluster deployment to finish
 #    And user of browser2 waits 180 seconds for cluster deployment to finish
 
-    # setup IP step in provider and zone panels
+    # setup IP step in zone panels
     And user of browser1 clicks on "Setup IP addresses" button in deployment setup IP step
 
     # setup DNS in zone panel
@@ -60,7 +60,7 @@ Feature: Deployment process using panel of zone and provider
     And user of browser2 clicks on "Perform check" button in deployment setup DNS step
     And user of browser2 clicks on Proceed button in deployment setup DNS step
 
-  # web cert in provider panel
+    # web cert in provider panel
     And user of browser2 deactivates lets encrypt toggle in web cert step of deployment process in Onepanel
     And user of browser2 clicks on Next step button in web cert step of deployment process in Onepanel
 
@@ -77,3 +77,14 @@ Feature: Deployment process using panel of zone and provider
 
     And user of browser2 clicks on Finish button in step 5 of deployment process in Onepanel
 
+    # check config in zone and provider panels
+    Then user of browser1 clicks on Clusters in the main menu
+    And user of browser1 clicks on "onezone" in clusters menu
+    And user of browser1 clicks Nodes of "onezone" in the sidebar
+    And user of browser1 sees that [Database, Cluster Worker, Cluster Manager, Primary Cluster Manager] options are enabled for .*onezone.* host in Nodes page in Onepanel
+    And user of browser1 sees that [Database, Cluster Worker, Cluster Manager, Primary Cluster Manager] options cannot be changed for .*onezone.* host in Nodes page in Onepanel
+
+    And user of browser2 clicks on link to go to Standalone Onepanel interface in last step of deployment process in Onepanel
+    And user of browser2 clicks on Nodes item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+    And user of browser2 sees that [Database, Cluster Worker, Cluster Manager, Primary Cluster Manager] options are enabled for .*oneprovider.* host in Nodes page in Onepanel
+    And user of browser2 sees that [Database, Cluster Worker, Cluster Manager, Primary Cluster Manager] options cannot be changed for .*oneprovider.* host in Nodes page in Onepanel

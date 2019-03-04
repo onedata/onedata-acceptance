@@ -52,7 +52,7 @@ Feature: Basic management of groups memberships in Onezone GUI
     And user of browser clicks on "Leave" button in modal "LEAVE GROUP"
 
     Then user of browser sees 2 membership rows in group memberships mode
-    And user of browser does not see that "user1" user is member of "group1" group in memberships mode
+    And user of browser does not see that "user1" user is member of "group1" group in group memberships mode
 
 
   Scenario: User removes relation between two groups (direct)

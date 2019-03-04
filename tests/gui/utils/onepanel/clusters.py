@@ -22,7 +22,7 @@ class WelcomePage(PageObject):
 
 
 class ClusterRecord(ButtonWithTextPageObject):
-    name = id = Label('.item-header', parent_name='clusters sidebar')
+    name = id = Label('.item-header .one-label', parent_name='clusters sidebar')
     submenu = WebItemsSequence('ul.one-list-level-2 li',
                                cls=ButtonWithTextPageObject)
 
@@ -32,5 +32,6 @@ class ClusterRecord(ButtonWithTextPageObject):
 
 class ClustersSidebar(PageObject):
     search_box = Input('ul.one-list li.search-bar-item input')
-    items = WebItemsSequence('ul.one-list li.one-list-item',
+    items = WebItemsSequence('.sidebar-clusters ul.one-list '
+                             'li.one-list-item.active',
                              cls=ClusterRecord)
