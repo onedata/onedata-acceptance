@@ -19,6 +19,9 @@ from tests.gui.steps.common.url import *
 from tests.gui.steps.onepanel.provider import (
     wt_click_on_discard_btn_in_domain_change_modal
 )
+from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
+from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
+from tests.gui.steps.common.login import g_login_using_basic_auth
 
 
 def modify_provider_with_given_name_in_op_panel_using_gui(selenium, user,
@@ -59,11 +62,21 @@ def modify_provider_with_given_name_in_op_panel_using_gui(selenium, user,
 
 
 def deregister_provider_in_op_panel_using_gui(selenium, user, provider_name,
-                                              onepanel, popups, hosts):
+                                              onepanel, popups, hosts,
+                                              login_page, users):
     sidebar = 'CLUSTERS'
     sub_item = 'Provider'
     content = 'provider'
     popup = 'Deregister provider'
+    service = 'emergency interface'
+
+    wt_click_on_subitem_for_item(selenium, user, sidebar, sub_item,
+                                 provider_name, onepanel, hosts)
+    wt_click_on_btn_in_content(selenium, user, 'Deregister provider', content,
+                               onepanel)
+    go_to_emergency_interface(selenium, user, popups)
+    g_login_using_basic_auth(selenium, user, 'admin',
+                             login_page, users, service)
 
     wt_click_on_subitem_for_item(selenium, user, sidebar, sub_item,
                                  provider_name, onepanel, hosts)
@@ -167,29 +180,31 @@ def register_provider_in_op_using_gui(selenium, user, onepanel, hosts, config, m
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_provider_name_if_name_is_different_than_given(selenium, browser_id,
                                                          provider, hosts,
-                                                         onepanel,
+                                                         onepanel, oz_page,
                                                          login_page,
                                                          users, modals):
     sub_item = 'Provider'
-    record = 1
+    domain = hosts[provider]['hostname']
+    provider_name = hosts[provider]['name']
     sidebar = 'CLUSTERS'
 
+    click_on_option_in_the_sidebar(selenium, browser_id, sidebar, oz_page)
+    click_on_record_in_clusters_menu(selenium, browser_id, oz_page, provider,
+                                     hosts)
     wt_click_on_subitem_for_item_with_name(selenium, browser_id, sidebar,
-                                           sub_item, record, onepanel)
-
+                                           sub_item, provider_name, onepanel)
+    time.sleep(1)
     current_provider = (onepanel(selenium[browser_id])
                         .content
                         .provider
                         .details
                         .provider_name)
-    domain = hosts[provider]['hostname']
-    provider = hosts[provider]['name']
-    if current_provider != provider:
+    if current_provider != provider_name:
         modify_provider_with_given_name_in_op_panel_using_gui(selenium,
                                                               browser_id,
                                                               onepanel,
                                                               current_provider,
-                                                              provider, domain,
+                                                              provider_name, domain,
                                                               login_page,
                                                               users, hosts,
                                                               browser_id, modals)

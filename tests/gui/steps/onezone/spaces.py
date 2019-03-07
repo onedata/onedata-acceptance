@@ -82,7 +82,7 @@ def assert_new_created_space_has_appeared_on_spaces(selenium, browser_id,
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
                '(?P<option>Data|Tokens|Spaces|Groups|Clusters) in the main menu'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_spaces_in_the_sidebar(selenium, browser_id, option, oz_page):
+def click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page):
     driver = selenium[browser_id]
     oz_page(driver)[str(option).lower()]
 

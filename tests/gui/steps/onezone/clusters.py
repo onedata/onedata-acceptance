@@ -32,14 +32,15 @@ def copy_registration_cluster_token(selenium, browser_id, oz_page):
 
 @wt(parsers.parse('user of {browser_id} clicks on "{record}" in clusters menu'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def copy_registration_cluster_token(selenium, browser_id, oz_page, record, hosts):
+def click_on_record_in_clusters_menu(selenium, browser_id, oz_page, record, hosts):
     driver = selenium[browser_id]
     record = hosts[record]['name']
     oz_page(driver)['clusters'].menu[record].click()
 
 
-@wt(parsers.parse('user of {browser_id} clicks {option} of "{record}" in the sidebar'))
+@wt(parsers.parse('user of {browser_id} clicks {option} of "{record}" '
+                  'in the sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def copy_registration_cluster_token(selenium, browser_id, oz_page, option):
+def click_option_of_record_in_the_sidebar(selenium, browser_id, oz_page, option):
     driver = selenium[browser_id]
     oz_page(driver)['clusters'].submenu[option].click()

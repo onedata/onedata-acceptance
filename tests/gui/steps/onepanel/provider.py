@@ -181,3 +181,12 @@ def wt_assert_value_of_provider_domain(selenium, browser_id, provider, hosts,
     assert displayed_val == expected_val, \
         ('displayed {} instead of expected {} as '
          'provider\'s domain'.format(displayed_val, expected_val))
+
+
+@wt(parsers.parse('user of {browser_id} clicks go to emergency interface '
+                  'in provider deregistration popups'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def go_to_emergency_interface(selenium, browser_id, popups):
+    driver = selenium[browser_id]
+    popups(driver).deregister_provider.buttons['Go to emergency interface'].click()
+

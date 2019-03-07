@@ -109,6 +109,7 @@ Feature: Oneprovider transfers functionality using multiple browser instances
     And user of browser1 uses spaces select to change data space to "space1"
     And user of browser1 sees file browser in data tab in Oneprovider page
     And user of browser1 double clicks on item named "dir1" in file browser
+    And user of browser1 is idle for 10 seconds
     And user of browser1 refreshes site
     And user of browser1 sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
