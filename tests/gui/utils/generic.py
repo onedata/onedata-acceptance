@@ -33,8 +33,8 @@ from functools import partial
 #   \            /      access                                       /
 #    \_base_url_/         \_________________method__________________/
 
-RE_URL = re.compile(r'(?P<base_url>https?://(?P<domain>.*?))'
-                    r'(/#)?(?P<method>/(?P<access>[^/]*)/(?P<tab>[^/]*)'
+RE_URL = re.compile(r'(?P<base_url>https?://(?P<domain>.*?)/(?P<where>[^/]*)/(?P<cluster>[^/]*))'
+                    r'(/i#)?(?P<method>/(?P<access>[^/]*)/(?P<tab>[^/]*)'
                     r'(/(?P<id>[^/]*).*)?)')
 
 

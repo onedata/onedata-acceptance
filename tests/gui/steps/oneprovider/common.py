@@ -21,11 +21,11 @@ def _wait_for_op_session_to_start(selenium, browser_id_list):
     @repeat_failed(timeout=WAIT_BACKEND*4)
     def _assert_correct_url(d):
         try:
-            found = parse_url(d.current_url).group('access')
+            found = parse_url(d.current_url).group('where')
         except AttributeError:
             raise RuntimeError('no access part found in url')
         else:
-            if 'op' != found.lower():
+            if 'opw' != found.lower():
                 raise RuntimeError('expected op as access part in url '
                                    'instead got: {}'.format(found))
 

@@ -11,19 +11,17 @@ createSpaces: false
 # Onezone image to use. Note that if 'sources' option is enabled, it must
 # be based off onedata/worker image (it contains all the machinery to run the
 # application from sources).
-onezoneImage: "docker.onedata.org/onezone-dev:VFS-4751-federated-login-in-onepanel"
+onezoneImage: "docker.onedata.org/onezone-dev:develop"
 
 # Oneprovider image to use. Note that if 'sources' option is enabled, it must
 # be based off onedata/worker image.
-oneproviderImage: "docker.onedata.org/oneprovider-dev:VFS-4751-federated-login-in-onepanel"
+oneproviderImage: "docker.onedata.org/oneprovider-dev:develop"
 
 # When enabled, onezoneImage and oneproviderImage will be pulled before every
 # deployment. If disabled, they will only be pulled if not existent.
-forceImagePull: false
+forceImagePull: true
 
 onezone:
-#  onezone_ready_check:
-#    enabled: false
   batchConfig:
     createUsers: false
 
@@ -31,9 +29,6 @@ oneprovidersPanelOverlayConfig: &oneprovidersPanelOverlayConfig |-
   [{op_worker, [{soft_quota_limit_size, 0}]}].
 
 oneprovider-1:
-#  workerOverlayConfig: *oneprovidersPanelOverlayConfig
-#  batchConfig:
-#    createUsers: false
-  oneprovider_ready_check:
-    enabled: false
-  batchConfig: false
+  workerOverlayConfig: *oneprovidersPanelOverlayConfig
+  batchConfig:
+    createUsers: false

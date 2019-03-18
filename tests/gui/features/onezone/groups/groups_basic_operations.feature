@@ -85,7 +85,7 @@ Feature: Basic management of groups with one user in Onezone GUI
 
     And user of browser refreshes site
 
-    And user of browser changes webapp path to "/#/onedata/groups" concatenated with copied item
+    And user of browser changes webapp path to "/i#/onedata/groups" concatenated with copied item
 
     Then user of browser see that page with text "RESOURCE NOT FOUND" appeared
 

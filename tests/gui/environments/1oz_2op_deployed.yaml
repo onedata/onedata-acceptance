@@ -11,34 +11,29 @@ createSpaces: false
 # Onezone image to use. Note that if 'sources' option is enabled, it must
 # be based off onedata/worker image (it contains all the machinery to run the
 # application from sources).
-onezoneImage: "docker.onedata.org/onezone-dev:ID-ef549657d7"
+onezoneImage: "docker.onedata.org/onezone-dev:develop"
 
 # Oneprovider image to use. Note that if 'sources' option is enabled, it must
 # be based off onedata/worker image.
-oneproviderImage: "docker.onedata.org/oneprovider-dev:ID-bc7710ca30"
+oneproviderImage: "docker.onedata.org/oneprovider-dev:develop"
 
 # When enabled, onezoneImage and oneproviderImage will be pulled before every
 # deployment. If disabled, they will only be pulled if not existent.
-forceImagePull: false
+forceImagePull: true
 
 onezone:
-  onezone_ready_check:
-    enabled: false
-  batchConfig: false
+  batchConfig:
+    createUsers: false
 
 oneprovidersPanelOverlayConfig: &oneprovidersPanelOverlayConfig |-
   [{op_worker, [{soft_quota_limit_size, 0}]}].
 
 oneprovider-1:
-  oneprovider_ready_check:
-    enabled: false
-  batchConfig: false
-  addTestDomain: true
   workerOverlayConfig: *oneprovidersPanelOverlayConfig
+  batchConfig:
+    createUsers: false
 
 oneprovider-2:
-  oneprovider_ready_check:
-    enabled: false
-  batchConfig: false
-  addTestDomain: true
   workerOverlayConfig: *oneprovidersPanelOverlayConfig
+  batchConfig:
+    createUsers: false

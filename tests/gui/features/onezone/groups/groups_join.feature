@@ -99,7 +99,7 @@ Feature: Joining a group in Onezone GUI
     And user of browser1 goes to group "group1" main subpage
     And user of browser1 copies a first resource ID from URL
     And user of browser1 sends copied ID to user of browser2
-    And user of browser2 changes webapp path to "/#/onedata/groups" concatenated with received ID
+    And user of browser2 changes webapp path to "/i#/onedata/groups" concatenated with received ID
 
     And user of browser2 refreshes site
 
