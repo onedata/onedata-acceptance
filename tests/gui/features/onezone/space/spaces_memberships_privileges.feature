@@ -63,7 +63,7 @@ Feature: Basic management of spaces privileges in Onezone GUI
     Then user of browser sees Insufficient permissions alert for "user1" user in space members subpage
 
 
-  Scenario: User fails to see space without view space
+  Scenario: User fails to see space without view space privilege
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Members of "space1" in the sidebar
     And user of browser clicks "user1" user in "space1" space members users list
@@ -74,7 +74,7 @@ Feature: Basic management of spaces privileges in Onezone GUI
     Then user of browser sees Insufficient permissions alert in space members subpage
 
 
-  Scenario: User fails to remove group from space without privileges
+  Scenario: User fails to remove group from space without remove group privileges
     When user of browser clicks "space2" on the spaces list in the sidebar
     And user of browser clicks Members of "space2" in the sidebar
     And user of browser clicks "user1" user in "space2" space members users list
@@ -91,7 +91,7 @@ Feature: Basic management of spaces privileges in Onezone GUI
     Then user of browser sees that error modal with text "Insufficient permissions" appeared
 
 
-  Scenario: User fails to remove user from space without privileges
+  Scenario: User fails to remove user from space without remove user privileges
     When user of browser clicks "space3" on the spaces list in the sidebar
     And user of browser clicks Members of "space3" in the sidebar
     And user of browser clicks "user1" user in "space3" space members users list

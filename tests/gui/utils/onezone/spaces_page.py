@@ -59,7 +59,7 @@ class GetSupportPage(PageObject):
     copy = NamedButton('.copy-btn', text='Copy')
     generate_another_token = NamedButton('.active .btn-get-token',
                                          text='Generate another token')
-    alert = WebElement('.alert.forbidden strong')
+    forbidden_alert = WebElement('.alert.forbidden')
 
 
 class SpaceProvidersPage(PageObject):

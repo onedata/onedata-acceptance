@@ -299,8 +299,10 @@ def see_insufficient_permissions_alert_on_providers_page(selenium, browser_id,
                                                          oz_page, alert_text):
     driver = selenium[browser_id]
 
-    alert = oz_page(driver)['spaces'].providers_page.get_support_page.alert.text
-    assert alert_text in alert, 'not found alert with {} text'.format(alert_text)
+    forbidden_alert = (oz_page(driver)['spaces'].providers_page.get_support_page
+                       .forbidden_alert.text)
+    assert alert_text in forbidden_alert, ('not found alert with {} text'
+                                           .format(alert_text))
 
 
 @wt(parsers.parse('user of {browser_id} clicks Deploy your own provider tab '
