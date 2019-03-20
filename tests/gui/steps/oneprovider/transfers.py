@@ -109,14 +109,12 @@ def replicate_item(selenium, browser_id, provider, hosts):
                'synchronized in provider "(?P<provider>.*)"'))
 def assert_item_never_synchronized(selenium, browser_id, provider, hosts):
     provider_name = hosts[provider]['name']
-    if (modals(selenium[browser_id])
+    assert (modals(selenium[browser_id])
             .data_distribution
             .providers[provider_name]
             .distribution
-            .is_never_synchronized()):
-        return ''
-    else:
-        return 'Item is synchronized in provider {}'.format(provider_name)
+            .is_never_synchronized()), \
+        'Item is synchronized in provider {}'.format(provider_name)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) selects "(?P<space>.*)" space '

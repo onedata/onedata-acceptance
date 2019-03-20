@@ -341,17 +341,12 @@ def assert_provider_chunk_in_data_distribution_filled(selenium, browser_id,
     distribution = prov_rec.distribution
     size, _ = distribution.size
     chunks = distribution.chunks
-
-    if len(chunks) != 1:
-        return 'distribution for {} is not entirely filled'.format(provider)
-
+    assert len(chunks) == 1, 'distribution for {} is not ' \
+                             'entirely filled'.format(provider)
     chunk = chunks[0]
-
-    if chunk[1] - chunk[0] == size:
-        return ''
-    else:
-        return ('distribution for {} is not filled entirely, but only '
-                'from {} to {}'.format(provider, chunk[0], chunk[1]))
+    assert chunk[1] - chunk[0] == size, \
+        'distribution for {} is not filled entirely, but only from ' \
+        '{} to {}'.format(provider, chunk[0], chunk[1])
 
 
 @when(parsers.parse('user of {browser_id} sees that chunk bar for provider '
@@ -367,11 +362,8 @@ def assert_provider_chunk_in_data_distribution_empty(selenium, browser_id,
     distribution = prov_rec.distribution
     size, _ = distribution.size
     chunks = distribution.chunks
-    if not chunks:
-        return ''
-    else:
-        return ('distribution for {} is not entirely empty. '
-                'Visible chunks: {}'.format(provider, chunks))
+    assert not chunks, 'distribution for {} is not entirely empty. ' \
+                       'Visible chunks: {}'.format(provider, chunks)
 
 
 @when(parsers.parse('user of {browser_id} sees {chunks} chunk(s) for provider '

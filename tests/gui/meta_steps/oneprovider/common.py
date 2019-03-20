@@ -2,8 +2,6 @@
 using web GUI
 """
 
-import time
-
 import yaml
 
 from tests.gui.steps.onezone.logged_in_common import *
@@ -81,11 +79,10 @@ def meta_replicate_item(selenium, browser_id, name, tmp_memory,
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees file chunks for file '
                '"(?P<file_name>.*)" as follows:\n(?P<desc>(.|\s)*)'))
-def assert_file_chunks(selenium, browser_id, file_name, desc, tmp_memory,
-                       op_page, hosts):
+def wt_assert_file_chunks(selenium, browser_id, file_name, desc, tmp_memory,
+                          op_page, hosts):
     tooltip = 'Show data distribution'
     modal_name = 'Data distribution'
-    timeout = 60
 
     assert_file_browser_in_data_tab_in_op(selenium, browser_id, op_page,
                                           tmp_memory)
@@ -93,36 +90,30 @@ def assert_file_chunks(selenium, browser_id, file_name, desc, tmp_memory,
     click_tooltip_from_toolbar_in_data_tab_in_op(selenium, browser_id, tooltip,
                                                  op_page)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    desc = yaml.load(desc)
-    for provider, chunks in desc.items():
-        start_time = time.time()
-        error_message = ''
-
-        while int(time.time() - start_time) <= timeout:
-            if chunks == 'never synchronized':
-                error_message = assert_item_never_synchronized(selenium,
-                                                               browser_id,
-                                                               provider, hosts)
-
-            elif chunks == 'entirely empty':
-                error_message = (
-                    assert_provider_chunk_in_data_distribution_empty
-                    (selenium, browser_id, provider, modals, hosts))
-
-            elif chunks == 'entirely filled':
-                error_message = (
-                    assert_provider_chunk_in_data_distribution_filled
-                    (selenium, browser_id, provider, modals, hosts))
-
-            if error_message == '':
-                break
-
-        assert error_message == '', error_message
-
+    _assert_file_chunks(selenium, browser_id, hosts, desc)
     wt_click_on_confirmation_btn_in_modal(selenium, browser_id, 'Close',
                                           tmp_memory)
     wt_wait_for_modal_to_disappear(selenium, browser_id, tmp_memory)
     deselect_items_from_file_browser(browser_id, file_name, tmp_memory)
+
+
+@repeat_failed(timeout=WAIT_FRONTEND*2)
+def _assert_file_chunks(selenium, browser_id, hosts, desc):
+    desc = yaml.load(desc)
+    for provider, chunks in desc.items():
+        if chunks == 'never synchronized':
+            assert_item_never_synchronized(selenium, browser_id, provider,
+                                           hosts)
+        elif chunks == 'entirely empty':
+            assert_provider_chunk_in_data_distribution_empty(selenium,
+                                                             browser_id,
+                                                             provider, modals,
+                                                             hosts)
+        elif chunks == 'entirely filled':
+            assert_provider_chunk_in_data_distribution_filled(selenium,
+                                                              browser_id,
+                                                              provider, modals,
+                                                              hosts)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) creates directory "(?P<name>.*)"'))
