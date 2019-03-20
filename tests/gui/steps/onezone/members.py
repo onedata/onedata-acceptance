@@ -419,8 +419,9 @@ def see_insufficient_permissions_alert_for_member(selenium, browser_id, oz_page,
     member_type = member_type + 's'
 
     members_list = getattr(oz_page(driver)[where].members_page, member_type)
-    alert = members_list.items[member_name].alert.text
-    assert alert_text in alert, 'not found alert with {} text'.format(alert_text)
+    forbidden_alert = members_list.items[member_name].forbidden_alert.text
+    assert alert_text in forbidden_alert, ('not found alert with {} text'
+                                           .format(alert_text))
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees '
@@ -432,6 +433,7 @@ def see_insufficient_permissions_alert(selenium, browser_id, oz_page,
     driver = selenium[browser_id]
     where = where + 's'
 
-    alert = oz_page(driver)[where].members_page.alert.text
-    assert alert_text in alert, 'not found alert with {} text'.format(alert_text)
+    forbidden_alert = oz_page(driver)[where].members_page.forbidden_alert.text
+    assert alert_text in forbidden_alert, ('not found alert with {} text'
+                                           .format(alert_text))
 
