@@ -58,7 +58,7 @@ class GroupMembersItemRow(PageObject):
     privileges = WebItemsSequence('.one-collapsible-list-item-content '
                                   '.form.ember-view > div > ul > li', 
                                   cls=PrivilegeGroup)
-    alert = WebElement('.alert.forbidden strong')
+    forbidden_alert = WebElement('.alert.forbidden')
 
 
 class GroupMembersList(PageObject):
@@ -105,5 +105,7 @@ class GroupMembersPage(PageObject):
     memberships_button = NamedButton('.mode-selector button', text='Memberships')
     memberships = WebItemsSequence('.membership-visualiser .membership-row',
                                    cls=MembershipRow)
+
+    forbidden_alert = WebElement('.alert.forbidden')
 
 
