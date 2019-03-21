@@ -79,16 +79,26 @@ def meta_replicate_item(selenium, browser_id, name, tmp_memory,
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees file chunks for file '
                '"(?P<file_name>.*)" as follows:\n(?P<desc>(.|\s)*)'))
-def assert_file_chunks(selenium, browser_id, file_name, desc, tmp_memory,
-                       op_page, hosts):
+def wt_assert_file_chunks(selenium, browser_id, file_name, desc, tmp_memory,
+                          op_page, hosts):
     tooltip = 'Show data distribution'
     modal_name = 'Data distribution'
+
     assert_file_browser_in_data_tab_in_op(selenium, browser_id, op_page,
                                           tmp_memory)
     select_files_from_file_list_using_ctrl(browser_id, file_name, tmp_memory)
     click_tooltip_from_toolbar_in_data_tab_in_op(selenium, browser_id, tooltip,
                                                  op_page)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
+    _assert_file_chunks(selenium, browser_id, hosts, desc)
+    wt_click_on_confirmation_btn_in_modal(selenium, browser_id, 'Close',
+                                          tmp_memory)
+    wt_wait_for_modal_to_disappear(selenium, browser_id, tmp_memory)
+    deselect_items_from_file_browser(browser_id, file_name, tmp_memory)
+
+
+@repeat_failed(timeout=WAIT_FRONTEND*2)
+def _assert_file_chunks(selenium, browser_id, hosts, desc):
     desc = yaml.load(desc)
     for provider, chunks in desc.items():
         if chunks == 'never synchronized':
@@ -104,10 +114,6 @@ def assert_file_chunks(selenium, browser_id, file_name, desc, tmp_memory,
                                                               browser_id,
                                                               provider, modals,
                                                               hosts)
-    wt_click_on_confirmation_btn_in_modal(selenium, browser_id, 'Close',
-                                          tmp_memory)
-    wt_wait_for_modal_to_disappear(selenium, browser_id, tmp_memory)
-    deselect_items_from_file_browser(browser_id, file_name, tmp_memory)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) creates directory "(?P<name>.*)"'))
