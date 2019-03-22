@@ -114,13 +114,25 @@ def list_pods_and_jobs():
     return kube.list_namespaced_pod(namespace).items
 
 
-def cmd_exec(pod, command):
+def cmd_exec(pod, command, interactive=False, tty=False, container=None):
+    cmd = ['kubectl', '--namespace', get_current_namespace(), 'exec']
+
+    if interactive:
+        cmd.append('-i')
+    if tty:
+        cmd.append('-t')
+    cmd.append(pod)
+
+    if container:
+        cmd.extend(['-c', container])
+
     if isinstance(command, list):
-        return ['kubectl', '--namespace', get_current_namespace(),
-                'exec', '-it', pod, '--'] + command
+        cmd.append('--')
+        cmd += command
     else:
-        return ['kubectl', '--namespace', get_current_namespace(),
-                'exec', '-it', pod, '--', command]
+        cmd.extend(['--', command])
+
+    return cmd
 
 
 def get_name(component):

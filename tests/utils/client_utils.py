@@ -26,6 +26,7 @@ from tests.utils.user_utils import User
 
 TOKEN_PATH = '/tmp/token'
 BAD_TOKEN = 'bad token'
+RPYC_DEFAULT_PORT = 18812
 
 
 class Client:
@@ -84,13 +85,13 @@ class Client:
     def absolute_path(self, path):
         return os.path.join(self.mount_path, str(path))
 
-    def start_rpyc(self, user):
-        self._start_rpyc_server(user)
+    def start_rpyc(self, user, port):
+        self._start_rpyc_server(user, port)
         started = False
         timeout = 30
         while not started and timeout >= 0:
             try:
-                self.rpyc_connection = rpyc.classic.connect(self.ip)
+                self.rpyc_connection = rpyc.classic.connect(self.ip, port)
                 started = True
             except Exception as e:
                 print e
@@ -99,9 +100,10 @@ class Client:
         if not started:
             pytest.skip('rpc connection couldn\'t be established')
 
-    def _start_rpyc_server(self, user_name):
+    def _start_rpyc_server(self, user_name, port):
         """start rpc server on client docker"""
-        cmd = '/usr/local/bin/rpyc_classic.py --host 0.0.0.0'
+        cmd = ('/usr/local/bin/rpyc_classic.py --host 0.0.0.0 --port {}'
+               .format(port))
         run_cmd(user_name, self.docker_id, cmd, detach=True)
         pid = run_cmd(user_name,
                       self.docker_id,
@@ -165,7 +167,8 @@ def mount_users(clients, user_names, mount_paths, client_hosts,
                 client_instances, tokens, hosts, request, users, env_desc):
     params = zip(user_names, mount_paths, client_instances, client_hosts,
                  tokens)
-    for (username, mount_path, client_instance, client_host, token) in params:
+    for i, (username, mount_path, client_instance, client_host,
+            token) in enumerate(params):
         user = users.get(username)
         if not user:
             user = users[username] = User(username)
@@ -177,7 +180,8 @@ def mount_users(clients, user_names, mount_paths, client_hosts,
                                client_conf.get('default timeout'),
                                client_conf.get('provider'))
 
-        client.start_rpyc(username)
+        client.start_rpyc(username, i + RPYC_DEFAULT_PORT)
+
         access_token = token if token == BAD_TOKEN else user.token
 
         client_mode = client_conf.get('mode')

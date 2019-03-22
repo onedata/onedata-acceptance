@@ -33,14 +33,14 @@ Feature: Tests for basic operations on single file in Oneprovider
   Scenario Outline: User creates file using <client1> and removes it using <client2>
     When using <client1>, user1 succeeds to create file named "file1" in "space1" in oneprovider-1
     And using <client2>, user1 succeeds to see item named "file1" in "space1" in oneprovider-1
-	And using <client2>, user1 removes file named "file1" in "space1" in oneprovider-1
+	And using <client2>, user1 succeeds to remove file named "file1" in "space1" in oneprovider-1
 	Then using <client1>, user1 fails to see item named "file1" in "space1" in oneprovider-1
 
 
   Scenario Outline: User removes file using <client1> and using <client2> sees that it has disappeared
     When using <client1>, user1 succeeds to create file named "file1" in "space1" in oneprovider-1
     And using <client2>, user1 succeeds to see item named "file1" in "space1" in oneprovider-1
-	And using <client1>, user1 removes file named "file1" in "space1" in oneprovider-1
+	And using <client1>, user1 succeeds to remove file named "file1" in "space1" in oneprovider-1
 	Then using <client2>, user1 fails to see item named "file1" in "space1" in oneprovider-1
 
 
@@ -63,10 +63,10 @@ Feature: Tests for basic operations on single file in Oneprovider
   Scenario Outline: User creates file using <client1>, removes it using <client2> and then recreates it using <client1>
     When using <client1>, user1 succeeds to create file named "file1" in "space1" in oneprovider-1
     And using <client2>, user1 succeeds to see item named "file1" in "space1" in oneprovider-1
-    And using <client2>, user1 removes file named "file1" in "space1" in oneprovider-1
+    And using <client2>, user1 succeeds to remove file named "file1" in "space1" in oneprovider-1
 
-    And using <client2>, user1 fails to see item named "dir1/dir2/file1" in "space1" in oneprovider-1
-    And using <client1>, user1 fails to see item named "dir1/dir2/file1" in "space1" in oneprovider-1
+    And using <client2>, user1 fails to see item named "file1" in "space1" in oneprovider-1
+    And using <client1>, user1 fails to see item named "file1" in "space1" in oneprovider-1
 
     And using <client1>, user1 succeeds to create file named "file1" in "space1" in oneprovider-1
     Then using <client2>, user1 succeeds to see item named "file1" in "space1" in oneprovider-1

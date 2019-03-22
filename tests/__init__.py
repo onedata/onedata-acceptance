@@ -49,6 +49,7 @@ UPLOAD_FILES_DIR = os.path.join(GUI_DIR, 'upload_files')
 PREPARE_ENV_LOG_FILE = 'prepare_test_environment.log'
 PREPARE_ENV_ERROR_LOG_FILE = 'prepare_test_environment_error.log'
 
+HTTP_PORT = 80
 OZ_REST_PORT = 443
 OP_REST_PORT = 443
 PANEL_REST_PORT = 9443
@@ -58,6 +59,7 @@ OZ_REST_PATH_PREFIX = '/api/v3/onezone'
 PROVIDER_REST_PATH_PREFIX = '/api/v3/oneprovider'
 LUMA_REST_PATH_PREFIX = '/api/v3/luma'
 CDMI_REST_PATH_PREFIX = '/cdmi'
+TOKEN_DISPENSER_PATH_PREFIX = '/api/v1.0'
 DEFAULT_HEADERS = {'content-type': 'application/json'}
 
 MEGABYTE = 1024 * 1024
