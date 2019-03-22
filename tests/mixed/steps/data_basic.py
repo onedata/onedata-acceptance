@@ -606,10 +606,10 @@ def set_posix_permissions_in_op(client, user, item_path, space, mode, result,
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
-@wt(parsers.re('using (?P<client>.*), (?P<user>\w+) sees that owner\'s uid '
-               'and gid for "(?P<path>.*)" in space "(?P<space>[\w-]+)" '
+@wt(parsers.re('using (?P<client>.*), (?P<user>\w+) sees that owner\'s UID '
+               'and GID for "(?P<path>.*)" in space "(?P<space>[\w-]+)" '
                'are (?P<res>equal|not equal) to (?P<uid>[\d]+) and '
-               '(?P<gid>[\d]+)'))
+               '(?P<gid>[\d]+) respectively'))
 def assert_file_stats(client, user, path, space, uid, gid, res, users):
     full_path = '{}/{}'.format(space, path)
     client_lower = client.lower()

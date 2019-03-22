@@ -234,7 +234,7 @@ def parse_users_cfg(patch_path, users, hosts):
             password = user_cfg.get('password')
             new_user = users[user_name] = User(user_name, password)
             idps = user_cfg.get('idps', {})
-            for idp_type in idps.keys():
+            for idp_type in idps:
                 new_user.idps.append(idp_type)
                 if idp_type == 'keycloak':
                     global_cfg = patch_cfg.get('global')

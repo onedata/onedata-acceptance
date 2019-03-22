@@ -25,10 +25,6 @@ onezone:
   batchConfig:
     createUsers: false
 
-oneprovidersPanelOverlayConfig: &oneprovidersPanelOverlayConfig |-
-  [{op_worker, [{soft_quota_limit_size, 0}]}].
-
 oneprovider-1:
-  workerOverlayConfig: *oneprovidersPanelOverlayConfig
   batchConfig:
     createUsers: false
