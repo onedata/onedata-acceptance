@@ -58,9 +58,6 @@ os-config:
     oneprovider-1: *cfg1
     oneclient-1: *cfg1
 
-oneprovidersWorkerOverlayConfig: &oneprovidersWorkerOverlayConfig |-
-  [{op_worker, [{soft_quota_limit_size, 0}]}].
-
 storages:
   - nfs
 
@@ -69,8 +66,6 @@ onezone:
     createUsers: false
 
 oneprovider-1:
-  workerOverlayConfig: *oneprovidersWorkerOverlayConfig
-
   batchConfig:
     createUsers: false
 

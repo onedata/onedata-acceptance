@@ -100,11 +100,16 @@ def create_file_in_op_rest(user, users, host, hosts, path, result):
         do_api.create_data_object(path, '')
 
 
-def remove_file_in_op_rest(user, users, host, hosts, path):
+def remove_file_in_op_rest(user, users, host, hosts, path, result):
     client = login_to_cdmi(user, users, hosts[host]['hostname'])
 
     do_api = DataObjectApi(client)
-    do_api.delete_data_object(path)
+    if result == 'fails':
+        with pytest.raises(CdmiException,
+                           message='Removing file did not fail'):
+            do_api.delete_data_object(path)
+    else:
+        do_api.delete_data_object(path)
 
 
 def see_items_in_op_rest(user, users, host, hosts, path_list, result, space):

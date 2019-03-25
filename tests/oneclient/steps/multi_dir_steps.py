@@ -7,10 +7,13 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 
+import os
 import errno
+import subprocess as sp
 
-from pytest_bdd import parsers, when
+from pytest_bdd import parsers, when, given
 
+from tests.utils.onenv_utils import cmd_exec
 from tests.utils.acceptance_utils import wt, list_parser
 from tests.utils.utils import assert_generic, assert_
 from tests.utils.client_utils import mkdir, rmdir, ls, rm, cp
@@ -159,3 +162,25 @@ def copy_dir(user, dir1, dir2, client_node, users):
         cp(client, src_path, dest_path, recursive=True)
 
     assert_(client.perform, condition)
+
+
+@given(parsers.re('there (is|are) director(y|ies) (?P<paths>.*) owned by '
+                  '(?P<uid>.*):(?P<gid>.*) in container '
+                  '"(?P<container>.*)" on provider "(?P<provider>.*)"'))
+def create_in_container(uid, gid, paths, container, provider, hosts):
+    for path in list_parser(paths):
+        pod_name = hosts[provider]['pod-name']
+        mkdir_cmd = ['sh', '-c', 'mkdir {}'.format(path)]
+        sp.call(cmd_exec(pod_name, mkdir_cmd, container=container))
+        chown_cmd = ['sh', '-c', 'chown {}:{} {}'.format(uid, gid, path)]
+        sp.call(cmd_exec(pod_name, chown_cmd, container=container))
+
+
+@wt(parsers.re('delete is performed on director(y|ies) (?P<paths>.*) in '
+               'container "(?P<container>.*)" on provider '
+               '"(?P<provider>.*)"'))
+def remove_in_container(paths, container, provider, hosts):
+    for path in list_parser(paths):
+        pod_name = hosts[provider]['pod-name']
+        cmd = ['sh', '-c', 'rm -rf {}'.format(path)]
+        sp.call(cmd_exec(pod_name, cmd, container=container))
