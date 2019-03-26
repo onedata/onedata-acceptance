@@ -36,6 +36,8 @@ from tests.gui.steps.modal import (wt_wait_for_modal_to_appear,
                                    activate_input_box_in_modal)
 from tests.gui.steps.common.miscellaneous import type_string_into_active_element
 from tests.utils.acceptance_utils import wt
+from tests.utils.utils import repeat_failed
+from tests.gui.conftest import WAIT_FRONTEND
 
 
 @given(parsers.re('opened "(?P<tab_name>spaces)" tab in web GUI by '
@@ -101,7 +103,7 @@ def wt_assert_file_chunks(selenium, browser_id, file_name, desc, tmp_memory,
     click_tooltip_from_toolbar_in_data_tab_in_op(selenium, browser_id, tooltip,
                                                  op_page)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    _assert_file_chunks(selenium, browser_id, hosts, desc)
+    _assert_file_chunks(selenium, browser_id, hosts, desc, modals)
     wt_click_on_confirmation_btn_in_modal(selenium, browser_id, 'Close',
                                           tmp_memory)
     wt_wait_for_modal_to_disappear(selenium, browser_id, tmp_memory)
@@ -109,7 +111,7 @@ def wt_assert_file_chunks(selenium, browser_id, file_name, desc, tmp_memory,
 
 
 @repeat_failed(timeout=WAIT_FRONTEND*2)
-def _assert_file_chunks(selenium, browser_id, hosts, desc):
+def _assert_file_chunks(selenium, browser_id, hosts, desc, modals):
     desc = yaml.load(desc)
     for provider, chunks in desc.items():
         if chunks == 'never synchronized':
