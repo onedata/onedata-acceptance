@@ -36,9 +36,10 @@ def click_log_in_to_emergency_interface(selenium, browser_id, login_page):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def g_login_using_basic_auth(selenium, browser_id_list, user_id_list,
                              login_page, users, service):
-    for browser_id, username in zip(parse_seq(browser_id_list),
-                                    parse_seq(user_id_list)):
-        if 'emergency interface' in service:
+    for browser_id, username, service in zip(parse_seq(browser_id_list),
+                                             parse_seq(user_id_list),
+                                             parse_seq(service)):
+        if 'emergency interface' in service or 'Onepanel' in service:
             click_log_in_to_emergency_interface(selenium, browser_id, login_page)
             time.sleep(1)
         _login_using_basic_auth(login_page(selenium[browser_id]), username,

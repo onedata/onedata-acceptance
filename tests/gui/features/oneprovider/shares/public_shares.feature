@@ -47,7 +47,7 @@ Feature: Basic data tab operations on public shares in file browser
     And user of browser1 sees that the modal has disappeared
 
     And user of browser2 opens received URL
-    Then user of browser2 sees that URL matches: https?://[^/]*/op/[^/]*/i#/public/shares/.*
+    Then user of browser2 sees that URL matches: https?://[^/]*/opw/[^/]*/i#/public/shares/.*
     And user of browser2 sees that public share is named "share1"
 
     And user of browser2 sees that current working directory path visible in public share's file browser is as follows: share1
@@ -79,13 +79,13 @@ Feature: Basic data tab operations on public shares in file browser
     And user of browser1 sends copied URL to user of browser2
 
     And user of browser1 clicks "Open the share" confirmation button in displayed modal
-    And user of browser1 sees that URL matches: https?://[^/]*/op/[^/]*/i#/onedata/shares/.*
+    And user of browser1 sees that URL matches: https?://[^/]*/opw/[^/]*/i#/onedata/shares/.*
     And user of browser1 selects "share1" from shares sidebar list
     And user of browser1 sees that selected share is named "share1"
     And user of browser1 sees that absolute share path visible in share's info header is as follows: space1/dir1
 
     And user of browser2 opens received URL
-    And user of browser2 sees that URL matches: https?://[^/]*/op/[^/]*/i#/public/shares/.*
+    And user of browser2 sees that URL matches: https?://[^/]*/opw/[^/]*/i#/public/shares/.*
     And user of browser2 sees that public share is named "share1"
 
     # rename share1
@@ -120,13 +120,13 @@ Feature: Basic data tab operations on public shares in file browser
     And user of browser1 sends copied URL to user of browser2
 
     And user of browser1 clicks "Open the share" confirmation button in displayed modal
-    And user of browser1 sees that URL matches: https?://[^/]*/op/[^/]*/i#/onedata/shares/.*
+    And user of browser1 sees that URL matches: https?://[^/]*/opw/[^/]*/i#/onedata/shares/.*
     And user of browser1 selects "share1" from shares sidebar list
     And user of browser1 sees that selected share is named "share1"
     And user of browser1 sees that absolute share path visible in share's info header is as follows: space1/dir1
 
     And user of browser2 opens received URL
-    And user of browser2 sees that URL matches: https?://[^/]*/op/[^/]*/i#/public/shares/.*
+    And user of browser2 sees that URL matches: https?://[^/]*/opw/[^/]*/i#/public/shares/.*
     And user of browser2 sees that public share is named "share1"
 
     # remove share
@@ -164,7 +164,7 @@ Feature: Basic data tab operations on public shares in file browser
     And user of browser1 sees that the modal has disappeared
 
     And user of browser2 opens received URL
-    And user of browser2 sees that URL matches: https?://[^/]*/op/[^/]*/i#/public/shares/.*
+    And user of browser2 sees that URL matches: https?://[^/]*/opw/[^/]*/i#/public/shares/.*
     And user of browser2 sees that public share is named "share1"
 
     And user of browser2 sees that current working directory path visible in public share's file browser is as follows: share1
@@ -208,7 +208,7 @@ Feature: Basic data tab operations on public shares in file browser
     And user of browser1 sees that the modal has disappeared
 
     And user of browser2 opens received URL
-    And user of browser2 sees that URL matches: https?://[^/]*/op/[^/]*/i#/public/shares/.*
+    And user of browser2 sees that URL matches: https?://[^/]*/opw/[^/]*/i#/public/shares/.*
     And user of browser2 sees that public share is named "share1"
 
     And user of browser2 sees that current working directory path visible in public share's file browser is as follows: share1
@@ -253,7 +253,7 @@ Feature: Basic data tab operations on public shares in file browser
     And user of browser1 sees that the modal has disappeared
 
     And user of browser2 opens received URL
-    And user of browser2 sees that URL matches: https?://[^/]*/op/[^/]*/i#/public/shares/.*
+    And user of browser2 sees that URL matches: https?://[^/]*/opw/[^/]*/i#/public/shares/.*
     And user of browser2 sees that public share is named "share1"
     And user of browser2 sees file browser in public share view
 

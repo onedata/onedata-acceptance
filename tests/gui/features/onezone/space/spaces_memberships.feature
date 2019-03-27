@@ -28,7 +28,7 @@ Feature: Basic management of spaces memberships in Onezone GUI
 
     And users opened [browser1, browser2] browsers' windows
     And user of [browser1, browser2] opened [Onezone, Onezone] page
-    And user of [browser1, browser2] logged as [user1, user2] to Onezone service
+    And user of [browser1, browser2] logged as [user1, user2] to [Onezone, Onezone] service
 
 
   Scenario: User leaves the space in members subpage

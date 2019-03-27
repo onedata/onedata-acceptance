@@ -51,7 +51,7 @@ class WelcomePage(PageObject):
 class GetSupportPage(PageObject):
     request_support_modal = NamedButton('.nav-link', text='Request support')
     deploy_provider_modal = NamedButton('.nav-link',
-                                        text='Deploy your own provider')
+                                        text='Deploy your own Oneprovider')
     expose_existing_data_modal = NamedButton('.nav-link',
                                              text='Expose existing data collection')
 
