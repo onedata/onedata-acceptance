@@ -5,8 +5,8 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
             - user1
 
     And users opened [browser1, browser2] browsers' windows
-    And users of [browser1, browser2] opened [oneprovider-1 provider panel, Onezone] page
-    And user of [browser1, browser2] logged as [admin, user1] to [Onepanel, Onezone] service
+    And users of [browser1, browser2] opened [Onezone, Onezone] page
+    And user of [browser1, browser2] logged as [admin, user1] to [Onezone, Onezone] service
 
     And directory tree structure on local file system:
           browser2:
