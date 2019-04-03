@@ -79,7 +79,7 @@ def assert_provider_hostname_matches_test_hostname(selenium, browser_id,
                                                    displays, clipboard):
     driver = selenium[browser_id]
     expected_domain = "{}.test".format(hosts[provider]['hostname'])
-    page = oz_page(driver)['data']
+    page = oz_page(driver)['providers']
     page.elements_list[0]()
     page.popover.copy_hostname()
     displayed_domain = clipboard.paste(display=displays[browser_id])
@@ -221,7 +221,7 @@ def click_on_provider_circle(selenium, browser_id, ordinal, oz_page):
                r'circle on Onezone world map'))
 def click_other_provider_icons(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
-    oz_page(driver)['data'].icons[0].icon()
+    oz_page(driver)['providers'].icons[0].icon()
 
 
 @when(parsers.re(r'user of (?P<browser_id>.+?) sees that provider popup has '
@@ -245,7 +245,7 @@ def assert_provider_popup_next_to_provider_circle(selenium, browser_id,
 @wt(parsers.parse('user of {browser_id} clicks on Onezone world map'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_world_map(selenium, browser_id, oz_page):
-    oz_page(selenium[browser_id])['data'].map_point.click()
+    oz_page(selenium[browser_id])['providers'].map_point.click()
 
 
 @when(parsers.parse('user of {browser_id} sees that the list of spaces '
@@ -337,7 +337,7 @@ def assert_provider_working_in_oz_panel(selenium, browser_id,
                                         provider, oz_page, hosts):
     driver = selenium[browser_id]
     provider = hosts[provider]['name']
-    page = oz_page(driver)['data']
+    page = oz_page(driver)['providers']
     try:
         provider_record = page.elements_list[provider]
         provider_record.click()
@@ -371,7 +371,7 @@ def click_on_provider_in_data_sidebar(selenium, browser_id, oz_page,
                                       provider, hosts):
     driver = selenium[browser_id]
     provider = hosts[provider]['name']
-    oz_page(driver)['data'].elements_list[provider]()
+    oz_page(driver)['providers'].elements_list[provider]()
 
 
 @wt(parsers.re('user of (?P<browser_id>.+?) clicks on '
@@ -402,7 +402,7 @@ def assert_home_space_has_appeared_on_provider_on_left_sidebar_menu(selenium,
                                                                     hosts):
     driver = selenium[browser_id]
     provider = hosts[provider]['name']
-    assert oz_page(driver)['data'].elements_list[provider].is_home_icon(), \
+    assert oz_page(driver)['providers'].elements_list[provider].is_home_icon(), \
         'home of provider "{}" not found'.format(provider)
 
 
@@ -413,7 +413,7 @@ def assert_number_of_supported_spaces_in_data_sidebar(selenium, browser_id,
                                                       number, hosts):
     driver = selenium[browser_id]
     provider = hosts[provider]['name']
-    supported_spaces_number = (oz_page(driver)['data']
+    supported_spaces_number = (oz_page(driver)['providers']
                                .elements_list[provider]
                                .supported_spaces_number)
     assert number == supported_spaces_number, ('number of supported spaces '

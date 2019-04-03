@@ -12,8 +12,8 @@ from selenium.webdriver.common.action_chains import ActionChains
 
 from tests.gui.utils.core.web_elements import WebElement, WebElementsSequence
 from .common import OZPanel
-from .spaces_page import SpacesPage
 from .data_page import DataPage
+from .providers_page import ProvidersPage
 from .groups.groups_page import GroupsPage
 from .tokens_page import TokensPage
 from .clusters_page import ClustersPage
@@ -27,9 +27,9 @@ class OZLoggedIn(object):
 
     panels = {
         'data': DataPage,
-        'tokens': TokensPage,
-        'spaces': SpacesPage,
+        'providers': ProvidersPage,
         'groups': GroupsPage,
+        'tokens': TokensPage,
         'clusters': ClustersPage
     }
 

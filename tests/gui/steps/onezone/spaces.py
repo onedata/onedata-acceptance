@@ -22,7 +22,7 @@ from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 def click_create_new_space_on_spaces_on_left_sidebar_menu(selenium, browser_id,
                                                           oz_page):
     driver = selenium[browser_id]
-    oz_page(driver)['spaces'].create_space_button()
+    oz_page(driver)['data'].create_space_button()
 
 
 @wt(parsers.parse('user of {browser_id} writes "{space_name}" '
@@ -31,7 +31,7 @@ def click_create_new_space_on_spaces_on_left_sidebar_menu(selenium, browser_id,
 def type_space_name_on_input_on_create_new_space_page(selenium, browser_id,
                                                       space_name, oz_page):
     driver = selenium[browser_id]
-    oz_page(driver)['spaces'].input_box.value = space_name
+    oz_page(driver)['data'].input_box.value = space_name
 
 
 @wt(parsers.parse('user of {browser_id} clicks on Create new space button'))
@@ -39,13 +39,13 @@ def type_space_name_on_input_on_create_new_space_page(selenium, browser_id,
 def create_new_space_by_click_on_create_new_space_button(selenium, browser_id,
                                                          oz_page):
     driver = selenium[browser_id]
-    oz_page(driver)['spaces'].input_box.confirm()
+    oz_page(driver)['data'].input_box.confirm()
 
 
 @wt(parsers.parse('user of {browser_id} creates space "{space_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_new_space_on_onezone_page(selenium, browser_id, space_name, oz_page):
-    page = oz_page(selenium[browser_id])['spaces']
+    page = oz_page(selenium[browser_id])['data']
     page.create_space_button()
     page.input_box.value = space_name
     page.input_box.confirm()
@@ -56,7 +56,7 @@ def create_new_space_on_onezone_page(selenium, browser_id, space_name, oz_page):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_no_provider_for_space(selenium, browser_id, provider_name,
                                  space_name, hosts, oz_page):
-    page = oz_page(selenium[browser_id])['spaces']
+    page = oz_page(selenium[browser_id])['data']
     page.elements_list[space_name]()
     page.elements_list[space_name].providers()
     provider = hosts[provider_name]['name']
@@ -75,7 +75,7 @@ def assert_no_provider_for_space(selenium, browser_id, provider_name,
 def assert_new_created_space_has_appeared_on_spaces(selenium, browser_id,
                                                     space_name, oz_page):
     driver = selenium[browser_id]
-    assert space_name in oz_page(driver)['spaces'].elements_list, \
+    assert space_name in oz_page(driver)['data'].elements_list, \
         'space "{}" not found'.format(space_name)
 
 
@@ -102,8 +102,8 @@ def click_space_on_spaces_on_left_sidebar_menu(selenium, browser_id, option,
 def type_space_name_on_rename_space_input_on_overview_page(selenium, browser_id,
                                                            space_name, oz_page):
     driver = selenium[browser_id]
-    oz_page(driver)['spaces'].overview_page.rename()
-    oz_page(driver)['spaces'].overview_page.edit_name_box.value = space_name
+    oz_page(driver)['data'].overview_page.rename()
+    oz_page(driver)['data'].overview_page.edit_name_box.value = space_name
 
 
 @wt(parsers.parse('user of {browser_id} clicks on confirmation button '
@@ -113,7 +113,7 @@ def rename_space_by_click_on_confirmation_button_on_overview_page(selenium,
                                                                   browser_id,
                                                                   oz_page):
     driver = selenium[browser_id]
-    oz_page(driver)['spaces'].overview_page.edit_name_box.confirm()
+    oz_page(driver)['data'].overview_page.edit_name_box.confirm()
 
 
 @wt(parsers.parse('user of {browser_id} clicks on cancel button '
@@ -121,7 +121,7 @@ def rename_space_by_click_on_confirmation_button_on_overview_page(selenium,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_cancel_rename_button_on_overview_page(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
-    oz_page(driver)['spaces'].overview_page.edit_name_box.cancel()
+    oz_page(driver)['data'].overview_page.edit_name_box.cancel()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on '
@@ -130,7 +130,7 @@ def click_cancel_rename_button_on_overview_page(selenium, browser_id, oz_page):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_option_in_menu(selenium, browser_id, button, oz_page):
     driver = selenium[browser_id]
-    page = oz_page(driver)['spaces']
+    page = oz_page(driver)['data']
     page.menu_button()
     page.menu[button].click()
 
@@ -149,7 +149,7 @@ def click_confirm_or_cancel_button_on_leave_space_page(selenium, browser_id,
 def assert_space_has_disappeared_on_spaces(selenium, browser_id, space_name,
                                            oz_page):
     driver = selenium[browser_id]
-    assert space_name not in oz_page(driver)['spaces'].elements_list, \
+    assert space_name not in oz_page(driver)['data'].elements_list, \
         'space "{}" found'.format(space_name)
 
 
@@ -161,7 +161,7 @@ def assert_home_space_has_appeared_on_spaces_on_left_sidebar_menu(selenium,
                                                                   space_name,
                                                                   oz_page):
     driver = selenium[browser_id]
-    assert oz_page(driver)['spaces'].elements_list[space_name].is_home_icon(), \
+    assert oz_page(driver)['data'].elements_list[space_name].is_home_icon(), \
         'home of space "{}" not found'.format(space_name)
 
 
@@ -173,7 +173,7 @@ def assert_home_space_has_disappeared_on_spaces_on_left_sidebar_menu(selenium,
                                                                      space_name,
                                                                      oz_page):
     driver = selenium[browser_id]
-    assert not oz_page(driver)['spaces'].elements_list[space_name].is_home_icon(), \
+    assert not oz_page(driver)['data'].elements_list[space_name].is_home_icon(), \
         'home of space "{}" found'.format(space_name)
 
 
@@ -183,7 +183,7 @@ def assert_home_space_has_disappeared_on_spaces_on_left_sidebar_menu(selenium,
 def assert_number_of_supporting_providers_of_space(selenium, browser_id,
                                                    number, space_name, oz_page):
     driver = selenium[browser_id]
-    assert (number == oz_page(driver)['spaces']
+    assert (number == oz_page(driver)['data']
             .elements_list[space_name]
             .supporting_providers_number), \
         'number of supporting providers is not equal {}'.format(number)
@@ -195,7 +195,7 @@ def assert_number_of_supporting_providers_of_space(selenium, browser_id,
 def assert_size_of_space_on_left_sidebar_menu(selenium, browser_id, number,
                                               space_name, oz_page):
     driver = selenium[browser_id]
-    assert (number == oz_page(driver)['spaces']
+    assert (number == oz_page(driver)['data']
             .elements_list[space_name]
             .support_size), ('size of space "{}" is not equal {}'
                              .format(space_name, number))
@@ -208,7 +208,7 @@ def assert_size_of_space_on_left_sidebar_menu(selenium, browser_id, number,
 def click_on_members_of_space_on_left_sidebar_menu(selenium, browser_id,
                                                    space_name, option, oz_page):
     driver = selenium[browser_id]
-    getattr(oz_page(driver)['spaces'].elements_list[space_name],
+    getattr(oz_page(driver)['data'].elements_list[space_name],
             transform(option)).click()
 
 
@@ -217,7 +217,7 @@ def click_on_members_of_space_on_left_sidebar_menu(selenium, browser_id,
 def click_get_started_on_spaces_on_left_sidebar_menu(selenium, browser_id,
                                                      oz_page):
     driver = selenium[browser_id]
-    oz_page(driver)['spaces'].get_started()
+    oz_page(driver)['data'].get_started()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks '
@@ -226,7 +226,7 @@ def click_get_started_on_spaces_on_left_sidebar_menu(selenium, browser_id,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_option_on_welcome_page(selenium, browser_id, option, oz_page):
     driver = selenium[browser_id]
-    getattr(oz_page(driver)['spaces'].welcome_page, transform(option)).click()
+    getattr(oz_page(driver)['data'].welcome_page, transform(option)).click()
 
 
 @wt(parsers.parse('user of {browser_id} writes "{token}" '
@@ -235,7 +235,7 @@ def click_option_on_welcome_page(selenium, browser_id, option, oz_page):
 def type_token_to_input_on_join_to_a_space_page(selenium, browser_id,
                                                 token, oz_page):
     driver = selenium[browser_id]
-    oz_page(driver)['spaces'].input_box.value = token
+    oz_page(driver)['data'].input_box.value = token
 
 
 @wt(parsers.parse('user of {browser_id} sees that error popup has appeared'))
@@ -253,7 +253,7 @@ def assert_providers_list_contains_provider(selenium, browser_id, provider,
     driver = selenium[browser_id]
     if provider in hosts:
         provider = hosts[provider]['name']
-    providers_list = oz_page(driver)['spaces'].providers_page.providers_list
+    providers_list = oz_page(driver)['data'].providers_page.providers_list
     assert provider in providers_list, 'provider "{}" not found'.format(provider)
 
 
@@ -262,8 +262,8 @@ def assert_providers_list_contains_provider(selenium, browser_id, provider,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_length_of_providers_list(selenium, browser_id, space_name, oz_page):
     driver = selenium[browser_id]
-    providers_list = oz_page(driver)['spaces'].providers_page.providers_list
-    number_of_providers = int(oz_page(driver)['spaces']
+    providers_list = oz_page(driver)['data'].providers_page.providers_list
+    number_of_providers = int(oz_page(driver)['data']
                               .elements_list[space_name]
                               .supporting_providers_number)
     assert len(providers_list) == number_of_providers, \
@@ -277,7 +277,7 @@ def assert_length_of_providers_list(selenium, browser_id, space_name, oz_page):
 def assert_length_of_providers_list_of_space(selenium, browser_id, space_name,
                                              number_of_providers, oz_page):
     driver = selenium[browser_id]
-    providers_list = oz_page(driver)['spaces'].providers_page.providers_list
+    providers_list = oz_page(driver)['data'].providers_page.providers_list
     assert len(providers_list) == int(number_of_providers), \
         ('length of providers list of space "{}" is not equal {}'
          .format(space_name, number_of_providers))
@@ -288,7 +288,7 @@ def assert_length_of_providers_list_of_space(selenium, browser_id, space_name,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_get_support_button_on_providers_page(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
-    oz_page(driver)['spaces'].providers_page.get_support()
+    oz_page(driver)['data'].providers_page.get_support()
 
 
 @wt(parsers.parse('user of {browser_id} clicks Deploy your own provider tab '
@@ -297,7 +297,7 @@ def click_get_support_button_on_providers_page(selenium, browser_id, oz_page):
 def click_deploy_your_own_provider_tab_on_get_support_page(selenium, browser_id,
                                                            oz_page):
     driver = selenium[browser_id]
-    oz_page(driver)['spaces'].providers_page.get_support_page \
+    oz_page(driver)['data'].providers_page.get_support_page \
         .deploy_provider_modal()
 
 
@@ -308,7 +308,7 @@ def click_expose_existing_data_collection_tab_on_get_support_page(selenium,
                                                                   browser_id,
                                                                   oz_page):
     driver = selenium[browser_id]
-    oz_page(driver)['spaces'].providers_page.get_support_page \
+    oz_page(driver)['data'].providers_page.get_support_page \
         .expose_existing_data_modal()
 
 
@@ -318,7 +318,7 @@ def click_expose_existing_data_collection_tab_on_get_support_page(selenium,
 def click_copy_button_on_request_support_page(selenium, browser_id, oz_page,
                                               displays, clipboard, tmp_memory):
     driver = selenium[browser_id]
-    oz_page(driver)['spaces'].providers_page.get_support_page.copy()
+    oz_page(driver)['data'].providers_page.get_support_page.copy()
 
     item = clipboard.paste(display=displays[browser_id])
     tmp_memory[browser_id]['mailbox']['token'] = item
@@ -330,7 +330,7 @@ def click_copy_button_on_request_support_page(selenium, browser_id, oz_page,
 def click_generate_another_token_on_request_support_page(selenium, browser_id,
                                                          oz_page):
     driver = selenium[browser_id]
-    oz_page(driver)['spaces'].providers_page.get_support_page \
+    oz_page(driver)['data'].providers_page.get_support_page \
         .generate_another_token()
 
 
@@ -341,7 +341,7 @@ def assert_two_tokens_are_different(selenium, browser_id, oz_page, displays,
                                        clipboard, tmp_memory):
     driver = selenium[browser_id]
     first_token = tmp_memory[browser_id]['mailbox']['token']
-    oz_page(driver)['spaces'].providers_page.get_support_page.copy()
+    oz_page(driver)['data'].providers_page.get_support_page.copy()
 
     second_token = clipboard.paste(display=displays[browser_id])
     assert first_token != second_token, 'two tokens are the same'
@@ -354,7 +354,7 @@ def assert_copy_token_and_input_token_are_the_same(selenium, browser_id,
                                                       oz_page, tmp_memory):
     driver = selenium[browser_id]
     first_token = tmp_memory[browser_id]['mailbox']['token']
-    second_token = oz_page(driver)['spaces'].providers_page.get_support_page \
+    second_token = oz_page(driver)['data'].providers_page.get_support_page \
         .token_textarea
     assert first_token == second_token, 'two tokens are not the same'
 
@@ -372,7 +372,7 @@ def assert_copy_token_is_not_empty(selenium, browser_id, tmp_memory):
 def assert_name_label_of_space_on_overview_page(selenium, browser_id,
                                                 space_name, oz_page):
     driver = selenium[browser_id]
-    assert oz_page(driver)['spaces'].overview_page.space_name == space_name, \
+    assert oz_page(driver)['data'].overview_page.space_name == space_name, \
         'space "{}" not found on overview page'.format(space_name)
 
 
@@ -382,7 +382,7 @@ def assert_name_label_of_space_on_overview_page(selenium, browser_id,
 def generate_and_send_support_token(selenium, browser_id1, space_name, oz_page,
                                     browser_id2, clipboard, displays,
                                     tmp_memory):
-    page = oz_page(selenium[browser_id1])['spaces']
+    page = oz_page(selenium[browser_id1])['data']
     page.elements_list[space_name]()
     page.elements_list[space_name].providers()
     page.providers_page.get_support()
@@ -395,7 +395,7 @@ def generate_and_send_support_token(selenium, browser_id1, space_name, oz_page,
                'from Spaces page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def copy_token(selenium, browser_id, oz_page):
-    oz_page(selenium[browser_id])['spaces'].providers_page.get_support_page.copy()
+    oz_page(selenium[browser_id])['data'].providers_page.get_support_page.copy()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) confirms create new space '

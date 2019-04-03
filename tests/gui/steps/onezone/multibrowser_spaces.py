@@ -34,7 +34,7 @@ def click_join_some_space_using_space_invitation_token_button(selenium,
                                                               browser_id,
                                                               oz_page):
     driver = selenium[browser_id]
-    oz_page(driver)['spaces'].join_space_button()
+    oz_page(driver)['data'].join_space_button()
 
 
 @wt(parsers.parse('user of {browser_id} pastes Space invitation {item_type} '
@@ -47,7 +47,7 @@ def paste_space_invitation_token_to_input_on_join_to_space_page(selenium,
                                                                 oz_page):
     driver = selenium[browser_id]
     token = tmp_memory[browser_id]['mailbox'][item_type]
-    oz_page(driver)['spaces'].input_box.value = token
+    oz_page(driver)['data'].input_box.value = token
 
 
 @wt(parsers.parse('user of {browser_id} clicks Join the space button '
@@ -56,7 +56,7 @@ def paste_space_invitation_token_to_input_on_join_to_space_page(selenium,
 def click_join_the_space_button_on_join_to_space_page(selenium, browser_id,
                                                       oz_page):
     driver = selenium[browser_id]
-    oz_page(driver)['spaces'].input_box.confirm()
+    oz_page(driver)['data'].input_box.confirm()
 
 
 @wt(parsers.parse('user of {browser_id} clicks "{group_name}" '
