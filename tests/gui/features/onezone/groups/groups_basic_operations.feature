@@ -86,8 +86,10 @@ Feature: Basic management of groups with one user in Onezone GUI
     And user of browser refreshes site
 
     And user of browser changes webapp path to "/i#/onedata/groups" concatenated with copied item
+    And user of browser refreshes site
 
-    Then user of browser see that page with text "RESOURCE NOT FOUND" appeared
+    And user of browser clicks Show details on groups page
+    Then user of browser sees "Insufficient permissions" text on groups page
 
 
 

@@ -23,7 +23,7 @@ Feature: Multi Browser invitation group to spaces
 
 
   Scenario Outline: User joins a space with group invitation token
-    When user of browser1 clicks on Spaces in the main menu
+    When user of browser1 clicks on Data in the main menu
     And user of browser1 clicks "space1" on the spaces list in the sidebar
     And user of browser1 clicks Members of "space1" in the sidebar
     And user of browser1 clicks on "Invite group using token" button in groups list menu in "space1" space members view
@@ -55,7 +55,7 @@ Feature: Multi Browser invitation group to spaces
 
   Scenario: User joins a space with group invitation token and see space was renamed
     # user1 invites user2 via group invitation
-    When user of browser1 clicks on Spaces in the main menu
+    When user of browser1 clicks on Data in the main menu
     And user of browser1 clicks "space1" on the spaces list in the sidebar
     And user of browser1 clicks Members of "space1" in the sidebar
     And user of browser1 clicks on "Invite group using token" button in groups list menu in "space1" space members view

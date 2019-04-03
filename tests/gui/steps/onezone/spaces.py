@@ -80,7 +80,8 @@ def assert_new_created_space_has_appeared_on_spaces(selenium, browser_id,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
-               '(?P<option>Data|Tokens|Spaces|Groups|Clusters) in the main menu'))
+               '(?P<option>Data|Providers|Groups|Tokens|Clusters) '
+               'in the main menu'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page):
     driver = selenium[browser_id]
@@ -93,6 +94,8 @@ def click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page):
 def click_space_on_spaces_on_left_sidebar_menu(selenium, browser_id, option,
                                                name, oz_page):
     driver = selenium[browser_id]
+    if option == 'spaces':
+        option = 'data'
     oz_page(driver)[option].elements_list[name].click()
 
 
@@ -212,10 +215,10 @@ def click_on_members_of_space_on_left_sidebar_menu(selenium, browser_id,
             transform(option)).click()
 
 
-@wt(parsers.parse('user of {browser_id} clicks Get started in spaces sidebar'))
+@wt(parsers.parse('user of {browser_id} clicks Get started in data sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_get_started_on_spaces_on_left_sidebar_menu(selenium, browser_id,
-                                                     oz_page):
+def click_get_started_on_data_on_left_sidebar_menu(selenium, browser_id,
+                                                   oz_page):
     driver = selenium[browser_id]
     oz_page(driver)['data'].get_started()
 

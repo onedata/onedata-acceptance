@@ -276,3 +276,18 @@ def assert_list_of_children_contains_group(selenium, browser_id, oz_page,
 def assert_list_of_children_contains_group(selenium, browser_id, oz_page):
     (oz_page(selenium[browser_id])['groups'].main_page.hierarchy
      .show_parent_groups())
+
+
+@wt(parsers.parse('user of {browser_id} clicks Show details on groups page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_show_details_on_groups_page(selenium, browser_id, oz_page):
+    oz_page(selenium[browser_id])['groups'].main_page.show_details()
+
+
+@wt(parsers.parse('user of {browser_id} sees "{text}" text on groups page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_error_detail_text(selenium, browser_id, oz_page, text):
+    page = oz_page(selenium[browser_id])['groups']
+    assert text in page.main_page.error_details, ('page with text "{}" '
+                                                  'not found'.format(text))
+

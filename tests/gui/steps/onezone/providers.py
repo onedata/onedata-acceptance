@@ -365,7 +365,7 @@ def assert_provider_not_working_in_oz_panel(selenium, browser_id,
 
 
 @wt(parsers.parse('user of {browser_id} clicks on provider "{provider}" '
-                  'in data sidebar'))
+                  'in providers sidebar'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_on_provider_in_data_sidebar(selenium, browser_id, oz_page,
                                       provider, hosts):

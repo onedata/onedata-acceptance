@@ -25,7 +25,7 @@ class Icon(Element):
 
 class ProvidersPage(GenericPage):
     _popover = WebElement('.webui-popover .provider-place-drop')
-    elements_list = WebItemsSequence('.sidebar-data '
+    elements_list = WebItemsSequence('.sidebar-providers '
                                      'li.one-list-item.clickable', cls=Provider)
     icons = WebItemsSequence('.provider-place', cls=Icon)
     map_point = Button('.one-map-container .jvectormap-container '

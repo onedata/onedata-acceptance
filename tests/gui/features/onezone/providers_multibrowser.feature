@@ -29,8 +29,8 @@ Feature: Basic management of providers in Onezone GUI
 
 
   Scenario: User sees that after unsupporting space, number displayed in space counter for given provider decreases
-    When user of browser1 clicks on Data in the main menu
-    And user of browser1 clicks on provider "oneprovider-1" in data sidebar
+    When user of browser1 clicks on Providers in the main menu
+    And user of browser1 clicks on provider "oneprovider-1" in providers sidebar
     And user of browser1 sees that spaces counter for "oneprovider-1" provider displays 2 in data sidebar
     And user of browser1 sees that length of spaces list on provider popover is 2
 
