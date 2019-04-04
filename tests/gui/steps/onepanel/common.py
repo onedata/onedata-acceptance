@@ -44,6 +44,8 @@ def wt_click_on_subitem_for_item(selenium, browser_id_list, sidebar,
     for browser_id in parse_seq(browser_id_list):
         nav = getattr(onepanel(selenium[browser_id]).sidebar,
                       transform(sidebar))
+
+        nav.scroll_to_bottom(selenium[browser_id])
         nav.items[record].submenu[sub_item].click()
 
 

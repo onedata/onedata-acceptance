@@ -35,3 +35,7 @@ class ClustersSidebar(PageObject):
     items = WebItemsSequence('.sidebar-clusters ul.one-list '
                              'li.one-list-item.active',
                              cls=ClusterRecord)
+
+    def scroll_to_bottom(self, driver):
+        driver.execute_script('var s = $(\'#col-sidebar\'); '
+                              's.scrollTo(s.height())')

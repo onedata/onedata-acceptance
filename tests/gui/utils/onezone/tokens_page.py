@@ -12,7 +12,7 @@ from tests.gui.utils.onezone.generic_page import Element, GenericPage
 
 
 class TokensPage(GenericPage):
-    create_token = Button('.oneicon-add-filled')
+    create_token = Button('.create-token-btn .oneicon-add-filled')
     remove_token = NamedButton('button.delete-token', text='Remove')
     copy_token = Button('.copy-btn')
     elements_list = WebItemsSequence('.sidebar-tokens '

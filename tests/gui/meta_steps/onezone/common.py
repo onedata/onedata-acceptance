@@ -40,7 +40,7 @@ def login_using_gui(host_list, selenium, driver, tmpdir, tmp_memory, xvfb,
     for user, host_name in zip(parse_seq(user_list),
                                parse_seq(host_list)):
         g_login_using_basic_auth(selenium, user, user, login_page,
-                                 users, host_list)
+                                 users, host_name)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)

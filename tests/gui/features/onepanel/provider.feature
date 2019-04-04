@@ -13,15 +13,13 @@ Feature: Provider management in Onepanel GUI
                     size: 1000000
 
 
-    And opened [browser1, browser2] with [admin, user1] logged to [onezone, onezone] service
+    And opened [browser1, browser2] with [admin, user1] logged to [oneprovider-1 provider panel, onezone] service
 
 
   Scenario: User changes provider name and domain
     Given provider name set to name of "oneprovider-1" by user of browser1 in Onepanel
     When user of browser2 refreshes site
 
-    And user of browser1 clicks on Clusters in the main menu
-    And user of browser1 clicks on "oneprovider-1" in clusters menu
     And user of browser1 clicks on Provider item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser1 sees that Provider name attribute is equal to the name of "oneprovider-1" provider in Provider panel
     And user of browser1 sees that Domain attribute is equal to the hostname of "oneprovider-1" provider in Provider panel
@@ -66,7 +64,7 @@ Feature: Provider management in Onepanel GUI
     Given provider name set to name of "oneprovider-1" by user of browser1 in Onepanel
     When user of browser2 refreshes site
 
-    When user of browser2 clicks on Data in the main menu
+    And user of browser2 clicks on Data in the main menu
     And user of browser2 clicks "space1" on the spaces list in the sidebar
     And user of browser2 clicks Providers of "space1" in the sidebar
     And user of browser2 sees "oneprovider-1" is on the providers list

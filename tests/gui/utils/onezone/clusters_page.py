@@ -41,3 +41,6 @@ class ClustersPage(GenericPage):
                             cls=MenuItem)
     submenu = WebItemsSequence('.second-level-items .item-header',
                                cls=SubmenuItem)
+
+    deregistration_checkbox = Button('.text-understand')
+    deregistration_button = Button('.btn-danger.btn-deregister')

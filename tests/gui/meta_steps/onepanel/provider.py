@@ -67,15 +67,6 @@ def deregister_provider_in_op_panel_using_gui(selenium, user, provider_name,
     sub_item = 'Provider'
     content = 'provider'
     popup = 'Deregister provider'
-    service = 'emergency interface'
-
-    wt_click_on_subitem_for_item(selenium, user, sidebar, sub_item,
-                                 provider_name, onepanel, hosts)
-    wt_click_on_btn_in_content(selenium, user, 'Deregister provider', content,
-                               onepanel)
-    go_to_emergency_interface(selenium, user, popups)
-    g_login_using_basic_auth(selenium, user, 'admin',
-                             login_page, users, service)
 
     wt_click_on_subitem_for_item(selenium, user, sidebar, sub_item,
                                  provider_name, onepanel, hosts)
@@ -183,27 +174,25 @@ def change_provider_name_if_name_is_different_than_given(selenium, browser_id,
                                                          login_page,
                                                          users, modals):
     sub_item = 'Provider'
-    domain = hosts[provider]['hostname']
-    provider_name = hosts[provider]['name']
+    record = 0
     sidebar = 'CLUSTERS'
 
-    click_on_option_in_the_sidebar(selenium, browser_id, sidebar, oz_page)
-    click_on_record_in_clusters_menu(selenium, browser_id, oz_page, provider,
-                                     hosts)
     wt_click_on_subitem_for_item_with_name(selenium, browser_id, sidebar,
-                                           sub_item, provider_name, onepanel)
-    time.sleep(1)
+                                           sub_item, record, onepanel)
+
     current_provider = (onepanel(selenium[browser_id])
                         .content
                         .provider
                         .details
                         .provider_name)
-    if current_provider != provider_name:
+    domain = hosts[provider]['hostname']
+    provider = hosts[provider]['name']
+    if current_provider != provider:
         modify_provider_with_given_name_in_op_panel_using_gui(selenium,
                                                               browser_id,
                                                               onepanel,
                                                               current_provider,
-                                                              provider_name, domain,
+                                                              provider, domain,
                                                               login_page,
                                                               users, hosts,
                                                               browser_id, modals)
