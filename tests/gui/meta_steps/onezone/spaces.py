@@ -205,7 +205,6 @@ def assert_provider_does_not_support_space_in_oz_gui(selenium, user, oz_page,
                                                      hosts):
     where = 'spaces'
     option = 'Providers'
-    number_of_providers = 0
 
     click_element_on_lists_on_left_sidebar_menu(selenium, user, where,
                                                 space_name, oz_page)

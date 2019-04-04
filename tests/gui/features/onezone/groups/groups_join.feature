@@ -41,7 +41,7 @@ Feature: Joining a group in Onezone GUI
     And user of browser2 confirms using <confirmation_method>
 
     And user of browser1 is idle for 4 seconds
-    Then user of browser1 sees user "user2" on group "group1" members list
+    Then user of browser1 sees "user2" user on "group1" group members list
     And user of browser2 sees group "group1" on groups list
 
 
