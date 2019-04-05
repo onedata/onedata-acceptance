@@ -50,7 +50,7 @@ def remove_group(selenium, browser_id, group_list, oz_page):
     option = 'Remove'
     modal = "REMOVE GROUP"
 
-    for group in group_list:
+    for group in parse_seq(group_list):
         click_on_group_menu_button(selenium, browser_id, option, group, oz_page)
         click_modal_button(selenium, browser_id, option, modal, oz_page)
 

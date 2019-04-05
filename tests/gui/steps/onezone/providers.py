@@ -370,8 +370,8 @@ def click_on_provider_in_data_sidebar_with_provider_name(selenium, browser_id,
 def click_on_provider_in_data_sidebar(selenium, browser_id, oz_page,
                                       provider, hosts):
     provider = hosts[provider]['name']
-    click_on_provider_in_data_sidebar(selenium, browser_id, oz_page,
-                                      provider)
+    click_on_provider_in_data_sidebar_with_provider_name(selenium, browser_id,
+                                                         oz_page, provider)
 
 
 @wt(parsers.parse('user of {browser_id} sees that "{provider}" provider is not '
