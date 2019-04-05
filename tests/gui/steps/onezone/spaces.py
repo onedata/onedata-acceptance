@@ -186,10 +186,10 @@ def assert_number_of_supporting_providers_of_space(selenium, browser_id,
     supporting_providers_number = int(oz_page(driver)['spaces']
                                       .elements_list[space_name]
                                       .supporting_providers_number)
-    assert number == supporting_providers_number, ('found {} supporting '
-                                                   'providers instead of {}'
-                                                   .format(supporting_providers_number,
-                                                           number))
+    assert int(number) == supporting_providers_number, ('found {} supporting '
+                                                        'providers instead of {}'
+                                                        .format(supporting_providers_number,
+                                                                number))
 
 
 @wt(parsers.parse('user of {browser_id} sees {number} size of '
