@@ -11,7 +11,7 @@ Feature: Basic spaces management utilities using onepanel
             password: password
             user role: admin
         - user1
-    And opened browsers with [admin, user1] logged to [oneprovider-1 provider panel, onezone] service
+    And opened browsers with [admin, user1] logged to [emergency interface of Onepanel, onezone] service
 
 
   Scenario Outline: Support space

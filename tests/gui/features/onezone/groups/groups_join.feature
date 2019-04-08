@@ -3,7 +3,7 @@ Feature: Joining a group in Onezone GUI
   Examples:
     | confirmation_method |
     | enter               |
-#    | button              |
+    | button              |
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -99,5 +99,5 @@ Feature: Joining a group in Onezone GUI
     And user of browser2 changes webapp path to "/i#/onedata/groups" concatenated with received ID
     And user of browser2 refreshes site
     And user of browser2 clicks Show details on groups page
-    Then user of browser2 sees "Insufficient permissions" text on groups page
+    Then user of browser2 sees "Insufficient permissions" in error details on groups page
 

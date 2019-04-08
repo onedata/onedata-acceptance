@@ -323,20 +323,21 @@ def wt_assert_storage_attr_in_deployment_step5(selenium, browser_id, st,
 @wt(parsers.re('user of (?P<browser_id>.*?) types received registration token '
                'in step 2 of deployment process in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_type_registration_token_in_step2(selenium, browser_id, onepanel, tmp_memory):
-
-    onepanel(selenium[browser_id]).content.deployment.step2.token = tmp_memory[browser_id]['mailbox']['token']
+def wt_type_registration_token_in_step2(selenium, browser_id, onepanel,
+                                        tmp_memory):
+    token = tmp_memory[browser_id]['mailbox']['token']
+    onepanel(selenium[browser_id]).content.deployment.step2.token = token
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks proceed button in step 2 '
                'of deployment process in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_proceed_button_in_step2(selenium, browser_id, onepanel, tmp_memory):
+def wt_click_proceed_button_in_step2(selenium, browser_id, onepanel):
     onepanel(selenium[browser_id]).content.deployment.step2.proceed()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on link to go '
-               'to Standalone Onepanel interface in last step '
+               'to Emergency Onepanel interface in last step '
                'of deployment process in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_go_to_standalone_onepanel_interface(selenium, browser_id, onepanel):

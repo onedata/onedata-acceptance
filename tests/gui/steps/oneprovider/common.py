@@ -26,16 +26,12 @@ def _wait_for_op_session_to_start(selenium, browser_id_list):
             raise RuntimeError('no access part found in url')
         else:
             if 'opw' != found.lower():
-                raise RuntimeError('expected op as access part in url '
+                raise RuntimeError('expected opw as access part in url '
                                    'instead got: {}'.format(found))
 
     time.sleep(12)
     for browser_id in parse_seq(browser_id_list):
         driver = selenium[browser_id]
-
-        # because of current subscription it is necessary
-        # to wait under certain circumstances for things to properly work
-        # driver.get(parse_url(driver.current_url).group('base_url'))
 
         _assert_correct_url(driver)
 

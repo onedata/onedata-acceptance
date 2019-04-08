@@ -89,7 +89,7 @@ Feature: Basic management of groups with one user in Onezone GUI
     And user of browser refreshes site
 
     And user of browser clicks Show details on groups page
-    Then user of browser sees "Insufficient permissions" text on groups page
+    Then user of browser sees "Insufficient permissions" in error details on groups page
 
 
 

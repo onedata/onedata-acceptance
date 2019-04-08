@@ -25,7 +25,7 @@ Feature: Basic management of providers in Onezone GUI
 
     And users opened [browser1, browser2] browsers' windows
     And users of [browser1, browser2] opened [Onezone, oneprovider-1 provider panel] page
-    And user of [browser1, browser2] logged as [user1, admin] to [Onezone, Onepanel] service
+    And user of [browser1, browser2] logged as [user1, admin] to [Onezone, emergency interface of Onepanel] service
 
 
   Scenario: User sees that after unsupporting space, number displayed in space counter for given provider decreases

@@ -86,7 +86,7 @@ def wt_click_on_sidebar_item(selenium, browser_id_list, sidebar,
         nav.items[record].click()
 
 
-@wt(parsers.parse('user of {browser_id} clicks button on warning bar '
+@wt(parsers.parse('user of {browser_id} clicks info button on warning bar '
                   'in Onepanel page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_info_button_on_warning_bar(selenium, browser_id, onepage):

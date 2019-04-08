@@ -6,8 +6,8 @@ Feature: Scenarios featuring login page to Onepanel GUI
     And user of browser opened onezone zone panel page
 
 
-  Scenario: User successfully login to emergency interface Zone panel
-    Given user of browser logged as admin to emergency interface Onepanel service
+  Scenario: User successfully login to emergency interface of Onezone panel
+    Given user of browser logged as admin to emergency interface of Onepanel service
     Then user of browser sees that he successfully logged in Onezone panel
 
 
@@ -20,20 +20,20 @@ Feature: Scenarios featuring login page to Onepanel GUI
 
 
   Scenario: User successfully logout
-    Given user of browser logged as admin to emergency interface Onepanel service
+    Given user of browser logged as admin to emergency interface of Onepanel service
     When user of browser clicks on logout button in main menu
     Then user of browser sees that he was logged out from Onepanel
 
 
-  Scenario: User successfully go to onezone page from emeregency interface
-    Given user of browser logged as admin to emergency interface Onepanel service
-    When user of browser clicks button on warning bar in Onepanel page
+  Scenario: User successfully goes to Onezone page from emeregency interface
+    Given user of browser logged as admin to emergency interface of Onepanel service
+    When user of browser clicks info button on warning bar in Onepanel page
     And user of browser clicks open in onezone in modal
     And user of browser logs as admin to Onezone service
     Then user of browser sees that URL matches: https?://[^/]*/ozp/onezone/i#/onedata/clusters/.*
 
 
-  Scenario: User successfully go to onezone page from Onepanel login page
+  Scenario: User successfully goes to Onezone page from Onepanel login page
     When user of browser clicks open in onezone in Onepanel login page
     And user of browser logs as admin to Onezone service
     Then user of browser sees that URL matches: https?://[^/]*/ozp/onezone/i#/onedata/clusters/.*

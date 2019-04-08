@@ -13,7 +13,7 @@ Feature: Provider management in Onepanel GUI
                     size: 1000000
 
 
-    And opened [browser1, browser2] with [admin, user1] logged to [oneprovider-1 provider panel, onezone] service
+    And opened [browser1, browser2] with [admin, user1] logged to [emergency interface of Onepanel, onezone] service
 
 
   Scenario: User changes provider name and domain

@@ -17,12 +17,17 @@ from tests.gui.utils.common.modals import Modals as modals
 from tests.gui.meta_steps.onezone.common import search_for_members
 
 
+def _change_to_tab_name(element):
+    main_menu_element = 'data' if element == 'space' else element + 's'
+    return main_menu_element
+
+
 @wt(parsers.re('user of (?P<browser_id>.*) clicks show view expand button in '
                '(?P<where>space|group) members subpage header'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_show_view_option(selenium, browser_id, oz_page, where):
     driver = selenium[browser_id]
-    where = 'data' if where == 'space' else where + 's'
+    where = _change_to_tab_name(where)
 
     oz_page(driver)[where].members_page.show_view_option()
 
@@ -35,7 +40,7 @@ def click_mode_view_in_members_subpage(selenium, browser_id, mode,
                                        oz_page, where):
     driver = selenium[browser_id]
     mode = mode + '_button'
-    where = 'data' if where == 'space' else where + 's'
+    where = _change_to_tab_name(where)
 
     getattr(oz_page(driver)[where].members_page, mode).click()
 
@@ -50,7 +55,7 @@ def assert_element_is_member_of_parent_in_memberships(selenium, browser_id,
                                                       member_type, parent_type,
                                                       oz_page, where):
     driver = selenium[browser_id]
-    where = 'data' if where == 'space' else where + 's'
+    where = _change_to_tab_name(where)
     records = oz_page(driver)[where].members_page.memberships
 
     def fun(record, member_index):
@@ -76,7 +81,7 @@ def assert_element_is_not_member_of_parent_in_memberships(selenium, browser_id,
                                                           member_type,
                                                           parent_type):
     driver = selenium[browser_id]
-    where = 'data' if where == 'space' else where + 's'
+    where = _change_to_tab_name(where)
     records = oz_page(driver)[where].members_page.memberships
 
     def fun(record, member_index):
@@ -98,7 +103,7 @@ def assert_element_is_not_member_of_parent_in_memberships(selenium, browser_id,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_count_membership_rows(selenium, browser_id, number, oz_page, where):
     driver = selenium[browser_id]
-    where = 'data' if where == 'space' else where + 's'
+    where = _change_to_tab_name(where)
     records = oz_page(driver)[where].members_page.memberships
     count_records = len(records)
 
@@ -114,7 +119,7 @@ def assert_count_membership_rows(selenium, browser_id, number, oz_page, where):
 def click_relation_menu_button(selenium, browser_id, member_name,
                                name, oz_page, where):
     driver = selenium[browser_id]
-    where = 'data' if where == 'space' else where + 's'
+    where = _change_to_tab_name(where)
     records = oz_page(driver)[where].members_page.memberships
 
     def click_on_menu(record, member_index):
@@ -139,7 +144,7 @@ def click_option_in_relation_menu_button(selenium, browser_id, option):
 def click_element_in_members_list(selenium, browser_id, member_name,
                                   oz_page, where, list_type):
     driver = selenium[browser_id]
-    where = 'data' if where == 'space' else where + 's'
+    where = _change_to_tab_name(where)
     (getattr(oz_page(driver)[where].members_page, list_type)
      .items[member_name].click())
 
@@ -164,7 +169,7 @@ def click_generate_token_in_subgroups_list(selenium, browser_id, group,
 def generate_group_or_user_invitation_token(selenium, browser_id, button,
                                             name, where, oz_page):
     driver = selenium[browser_id]
-    where = 'data' if where == 'space' else where + 's'
+    where = _change_to_tab_name(where)
     page = oz_page(driver)[where]
     page.elements_list[name]()
 
@@ -301,7 +306,7 @@ def get_invitation_token(selenium, browser_id, group, who, oz_page, tmp_memory):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_invite_on_menu_of_members(selenium, browser_id, who, where, oz_page):
     driver = selenium[browser_id]
-    where = 'data' if where == 'space' else where + 's'
+    where = _change_to_tab_name(where)
     elem = oz_page(driver)[where]
     elem.menu_button()
     elem.menu['Invite ' + who].click()
@@ -316,7 +321,7 @@ def click_privilege_toggle_for_member(selenium, browser_id, option, where,
                                       privilege_name, member_name, oz_page,
                                       member_type):
     driver = selenium[browser_id]
-    where = 'data' if where == 'space' else where + 's'
+    where = _change_to_tab_name(where)
     member_type = member_type + 's'
     members_list = getattr(oz_page(driver)[where].members_page, member_type)
     privilege = (members_list.items[member_name]
@@ -338,7 +343,7 @@ def click_nested_privilege_toggle_for_member(selenium, browser_id, option,
                                              oz_page, member_type,
                                              parent_privilege_name):
     driver = selenium[browser_id]
-    where = 'data' if where == 'space' else where + 's'
+    where = _change_to_tab_name(where)
     member_type = member_type + 's'
     members_list = getattr(oz_page(driver)[where].members_page, member_type)
     privilege = (members_list.items[member_name]
@@ -359,7 +364,7 @@ def assert_privilege_toggle_is_checked_for_member(selenium, browser_id, option,
                                                   oz_page, where, member_name,
                                                   privilege, member_type):
     driver = selenium[browser_id]
-    where = 'data' if where == 'space' else where + 's'
+    where = _change_to_tab_name(where)
     member_type = member_type + 's'
     members_list = getattr(oz_page(driver)[where].members_page, member_type)
     is_checked = (members_list.items[member_name].privileges[privilege]
@@ -379,7 +384,7 @@ def click_button_on_element_header_in_members(selenium, browser_id, option,
                                               member_type):
     driver = selenium[browser_id]
     option = option.lower() + '_button'
-    where = 'data' if where == 'space' else where + 's'
+    where = _change_to_tab_name(where)
     member_type = member_type + 's'
 
     members_list = getattr(oz_page(driver)[where].members_page, member_type)
@@ -394,7 +399,7 @@ def click_button_on_element_header_in_members(selenium, browser_id, option,
 def expand_privilege_for_member(selenium, browser_id, privilege_name, oz_page,
                                 where, member_name, member_type):
     driver = selenium[browser_id]
-    where = 'data' if where == 'space' else where + 's'
+    where = _change_to_tab_name(where)
     member_type = member_type + 's'
 
     members_list = getattr(oz_page(driver)[where].members_page, member_type)
@@ -410,7 +415,7 @@ def see_insufficient_permissions_alert(selenium, browser_id, oz_page,
                                        where, member_name, member_type,
                                        alert_text):
     driver = selenium[browser_id]
-    where = 'data' if where == 'space' else where + 's'
+    where = _change_to_tab_name(where)
     member_type = member_type + 's'
 
     members_list = getattr(oz_page(driver)[where].members_page, member_type)

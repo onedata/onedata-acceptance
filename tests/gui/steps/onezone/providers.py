@@ -430,9 +430,3 @@ def assert_len_of_spaces_list_in_provider_popover(selenium, browser_id,
     assert int(number) == len(spaces_list), ('number of supported spaces '
                                              'is not equal {}'.format(number))
 
-
-@wt(parsers.parse('user of {browser_id} debugger'))
-def debugger(selenium, browser_id, oz_page):
-    driver = selenium[browser_id]
-    import pdb
-    pdb.set_trace()

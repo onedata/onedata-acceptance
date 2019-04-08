@@ -284,7 +284,8 @@ def click_show_details_on_groups_page(selenium, browser_id, oz_page):
     oz_page(selenium[browser_id])['groups'].main_page.show_details()
 
 
-@wt(parsers.parse('user of {browser_id} sees "{text}" text on groups page'))
+@wt(parsers.parse('user of {browser_id} sees "{text}" in error details'
+                  ' on groups page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_error_detail_text(selenium, browser_id, oz_page, text):
     page = oz_page(selenium[browser_id])['groups']

@@ -12,7 +12,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
             - user1:
                 password: password
                 user role: admin
-    And opened browsers with [admin, user1] logged to [oneprovider-1 provider panel, onezone] service
+    And opened browsers with [admin, user1] logged to [emergency interface of Onepanel, onezone] service
     And directory tree structure on local file system:
           user1:
               - dir1: 5

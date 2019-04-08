@@ -61,8 +61,7 @@ def modify_provider_with_given_name_in_op_panel_using_gui(selenium, user,
 
 
 def deregister_provider_in_op_panel_using_gui(selenium, user, provider_name,
-                                              onepanel, popups, hosts,
-                                              login_page, users):
+                                              onepanel, popups, hosts):
     sidebar = 'CLUSTERS'
     sub_item = 'Provider'
     content = 'provider'
@@ -170,8 +169,7 @@ def register_provider_in_op_using_gui(selenium, user, onepanel, hosts, config, m
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_provider_name_if_name_is_different_than_given(selenium, browser_id,
                                                          provider, hosts,
-                                                         onepanel, oz_page,
-                                                         login_page,
+                                                         onepanel,  login_page,
                                                          users, modals):
     sub_item = 'Provider'
     record = 0
