@@ -24,6 +24,8 @@ def open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
     for browser_id, host in zip(parse_seq(browser_id_list),
                                 parse_seq(hosts_list)):
         driver = selenium[browser_id]
+        if host == 'emergency interface of Onepanel':
+            host = 'oneprovider-1 provider panel'
         host = host.lower().split()
         alias, service = host[0], '_'.join(host[1:])
         if 'panel' in service:

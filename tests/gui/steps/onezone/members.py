@@ -431,7 +431,7 @@ def see_insufficient_permissions_alert_for_member(selenium, browser_id, oz_page,
 def see_insufficient_permissions_alert(selenium, browser_id, oz_page,
                                        where, alert_text):
     driver = selenium[browser_id]
-    where = where + 's'
+    where = _change_to_tab_name(where)
 
     forbidden_alert = oz_page(driver)[where].members_page.forbidden_alert.text
     assert alert_text in forbidden_alert, ('not found alert with {} text'
