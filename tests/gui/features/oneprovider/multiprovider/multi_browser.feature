@@ -19,7 +19,7 @@ Feature: Oneprovider functionality using multiple providers and multiple browser
 
     And users opened [browser1, browser2] browsers' windows
     And users of [browser1, browser2] opened [onezone, onezone] page
-    And users of [browser1, browser2] logged as [user1, user2] to Onezone service
+    And users of [browser1, browser2] logged as [user1, user2] to [Onezone, Onezone] service
     And opened [oneprovider-1, oneprovider-2] Oneprovider view in web GUI by users of [browser1, browser2]
 
 

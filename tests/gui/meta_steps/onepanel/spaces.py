@@ -13,6 +13,8 @@ import yaml
 from tests.gui.steps.onepanel.common import *
 from tests.gui.steps.common.notifies import *
 from tests.gui.steps.onepanel.spaces import *
+from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
+from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 
 
 def support_space_in_op_panel_using_gui(selenium, user, config, onepanel,
@@ -144,7 +146,7 @@ def assert_proper_space_configuration_in_op_panel_gui(selenium, user, space,
                      'by user of {browser_id}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def revoke_all_space_supports(selenium, browser_id, onepanel, popups,
-                              modals, hosts):
+                              modals, hosts, oz_page):
     sidebar = 'CLUSTERS'
     sub_item = 'Spaces'
     record = 'oneprovider-1'
@@ -152,8 +154,13 @@ def revoke_all_space_supports(selenium, browser_id, onepanel, popups,
     option = 'Revoke space support'
     button = 'Yes, revoke'
 
+    click_on_option_in_the_sidebar(selenium, browser_id, sidebar, oz_page)
+    click_on_record_in_clusters_menu(selenium, browser_id, oz_page, record,
+                                     hosts)
     wt_click_on_subitem_for_item(selenium, browser_id, sidebar, sub_item,
                                  record, onepanel, hosts)
+    # wait for load spaces list
+    time.sleep(1)
     spaces_list = onepanel(selenium[browser_id]).content.spaces.spaces
     for space in spaces_list:
         wt_expands_toolbar_icon_for_space_in_onepanel(selenium, browser_id,

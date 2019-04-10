@@ -59,6 +59,7 @@ Feature: Oneprovider transfers functionality
     And user of browser sees that there is non-zero throughput in transfer chart
 
     And user of browser clicks on the "data" tab in main menu sidebar
+    And user of browser uses spaces select to change data space to "space1"
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
@@ -98,6 +99,7 @@ Feature: Oneprovider transfers functionality
     And user of browser sees that there is non-zero throughput in transfer chart
 
     And user of browser clicks on the "data" tab in main menu sidebar
+    And user of browser uses spaces select to change data space to "space1"
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser sees file chunks for file "large_file.txt" as follows:
@@ -129,6 +131,7 @@ Feature: Oneprovider transfers functionality
             status: failed
 
     And user of browser clicks on the "data" tab in main menu sidebar
+    And user of browser uses spaces select to change data space to "smallSpace""
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
@@ -162,6 +165,7 @@ Feature: Oneprovider transfers functionality
             status: failed
 
     And user of browser clicks on the "data" tab in main menu sidebar
+    And user of browser uses spaces select to change data space to "smallSpace"
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser sees file chunks for file "large_file.txt" as follows:
@@ -193,6 +197,7 @@ Feature: Oneprovider transfers functionality
             status: failed
 
     And user of browser clicks on the "data" tab in main menu sidebar
+    And user of browser uses spaces select to change data space to "smallSpace"
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
@@ -226,6 +231,7 @@ Feature: Oneprovider transfers functionality
             status: failed
 
     And user of browser clicks on the "data" tab in main menu sidebar
+    And user of browser uses spaces select to change data space to "smallSpace"
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser sees file chunks for file "large_file.txt" as follows:
@@ -260,6 +266,7 @@ Feature: Oneprovider transfers functionality
             status: completed
 
     And user of browser clicks on the "data" tab in main menu sidebar
+    And user of browser uses spaces select to change data space to "space1"
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser sees file chunks for file "large_file.txt" as follows:
@@ -269,6 +276,7 @@ Feature: Oneprovider transfers functionality
 
   Scenario: User migrates file to remote provider
     When user of browser uses spaces select to change data space to "space1"
+    And user of browser sees file browser in data tab in Oneprovider page
     And user of browser uses upload button in toolbar to upload file "large_file.txt" to current dir
 
     # Wait to ensure synchronization between providers
@@ -299,6 +307,7 @@ Feature: Oneprovider transfers functionality
     And user of browser sees that there is non-zero throughput in transfer chart
 
     And user of browser clicks on the "data" tab in main menu sidebar
+    And user of browser uses spaces select to change data space to "space1"
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely empty
@@ -335,6 +344,7 @@ Feature: Oneprovider transfers functionality
             status: completed
 
     And user of browser clicks on the "data" tab in main menu sidebar
+    And user of browser uses spaces select to change data space to "space1"
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser sees file chunks for file "large_file.txt" as follows:

@@ -16,7 +16,7 @@ Feature: Multi Browser basic management of spaces
 
     And users opened [browser1, browser2] browsers' windows
     And users of [browser1, browser2] opened [Onezone, Onezone] page
-    And users of [browser1, browser2] logged as [user1, user2] to Onezone service
+    And users of [browser1, browser2] logged as [user1, user2] to [Onezone, Onezone] service
 
 
   Scenario Outline: User successfully joins space using invitation token
@@ -44,7 +44,6 @@ Feature: Multi Browser basic management of spaces
     And user of browser1 copies invitation token from modal
     And user of browser1 sends invitation token to "browser2"
     And user of browser1 closes "Invite group using token" modal
-    And user of browser2 clicks Get started in spaces sidebar
     And user of browser2 clicks join an existing space on Welcome page
     And user of browser2 pastes Space invitation token into space token text field
     And user of browser2 clicks Join the space button on Join to a space page

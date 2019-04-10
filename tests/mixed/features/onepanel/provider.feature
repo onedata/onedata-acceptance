@@ -17,7 +17,7 @@ Feature: Provider management in Onepanel
                 - oneprovider-1:
                     storage: posix
                     size: 1000000
-    And opened browsers with [admin, user1] logged to [oneprovider-1 provider panel, onezone] service
+    And opened browsers with [admin, user1] logged to [emergency interface of Onepanel, onezone] service
 
 
 #  TODO: VFS-5149 rewrite test to new gui

@@ -102,25 +102,7 @@ def click_discard_button_on_modal_in_provider_panel(selenium, browser_id, onepan
 @wt(parsers.parse('user of {browser_id} clicks on Discard '
                   'button in the configure web cert modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_on_discard_btn_in_domain_change_modal(selenium, browser_id, onepanel,
-                                                   modals):
-    # TODO: will be fixed when VFS-4798 will be integrated
-    try:
-        modals(selenium[browser_id]).configure_web_cert.discard()
-    except RuntimeError as e:
-        import re
-        if re.match(r'no.*item found in modals', str(e)):
-            pass
-        else:
-            raise
-
-
-@wt(parsers.parse('user of {browser_id} clicks on Discard '
-                  'button in the configure web cert modal'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_on_discard_btn_in_domain_change_modal(selenium, browser_id, onepanel,
-                                                   modals):
-    # TODO: there is currently a bug in GUI - this modal does not appear sometimes
+def wt_click_on_discard_btn_in_domain_change_modal(selenium, browser_id, modals):
     try:
         modals(selenium[browser_id]).configure_web_cert.discard()
     except RuntimeError as e:
@@ -181,3 +163,12 @@ def wt_assert_value_of_provider_domain(selenium, browser_id, provider, hosts,
     assert displayed_val == expected_val, \
         ('displayed {} instead of expected {} as '
          'provider\'s domain'.format(displayed_val, expected_val))
+
+
+@wt(parsers.parse('user of {browser_id} clicks go to emergency interface '
+                  'in provider deregistration popups'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def go_to_emergency_interface(selenium, browser_id, popups):
+    driver = selenium[browser_id]
+    popups(driver).deregister_provider.buttons['Go to emergency interface'].click()
+
