@@ -7,39 +7,55 @@ global:
    keycloakInstance:
      realmId: onedata
      idpName: rhea
+   alpha: true
 
 
 lumaJobEnabled: true
 
 
 all_space_privileges: &all_space_privileges
-  - space_delete
-  - space_invite_group
-  - space_invite_provider
-  - space_invite_user
-  - space_manage_shares
-  - space_remove_group
-  - space_remove_provider
-  - space_remove_user
-  - space_set_privileges
-  - space_update
   - space_view
+  - space_update
+  - space_delete
+  - space_view_privileges
+  - space_set_privileges
+  - space_read_data
   - space_write_data
+  - space_manage_shares
+  - space_manage_indexes
+  - space_query_indexes
+  - space_view_statistics
+  - space_view_transfers
+  - space_schedule_replication
+  - space_cancel_replication
+  - space_schedule_eviction
+  - space_cancel_eviction
+  - space_add_user
+  - space_remove_user
+  - space_add_group
+  - space_remove_group
+  - space_add_provider
+  - space_remove_provider
 
 
 all_group_privileges: &all_group_privileges
-  - group_create_space
-  - group_delete
-  - group_invite_group
-  - group_invite_user
-  - group_join_group
-  - group_join_space
-  - group_leave_space
-  - group_remove_group
-  - group_remove_user
-  - group_set_privileges
-  - group_update
   - group_view
+  - group_update
+  - group_delete
+  - group_view_privileges
+  - group_set_privileges
+  - group_add_user
+  - group_remove_user
+  - group_add_parent
+  - group_leave_parent
+  - group_add_child
+  - group_remove_child
+  - group_add_space
+  - group_leave_space
+  - group_create_handle_service
+  - group_leave_handle_service
+  - group_create_handle
+  - group_leave_handle
 
 
 alpha_group: &group_alpha

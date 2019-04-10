@@ -4,6 +4,7 @@ global:
    region: cluster
    tld: local
    imagePullPolicy: IfNotPresent
+   alpha: true
 
 
 groups:
