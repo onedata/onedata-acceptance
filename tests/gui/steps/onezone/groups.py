@@ -184,8 +184,8 @@ def add_group_as_subgroup(selenium, browser_id, group, oz_page, tmp_memory):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_error_page_appeared(selenium, browser_id, text, oz_page):
     page = oz_page(selenium[browser_id])['groups']
-    assert (page.main_page.error_label == text,
-            'page with text "{}" not found'.format(text))
+    assert page.main_page.error_label == text, \
+        'page with text "{}" not found'.format(text)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) confirms group rename '
@@ -276,3 +276,19 @@ def assert_list_of_children_contains_group(selenium, browser_id, oz_page,
 def assert_list_of_children_contains_group(selenium, browser_id, oz_page):
     (oz_page(selenium[browser_id])['groups'].main_page.hierarchy
      .show_parent_groups())
+
+
+@wt(parsers.parse('user of {browser_id} clicks Show details on groups page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_show_details_on_groups_page(selenium, browser_id, oz_page):
+    oz_page(selenium[browser_id])['groups'].main_page.show_details()
+
+
+@wt(parsers.parse('user of {browser_id} sees "{text}" in error details'
+                  ' on groups page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_error_detail_text(selenium, browser_id, oz_page, text):
+    page = oz_page(selenium[browser_id])['groups']
+    assert text in page.main_page.error_details, ('page with text "{}" '
+                                                  'not found'.format(text))
+

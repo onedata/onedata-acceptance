@@ -13,7 +13,8 @@ Feature: Provider management in Onepanel GUI
                     size: 1000000
 
 
-    And opened [browser1, browser2] with [admin, user1] logged to [oneprovider-1 provider panel, onezone] service
+    And opened [browser1, browser2] with [admin, user1] logged to [emergency interface of Onepanel, onezone] service
+
 
   Scenario: User changes provider name and domain
     Given provider name set to name of "oneprovider-1" by user of browser1 in Onepanel
@@ -61,25 +62,27 @@ Feature: Provider management in Onepanel GUI
   Scenario: User deregisters provider, registers it again and sees that provider is working
     Given provider name set to name of "oneprovider-1" by user of browser1 in Onepanel
 
-    When user of browser2 clicks on Spaces in the main menu
+    When user of browser2 clicks on Data in the main menu
     And user of browser2 clicks "space1" on the spaces list in the sidebar
     And user of browser2 clicks Providers of "space1" in the sidebar
     And user of browser2 sees "oneprovider-1" is on the providers list
     And using web gui, admin deregisters provider in "oneprovider-1" Oneprovider panel service
     And user of browser2 is idle for 8 seconds
 
-    And using web gui, admin registers provider in "onezone" Onezone service with following configuration:
-          provider name:
-              of provider: oneprovider-1
-          domain:
-              of provider: oneprovider-1
-          zone domain:
-              of zone: onezone
-          storages:
-              posix:
-                type: posix
-                mount point: /volumes/storage
-          admin email: admin@onedata.org
+    # send registration token
+    And user of browser2 clicks on add new provider cluster button in clusters menu
+    And user of browser2 copies registration token from clusters page
+    And user of browser2 sends copied token to user of browser1
+
+    # step2 in provider panel
+    And user of browser1 types received registration token in step 2 of deployment process in Onepanel
+    And user of browser1 clicks proceed button in step 2 of deployment process in Onepanel
+
+    And user of browser1 types name of "oneprovider-1" provider to Provider name field in step 2 of deployment process in Onepanel
+    And user of browser1 deactivates Request a subdomain toggle
+    And user of browser1 types hostname of "oneprovider-1" provider to domain field in step 2 of deployment process in Onepanel
+    And user of browser1 types "admin@admin.email" to admin email field in step 2 of deployment process in Onepanel
+    And user of browser1 clicks on Register button in step 2 of deployment process in Onepanel
 
     Then user of browser1 sees that [Database, Cluster Worker, Cluster Manager, Primary Cluster Manager] options are enabled for .*oneprovider.* host in Nodes page in Onepanel
     And user of browser1 sees that [Database, Cluster Worker, Cluster Manager, Primary Cluster Manager] options cannot be changed for .*oneprovider.* host in Nodes page in Onepanel

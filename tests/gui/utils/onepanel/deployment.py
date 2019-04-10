@@ -37,7 +37,9 @@ class Step2(PageObject):
     longitude = Input('input.field-editBottom-geoLongitude')
     admin_email = Input('input.field-editBottom-adminEmail')
     register = NamedButton('button', text='Register')
-    subdomain_delegation = Toggle('.one-way-toggle.toggle-field-editTop-subdomainDelegation') 
+    subdomain_delegation = Toggle('.one-way-toggle.toggle-field-editTop-subdomainDelegation')
+    token = Input('.zone-token-textarea')
+    proceed = NamedButton('button', text='Proceed')
 
     def __str__(self):
         return str(self.parent)
@@ -79,7 +81,9 @@ class Step5(StorageContentPage):
 
 class LastStep(PageObject):
     """Used in both provider and zone panel"""
-    manage_the_cluster = NamedButton('button', text='Manage the cluster')
+    manage_cluster_via_onezone = NamedButton('button',
+                                             text='Manage cluster via Onezone')
+    link = Button('.info a')
 
     def __str__(self):
         return str(self.parent)

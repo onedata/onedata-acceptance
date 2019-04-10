@@ -162,7 +162,7 @@ def assert_provider_has_given_name_and_test_hostname_in_oz(client, request, user
 @when(parsers.re('using (?P<client>.*), (?P<user>.+?) deregisters '
                  'provider in "(?P<host>.+?)" Oneprovider panel service'))
 def deregister_provider_in_op_panel(client, request, user, host, hosts, 
-                                    selenium, onepanel, popups, users):
+                                    selenium, onepanel, popups, users, login_page):
 
     if client.lower() == 'rest':
         from tests.mixed.steps.rest.onepanel.provider import \

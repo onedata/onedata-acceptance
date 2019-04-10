@@ -14,6 +14,7 @@ from pytest_bdd import parsers
 from tests.gui.utils.common.modals import Modals as modals
 from tests.utils.utils import repeat_failed
 from tests.utils.acceptance_utils import wt
+from tests.gui.conftest import WAIT_FRONTEND
 
 
 def _assert_transfer(transfer, item_type, desc, sufix, hosts):
@@ -107,6 +108,7 @@ def replicate_item(selenium, browser_id, provider, hosts):
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees that item is never '
                'synchronized in provider "(?P<provider>.*)"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_item_never_synchronized(selenium, browser_id, provider, hosts):
     provider_name = hosts[provider]['name']
     assert (modals(selenium[browser_id])
