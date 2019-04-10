@@ -340,7 +340,7 @@ def wt_click_proceed_button_in_step2(selenium, browser_id, onepanel):
                'to Emergency Onepanel interface in last step '
                'of deployment process in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_go_to_standalone_onepanel_interface(selenium, browser_id, onepanel):
+def wt_go_to_emergency_onepanel_interface(selenium, browser_id, onepanel):
     onepanel(selenium[browser_id]).content.deployment.laststep.link()
 
 

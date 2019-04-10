@@ -170,8 +170,7 @@ def deregister_provider_in_op_panel(client, request, user, host, hosts,
         from tests.gui.meta_steps.onepanel.provider import \
                                     deregister_provider_in_op_panel_using_gui
         deregister_provider_in_op_panel_using_gui(selenium, user, host,
-                                                  onepanel, popups, hosts,
-                                                  login_page, users)
+                                                  onepanel, popups, hosts)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
 

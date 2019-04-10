@@ -302,7 +302,7 @@ def see_insufficient_permissions_alert_on_providers_page(selenium, browser_id,
                                                          oz_page, alert_text):
     driver = selenium[browser_id]
 
-    forbidden_alert = (oz_page(driver)['spaces'].providers_page.get_support_page
+    forbidden_alert = (oz_page(driver)['data'].providers_page.get_support_page
                        .forbidden_alert.text)
     assert alert_text in forbidden_alert, ('not found alert with {} text'
                                            .format(alert_text))

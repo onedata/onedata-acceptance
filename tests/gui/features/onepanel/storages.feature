@@ -17,7 +17,7 @@ Feature: Storage management using onepanel
     Given there are no spaces supported in Onepanel used by user of browser1
 
     # create new_storage POSIX storage
-    And user of browser1 clicks on Clusters in the main menu
+    When user of browser1 clicks on Clusters in the main menu
     And user of browser1 clicks on "oneprovider-1" in clusters menu
     And user of browser1 clicks on Storages item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser1 clicks on Add storage button in storages page in Onepanel

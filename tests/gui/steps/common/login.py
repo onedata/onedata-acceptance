@@ -32,13 +32,13 @@ def click_log_in_to_emergency_interface(selenium, browser_id, login_page):
 
 
 @given(parsers.re('users? of (?P<browser_id_list>.*) logged '
-                  'as (?P<user_id_list>.*) to (?P<service>.*) service'))
+                  'as (?P<user_id_list>.*) to (?P<service_list>.*) service'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def g_login_using_basic_auth(selenium, browser_id_list, user_id_list,
-                             login_page, users, service):
+                             login_page, users, service_list):
     for browser_id, username, service in zip(parse_seq(browser_id_list),
                                              parse_seq(user_id_list),
-                                             parse_seq(service)):
+                                             parse_seq(service_list)):
         if 'emergency interface' in service:
             click_log_in_to_emergency_interface(selenium, browser_id, login_page)
             time.sleep(1)

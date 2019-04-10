@@ -62,7 +62,7 @@ Feature: Provider management in Onepanel GUI
   Scenario: User deregisters provider, registers it again and sees that provider is working
     Given provider name set to name of "oneprovider-1" by user of browser1 in Onepanel
 
-    And user of browser2 clicks on Data in the main menu
+    When user of browser2 clicks on Data in the main menu
     And user of browser2 clicks "space1" on the spaces list in the sidebar
     And user of browser2 clicks Providers of "space1" in the sidebar
     And user of browser2 sees "oneprovider-1" is on the providers list
