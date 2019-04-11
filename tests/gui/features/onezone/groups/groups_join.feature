@@ -24,7 +24,7 @@ Feature: Joining a group in Onezone GUI
 
     And users opened [browser1, browser2] browsers' windows
     And user of [browser1, browser2] opened [Onezone, Onezone] page
-    And user of [browser1, browser2] logged as [user1, user2] to Onezone service
+    And user of [browser1, browser2] logged as [user1, user2] to [Onezone, Onezone] service
 
 
   Scenario Outline: User joins group using invitation token
@@ -35,12 +35,12 @@ Feature: Joining a group in Onezone GUI
     And user of browser1 closes "Invite user using token" modal
     And user of browser1 sends copied token to user of browser2
 
-    And user of browser2 clicks on Groups in the main menu
     And user of browser2 clicks on Join group button in groups sidebar
     And user of browser2 pastes copied token into group token text field
     And user of browser2 confirms using <confirmation_method>
 
-    And user of browser1 is idle for 4 seconds
+    And users of browser1 refreshes site
+
     Then user of browser1 sees "user2" user on "group1" group members list
     And user of browser2 sees group "group1" on groups list
 
@@ -53,7 +53,6 @@ Feature: Joining a group in Onezone GUI
     And user of browser1 closes "Invite group using token" modal
     And user of browser1 sends copied token to user of browser2
 
-    And user of browser2 clicks on Groups in the main menu
     And user of browser2 clicks on Join group button in groups sidebar
     And user of browser2 pastes copied token into group token text field
     And user of browser2 confirms using <confirmation_method>
@@ -62,8 +61,7 @@ Feature: Joining a group in Onezone GUI
 
 
   Scenario Outline: User fails to join group using incorrect token
-    When user of browser1 clicks on Groups in the main menu
-    And user of browser1 clicks on Join group button in groups sidebar
+    When user of browser1 clicks on Join group button in groups sidebar
     And user of browser1 writes "aaa" into group token text field
     And user of browser1 confirms using <confirmation_method>
 
@@ -98,7 +96,8 @@ Feature: Joining a group in Onezone GUI
     And user of browser1 goes to group "group1" main subpage
     And user of browser1 copies a first resource ID from URL
     And user of browser1 sends copied ID to user of browser2
-    And user of browser2 changes webapp path to "/#/onedata/groups" concatenated with received ID
-
-    Then user of browser2 see that page with text "RESOURCE NOT FOUND" appeared
+    And user of browser2 changes webapp path to "/i#/onedata/groups" concatenated with received ID
+    And user of browser2 refreshes site
+    And user of browser2 clicks Show details on groups page
+    Then user of browser2 sees "Insufficient permissions" in error details on groups page
 

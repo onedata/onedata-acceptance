@@ -11,7 +11,7 @@ __license__ = ("This software is released under the MIT license cited in "
 from pytest_bdd import parsers, given
 
 from tests.utils.acceptance_utils import *
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.conftest import WAIT_FRONTEND, modals
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.utils import repeat_failed
 
@@ -44,6 +44,8 @@ def wt_click_on_subitem_for_item(selenium, browser_id_list, sidebar,
     for browser_id in parse_seq(browser_id_list):
         nav = getattr(onepanel(selenium[browser_id]).sidebar,
                       transform(sidebar))
+
+        nav.scroll_to_bottom(selenium[browser_id])
         nav.items[record].submenu[sub_item].click()
 
 
@@ -82,3 +84,25 @@ def wt_click_on_sidebar_item(selenium, browser_id_list, sidebar,
         nav = getattr(onepanel(selenium[browser_id]).sidebar,
                       transform(sidebar))
         nav.items[record].click()
+
+
+@wt(parsers.parse('user of {browser_id} clicks info button on warning bar '
+                  'in Onepanel page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_info_button_on_warning_bar(selenium, browser_id, onepage):
+    onepage(selenium[browser_id]).warning_bar.info()
+
+
+@wt(parsers.parse('user of {browser_id} clicks open in onezone in modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_open_in_onezone_in_modal(selenium, browser_id, modals):
+    modal = modals(selenium[browser_id])
+    modal.emergency_interface.open_in_onezone()
+
+
+@wt(parsers.parse('user of {browser_id} clicks open in onezone '
+                  'in Onepanel login page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_open_in_onezone(selenium, browser_id, login_page):
+    login_page(selenium[browser_id]).open_in_onezone()
+

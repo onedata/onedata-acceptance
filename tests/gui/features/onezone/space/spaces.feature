@@ -19,7 +19,7 @@ Feature: Basic management of spaces
 
 
   Scenario Outline: User successfully renames space
-    When user of browser clicks on Spaces in the main menu
+    When user of browser clicks on Data in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser writes "space2" into rename space text field
     And user of browser confirms rename the space using <confirmation_method>
@@ -33,7 +33,7 @@ Feature: Basic management of spaces
 
 
   Scenario: User successfully cancels rename space
-    When user of browser clicks on Spaces in the main menu
+    When user of browser clicks on Data in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser writes "space2" into rename space text field
     And user of browser clicks on cancel button on overview page
@@ -43,7 +43,7 @@ Feature: Basic management of spaces
 
   Scenario: User successfully leaves space
     # create new space
-    When user of browser clicks on Spaces in the main menu
+    When user of browser clicks on Data in the main menu
     And user of browser clicks on Create space button in spaces sidebar
     And user of browser writes "space2" into space name text field
     And user of browser clicks on Create new space button
@@ -57,7 +57,7 @@ Feature: Basic management of spaces
 
   Scenario: User successfully cancels leave space
     # create new space
-    When user of browser clicks on Spaces in the main menu
+    When user of browser clicks on Data in the main menu
     And user of browser clicks on Create space button in spaces sidebar
     And user of browser writes "space2" into space name text field
     And user of browser clicks on Create new space button
@@ -70,14 +70,14 @@ Feature: Basic management of spaces
 
 
   Scenario: User successfully sets space as home space
-    When user of browser clicks on Spaces in the main menu
+    When user of browser clicks on Data in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks on "Toggle default space" button in space menu
     Then user of browser sees that home of "space1" has appeared in the sidebar
 
 
   Scenario: User successfully unsets space as home space
-    When user of browser clicks on Spaces in the main menu
+    When user of browser clicks on Data in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks on "Toggle default space" button in space menu
     And user of browser sees that home of "space1" has appeared in the sidebar
@@ -87,7 +87,7 @@ Feature: Basic management of spaces
 
   Scenario: User sees no supporting providers after create new space
     # create new space
-    When user of browser clicks on Spaces in the main menu
+    When user of browser clicks on Data in the main menu
     And user of browser clicks on Create space button in spaces sidebar
     And user of browser writes "space2" into space name text field
     And user of browser clicks on Create new space button
@@ -97,7 +97,7 @@ Feature: Basic management of spaces
 
   Scenario: User sees that space size is zero right after creating
     # create new space
-    When user of browser clicks on Spaces in the main menu
+    When user of browser clicks on Data in the main menu
     And user of browser clicks on Create space button in spaces sidebar
     And user of browser writes "space2" into space name text field
     And user of browser clicks on Create new space button
@@ -106,7 +106,7 @@ Feature: Basic management of spaces
 
 
   Scenario: User fails to join to space because of using invalid token
-    When user of browser clicks on Spaces in the main menu
+    When user of browser clicks on Data in the main menu
     And user of browser clicks Join some space using a space invitation token button
     And user of browser writes "invalid token" into space token text field
     And user of browser clicks Join the space button on Join to a space page
@@ -114,7 +114,7 @@ Feature: Basic management of spaces
 
 
   Scenario: User sees that provider is added to supporters list after supporting space
-    When user of browser clicks on Spaces in the main menu
+    When user of browser clicks on Data in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Providers of "space1" in the sidebar
     Then user of browser sees "oneprovider-1" is on the providers list
@@ -122,7 +122,7 @@ Feature: Basic management of spaces
 
 
   Scenario: User generates different support tokens (space has already supported by one provider)
-    When user of browser clicks on Spaces in the main menu
+    When user of browser clicks on Data in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Providers of "space1" in the sidebar
     And user of browser clicks Get support button on providers page
@@ -132,7 +132,7 @@ Feature: Basic management of spaces
 
 
   Scenario: User generates different deploy provider tokens (space has already supported by one provider)
-    When user of browser clicks on Spaces in the main menu
+    When user of browser clicks on Data in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Providers of "space1" in the sidebar
     And user of browser clicks Get support button on providers page
@@ -143,7 +143,7 @@ Feature: Basic management of spaces
 
 
   Scenario: User successfully copies support token (space has already supported by one provider)
-    When user of browser clicks on Spaces in the main menu
+    When user of browser clicks on Data in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Providers of "space1" in the sidebar
     And user of browser clicks Get support button on providers page

@@ -17,14 +17,14 @@ from tests.gui.utils.generic import transform
 from tests.utils.utils import repeat_failed
 
 
-@when(parsers.parse('user of {browser_id} clicks on user account '
+@when(parsers.parse('user of {browser_id} clicks on logout '
                     'button in main menu'))
-@then(parsers.parse('user of {browser_id} clicks on user account '
+@then(parsers.parse('user of {browser_id} clicks on logout '
                     'button in main menu'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_user_account_btn_panel(selenium, browser_id, onepage):
     sleep(1)
-    onepage(selenium[browser_id]).account.click()
+    onepage(selenium[browser_id]).logout.click()
 
 
 @when(parsers.parse('user of {browser_id} clicks on {btn} button '

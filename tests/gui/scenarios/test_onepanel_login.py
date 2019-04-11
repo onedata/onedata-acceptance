@@ -55,5 +55,4 @@ def screens():
     return [0]
 
 
-scenarios('../features/onepanel/account_management.feature')
 scenarios('../features/onepanel/login_page.feature')

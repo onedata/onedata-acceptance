@@ -27,6 +27,7 @@ from .dns_configuration_warning import DNSConfigurationWarningModal
 from .provider_popover import ProviderPopover
 from .membership_relation_menu import MembershipRelationMenu
 from .groups_hierarchy_menu import GroupHierarchyMenu
+from .emergency_interface import EmergencyInterface
 
 
 class Modals(object):
@@ -67,6 +68,7 @@ class Modals(object):
     create_group = WebItem('.modal-dialog', cls=CreateGroup)
     membership_relation_menu = WebItem('.relation-actions.one-webui-popover',
                                        cls=MembershipRelationMenu)
+    emergency_interface = WebItem('.modal-dialog', cls=EmergencyInterface)
 
     def __init__(self, driver):
         self.driver = driver

@@ -19,6 +19,9 @@ from tests.gui.steps.common.url import *
 from tests.gui.steps.onepanel.provider import (
     wt_click_on_discard_btn_in_domain_change_modal
 )
+from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
+from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
+from tests.gui.steps.common.login import g_login_using_basic_auth
 
 
 def modify_provider_with_given_name_in_op_panel_using_gui(selenium, user,
@@ -50,8 +53,7 @@ def modify_provider_with_given_name_in_op_panel_using_gui(selenium, user,
                                                    red_point_attr, onepanel)
     wt_click_on_btn_in_modify_provider_detail_form(selenium, user, onepanel)
     notify_visible_with_text(selenium, user, notify_type, notify_text_regexp)
-    wt_click_on_discard_btn_in_domain_change_modal(selenium, browser_id, onepanel,
-                                                   modals)
+    wt_click_on_discard_btn_in_domain_change_modal(selenium, browser_id, modals)
     wt_assert_value_of_provider_attribute(selenium, user, prov_name_attr,
                                           new_provider_name, onepanel)
     wt_assert_value_of_provider_attribute(selenium, user, red_point_attr,
@@ -167,11 +169,10 @@ def register_provider_in_op_using_gui(selenium, user, onepanel, hosts, config, m
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_provider_name_if_name_is_different_than_given(selenium, browser_id,
                                                          provider, hosts,
-                                                         onepanel,
-                                                         login_page,
+                                                         onepanel,  login_page,
                                                          users, modals):
     sub_item = 'Provider'
-    record = 1
+    record = 0
     sidebar = 'CLUSTERS'
 
     wt_click_on_subitem_for_item_with_name(selenium, browser_id, sidebar,

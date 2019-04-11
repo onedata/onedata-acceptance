@@ -6,8 +6,8 @@ Feature: Storage management using onepanel
             - user1
 
     And users opened [browser1, browser2] browsers' windows
-    And users of [browser1, browser2] opened [oneprovider-1 provider panel, Onezone] page
-    And user of [browser1, browser2] logged as [admin, user1] to [Onepanel, Onezone] service
+    And users of [browser1, browser2] opened [Onezone, Onezone] page
+    And user of [browser1, browser2] logged as [admin, user1] to [Onezone, Onezone] service
     And directory tree structure on local file system:
           browser2:
               - dir1: 70
@@ -17,7 +17,9 @@ Feature: Storage management using onepanel
     Given there are no spaces supported in Onepanel used by user of browser1
 
     # create new_storage POSIX storage
-    When user of browser1 clicks on Storages item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+    When user of browser1 clicks on Clusters in the main menu
+    And user of browser1 clicks on "oneprovider-1" in clusters menu
+    And user of browser1 clicks on Storages item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser1 clicks on Add storage button in storages page in Onepanel
     And user of browser1 selects POSIX from storage selector in storages page in Onepanel
     And user of browser1 types "new_storage" to Storage name field in POSIX form in storages page in Onepanel
@@ -53,6 +55,7 @@ Feature: Storage management using onepanel
 
     # go to provider
     And user of browser2 is idle for 2 seconds
+    And user of browser2 refreshes site
     And user of browser2 clicks Providers of "hello_world2" in the sidebar
     And user of browser2 opens oneprovider-1 Oneprovider view in web GUI
 

@@ -2,8 +2,8 @@ Feature: Basic spaces management utilities using onepanel
 
   Background:
     Given users opened [browser1, browser2] browsers' windows
-    And users of [browser1, browser2] opened [oneprovider-1 provider panel, Onezone] page
-    And user of [browser1, browser2] logged as [admin, admin] to [Onepanel, Onezone] service
+    And users of [browser1, browser2] opened [Onezone, Onezone] page
+    And user of [browser1, browser2] logged as [admin, admin] to [Onezone, Onezone] service
 
 
   Scenario: Support space
@@ -24,6 +24,8 @@ Feature: Basic spaces management utilities using onepanel
     And user of browser2 sends copied token to user of browser1
 
     # support space
+    And user of browser1 clicks on Clusters in the main menu
+    And user of browser1 clicks on "oneprovider-1" in clusters menu
     And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser1 clicks on Support space button in spaces page in Onepanel if there are some spaces already supported
     And user of browser1 selects "posix" from storage selector in support space form in Onepanel
@@ -49,6 +51,8 @@ Feature: Basic spaces management utilities using onepanel
     And user of browser2 sees that length of providers list of "helloworld" equals "1"
 
     # unsupport space
+    And user of browser1 clicks on Clusters in the main menu
+    And user of browser1 clicks on "oneprovider-1" in clusters menu
     And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser1 expands toolbar for "helloworld" space record in Spaces page in Onepanel
     And user of browser1 clicks on Revoke space support option in space's toolbar in Onepanel
