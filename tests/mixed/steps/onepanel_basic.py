@@ -1,6 +1,8 @@
 """This module contains gherkin steps to run acceptance tests featuring
 basic operations in Onepanel using REST API mixed with web GUI.
 """
+from tests.gui.meta_steps.onezone.provider import \
+    send_copied_invite_token_in_oz_gui
 
 __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
@@ -228,7 +230,7 @@ def assert_provider_does_not_support_space_in_oz(client, request, user,
                  'provider in "(?P<host>.+?)" Onezone service with following '
                  'configuration:\n(?P<config>(.|\s)*)'))
 def register_provider_in_op(client, request, user, hosts, users, selenium,
-                            onepanel, config, modals):
+                            onepanel, config, tmp_memory):
     """ Register provider according to given config.
 
     config should be in yaml format exactly as seen in panel, e.g.
@@ -268,7 +270,7 @@ def register_provider_in_op(client, request, user, hosts, users, selenium,
         from tests.gui.meta_steps.onepanel.provider import \
                                             register_provider_in_op_using_gui
         register_provider_in_op_using_gui(selenium, user, onepanel, hosts,
-                                          config, modals)
+                                          config, tmp_memory)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
@@ -579,3 +581,18 @@ def copy_id_of_space(client, request, user, space_name, selenium, onepanel,
 def remove_spaces_in_oz(client, request, user, seconds):
     from tests.utils.acceptance_utils import wait_given_time
     wait_given_time(seconds)
+
+
+@then(parsers.re('using (?P<client>.*), (?P<user>.+?) sends copied invite token '
+                 'to (?P<send_to>.+?) user '
+                 'in "(?P<host>.+?)" Onezone service'))
+def send_copied_invite_token(client, user, selenium, oz_page,
+                             tmp_memory, displays, clipboard, send_to):
+    if client.lower() == 'web gui':
+        from tests.gui.meta_steps.onezone.provider import \
+                                    assert_there_is_no_provider_in_oz_gui
+        send_copied_invite_token_in_oz_gui(selenium, user, oz_page,
+                                           send_to,
+                                           tmp_memory, displays, clipboard)
+    else:
+        raise NoSuchClientException('Client: {} not found.'.format(client))

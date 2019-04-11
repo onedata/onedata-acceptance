@@ -58,7 +58,6 @@ from tests.mixed.steps.space_basic import *
 from tests.mixed.utils.common import *
 
 
-scenarios('../features/onepanel/account_management.feature')
 scenarios('../features/onepanel/spaces.feature')
 scenarios('../features/onepanel/storage_sync.feature')
 scenarios('../features/onepanel/provider.feature')

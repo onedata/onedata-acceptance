@@ -173,8 +173,8 @@ def remove_provider_support_for_space_in_oz(client, request, user,
         from tests.gui.meta_steps.onezone.spaces import \
                             remove_provider_support_for_space_in_oz_using_gui
         remove_provider_support_for_space_in_oz_using_gui(selenium, user,
-                                                          space_name,
-                                                          onepanel, popups)
+                                                          space_name, onepanel,
+                                                          popups, hosts)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
 

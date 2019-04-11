@@ -251,7 +251,7 @@ def assert_user_is_in_group_members_list(selenium, browser_id, option,
 def assert_user_is_in_space_members_list(selenium, browser_id, option,
                                          username, space_name, oz_page):
     driver = selenium[browser_id]
-    page = oz_page(driver)['spaces']
+    page = oz_page(driver)['data']
     page.elements_list[space_name]()
     page.elements_list[space_name].members()
     try:

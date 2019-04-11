@@ -37,6 +37,7 @@ Feature: Provider management in Onepanel
     And using <client1>, admin deregisters provider in "oneprovider-1" Oneprovider panel service
     And using <client2>, user1 is idle for 8 seconds
     Then using <client2>, user1 sees that provider "oneprovider-1" has been deregistered in "onezone" Onezone service
+    And using <client1>, user1 sends copied invite token to admin user in "onezone" Onezone service
     And using <client1>, admin registers provider in "onezone" Onezone service with following configuration:
           provider name:
               of provider: oneprovider-1

@@ -362,10 +362,10 @@ def assert_provider_not_working_in_oz_panel(selenium, browser_id,
                                               ''.format(provider))
 
 
-def click_on_provider_in_data_sidebar_with_provider_name(selenium, browser_id,
-                                                         oz_page, provider_name):
+def click_on_provider_in_providers_sidebar_with_provider_name(selenium, browser_id,
+                                                              oz_page, provider_name):
     driver = selenium[browser_id]
-    oz_page(driver)['data'].elements_list[provider_name]()
+    oz_page(driver)['providers'].elements_list[provider_name]()
 
 
 @wt(parsers.parse('user of {browser_id} clicks on provider "{provider}" '
@@ -374,8 +374,8 @@ def click_on_provider_in_data_sidebar_with_provider_name(selenium, browser_id,
 def click_on_provider_in_data_sidebar(selenium, browser_id, oz_page,
                                       provider, hosts):
     provider = hosts[provider]['name']
-    click_on_provider_in_data_sidebar_with_provider_name(selenium, browser_id,
-                                                         oz_page, provider)
+    click_on_provider_in_providers_sidebar_with_provider_name(selenium, browser_id,
+                                                              oz_page, provider)
 
 
 @wt(parsers.parse('user of {browser_id} sees that "{provider}" provider is not '
@@ -394,6 +394,7 @@ def assert_provider_is_not_in_providers_list_in_data_sidebar(selenium, browser_i
 @wt(parsers.re('user of (?P<browser_id>.+?) clicks on '
                '(?P<option>Visit provider|Toggle home provider) button '
                'on provider popover'))
+@repeat_failed(timeout=WAIT_BACKEND)
 def click_on_visit_provider_in_provider_popover(selenium, browser_id, option,
                                                 modals):
     driver = selenium[browser_id]
@@ -402,6 +403,7 @@ def click_on_visit_provider_in_provider_popover(selenium, browser_id, option,
 
 @wt(parsers.parse('user of {browser_id} sees "{space_name}" is '
                   'on the spaces list on provider popover'))
+@repeat_failed(timeout=WAIT_BACKEND)
 def assert_space_is_in_spaces_list_in_provider_popover(selenium, browser_id,
                                                        space_name, modals):
     driver = selenium[browser_id]

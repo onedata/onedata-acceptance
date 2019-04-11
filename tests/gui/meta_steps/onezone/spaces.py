@@ -11,7 +11,7 @@ from tests.gui.steps.common.notifies import *
 from tests.gui.steps.common.copy_paste import *
 from tests.gui.steps.common.url import refresh_site
 from tests.gui.steps.onezone.spaces import *
-from tests.gui.steps.onepanel.common import wt_click_on_sidebar_item
+from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
 from tests.gui.steps.onepanel.spaces import *
 from tests.gui.steps.onezone.multibrowser_spaces import *
 from tests.gui.steps.onezone.members import *
@@ -69,17 +69,19 @@ def set_space_as_home_in_oz_using_gui(selenium, user, oz_page, space_name):
 
 def remove_provider_support_for_space_in_oz_using_gui(selenium, user,
                                                       space_name, onepanel,
-                                                      popups):
+                                                      popups, hosts):
     sidebar = 'CLUSTERS'
     record = 'Spaces'
     option = 'Revoke space support'
     confirmation_button = 'Yes, revoke'
     notify_type = 'info'
     text_regexp = '.*[Ss]upport.*revoked.*'
+    provider_name = 'oneprovider-1'
 
-    wt_click_on_sidebar_item(selenium, user, sidebar, record, onepanel)
-    wt_expands_toolbar_icon_for_space_in_onepanel(selenium, user,
-                                                  space_name, onepanel)
+    wt_click_on_subitem_for_item(selenium, user, sidebar, record,
+                                 provider_name, onepanel, hosts)
+    wt_expands_toolbar_icon_for_space_in_onepanel(selenium, user, space_name,
+                                                  onepanel)
     wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, user,
                                                option, popups)
     wt_clicks_on_btn_in_revoke_space_support(selenium, user,
@@ -115,13 +117,13 @@ def invite_other_users_to_space_using_gui(selenium, user,
 
 def request_space_support_using_gui(selenium, user, oz_page, space_name,
                                     tmp_memory, displays, clipboard, receiver):
-    where = 'Spaces'
+    where = 'Data'
     option = 'Providers'
     notify_type = 'info'
     text_regexp = '.*copied.*'
     item_type = 'token'
 
-    click_on_spaces_in_the_sidebar(selenium, user, where, oz_page)
+    click_on_option_in_the_sidebar(selenium, user, where, oz_page)
     click_element_on_lists_on_left_sidebar_menu(selenium, user, where.lower(),
                                                 space_name, oz_page)
     click_on_members_of_space_on_left_sidebar_menu(selenium, user,
@@ -218,10 +220,10 @@ def assert_provider_does_not_support_space_in_oz_gui(selenium, user, oz_page,
 def assert_space_is_supported_by_provider_in_oz_gui(selenium, user, oz_page,
                                                     space_name, provider_name,
                                                     hosts):
-    where = 'Spaces'
+    where = 'Data'
     option = 'Providers'
 
-    click_on_spaces_in_the_sidebar(selenium, user, where, oz_page)
+    click_on_option_in_the_sidebar(selenium, user, where, oz_page)
     click_element_on_lists_on_left_sidebar_menu(selenium, user, where.lower(),
                                                 space_name, oz_page)
     click_on_members_of_space_on_left_sidebar_menu(selenium, user,
