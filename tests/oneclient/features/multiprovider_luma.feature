@@ -37,7 +37,7 @@ Feature: LUMA acceptance tests using multiple providers
       using [token, token, token] by [rob, marie, rob]
     And there is directory "volume-data-sync-rw-luma-test/Landsat-1" owned by 40001:42001 in container "volume-data-sync-rw-luma-test" on provider "oneprovider-1"
     # wait to ensure synchronization between providers
-    Then rob waits 10 seconds
+    Then rob waits 20 seconds
     And rob sees [Landsat-1] in krk-plirw-par-c on client11
     And rob sees that owner's UID and GID for krk-plirw-par-c/Landsat-1 are equal to 40001 and 42001 respectively on client11
 
