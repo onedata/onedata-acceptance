@@ -9,8 +9,10 @@ __license__ = "This software is released under the MIT license cited in " \
 
 
 import os
+import re
 import json
 import stat as stat_lib
+import subprocess as sp
 
 import pytest
 import jsondiff
@@ -24,6 +26,7 @@ from tests.utils.client_utils import (stat, ls, mv, osrename, create_file, rm,
                                       removexattr, listxattr, get_all_xattr,
                                       clear_xattr)
 from tests.utils.docker_utils import run_cmd
+from tests.utils.onenv_utils import cmd_exec
 
 
 def create_base(user, files, client_node, users, should_fail=False):
@@ -547,3 +550,63 @@ def get_metadata(user, path, client_node, users):
 
     xattr_value = get_all_xattr(client, file_path)
     return xattr_value
+
+
+@wt(parsers.re('(?P<user>\w+) sees that owner\'s UID and GID for (?P<path>.*) '
+               'are (?P<res>equal|not equal) to (?P<uid>[\d]+) and '
+               '(?P<gid>[\d]+) respectively on (?P<client_node>.*)'))
+def assert_file_ownership(user, path, res, uid, gid, client_node, users):
+    user = users[user]
+    client = user.clients[client_node]
+    file_path = client.absolute_path(path)
+    uid = int(uid)
+    gid = int(gid)
+
+    def condition():
+        stat_result = stat(client, file_path)
+        if res == 'equal':
+            wrong_id_fmt = ('Expected owner\'s {} of file {} to be {}, '
+                            'but found {}')
+            wrong_uid_msg = wrong_id_fmt.format('UID', path, uid,
+                                                stat_result.st_uid)
+            wrong_gid_msg = wrong_id_fmt.format('GID', path, gid,
+                                                stat_result.st_gid)
+            assert stat_result.st_uid == uid, wrong_uid_msg
+            assert stat_result.st_gid == gid, wrong_gid_msg
+        else:
+            wrong_id_fmt = 'Expected owner\'s {} of file {} not to be {}'
+            wrong_uid_msg = wrong_id_fmt.format('UID', path, uid)
+            wrong_gid_msg = wrong_id_fmt.format('GID', path, gid)
+            assert stat_result.st_uid != uid, wrong_uid_msg
+            assert stat_result.st_gid != gid, wrong_gid_msg
+
+    assert_(client.perform, condition)
+
+
+@wt(parsers.re('there is file "(?P<path>.*)" in container "(?P<container>.*)" '
+               'on provider "(?P<provider>.*)"'))
+def assert_file_exists_on_storage(path, container, provider, hosts):
+    pod_name = hosts[provider]['pod-name']
+    filename = os.path.basename(path)
+    dir_path = os.path.dirname(path)
+    cmd = ['sh', '-c', 'ls {}'.format(dir_path)]
+    ls_res = sp.check_output(cmd_exec(pod_name, cmd, container=container))
+    listed_files = [file_name for file_name in ls_res.split('\n') if file_name]
+    assert filename in listed_files, ('File {} does not exists in storage {}'
+                                      .format(filename, container))
+
+
+@wt(parsers.re('file "(?P<path>.*)" in container "(?P<container>.*)" '
+               'on provider "(?P<provider>.*)" has owner\'s UID and GID '
+               'equal to (?P<uid>[\d]+) and (?P<gid>[\d]+) respectively'))
+def assert_file_stats_on_storage(path, container, provider, hosts, uid, gid):
+    pod_name = hosts[provider]['pod-name']
+    cmd = ['sh', '-c', 'stat {}'.format(path)]
+    file_stat = sp.check_output(cmd_exec(pod_name, cmd, container=container))
+    stat_uid = re.search(r'Uid:\s*\((\d+).*\)', file_stat).group(1)
+    stat_gid = re.search(r'Gid:\s*\((\d+).*\)', file_stat).group(1)
+    assert uid == stat_uid, ('Expected owner\'s UID of file {} to be {}, '
+                             'but found {}'.format(path, uid, stat_uid))
+    assert gid == stat_gid, ('Expected owner\'s GID of file {} to be {}, '
+                             'but found {}'.format(path, gid, stat_gid))
+

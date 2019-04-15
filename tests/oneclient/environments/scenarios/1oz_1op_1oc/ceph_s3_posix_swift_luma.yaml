@@ -63,16 +63,11 @@ os-config:
     oneprovider-1: *cfg1
     oneclient-1: *cfg1
 
-oneprovidersWorkerOverlayConfig: &oneprovidersWorkerOverlayConfig |-
-  [{op_worker, [{soft_quota_limit_size, 0}]}].
-
 onezone:
   batchConfig:
     createUsers: false
 
 oneprovider-1:
-  workerOverlayConfig: *oneprovidersWorkerOverlayConfig
-
   wait-for-onezone:
     enabled: false
 
@@ -86,4 +81,3 @@ oneprovider-1:
     users: []
     wait_for_oneprovider:
       enabled: false
-

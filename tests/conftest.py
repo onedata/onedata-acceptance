@@ -179,7 +179,8 @@ def parse_oz_op_cfg(pod_name, pod_cfg, service_type, add_test_domain, hosts,
                                         pod_cfg.get('domain'),
                                         pod_cfg.get('ip'),
                                         pod_cfg.get('container-id'))
-    hosts[alias] = {'service-type': service_type,
+    hosts[alias] = {'pod-name': pod_name,
+                    'service-type': service_type,
                     'name': name,
                     'hostname': hostname,
                     'ip': ip,
@@ -232,6 +233,16 @@ def parse_users_cfg(patch_path, users, hosts):
             user_name = user_cfg.get('name')
             password = user_cfg.get('password')
             new_user = users[user_name] = User(user_name, password)
+            idps = user_cfg.get('idps', {})
+            for idp_type in idps:
+                new_user.idps.append(idp_type)
+                if idp_type == 'keycloak':
+                    global_cfg = patch_cfg.get('global')
+                    keycloak_suffix = (global_cfg
+                                       .get('keycloakInstance', {})
+                                       .get('idpName'))
+                    new_user.keycloak_name = ('keycloak-{}'
+                                              .format(keycloak_suffix))
             new_user.token = new_user.create_token(hosts['onezone']['ip'])
 
 
@@ -263,9 +274,9 @@ def env_desc(env_description_abs_path, hosts, request, users):
         scenarios_dir_path = SCENARIO_DIRS.get(get_test_type(request))
         scenario_path = os.path.abspath(os.path.join(scenarios_dir_path,
                                                      scenario))
-    
-        start_environment(scenario_path, request, hosts, '',
-                          users, env_description_abs_path)
+
+        start_environment(scenario_path, request, hosts, '', users,
+                          env_description_abs_path)
         return env_desc
 
     elif test_type == 'oneclient':

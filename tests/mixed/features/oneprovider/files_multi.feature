@@ -34,7 +34,7 @@ Feature: Files multiclient tests
   Scenario Outline: User1 creates file using <client1> and user2 removes it using <client2>
     When using <client1>, user1 succeeds to create file named "file1" in "space1" in oneprovider-1
     And using <client2>, user2 succeeds to see item named "file1" in "space1" in oneprovider-1
-    And using <client2>, user2 removes file named "file1" in "space1" in oneprovider-1
+    And using <client2>, user2 succeeds to remove file named "file1" in "space1" in oneprovider-1
     Then using <client2>, user2 fails to see item named "file1" in "space1" in oneprovider-1
     And using <client1>, user1 fails to see item named "file1" in "space1" in oneprovider-1
 
