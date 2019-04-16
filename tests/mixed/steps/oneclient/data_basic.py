@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import os
 import json
 from functools import partial
 
@@ -35,7 +36,8 @@ def create_file_in_op_oneclient(user, path, users, result, host):
 
 def see_items_in_op_oneclient(items, space, user, users, result, host):
     for item in parse_seq(items):
-        if item.startswith('dir'):
+        last_elem_in_path = os.path.basename(item)
+        if last_elem_in_path.startswith('dir'):
             full_path = '{}/{}'.format(space, item)
             if result == 'fails':
                 multi_dir_steps.cannot_list_dir(user, full_path, host, users)
@@ -193,4 +195,12 @@ def grant_acl_privileges_in_op_oneclient(user, users, host, path, priv,
     except KeyError:
         acl = []
     acl = get_acl_metadata(acl, priv, item_type, groups, name, users, path)
-    multi_file_steps.set_xattr(user, path, 'cdmi_acl', json.dumps(acl), host, users)
+    multi_file_steps.set_xattr(user, path, 'cdmi_acl', json.dumps(acl), host,
+                               users)
+
+
+def remove_file_in_op_oneclient(user, path, host, users, res):
+    if res == 'fails':
+        multi_file_steps.delete_file_fail(user, path, host, users)
+    else:
+        multi_file_steps.delete_file(user, path, host, users)

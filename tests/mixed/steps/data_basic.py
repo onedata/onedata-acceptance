@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import tests.oneclient.steps.multi_file_steps
 from tests.mixed.steps.oneclient.data_basic import *
 from tests.mixed.steps.rest.oneprovider.data import *
 from tests.gui.meta_steps.oneprovider.data import *
@@ -137,20 +138,22 @@ def remove_dir_in_op(client, user, users, space, name, hosts, selenium,
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>\w+) removes file named '
-                 '"(?P<name>.*)" in "(?P<space>.*)" in (?P<host>.*)'))
+@wt(parsers.re('using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) '
+               'to remove file named "(?P<name>.*)" in "(?P<space>.*)" in '
+               '(?P<host>.*)'))
 def remove_file_in_op(client, user, name, space, host, users, hosts,
-                      tmp_memory, selenium, op_page):
+                      tmp_memory, selenium, op_page, result):
     full_path = '{}/{}'.format(space, name)
     client_lower = client.lower()
     if client_lower == 'web gui':
         remove_item_in_op_gui(selenium, user, name, tmp_memory, op_page, 
-                              'succeeds', space)
+                              result, space)
     elif client_lower == 'rest':
-        remove_file_in_op_rest(user, users, host, hosts, full_path)
+        remove_file_in_op_rest(user, users, host, hosts, full_path, result)
     elif 'oneclient' in client_lower:
         oneclient_host = client_lower.replace('oneclient', 'client')
-        multi_file_steps.delete_file(user, full_path, oneclient_host, users)
+        remove_file_in_op_oneclient(user, full_path, oneclient_host,
+                                    users, result)
     else:
         raise NoSuchClientException('Client: {} not found'.format(client))
 
@@ -599,5 +602,33 @@ def set_posix_permissions_in_op(client, user, item_path, space, mode, result,
         oneclient_host = client_lower.replace('oneclient', 'client')
         set_posix_permissions_in_op_oneclient(user, full_path, mode,
                                               oneclient_host, users, result)
+    else:
+        raise NoSuchClientException('Client: {} not found'.format(client))
+
+
+@wt(parsers.re('using (?P<client>.*), (?P<user>\w+) sees that owner\'s UID '
+               'and GID for "(?P<path>.*)" in space "(?P<space>[\w-]+)" '
+               'are (?P<res>equal|not equal) to (?P<uid>[\d]+) and '
+               '(?P<gid>[\d]+) respectively'))
+def assert_file_stats(client, user, path, space, uid, gid, res, users):
+    full_path = '{}/{}'.format(space, path)
+    client_lower = client.lower()
+    if 'oneclient' in client_lower:
+        oneclient_host = client_lower.replace('oneclient', 'client')
+        multi_file_steps.assert_file_ownership(user, full_path, res, uid, gid,
+                                               oneclient_host, users)
+    else:
+        raise NoSuchClientException('Client: {} not found'.format(client))
+
+
+@wt(parsers.re('using (?P<client>.*), (?P<user>\w+) opens "(?P<path>.*)" '
+               'in space "(?P<space>[\w-]+)" in (?P<host>.*)'))
+def assert_file_stats(client, user, path, space, users):
+    full_path = '{}/{}'.format(space, path)
+    client_lower = client.lower()
+    if 'oneclient' in client_lower:
+        oneclient_host = client_lower.replace('oneclient', 'client')
+        multi_reg_file_steps.open(user, full_path, '664', oneclient_host,
+                                  users)
     else:
         raise NoSuchClientException('Client: {} not found'.format(client))

@@ -8,9 +8,12 @@ __license__ = "This software is released under the MIT license cited in " \
 
 import json
 
-from tests import OZ_REST_PORT
+from tests import OZ_REST_PORT, HTTP_PORT
 from tests.utils.utils import repeat_failed
-from tests.utils.rest_utils import (http_post, get_zone_rest_path)
+from tests.utils.onenv_utils import match_pods, get_ip
+from tests.utils.rest_utils import (http_post, get_zone_rest_path,
+                                    get_token_dispenser_rest_path,
+                                    http_get)
 
 
 class User:
@@ -19,6 +22,8 @@ class User:
         self.password = password
         self.id = id
         self.token = token
+        self.idps = []
+        self.keycloak_name = ''
 
         self.last_operation_failed = False
         self.clients = {}
@@ -31,10 +36,20 @@ class User:
 
     @repeat_failed(attempts=5)
     def create_token(self, oz_ip):
-        response = http_post(ip=oz_ip, port=OZ_REST_PORT,
-                             path=get_zone_rest_path('user', 'client_tokens'),
-                             auth=(self.username, self.password))
-        return json.loads(response.content)['token']
+        if 'keycloak' in self.idps:
+            token_dispenser_pod = match_pods('token-dispenser')[0]
+            token_dispenser_ip = get_ip(token_dispenser_pod)
+            response = http_get(ip=token_dispenser_ip, port=HTTP_PORT,
+                                path=get_token_dispenser_rest_path('token',
+                                                                   self.keycloak_name),
+                                auth=(self.username, self.password),
+                                default_headers=False, use_ssl=False)
+            return response.content
+        else:
+            response = http_post(ip=oz_ip, port=OZ_REST_PORT,
+                                 path=get_zone_rest_path('user', 'client_tokens'),
+                                 auth=(self.username, self.password))
+            return json.loads(response.content)['token']
 
 
 class AdminUser(User):

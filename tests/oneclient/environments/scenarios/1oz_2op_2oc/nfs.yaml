@@ -38,9 +38,6 @@ forceImagePull: true
 
 createSpaces: false
 
-oneprovidersWorkerOverlayConfig: &oneprovidersWorkerOverlayConfig |-
-  [{op_worker, [{soft_quota_limit_size, 0}]}].
-
 onezone:
   batchConfig:
     createUsers: false
@@ -70,8 +67,6 @@ os-config:
     oneclient-2: *cfg1
 
 oneprovider-1:
-  workerOverlayConfig: *oneprovidersWorkerOverlayConfig
-
   oneclient:
     users: []
     wait_for_oneprovider:
@@ -81,8 +76,6 @@ oneprovider-1:
       createUsers: false
 
 oneprovider-2:
-  workerOverlayConfig: *oneprovidersWorkerOverlayConfig
-
   batchConfig:
     createUsers: false
 

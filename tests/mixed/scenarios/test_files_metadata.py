@@ -15,6 +15,7 @@ from tests.gui.steps.rest.env_up.spaces import *
 
 from tests.gui.steps.oneprovider_common import *
 from tests.gui.meta_steps.onezone import *
+from tests.gui.meta_steps.oneprovider.data import *
 
 from tests.mixed.steps.data_basic import *
 from tests.gui.meta_steps.oneprovider.data import *

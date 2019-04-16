@@ -43,9 +43,14 @@ from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.oneprovider.data import *
 
 from tests.mixed.steps.luma.common import *
-from tests.mixed.steps.oneclient.common import *
 
 from tests.gui.conftest import *
+
+from tests.oneclient.steps.multi_auth_steps import *
+
+from tests.mixed.steps.data_basic import *
+from tests.gui.meta_steps.oneprovider.data import *
+
 
 @fixture(scope='module')
 def screens():
