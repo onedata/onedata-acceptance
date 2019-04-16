@@ -148,12 +148,12 @@ def click_confirm_or_cancel_button_on_leave_space_page(selenium, browser_id,
 
 @wt(parsers.parse('user of {browser_id} sees that "{space_name}" '
                   'has disappeared on the spaces list in the sidebar'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_FRONTEND * 2)
 def assert_space_has_disappeared_on_spaces(selenium, browser_id, space_name,
                                            oz_page):
     driver = selenium[browser_id]
-    assert space_name not in oz_page(driver)['data'].elements_list, \
-        'space "{}" found'.format(space_name)
+    spaces = oz_page(driver)['data'].elements_list
+    assert space_name not in spaces, 'space "{}" found'.format(space_name)
 
 
 @wt(parsers.parse('user of {browser_id} sees that home of "{space_name}" '
