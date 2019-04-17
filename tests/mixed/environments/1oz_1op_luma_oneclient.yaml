@@ -1,1 +1,14 @@
 scenario: "1oz_1op_luma_oneclient.yaml"
+
+
+oneclient:
+  oneclient-1:
+    clients:
+      client1:
+        provider: "oneprovider-1"
+        mode: proxyio
+        default timeout: 10
+      client2:
+        provider: "oneprovider-1"
+        mode: proxyio
+        default timeout: 10

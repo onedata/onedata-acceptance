@@ -64,7 +64,7 @@ Feature: File content tests
               - file1
      And using <client2>, user1 writes "TEST TEXT ONEDATA" to file named "dir1/dir2/file1" in "space1" in oneprovider-1
      And using <client2>, user1 reads "TEST TEXT ONEDATA" from file named "dir1/dir2/file1" in "space1" in oneprovider-1
-     And using <client2>, user1 removes file named "dir1/dir2/file1" in "space1" in oneprovider-1
+     And using <client2>, user1 succeeds to remove file named "dir1/dir2/file1" in "space1" in oneprovider-1
      Then using <client1>, user1 fails to see item named "dir1/dir2/file1" in "space1" in oneprovider-1
 
   Examples:

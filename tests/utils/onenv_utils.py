@@ -85,22 +85,6 @@ def helm_init_cmd(client_only=None):
     return cmd
 
 
-def run_onenv_command(command, args=None):
-    cmd = ['./onenv', command]
-
-    if args:
-        cmd.extend(args)
-
-    print('Running command: {}'.format(cmd))
-    proc = sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.PIPE, cwd='one_env')
-    output, err = proc.communicate()
-
-    sys.stdout.write(output.decode('utf-8'))
-    sys.stderr.write(err.decode('utf-8'))
-
-    return output, proc.returncode
-
-
 def get_kube_client():
     urllib3.disable_warnings()
     config.load_kube_config()
@@ -114,13 +98,25 @@ def list_pods_and_jobs():
     return kube.list_namespaced_pod(namespace).items
 
 
-def cmd_exec(pod, command):
+def cmd_exec(pod, command, interactive=False, tty=False, container=None):
+    cmd = ['kubectl', '--namespace', get_current_namespace(), 'exec']
+
+    if interactive:
+        cmd.append('-i')
+    if tty:
+        cmd.append('-t')
+    cmd.append(pod)
+
+    if container:
+        cmd.extend(['-c', container])
+
     if isinstance(command, list):
-        return ['kubectl', '--namespace', get_current_namespace(),
-                'exec', '-it', pod, '--'] + command
+        cmd.append('--')
+        cmd += command
     else:
-        return ['kubectl', '--namespace', get_current_namespace(),
-                'exec', '-it', pod, '--', command]
+        cmd.extend(['--', command])
+
+    return cmd
 
 
 def get_name(component):

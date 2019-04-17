@@ -22,6 +22,7 @@ from one_env.scripts.utils import one_env_dir
 from one_env.scripts.utils.terminal import info
 from one_env.scripts.onenv_hosts import update_etc_hosts
 from one_env.scripts.utils.one_env_dir import user_config
+from one_env.scripts.utils.artifacts import LOCAL_ARTIFACTS_DIR
 
 
 ZONE_IMAGES_CFG_PATH = 'onezone_images/docker-dev-build-list.json'
@@ -60,8 +61,9 @@ def env_errors_exists(testsuite):
 
 
 def parse_image_for_service(file_path):
+    abs_file_path = os.path.join(LOCAL_ARTIFACTS_DIR, file_path)
     try:
-        with open(file_path, 'r') as images_cfg_file:
+        with open(abs_file_path, 'r') as images_cfg_file:
             images = json.load(images_cfg_file)
             image = images.get('git-commit')
             return image
@@ -86,9 +88,11 @@ def clean_env():
                volumes=[(os.path.join(os.path.expanduser('~'),
                                       '.docker'), '/tmp/.docker', 'rw'),
                         (kube_config_path, '/tmp/.kube/config', 'rw'),
-                        (minikube_config_path, '/tmp/.minikube/config', 'rw')],
+                        (minikube_config_path, '/tmp/.minikube/config', 'rw'),
+                        (os.path.join(os.path.expanduser('~'), '.one-env'),
+                         '/tmp/.one-env', 'rw')],
                image=args.image,
-               command=['./onenv', 'clean'],
+               command=['./onenv', 'clean', '-a', '-v'],
                envs={'HOME': '/tmp'})
 
 
@@ -218,6 +222,8 @@ parser.add_argument(
 
 [args, pass_args] = parser.parse_known_args()
 
+user_config.ensure_exists()
+
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
 command = '''
@@ -307,7 +313,7 @@ ALL       ALL = (ALL) NOPASSWD: ALL
                              if args.env_file else [],
                              timeout=['--timeout={}'.format(args.timeout)]
                              if args.timeout else [],
-                             images_opt=images_opt,
+                             images_opt=images_opt if images_opt else [],
                              home=one_env_dir.get_host_home(),
                              privileged=args.privileged)
     kube_config_path = os.path.expanduser(args.kube_config_path)
