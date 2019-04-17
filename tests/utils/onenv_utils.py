@@ -85,22 +85,6 @@ def helm_init_cmd(client_only=None):
     return cmd
 
 
-def run_onenv_command(command, args=None):
-    cmd = ['./onenv', command]
-
-    if args:
-        cmd.extend(args)
-
-    print('Running command: {}'.format(cmd))
-    proc = sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.PIPE, cwd='one_env')
-    output, err = proc.communicate()
-
-    sys.stdout.write(output.decode('utf-8'))
-    sys.stderr.write(err.decode('utf-8'))
-
-    return output, proc.returncode
-
-
 def get_kube_client():
     urllib3.disable_warnings()
     config.load_kube_config()
