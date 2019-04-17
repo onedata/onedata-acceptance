@@ -51,10 +51,11 @@ class Client:
 
         if gdb:
             cmd = ('mkdir -p {mount_path}'
+                   ' && mkdir -p /tmp/oc_logs'
                    ' && export ONECLIENT_PROVIDER_HOST={op_domain}'
                    ' && echo {token} > {token_path}'
                    ' && gdb oneclient -batch -return-child-result -ex'
-                   ' \'run --log-dir /tmp {mode} --insecure {mount_path}'
+                   ' \'run --log-dir /tmp/oc_logs {mode} --insecure {mount_path}'
                    ' --token $(cat {token_path})\' -ex \'bt\''
                    ' 2>&1').format(mount_path=self.mount_path,
                                    op_domain=hosts[self.provider]['hostname'],
@@ -63,9 +64,10 @@ class Client:
                                    mode=mode_flag)
         else:
             cmd = ('mkdir -p {mount_path}'
+                   ' && mkdir -p /tmp/oc_logs'
                    ' && export ONECLIENT_PROVIDER_HOST={op_domain}'
                    ' && echo {token} > {token_path}'
-                   ' && oneclient --log-dir /tmp {mode} --insecure '
+                   ' && oneclient --log-dir /tmp/oc_logs {mode} --insecure '
                    '{mount_path} --token "$(cat {token_path})"'
                    ' 2>&1').format(mount_path=self.mount_path,
                                    op_domain=hosts[self.provider]['hostname'],
