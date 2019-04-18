@@ -10,10 +10,6 @@ Feature: LUMA acceptance tests
             - user1
             - user2
             - user3
-    And oneclients [client1, client2]
-      mounted in [/home/user1/onedata, /home/user2/onedata]
-      on client_hosts [oneclient-1, oneclient-1] respectively,
-      using [token, token] by [user1, user2]
     And initial spaces configuration in "onezone" Onezone service:
         space1:
             owner: user1
@@ -33,6 +29,10 @@ Feature: LUMA acceptance tests
             space1: 2000
         storage_name: posix
         storage_type: posix
+    And oneclients [client1, client2]
+      mounted in [/home/user1/onedata, /home/user2/onedata]
+      on client_hosts [oneclient-1, oneclient-1] respectively,
+      using [token, token] by [user1, user2]
     And opened browser with user3 logged to "onezone" service
     And opened oneprovider-1 Oneprovider view in web GUI by user3
 
