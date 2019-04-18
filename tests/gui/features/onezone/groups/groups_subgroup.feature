@@ -30,7 +30,7 @@ Feature: Basic management of groups with multiple users in Onezone GUI
   Scenario Outline: Single user adds subgroup
     When user of browser1 clicks on "Invite group using token" button in groups list menu in "group3" group members view
     And user of browser1 copies invitation token from modal
-    And user of browser1 closes "Invite group using token" modal
+    And user of browser1 closes "Invite using token" modal
 
     And user of browser1 clicks on "Join as subgroup" button in group "group1" menu in the sidebar
     And user of browser1 pastes copied token into group token text field

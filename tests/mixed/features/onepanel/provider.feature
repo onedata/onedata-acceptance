@@ -20,7 +20,6 @@ Feature: Provider management in Onepanel
     And opened browsers with [admin, user1] logged to [emergency interface of Onepanel, onezone] service
 
 
-#  TODO: VFS-5149 rewrite test to new gui
   Scenario Outline: User changes provider name and domain using <client2> and he sees in <client1> that they have changed
     Given provider name set to name of "oneprovider-1" by admin in Onepanel
     When using web GUI, user1 refreshes site
@@ -31,7 +30,6 @@ Feature: Provider management in Onepanel
     And using <client1>, admin modifies provider named "pro1" changing his name and domain to match that of "oneprovider-1" provider in "oneprovider-1" Oneprovider panel service
 
 
-#  TODO: VFS-5149 rewrite test to new gui
   Scenario Outline: User deregisters provider and registers it again
     Given provider name set to name of "oneprovider-1" by admin in Onepanel
     When using web GUI, user1 refreshes site
@@ -39,6 +37,7 @@ Feature: Provider management in Onepanel
     And using <client1>, admin deregisters provider in "oneprovider-1" Oneprovider panel service
     And using <client2>, user1 is idle for 8 seconds
     Then using <client2>, user1 sees that provider "oneprovider-1" has been deregistered in "onezone" Onezone service
+    And using <client1>, user1 sends copied invite token to admin user in "onezone" Onezone service
     And using <client1>, admin registers provider in "onezone" Onezone service with following configuration:
           provider name:
               of provider: oneprovider-1

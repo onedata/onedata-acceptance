@@ -50,9 +50,7 @@ from tests.gui.steps.oneprovider.spaces import *
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.oneprovider.common import *
 
-# TODO: VFS-5149 rewrite tests to new gui
-# scenarios('../features/onezone/space/creation.feature')
-# scenarios('../features/onezone/space/basic_management.feature')
-# scenarios('../features/onezone/space/multiuser.feature')
-# scenarios('../features/onezone/space/multiuser_with_admin.feature')
-scenarios('../../gui/features/pass.feature')
+scenarios('../features/onezone/space/creation.feature')
+scenarios('../features/onezone/space/basic_management.feature')
+scenarios('../features/onezone/space/multiuser.feature')
+scenarios('../features/onezone/space/multiuser_with_admin.feature')

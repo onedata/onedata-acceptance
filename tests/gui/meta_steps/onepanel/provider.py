@@ -76,23 +76,16 @@ def deregister_provider_in_op_panel_using_gui(selenium, user, provider_name,
                              '.*[Pp]rovider.*deregistered.*')
 
 
-def register_provider_in_op_using_gui(selenium, user, onepanel, hosts, config, modals):
-    sidebar = 'CLUSTERS'
-    record = 'New cluster'
+def register_provider_in_op_using_gui(selenium, user, onepanel, hosts, config,
+                                      tmp_memory):
     step2 = 'step 2'
-    step3 = 'step 3'
-    webcertstep = 'web cert step'
-    step5 = 'step 5'
-    storage_type_attr = 'Storage type'
-    mount_point_attr = 'Mount point'
-    last_step = 'last step'
-    notify_type = 'info'
-    notify_text_regexp = '.*registered.*successfully.*'
-
     options = yaml.load(config)
 
-    # step2
-    wt_click_on_sidebar_item(selenium, user, sidebar, record, onepanel)
+    wt_type_registration_token_in_step2(selenium, user, onepanel,
+                                        tmp_memory)
+    wt_click_proceed_button_in_step2(selenium, user, onepanel)
+
+    time.sleep(1)
     deactivate_request_subdomain_toggle(selenium, user, onepanel)
 
     try:
@@ -104,16 +97,6 @@ def register_provider_in_op_using_gui(selenium, user, onepanel, hosts, config, m
     else:
         wt_type_property_to_in_box_in_deployment_step(
             selenium, user, provider_name, 'name', 'Provider name', step2,
-            onepanel, hosts)
-    try:
-        onezone = options['zone domain']['of zone']
-    except KeyError:
-        wt_type_text_to_in_box_in_deployment_step(
-            selenium, user, options['zone domain'], 'Onezone domain', step2,
-            onepanel)
-    else:
-        wt_type_property_to_in_box_in_deployment_step(
-            selenium, user, onezone, 'hostname', 'Onezone domain', step2,
             onepanel, hosts)
     try:
         provider_name = options['domain']['of provider']
@@ -131,37 +114,6 @@ def register_provider_in_op_using_gui(selenium, user, onepanel, hosts, config, m
 
     wt_click_on_btn_in_deployment_step(selenium, user, 'Register', step2,
                                        onepanel)
-    notify_visible_with_text(selenium, user, notify_type,
-                             notify_text_regexp)
-
-    #step3
-    wt_click_setup_ip_in_deployment_setup_ip(selenium, user, onepanel)
-
-    # dns setup
-    wt_click_perform_check_in_dns_setup_step(selenium, user, onepanel)
-    wt_click_proceed_in_dns_setup_step(selenium, user, onepanel)
-
-    # web cert step
-    wt_deactivate_lets_encrypt_toggle_in_deployment_step4(selenium, user, onepanel)
-    wt_click_on_btn_in_deployment_step(selenium, user, 'Next step', webcertstep, 
-                                       onepanel)
-
-    #step5
-    for storage_name, storage_options in options['storages'].items():
-        storage_type = storage_options['type']
-        mount_point = storage_options['mount point']
-        wt_expand_storage_item_in_deployment_step5(selenium, user, storage_name,
-                                                   onepanel)
-        wt_assert_storage_attr_in_deployment_step5(selenium, user, storage_name,
-                                                   storage_type_attr,
-                                                   storage_type, onepanel)
-        wt_assert_storage_attr_in_deployment_step5(selenium, user, storage_name,
-                                                   mount_point_attr,
-                                                   mount_point, onepanel)
-    wt_click_on_btn_in_deployment_step(selenium, user, 'Finish', step5,
-                                       onepanel)
-    wt_click_on_btn_in_deployment_step(selenium, user, 'Manage the cluster',
-                                       last_step, onepanel)
 
 
 @given(parsers.re('provider name set to name of "(?P<provider>.+?)" '

@@ -25,7 +25,7 @@ Feature: Multi Browser basic management of spaces
     And user of browser1 clicks on "Invite user using token" button in users list menu in "space1" space members view
     And user of browser1 copies invitation token from modal
     And user of browser1 sends invitation token to "browser2"
-    And user of browser1 closes "Invite group using token" modal
+    And user of browser1 closes "Invite using token" modal
     And user of browser2 clicks Join some space using a space invitation token button
     And user of browser2 pastes Space invitation token into space token text field
     And user of browser2 confirms join the space using <confirmation_method>
@@ -43,7 +43,7 @@ Feature: Multi Browser basic management of spaces
     And user of browser1 clicks on "Invite user using token" button in users list menu in "space1" space members view
     And user of browser1 copies invitation token from modal
     And user of browser1 sends invitation token to "browser2"
-    And user of browser1 closes "Invite group using token" modal
+    And user of browser1 closes "Invite using token" modal
     And user of browser2 clicks join an existing space on Welcome page
     And user of browser2 pastes Space invitation token into space token text field
     And user of browser2 clicks Join the space button on Join to a space page
