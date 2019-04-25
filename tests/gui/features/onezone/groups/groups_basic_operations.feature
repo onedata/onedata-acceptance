@@ -22,60 +22,60 @@ Feature: Basic management of groups with one user in Onezone GUI
     And user of browser logged as user1 to Onezone service
 
 
-#  Scenario Outline: User renames group
-#    When user of browser clicks on "Rename" button in group "group1" menu in the sidebar
-#    And user of browser writes "group2" into rename group text field
-#    And user of browser confirms group rename using <confirmation_method>
-#    Then user of browser sees group "group2" on groups list
-#    And user of browser does not see group "group1" on groups list
-#
-#    Examples:
-#      | confirmation_method |
-#      | enter               |
-#      | button              |
-#
-#
-#  Scenario: User removes group
-#    When user of browser clicks on "Remove" button in group "group1" menu in the sidebar
-#    And user of browser clicks on "Remove" button in modal "REMOVE GROUP"
-#    Then user of browser does not see group "group1" on groups list
-#
-#
-#  Scenario: User leaves group
-#    When user of browser clicks on "Leave" button in group "group1" menu in the sidebar
-#    And user of browser clicks on "Leave" button in modal "LEAVE GROUP"
-#    Then user of browser does not see group "group1" on groups list
-#
-#
-#  Scenario Outline: User fails to add group as its subgroup
-#    When user of browser clicks on "generate an invitation token" text in group "group1" members groups list
-#    And user of browser copies invitation token from modal
-#    And user of browser closes "Invite using token" modal
-#
-#    And user of browser clicks on "Join as subgroup" button in group "group1" menu in the sidebar
-#    And user of browser pastes copied token into group token text field
-#    And user of browser confirms using <confirmation_method>
-#
-#    Then user of browser sees that error modal with text "joining group as subgroup failed" appeared
-#
-#    Examples:
-#      | confirmation_method |
-#      | enter               |
-#      | button              |
-#
-#
-#  Scenario: User generates group invitation token
-#    When user of browser clicks on "Invite group using token" button in groups list menu in "group1" group members view
-#    And user of browser sees that area with group invitation token has appeared
-#
-#    Then user of browser sees non-empty token in token area
-#
-#
-#  Scenario: User generates user invitation token
-#    When user of browser clicks on "Invite user using token" button in users list menu in "group1" group members view
-#    And user of browser sees that area with user invitation token has appeared
-#
-#    Then user of browser sees non-empty token in token area
+  Scenario Outline: User renames group
+    When user of browser clicks on "Rename" button in group "group1" menu in the sidebar
+    And user of browser writes "group2" into rename group text field
+    And user of browser confirms group rename using <confirmation_method>
+    Then user of browser sees group "group2" on groups list
+    And user of browser does not see group "group1" on groups list
+
+    Examples:
+      | confirmation_method |
+      | enter               |
+      | button              |
+
+
+  Scenario: User removes group
+    When user of browser clicks on "Remove" button in group "group1" menu in the sidebar
+    And user of browser clicks on "Remove" button in modal "REMOVE GROUP"
+    Then user of browser does not see group "group1" on groups list
+
+
+  Scenario: User leaves group
+    When user of browser clicks on "Leave" button in group "group1" menu in the sidebar
+    And user of browser clicks on "Leave" button in modal "LEAVE GROUP"
+    Then user of browser does not see group "group1" on groups list
+
+
+  Scenario Outline: User fails to add group as its subgroup
+    When user of browser clicks on "generate an invitation token" text in group "group1" members groups list
+    And user of browser copies invitation token from modal
+    And user of browser closes "Invite using token" modal
+
+    And user of browser clicks on "Join as subgroup" button in group "group1" menu in the sidebar
+    And user of browser pastes copied token into group token text field
+    And user of browser confirms using <confirmation_method>
+
+    Then user of browser sees that error modal with text "joining group as subgroup failed" appeared
+
+    Examples:
+      | confirmation_method |
+      | enter               |
+      | button              |
+
+
+  Scenario: User generates group invitation token
+    When user of browser clicks on "Invite group using token" button in groups list menu in "group1" group members view
+    And user of browser sees that area with group invitation token has appeared
+
+    Then user of browser sees non-empty token in token area
+
+
+  Scenario: User generates user invitation token
+    When user of browser clicks on "Invite user using token" button in users list menu in "group1" group members view
+    And user of browser sees that area with user invitation token has appeared
+
+    Then user of browser sees non-empty token in token area
 
 
   Scenario: User fails to view group after leaving it

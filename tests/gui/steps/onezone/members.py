@@ -450,3 +450,19 @@ def see_insufficient_permissions_alert(selenium, browser_id, oz_page,
     assert alert_text in forbidden_alert, ('not found alert with {} text'
                                            .format(alert_text))
 
+
+@wt(parsers.re('user of (?P<browser_id>.*) sees privileges for '
+               '"(?P<member_name>.*)" (?P<member_type>user|group) '
+               'in (?P<where>space|group) members subpage'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def see_privileges_for_member(selenium, browser_id, oz_page, where,
+                              member_type, member_name):
+    driver = selenium[browser_id]
+    where = _change_to_tab_name(where)
+    member_type = member_type + 's'
+
+    members_list = getattr(oz_page(driver)[where].members_page, member_type)
+
+    assert len(members_list.items[member_name].privileges) > 0, ('not found '
+                                                                 'privileges')
+

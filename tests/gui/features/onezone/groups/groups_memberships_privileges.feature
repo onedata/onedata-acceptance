@@ -8,6 +8,8 @@ Feature: Basic management of groups privileges in Onezone GUI
     And initial groups configuration in "onezone" Onezone service:
           group1:
             owner: user1
+            users:
+                - user2
             groups:
                 - group2
                 - group4
@@ -47,13 +49,16 @@ Feature: Basic management of groups privileges in Onezone GUI
 
   Scenario: User fails to see privileges without view privileges
     When user of browser goes to group "group1" members subpage
+    And user of browser clicks "user2" user in "group1" group members users list
+    And user of browser sees privileges for "user2" user in group members subpage
+    And user of browser refreshes site
     And user of browser clicks "user1" user in "group1" group members users list
     And user of browser expands "Group management" privilege for "user1" user in group members subpage
     And user of browser unchecks "View privileges" privilege toggle in "Group management" for "user1" user in group members subpage
     And user of browser clicks Save button for "user1" user in group members subpage
     And user of browser refreshes site
-    And user of browser clicks "user1" user in "group1" group members users list
-    Then user of browser sees Insufficient permissions alert for "user1" user in group members subpage
+    And user of browser clicks "user2" user in "group1" group members users list
+    Then user of browser sees Insufficient permissions alert for "user2" user in group members subpage
 
 
   Scenario: User fails to remove relation without privileges
