@@ -98,6 +98,5 @@ Feature: Joining a group in Onezone GUI
     And user of browser1 sends copied ID to user of browser2
     And user of browser2 changes webapp path to "/i#/onedata/groups" concatenated with received ID
     And user of browser2 refreshes site
-    And user of browser2 clicks Show details on groups page
     Then user of browser2 sees "Insufficient permissions" in error details on groups page
 

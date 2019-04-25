@@ -278,12 +278,6 @@ def assert_list_of_children_contains_group(selenium, browser_id, oz_page):
      .show_parent_groups())
 
 
-@wt(parsers.parse('user of {browser_id} clicks Show details on groups page'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_show_details_on_groups_page(selenium, browser_id, oz_page):
-    oz_page(selenium[browser_id])['groups'].main_page.show_details()
-
-
 @wt(parsers.parse('user of {browser_id} sees "{text}" in error details'
                   ' on groups page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
