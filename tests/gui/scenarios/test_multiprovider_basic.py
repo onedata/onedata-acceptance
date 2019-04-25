@@ -64,3 +64,4 @@ def screens():
 
 scenarios('../features/oneprovider/multiprovider/cdmi.feature')
 scenarios('../features/oneprovider/multiprovider/basic.feature')
+scenarios('../features/oneprovider/multiprovider/auto_cleaning.feature')
