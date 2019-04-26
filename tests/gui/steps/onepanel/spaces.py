@@ -1,6 +1,7 @@
 """This module contains gherkin steps to run acceptance tests featuring
 spaces management in onepanel web GUI.
 """
+from tests.gui.steps.common.miscellaneous import _enter_text
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
@@ -9,6 +10,7 @@ __license__ = ("This software is released under the MIT license cited in "
 
 
 import yaml
+import re
 
 from pytest_bdd import when, then, parsers
 
@@ -470,8 +472,8 @@ def click_change_quota_button(selenium, browser_id, quota, onepanel):
 def type_value_to_quota_input(selenium, browser_id, quota, value, onepanel):
     quota = '{}_quota'.format(quota)
     driver = selenium[browser_id]
-    getattr(onepanel(driver).content.spaces.space.auto_cleaning,
-            quota).rename_input = value
+    _enter_text(getattr(onepanel(driver).content.spaces.space.auto_cleaning,
+                quota).rename_input, value)
 
 
 @wt(parsers.parse('user of {browser_id} confirms changing value '
@@ -500,7 +502,8 @@ def see_released_size_in_cleaning_report(selenium, browser_id, onepanel, size):
     driver = selenium[browser_id]
     cleaning_report = (onepanel(driver).content.spaces.space
                        .auto_cleaning.cleaning_reports)[0]
-
-    released_size = cleaning_report.released_size.text.split(' (out')[0]
+    released_size = re.match(r'((\d+) (MiB|B)) \(out of (\d*\.\d+|\d+) MiB\)',
+                             cleaning_report.released_size.text).group(1)
     assert released_size == size, ('released size is {} instead of {}'
                                    .format(released_size, size))
+
