@@ -28,7 +28,6 @@ class GroupDetailsPage(PageObject):
     hierarchy = WebItem('.content-groups-hierarchy', cls=GroupHierarchyPage)
     error_label = Label('.text-center div h1')
     bulk_edit = NamedButton('button', text='Bulk edit')
-    show_details = NamedButton('.show-error-details', text='Show details...')
     error_details = Label('.error-details p')
 
 

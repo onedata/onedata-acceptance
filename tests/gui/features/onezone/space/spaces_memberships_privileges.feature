@@ -15,6 +15,8 @@ Feature: Basic management of spaces privileges in Onezone GUI
     And initial spaces configuration in "onezone" Onezone service:
           space1:
             owner: user1
+            users:
+                - user2
           space2:
             owner: user1
             groups:
@@ -54,13 +56,16 @@ Feature: Basic management of spaces privileges in Onezone GUI
   Scenario: User fails to see privileges without view privileges
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Members of "space1" in the sidebar
+    And user of browser clicks "user2" user in "space1" space members users list
+    And user of browser sees privileges for "user2" user in space members subpage
+    And user of browser refreshes site
     And user of browser clicks "user1" user in "space1" space members users list
     And user of browser expands "Space management" privilege for "user1" user in space members subpage
     And user of browser unchecks "View privileges" privilege toggle in "Space management" for "user1" user in space members subpage
     And user of browser clicks Save button for "user1" user in space members subpage
     And user of browser refreshes site
-    And user of browser clicks "user1" user in "space1" space members users list
-    Then user of browser sees Insufficient permissions alert for "user1" user in space members subpage
+    And user of browser clicks "user2" user in "space1" space members users list
+    Then user of browser sees Insufficient permissions alert for "user2" user in space members subpage
 
 
   Scenario: User fails to see space without view space privilege
