@@ -141,7 +141,7 @@ class FilePopularity(PageObject):
 
 class QuotaEditor(PageObject):
     rename_button = Button('.oneicon-rename')
-    rename_input = Input('input')
+    rename_input = WebElement('input')
     accept_button = Button('.oneicon-checked')
     cancel_button = Button('.oneicon-ban-left')
 
@@ -194,7 +194,7 @@ class AutoCleaning(PageObject):
 class NavigationHeader(PageObject):
     overview = NamedButton('li', text='Overview')
     storage_synchronization = NamedButton('li', text='Storage synchronization')
-    files_popularity = NamedButton('li', text='File-popularity')
+    file_popularity = NamedButton('li', text='File-popularity')
     auto_cleaning = NamedButton('li', text='Auto-cleaning')
 
 
@@ -220,7 +220,7 @@ class Space(PageObject):
 
     overview = WebItem('.tab-pane.active', cls=SpaceInfo)
     sync_chart = WebItem('.tab-pane.active', cls=SyncChart)
-    files_popularity = WebItem('.tab-pane.active', cls=FilePopularity)
+    file_popularity = WebItem('.tab-pane.active', cls=FilePopularity)
     auto_cleaning = WebItem('.tab-pane.active', cls=AutoCleaning)
 
 
