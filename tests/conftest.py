@@ -32,6 +32,9 @@ def pytest_addoption(parser):
                      help='type of test (oneclient, env_up, '
                           'packaging, gui)')
 
+    parser.addoption('--local', action='store_true',
+                     help='If specified tests are assumed to be stared '
+                          'on local machine')
     parser.addoption('--ignore-xfail', action='store_true',
                      help='Ignores xfail mark')
     parser.addoption('--env-file', action='store', default=None,
@@ -368,8 +371,9 @@ def start_environment(scenario_path, request, hosts, patch_path,
 
     pods_cfg = check_deployment(request, env_description_abs_path)
     parse_hosts_cfg(pods_cfg, hosts, request)
-    run_onenv_command('hosts', skip_on_error=True, request=request,
-                      env_path=env_description_abs_path)
+    if not request.config.getoption('--local'):
+        run_onenv_command('hosts', skip_on_error=True, request=request,
+                          env_path=env_description_abs_path)
 
     if patch_path and clean:
         patch_args = parse_patch_args(request, patch_path)
