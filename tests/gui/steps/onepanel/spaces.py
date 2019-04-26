@@ -1,7 +1,6 @@
 """This module contains gherkin steps to run acceptance tests featuring
 spaces management in onepanel web GUI.
 """
-from tests.gui.steps.common.miscellaneous import _enter_text
 
 __author__ = "Bartosz Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
@@ -13,13 +12,14 @@ import yaml
 import re
 
 from pytest_bdd import when, then, parsers
+from selenium.common.exceptions import StaleElementReferenceException
 
 from tests.utils.utils import repeat_failed
 from tests.gui.conftest import (WAIT_FRONTEND, WAIT_BACKEND,
                                 SELENIUM_IMPLICIT_WAIT)
 from tests.gui.utils.generic import transform, implicit_wait, parse_seq
 from tests.utils.acceptance_utils import wt
-from selenium.common.exceptions import StaleElementReferenceException
+from tests.gui.steps.common.miscellaneous import _enter_text
 
 
 @when(parsers.parse('user of {browser_id} selects "{storage}" from storage '
@@ -444,7 +444,7 @@ def enable_selective_cleaning(selenium, browser_id, onepanel):
 def enable_option_in_auto_cleaning(selenium, browser_id, onepanel, option):
     driver = selenium[browser_id]
     tab = onepanel(driver).content.spaces.space.auto_cleaning
-    tab.selective_cleaning_form[option].checkbox()
+    tab.selective_cleaning_form[option].checkbox.check()
 
 
 @wt(parsers.parse('user of {browser_id} clicks {option} on dropdown '
@@ -473,13 +473,13 @@ def type_value_to_quota_input(selenium, browser_id, quota, value, onepanel):
     quota = '{}_quota'.format(quota)
     driver = selenium[browser_id]
     _enter_text(getattr(onepanel(driver).content.spaces.space.auto_cleaning,
-                quota).rename_input, value)
+                quota).edit_input, value)
 
 
 @wt(parsers.parse('user of {browser_id} confirms changing value '
                   'of {quota} quota in auto-cleaning tab in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_rename_quota(selenium, browser_id, quota, onepanel):
+def confirm_quota_value_change(selenium, browser_id, quota, onepanel):
     quota = '{}_quota'.format(quota)
     driver = selenium[browser_id]
     getattr(onepanel(driver).content.spaces.space.auto_cleaning,
