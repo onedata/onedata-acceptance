@@ -64,6 +64,7 @@ Feature: Multiprovider_replication
     When user1 creates regular files [space1/file1] on client11
     And user1 writes "a" to space1/file1 on client11
     And user1 changes space1/file1 mode to 666 on client11
+    And user2 can stat [file1] in space1 on client21
     And mode of user2's space1/file1 is 666 on client21
     And user1 waits 10 seconds
     And user2 appends "b" to space1/file1 on client21
