@@ -11,7 +11,7 @@ from tests.gui.utils.core.web_elements import (Button, NamedButton,
                                                Label, WebItem, Input,
                                                WebItemsSequence)
 from tests.gui.utils.onezone.generic_page import Element, GenericPage
-from .members_subpage import GroupMembersPage
+from tests.gui.utils.onezone.members_subpage import MembersPage
 from .hierarchy_subpage import GroupHierarchyPage
 from tests.gui.utils.onezone.common import EditBox, InputBox
 
@@ -24,7 +24,7 @@ class Group(Element):
 
 
 class GroupDetailsPage(PageObject):
-    members = WebItem('.content-groups-members', cls=GroupMembersPage)
+    members = WebItem('.content-groups-members', cls=MembersPage)
     hierarchy = WebItem('.content-groups-hierarchy', cls=GroupHierarchyPage)
     error_label = Label('.text-center div h1')
     bulk_edit = NamedButton('button', text='Bulk edit')
@@ -56,7 +56,7 @@ class GroupsPage(GenericPage):
     input_box = WebItem('.content-info-content-container', cls=InputBox) 
 
     main_page = WebItem('.col-content', cls=GroupDetailsPage)
-    members_page = WebItem('.main-content', cls=GroupMembersPage)
+    members_page = WebItem('.main-content', cls=MembersPage)
 
     join_space = Button('.minimized-item.clickable.join-space-action '
                         '.oneicon-space-join')

@@ -65,14 +65,19 @@ Feature: Basic management of groups with one user in Onezone GUI
 
 
   Scenario: User generates group invitation token
-    When user of browser clicks on "Invite group using token" button in groups list menu in "group1" group members view
+    When user of browser clicks on Groups in the main menu
+    And user of browser clicks "group1" on the groups list in the sidebar
+    And user of browser clicks on "Invite group using token" button in groups list menu in "group1" group members view
     And user of browser sees that area with group invitation token has appeared
 
     Then user of browser sees non-empty token in token area
 
 
   Scenario: User generates user invitation token
-    When user of browser clicks on "Invite user using token" button in users list menu in "group1" group members view
+    When user of browser clicks on Groups in the main menu
+    And user of browser clicks "group1" on the groups list in the sidebar
+    And user of browser clicks Members of "group1" in the sidebar
+    And user of browser clicks on "Invite user using token" button in users list menu in "group1" group members view
     And user of browser sees that area with user invitation token has appeared
 
     Then user of browser sees non-empty token in token area

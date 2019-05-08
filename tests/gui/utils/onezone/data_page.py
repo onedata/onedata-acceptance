@@ -11,7 +11,7 @@ from tests.gui.utils.core.web_elements import (Button, NamedButton,
                                                WebItem, WebElement)
 from tests.gui.utils.onezone.generic_page import Element, GenericPage
 from .common import EditBox, InputBox
-from groups.members_subpage import GroupMembersPage
+from tests.gui.utils.onezone.members_subpage import MembersPage
 
 
 class Space(Element):
@@ -89,7 +89,7 @@ class DataPage(GenericPage):
 
     overview_page = WebItem('.main-content', cls=SpaceOverviewPage)
     providers_page = WebItem('.main-content', cls=SpaceProvidersPage)
-    members_page = WebItem('.main-content', cls=GroupMembersPage)
+    members_page = WebItem('.main-content', cls=MembersPage)
     welcome_page = WebItem('.main-content', cls=WelcomePage)
 
     menu_button = Button('.with-menu .collapsible-toolbar-toggle')
