@@ -19,7 +19,7 @@ from tests.gui.steps.common.miscellaneous import _enter_text
 @wt(parsers.parse('user of {browser_id} clicks on {button} '
                   'button in clusters menu'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_add_new_provider_cluster(selenium, browser_id, oz_page, button):
+def click_button_in_cluster_menu(selenium, browser_id, oz_page, button):
     driver = selenium[browser_id]
     getattr(oz_page(driver)['clusters'], transform(button)).click()
 
@@ -60,10 +60,19 @@ def input_join_cluster_token_into_token_input_field(selenium, browser_id,
     _enter_text(token_input, token)
 
 
-@wt(parsers.parse('user of {browser_id} clicks on join the cluster button '
+@wt(parsers.parse('user of {browser_id} clicks on {button} button '
                   'in clusters page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_join_the_cluster_button(selenium, browser_id, oz_page):
+def click_on_join_the_cluster_button(selenium, browser_id, oz_page, button):
     driver = selenium[browser_id]
-    oz_page(driver)['clusters'].join_the_cluster()
+    button = transform(button)
+    getattr(oz_page(driver)['clusters'], button).click()
+
+
+@wt(parsers.parse('user of {browser_id} checks the understand notice '
+                  'in clusters page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def check_the_understand_notice(selenium, browser_id, oz_page):
+    driver = selenium[browser_id]
+    oz_page(driver)['clusters'].deregistration_checkbox()
 

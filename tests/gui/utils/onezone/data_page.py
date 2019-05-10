@@ -11,7 +11,7 @@ from tests.gui.utils.core.web_elements import (Button, NamedButton,
                                                WebItem, WebElement)
 from tests.gui.utils.onezone.generic_page import Element, GenericPage
 from .common import EditBox, InputBox
-from tests.gui.utils.onezone.members_subpage import MembersPage
+from .members_subpage import MembersPage
 
 
 class Space(Element):

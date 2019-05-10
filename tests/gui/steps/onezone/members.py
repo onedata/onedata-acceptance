@@ -25,6 +25,7 @@ def _change_to_tab_name(element):
 
 
 def _find_members_page(onepanel, oz_page, driver, where):
+    where = _change_to_tab_name(where)
     if where == 'clusters':
         return onepanel(driver).content.members
     else:
@@ -36,8 +37,6 @@ def _find_members_page(onepanel, oz_page, driver, where):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_show_view_option(selenium, browser_id, oz_page, where, onepanel):
     driver = selenium[browser_id]
-    where = _change_to_tab_name(where)
-
     page = _find_members_page(onepanel, oz_page, driver, where)
     page.show_view_option()
 
@@ -50,8 +49,6 @@ def click_mode_view_in_members_subpage(selenium, browser_id, mode,
                                        oz_page, where, onepanel):
     driver = selenium[browser_id]
     mode = mode + '_button'
-    where = _change_to_tab_name(where)
-
     page = _find_members_page(onepanel, oz_page, driver, where)
 
     getattr(page, mode).click()
@@ -157,8 +154,6 @@ def click_option_in_relation_menu_button(selenium, browser_id, option):
 def click_element_in_members_list(selenium, browser_id, member_name,
                                   oz_page, where, list_type, onepanel):
     driver = selenium[browser_id]
-    where = _change_to_tab_name(where)
-
     page = _find_members_page(onepanel, oz_page, driver, where)
 
     getattr(page, list_type).items[member_name].click()
@@ -183,11 +178,10 @@ def click_generate_token_in_subgroups_list(selenium, browser_id, group,
 def click_on_option_in_members_list_menu(selenium, browser_id, button,
                                          name, where, member, oz_page, onepanel):
     driver = selenium[browser_id]
-    where = _change_to_tab_name(where)
 
     page = _find_members_page(onepanel, oz_page, driver, where)
+    where = _change_to_tab_name(where)
     getattr(page, member).header.menu_button()
-
     if where == 'clusters':
         onepanel(driver).member_menu[button].click()
     else:
@@ -250,8 +244,7 @@ def assert_member_is_in_parent_members_list(selenium, browser_id, option,
                                             parent_name, parent_type,
                                             oz_page, onepanel):
     driver = selenium[browser_id]
-    where = _change_to_tab_name(parent_type)
-    page = _find_members_page(onepanel, oz_page, driver, where)
+    page = _find_members_page(onepanel, oz_page, driver, parent_type)
 
     try:
         if member_type == 'user':
@@ -273,17 +266,20 @@ def assert_member_is_in_parent_members_list(selenium, browser_id, option,
 @wt(parsers.re('user of (?P<browser_id>.*) removes "(?P<member_name>.*)" '
                '(?P<member_type>user|group) from "(?P<name>.*)" '
                '(?P<where>cluster|group) members'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def remove_member_from_group(selenium, browser_id, member_name, member_type,
                              name, oz_page, tmp_memory, onepanel, where):
     driver = selenium[browser_id]
-    where = _change_to_tab_name(where)
     page = _find_members_page(onepanel, oz_page, driver, where)
+    where = _change_to_tab_name(where)
     list_name = member_type + 's'
     (getattr(page, list_name)
      .items[member_name].header.click_menu(selenium[browser_id]))
 
     if member_type == 'user':
         modal_name = 'remove user from '
+    elif member_type == 'group' and where == 'clusters':
+        modal_name = 'remove group from '
     else:
         modal_name = 'remove subgroup from '
 
@@ -372,7 +368,6 @@ def click_nested_privilege_toggle_for_member(selenium, browser_id, option,
                                              oz_page, member_type,
                                              parent_privilege_name, onepanel):
     driver = selenium[browser_id]
-    where = _change_to_tab_name(where)
     member_type = member_type + 's'
     page = _find_members_page(onepanel, oz_page, driver, where)
     members_list = getattr(page, member_type)
@@ -414,7 +409,6 @@ def click_button_on_element_header_in_members(selenium, browser_id, option,
                                               member_type, onepanel):
     driver = selenium[browser_id]
     option = option.lower() + '_button'
-    where = _change_to_tab_name(where)
     member_type = member_type + 's'
     page = _find_members_page(onepanel, oz_page, driver, where)
 
@@ -430,9 +424,7 @@ def click_button_on_element_header_in_members(selenium, browser_id, option,
 def expand_privilege_for_member(selenium, browser_id, privilege_name, oz_page,
                                 where, member_name, member_type, onepanel):
     driver = selenium[browser_id]
-    where = _change_to_tab_name(where)
     member_type = member_type + 's'
-
     page = _find_members_page(onepanel, oz_page, driver, where)
 
     members_list = getattr(page, member_type)
@@ -448,7 +440,6 @@ def see_insufficient_permissions_alert_for_member(selenium, browser_id, oz_page,
                                                   where, member_name, onepanel,
                                                   member_type, alert_text):
     driver = selenium[browser_id]
-    where = _change_to_tab_name(where)
     member_type = member_type + 's'
     page = _find_members_page(onepanel, oz_page, driver, where)
 
@@ -465,7 +456,6 @@ def see_insufficient_permissions_alert_for_member(selenium, browser_id, oz_page,
 def see_insufficient_permissions_alert(selenium, browser_id, oz_page,
                                        where, alert_text, onepanel):
     driver = selenium[browser_id]
-    where = _change_to_tab_name(where)
     page = _find_members_page(onepanel, oz_page, driver, where)
 
     forbidden_alert = page.forbidden_alert.text
@@ -480,9 +470,7 @@ def see_insufficient_permissions_alert(selenium, browser_id, oz_page,
 def see_privileges_for_member(selenium, browser_id, oz_page, where,
                               member_type, member_name, onepanel):
     driver = selenium[browser_id]
-    where = _change_to_tab_name(where)
     member_type = member_type + 's'
-
     page = _find_members_page(onepanel, oz_page, driver, where)
     members_list = getattr(page, member_type)
 
