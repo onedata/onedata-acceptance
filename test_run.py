@@ -286,7 +286,8 @@ if args.local:
     # TODO: change this after python3 will be used in tests
     cmd = ['python2.7', '-m', 'py.test',
            '--test-type={}'.format(args.test_type),
-           args.test_dir, '--junitxml={}'.format(args.report_path)] + pass_args
+           args.test_dir, '--junitxml={}'.format(args.report_path),
+           '--local'] + pass_args
     ret = call(cmd, stdin=None, stderr=None, stdout=None)
 
 else:

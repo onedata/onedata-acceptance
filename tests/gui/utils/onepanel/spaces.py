@@ -139,14 +139,62 @@ class FilePopularity(PageObject):
     maxAvgOpenCountPerDayGroup = Input('.maxAvgOpenCountPerDayGroup input')
 
 
+class QuotaEditor(PageObject):
+    edit_button = Button('.oneicon-rename')
+    edit_input = WebElement('input')
+    accept_button = Button('.oneicon-checked')
+    cancel_button = Button('.oneicon-ban-left')
+
+
+class CleaningReport(PageObject):
+    start = WebElement('td.data-cell-start')
+    stop = WebElement('td.data-cell-stop')
+    released_size = WebElement('td.data-cell-released-size')
+    files_number = WebElement('td.data-cell-files-number')
+    status = WebElement('td.data-cell-status')
+
+
+class SelectiveCleaningRecord(PageObject):
+    name = id = Label('.label-column.control-label')
+    checkbox = Toggle('.toggle-column')
+    value_input = Input('.condition-number-input')
+    dropdown_button = Button('.ember-power-select-trigger')
+    dropdown = WebItemsSequence('li.ember-power-select-option',
+                                cls=ButtonWithTextPageObject)
+
+
 class AutoCleaning(PageObject):
-    enable_auto_cleaning = Toggle('.one-way-toggle-control')
+    enable_auto_cleaning = Toggle('.cleaning-enabled-toggle '
+                                  '.one-way-toggle-control')
+    selective_cleaning = Toggle('.selective-cleaning-toggle '
+                                '.one-way-toggle-control')
+    selective_cleaning_form = WebItemsSequence('.selective-cleaning-rules-form '
+                                               '> div',
+                                               cls=SelectiveCleaningRecord)
+
+    start_cleaning_now = Button('.btn-clean-now')
+
+    _soft_quota = WebElement('.soft-quota-editor')
+    soft_quota = WebItem('.soft-quota-editor', cls=QuotaEditor)
+    _hard_quota = WebElement('.hard-quota-editor')
+    hard_quota = WebItem('.hard-quota-editor', cls=QuotaEditor)
+
+    cleaning_reports = WebItemsSequence('tbody tr.data-item-base',
+                                        cls=CleaningReport)
+
+    def click_rename_soft_quota_button(self, driver):
+        ActionChains(driver).move_to_element(self._soft_quota).perform()
+        self.soft_quota.edit_button()
+
+    def click_rename_hard_quota_button(self, driver):
+        ActionChains(driver).move_to_element(self._hard_quota).perform()
+        self.hard_quota.edit_button()
 
 
 class NavigationHeader(PageObject):
     overview = NamedButton('li', text='Overview')
     storage_synchronization = NamedButton('li', text='Storage synchronization')
-    files_popularity = NamedButton('li', text='File-popularity')
+    file_popularity = NamedButton('li', text='File-popularity')
     auto_cleaning = NamedButton('li', text='Auto-cleaning')
 
 
@@ -172,7 +220,7 @@ class Space(PageObject):
 
     overview = WebItem('.tab-pane.active', cls=SpaceInfo)
     sync_chart = WebItem('.tab-pane.active', cls=SyncChart)
-    files_popularity = WebItem('.tab-pane.active', cls=FilePopularity)
+    file_popularity = WebItem('.tab-pane.active', cls=FilePopularity)
     auto_cleaning = WebItem('.tab-pane.active', cls=AutoCleaning)
 
 
