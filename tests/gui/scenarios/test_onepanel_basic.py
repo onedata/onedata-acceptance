@@ -55,6 +55,7 @@ from tests.gui.steps.oneprovider_common import *
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.onepanel.provider import *
 from tests.gui.meta_steps.onepanel.spaces import *
+from tests.gui.meta_steps.onezone.spaces import *
 
 from tests.mixed.steps.onepanel_basic import *
 from tests.mixed.steps.space_basic import *

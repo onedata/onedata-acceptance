@@ -24,18 +24,10 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     Given there are no spaces supported in Onepanel used by user of browser1
 
     # create space
-    When user of browser2 clicks on Create space button in spaces sidebar
-    And user of browser2 writes "space2" into space name text field
-    And user of browser2 clicks on Create new space button
-    And user of browser2 sees that "space2" has appeared on the spaces list in the sidebar
+    When user of browser2 creates "space2" space in Onezone
 
     # receive support token
-    And user of browser2 clicks "space2" on the spaces list in the sidebar
-    And user of browser2 clicks Providers of "space2" in the sidebar
-    And user of browser2 clicks Get support button on providers page
-    And user of browser2 copies invitation token from Spaces page
-    And user of browser2 sees an info notify with text matching to: .*copied.*
-    And user of browser2 sends copied token to user of browser1
+    And user of browser2 sends support token from "space2" to user of browser1
 
     # copy files to provider storage
     And user of browser2 copies dir2 to provider's storage mount point
@@ -132,30 +124,17 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sees that there are 10 items in file browser
 
     # revoke space support
-    And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of browser1 expands toolbar for "space2" space record in Spaces page in Onepanel
-    And user of browser1 clicks on Revoke space support option in space's toolbar in Onepanel
-    And user of browser1 clicks on Yes, revoke button in REVOKE SPACE SUPPORT modal in Onepanel
-    And user of browser1 sees an info notify with text matching to: .*[Ss]upport.*revoked.*
+    And user of browser1 revokes "space2" space support in "oneprovider-1" provider in Onepanel
 
 
   Scenario: User supports space with storage sync and no enabled options
     Given there are no spaces supported in Onepanel used by user of browser1
 
     # create space
-    When user of browser2 sees that "space1" has disappeared on the spaces list in the sidebar
-    And user of browser2 clicks on Create space button in spaces sidebar
-    And user of browser2 writes "space1" into space name text field
-    And user of browser2 clicks on Create new space button
-    And user of browser2 sees that "space1" has appeared on the spaces list in the sidebar
+    When user of browser2 creates "space1" space in Onezone
 
     # receive support token
-    And user of browser2 clicks "space1" on the spaces list in the sidebar
-    And user of browser2 clicks Providers of "space1" in the sidebar
-    And user of browser2 clicks Get support button on providers page
-    And user of browser2 copies invitation token from Spaces page
-    And user of browser2 sees an info notify with text matching to: .*copied.*
-    And user of browser2 sends copied token to user of browser1
+    And user of browser2 sends support token from "space1" to user of browser1
 
     # support space
     And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
@@ -255,30 +234,17 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sees that there are 10 items in file browser
 
     # revoke space support
-    And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of browser1 expands toolbar for "space1" space record in Spaces page in Onepanel
-    And user of browser1 clicks on Revoke space support option in space's toolbar in Onepanel
-    And user of browser1 clicks on Yes, revoke button in REVOKE SPACE SUPPORT modal in Onepanel
-    And user of browser1 sees an info notify with text matching to: .*[Ss]upport.*revoked.*
+    And user of browser1 revokes "space1" space support in "oneprovider-1" provider in Onepanel
 
 
   Scenario: User supports space with storage sync and enabled options: Delete
     Given there are no spaces supported in Onepanel used by user of browser1
 
     # create space
-    When user of browser2 sees that "space3" has disappeared on the spaces list in the sidebar
-    And user of browser2 clicks on Create space button in spaces sidebar
-    And user of browser2 writes "space3" into space name text field
-    And user of browser2 clicks on Create new space button
-    And user of browser2 sees that "space3" has appeared on the spaces list in the sidebar
+    When user of browser2 creates "space3" space in Onezone
 
     # receive support token
-    And user of browser2 clicks "space3" on the spaces list in the sidebar
-    And user of browser2 clicks Providers of "space3" in the sidebar
-    And user of browser2 clicks Get support button on providers page
-    And user of browser2 copies invitation token from Spaces page
-    And user of browser2 sees an info notify with text matching to: .*copied.*
-    And user of browser2 sends copied token to user of browser1
+    And user of browser2 sends support token from "space3" to user of browser1
 
     # support space
     And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
@@ -391,30 +357,17 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sees item(s) named "dir22" in file browser
 
     # revoke space support
-    And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of browser1 expands toolbar for "space3" space record in Spaces page in Onepanel
-    And user of browser1 clicks on Revoke space support option in space's toolbar in Onepanel
-    And user of browser1 clicks on Yes, revoke button in REVOKE SPACE SUPPORT modal in Onepanel
-    And user of browser1 sees an info notify with text matching to: .*[Ss]upport.*revoked.*
+    And user of browser1 revokes "space3" space support in "oneprovider-1" provider in Onepanel
 
 
   Scenario: User supports space with storage sync and enabled options: Write once
     Given there are no spaces supported in Onepanel used by user of browser1
 
     # create space
-    When user of browser2 sees that "space4" has disappeared on the spaces list in the sidebar
-    And user of browser2 clicks on Create space button in spaces sidebar
-    And user of browser2 writes "space4" into space name text field
-    And user of browser2 clicks on Create new space button
-    And user of browser2 sees that "space4" has appeared on the spaces list in the sidebar
+    When user of browser2 creates "space4" space in Onezone
 
     # receive support token
-    And user of browser2 clicks "space4" on the spaces list in the sidebar
-    And user of browser2 clicks Providers of "space4" in the sidebar
-    And user of browser2 clicks Get support button on providers page
-    And user of browser2 copies invitation token from Spaces page
-    And user of browser2 sees an info notify with text matching to: .*copied.*
-    And user of browser2 sends copied token to user of browser1
+    And user of browser2 sends support token from "space4" to user of browser1
 
     # support space
     And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
@@ -515,30 +468,17 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sees that there are 10 items in file browser
 
     # revoke space support
-    And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of browser1 expands toolbar for "space4" space record in Spaces page in Onepanel
-    And user of browser1 clicks on Revoke space support option in space's toolbar in Onepanel
-    And user of browser1 clicks on Yes, revoke button in REVOKE SPACE SUPPORT modal in Onepanel
-    And user of browser1 sees an info notify with text matching to: .*[Ss]upport.*revoked.*
+    And user of browser1 revokes "space4" space support in "oneprovider-1" provider in Onepanel
 
 
   Scenario: User supports space with storage sync and enabled options: Delete and Write once
     Given there are no spaces supported in Onepanel used by user of browser1
 
     # create space
-    When user of browser2 sees that "space5" has disappeared on the spaces list in the sidebar
-    And user of browser2 clicks on Create space button in spaces sidebar
-    And user of browser2 writes "space5" into space name text field
-    And user of browser2 clicks on Create new space button
-    And user of browser2 sees that "space5" has appeared on the spaces list in the sidebar
+    When user of browser2 creates "space5" space in Onezone
 
     # receive support token
-    And user of browser2 clicks "space5" on the spaces list in the sidebar
-    And user of browser2 clicks Providers of "space5" in the sidebar
-    And user of browser2 clicks Get support button on providers page
-    And user of browser2 copies invitation token from Spaces page
-    And user of browser2 sees an info notify with text matching to: .*copied.*
-    And user of browser2 sends copied token to user of browser1
+    And user of browser2 sends support token from "space5" to user of browser1
 
     # support space
     And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
@@ -652,30 +592,17 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sees item(s) named "dir22" in file browser
 
     # revoke space support
-    And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of browser1 expands toolbar for "space5" space record in Spaces page in Onepanel
-    And user of browser1 clicks on Revoke space support option in space's toolbar in Onepanel
-    And user of browser1 clicks on Yes, revoke button in REVOKE SPACE SUPPORT modal in Onepanel
-    And user of browser1 sees an info notify with text matching to: .*[Ss]upport.*revoked.*
+    And user of browser1 revokes "space5" space support in "oneprovider-1" provider in Onepanel
 
 
   Scenario: User disables files update
     Given there are no spaces supported in Onepanel used by user of browser1
 
     # create space
-    When user of browser2 sees that "space6" has disappeared on the spaces list in the sidebar
-    And user of browser2 clicks on Create space button in spaces sidebar
-    And user of browser2 writes "space6" into space name text field
-    And user of browser2 clicks on Create new space button
-    And user of browser2 sees that "space6" has appeared on the spaces list in the sidebar
+    When user of browser2 creates "space6" space in Onezone
 
     # receive support token
-    And user of browser2 clicks "space6" on the spaces list in the sidebar
-    And user of browser2 clicks Providers of "space6" in the sidebar
-    And user of browser2 clicks Get support button on providers page
-    And user of browser2 copies invitation token from Spaces page
-    And user of browser2 sees an info notify with text matching to: .*copied.*
-    And user of browser2 sends copied token to user of browser1
+    And user of browser2 sends support token from "space6" to user of browser1
 
     # support space
     And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
@@ -799,8 +726,4 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     Then user of browser2 does not see any item(s) named "dir1" in file browser
 
     # revoke space support
-    And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of browser1 expands toolbar for "space6" space record in Spaces page in Onepanel
-    And user of browser1 clicks on Revoke space support option in space's toolbar in Onepanel
-    And user of browser1 clicks on Yes, revoke button in REVOKE SPACE SUPPORT modal in Onepanel
-    And user of browser1 sees an info notify with text matching to: .*[Ss]upport.*revoked.*
+    And user of browser1 revokes "space6" space support in "oneprovider-1" provider in Onepanel

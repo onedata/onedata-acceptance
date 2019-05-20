@@ -31,16 +31,10 @@ Feature: Storage management using onepanel
     And user of browser1 sees that "new_storage" Mount point is /volumes/storage in storages page in Onepanel
 
     # create space
-    And user of browser2 clicks on Create space button in spaces sidebar
-    And user of browser2 writes "hello_world2" into space name text field
-    And user of browser2 clicks on Create new space button
-    And user of browser2 sees that "hello_world2" has appeared on the spaces list in the sidebar
+    And user of browser2 creates "hello_world2" space in Onezone
 
     # receive support token
-    And user of browser2 clicks Providers of "hello_world2" in the sidebar
-    And user of browser2 clicks Get support button on providers page
-    And user of browser2 clicks Copy button on Get support page
-    And user of browser2 sends copied token to user of browser1
+    And user of browser2 sends support token from "hello_world2" to user of browser1
 
     # support space
     And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
