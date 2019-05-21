@@ -19,11 +19,13 @@ from tests.utils.utils import repeat_failed
                'to "(?P<new_group>.*)" using '
                '(?P<confirm_type>.*) to confirm'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def rename_group(selenium, browser_id, group, new_group, confirm_type, oz_page):
+def rename_group(selenium, browser_id, group, new_group, confirm_type,
+                 oz_page, popups):
     option = 'Rename'
     text = new_group
 
-    click_on_group_menu_button(selenium, browser_id, option, group, oz_page)
+    click_on_group_menu_button(selenium, browser_id, option, group,
+                               oz_page, popups)
     input_new_group_name_into_rename_group_inpux_box(selenium, browser_id, text,
                                                      oz_page)
     if confirm_type == 'button':
@@ -36,22 +38,24 @@ def rename_group(selenium, browser_id, group, new_group, confirm_type, oz_page):
 
 @wt(parsers.parse('user of {browser_id} leaves group "{group}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def leave_group(selenium, browser_id, group, oz_page):
+def leave_group(selenium, browser_id, group, oz_page, popups):
     option = 'Leave'
     modal = "LEAVE GROUP"
 
-    click_on_group_menu_button(selenium, browser_id, option, group, oz_page)
+    click_on_group_menu_button(selenium, browser_id, option, group,
+                               oz_page, popups)
     click_modal_button(selenium, browser_id, option, modal, oz_page)
 
 
 @wt(parsers.parse('user of {browser_id} removes group "{group_list}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def remove_group(selenium, browser_id, group_list, oz_page):
+def remove_group(selenium, browser_id, group_list, oz_page, popups):
     option = 'Remove'
     modal = "REMOVE GROUP"
 
     for group in parse_seq(group_list):
-        click_on_group_menu_button(selenium, browser_id, option, group, oz_page)
+        click_on_group_menu_button(selenium, browser_id, option, group,
+                                   oz_page, popups)
         click_modal_button(selenium, browser_id, option, modal, oz_page)
 
 

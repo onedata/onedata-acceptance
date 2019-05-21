@@ -32,13 +32,11 @@ class SubmenuItem(PageObject):
 
 class ClustersPage(GenericPage):
     add_new_provider_cluster = Button('.add-cluster-btn')
-
     join_cluster = Button('.join-cluster-btn')
 
     token_page = WebItem('.main-content', cls=TokenPage)
 
     menu_button = Button('.with-menu .collapsible-toolbar-toggle')
-
     menu = WebItemsSequence('.two-level-sidebar.sidebar-clusters '
                             '.one-list-wrapper .one-label',
                             cls=MenuItem)
@@ -46,13 +44,13 @@ class ClustersPage(GenericPage):
                                cls=SubmenuItem)
 
     deregister_provider = Button('.btn-danger.btn-deregister-provider')
+    deregistration_checkbox = Button('.text-understand')
+    confirm_deregistration = Button('.btn-danger.btn-deregister')
+
     modify_provider_details = Button('.collapsible-toolbar-buttons '
                                      '.btn-modify-provider')
     confirm_modify_provider_details = NamedButton('button span',
                                                   text='Modify provider details')
-
-    deregistration_checkbox = Button('.text-understand')
-    confirm_deregistration = Button('.btn-danger.btn-deregister')
 
     join_cluster_token_input = WebElement('.join-cluster-token')
     join_the_cluster = NamedButton('button .spin-button-label',

@@ -176,19 +176,14 @@ def click_generate_token_in_subgroups_list(selenium, browser_id, group,
                '"(?P<name>.*)" (?P<where>group|space|cluster) members view'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_option_in_members_list_menu(selenium, browser_id, button,
-                                         name, where, member, oz_page, onepanel):
+                                         name, where, member, oz_page,
+                                         onepanel, popups):
     driver = selenium[browser_id]
 
     page = _find_members_page(onepanel, oz_page, driver, where)
-    where = _change_to_tab_name(where)
     getattr(page, member).header.menu_button()
-    if where == 'clusters':
-        onepanel(driver).member_menu[button].click()
-    else:
-        page = oz_page(driver)[where]
-        # wait for menu to appear
-        time.sleep(2)
-        page.menu[button].click()
+
+    popups(driver).member_menu.menu[button]()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees that area with '
@@ -268,7 +263,7 @@ def assert_member_is_in_parent_members_list(selenium, browser_id, option,
                '(?P<where>cluster|group) members'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def remove_member_from_group(selenium, browser_id, member_name, member_type,
-                             name, oz_page, tmp_memory, onepanel, where):
+                             name, oz_page, tmp_memory, onepanel, where, popups):
     driver = selenium[browser_id]
     page = _find_members_page(onepanel, oz_page, driver, where)
     where = _change_to_tab_name(where)
@@ -283,14 +278,10 @@ def remove_member_from_group(selenium, browser_id, member_name, member_type,
     else:
         modal_name = 'remove subgroup from '
 
+    popups(driver).member_menu.menu['Remove this member']()
     if where == 'clusters':
-        onepanel(driver).member_menu['Remove this member'].click()
         modal_name += 'cluster'
     else:
-        page = oz_page(driver)[where]
-        # wait for menu to appear
-        time.sleep(2)
-        page.menu['Remove this member'].click()
         modal_name += 'group'
 
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
@@ -301,13 +292,15 @@ def remove_member_from_group(selenium, browser_id, member_name, member_type,
                '(?P<who>user|group) invitation token'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def copy_invitation_token(selenium, browser_id, group, who, oz_page,
-                          tmp_memory):
-    page = oz_page(selenium[browser_id])['groups']
+                          tmp_memory, popups):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['groups']
     page.elements_list[group]()
 
     getattr(page.main_page.members, who + 's').header.menu_button()
     button = 'Invite {} using token'.format(who)
-    page.menu[button].click()
+
+    popups(driver).member_menu.menu[button].click()
 
     wt_wait_for_modal_to_appear(selenium, browser_id, button, tmp_memory)
     modals(selenium[browser_id]).invite_using_token.copy()
@@ -317,11 +310,13 @@ def copy_invitation_token(selenium, browser_id, group, who, oz_page,
 @wt(parsers.re('user of (?P<browser_id>.*) gets group "(?P<group>.*)" '
                '(?P<who>user|group) invitation token'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def get_invitation_token(selenium, browser_id, group, who, oz_page, tmp_memory):
-    page = oz_page(selenium[browser_id])['groups']
+def get_invitation_token(selenium, browser_id, group, who, oz_page,
+                         tmp_memory, popups):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['groups']
     page.elements_list[group]()
     page.main_page.menu_button()
-    page.menu['Invite ' + who]()
+    popups(driver).member_menu.menu['Invite ' + who]()
     token = page.members_page.token.token
     tmp_memory[browser_id]['token'] = token
 
@@ -329,12 +324,13 @@ def get_invitation_token(selenium, browser_id, group, who, oz_page, tmp_memory):
 @wt(parsers.re('user of (?P<browser_id>.*) clicks Invite (?P<who>user|group) '
                'on Menu of Members of (?P<where>Spaces|Groups)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_invite_on_menu_of_members(selenium, browser_id, who, where, oz_page):
+def click_invite_on_menu_of_members(selenium, browser_id, who, where,
+                                    oz_page, popups):
     driver = selenium[browser_id]
     where = _change_to_tab_name(where)
     elem = oz_page(driver)[where]
     elem.menu_button()
-    elem.menu['Invite ' + who].click()
+    popups(driver).member_menu.menu['Invite ' + who]()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>checks|unchecks) '

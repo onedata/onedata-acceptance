@@ -70,13 +70,6 @@ class SpaceProvidersPage(PageObject):
     get_support_page = WebItem('.ember-view', cls=GetSupportPage)
 
 
-class MenuItem(PageObject):
-    name = id = Label('a.clickable .text')
-
-    def __call__(self):
-        self.click()
-
-
 class DataPage(GenericPage):
     create_space_button = Button('.one-sidebar-toolbar-button '
                                  '.oneicon-add-filled')
@@ -94,8 +87,5 @@ class DataPage(GenericPage):
 
     menu_button = Button('.with-menu .collapsible-toolbar-toggle')
 
-    menu = WebItemsSequence('div.webui-popover'
-                            '[style*=\'display: block;\'] ul li',
-                            cls=MenuItem)
-
     get_started = Button('.btn.btn-default.hide-sm-active.ember-view')
+

@@ -7,6 +7,8 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import time
+
 from pytest_bdd import parsers
 
 from tests.utils.utils import repeat_failed
@@ -30,11 +32,12 @@ def click_create_or_join_group_button_in_panel(selenium, browser_id, operation,
 
 @wt(parsers.parse('user of {browser_id} joins group "{group}" to space'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def join_space(selenium, browser_id, group, oz_page, tmp_memory):
-    page = oz_page(selenium[browser_id])['groups']
+def join_space(selenium, browser_id, group, oz_page, tmp_memory, popups):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['groups']
     page.elements_list[group]()
     page.elements_list[group].menu()
-    page.menu['Join space']()
+    popups(driver).member_menu.menu['Join space']()
     token = tmp_memory[browser_id]['mailbox']['token']
     page.input_box.value = token
     page.input_box.edit_box.confirm()
@@ -95,11 +98,13 @@ def assert_group_exists(selenium, browser_ids, option, group, oz_page):
                '"(?P<option>Rename|Join space|Join as subgroup|Leave|Remove)" '
                'button in group "(?P<group>.*)" menu in the sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_group_menu_button(selenium, browser_id, option, group, oz_page):
-    page = oz_page(selenium[browser_id])['groups']
+def click_on_group_menu_button(selenium, browser_id, option, group,
+                               oz_page, popups):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['groups']
     page.elements_list[group]()
     page.elements_list[group].menu()
-    page.menu[option]()
+    popups(driver).member_menu.menu[option]()
 
 
 @wt(parsers.parse('user of {browser_id} writes '
@@ -167,9 +172,11 @@ def input_token_into_token_input_field(selenium, browser_id, oz_page,
 @wt(parsers.parse('user of {browser_id} adds group "{group}" as subgroup '
                   'using received token'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def add_group_as_subgroup(selenium, browser_id, group, oz_page, tmp_memory):
+def add_group_as_subgroup(selenium, browser_id, group, oz_page,
+                          tmp_memory, popups):
     option = 'Join as subgroup'
-    click_on_group_menu_button(selenium, browser_id, option, group, oz_page)
+    click_on_group_menu_button(selenium, browser_id, option, group,
+                               oz_page, popups)
 
     token = tmp_memory[browser_id]['mailbox']['token']
     page = oz_page(selenium[browser_id])['groups']

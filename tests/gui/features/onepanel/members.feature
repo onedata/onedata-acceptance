@@ -120,7 +120,7 @@ Feature: Basic cluster members management utilities using onepanel
     Then user of browser2 sees Insufficient permissions alert in "Invite using token" modal
 
 
-  Scenario: User fails to remove group from cluster
+  Scenario: User fails to remove group from cluster without remove group privileges
     # create group
     When user of browser1 clicks on Create group button in groups sidebar
     And user of browser1 writes "group1" into group name text field
@@ -152,7 +152,7 @@ Feature: Basic cluster members management utilities using onepanel
     Then user of browser2 sees that error modal with text "Insufficient permissions" appeared
 
 
-  Scenario: User fails to add group to cluster
+  Scenario: User fails to add group to cluster without add group privileges
     # create group
     When user of browser2 clicks on Create group button in groups sidebar
     And user of browser2 writes "group1" into group name text field
@@ -194,7 +194,7 @@ Feature: Basic cluster members management utilities using onepanel
     Then user of browser2 sees Insufficient permissions alert in cluster members subpage
 
 
-  Scenario: User fails to modify cluster without remove cluster privileges
+  Scenario: User fails to modify cluster without modify cluster privileges
     When user of browser1 invites user of browser2 to "oneprovider-1" cluster
     And user of browser2 joins to cluster
     And user of browser1 clicks "admin" user in "oneprovider-1" cluster members users list

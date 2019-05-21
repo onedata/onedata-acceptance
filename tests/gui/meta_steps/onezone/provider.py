@@ -15,8 +15,7 @@ from tests.gui.steps.onezone.providers import (
     assert_provider_is_not_in_providers_list_in_data_sidebar)
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
-from tests.gui.steps.onezone.clusters import (copy_registration_cluster_token,
-                                              click_button_in_cluster_menu)
+from tests.gui.steps.onezone.clusters import copy_registration_cluster_token
 
 
 def assert_provider_has_name_and_hostname_in_oz_gui(selenium, user, oz_page,

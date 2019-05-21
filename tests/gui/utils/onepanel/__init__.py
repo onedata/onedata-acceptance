@@ -11,7 +11,6 @@ from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (WebItem, Label, WebElement,
                                                Button, WebItemsSequence)
 from tests.gui.utils.common.common import OnePage, BaseContent
-from tests.gui.utils.onezone.data_page import MenuItem
 from tests.gui.utils.onezone.members_subpage import MembersPage
 from .clusters import ClustersSidebar, WelcomePage
 from .deployment import Deployment
@@ -54,9 +53,4 @@ class Onepanel(OnePage):
         if 'ps-active-x' not in sidebar.get_attribute('class'):
             sidebar = self._main_sidebar
         return Sidebar(self.driver, sidebar, self)
-
-    member_menu = WebItemsSequence('.webui-popover-content '
-                                   '.one-collapsible-toolbar-popover '
-                                   '.dropdown-menu .one-collapsible-toolbar-item',
-                                   cls=MenuItem)
 

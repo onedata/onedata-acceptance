@@ -312,7 +312,7 @@ def assert_btn_in_modal_is_enabled(browser_id, btn_name, tmp_memory):
 @wt(parsers.parse('user of {browser_id} sees {text} alert '
                   'in "{modal}" modal'))
 def assert_alert_text_in_modal(selenium, browser_id, modals, modal, text):
+    driver = selenium(browser_id)
     modal = transform(modal)
-    alert = getattr(modals(selenium[browser_id]), modal).forbidden_alert.text
-    assert text in alert
+    assert text in getattr(modals(driver), modal).forbidden_alert.text
 
