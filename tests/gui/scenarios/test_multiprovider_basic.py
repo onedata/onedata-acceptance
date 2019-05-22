@@ -22,6 +22,7 @@ from tests.gui.steps.common.copy_paste import *
 from tests.gui.steps.common.local_file_system import *
 from tests.gui.steps.common.notifies import *
 from tests.gui.steps.common.miscellaneous import *
+from tests.gui.steps.common.docker import *
 
 from tests.gui.steps.onepanel.account_management import *
 from tests.gui.steps.onepanel.login import *
@@ -49,6 +50,11 @@ from tests.gui.steps.oneprovider.spaces import *
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
 
+from tests.gui.meta_steps.onepanel.spaces import *
+from tests.gui.meta_steps.oneprovider.common import *
+from tests.gui.meta_steps.onezone.common import *
+from tests.gui.meta_steps.onepanel.provider import *
+
 from tests.utils.acceptance_utils import *
 
 
@@ -59,3 +65,4 @@ def screens():
 
 scenarios('../features/oneprovider/multiprovider/cdmi.feature')
 scenarios('../features/oneprovider/multiprovider/basic.feature')
+scenarios('../features/oneprovider/multiprovider/auto_cleaning.feature')
