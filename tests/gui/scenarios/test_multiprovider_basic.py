@@ -60,7 +60,7 @@ from tests.utils.acceptance_utils import *
 
 @pytest.fixture(scope='module')
 def screens():
-    return [0]
+    return [0, 1]
 
 
 scenarios('../features/oneprovider/multiprovider/cdmi.feature')

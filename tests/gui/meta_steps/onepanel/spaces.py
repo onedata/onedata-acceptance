@@ -153,6 +153,7 @@ def revoke_all_space_supports(selenium, browser_id, onepanel, popups,
     button = 'Yes, revoke'
     wt_click_on_subitem_for_item(selenium, browser_id, sidebar, sub_item,
                                  record, onepanel, hosts)
+    # wait for load spaces list
     time.sleep(1)
     spaces_list = onepanel(selenium[browser_id]).content.spaces.spaces
 
@@ -164,4 +165,6 @@ def revoke_all_space_supports(selenium, browser_id, onepanel, popups,
                                                    option, popups)
         wt_clicks_on_btn_in_revoke_space_support(selenium, browser_id,
                                                  button, modals)
+        # wait for update spaces list
+        time.sleep(1)
         spaces_list = onepanel(selenium[browser_id]).content.spaces.spaces
