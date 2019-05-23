@@ -11,8 +11,6 @@ Feature: Basic cluster members management utilities using onepanel
   Scenario: User fails to see privileges without view privileges
     When user of browser1 invites user of browser2 to "oneprovider-1" cluster
     And user of browser2 joins to cluster
-    And user of browser1 clicks "admin" user in "oneprovider-1" cluster members users list
-    And user of browser1 sees privileges for "admin" user in cluster members subpage
 
     # uncheck view privileges
     And user of browser1 clicks "user1" user in "oneprovider-1" cluster members users list
@@ -32,8 +30,6 @@ Feature: Basic cluster members management utilities using onepanel
   Scenario: User fails to set privileges without set privileges
     When user of browser1 invites user of browser2 to "oneprovider-1" cluster
     And user of browser2 joins to cluster
-    And user of browser1 clicks "admin" user in "oneprovider-1" cluster members users list
-    And user of browser1 sees privileges for "admin" user in cluster members subpage
 
     # uncheck set privileges
     And user of browser1 clicks "user1" user in "oneprovider-1" cluster members users list
@@ -56,8 +52,6 @@ Feature: Basic cluster members management utilities using onepanel
   Scenario: User fails to remove cluster without remove cluster privileges
     When user of browser1 invites user of browser2 to "oneprovider-1" cluster
     And user of browser2 joins to cluster
-    And user of browser1 clicks "admin" user in "oneprovider-1" cluster members users list
-    And user of browser1 sees privileges for "admin" user in cluster members subpage
 
     # uncheck remove cluster
     And user of browser1 clicks "user1" user in "oneprovider-1" cluster members users list
@@ -79,8 +73,6 @@ Feature: Basic cluster members management utilities using onepanel
   Scenario: User fails to remove user without remove user privileges
     When user of browser1 invites user of browser2 to "oneprovider-1" cluster
     And user of browser2 joins to cluster
-    And user of browser1 clicks "admin" user in "oneprovider-1" cluster members users list
-    And user of browser1 sees privileges for "admin" user in cluster members subpage
 
     # uncheck remove user privilege
     And user of browser1 clicks "user1" user in "oneprovider-1" cluster members users list
@@ -101,8 +93,6 @@ Feature: Basic cluster members management utilities using onepanel
   Scenario: User fails to add user without add user privileges
     When user of browser1 invites user of browser2 to "oneprovider-1" cluster
     And user of browser2 joins to cluster
-    And user of browser1 clicks "admin" user in "oneprovider-1" cluster members users list
-    And user of browser1 sees privileges for "admin" user in cluster members subpage
 
     # uncheck add user privilege
     And user of browser1 clicks "user1" user in "oneprovider-1" cluster members users list
@@ -180,8 +170,6 @@ Feature: Basic cluster members management utilities using onepanel
     And user of browser2 joins to cluster
 
     And user of browser2 clicks on Members item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of browser2 clicks "user1" user in "oneprovider-1" cluster members users list
-    And user of browser2 sees privileges for "user1" user in cluster members subpage
 
     # uncheck view privileges
     And user of browser1 clicks "user1" user in "oneprovider-1" cluster members users list
@@ -197,8 +185,6 @@ Feature: Basic cluster members management utilities using onepanel
   Scenario: User fails to modify cluster without modify cluster privileges
     When user of browser1 invites user of browser2 to "oneprovider-1" cluster
     And user of browser2 joins to cluster
-    And user of browser1 clicks "admin" user in "oneprovider-1" cluster members users list
-    And user of browser1 sees privileges for "admin" user in cluster members subpage
 
     # uncheck modify cluster
     And user of browser1 clicks "user1" user in "oneprovider-1" cluster members users list

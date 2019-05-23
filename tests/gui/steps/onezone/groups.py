@@ -7,8 +7,6 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-import time
-
 from pytest_bdd import parsers
 
 from tests.utils.utils import repeat_failed
@@ -18,7 +16,6 @@ from tests.gui.utils.generic import parse_seq
 from tests.gui.conftest import WAIT_FRONTEND
 from selenium.webdriver.common.keys import Keys
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
-from tests.gui.steps.modal import wt_wait_for_modal_to_appear
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on (?P<operation>Create|Join) '

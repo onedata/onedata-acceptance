@@ -7,8 +7,6 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-import time
-
 from pytest_bdd import parsers
 
 from tests.gui.steps.modal import wt_wait_for_modal_to_appear
@@ -25,11 +23,11 @@ def _change_to_tab_name(element):
 
 
 def _find_members_page(onepanel, oz_page, driver, where):
-    where = _change_to_tab_name(where)
-    if where == 'clusters':
+    tab_name = _change_to_tab_name(where)
+    if tab_name == 'clusters':
         return onepanel(driver).content.members
     else:
-        return oz_page(driver)[where].members_page
+        return oz_page(driver)[tab_name].members_page
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks show view expand button in '
@@ -262,27 +260,24 @@ def assert_member_is_in_parent_members_list(selenium, browser_id, option,
                '(?P<member_type>user|group) from "(?P<name>.*)" '
                '(?P<where>cluster|group) members'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def remove_member_from_group(selenium, browser_id, member_name, member_type,
-                             name, oz_page, tmp_memory, onepanel, where, popups):
+def remove_member_from_parent(selenium, browser_id, member_name, member_type,
+                              name, oz_page, tmp_memory, onepanel, where, popups):
     driver = selenium[browser_id]
     page = _find_members_page(onepanel, oz_page, driver, where)
-    where = _change_to_tab_name(where)
+    tab_name = _change_to_tab_name(where)
     list_name = member_type + 's'
     (getattr(page, list_name)
      .items[member_name].header.click_menu(selenium[browser_id]))
 
     if member_type == 'user':
         modal_name = 'remove user from '
-    elif member_type == 'group' and where == 'clusters':
+    elif member_type == 'group' and tab_name == 'clusters':
         modal_name = 'remove group from '
     else:
         modal_name = 'remove subgroup from '
+    modal_name += where
 
     popups(driver).member_menu.menu['Remove this member']()
-    if where == 'clusters':
-        modal_name += 'cluster'
-    else:
-        modal_name += 'group'
 
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     modals(driver).remove_member.remove()
@@ -472,17 +467,4 @@ def see_privileges_for_member(selenium, browser_id, oz_page, where,
 
     assert len(members_list.items[member_name].privileges) > 0, ('not found '
                                                                  'privileges')
-
-
-@wt(parsers.parse('user of {browser_id} selects "{group_name}" '
-                  'from group selector in {modal_name} modal'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def select_group_from_selector_in_modal(selenium, browser_id, group_name,
-                                        modal_name, tmp_memory):
-    driver = selenium[browser_id]
-    group_selector = modals(driver).add_one_of_groups.group_selector
-
-    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    group_selector.expand()
-    group_selector.options[group_name].click()
 

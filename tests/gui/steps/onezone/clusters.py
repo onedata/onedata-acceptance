@@ -52,9 +52,9 @@ def click_option_of_record_in_the_sidebar(selenium, browser_id, oz_page, option)
 @wt(parsers.parse('user of {browser_id} pastes copied token into join cluster '
                   'token text field'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def input_join_cluster_token_into_token_input_field(selenium, browser_id,
-                                                    oz_page, displays,
-                                                    clipboard):
+def enter_copied_join_cluster_token_into_token_input_field(selenium, browser_id,
+                                                           oz_page, displays,
+                                                           clipboard):
     token = clipboard.paste(display=displays[browser_id])
     token_input = (oz_page(selenium[browser_id])['clusters']
                    .join_cluster_token_input)

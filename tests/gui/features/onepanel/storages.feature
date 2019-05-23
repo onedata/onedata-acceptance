@@ -19,16 +19,16 @@ Feature: Storage management using onepanel
     # create new_storage POSIX storage
     When user of browser1 clicks on Clusters in the main menu
     And user of browser1 clicks on "oneprovider-1" in clusters menu
-    And user of <client1> clicks on Storages item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of <client1> clicks on Add storage button in storages page in Onepanel
-    And user of <client1> selects POSIX from storage selector in storages page in Onepanel
-    And user of <client1> types "<storage_name>" to Storage name field in POSIX form in storages page in Onepanel
-    And user of <client1> types "/volumes/storage" to Mount point field in POSIX form in storages page in Onepanel
-    And user of <client1> clicks on Add button in add storage form in storages page in Onepanel
-    And user of <client1> sees an info notify with text matching to: .*[Ss]torage.*added.*
-    And user of <client1> expands "<storage_name>" record on storages list in storages page in Onepanel
-    And user of <client1> sees that "<storage_name>" Storage type is posix in storages page in Onepanel
-    And user of <client1> sees that "<storage_name>" Mount point is /volumes/storage in storages page in Onepanel
+    And user of <client> clicks on Storages item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+    And user of <client> clicks on Add storage button in storages page in Onepanel
+    And user of <client> selects POSIX from storage selector in storages page in Onepanel
+    And user of <client> types "<storage_name>" to Storage name field in POSIX form in storages page in Onepanel
+    And user of <client> types "/volumes/storage" to Mount point field in POSIX form in storages page in Onepanel
+    And user of <client> clicks on Add button in add storage form in storages page in Onepanel
+    And user of <client> sees an info notify with text matching to: .*[Ss]torage.*added.*
+    And user of <client> expands "<storage_name>" record on storages list in storages page in Onepanel
+    And user of <client> sees that "<storage_name>" Storage type is posix in storages page in Onepanel
+    And user of <client> sees that "<storage_name>" Mount point is /volumes/storage in storages page in Onepanel
 
     # create space
     And user of browser1 clicks on Create space button in spaces sidebar
@@ -40,20 +40,20 @@ Feature: Storage management using onepanel
     And user of browser1 clicks Providers of "<space>" in the sidebar
     And user of browser1 clicks Get support button on providers page
     And user of browser1 clicks Copy button on Get support page
-    And user of browser1 sends copied token to user of <client1>
+    And user of browser1 sends copied token to user of <client>
 
     # support space
     And user of browser1 clicks on Clusters in the main menu
     And user of browser1 clicks on "oneprovider-1" in clusters menu
-    And user of <client1> clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of <client1> clicks on Support space button in spaces page in Onepanel if there are some spaces already supported
-    And user of <client1> selects "<storage_name>" from storage selector in support space form in Onepanel
-    And user of <client1> types received token to Support token field in support space form in Onepanel
-    And user of <client1> types "1" to Size input field in support space form in Onepanel
-    And user of <client1> selects GiB radio button in support space form in Onepanel
-    And user of <client1> clicks on Support space button in support space form in Onepanel
-    And user of <client1> sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
-    And user of <client1> sees that space support record for "<space>" has appeared in Spaces page in Onepanel
+    And user of <client> clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+    And user of <client> clicks on Support space button in spaces page in Onepanel if there are some spaces already supported
+    And user of <client> selects "<storage_name>" from storage selector in support space form in Onepanel
+    And user of <client> types received token to Support token field in support space form in Onepanel
+    And user of <client> types "1" to Size input field in support space form in Onepanel
+    And user of <client> selects GiB radio button in support space form in Onepanel
+    And user of <client> clicks on Support space button in support space form in Onepanel
+    And user of <client> sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
+    And user of <client> sees that space support record for "<space>" has appeared in Spaces page in Onepanel
 
     # go to provider
     And user of browser1 is idle for 2 seconds
@@ -80,7 +80,7 @@ Feature: Storage management using onepanel
     Then user of browser1 sees that there are 70 items in file browser
 
     Examples:
-    | client1  | storage_name | space        | breadcrumbs         |
+    | client   | storage_name | space        | breadcrumbs         |
     | browser1 | new_storage1 | hello_world1 | hello_world1/dir100 |
     | browser2 | new_storage2 | hello_world2 | hello_world2/dir100 |
 

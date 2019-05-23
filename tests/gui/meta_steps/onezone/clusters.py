@@ -12,7 +12,8 @@ from tests.gui.steps.onezone.members import *
 from tests.utils.utils import repeat_failed
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.steps.onezone.clusters import (click_on_record_in_clusters_menu,
-                                              input_join_cluster_token_into_token_input_field)
+                                              click_button_in_cluster_page,
+                                              enter_copied_join_cluster_token_into_token_input_field)
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
 from tests.gui.steps.common.miscellaneous import close_modal
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
@@ -52,9 +53,9 @@ def join_to_cluster(selenium, browser_id, oz_page, displays, clipboard):
     button2 = 'join the cluster'
 
     click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
-    click_button_in_cluster_menu(selenium, browser_id, oz_page, button)
-    input_join_cluster_token_into_token_input_field(selenium, browser_id,
-                                                    oz_page, displays,
-                                                    clipboard)
-    click_button_in_cluster_menu(selenium, browser_id, oz_page, button2)
+    click_button_in_cluster_page(selenium, browser_id, oz_page, button)
+    enter_copied_join_cluster_token_into_token_input_field(selenium, browser_id,
+                                                           oz_page, displays,
+                                                           clipboard)
+    click_button_in_cluster_page(selenium, browser_id, oz_page, button2)
 
