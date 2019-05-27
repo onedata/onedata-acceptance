@@ -24,6 +24,11 @@ def _login_using_basic_auth(login_page, username, password):
     login_page.sign_in()
 
 
+def _login_using_passphrase(login_page, password):
+    login_page.passphrase = password
+    login_page.sign_in()
+
+
 @wt(parsers.re('user of (?P<browser_id>.*) clicks Log in to emergency '
                'interface in Onepanel login page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -39,11 +44,16 @@ def g_login_using_basic_auth(selenium, browser_id_list, user_id_list,
     for browser_id, username, service in zip(parse_seq(browser_id_list),
                                              parse_seq(user_id_list),
                                              parse_seq(service_list)):
+        driver = selenium[browser_id]
+
         if 'emergency interface' in service:
             click_log_in_to_emergency_interface(selenium, browser_id, login_page)
             time.sleep(1)
-        _login_using_basic_auth(login_page(selenium[browser_id]), username,
-                                users[username].password)
+            _login_using_passphrase(login_page(driver),
+                                    users[username].password)
+        else:
+            _login_using_basic_auth(login_page(driver), username,
+                                    users[username].password)
         notify_visible_with_text(selenium, browser_id, 'info',
                                  'Authentication succeeded!')
 
@@ -60,8 +70,8 @@ def wt_login_using_basic_auth(selenium, browser_id_list, user_id_list,
 
 
 @wt(parsers.re(r'user of (?P<browser_id>.*?) types "(?P<text>.*?)" to '
-               r'(?P<in_box>Username|Password) input in (Onepanel|Onezone) '
-               r'login form'))
+               r'(?P<in_box>Username|Password|Passphrase) input '
+               r'in (Onepanel|Onezone) login form'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_enter_text_to_field_in_login_form(selenium, browser_id, in_box,
                                          text, login_page):

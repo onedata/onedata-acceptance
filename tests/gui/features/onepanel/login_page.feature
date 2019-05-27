@@ -13,8 +13,7 @@ Feature: Scenarios featuring login page to Onepanel GUI
 
   Scenario: User fails to login because of invalid credentials
     When user of browser clicks Log in to emergency interface in Onepanel login page
-    When user of browser types "admin" to Username input in Onepanel login form
-    And user of browser types "as" to Password input in Onepanel login form
+    And user of browser types "as" to Passphrase input in Onepanel login form
     And user of browser presses Sign in button in Onepanel login page
     Then user of browser sees error message about invalid credentials in Onepanel login page
 

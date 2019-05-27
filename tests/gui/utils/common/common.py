@@ -92,6 +92,7 @@ class LoginPage(object):
     log_in_to_emergency_interface = Button('.text-link')
     username = Input('input[placeholder="Username"]')
     password = Input('input[placeholder="Password"]')
+    passphrase = Input('input[placeholder="Passphrase"]')
     sign_in = NamedButton('button .spin-button-label', text='Sign in')
     err_msg = Label('.login-error-message')
     open_in_onezone = Button('.btn-login-onezone')

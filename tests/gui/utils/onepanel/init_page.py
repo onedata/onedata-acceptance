@@ -16,8 +16,8 @@ class PanelInitPage(PageObject):
     join_cluster = NamedButton('.btn-primary', text='Join a cluster')
 
     username = Input('input[placeholder="Username"]')
-    password = Input('input[placeholder="Password"]')
-    confirm_password = Input('input[placeholder="Confirm password"]')
+    passphrase = Input('input[placeholder="Passphrase"]')
+    confirm_passphrase = Input('input[placeholder="Confirm passphrase"]')
 
-    create_button = NamedButton('.btn-primary', text='Create')
-    back_button = NamedButton('.btn-primary', text='Back')
+    create_button = NamedButton('.btn-primary', text='Submit')
+    back_button = NamedButton('.btn-back', text='Back')
