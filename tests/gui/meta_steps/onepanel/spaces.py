@@ -145,12 +145,12 @@ def assert_proper_space_configuration_in_op_panel_gui(selenium, user, space,
     wt_assert_proper_space_configuration_in_panel(selenium, user, sync_type,
                                                   space, conf, onepanel)
 
+
 @given(parsers.parse('there are no spaces supported in Onepanel used '
                      'by user of {browser_id}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def revoke_all_space_supports(selenium, browser_id, onepanel, popups,
                               modals, hosts, oz_page):
-    driver = selenium[browser_id]
     sidebar = 'CLUSTERS'
     sub_item = 'Spaces'
     record = 'oneprovider-1'
@@ -166,7 +166,6 @@ def revoke_all_space_supports(selenium, browser_id, onepanel, popups,
     # wait for load spaces list
     time.sleep(1)
     spaces_list = onepanel(selenium[browser_id]).content.spaces.spaces
-
     while len(spaces_list) > 0:
         space = spaces_list[0]
         wt_expands_toolbar_icon_for_space_in_onepanel(selenium, browser_id,

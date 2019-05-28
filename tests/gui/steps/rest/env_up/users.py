@@ -27,14 +27,15 @@ from tests.utils.user_utils import User
                      'Onezone service:\n{config}'))
 def users_creation(host, config, admin_credentials, hosts, users, rm_users):
     zone_hostname = hosts[host]['hostname']
-    users[admin_credentials.username] = _create_admin_in_zone(zone_hostname,
-                                                              admin_credentials)
+    admin_credentials.username = 'onepanel'
     users_db = {}
     for user_config in yaml.load(config):
         username, options = _parse_user_info(user_config)
         try:
             user_cred = _create_user(zone_hostname, admin_credentials,
                                      username, options, rm_users)
+            if not options.get('fullName', None):
+                options['fullName'] = user_cred.username
             _configure_user(zone_hostname, user_cred, options)
         except Exception as ex:
             _rm_users(zone_hostname, admin_credentials, users_db)
@@ -70,7 +71,7 @@ def _parse_user_info(user_config):
 def _create_new_user(zone_hostname, admin_credentials, username, password,
                      user_conf_details, generate_token):
     http_post(ip=zone_hostname, port=PANEL_REST_PORT,
-              path=get_panel_rest_path('users'),
+              path=get_panel_rest_path('zone', 'users'),
               auth=(admin_credentials.username, admin_credentials.password),
               data=json.dumps(user_conf_details))
 
@@ -90,14 +91,15 @@ def _create_new_user(zone_hostname, admin_credentials, username, password,
 def _create_user(zone_hostname, admin_credentials, username, options, rm_users):
     password = options.get('password', 'password')
     generate_token = options.get('generate_token', True)
+    groups_list = []
     user_conf_details = {'username': username,
                          'password': password,
-                         'userRole': options.get('user role', 'regular')}
+                         'groups': groups_list}
 
     # if user already exist (possible remnants of previous tests) skip test
     try:
         resp = http_get(ip=zone_hostname, port=PANEL_REST_PORT,
-                        path=get_panel_rest_path('users', username),
+                        path=get_panel_rest_path('zone', 'users', username),
                         auth=(admin_credentials.username, admin_credentials.password)).json()
     except HTTPNotFound:
         return _create_new_user(zone_hostname, admin_credentials, username,
@@ -117,12 +119,12 @@ def _create_user(zone_hostname, admin_credentials, username, options, rm_users):
 
 
 def _configure_user(zone_hostname, user_cred, options):
-    alias = options.get('alias', None)
-    if alias:
+    full_name = options.get('fullName', None)
+    if full_name:
         http_patch(ip=zone_hostname, port=OZ_REST_PORT,
                    path=get_zone_rest_path('user'),
                    auth=(user_cred.username, user_cred.password),
-                   data=json.dumps({'alias': alias}))
+                   data=json.dumps({'fullName': full_name}))
 
 
 def _rm_users(zone_hostname, admin_credentials, users_db,
@@ -137,14 +139,12 @@ def _rm_user(zone_hostname, admin_credentials, user_credentials,
     admin_username = admin_credentials.username
     admin_password = admin_credentials.password
     rm_zone_user = partial(_rm_zone_user, user_id=user_credentials.id)
-    rm_panel_user = partial(_rm_panel_user, username=user_credentials.username)
 
-    for fun in (rm_zone_user, rm_panel_user):
-        try:
-            fun(zone_hostname, admin_username, admin_password)
-        except HTTPError as ex:
-            if not ignore_http_exceptions:
-                raise ex
+    try:
+        rm_zone_user(zone_hostname, admin_username, admin_password)
+    except HTTPError as ex:
+        if not ignore_http_exceptions:
+            raise ex
 
 
 @repeat_failed(attempts=5)
