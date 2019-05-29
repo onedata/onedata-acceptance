@@ -91,10 +91,9 @@ def _create_new_user(zone_hostname, admin_credentials, username, password,
 def _create_user(zone_hostname, admin_credentials, username, options, rm_users):
     password = options.get('password', 'password')
     generate_token = options.get('generate_token', True)
-    groups_list = []
     user_conf_details = {'username': username,
                          'password': password,
-                         'groups': groups_list}
+                         'groups': []}
 
     # if user already exist (possible remnants of previous tests) skip test
     try:
@@ -120,11 +119,10 @@ def _create_user(zone_hostname, admin_credentials, username, options, rm_users):
 
 def _configure_user(zone_hostname, user_cred, options):
     full_name = options.get('fullName', None)
-    if full_name:
-        http_patch(ip=zone_hostname, port=OZ_REST_PORT,
-                   path=get_zone_rest_path('user'),
-                   auth=(user_cred.username, user_cred.password),
-                   data=json.dumps({'fullName': full_name}))
+    http_patch(ip=zone_hostname, port=OZ_REST_PORT,
+               path=get_zone_rest_path('user'),
+               auth=(user_cred.username, user_cred.password),
+               data=json.dumps({'fullName': full_name}))
 
 
 def _rm_users(zone_hostname, admin_credentials, users_db,

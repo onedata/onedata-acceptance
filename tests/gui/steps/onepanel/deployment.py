@@ -28,7 +28,7 @@ def g_create_admin_in_panel(selenium, browser_id_list, onepanel,
         init_page.create_new_cluster()
         init_page.passphrase = passphrase
         init_page.confirm_passphrase = passphrase
-        init_page.create_button()
+        init_page.submit_button()
 
 
 @when(parsers.parse('user of {browser_id} enables {options} options for '

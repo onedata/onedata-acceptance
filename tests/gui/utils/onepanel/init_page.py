@@ -19,5 +19,5 @@ class PanelInitPage(PageObject):
     passphrase = Input('input[placeholder="Passphrase"]')
     confirm_passphrase = Input('input[placeholder="Confirm passphrase"]')
 
-    create_button = NamedButton('.btn-primary', text='Submit')
+    submit_button = NamedButton('.btn-primary', text='Submit')
     back_button = NamedButton('.btn-back', text='Back')
