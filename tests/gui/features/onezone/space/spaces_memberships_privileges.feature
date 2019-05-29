@@ -39,7 +39,7 @@ Feature: Basic management of spaces privileges in Onezone GUI
     And user of browser unchecks "Add provider" privilege toggle in "Provider management" for "user1" user in space members subpage
     And user of browser clicks Save button for "user1" user in space members subpage
     And user of browser clicks Providers of "space1" in the sidebar
-    And user of browser clicks Get support button on providers page
+    And user of browser clicks Add support button on providers page
     Then user of browser sees Insufficient permissions alert on providers page
 
 
