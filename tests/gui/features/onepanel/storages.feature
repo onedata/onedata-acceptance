@@ -38,8 +38,8 @@ Feature: Storage management using onepanel
 
     # receive support token
     And user of browser1 clicks Providers of "<space>" in the sidebar
-    And user of browser1 clicks Get support button on providers page
-    And user of browser1 clicks Copy button on Get support page
+    And user of browser1 clicks Add support button on providers page
+    And user of browser1 clicks Copy button on Add support page
     And user of browser1 sends copied token to user of <client>
 
     # support space

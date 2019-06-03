@@ -32,7 +32,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     # receive support token
     And user of browser2 clicks "space2" on the spaces list in the sidebar
     And user of browser2 clicks Providers of "space2" in the sidebar
-    And user of browser2 clicks Get support button on providers page
+    And user of browser2 clicks Add support button on providers page
     And user of browser2 copies invitation token from Spaces page
     And user of browser2 sees an info notify with text matching to: .*copied.*
     And user of browser2 sends copied token to user of browser1
@@ -152,7 +152,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     # receive support token
     And user of browser2 clicks "space1" on the spaces list in the sidebar
     And user of browser2 clicks Providers of "space1" in the sidebar
-    And user of browser2 clicks Get support button on providers page
+    And user of browser2 clicks Add support button on providers page
     And user of browser2 copies invitation token from Spaces page
     And user of browser2 sees an info notify with text matching to: .*copied.*
     And user of browser2 sends copied token to user of browser1
@@ -275,7 +275,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     # receive support token
     And user of browser2 clicks "space3" on the spaces list in the sidebar
     And user of browser2 clicks Providers of "space3" in the sidebar
-    And user of browser2 clicks Get support button on providers page
+    And user of browser2 clicks Add support button on providers page
     And user of browser2 copies invitation token from Spaces page
     And user of browser2 sees an info notify with text matching to: .*copied.*
     And user of browser2 sends copied token to user of browser1
@@ -411,7 +411,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     # receive support token
     And user of browser2 clicks "space4" on the spaces list in the sidebar
     And user of browser2 clicks Providers of "space4" in the sidebar
-    And user of browser2 clicks Get support button on providers page
+    And user of browser2 clicks Add support button on providers page
     And user of browser2 copies invitation token from Spaces page
     And user of browser2 sees an info notify with text matching to: .*copied.*
     And user of browser2 sends copied token to user of browser1
@@ -535,7 +535,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     # receive support token
     And user of browser2 clicks "space5" on the spaces list in the sidebar
     And user of browser2 clicks Providers of "space5" in the sidebar
-    And user of browser2 clicks Get support button on providers page
+    And user of browser2 clicks Add support button on providers page
     And user of browser2 copies invitation token from Spaces page
     And user of browser2 sees an info notify with text matching to: .*copied.*
     And user of browser2 sends copied token to user of browser1
@@ -672,7 +672,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     # receive support token
     And user of browser2 clicks "space6" on the spaces list in the sidebar
     And user of browser2 clicks Providers of "space6" in the sidebar
-    And user of browser2 clicks Get support button on providers page
+    And user of browser2 clicks Add support button on providers page
     And user of browser2 copies invitation token from Spaces page
     And user of browser2 sees an info notify with text matching to: .*copied.*
     And user of browser2 sends copied token to user of browser1

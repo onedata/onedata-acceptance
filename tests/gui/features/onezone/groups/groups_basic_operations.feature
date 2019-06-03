@@ -92,7 +92,7 @@ Feature: Basic management of groups with one user in Onezone GUI
     And user of browser changes webapp path to "/i#/onedata/groups" concatenated with copied item
     And user of browser refreshes site
 
-    Then user of browser sees "Insufficient permissions" in error details on groups page
+    Then user of browser sees "DON’T HAVE ACCESS" in error details on groups page
 
 
 

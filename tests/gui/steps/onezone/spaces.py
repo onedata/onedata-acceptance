@@ -290,12 +290,12 @@ def assert_length_of_providers_list_of_space(selenium, browser_id, space_name,
          .format(space_name, number_of_providers))
 
 
-@wt(parsers.parse('user of {browser_id} clicks Get support button '
+@wt(parsers.parse('user of {browser_id} clicks Add support button '
                   'on providers page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_get_support_button_on_providers_page(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
-    oz_page(driver)['data'].providers_page.get_support()
+    oz_page(driver)['data'].providers_page.add_support()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees '
@@ -313,7 +313,7 @@ def see_insufficient_permissions_alert_on_providers_page(selenium, browser_id,
 
 
 @wt(parsers.parse('user of {browser_id} clicks Deploy your own provider tab '
-                  'on get support page'))
+                  'on Add support page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_deploy_your_own_provider_tab_on_get_support_page(selenium, browser_id,
                                                            oz_page):
@@ -322,8 +322,8 @@ def click_deploy_your_own_provider_tab_on_get_support_page(selenium, browser_id,
         .deploy_provider_modal()
 
 
-@wt(parsers.parse('user of {browser_id} clicks Expose existing data collection '
-                  'tab on get support page'))
+@wt(parsers.parse('user of {browser_id} clicks Expose existing data set '
+                  'tab on Add support page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_expose_existing_data_collection_tab_on_get_support_page(selenium,
                                                                   browser_id,
@@ -334,7 +334,7 @@ def click_expose_existing_data_collection_tab_on_get_support_page(selenium,
 
 
 @wt(parsers.parse(
-    'user of {browser_id} clicks Copy button on Get support page'))
+    'user of {browser_id} clicks Copy button on Add support page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_copy_button_on_request_support_page(selenium, browser_id, oz_page,
                                               displays, clipboard, tmp_memory):
@@ -346,7 +346,7 @@ def click_copy_button_on_request_support_page(selenium, browser_id, oz_page,
 
 
 @wt(parsers.parse('user of {browser_id} clicks Generate another token '
-                  'on Get support page'))
+                  'on Add support page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_generate_another_token_on_request_support_page(selenium, browser_id,
                                                          oz_page):
@@ -406,7 +406,7 @@ def generate_and_send_support_token(selenium, browser_id1, space_name, oz_page,
     page = oz_page(selenium[browser_id1])['data']
     page.elements_list[space_name]()
     page.elements_list[space_name].providers()
-    page.providers_page.get_support()
+    page.providers_page.add_support()
     copy_token(selenium, browser_id1, oz_page)
     item = clipboard.paste(display=displays[browser_id1])
     tmp_memory[browser_id2]['mailbox']['token'] = item

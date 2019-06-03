@@ -53,7 +53,7 @@ class GetSupportPage(PageObject):
     deploy_provider_modal = NamedButton('.nav-link',
                                         text='Deploy your own Oneprovider')
     expose_existing_data_modal = NamedButton('.nav-link',
-                                             text='Expose existing data collection')
+                                             text='Expose existing data set')
 
     token_textarea = Label('.active textarea')
     copy = NamedButton('.copy-btn', text='Copy')
@@ -66,7 +66,7 @@ class SpaceProvidersPage(PageObject):
     providers_list = WebItemsSequence('.space-providers-list '
                                       'li.one-collapsible-list-item',
                                       cls=Provider)
-    get_support = NamedButton('button', text='Get support')
+    add_support = NamedButton('button', text='Add support')
     get_support_page = WebItem('.ember-view', cls=GetSupportPage)
 
 

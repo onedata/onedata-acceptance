@@ -18,8 +18,8 @@ Feature: Basic spaces management utilities using onepanel
     # receive support token
     And user of browser1 clicks "<space>" on the spaces list in the sidebar
     And user of browser1 clicks Providers of "<space>" in the sidebar
-    And user of browser1 clicks Get support button on providers page
-    And user of browser1 clicks Copy button on Get support page
+    And user of browser1 clicks Add support button on providers page
+    And user of browser1 clicks Copy button on Add support page
     And user of browser1 sees an info notify with text matching to: .*copied.*
     And user of browser1 sends copied token to user of <client>
 
