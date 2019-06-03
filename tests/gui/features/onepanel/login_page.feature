@@ -13,8 +13,7 @@ Feature: Scenarios featuring login page to Onepanel GUI
 
   Scenario: User fails to login because of invalid credentials
     When user of browser clicks Log in to emergency interface in Onepanel login page
-    When user of browser types "admin" to Username input in Onepanel login form
-    And user of browser types "as" to Password input in Onepanel login form
+    And user of browser types "as" to Passphrase input in Onepanel login form
     And user of browser presses Sign in button in Onepanel login page
     Then user of browser sees error message about invalid credentials in Onepanel login page
 
@@ -30,10 +29,10 @@ Feature: Scenarios featuring login page to Onepanel GUI
     When user of browser clicks info button on warning bar in Onepanel page
     And user of browser clicks open in onezone in modal
     And user of browser logs as admin to Onezone service
-    Then user of browser sees that URL matches: https?://[^/]*/ozp/onezone/i#/onedata/clusters/.*
+    Then user of browser sees that URL matches: https?://[^/]*/ozw/onezone/i#/.*
 
 
   Scenario: User successfully goes to Onezone page from Onepanel login page
     When user of browser clicks open in onezone in Onepanel login page
     And user of browser logs as admin to Onezone service
-    Then user of browser sees that URL matches: https?://[^/]*/ozp/onezone/i#/onedata/clusters/.*
+    Then user of browser sees that URL matches: https?://[^/]*/ozw/onezone/i#/.*
