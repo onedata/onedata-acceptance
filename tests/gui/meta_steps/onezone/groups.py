@@ -81,12 +81,13 @@ def see_groups_using_op_gui(selenium, user, oz_page, group_list):
         assert_group_exists(selenium, user, option, group, oz_page)
 
 
-def rename_groups_using_op_gui(selenium, user, oz_page, group_list, new_names):
+def rename_groups_using_op_gui(selenium, user, oz_page, group_list,
+                               new_names, popups):
     confirm_type = 'enter'
 
     for group, new_name in zip(parse_seq(group_list), parse_seq(new_names)):
         rename_group(selenium, user, group, new_name, confirm_type,
-                     oz_page)
+                     oz_page, popups)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -97,12 +98,13 @@ def fail_to_see_groups_using_op_gui(selenium, user, oz_page, group_list):
         assert_group_exists(selenium, user, option, group, oz_page)
 
 
-def leave_groups_using_op_gui(selenium, user, oz_page, group_list):
+def leave_groups_using_op_gui(selenium, user, oz_page, group_list, popups):
     for group in parse_seq(group_list):
-        leave_group(selenium, user, group, oz_page)
+        leave_group(selenium, user, group, oz_page, popups)
 
 
-def _select_mode_view_in_members_subpage(selenium, user, oz_page, parent):
+def _select_mode_view_in_members_subpage(selenium, user, oz_page,
+                                         parent, onepanel):
     where = 'group'
     direct_selector = 'effective'
     mode_selector = 'memberships'
@@ -110,7 +112,7 @@ def _select_mode_view_in_members_subpage(selenium, user, oz_page, parent):
     subpage = 'members'
 
     go_to_group_subpage(selenium, user, parent, subpage, oz_page)
-    click_show_view_option(selenium, user, oz_page, where)
+    click_show_view_option(selenium, user, oz_page, where, onepanel)
     click_mode_view_in_members_subpage(selenium, user, direct_selector,
                                        oz_page, where)
     click_mode_view_in_members_subpage(selenium, user, mode_selector,
@@ -119,10 +121,12 @@ def _select_mode_view_in_members_subpage(selenium, user, oz_page, parent):
                                   oz_page, where, list_type)
 
 
-def assert_subgroups_using_op_gui(selenium, user, oz_page, group_list, parent):
+def assert_subgroups_using_op_gui(selenium, user, oz_page, group_list,
+                                  parent, onepanel):
     where = 'group'
 
-    _select_mode_view_in_members_subpage(selenium, user, oz_page, parent)
+    _select_mode_view_in_members_subpage(selenium, user, oz_page,
+                                         parent, onepanel)
     for group in parse_seq(group_list):
         assert_element_is_member_of_parent_in_memberships(selenium, user,
                                                           group, parent,
@@ -131,10 +135,11 @@ def assert_subgroups_using_op_gui(selenium, user, oz_page, group_list, parent):
 
 
 def fail_to_see_subgroups_using_op_gui(selenium, user, oz_page,
-                                       group_list, parent):
+                                       group_list, parent, onepanel):
     where = 'group'
 
-    _select_mode_view_in_members_subpage(selenium, user, oz_page, parent)
+    _select_mode_view_in_members_subpage(selenium, user, oz_page,
+                                         parent, onepanel)
     for group in parse_seq(group_list):
         assert_element_is_not_member_of_parent_in_memberships(selenium, user,
                                                               group, where,
@@ -142,8 +147,8 @@ def fail_to_see_subgroups_using_op_gui(selenium, user, oz_page,
                                                               where, where)
 
 
-def _create_group_token(selenium, user, user2, oz_page, name,
-                        tmp_memory, displays, clipboard, member):
+def _create_group_token(selenium, user, user2, oz_page, name, tmp_memory,
+                        displays, clipboard, member, onepanel, popups):
     item_type = 'token'
     where = 'group'
     button = 'Invite {} using token'.format(member)
@@ -151,7 +156,7 @@ def _create_group_token(selenium, user, user2, oz_page, name,
     modal = 'Invite using token'
 
     click_on_option_in_members_list_menu(selenium, user, button,
-                                         name, where, member, oz_page)
+                                         where, member, oz_page, onepanel, popups)
     copy_token_from_modal(selenium, user)
     close_modal(selenium, user, modal, modals)
     send_copied_item_to_other_users(user, item_type, user2,
@@ -162,18 +167,20 @@ def _create_group_token(selenium, user, user2, oz_page, name,
                '"(?P<name>.*)" using Oneprovider web GUI'))
 def create_group_token_to_invite_user_using_op_gui(selenium, user, user2,
                                                    oz_page, name, tmp_memory,
-                                                   displays, clipboard):
+                                                   displays, clipboard,
+                                                   onepanel, popups):
     member = 'user'
-    _create_group_token(selenium, user, user2, oz_page, name,
-                        tmp_memory, displays, clipboard, member)
+    _create_group_token(selenium, user, user2, oz_page, name, tmp_memory,
+                        displays, clipboard, member, onepanel, popups)
 
 
 def create_group_token_to_invite_group_using_op_gui(selenium, user, user2,
                                                     oz_page, name, tmp_memory,
-                                                    displays, clipboard):
+                                                    displays, clipboard,
+                                                    onepanel, popups):
     member = 'group'
-    _create_group_token(selenium, user, user2, oz_page, name,
-                        tmp_memory, displays, clipboard, member)
+    _create_group_token(selenium, user, user2, oz_page, name, tmp_memory,
+                        displays, clipboard, member, onepanel, popups)
 
 
 @wt(parsers.re('(?P<user>\w+) joins group he was invited to using '
@@ -204,11 +211,12 @@ def remove_subgroups_using_op_gui(selenium, user, oz_page, group_list,
 
 
 def fail_to_rename_groups_using_op_gui(selenium, user, oz_page, group_list,
-                                       new_names):
+                                       new_names, popups):
     text = 'failed'
 
     for group, new_name in zip(parse_seq(group_list), parse_seq(new_names)):
-        rename_groups_using_op_gui(selenium, user, oz_page, group, new_name)
+        rename_groups_using_op_gui(selenium, user, oz_page, group,
+                                   new_name, popups)
         assert_error_modal_with_text_appeared(selenium, user, text, oz_page)
 
 

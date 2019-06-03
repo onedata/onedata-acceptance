@@ -9,6 +9,8 @@ __license__ = ("This software is released under the MIT license cited in "
 
 from pytest_bdd import parsers
 
+import time
+
 from tests.gui.steps.modal import wt_wait_for_modal_to_appear
 from tests.utils.utils import repeat_failed
 from tests.utils.acceptance_utils import wt
@@ -174,7 +176,7 @@ def click_generate_token_in_subgroups_list(selenium, browser_id, group,
                '"(?P<name>.*)" (?P<where>group|space|cluster) members view'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_option_in_members_list_menu(selenium, browser_id, button,
-                                         name, where, member, oz_page,
+                                         where, member, oz_page,
                                          onepanel, popups):
     driver = selenium[browser_id]
 
@@ -365,6 +367,7 @@ def click_nested_privilege_toggle_for_member(selenium, browser_id, option,
     privilege = (members_list.items[member_name]
                  .privileges[parent_privilege_name]
                  .privileges[privilege_name].toggle)
+    time.sleep(1)
     if option == 'checks':
         privilege.check()
     else:

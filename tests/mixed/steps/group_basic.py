@@ -51,13 +51,13 @@ def assert_groups(client, user, group_list, host, hosts, users, selenium,
                  '(?P<group_list>.*) to (?P<new_names>.*) in '
                  '"(?P<host>.*)" Onezone service'))
 def rename_groups(client, user, group_list, new_names, host, hosts, users, 
-                  selenium, oz_page):
+                  selenium, oz_page, popups):
     
     if client.lower() == 'rest':
         rename_groups_using_rest(user, users, hosts, group_list, new_names, host)
     elif client.lower() == 'web gui':
         rename_groups_using_op_gui(selenium, user, oz_page, group_list,
-                                   new_names)
+                                   new_names, popups)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
@@ -99,12 +99,12 @@ def remove_groups(client, user, group_list, host, hosts, users, selenium,
 @then(parsers.re('using (?P<client>.*), (?P<user>\w+) leaves groups? '
                  '(?P<group_list>.*) in "(?P<host>.*)" Onezone service'))
 def leave_groups(client, user, group_list, host, hosts, users, selenium, 
-                 oz_page):
+                 oz_page, popups):
     
     if client.lower() == 'rest':
         leave_groups_using_rest(user, users, hosts, group_list, host)
     elif client.lower() == 'web gui':
-        leave_groups_using_op_gui(selenium, user, oz_page, group_list)
+        leave_groups_using_op_gui(selenium, user, oz_page, group_list, popups)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
@@ -152,12 +152,13 @@ def remove_subgroups(client, user, group_list, host, hosts,
                  '(?P<group_list>.*) as subgroup to group "(?P<parent>.*)" '
                  'in "(?P<host>.*)" Onezone service'))
 def assert_subgroups(client, user, group_list, host, hosts, 
-                     users, selenium, parent, oz_page):
+                     users, selenium, parent, oz_page, onepanel):
     
     if client.lower() == 'rest':
         assert_subgroups_using_rest(user, users, hosts, group_list, parent, host)
     elif client.lower() == 'web gui':
-        assert_subgroups_using_op_gui(selenium, user, oz_page, group_list, parent)
+        assert_subgroups_using_op_gui(selenium, user, oz_page, group_list,
+                                      parent, onepanel)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
@@ -169,14 +170,14 @@ def assert_subgroups(client, user, group_list, host, hosts,
                  '(?P<group_list>.*) as subgroup to group "(?P<parent>.*)"'
                  ' in "(?P<host>.*)" Onezone service'))
 def fail_to_see_subgroups(client, user, group_list, host, hosts, 
-                          users, selenium, oz_page, parent):
+                          users, selenium, oz_page, parent, onepanel):
     
     if client.lower() == 'rest':
         fail_to_see_subgroups_using_rest(user, users, group_list, parent, hosts,
                                          host)
     elif client.lower() == 'web gui':
         fail_to_see_subgroups_using_op_gui(selenium, user, oz_page, group_list,
-                                           parent)
+                                           parent, onepanel)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
@@ -223,14 +224,14 @@ def join_group(client, user, host, hosts, users, selenium,
                  ' groups? (?P<group_list>.*) to (?P<new_names>.*) in'
                  ' "(?P<host>.*)" Onezone service'))
 def fail_to_rename_groups(client, user, group_list, host, hosts, users, 
-                          selenium, oz_page, request, new_names):
+                          selenium, oz_page, request, new_names, popups):
 
     if client.lower() == 'rest':
         fail_to_rename_groups_using_rest(user, users, hosts, group_list,
                                          new_names, host)
     elif client.lower() == 'web gui':
         fail_to_rename_groups_using_op_gui(selenium, user, oz_page, group_list,
-                                           new_names)
+                                           new_names, popups)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
 

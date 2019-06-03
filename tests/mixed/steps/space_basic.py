@@ -38,7 +38,7 @@ def create_spaces_in_oz(client, user, space_list, host, hosts, users, selenium,
                  'named (?P<space_list>.+?) in "(?P<host>.+?)" Onezone '
                  'service'))
 def leave_spaces_in_oz(client, request, user, space_list, host,
-                       selenium, oz_page, users, hosts, spaces):
+                       selenium, oz_page, users, hosts, spaces, popups):
 
     if client.lower() == 'rest':
         from tests.mixed.steps.rest.onezone.space_management import \
@@ -48,7 +48,7 @@ def leave_spaces_in_oz(client, request, user, space_list, host,
     elif client.lower() == 'web gui':
         from tests.gui.meta_steps.onezone.spaces import \
                                                 leave_spaces_in_oz_using_gui
-        leave_spaces_in_oz_using_gui(selenium, user, space_list, oz_page)
+        leave_spaces_in_oz_using_gui(selenium, user, space_list, oz_page, popups)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
@@ -77,7 +77,7 @@ def rename_spaces_in_oz(client, request, user, space_list, new_names_list,
                  '"(?P<space_name>.+?)" as home space in "(?P<host>.+?)" '
                  'Onezone service'))
 def set_space_as_home_in_oz(client, request, user, space_name, host, selenium,
-                            oz_page, users, hosts, spaces):
+                            oz_page, users, hosts, spaces, popups):
 
     if client.lower() == 'rest':
         from tests.mixed.steps.rest.onezone.space_management import \
@@ -87,7 +87,8 @@ def set_space_as_home_in_oz(client, request, user, space_name, host, selenium,
     elif client.lower() == 'web gui':
         from tests.gui.meta_steps.onezone.spaces import \
                                             set_space_as_home_in_oz_using_gui
-        set_space_as_home_in_oz_using_gui(selenium, user, oz_page, space_name)
+        set_space_as_home_in_oz_using_gui(selenium, user, oz_page,
+                                          space_name, popups)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
@@ -184,7 +185,8 @@ def remove_provider_support_for_space_in_oz(client, request, user,
                  '"(?P<host>.+?)" Onezone service'))
 def invite_other_users_to_space(client, request, user, user_list, space_name,
                                 host, selenium, tmp_memory, users,
-                                hosts, spaces, displays, clipboard, oz_page):
+                                hosts, spaces, displays, clipboard, oz_page,
+                                onepanel, popups):
 
     if client.lower() == 'rest':
         from tests.mixed.steps.rest.onezone.space_management import \
@@ -198,7 +200,8 @@ def invite_other_users_to_space(client, request, user, user_list, space_name,
                                         invite_other_users_to_space_using_gui
         invite_other_users_to_space_using_gui(selenium, user, space_name,
                                               user_list, oz_page, tmp_memory,
-                                              displays, clipboard)
+                                              displays, clipboard,
+                                              onepanel, popups)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
 

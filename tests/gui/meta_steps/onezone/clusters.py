@@ -23,7 +23,8 @@ from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
                   'to "{cluster}" cluster'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def invite_user_to_cluster(selenium, browser_id, browser, cluster, oz_page,
-                           hosts, onepanel, tmp_memory, displays, clipboard):
+                           hosts, onepanel, tmp_memory, displays,
+                           clipboard, popups):
     option = 'Clusters'
     sub_item = 'Members'
     button = 'Invite user using token'
@@ -37,8 +38,10 @@ def invite_user_to_cluster(selenium, browser_id, browser, cluster, oz_page,
                                      hosts)
     wt_click_on_subitem_for_item(selenium, browser_id, option,
                                  sub_item, cluster, onepanel, hosts)
-    click_on_option_in_members_list_menu(selenium, browser_id, button, cluster,
-                                         where, member, oz_page, onepanel)
+
+    click_on_option_in_members_list_menu(selenium, browser_id, button,
+                                         where, member, oz_page,
+                                         onepanel, popups)
     copy_token_from_modal(selenium, browser_id)
     close_modal(selenium, browser_id, modal, modals)
     send_copied_item_to_other_users(browser_id, item_type, browser,
