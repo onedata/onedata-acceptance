@@ -7,7 +7,10 @@ Feature: Multiuser with admin
             - user1
             - admin2:
                 password: password
-                user role: admin
+                user role: onezone admin
+                cluster privileges:
+                  - oz_spaces_add_relationships
+                  - oz_users_add_relationships
     And initial spaces configuration in "onezone" Onezone service:
         space1:
             owner: admin2

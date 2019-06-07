@@ -22,7 +22,8 @@ from tests.utils.utils import repeat_failed
 
 @given(parsers.parse('initial spaces configuration in "{zone_host}" '
                      'Onezone service:\n{config}'))
-def create_and_configure_spaces(config, zone_host, admin_credentials, hosts,
+def create_and_configure_spaces(config, zone_host, admin_credentials,
+                                onepanel_credentials, hosts,
                                 users, groups, storages, spaces):
     """Create and configure spaces according to given config.
 
@@ -94,11 +95,13 @@ def create_and_configure_spaces(config, zone_host, admin_credentials, hosts,
                             provider: 2
                             content: 22222
     """
-    _create_and_configure_spaces(config, zone_host, admin_credentials, hosts,
+    _create_and_configure_spaces(config, zone_host, admin_credentials,
+                                 onepanel_credentials, hosts,
                                  users, groups, storages, spaces)
 
 
-def _create_and_configure_spaces(config, zone_name, admin_credentials, hosts,
+def _create_and_configure_spaces(config, zone_name, admin_credentials,
+                                 onepanel_credentials, hosts,
                                  users_db, groups_db, storages_db, spaces_db):
     zone_hostname = hosts[zone_name]['hostname']
 
@@ -114,7 +117,7 @@ def _create_and_configure_spaces(config, zone_name, admin_credentials, hosts,
                                description.get('home space for', []))
         _add_groups_to_space(zone_hostname, admin_credentials, space_id,
                              groups_db, description.get('groups', {}))
-        _get_support(zone_hostname, admin_credentials, owner, space_id,
+        _get_support(zone_hostname, onepanel_credentials, owner, space_id,
                      storages_db, hosts, description.get('providers', {}))
         _init_storage(owner, space_name, hosts,
                       description.get('storage', {}))
@@ -193,10 +196,10 @@ def _add_group_to_space(zone_hostname, admin_username, admin_password,
              auth=(admin_username, admin_password), data=data)
 
 
-def _get_support(zone_hostname, admin_credentials, owner_credentials,
-                 space_id, storages_db, hosts, providers):
-    admin_username = admin_credentials.username
-    admin_password = admin_credentials.password
+def _get_support(zone_hostname, onepanel_credentials,
+                 owner_credentials, space_id, storages_db, hosts, providers):
+    onepanel_username = onepanel_credentials.username
+    onepanel_password = onepanel_credentials.password
 
     for provider in providers:
         [(provider, options)] = provider.items()
@@ -212,8 +215,8 @@ def _get_support(zone_hostname, admin_credentials, owner_credentials,
             storage_id = storages_db[provider_name][storage_name]
         except KeyError:
             storage_id = storages_db[provider_name][storage_name] = \
-                _get_storage_id(provider_hostname, admin_username,
-                                admin_password, storage_name)
+                _get_storage_id(provider_hostname, onepanel_username,
+                                onepanel_password, storage_name)
 
         token = http_post(ip=zone_hostname, port=OZ_REST_PORT,
                           path=get_zone_rest_path('spaces', space_id,
@@ -226,7 +229,7 @@ def _get_support(zone_hostname, admin_credentials, owner_credentials,
                                  'storageId': storage_id}
         http_post(ip=provider_hostname, port=PANEL_REST_PORT,
                   path=get_panel_rest_path('provider', 'spaces'),
-                  auth=(admin_username, admin_password),
+                  auth=(onepanel_username, onepanel_password),
                   data=json.dumps(space_support_details))
 
         wait_for_space_support(space_id, owner_credentials, provider_hostname)
@@ -235,24 +238,24 @@ def _get_support(zone_hostname, admin_credentials, owner_credentials,
 @repeat_failed(attempts=10, interval = 0.5, 
                exceptions=(AssertionError, HTTPError))
 def wait_for_space_support(space_id, owner_credentials, provider_hostname):
-    response = http_get(ip = provider_hostname, port = OP_REST_PORT, 
-                        path = get_provider_rest_path('spaces', space_id), 
-                        headers = {'X-Auth-Token': owner_credentials.token})
+    response = http_get(ip=provider_hostname, port=OP_REST_PORT,
+                        path=get_provider_rest_path('spaces', space_id),
+                        headers={'X-Auth-Token': owner_credentials.token})
 
     assert response.json()['providers'], 'Space has no support'
 
 
-def _get_storage_id(provider_hostname, admin_username,
-                    admin_password, storage_name):
+def _get_storage_id(provider_hostname, onepanel_username,
+                    onepanel_password, storage_name):
     storages_id = http_get(ip=provider_hostname, port=PANEL_REST_PORT,
                            path=get_panel_rest_path('provider', 'storages'),
-                           auth=(admin_username, admin_password))
+                           auth=(onepanel_username, onepanel_password))
     for storage_id in storages_id.json()['ids']:
         storage_details = http_get(ip=provider_hostname, port=PANEL_REST_PORT,
                                    path=get_panel_rest_path('provider',
                                                             'storages',
                                                             storage_id),
-                                   auth=(admin_username, admin_password))
+                                   auth=(onepanel_username, onepanel_password))
         if storage_details.json()['name'] == storage_name:
             return storage_id
 

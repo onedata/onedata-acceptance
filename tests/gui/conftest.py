@@ -25,7 +25,7 @@ from tests.gui.utils.generic import suppress
 from tests.conftest import export_logs
 from _pytest.fixtures import FixtureLookupError
 from tests.utils.ffmpeg_utils import start_recording, stop_recording
-
+from tests.utils import onenv_utils
 
 
 __author__ = "Jakub Liput, Bartosz Walkowicz"
@@ -88,6 +88,21 @@ def pytest_addoption(parser):
 def finalize(request):
     yield
     export_logs(request)
+
+
+@fixture(autouse=True)
+def emergency_passphrase(users, hosts):
+    zone_pod_name = hosts['onezone']['pod-name']
+    zone_pod = onenv_utils.match_pods(zone_pod_name)[0]
+    passphrase = onenv_utils.get_env_variable(zone_pod,
+                                              'ONEPANEL_EMERGENCY_PASSPHRASE')
+    return passphrase
+
+
+@fixture(autouse=True)
+def onepanel_credentials(users, emergency_passphrase):
+    creds = users['onepanel'] = AdminUser('onepanel', emergency_passphrase)
+    return creds
 
 
 @fixture(autouse=True)
