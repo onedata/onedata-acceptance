@@ -9,7 +9,6 @@ __license__ = "This software is released under the MIT license cited in " \
 import yaml
 import json
 from functools import partial
-from collections import namedtuple
 
 from pytest_bdd import given, parsers
 from pytest import skip
@@ -17,7 +16,7 @@ from pytest import skip
 from tests import OZ_REST_PORT, PANEL_REST_PORT
 from tests.utils.rest_utils import (http_get, http_post, http_delete,
                                     http_patch, get_panel_rest_path,
-                                    get_zone_rest_path)
+                                    get_zone_rest_path, http_put)
 from tests.utils.http_exceptions import HTTPError, HTTPNotFound
 from tests.utils.utils import repeat_failed
 from tests.utils.user_utils import User
@@ -25,18 +24,18 @@ from tests.utils.user_utils import User
 
 @given(parsers.parse('initial users configuration in "{host}" '
                      'Onezone service:\n{config}'))
-def users_creation(host, config, admin_credentials, hosts, users, rm_users):
+def users_creation(host, config, admin_credentials, onepanel_credentials,
+                   hosts, users, rm_users):
     zone_hostname = hosts[host]['hostname']
-    admin_credentials.username = 'onepanel'
     users_db = {}
     for user_config in yaml.load(config):
         username, options = _parse_user_info(user_config)
         try:
-            user_cred = _create_user(zone_hostname, admin_credentials,
-                                     username, options, rm_users)
-            if not options.get('fullName', None):
-                options['fullName'] = user_cred.username
-            _configure_user(zone_hostname, user_cred, options)
+            user_cred = _create_user(zone_hostname, onepanel_credentials,
+                                     admin_credentials, username, options,
+                                     rm_users)
+            _configure_user(zone_hostname, admin_credentials, user_cred,
+                            options)
         except Exception as ex:
             _rm_users(zone_hostname, admin_credentials, users_db)
             raise ex
@@ -48,17 +47,6 @@ def users_creation(host, config, admin_credentials, hosts, users, rm_users):
     _rm_users(zone_hostname, admin_credentials, users_db)
 
 
-@repeat_failed(attempts=30, interval=5)
-def _create_admin_in_zone(zone_hostname, admin_credentials):
-    username, password = admin_credentials.username, admin_credentials.password
-    response = http_get(ip=zone_hostname, port=OZ_REST_PORT,
-                        path=get_zone_rest_path('user'),
-                        auth=(username, password)).json()
-    admin_id = response['userId']
-    token = _create_token(zone_hostname, username, password)
-    return User(username, password, token, admin_id)
-
-
 def _parse_user_info(user_config):
     try:
         [(username, options)] = user_config.items()
@@ -68,11 +56,12 @@ def _parse_user_info(user_config):
         return username, options
 
 
-def _create_new_user(zone_hostname, admin_credentials, username, password,
+def _create_new_user(zone_hostname, onepanel_credentials, username, password,
                      user_conf_details, generate_token):
     http_post(ip=zone_hostname, port=PANEL_REST_PORT,
               path=get_panel_rest_path('zone', 'users'),
-              auth=(admin_credentials.username, admin_credentials.password),
+              auth=(onepanel_credentials.username,
+                    onepanel_credentials.password),
               data=json.dumps(user_conf_details))
 
     # user is created in zone panel and not zone itself
@@ -88,7 +77,8 @@ def _create_new_user(zone_hostname, admin_credentials, username, password,
                 token=token)
 
 
-def _create_user(zone_hostname, admin_credentials, username, options, rm_users):
+def _create_user(zone_hostname, onepanel_credentials, admin_credentials,
+                 username, options, rm_users):
     password = options.get('password', 'password')
     generate_token = options.get('generate_token', True)
     user_conf_details = {'username': username,
@@ -99,9 +89,10 @@ def _create_user(zone_hostname, admin_credentials, username, options, rm_users):
     try:
         resp = http_get(ip=zone_hostname, port=PANEL_REST_PORT,
                         path=get_panel_rest_path('zone', 'users', username),
-                        auth=(admin_credentials.username, admin_credentials.password)).json()
+                        auth=(onepanel_credentials.username,
+                              onepanel_credentials.password)).json()
     except HTTPNotFound:
-        return _create_new_user(zone_hostname, admin_credentials, username,
+        return _create_new_user(zone_hostname, onepanel_credentials, username,
                                 password, user_conf_details, generate_token)
 
     except HTTPError:
@@ -111,18 +102,49 @@ def _create_user(zone_hostname, admin_credentials, username, options, rm_users):
             _rm_user(zone_hostname, admin_credentials,
                      User(username, password, None, resp['userId']),
                      True)
-            return _create_new_user(zone_hostname, admin_credentials, username,
+            return _create_new_user(zone_hostname, onepanel_credentials, username,
                                     password, user_conf_details, generate_token)
         else:
             skip('"{}" user already exist'.format(username))
 
 
-def _configure_user(zone_hostname, user_cred, options):
-    full_name = options.get('fullName', None)
+def _configure_user(zone_hostname, admin_credentials, user_cred, options):
+    full_name = options.get('fullName', user_cred.username)
     http_patch(ip=zone_hostname, port=OZ_REST_PORT,
                path=get_zone_rest_path('user'),
                auth=(user_cred.username, user_cred.password),
                data=json.dumps({'fullName': full_name}))
+    if options.get('user role') == 'onezone admin':
+        _add_user_to_zone_cluster(zone_hostname, admin_credentials,
+                                  user_cred, options.get('cluster privileges'))
+
+
+def _add_user_to_zone_cluster(zone_hostname, admin_credentials,
+                              user_credentials, cluster_privileges):
+    username, password = user_credentials.username, user_credentials.password
+    admin_username = admin_credentials.username
+    admin_password = admin_credentials.password
+
+    # get user ID
+    response = http_get(ip=zone_hostname, port=OZ_REST_PORT,
+                        path=get_zone_rest_path('user'),
+                        auth=(username, password)).json()
+    user_id = response['userId']
+
+    # add user to cluster
+    http_put(ip=zone_hostname, port=OZ_REST_PORT,
+             path=get_zone_rest_path('clusters/{}/users/{}'
+                                     .format('onezone', user_id)),
+             auth=(admin_username, admin_password))
+
+    # add privileges
+    if cluster_privileges is not None:
+        http_patch(ip=zone_hostname, port=OZ_REST_PORT,
+                   path=get_zone_rest_path('users/{}/privileges'.format(user_id)),
+                   auth=(admin_username, admin_password),
+                   data=json.dumps({'grant': cluster_privileges}))
+    token = _create_token(zone_hostname, username, password)
+    return User(username, password, token, user_id)
 
 
 def _rm_users(zone_hostname, admin_credentials, users_db,
@@ -146,15 +168,7 @@ def _rm_user(zone_hostname, admin_credentials, user_credentials,
 
 
 @repeat_failed(attempts=5)
-def _rm_panel_user(zone_hostname, admin_username, admin_password, username):
-    path = get_panel_rest_path('users', username)
-    http_delete(ip=zone_hostname, port=PANEL_REST_PORT, path=path,
-                auth=(admin_username, admin_password))
-
-
-@repeat_failed(attempts=5)
 def _rm_zone_user(zone_hostname, admin_username, admin_password, user_id):
-    admin_username = 'admin'
     path = get_zone_rest_path('users', user_id)
     http_delete(ip=zone_hostname, port=OZ_REST_PORT, path=path,
                 auth=(admin_username, admin_password))
@@ -163,6 +177,6 @@ def _rm_zone_user(zone_hostname, admin_username, admin_password, user_id):
 @repeat_failed(attempts=5)
 def _create_token(zone_hostname, username, password):
     response = http_post(ip=zone_hostname, port=OZ_REST_PORT, 
-                      path=get_zone_rest_path('user', 'client_tokens'),
-                      auth=(username, password))
+                         path=get_zone_rest_path('user', 'client_tokens'),
+                         auth=(username, password))
     return json.loads(response.content)['token']
