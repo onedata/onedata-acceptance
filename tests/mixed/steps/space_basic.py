@@ -343,7 +343,7 @@ def assert_there_is_no_provider_for_space_in_oz(client, request, user,
                  '"(?P<space_name>.+?)" in "(?P<host>.+?)" Onezone service'))
 def assert_user_is_member_of_space(client, request, user, user_list,
                                    space_name, host, spaces, users, hosts,
-                                   selenium, oz_page):
+                                   selenium, oz_page, onepanel):
 
     if client.lower() == 'rest':
         from tests.mixed.steps.rest.onezone.space_management import \
@@ -354,7 +354,7 @@ def assert_user_is_member_of_space(client, request, user, user_list,
         from tests.gui.meta_steps.onezone.spaces import \
                                             assert_user_is_member_of_space_gui
         assert_user_is_member_of_space_gui(selenium, user, space_name, oz_page,
-                                           user_list)
+                                           user_list, onepanel)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
 

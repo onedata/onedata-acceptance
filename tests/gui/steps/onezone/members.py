@@ -231,7 +231,7 @@ def assert_element_is_groups_child(selenium, browser_id, option, child,
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>does not see|sees) '
                '"(?P<member_name>.*)" (?P<member_type>user|group) '
-               'on "(?P<parent_name>.*)" (?P<parent_type>user|group|cluster) '
+               'on "(?P<parent_name>.*)" (?P<parent_type>user|group|space|cluster) '
                'members list'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_member_is_in_parent_members_list(selenium, browser_id, option,

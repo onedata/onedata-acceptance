@@ -191,16 +191,20 @@ def assert_there_is_no_provider_for_space_in_oz_gui(selenium, user, oz_page,
 
 
 def assert_user_is_member_of_space_gui(selenium, user, space_name, oz_page,
-                                       user_list):
+                                       user_list, onepanel):
     where = 'Members'
     option = 'sees'
+    member_type = 'user'
+    parent_type = 'space'
 
     click_on_members_of_space_on_left_sidebar_menu(selenium, user,
                                                    space_name, where, oz_page)
 
     for username in parse_seq(user_list):
-        assert_user_is_in_space_members_list(selenium, user, option,
-                                             username, space_name, oz_page)
+        assert_member_is_in_parent_members_list(selenium, user, option,
+                                                username, member_type,
+                                                space_name, parent_type,
+                                                oz_page, onepanel)
 
 
 def assert_provider_does_not_support_space_in_oz_gui(selenium, user, oz_page,

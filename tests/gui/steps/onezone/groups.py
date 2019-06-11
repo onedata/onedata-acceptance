@@ -34,7 +34,7 @@ def join_space(selenium, browser_id, group, oz_page, tmp_memory, popups):
     page = oz_page(driver)['groups']
     page.elements_list[group]()
     page.elements_list[group].menu()
-    popups(driver).member_menu.menu['Join space']()
+    popups(driver).member_menu.menu['Join to space']()
     token = tmp_memory[browser_id]['mailbox']['token']
     page.input_box.value = token
     page.input_box.edit_box.confirm()
@@ -92,7 +92,7 @@ def assert_group_exists(selenium, browser_ids, option, group, oz_page):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on '
-               '"(?P<option>Rename|Join space|Join as subgroup|Leave|Remove)" '
+               '"(?P<option>Rename|Join to space|Join as subgroup|Leave|Remove)" '
                'button in group "(?P<group>.*)" menu in the sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_group_menu_button(selenium, browser_id, option, group,
