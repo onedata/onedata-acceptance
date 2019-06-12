@@ -117,8 +117,8 @@ def _select_mode_view_in_members_subpage(selenium, user, oz_page,
                                        oz_page, where, onepanel)
     click_mode_view_in_members_subpage(selenium, user, mode_selector,
                                        oz_page, where, onepanel)
-    click_element_in_members_list(selenium, user, user,
-                                  oz_page, where, list_type)
+    click_element_in_members_list(selenium, user, user, oz_page, where,
+                                  list_type, onepanel)
 
 
 def assert_subgroups_using_op_gui(selenium, user, oz_page, group_list,
@@ -147,6 +147,7 @@ def fail_to_see_subgroups_using_op_gui(selenium, user, oz_page,
                                                               where, where)
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
 def _create_group_token(selenium, user, user2, oz_page, name, tmp_memory,
                         displays, clipboard, member, onepanel, popups):
     item_type = 'token'
@@ -154,7 +155,9 @@ def _create_group_token(selenium, user, user2, oz_page, name, tmp_memory,
     button = 'Invite {} using token'.format(member)
     member += 's'
     modal = 'Invite using token'
+    subpage = 'members'
 
+    go_to_group_subpage(selenium, user, name, subpage, oz_page)
     click_on_option_in_members_list_menu(selenium, user, button,
                                          where, member, oz_page, onepanel, popups)
     copy_token_from_modal(selenium, user)
@@ -192,22 +195,26 @@ def join_group_using_op_gui(selenium, user, oz_page, tmp_memory):
 
 
 def add_subgroups_using_op_gui(selenium, user, oz_page, parent, group_list,
-                               tmp_memory, displays, clipboard):
+                               tmp_memory, displays, clipboard,
+                               onepanel, popups):
     for child in parse_seq(group_list):
         create_group_token_to_invite_group_using_op_gui(selenium, user, user,
                                                         oz_page, parent,
                                                         tmp_memory, displays,
-                                                        clipboard)
-        add_group_as_subgroup(selenium, user, child, oz_page, tmp_memory)
+                                                        clipboard, onepanel,
+                                                        popups)
+        add_group_as_subgroup(selenium, user, child, oz_page,
+                              tmp_memory, popups)
 
 
 def remove_subgroups_using_op_gui(selenium, user, oz_page, group_list,
-                                  tmp_memory, parent):
+                                  tmp_memory, parent, onepanel, popups):
     member_type = 'group'
 
     for child in parse_seq(group_list):
-        remove_member_from_group(selenium, user, child, member_type, parent,
-                                 oz_page, tmp_memory)
+        remove_member_from_parent(selenium, user, child, member_type, parent,
+                                  oz_page, tmp_memory, onepanel,
+                                  member_type, popups)
 
 
 def fail_to_rename_groups_using_op_gui(selenium, user, oz_page, group_list,
@@ -222,15 +229,17 @@ def fail_to_rename_groups_using_op_gui(selenium, user, oz_page, group_list,
 
 def fail_to_add_subgroups_using_op_gui(selenium, user, oz_page, parent,
                                        group_list, tmp_memory, displays,
-                                       clipboard):
+                                       clipboard, onepanel, popups):
     create_group_token_to_invite_group_using_op_gui(selenium, user, user,
                                                     oz_page, parent, tmp_memory,
-                                                    displays, clipboard)
+                                                    displays, clipboard,
+                                                    onepanel, popups)
     for child in parse_seq(group_list):
         error = 'joining group as subgroup failed'
         modal = 'error'
 
-        add_group_as_subgroup(selenium, user, child, oz_page, tmp_memory)
+        add_group_as_subgroup(selenium, user, child, oz_page,
+                              tmp_memory, popups)
         assert_error_modal_with_text_appeared(selenium, user, error,
                                               oz_page)
         close_modal(selenium, user, modal, modals)

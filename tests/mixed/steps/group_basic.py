@@ -116,13 +116,15 @@ def leave_groups(client, user, group_list, host, hosts, users, selenium,
                  '(?P<group_list>.*) as subgroup to group "(?P<parent>.*)" in'
                  ' "(?P<host>.*)" Onezone service'))
 def add_subgroups(client, user, group_list, host, hosts, users, 
-                  selenium, oz_page, tmp_memory, parent, displays, clipboard):
+                  selenium, oz_page, tmp_memory, parent, displays,
+                  clipboard, onepanel, popups):
     
     if client.lower() == 'rest':
         add_subgroups_using_rest(user, users, hosts, group_list, parent, host)
     elif client.lower() == 'web gui':
         add_subgroups_using_op_gui(selenium, user, oz_page, parent, group_list,
-                                   tmp_memory, displays, clipboard)
+                                   tmp_memory, displays, clipboard, onepanel,
+                                   popups)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
@@ -134,13 +136,14 @@ def add_subgroups(client, user, group_list, host, hosts, users,
                  '(?P<group_list>.*) from group "(?P<parent>.*)" in'
                  ' "(?P<host>.*)" Onezone service'))
 def remove_subgroups(client, user, group_list, host, hosts, 
-                     users, selenium, oz_page, tmp_memory, parent):
+                     users, selenium, oz_page, tmp_memory, parent,
+                     onepanel, popups):
     
     if client.lower() == 'rest':
         remove_subgroups_using_rest(user, users, hosts, group_list, parent, host)
     elif client.lower() == 'web gui':
         remove_subgroups_using_op_gui(selenium, user, oz_page, group_list,
-                                      tmp_memory, parent)
+                                      tmp_memory, parent, onepanel, popups)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
@@ -259,7 +262,7 @@ def fail_to_remove_groups(client, user, group_list, request, host, hosts, users,
                '"(?P<parent>.*?)" in "(?P<host>.*)" Onezone service'))
 def fail_to_add_subgroups(client, user, group_list, host, hosts, users, 
                           selenium, oz_page, parent, tmp_memory, displays,
-                          clipboard):
+                          clipboard, onepanel, popups):
 
     if client.lower() == 'rest':
         fail_to_add_subgroups_using_rest(user, users, hosts, group_list,
@@ -267,7 +270,7 @@ def fail_to_add_subgroups(client, user, group_list, host, hosts, users,
     elif client.lower() == 'web gui':
         fail_to_add_subgroups_using_op_gui(selenium, user, oz_page, parent,
                                            group_list, tmp_memory, displays,
-                                           clipboard)
+                                           clipboard, onepanel, popups)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
