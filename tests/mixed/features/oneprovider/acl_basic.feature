@@ -13,7 +13,6 @@ Feature: ACL basic tests
     Given initial users configuration in "onezone" Onezone service:
             - user1
             - user2
-    And oneclient mounted in /home/user1/onedata using token by user1
     And initial groups configuration in "onezone" Onezone service:
             group1:
                 owner: user1
@@ -28,15 +27,16 @@ Feature: ACL basic tests
                 - oneprovider-1:
                     storage: posix
                     size: 1000000
-            storage:
-                defaults:
-                    provider: oneprovider-1
-                directory tree:
-                    - file1
-                    - dir1
-
+    And provider effectively supports user:
+        oneprovider-1:
+            - user1
+    And oneclient mounted in /home/user1/onedata using token by user1
     And opened browser with user1 logged to "onezone" service
     And opened oneprovider-1 Oneprovider view in web GUI by user1
+    And user of browser creates directory structure in "space1" space on oneprovider-1 as follow:
+            - file1
+            - dir1
+
 
   Scenario: User sets ACL with one entry
     When using <client1>, user1 sets new ACE for <item> in space "space1" with <privileges> privileges set for <subject_type> <subject_name> in oneprovider-1
