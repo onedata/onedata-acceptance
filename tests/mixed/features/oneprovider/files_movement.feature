@@ -18,7 +18,7 @@ Feature: Files movement tests
                 - oneprovider-1:
                     storage: posix
                     size: 1000000
-    And provider effectively supports user:
+    And effective support for user in provider:
         oneprovider-1:
             - user1
     And oneclient mounted in /home/user1/onedata using token by user1

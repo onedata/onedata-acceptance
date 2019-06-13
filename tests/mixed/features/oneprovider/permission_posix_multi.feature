@@ -23,7 +23,7 @@ Feature: POSIX privileges multiclient tests
                 - oneprovider-1:
                     storage: posix
                     size: 1000000
-    And provider effectively supports user:
+    And effective support for users in provider:
         oneprovider-1:
             - user1
             - user2

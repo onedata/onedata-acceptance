@@ -21,8 +21,8 @@ from tests.utils.utils import repeat_failed
 
 
 @repeat_failed(attempts=10, interval=0.5)
-@given(parsers.re('providers? effectively supports? '
-                  'users?:\n(?P<config>(.|\s)+)'))
+@given(parsers.re('effective support for users? in providers?:\n'
+                  '(?P<config>(.|\s)+)'))
 def providers_effectively_supports_users(config, zone_host, hosts, users):
     zone_hostname = hosts[zone_host]['hostname']
     err_msg_fmt = ('provider {} not present in effective providers list ({}) '

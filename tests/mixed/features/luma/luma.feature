@@ -29,7 +29,7 @@ Feature: LUMA acceptance tests
             space1: 2000
         storage_name: posix
         storage_type: posix
-    And provider effectively supports users:
+    And effective support for users in provider:
         oneprovider-1:
             - user1
             - user2
