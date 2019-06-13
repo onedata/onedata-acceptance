@@ -285,6 +285,15 @@ def assert_file_content_in_op_gui(text, path, space, selenium, user, users,
     has_downloaded_file_content(user, item_name, text, tmpdir)
 
 
+@given(parsers.re('directory structure created by user of (?P<browser_id>\w+) '
+                  'in "(?P<space>.*)" space on (?P<host>.*) as follows:\n'
+                  '(?P<config>(.|\s)*)'))
+def g_create_directory_structure_in_op_gui(selenium, user, op_page, config,
+                                           space, tmp_memory):
+    create_directory_structure_in_op_gui(selenium, user, op_page, config,
+                                         space, tmp_memory)
+
+
 def create_directory_structure_in_op_gui(selenium, user, op_page, config, space,
                                          tmp_memory):
     items = yaml.load(config)

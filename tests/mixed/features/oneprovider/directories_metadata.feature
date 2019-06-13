@@ -13,7 +13,6 @@ Feature: Directory metadata tests
   Background:
     Given initial users configuration in "onezone" Onezone service:
             - user1
-    And oneclient mounted in /home/user1/onedata using token by user1
     And initial spaces configuration in "onezone" Onezone service:
         space1:
             owner: user1
@@ -21,13 +20,14 @@ Feature: Directory metadata tests
                 - oneprovider-1:
                     storage: posix
                     size: 1000000
-            storage:
-                defaults:
-                    provider: oneprovider-1
-                directory tree:
-                    - dir1
+    And effective support for user in provider:
+        oneprovider-1:
+            - user1
+    And oneclient mounted in /home/user1/onedata using token by user1
     And opened browser with user1 logged to "onezone" service
     And opened oneprovider-1 Oneprovider view in web GUI by user1
+    And directory structure created by user of browser in "space1" space on oneprovider-1 as follows:
+            - dir1
 
 
   Scenario: User sets metadata

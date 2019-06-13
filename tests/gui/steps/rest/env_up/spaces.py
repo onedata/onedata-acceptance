@@ -20,6 +20,41 @@ from tests.utils.http_exceptions import HTTPNotFound, HTTPError, HTTPBadRequest
 from tests.utils.utils import repeat_failed
 
 
+@repeat_failed(attempts=10, interval=0.5)
+@given(parsers.re('effective support for users? in providers?:\n'
+                  '(?P<config>(.|\s)+)'))
+def providers_effectively_supports_users(config, zone_host, hosts, users):
+    zone_hostname = hosts[zone_host]['hostname']
+    err_msg_fmt = ('provider {} not present in effective providers list ({}) '
+                   'for user {}')
+
+    cfg = yaml.load(config)
+    for provider, user_list in cfg.items():
+        provider_name = hosts[provider]['name']
+        for user in user_list:
+            resp = http_get(ip=zone_hostname, port=OZ_REST_PORT,
+                            path=get_zone_rest_path('user',
+                                                    'effective_providers'),
+                            auth=(user, users[user].password)).content
+            eff_providers = []
+            for eff_provider_id in json.loads(resp).get('providers', []):
+                eff_provider_name = _get_eff_provider_name(zone_hostname,
+                                                           eff_provider_id,
+                                                           user, users)
+                eff_providers.append(eff_provider_name)
+            assert provider_name in eff_providers, (err_msg_fmt.format(provider_name,
+                                                                       eff_providers,
+                                                                       user))
+
+
+def _get_eff_provider_name(zone_hostname, provider_id, user, users):
+    resp = http_get(ip=zone_hostname, port=OZ_REST_PORT,
+                    path=get_zone_rest_path('user', 'effective_providers',
+                                            provider_id),
+                    auth=(user, users[user].password)).content
+    return json.loads(resp).get('name')
+
+
 @given(parsers.parse('initial spaces configuration in "{zone_host}" '
                      'Onezone service:\n{config}'))
 def create_and_configure_spaces(config, zone_host, admin_credentials, hosts,
