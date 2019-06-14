@@ -36,7 +36,7 @@ Feature: Space join methods in Onezone GUI
 
     # user1 joins space
     And user of browser1 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
-    And user of browser1 clicks on "Join space" button in expanded "DATA SPACE MANAGEMENT" Onezone panel
+    And user of browser1 clicks on "Join to space" button in expanded "DATA SPACE MANAGEMENT" Onezone panel
     And user of browser1 sees that "Join a space" modal has appeared
     And user of browser1 clicks on input box in active modal
     And user of browser1 types received token on keyboard
@@ -62,7 +62,7 @@ Feature: Space join methods in Onezone GUI
 
     # user1 joins space
     And user of browser1 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
-    And user of browser1 clicks on "Join space" button in expanded "DATA SPACE MANAGEMENT" Onezone panel
+    And user of browser1 clicks on "Join to space" button in expanded "DATA SPACE MANAGEMENT" Onezone panel
     And user of browser1 sees that "Join a space" modal has appeared
     And user of browser1 clicks on input box in active modal
     And user of browser1 types received token on keyboard
