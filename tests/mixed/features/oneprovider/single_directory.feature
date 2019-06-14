@@ -20,6 +20,9 @@ Feature: Tests for basic operations on single directory
                 - oneprovider-1:
                     storage: posix
                     size: 1000000
+    And effective support for user in provider:
+        oneprovider-1:
+            - user1
     And oneclient mounted in /home/user1/onedata using token by user1
     And opened browser with user1 logged to "onezone" service
     And opened oneprovider-1 Oneprovider view in web GUI by user1
