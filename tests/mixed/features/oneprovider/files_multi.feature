@@ -23,6 +23,10 @@ Feature: Files multiclient tests
                 - oneprovider-1:
                     storage: posix
                     size: 1000000
+    And effective support for users in provider:
+        oneprovider-1:
+            - user1
+            - user2
     And oneclients [client1, client2]
       mounted in [/home/user1/onedata, /home/user2/onedata]
       on client_hosts [oneclient-1, oneclient-2] respectively,

@@ -28,9 +28,13 @@ attrs_mapping = {
 
 def revoke_space_support_in_op_panel_using_rest(user, users, provider_host,
                                                 hosts, space_name,
+                                                admin_credentials,
+                                                onepanel_credentials,
                                                 zone_host='onezone'):
     user_client_op = login_to_panel(user, users[user].password,
                                     hosts[provider_host]['hostname'])
+    if user == onepanel_credentials.username:
+        user = admin_credentials.username
     user_client_oz = login_to_oz(user, users[user].password,
                                  hosts[zone_host]['hostname'])
 
@@ -41,7 +45,6 @@ def revoke_space_support_in_op_panel_using_rest(user, users, provider_host,
 
 def support_space_in_op_panel_using_rest(user, provider_host, hosts, users,
                                          tmp_memory, config):
-
     user_client = login_to_panel(user, users[user].password,
                                  hosts[provider_host]['hostname'])
 
@@ -77,9 +80,13 @@ def support_space_in_op_panel_using_rest(user, provider_host, hosts, users,
 def configure_sync_parameters_for_space_in_op_panel_rest(user, users,
                                                          provider_host, hosts,
                                                          conf, space_name,
-                                                         sync_type):
+                                                         sync_type,
+                                                         onepanel_credentials,
+                                                         admin_credentials):
     user_client_op = login_to_panel(user, users[user].password,
                                     hosts[provider_host]['hostname'])
+    if user == onepanel_credentials.username:
+        user = admin_credentials.username
     user_client_oz = login_to_oz(user, users[user].password,
                                  hosts['onezone']['hostname'])
 
@@ -112,9 +119,13 @@ def configure_sync_parameters_for_space_in_op_panel_rest(user, users,
 def assert_proper_space_configuration_in_op_panel_rest(space_name, user, users,
                                                        provider_host, hosts,
                                                        conf, sync_type,
+                                                       onepanel_credentials,
+                                                       admin_credentials,
                                                        zone_host='onezone'):
     user_client_op = login_to_panel(user, users[user].password,
                                     hosts[provider_host]['hostname'])
+    if user == onepanel_credentials.username:
+        user = admin_credentials.username
     user_client_oz = login_to_oz(user, users[user].password,
                                  hosts[zone_host]['hostname'])
 
