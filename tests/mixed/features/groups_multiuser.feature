@@ -15,7 +15,6 @@ Feature: Multiuser operations on groups using REST API and web GUI
                     size: 1000000
 
     And opened browser with [user1, user2] logged to [onezone, onezone] service
-    And opened oneprovider-1 Oneprovider view in web GUI by [user1, user2]
 
 
   Scenario Outline: User joins group
@@ -28,7 +27,7 @@ Feature: Multiuser operations on groups using REST API and web GUI
   Examples:
   | client1 | client2   |
   | REST    | web GUI   |
-  | web GUI | REST      | 
+  | web GUI | REST      |
 
 
   Scenario Outline: Group is not renamed because of lack in privileges
@@ -44,7 +43,7 @@ Feature: Multiuser operations on groups using REST API and web GUI
   Examples:
   | client1 | client2   |
   | REST    | web GUI   |
-  | web GUI | REST      | 
+  | web GUI | REST      |
 
 
   Scenario: Group is not removed because of lack in privileges
@@ -70,5 +69,5 @@ Feature: Multiuser operations on groups using REST API and web GUI
   Examples:
   | client1 | client2   |
   | REST    | web GUI   |
-  | web GUI | REST      | 
+  | web GUI | REST      |
 

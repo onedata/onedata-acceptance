@@ -19,9 +19,9 @@ from tests.gui.steps.common.copy_paste import *
 from tests.gui.steps.common.local_file_system import *
 from tests.gui.steps.common.notifies import *
 from tests.gui.steps.common.miscellaneous import *
+from tests.gui.steps.common.login import *
 
 from tests.gui.steps.onepanel.account_management import *
-from tests.gui.steps.onepanel.login import *
 from tests.gui.steps.onepanel.nodes import *
 from tests.gui.steps.onepanel.common import *
 from tests.gui.steps.onepanel.deployment import *
@@ -32,7 +32,6 @@ from tests.gui.steps.onezone.access_tokens import *
 from tests.gui.steps.onezone.data_space_management import *
 from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.manage_account import *
-from tests.gui.steps.onezone.login_page import *
 
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
@@ -50,7 +49,6 @@ from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.oneprovider.common import *
-
 
 scenarios('../features/onezone/space/creation.feature')
 scenarios('../features/onezone/space/basic_management.feature')

@@ -140,8 +140,8 @@ class FilePopularity(PageObject):
 
 
 class QuotaEditor(PageObject):
-    rename_button = Button('.oneicon-rename')
-    rename_input = Input('input')
+    edit_button = Button('.oneicon-rename')
+    edit_input = WebElement('input')
     accept_button = Button('.oneicon-checked')
     cancel_button = Button('.oneicon-ban-left')
 
@@ -156,7 +156,7 @@ class CleaningReport(PageObject):
 
 class SelectiveCleaningRecord(PageObject):
     name = id = Label('.label-column.control-label')
-    checkbox = Button('.toggle-column')
+    checkbox = Toggle('.toggle-column')
     value_input = Input('.condition-number-input')
     dropdown_button = Button('.ember-power-select-trigger')
     dropdown = WebItemsSequence('li.ember-power-select-option',
@@ -184,17 +184,17 @@ class AutoCleaning(PageObject):
 
     def click_rename_soft_quota_button(self, driver):
         ActionChains(driver).move_to_element(self._soft_quota).perform()
-        self.soft_quota.rename_button()
+        self.soft_quota.edit_button()
 
     def click_rename_hard_quota_button(self, driver):
         ActionChains(driver).move_to_element(self._hard_quota).perform()
-        self.hard_quota.rename_button()
+        self.hard_quota.edit_button()
 
 
 class NavigationHeader(PageObject):
     overview = NamedButton('li', text='Overview')
     storage_synchronization = NamedButton('li', text='Storage synchronization')
-    files_popularity = NamedButton('li', text='File-popularity')
+    file_popularity = NamedButton('li', text='File-popularity')
     auto_cleaning = NamedButton('li', text='Auto-cleaning')
 
 
@@ -220,7 +220,7 @@ class Space(PageObject):
 
     overview = WebItem('.tab-pane.active', cls=SpaceInfo)
     sync_chart = WebItem('.tab-pane.active', cls=SyncChart)
-    files_popularity = WebItem('.tab-pane.active', cls=FilePopularity)
+    file_popularity = WebItem('.tab-pane.active', cls=FilePopularity)
     auto_cleaning = WebItem('.tab-pane.active', cls=AutoCleaning)
 
 

@@ -12,7 +12,6 @@ Feature: Basic operations on groups
                     size: 1000000
                 
     And opened browser with user1 logged to "onezone" service
-    And opened oneprovider-1 Oneprovider view in web GUI by user1
 
 
   Scenario Outline: User creates groups

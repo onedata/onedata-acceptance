@@ -55,8 +55,8 @@ def press_enter_on_active_element(selenium, browser_id):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def title_contains(selenium, browser_id, text):
     page_title = selenium[browser_id].title
-    assert page_title == text, \
-        'page title is {} instead of expected {}'.format(page_title, text)
+    assert text in page_title, \
+        '{} page title should contain {}'.format(page_title, text)
 
 
 @when(parsers.re('users? of (?P<browser_id_list>.*) clicks on '
@@ -75,3 +75,15 @@ def wt_click_on_btn_in_popup(selenium, browser_id, btn, popup, popups):
 def g_click_on_btn_in_popup(selenium, browser_id, btn, popup, popups):
     getattr(popups(selenium[browser_id]),
             transform(popup)).buttons[btn].click()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) closes "(?P<modal>.*)" modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def close_modal(selenium, browser_id, modal, modals):
+    modal = transform(modal)
+    getattr(modals(selenium[browser_id]), modal).close()
+
+
+@wt(parsers.re('pass'))
+def pass_test():
+    pass

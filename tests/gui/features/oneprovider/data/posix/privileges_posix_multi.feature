@@ -38,11 +38,8 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
 
     And users opened [browser1, browser2] browsers' windows
     And users of [browser1, browser2] opened [onezone, onezone] page
-    And users of [browser1, browser2] logged as [user1, user2] to Onezone service
-    And users of [browser1, browser2] expanded the "go to your files" Onezone sidebar panel
-    And users of [browser1, browser2] clicked on "oneprovider-1" provider in expanded "GO TO YOUR FILES" Onezone panel
-    And users of [browser1, browser2] clicked on the "Go to your files" button in "oneprovider-1" provider's popup displayed on world map
-    And users of [browser1, browser2] seen that Oneprovider session has started
+    And users of [browser1, browser2] logged as [user1, user2] to [Onezone, Onezone] service
+    And opened oneprovider-1 Oneprovider view in web GUI by users of [browser1, browser2]
 
 
   Scenario: User1 changes file permission and user2 sees that it has changed
@@ -85,9 +82,9 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     And user of browser1 sets "664" permission code in active modal
     And user of browser1 presses enter on keyboard
     And user of browser1 sees that the modal has disappeared
-    
+
 	# User2 checks permission code
-    Then user of browser2 uses spaces select to change data space to "space1"             
+    Then user of browser2 uses spaces select to change data space to "space1"
     And user of browser2 sees file browser in data tab in Oneprovider page
     And user of browser2 selects "dir1" item(s) from file browser with pressed ctrl
     And user of browser2 clicks the button from top menu bar with tooltip "Change element permissions"
@@ -124,7 +121,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     And user of browser1 sets "753" permission code in active modal
     And user of browser1 clicks "Ok" confirmation button in displayed modal
     And user of browser1 sees that the modal has disappeared
-    
+
 	# User2 fails to remove dir
     Then user of browser2 selects "dir2" item(s) from file browser with pressed ctrl
     And user of browser2 clicks the button from top menu bar with tooltip "Remove element"
@@ -159,7 +156,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     And user of browser1 sets "753" permission code in active modal
     And user of browser1 clicks "Ok" confirmation button in displayed modal
     And user of browser1 sees that the modal has disappeared
-    
+
 	# User2 fails to rename dir
     Then user of browser2 selects "dir2" item(s) from file browser with pressed ctrl
     And user of browser2 clicks the button from top menu bar with tooltip "Rename element"
@@ -197,7 +194,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     And user of browser1 sets "753" permission code in active modal
     And user of browser1 clicks "Ok" confirmation button in displayed modal
     And user of browser1 sees that the modal has disappeared
-    
+
 	# User2 fails to create dir
     Then user of browser2 clicks the button from top menu bar with tooltip "Create directory"
     And user of browser2 sees that "New directory" modal has appeared
@@ -221,7 +218,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     And user of browser2 types "file1" on keyboard
     And user of browser2 presses enter on keyboard
     And user of browser2 sees that the modal has disappeared
-    
+
 	# User1 changes permission code
     And user of browser1 uses spaces select to change data space to "space2"
     And user of browser1 sees file browser in data tab in Oneprovider page
@@ -234,7 +231,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     And user of browser1 sets "753" permission code in active modal
     And user of browser1 clicks "Ok" confirmation button in displayed modal
     And user of browser1 sees that the modal has disappeared
-    
+
 	# User2 fails to remove file
     Then user of browser2 selects "file1" item(s) from file browser with pressed ctrl
     And user of browser2 clicks the button from top menu bar with tooltip "Remove element"
@@ -257,7 +254,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     And user of browser2 types "file1" on keyboard
     And user of browser2 presses enter on keyboard
     And user of browser2 sees that the modal has disappeared
-    
+
 	# User1 changes permission code
     And user of browser1 uses spaces select to change data space to "space2"
     And user of browser1 sees file browser in data tab in Oneprovider page
@@ -270,7 +267,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     And user of browser1 sets "753" permission code in active modal
     And user of browser1 clicks "Ok" confirmation button in displayed modal
     And user of browser1 sees that the modal has disappeared
-    
+
 	# User2 fails to rename file
     Then user of browser2 selects "file1" item(s) from file browser with pressed ctrl
     And user of browser2 clicks the button from top menu bar with tooltip "Rename element"
@@ -283,7 +280,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
 
 
   Scenario: User2 creates file and fails to create another file because of change in parent directory permission
-    
+
 	# User2 creates file
     When user of browser2 uses spaces select to change data space to "space2"
     And user of browser2 refreshes site
@@ -295,7 +292,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     And user of browser2 types "file1" on keyboard
     And user of browser2 presses enter on keyboard
     And user of browser2 sees that the modal has disappeared
-    
+
 	# User1 changes permission code
     And user of browser1 uses spaces select to change data space to "space2"
     And user of browser1 sees file browser in data tab in Oneprovider page
@@ -308,7 +305,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     And user of browser1 sets "753" permission code in active modal
     And user of browser1 clicks "Ok" confirmation button in displayed modal
     And user of browser1 sees that the modal has disappeared
-    
+
 	# User2 fails to create file
     Then user of browser2 clicks the button from top menu bar with tooltip "Create file"
     And user of browser2 sees that "New file" modal has appeared

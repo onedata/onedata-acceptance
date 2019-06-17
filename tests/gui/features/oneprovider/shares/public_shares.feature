@@ -23,10 +23,7 @@ Feature: Basic data tab operations on public shares in file browser
     And users opened [browser1, browser2] browsers' windows
     And user of browser1 opened onezone page
     And user of browser1 logged as user1 to Onezone service
-    And user of browser1 expanded the "go to your files" Onezone sidebar panel
-    And user of browser1 clicked on "oneprovider-1" provider in expanded "GO TO YOUR FILES" Onezone panel
-    And user of browser1 clicked on the "Go to your files" button in "oneprovider-1" provider's popup displayed on world map
-    And user of browser1 seen that Oneprovider session has started
+    And opened oneprovider-1 Oneprovider view in web GUI by user of browser1
 
 
   Scenario: User views and downloads files from public share
@@ -50,7 +47,7 @@ Feature: Basic data tab operations on public shares in file browser
     And user of browser1 sees that the modal has disappeared
 
     And user of browser2 opens received URL
-    Then user of browser2 sees that URL matches: https?://[^/]*/#/public/shares/.*
+    Then user of browser2 sees that URL matches: https?://[^/]*/opw/[^/]*/i#/public/shares/.*
     And user of browser2 sees that public share is named "share1"
 
     And user of browser2 sees that current working directory path visible in public share's file browser is as follows: share1
@@ -82,13 +79,13 @@ Feature: Basic data tab operations on public shares in file browser
     And user of browser1 sends copied URL to user of browser2
 
     And user of browser1 clicks "Open the share" confirmation button in displayed modal
-    And user of browser1 sees that URL matches: https?://[^/]*/#/onedata/shares/.*
+    And user of browser1 sees that URL matches: https?://[^/]*/opw/[^/]*/i#/onedata/shares/.*
     And user of browser1 selects "share1" from shares sidebar list
     And user of browser1 sees that selected share is named "share1"
     And user of browser1 sees that absolute share path visible in share's info header is as follows: space1/dir1
 
     And user of browser2 opens received URL
-    And user of browser2 sees that URL matches: https?://[^/]*/#/public/shares/.*
+    And user of browser2 sees that URL matches: https?://[^/]*/opw/[^/]*/i#/public/shares/.*
     And user of browser2 sees that public share is named "share1"
 
     # rename share1
@@ -123,13 +120,13 @@ Feature: Basic data tab operations on public shares in file browser
     And user of browser1 sends copied URL to user of browser2
 
     And user of browser1 clicks "Open the share" confirmation button in displayed modal
-    And user of browser1 sees that URL matches: https?://[^/]*/#/onedata/shares/.*
+    And user of browser1 sees that URL matches: https?://[^/]*/opw/[^/]*/i#/onedata/shares/.*
     And user of browser1 selects "share1" from shares sidebar list
     And user of browser1 sees that selected share is named "share1"
     And user of browser1 sees that absolute share path visible in share's info header is as follows: space1/dir1
 
     And user of browser2 opens received URL
-    And user of browser2 sees that URL matches: https?://[^/]*/#/public/shares/.*
+    And user of browser2 sees that URL matches: https?://[^/]*/opw/[^/]*/i#/public/shares/.*
     And user of browser2 sees that public share is named "share1"
 
     # remove share
@@ -167,7 +164,7 @@ Feature: Basic data tab operations on public shares in file browser
     And user of browser1 sees that the modal has disappeared
 
     And user of browser2 opens received URL
-    And user of browser2 sees that URL matches: https?://[^/]*/#/public/shares/.*
+    And user of browser2 sees that URL matches: https?://[^/]*/opw/[^/]*/i#/public/shares/.*
     And user of browser2 sees that public share is named "share1"
 
     And user of browser2 sees that current working directory path visible in public share's file browser is as follows: share1
@@ -211,7 +208,7 @@ Feature: Basic data tab operations on public shares in file browser
     And user of browser1 sees that the modal has disappeared
 
     And user of browser2 opens received URL
-    And user of browser2 sees that URL matches: https?://[^/]*/#/public/shares/.*
+    And user of browser2 sees that URL matches: https?://[^/]*/opw/[^/]*/i#/public/shares/.*
     And user of browser2 sees that public share is named "share1"
 
     And user of browser2 sees that current working directory path visible in public share's file browser is as follows: share1
@@ -256,7 +253,7 @@ Feature: Basic data tab operations on public shares in file browser
     And user of browser1 sees that the modal has disappeared
 
     And user of browser2 opens received URL
-    And user of browser2 sees that URL matches: https?://[^/]*/#/public/shares/.*
+    And user of browser2 sees that URL matches: https?://[^/]*/opw/[^/]*/i#/public/shares/.*
     And user of browser2 sees that public share is named "share1"
     And user of browser2 sees file browser in public share view
 

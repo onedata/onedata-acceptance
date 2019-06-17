@@ -184,13 +184,13 @@ def rename_item_in_op(client, user, users, result, space, old_name, new_name,
                '(is 1|are (?P<num>\d+)) items? in "(?P<space>.*)" in '
                '(?P<host>.*)'))
 def see_num_of_items_in_op(client, user, num, space, host, users,
-                           hosts, tmp_memory, selenium, op_page, oz_page):
+                           hosts, tmp_memory, selenium, op_page, oz_page, modals):
     num = int(num) if num is not None else 1
     client_lower = client.lower()
     if client_lower == 'web gui':
         see_num_of_items_in_path_in_op_gui(selenium, user, tmp_memory, op_page,
                                            '', space, num, oz_page, host,
-                                           hosts)
+                                           hosts, modals)
     elif client_lower == 'rest':
         assert_num_of_files_in_path_in_op_rest(num, space, user, users, host,
                                                hosts)
@@ -225,13 +225,13 @@ def write_to_file_in_op(client, user, text, file_name, space, host, users,
                '"(?P<space>.*)" in (?P<host>.*)'))
 def read_from_file_in_op(client, user, text, file_name, space, host, users,
                          hosts, selenium, oz_page, op_page, tmp_memory,
-                         tmpdir):
+                         tmpdir, modals):
     full_path = '{}/{}'.format(space, file_name)
     client_lower = client.lower()
     if client_lower == 'web gui':
         assert_file_content_in_op_gui(text, file_name, space, selenium, user,
                                       users, host, hosts, oz_page, op_page,
-                                      tmp_memory, tmpdir)
+                                      tmp_memory, tmpdir, modals)
     elif client_lower == 'rest':
         assert_file_content_in_op_rest(full_path, text, user, users,
                                        host, hosts)
@@ -372,14 +372,14 @@ def assert_mtime_not_earlier_than(client, file_path, selenium, user,
                'previously created'))
 def assert_directory_structure_in_op(client, selenium, user, op_page, oz_page, 
                                      tmp_memory, tmpdir, space, host, spaces, 
-                                     hosts, users):
+                                     hosts, users, modals):
     config = tmp_memory['config']
     client_lower = client.lower()
 
     if client_lower == 'web gui':
         assert_space_content_in_op_gui(config, selenium, user, op_page, 
                                        tmp_memory, tmpdir, space, oz_page, host,
-                                       hosts)
+                                       hosts, modals)
     elif client_lower == 'rest':
         assert_space_content_in_op_rest(user, users, hosts, config, space, 
                                         spaces, host)
@@ -396,12 +396,12 @@ def assert_directory_structure_in_op(client, selenium, user, op_page, oz_page,
                  'follow:\n(?P<config>(.|\s)*)'))
 def assert_directory_structure_in_op(client, selenium, user, op_page, oz_page,
                                      tmp_memory, tmpdir, space, host, spaces,
-                                     hosts, users, config):
+                                     hosts, users, config, modals):
     client_lower = client.lower()
     if client_lower == 'web gui':
         assert_space_content_in_op_gui(config, selenium, user, op_page,
                                        tmp_memory, tmpdir, space, oz_page,
-                                       host, hosts)
+                                       host, hosts, modals)
     elif client_lower == 'rest':
         assert_space_content_in_op_rest(user, users, hosts, config, space,
                                         spaces, host)

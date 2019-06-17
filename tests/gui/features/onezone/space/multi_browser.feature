@@ -15,7 +15,7 @@ Feature: Space join methods in Onezone GUI
 
     And users opened [browser1, browser2] browsers' windows
     And users of [browser1, browser2] opened [onezone, onezone] page
-    And users of [browser1, browser2] logged as [user1, user2] to Onezone service
+    And users of [browser1, browser2] logged as [user1, user2] to [Onezone, Onezone] service
     And user of browser2 expanded the "go to your files" Onezone sidebar panel
     And user of browser2 clicked on "oneprovider-1" provider in expanded "GO TO YOUR FILES" Onezone panel
     And user of browser2 clicked on the "Go to your files" button in "oneprovider-1" provider's popup displayed on world map
@@ -36,7 +36,7 @@ Feature: Space join methods in Onezone GUI
 
     # user1 joins space
     And user of browser1 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
-    And user of browser1 clicks on "Join space" button in expanded "DATA SPACE MANAGEMENT" Onezone panel
+    And user of browser1 clicks on "Join to space" button in expanded "DATA SPACE MANAGEMENT" Onezone panel
     And user of browser1 sees that "Join a space" modal has appeared
     And user of browser1 clicks on input box in active modal
     And user of browser1 types received token on keyboard
@@ -62,7 +62,7 @@ Feature: Space join methods in Onezone GUI
 
     # user1 joins space
     And user of browser1 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
-    And user of browser1 clicks on "Join space" button in expanded "DATA SPACE MANAGEMENT" Onezone panel
+    And user of browser1 clicks on "Join to space" button in expanded "DATA SPACE MANAGEMENT" Onezone panel
     And user of browser1 sees that "Join a space" modal has appeared
     And user of browser1 clicks on input box in active modal
     And user of browser1 types received token on keyboard

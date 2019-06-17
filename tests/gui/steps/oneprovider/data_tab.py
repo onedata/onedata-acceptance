@@ -7,11 +7,11 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-
 from itertools import izip
 
 import pytest
 from pytest_bdd import given, when, then, parsers
+from tests.utils.acceptance_utils import wt
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import (parse_seq, upload_file_path, transform)
@@ -29,6 +29,27 @@ def change_space_view_in_data_tab_in_op(selenium, browser_id,
     selector = op_page(driver).data.sidebar.space_selector
     selector.expand()
     selector.spaces[space_name].click()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*?) sees "(?P<space_name>.*?)" '
+               '(?P<option>is|is not) in spaces list on Oneprovider page'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_if_list_contains_space_in_data_tab_in_op(selenium, browser_id,
+                                                    space_name, option,
+                                                    op_page):
+    driver = selenium[browser_id]
+    space_selector = op_page(driver).data.sidebar.space_selector
+    space_selector.expand()
+    if option == 'is':
+        assert space_name in space_selector.spaces, ('space named "{}" found '
+                                                     'in spaces list, while it '
+                                                     'should not be')\
+            .format(space_name)
+    else:
+        assert space_name not in space_selector.spaces, ('space named "{}" not '
+                                                         'found in spaces list, '
+                                                         'while it should be')\
+            .format(space_name)
 
 
 @when(parsers.re(r'user of (?P<browser_id>.*?) clicks the button '
@@ -190,7 +211,7 @@ def wt_is_space_tree_root(selenium, browser_id, is_home, space_name, op_page):
                     'in data tab in Oneprovider page'))
 @then(parsers.parse('user of {browser_id} sees nonempty file browser '
                     'in data tab in Oneprovider page'))
-@repeat_failed(timeout=WAIT_BACKEND*2)
+@repeat_failed(timeout=WAIT_BACKEND * 2)
 def assert_nonempty_file_browser_in_data_tab_in_op(selenium, browser_id,
                                                    op_page, tmp_memory):
     driver = selenium[browser_id]
@@ -275,7 +296,7 @@ def resize_data_tab_sidebar(selenium, browser_id, direction, offset, op_page):
 
 @when(parsers.parse('user of {browser_id} waits for file upload to finish'))
 @then(parsers.parse('user of {browser_id} waits for file upload to finish'))
-@repeat_failed(timeout=WAIT_BACKEND*3)
+@repeat_failed(timeout=WAIT_BACKEND * 3)
 def wait_for_file_upload_to_finish(selenium, browser_id, op_page):
     driver = selenium[browser_id]
     uploader = op_page(driver).data.file_uploader
@@ -304,7 +325,8 @@ def upload_files_to_cwd_in_data_tab(selenium, browser_id, dir_path,
     directory = tmpdir.join(browser_id, *dir_path.split('/'))
     if directory.isdir():
         op_page(driver).data.toolbar.upload_files('\n'.join(str(item) for item
-                                                            in directory.listdir()
+                                                            in
+                                                            directory.listdir()
                                                             if item.isfile()))
     else:
         raise RuntimeError('directory {} does not exist'.format(str(directory)))
@@ -381,8 +403,9 @@ def assert_provider_chunks_in_data_distribution(selenium, browser_id, chunks,
     displayed_chunks = distribution.chunks
     expected_chunks = parse_seq(chunks, pattern=r'\(.+?\)')
     assert len(displayed_chunks) == len(expected_chunks), \
-        'displayed {} chunks instead of expected {}'.format(len(displayed_chunks),
-                                                            len(expected_chunks))
+        'displayed {} chunks instead of expected {}'.format(
+            len(displayed_chunks),
+            len(expected_chunks))
     for chunk1, chunk2 in izip(displayed_chunks, expected_chunks):
         assert all(round(x - z) == 0 for x, z in izip(chunk1,
                                                       parse_seq(chunk2,

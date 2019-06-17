@@ -25,10 +25,7 @@ Feature: Oneprovider transfers functionality
     And user opened browser window
     And user of browser opened onezone page
     And user of browser logged as user1 to Onezone service
-    And user of browser expanded the "go to your files" Onezone sidebar panel
-    And user of browser clicked on "oneprovider-1" provider in expanded "GO TO YOUR FILES" Onezone panel
-    And user of browser clicked on the "Go to your files" button in "oneprovider-1" provider's popup displayed on world map
-    And user of browser seen that Oneprovider session has started
+    And opened oneprovider-1 Oneprovider view in web GUI by user of browser
 
 
   Scenario: User replicates file to remote provider
@@ -62,6 +59,7 @@ Feature: Oneprovider transfers functionality
     And user of browser sees that there is non-zero throughput in transfer chart
 
     And user of browser clicks on the "data" tab in main menu sidebar
+    And user of browser uses spaces select to change data space to "space1"
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
@@ -101,6 +99,7 @@ Feature: Oneprovider transfers functionality
     And user of browser sees that there is non-zero throughput in transfer chart
 
     And user of browser clicks on the "data" tab in main menu sidebar
+    And user of browser uses spaces select to change data space to "space1"
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser sees file chunks for file "large_file.txt" as follows:
@@ -132,6 +131,7 @@ Feature: Oneprovider transfers functionality
             status: failed
 
     And user of browser clicks on the "data" tab in main menu sidebar
+    And user of browser uses spaces select to change data space to "smallSpace""
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
@@ -165,6 +165,7 @@ Feature: Oneprovider transfers functionality
             status: failed
 
     And user of browser clicks on the "data" tab in main menu sidebar
+    And user of browser uses spaces select to change data space to "smallSpace"
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser sees file chunks for file "large_file.txt" as follows:
@@ -196,6 +197,7 @@ Feature: Oneprovider transfers functionality
             status: failed
 
     And user of browser clicks on the "data" tab in main menu sidebar
+    And user of browser uses spaces select to change data space to "smallSpace"
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
@@ -229,6 +231,7 @@ Feature: Oneprovider transfers functionality
             status: failed
 
     And user of browser clicks on the "data" tab in main menu sidebar
+    And user of browser uses spaces select to change data space to "smallSpace"
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser sees file chunks for file "large_file.txt" as follows:
@@ -263,6 +266,7 @@ Feature: Oneprovider transfers functionality
             status: completed
 
     And user of browser clicks on the "data" tab in main menu sidebar
+    And user of browser uses spaces select to change data space to "space1"
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser sees file chunks for file "large_file.txt" as follows:
@@ -272,6 +276,7 @@ Feature: Oneprovider transfers functionality
 
   Scenario: User migrates file to remote provider
     When user of browser uses spaces select to change data space to "space1"
+    And user of browser sees file browser in data tab in Oneprovider page
     And user of browser uses upload button in toolbar to upload file "large_file.txt" to current dir
 
     # Wait to ensure synchronization between providers
@@ -302,6 +307,7 @@ Feature: Oneprovider transfers functionality
     And user of browser sees that there is non-zero throughput in transfer chart
 
     And user of browser clicks on the "data" tab in main menu sidebar
+    And user of browser uses spaces select to change data space to "space1"
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely empty
@@ -338,6 +344,7 @@ Feature: Oneprovider transfers functionality
             status: completed
 
     And user of browser clicks on the "data" tab in main menu sidebar
+    And user of browser uses spaces select to change data space to "space1"
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser sees file chunks for file "large_file.txt" as follows:

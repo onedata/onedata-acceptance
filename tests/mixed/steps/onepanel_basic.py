@@ -1,6 +1,8 @@
 """This module contains gherkin steps to run acceptance tests featuring
 basic operations in Onepanel using REST API mixed with web GUI.
 """
+from tests.gui.meta_steps.onezone.provider import \
+    send_copied_invite_token_in_oz_gui
 
 __author__ = "Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
@@ -37,12 +39,12 @@ def change_user_password_in_oz_panel(client, request, user, new_password, host,
 @when(parsers.re('using (?P<client>.*), (?P<user>.+?) logs out from '
                  '"(?P<host>.+?)" Onezone panel service'))
 def log_out_from_oz_panel(client, request, user, host, selenium, onepage,
-                          panel_login_page, popups):
+                          login_page, popups):
 
     if client.lower() == 'web gui':
         from tests.gui.meta_steps.onepanel.account_management import \
                                     log_out_from_oz_panel_gui
-        log_out_from_oz_panel_gui(user, selenium, onepage, panel_login_page,
+        log_out_from_oz_panel_gui(user, selenium, onepage, login_page,
                                   popups)
     elif client.lower() == 'rest':
         pass
@@ -55,13 +57,13 @@ def log_out_from_oz_panel(client, request, user, host, selenium, onepage,
                  'logs in to "(?P<host>.+?)" Onezone panel service using '
                  'password "(?P<password>.+?)"'))
 def login_to_oz_panel_using_new_password(client, request, user, host, selenium,
-                                         panel_login_page, hosts, password):
+                                         login_page, hosts, password):
 
     if client.lower() == 'web gui':
         from tests.gui.meta_steps.onepanel.account_management import \
                                     login_to_oz_panel_using_new_password_gui
         login_to_oz_panel_using_new_password_gui(selenium, user, password,
-                                                 panel_login_page)
+                                                 login_page)
     elif client.lower() == 'rest':
         from tests.mixed.steps.rest.onepanel.account_management import \
                                     login_to_oz_panel_using_new_password_rest
@@ -80,7 +82,7 @@ def modify_provider_using_test_hostname_in_op_panel(client, request, user,
                                                     new_provider_name,
                                                     host, users, hosts,
                                                     selenium, onepanel,
-                                                    panel_login_page,
+                                                    login_page,
                                                     modals):
 
     test_domain = '{}.test'.format(hosts[provider_name]['hostname'])
@@ -95,7 +97,7 @@ def modify_provider_using_test_hostname_in_op_panel(client, request, user,
                                     modify_provider_with_given_name_in_op_panel_using_gui
         modify_provider_with_given_name_in_op_panel_using_gui(
             selenium, user, onepanel, hosts[provider_name]['name'],
-            new_provider_name, test_domain, panel_login_page, users,
+            new_provider_name, test_domain, login_page, users,
             hosts, user, modals)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
@@ -109,7 +111,7 @@ def modify_provider_using_known_hostname_in_op_panel(client, request, user,
                                                      provider_name,
                                                      target_provider, host,
                                                      users, hosts, selenium,
-                                                     onepanel, panel_login_page,
+                                                     onepanel, login_page,
                                                      modals):
 
     if client.lower() == 'rest':
@@ -124,7 +126,7 @@ def modify_provider_using_known_hostname_in_op_panel(client, request, user,
         modify_provider_with_given_name_in_op_panel_using_gui(
             selenium, user, onepanel, provider_name,
             hosts[target_provider]['name'],
-            hosts[target_provider]['hostname'], panel_login_page, users, hosts,
+            hosts[target_provider]['hostname'], login_page, users, hosts,
             user, modals)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
@@ -136,7 +138,8 @@ def modify_provider_using_known_hostname_in_op_panel(client, request, user,
 def assert_provider_has_given_name_and_test_hostname_in_oz(client, request, user,
                                                            provider_name, provider,
                                                            host, users, hosts,
-                                                           selenium, oz_page):
+                                                           selenium, oz_page,
+                                                           modals):
 
     test_domain = '{}.test'.format(hosts[provider]['hostname'])
 
@@ -151,7 +154,8 @@ def assert_provider_has_given_name_and_test_hostname_in_oz(client, request, user
                                 assert_provider_has_name_and_hostname_in_oz_gui
         assert_provider_has_name_and_hostname_in_oz_gui(selenium, user, oz_page,
                                                         provider_name, provider,
-                                                        hosts, with_refresh=True,
+                                                        hosts, modals,
+                                                        with_refresh=True,
                                                         test_domain=True)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
@@ -160,7 +164,7 @@ def assert_provider_has_given_name_and_test_hostname_in_oz(client, request, user
 @when(parsers.re('using (?P<client>.*), (?P<user>.+?) deregisters '
                  'provider in "(?P<host>.+?)" Oneprovider panel service'))
 def deregister_provider_in_op_panel(client, request, user, host, hosts, 
-                                    selenium, onepanel, popups, users):
+                                    selenium, onepanel, popups, users, login_page):
 
     if client.lower() == 'rest':
         from tests.mixed.steps.rest.onepanel.provider import \
@@ -226,7 +230,7 @@ def assert_provider_does_not_support_space_in_oz(client, request, user,
                  'provider in "(?P<host>.+?)" Onezone service with following '
                  'configuration:\n(?P<config>(.|\s)*)'))
 def register_provider_in_op(client, request, user, hosts, users, selenium,
-                            onepanel, config, modals):
+                            onepanel, config, tmp_memory):
     """ Register provider according to given config.
 
     config should be in yaml format exactly as seen in panel, e.g.
@@ -266,7 +270,7 @@ def register_provider_in_op(client, request, user, hosts, users, selenium,
         from tests.gui.meta_steps.onepanel.provider import \
                                             register_provider_in_op_using_gui
         register_provider_in_op_using_gui(selenium, user, onepanel, hosts,
-                                          config, modals)
+                                          config, tmp_memory)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
@@ -293,8 +297,8 @@ def request_space_support(client, request, user, space_name,
         from tests.gui.meta_steps.onezone.spaces import \
                                             request_space_support_using_gui
         request_space_support_using_gui(selenium, user, oz_page,
-                                        space_name, tmp_memory, modals,
-                                        displays, clipboard, supporting_user)
+                                        space_name, tmp_memory, displays,
+                                        clipboard, supporting_user)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
@@ -357,8 +361,7 @@ def w_assert_space_is_supported_by_provider_in_oz(client, request, user,
                                 assert_space_is_supported_by_provider_in_oz_gui
         assert_space_is_supported_by_provider_in_oz_gui(selenium, user, oz_page,
                                                         space_name,
-                                                        provider_name, hosts,
-                                                        with_refresh=True)
+                                                        provider_name, hosts)
     elif client.lower() == 'rest':
         from tests.mixed.steps.rest.onezone.space_management import \
                                 assert_space_is_supported_by_provider_in_oz_rest
@@ -379,7 +382,8 @@ def w_assert_space_is_supported_by_provider_in_oz(client, request, user,
                  'panel service'))
 def revoke_space_support_in_op_panel(client, request, user, space_name,
                                      provider_name, host, selenium, onepanel,
-                                     popups, modals, users, hosts):
+                                     popups, modals, users, hosts,
+                                     admin_credentials, onepanel_credentials):
 
     if client.lower() == 'web gui':
         from tests.gui.meta_steps.onepanel.spaces import \
@@ -392,7 +396,9 @@ def revoke_space_support_in_op_panel(client, request, user, space_name,
         from tests.mixed.steps.rest.onepanel.spaces import \
                                     revoke_space_support_in_op_panel_using_rest
         revoke_space_support_in_op_panel_using_rest(user, users, host, hosts,
-                                                    space_name)
+                                                    space_name,
+                                                    admin_credentials,
+                                                    onepanel_credentials)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
@@ -430,7 +436,9 @@ def cp_files_to_space_root_dir(user, src_path, dst_path, space_name, tmpdir,
 def assert_proper_space_configuration_in_op_panel(client, request, user,
                                                   sync_type, space, config,
                                                   selenium, onepanel,
-                                                  users, host, hosts):
+                                                  users, host, hosts,
+                                                  onepanel_credentials,
+                                                  admin_credentials):
     """Assert configuration displayed in space record in panel.
 
     config should be in yaml format exactly as seen in panel, e.g.
@@ -461,7 +469,9 @@ def assert_proper_space_configuration_in_op_panel(client, request, user,
                             assert_proper_space_configuration_in_op_panel_rest
         assert_proper_space_configuration_in_op_panel_rest(space, user, users,
                                                            host, hosts,
-                                                           config, sync_type)
+                                                           config, sync_type,
+                                                           onepanel_credentials,
+                                                           admin_credentials)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
@@ -473,7 +483,9 @@ def assert_proper_space_configuration_in_op_panel(client, request, user,
 def configure_sync_parameters_for_space_in_op_panel(client, request, user,
                                                     sync_type, space_name, host,
                                                     config, selenium, onepanel,
-                                                    popups, users, hosts):
+                                                    popups, users, hosts,
+                                                    onepanel_credentials,
+                                                    admin_credentials):
     """Configure synchronization parameters for space.
 
     config should be in yaml format exactly as seen in panel, e.g.
@@ -506,7 +518,9 @@ def configure_sync_parameters_for_space_in_op_panel(client, request, user,
         configure_sync_parameters_for_space_in_op_panel_rest(user, users, host,
                                                              hosts, config,
                                                              space_name,
-                                                             sync_type)
+                                                             sync_type,
+                                                             onepanel_credentials,
+                                                             admin_credentials)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
@@ -517,7 +531,7 @@ def configure_sync_parameters_for_space_in_op_panel(client, request, user,
 @repeat_failed(timeout=WAIT_BACKEND, interval=1.5)
 def assert_space_content_in_op(client, request, config, selenium, user,
                                op_page, tmp_memory, tmpdir, users, hosts,
-                               space_name, spaces, host, oz_page):
+                               space_name, spaces, host, oz_page, modals):
     """ Assert space has given content in provider.
 
      space content format given in yaml is as follow:
@@ -539,7 +553,7 @@ def assert_space_content_in_op(client, request, config, selenium, user,
                                                 assert_space_content_in_op_gui
         assert_space_content_in_op_gui(config, selenium, user, op_page,
                                        tmp_memory, tmpdir, space_name, oz_page,
-                                       host, hosts)
+                                       host, hosts, modals)
     elif client.lower() == 'rest':
         from tests.mixed.steps.rest.oneprovider.data import \
                                                 assert_space_content_in_op_rest
@@ -559,7 +573,8 @@ def rm_files_from_space_root_dir(user, src_path, space_name, tmp_memory, hosts):
 @when(parsers.re('using (?P<client>.*), (?P<user>.+?) copies Id of '
                  '"(?P<space_name>.+?)" space in Spaces page in Onepanel'))
 def copy_id_of_space(client, request, user, space_name, selenium, onepanel,
-                     tmp_memory, users, hosts):
+                     tmp_memory, users, hosts, admin_credentials,
+                     onepanel_credentials):
 
     if client.lower() == 'web gui':
         from tests.gui.meta_steps.onepanel.spaces import \
@@ -568,7 +583,8 @@ def copy_id_of_space(client, request, user, space_name, selenium, onepanel,
     elif client.lower() == 'rest':
         from tests.mixed.steps.rest.onezone.space_management import \
                                                         copy_id_of_space_rest
-        copy_id_of_space_rest(user, users, hosts, space_name, tmp_memory)
+        copy_id_of_space_rest(user, users, hosts, space_name, tmp_memory,
+                              onepanel_credentials, admin_credentials)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
@@ -578,3 +594,18 @@ def copy_id_of_space(client, request, user, space_name, selenium, onepanel,
 def remove_spaces_in_oz(client, request, user, seconds):
     from tests.utils.acceptance_utils import wait_given_time
     wait_given_time(seconds)
+
+
+@then(parsers.re('using (?P<client>.*), (?P<user>.+?) sends copied invite token '
+                 'to (?P<send_to>.+?) user '
+                 'in "(?P<host>.+?)" Onezone service'))
+def send_copied_invite_token(client, user, selenium, oz_page,
+                             tmp_memory, displays, clipboard, send_to):
+    if client.lower() == 'web gui':
+        from tests.gui.meta_steps.onezone.provider import \
+                                    assert_there_is_no_provider_in_oz_gui
+        send_copied_invite_token_in_oz_gui(selenium, user, oz_page,
+                                           send_to,
+                                           tmp_memory, displays, clipboard)
+    else:
+        raise NoSuchClientException('Client: {} not found.'.format(client))

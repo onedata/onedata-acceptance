@@ -38,6 +38,7 @@ Feature: ACL basic tests
             - dir1
 
 
+
   Scenario: User sets ACL with one entry
     When using <client1>, user1 sets new ACE for <item> in space "space1" with <privileges> privileges set for <subject_type> <subject_name> in oneprovider-1
     Then using <client2>, user1 sees that <item> in space "space1" has <privileges> privileges set for <subject_type> <subject_name> in first ACL record in oneprovider-1

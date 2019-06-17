@@ -26,7 +26,7 @@ def create_groups_using_rest(user, users, hosts, group_list, host='onezone'):
     user_api = UserApi(user_client)
 
     for group_name in parse_seq(group_list):
-        user_api.create_group_for_user(GroupCreateRequest(name=group_name))
+        user_api.create_user_group(GroupCreateRequest(name=group_name))
 
 
 @when(parsers.re('(?P<user>\w+) sees groups? (?P<group_list>.*) using REST'))

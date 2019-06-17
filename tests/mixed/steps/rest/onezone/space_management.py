@@ -34,7 +34,7 @@ def leave_spaces_in_oz_using_rest(user, users, zone_name, hosts, space_list,
     user_api = UserApi(user_client)
 
     for space_name in parse_seq(space_list):
-        user_api.remove_user_space(spaces[space_name])
+        user_api.leave_space(spaces[space_name])
 
 
 def rename_spaces_in_oz_using_rest(user, users, zone_name, hosts, space_list,
@@ -112,7 +112,7 @@ def add_users_to_space_in_oz_using_rest(user_list, users, zone_name, hosts,
     space_api = SpaceApi(user_client)
 
     for user in parse_seq(user_list):
-        space_api.add_user_to_space(spaces[space_name], users[user].id)
+        space_api.add_space_user(spaces[space_name], users[user].id)
 
 
 def invite_otehr_users_to_space_using_rest(user, users, zone_name, hosts,
@@ -255,7 +255,10 @@ def assert_provider_does_not_support_space_in_oz_rest(user, users, zone_host,
         'Provider {} supports space {}'.format(provider_name, space_name)
 
 
-def copy_id_of_space_rest(user, users, hosts, space_name, tmp_memory):
+def copy_id_of_space_rest(user, users, hosts, space_name, tmp_memory,
+                          onepanel_credentials, admin_credentials):
+    if user == onepanel_credentials.username:
+        user = admin_credentials.username
     user_client = login_to_oz(user, users[user].password,
                               hosts['onezone']['hostname'])
     space = get_space_with_name(user_client, space_name)

@@ -19,11 +19,8 @@ Feature: Oneprovider functionality using multiple providers and multiple browser
 
     And users opened [browser1, browser2] browsers' windows
     And users of [browser1, browser2] opened [onezone, onezone] page
-    And users of [browser1, browser2] logged as [user1, user2] to Onezone service
-    And users of [browser1, browser2] expanded the "go to your files" Onezone sidebar panel
-    And users of [browser1, browser2] clicked on ["oneprovider-1", "oneprovider-2"] provider in expanded "GO TO YOUR FILES" Onezone panel
-    And users of [browser1, browser2] clicked on the "Go to your files" button in provider popup
-    And users of [browser1, browser2] seen that Oneprovider session has started
+    And users of [browser1, browser2] logged as [user1, user2] to [Onezone, Onezone] service
+    And opened [oneprovider-1, oneprovider-2] Oneprovider view in web GUI by users of [browser1, browser2]
 
 
   Scenario: User uploads file on one provider, sees it's distribution, downloads on other provider and again sees it's distribution

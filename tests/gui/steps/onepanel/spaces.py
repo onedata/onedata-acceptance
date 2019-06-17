@@ -9,15 +9,17 @@ __license__ = ("This software is released under the MIT license cited in "
 
 
 import yaml
+import re
 
 from pytest_bdd import when, then, parsers
+from selenium.common.exceptions import StaleElementReferenceException
 
+from tests.utils.utils import repeat_failed
 from tests.gui.conftest import (WAIT_FRONTEND, WAIT_BACKEND,
                                 SELENIUM_IMPLICIT_WAIT)
-from tests.gui.utils.generic import (transform, implicit_wait, parse_seq)
-from tests.utils.utils import repeat_failed
+from tests.gui.utils.generic import transform, implicit_wait, parse_seq
 from tests.utils.acceptance_utils import wt
-from selenium.common.exceptions import StaleElementReferenceException
+from tests.gui.steps.common.miscellaneous import _enter_text
 
 
 @when(parsers.parse('user of {browser_id} selects "{storage}" from storage '
@@ -402,6 +404,7 @@ def click_on_navigation_tab_in_space(browser_id, tab_name, onepanel, selenium):
     getattr(nav, tab).click()
 
 
+
 @wt(parsers.parse('user of {browser_id} cannot click on {tab_name} '
                   'navigation tab in space "{space_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -441,11 +444,11 @@ def enable_selective_cleaning(selenium, browser_id, onepanel):
 def enable_option_in_auto_cleaning(selenium, browser_id, onepanel, option):
     driver = selenium[browser_id]
     tab = onepanel(driver).content.spaces.space.auto_cleaning
-    tab.selective_cleaning_form[option].checkbox()
+    tab.selective_cleaning_form[option].checkbox.check()
 
 
-@wt(parsers.parse('user of {browser_id} clicks {option} on dropdown {rule} rule '
-                  'in auto-cleaning tab in Onepanel'))
+@wt(parsers.parse('user of {browser_id} clicks {option} on dropdown '
+                  '{rule} rule in auto-cleaning tab in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_option_on_dropdown_rule(selenium, browser_id, onepanel, option, rule):
     driver = selenium[browser_id]
@@ -469,14 +472,14 @@ def click_change_quota_button(selenium, browser_id, quota, onepanel):
 def type_value_to_quota_input(selenium, browser_id, quota, value, onepanel):
     quota = '{}_quota'.format(quota)
     driver = selenium[browser_id]
-    getattr(onepanel(driver).content.spaces.space.auto_cleaning,
-            quota).rename_input = value
+    _enter_text(getattr(onepanel(driver).content.spaces.space.auto_cleaning,
+                quota).edit_input, value)
 
 
 @wt(parsers.parse('user of {browser_id} confirms changing value '
                   'of {quota} quota in auto-cleaning tab in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_rename_quota(selenium, browser_id, quota, onepanel):
+def confirm_quota_value_change(selenium, browser_id, quota, onepanel):
     quota = '{}_quota'.format(quota)
     driver = selenium[browser_id]
     getattr(onepanel(driver).content.spaces.space.auto_cleaning,
@@ -499,8 +502,8 @@ def see_released_size_in_cleaning_report(selenium, browser_id, onepanel, size):
     driver = selenium[browser_id]
     cleaning_report = (onepanel(driver).content.spaces.space
                        .auto_cleaning.cleaning_reports)[0]
-
-    released_size = cleaning_report.released_size.text.split(' (out')[0]
+    released_size = re.match(r'((\d+) (MiB|B)) \(out of (\d*\.\d+|\d+) MiB\)',
+                             cleaning_report.released_size.text).group(1)
     assert released_size == size, ('released size is {} instead of {}'
                                    .format(released_size, size))
 

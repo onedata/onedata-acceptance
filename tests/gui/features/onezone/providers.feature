@@ -7,106 +7,53 @@ Feature: Basic management of providers in Onezone GUI
     And initial spaces configuration in "onezone" Onezone service:
           space1:
               owner: user1
-              home space for:
-                  - user1
               providers:
                   - oneprovider-1:
                       storage: posix
                       size: 1000000
 
     And user opened browser window
-    And user of browser opened onezone page
+    And user of browser opened Onezone page
     And user of browser logged as user1 to Onezone service
 
 
-  Scenario: User opens provider popup by clicking on supporting provider in space's submenu
-    When user of browser expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
-    And user of browser expands submenu of space named "space1" by clicking on space record in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser clicks on provider "oneprovider-1" in submenu of space named "space1" in expanded "DATA SPACE MANAGEMENT" Onezone panel
+  Scenario: User opens provider popup by clicking on supporting provider in data page
+    When user of browser clicks on Providers in the main menu
+    And user of browser clicks on provider "oneprovider-1" in providers sidebar
     Then user of browser sees that provider popup for provider "oneprovider-1" has appeared on world map
 
 
-  Scenario: User can go to Oneprovider by clicking on Go to your files in provider's popup
-    When user of browser expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
-    And user of browser expands submenu of space named "space1" by clicking on space record in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser clicks on provider "oneprovider-1" in submenu of space named "space1" in expanded "DATA SPACE MANAGEMENT" Onezone panel
+  Scenario: User can go to Oneprovider by clicking on Visit provider in provider's popup
+    When user of browser clicks on Providers in the main menu
+    And user of browser clicks on provider "oneprovider-1" in providers sidebar
     And user of browser sees that provider popup for provider "oneprovider-1" has appeared on world map
-    And user of browser clicks on the "Go to your files" button in "oneprovider-1" provider's popup displayed on world map
+    And user of browser clicks on Visit provider button on provider popover
     And user of browser sees that Oneprovider session has started
-    Then user of browser sees that URL matches: https?://[^/]*/#/onedata/data/.*
+    Then user of browser sees that URL matches: https?://[^/]*/opw/[^/]*/i#/onedata/data/.*
 
 
-  Scenario: User sees that after clicking on provider's circle on world map, provider's popup appears
-    When user of browser sees that there is no displayed provider popup next to 1st provider circle on Onezone world map
-    And user of browser clicks on 1st provider circle on Onezone world map
-    Then user of browser sees that provider popup has appeared next to 1st provider circle on Onezone world map
-
-
-  # TODO clicking on other provider do when there will be other providers
-  Scenario: User sees that provider popup can be closed with clicking the same or other provider circle
-    When user of browser sees that there is no displayed provider popup next to 1st provider circle on Onezone world map
-    And user of browser clicks on 1st provider circle on Onezone world map
-    And user of browser sees that provider popup has appeared next to 1st provider circle on Onezone world map
-    And user of browser clicks on 1st provider circle on Onezone world map
-    Then user of browser sees that provider popup next to 1st provider circle on Onezone world map has disappeared
-
-
-  # TODO now it is not possible to close by clicking outside map, try it when it will be possible
   Scenario: User sees that provider popup can be closed with clicking on map
-    When user of browser sees that there is no displayed provider popup next to 1st provider circle on Onezone world map
-    And user of browser clicks on 1st provider circle on Onezone world map
-    And user of browser sees that provider popup has appeared next to 1st provider circle on Onezone world map
+    When user of browser clicks on Providers in the main menu
+    And user of browser clicks on provider "oneprovider-1" in providers sidebar
     And user of browser clicks on Onezone world map
-    Then user of browser sees that provider popup next to 1st provider circle on Onezone world map has disappeared
+    Then user of browser does not see provider popover on Onezone world map
 
 
-  Scenario: User sees that spaces list in provider popup and provider record in "GO TO YOUR FILES" matches
-    When user of browser expands the "GO TO YOUR FILES" Onezone sidebar panel
-    And user of browser expands submenu of provider "oneprovider-1" by clicking on cloud in provider record in expanded "GO TO YOUR FILES" Onezone panel
-    And user of browser clicks on "oneprovider-1" provider in expanded "GO TO YOUR FILES" Onezone panel
-    And user of browser sees that provider popup for provider "oneprovider-1" has appeared on world map
-    Then user of browser sees that the list of spaces in provider popup and in expanded "GO TO YOUR FILES" Onezone panel are the same for provider named "oneprovider-1"
-
-
-  Scenario: User sees that if space is displayed in provider submenu in GO TO YOUR FILES panel, that provider is also displayed in submenu of that space in DATA SPACE MANAGEMENT panel
-    When user of browser expands the "GO TO YOUR FILES" Onezone sidebar panel
-    And user of browser sees that there is provider "oneprovider-1" in expanded "GO TO YOUR FILES" Onezone panel
-    And user of browser expands submenu of provider "oneprovider-1" by clicking on cloud in provider record in expanded "GO TO YOUR FILES" Onezone panel
-    And user of browser sees that there is space named "space1" in submenu of provider "oneprovider-1" in expanded "GO TO YOUR FILES" Onezone panel
-    And user of browser expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
-    And user of browser expands submenu of space named "space1" by clicking on space record in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    Then user of browser sees that there is provider "oneprovider-1" in submenu of space named "space1" in expanded "DATA SPACE MANAGEMENT" Onezone panel
+  Scenario: User sees that if space is displayed in provider in Data, that provider is also displayed in provider in Spaces
+    When user of browser clicks on Providers in the main menu
+    And user of browser clicks on provider "oneprovider-1" in providers sidebar
+    And user of browser sees "space1" is on the spaces list on provider popover
+    And user of browser clicks on Data in the main menu
+    And user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Providers of "space1" in the sidebar
+    Then user of browser sees "oneprovider-1" is on the providers list
 
 
   Scenario: User sees that home space of provider should have "cloud with home" icon
-    When user of browser expands the "GO TO YOUR FILES" Onezone sidebar panel
-    And user of browser sees that there is provider "oneprovider-1" in expanded "GO TO YOUR FILES" Onezone panel
-    And user of browser expands submenu of provider "oneprovider-1" by clicking on cloud in provider record in expanded "GO TO YOUR FILES" Onezone panel
-    And user of browser sees that spaces counter for "oneprovider-1" match number of displayed supported spaces in expanded submenu of given provider in expanded "GO TO YOUR FILES" Onezone panel
-    Then user of browser sees that space named "space1" in submenu of provider "oneprovider-1" in expanded "GO TO YOUR FILES" Onezone panel is set as home
-
-
-  Scenario: User sees that after unsupporting space, number displayed in space counter for given provider decreases
-    When user of browser expands the "GO TO YOUR FILES" Onezone sidebar panel
-    And user of browser sees that there is provider "oneprovider-1" in expanded "GO TO YOUR FILES" Onezone panel
-    And user of browser sees that spaces counter for provider "oneprovider-1" displays 1 in expanded "GO TO YOUR FILES" Onezone panel
-    And user of browser expands submenu of provider "oneprovider-1" by clicking on cloud in provider record in expanded "GO TO YOUR FILES" Onezone panel
-    And user of browser sees that spaces counter for "oneprovider-1" match number of displayed supported spaces in expanded submenu of given provider in expanded "GO TO YOUR FILES" Onezone panel
-
-    # unsupport space
-    When user of browser expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
-    And user of browser expands submenu of space named "space1" by clicking on space record in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser clicks on unsupport space for provider "oneprovider-1" in submenu of space named "space1" in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser sees that "Unsupport space" modal has appeared
-    And user of browser selects "I understand the risk of data loss" option in displayed modal
-    And user of browser sees that "Yes" item displayed in modal is enabled
-    And user of browser clicks "Yes" confirmation button in displayed modal
-    And user of browser sees that the modal has disappeared
-
-    # confirm results
-    Then user of browser sees that spaces counter for provider "oneprovider-1" displays 0 in expanded "GO TO YOUR FILES" Onezone panel
-    And user of browser expands submenu of provider "oneprovider-1" by clicking on cloud in provider record in expanded "GO TO YOUR FILES" Onezone panel
-    And user of browser sees that spaces counter for "oneprovider-1" match number of displayed supported spaces in expanded submenu of given provider in expanded "GO TO YOUR FILES" Onezone panel
+    When user of browser clicks on Providers in the main menu
+    And user of browser clicks on provider "oneprovider-1" in providers sidebar
+    And user of browser clicks on Toggle home provider button on provider popover
+    Then user of browser sees that home of "oneprovider-1" has appeared in the data sidebar
 
 # TODO VFS-5244 fix kill_providers() and change alert text
 #  Scenario: User sees that when no provider is working appropriate msg is shown

@@ -18,15 +18,15 @@ from tests.utils.utils import repeat_failed
 
 
 def _click_on_btn_for_token(driver, oz_page, ordinal, btn):
-    token = oz_page(driver)['access tokens'].tokens[int(ordinal[:-2]) - 1]
-    action = getattr(token, btn)
-    action()
+    action = btn + '_token'
+    oz_page(driver)['tokens'].elements_list[int(ordinal[:-2]) - 1].click()
+    getattr(oz_page(driver)['tokens'], action).click()
 
 
 @given(parsers.re(r'user of (?P<browser_id>.*?) clicked on (?P<btn>copy|remove) '
                   r'icon for (?P<ordinal>1st|2nd|3rd|\d*?[4567890]th|\d*?11th|'
                   r'\d*?12th|\d*?13th|\d*?[^1]1st|\d*?[^1]2nd|\d*?[^1]3rd) '
-                  r'item on tokens list in expanded "ACCESS TOKENS" Onezone panel'))
+                  r'item on tokens list in tokens sidebar'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def g_click_on_btn_for_oz_access_token(selenium, browser_id, btn,
                                        ordinal, oz_page):
@@ -35,13 +35,13 @@ def g_click_on_btn_for_oz_access_token(selenium, browser_id, btn,
 
 
 @when(parsers.re(r'user of (?P<browser_id>.*?) clicks on (?P<btn>copy|remove) '
-                 r'icon for (?P<ordinal>1st|2nd|3rd|\d*?[4567890]th|\d*?11th|'
+                 r'button for (?P<ordinal>1st|2nd|3rd|\d*?[4567890]th|\d*?11th|'
                  r'\d*?12th|\d*?13th|\d*?[^1]1st|\d*?[^1]2nd|\d*?[^1]3rd) '
-                 r'item on tokens list in expanded "ACCESS TOKENS" Onezone panel'))
+                 r'item on tokens list in tokens page'))
 @then(parsers.re(r'user of (?P<browser_id>.*?) clicks on (?P<btn>copy|remove) '
-                 r'icon for (?P<ordinal>1st|2nd|3rd|\d*?[4567890]th|\d*?11th|'
+                 r'button for (?P<ordinal>1st|2nd|3rd|\d*?[4567890]th|\d*?11th|'
                  r'\d*?12th|\d*?13th|\d*?[^1]1st|\d*?[^1]2nd|\d*?[^1]3rd) '
-                 r'item on tokens list in expanded "ACCESS TOKENS" Onezone panel'))
+                 r'item on tokens list in tokens page'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def wt_click_on_btn_for_oz_access_token(selenium, browser_id, btn,
                                         ordinal, oz_page):
@@ -60,32 +60,33 @@ def g_record_copied_access_token(browser_id, tmp_memory, displays, clipboard):
 @when(parsers.re(r'user of (?P<browser_id>.+?) sees that token for '
                  r'(?P<ordinal>1st|2nd|3rd|\d*?[4567890]th|\d*?11th|'
                  r'\d*?12th|\d*?13th|\d*?[^1]1st|\d*?[^1]2nd|\d*?[^1]3rd) '
-                 r'item on tokens list in expanded "ACCESS TOKENS" Onezone '
-                 r'panel has been copied correctly'))
+                 r'item on tokens list in tokens sidebar '
+                 r'has been copied correctly'))
 @then(parsers.re(r'user of (?P<browser_id>.+?) sees that token for '
                  r'(?P<ordinal>1st|2nd|3rd|\d*?[4567890]th|\d*?11th|'
                  r'\d*?12th|\d*?13th|\d*?[^1]1st|\d*?[^1]2nd|\d*?[^1]3rd) '
-                 r'item on tokens list in expanded "ACCESS TOKENS" Onezone '
-                 r'panel has been copied correctly'))
+                 r'item on tokens list in tokens sidebar '
+                 r'has been copied correctly'))
 def assert_oz_access_token_has_been_copied_correctly(selenium, browser_id,
                                                      ordinal, oz_page,
                                                      displays, clipboard):
     driver = selenium[browser_id]
-    val = oz_page(driver)['access tokens'].tokens[int(ordinal[:-2]) - 1].value
+    oz_page(driver)['tokens'].elements_list[int(ordinal[:-2]) - 1].click()
+    val = oz_page(driver)['tokens'].token
     copied_val = clipboard.paste(display=displays[browser_id])
     assert val == copied_val, 'Access Token has been copied incorrectly. ' \
                               'Expected {}, got {}'.format(val, copied_val)
 
 
 @when(parsers.parse('user of {browser_id} sees exactly {expected_num:d} item(s) '
-                    'on tokens list in expanded "ACCESS TOKENS" Onezone panel'))
+                    'on tokens list in tokens sidebar'))
 @then(parsers.parse('user of {browser_id} sees exactly {expected_num:d} item(s) '
-                    'on tokens list in expanded "ACCESS TOKENS" Onezone panel'))
+                    'on tokens list in tokens sidebar'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_oz_access_tokens_list_has_num_tokens(selenium, browser_id,
                                                 expected_num, oz_page):
     driver = selenium[browser_id]
-    displayed_tokens_num = oz_page(driver)['access tokens'].tokens.count()
+    displayed_tokens_num = len(oz_page(driver)['tokens'].elements_list)
     assert displayed_tokens_num == expected_num, \
         ('Displayed number of tokens in ACCESS TOKENS oz panel: {seen} '
          'instead of excepted: {excepted}'.format(seen=displayed_tokens_num,
@@ -93,15 +94,13 @@ def assert_oz_access_tokens_list_has_num_tokens(selenium, browser_id,
 
 
 @when(parsers.parse('user of {browser_id} clicks on "Create new '
-                    'access token" button in expanded "ACCESS TOKENS" '
-                    'Onezone panel'))
+                    'token" button in tokens sidebar'))
 @then(parsers.parse('user of {browser_id} clicks on "Create new '
-                    'access token" button in expanded "ACCESS TOKENS" '
-                    'Onezone panel'))
+                    'token" button in tokens sidebar'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_on_create_new_token_in_oz_access_tokens_panel(selenium, browser_id,
                                                         oz_page):
-    oz_page(selenium[browser_id])['access tokens'].create_new_access_token()
+    oz_page(selenium[browser_id])['tokens'].create_token()
 
 
 @given(parsers.parse('user of {browser_id} created and recorded access token '

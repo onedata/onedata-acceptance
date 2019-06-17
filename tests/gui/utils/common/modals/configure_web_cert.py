@@ -2,14 +2,14 @@
 domain change.
 """
 
-from tests.gui.utils.core.web_elements import NamedButton
-from tests.gui.utils.core.web_elements import Input
-from .modal import Modal
-
 __author__ = "Jakub Liput"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
+
+from tests.gui.utils.core.web_elements import NamedButton
+from tests.gui.utils.core.web_elements import Input
+from .modal import Modal
 
 
 class ConfigureWebCertModal(Modal):

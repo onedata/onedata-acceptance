@@ -88,15 +88,21 @@ def wt_type_host_domain_to_in_box_in_provider_details_form(selenium, browser_id,
                     'button in provider details form in Provider panel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_btn_in_modify_provider_detail_form(selenium, browser_id, onepanel):
-    onepanel(selenium[browser_id]).content.provider.form.modify_provider_details()
+    driver = selenium[browser_id]
+    onepanel(driver).content.provider.form.modify_provider_details()
+
+
+@wt(parsers.parse('user of {browser_id} clicks Discard button on modal '
+                  'in Provider panel'))
+def click_discard_button_on_modal_in_provider_panel(selenium, browser_id, onepanel):
+    driver = selenium[browser_id]
+    onepanel(driver).discard_button()
 
 
 @wt(parsers.parse('user of {browser_id} clicks on Discard '
                   'button in the configure web cert modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_on_discard_btn_in_domain_change_modal(selenium, browser_id, onepanel,
-                                                   modals):
-    # TODO: there is currently a bug in GUI - this modal does not appear sometimes
+def wt_click_on_discard_btn_in_domain_change_modal(selenium, browser_id, modals):
     try:
         modals(selenium[browser_id]).configure_web_cert.discard()
     except RuntimeError as e:
@@ -157,3 +163,12 @@ def wt_assert_value_of_provider_domain(selenium, browser_id, provider, hosts,
     assert displayed_val == expected_val, \
         ('displayed {} instead of expected {} as '
          'provider\'s domain'.format(displayed_val, expected_val))
+
+
+@wt(parsers.parse('user of {browser_id} clicks go to emergency interface '
+                  'in provider deregistration popups'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def go_to_emergency_interface(selenium, browser_id, popups):
+    driver = selenium[browser_id]
+    popups(driver).deregister_provider.buttons['Go to emergency interface'].click()
+

@@ -19,10 +19,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And user opened browser window
     And user of browser opened onezone page
     And user of browser logged as user1 to Onezone service
-    And user of browser expanded the "go to your files" Onezone sidebar panel
-    And user of browser clicked on "oneprovider-1" provider in expanded "GO TO YOUR FILES" Onezone panel
-    And user of browser clicked on the "Go to your files" button in "oneprovider-1" provider's popup displayed on world map
-    And user of browser seen that Oneprovider session has started
+    And opened oneprovider-1 Oneprovider view in web GUI by user of browser
 
   Scenario: User uploads file on one provider, sees it's distribution, writes to it using cdmi on other provider and sees it's distribution
     When user of browser uses spaces select to change data space to "space1"
@@ -44,7 +41,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And user of browser clicks "Close" confirmation button in displayed modal
     And user of browser sees that the modal has disappeared
 
-    And using cdmi api user1 writes "ABCD" to "/space1/20B-0.txt" starting at offset 20 in "oneprovider-2" provider
+    And using CDMI API user1 writes "ABCD" to "/space1/20B-0.txt" starting at offset 20 in "oneprovider-2" provider
     And user of browser is idle for 90 seconds
     And user of browser refreshes site
     And user of browser sees file browser in data tab in Oneprovider page
@@ -76,7 +73,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And user of browser clicks "Close" confirmation button in displayed modal
     And user of browser sees that the modal has disappeared
 
-    And using cdmi api user1 writes "ABCD" to "/space1/20B-0.txt" starting at offset 20 in "oneprovider-1" provider
+    And using CDMI API user1 writes "ABCD" to "/space1/20B-0.txt" starting at offset 20 in "oneprovider-1" provider
     And user of browser is idle for 90 seconds
     And user of browser refreshes site
     And user of browser sees file browser in data tab in Oneprovider page
@@ -109,7 +106,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And user of browser clicks "Close" confirmation button in displayed modal
     And user of browser sees that the modal has disappeared
 
-    And using cdmi api user1 reads from "/space1/20B-0.txt" in range 10 to 20 in "oneprovider-2" provider
+    And using CDMI API user1 reads from "/space1/20B-0.txt" in range 10 to 20 in "oneprovider-2" provider
     And user of browser is idle for 90 seconds
     And user of browser refreshes site
     And user of browser sees file browser in data tab in Oneprovider page
@@ -139,7 +136,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And user of browser clicks "Close" confirmation button in displayed modal
     And user of browser sees that the modal has disappeared
 
-    And using cdmi api user1 writes "ABCD" to "/space1/20B-0.txt" starting at offset 40 in "oneprovider-1" provider
+    And using CDMI API user1 writes "ABCD" to "/space1/20B-0.txt" starting at offset 40 in "oneprovider-1" provider
     And user of browser is idle for 90 seconds
     And user of browser refreshes site
     And user of browser sees file browser in data tab in Oneprovider page
@@ -161,7 +158,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And user of browser sees an info notify with text matching to: .*[Cc]ompleted upload.*1.*
     And user of browser sees that item named "20B-0.txt" has appeared in file browser
 
-    And using cdmi api user1 writes "ABCD" to "/space1/20B-0.txt" starting at offset 20 in "oneprovider-1" provider
+    And using CDMI API user1 writes "ABCD" to "/space1/20B-0.txt" starting at offset 20 in "oneprovider-1" provider
     And user of browser is idle for 90 seconds
     And user of browser refreshes site
     And user of browser sees file browser in data tab in Oneprovider page

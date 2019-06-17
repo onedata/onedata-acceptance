@@ -3,12 +3,16 @@ using web GUI
 """
 
 import yaml
+from pytest_bdd import given, parsers
 
-from tests.gui.steps.onezone.logged_in_common import *
-from tests.gui.steps.onezone.providers import *
-from tests.gui.steps.oneprovider.common import *
-from tests.gui.steps.oneprovider_common import *
-from tests.utils.acceptance_utils import wt
+from tests.gui.meta_steps.onezone.common import g_wt_visit_op
+from tests.gui.steps.oneprovider.transfers import (
+    replicate_item,
+    assert_item_never_synchronized,
+    migrate_item)
+from tests.gui.steps.oneprovider_common import (
+    g_click_on_the_given_main_menu_tab,
+    wt_click_on_the_given_main_menu_tab)
 from tests.gui.steps.oneprovider.data_tab import (
     assert_file_browser_in_data_tab_in_op,
     click_tooltip_from_toolbar_in_data_tab_in_op,
@@ -23,8 +27,10 @@ from tests.gui.steps.modal import (wt_wait_for_modal_to_appear,
                                    wt_click_on_confirmation_btn_in_modal,
                                    wt_wait_for_modal_to_disappear,
                                    activate_input_box_in_modal)
-from tests.gui.steps.oneprovider.transfers import *
 from tests.gui.steps.common.miscellaneous import type_string_into_active_element
+from tests.utils.acceptance_utils import wt
+from tests.utils.utils import repeat_failed
+from tests.gui.conftest import WAIT_FRONTEND
 
 
 @given(parsers.re('opened "(?P<tab_name>spaces)" tab in web GUI by '
@@ -34,26 +40,12 @@ def go_to_tab_in_provider(browser_id_list, tab_name, selenium):
 
 
 def navigate_to_tab_in_op_using_gui(selenium, user, oz_page, provider,
-                                    main_menu_tab, hosts):
-    panel_name = button_name = 'GO TO YOUR FILES'
-    item_type = 'provider'
+                                    main_menu_tab, hosts, modals):
     title = selenium[user].title
 
     if 'onezone' in title.lower():
-        wt_expand_oz_panel(selenium, user, panel_name, oz_page)
-        assert_there_is_item_with_known_name_in_oz_panel_list(selenium, user,
-                                                              item_type,
-                                                              provider,
-                                                              panel_name,
-                                                              oz_page, hosts)
-        wt_click_on_provider_in_go_to_your_files_oz_panel(selenium, user,
-                                                          provider,
-                                                          oz_page, hosts)
-        assert_popup_for_provider_has_appeared_on_map(selenium, user, provider,
-                                                      oz_page, hosts)
-        wt_click_on_btn_in_provider_popup(selenium, user, button_name, provider,
-                                          oz_page, hosts)
-        wt_wait_for_op_session_to_start(selenium, user)
+        g_wt_visit_op(selenium, oz_page, user, provider, hosts,
+                      modals)
 
     wt_click_on_the_given_main_menu_tab(selenium, user, main_menu_tab)
 
@@ -80,7 +72,7 @@ def meta_replicate_item(selenium, browser_id, name, tmp_memory,
 @wt(parsers.re('user of (?P<browser_id>.*) sees file chunks for file '
                '"(?P<file_name>.*)" as follows:\n(?P<desc>(.|\s)*)'))
 def wt_assert_file_chunks(selenium, browser_id, file_name, desc, tmp_memory,
-                          op_page, hosts):
+                          op_page, hosts, modals):
     tooltip = 'Show data distribution'
     modal_name = 'Data distribution'
 
@@ -90,7 +82,7 @@ def wt_assert_file_chunks(selenium, browser_id, file_name, desc, tmp_memory,
     click_tooltip_from_toolbar_in_data_tab_in_op(selenium, browser_id, tooltip,
                                                  op_page)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    _assert_file_chunks(selenium, browser_id, hosts, desc)
+    _assert_file_chunks(selenium, browser_id, hosts, desc, modals)
     wt_click_on_confirmation_btn_in_modal(selenium, browser_id, 'Close',
                                           tmp_memory)
     wt_wait_for_modal_to_disappear(selenium, browser_id, tmp_memory)
@@ -98,7 +90,7 @@ def wt_assert_file_chunks(selenium, browser_id, file_name, desc, tmp_memory,
 
 
 @repeat_failed(timeout=WAIT_FRONTEND*2)
-def _assert_file_chunks(selenium, browser_id, hosts, desc):
+def _assert_file_chunks(selenium, browser_id, hosts, desc, modals):
     desc = yaml.load(desc)
     for provider, chunks in desc.items():
         if chunks == 'never synchronized':
