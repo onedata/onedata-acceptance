@@ -69,9 +69,9 @@ def screens():
     return [0, 1]
 
 
-# scenarios('../features/onepanel/deployment.feature')
-# scenarios('../features/onepanel/storages.feature')
-# scenarios('../features/onepanel/provider.feature')
-# scenarios('../features/onepanel/spaces.feature')
+scenarios('../features/onepanel/deployment.feature')
+scenarios('../features/onepanel/storages.feature')
+scenarios('../features/onepanel/provider.feature')
+scenarios('../features/onepanel/spaces.feature')
 scenarios('../features/onepanel/emergency_passphrase.feature')
 
