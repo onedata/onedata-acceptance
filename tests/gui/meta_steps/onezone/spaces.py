@@ -48,6 +48,9 @@ def receive_support_token(selenium, user, space_name, browser_id, oz_page,
                                     tmp_memory, displays, clipboard)
 
 
+@wt(parsers.re('user of (?P<user>.*) leaves (?P<space_list>.+?) space '
+               'in Onezone page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def leave_spaces_in_oz_using_gui(selenium, user, space_list, oz_page, popups):
     where = 'spaces'
     option = 'Leave space'

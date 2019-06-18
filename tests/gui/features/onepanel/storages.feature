@@ -74,9 +74,7 @@ Feature: Storage management using onepanel
     Then user of browser1 sees that there are 70 items in file browser
 
     And user of browser1 clicks on the "spaces" tab in main menu sidebar
-    And user of browser1 clicks "hello_world1" on the spaces list in the sidebar
-    And user of browser1 clicks on "Leave space" button in space menu
-    And user of browser1 clicks on yes button
+    And user of browser1 leaves hello_world1 space in Onezone page
 
     Examples:
     | client   | storage_name |
