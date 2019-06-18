@@ -64,3 +64,4 @@ def screens():
 
 scenarios('../features/onezone/space/spaces_multibrowser.feature')
 scenarios('../features/onezone/space/invite_group_to_space.feature')
+
