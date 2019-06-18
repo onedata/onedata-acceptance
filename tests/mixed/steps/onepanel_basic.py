@@ -382,7 +382,8 @@ def w_assert_space_is_supported_by_provider_in_oz(client, request, user,
                  'panel service'))
 def revoke_space_support_in_op_panel(client, request, user, space_name,
                                      provider_name, host, selenium, onepanel,
-                                     popups, modals, users, hosts):
+                                     popups, modals, users, hosts,
+                                     admin_credentials, onepanel_credentials):
 
     if client.lower() == 'web gui':
         from tests.gui.meta_steps.onepanel.spaces import \
@@ -395,7 +396,9 @@ def revoke_space_support_in_op_panel(client, request, user, space_name,
         from tests.mixed.steps.rest.onepanel.spaces import \
                                     revoke_space_support_in_op_panel_using_rest
         revoke_space_support_in_op_panel_using_rest(user, users, host, hosts,
-                                                    space_name)
+                                                    space_name,
+                                                    admin_credentials,
+                                                    onepanel_credentials)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
@@ -433,7 +436,9 @@ def cp_files_to_space_root_dir(user, src_path, dst_path, space_name, tmpdir,
 def assert_proper_space_configuration_in_op_panel(client, request, user,
                                                   sync_type, space, config,
                                                   selenium, onepanel,
-                                                  users, host, hosts):
+                                                  users, host, hosts,
+                                                  onepanel_credentials,
+                                                  admin_credentials):
     """Assert configuration displayed in space record in panel.
 
     config should be in yaml format exactly as seen in panel, e.g.
@@ -464,7 +469,9 @@ def assert_proper_space_configuration_in_op_panel(client, request, user,
                             assert_proper_space_configuration_in_op_panel_rest
         assert_proper_space_configuration_in_op_panel_rest(space, user, users,
                                                            host, hosts,
-                                                           config, sync_type)
+                                                           config, sync_type,
+                                                           onepanel_credentials,
+                                                           admin_credentials)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
@@ -476,7 +483,9 @@ def assert_proper_space_configuration_in_op_panel(client, request, user,
 def configure_sync_parameters_for_space_in_op_panel(client, request, user,
                                                     sync_type, space_name, host,
                                                     config, selenium, onepanel,
-                                                    popups, users, hosts):
+                                                    popups, users, hosts,
+                                                    onepanel_credentials,
+                                                    admin_credentials):
     """Configure synchronization parameters for space.
 
     config should be in yaml format exactly as seen in panel, e.g.
@@ -509,7 +518,9 @@ def configure_sync_parameters_for_space_in_op_panel(client, request, user,
         configure_sync_parameters_for_space_in_op_panel_rest(user, users, host,
                                                              hosts, config,
                                                              space_name,
-                                                             sync_type)
+                                                             sync_type,
+                                                             onepanel_credentials,
+                                                             admin_credentials)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
@@ -562,7 +573,8 @@ def rm_files_from_space_root_dir(user, src_path, space_name, tmp_memory, hosts):
 @when(parsers.re('using (?P<client>.*), (?P<user>.+?) copies Id of '
                  '"(?P<space_name>.+?)" space in Spaces page in Onepanel'))
 def copy_id_of_space(client, request, user, space_name, selenium, onepanel,
-                     tmp_memory, users, hosts):
+                     tmp_memory, users, hosts, admin_credentials,
+                     onepanel_credentials):
 
     if client.lower() == 'web gui':
         from tests.gui.meta_steps.onepanel.spaces import \
@@ -571,7 +583,8 @@ def copy_id_of_space(client, request, user, space_name, selenium, onepanel,
     elif client.lower() == 'rest':
         from tests.mixed.steps.rest.onezone.space_management import \
                                                         copy_id_of_space_rest
-        copy_id_of_space_rest(user, users, hosts, space_name, tmp_memory)
+        copy_id_of_space_rest(user, users, hosts, space_name, tmp_memory,
+                              onepanel_credentials, admin_credentials)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
 

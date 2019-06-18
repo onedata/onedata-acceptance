@@ -74,16 +74,21 @@ def assert_provider_hostname_matches_known_domain(selenium, browser_id,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_provider_hostname_matches_test_hostname(selenium, browser_id,
                                                    provider, hosts, oz_page,
-                                                   displays, clipboard):
+                                                   displays, clipboard, modals):
     driver = selenium[browser_id]
     expected_domain = "{}.test".format(hosts[provider]['hostname'])
     page = oz_page(driver)['providers']
     page.elements_list[0]()
-    page.popover.copy_hostname()
+    _click_copy_hostname(driver, modals)
     displayed_domain = clipboard.paste(display=displays[browser_id])
     assert displayed_domain == expected_domain, \
         'displayed {} provider hostname instead ' \
         'of expected {}'.format(displayed_domain, expected_domain)
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def _click_copy_hostname(driver, modals):
+    modals(driver).provider_popover.copy_hostname()
 
 
 def _click_on_btn_in_provider_popup(driver, btn, provider, oz_page, hosts):

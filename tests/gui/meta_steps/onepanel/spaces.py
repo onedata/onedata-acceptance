@@ -172,6 +172,7 @@ def revoke_all_space_supports(selenium, browser_id, onepanel, popups,
     # wait for load spaces list
     time.sleep(1)
     spaces_list = onepanel(selenium[browser_id]).content.spaces.spaces
+
     while len(spaces_list) > 0:
         space = spaces_list[0]
         wt_expands_toolbar_icon_for_space_in_onepanel(selenium, browser_id,
@@ -183,4 +184,3 @@ def revoke_all_space_supports(selenium, browser_id, onepanel, popups,
         # wait for update spaces list
         time.sleep(1)
         spaces_list = onepanel(selenium[browser_id]).content.spaces.spaces
-

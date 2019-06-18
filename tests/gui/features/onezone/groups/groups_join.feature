@@ -70,7 +70,7 @@ Feature: Joining a group in Onezone GUI
 
   Scenario Outline: User fails to join group to space using incorrect token
     When user of browser1 clicks on Groups in the main menu
-    And user of browser1 clicks on "Join space" button in group "group1" menu in the sidebar
+    And user of browser1 clicks on "Join to space" button in group "group1" menu in the sidebar
     And user of browser1 writes "aaa" into group token text field
     And user of browser1 confirms using <confirmation_method>
 
@@ -98,5 +98,5 @@ Feature: Joining a group in Onezone GUI
     And user of browser1 sends copied ID to user of browser2
     And user of browser2 changes webapp path to "/i#/onedata/groups" concatenated with received ID
     And user of browser2 refreshes site
-    Then user of browser2 sees "Insufficient permissions" in error details on groups page
+    Then user of browser2 sees "DON’T HAVE ACCESS" in error details on groups page
 
