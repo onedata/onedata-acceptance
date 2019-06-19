@@ -131,7 +131,7 @@ class SyncChart(PageObject):
 
 
 class FilePopularity(PageObject):
-    enable_files_popularity = Toggle('.one-way-toggle-control')
+    enable_file_popularity = Toggle('.one-way-toggle-control')
 
     lastOpenHourWeightGroup = Input('.lastOpenHourWeightGroup input')
     avgOpenCountPerDayWeightGroup = Input('.avgOpenCountPerDayWeightGroup '
