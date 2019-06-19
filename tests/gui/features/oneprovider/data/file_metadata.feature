@@ -33,7 +33,7 @@ Feature: Basic data tab operations on file metadata in file browser
     Then user of browser sees [Basic, JSON, RDF] navigation tabs in metadata panel opened for "file1"
 
 
-  Scenario: Edit metadata icon is visible if file has empty basic metadata entry
+  Scenario: Edit metadata icon is visible if file has basic metadata entry
     When user of browser uses spaces select to change data space to "space1"
     And user of browser sees file browser in data tab in Oneprovider page
 
@@ -41,6 +41,8 @@ Feature: Basic data tab operations on file metadata in file browser
     And user of browser selects "file1" item(s) from file browser with pressed ctrl
     And user of browser clicks on metadata tool icon in file row for "file1" in file browser
     And user of browser sees that metadata panel for "file1" in files list has appeared
+    And user of browser types "attr" to attribute input box of new metadata basic entry in metadata panel opened for "file1"
+    And user of browser types "val" to value input box of new metadata basic entry in metadata panel opened for "file1"
     And user of browser clicks on "Save all changes" button in metadata panel opened for "file1"
     And user of browser sees an info notify with text matching to: .*[Mm]etadata.*saved.*successfully.*
     And user of browser refreshes site
@@ -59,33 +61,33 @@ Feature: Basic data tab operations on file metadata in file browser
     Then user of browser sees that edited attribute key in metadata panel opened for "file1" is highlighted as invalid
 
 
-  Scenario: Entered invalid metadata for file will not be saved
-    When user of browser uses spaces select to change data space to "space1"
-    And user of browser sees file browser in data tab in Oneprovider page
-
-    # try saving empty forms
-    And user of browser selects "file1" item(s) from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "file1" in file browser
-    And user of browser sees that metadata panel for "file1" in files list has appeared
-    And user of browser clicks on "Save all changes" button in metadata panel opened for "file1"
-    And user of browser sees an info notify with text matching to: .*[Mm]etadata.*saved.*successfully.*
-    And user of browser refreshes site
-    And user of browser sees file browser in data tab in Oneprovider page
-
-    # try saving metadata with record key being filled only
-    And user of browser selects "file1" item(s) from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "file1" in file browser
-    And user of browser sees that metadata panel for "file1" in files list has appeared
-    And user of browser types "attr" to attribute input box of new metadata basic entry in metadata panel opened for "file1"
-    And user of browser clicks on add basic metadata entry icon in metadata panel opened for "file1"
-    And user of browser sees that "Save all changes" button in metadata panel opened for "file1" is disabled
-
-    And user of browser refreshes site
-    And user of browser sees file browser in data tab in Oneprovider page
-    And user of browser selects "file1" item(s) from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "file1" in file browser
-    And user of browser sees that metadata panel for "file1" in files list has appeared
-    Then user of browser should not see basic metadata entry with attribute named "attr" in metadata panel opened for "file1"
+#  Scenario: Entered invalid metadata for file will not be saved
+#    When user of browser uses spaces select to change data space to "space1"
+#    And user of browser sees file browser in data tab in Oneprovider page
+#
+#    # try saving empty forms
+#    And user of browser selects "file1" item(s) from file browser with pressed ctrl
+#    And user of browser clicks on metadata tool icon in file row for "file1" in file browser
+#    And user of browser sees that metadata panel for "file1" in files list has appeared
+#    And user of browser clicks on "Save all changes" button in metadata panel opened for "file1"
+#    And user of browser sees an info notify with text matching to: .*[Mm]etadata.*saved.*successfully.*
+#    And user of browser refreshes site
+#    And user of browser sees file browser in data tab in Oneprovider page
+#
+#    # try saving metadata with record key being filled only
+#    And user of browser selects "file1" item(s) from file browser with pressed ctrl
+#    And user of browser clicks on metadata tool icon in file row for "file1" in file browser
+#    And user of browser sees that metadata panel for "file1" in files list has appeared
+#    And user of browser types "attr" to attribute input box of new metadata basic entry in metadata panel opened for "file1"
+#    And user of browser clicks on add basic metadata entry icon in metadata panel opened for "file1"
+#    And user of browser sees that "Save all changes" button in metadata panel opened for "file1" is disabled
+#
+#    And user of browser refreshes site
+#    And user of browser sees file browser in data tab in Oneprovider page
+#    And user of browser selects "file1" item(s) from file browser with pressed ctrl
+#    And user of browser clicks on metadata tool icon in file row for "file1" in file browser
+#    And user of browser sees that metadata panel for "file1" in files list has appeared
+#    Then user of browser should not see basic metadata entry with attribute named "attr" in metadata panel opened for "file1"
 
 
   Scenario: Add metadata to file (clicks both add icon and "Save all changes" button)
@@ -253,7 +255,7 @@ Feature: Basic data tab operations on file metadata in file browser
     And user of browser clicks on metadata tool icon in file row for "file1" in file browser
     And user of browser sees that metadata panel for "file1" in files list has appeared
     And user of browser clicks on JSON navigation tab in metadata panel opened for "file1"
-    Then user of browser sees that content of JSON textarea placed in metadata panel opened for "file1" is equal to: "{}"
+    Then user of browser sees that content of JSON textarea placed in metadata panel opened for "file1" is equal to: "null"
 
 
   Scenario: Discard changes while entering metadata for file in JSON format
@@ -273,7 +275,7 @@ Feature: Basic data tab operations on file metadata in file browser
     And user of browser clicks on metadata tool icon in file row for "file1" in file browser
     And user of browser sees that metadata panel for "file1" in files list has appeared
     And user of browser clicks on JSON navigation tab in metadata panel opened for "file1"
-    Then user of browser sees that content of JSON textarea placed in metadata panel opened for "file1" is equal to: "{}"
+    Then user of browser sees that content of JSON textarea placed in metadata panel opened for "file1" is equal to: "null"
 
 
   Scenario: Add valid metadata to file in XML format
