@@ -60,7 +60,7 @@ Feature: Basic data tab operations on file metadata in file browser
     And user of browser types "attr" to attribute input box of new metadata basic entry in metadata panel opened for "file1"
     Then user of browser sees that edited attribute key in metadata panel opened for "file1" is highlighted as invalid
 
-
+# TODO uncomment when new validation will be in gui
 #  Scenario: Entered invalid metadata for file will not be saved
 #    When user of browser uses spaces select to change data space to "space1"
 #    And user of browser sees file browser in data tab in Oneprovider page
