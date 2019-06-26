@@ -1,5 +1,5 @@
 """This module contains gherkin steps to run acceptance tests featuring
-user alias management in onezone web GUI.
+user full name management in onezone web GUI.
 """
 
 __author__ = "Bartosz Walkowicz, Agnieszka Warchol"
@@ -44,8 +44,9 @@ def activate_user_full_name_edit_box_in_oz(selenium, browser_id, oz_page):
 def assert_correct_usr_full_name_in_oz(selenium, browser_id,
                                        expected_full_name, oz_page):
     displayed_full_name = oz_page(selenium[browser_id])['profile'].full_name
-    assert displayed_full_name == expected_full_name, \
-        ('expected "{}" as user full name, but instead displayed is "{}" '
-         'in USER FULL NAME oz panel'.format(expected_full_name,
-                                             displayed_full_name))
+    err_msg = ('expected "{}" as user full name, but instead displayed is "{}" '
+               'in USER FULL NAME oz panel'.format(expected_full_name,
+                                                   displayed_full_name))
+
+    assert displayed_full_name == expected_full_name, err_msg
 

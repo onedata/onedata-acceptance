@@ -34,13 +34,6 @@ from tests.gui.steps.oneprovider.file_browser import *
 
 from tests.gui.steps.rest.cdmi import *
 
-from tests.gui.steps.onezone.logged_in_common import *
-from tests.gui.steps.onezone.user_full_name import *
-from tests.gui.steps.onezone.access_tokens import *
-from tests.gui.steps.onezone.data_space_management import *
-from tests.gui.steps.onezone.providers import *
-from tests.gui.steps.onezone.manage_account import *
-
 from tests.gui.steps.oneprovider.permissions import *
 from tests.gui.steps.oneprovider.common import *
 from tests.gui.steps.oneprovider.data_tab import *
