@@ -55,9 +55,9 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     And user of browser1 sets "775" permission code in active modal
     And user of browser1 presses enter on keyboard
     And user of browser1 sees that the modal has disappeared
-    
+
 	# User2 checks permission code
-    Then user of browser2 uses spaces select to change data space to "space1"             
+    Then user of browser2 uses spaces select to change data space to "space1"
     And user of browser2 sees file browser in data tab in Oneprovider page
     And user of browser2 selects "file1" item(s) from file browser with pressed ctrl
     And user of browser2 clicks the button from top menu bar with tooltip "Change element permissions"

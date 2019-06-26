@@ -80,7 +80,7 @@ def assert_new_created_space_has_appeared_on_spaces(selenium, browser_id,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
-               '(?P<option>Data|Providers|Groups|Tokens|Clusters) '
+               '(?P<option>Data|Providers|Groups|Tokens|Discovery|Clusters) '
                'in the main menu'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page):
@@ -89,13 +89,15 @@ def click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks "(?P<name>.*?)" '
-               'on the (?P<option>spaces|groups) list in the sidebar'))
+               'on the (?P<option>spaces|groups|harvesters) list in the sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option,
                                                 name, oz_page):
     driver = selenium[browser_id]
     if option == 'spaces':
         option = 'data'
+    elif option == 'harvesters':
+        option = 'discovery'
     oz_page(driver)[option].elements_list[name].click()
 
 
