@@ -27,6 +27,17 @@ Feature: Basic management of harvester in Onezone GUI
     Then user of browser sees that error popup has appeared
 
 
+  Scenario: User successfully adds space to harvester
+    When user of browser creates space2 space in Onezone page
+    And user of browser clicks on Discovery in the main menu
+    And user of browser clicks "harvester1" on the harvesters list in the sidebar
+    And user of browser clicks Spaces of "harvester1" harvester in the sidebar
+    And user of browser clicks add one of your spaces button in harvester spaces page
+    And user of browser chooses space2 from dropdown in add space modal
+    And user of browser clicks on "Add" button in modal "Choose Space"
+    Then user of browser sees that "space2" has appeared on the spaces list in discovery page
+
+
   Scenario: User successfully renames harvester
     When user of browser clicks on Discovery in the main menu
     And user of browser clicks "harvester1" on the harvesters list in the sidebar
@@ -36,3 +47,10 @@ Feature: Basic management of harvester in Onezone GUI
     Then user of browser sees that "harvester2" has appeared on the harvesters list in the sidebar
     And user of browser sees that "harvester1" has disappeared on the harvesters list in the sidebar
 
+
+  Scenario: User successfully leave harvester
+    When user of browser clicks on Discovery in the main menu
+    And user of browser clicks "harvester2" on the harvesters list in the sidebar
+    And user of browser clicks on "Leave" button in harvester "harvester2" menu in the sidebar
+    And user of browser clicks on "Leave" button in modal "Leave harvester"
+    And user of browser sees that "harvester2" has disappeared on the harvesters list in the sidebar

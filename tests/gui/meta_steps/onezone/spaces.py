@@ -18,6 +18,9 @@ from tests.gui.steps.onezone.members import *
 from tests.gui.steps.common.miscellaneous import close_modal
 
 
+@wt(parsers.re('user of (?P<user>.*) creates (?P<space_list>.+?) space '
+               'in Onezone page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def create_spaces_in_oz_using_gui(selenium, user, oz_page, space_list):
     option = 'enter'
 

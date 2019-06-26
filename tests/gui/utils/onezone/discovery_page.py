@@ -29,10 +29,8 @@ class Harvester(Element):
     name = id = Label('.one-label')
     menu_button = Button('.collapsible-toolbar-toggle')
 
-    overview = NamedButton('.one-list-level-2 .item-header',
-                           text='Overview')
-    providers = NamedButton('.one-list-level-2 .item-header',
-                            text='Providers')
+    spaces = NamedButton('.one-list-level-2 .item-header',
+                         text='Spaces')
     members = NamedButton('.one-list-level-2 .item-header',
                           text='Members')
 
@@ -42,6 +40,10 @@ class MenuItem(PageObject):
 
     def __call__(self):
         self.click()
+
+
+class Space(PageObject):
+    name = id = Label('.one-label')
 
 
 class DiscoveryPage(GenericPage):
@@ -70,4 +72,9 @@ class DiscoveryPage(GenericPage):
 
     rename_input = WebElement('.name-editor input')
     rename_button = Button('.save-icon')
+
+    add_space_button = NamedButton('button', text='Add one of your spaces')
+    spaces_list = WebItemsSequence('.content-harvesters-spaces '
+                                   '.row .header-content-container',
+                                   cls=Space)
 

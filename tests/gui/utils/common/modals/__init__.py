@@ -21,6 +21,7 @@ from .remove import RemoveModal
 from .leave_group import LeaveGroupModal
 from .leave_space import LeaveSpaceModal
 from .leave_parent import LeaveParentModal
+from .leave_harvester import LeaveHarvesterModal
 from .error_modal import ErrorModal
 from .invite_using_token import InviteUsingTokenModal
 from .dns_configuration_warning import DNSConfigurationWarningModal
@@ -28,6 +29,7 @@ from .provider_popover import ProviderPopover
 from .membership_relation_menu import MembershipRelationMenu
 from .groups_hierarchy_menu import GroupHierarchyMenu
 from .emergency_interface import EmergencyInterface
+from .choose_space import ChooseSpaceModal
 
 
 class Modals(object):
@@ -52,6 +54,7 @@ class Modals(object):
                            cls=LeaveParentModal)
     leave_space = WebItem('.modal-dialog',
                           cls=LeaveSpaceModal)
+    leave_harvester = WebItem('.modal-dialog', cls=LeaveHarvesterModal)
     provider_popover = WebItem('.webui-popover .provider-place-drop',
                                cls=ProviderPopover)
     remove_member = WebItem('.remove-relation-modal.modal.in .modal-dialog',
@@ -69,6 +72,7 @@ class Modals(object):
     membership_relation_menu = WebItem('.relation-actions.one-webui-popover',
                                        cls=MembershipRelationMenu)
     emergency_interface = WebItem('.modal-dialog', cls=EmergencyInterface)
+    choose_space = WebItem('.modal-dialog', cls=ChooseSpaceModal)
 
     def __init__(self, driver):
         self.driver = driver

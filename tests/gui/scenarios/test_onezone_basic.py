@@ -52,12 +52,13 @@ from tests.gui.steps.oneprovider.spaces import *
 
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
+
 from tests.gui.meta_steps.onezone import *
 from tests.gui.meta_steps.onezone.groups import *
+from tests.gui.meta_steps.onezone.spaces import *
+from tests.gui.meta_steps.onezone.common import *
 
 from tests.utils.acceptance_utils import *
-from tests.gui.steps.oneprovider_common import *
-from tests.gui.meta_steps.onezone.common import *
 
 
 @fixture(scope='module')

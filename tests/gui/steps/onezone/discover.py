@@ -13,6 +13,7 @@ from tests.utils.acceptance_utils import wt
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.utils.utils import repeat_failed
 from tests.gui.steps.common.miscellaneous import _enter_text
+from tests.gui.utils.generic import transform
 
 
 @wt(parsers.parse('user of {browser_id} clicks on Create harvester button '
@@ -99,5 +100,44 @@ def confirm_harvester_rename_using_button(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
     oz_page(driver)['discovery'].rename_button()
 
+
+@wt(parsers.re('user of (?P<browser_id>.*?) clicks (?P<option>.*?) '
+               'of "(?P<harvester_name>.*?)" harvester in the sidebar'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id,
+                                                      harvester_name, option,
+                                                      oz_page):
+    driver = selenium[browser_id]
+    getattr(oz_page(driver)['discovery'].elements_list[harvester_name],
+            transform(option)).click()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*?) clicks add one of your spaces '
+               'button in harvester spaces page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_add_space_button_in_harvester_spaces_page(selenium, browser_id,
+                                                    oz_page):
+    driver = selenium[browser_id]
+    oz_page(driver)['discovery'].add_space_button()
+
+
+@wt(parsers.parse('user of {browser_id} chooses {space_name} from dropdown '
+                  'in add space modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def choose_space_from_dropdown_in_add_space_modal(selenium, browser_id,
+                                                  space_name, modals):
+    driver = selenium[browser_id]
+    modals(driver).choose_space.dropdown.expand()
+    modals(driver).choose_space.dropdown.options[space_name].click()
+
+
+@wt(parsers.parse('user of {browser_id} sees that "{space_name}" has appeared '
+                  'on the spaces list in discovery page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_space_has_appeared_in_discovery_page(selenium, browser_id,
+                                                space_name, oz_page):
+    driver = selenium[browser_id]
+    assert space_name in oz_page(driver)['discovery'].spaces_list, \
+        'space "{}" not found'.format(space_name)
 
 
