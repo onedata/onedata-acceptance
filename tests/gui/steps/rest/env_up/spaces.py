@@ -20,41 +20,6 @@ from tests.utils.http_exceptions import HTTPNotFound, HTTPError, HTTPBadRequest
 from tests.utils.utils import repeat_failed
 
 
-@repeat_failed(attempts=10, interval=0.5)
-@given(parsers.re('effective support for users? in providers?:\n'
-                  '(?P<config>(.|\s)+)'))
-def providers_effectively_supports_users(config, zone_host, hosts, users):
-    zone_hostname = hosts[zone_host]['hostname']
-    err_msg_fmt = ('provider {} not present in effective providers list ({}) '
-                   'for user {}')
-
-    cfg = yaml.load(config)
-    for provider, user_list in cfg.items():
-        provider_name = hosts[provider]['name']
-        for user in user_list:
-            resp = http_get(ip=zone_hostname, port=OZ_REST_PORT,
-                            path=get_zone_rest_path('user',
-                                                    'effective_providers'),
-                            auth=(user, users[user].password)).content
-            eff_providers = []
-            for eff_provider_id in json.loads(resp).get('providers', []):
-                eff_provider_name = _get_eff_provider_name(zone_hostname,
-                                                           eff_provider_id,
-                                                           user, users)
-                eff_providers.append(eff_provider_name)
-            assert provider_name in eff_providers, (err_msg_fmt.format(provider_name,
-                                                                       eff_providers,
-                                                                       user))
-
-
-def _get_eff_provider_name(zone_hostname, provider_id, user, users):
-    resp = http_get(ip=zone_hostname, port=OZ_REST_PORT,
-                    path=get_zone_rest_path('user', 'effective_providers',
-                                            provider_id),
-                    auth=(user, users[user].password)).content
-    return json.loads(resp).get('name')
-
-
 @given(parsers.parse('initial spaces configuration in "{zone_host}" '
                      'Onezone service:\n{config}'))
 def create_and_configure_spaces(config, zone_host, admin_credentials,
@@ -142,18 +107,20 @@ def _create_and_configure_spaces(config, zone_name, admin_credentials,
 
     for space_name, description in yaml.load(config).items():
         owner = users_db[description['owner']]
+        users_to_add = description.get('users', [])
         spaces_db[space_name] = space_id = _create_space(zone_hostname,
                                                          owner.username,
                                                          owner.password,
                                                          space_name)
         _add_users_to_space(zone_hostname, admin_credentials, space_id,
-                            users_db, description.get('users', {}))
+                            users_db, users_to_add)
         _set_as_home_for_users(space_id, zone_hostname, users_db,
                                description.get('home space for', []))
         _add_groups_to_space(zone_hostname, admin_credentials, space_id,
                              groups_db, description.get('groups', {}))
         _get_support(zone_hostname, onepanel_credentials, owner, space_id,
-                     storages_db, hosts, description.get('providers', {}))
+                     storages_db, hosts, description.get('providers', {}),
+                     users_to_add, users_db)
         _init_storage(owner, space_name, hosts,
                       description.get('storage', {}))
 
@@ -232,7 +199,8 @@ def _add_group_to_space(zone_hostname, admin_username, admin_password,
 
 
 def _get_support(zone_hostname, onepanel_credentials,
-                 owner_credentials, space_id, storages_db, hosts, providers):
+                 owner_credentials, space_id, storages_db, hosts, providers,
+                 members, users):
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password
 
@@ -267,17 +235,26 @@ def _get_support(zone_hostname, onepanel_credentials,
                   auth=(onepanel_username, onepanel_password),
                   data=json.dumps(space_support_details))
 
-        wait_for_space_support(space_id, owner_credentials, provider_hostname)
+        all_members = [owner_credentials.username] + members
+        wait_for_space_support(space_id, provider_hostname, all_members, users)
+
+        # TODO: remove after resolving VFS-5544
+        time.sleep(5)
+        wait_for_space_support(space_id, provider_hostname, all_members, users)
 
 
-@repeat_failed(attempts=10, interval = 0.5, 
+@repeat_failed(attempts=10, interval=0.5,
                exceptions=(AssertionError, HTTPError))
-def wait_for_space_support(space_id, owner_credentials, provider_hostname):
-    response = http_get(ip=provider_hostname, port=OP_REST_PORT,
-                        path=get_provider_rest_path('spaces', space_id),
-                        headers={'X-Auth-Token': owner_credentials.token})
+def wait_for_space_support(space_id, provider_hostname, members, users):
+    for user in members:
+        response = http_get(ip=provider_hostname, port=OP_REST_PORT,
+                            path=get_provider_rest_path('spaces'),
+                            headers={'X-Auth-Token': users[user].token}).content
+        space_id_list = [space['spaceId'] for space in json.loads(response)]
 
-    assert response.json()['providers'], 'Space has no support'
+        assert space_id in space_id_list, ('space {} not found in user '
+                                           '{} spaces'.format(space_id,
+                                                              user))
 
 
 def _get_storage_id(provider_hostname, onepanel_username,
