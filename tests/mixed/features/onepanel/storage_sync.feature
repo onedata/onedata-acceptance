@@ -15,7 +15,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
                 cluster privileges:
                   - oz_spaces_list
                   - oz_providers_list
-    And opened browsers with [onepanel, user1] logged to [emergency interface of Onepanel, onezone] service
+    And opened browsers with [onepanel, user1] signed in to [emergency interface of Onepanel, onezone] service
     And directory tree structure on local file system:
           user1:
               - dir1: 5

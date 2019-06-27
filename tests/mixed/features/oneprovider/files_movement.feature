@@ -22,7 +22,7 @@ Feature: Files movement tests
         oneprovider-1:
             - user1
     And oneclient mounted in /home/user1/onedata using token by user1
-    And opened browser with user1 logged to "onezone" service
+    And opened browser with user1 signed in to "onezone" service
     And opened oneprovider-1 Oneprovider view in web GUI by user1
 
 

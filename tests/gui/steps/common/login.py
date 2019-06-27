@@ -29,11 +29,11 @@ def _login_using_passphrase(login_page, password):
     login_page.sign_in()
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) clicks Log in to emergency '
+@wt(parsers.re('user of (?P<browser_id>.*) clicks Sign in to emergency '
                'interface in Onepanel login page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_log_in_to_emergency_interface(selenium, browser_id, login_page):
-    login_page(selenium[browser_id]).log_in_to_emergency_interface()
+def click_sign_in_to_emergency_interface(selenium, browser_id, login_page):
+    login_page(selenium[browser_id]).sign_in_to_emergency_interface()
 
 
 def _login_to_service(selenium, browser_id_list, user_id_list, service_list,
@@ -44,7 +44,7 @@ def _login_to_service(selenium, browser_id_list, user_id_list, service_list,
         driver = selenium[browser_id]
 
         if 'emergency interface' in service:
-            click_log_in_to_emergency_interface(selenium, browser_id, login_page)
+            click_sign_in_to_emergency_interface(selenium, browser_id, login_page)
             time.sleep(1)
             _login_using_passphrase(login_page(driver),
                                     users[username].password)
@@ -91,7 +91,7 @@ def wt_press_sign_in_btn_on_login_page(selenium, browser_id, login_page):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees that he successfully '
-               'logged in (?P<service>.*)'))
+               'signed in (?P<service>.*)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_successful_login(selenium, browser_id, onepage, service):
     logged_in_service = onepage(selenium[browser_id]).service

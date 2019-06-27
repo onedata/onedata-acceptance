@@ -29,7 +29,7 @@ Feature: ACL files privileges tests using multiple browsers in Oneprovider GUI
                 directory tree:
                     - file1
 
-    And opened [browser1, browser2] with [user1, user2] logged to [onezone, onezone] service
+    And opened [browser1, browser2] with [user1, user2] signed in to [onezone, onezone] service
     And opened oneprovider-1 Oneprovider view in web GUI by users of [browser1, browser2]
 
 
