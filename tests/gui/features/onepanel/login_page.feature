@@ -29,10 +29,10 @@ Feature: Scenarios featuring login page to Onepanel GUI
     When user of browser clicks info button on warning bar in Onepanel page
     And user of browser clicks open in onezone in modal
     And user of browser logs as admin to Onezone service
-    Then user of browser sees that URL matches: https?://[^/]*/ozw/onezone/i#/.*
+    Then user of browser sees that URL matches: https?://[^/]*/onp/onezone/i#/.*
 
 
   Scenario: User successfully goes to Onezone page from Onepanel login page
     When user of browser clicks open in onezone in Onepanel login page
     And user of browser logs as admin to Onezone service
-    Then user of browser sees that URL matches: https?://[^/]*/ozw/onezone/i#/.*
+    Then user of browser sees that URL matches: https?://[^/]*/onp/onezone/i#/.*
