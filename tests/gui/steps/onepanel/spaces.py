@@ -107,15 +107,16 @@ def wt_enable_option_box_in_space_support_form(selenium, browser_id,
 
 
 @when(parsers.parse('user of {browser_id} sees that space support record for '
-                    '"{space}" has appeared in Spaces page in Onepanel'))
+                    '"{space_name}" has appeared in Spaces page in Onepanel'))
 @then(parsers.parse('user of {browser_id} sees that space support record for '
-                    '"{space}" has appeared in Spaces page in Onepanel'))
+                    '"{space_name}" has appeared in Spaces page in Onepanel'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def wt_assert_existence_of_space_support_record(selenium, browser_id,
-                                                space, onepanel):
+                                                space_name, onepanel):
     spaces = {space.name for space
               in onepanel(selenium[browser_id]).content.spaces.spaces}
-    assert space in spaces, 'not found "{}" in spaces in Onepanel'.format(space)
+    assert space_name in spaces, ('not found "{}" in spaces in Onepanel'
+                                  .format(space_name))
 
 
 @when(parsers.parse('user of {browser_id} sees that list of supported spaces '
@@ -289,15 +290,15 @@ def wt_copy_space_id_in_spaces_page_in_onepanel(selenium, browser_id,
     tmp_memory['spaces'][space] = record.overview.space_id
 
 
-@when(parsers.parse('user of {browser_id} expands toolbar for "{space}" '
+@when(parsers.parse('user of {browser_id} expands toolbar for "{space_name}" '
                     'space record in Spaces page in Onepanel'))
-@then(parsers.parse('user of {browser_id} expands toolbar for "{space}" '
+@then(parsers.parse('user of {browser_id} expands toolbar for "{space_name}" '
                     'space record in Spaces page in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_expands_toolbar_icon_for_space_in_onepanel(selenium, browser_id,
-                                                  space, onepanel):
+                                                  space_name, onepanel):
     driver = selenium[browser_id]
-    onepanel(driver).content.spaces.spaces[space].expand_menu(driver)
+    onepanel(driver).content.spaces.spaces[space_name].expand_menu(driver)
 
 
 @when(parsers.re(r"user of (?P<browser_id>.*?) clicks on "

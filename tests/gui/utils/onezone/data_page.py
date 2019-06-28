@@ -11,7 +11,7 @@ from tests.gui.utils.core.web_elements import (Button, NamedButton,
                                                WebItem, WebElement)
 from tests.gui.utils.onezone.generic_page import Element, GenericPage
 from .common import EditBox, InputBox
-from groups.members_subpage import GroupMembersPage
+from .members_subpage import MembersPage
 
 
 class Space(Element):
@@ -70,13 +70,6 @@ class SpaceProvidersPage(PageObject):
     get_support_page = WebItem('.ember-view', cls=GetSupportPage)
 
 
-class MenuItem(PageObject):
-    name = id = Label('a.clickable .text')
-
-    def __call__(self):
-        self.click()
-
-
 class DataPage(GenericPage):
     create_space_button = Button('.one-sidebar-toolbar-button '
                                  '.oneicon-add-filled')
@@ -89,13 +82,10 @@ class DataPage(GenericPage):
 
     overview_page = WebItem('.main-content', cls=SpaceOverviewPage)
     providers_page = WebItem('.main-content', cls=SpaceProvidersPage)
-    members_page = WebItem('.main-content', cls=GroupMembersPage)
+    members_page = WebItem('.main-content', cls=MembersPage)
     welcome_page = WebItem('.main-content', cls=WelcomePage)
 
     menu_button = Button('.with-menu .collapsible-toolbar-toggle')
 
-    menu = WebItemsSequence('div.webui-popover'
-                            '[style*=\'display: block;\'] ul li',
-                            cls=MenuItem)
-
     get_started = Button('.btn.btn-default.hide-sm-active.ember-view')
+
