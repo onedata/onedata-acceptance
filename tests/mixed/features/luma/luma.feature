@@ -29,10 +29,6 @@ Feature: LUMA acceptance tests
             space1: 2000
         storage_name: posix
         storage_type: posix
-    And effective support for users in provider:
-        oneprovider-1:
-            - user1
-            - user2
     And oneclients [client1, client2]
       mounted in [/home/user1/onedata, /home/user2/onedata]
       on client_hosts [oneclient-1, oneclient-1] respectively,

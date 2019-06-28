@@ -19,11 +19,13 @@ from tests.utils.utils import repeat_failed
                'to "(?P<new_group>.*)" using '
                '(?P<confirm_type>.*) to confirm'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def rename_group(selenium, browser_id, group, new_group, confirm_type, oz_page):
+def rename_group(selenium, browser_id, group, new_group, confirm_type,
+                 oz_page, popups):
     option = 'Rename'
     text = new_group
 
-    click_on_group_menu_button(selenium, browser_id, option, group, oz_page)
+    click_on_group_menu_button(selenium, browser_id, option, group,
+                               oz_page, popups)
     input_new_group_name_into_rename_group_inpux_box(selenium, browser_id, text,
                                                      oz_page)
     if confirm_type == 'button':
@@ -36,22 +38,24 @@ def rename_group(selenium, browser_id, group, new_group, confirm_type, oz_page):
 
 @wt(parsers.parse('user of {browser_id} leaves group "{group}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def leave_group(selenium, browser_id, group, oz_page):
+def leave_group(selenium, browser_id, group, oz_page, popups):
     option = 'Leave'
     modal = "LEAVE GROUP"
 
-    click_on_group_menu_button(selenium, browser_id, option, group, oz_page)
+    click_on_group_menu_button(selenium, browser_id, option, group,
+                               oz_page, popups)
     click_modal_button(selenium, browser_id, option, modal, oz_page)
 
 
 @wt(parsers.parse('user of {browser_id} removes group "{group_list}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def remove_group(selenium, browser_id, group_list, oz_page):
+def remove_group(selenium, browser_id, group_list, oz_page, popups):
     option = 'Remove'
     modal = "REMOVE GROUP"
 
     for group in parse_seq(group_list):
-        click_on_group_menu_button(selenium, browser_id, option, group, oz_page)
+        click_on_group_menu_button(selenium, browser_id, option, group,
+                                   oz_page, popups)
         click_modal_button(selenium, browser_id, option, modal, oz_page)
 
 
@@ -77,12 +81,13 @@ def see_groups_using_op_gui(selenium, user, oz_page, group_list):
         assert_group_exists(selenium, user, option, group, oz_page)
 
 
-def rename_groups_using_op_gui(selenium, user, oz_page, group_list, new_names):
+def rename_groups_using_op_gui(selenium, user, oz_page, group_list,
+                               new_names, popups):
     confirm_type = 'enter'
 
     for group, new_name in zip(parse_seq(group_list), parse_seq(new_names)):
         rename_group(selenium, user, group, new_name, confirm_type,
-                     oz_page)
+                     oz_page, popups)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -93,12 +98,13 @@ def fail_to_see_groups_using_op_gui(selenium, user, oz_page, group_list):
         assert_group_exists(selenium, user, option, group, oz_page)
 
 
-def leave_groups_using_op_gui(selenium, user, oz_page, group_list):
+def leave_groups_using_op_gui(selenium, user, oz_page, group_list, popups):
     for group in parse_seq(group_list):
-        leave_group(selenium, user, group, oz_page)
+        leave_group(selenium, user, group, oz_page, popups)
 
 
-def _select_mode_view_in_members_subpage(selenium, user, oz_page, parent):
+def _select_mode_view_in_members_subpage(selenium, user, oz_page,
+                                         parent, onepanel):
     where = 'group'
     direct_selector = 'effective'
     mode_selector = 'memberships'
@@ -106,19 +112,21 @@ def _select_mode_view_in_members_subpage(selenium, user, oz_page, parent):
     subpage = 'members'
 
     go_to_group_subpage(selenium, user, parent, subpage, oz_page)
-    click_show_view_option(selenium, user, oz_page, where)
+    click_show_view_option(selenium, user, oz_page, where, onepanel)
     click_mode_view_in_members_subpage(selenium, user, direct_selector,
-                                       oz_page, where)
+                                       oz_page, where, onepanel)
     click_mode_view_in_members_subpage(selenium, user, mode_selector,
-                                       oz_page, where)
-    click_element_in_members_list(selenium, user, user,
-                                  oz_page, where, list_type)
+                                       oz_page, where, onepanel)
+    click_element_in_members_list(selenium, user, user, oz_page, where,
+                                  list_type, onepanel)
 
 
-def assert_subgroups_using_op_gui(selenium, user, oz_page, group_list, parent):
+def assert_subgroups_using_op_gui(selenium, user, oz_page, group_list,
+                                  parent, onepanel):
     where = 'group'
 
-    _select_mode_view_in_members_subpage(selenium, user, oz_page, parent)
+    _select_mode_view_in_members_subpage(selenium, user, oz_page,
+                                         parent, onepanel)
     for group in parse_seq(group_list):
         assert_element_is_member_of_parent_in_memberships(selenium, user,
                                                           group, parent,
@@ -127,10 +135,11 @@ def assert_subgroups_using_op_gui(selenium, user, oz_page, group_list, parent):
 
 
 def fail_to_see_subgroups_using_op_gui(selenium, user, oz_page,
-                                       group_list, parent):
+                                       group_list, parent, onepanel):
     where = 'group'
 
-    _select_mode_view_in_members_subpage(selenium, user, oz_page, parent)
+    _select_mode_view_in_members_subpage(selenium, user, oz_page,
+                                         parent, onepanel)
     for group in parse_seq(group_list):
         assert_element_is_not_member_of_parent_in_memberships(selenium, user,
                                                               group, where,
@@ -138,16 +147,19 @@ def fail_to_see_subgroups_using_op_gui(selenium, user, oz_page,
                                                               where, where)
 
 
-def _create_group_token(selenium, user, user2, oz_page, name,
-                        tmp_memory, displays, clipboard, member):
+@repeat_failed(timeout=WAIT_FRONTEND)
+def _create_group_token(selenium, user, user2, oz_page, name, tmp_memory,
+                        displays, clipboard, member, onepanel, popups):
     item_type = 'token'
     where = 'group'
     button = 'Invite {} using token'.format(member)
     member += 's'
     modal = 'Invite using token'
+    subpage = 'members'
 
+    go_to_group_subpage(selenium, user, name, subpage, oz_page)
     click_on_option_in_members_list_menu(selenium, user, button,
-                                         name, where, member, oz_page)
+                                         where, member, oz_page, onepanel, popups)
     copy_token_from_modal(selenium, user)
     close_modal(selenium, user, modal, modals)
     send_copied_item_to_other_users(user, item_type, user2,
@@ -158,18 +170,20 @@ def _create_group_token(selenium, user, user2, oz_page, name,
                '"(?P<name>.*)" using Oneprovider web GUI'))
 def create_group_token_to_invite_user_using_op_gui(selenium, user, user2,
                                                    oz_page, name, tmp_memory,
-                                                   displays, clipboard):
+                                                   displays, clipboard,
+                                                   onepanel, popups):
     member = 'user'
-    _create_group_token(selenium, user, user2, oz_page, name,
-                        tmp_memory, displays, clipboard, member)
+    _create_group_token(selenium, user, user2, oz_page, name, tmp_memory,
+                        displays, clipboard, member, onepanel, popups)
 
 
 def create_group_token_to_invite_group_using_op_gui(selenium, user, user2,
                                                     oz_page, name, tmp_memory,
-                                                    displays, clipboard):
+                                                    displays, clipboard,
+                                                    onepanel, popups):
     member = 'group'
-    _create_group_token(selenium, user, user2, oz_page, name,
-                        tmp_memory, displays, clipboard, member)
+    _create_group_token(selenium, user, user2, oz_page, name, tmp_memory,
+                        displays, clipboard, member, onepanel, popups)
 
 
 @wt(parsers.re('(?P<user>\w+) joins group he was invited to using '
@@ -181,45 +195,65 @@ def join_group_using_op_gui(selenium, user, oz_page, tmp_memory):
 
 
 def add_subgroups_using_op_gui(selenium, user, oz_page, parent, group_list,
-                               tmp_memory, displays, clipboard):
+                               tmp_memory, displays, clipboard,
+                               onepanel, popups):
     for child in parse_seq(group_list):
         create_group_token_to_invite_group_using_op_gui(selenium, user, user,
                                                         oz_page, parent,
                                                         tmp_memory, displays,
-                                                        clipboard)
-        add_group_as_subgroup(selenium, user, child, oz_page, tmp_memory)
+                                                        clipboard, onepanel,
+                                                        popups)
+        add_group_as_subgroup(selenium, user, child, oz_page,
+                              tmp_memory, popups)
 
 
 def remove_subgroups_using_op_gui(selenium, user, oz_page, group_list,
-                                  tmp_memory, parent):
+                                  tmp_memory, parent, onepanel, popups):
     member_type = 'group'
 
     for child in parse_seq(group_list):
-        remove_member_from_group(selenium, user, child, member_type, parent,
-                                 oz_page, tmp_memory)
+        remove_member_from_parent(selenium, user, child, member_type, parent,
+                                  oz_page, tmp_memory, onepanel,
+                                  member_type, popups)
 
 
 def fail_to_rename_groups_using_op_gui(selenium, user, oz_page, group_list,
-                                       new_names):
+                                       new_names, popups):
     text = 'failed'
 
     for group, new_name in zip(parse_seq(group_list), parse_seq(new_names)):
-        rename_groups_using_op_gui(selenium, user, oz_page, group, new_name)
+        rename_groups_using_op_gui(selenium, user, oz_page, group,
+                                   new_name, popups)
         assert_error_modal_with_text_appeared(selenium, user, text, oz_page)
 
 
 def fail_to_add_subgroups_using_op_gui(selenium, user, oz_page, parent,
                                        group_list, tmp_memory, displays,
-                                       clipboard):
+                                       clipboard, onepanel, popups):
     create_group_token_to_invite_group_using_op_gui(selenium, user, user,
                                                     oz_page, parent, tmp_memory,
-                                                    displays, clipboard)
+                                                    displays, clipboard,
+                                                    onepanel, popups)
     for child in parse_seq(group_list):
         error = 'joining group as subgroup failed'
         modal = 'error'
 
-        add_group_as_subgroup(selenium, user, child, oz_page, tmp_memory)
+        add_group_as_subgroup(selenium, user, child, oz_page,
+                              tmp_memory, popups)
         assert_error_modal_with_text_appeared(selenium, user, error,
                                               oz_page)
         close_modal(selenium, user, modal, modals)
+
+
+@wt(parsers.parse('user of {browser_id} selects "{group_name}" '
+                  'from group selector in {modal_name} modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def select_group_from_selector_in_modal(selenium, browser_id, group_name,
+                                        modal_name, tmp_memory):
+    driver = selenium[browser_id]
+    group_selector = modals(driver).add_one_of_groups.group_selector
+
+    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
+    group_selector.expand()
+    group_selector.options[group_name].click()
 
