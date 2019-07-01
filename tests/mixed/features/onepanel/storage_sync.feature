@@ -254,50 +254,50 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
 
   Scenario: User disables files update
-    When using <client1>, user1 creates space "space6" in "onezone" Onezone service
-    And using <client1>, user1 generates space support token for space named "space6" in "onezone" Onezone service and sends it to onepanel
-    And using <client2>, onepanel supports "space6" space in "oneprovider-1" Oneprovider panel service with following configuration:
+    When using <client1>, user1 creates space "space7" in "onezone" Onezone service
+    And using <client1>, user1 generates space support token for space named "space7" in "onezone" Onezone service and sends it to onepanel
+    And using <client2>, onepanel supports "space7" space in "oneprovider-1" Oneprovider panel service with following configuration:
         storage: "posix"
         size: 1000000
-    And using <client2>, onepanel copies Id of "space6" space in Spaces page in Onepanel
-    And using docker, user1 copies dir2 to the root directory of "space6" space
-    And using <client2>, onepanel configures IMPORT parameters for "space6" in "oneprovider-1" Oneprovider panel service as follow:
+    And using <client2>, onepanel copies Id of "space7" space in Spaces page in Onepanel
+    And using docker, user1 copies dir2 to the root directory of "space7" space
+    And using <client2>, onepanel configures IMPORT parameters for "space7" in "oneprovider-1" Oneprovider panel service as follow:
             Import strategy: Simple scan
             Max depth: 2
-    And using <client2>, onepanel sees that IMPORT strategy configuration for "space6" in "oneprovider-1" is as follow:
+    And using <client2>, onepanel sees that IMPORT strategy configuration for "space7" in "oneprovider-1" is as follow:
           Import strategy: Simple scan
           Max depth: 2
-    And using <client1>, user1 sees that list of supporting providers for space named "space6" contains "oneprovider-1" in "onezone" Onezone service
-    And using <client1>, user1 sees that content for "space6" in "oneprovider-1" Oneprovider service is as follow:
+    And using <client1>, user1 sees that list of supporting providers for space named "space7" contains "oneprovider-1" in "onezone" Onezone service
+    And using <client1>, user1 sees that content for "space7" in "oneprovider-1" Oneprovider service is as follow:
           - dir2:
               - dir21
               - dir22
               - file1.txt: 22222
-    And using <client2>, onepanel configures UPDATE parameters for "space6" in "oneprovider-1" Oneprovider panel service as follow:
+    And using <client2>, onepanel configures UPDATE parameters for "space7" in "oneprovider-1" Oneprovider panel service as follow:
           Update strategy: Simple scan
           Max depth: 3
           Scan interval [s]: 1
           Write once: false
           Delete enabled: false
-    And using <client2>, onepanel sees that UPDATE strategy configuration for "space6" in "oneprovider-1" is as follow:
+    And using <client2>, onepanel sees that UPDATE strategy configuration for "space7" in "oneprovider-1" is as follow:
           Update strategy: Simple scan
           Max depth: 3
           Scan interval [s]: 1
           Write once: false
           Delete enabled: false
-    And using <client1>, user1 sees that content for "space6" in "oneprovider-1" Oneprovider service is as follow:
+    And using <client1>, user1 sees that content for "space7" in "oneprovider-1" Oneprovider service is as follow:
           - dir2:
               - dir21:
                   - dir211
                   - file2.txt: 11111
               - dir22: 10
               - file1.txt: 22222
-    And using <client2>, onepanel configures UPDATE parameters for "space6" in "oneprovider-1" Oneprovider panel service as follow:
+    And using <client2>, onepanel configures UPDATE parameters for "space7" in "oneprovider-1" Oneprovider panel service as follow:
           Update strategy: Disabled
-    And using <client2>, onepanel sees that UPDATE strategy configuration for "space6" in "oneprovider-1" is as follow:
+    And using <client2>, onepanel sees that UPDATE strategy configuration for "space7" in "oneprovider-1" is as follow:
           Update strategy: Disabled
-    And using docker, user1 copies dir1 to dir2 regular directory of "space6" space
-    And using <client1>, user1 sees that content for "space6" in "oneprovider-1" Oneprovider service is as follow:
+    And using docker, user1 copies dir1 to dir2 regular directory of "space7" space
+    And using <client1>, user1 sees that content for "space7" in "oneprovider-1" Oneprovider service is as follow:
           - dir2: 3
           - dir2:
               - dir21:
@@ -305,5 +305,5 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
                   - file2.txt: 11111
               - dir22: 10
               - file1.txt: 22222
-    And using <client2>, onepanel revokes "oneprovider-1" provider space support for space named "space6" in "oneprovider-1" Oneprovider panel service
-    And using <client3>, user1 removes space named "space6" in "onezone" Onezone service
+    And using <client2>, onepanel revokes "oneprovider-1" provider space support for space named "space7" in "oneprovider-1" Oneprovider panel service
+    And using <client3>, user1 removes space named "space7" in "onezone" Onezone service

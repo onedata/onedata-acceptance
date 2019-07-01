@@ -50,5 +50,5 @@ Feature: Provider management in Onepanel
           storages:
               posix:
                 type: posix
-                mount point: /volumes/storage
+                mount point: /volumes/persistence/storage
           admin email: admin@onedata.org
