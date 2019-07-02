@@ -8,7 +8,7 @@ Feature: Basic spaces management utilities using onepanel
   Background:
     Given initial users configuration in "onezone" Onezone service:
         - user1
-    And opened browsers with [onepanel, user1] logged to [emergency interface of Onepanel, onezone] service
+    And opened browsers with [onepanel, user1] signed in to [emergency interface of Onepanel, onezone] service
 
 
   Scenario Outline: Support space

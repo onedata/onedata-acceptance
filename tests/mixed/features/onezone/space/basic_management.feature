@@ -11,7 +11,7 @@ Feature: Basic management
                 - oneprovider-1:
                     storage: posix
                     size: 1000000
-    And opened browsers with [admin, user1] logged to [emergency interface of Onepanel, onezone] service
+    And opened browsers with [admin, user1] signed in to [emergency interface of Onepanel, onezone] service
 
 
   Scenario Outline: User leaves space using <client1> and using <client2> he sees that it has been left
