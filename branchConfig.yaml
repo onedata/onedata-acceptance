@@ -6,7 +6,7 @@ branches:
   # Onezone packages plan
   onezone: current_branch
   # Oneprovider packages plan
-  onedata: current_branch
+  onedata: feature/VFS-5107-edit-and-remove-op-worker-storages
   oneclient_docker_build: current_branch
   luma_docker_build: develop
   rest_cli_docker_build: develop
