@@ -18,10 +18,8 @@ from .revoke_space_support import RevokeSpaceSupportModal
 from .edit_permissions import EditPermissionsModal
 from .configure_web_cert import ConfigureWebCertModal
 from .remove import RemoveModal
-from .leave_group import LeaveGroupModal
 from .leave_space import LeaveSpaceModal
 from .leave_parent import LeaveParentModal
-from .leave_harvester import LeaveHarvesterModal
 from .error_modal import ErrorModal
 from .invite_using_token import InviteUsingTokenModal
 from .dns_configuration_warning import DNSConfigurationWarningModal
@@ -29,7 +27,8 @@ from .provider_popover import ProviderPopover
 from .membership_relation_menu import MembershipRelationMenu
 from .groups_hierarchy_menu import GroupHierarchyMenu
 from .emergency_interface import EmergencyInterface
-from .choose_space import ChooseSpaceModal
+from .choose_element import ChooseElementModal
+from .leave_element import LeaveElementModal
 
 
 class Modals(object):
@@ -49,16 +48,17 @@ class Modals(object):
     remove_group = WebItem('.group-remove-modal.modal.in .modal-dialog',
                            cls=RemoveModal)
     leave_group = WebItem('.leave-modal.modal.in .modal-dialog',
-                          cls=LeaveGroupModal)
+                          cls=LeaveElementModal)
     leave_parent = WebItem('.leave-parent-modal.modal.in .modal-dialog',
                            cls=LeaveParentModal)
     leave_space = WebItem('.modal-dialog',
                           cls=LeaveSpaceModal)
-    leave_harvester = WebItem('.modal-dialog', cls=LeaveHarvesterModal)
+    leave_harvester = WebItem('.modal-dialog', cls=LeaveElementModal)
     provider_popover = WebItem('.webui-popover .provider-place-drop',
                                cls=ProviderPopover)
     remove_member = WebItem('.remove-relation-modal.modal.in .modal-dialog',
                             cls=RemoveModal)
+    remove_harvester = WebItem('.modal-dialog', cls=RemoveModal)
     error = WebItem('.alert-global.modal.in .modal-dialog',
                     cls=ErrorModal)
     invite_using_token = WebItem('.invite-using-token-modal.modal.in '
@@ -72,7 +72,8 @@ class Modals(object):
     membership_relation_menu = WebItem('.relation-actions.one-webui-popover',
                                        cls=MembershipRelationMenu)
     emergency_interface = WebItem('.modal-dialog', cls=EmergencyInterface)
-    choose_space = WebItem('.modal-dialog', cls=ChooseSpaceModal)
+    choose_space = WebItem('.modal-dialog', cls=ChooseElementModal)
+    remove_space_from_harvester = WebItem('.modal-dialog', cls=RemoveModal)
 
     def __init__(self, driver):
         self.driver = driver

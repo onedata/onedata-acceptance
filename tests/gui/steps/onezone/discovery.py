@@ -9,6 +9,7 @@ __license__ = ("This software is released under the MIT license cited in "
 
 from pytest_bdd import parsers
 
+from tests import ELASTICSEARCH_PORT
 from tests.utils.acceptance_utils import wt
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.utils.utils import repeat_failed
@@ -16,14 +17,14 @@ from tests.gui.steps.common.miscellaneous import _enter_text
 from tests.gui.utils.generic import transform
 
 
-@wt(parsers.parse('user of {browser_id} clicks on Create harvester button '
+@wt(parsers.parse('user of {browser_id} clicks on {button_name} button '
                   'in discovery sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_create_new_harvester_on_discovery_on_left_sidebar_menu(selenium,
-                                                                 browser_id,
-                                                                 oz_page):
+def click_button_on_discovery_on_left_sidebar_menu(selenium, browser_id,
+                                                   button_name, oz_page):
     driver = selenium[browser_id]
-    oz_page(driver)['discovery'].create_new_harvester_button()
+    button = transform(button_name) + '_button'
+    getattr(oz_page(driver)['discovery'], button).click()
 
 
 @wt(parsers.parse('user of {browser_id} types "{text}" to {input_name} input '
@@ -43,7 +44,7 @@ def type_endpoint_to_input_field_in_discovery_page(selenium, browser_id,
                                                    oz_page, input_name, hosts):
     driver = selenium[browser_id]
     input_field = getattr(oz_page(driver)['discovery'], input_name)
-    text = hosts['elasticsearch']['ip'] + ':9200'
+    text = '{}:{}'.format(hosts['elasticsearch']['ip'], ELASTICSEARCH_PORT)
     _enter_text(input_field, text)
 
 
@@ -58,12 +59,10 @@ def click_create_button_in_discovery_page(selenium, browser_id, oz_page):
 @wt(parsers.parse('user of {browser_id} sees that "{harvester_name}" '
                   'has {option} on the harvesters list in the sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_new_created_harvester_has_appeared_on_harvesters_list(selenium,
-                                                                 browser_id,
-                                                                 oz_page,
-                                                                 harvester_name,
-                                                                 option):
+def assert_harvester_exists_on_harvesters_list(selenium, browser_id, oz_page,
+                                               harvester_name, option):
     driver = selenium[browser_id]
+
     if option == 'appeared':
         assert harvester_name in oz_page(driver)['discovery'].elements_list, \
             'harvester "{}" not found'.format(harvester_name)
@@ -77,7 +76,8 @@ def assert_new_created_harvester_has_appeared_on_harvesters_list(selenium,
                'button in harvester "(?P<name>.*)" menu '
                'in the sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_group_menu_button(selenium, browser_id, option, name, oz_page):
+def click_on_option_in_harvester_menu(selenium, browser_id, option,
+                                      name, oz_page):
     page = oz_page(selenium[browser_id])['discovery']
     page.elements_list[name]()
     page.elements_list[name].menu_button()
@@ -87,8 +87,8 @@ def click_on_group_menu_button(selenium, browser_id, option, name, oz_page):
 @wt(parsers.parse('user of {browser_id} types "{text}" to rename harvester '
                   'input field'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def type_text_to_input_field_in_discovery_page(selenium, browser_id, oz_page,
-                                               text):
+def type_text_to_rename_input_field_in_discovery_page(selenium, browser_id,
+                                                      oz_page, text):
     driver = selenium[browser_id]
     input_field = oz_page(driver)['discovery'].rename_input
     _enter_text(input_field, text)
@@ -112,16 +112,17 @@ def click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id,
             transform(option)).click()
 
 
-@wt(parsers.re('user of (?P<browser_id>.*?) clicks add one of your spaces '
-               'button in harvester spaces page'))
+@wt(parsers.parse('user of {browser_id} clicks {button_name} button '
+                  'in harvester spaces page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_add_space_button_in_harvester_spaces_page(selenium, browser_id,
-                                                    oz_page):
+def click_button_in_harvester_spaces_page(selenium, browser_id, oz_page,
+                                          button_name):
     driver = selenium[browser_id]
-    oz_page(driver)['discovery'].add_space_button()
+    button_name = transform(button_name) + '_button'
+    getattr(oz_page(driver)['discovery'], button_name).click()
 
 
-@wt(parsers.parse('user of {browser_id} chooses {space_name} from dropdown '
+@wt(parsers.parse('user of {browser_id} chooses "{space_name}" from dropdown '
                   'in add space modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_space_from_dropdown_in_add_space_modal(selenium, browser_id,
@@ -140,4 +141,64 @@ def assert_space_has_appeared_in_discovery_page(selenium, browser_id,
     assert space_name in oz_page(driver)['discovery'].spaces_list, \
         'space "{}" not found'.format(space_name)
 
+
+@wt(parsers.parse('user of {browser_id} types "{index_name}" '
+                  'to name input field in indices page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def type_index_name_to_input_field_in_indices_page(selenium, browser_id,
+                                                   oz_page, index_name):
+    driver = selenium[browser_id]
+    name_input = oz_page(driver)['discovery'].indices_page.name_input
+    _enter_text(name_input, index_name)
+
+
+@wt(parsers.parse('user of {browser_id} clicks on Create button '
+                  'in indices page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_create_button_in_indices_page(selenium, browser_id, oz_page):
+    driver = selenium[browser_id]
+    oz_page(driver)['discovery'].indices_page.create_button()
+
+
+@wt(parsers.parse('user of {browser_id} sees that "{index_name}" '
+                  'has appeared on the indices list'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_index_has_appeared_in_indices_page(selenium, browser_id, oz_page,
+                                              index_name):
+    driver = selenium[browser_id]
+    indices_list = oz_page(driver)['discovery'].indices_page.indices_list
+    assert index_name in indices_list, 'index "{}" not found'.format(index_name)
+
+
+@wt(parsers.parse('user of {browser_id} expands "{index_name}" index record '
+                  'in indices page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def expand_index_record_in_indices_page(selenium, browser_id, oz_page,
+                                        index_name):
+    driver = selenium[browser_id]
+    indices_list = oz_page(driver)['discovery'].indices_page.indices_list
+    indices_list[index_name].click()
+
+
+@wt(parsers.parse('user of {browser_id} sees {value} progress in '
+                  '"{index_name}" index harvesting'))
+@repeat_failed(timeout=WAIT_FRONTEND * 2)
+def assert_progress_in_harvesting(selenium, browser_id, oz_page,
+                                  index_name, value):
+    driver = selenium[browser_id]
+    indices_list = oz_page(driver)['discovery'].indices_page.indices_list
+    progress_value = indices_list[index_name].progress_value
+
+    assert value == progress_value, 'found {} instead of {}'.format(progress_value,
+                                                                    value)
+
+
+def click_remove_space_option_in_menu_in_discover_spaces_page(selenium,
+                                                              browser_id,
+                                                              space_name,
+                                                              oz_page):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['discovery']
+    page.spaces_list[space_name].click_menu()
+    page.menu['Remove this space'].click()
 

@@ -17,6 +17,10 @@ from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 
 
+@wt(parsers.re('user of (?P<user>.+?) supports "(?P<space_name>.*)" space '
+               'in "(?P<provider_name>.+?)" Oneprovider panel service '
+               'with following configuration:\n'
+               '(?P<config>(.|\s)*)'))
 def support_space_in_op_panel_using_gui(selenium, user, config, onepanel,
                                         tmp_memory, space_name, provider_name,
                                         hosts):

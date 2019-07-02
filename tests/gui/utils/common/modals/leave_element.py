@@ -1,4 +1,4 @@
-"""Utils and fixtures to facilitate operations on leave harvester modal.
+"""Utils and fixtures to facilitate operations on leave element modal.
 """
 
 __author__ = "Agnieszka Warchol"
@@ -10,10 +10,10 @@ from tests.gui.utils.core.web_elements import NamedButton
 from .modal import Modal
 
 
-class LeaveHarvesterModal(Modal):
-    cancel = NamedButton('button', text='Cancel')
+class LeaveElementModal(Modal):
     leave = NamedButton('button', text='Leave')
+    cancel = NamedButton('button', text='Cancel')
 
     def __str__(self):
-        return 'Leave harvester modal'
+        return 'Leave element modal'
 

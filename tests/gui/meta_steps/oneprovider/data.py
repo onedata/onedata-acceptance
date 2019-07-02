@@ -149,7 +149,7 @@ def assert_metadata_in_op_gui(selenium, browser_id, path, tmp_memory, op_page,
                                                   item_name, tmp_memory)
         if res == 'fails':
             assert_textarea_content_is_eq_to(browser_id, item_name,
-                                             '{}' if tab_name == 'json' else '',
+                                             'null' if tab_name == 'json' else '',
                                              tab_name, tmp_memory)
         else:
             assert_textarea_contains_record(browser_id, val, tab_name, 

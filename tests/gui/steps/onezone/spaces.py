@@ -442,3 +442,31 @@ def confirm_rename_the_space(selenium, browser_id, option, oz_page):
         rename_space_by_click_on_confirmation_button_on_overview_page(selenium,
                                                                       browser_id,
                                                                       oz_page)
+
+
+@wt(parsers.parse('user of {browser_id} clicks join to harvester in menu '
+                  'for "{space_name}" in spaces list'))
+def click_join_to_harvester_option_in_menu_in_data_page(selenium, browser_id,
+                                                       space_name, oz_page):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['data']
+    page.elements_list[space_name].click_menu()
+    page.left_menu['Join to harvester'].click()
+
+
+@wt(parsers.parse('user of {browser_id} pastes harvester invitation token '
+                  'into harvester token text field in {where} page'))
+def paste_harvester_invitation_token_into_text_field(selenium, browser_id,
+                                                     oz_page, clipboard,
+                                                     displays, where):
+    driver = selenium[browser_id]
+    token = clipboard.paste(display=displays[browser_id])
+    oz_page(driver)[where].input_box.value = token
+
+
+@wt(parsers.parse('user of {browser_id} clicks Join the harvester button '
+                  'in data page'))
+def click_join_harvester_button_in_data_page(selenium, browser_id, oz_page):
+    driver = selenium[browser_id]
+    oz_page(driver)['data'].join_harvester_button()
+

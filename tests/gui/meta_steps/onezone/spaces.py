@@ -18,7 +18,7 @@ from tests.gui.steps.onezone.members import *
 from tests.gui.steps.common.miscellaneous import close_modal
 
 
-@wt(parsers.re('user of (?P<user>.*) creates (?P<space_list>.+?) space '
+@wt(parsers.re('user of (?P<user>.*) creates "(?P<space_list>.+?)" space '
                'in Onezone page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_spaces_in_oz_using_gui(selenium, user, oz_page, space_list):
@@ -32,6 +32,27 @@ def create_spaces_in_oz_using_gui(selenium, user, oz_page, space_list):
         confirm_create_new_space(selenium, user, option, oz_page)
 
 
+@wt(parsers.parse('user of {user} sends support token from "{space_name}" '
+                  'to user of {browser_id}'))
+def receive_support_token(selenium, user, space_name, browser_id, oz_page,
+                          tmp_memory, displays, clipboard):
+    option = 'spaces'
+    where = 'Providers'
+    item_type = 'token'
+
+    click_element_on_lists_on_left_sidebar_menu(selenium, user, option,
+                                                space_name, oz_page)
+    click_on_members_of_space_on_left_sidebar_menu(selenium, user,
+                                                   space_name, where, oz_page)
+    click_get_support_button_on_providers_page(selenium, user, oz_page)
+    copy_token(selenium, user, oz_page)
+    send_copied_item_to_other_users(user, item_type, browser_id,
+                                    tmp_memory, displays, clipboard)
+
+
+@wt(parsers.re('user of (?P<user>.*) leaves "(?P<space_list>.+?)" space '
+               'in Onezone page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def leave_spaces_in_oz_using_gui(selenium, user, space_list, oz_page):
     where = 'spaces'
     option = 'Leave space'
