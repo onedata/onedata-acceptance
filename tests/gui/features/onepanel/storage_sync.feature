@@ -22,14 +22,8 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
   Scenario: User supports space with storage sync and enabled options: Mount in root
     Given there are no spaces supported in Onepanel used by user of browser1
-
-    # create space
     When user of browser2 creates "space2" space in Onezone
-
-    # receive support token
     And user of browser2 sends support token from "space2" to user of browser1
-
-    # copy files to provider storage
     And user of browser2 copies dir2 to provider's storage mount point
 
     # support space
@@ -123,17 +117,12 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 double clicks on item named "dir22" in file browser
     And user of browser2 sees that there are 10 items in file browser
 
-    # revoke space support
     And user of browser1 revokes "space2" space support in "oneprovider-1" provider in Onepanel
 
 
   Scenario: User supports space with storage sync and no enabled options
     Given there are no spaces supported in Onepanel used by user of browser1
-
-    # create space
     When user of browser2 creates "space1" space in Onezone
-
-    # receive support token
     And user of browser2 sends support token from "space1" to user of browser1
 
     # support space
@@ -233,17 +222,12 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 double clicks on item named "dir22" in file browser
     And user of browser2 sees that there are 10 items in file browser
 
-    # revoke space support
     And user of browser1 revokes "space1" space support in "oneprovider-1" provider in Onepanel
 
 
   Scenario: User supports space with storage sync and enabled options: Delete
     Given there are no spaces supported in Onepanel used by user of browser1
-
-    # create space
     When user of browser2 creates "space3" space in Onezone
-
-    # receive support token
     And user of browser2 sends support token from "space3" to user of browser1
 
     # support space
@@ -356,17 +340,12 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     Then user of browser2 sees that there is 1 item in file browser
     And user of browser2 sees item(s) named "dir22" in file browser
 
-    # revoke space support
     And user of browser1 revokes "space3" space support in "oneprovider-1" provider in Onepanel
 
 
   Scenario: User supports space with storage sync and enabled options: Write once
     Given there are no spaces supported in Onepanel used by user of browser1
-
-    # create space
     When user of browser2 creates "space4" space in Onezone
-
-    # receive support token
     And user of browser2 sends support token from "space4" to user of browser1
 
     # support space
@@ -467,17 +446,12 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 double clicks on item named "dir22" in file browser
     And user of browser2 sees that there are 10 items in file browser
 
-    # revoke space support
     And user of browser1 revokes "space4" space support in "oneprovider-1" provider in Onepanel
 
 
   Scenario: User supports space with storage sync and enabled options: Delete and Write once
     Given there are no spaces supported in Onepanel used by user of browser1
-
-    # create space
     When user of browser2 creates "space5" space in Onezone
-
-    # receive support token
     And user of browser2 sends support token from "space5" to user of browser1
 
     # support space
@@ -591,17 +565,12 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sees that there is 1 item in file browser
     And user of browser2 sees item(s) named "dir22" in file browser
 
-    # revoke space support
     And user of browser1 revokes "space5" space support in "oneprovider-1" provider in Onepanel
 
 
   Scenario: User disables files update
     Given there are no spaces supported in Onepanel used by user of browser1
-
-    # create space
     When user of browser2 creates "space6" space in Onezone
-
-    # receive support token
     And user of browser2 sends support token from "space6" to user of browser1
 
     # support space
@@ -725,5 +694,4 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sees item(s) named ["dir21", "dir22", "file1.txt"] in file browser
     Then user of browser2 does not see any item(s) named "dir1" in file browser
 
-    # revoke space support
     And user of browser1 revokes "space6" space support in "oneprovider-1" provider in Onepanel

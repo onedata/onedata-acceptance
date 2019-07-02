@@ -30,10 +30,7 @@ Feature: Storage management using onepanel
     And user of <client> sees that "<storage_name>" Storage type is posix in storages page in Onepanel
     And user of <client> sees that "<storage_name>" Mount point is /volumes/storage in storages page in Onepanel
 
-    # create space
     And user of browser1 creates "hello_world1" space in Onezone
-
-    # receive support token
     And user of browser1 sends support token from "hello_world1" to user of <client>
 
     # support space
