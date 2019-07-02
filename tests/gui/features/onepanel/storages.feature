@@ -23,12 +23,12 @@ Feature: Storage management using onepanel
     And user of <client> clicks on Add storage button in storages page in Onepanel
     And user of <client> selects POSIX from storage selector in storages page in Onepanel
     And user of <client> types "<storage_name>" to Storage name field in POSIX form in storages page in Onepanel
-    And user of <client> types "/volumes/storage" to Mount point field in POSIX form in storages page in Onepanel
+    And user of <client> types "/volumes/persistence/storage" to Mount point field in POSIX form in storages page in Onepanel
     And user of <client> clicks on Add button in add storage form in storages page in Onepanel
     And user of <client> sees an info notify with text matching to: .*[Ss]torage.*added.*
     And user of <client> expands "<storage_name>" record on storages list in storages page in Onepanel
     And user of <client> sees that "<storage_name>" Storage type is posix in storages page in Onepanel
-    And user of <client> sees that "<storage_name>" Mount point is /volumes/storage in storages page in Onepanel
+    And user of <client> sees that "<storage_name>" Mount point is /volumes/persistence/storage in storages page in Onepanel
 
     # create space
     And user of browser1 clicks on Create space button in spaces sidebar

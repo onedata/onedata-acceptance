@@ -18,7 +18,7 @@ from tests.gui.utils.generic import parse_seq, suppress
 
 
 PROVIDER_CONTAINER_NAME = 'oneprovider-1'
-MOUNT_POINT = '/volumes/storage'
+MOUNT_POINT = '/volumes/persistence/storage'
 
 
 def _docker_cp(tmpdir, browser_id, src_path, hosts, dst_path=None):
