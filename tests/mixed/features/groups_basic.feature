@@ -11,7 +11,7 @@ Feature: Basic operations on groups
                     storage: posix
                     size: 1000000
                 
-    And opened browser with user1 logged to "onezone" service
+    And opened browser with user1 signed in to "onezone" service
 
 
   Scenario Outline: User creates groups
@@ -21,7 +21,7 @@ Feature: Basic operations on groups
   Examples:
   | client1 | client2   |
   | REST    | web GUI   |
-  | web GUI | REST      | 
+  | web GUI | REST      |
 
 
   Scenario Outline: User renames group
@@ -34,7 +34,7 @@ Feature: Basic operations on groups
   Examples:
   | client1 | client2   |
   | REST    | web GUI   |
-  | web GUI | REST      | 
+  | web GUI | REST      |
 
 
   Scenario: User removes group
@@ -43,7 +43,7 @@ Feature: Basic operations on groups
     And using REST, user1 removes group "group1" in "onezone" Onezone service
     Then using web GUI, user1 does not see group named "group1" in "onezone" Onezone service
 
-    
+
   Scenario Outline: User leaves group
     When using <client1>, user1 creates group "group1" in "onezone" Onezone service
     And using <client2>, user1 sees that group named "group1" has appeared in "onezone" Onezone service
@@ -53,7 +53,7 @@ Feature: Basic operations on groups
   Examples:
   | client1 | client2   |
   | REST    | web GUI   |
-  | web GUI | REST      | 
+  | web GUI | REST      |
 
 
   Scenario Outline: User joins a group to parent group
@@ -65,7 +65,7 @@ Feature: Basic operations on groups
   Examples:
   | client1 | client2   |
   | REST    | web GUI   |
-  | web GUI | REST      | 
+  | web GUI | REST      |
 
 
   Scenario Outline: User removes group from parent group
@@ -80,4 +80,4 @@ Feature: Basic operations on groups
   Examples:
   | client1 | client2   |
   | REST    | web GUI   |
-  | web GUI | REST      | 
+  | web GUI | REST      |

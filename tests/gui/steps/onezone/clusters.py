@@ -12,14 +12,16 @@ from pytest_bdd import parsers
 from tests.utils.utils import repeat_failed
 from tests.utils.acceptance_utils import wt
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.utils.generic import transform
+from tests.gui.steps.common.miscellaneous import _enter_text
 
 
-@wt(parsers.parse('user of {browser_id} clicks on add new provider cluster '
-                  'button in clusters menu'))
+@wt(parsers.parse('user of {browser_id} clicks on {button} '
+                  'button in clusters {where}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_add_new_provider_cluster(selenium, browser_id, oz_page):
+def click_button_in_cluster_page(selenium, browser_id, oz_page, button):
     driver = selenium[browser_id]
-    oz_page(driver)['clusters'].add_new_provider_cluster()
+    getattr(oz_page(driver)['clusters'], transform(button)).click()
 
 
 @wt(parsers.parse('user of {browser_id} copies registration token '
@@ -32,10 +34,11 @@ def copy_registration_cluster_token(selenium, browser_id, oz_page):
 
 @wt(parsers.parse('user of {browser_id} clicks on "{record}" in clusters menu'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_record_in_clusters_menu(selenium, browser_id, oz_page, record, hosts):
+def click_on_record_in_clusters_menu(selenium, browser_id, oz_page, record,
+                                     hosts):
     driver = selenium[browser_id]
     record = hosts[record]['name']
-    oz_page(driver)['clusters'].menu[record].click()
+    oz_page(driver)['clusters'].menu[record]()
 
 
 @wt(parsers.parse('user of {browser_id} clicks {option} of "{record}" '
@@ -44,3 +47,24 @@ def click_on_record_in_clusters_menu(selenium, browser_id, oz_page, record, host
 def click_option_of_record_in_the_sidebar(selenium, browser_id, oz_page, option):
     driver = selenium[browser_id]
     oz_page(driver)['clusters'].submenu[option].click()
+
+
+@wt(parsers.parse('user of {browser_id} pastes copied token into join cluster '
+                  'token text field'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def enter_copied_join_cluster_token_into_token_input_field(selenium, browser_id,
+                                                           oz_page, displays,
+                                                           clipboard):
+    token = clipboard.paste(display=displays[browser_id])
+    token_input = (oz_page(selenium[browser_id])['clusters']
+                   .join_cluster_token_input)
+    _enter_text(token_input, token)
+
+
+@wt(parsers.parse('user of {browser_id} checks the understand notice '
+                  'in clusters page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def check_the_understand_notice(selenium, browser_id, oz_page):
+    driver = selenium[browser_id]
+    oz_page(driver)['clusters'].deregistration_checkbox()
+

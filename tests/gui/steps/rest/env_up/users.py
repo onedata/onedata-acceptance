@@ -169,6 +169,7 @@ def _rm_user(zone_hostname, admin_credentials, user_credentials,
 
 @repeat_failed(attempts=5)
 def _rm_zone_user(zone_hostname, admin_username, admin_password, user_id):
+    admin_username = 'admin'
     path = get_zone_rest_path('users', user_id)
     http_delete(ip=zone_hostname, port=OZ_REST_PORT, path=path,
                 auth=(admin_username, admin_password))

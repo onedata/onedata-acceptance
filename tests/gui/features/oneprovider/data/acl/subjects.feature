@@ -38,7 +38,7 @@ Feature: ACL basic subjects tests in Oneprovider GUI
                 - group2
                 - group3
                         
-    And opened browser with user1 logged to "onezone" service
+    And opened browser with user1 signed in to "onezone" service
     And opened oneprovider-1 Oneprovider view in web GUI by user of browser
     When user of browser sees file browser in data tab in Oneprovider page
     And user of browser clicks once on item named "file1" in file browser
@@ -68,7 +68,7 @@ Feature: ACL basic subjects tests in Oneprovider GUI
                 - group1
                 - group2
 
-    And opened browser with user1 logged to "onezone" service
+    And opened browser with user1 signed in to "onezone" service
     And opened oneprovider-1 Oneprovider view in web GUI by user of browser
     When user of browser sets "file1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
     Then user of browser <result> to remove "file1" in "space1"
@@ -95,7 +95,7 @@ Feature: ACL basic subjects tests in Oneprovider GUI
             groups:
                 - group2
 
-    And opened browser with user1 logged to "onezone" service
+    And opened browser with user1 signed in to "onezone" service
     And opened oneprovider-1 Oneprovider view in web GUI by user of browser
     When user of browser sets "file1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
     Then user of browser <result> to remove "file1" in "space1"
@@ -123,7 +123,7 @@ Feature: ACL basic subjects tests in Oneprovider GUI
                 - group1
                 - group3
 
-    And opened browser with user3 logged to "onezone" service
+    And opened browser with user3 signed in to "onezone" service
     And opened oneprovider-1 Oneprovider view in web GUI by user of browser
     When user of browser sees file browser in data tab in Oneprovider page
     And user of browser clicks once on item named "file1" in file browser

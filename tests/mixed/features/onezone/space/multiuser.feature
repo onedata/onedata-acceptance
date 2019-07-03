@@ -19,7 +19,7 @@ Feature: Multiuser
                 - oneprovider-1:
                     storage: posix
                     size: 1000000
-    And opened browsers with [user1, user2] logged to [onezone, onezone] service
+    And opened browsers with [user1, user2] signed in to [onezone, onezone] service
     And opened oneprovider-1 Oneprovider view in web GUI by user2
     And opened "spaces" tab in web GUI by user2
 

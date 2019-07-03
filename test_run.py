@@ -73,7 +73,7 @@ def parse_image_for_service(file_path):
 
 def delete_test_runner_pod():
     delete_test_runner_cmd = ['kubectl', 'delete', 'pod', 'test-runner']
-    call(delete_test_runner_cmd, stdin=None, stderr=None, stdout=None)
+    call(delete_test_runner_cmd, stdin=None, stderr=DEVNULL, stdout=DEVNULL)
 
 
 def clean_env():
