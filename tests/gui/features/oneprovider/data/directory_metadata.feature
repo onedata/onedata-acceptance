@@ -52,36 +52,6 @@ Feature: Basic data tab operations on directory metadata in file browser
     Then user of browser sees that edited attribute key in metadata panel opened for "dir1" is highlighted as invalid
 
 
-# TODO uncomment when new validation will be in gui
-#  Scenario: Entered invalid metadata for directory will not be saved
-#    When user of browser uses spaces select to change data space to "space1"
-#    And user of browser sees file browser in data tab in Oneprovider page
-#
-#    # try saving empty forms
-#    And user of browser selects "dir1" item(s) from file browser with pressed ctrl
-#    And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
-#    And user of browser sees that metadata panel for "dir1" in files list has appeared
-#    And user of browser clicks on "Save all changes" button in metadata panel opened for "dir1"
-#    And user of browser sees an info notify with text matching to: .*[Mm]etadata.*saved.*successfully.*
-#    And user of browser refreshes site
-#    And user of browser sees file browser in data tab in Oneprovider page
-#
-#    # try saving metadata with record key being filled only
-#    And user of browser selects "dir1" item(s) from file browser with pressed ctrl
-#    And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
-#    And user of browser sees that metadata panel for "dir1" in files list has appeared
-#    And user of browser types "attr" to attribute input box of new metadata basic entry in metadata panel opened for "dir1"
-#    And user of browser clicks on add basic metadata entry icon in metadata panel opened for "dir1"
-#    And user of browser sees that "Save all changes" button in metadata panel opened for "dir1" is disabled
-#
-#    And user of browser refreshes site
-#    And user of browser sees file browser in data tab in Oneprovider page
-#    And user of browser selects "dir1" item(s) from file browser with pressed ctrl
-#    And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
-#    And user of browser sees that metadata panel for "dir1" in files list has appeared
-#    Then user of browser should not see basic metadata entry with attribute named "attr" in metadata panel opened for "dir1"
-
-
   Scenario: Add metadata to directory (clicks both add icon and "Save all changes" button)
     When user of browser uses spaces select to change data space to "space1"
     And user of browser sees file browser in data tab in Oneprovider page
