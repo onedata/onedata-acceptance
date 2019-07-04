@@ -126,13 +126,9 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sends support token from "space1" to user of browser1
 
     # support space
-    And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of browser1 clicks on Support space button in spaces page in Onepanel if there are some spaces already supported
-    And user of browser1 selects "posix" from storage selector in support space form in Onepanel
-    And user of browser1 types received token to Support token field in support space form in Onepanel
-    And user of browser1 types "1" to Size input field in support space form in Onepanel
-    And user of browser1 selects GiB radio button in support space form in Onepanel
-    And user of browser1 clicks on Support space button in support space form in Onepanel
+    And user of browser1 supports "space1" space in "oneprovider-1" Oneprovider panel service with following configuration:
+          storage: posix
+          size: 1024
     And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
     And user of browser1 sees that space support record for "space1" has appeared in Spaces page in Onepanel
 
@@ -231,13 +227,9 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sends support token from "space3" to user of browser1
 
     # support space
-    And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of browser1 clicks on Support space button in spaces page in Onepanel if there are some spaces already supported
-    And user of browser1 selects "posix" from storage selector in support space form in Onepanel
-    And user of browser1 types received token to Support token field in support space form in Onepanel
-    And user of browser1 types "1" to Size input field in support space form in Onepanel
-    And user of browser1 selects GiB radio button in support space form in Onepanel
-    And user of browser1 clicks on Support space button in support space form in Onepanel
+    And user of browser1 supports "space3" space in "oneprovider-1" Oneprovider panel service with following configuration:
+          storage: posix
+          size: 1024
     And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
     And user of browser1 sees that space support record for "space3" has appeared in Spaces page in Onepanel
 
@@ -349,13 +341,9 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sends support token from "space4" to user of browser1
 
     # support space
-    And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of browser1 clicks on Support space button in spaces page in Onepanel if there are some spaces already supported
-    And user of browser1 selects "posix" from storage selector in support space form in Onepanel
-    And user of browser1 types received token to Support token field in support space form in Onepanel
-    And user of browser1 types "1" to Size input field in support space form in Onepanel
-    And user of browser1 selects GiB radio button in support space form in Onepanel
-    And user of browser1 clicks on Support space button in support space form in Onepanel
+    And user of browser1 supports "space4" space in "oneprovider-1" Oneprovider panel service with following configuration:
+          storage: posix
+          size: 1024
     And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
     And user of browser1 sees that space support record for "space4" has appeared in Spaces page in Onepanel
 
@@ -455,13 +443,9 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sends support token from "space5" to user of browser1
 
     # support space
-    And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of browser1 clicks on Support space button in spaces page in Onepanel if there are some spaces already supported
-    And user of browser1 selects "posix" from storage selector in support space form in Onepanel
-    And user of browser1 types received token to Support token field in support space form in Onepanel
-    And user of browser1 types "1" to Size input field in support space form in Onepanel
-    And user of browser1 selects GiB radio button in support space form in Onepanel
-    And user of browser1 clicks on Support space button in support space form in Onepanel
+    And user of browser1 supports "space5" space in "oneprovider-1" Oneprovider panel service with following configuration:
+          storage: posix
+          size: 1024
     And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
     And user of browser1 sees that space support record for "space5" has appeared in Spaces page in Onepanel
 
@@ -574,13 +558,9 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sends support token from "space6" to user of browser1
 
     # support space
-    And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of browser1 clicks on Support space button in spaces page in Onepanel if there are some spaces already supported
-    And user of browser1 selects "posix" from storage selector in support space form in Onepanel
-    And user of browser1 types received token to Support token field in support space form in Onepanel
-    And user of browser1 types "1" to Size input field in support space form in Onepanel
-    And user of browser1 selects GiB radio button in support space form in Onepanel
-    And user of browser1 clicks on Support space button in support space form in Onepanel
+    And user of browser1 supports "space6" space in "oneprovider-1" Oneprovider panel service with following configuration:
+          storage: posix
+          size: 1024
     And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
     And user of browser1 sees that space support record for "space6" has appeared in Spaces page in Onepanel
 

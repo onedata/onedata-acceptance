@@ -81,18 +81,8 @@ Feature: Basic cluster members management utilities using onepanel
 
 
   Scenario: User fails to remove group from cluster without remove group privileges
-    # create group
-    When user of browser1 clicks on Create group button in groups sidebar
-    And user of browser1 writes "group1" into group name text field
-    And user of browser1 confirms using enter
-
-    # add group to cluster
-    And user of browser1 clicks on Clusters in the main menu
-    And user of browser1 clicks on "oneprovider-1" in clusters menu
-    And user of browser1 clicks on Members item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of browser1 clicks on "Add one of your groups" button in groups list menu in "oneprovider-1" cluster members view
-    And user of browser1 selects "group1" from group selector in add one of your groups modal
-    And user of browser1 clicks "Add" confirmation button in displayed modal
+    When user of browser1 creates group "group1"
+    And user of browser1 adds "group1" group to "oneprovider-1" cluster
     And user of browser1 sees "group1" group on "oneprovider-1" cluster members list
 
     And user of browser1 invites user of browser2 to "oneprovider-1" cluster
@@ -106,20 +96,14 @@ Feature: Basic cluster members management utilities using onepanel
 
 
   Scenario: User fails to add group to cluster without add group privileges
-    # create group
-    When user of browser2 clicks on Create group button in groups sidebar
-    And user of browser2 writes "group1" into group name text field
-    And user of browser2 confirms using enter
+    When user of browser2 creates group "group1"
 
     And user of browser1 invites user of browser2 to "oneprovider-1" cluster
     And user of browser2 joins to cluster
     And user of browser1 unchecks nested "Add group" privilege in "Group management" privilege for user1 user in cluster page
 
     # fail to add group to cluster
-    And user of browser2 clicks on Members item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of browser2 clicks on "Add one of your groups" button in groups list menu in "oneprovider-1" cluster members view
-    And user of browser2 selects "group1" from group selector in add one of your groups modal
-    And user of browser2 clicks "Add" confirmation button in displayed modal
+    And user of browser2 adds "group1" group to "oneprovider-1" cluster
     Then user of browser2 sees that error modal with text "Insufficient permissions" appeared
 
   Scenario: User fails to see members without view cluster
@@ -146,6 +130,4 @@ Feature: Basic cluster members management utilities using onepanel
     And user of browser2 types "pro1" to Provider name input box in modify provider details form in Provider panel
     And user of browser2 clicks on confirm modify provider details button in clusters page
     Then user of browser2 sees that error modal with text "Forbidden" appeared
-
-
 
