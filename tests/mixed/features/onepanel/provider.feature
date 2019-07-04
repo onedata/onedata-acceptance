@@ -19,7 +19,7 @@ Feature: Provider management in Onepanel
                 - oneprovider-1:
                     storage: posix
                     size: 1000000
-    And opened browsers with [onepanel, user1] logged to [emergency interface of Onepanel, onezone] service
+    And opened browsers with [onepanel, user1] signed in to [emergency interface of Onepanel, onezone] service
 
 
   Scenario Outline: User changes provider name and domain using <client2> and he sees in <client1> that they have changed
@@ -50,5 +50,5 @@ Feature: Provider management in Onepanel
           storages:
               posix:
                 type: posix
-                mount point: /volumes/storage
+                mount point: /volumes/persistence/storage
           admin email: admin@onedata.org

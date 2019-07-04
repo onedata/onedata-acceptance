@@ -18,7 +18,7 @@ Feature: Multiuser with admin
                 - oneprovider-1:
                     storage: posix
                     size: 1000000
-    And opened browsers with [user1, admin2] logged to [onezone, onezone] service
+    And opened browsers with [user1, admin2] signed in to [onezone, onezone] service
 
 
   Scenario: Admin user adds other user to space using <client1> and that user using <client2> sees that he has been added
