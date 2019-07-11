@@ -13,7 +13,7 @@ from tests.gui.utils.onezone.generic_page import GenericPage
 class ManageAccountPage(GenericPage):
     profile = Button('.user-account-button-main')
 
-    alias = Label('.alias-editor')
-    rename_alias = Button('.alias-editor .edit-icon')
+    full_name = Label('.full-name-editor')
+    rename_full_name = Button('.full-name-editor .edit-icon')
     edit_box = WebItem('.editor', cls=EditBox)
 

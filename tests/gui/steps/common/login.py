@@ -29,25 +29,22 @@ def _login_using_passphrase(login_page, password):
     login_page.sign_in()
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) clicks Log in to emergency '
+@wt(parsers.re('user of (?P<browser_id>.*) clicks Sign in to emergency '
                'interface in Onepanel login page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_log_in_to_emergency_interface(selenium, browser_id, login_page):
-    login_page(selenium[browser_id]).log_in_to_emergency_interface()
+def click_sign_in_to_emergency_interface(selenium, browser_id, login_page):
+    login_page(selenium[browser_id]).sign_in_to_emergency_interface()
 
 
-@given(parsers.re('users? of (?P<browser_id_list>.*) logged '
-                  'as (?P<user_id_list>.*) to (?P<service_list>.*) service'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def g_login_using_basic_auth(selenium, browser_id_list, user_id_list,
-                             login_page, users, service_list):
+def _login_to_service(selenium, browser_id_list, user_id_list, service_list,
+                      login_page, users):
     for browser_id, username, service in zip(parse_seq(browser_id_list),
                                              parse_seq(user_id_list),
                                              parse_seq(service_list)):
         driver = selenium[browser_id]
 
         if 'emergency interface' in service:
-            click_log_in_to_emergency_interface(selenium, browser_id, login_page)
+            click_sign_in_to_emergency_interface(selenium, browser_id, login_page)
             time.sleep(1)
             _login_using_passphrase(login_page(driver),
                                     users[username].password)
@@ -58,15 +55,22 @@ def g_login_using_basic_auth(selenium, browser_id_list, user_id_list,
                                  'Authentication succeeded!')
 
 
+@given(parsers.re('users? of (?P<browser_id_list>.*) logged '
+                  'as (?P<user_id_list>.*) to (?P<service_list>.*) service'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def g_login_using_basic_auth(selenium, browser_id_list, user_id_list,
+                             login_page, users, service_list):
+    _login_to_service(selenium, browser_id_list, user_id_list, service_list,
+                      login_page, users)
+
+
 @wt(parsers.re('users? of (?P<browser_id_list>.*) logs? '
-               'as (?P<user_id_list>.*) to (Onepanel|Onezone) service'))
+               'as (?P<user_id_list>.*) to (?P<service_list>.*) service'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_login_using_basic_auth(selenium, browser_id_list, user_id_list,
-                              login_page, users):
-    for browser_id, username in zip(parse_seq(browser_id_list),
-                                    parse_seq(user_id_list)):
-        _login_using_basic_auth(login_page(selenium[browser_id]), username,
-                                users[username].password)
+                              login_page, users, service_list):
+    _login_to_service(selenium, browser_id_list, user_id_list, service_list,
+                      login_page, users)
 
 
 @wt(parsers.re(r'user of (?P<browser_id>.*?) types "(?P<text>.*?)" to '
@@ -87,7 +91,7 @@ def wt_press_sign_in_btn_on_login_page(selenium, browser_id, login_page):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees that he successfully '
-               'logged in (?P<service>.*)'))
+               'signed in (?P<service>.*)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_successful_login(selenium, browser_id, onepage, service):
     logged_in_service = onepage(selenium[browser_id]).service

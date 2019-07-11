@@ -81,6 +81,7 @@ def change_application_path(selenium, browser_id, path):
                  '(?:url|URL) matches: (?P<path>.+)'))
 @then(parsers.re('user of (?P<browser_id>.+?) sees that '
                  '(?:url|URL) matches: (?P<path>.+)'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def is_url_matching(selenium, browser_id, path):
     driver = selenium[browser_id]
     regexp = r'{}$'.format(path.replace('\\', '\\\\'))
