@@ -32,10 +32,8 @@ class StorageAddForm(PageObject):
 class StorageRecord(PageObject, ExpandableMixin):
     name = id = Label('.item-icon-container + .one-label')
     # TODO: add classes in GUI code or match by label text in tests
-    storage_type = Label('.cluster-storage-add-form .form-static '
-                         'div:nth-child(1) span')
-    mount_point = Label('.cluster-storage-add-form .form-static '
-                        'div:nth-child(5) span')
+    storage_type = Label('.item-table .field-type_static-type')
+    mount_point = Label('.item-table .field-posix_static-mountPoint')
     _toggle = WebElement('.one-collapsible-list-item-header')
 
     def is_expanded(self):
