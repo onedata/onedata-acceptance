@@ -23,7 +23,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
   Scenario: User supports space with storage sync and enabled options: Mount in root
     Given there are no spaces supported in Onepanel used by user of browser1
     When user of browser2 creates "space2" space in Onezone
-    And user of browser2 sends support token from "space2" to user of browser1
+    And user of browser2 sends support token for "space2" to user of browser1
     And user of browser2 copies dir2 to provider's storage mount point
 
     # support space
@@ -123,12 +123,13 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
   Scenario: User supports space with storage sync and no enabled options
     Given there are no spaces supported in Onepanel used by user of browser1
     When user of browser2 creates "space1" space in Onezone
-    And user of browser2 sends support token from "space1" to user of browser1
+    And user of browser2 sends support token for "space1" to user of browser1
 
     # support space
     And user of browser1 supports "space1" space in "oneprovider-1" Oneprovider panel service with following configuration:
           storage: posix
-          size: 1024
+          size: 1
+          unit: GiB
     And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
     And user of browser1 sees that space support record for "space1" has appeared in Spaces page in Onepanel
 
@@ -224,12 +225,13 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
   Scenario: User supports space with storage sync and enabled options: Delete
     Given there are no spaces supported in Onepanel used by user of browser1
     When user of browser2 creates "space3" space in Onezone
-    And user of browser2 sends support token from "space3" to user of browser1
+    And user of browser2 sends support token for "space3" to user of browser1
 
     # support space
     And user of browser1 supports "space3" space in "oneprovider-1" Oneprovider panel service with following configuration:
           storage: posix
-          size: 1024
+          size: 1
+          unit: GiB
     And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
     And user of browser1 sees that space support record for "space3" has appeared in Spaces page in Onepanel
 
@@ -338,12 +340,13 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
   Scenario: User supports space with storage sync and enabled options: Write once
     Given there are no spaces supported in Onepanel used by user of browser1
     When user of browser2 creates "space4" space in Onezone
-    And user of browser2 sends support token from "space4" to user of browser1
+    And user of browser2 sends support token for "space4" to user of browser1
 
     # support space
     And user of browser1 supports "space4" space in "oneprovider-1" Oneprovider panel service with following configuration:
           storage: posix
-          size: 1024
+          size: 1
+          unit: GiB
     And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
     And user of browser1 sees that space support record for "space4" has appeared in Spaces page in Onepanel
 
@@ -440,12 +443,13 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
   Scenario: User supports space with storage sync and enabled options: Delete and Write once
     Given there are no spaces supported in Onepanel used by user of browser1
     When user of browser2 creates "space5" space in Onezone
-    And user of browser2 sends support token from "space5" to user of browser1
+    And user of browser2 sends support token for "space5" to user of browser1
 
     # support space
     And user of browser1 supports "space5" space in "oneprovider-1" Oneprovider panel service with following configuration:
           storage: posix
-          size: 1024
+          size: 1
+          unit: GiB
     And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
     And user of browser1 sees that space support record for "space5" has appeared in Spaces page in Onepanel
 
@@ -555,12 +559,13 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
   Scenario: User disables files update
     Given there are no spaces supported in Onepanel used by user of browser1
     When user of browser2 creates "space6" space in Onezone
-    And user of browser2 sends support token from "space6" to user of browser1
+    And user of browser2 sends support token for "space6" to user of browser1
 
     # support space
     And user of browser1 supports "space6" space in "oneprovider-1" Oneprovider panel service with following configuration:
           storage: posix
-          size: 1024
+          size: 1
+          unit: GiB
     And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
     And user of browser1 sees that space support record for "space6" has appeared in Spaces page in Onepanel
 

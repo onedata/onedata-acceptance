@@ -18,10 +18,11 @@ Feature: Onepanel features auto-cleaning
 
   Scenario: User uses auto-cleaning
     Given there are no spaces supported in Onepanel used by user of browser1
-    When user of browser2 sends support token from "space2" to user of browser1
+    When user of browser2 sends support token for "space2" to user of browser1
     And user of browser1 supports "space2" space in "oneprovider-1" Oneprovider panel service with following configuration:
            storage: posix
-           size: 1024
+           size: 1
+           unit: GiB
 
     # enable file popularity
     And user of browser1 expands "space2" record on spaces list in Spaces page in Onepanel
@@ -105,10 +106,11 @@ Feature: Onepanel features auto-cleaning
 
   Scenario: User uses auto-cleaning with lower size limit which skips too small files
     Given there are no spaces supported in Onepanel used by user of browser1
-    When user of browser2 sends support token from "space2" to user of browser1
+    When user of browser2 sends support token for "space2" to user of browser1
     And user of browser1 supports "space2" space in "oneprovider-1" Oneprovider panel service with following configuration:
             storage: posix
-            size: 1024
+            size: 1
+            unit: GiB
 
     # enable file popularity
     And user of browser1 expands "space2" record on spaces list in Spaces page in Onepanel
@@ -195,10 +197,11 @@ Feature: Onepanel features auto-cleaning
 
   Scenario: User uses auto-cleaning with upper size limit which skips too big files
     Given there are no spaces supported in Onepanel used by user of browser1
-    When user of browser2 sends support token from "space2" to user of browser1
+    When user of browser2 sends support token for "space2" to user of browser1
     And user of browser1 supports "space2" space in "oneprovider-1" Oneprovider panel service with following configuration:
             storage: posix
-            size: 1024
+            size: 1
+            unit: GiB
 
     # enable file popularity
     And user of browser1 expands "space2" record on spaces list in Spaces page in Onepanel

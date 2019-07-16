@@ -68,9 +68,9 @@ def join_to_cluster(selenium, browser_id, oz_page, displays, clipboard):
                   'privilege in "{parent_privilege}" privilege '
                   'for {user_name} user in {where} page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_nested_privilege_in_cluster(selenium, browser_id, oz_page,
-                                      onepanel, nested_privilege, option,
-                                      parent_privilege, where, user_name):
+def change_nested_privilege_in_cluster(selenium, browser_id, oz_page,
+                                       onepanel, nested_privilege, option,
+                                       parent_privilege, where, user_name):
     member_type = 'user'
     button = 'Save'
     list_type = 'users'

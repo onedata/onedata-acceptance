@@ -30,7 +30,7 @@ def create_spaces_in_oz_using_gui(selenium, user, oz_page, space_list):
         confirm_create_new_space(selenium, user, option, oz_page)
 
 
-@wt(parsers.parse('user of {user} sends support token from "{space_name}" '
+@wt(parsers.parse('user of {user} sends support token for "{space_name}" '
                   'to user of {browser_id}'))
 def send_support_token_in_oz_using_gui(selenium, user, space_name, browser_id,
                                        oz_page, tmp_memory, displays, clipboard):
@@ -48,7 +48,7 @@ def send_support_token_in_oz_using_gui(selenium, user, space_name, browser_id,
                                     tmp_memory, displays, clipboard)
 
 
-@wt(parsers.re('user of (?P<user>.*) leaves (?P<space_list>.+?) space '
+@wt(parsers.re('user of (?P<user>.*) leaves "(?P<space_list>.+?)" space '
                'in Onezone page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def leave_spaces_in_oz_using_gui(selenium, user, space_list, oz_page, popups):
