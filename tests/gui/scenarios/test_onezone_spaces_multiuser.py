@@ -30,7 +30,7 @@ from tests.gui.steps.onepanel.deployment import *
 from tests.gui.steps.onepanel.spaces import *
 
 from tests.gui.steps.onezone.logged_in_common import *
-from tests.gui.steps.onezone.user_alias import *
+from tests.gui.steps.onezone.user_full_name import *
 from tests.gui.steps.onezone.access_tokens import *
 from tests.gui.steps.onezone.data_space_management import *
 from tests.gui.steps.onezone.providers import *
@@ -64,3 +64,4 @@ def screens():
 
 scenarios('../features/onezone/space/spaces_multibrowser.feature')
 scenarios('../features/onezone/space/invite_group_to_space.feature')
+

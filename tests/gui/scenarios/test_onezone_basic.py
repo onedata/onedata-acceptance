@@ -31,7 +31,7 @@ from tests.gui.steps.onepanel.deployment import *
 from tests.gui.steps.onepanel.spaces import *
 
 from tests.gui.steps.onezone.logged_in_common import *
-from tests.gui.steps.onezone.user_alias import *
+from tests.gui.steps.onezone.user_full_name import *
 from tests.gui.steps.onezone.access_tokens import *
 from tests.gui.steps.onezone.data_space_management import *
 from tests.gui.steps.onezone.providers import *
@@ -73,6 +73,7 @@ scenarios('../features/onezone/login_page.feature')
 scenarios('../features/onezone/providers.feature')
 scenarios('../features/onezone/providers_multibrowser.feature')
 scenarios('../features/onezone/access_tokens.feature')
+scenarios('../features/onezone/full_name.feature')
 
 scenarios('../features/onezone/groups/groups_creation.feature')
 scenarios('../features/onezone/groups/groups_basic_operations.feature')

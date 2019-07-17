@@ -24,7 +24,7 @@ Feature: ACL basic tests using sigle browser in Oneprovider GUI
             groups:     
                 - group1  
 
-    And opened browser with user1 logged to "onezone" service
+    And opened browser with user1 signed in to "onezone" service
     And opened oneprovider-1 Oneprovider view in web GUI by user of browser
         
         

@@ -17,8 +17,8 @@ from tests.utils.acceptance_utils import list_parser
 from tests.gui.conftest import WAIT_FRONTEND
 
 
-@given(parsers.re('opened (?P<browser_id_list>.*) with (?P<user_list>.*) logged'
-                  ' to (?P<host_list>.*) service'))
+@given(parsers.re('opened (?P<browser_id_list>.*) with (?P<user_list>.*) '
+                  'signed in to (?P<host_list>.*) service'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def login_using_gui(host_list, selenium, driver, tmpdir, tmp_memory, xvfb,
                     driver_kwargs, driver_type, firefox_logging, displays,

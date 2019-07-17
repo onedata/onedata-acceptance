@@ -31,7 +31,7 @@ Feature: ACL subdirectories privileges tests using multiple browsers in Oneprovi
             groups:
                 - group1 
 
-    And opened [browser1, browser2] with [user1, user2] logged to [onezone, onezone] service
+    And opened [browser1, browser2] with [user1, user2] signed in to [onezone, onezone] service
     And opened oneprovider-1 Oneprovider view in web GUI by users of [browser1, browser2]
 
         

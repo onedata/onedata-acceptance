@@ -27,6 +27,7 @@ from .provider_popover import ProviderPopover
 from .membership_relation_menu import MembershipRelationMenu
 from .groups_hierarchy_menu import GroupHierarchyMenu
 from .emergency_interface import EmergencyInterface
+from .add_one_of_groups import AddOneOfGroupsModal
 from .choose_element import ChooseElementModal
 from .leave_element import LeaveElementModal
 
@@ -72,6 +73,7 @@ class Modals(object):
     membership_relation_menu = WebItem('.relation-actions.one-webui-popover',
                                        cls=MembershipRelationMenu)
     emergency_interface = WebItem('.modal-dialog', cls=EmergencyInterface)
+    add_one_of_groups = WebItem('.modal-dialog', cls=AddOneOfGroupsModal)
     choose_space = WebItem('.modal-dialog', cls=ChooseElementModal)
     remove_space_from_harvester = WebItem('.modal-dialog', cls=RemoveModal)
 

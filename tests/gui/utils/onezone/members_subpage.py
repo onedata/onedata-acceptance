@@ -96,7 +96,7 @@ class InvitationTokenArea(PageObject):
     close = Button('.oneicon-close')
 
 
-class GroupMembersPage(PageObject):
+class MembersPage(PageObject):
     groups = WebItem('.row:nth-of-type(2) > ul', cls=GroupMembersList)
     users = WebItem('.row:nth-of-type(3) > ul', cls=GroupMembersList)
     token = WebItem('.invitation-token-presenter', cls=InvitationTokenArea)

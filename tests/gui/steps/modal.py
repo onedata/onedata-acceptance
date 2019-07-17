@@ -16,7 +16,7 @@ from pytest_bdd import parsers, given, when, then
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.utils.acceptance_utils import wt
-from tests.gui.utils.generic import click_on_web_elem
+from tests.gui.utils.generic import click_on_web_elem, transform
 from tests.utils.utils import repeat_failed
 
 
@@ -70,12 +70,15 @@ def assert_non_empty_token_in_add_storage_modal(browser_id, tmp_memory):
 
 def _find_modal(driver, modal_name):
     def _find():
-        if 'group' in modal_name or 'token' in modal_name:
+        if any([name for name in ['group', 'token', 'cluster']
+                if name in modal_name]):
             modals = driver.find_elements_by_css_selector('.modal, '
-                                                          '.modal .modal-header h1')
+                                                          '.modal '
+                                                          '.modal-header h1')
         else:
             modals = driver.find_elements_by_css_selector('.modal.in, '
-                                                          '.modal.in .modal-title')
+                                                          '.modal.in '
+                                                          '.modal-title')
 
         for name, modal in zip(modals[1::2], modals[::2]):
             if name.text.lower() == modal_name:
@@ -304,3 +307,14 @@ def assert_btn_in_modal_is_enabled(browser_id, btn_name, tmp_memory):
             break
     else:
         raise RuntimeError('no button named {} found'.format(button_name))
+
+
+@wt(parsers.parse('user of {browser_id} sees {text} alert '
+                  'in "{modal}" modal'))
+def assert_alert_text_in_modal(selenium, browser_id, modals, modal, text):
+    driver = selenium[browser_id]
+    modal = transform(modal)
+    forbidden_alert_text = getattr(modals(driver), modal).forbidden_alert.text
+    assert text in forbidden_alert_text, ('found {} text instead of {}'
+                                          .format(forbidden_alert_text, text))
+

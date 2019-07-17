@@ -54,7 +54,8 @@ Feature: Basic management of groups with multiple users in Onezone GUI
 
 
   Scenario: User is removed from group
-    When user of browser1 removes "user2" user from "group1" group members
+    When user of browser1 goes to group "group1" members subpage
+    And user of browser1 removes "user2" user from "group1" group members
     Then user of browser1 does not see "user2" user on "group1" group members list
     And user of browser2 does not see group "group1" on groups list
 

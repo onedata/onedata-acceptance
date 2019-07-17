@@ -89,7 +89,7 @@ DropdownSelector = partial(WebItem, cls=_DropdownSelector)
 
 class LoginPage(object):
     header = Label('.row-login-header')
-    log_in_to_emergency_interface = Button('.text-link')
+    sign_in_to_emergency_interface = Button('.text-link')
     username = Input('input[placeholder="Username"]')
     password = Input('input[placeholder="Password"]')
     passphrase = Input('input[placeholder="Passphrase"]')

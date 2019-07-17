@@ -133,11 +133,11 @@ def click_cancel_rename_button_on_overview_page(selenium, browser_id, oz_page):
                '"(?P<button>Leave space|Toggle default space)" button '
                'in space menu'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_option_in_menu(selenium, browser_id, button, oz_page):
+def click_on_option_in_menu(selenium, browser_id, button, oz_page, popups):
     driver = selenium[browser_id]
     page = oz_page(driver)['data']
     page.menu_button()
-    page.menu[button].click()
+    popups(driver).member_menu.menu[button]()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
@@ -216,6 +216,7 @@ def assert_size_of_space_on_left_sidebar_menu(selenium, browser_id, number,
 def click_on_members_of_space_on_left_sidebar_menu(selenium, browser_id,
                                                    space_name, option, oz_page):
     driver = selenium[browser_id]
+    oz_page(driver)['data'].elements_list[space_name].click()
     getattr(oz_page(driver)['data'].elements_list[space_name],
             transform(option)).click()
 

@@ -11,6 +11,7 @@ __license__ = ("This software is released under the MIT license cited in "
 from tests.gui.steps.onepanel.account_management import *
 from tests.gui.steps.common.login import *
 from tests.gui.steps.common.notifies import *
+from tests.gui.steps.onepanel.emergency_passphrase import *
 
 
 def change_user_password_in_oz_panel_using_gui(selenium, user, onepage, users,
@@ -56,3 +57,31 @@ def log_out_from_oz_panel_gui(username, selenium, onepage, login_page,
     wt_click_option_in_user_account_popover(selenium, username, button_name,
                                             popups)
     wt_assert_login_page(selenium, username, login_page)
+
+
+@wt(parsers.parse('user of {browser_id} changes passphrase from '
+                  '"{current_passphrase}" to "{new_passphrase}" '
+                  'on emergency passphrase page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def change_passphrase(selenium, browser_id, onepanel, current_passphrase,
+                      new_passphrase):
+    change_passphrase_button = 'Change passphrase'
+    confirm_button = 'Change'
+    current_passphrase_input = 'Current passphrase'
+    new_passphrase_input = 'New passphrase'
+    retype_new_passphrase_input = 'Retype new passphrase'
+
+    click_button_on_emergency_passphrase_page(selenium, browser_id,
+                                              onepanel, change_passphrase_button)
+    type_text_to_input_on_emergency_passphrase_page(selenium, browser_id,
+                                                    onepanel, current_passphrase,
+                                                    current_passphrase_input)
+    type_text_to_input_on_emergency_passphrase_page(selenium, browser_id,
+                                                    onepanel, new_passphrase,
+                                                    new_passphrase_input)
+    type_text_to_input_on_emergency_passphrase_page(selenium, browser_id,
+                                                    onepanel, new_passphrase,
+                                                    retype_new_passphrase_input)
+    click_button_on_emergency_passphrase_page(selenium, browser_id,
+                                              onepanel, confirm_button)
+

@@ -53,7 +53,7 @@ def receive_support_token(selenium, user, space_name, browser_id, oz_page,
 @wt(parsers.re('user of (?P<user>.*) leaves "(?P<space_list>.+?)" space '
                'in Onezone page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def leave_spaces_in_oz_using_gui(selenium, user, space_list, oz_page):
+def leave_spaces_in_oz_using_gui(selenium, user, space_list, oz_page, popups):
     where = 'spaces'
     option = 'Leave space'
     confirmation_button = 'yes'
@@ -61,7 +61,7 @@ def leave_spaces_in_oz_using_gui(selenium, user, space_list, oz_page):
     for space_name in parse_seq(space_list):
         click_element_on_lists_on_left_sidebar_menu(selenium, user, where,
                                                     space_name, oz_page)
-        click_on_option_in_menu(selenium, user, option, oz_page)
+        click_on_option_in_menu(selenium, user, option, oz_page, popups)
         click_confirm_or_cancel_button_on_leave_space_page(selenium, user,
                                                            confirmation_button)
 
@@ -82,13 +82,14 @@ def rename_spaces_in_oz_using_gui(selenium, user, oz_page, space_list,
         confirm_rename_the_space(selenium, user, option, oz_page)
 
 
-def set_space_as_home_in_oz_using_gui(selenium, user, oz_page, space_name):
+def set_space_as_home_in_oz_using_gui(selenium, user, oz_page,
+                                      space_name, popups):
     where = 'spaces'
     button = 'Toggle default space'
 
     click_element_on_lists_on_left_sidebar_menu(selenium, user, where,
                                                 space_name, oz_page)
-    click_on_option_in_menu(selenium, user, button, oz_page)
+    click_on_option_in_menu(selenium, user, button, oz_page, popups)
 
 
 def remove_provider_support_for_space_in_oz_using_gui(selenium, user,
@@ -116,7 +117,7 @@ def remove_provider_support_for_space_in_oz_using_gui(selenium, user,
 def invite_other_users_to_space_using_gui(selenium, user,
                                           space_name, user_list,
                                           oz_page, tmp_memory, displays,
-                                          clipboard):
+                                          clipboard, onepanel, popups):
     option = 'spaces'
     option_in_space = 'Members'
     button = 'Invite user using token'
@@ -130,8 +131,8 @@ def invite_other_users_to_space_using_gui(selenium, user,
     click_on_members_of_space_on_left_sidebar_menu(selenium, user,
                                                    space_name, option_in_space,
                                                    oz_page)
-    click_on_option_in_members_list_menu(selenium, user, button,
-                                         space_name, where, member, oz_page)
+    click_on_option_in_members_list_menu(selenium, user, button, where,
+                                         member, oz_page, onepanel, popups)
     copy_token_from_modal(selenium, user)
     send_invitation_token_to_browser(selenium, user, item_type, oz_page,
                                      displays, clipboard, user_list,
@@ -214,16 +215,20 @@ def assert_there_is_no_provider_for_space_in_oz_gui(selenium, user, oz_page,
 
 
 def assert_user_is_member_of_space_gui(selenium, user, space_name, oz_page,
-                                       user_list):
+                                       user_list, onepanel):
     where = 'Members'
     option = 'sees'
+    member_type = 'user'
+    parent_type = 'space'
 
     click_on_members_of_space_on_left_sidebar_menu(selenium, user,
                                                    space_name, where, oz_page)
 
     for username in parse_seq(user_list):
-        assert_user_is_in_space_members_list(selenium, user, option,
-                                             username, space_name, oz_page)
+        assert_member_is_in_parent_members_list(selenium, user, option,
+                                                username, member_type,
+                                                space_name, parent_type,
+                                                oz_page, onepanel)
 
 
 def assert_provider_does_not_support_space_in_oz_gui(selenium, user, oz_page,

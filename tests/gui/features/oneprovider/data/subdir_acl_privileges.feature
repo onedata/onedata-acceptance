@@ -28,7 +28,7 @@ Feature: ACL subdirectories privileges tests using sigle browser in Oneprovider 
             groups:
                 - group1 
 
-    And opened browser with user1 logged to "onezone" service
+    And opened browser with user1 signed in to "onezone" service
     And opened oneprovider-1 Oneprovider view in web GUI by user of browser
 
         
