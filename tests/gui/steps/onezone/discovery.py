@@ -122,14 +122,17 @@ def click_button_in_harvester_spaces_page(selenium, browser_id, oz_page,
     getattr(oz_page(driver)['discovery'], button_name).click()
 
 
-@wt(parsers.parse('user of {browser_id} chooses "{space_name}" from dropdown '
-                  'in add space modal'))
+@wt(parsers.parse('user of {browser_id} chooses "{element_name}" from dropdown '
+                  'in add {element} modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def choose_space_from_dropdown_in_add_space_modal(selenium, browser_id,
-                                                  space_name, modals):
+def choose_element_from_dropdown_in_add_element_modal(selenium, browser_id,
+                                                      element_name, modals,
+                                                      element):
     driver = selenium[browser_id]
-    modals(driver).choose_space.dropdown.expand()
-    modals(driver).choose_space.dropdown.options[space_name].click()
+    modal_name = 'choose_' + element
+    dropdown_modal = getattr(modals(driver), modal_name).dropdown
+    dropdown_modal.expand()
+    dropdown_modal.options[element_name].click()
 
 
 @wt(parsers.parse('user of {browser_id} sees that "{space_name}" has appeared '
@@ -201,4 +204,13 @@ def click_remove_space_option_in_menu_in_discover_spaces_page(selenium,
     page = oz_page(driver)['discovery']
     page.spaces_list[space_name].click_menu()
     page.menu['Remove this space'].click()
+
+
+@wt(parsers.parse('user of {browser_id} clicks Join the harvester button '
+                  'in discovery page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_join_harvester_button_in_discovery_page(selenium, browser_id,
+                                                  oz_page):
+    driver = selenium[browser_id]
+    oz_page(driver)['discovery'].join_harvester_button.click()
 

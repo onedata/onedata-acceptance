@@ -87,5 +87,7 @@ scenarios('../features/onezone/groups/groups_hierarchy.feature')
 scenarios('../features/onezone/groups/groups_memberships.feature')
 scenarios('../features/onezone/groups/groups_memberships_multibrowser.feature')
 scenarios('../features/onezone/groups/groups_memberships_privileges.feature')
+
 scenarios('../features/onezone/harvesters.feature')
+scenarios('../features/onezone/harvesters_memberships_privileges.feature')
 

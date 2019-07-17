@@ -10,6 +10,8 @@ from tests.gui.utils.core.web_elements import (Button, NamedButton, WebElement,
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.onezone.generic_page import GenericPage, Element
 from tests.gui.utils.common.common import DropdownSelector
+from tests.gui.utils.onezone.members_subpage import MembersPage
+from tests.gui.utils.onezone.common import InputBox
 
 
 class WelcomePage(PageObject):
@@ -86,14 +88,16 @@ class DiscoveryPage(GenericPage):
     get_started = Button('.btn.btn-default.hide-sm-active.ember-view')
     create_new_harvester_button = Button('.one-sidebar-toolbar-button'
                                          '.create-harvester-btn')
-    join_harvester_button = Button('.join-harvester-btn'
-                                   '.one-sidebar-toolbar-button '
-                                   '.oneicon-join-plug')
+    join_to_harvester_button = Button('.join-harvester-btn'
+                                      '.one-sidebar-toolbar-button '
+                                      '.oneicon-join-plug')
 
     name = WebElement('.field-create-name')
     plugin_selector = DropdownSelector('.ember-basic-dropdown')
     endpoint = WebElement('.field-create-endpoint')
     create_button = NamedButton('button', text='Create')
+
+    join_harvester_button = NamedButton('button', text='Join the harvester')
 
     rename_input = WebElement('.name-editor input')
     rename_button = Button('.save-icon')
@@ -102,5 +106,8 @@ class DiscoveryPage(GenericPage):
                                    '.row .list-header-row',
                                    cls=Space)
 
+    input_box = WebItem('.content-info-content-container', cls=InputBox)
+
     indices_page = WebItem('.main-content', cls=IndicesPage)
+    members_page = WebItem('.main-content', cls=MembersPage)
 
