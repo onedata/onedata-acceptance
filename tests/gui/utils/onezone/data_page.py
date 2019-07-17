@@ -75,6 +75,13 @@ class SpaceProvidersPage(PageObject):
     get_support_page = WebItem('.ember-view', cls=GetSupportPage)
 
 
+class MenuItem(PageObject):
+    name = id = Label('a.clickable .text')
+
+    def __call__(self):
+        self.click()
+
+
 class DataPage(GenericPage):
     create_space_button = Button('.one-sidebar-toolbar-button '
                                  '.oneicon-add-filled')
