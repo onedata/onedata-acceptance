@@ -158,7 +158,7 @@ def assert_space_has_disappeared_on_spaces(selenium, browser_id, space_name,
 
 @wt(parsers.parse('user of {browser_id} sees that home of "{space_name}" '
                   'has appeared in the sidebar'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_FRONTEND * 2)
 def assert_home_space_has_appeared_on_spaces_on_left_sidebar_menu(selenium,
                                                                   browser_id,
                                                                   space_name,
