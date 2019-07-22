@@ -13,18 +13,15 @@ createSpaces: false
 # application from sources).
 
 # onezoneImage: "docker.onedata.org/onezone-dev:ID-0ffe404847"
-onezoneImage: "docker.onedata.org/onezone-dev:ID-0ccf6172b2"
+onezoneImage: "docker.onedata.org/onezone-dev:develop"
 
 # Oneprovider image to use. Note that if 'sources' option is enabled, it must
 # be based off onedata/worker image.
-# oneproviderImage: "docker.onedata.org/oneprovider-dev:ID-1bdcde5121"
-oneproviderImage: "docker.onedata.org/oneprovider-dev:ID-1e84744ca2"
+oneproviderImage: "docker.onedata.org/oneprovider-dev:develop"
 
 # When enabled, onezoneImage and oneproviderImage will be pulled before every
 # deployment. If disabled, they will only be pulled if not existent.
-forceImagePull: false
-
-elasticSearch: true
+forceImagePull: true
 
 onezone:
   batchConfig:
