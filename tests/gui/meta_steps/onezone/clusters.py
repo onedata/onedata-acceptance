@@ -61,4 +61,5 @@ def join_to_cluster(selenium, browser_id, oz_page, displays, clipboard):
                                                            oz_page, displays,
                                                            clipboard)
     click_button_in_cluster_page(selenium, browser_id, oz_page, button2)
+    time.sleep(5)
 
