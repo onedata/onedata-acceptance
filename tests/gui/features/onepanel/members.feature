@@ -168,7 +168,7 @@ Feature: Basic cluster members management utilities using onepanel
   Scenario: User fails to see members without view cluster
     When user of browser1 invites user of browser2 to "oneprovider-1" cluster
     And user of browser2 joins to cluster
-
+    And user of browser2 is idle for 5 seconds
     And user of browser2 clicks on Members item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
 
     # uncheck view privileges

@@ -13,6 +13,7 @@ Feature: Basic spaces management utilities using onepanel
     When user of browser1 clicks on Create space button in spaces sidebar
     And user of browser1 writes "<space>" into space name text field
     And user of browser1 clicks on Create new space button
+    And user of browser1 is idle for 5 seconds
     And user of browser1 sees that "<space>" has appeared on the spaces list in the sidebar
 
     # receive support token
