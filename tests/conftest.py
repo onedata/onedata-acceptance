@@ -21,7 +21,7 @@ from tests.utils.user_utils import User
 from tests.utils.onenv_utils import (init_helm,
                                      client_alias_to_pod_mapping,
                                      service_name_to_alias_mapping,
-                                     deployment_data_path, OneenvError,
+                                     deployment_data_path, OnenvError,
                                      run_onenv_command, clean_env)
 from tests import (CONFIG_FILES, PANEL_REST_PORT, ENV_DIRS, SCENARIO_DIRS,
                    LANDSCAPE_DIRS, LOGDIRS)
@@ -267,15 +267,19 @@ def previous_env():
     return {}
 
 
-def _check_if_should_start_new_env(previous_env):
+def _check_if_should_start_new_env(env_description_abs_path, previous_env):
     previous_env_path = previous_env.get('env_path', '')
     previous_env_started = previous_env.get('started', False)
     start_env = True
 
+    # Check which environment was started last time to avoid starting
+    # the same env multiple times
     if previous_env_path == env_description_abs_path:
         if previous_env_started:
             start_env = False
         else:
+            # Since the same env failed to start last time assume
+            # problem with k8s - skip tests
             pytest.skip('Environment error.')
     else:
         start_env = True
@@ -291,7 +295,8 @@ def env_desc(env_description_abs_path, hosts, request, users,
     Sets up environment and returns environment description.
     """
     test_type = get_test_type(request)
-    start_env = _check_if_should_start_new_env(previous_env)
+    start_env = _check_if_should_start_new_env(env_description_abs_path,
+                                               previous_env)
 
     if test_type in ['gui']:
         # For now gui tests do not use onenv patch
@@ -429,7 +434,7 @@ def start_environment(scenario_path, request, hosts, patch_path,
 
             return True
 
-        except OneenvError as e:
+        except OnenvError as e:
             attempts += 1
             if attempts >= START_ENV_MAX_RETRIES:
                 handle_env_init_error(request, env_description_abs_path,
@@ -447,10 +452,10 @@ def check_deployment():
     pods_cfg = status_output['pods']
 
     if not env_ready:
-        raise OneenvError('Environment error: timeout while waiting for '
+        raise OnenvError('Environment error: timeout while waiting for '
                           'deployment to be ready.')
     if not pods_cfg:
-        raise OneenvError('Environment error: could not get deployment '
+        raise OnenvError('Environment error: could not get deployment '
                           'configuration.')
 
     return pods_cfg

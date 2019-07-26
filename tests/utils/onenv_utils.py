@@ -17,7 +17,7 @@ import urllib3
 from kubernetes import client, config
 
 
-class OneenvError(BaseException):
+class OnenvError(BaseException):
     """Raised when one of one-env commands fails"""
     pass
 
@@ -36,7 +36,7 @@ def run_onenv_command(command, args=None, fail_with_error=True):
     sys.stderr.write(err.decode('utf-8'))
 
     if proc.returncode != 0 and fail_with_error:
-        raise OneenvError('Environment error.\n'
+        raise OnenvError('Environment error.\n'
                           'Command: {} failed.\n'
                           'Captured output: {}'.format(cmd, output))
 
