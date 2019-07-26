@@ -31,6 +31,7 @@ Feature: Storage management using onepanel
     And user of <client> sees that "<storage_name>" Mount point is /volumes/persistence/storage in storages page in Onepanel
 
     And user of browser1 creates "hello_world1" space in Onezone
+    And user of browser1 is idle for 5 seconds
     And user of browser1 sends support token for "hello_world1" to user of <client>
 
     # support space
