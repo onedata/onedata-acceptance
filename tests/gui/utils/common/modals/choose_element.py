@@ -1,4 +1,4 @@
-"""Utils and fixtures to facilitate operations on choose space modal.
+"""Utils and fixtures to facilitate operations on choose element modal.
 """
 
 __author__ = "Agnieszka Warchol"

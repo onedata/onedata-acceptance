@@ -1,8 +1,8 @@
 """Utils and fixtures to facilitate operations on leave element modal.
 """
 
-__author__ = "Agnieszka Warchol"
-__copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
+__author__ = "Lukasz Niemiec, Agnieszka Warchol"
+__copyright__ = "Copyright (C) 2018-2019 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 

@@ -9,7 +9,7 @@ __license__ = ("This software is released under the MIT license cited in "
 
 from pytest_bdd import parsers
 from tests.utils.acceptance_utils import wt
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.utils.utils import repeat_failed
 from tests.gui.utils.generic import parse_seq, transform
 from tests.gui.utils.common.modals import Modals as modals
@@ -150,7 +150,7 @@ def click_confirm_or_cancel_button_on_leave_space_page(selenium, browser_id,
 
 @wt(parsers.parse('user of {browser_id} sees that "{space_name}" '
                   'has disappeared on the spaces list in the sidebar'))
-@repeat_failed(timeout=WAIT_FRONTEND * 2)
+@repeat_failed(timeout=WAIT_BACKEND)
 def assert_space_has_disappeared_on_spaces(selenium, browser_id, space_name,
                                            oz_page):
     driver = selenium[browser_id]

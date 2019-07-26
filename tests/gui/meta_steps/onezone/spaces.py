@@ -34,8 +34,8 @@ def create_spaces_in_oz_using_gui(selenium, user, oz_page, space_list):
 
 @wt(parsers.parse('user of {user} sends support token from "{space_name}" '
                   'to user of {browser_id}'))
-def receive_support_token(selenium, user, space_name, browser_id, oz_page,
-                          tmp_memory, displays, clipboard):
+def create_and_send_support_token(selenium, user, space_name, browser_id,
+                                  oz_page, tmp_memory, displays, clipboard):
     option = 'spaces'
     where = 'Providers'
     item_type = 'token'
