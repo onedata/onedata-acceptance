@@ -68,6 +68,8 @@ def pytest_addoption(parser):
     onenv.addoption('--no-clean', action='store_true',
                     help='If present prevents cleaning environment created '
                          'by one-env')
+    onenv.addoption('--gui-pkg-verification', action='store_true',
+                    help='enables verification of GUI packages')
 
 
 def pytest_generate_tests(metafunc):
@@ -314,6 +316,7 @@ def parse_up_args(request, scenario_path):
     sources = request.config.getoption('--sources')
     timeout = request.config.getoption('--timeout')
     local_charts_path = request.config.getoption('--local-charts-path')
+    gui_pkg_verification = request.config.getoption('--gui-pkg-verification')
 
     if oz_image:
         up_args.extend(['-zi', oz_image])
@@ -331,6 +334,8 @@ def parse_up_args(request, scenario_path):
         up_args.extend(['-lcp', local_charts_path])
     if timeout:
         up_args.extend(['--timeout', timeout])
+    if gui_pkg_verification:
+        up_args.append('--gui-pkg-verification')
 
     up_args.extend(['{}'.format(scenario_path)])
     return up_args
