@@ -9,7 +9,6 @@ __license__ = "This software is released under the MIT license cited in " \
 
 import os
 import re
-import sys
 import subprocess as sp
 
 import yaml
@@ -22,9 +21,13 @@ from tests.utils.user_utils import User
 from tests.utils.onenv_utils import (init_helm,
                                      client_alias_to_pod_mapping,
                                      service_name_to_alias_mapping,
-                                     deployment_data_path)
+                                     deployment_data_path, OnenvError,
+                                     run_onenv_command, clean_env)
 from tests import (CONFIG_FILES, PANEL_REST_PORT, ENV_DIRS, SCENARIO_DIRS,
                    LANDSCAPE_DIRS, LOGDIRS)
+
+
+START_ENV_MAX_RETRIES = 3
 
 
 def pytest_addoption(parser):
@@ -259,17 +262,49 @@ def env_description_abs_path(request, env_description_file):
     return absolute_path
 
 
+@pytest.fixture(scope='session')
+def previous_env():
+    return {}
+
+
+def _check_if_should_start_new_env(env_description_abs_path, previous_env):
+    previous_env_path = previous_env.get('env_path', '')
+    previous_env_started = previous_env.get('started', False)
+    start_env = True
+
+    # Check which environment was started last time to avoid starting
+    # the same env multiple times
+    if previous_env_path == env_description_abs_path:
+        if previous_env_started:
+            start_env = False
+        else:
+            # Since the same env failed to start last time assume
+            # problem with k8s - skip tests
+            pytest.skip('Environment error.')
+    else:
+        start_env = True
+        previous_env['env_path'] = env_description_abs_path
+
+    return start_env
+
+
 @pytest.fixture(scope='module', autouse=True)
-def env_desc(env_description_abs_path, hosts, request, users):
+def env_desc(env_description_abs_path, hosts, request, users,
+             previous_env):
     """
     Sets up environment and returns environment description.
     """
     test_type = get_test_type(request)
+    start_env = _check_if_should_start_new_env(env_description_abs_path,
+                                               previous_env)
 
     if test_type in ['gui']:
         # For now gui tests do not use onenv patch
-        start_environment(env_description_abs_path, request, hosts, '',
-                          users, env_description_abs_path)
+        if start_env:
+            previous_env['started'] = start_environment(
+                env_description_abs_path, request, hosts, '', users,
+                env_description_abs_path
+            )
         return ''
 
     elif test_type == 'mixed':
@@ -281,8 +316,11 @@ def env_desc(env_description_abs_path, hosts, request, users):
         scenario_path = os.path.abspath(os.path.join(scenarios_dir_path,
                                                      scenario))
 
-        start_environment(scenario_path, request, hosts, '', users,
-                          env_description_abs_path)
+        if start_env:
+            previous_env['started'] = start_environment(
+                scenario_path, request, hosts, '', users,
+                env_description_abs_path
+            )
         return env_desc
 
     elif test_type == 'oneclient':
@@ -299,9 +337,11 @@ def env_desc(env_description_abs_path, hosts, request, users):
         patch_dir_path = LANDSCAPE_DIRS.get(
             get_test_type(request))
         patch_path = os.path.join(patch_dir_path, patch)
-
-        start_environment(scenario_path, request, hosts, patch_path, users,
-                          env_description_abs_path)
+        if start_env:
+            previous_env['started'] = start_environment(
+                scenario_path, request, hosts, patch_path, users,
+                env_description_abs_path
+            )
         return env_desc
 
 
@@ -363,62 +403,68 @@ def parse_wait_args(request):
 
 def start_environment(scenario_path, request, hosts, patch_path,
                       users, env_description_abs_path):
-    init_helm()
+    attempts = 0
     clean = False if request.config.getoption('--no-clean') else True
+    local = request.config.getoption('--local')
+    up_args = parse_up_args(request, scenario_path)
+    wait_args = parse_wait_args(request)
+    patch_args = parse_patch_args(request, patch_path) if patch_path else []
 
-    if clean:
-        up_args = parse_up_args(request, scenario_path)
-        run_onenv_command('up', up_args, skip_on_error=True, request=request,
-                          env_path=env_description_abs_path)
+    while attempts < START_ENV_MAX_RETRIES:
+        try:
+            init_helm()
 
-        wait_args = parse_wait_args(request)
-        run_onenv_command('wait', wait_args)
+            if clean:
+                run_onenv_command('up', up_args)
+                run_onenv_command('wait', wait_args)
+            pods_cfg = check_deployment()
+            parse_hosts_cfg(pods_cfg, hosts, request)
 
-    pods_cfg = check_deployment(request, env_description_abs_path)
-    parse_hosts_cfg(pods_cfg, hosts, request)
-    if not request.config.getoption('--local'):
-        run_onenv_command('hosts', skip_on_error=True, request=request,
-                          env_path=env_description_abs_path)
+            if not local:
+                run_onenv_command('hosts')
 
-    if patch_path and clean:
-        patch_args = parse_patch_args(request, patch_path)
-        run_onenv_command('patch', patch_args, skip_on_error=True,
-                          request=request, env_path=env_description_abs_path)
-        wait_args = parse_wait_args(request)
-        run_onenv_command('wait', wait_args)
-        check_deployment(request, env_description_abs_path)
+            if patch_path and clean:
+                run_onenv_command('patch', patch_args)
+                wait_args = parse_wait_args(request)
+                run_onenv_command('wait', wait_args)
+                check_deployment()
 
-    if patch_path:
-        parse_users_cfg(patch_path, users, hosts)
+            if patch_path:
+                parse_users_cfg(patch_path, users, hosts)
 
-    test_type = get_test_type(request)
-    if test_type == 'oneclient' and clean:
-        def fin():
-            run_onenv_command('clean', ['-a', '-v'])
+            return True
 
-        request.addfinalizer(fin)
+        except OnenvError as e:
+            attempts += 1
+            if attempts >= START_ENV_MAX_RETRIES:
+                handle_env_init_error(request, env_description_abs_path,
+                                      e.message)
+                return False
+            else:
+                clean_env()
 
 
-def check_deployment(request, env_description_abs_path):
-    status_output = run_onenv_command('status', skip_on_error=True,
-                                      request=request,
-                                      env_path=env_description_abs_path)
+def check_deployment():
+    status_output = run_onenv_command('status')
     status_output = yaml.load(status_output.decode('utf-8'))
 
     env_ready = status_output.get('ready')
     pods_cfg = status_output['pods']
 
-    if not env_ready or not pods_cfg:
-        export_logs(request, env_description_abs_path)
-        run_onenv_command('clean', ['-a', '-v'])
-        if not env_ready:
-            pytest.skip('Environment error: timeout while waiting for '
-                        'deployment to be ready.')
-        else:
-            pytest.skip('Environment error: could not get deployment '
-                        'configuration.')
+    if not env_ready:
+        raise OnenvError('Environment error: timeout while waiting for '
+                          'deployment to be ready.')
+    if not pods_cfg:
+        raise OnenvError('Environment error: could not get deployment '
+                          'configuration.')
 
     return pods_cfg
+
+
+def handle_env_init_error(request, env_description_abs_path, error_msg):
+    export_logs(request, env_description_abs_path)
+    clean_env()
+    pytest.skip(error_msg)
 
 
 def get_test_type(request):
@@ -428,34 +474,6 @@ def get_test_type(request):
 def extract_timestamp(filename):
     s = re.findall('\d+\.\d+$', filename)
     return float(s[0]) if s else -1
-
-
-def run_onenv_command(command, args=None, skip_on_error=False, request=None,
-                      env_path=None):
-    cmd = ['./onenv', command]
-
-    if args:
-        cmd.extend(args)
-
-    print('Running command: {}'.format(cmd))
-    proc = sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.PIPE, cwd='one_env')
-    output, err = proc.communicate()
-
-    sys.stdout.write(output.decode('utf-8'))
-    sys.stderr.write(err.decode('utf-8'))
-
-    if skip_on_error and proc.returncode != 0:
-        handle_env_init_error(request, env_path, command, output)
-
-    return output
-
-
-def handle_env_init_error(request, env_description_abs_path, command, output):
-    export_logs(request, env_description_abs_path)
-    run_onenv_command('clean', ['-a', '-v'])
-    pytest.skip('Environment error: Onenv command {} failed.'
-                'Captured stdout: {}.'
-                .format(command, output))
 
 
 def export_logs(request, env_description_abs_path=None):
@@ -472,7 +490,8 @@ def export_logs(request, env_description_abs_path=None):
         latest_logdir = max(timestamped_logdirs, key=extract_timestamp)
         logdir_path = os.path.join(logdir_path, latest_logdir)
 
-    run_onenv_command('export', [logdir_path, '-c', '/tmp/oc_logs'])
+    run_onenv_command('export', [logdir_path, '-c', '/tmp/oc_logs'],
+                      fail_with_error=False)
 
 
 @pytest.fixture()
