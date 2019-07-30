@@ -42,11 +42,7 @@ Feature: Basic management of spaces
 
 
   Scenario: User successfully leaves space
-    # create new space
-    When user of browser clicks on Data in the main menu
-    And user of browser clicks on Create space button in spaces sidebar
-    And user of browser writes "space2" into space name text field
-    And user of browser clicks on Create new space button
+    When user of browser creates "space2" space in Onezone
 
     # leave space
     And user of browser clicks "space2" on the spaces list in the sidebar
@@ -56,11 +52,7 @@ Feature: Basic management of spaces
 
 
   Scenario: User successfully cancels leave space
-    # create new space
-    When user of browser clicks on Data in the main menu
-    And user of browser clicks on Create space button in spaces sidebar
-    And user of browser writes "space2" into space name text field
-    And user of browser clicks on Create new space button
+    When user of browser creates "space2" space in Onezone
 
     # leave space
     And user of browser clicks "space2" on the spaces list in the sidebar
@@ -86,22 +78,12 @@ Feature: Basic management of spaces
 
 
   Scenario: User sees no supporting providers after create new space
-    # create new space
-    When user of browser clicks on Data in the main menu
-    And user of browser clicks on Create space button in spaces sidebar
-    And user of browser writes "space2" into space name text field
-    And user of browser clicks on Create new space button
-
+    When user of browser creates "space2" space in Onezone
     Then user of browser sees 0 number of supporting providers of "space2"
 
 
   Scenario: User sees that space size is zero right after creating
-    # create new space
-    When user of browser clicks on Data in the main menu
-    And user of browser clicks on Create space button in spaces sidebar
-    And user of browser writes "space2" into space name text field
-    And user of browser clicks on Create new space button
-
+    When user of browser creates "space2" space in Onezone
     Then user of browser sees 0 B size of the "space2"
 
 

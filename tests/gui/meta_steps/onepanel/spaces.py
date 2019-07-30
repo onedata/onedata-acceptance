@@ -17,18 +17,22 @@ from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 
 
+@wt(parsers.re('user of (?P<user>.+?) supports "(?P<space_name>.*)" space '
+               'in "(?P<provider_name>.+?)" Oneprovider panel service '
+               'with following configuration:\n'
+               '(?P<config>(.|\s)*)'))
 def support_space_in_op_panel_using_gui(selenium, user, config, onepanel,
                                         tmp_memory, space_name, provider_name,
                                         hosts):
     sidebar = 'Clusters'
     sub_item = 'Spaces'
     input_box = 'Size'
-    button = 'MiB'
     sync_type = 'IMPORT'
     notify_type = 'info'
     notify_text_regexp = '.*[Aa]dded.*support.*space.*'
 
     options = yaml.load(config)
+    unit = options.get('unit', 'MiB')
 
     wt_click_on_subitem_for_item(selenium, user, sidebar, sub_item,
                                  provider_name, onepanel, hosts)
@@ -39,7 +43,7 @@ def support_space_in_op_panel_using_gui(selenium, user, config, onepanel,
                                                   tmp_memory)
     wt_type_text_to_input_box_in_space_support_form(
         selenium, user, str(options['size']), input_box, onepanel)
-    wt_select_unit_in_space_support_add_form(selenium, user, button,
+    wt_select_unit_in_space_support_add_form(selenium, user, unit,
                                              onepanel)
     if options.get('mount in root', False):
         wt_enable_option_box_in_space_support_form(selenium, user,
@@ -63,6 +67,8 @@ def support_space_in_op_panel_using_gui(selenium, user, config, onepanel,
                                                 onepanel)
 
 
+@wt(parsers.parse('user of {user} revokes "{space_name}" space support '
+                  'in "{provider_name}" provider in Onepanel'))
 def revoke_space_support_in_op_panel_using_gui(selenium, user, provider_name,
                                                onepanel, space_name, popups,
                                                modals, hosts):

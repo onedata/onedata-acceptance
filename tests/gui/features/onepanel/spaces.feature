@@ -8,12 +8,8 @@ Feature: Basic spaces management utilities using onepanel
 
   Scenario Outline: Support space
     Given there are no spaces supported in Onepanel used by user of browser1
-
-    # create space
-    When user of browser1 clicks on Create space button in spaces sidebar
-    And user of browser1 writes "<space>" into space name text field
-    And user of browser1 clicks on Create new space button
-    And user of browser1 sees that "<space>" has appeared on the spaces list in the sidebar
+    When user of browser1 creates "<space>" space in Onezone
+    And user of browser1 is idle for 5 seconds
 
     # receive support token
     And user of browser1 clicks "<space>" on the spaces list in the sidebar
