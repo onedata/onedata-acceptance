@@ -37,8 +37,9 @@ def type_text_to_input_field_in_discovery_page(selenium, browser_id, oz_page,
     _enter_text(input_field, text)
 
 
-@wt(parsers.parse('user of {browser_id} types elasticsearch client endpoint '
-                  'to {input_name} input field in discovery page'))
+@wt(parsers.parse('user of {browser_id} types the endpoint of deployed '
+                  'elasticsearch client to {input_name} input field '
+                  'in discovery page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def type_endpoint_to_input_field_in_discovery_page(selenium, browser_id,
                                                    oz_page, input_name, hosts):
@@ -57,13 +58,13 @@ def click_create_button_in_discovery_page(selenium, browser_id, oz_page):
 
 
 @wt(parsers.parse('user of {browser_id} sees that "{harvester_name}" '
-                  'has {option} on the harvesters list in the sidebar'))
+                  'has {option} the harvesters list in the sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_harvester_exists_on_harvesters_list(selenium, browser_id, oz_page,
-                                               harvester_name, option):
+def check_harvester_exists_on_harvesters_list(selenium, browser_id, oz_page,
+                                              harvester_name, option):
     driver = selenium[browser_id]
 
-    if option == 'appeared':
+    if option.startswith('appeared'):
         assert harvester_name in oz_page(driver)['discovery'].elements_list, \
             'harvester "{}" not found'.format(harvester_name)
     else:
