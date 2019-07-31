@@ -18,8 +18,7 @@ from tests.gui.steps.onezone.members import *
 from tests.gui.steps.common.miscellaneous import close_modal
 
 
-@wt(parsers.re('user of (?P<user>.*) creates "(?P<space_list>.+?)" space '
-               'in Onezone page'))
+@wt(parsers.parse('user of {user} creates "{space_list}" space in Onezone'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_spaces_in_oz_using_gui(selenium, user, oz_page, space_list):
     option = 'enter'
@@ -32,10 +31,10 @@ def create_spaces_in_oz_using_gui(selenium, user, oz_page, space_list):
         confirm_create_new_space(selenium, user, option, oz_page)
 
 
-@wt(parsers.parse('user of {user} sends support token from "{space_name}" '
+@wt(parsers.parse('user of {user} sends support token for "{space_name}" '
                   'to user of {browser_id}'))
-def create_and_send_support_token(selenium, user, space_name, browser_id,
-                                  oz_page, tmp_memory, displays, clipboard):
+def send_support_token_in_oz_using_gui(selenium, user, space_name, browser_id,
+                                       oz_page, tmp_memory, displays, clipboard):
     option = 'spaces'
     where = 'Providers'
     item_type = 'token'

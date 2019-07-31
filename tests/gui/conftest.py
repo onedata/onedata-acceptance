@@ -84,7 +84,7 @@ def pytest_addoption(parser):
                                   'with multiple browsers')
 
 
-@fixture(autouse=True, scope='session')
+@fixture(autouse=True, scope='module')
 def finalize(request):
     yield
     export_logs(request)
@@ -392,9 +392,10 @@ def env_description_abs_path(request, env_description_file):
 
 
 @fixture(scope='session')
-def env_desc(env_description_abs_path, hosts, request, users):
+def env_desc(env_description_abs_path, hosts, request, users, previous_env):
     from tests.conftest import env_desc
-    return env_desc(env_description_abs_path, hosts, request, users)
+    return env_desc(env_description_abs_path, hosts, request, users,
+                    previous_env)
 
 
 @fixture(scope='session')

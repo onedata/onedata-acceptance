@@ -58,6 +58,7 @@ from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.onezone.groups import *
 from tests.gui.meta_steps.onepanel.spaces import *
 from tests.gui.meta_steps.oneprovider.common import *
+from tests.gui.meta_steps.onezone.spaces import *
 
 from tests.gui.meta_steps.onepanel.spaces import *
 from tests.gui.meta_steps.oneprovider.common import *

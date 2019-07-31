@@ -30,17 +30,9 @@ Feature: Storage management using onepanel
     And user of <client> sees that "<storage_name>" Storage type is posix in storages page in Onepanel
     And user of <client> sees that "<storage_name>" Mount point is /volumes/persistence/storage in storages page in Onepanel
 
-    # create space
-    And user of browser1 clicks on Create space button in spaces sidebar
-    And user of browser1 writes "hello_world1" into space name text field
-    And user of browser1 clicks on Create new space button
-    And user of browser1 sees that "hello_world1" has appeared on the spaces list in the sidebar
-
-    # receive support token
-    And user of browser1 clicks Providers of "hello_world1" in the sidebar
-    And user of browser1 clicks Add support button on providers page
-    And user of browser1 clicks Copy button on Add support page
-    And user of browser1 sends copied token to user of <client>
+    And user of browser1 creates "hello_world1" space in Onezone
+    And user of browser1 is idle for 5 seconds
+    And user of browser1 sends support token for "hello_world1" to user of <client>
 
     # support space
     And user of browser1 clicks on Clusters in the main menu
@@ -80,9 +72,7 @@ Feature: Storage management using onepanel
     Then user of browser1 sees that there are 70 items in file browser
 
     And user of browser1 clicks on the "spaces" tab in main menu sidebar
-    And user of browser1 clicks "hello_world1" on the spaces list in the sidebar
-    And user of browser1 clicks on "Leave space" button in space menu
-    And user of browser1 clicks on yes button
+    And user of browser1 leaves "hello_world1" space in Onezone page
 
     Examples:
     | client   | storage_name |

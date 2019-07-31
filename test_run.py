@@ -25,11 +25,53 @@ from one_env.scripts.utils.one_env_dir import user_config
 from one_env.scripts.utils.artifacts import LOCAL_ARTIFACTS_DIR
 
 
+PULL_DOCKER_IMAGE_RETRIES = 5
+
 ZONE_IMAGES_CFG_PATH = 'onezone_images/docker-dev-build-list.json'
 PROVIDER_IMAGES_CFG_PATH = 'oneprovider_images/docker-dev-build-list.json'
 CLIENT_IMAGES_CFG_PATH = 'oneclient_images/oc-docker-dev-build-list.json'
 LUMA_IMAGES_CFG_PATH = 'luma_images/luma-docker-build-report.json'
 REST_CLI_IMAGES_CFG_PATH = 'rest_cli_images/rest-cli-docker-build-report.json'
+
+
+def get_images_option(test_type='oneclient', oz_image=None, op_image=None,
+                      rest_cli_image=None, oc_image=None, luma_image=None):
+    images_cfg = []
+
+    add_image_to_images_cfg(oz_image, 'onezone', '--oz-image', images_cfg)
+    add_image_to_images_cfg(op_image, 'oneprovider', '--op-image', images_cfg)
+    add_image_to_images_cfg(rest_cli_image, 'rest cli', '--rest-cli-image',
+                            images_cfg)
+
+    if test_type in ['oneclient', 'mixed']:
+        add_image_to_images_cfg(oc_image, 'oneclient', '--oc-image',
+                                images_cfg)
+        add_image_to_images_cfg(luma_image, 'LUMA', '--luma-image', images_cfg)
+
+    return ' + '.join(images_cfg)
+
+
+def add_image_to_images_cfg(image, service_name, option, images_cfg):
+    if image:
+        info('Using image: {} for {} service'.format(image, service_name))
+        pull_docker_image_with_retries(image)
+        images_cfg.append("['{}={}']".format(option, image))
+
+
+def pull_docker_image_with_retries(image, retries=PULL_DOCKER_IMAGE_RETRIES):
+    attempts = 0
+
+    while attempts < retries:
+        try:
+            docker.pull_image(image)
+        except CalledProcessError as e:
+            attempts += 1
+            if attempts >= retries:
+                print ('Could not download image {}. Tried {} times. \n'
+                       'Captured output from last call: {} \n'
+                       .format(image, retries, e.output))
+        else:
+            return
 
 
 def load_test_report(junit_report_path):
@@ -251,33 +293,12 @@ ret = subprocess.call(command)
 sys.exit(ret)
 '''
 
-oz_image, op_image, rest_cli_image = (args.oz_image, args.op_image,
-                                      args.rest_cli_image)
-images_cfg = []
-if oz_image:
-    info('Using onezone image: {}'.format(oz_image))
-    docker.pull_image(oz_image)
-    images_cfg.append("['--oz-image={}']".format(oz_image))
-if op_image:
-    info('Using oneprovider image: {}'.format(op_image))
-    docker.pull_image(op_image)
-    images_cfg.append("['--op-image={}']".format(op_image))
-if rest_cli_image:
-    info('Using rest cli image: {}'.format(rest_cli_image))
-    docker.pull_image(rest_cli_image)
-    images_cfg.append("['--rest-cli-image={}']".format(rest_cli_image))
-
-if args.test_type in ['oneclient', 'mixed']:
-    oc_image, luma_image = args.oc_image, args.luma_image
-    if oc_image:
-        info('Using oneclient image: {}'.format(oc_image))
-        docker.pull_image(oc_image)
-        images_cfg.append("['--oc-image={}']".format(oc_image))
-    if luma_image:
-        info('Using luma image: {}'.format(luma_image))
-        docker.pull_image(luma_image)
-        images_cfg.append("['--luma-image={}']".format(luma_image))
-images_opt = ' + '.join(images_cfg)
+images_opt = get_images_option(args.test_type,
+                               oz_image=args.oz_image,
+                               op_image=args.op_image,
+                               oc_image=args.oc_image,
+                               rest_cli_image=args.rest_cli_image,
+                               luma_image=args.luma_image)
 
 if args.update_etc_hosts:
     update_etc_hosts()
