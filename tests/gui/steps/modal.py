@@ -6,20 +6,19 @@ __copyright__ = "Copyright (C) 2016 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-
 import re
 import itertools
-
-from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.common.keys import Keys
 from pytest_bdd import parsers, given, when, then
 
+from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.utils.generic import click_on_web_elem, transform
 from tests.utils.utils import repeat_failed
 from tests.utils.acceptance_utils import wt
+from tests.gui.utils.common.modals import Modals as modals
 
 
 in_type_to_id = {'username': 'login-form-username-input',
@@ -317,4 +316,13 @@ def assert_alert_text_in_modal(selenium, browser_id, modals, modal, text):
     forbidden_alert_text = getattr(modals(driver), modal).forbidden_alert.text
     assert text in forbidden_alert_text, ('found {} text instead of {}'
                                           .format(forbidden_alert_text, text))
+
+
+@wt(parsers.parse('user of {browser_id} clicks on "{button}" button in '
+                  'modal "{modal}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_modal_button(selenium, browser_id, button, modal):
+    button = button.lower()
+    modal = modal.lower().replace(' ', '_')
+    getattr(getattr(modals(selenium[browser_id]), modal), button)()
 

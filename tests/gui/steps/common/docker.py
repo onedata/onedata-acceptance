@@ -15,6 +15,7 @@ import os.path
 from pytest_bdd import given, when, then, parsers
 
 from tests.gui.utils.generic import parse_seq, suppress
+from tests.utils.acceptance_utils import wt
 
 
 PROVIDER_CONTAINER_NAME = 'oneprovider-1'

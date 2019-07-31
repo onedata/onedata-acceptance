@@ -79,3 +79,60 @@ Feature: Storage management using onepanel
     | browser1 | new_storage1 |
     | browser2 | new_storage2 |
 
+
+  Scenario Outline: User modifies newly created storage
+    # create new_storage POSIX storage
+    When user of browser1 clicks on Clusters in the main menu
+    And user of browser1 clicks on "oneprovider-1" in clusters menu
+    And user of <client> clicks on Storages item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+    And user of <client> clicks on Add storage button in storages page in Onepanel
+    And user of <client> selects POSIX from storage selector in storages page in Onepanel
+    And user of <client> types "<storage_name>" to Storage name field in POSIX form in storages page in Onepanel
+    And user of <client> types "/volumes/persistence/storage" to Mount point field in POSIX form in storages page in Onepanel
+    And user of <client> clicks on Add button in add storage form in storages page in Onepanel
+    And user of <client> sees an info notify with text matching to: .*[Ss]torage.*added.*
+    And user of <client> expands "<storage_name>" record on storages list in storages page in Onepanel
+    And user of <client> sees that "<storage_name>" Storage type is posix in storages page in Onepanel
+    And user of <client> sees that "<storage_name>" Mount point is /volumes/persistence/storage in storages page in Onepanel
+
+    And user of <client> expands toolbar for "<storage_name>" storage record in Storages page in Onepanel
+    And user of <client> clicks on Modify storage details option in storage's toolbar in Onepanel
+    And user of <client> types "/volumes/persistence/storage2" to Mount point field in POSIX edit form in storages page in Onepanel
+    And user of <client> clicks on Save button in edit form in storages page in Onepanel
+    And user of <client> clicks on "Proceed" button in modal "MODIFY STORAGE"
+    Then user of <client> sees that "<storage_name>" Mount point is /volumes/persistence/storage2 in storages page in Onepanel
+
+    And user of <client> removes "<storage_name>" storage in Onepanel page
+
+    Examples:
+    | client   | storage_name |
+    | browser1 | new_storage3 |
+    | browser2 | new_storage4 |
+
+
+  Scenario Outline: User removes newly created storage
+    # create new_storage POSIX storage
+    When user of browser1 clicks on Clusters in the main menu
+    And user of browser1 clicks on "oneprovider-1" in clusters menu
+    And user of <client> clicks on Storages item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+    And user of <client> clicks on Add storage button in storages page in Onepanel
+    And user of <client> selects POSIX from storage selector in storages page in Onepanel
+    And user of <client> types "<storage_name>" to Storage name field in POSIX form in storages page in Onepanel
+    And user of <client> types "/volumes/persistence/storage" to Mount point field in POSIX form in storages page in Onepanel
+    And user of <client> clicks on Add button in add storage form in storages page in Onepanel
+    And user of <client> sees an info notify with text matching to: .*[Ss]torage.*added.*
+    And user of <client> expands "<storage_name>" record on storages list in storages page in Onepanel
+    And user of <client> sees that "<storage_name>" Storage type is posix in storages page in Onepanel
+    And user of <client> sees that "<storage_name>" Mount point is /volumes/persistence/storage in storages page in Onepanel
+
+    And user of <client> expands toolbar for "<storage_name>" storage record in Storages page in Onepanel
+    And user of <client> clicks on Remove storage option in storage's toolbar in Onepanel
+    And user of <client> clicks on "Remove" button in modal "REMOVE STORAGE"
+    And user of <client> sees that "<storage_name>" has disappeared from the storages list
+
+    Examples:
+    | client   | storage_name |
+    | browser1 | new_storage5 |
+    | browser2 | new_storage6 |
+
+
