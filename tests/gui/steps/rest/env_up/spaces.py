@@ -238,10 +238,6 @@ def _get_support(zone_hostname, onepanel_credentials,
         all_members = [owner_credentials.username] + members
         wait_for_space_support(space_id, provider_hostname, all_members, users)
 
-        # TODO: remove after resolving VFS-5544
-        time.sleep(5)
-        wait_for_space_support(space_id, provider_hostname, all_members, users)
-
 
 @repeat_failed(attempts=10, interval=0.5,
                exceptions=(AssertionError, HTTPError))
