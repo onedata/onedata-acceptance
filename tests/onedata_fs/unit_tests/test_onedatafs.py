@@ -36,7 +36,8 @@ class TestOnedataFS(FSTestCases, unittest.TestCase):
 
     def destroy_fs(self, fs):
         time.sleep(4)
-        # sometimes destroying OnedataFS throws Segmentation Fault when
+        # sometimes destroying OnedataFS throws Segmentation Fault
+        # when it hadn't handled all requests  
         try:
             fs.close()
         except:
