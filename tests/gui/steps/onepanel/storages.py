@@ -128,5 +128,5 @@ def type_name_to_form_in_storages_page(selenium, browser_id, name,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_button_in_edit_form(selenium, browser_id, name, onepanel):
     driver = selenium[browser_id]
-    onepanel(driver).content.storages.edit_form.posix_editor.save_button.click()
+    onepanel(driver).content.storages.edit_form.posix_editor.save_button()
 

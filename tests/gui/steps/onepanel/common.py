@@ -11,7 +11,7 @@ __license__ = ("This software is released under the MIT license cited in "
 from pytest_bdd import parsers, given
 
 from tests.utils.acceptance_utils import *
-from tests.gui.conftest import WAIT_FRONTEND, modals
+from tests.gui.conftest import WAIT_FRONTEND, modals, WAIT_BACKEND
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.utils import repeat_failed
 
@@ -37,7 +37,7 @@ def wt_click_on_btn_in_content(selenium, browser_id_list,
 @then(parsers.re('users? of (?P<browser_id_list>.+?) clicks? on '
                  '(?P<sub_item>.+?) item in submenu of "(?P<record>.+?)" '
                  'item in (?P<sidebar>CLUSTERS) sidebar in Onepanel'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def wt_click_on_subitem_for_item(selenium, browser_id_list, sidebar,
                                  sub_item, record, onepanel, hosts):
     record = hosts[record]['name']

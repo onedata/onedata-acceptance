@@ -36,7 +36,7 @@ class POSIXEditor(PageObject):
     timeout = Input('input.field-posix_editor-timeout')
     read_only = Toggle('.toggle-field-posix_editor-readonly')
 
-    save_button = NamedButton('button', text='Save')
+    save_button = Button('button.btn-primary')
     cancel_button = NamedButton('button', text='Cancel')
 
 

@@ -59,7 +59,7 @@ class SpaceSupportAddForm(PageObject):
     update_configuration = WebItem('.update-configuration-section',
                                    cls=UpdateConfigurationForm)
 
-    support_space = NamedButton('button', text='Support space')
+    support_space = Button('button.ready')
 
 
 class SpaceInfo(PageObject):
