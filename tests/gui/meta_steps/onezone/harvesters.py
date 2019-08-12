@@ -118,3 +118,31 @@ def join_to_harvester(selenium, browser_id, oz_page, clipboard, displays):
                                                   oz_page)
 
 
+@wt(parsers.parse('user of {browser_id} {option} nested "{nested_privilege}" '
+                  'privilege in "{parent_privilege}" privilege '
+                  'for {user_name} user in "{harvester_name}" harvester'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def change_nested_privilege_in_harvester(selenium, browser_id, oz_page,
+                                         onepanel, nested_privilege, option,
+                                         parent_privilege, user_name,
+                                         harvester_name):
+    where = 'harvester'
+    list_type = 'user'
+    button_name = 'Save'
+    menu_option = 'Members'
+
+    click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id,
+                                                      harvester_name,
+                                                      menu_option, oz_page)
+    click_element_in_members_list(selenium, browser_id, user_name,
+                                  oz_page, where, list_type + 's', onepanel)
+    expand_privilege_for_member(selenium, browser_id, parent_privilege, oz_page,
+                                where, user_name, list_type, onepanel)
+    click_nested_privilege_toggle_for_member(selenium, browser_id, option,
+                                             where, nested_privilege, user_name,
+                                             oz_page, list_type,
+                                             parent_privilege, onepanel)
+    click_button_on_element_header_in_members(selenium, browser_id, button_name,
+                                              oz_page, where, user_name,
+                                              list_type, onepanel)
+

@@ -33,7 +33,6 @@ Feature: Basic management of harvester in Onezone GUI
 
 
   Scenario: User fails to see harvester without view harvester privilege
-    # join user to harvester
     When user of browser1 creates "harvester2" harvester in Onezone page
     And user of browser1 sends invitation token from "harvester2" harvester to user of browser2
     And user of browser2 joins to harvester in Onezone page
@@ -54,7 +53,6 @@ Feature: Basic management of harvester in Onezone GUI
 
 
   Scenario: User successfully renames harvester with modify harvester privilege
-    # join user to harvester
     When user of browser1 creates "harvester3" harvester in Onezone page
     And user of browser1 sends invitation token from "harvester3" harvester to user of browser2
     And user of browser2 joins to harvester in Onezone page
@@ -68,12 +66,7 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser2 sees that error popup has appeared
     And user of browser2 clicks on "Close" button in modal "Error"
 
-    # check modify harvester privilege
-    And user of browser1 clicks Members of "harvester3" harvester in the sidebar
-    And user of browser1 clicks "user1" user in "harvester3" harvester members users list
-    And user of browser1 expands "Harvester management" privilege for "user1" user in harvester members subpage
-    And user of browser1 checks "Modify harvester" privilege toggle in "Harvester management" for "user1" user in harvester members subpage
-    And user of browser1 clicks Save button for "user1" user in harvester members subpage
+    And user of browser1 checks nested "Modify harvester" privilege in "Harvester management" privilege for user1 user in "harvester3" harvester
 
     # rename harvester
     And user of browser2 refreshes site
@@ -86,7 +79,6 @@ Feature: Basic management of harvester in Onezone GUI
 
 
   Scenario: User successfully removes harvester with remove harvester privilege
-    # join user to harvester
     When user of browser1 creates "harvester4" harvester in Onezone page
     And user of browser1 sends invitation token from "harvester4" harvester to user of browser2
     And user of browser2 joins to harvester in Onezone page
@@ -99,12 +91,7 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser2 sees that error popup has appeared
     And user of browser2 clicks on "Close" button in modal "Error"
 
-    # check remove harvester privilege
-    And user of browser1 clicks Members of "harvester4" harvester in the sidebar
-    And user of browser1 clicks "user1" user in "harvester4" harvester members users list
-    And user of browser1 expands "Harvester management" privilege for "user1" user in harvester members subpage
-    And user of browser1 checks "Remove harvester" privilege toggle in "Harvester management" for "user1" user in harvester members subpage
-    And user of browser1 clicks Save button for "user1" user in harvester members subpage
+    And user of browser1 checks nested "Remove harvester" privilege in "Harvester management" privilege for user1 user in "harvester4" harvester
 
     # remove harvester
     Then user of browser2 clicks "harvester4" on the harvesters list in the sidebar
@@ -114,7 +101,6 @@ Feature: Basic management of harvester in Onezone GUI
 
 
   Scenario: User successfully views privileges with view privileges privilege
-    # join user to harvester
     When user of browser1 creates "harvester5" harvester in Onezone page
     And user of browser1 sends invitation token from "harvester5" harvester to user of browser2
     And user of browser2 joins to harvester in Onezone page
@@ -125,12 +111,7 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser2 clicks "admin" user in "harvester5" harvester members users list
     And user of browser2 sees Insufficient permissions alert in harvester members subpage
 
-    # check view privileges
-    And user of browser1 clicks Members of "harvester5" harvester in the sidebar
-    And user of browser1 clicks "user1" user in "harvester5" harvester members users list
-    And user of browser1 expands "Harvester management" privilege for "user1" user in harvester members subpage
-    And user of browser1 checks "View privileges" privilege toggle in "Harvester management" for "user1" user in harvester members subpage
-    And user of browser1 clicks Save button for "user1" user in harvester members subpage
+    And user of browser1 checks nested "View privileges" privilege in "Harvester management" privilege for user1 user in "harvester5" harvester
 
     # view privileges
     And user of browser2 refreshes site
@@ -141,7 +122,6 @@ Feature: Basic management of harvester in Onezone GUI
 
 
   Scenario: User successfully sets privileges with set privileges privilege
-    # join user to harvester
     When user of browser1 creates "harvester6" harvester in Onezone page
     And user of browser1 sends invitation token from "harvester6" harvester to user of browser2
     And user of browser2 joins to harvester in Onezone page
@@ -156,12 +136,7 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser2 sees that error popup has appeared
     And user of browser2 clicks on "Close" button in modal "Error"
 
-    # check set privileges
-    And user of browser1 clicks Members of "harvester6" harvester in the sidebar
-    And user of browser1 clicks "user1" user in "harvester6" harvester members users list
-    And user of browser1 expands "Harvester management" privilege for "user1" user in harvester members subpage
-    And user of browser1 checks "Set privileges" privilege toggle in "Harvester management" for "user1" user in harvester members subpage
-    And user of browser1 clicks Save button for "user1" user in harvester members subpage
+    And user of browser1 checks nested "Set privileges" privilege in "Harvester management" privilege for user1 user in "harvester6" harvester
 
     # set privilege
     Then user of browser2 refreshes site
@@ -177,7 +152,6 @@ Feature: Basic management of harvester in Onezone GUI
 
 
   Scenario: User successfully generate invitation token for user with add user privilege
-    # join user to harvester
     When user of browser1 creates "harvester7" harvester in Onezone page
     And user of browser1 sends invitation token from "harvester7" harvester to user of browser2
     And user of browser2 joins to harvester in Onezone page
@@ -191,12 +165,7 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser2 sees Insufficient permissions alert in Invite user using token modal
     And user of browser2 closes "Invite using token" modal
 
-    # check add user privilege
-    And user of browser1 clicks Members of "harvester7" harvester in the sidebar
-    And user of browser1 clicks "user1" user in "harvester7" harvester members users list
-    And user of browser1 expands "User management" privilege for "user1" user in harvester members subpage
-    And user of browser1 checks "Add user" privilege toggle in "User management" for "user1" user in harvester members subpage
-    And user of browser1 clicks Save button for "user1" user in harvester members subpage
+    And user of browser1 checks nested "Add user" privilege in "User management" privilege for user1 user in "harvester7" harvester
 
     # generate invitation token for user
     Then user of browser2 clicks on "Invite user using token" button in users list menu in "harvester7" harvester members view
@@ -206,7 +175,6 @@ Feature: Basic management of harvester in Onezone GUI
 
 
   Scenario: User successfully removes user with remove user privilege
-    # join user to harvester
     When user of browser1 creates "harvester8" harvester in Onezone page
     And user of browser1 sends invitation token from "harvester8" harvester to user of browser2
     And user of browser2 joins to harvester in Onezone page
@@ -217,12 +185,7 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser2 sees that error popup has appeared
     And user of browser2 clicks on "Close" button in modal "Error"
 
-    # check remove user privilege
-    And user of browser1 clicks Members of "harvester8" harvester in the sidebar
-    And user of browser1 clicks "user1" user in "harvester8" harvester members users list
-    And user of browser1 expands "User management" privilege for "user1" user in harvester members subpage
-    And user of browser1 checks "Remove user" privilege toggle in "User management" for "user1" user in harvester members subpage
-    And user of browser1 clicks Save button for "user1" user in harvester members subpage
+    And user of browser1 checks nested "Remove user" privilege in "User management" privilege for user1 user in "harvester8" harvester
 
     # remove user
     Then user of browser2 removes "admin" user from "harvester8" harvester members
@@ -232,7 +195,6 @@ Feature: Basic management of harvester in Onezone GUI
   Scenario: User successfully add group to harvester with add group privilege
     When user of browser2 creates group "group1"
 
-    # join user to harvester
     And user of browser1 creates "harvester9" harvester in Onezone page
     And user of browser1 sends invitation token from "harvester9" harvester to user of browser2
     And user of browser2 joins to harvester in Onezone page
@@ -248,12 +210,7 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser2 sees that error popup has appeared
     And user of browser2 clicks on "Close" button in modal "Error"
 
-    # check add group privilege
-    And user of browser1 clicks Members of "harvester9" harvester in the sidebar
-    And user of browser1 clicks "user1" user in "harvester9" harvester members users list
-    And user of browser1 expands "Group management" privilege for "user1" user in harvester members subpage
-    And user of browser1 checks "Add group" privilege toggle in "Group management" for "user1" user in harvester members subpage
-    And user of browser1 clicks Save button for "user1" user in harvester members subpage
+    And user of browser1 checks nested "Add group" privilege in "Group management" privilege for user1 user in "harvester9" harvester
 
     # add group to harvester
     Then user of browser2 clicks on "Add one of your groups" button in groups list menu in "harvester9" harvester members view
@@ -267,7 +224,6 @@ Feature: Basic management of harvester in Onezone GUI
   Scenario: User successfully remove group from harvester with remove group privilege
     When user of browser1 creates group "group1"
 
-    # join user to harvester
     And user of browser1 creates "harvester10" harvester in Onezone page
     And user of browser1 sends invitation token from "harvester10" harvester to user of browser2
     And user of browser2 joins to harvester in Onezone page
@@ -284,12 +240,7 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser2 sees that error popup has appeared
     And user of browser2 clicks on "Close" button in modal "Error"
 
-    # check remove group privilege
-    And user of browser1 clicks Members of "harvester10" harvester in the sidebar
-    And user of browser1 clicks "user1" user in "harvester10" harvester members users list
-    And user of browser1 expands "Group management" privilege for "user1" user in harvester members subpage
-    And user of browser1 checks "Remove group" privilege toggle in "Group management" for "user1" user in harvester members subpage
-    And user of browser1 clicks Save button for "user1" user in harvester members subpage
+    And user of browser1 checks nested "Remove group" privilege in "Group management" privilege for user1 user in "harvester10" harvester
 
     # remove group from harvester
     And user of browser2 removes "group1" group from "harvester10" harvester members
@@ -301,7 +252,6 @@ Feature: Basic management of harvester in Onezone GUI
   Scenario: User successfully adds space with add space privilege
     When user of browser2 creates "space1" space in Onezone
 
-    # join user to harvester
     And user of browser1 creates "harvester11" harvester in Onezone page
     And user of browser1 sends invitation token from "harvester11" harvester to user of browser2
     And user of browser2 joins to harvester in Onezone page
@@ -317,12 +267,7 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser2 sees that error popup has appeared
     And user of browser2 clicks on "Close" button in modal "Error"
 
-    # check add space privilege
-    And user of browser1 clicks Members of "harvester11" harvester in the sidebar
-    And user of browser1 clicks "user1" user in "harvester11" harvester members users list
-    And user of browser1 expands "Space management" privilege for "user1" user in harvester members subpage
-    And user of browser1 checks "Add space" privilege toggle in "Space management" for "user1" user in harvester members subpage
-    And user of browser1 clicks Save button for "user1" user in harvester members subpage
+    And user of browser1 checks nested "Add space" privilege in "Space management" privilege for user1 user in "harvester11" harvester
 
     # add space
     And user of browser2 clicks Spaces of "harvester11" harvester in the sidebar
@@ -336,7 +281,6 @@ Feature: Basic management of harvester in Onezone GUI
 
   Scenario: User successfully removes space with remove space privilege
     When user of browser1 creates "space2" space in Onezone
-    # join user to harvester
     And user of browser1 creates "harvester12" harvester in Onezone page
     And user of browser1 sends invitation token from "harvester12" harvester to user of browser2
     And user of browser2 joins to harvester in Onezone page
@@ -354,12 +298,7 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser2 sees that error popup has appeared
     And user of browser2 clicks on "Close" button in modal "Error"
 
-    # check remove space privilege
-    And user of browser1 clicks Members of "harvester12" harvester in the sidebar
-    And user of browser1 clicks "user1" user in "harvester12" harvester members users list
-    And user of browser1 expands "Space management" privilege for "user1" user in harvester members subpage
-    And user of browser1 checks "Remove space" privilege toggle in "Space management" for "user1" user in harvester members subpage
-    And user of browser1 clicks Save button for "user1" user in harvester members subpage
+    And user of browser1 checks nested "Remove space" privilege in "Space management" privilege for user1 user in "harvester12" harvester
 
     # remove space
     Then user of browser2 removes "space2" space from harvester
