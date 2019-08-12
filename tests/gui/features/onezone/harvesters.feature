@@ -30,7 +30,7 @@ Feature: Basic management of harvester in Onezone GUI
 
 
   Scenario: User successfully adds space to harvester
-    When user of browser creates "space1" space in Onezone page
+    When user of browser creates "space1" space in Onezone
     And user of browser creates "harvester3" harvester in Onezone page
 
     # add space to harvester
@@ -48,7 +48,7 @@ Feature: Basic management of harvester in Onezone GUI
 
 
   Scenario: User successfully adds space to harvester (with invitation token)
-    When user of browser creates "space1" space in Onezone page
+    When user of browser creates "space1" space in Onezone
     And user of browser creates "harvester4" harvester in Onezone page
 
     # copy invitation token
@@ -114,9 +114,9 @@ Feature: Basic management of harvester in Onezone GUI
 
 
   Scenario: User successfully checks harvesting progress
-    When user of browser creates "space1" space in Onezone page
+    When user of browser creates "space1" space in Onezone
     # support space
-    And user of browser sends support token from "space1" to user of browser
+    And user of browser sends support token for "space1" to user of browser
     And user of browser clicks on Clusters in the main menu
     And user of browser clicks on "oneprovider-1" in clusters menu
     And user of browser clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel

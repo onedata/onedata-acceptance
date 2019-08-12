@@ -299,7 +299,7 @@ Feature: Basic management of harvester in Onezone GUI
 
 
   Scenario: User successfully adds space with add space privilege
-    When user of browser2 creates "space1" space in Onezone page
+    When user of browser2 creates "space1" space in Onezone
 
     # join user to harvester
     And user of browser1 creates "harvester11" harvester in Onezone page
@@ -335,7 +335,7 @@ Feature: Basic management of harvester in Onezone GUI
 
 
   Scenario: User successfully removes space with remove space privilege
-    When user of browser1 creates "space2" space in Onezone page
+    When user of browser1 creates "space2" space in Onezone
     # join user to harvester
     And user of browser1 creates "harvester12" harvester in Onezone page
     And user of browser1 sends invitation token from "harvester12" harvester to user of browser2
