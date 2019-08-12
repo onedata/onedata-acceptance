@@ -25,6 +25,19 @@ onezone:
   onezone_ready_check:
     enabled: false
   batchConfig: false
+  workerOverlayConfig: |-
+    [
+      {oz_worker, [
+        {disable_gui_package_verification, true},
+        {gui_debug_mode, true}
+      ]}
+    ].
+  panelOverlayConfig: |-
+    [
+      {onepanel, [
+        {gui_debug_mode, true}
+      ]}
+    ].
 
 oneprovider-1:
   oneprovider_ready_check:

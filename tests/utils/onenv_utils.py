@@ -17,9 +17,38 @@ import urllib3
 from kubernetes import client, config
 
 
+class OnenvError(BaseException):
+    """Raised when one of one-env commands fails"""
+    pass
+
+
+def run_onenv_command(command, args=None, fail_with_error=True):
+    cmd = ['./onenv', command]
+
+    if args:
+        cmd.extend(args)
+
+    print('Running command: {}'.format(cmd))
+    proc = sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.PIPE, cwd='one_env')
+    output, err = proc.communicate()
+
+    sys.stdout.write(output.decode('utf-8'))
+    sys.stderr.write(err.decode('utf-8'))
+
+    if proc.returncode != 0 and fail_with_error:
+        raise OnenvError('Environment error.\n'
+                          'Command: {} failed.\n'
+                          'Captured output: {}'.format(cmd, output))
+
+    return output
+
+
+def clean_env():
+    run_onenv_command('clean', ['-a', '-s', '-d', '-v'])
+
+
 # TODO: After resolving VFS-4820 all this function can be imported from
 # one-env submodule
-
 def client_alias_to_pod_mapping():
     prov_clients_mapping = collections.defaultdict(list)
     client_alias_mapping = {}

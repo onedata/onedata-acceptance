@@ -18,23 +18,11 @@ Feature: Onepanel features auto-cleaning
 
   Scenario: User uses auto-cleaning
     Given there are no spaces supported in Onepanel used by user of browser1
-
-    # receive support token
-    When user of browser2 clicks "space2" on the spaces list in the sidebar
-    And user of browser2 clicks Providers of "space2" in the sidebar
-    And user of browser2 clicks Add support button on providers page
-    And user of browser2 clicks Copy button on Add support page
-    And user of browser2 sees an info notify with text matching to: .*copied.*
-    And user of browser2 sends copied token to user of browser1
-
-    # support space
-    And user of browser1 selects "posix" from storage selector in support space form in Onepanel
-    And user of browser1 types received token to Support token field in support space form in Onepanel
-    And user of browser1 types "1" to Size input field in support space form in Onepanel
-    And user of browser1 selects GiB radio button in support space form in Onepanel
-    And user of browser1 clicks on Support space button in support space form in Onepanel
-    And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
-    And user of browser1 sees that space support record for "space2" has appeared in Spaces page in Onepanel
+    When user of browser2 sends support token for "space2" to user of browser1
+    And user of browser1 supports "space2" space in "oneprovider-1" Oneprovider panel service with following configuration:
+           storage: posix
+           size: 1
+           unit: GiB
 
     # enable file popularity
     And user of browser1 expands "space2" record on spaces list in Spaces page in Onepanel
@@ -113,32 +101,16 @@ Feature: Onepanel features auto-cleaning
             oneprovider-2: entirely filled
 
     # revoke space support
-    And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of browser1 expands toolbar for "space2" space record in Spaces page in Onepanel
-    And user of browser1 clicks on Revoke space support option in space's toolbar in Onepanel
-    And user of browser1 clicks on Yes, revoke button in REVOKE SPACE SUPPORT modal in Onepanel
-    And user of browser1 sees an info notify with text matching to: .*[Ss]upport.*revoked.*
+    And user of browser1 revokes "space2" space support in "oneprovider-1" provider in Onepanel
 
 
   Scenario: User uses auto-cleaning with lower size limit which skips too small files
     Given there are no spaces supported in Onepanel used by user of browser1
-
-    # receive support token
-    When user of browser2 clicks "space2" on the spaces list in the sidebar
-    And user of browser2 clicks Providers of "space2" in the sidebar
-    And user of browser2 clicks Add support button on providers page
-    And user of browser2 clicks Copy button on Add support page
-    And user of browser2 sees an info notify with text matching to: .*copied.*
-    And user of browser2 sends copied token to user of browser1
-
-    # support space
-    And user of browser1 selects "posix" from storage selector in support space form in Onepanel
-    And user of browser1 types received token to Support token field in support space form in Onepanel
-    And user of browser1 types "1" to Size input field in support space form in Onepanel
-    And user of browser1 selects GiB radio button in support space form in Onepanel
-    And user of browser1 clicks on Support space button in support space form in Onepanel
-    And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
-    And user of browser1 sees that space support record for "space2" has appeared in Spaces page in Onepanel
+    When user of browser2 sends support token for "space2" to user of browser1
+    And user of browser1 supports "space2" space in "oneprovider-1" Oneprovider panel service with following configuration:
+            storage: posix
+            size: 1
+            unit: GiB
 
     # enable file popularity
     And user of browser1 expands "space2" record on spaces list in Spaces page in Onepanel
@@ -220,32 +192,16 @@ Feature: Onepanel features auto-cleaning
             oneprovider-2: entirely filled
 
     # revoke space support
-    And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of browser1 expands toolbar for "space2" space record in Spaces page in Onepanel
-    And user of browser1 clicks on Revoke space support option in space's toolbar in Onepanel
-    And user of browser1 clicks on Yes, revoke button in REVOKE SPACE SUPPORT modal in Onepanel
-    And user of browser1 sees an info notify with text matching to: .*[Ss]upport.*revoked.*
+    And user of browser1 revokes "space2" space support in "oneprovider-1" provider in Onepanel
 
 
   Scenario: User uses auto-cleaning with upper size limit which skips too big files
     Given there are no spaces supported in Onepanel used by user of browser1
-
-    # receive support token
-    When user of browser2 clicks "space2" on the spaces list in the sidebar
-    And user of browser2 clicks Providers of "space2" in the sidebar
-    And user of browser2 clicks Add support button on providers page
-    And user of browser2 clicks Copy button on Add support page
-    And user of browser2 sees an info notify with text matching to: .*copied.*
-    And user of browser2 sends copied token to user of browser1
-
-    # support space
-    And user of browser1 selects "posix" from storage selector in support space form in Onepanel
-    And user of browser1 types received token to Support token field in support space form in Onepanel
-    And user of browser1 types "1" to Size input field in support space form in Onepanel
-    And user of browser1 selects GiB radio button in support space form in Onepanel
-    And user of browser1 clicks on Support space button in support space form in Onepanel
-    And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
-    And user of browser1 sees that space support record for "space2" has appeared in Spaces page in Onepanel
+    When user of browser2 sends support token for "space2" to user of browser1
+    And user of browser1 supports "space2" space in "oneprovider-1" Oneprovider panel service with following configuration:
+            storage: posix
+            size: 1
+            unit: GiB
 
     # enable file popularity
     And user of browser1 expands "space2" record on spaces list in Spaces page in Onepanel
@@ -334,9 +290,5 @@ Feature: Onepanel features auto-cleaning
             oneprovider-2: entirely filled
 
     # revoke space support
-    And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of browser1 expands toolbar for "space2" space record in Spaces page in Onepanel
-    And user of browser1 clicks on Revoke space support option in space's toolbar in Onepanel
-    And user of browser1 clicks on Yes, revoke button in REVOKE SPACE SUPPORT modal in Onepanel
-    And user of browser1 sees an info notify with text matching to: .*[Ss]upport.*revoked.*
+    And user of browser1 revokes "space2" space support in "oneprovider-1" provider in Onepanel
 
