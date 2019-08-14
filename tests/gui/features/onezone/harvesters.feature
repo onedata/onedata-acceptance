@@ -13,14 +13,14 @@ Feature: Basic management of harvester in Onezone GUI
     When user of browser clicks on Discovery in the main menu
     And user of browser clicks on Create new harvester button in discovery sidebar
     And user of browser types "harvester1" to name input field in discovery page
-    And user of browser types elasticsearch client endpoint to endpoint input field in discovery page
+    And user of browser types the endpoint of deployed elasticsearch client to endpoint input field in discovery page
     And user of browser clicks on Create button in discovery page
     Then user of browser sees that "harvester1" has appeared on the harvesters list in the sidebar
 
     And user of browser removes "harvester1" harvester in Onezone page
 
 
-  Scenario: User fails to create new harvester
+  Scenario: User fails to create new harvester with invalid endpoint
     When user of browser clicks on Discovery in the main menu
     And user of browser clicks on Create new harvester button in discovery sidebar
     And user of browser types "harvester2" to name input field in discovery page
@@ -29,7 +29,7 @@ Feature: Basic management of harvester in Onezone GUI
     Then user of browser sees that error popup has appeared
 
 
-  Scenario: User successfully adds space to harvester
+  Scenario: User successfully adds space to harvester using available spaces dropdown
     When user of browser creates "space1" space in Onezone
     And user of browser creates "harvester3" harvester in Onezone page
 
@@ -98,19 +98,19 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser types "harvester7" to rename harvester input field
     And user of browser confirms harvester rename using button
     Then user of browser sees that "harvester7" has appeared on the harvesters list in the sidebar
-    And user of browser sees that "harvester6" has disappeared on the harvesters list in the sidebar
+    And user of browser sees that "harvester6" has disappeared from the harvesters list in the sidebar
 
     And user of browser removes "harvester7" harvester in Onezone page
 
 
-  Scenario: User successfully leave harvester
+  Scenario: User successfully leaves harvester
     When user of browser creates "harvester8" harvester in Onezone page
 
     And user of browser clicks on Discovery in the main menu
     And user of browser clicks "harvester8" on the harvesters list in the sidebar
     And user of browser clicks on "Leave" button in harvester "harvester8" menu in the sidebar
     And user of browser clicks on "Leave" button in modal "Leave harvester"
-    And user of browser sees that "harvester8" has disappeared on the harvesters list in the sidebar
+    And user of browser sees that "harvester8" has disappeared from the harvesters list in the sidebar
 
 
   Scenario: User successfully checks harvesting progress
@@ -124,31 +124,13 @@ Feature: Basic management of harvester in Onezone GUI
           storage: posix
           size: 100000
 
-    # upload file
-    And user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Providers of "space1" in the sidebar
     And user of browser opens oneprovider-1 Oneprovider view in web GUI
-    And user of browser uses upload button in toolbar to upload file "20B-0.txt" to current dir
-    And user of browser is idle for 10 seconds
-    And user of browser refreshes site
-    And user of browser sees file browser in data tab in Oneprovider page
-    And user of browser is idle for 5 seconds
+    And user of browser uploads "20B-0.txt" to the root directory of "space1" using oneprovider-1 GUI
 
     And user of browser clicks on the "spaces" tab in main menu sidebar
-
-    # create harvester
     And user of browser creates "harvester9" harvester in Onezone page
-
-    # join space to harvester
-    And user of browser clicks Spaces of "harvester9" harvester in the sidebar
-    And user of browser clicks add one of your spaces button in harvester spaces page
-    And user of browser chooses "space1" from dropdown in add space modal
-    And user of browser clicks on "Add" button in modal "Choose Space"
-
-    # create index
-    And user of browser clicks Indices of "harvester9" harvester in the sidebar
-    And user of browser types "index1" to name input field in indices page
-    And user of browser clicks on Create button in indices page
+    And user of browser adds "space1" space to "harvester9" harvester using available spaces dropdown
+    And user of browser creates "index1" index in "harvester9" harvester in Discovery page
 
     # check harvesting progress
     Then user of browser expands "index1" index record in indices page

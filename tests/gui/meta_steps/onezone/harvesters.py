@@ -16,6 +16,9 @@ from tests.gui.steps.onezone.discovery import (
     click_remove_space_option_in_menu_in_discover_spaces_page,
     click_create_button_in_discovery_page,
     click_on_option_of_harvester_on_left_sidebar_menu,
+    type_index_name_to_input_field_in_indices_page,
+    click_create_button_in_indices_page, click_button_in_harvester_spaces_page,
+    choose_element_from_dropdown_in_add_element_modal,
     click_join_harvester_button_in_discovery_page)
 from tests.gui.steps.onezone.groups import click_modal_button
 from tests.gui.steps.onezone.spaces import (
@@ -73,6 +76,43 @@ def create_harvester(selenium, browser_id, oz_page, harvester_name, hosts):
                                                    oz_page, endpoint_input,
                                                    hosts)
     click_create_button_in_discovery_page(selenium, browser_id, oz_page)
+
+
+@wt(parsers.parse('user of {browser_id} adds "{space_name}" space to '
+                  '"{harvester_name}" harvester using available spaces dropdown'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def join_space_to_harvester(selenium, browser_id, oz_page, space_name,
+                            harvester_name):
+    option = 'Spaces'
+    button_name = 'add one of your spaces'
+    button_in_modal = 'Add'
+    modal = 'Choose Space'
+    element_type = 'space'
+
+    click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id,
+                                                      harvester_name, option,
+                                                      oz_page)
+    click_button_in_harvester_spaces_page(selenium, browser_id, oz_page,
+                                          button_name)
+    choose_element_from_dropdown_in_add_element_modal(selenium, browser_id,
+                                                      space_name, modals,
+                                                      element_type)
+    click_modal_button(selenium, browser_id, button_in_modal, modal, oz_page)
+
+
+@wt(parsers.parse('user of {browser_id} creates "{index_name}" index '
+                  'in "{harvester_name}" harvester in Discovery page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def create_index_in_harvester(selenium, browser_id, oz_page, index_name,
+                              harvester_name):
+    option = 'Indices'
+
+    click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id,
+                                                      harvester_name, option,
+                                                      oz_page)
+    type_index_name_to_input_field_in_indices_page(selenium, browser_id,
+                                                   oz_page, index_name)
+    click_create_button_in_indices_page(selenium, browser_id, oz_page)
 
 
 @wt(parsers.parse('user of {user} sends invitation token '

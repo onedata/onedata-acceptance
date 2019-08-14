@@ -227,10 +227,11 @@ def click_on_button_in_active_modal(selenium, browser_id, tmp_memory, option):
                                                     'button.btn-default')
 
     @repeat_failed(attempts=WAIT_FRONTEND, timeout=True)
-    def click_on_cp_btn(d, btn, err_msg):
+    def click_on_btn(d, btn, err_msg):
         click_on_web_elem(d, btn, err_msg)
 
-    click_on_cp_btn(driver, button, 'copy btn for displayed modal disabled')
+    click_on_btn(driver, button, '{} btn for displayed modal disabled'
+                 .format(option))
 
 
 @when(parsers.parse('user of {browser_id} sees that "{text}" option '

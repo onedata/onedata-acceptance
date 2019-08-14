@@ -214,7 +214,7 @@ def parse_client_cfg(pod_name, pod_cfg, hosts):
                            'provider-host': provider_host}
 
 
-def parse_client_elasticsearch_cfg(pod_cfg, hosts):
+def parse_elasticsearch_cfg(pod_cfg, hosts):
     ip, container_id = (pod_cfg.get('ip'),
                         pod_cfg.get('container-id'))
 
@@ -240,7 +240,7 @@ def parse_hosts_cfg(pods_cfg, hosts, request):
         elif service_type == 'oneclient':
             parse_client_cfg(pod_name, pod_cfg, hosts)
         elif service_type == 'client':
-            parse_client_elasticsearch_cfg(pod_cfg, hosts)
+            parse_elasticsearch_cfg(pod_cfg, hosts)
 
 
 def parse_users_cfg(patch_path, users, hosts):

@@ -1,12 +1,11 @@
 """This module contains tests suite for basic operations using
-Onezone GUI and single browser instance.
+Onezone Harvesters GUI and single browser instance.
 """
 
-__author__ = "Bartosz Walkowicz, Lukasz Niemiec"
-__copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
+__author__ = "Agnieszka Warchol"
+__copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
-
 
 from pytest import fixture
 from pytest_bdd import scenario, scenarios
@@ -70,22 +69,6 @@ def screens():
     return [0]
 
 
-scenarios('../features/onezone/login_page.feature')
-scenarios('../features/onezone/providers.feature')
-scenarios('../features/onezone/providers_multibrowser.feature')
-scenarios('../features/onezone/access_tokens.feature')
-scenarios('../features/onezone/full_name.feature')
-
-scenarios('../features/onezone/groups/groups_creation.feature')
-scenarios('../features/onezone/groups/groups_basic_operations.feature')
-scenarios('../features/onezone/groups/groups_join.feature')
-scenarios('../features/onezone/groups/'
-          'groups_multiple_users_with_single_group.feature')
-scenarios('../features/onezone/groups/groups_subgroup.feature')
-scenarios('../features/onezone/groups/'
-          'groups_multiple_users_with_multiple_groups.feature')
-scenarios('../features/onezone/groups/groups_hierarchy.feature')
-scenarios('../features/onezone/groups/groups_memberships.feature')
-scenarios('../features/onezone/groups/groups_memberships_multibrowser.feature')
-scenarios('../features/onezone/groups/groups_memberships_privileges.feature')
+scenarios('../features/onezone/harvesters.feature')
+scenarios('../features/onezone/harvesters_memberships_privileges.feature')
 
