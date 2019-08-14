@@ -16,6 +16,7 @@ from .data_page import DataPage
 from .providers_page import ProvidersPage
 from .groups.groups_page import GroupsPage
 from .tokens_page import TokensPage
+from .discovery_page import DiscoveryPage
 from .clusters_page import ClustersPage
 from .manage_account_page import ManageAccountPage
 
@@ -30,6 +31,7 @@ class OZLoggedIn(object):
         'providers': ProvidersPage,
         'groups': GroupsPage,
         'tokens': TokensPage,
+        'discovery': DiscoveryPage,
         'clusters': ClustersPage
     }
 
