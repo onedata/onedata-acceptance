@@ -58,23 +58,13 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser2 joins to harvester in Onezone page
     And user of browser2 sees that "harvester3" has appeared on the harvesters list in the sidebar
 
-    # fail to rename harvester
-    And user of browser2 clicks "harvester3" on the harvesters list in the sidebar
-    And user of browser2 clicks on "Rename" button in harvester "harvester3" menu in the sidebar
-    And user of browser2 types "harvester33" to rename harvester input field
-    And user of browser2 confirms harvester rename using button
+    And user of browser2 renames "harvester3" harvester to "harvester33" in Onezone page
     And user of browser2 sees that error popup has appeared
     And user of browser2 clicks on "Close" button in modal "Error"
 
     And user of browser1 checks nested "Modify harvester" privilege in "Harvester management" privilege for user1 user in "harvester3" harvester
-
-    # rename harvester
-    And user of browser2 refreshes site
-    And user of browser2 clicks "harvester3" on the harvesters list in the sidebar
-    And user of browser2 clicks on "Rename" button in harvester "harvester3" menu in the sidebar
-    And user of browser2 types "harvester33" to rename harvester input field
-    And user of browser2 confirms harvester rename using button
-
+    Then user of browser2 refreshes site
+    And user of browser2 renames "harvester3" harvester to "harvester33" in Onezone page
     And user of browser1 removes "harvester33" harvester in Onezone page
 
 
@@ -84,19 +74,13 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser2 joins to harvester in Onezone page
     And user of browser2 sees that "harvester4" has appeared on the harvesters list in the sidebar
 
-    # fail to remove harvester
-    And user of browser2 clicks "harvester4" on the harvesters list in the sidebar
-    And user of browser2 clicks on "Remove" button in harvester "harvester4" menu in the sidebar
-    And user of browser2 clicks on "Remove" button in modal "Remove harvester"
+    And user of browser2 removes "harvester4" harvester in Onezone page
     And user of browser2 sees that error popup has appeared
     And user of browser2 clicks on "Close" button in modal "Error"
 
     And user of browser1 checks nested "Remove harvester" privilege in "Harvester management" privilege for user1 user in "harvester4" harvester
 
-    # remove harvester
-    Then user of browser2 clicks "harvester4" on the harvesters list in the sidebar
-    And user of browser2 clicks on "Remove" button in harvester "harvester4" menu in the sidebar
-    And user of browser2 clicks on "Remove" button in modal "Remove harvester"
+    And user of browser2 removes "harvester4" harvester in Onezone page
     And user of browser2 sees that "harvester4" has disappeared on the harvesters list in the sidebar
 
 
@@ -127,22 +111,14 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser2 joins to harvester in Onezone page
     And user of browser2 sees that "harvester6" has appeared on the harvesters list in the sidebar
 
-    # fail to set privileges
-    And user of browser2 clicks Members of "harvester6" harvester in the sidebar
-    And user of browser2 sees "user1" user in "harvester6" harvester members users list
-    And user of browser2 clicks "user1" user in "harvester6" harvester members users list
-    And user of browser2 checks "Harvester management" privilege toggle for "user1" user in harvester members subpage
-    And user of browser2 clicks Save button for "user1" user in harvester members subpage
+    And user of browser2 checks "Harvester management" privilege for user1 user in "harvester6" harvester
     And user of browser2 sees that error popup has appeared
     And user of browser2 clicks on "Close" button in modal "Error"
 
     And user of browser1 checks nested "Set privileges" privilege in "Harvester management" privilege for user1 user in "harvester6" harvester
 
-    # set privilege
     Then user of browser2 refreshes site
-    And user of browser2 clicks "user1" user in "harvester6" harvester members users list
-    And user of browser2 checks "Harvester management" privilege toggle for "user1" user in harvester members subpage
-    And user of browser2 clicks Save button for "user1" user in harvester members subpage
+    And user of browser2 checks "Harvester management" privilege for user1 user in "harvester6" harvester
 
     And user of browser1 refreshes site
     And user of browser1 clicks "user1" user in "harvester6" harvester members users list
@@ -203,19 +179,13 @@ Feature: Basic management of harvester in Onezone GUI
     # fail to add group to harvester
     And user of browser2 clicks on Discovery in the main menu
     And user of browser2 clicks "harvester9" on the harvesters list in the sidebar
-    And user of browser2 clicks Members of "harvester9" harvester in the sidebar
-    And user of browser2 clicks on "Add one of your groups" button in groups list menu in "harvester9" harvester members view
-    And user of browser2 chooses "group1" from dropdown in add group modal
-    And user of browser2 clicks on "Add" button in modal "Choose Group"
+    And user of browser2 adds "group1" group to "harvester9" harvester using available groups dropdown
     And user of browser2 sees that error popup has appeared
     And user of browser2 clicks on "Close" button in modal "Error"
 
     And user of browser1 checks nested "Add group" privilege in "Group management" privilege for user1 user in "harvester9" harvester
 
-    # add group to harvester
-    Then user of browser2 clicks on "Add one of your groups" button in groups list menu in "harvester9" harvester members view
-    And user of browser2 chooses "group1" from dropdown in add group modal
-    And user of browser2 clicks on "Add" button in modal "Choose Group"
+    Then user of browser2 adds "group1" group to "harvester9" harvester using available groups dropdown
     And user of browser2 sees "group1" group in "harvester9" harvester members groups list
 
     And user of browser1 removes "harvester9" harvester in Onezone page
@@ -230,10 +200,7 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser2 sees that "harvester10" has appeared on the harvesters list in the sidebar
 
     # add group to harvester
-    And user of browser1 clicks Members of "harvester10" harvester in the sidebar
-    Then user of browser1 clicks on "Add one of your groups" button in groups list menu in "harvester10" harvester members view
-    And user of browser1 chooses "group1" from dropdown in add group modal
-    And user of browser1 clicks on "Add" button in modal "Choose Group"
+    Then user of browser1 adds "group1" group to "harvester10" harvester using available groups dropdown
 
     # fail to remove group from harvester
     And user of browser2 removes "group1" group from "harvester10" harvester members
@@ -259,21 +226,12 @@ Feature: Basic management of harvester in Onezone GUI
 
     # fail to add space
     And user of browser2 clicks on Discovery in the main menu
-    And user of browser2 clicks "harvester11" on the harvesters list in the sidebar
-    And user of browser2 clicks Spaces of "harvester11" harvester in the sidebar
-    And user of browser2 clicks add one of your spaces button in harvester spaces page
-    And user of browser2 chooses "space1" from dropdown in add space modal
-    And user of browser2 clicks on "Add" button in modal "Choose Space"
+    And user of browser2 adds "space1" space to "harvester11" harvester using available spaces dropdown
     And user of browser2 sees that error popup has appeared
     And user of browser2 clicks on "Close" button in modal "Error"
 
     And user of browser1 checks nested "Add space" privilege in "Space management" privilege for user1 user in "harvester11" harvester
-
-    # add space
-    And user of browser2 clicks Spaces of "harvester11" harvester in the sidebar
-    And user of browser2 clicks add one of your spaces button in harvester spaces page
-    And user of browser2 chooses "space1" from dropdown in add space modal
-    And user of browser2 clicks on "Add" button in modal "Choose Space"
+    And user of browser2 adds "space1" space to "harvester11" harvester using available spaces dropdown
 
     Then user of browser2 sees that "space1" has appeared on the spaces list in discovery page
     And user of browser1 removes "harvester11" harvester in Onezone page
@@ -285,12 +243,7 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser1 sends invitation token from "harvester12" harvester to user of browser2
     And user of browser2 joins to harvester in Onezone page
     And user of browser2 sees that "harvester12" has appeared on the harvesters list in the sidebar
-
-    # join space to harvester
-    And user of browser1 clicks Spaces of "harvester12" harvester in the sidebar
-    And user of browser1 clicks add one of your spaces button in harvester spaces page
-    And user of browser1 chooses "space2" from dropdown in add space modal
-    And user of browser1 clicks on "Add" button in modal "Choose Space"
+    And user of browser1 adds "space2" space to "harvester12" harvester using available spaces dropdown
 
     # fail to remove space from harvester
     And user of browser2 clicks Spaces of "harvester12" harvester in the sidebar
@@ -299,10 +252,7 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser2 clicks on "Close" button in modal "Error"
 
     And user of browser1 checks nested "Remove space" privilege in "Space management" privilege for user1 user in "harvester12" harvester
-
-    # remove space
     Then user of browser2 removes "space2" space from harvester
-
     And user of browser1 removes "harvester12" harvester in Onezone page
     And user of browser1 leaves "space2" space in Onezone page
 

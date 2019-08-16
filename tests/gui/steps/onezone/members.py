@@ -268,8 +268,8 @@ def assert_member_is_in_parent_members_list(selenium, browser_id, option,
                '"(?P<username>.*)" user on "(?P<space_name>.*)" '
                'space members list'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_user_is_in_space_members_list(selenium, browser_id, option,
-                                         username, space_name, oz_page):
+def check_user_in_space_members_list(selenium, browser_id, option,
+                                     username, space_name, oz_page):
     driver = selenium[browser_id]
     page = oz_page(driver)['data']
     page.elements_list[space_name]()
@@ -292,9 +292,10 @@ def assert_user_is_in_space_members_list(selenium, browser_id, option,
 def remove_member_from_parent(selenium, browser_id, member_name, member_type,
                               name, oz_page, tmp_memory, onepanel, where, popups):
     driver = selenium[browser_id]
-    main_page = oz_page(selenium[browser_id])[_change_to_tab_name(where)]
-    main_page.elements_list[name]()
-    main_page.elements_list[name].members()
+    if where != 'cluster':
+        main_page = oz_page(selenium[browser_id])[_change_to_tab_name(where)]
+        main_page.elements_list[name]()
+        main_page.elements_list[name].members()
     members_page = _find_members_page(onepanel, oz_page, driver, where)
     list_name = member_type + 's'
     (getattr(members_page, list_name).items[member_name].header
@@ -302,7 +303,7 @@ def remove_member_from_parent(selenium, browser_id, member_name, member_type,
 
     if member_type == 'user':
         modal_name = 'remove user from '
-    elif member_type == 'group':
+    elif member_type == 'group' and where != 'group':
         modal_name = 'remove group from '
     else:
         modal_name = 'remove subgroup from '
@@ -506,8 +507,8 @@ def see_privileges_for_member(selenium, browser_id, oz_page, where,
                'in "(?P<name>.*)" harvester members '
                '(?P<list_type>users|groups) list'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_element_in_members_subpage(selenium, browser_id, option, oz_page,
-                                      member_name, member_type, list_type):
+def check_element_in_members_subpage(selenium, browser_id, option, oz_page,
+                                     member_name, member_type, list_type):
     driver = selenium[browser_id]
     member_list = getattr(oz_page(driver)['discovery'].members_page,
                           list_type).items
