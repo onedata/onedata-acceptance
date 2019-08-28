@@ -24,7 +24,7 @@ from tests.utils.onenv_utils import (init_helm,
                                      deployment_data_path, OnenvError,
                                      run_onenv_command, clean_env)
 from tests import (CONFIG_FILES, PANEL_REST_PORT, ENV_DIRS, SCENARIO_DIRS,
-                   LANDSCAPE_DIRS, LOGDIRS)
+                   PATCHES_DIR, LOGDIRS)
 
 
 START_ENV_MAX_RETRIES = 3
@@ -79,11 +79,11 @@ def pytest_generate_tests(metafunc):
     if metafunc.config.option.test_type:
         test_type = metafunc.config.option.test_type
 
-        if test_type in ['gui', 'mixed']:
-            if test_type == 'mixed':
-                default_env_file = '1oz_1op_1oc'
-            else:
+        if test_type in ['gui', 'mixed', 'onedata_fs']:
+            if test_type == 'gui':
                 default_env_file = '1oz_1op_deployed'
+            else:
+                default_env_file = '1oz_1op_1oc'
 
             env_file = metafunc.config.getoption('env_file')
             if env_file:
@@ -320,7 +320,6 @@ def env_desc(env_description_abs_path, hosts, request, users,
     elif test_type == 'mixed':
         with open(env_description_abs_path, 'r') as env_desc_file:
             env_desc = yaml.load(env_desc_file)
-
         scenario = env_desc.get('scenario')
         scenarios_dir_path = SCENARIO_DIRS.get(get_test_type(request))
         scenario_path = os.path.abspath(os.path.join(scenarios_dir_path,
@@ -333,19 +332,17 @@ def env_desc(env_description_abs_path, hosts, request, users,
             )
         return env_desc
 
-    elif test_type == 'oneclient':
+    elif test_type in ['oneclient', 'onedata_fs']:
         with open(env_description_abs_path, 'r') as env_desc_file:
             env_desc = yaml.load(env_desc_file)
 
         scenario = env_desc.get('scenario')
-        scenarios_dir_path = SCENARIO_DIRS.get(
-            get_test_type(request))
-        scenario_path = os.path.abspath(
-            os.path.join(scenarios_dir_path, scenario))
+        scenarios_dir_path = SCENARIO_DIRS.get(get_test_type(request))
+        scenario_path = os.path.abspath(os.path.join(scenarios_dir_path,
+                                                     scenario))
 
         patch = env_desc.get('patch')
-        patch_dir_path = LANDSCAPE_DIRS.get(
-            get_test_type(request))
+        patch_dir_path = PATCHES_DIR.get(get_test_type(request))
         patch_path = os.path.join(patch_dir_path, patch)
         if start_env:
             previous_env['started'] = start_environment(
