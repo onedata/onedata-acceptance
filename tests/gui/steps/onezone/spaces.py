@@ -80,7 +80,7 @@ def assert_new_created_space_has_appeared_on_spaces(selenium, browser_id,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
-               '(?P<option>Data|Providers|Groups|Tokens|Clusters) '
+               '(?P<option>Data|Providers|Groups|Tokens|Discovery|Clusters) '
                'in the main menu'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page):
@@ -89,13 +89,15 @@ def click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks "(?P<name>.*?)" '
-               'on the (?P<option>spaces|groups) list in the sidebar'))
+               'on the (?P<option>spaces|groups|harvesters) list in the sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option,
                                                 name, oz_page):
     driver = selenium[browser_id]
     if option == 'spaces':
         option = 'data'
+    elif option == 'harvesters':
+        option = 'discovery'
     oz_page(driver)[option].elements_list[name].click()
 
 
@@ -441,3 +443,31 @@ def confirm_rename_the_space(selenium, browser_id, option, oz_page):
         rename_space_by_click_on_confirmation_button_on_overview_page(selenium,
                                                                       browser_id,
                                                                       oz_page)
+
+
+@wt(parsers.parse('user of {browser_id} clicks join to harvester in menu '
+                  'for "{space_name}" in spaces list'))
+def click_join_to_harvester_option_in_menu_in_data_page(selenium, browser_id,
+                                                       space_name, oz_page):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['data']
+    page.elements_list[space_name].click_menu()
+    page.left_menu['Join to harvester'].click()
+
+
+@wt(parsers.parse('user of {browser_id} pastes harvester invitation token '
+                  'into harvester token text field in {where} page'))
+def paste_harvester_invitation_token_into_text_field(selenium, browser_id,
+                                                     oz_page, clipboard,
+                                                     displays, where):
+    driver = selenium[browser_id]
+    token = clipboard.paste(display=displays[browser_id])
+    oz_page(driver)[where].input_box.value = token
+
+
+@wt(parsers.parse('user of {browser_id} clicks Join the harvester button '
+                  'in data page'))
+def click_join_harvester_button_in_data_page(selenium, browser_id, oz_page):
+    driver = selenium[browser_id]
+    oz_page(driver)['data'].join_harvester_button()
+
