@@ -85,7 +85,7 @@ Feature: Storage management using onepanel
     When user of <client> creates "<storage_name>" storage in "oneprovider-1" Oneprovider panel service with following configuration:
           storage type: POSIX
           mount point: /volumes/persistence/storage
-    And user of <client> renames /volumes/persistence/storage to /volumes/persistence/storage2
+    And user of <client> renames /volumes/persistence/storage path to /volumes/persistence/storage2
     And user of <client> expands toolbar for "<storage_name>" storage record in Storages page in Onepanel
     And user of <client> clicks on Modify storage details option in storage's toolbar in Onepanel
     And user of <client> types "/volumes/persistence/storage2" to Mount point field in POSIX edit form in storages page in Onepanel
@@ -94,7 +94,7 @@ Feature: Storage management using onepanel
     Then user of <client> sees that "<storage_name>" Mount point is /volumes/persistence/storage2 in storages page in Onepanel
 
     And user of <client> removes "<storage_name>" storage in Onepanel page
-    And user of <client> renames /volumes/persistence/storage2 to /volumes/persistence/storage
+    And user of <client> renames /volumes/persistence/storage2 path to /volumes/persistence/storage
 
     Examples:
     | client   | storage_name |
@@ -154,7 +154,7 @@ Feature: Storage management using onepanel
     And user of browser1 sees that there is 1 item in file browser
     And user of browser1 sees item(s) named "dir1" in file browser
 
-    And user of browser1 renames /volumes/persistence/storage/dir to /volumes/persistence/storage/renamed_dir05
+    And user of browser1 renames /volumes/persistence/storage/dir path to /volumes/persistence/storage/renamed_dir05
     And user of browser1 copies dir2 to /volumes/persistence/storage/renamed_dir05 directory of provider's storage mount point
 
     And user of browser1 is idle for 8 seconds

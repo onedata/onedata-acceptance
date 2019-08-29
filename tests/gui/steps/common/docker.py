@@ -98,7 +98,8 @@ def wt_rm_files_to_space_root_dir(src_path, space, tmp_memory, hosts):
                             src_path), hosts)
 
 
-@wt(parsers.parse('user of {browser_id} renames {src_path} to {new_src_path}'))
+@wt(parsers.parse('user of {browser_id} renames {src_path} path '
+                  'to {new_src_path}'))
 def wt_mv_file(src_path, new_src_path, hosts):
     _docker_mv(src_path, new_src_path, hosts)
 
