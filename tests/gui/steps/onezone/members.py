@@ -19,14 +19,11 @@ from tests.gui.utils.common.modals import Modals as modals
 from tests.gui.meta_steps.onezone.common import search_for_members
 
 
+MENU_ELEM_TO_TAB_NAME = {'space': 'data', 'harvester': 'discovery'}
+
+
 def _change_to_tab_name(element):
-    if element == 'space':
-        main_menu_element = 'data'
-    elif element == 'harvester':
-        main_menu_element = 'discovery'
-    else:
-        main_menu_element = element + 's'
-    return main_menu_element
+    return MENU_ELEM_TO_TAB_NAME.get(element, element + 's')
 
 
 def _find_members_page(onepanel, oz_page, driver, where):
@@ -469,7 +466,7 @@ def see_insufficient_permissions_alert_for_member(selenium, browser_id, oz_page,
 
     members_list = getattr(page, member_type)
     forbidden_alert = members_list.items[member_name].forbidden_alert.text
-    assert alert_text in forbidden_alert, ('not found alert with {} text'
+    assert alert_text in forbidden_alert, ('alert with text "{}" not found'
                                            .format(alert_text))
 
 
@@ -483,7 +480,7 @@ def see_insufficient_permissions_alert(selenium, browser_id, oz_page,
     page = _find_members_page(onepanel, oz_page, driver, where)
 
     forbidden_alert = page.forbidden_alert.text
-    assert alert_text in forbidden_alert, ('not found alert with {} text'
+    assert alert_text in forbidden_alert, ('alert with text "{}" not found'
                                            .format(alert_text))
 
 
@@ -527,7 +524,7 @@ def check_element_in_members_subpage(selenium, browser_id, option, oz_page,
 def assert_insufficient_permissions_in_modal(selenium, browser_id, alert_text):
     driver = selenium[browser_id]
     forbidden_alert = modals(driver).invite_using_token.forbidden_alert.text
-    assert alert_text in forbidden_alert, ('not found alert with {} text'
+    assert alert_text in forbidden_alert, ('alert with text "{}" not found'
                                            .format(alert_text))
 
 

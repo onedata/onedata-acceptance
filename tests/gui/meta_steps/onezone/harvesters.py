@@ -142,11 +142,12 @@ def create_index_in_harvester(selenium, browser_id, oz_page, index_name,
     click_create_button_in_indices_page(selenium, browser_id, oz_page)
 
 
-@wt(parsers.parse('user of {user} sends invitation token '
-                  'from "{harvester_name}" harvester to user of {browser_id}'))
+@wt(parsers.parse('user of {browser_id1} sends invitation token '
+                  'from "{harvester_name}" harvester to user of {browser_id2}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def send_invitation_token(selenium, user, oz_page, harvester_name, browser_id,
-                          tmp_memory, displays, clipboard, onepanel, popups):
+def send_invitation_token(selenium, browser_id1, oz_page, harvester_name,
+                          browser_id2, tmp_memory, displays, clipboard,
+                          onepanel, popups):
     where = 'Discovery'
     list_type = 'harvester'
     option = 'Members'
@@ -155,18 +156,19 @@ def send_invitation_token(selenium, user, oz_page, harvester_name, browser_id,
     modal = 'Invite using token'
     item_type = 'token'
 
-    click_on_option_in_the_sidebar(selenium, user, where, oz_page)
-    click_element_on_lists_on_left_sidebar_menu(selenium, user, list_type + 's',
+    click_on_option_in_the_sidebar(selenium, browser_id1, where, oz_page)
+    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id1,
+                                                list_type + 's',
                                                 harvester_name, oz_page)
-    click_on_option_of_harvester_on_left_sidebar_menu(selenium, user,
+    click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id1,
                                                       harvester_name, option,
                                                       oz_page)
-    click_on_option_in_members_list_menu(selenium, user, button,
+    click_on_option_in_members_list_menu(selenium, browser_id1, button,
                                          list_type, member, oz_page,
                                          onepanel, popups)
-    copy_token_from_modal(selenium, user)
-    close_modal(selenium, user, modal, modals)
-    send_copied_item_to_other_users(user, item_type, browser_id,
+    copy_token_from_modal(selenium, browser_id1)
+    close_modal(selenium, browser_id1, modal, modals)
+    send_copied_item_to_other_users(browser_id1, item_type, browser_id2,
                                     tmp_memory, displays, clipboard)
 
 
@@ -185,14 +187,14 @@ def join_to_harvester(selenium, browser_id, oz_page, clipboard, displays):
                                                   oz_page)
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>checks|unchecks) nested '
-               '"(?P<nested_privilege>.*)" privilege in '
-               '"(?P<parent_privilege>.*)" privilege for (?P<user_name>.*) user '
-               'in "(?P<harvester_name>.*)" harvester'))
+@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>checks|unchecks) '
+               '"(?P<privilege>.*)" privilege in '
+               '"(?P<privilege_group>.*)" privileges group for '
+               '(?P<user_name>.*) user in "(?P<harvester_name>.*)" harvester'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_nested_privilege_in_harvester(selenium, browser_id, oz_page,
-                                         onepanel, nested_privilege, option,
-                                         parent_privilege, user_name,
+                                         onepanel, privilege, option,
+                                         privilege_group, user_name,
                                          harvester_name):
     where = 'harvester'
     list_type = 'user'
@@ -204,20 +206,20 @@ def change_nested_privilege_in_harvester(selenium, browser_id, oz_page,
                                                       menu_option, oz_page)
     click_element_in_members_list(selenium, browser_id, user_name,
                                   oz_page, where, list_type + 's', onepanel)
-    expand_privilege_for_member(selenium, browser_id, parent_privilege, oz_page,
+    expand_privilege_for_member(selenium, browser_id, privilege_group, oz_page,
                                 where, user_name, list_type, onepanel)
     click_nested_privilege_toggle_for_member(selenium, browser_id, option,
-                                             where, nested_privilege, user_name,
+                                             where, privilege, user_name,
                                              oz_page, list_type,
-                                             parent_privilege, onepanel)
+                                             privilege_group, onepanel)
     click_button_on_element_header_in_members(selenium, browser_id, button_name,
                                               oz_page, where, user_name,
                                               list_type, onepanel)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>checks|unchecks) '
-               '"(?P<privilege_name>.*)" privilege for (?P<user_name>.*) user '
-               'in "(?P<harvester_name>.*)" harvester'))
+               '"(?P<privilege_name>.*?)" privileges group for '
+               '(?P<user_name>.*) user in "(?P<harvester_name>.*)" harvester'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_privilege_in_harvester(selenium, browser_id, oz_page, onepanel,
                                   privilege_name, option, user_name,

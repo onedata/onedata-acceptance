@@ -215,3 +215,16 @@ def click_join_harvester_button_in_discovery_page(selenium, browser_id,
     driver = selenium[browser_id]
     oz_page(driver)['discovery'].join_harvester_button.click()
 
+
+@wt(parsers.re('user of (?P<browser_id>.*) sees '
+               '(?P<alert_text>Insufficient permissions) alert '
+               'on (?P<where>Spaces|Indices) subpage'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def see_insufficient_permissions_alert_on_discovery_page(selenium, browser_id,
+                                                         oz_page, alert_text):
+    driver = selenium[browser_id]
+    forbidden_alert = oz_page(driver)['discovery'].forbidden_alert.text
+
+    assert alert_text in forbidden_alert, ('alert with text "{}" not found'
+                                           .format(alert_text))
+

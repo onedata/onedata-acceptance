@@ -111,3 +111,5 @@ class DiscoveryPage(GenericPage):
     indices_page = WebItem('.main-content', cls=IndicesPage)
     members_page = WebItem('.main-content', cls=MembersPage)
 
+    forbidden_alert = WebElement('.alert.forbidden')
+
