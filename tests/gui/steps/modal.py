@@ -15,9 +15,9 @@ from selenium.webdriver.common.keys import Keys
 from pytest_bdd import parsers, given, when, then
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
+from tests.utils.acceptance_utils import wt
 from tests.gui.utils.generic import click_on_web_elem, transform
 from tests.utils.utils import repeat_failed
-from tests.utils.acceptance_utils import wt
 from tests.gui.utils.common.modals import Modals as modals
 
 
@@ -215,20 +215,23 @@ def activate_input_box_in_modal(browser_id, in_type, tmp_memory):
     in_box.send_keys(Keys.NULL)
 
 
-@when(parsers.parse('user of {browser_id} clicks on '
-                    'copy button in active modal'))
-@then(parsers.parse('user of {browser_id} clicks on '
-                    'copy button in active modal'))
-def click_on_copy_btn_in_modal(selenium, browser_id, tmp_memory):
+@wt(parsers.parse('user of {browser_id} clicks on '
+                  '{option} button in active modal'))
+def click_on_button_in_active_modal(selenium, browser_id, tmp_memory, option):
     driver = selenium[browser_id]
     modal = tmp_memory[browser_id]['window']['modal']
-    copy_btn = modal.find_element_by_css_selector('button.copy-btn')
+    if option == 'copy':
+        button = modal.find_element_by_css_selector('button.copy-btn')
+    else:
+        button = modal.find_element_by_css_selector('.modal-footer '
+                                                    'button.btn-default')
 
     @repeat_failed(attempts=WAIT_FRONTEND, timeout=True)
-    def click_on_cp_btn(d, btn, err_msg):
+    def click_on_btn(d, btn, err_msg):
         click_on_web_elem(d, btn, err_msg)
 
-    click_on_cp_btn(driver, copy_btn, 'copy btn for displayed modal disabled')
+    click_on_btn(driver, button, '{} btn for displayed modal disabled'
+                 .format(option))
 
 
 @when(parsers.parse('user of {browser_id} sees that "{text}" option '

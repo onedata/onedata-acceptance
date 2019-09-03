@@ -191,3 +191,4 @@ def revoke_all_space_supports(selenium, browser_id, onepanel, popups,
         # wait for update spaces list
         time.sleep(1)
         spaces_list = onepanel(selenium[browser_id]).content.spaces.spaces
+    selenium[browser_id].refresh()

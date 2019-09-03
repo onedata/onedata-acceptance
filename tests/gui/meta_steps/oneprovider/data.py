@@ -149,7 +149,7 @@ def assert_metadata_in_op_gui(selenium, browser_id, path, tmp_memory, op_page,
                                                   item_name, tmp_memory)
         if res == 'fails':
             assert_textarea_content_is_eq_to(browser_id, item_name,
-                                             '{}' if tab_name == 'json' else '',
+                                             'null' if tab_name == 'json' else '',
                                              tab_name, tmp_memory)
         else:
             assert_textarea_contains_record(browser_id, val, tab_name, 
@@ -325,7 +325,8 @@ def _create_content(selenium, browser_id, content, cwd, space, tmp_memory,
         _create_item(selenium, browser_id, name, content, cwd, space, 
                      tmp_memory, op_page)
 
-
+@wt(parsers.re('user of (?P<browser_id>.*) uploads "(?P<path>.*)" to the '
+               'root directory of "(?P<space>.*)" using (?P<host>.*) GUI'))
 def upload_file_to_op_gui(path, selenium, browser_id, space, op_page,
                           tmp_memory):
     item_name, path = get_item_name_and_containing_dir_path(path)

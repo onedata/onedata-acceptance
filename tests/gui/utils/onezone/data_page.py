@@ -26,6 +26,11 @@ class Space(Element):
                             text='Providers')
     members = NamedButton('.one-list-level-2 .item-header',
                           text='Members')
+    menu_button = Button('.collapsible-toolbar-toggle')
+
+    def click_menu(self):
+        self.click()
+        self.menu_button.click()
 
     def is_home_icon(self):
         return 'oneicon-home' in self.home_icon.get_attribute("class")
@@ -70,10 +75,19 @@ class SpaceProvidersPage(PageObject):
     get_support_page = WebItem('.ember-view', cls=GetSupportPage)
 
 
+class MenuItem(PageObject):
+    name = id = Label('a.clickable .text')
+
+    def __call__(self):
+        self.click()
+
+
 class DataPage(GenericPage):
     create_space_button = Button('.one-sidebar-toolbar-button '
                                  '.oneicon-add-filled')
     join_space_button = Button('.oneicon-join-plug')
+    join_harvester_button = NamedButton('button span.spin-button-label',
+                                        text='Join the harvester')
 
     elements_list = WebItemsSequence('.sidebar-spaces '
                                      'li.one-list-item.clickable', cls=Space)
@@ -88,4 +102,9 @@ class DataPage(GenericPage):
     menu_button = Button('.with-menu .collapsible-toolbar-toggle')
 
     get_started = Button('.btn.btn-default.hide-sm-active.ember-view')
+
+    left_menu = WebItemsSequence('.webui-popover-content '
+                                 '.one-collapsible-toolbar-popover '
+                                 '.dropdown-menu .one-collapsible-toolbar-item',
+                                 cls=MenuItem)
 
