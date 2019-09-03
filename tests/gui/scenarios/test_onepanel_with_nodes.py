@@ -2,8 +2,8 @@
 Onepanel GUI and multiple browser instances.
 """
 
-__author__ = "Bartosz Walkowicz"
-__copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
+__author__ = "Agnieszka Warchol"
+__copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
@@ -76,10 +76,4 @@ def screens():
     return [0, 1]
 
 
-scenarios('../features/onepanel/deployment.feature')
-scenarios('../features/onepanel/storages.feature')
-scenarios('../features/onepanel/provider.feature')
-scenarios('../features/onepanel/spaces.feature')
-scenarios('../features/onepanel/members.feature')
-scenarios('../features/onepanel/emergency_passphrase.feature')
-
+scenarios('../features/onepanel/deployment_with_nodes.feature')

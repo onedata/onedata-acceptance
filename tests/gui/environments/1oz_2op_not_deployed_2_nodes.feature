@@ -43,4 +43,8 @@ oneprovider-1:
   oneprovider_ready_check:
     enabled: false
   batchConfig: false
+  clusterConfig:
+    managers: [node-1]
+    workers: [node-2]
+    databases: [node-1]
   addTestDomain: true

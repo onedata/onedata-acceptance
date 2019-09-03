@@ -19,10 +19,10 @@ from tests.gui.steps.onezone.discovery import (
     type_index_name_to_input_field_in_indices_page,
     click_create_button_in_indices_page, click_button_in_harvester_spaces_page,
     choose_space_from_dropdown_in_add_space_modal)
-from tests.gui.steps.onezone.groups import click_modal_button
 from tests.gui.steps.onezone.spaces import (
     click_on_option_in_the_sidebar,
     click_element_on_lists_on_left_sidebar_menu)
+from tests.gui.steps.modal import click_modal_button
 
 
 @wt(parsers.parse('user of {browser_id} removes "{space_name}" space '
@@ -51,7 +51,7 @@ def remove_harvester(selenium, browser_id, oz_page, harvester_name):
                                                 harvester_name, oz_page)
     click_on_option_in_harvester_menu(selenium, browser_id, option,
                                       harvester_name, oz_page)
-    click_modal_button(selenium, browser_id, option, modal, oz_page)
+    click_modal_button(selenium, browser_id, option, modal)
 
 
 @wt(parsers.parse('user of {browser_id} creates "{harvester_name}" harvester '
@@ -91,7 +91,7 @@ def join_space_to_harvester(selenium, browser_id, oz_page, space_name,
                                           button_name)
     choose_space_from_dropdown_in_add_space_modal(selenium, browser_id,
                                                   space_name, modals)
-    click_modal_button(selenium, browser_id, button_in_modal, modal, oz_page)
+    click_modal_button(selenium, browser_id, button_in_modal, modal)
 
 
 @wt(parsers.parse('user of {browser_id} creates "{index_name}" index '
