@@ -20,7 +20,7 @@ class Popups(object):
                                   cls=DeregisterProvider)
     user_account_menu = WebItem('.webui-popover-content .user-account-menu',
                                 cls=UserAccountPopup)
-    member_menu = WebItem('.webui-popover', cls=MemberMenu)
+    member_menu = WebItem('.webui-popover.in', cls=MemberMenu)
 
     def __init__(self, driver):
         self.driver = self.web_elem = driver

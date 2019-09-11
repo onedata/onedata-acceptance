@@ -75,6 +75,7 @@ class Modals(object):
     emergency_interface = WebItem('.modal-dialog', cls=EmergencyInterface)
     add_one_of_groups = WebItem('.modal-dialog', cls=AddOneOfGroupsModal)
     choose_space = WebItem('.modal-dialog', cls=ChooseElementModal)
+    choose_group = WebItem('.modal-dialog', cls=ChooseElementModal)
     remove_space_from_harvester = WebItem('.modal-dialog', cls=RemoveModal)
 
     def __init__(self, driver):
