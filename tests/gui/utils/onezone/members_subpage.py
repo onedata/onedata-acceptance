@@ -15,14 +15,14 @@ from tests.gui.utils.core.web_elements import (Button, NamedButton,
                                                WebItemsSequence, WebElement)
 
 
-class GroupMembersHeaderRow(PageObject):
+class MembersHeaderRow(PageObject):
     checkbox = Button('div.item-checkbox')
     search_bar = Input('input.form-control')
     menu_button = Button('li.list-header-row '
                          '.collapsible-toolbar-toggle.btn-menu-toggle')
 
 
-class GroupMembersItemHeader(PageObject):
+class MembersItemHeader(PageObject):
     checkbox = Button('div.item-checkbox')
     user = WebElement('.header-content-container')
     menu_button = Button('.collapsible-toolbar-toggle')
@@ -52,8 +52,8 @@ class PrivilegeGroup(PageObject):
         self.show_hide_button.click()
 
 
-class GroupMembersItemRow(PageObject):
-    header = WebItem('.list-header-row', cls=GroupMembersItemHeader)
+class MembersItemRow(PageObject):
+    header = WebItem('.list-header-row', cls=MembersItemHeader)
     name = id = Label('.one-label')
     privileges = WebItemsSequence('.one-collapsible-list-item-content '
                                   '.form.ember-view > div > ul > li', 
@@ -61,10 +61,10 @@ class GroupMembersItemRow(PageObject):
     forbidden_alert = WebElement('.alert.forbidden')
 
 
-class GroupMembersList(PageObject):
-    header = WebItem('li.list-header-row', cls=GroupMembersHeaderRow)
-    items = WebItemsSequence('.one-collapsible-list-item', 
-                             cls=GroupMembersItemRow)
+class MembersList(PageObject):
+    header = WebItem('li.list-header-row', cls=MembersHeaderRow)
+    items = WebItemsSequence('.one-collapsible-list-item',
+                             cls=MembersItemRow)
     generate_token = NamedButton('a', text='generate an invitation token')
 
 
@@ -97,8 +97,8 @@ class InvitationTokenArea(PageObject):
 
 
 class MembersPage(PageObject):
-    groups = WebItem('.row:nth-of-type(2) > ul', cls=GroupMembersList)
-    users = WebItem('.row:nth-of-type(3) > ul', cls=GroupMembersList)
+    groups = WebItem('.row:nth-of-type(2) > ul', cls=MembersList)
+    users = WebItem('.row:nth-of-type(3) > ul', cls=MembersList)
     token = WebItem('.invitation-token-presenter', cls=InvitationTokenArea)
     show_view_option = Button('.view-tools-toggle')
     effective_button = NamedButton('.direct-selector button', text='Effective')
