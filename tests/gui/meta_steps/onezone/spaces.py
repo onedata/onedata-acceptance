@@ -7,6 +7,8 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+from pytest_bdd import given
+
 from tests.gui.steps.common.notifies import *
 from tests.gui.steps.common.copy_paste import *
 from tests.gui.steps.common.url import refresh_site
@@ -258,4 +260,17 @@ def assert_space_is_supported_by_provider_in_oz_gui(selenium, user, oz_page,
                                                    space_name, option, oz_page)
     assert_providers_list_contains_provider(selenium, user, provider_name,
                                             hosts, oz_page)
+
+
+@given(parsers.parse('there is no "{space_name}" space in Onezone used '
+                     'by user of {browser_id}'))
+def leave_space_in_onezone(selenium, browser_id, space_name, oz_page, popups):
+    option = 'Data'
+
+    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
+    try:
+        leave_spaces_in_oz_using_gui(selenium, browser_id, space_name,
+                                     oz_page, popups)
+    except RuntimeError:
+        pass
 

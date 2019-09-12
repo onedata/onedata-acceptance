@@ -15,6 +15,7 @@ Feature: Storage management using onepanel
 
   Scenario Outline: User uploads files on freshly supported space on newly created storage
     Given there are no spaces supported in Onepanel used by user of browser1
+    And there is no "hello_world1" space in Onezone used by user of browser1
 
     # create new_storage POSIX storage
     When user of browser1 clicks on Clusters in the main menu
@@ -50,7 +51,6 @@ Feature: Storage management using onepanel
     # go to provider
     And user of browser1 is idle for 2 seconds
     And user of browser1 refreshes site
-    And user of browser1 clicks Providers of "hello_world1" in the sidebar
     And user of browser1 opens oneprovider-1 Oneprovider view in web GUI
 
     # create tmp dir and upload there 70 files
