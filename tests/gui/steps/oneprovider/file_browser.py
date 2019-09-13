@@ -262,6 +262,7 @@ def deselect_items_from_file_browser(browser_id, item_list, tmp_memory):
         selector.ctrl_or_cmd_down()
 
 
+@repeat_failed(timeout=WAIT_BACKEND)
 def _select_files(browser, selector, item_list):
     for item_name in parse_seq(item_list):
         item = browser.files[item_name]
