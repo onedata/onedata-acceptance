@@ -1,7 +1,7 @@
 Feature: Deployment process using panel of zone and provider
 
 
-  Scenario: Cluster deployment
+  Scenario: Cluster deployment with 2 hosts
     Given users opened [browser1, browser2] browsers' windows
     And users of [browser1, browser2] opened [onezone zone panel, oneprovider-1 provider panel] page
     And users of [browser1, browser2] created admin accounts "admin:password"

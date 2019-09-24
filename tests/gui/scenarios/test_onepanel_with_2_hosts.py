@@ -76,4 +76,5 @@ def screens():
     return [0, 1]
 
 
-scenarios('../features/onepanel/deployment_with_nodes.feature')
+scenarios('../features/onepanel/deployment_with_2_hosts.feature')
+

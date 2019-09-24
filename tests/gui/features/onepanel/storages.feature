@@ -117,7 +117,7 @@ Feature: Storage management using onepanel
     | browser2 | new_storage6 |
 
 
-  Scenario: User changes name of directory which it is mount point in storage
+  Scenario: User changes name of directory which it is mount point for storage
     When user of browser1 creates "space3" space in Onezone
     And user of browser1 copies dir1 to /volumes/persistence/storage/dir directory of provider's storage mount point
     And user of browser1 creates "new_storage7" storage in "oneprovider-1" Oneprovider panel service with following configuration:
