@@ -163,6 +163,7 @@ def request_space_support_using_gui(selenium, user, oz_page, space_name,
 def join_space_in_oz_using_gui(selenium, user_list, oz_page, tmp_memory,
                                item_type):
     option = 'enter'
+    where = 'data'
 
     for user in parse_seq(user_list):
         click_join_some_space_using_space_invitation_token_button(selenium,
@@ -172,8 +173,9 @@ def join_space_in_oz_using_gui(selenium, user_list, oz_page, tmp_memory,
                                                                     user,
                                                                     tmp_memory,
                                                                     item_type,
-                                                                    oz_page)
-        confirm_join_the_space(selenium, user, option, oz_page)
+                                                                    oz_page,
+                                                                    where)
+        confirm_join_the_space(selenium, user, option, oz_page, where)
 
 
 def assert_spaces_have_appeared_in_oz_gui(selenium, user, oz_page, space_list):

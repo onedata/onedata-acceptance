@@ -7,12 +7,12 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-from itertools import izip
+import itertools
 
 import pytest
 from pytest_bdd import given, when, then, parsers
-from tests.utils.acceptance_utils import wt
 
+from tests.utils.acceptance_utils import wt
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import (parse_seq, upload_file_path, transform)
 from tests.utils.utils import repeat_failed
@@ -406,11 +406,11 @@ def assert_provider_chunks_in_data_distribution(selenium, browser_id, chunks,
         'displayed {} chunks instead of expected {}'.format(
             len(displayed_chunks),
             len(expected_chunks))
-    for chunk1, chunk2 in izip(displayed_chunks, expected_chunks):
-        assert all(round(x - z) == 0 for x, z in izip(chunk1,
-                                                      parse_seq(chunk2,
-                                                                pattern='\d+',
-                                                                default=int))), \
+    for chunk1, chunk2 in zip(displayed_chunks, expected_chunks):
+        assert all(round(x - z) == 0 for x, z in zip(chunk1,
+                                                     parse_seq(chunk2,
+                                                               pattern='\d+',
+                                                               default=int))), \
             'displayed chunk {} instead of expected {}'.format(chunk1, chunk2)
 
 

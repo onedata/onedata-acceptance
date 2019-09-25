@@ -17,7 +17,7 @@ import hashlib
 import rpyc
 import pytest
 
-from docker_utils import run_cmd
+from .docker_utils import run_cmd
 from environment import docker
 from tests.utils.utils import (log_exception, assert_)
 from tests.utils.path_utils import escape_path
@@ -47,7 +47,7 @@ class Client:
         else:
             mode_flag = ''
 
-        print 'Mounting client with {} flag'.format(mode_flag)
+        print('Mounting client with {} flag'.format(mode_flag))
 
         if gdb:
             cmd = ('mkdir -p {mount_path}'
@@ -96,7 +96,7 @@ class Client:
                 self.rpyc_connection = rpyc.classic.connect(self.ip, port)
                 started = True
             except Exception as e:
-                print e
+                print(e)
                 time.sleep(1)
                 timeout -= 1
         if not started:
@@ -306,7 +306,7 @@ def mkdir(client, dir_path, recursive=False):
         client.rpyc_connection.modules.os.mkdir(dir_path)
 
 
-def create_file(client, file_path, mode=0664):
+def create_file(client, file_path, mode=0o664):
     client.rpyc_connection.modules.os.mknod(file_path, mode | stat_lib.S_IFREG)
 
 

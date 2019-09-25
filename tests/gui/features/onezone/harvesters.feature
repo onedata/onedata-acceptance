@@ -119,6 +119,7 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser sends support token for "space1" to user of browser
     And user of browser clicks on Clusters in the main menu
     And user of browser clicks on "oneprovider-1" in clusters menu
+    And user of browser is idle for 1 seconds
     And user of browser clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser supports "space1" space in "oneprovider-1" Oneprovider panel service with following configuration:
           storage: posix

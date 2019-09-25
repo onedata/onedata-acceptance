@@ -115,7 +115,7 @@ def _overlay_streams(tags, offsets):
 
     formats = chain(repeat(overlay_fmt, len(tags) - 1), [last_overlay_fmt])
     bases = ((base_fmt.format(num=num), base_fmt.format(num=num+1))
-             for num in xrange(len(tags)))
+             for num in range(len(tags)))
     offsets = iter(offsets)
 
     return (';'.join(fmt.format(base=base, tag=tag, x=x, y=y,
@@ -126,7 +126,7 @@ def _overlay_streams(tags, offsets):
 
 
 def _tag_streams(input_streams_num):
-    tags = ['v{num}'.format(num=num) for num in xrange(input_streams_num)]
+    tags = ['v{num}'.format(num=num) for num in range(input_streams_num)]
     fmt = '[{stream}:v] setpts=PTS-STARTPTS [{tag}]'
     tagged_streams = ';'.join(fmt.format(stream=i, tag=tag)
                               for i, tag in enumerate(tags))
@@ -138,6 +138,6 @@ def _gen_offsets(screen_num, width, height):
     if a*b < screen_num:
         a += 1
     yield int(a*width), int(b*height)
-    for i in xrange(a):
-        for j in xrange(b):
+    for i in range(a):
+        for j in range(b):
             yield int(i*width), int(j*height)

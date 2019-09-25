@@ -67,9 +67,9 @@ def pull_docker_image_with_retries(image, retries=PULL_DOCKER_IMAGE_RETRIES):
         except CalledProcessError as e:
             attempts += 1
             if attempts >= retries:
-                print ('Could not download image {}. Tried {} times. \n'
-                       'Captured output from last call: {} \n'
-                       .format(image, retries, e.output))
+                print('Could not download image {}. Tried {} times. \n'
+                      'Captured output from last call: {} \n'
+                      .format(image, retries, e.output))
         else:
             return
 
@@ -305,7 +305,7 @@ if args.update_etc_hosts:
 
 if args.local:
     # TODO: change this after python3 will be used in tests
-    cmd = ['python2.7', '-m', 'py.test',
+    cmd = ['python3', '-m', 'pytest',
            '--test-type={}'.format(args.test_type),
            args.test_dir, '--junitxml={}'.format(args.report_path),
            '--local'] + pass_args

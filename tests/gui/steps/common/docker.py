@@ -96,7 +96,7 @@ def kill_providers(persistent_environment, provider_list):
             if provider in node:
                 container_name = node.split('@')[1]
                 subprocess.call(kill_cmd + [container_name])
-                for _ in xrange(10):
+                for _ in range(10):
                     is_alive = subprocess.Popen(inspect_cmd + [container_name],
                                                 stdout=subprocess.PIPE)
                     with suppress(Exception):

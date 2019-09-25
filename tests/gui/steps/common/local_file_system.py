@@ -70,7 +70,7 @@ def _mkdirs(cwd, dir_content=None):
             else:
                 _mkfile(cwd.join(name), content)
     else:
-        for i in xrange(files_num):
+        for i in range(files_num):
             _mkfile(cwd.join('file{}.txt'.format(i)))
 
 

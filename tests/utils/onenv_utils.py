@@ -207,7 +207,7 @@ def current_deployment_dir():
     all_deployments = os.listdir(deployments_directory())
     all_deployments.sort()
     if len(all_deployments) == 0:
-        print 'There are no deployments'
+        print('There are no deployments')
         sys.exit(1)
     else:
         return os.path.join(deployments_directory(), all_deployments[-1])

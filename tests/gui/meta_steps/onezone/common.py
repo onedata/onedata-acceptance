@@ -2,9 +2,10 @@
 using web GUI
 """
 
+from itertools import zip_longest
+
 from pytest_bdd import given, parsers
 
-from itertools import izip_longest
 from tests.utils.utils import repeat_failed
 from tests.gui.steps.common.browser_creation import \
     create_instances_of_webdriver
@@ -59,9 +60,9 @@ def click_visit_provider(driver, modals):
 def g_wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts,
                   modals):
     providers_list = list_parser(providers_list)
-    for browser_id, provider in izip_longest(list_parser(browser_id_list),
-                                             providers_list,
-                                             fillvalue=providers_list[-1]):
+    for browser_id, provider in zip_longest(list_parser(browser_id_list),
+                                            providers_list,
+                                            fillvalue=providers_list[-1]):
         visit_op(selenium, browser_id, oz_page, hosts[provider]['name'],
                  modals)
     g_wait_for_op_session_to_start(selenium, browser_id_list)

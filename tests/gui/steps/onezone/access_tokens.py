@@ -124,7 +124,7 @@ def create_and_record_access_token_for_cdmi(selenium, browser_id,
                 try:
                     panel.tokens[0].copy()
                 except (RuntimeError, Exception) as ex:
-                    print ex
+                    print(ex)
                     now = time.time()
                 else:
                     break
@@ -133,3 +133,4 @@ def create_and_record_access_token_for_cdmi(selenium, browser_id,
                                    "access token in oz")
     token = clipboard.paste(display=displays[browser_id])
     tmp_memory[browser_id]['access_token'] = token
+

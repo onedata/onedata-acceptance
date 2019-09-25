@@ -75,7 +75,7 @@ class PageObjectsSequence(object):
                                    '{idx} while limit is {limit} in '
                                    '{parent}'.format(idx=sel, limit=len(self),
                                                      parent=self.parent))
-        elif isinstance(sel, (str, unicode)):
+        elif isinstance(sel, str):
             item = self._getitem_by_id(sel)
             if item:
                 return item
