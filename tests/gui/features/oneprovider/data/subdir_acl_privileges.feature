@@ -49,9 +49,9 @@ Feature: ACL subdirectories privileges tests using sigle browser in Oneprovider 
 
     Examples:
     | result   |  privileges                                                              |
-    | succeeds |  [list files, delete subdirectory, traverse directory, add subdirectory] |
+    | succeeds |  [list files, delete child, traverse directory, add subdirectory]        |
     | fails    |  all except [add subdirectory]                                           |
-    | fails    |  all except [delete subdirectory]                                        |
+    | fails    |  all except [delete child]                                               |
     | fails    |  all except [traverse directory]                                         |
         
         
@@ -61,9 +61,9 @@ Feature: ACL subdirectories privileges tests using sigle browser in Oneprovider 
 
     Examples:
     | result   |  privileges                                                       |
-    | succeeds |  [list files, delete subdirectory, traverse directory, add files] |
+    | succeeds |  [list files, delete child, traverse directory, add files]        |
     | fails    |  all except [add files]                                           |
-    | fails    |  all except [delete subdirectory]                                 |
+    | fails    |  all except [delete child]                                        |
     | fails    |  all except [traverse directory]                                  |
         
         
@@ -73,9 +73,9 @@ Feature: ACL subdirectories privileges tests using sigle browser in Oneprovider 
 
     Examples:
     | result   |  privileges                                                   |
-    | succeeds |  [delete, delete subdirectory, list files, traverse directory]|
+    | succeeds |  [delete, delete child, list files, traverse directory]       |
     | fails    |  all except [delete]                                          |
-    | fails    |  all except [delete subdirectory]                             |
+    | fails    |  all except [delete child]                                    |
     | fails    |  all except [list files]                                      |
     | fails    |  all except [traverse directory]                              |
         
@@ -86,17 +86,17 @@ Feature: ACL subdirectories privileges tests using sigle browser in Oneprovider 
 
     Examples:
     | result   |  privileges                                            |
-    | succeeds |  [delete subdirectory, traverse directory, list files] |
+    | succeeds |  [delete child, traverse directory, list files]        |
     | fails    |  all except [traverse directory]                       |
-    | fails    |  all except [delete subdirectory]                      |
-        
-        
+    | fails    |  all except [delete child]                             |
+
+
   Scenario Outline: Remove subfile
     When user of browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
     Then user of browser <result> to remove "dir1/file1" in "space1"
 
     Examples:
     | result   |  privileges                                            |
-    | succeeds |  [delete subdirectory, traverse directory, list files] |
+    | succeeds |  [delete child, traverse directory, list files]        |
     | fails    |  all except [traverse directory]                       |
-    | fails    |  all except [delete subdirectory]                      |
+    | fails    |  all except [delete child]                             |
