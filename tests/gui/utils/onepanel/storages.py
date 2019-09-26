@@ -51,7 +51,7 @@ class StorageRecord(PageObject, ExpandableMixin):
     mount_point = Label('.item-table .field-posix_static-mountPoint')
     _toggle = WebElement('.one-collapsible-list-item-header')
 
-    toolbar = Button('.collapsible-toolbar-toggle')
+    menu_button = Button('.collapsible-toolbar-toggle')
     _toolbar = WebElement('.one-collapsible-toolbar')
 
     def is_expanded(self):
@@ -60,7 +60,7 @@ class StorageRecord(PageObject, ExpandableMixin):
 
     def expand_menu(self, driver):
         ActionChains(driver).move_to_element(self._toolbar).perform()
-        self.toolbar.click()
+        self.menu_button.click()
 
 
 class StorageContentPage(PageObject):

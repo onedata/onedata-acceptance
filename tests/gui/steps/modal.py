@@ -18,7 +18,6 @@ from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.utils.acceptance_utils import wt
 from tests.gui.utils.generic import click_on_web_elem, transform
 from tests.utils.utils import repeat_failed
-from tests.gui.utils.common.modals import Modals as modals
 
 
 in_type_to_id = {'username': 'login-form-username-input',
@@ -325,7 +324,7 @@ def assert_alert_text_in_modal(selenium, browser_id, modals, modal, text):
 @wt(parsers.parse('user of {browser_id} clicks on "{button}" button in '
                   'modal "{modal}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_modal_button(selenium, browser_id, button, modal):
+def click_modal_button(selenium, browser_id, button, modal, modals):
     button = button.lower()
     modal = modal.lower().replace(' ', '_')
     getattr(getattr(modals(selenium[browser_id]), modal), button)()

@@ -15,13 +15,9 @@ from selenium.webdriver.support.ui import WebDriverWait as Wait
 from pytest_bdd import given, parsers, when, then
 
 
-MAIN_MENU_TAB_TO_URL = {'spaces': 'spaces',
-                        'groups': 'groups',
-                        'data': 'data',
-                        'shared': 'shares',
-                        'transfers': 'transfers',
-                        'clusters': 'clusters',
-                        'providers': 'providers'}
+def main_menu_tab_to_url(tab):
+    tab_to_url_mapping = {'shared': 'shares'}
+    return tab_to_url_mapping.get(tab, tab)
 
 
 def _click_on_tab_in_main_menu_sidebar(driver, tab):
@@ -38,7 +34,7 @@ def _click_on_tab_in_main_menu_sidebar(driver, tab):
                     'Current url: {:s}'.format(driver.current_url)
         )
 
-    menu_tab = MAIN_MENU_TAB_TO_URL[tab]
+    menu_tab = main_menu_tab_to_url(tab)
     css_path = '.primary-sidebar a#main-{:s}'.format(menu_tab)
 
     Wait(driver, WAIT_BACKEND).until(

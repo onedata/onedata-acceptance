@@ -40,7 +40,7 @@ def remove_space_from_harvester(selenium, browser_id, oz_page, space_name):
 
     click_remove_space_option_in_menu_in_discover_spaces_page(selenium, browser_id,
                                                               space_name, oz_page)
-    click_modal_button(selenium, browser_id, button, modal)
+    click_modal_button(selenium, browser_id, button, modal, modals)
 
 
 @wt(parsers.parse('user of {browser_id} removes "{harvester_name}" '
@@ -57,7 +57,7 @@ def remove_harvester(selenium, browser_id, oz_page, harvester_name):
                                                 harvester_name, oz_page)
     click_on_option_in_harvester_menu(selenium, browser_id, option,
                                       harvester_name, oz_page)
-    click_modal_button(selenium, browser_id, option, modal)
+    click_modal_button(selenium, browser_id, option, modal, modals)
 
 
 @wt(parsers.parse('user of {browser_id} creates "{harvester_name}" harvester '
@@ -99,7 +99,7 @@ def join_space_to_harvester(selenium, browser_id, oz_page, space_name,
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id,
                                                       space_name, modals,
                                                       element_type)
-    click_modal_button(selenium, browser_id, button_in_modal, modal)
+    click_modal_button(selenium, browser_id, button_in_modal, modal, modals)
 
 
 @wt(parsers.parse('user of {browser_id} adds "{group_name}" group to '
@@ -124,7 +124,7 @@ def add_group_to_harvester(selenium, browser_id, oz_page, group_name,
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id,
                                                       group_name, modals,
                                                       where)
-    click_modal_button(selenium, browser_id, button_in_modal, modal)
+    click_modal_button(selenium, browser_id, button_in_modal, modal, modals)
 
 
 @wt(parsers.parse('user of {browser_id} creates "{index_name}" index '

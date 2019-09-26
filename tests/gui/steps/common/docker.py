@@ -78,7 +78,8 @@ def wt_cp_files_to_dst_path_in_space(browser_id, src_path, dst_path,
 @wt(parsers.parse('user of {browser_id} copies {src_path} '
                   'to {dst_path} directory of provider\'s storage mount point'))
 def wt_cp_files_to_dst_path(browser_id, src_path, dst_path, tmpdir, hosts):
-    _docker_cp(tmpdir, browser_id, src_path, hosts, dst_path)
+    _docker_cp(tmpdir, browser_id, src_path, hosts,
+               os.path.join(MOUNT_POINT, dst_path))
 
 
 @when(parsers.parse('user of {browser_id} removes {src_path} '

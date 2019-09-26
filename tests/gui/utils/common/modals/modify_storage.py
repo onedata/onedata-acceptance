@@ -15,5 +15,5 @@ class ModifyStorage(Modal):
     cancel = NamedButton('button', text='Cancel')
 
     def __str__(self):
-        return 'Modify storage'
+        return 'Modify storage modal'
 

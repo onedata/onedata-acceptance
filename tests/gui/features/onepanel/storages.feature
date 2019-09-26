@@ -82,7 +82,7 @@ Feature: Storage management using onepanel
 
 
   Scenario Outline: User modifies newly created storage
-    When user of <client> creates "<storage_name>" storage in "oneprovider-1" Oneprovider panel service with following configuration:
+    When user of <client> adds "<storage_name>" storage in "oneprovider-1" Oneprovider panel service with following configuration:
           storage type: POSIX
           mount point: /volumes/persistence/storage
     And user of <client> renames /volumes/persistence/storage path to /volumes/persistence/storage2
@@ -103,7 +103,7 @@ Feature: Storage management using onepanel
 
 
   Scenario Outline: User removes newly created storage
-    When user of <client> creates "<storage_name>" storage in "oneprovider-1" Oneprovider panel service with following configuration:
+    When user of <client> adds "<storage_name>" storage in "oneprovider-1" Oneprovider panel service with following configuration:
           storage type: POSIX
           mount point: /volumes/persistence/storage
     Then user of <client> expands toolbar for "<storage_name>" storage record in Storages page in Onepanel
@@ -119,8 +119,8 @@ Feature: Storage management using onepanel
 
   Scenario: User changes name of directory which it is mount point for storage
     When user of browser1 creates "space3" space in Onezone
-    And user of browser1 copies dir1 to /volumes/persistence/storage/dir directory of provider's storage mount point
-    And user of browser1 creates "new_storage7" storage in "oneprovider-1" Oneprovider panel service with following configuration:
+    And user of browser1 copies dir1 to dir directory of provider's storage mount point
+    And user of browser1 adds "new_storage7" storage in "oneprovider-1" Oneprovider panel service with following configuration:
           storage type: POSIX
           mount point: /volumes/persistence/storage/dir
     And user of browser1 sends support token for "space3" to user of browser1
@@ -155,7 +155,7 @@ Feature: Storage management using onepanel
     And user of browser1 sees item(s) named "dir1" in file browser
 
     And user of browser1 renames /volumes/persistence/storage/dir path to /volumes/persistence/storage/renamed_dir05
-    And user of browser1 copies dir2 to /volumes/persistence/storage/renamed_dir05 directory of provider's storage mount point
+    And user of browser1 copies dir2 to renamed_dir05 directory of provider's storage mount point
 
     And user of browser1 is idle for 8 seconds
     And user of browser1 refreshes site
