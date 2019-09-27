@@ -46,6 +46,8 @@ class StorageEditForm(PageObject):
 
 class StorageRecord(PageObject, ExpandableMixin):
     name = id = Label('.item-icon-container + .one-label')
+    edit_form = WebItem('.storage-info .cluster-storage-add-form'
+                        ':not(.form-static)', cls=StorageEditForm)
     # TODO: add classes in GUI code or match by label text in tests
     storage_type = Label('.item-table .field-type_static-type')
     mount_point = Label('.item-table .field-posix_static-mountPoint')
@@ -65,8 +67,6 @@ class StorageRecord(PageObject, ExpandableMixin):
 
 class StorageContentPage(PageObject):
     form = WebItem('.cluster-storage-add-form', cls=StorageAddForm)
-    edit_form = WebItem('.storage-info .cluster-storage-add-form'
-                        ':not(.form-static)', cls=StorageEditForm)
     storages = WebItemsSequence('ul li .storage-item', cls=StorageRecord)
     add_storage = NamedButton('button', text='Add storage')
     cancel = NamedButton('button', text='Cancel')

@@ -114,20 +114,22 @@ def assert_storage_disappeared_from_list(selenium, browser_id, name,
 
 
 @wt(parsers.parse('user of {browser_id} types "{name}" to {input_box} field '
-                  'in POSIX edit form in storages page in Onepanel'))
+                  'in POSIX edit form for "{storage}" storage in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def type_name_to_form_in_storages_page(selenium, browser_id, name,
-                                       input_box, onepanel):
+                                       input_box, onepanel, storage):
     driver = selenium[browser_id]
-    form = onepanel(driver).content.storages.edit_form.posix_editor
+    form = (onepanel(driver).content.storages.storages[storage]
+            .edit_form.posix_editor)
     setattr(form, transform(input_box), name)
 
 
 @wt(parsers.parse('user of {browser_id} clicks on {name} button in edit form '
-                  'in storages page in Onepanel'))
+                  'for "{storage}" storage in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_button_in_edit_form(selenium, browser_id, name, onepanel):
+def click_on_button_in_edit_form(selenium, browser_id, name, onepanel, storage):
     driver = selenium[browser_id]
-    button = name + '_button'
-    getattr(onepanel(driver).content.storages.edit_form.posix_editor, button)()
+    button = name.lower() + '_button'
+    getattr(onepanel(driver).content.storages.storages[storage]
+            .edit_form.posix_editor, button)()
 

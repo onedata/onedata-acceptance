@@ -14,11 +14,11 @@ Feature: Deployment process using panel of zone and provider
     And user of browser1 sees that cluster deployment has started
 
     And user of browser2 clicks on Create Oneprovider cluster button in welcome page in Onepanel
-    And user of browser2 enables [Database, Cluster Worker, Cluster Manager, Primary Cluster Manager] options for .*oneprovider.* host in step 1 of deployment process in Onepanel
     And user of browser2 clicks on Add new host button in step 1 of deployment process in Onepanel
     And user of browser2 types "dev-oneprovider-krakow-0.dev-oneprovider-krakow.default.svc.cluster.local" to hostname field in step 1 of deployment process in Onepanel
     And user of browser2 clicks on Add host button in step 1 of deployment process in Onepanel
-    And user of browser2 enables [Database, Cluster Worker, Cluster Manager] options for .*1.*oneprovider.* host in step 1 of deployment process in Onepanel
+    And user of browser2 enables [Database, Cluster Worker] options for .*1.*oneprovider.* host in step 1 of deployment process in Onepanel
+    And user of browser2 enables [Cluster Manager, Primary Cluster Manager] options for .*0.*oneprovider.* host in step 1 of deployment process in Onepanel
     And user of browser2 clicks on Deploy button in step 1 of deployment process in Onepanel
     And user of browser2 sees that cluster deployment has started
 
@@ -88,5 +88,7 @@ Feature: Deployment process using panel of zone and provider
 
     And user of browser2 clicks on link to go to Emergency Onepanel interface in last step of deployment process in Onepanel
     And user of browser2 clicks on Nodes item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of browser2 sees that [Database, Cluster Worker, Cluster Manager, Primary Cluster Manager] options are enabled for .*oneprovider.* host in Nodes page in Onepanel
-    And user of browser2 sees that [Database, Cluster Worker, Cluster Manager, Primary Cluster Manager] options cannot be changed for .*oneprovider.* host in Nodes page in Onepanel
+    And user of browser2 sees that [Database, Cluster Worker] options are enabled for .*1.*oneprovider.* host in Nodes page in Onepanel
+    And user of browser2 sees that [Cluster Manager, Primary Cluster Manager] options are enabled for .*0.*oneprovider.* host in Nodes page in Onepanel
+    And user of browser2 sees that [Database, Cluster Worker] options cannot be changed for .*1.*oneprovider.* host in Nodes page in Onepanel
+    And user of browser2 sees that [Cluster Manager, Primary Cluster Manager] options cannot be changed for .*0.*oneprovider.* host in Nodes page in Onepanel

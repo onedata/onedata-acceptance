@@ -85,16 +85,15 @@ Feature: Storage management using onepanel
     When user of <client> adds "<storage_name>" storage in "oneprovider-1" Oneprovider panel service with following configuration:
           storage type: POSIX
           mount point: /volumes/persistence/storage
-    And user of <client> renames /volumes/persistence/storage path to /volumes/persistence/storage2
+    And using docker, admin renames /volumes/persistence/storage path to /volumes/persistence/storage2
     And user of <client> expands toolbar for "<storage_name>" storage record in Storages page in Onepanel
     And user of <client> clicks on Modify storage details option in storage's toolbar in Onepanel
-    And user of <client> types "/volumes/persistence/storage2" to Mount point field in POSIX edit form in storages page in Onepanel
-    And user of <client> clicks on Save button in edit form in storages page in Onepanel
+    And user of <client> types "/volumes/persistence/storage2" to Mount point field in POSIX edit form for "<storage_name>" storage in Onepanel
+    And user of <client> clicks on Save button in edit form for "<storage_name>" storage in Onepanel
     And user of <client> clicks on "Proceed" button in modal "MODIFY STORAGE"
     Then user of <client> sees that "<storage_name>" Mount point is /volumes/persistence/storage2 in storages page in Onepanel
 
-    And user of <client> removes "<storage_name>" storage in Onepanel page
-    And user of <client> renames /volumes/persistence/storage2 path to /volumes/persistence/storage
+    And using docker, admin renames /volumes/persistence/storage2 path to /volumes/persistence/storage
 
     Examples:
     | client   | storage_name |
@@ -117,9 +116,9 @@ Feature: Storage management using onepanel
     | browser2 | new_storage6 |
 
 
-  Scenario: User changes name of directory which it is mount point for storage
+  Scenario: User changes the name of a directory which is the mount point for storage
     When user of browser1 creates "space3" space in Onezone
-    And user of browser1 copies dir1 to dir directory of provider's storage mount point
+    And user of browser1 copies dir1 to /volumes/persistence/storage/dir directory
     And user of browser1 adds "new_storage7" storage in "oneprovider-1" Oneprovider panel service with following configuration:
           storage type: POSIX
           mount point: /volumes/persistence/storage/dir
@@ -154,8 +153,8 @@ Feature: Storage management using onepanel
     And user of browser1 sees that there is 1 item in file browser
     And user of browser1 sees item(s) named "dir1" in file browser
 
-    And user of browser1 renames /volumes/persistence/storage/dir path to /volumes/persistence/storage/renamed_dir05
-    And user of browser1 copies dir2 to renamed_dir05 directory of provider's storage mount point
+    And using docker, admin renames /volumes/persistence/storage/dir path to /volumes/persistence/storage/renamed_dir05
+    And user of browser1 copies dir2 to /volumes/persistence/storage/renamed_dir05 directory
 
     And user of browser1 is idle for 8 seconds
     And user of browser1 refreshes site
@@ -169,8 +168,8 @@ Feature: Storage management using onepanel
     And user of browser1 clicks on Storages item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser1 expands toolbar for "new_storage7" storage record in Storages page in Onepanel
     And user of browser1 clicks on Modify storage details option in storage's toolbar in Onepanel
-    And user of browser1 types "/volumes/persistence/storage/renamed_dir05" to Mount point field in POSIX edit form in storages page in Onepanel
-    And user of browser1 clicks on Save button in edit form in storages page in Onepanel
+    And user of browser1 types "/volumes/persistence/storage/renamed_dir05" to Mount point field in POSIX edit form for "new_storage7" storage in Onepanel
+    And user of browser1 clicks on Save button in edit form for "new_storage7" storage in Onepanel
     And user of browser1 clicks on "Proceed" button in modal "MODIFY STORAGE"
 
     And user of browser1 opens oneprovider-1 Oneprovider view in web GUI

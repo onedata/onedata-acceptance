@@ -1,4 +1,4 @@
-"""This module contains tests suite for basic operations in
+"""This module contains tests suite for deployment with two hosts in
 Onepanel GUI and multiple browser instances.
 """
 

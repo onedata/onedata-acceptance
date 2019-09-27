@@ -76,10 +76,9 @@ def wt_cp_files_to_dst_path_in_space(browser_id, src_path, dst_path,
 
 
 @wt(parsers.parse('user of {browser_id} copies {src_path} '
-                  'to {dst_path} directory of provider\'s storage mount point'))
+                  'to {dst_path} directory'))
 def wt_cp_files_to_dst_path(browser_id, src_path, dst_path, tmpdir, hosts):
-    _docker_cp(tmpdir, browser_id, src_path, hosts,
-               os.path.join(MOUNT_POINT, dst_path))
+    _docker_cp(tmpdir, browser_id, src_path, hosts, dst_path)
 
 
 @when(parsers.parse('user of {browser_id} removes {src_path} '
@@ -98,8 +97,7 @@ def wt_rm_files_to_space_root_dir(src_path, space, tmp_memory, hosts):
     _docker_rm(os.path.join(MOUNT_POINT, tmp_memory['spaces'][space],
                             src_path), hosts)
 
-
-@wt(parsers.parse('user of {browser_id} renames {src_path} path '
+@wt(parsers.parse('using docker, {user} renames {src_path} path '
                   'to {new_src_path}'))
 def wt_mv_file(src_path, new_src_path, hosts):
     _docker_mv(src_path, new_src_path, hosts)
