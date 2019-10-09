@@ -288,7 +288,7 @@ if {shed_privileges}:
         os.setregid({gid}, {gid})
         os.setreuid({uid}, {uid})
         
-command = ['python'] + ['-m'] + ['py.test'] + ['--test-type={test_type}'] + ['{test_dir}'] + {args} + {env_file} + {local_charts_path} + {no_clean} + {timeout} + {images_opt} + ['--junitxml={report_path}'] + ['--add-test-domain']  
+command = ['python3'] + ['-m'] + ['pytest'] + ['--test-type={test_type}'] + ['{test_dir}'] + {args} + {env_file} + {local_charts_path} + {no_clean} + {timeout} + {images_opt} + ['--junitxml={report_path}'] + ['--add-test-domain']  
 ret = subprocess.call(command)
 sys.exit(ret)
 '''
