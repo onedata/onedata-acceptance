@@ -1,5 +1,5 @@
 # Name of the scenario to run
-scenario: "scenario-1oz-2op"
+scenario: "scenario-1oz-1op"
 
 # Determines if onedata components should be started from pre-compiled sources
 # or pre-installed packages inside dockers. When enabled, sources are expected
@@ -22,13 +22,29 @@ oneproviderImage: "docker.onedata.org/oneprovider-dev:develop"
 forceImagePull: true
 
 onezone:
-  batchConfig:
-    createUsers: false
+  onezone_ready_check:
+    enabled: false
+  batchConfig: false
+  workerOverlayConfig: |-
+    [
+      {oz_worker, [
+        {disable_gui_package_verification, true},
+        {gui_debug_mode, true}
+      ]}
+    ].
+  panelOverlayConfig: |-
+    [
+      {onepanel, [
+        {gui_debug_mode, true}
+      ]}
+    ].
 
 oneprovider-1:
-  batchConfig:
-    createUsers: false
-
-oneprovider-2:
-  batchConfig:
-    createUsers: false
+  oneprovider_ready_check:
+    enabled: false
+  batchConfig: false
+  clusterConfig:
+    managers: [node-1]
+    workers: [node-2]
+    databases: [node-1]
+  addTestDomain: true

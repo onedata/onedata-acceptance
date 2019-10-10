@@ -7,12 +7,12 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-
 from pytest_bdd import when, then, parsers
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.generic import transform
 from tests.utils.utils import repeat_failed
+from tests.utils.acceptance_utils import wt
 
 
 @when(parsers.parse('user of {browser_id} selects {storage_type} from storage '
@@ -79,3 +79,57 @@ def wt_assert_storage_attr_in_storages_page_op_panel(selenium, browser_id,
     assert displayed_val == val.lower(), \
         'got {} as storage\'s {} instead of expected {}'.format(displayed_val,
                                                                 attr, val)
+
+
+@wt(parsers.parse('user of {browser_id} expands toolbar for "{name}" storage '
+                  'record in Storages page in Onepanel'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def wt_expands_toolbar_for_storage_in_onepanel(selenium, browser_id,
+                                               name, onepanel):
+    driver = selenium[browser_id]
+    onepanel(driver).content.storages.storages[name].expand_menu(driver)
+
+
+@wt(parsers.re(r"user of (?P<browser_id>.*?) clicks on "
+               r"(?P<option>Modify storage details|Remove storage) "
+               r"option in storage's toolbar in Onepanel"))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def wt_clicks_on_btn_in_storage_toolbar_in_panel(selenium, browser_id,
+                                                 option, popups):
+    toolbar = popups(selenium[browser_id]).toolbar
+    if toolbar.is_displayed():
+        toolbar.options[option].click()
+    else:
+        raise RuntimeError('no storage toolbar found in Onepanel')
+
+
+@wt(parsers.parse('user of {browser_id} sees that "{name}" has disappeared '
+                  'from the storages list'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_storage_disappeared_from_list(selenium, browser_id, name,
+                                         onepanel):
+    driver = selenium[browser_id]
+    storages_list = onepanel(driver).content.storages.storages
+    assert name not in storages_list, 'found {} on storages list'.format(name)
+
+
+@wt(parsers.parse('user of {browser_id} types "{name}" to {input_box} field '
+                  'in POSIX edit form for "{storage}" storage in Onepanel'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def type_name_to_form_in_storages_page(selenium, browser_id, name,
+                                       input_box, onepanel, storage):
+    driver = selenium[browser_id]
+    form = (onepanel(driver).content.storages.storages[storage]
+            .edit_form.posix_editor)
+    setattr(form, transform(input_box), name)
+
+
+@wt(parsers.parse('user of {browser_id} clicks on {name} button in edit form '
+                  'for "{storage}" storage in Onepanel'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_button_in_edit_form(selenium, browser_id, name, onepanel, storage):
+    driver = selenium[browser_id]
+    button = name.lower() + '_button'
+    getattr(onepanel(driver).content.storages.storages[storage]
+            .edit_form.posix_editor, button)()
+
