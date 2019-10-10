@@ -22,13 +22,13 @@ from tests.gui.steps.onezone.discovery import (
     click_join_harvester_button_in_discovery_page,
     type_text_to_rename_input_field_in_discovery_page,
     confirm_harvester_rename_using_button)
-from tests.gui.steps.onezone.groups import click_modal_button
 from tests.gui.steps.onezone.spaces import (
     click_on_option_in_the_sidebar,
     click_element_on_lists_on_left_sidebar_menu,
     paste_harvester_invitation_token_into_text_field)
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.common.miscellaneous import close_modal
+from tests.gui.steps.modal import click_modal_button
 
 
 @wt(parsers.parse('user of {browser_id} removes "{space_name}" space '
@@ -40,7 +40,7 @@ def remove_space_from_harvester(selenium, browser_id, oz_page, space_name):
 
     click_remove_space_option_in_menu_in_discover_spaces_page(selenium, browser_id,
                                                               space_name, oz_page)
-    click_modal_button(selenium, browser_id, button, modal, oz_page)
+    click_modal_button(selenium, browser_id, button, modal, modals)
 
 
 @wt(parsers.parse('user of {browser_id} removes "{harvester_name}" '
@@ -57,7 +57,7 @@ def remove_harvester(selenium, browser_id, oz_page, harvester_name):
                                                 harvester_name, oz_page)
     click_on_option_in_harvester_menu(selenium, browser_id, option,
                                       harvester_name, oz_page)
-    click_modal_button(selenium, browser_id, option, modal, oz_page)
+    click_modal_button(selenium, browser_id, option, modal, modals)
 
 
 @wt(parsers.parse('user of {browser_id} creates "{harvester_name}" harvester '
@@ -99,7 +99,7 @@ def join_space_to_harvester(selenium, browser_id, oz_page, space_name,
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id,
                                                       space_name, modals,
                                                       element_type)
-    click_modal_button(selenium, browser_id, button_in_modal, modal, oz_page)
+    click_modal_button(selenium, browser_id, button_in_modal, modal, modals)
 
 
 @wt(parsers.parse('user of {browser_id} adds "{group_name}" group to '
@@ -124,7 +124,7 @@ def add_group_to_harvester(selenium, browser_id, oz_page, group_name,
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id,
                                                       group_name, modals,
                                                       where)
-    click_modal_button(selenium, browser_id, button_in_modal, modal, oz_page)
+    click_modal_button(selenium, browser_id, button_in_modal, modal, modals)
 
 
 @wt(parsers.parse('user of {browser_id} creates "{index_name}" index '

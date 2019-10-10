@@ -27,7 +27,8 @@ def support_space_in_op_panel_using_gui(selenium, user, config, onepanel,
     sidebar = 'Clusters'
     sub_item = 'Spaces'
     input_box = 'Size'
-    sync_type = 'IMPORT'
+    sync_type_import = 'IMPORT'
+    sync_type_update = 'UPDATE'
     notify_type = 'info'
     notify_text_regexp = '.*[Aa]dded.*support.*space.*'
 
@@ -53,12 +54,18 @@ def support_space_in_op_panel_using_gui(selenium, user, config, onepanel,
         wt_enable_option_box_in_space_support_form(
             selenium, user, 'Import storage data', onepanel)
         wt_select_strategy_in_conf_in_support_space_form(
-            selenium, user, storage_import_options['strategy'], sync_type,
-            onepanel)
+            selenium, user, storage_import_options['strategy'],
+            sync_type_import, onepanel)
         if 'max depth' in storage_import_options:
             wt_type_text_to_input_box_in_conf_in_space_support_form(
                 selenium, user, str(storage_import_options['max depth']),
-                'Max depth', sync_type, onepanel)
+                'Max depth', sync_type_import, onepanel)
+
+        if options.get('storage update', False):
+            storage_update_options = options.get('storage update', None)
+            wt_select_strategy_in_conf_in_support_space_form(
+                selenium, user, storage_update_options['strategy'],
+                sync_type_update, onepanel)
 
     wt_click_on_btn_in_space_support_add_form(selenium, user, onepanel)
     notify_visible_with_text(selenium, user, notify_type,

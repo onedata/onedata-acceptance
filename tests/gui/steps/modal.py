@@ -320,3 +320,12 @@ def assert_alert_text_in_modal(selenium, browser_id, modals, modal, text):
     assert text in forbidden_alert_text, ('found {} text instead of {}'
                                           .format(forbidden_alert_text, text))
 
+
+@wt(parsers.parse('user of {browser_id} clicks on "{button}" button in '
+                  'modal "{modal}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_modal_button(selenium, browser_id, button, modal, modals):
+    button = button.lower()
+    modal = modal.lower().replace(' ', '_')
+    getattr(getattr(modals(selenium[browser_id]), modal), button)()
+

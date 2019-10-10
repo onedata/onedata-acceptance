@@ -30,6 +30,7 @@ from .emergency_interface import EmergencyInterface
 from .add_one_of_groups import AddOneOfGroupsModal
 from .choose_element import ChooseElementModal
 from .leave_element import LeaveElementModal
+from .modify_storage import ModifyStorage
 
 
 class Modals(object):
@@ -60,6 +61,10 @@ class Modals(object):
     remove_member = WebItem('.remove-relation-modal.modal.in .modal-dialog',
                             cls=RemoveModal)
     remove_harvester = WebItem('.modal-dialog', cls=RemoveModal)
+    modify_storage = WebItem('.modify-storage-modal.modal.in .modal-dialog',
+                             cls=ModifyStorage)
+    remove_storage = WebItem('.remove-storage-modal.modal.in .modal-dialog',
+                             cls=RemoveModal)
     error = WebItem('.alert-global.modal.in .modal-dialog',
                     cls=ErrorModal)
     invite_using_token = WebItem('.invite-using-token-modal.modal.in '

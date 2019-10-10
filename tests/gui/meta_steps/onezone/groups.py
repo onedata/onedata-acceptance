@@ -11,6 +11,7 @@ from tests.gui.steps.common.miscellaneous import *
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.onezone.groups import *
 from tests.gui.steps.onezone.members import *
+from tests.gui.steps.modal import click_modal_button
 from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed
 
@@ -44,7 +45,7 @@ def leave_group(selenium, browser_id, group, oz_page, popups):
 
     click_on_group_menu_button(selenium, browser_id, option, group,
                                oz_page, popups)
-    click_modal_button(selenium, browser_id, option, modal, oz_page)
+    click_modal_button(selenium, browser_id, option, modal, modals)
 
 
 @wt(parsers.parse('user of {browser_id} removes group "{group_list}"'))
@@ -56,7 +57,7 @@ def remove_group(selenium, browser_id, group_list, oz_page, popups):
     for group in parse_seq(group_list):
         click_on_group_menu_button(selenium, browser_id, option, group,
                                    oz_page, popups)
-        click_modal_button(selenium, browser_id, option, modal, oz_page)
+        click_modal_button(selenium, browser_id, option, modal, modals)
 
 
 @wt(parsers.parse('user of {browser_id} creates group "{group_list}"'))
