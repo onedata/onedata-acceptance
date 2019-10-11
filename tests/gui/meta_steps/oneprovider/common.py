@@ -30,7 +30,7 @@ from tests.gui.steps.modal import (wt_wait_for_modal_to_appear,
 from tests.gui.steps.common.miscellaneous import type_string_into_active_element
 from tests.utils.acceptance_utils import wt
 from tests.utils.utils import repeat_failed
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.conftest import WAIT_BACKEND
 
 
 @given(parsers.re('opened "(?P<tab_name>spaces)" tab in web GUI by '
@@ -89,7 +89,7 @@ def wt_assert_file_chunks(selenium, browser_id, file_name, desc, tmp_memory,
     deselect_items_from_file_browser(browser_id, file_name, tmp_memory)
 
 
-@repeat_failed(timeout=WAIT_FRONTEND*2)
+@repeat_failed(timeout=WAIT_BACKEND)
 def _assert_file_chunks(selenium, browser_id, hosts, desc, modals):
     desc = yaml.load(desc)
     for provider, chunks in desc.items():
