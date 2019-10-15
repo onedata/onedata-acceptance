@@ -252,9 +252,9 @@ def fail_to_add_subgroups_using_op_gui(selenium, user, oz_page, parent,
 def select_group_from_selector_in_modal(selenium, browser_id, group_name,
                                         modal_name, tmp_memory):
     driver = selenium[browser_id]
-    group_selector = modals(driver).add_one_of_groups.group_selector
+    choose_group_modal = modals(driver).add_one_of_groups
 
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    group_selector.expand()
-    group_selector.options[group_name].click()
+    choose_group_modal.expand_dropdown()
+    modals(driver).dropdown.options[group_name].click()
 

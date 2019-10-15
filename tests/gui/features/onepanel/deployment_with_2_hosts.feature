@@ -15,7 +15,7 @@ Feature: Deployment process using panel of zone and provider
 
     And user of browser2 clicks on Create Oneprovider cluster button in welcome page in Onepanel
     And user of browser2 clicks on Add new host button in step 1 of deployment process in Onepanel
-    And user of browser2 types "dev-oneprovider-krakow-0.dev-oneprovider-krakow.default.svc.cluster.local" to hostname field in step 1 of deployment process in Onepanel
+    And user of browser2 types second host to hostname field in step 1 of deployment process in Onepanel
     And user of browser2 clicks on Add host button in step 1 of deployment process in Onepanel
     And user of browser2 enables [Database, Cluster Worker] options for .*1.*oneprovider.* host in step 1 of deployment process in Onepanel
     And user of browser2 enables [Cluster Manager, Primary Cluster Manager] options for .*0.*oneprovider.* host in step 1 of deployment process in Onepanel

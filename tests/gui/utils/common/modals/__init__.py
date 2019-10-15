@@ -10,6 +10,7 @@ from .data_distribution import DataDistributionModal
 from .add_storage import AddStorage
 from tests.gui.utils.core.web_elements import WebItem
 from tests.gui.utils.common.modals.create_group import CreateGroup
+from tests.gui.utils.common.common import DropdownSelector
 
 from .data_distribution import DataDistributionModal
 from .login import LoginFormModal
@@ -82,6 +83,7 @@ class Modals(object):
     choose_space = WebItem('.modal-dialog', cls=ChooseElementModal)
     choose_group = WebItem('.modal-dialog', cls=ChooseElementModal)
     remove_space_from_harvester = WebItem('.modal-dialog', cls=RemoveModal)
+    dropdown = DropdownSelector('.ember-basic-dropdown-content')
 
     def __init__(self, driver):
         self.driver = driver
