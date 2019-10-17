@@ -130,9 +130,10 @@ def choose_element_from_dropdown_in_add_element_modal(selenium, browser_id,
                                                       element_name, modals,
                                                       element):
     driver = selenium[browser_id]
-    modal_name = 'choose_' + element
-    choose_element_modal = getattr(modals(driver), modal_name)
-    choose_element_modal.expand_dropdown()
+    modal_name = 'add_one_of_{}s'.format(element)
+
+    add_one_of_elements_modal = getattr(modals(driver), modal_name)
+    add_one_of_elements_modal.expand_dropdown()
     modals(driver).dropdown.options[element_name].click()
 
 

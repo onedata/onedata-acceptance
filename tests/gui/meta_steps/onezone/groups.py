@@ -245,16 +245,3 @@ def fail_to_add_subgroups_using_op_gui(selenium, user, oz_page, parent,
                                               oz_page)
         close_modal(selenium, user, modal, modals)
 
-
-@wt(parsers.parse('user of {browser_id} selects "{group_name}" '
-                  'from group selector in {modal_name} modal'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def select_group_from_selector_in_modal(selenium, browser_id, group_name,
-                                        modal_name, tmp_memory):
-    driver = selenium[browser_id]
-    choose_group_modal = modals(driver).add_one_of_groups
-
-    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    choose_group_modal.expand_dropdown()
-    modals(driver).dropdown.options[group_name].click()
-

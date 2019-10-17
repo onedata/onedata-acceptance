@@ -16,7 +16,8 @@ from tests.gui.steps.onezone.clusters import (click_on_record_in_clusters_menu,
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
 from tests.gui.steps.common.miscellaneous import close_modal
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
-from tests.gui.meta_steps.onezone.groups import select_group_from_selector_in_modal
+from tests.gui.steps.onezone.discovery import (
+    choose_element_from_dropdown_in_add_element_modal)
 from tests.gui.steps.modal import wt_click_on_confirmation_btn_in_modal
 
 
@@ -102,6 +103,7 @@ def add_group_to_cluster(selenium, browser_id, oz_page, onepanel, hosts,
     button_name = 'Add'
     where = 'cluster'
     member = 'groups'
+    element_type = 'group'
 
     click_on_option_in_the_sidebar(selenium, browser_id, sidebar, oz_page)
     click_on_record_in_clusters_menu(selenium, browser_id, oz_page,
@@ -111,8 +113,9 @@ def add_group_to_cluster(selenium, browser_id, oz_page, onepanel, hosts,
     click_on_option_in_members_list_menu(selenium, browser_id, sub_item,
                                          where, member, oz_page,
                                          onepanel, popups)
-    select_group_from_selector_in_modal(selenium, browser_id, group_name,
-                                        sub_item, tmp_memory)
+    choose_element_from_dropdown_in_add_element_modal(selenium, browser_id,
+                                                      group_name, modals,
+                                                      element_type)
     wt_click_on_confirmation_btn_in_modal(selenium, browser_id, button_name,
                                           tmp_memory)
 
