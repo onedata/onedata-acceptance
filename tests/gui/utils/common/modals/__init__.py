@@ -10,6 +10,7 @@ from .data_distribution import DataDistributionModal
 from .add_storage import AddStorage
 from tests.gui.utils.core.web_elements import WebItem
 from tests.gui.utils.common.modals.create_group import CreateGroup
+from tests.gui.utils.common.common import DropdownSelector
 
 from .data_distribution import DataDistributionModal
 from .login import LoginFormModal
@@ -27,8 +28,7 @@ from .provider_popover import ProviderPopover
 from .membership_relation_menu import MembershipRelationMenu
 from .groups_hierarchy_menu import GroupHierarchyMenu
 from .emergency_interface import EmergencyInterface
-from .add_one_of_groups import AddOneOfGroupsModal
-from .choose_element import ChooseElementModal
+from .add_one_of_elements import AddOneOfElementsModal
 from .leave_element import LeaveElementModal
 from .modify_storage import ModifyStorage
 
@@ -78,10 +78,10 @@ class Modals(object):
     membership_relation_menu = WebItem('.relation-actions.one-webui-popover',
                                        cls=MembershipRelationMenu)
     emergency_interface = WebItem('.modal-dialog', cls=EmergencyInterface)
-    add_one_of_groups = WebItem('.modal-dialog', cls=AddOneOfGroupsModal)
-    choose_space = WebItem('.modal-dialog', cls=ChooseElementModal)
-    choose_group = WebItem('.modal-dialog', cls=ChooseElementModal)
+    add_one_of_groups = WebItem('.modal-dialog', cls=AddOneOfElementsModal)
+    add_one_of_spaces = WebItem('.modal-dialog', cls=AddOneOfElementsModal)
     remove_space_from_harvester = WebItem('.modal-dialog', cls=RemoveModal)
+    dropdown = DropdownSelector('.ember-basic-dropdown-content')
 
     def __init__(self, driver):
         self.driver = driver

@@ -21,15 +21,35 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 
 
 def open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
+    """ hosts_list may contains:
+            onezone,
+            onezone zone panel,
+            oneprovider-[0-9] provider panel,
+            node[0-9] of oneprovider-[0-9] provider panel,
+            emergency interface of Onepanel
+    """
     for browser_id, host in zip(parse_seq(browser_id_list),
                                 parse_seq(hosts_list)):
         driver = selenium[browser_id]
         if host == 'emergency interface of Onepanel':
             host = 'oneprovider-1 provider panel'
         host = host.lower().split()
+
+        if 'node' in host[0]:
+            node_number = int(host[0][-1:])
+            host = host[2:]
+        else:
+            node_number = ''
+
         alias, service = host[0], '_'.join(host[1:])
         if 'panel' in service:
-            driver.get('https://{}'.format(hosts[alias]['panel']['hostname']))
+            hostname = hosts[alias]['panel']['hostname']
+
+            if node_number != '':
+                driver.get('https://{}-{}.{}'.format(hostname.split('.')[0],
+                                                     node_number, hostname))
+            else:
+                driver.get('https://{}'.format(hostname))
         else:
             driver.get('https://{}'.format(hosts[alias]['hostname']))
 

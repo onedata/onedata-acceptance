@@ -39,7 +39,7 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser clicks Spaces of "harvester3" harvester in the sidebar
     And user of browser clicks add one of your spaces button in harvester spaces page
     And user of browser chooses "space1" from dropdown in add space modal
-    And user of browser clicks on "Add" button in modal "Choose Space"
+    And user of browser clicks on "Add" button in modal "Add one of spaces"
 
     Then user of browser sees that "space1" has appeared on the spaces list in discovery page
 
@@ -48,6 +48,7 @@ Feature: Basic management of harvester in Onezone GUI
 
 
   Scenario: User successfully adds space to harvester (with invitation token)
+    Given there is no "space1" space in Onezone used by user of browser
     When user of browser creates "space1" space in Onezone
     And user of browser creates "harvester4" harvester in Onezone page
 
@@ -114,6 +115,7 @@ Feature: Basic management of harvester in Onezone GUI
 
 
   Scenario: User successfully checks harvesting progress
+    Given there is no "space1" space in Onezone used by user of browser
     When user of browser creates "space1" space in Onezone
     # support space
     And user of browser sends support token for "space1" to user of browser
