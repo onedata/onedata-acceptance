@@ -24,6 +24,7 @@ class Step1(PageObject):
     zone_domain_name = Input('input.field-main-domainName')
     add_new_host = NamedButton('button', text='Add new host')
     add_host = NamedButton('button', text='Add host')
+    hostname_label = Label('.cluster-host-table-row .one-label')
     hostname = Input('input.input-add-host')
 
     def __str__(self):

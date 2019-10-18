@@ -66,6 +66,20 @@ def wt_type_text_to_in_box_in_deployment_step(selenium, browser_id, text,
     setattr(step, transform(input_box), text)
 
 
+@wt(parsers.re('user of (?P<browser_id>.+?) types second host to '
+               '(?P<input_box>.+?) field in '
+               '(?P<step>step 1|step 2|step 4|last step) of deployment '
+               'process in Onepanel'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def wt_type_text_to_in_box_in_deployment_step(selenium, browser_id,
+                                              input_box, step, onepanel):
+    step = getattr(onepanel(selenium[browser_id]).content.deployment,
+                   step.replace(' ', ''))
+    text = step.hostname_label
+    text = text.replace('0', '1') if '0' in text else text.replace('1', '0')
+    setattr(step, transform(input_box), text)
+
+
 @when(parsers.re('user of (?P<browser_id>.+?) types '
                  '(?P<property>name|hostname) of "(?P<alias>.+?)" '
                  '(zone|provider) to (?P<input_box>.+?) field in '

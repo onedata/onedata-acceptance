@@ -88,7 +88,7 @@ def join_space_to_harvester(selenium, browser_id, oz_page, space_name,
     option = 'Spaces'
     button_name = 'add one of your spaces'
     button_in_modal = 'Add'
-    modal = 'Choose Space'
+    modal = 'Add one of spaces'
     element_type = 'space'
 
     click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id,
@@ -113,7 +113,7 @@ def add_group_to_harvester(selenium, browser_id, oz_page, group_name,
     where = 'group'
     member = 'harvester'
     button_in_modal = 'Add'
-    modal = 'Choose Group'
+    modal = 'Add one of groups'
 
     click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id,
                                                       harvester_name, option,
