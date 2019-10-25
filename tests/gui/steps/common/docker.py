@@ -15,6 +15,7 @@ import os.path
 from pytest_bdd import given, when, then, parsers
 
 from tests.gui.utils.generic import parse_seq, suppress
+from tests.utils.acceptance_utils import wt
 
 
 PROVIDER_CONTAINER_NAME = 'oneprovider-1'
@@ -37,6 +38,11 @@ def _docker_cp(tmpdir, browser_id, src_path, hosts, dst_path=None):
 
 def _docker_rm(path, hosts):
     cmd = ['docker', 'exec', hosts[PROVIDER_CONTAINER_NAME]['container-id'], 'rm', '-rf', path]
+    subprocess.check_call(cmd)
+
+
+def _docker_mv(path, new_path, hosts):
+    cmd = ['docker', 'exec', hosts[PROVIDER_CONTAINER_NAME]['container-id'], 'mv', path, new_path]
     subprocess.check_call(cmd)
 
 
@@ -69,6 +75,12 @@ def wt_cp_files_to_dst_path_in_space(browser_id, src_path, dst_path,
                             dst_path))
 
 
+@wt(parsers.parse('user of {browser_id} copies {src_path} '
+                  'to {dst_path} directory'))
+def wt_cp_files_to_dst_path(browser_id, src_path, dst_path, tmpdir, hosts):
+    _docker_cp(tmpdir, browser_id, src_path, hosts, dst_path)
+
+
 @when(parsers.parse('user of {browser_id} removes {src_path} '
                     'from provider\'s storage mount point'))
 @then(parsers.parse('user of {browser_id} removes {src_path} '
@@ -84,6 +96,11 @@ def wt_rm_files_to_storage_mount_point(src_path, hosts):
 def wt_rm_files_to_space_root_dir(src_path, space, tmp_memory, hosts):
     _docker_rm(os.path.join(MOUNT_POINT, tmp_memory['spaces'][space],
                             src_path), hosts)
+
+@wt(parsers.parse('using docker, {user} renames {src_path} path '
+                  'to {new_src_path}'))
+def wt_mv_file(src_path, new_src_path, hosts):
+    _docker_mv(src_path, new_src_path, hosts)
 
 
 @given(parsers.parse('there is no working provider named {provider_list}'))

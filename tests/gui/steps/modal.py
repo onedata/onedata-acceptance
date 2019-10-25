@@ -70,7 +70,8 @@ def assert_non_empty_token_in_add_storage_modal(browser_id, tmp_memory):
 
 def _find_modal(driver, modal_name):
     def _find():
-        if any([name for name in ['group', 'token', 'cluster']
+        elements_list = ['group', 'token', 'cluster', 'harvester']
+        if any([name for name in elements_list
                 if name in modal_name]):
             modals = driver.find_elements_by_css_selector('.modal, '
                                                           '.modal '
@@ -318,4 +319,13 @@ def assert_alert_text_in_modal(selenium, browser_id, modals, modal, text):
     forbidden_alert_text = getattr(modals(driver), modal).forbidden_alert.text
     assert text in forbidden_alert_text, ('found {} text instead of {}'
                                           .format(forbidden_alert_text, text))
+
+
+@wt(parsers.parse('user of {browser_id} clicks on "{button}" button in '
+                  'modal "{modal}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_modal_button(selenium, browser_id, button, modal, modals):
+    button = button.lower()
+    modal = modal.lower().replace(' ', '_')
+    getattr(getattr(modals(selenium[browser_id]), modal), button)()
 

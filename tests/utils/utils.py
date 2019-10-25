@@ -1,6 +1,4 @@
 """This module contains utility functions to be used in acceptance tests."""
-import logging
-import traceback
 
 __author__ = "Jakub Kudzia"
 __copyright__ = "Copyright (C) 2016-2018 ACK CYFRONET AGH"
@@ -10,9 +8,19 @@ __license__ = "This software is released under the MIT license cited in " \
 
 import traceback
 import logging
+import subprocess as sp
 from time import time, sleep
 
 from decorator import decorator
+
+
+def check_call_with_logging(cmd):
+    try:
+        sp.check_call(cmd)
+    except sp.CalledProcessError as e:
+        logging.error('{}\n'
+                      'Captured output: {}'.format(e.message, e.output))
+        raise e
 
 
 def log_exception():

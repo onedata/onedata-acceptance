@@ -24,9 +24,14 @@ ONECLIENT_TEST_CONFIG = os.path.join(ONECLIENT_DIR, 'test_config.yaml')
 ENV_UP_DIR = os.path.join(TEST_DIR, 'env_up')
 GUI_DIR = os.path.join(TEST_DIR, 'gui')
 MIXED_DIR = os.path.join(TEST_DIR, 'mixed')
+ONEDATA_FS_DIR = os.path.join(TEST_DIR, 'onedata_fs')
+ONEDATA_FS_ENV_DIR = os.path.join(ONEDATA_FS_DIR, 'environments')
+ONEDATA_FS_SCENARIO_DIR = os.path.join(ONEDATA_FS_ENV_DIR, 'scenarios')
+ONEDATA_FS_PATCHES_DIR = os.path.join(ONEDATA_FS_ENV_DIR, 'patches')
+ONEDATA_FS_LOGDIR = os.path.join(ONEDATA_FS_DIR, 'logs')
 ONECLIENT_ENV_DIR = os.path.join(ONECLIENT_DIR, 'environments')
 ONECLIENT_SCENARIO_DIR = os.path.join(ONECLIENT_ENV_DIR, 'scenarios')
-ONECLIENT_LANDSCAPE_DIR = os.path.join(ONECLIENT_ENV_DIR, 'patches')
+ONECLIENT_PATCHES_DIR = os.path.join(ONECLIENT_ENV_DIR, 'patches')
 GUI_ENV_DIR = os.path.join(GUI_DIR, 'environments')
 MIXED_ENV_DIR = os.path.join(MIXED_DIR, 'environments')
 MIXED_SCENARIO_DIR = os.path.join(MIXED_ENV_DIR, 'scenarios')
@@ -74,13 +79,15 @@ ONECLIENT_MOUNTPATH_PREFIX = '/mnt/oneclient'
 ENV_DIRS = {
     'oneclient': ONECLIENT_ENV_DIR,
     'gui': GUI_ENV_DIR,
-    'mixed': MIXED_ENV_DIR
+    'mixed': MIXED_ENV_DIR,
+    'onedata_fs': ONEDATA_FS_ENV_DIR
 }
 
 LOGDIRS = {
     'oneclient': ONECLIENT_LOGDIR,
     'mixed': MIXED_LOGDIR,
-    'gui': GUI_LOGDIR
+    'gui': GUI_LOGDIR,
+    'onedata_fs': ONEDATA_FS_LOGDIR
 }
 
 CONFIG_FILES = {
@@ -89,9 +96,11 @@ CONFIG_FILES = {
 
 SCENARIO_DIRS = {
     'oneclient': ONECLIENT_SCENARIO_DIR,
-    'mixed': MIXED_SCENARIO_DIR
+    'mixed': MIXED_SCENARIO_DIR,
+    'onedata_fs': ONEDATA_FS_SCENARIO_DIR
 }
 
-LANDSCAPE_DIRS = {
-    'oneclient': ONECLIENT_LANDSCAPE_DIR
+PATCHES_DIR = {
+    'oneclient': ONECLIENT_PATCHES_DIR,
+    'onedata_fs': ONEDATA_FS_PATCHES_DIR
 }

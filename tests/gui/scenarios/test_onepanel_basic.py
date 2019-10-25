@@ -22,6 +22,7 @@ from tests.gui.steps.common.local_file_system import *
 from tests.gui.steps.common.notifies import *
 from tests.gui.steps.common.miscellaneous import *
 from tests.gui.steps.common.login import *
+from tests.gui.steps.common.docker import *
 
 from tests.gui.steps.onepanel.account_management import *
 from tests.gui.steps.onepanel.nodes import *
@@ -62,6 +63,7 @@ from tests.gui.meta_steps.onezone.clusters import *
 from tests.gui.meta_steps.onezone.groups import *
 from tests.gui.meta_steps.onezone.spaces import *
 from tests.gui.meta_steps.onepanel.account_management import *
+from tests.gui.meta_steps.onepanel.storages import *
 
 from tests.mixed.steps.onepanel_basic import *
 from tests.mixed.steps.space_basic import *
@@ -74,7 +76,6 @@ def screens():
     return [0, 1]
 
 
-scenarios('../features/onepanel/deployment.feature')
 scenarios('../features/onepanel/storages.feature')
 scenarios('../features/onepanel/provider.feature')
 scenarios('../features/onepanel/spaces.feature')

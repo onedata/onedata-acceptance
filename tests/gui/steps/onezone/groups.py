@@ -129,15 +129,6 @@ def assert_create_button_inactive(selenium, browser_id, oz_page):
                                                      'is enabled')
 
 
-@wt(parsers.parse('user of {browser_id} clicks on "{button}" button in '
-                  'modal "{modal}"'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_modal_button(selenium, browser_id, button, modal, oz_page):
-    button = button.lower()
-    modal = modal.lower().replace(' ', '_')
-    getattr(getattr(modals(selenium[browser_id]), modal), button)()
-
-
 @wt(parsers.parse('user of {browser_id} sees that error modal with '
                   'text "{text}" appeared'))
 @repeat_failed(timeout=WAIT_FRONTEND)

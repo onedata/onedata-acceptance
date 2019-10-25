@@ -11,6 +11,7 @@ from tests.gui.steps.common.miscellaneous import *
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.onezone.groups import *
 from tests.gui.steps.onezone.members import *
+from tests.gui.steps.modal import click_modal_button
 from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed
 
@@ -44,7 +45,7 @@ def leave_group(selenium, browser_id, group, oz_page, popups):
 
     click_on_group_menu_button(selenium, browser_id, option, group,
                                oz_page, popups)
-    click_modal_button(selenium, browser_id, option, modal, oz_page)
+    click_modal_button(selenium, browser_id, option, modal, modals)
 
 
 @wt(parsers.parse('user of {browser_id} removes group "{group_list}"'))
@@ -56,7 +57,7 @@ def remove_group(selenium, browser_id, group_list, oz_page, popups):
     for group in parse_seq(group_list):
         click_on_group_menu_button(selenium, browser_id, option, group,
                                    oz_page, popups)
-        click_modal_button(selenium, browser_id, option, modal, oz_page)
+        click_modal_button(selenium, browser_id, option, modal, modals)
 
 
 @wt(parsers.parse('user of {browser_id} creates group "{group_list}"'))
@@ -243,17 +244,4 @@ def fail_to_add_subgroups_using_op_gui(selenium, user, oz_page, parent,
         assert_error_modal_with_text_appeared(selenium, user, error,
                                               oz_page)
         close_modal(selenium, user, modal, modals)
-
-
-@wt(parsers.parse('user of {browser_id} selects "{group_name}" '
-                  'from group selector in {modal_name} modal'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def select_group_from_selector_in_modal(selenium, browser_id, group_name,
-                                        modal_name, tmp_memory):
-    driver = selenium[browser_id]
-    group_selector = modals(driver).add_one_of_groups.group_selector
-
-    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    group_selector.expand()
-    group_selector.options[group_name].click()
 

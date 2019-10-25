@@ -78,7 +78,7 @@ class _Toggle(PageObject):
 
 
 class _DropdownSelector(PageObject, ExpandableMixin):
-    selected = Label('.ember-power-select-selected-item')
+    selected = Label('.ember-power-select-trigger')
     options = WebItemsSequence('ul li', cls=ButtonWithTextPageObject)
     _toggle = WebElement('.ember-basic-dropdown-trigger[role="button"]')
 

@@ -15,4 +15,4 @@ class RemoveModal(Modal):
     remove = NamedButton('button', text='Remove')
 
     def __str__(self):
-        return 'Remove group/user modal'
+        return 'Remove group/user/storage modal'
