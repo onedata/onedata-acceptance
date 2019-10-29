@@ -354,7 +354,7 @@ def assert_provider_chunk_in_data_distribution_size(selenium, browser_id,
                     '"{provider}" is entirely filled'))
 @then(parsers.parse('user of {browser_id} sees that chunk bar for provider '
                     '"{provider}" is entirely filled'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def assert_provider_chunk_in_data_distribution_filled(selenium, browser_id,
                                                       provider, modals, hosts):
     driver = selenium[browser_id]
@@ -375,7 +375,7 @@ def assert_provider_chunk_in_data_distribution_filled(selenium, browser_id,
                     '"{provider}" is entirely empty'))
 @then(parsers.parse('user of {browser_id} sees that chunk bar for provider '
                     '"{provider}" is entirely empty'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def assert_provider_chunk_in_data_distribution_empty(selenium, browser_id,
                                                      provider, modals, hosts):
     driver = selenium[browser_id]

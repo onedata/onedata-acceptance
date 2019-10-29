@@ -130,10 +130,11 @@ def choose_element_from_dropdown_in_add_element_modal(selenium, browser_id,
                                                       element_name, modals,
                                                       element):
     driver = selenium[browser_id]
-    modal_name = 'choose_' + element
-    dropdown_modal = getattr(modals(driver), modal_name).dropdown
-    dropdown_modal.expand()
-    dropdown_modal.options[element_name].click()
+    modal_name = 'add_one_of_{}s'.format(element)
+
+    add_one_of_elements_modal = getattr(modals(driver), modal_name)
+    add_one_of_elements_modal.expand_dropdown()
+    modals(driver).dropdown.options[element_name].click()
 
 
 @wt(parsers.parse('user of {browser_id} sees that "{space_name}" has appeared '
