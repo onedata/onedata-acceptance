@@ -30,6 +30,7 @@ Feature: Basic management of harvester in Onezone GUI
 
 
   Scenario: User successfully adds space to harvester using available spaces dropdown
+    Given there is no "space1" space in Onezone used by admin user
     When user of browser creates "space1" space in Onezone
     And user of browser creates "harvester3" harvester in Onezone page
 
@@ -48,7 +49,7 @@ Feature: Basic management of harvester in Onezone GUI
 
 
   Scenario: User successfully adds space to harvester (with invitation token)
-    Given there is no "space1" space in Onezone used by user of browser
+    Given there is no "space1" space in Onezone used by admin user
     When user of browser creates "space1" space in Onezone
     And user of browser creates "harvester4" harvester in Onezone page
 
@@ -115,7 +116,7 @@ Feature: Basic management of harvester in Onezone GUI
 
 
   Scenario: User successfully checks harvesting progress
-    Given there is no "space1" space in Onezone used by user of browser
+    Given there is no "space1" space in Onezone used by admin user
     When user of browser creates "space1" space in Onezone
     # support space
     And user of browser sends support token for "space1" to user of browser

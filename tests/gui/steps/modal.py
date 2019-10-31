@@ -76,6 +76,10 @@ def _find_modal(driver, modal_name):
             modals = driver.find_elements_by_css_selector('.modal, '
                                                           '.modal '
                                                           '.modal-header h1')
+        elif 'leave this space' in modal_name:
+            modals = driver.find_elements_by_css_selector('.modal.in, '
+                                                          '.modal.in '
+                                                          'h1')
         else:
             modals = driver.find_elements_by_css_selector('.modal.in, '
                                                           '.modal.in '

@@ -18,6 +18,8 @@ from tests.gui.steps.onepanel.spaces import *
 from tests.gui.steps.onezone.multibrowser_spaces import *
 from tests.gui.steps.onezone.members import *
 from tests.gui.steps.common.miscellaneous import close_modal
+from tests import OZ_REST_PORT
+from tests.utils.rest_utils import http_get, get_zone_rest_path, http_delete
 
 
 @wt(parsers.parse('user of {user} creates "{space_list}" space in Onezone'))
@@ -270,9 +272,25 @@ def leave_space_in_onezone(selenium, browser_id, space_name, oz_page, popups):
     option = 'Data'
 
     click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
+    time.sleep(2)
     try:
         leave_spaces_in_oz_using_gui(selenium, browser_id, space_name,
                                      oz_page, popups)
     except RuntimeError:
         pass
+
+
+@given(parsers.parse('there is no "{space_name}" space in Onezone used '
+                     'by {user} user'))
+def leave_users_space_in_onezone_using_rest(hosts, users, user):
+    zone_hostname = hosts['onezone']['hostname']
+
+    list_users_spaces = http_get(ip=zone_hostname, port=OZ_REST_PORT,
+                                 path=get_zone_rest_path('user', 'spaces'),
+                                 auth=(user, users[user].password)).json()
+
+    for space in list_users_spaces['spaces']:
+        http_delete(ip=zone_hostname, port=OZ_REST_PORT,
+                    path=get_zone_rest_path('user', 'spaces', space),
+                    auth=(user, users[user].password))
 

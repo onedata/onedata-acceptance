@@ -16,7 +16,7 @@ Feature: Storage management using onepanel
 
   Scenario Outline: User uploads files on freshly supported space on newly created storage
     Given there are no spaces supported in Onepanel used by user of browser1
-    And there is no "hello_world1" space in Onezone used by user of browser1
+    And there is no "hello_world1" space in Onezone used by admin user
 
     # create new_storage POSIX storage
     When user of browser1 clicks on Clusters in the main menu
