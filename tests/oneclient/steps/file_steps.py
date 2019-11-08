@@ -9,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 from pytest_bdd import parsers, then, when
 
-import multi_file_steps
+from . import multi_file_steps
 from tests.utils.acceptance_utils import wt
 
 

@@ -1,5 +1,6 @@
 """Module implements common steps for manipulating extended attributes.
 """
+
 __author__ = "Bartek Kryza"
 __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
@@ -8,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 from pytest_bdd import parsers
 
-import multi_file_steps
+from . import multi_file_steps
 from tests.utils.acceptance_utils import wt
 
 
