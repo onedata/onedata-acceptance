@@ -444,8 +444,7 @@ def start_environment(scenario_path, request, hosts, patch_path,
         except OnenvError as e:
             attempts += 1
             if attempts >= START_ENV_MAX_RETRIES:
-                handle_env_init_error(request, env_description_abs_path,
-                                      e.message)
+                handle_env_init_error(request, env_description_abs_path, e)
                 return False
             else:
                 clean_env()
