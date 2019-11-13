@@ -57,7 +57,7 @@ Feature: Joining a group in Onezone GUI
     And user of browser2 pastes copied token into group token text field
     And user of browser2 confirms using <confirmation_method>
 
-    Then user of browser2 sees that error modal with text "joining the group failed" appeared
+    Then user of browser2 sees that error modal with text "Joining the group failed" appeared
 
 
   Scenario Outline: User fails to join group using incorrect token
@@ -65,7 +65,7 @@ Feature: Joining a group in Onezone GUI
     And user of browser1 writes "aaa" into group token text field
     And user of browser1 confirms using <confirmation_method>
 
-    Then user of browser1 sees that error modal with text "joining the group failed" appeared
+    Then user of browser1 sees that error modal with text "Joining the group failed" appeared
 
 
   Scenario Outline: User fails to join group to space using incorrect token
@@ -74,7 +74,7 @@ Feature: Joining a group in Onezone GUI
     And user of browser1 writes "aaa" into group token text field
     And user of browser1 confirms using <confirmation_method>
 
-    Then user of browser1 sees that error modal with text "joining space failed" appeared
+    Then user of browser1 sees that error modal with text "Joining space failed" appeared
 
 
   Scenario Outline: User fails to join group he already belongs to
@@ -88,7 +88,7 @@ Feature: Joining a group in Onezone GUI
     And user of browser1 pastes copied token into group token text field
     And user of browser1 confirms using <confirmation_method>
 
-    Then user of browser1 sees that error modal with text "joining the group failed" appeared
+    Then user of browser1 sees that error modal with text "Joining the group failed" appeared
 
 
   Scenario: User fails to view group he does not belong to
