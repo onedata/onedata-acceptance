@@ -41,8 +41,6 @@ class JoinToHarvester(PageObject):
 
 
 class Harvester(Element):
-    name = id = Label('.one-label')
-
     menu_button = Button('.collapsible-toolbar-toggle')
 
     spaces = NamedButton('.one-list-level-2 .item-header',
