@@ -40,7 +40,7 @@ class MenuItem(PageObject):
 
 class GroupsPage(GenericPage):
     elements_list = WebItemsSequence('.sidebar-groups '
-                                     '.one-list > .one-list-item.clickable',
+                                     '.one-list>.one-list-item.clickable',
                                      cls=Group)
 
     create_group = Button('.oneicon-add-filled')
