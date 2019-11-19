@@ -60,6 +60,7 @@ def screens():
     return [0]
 
 
+# TODO: change test because of a new gui
 # scenario = partial(scenario, '../features/oneprovider/data/upload_multiple_files.feature')
 #
 # skip_if_not_chrome = mark.skipif(BROWSER != 'Chrome',
@@ -92,7 +93,6 @@ def screens():
 #     pass
 
 
-# TODO: change test because of a new gui
 # scenarios('../features/oneprovider/data/empty_file_browser.feature')
 # scenarios('../features/oneprovider/data/single_file.feature')
 # scenarios('../features/oneprovider/data/several_files.feature')
