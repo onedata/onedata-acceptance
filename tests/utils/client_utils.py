@@ -107,13 +107,11 @@ class Client:
         cmd = ('/usr/local/bin/rpyc_classic.py --host 0.0.0.0 --port {}'
                .format(port))
         run_cmd(user_name, self.docker_id, cmd, detach=True)
-        pid = run_cmd(user_name,
-                      self.docker_id,
-                      ' | '.join(['ps -u {}'.format(user_name),
-                                  'grep "rpyc_classic.py"',
-                                  'grep -v "grep"',
-                                  'awk "{print $1}"']),
-                      output=True)
+        get_pid_cmd = ' | '.join(
+            ['ps -u {}'.format(user_name), 'grep "rpyc_classic.py"',
+             'grep -v "grep"', 'awk \'{print $1}\'']
+        )
+        pid = run_cmd(user_name, self.docker_id, get_pid_cmd, output=True)
 
         self.rpyc_server_pid = pid
 
@@ -205,42 +203,44 @@ def mount_users(clients, user_names, mount_paths, client_hosts,
             user.mark_last_operation_failed()
 
     def fin():
-        for user in users.values():
-            for client in user.clients.values():
-                for opened_file in client.opened_files.keys():
-                    close_file(client, opened_file)
-                client.opened_files.clear()
-                clean_mount_path(user.username, client)
-        for user_name in user_names:
-            for client in users[user_name].clients.values():
-                client.stop_rpyc_server()
-            users[user_name].clients.clear()
+        clean_clients(user_names, users)
 
     request.addfinalizer(fin)
 
 
-def clean_mount_path(user, client):
+def clean_clients(user_names, users, lazy=False):
+    for user in users.values():
+        for client in user.clients.values():
+            for opened_file in client.opened_files.keys():
+                close_file(client, opened_file)
+            client.opened_files.clear()
+            clean_mount_path(user.username, client, lazy)
+    for user_name in user_names:
+        for client in users[user_name].clients.values():
+            client.stop_rpyc_server()
+        users[user_name].clients.clear()
+
+
+def clean_mount_path(user, client, lazy=False):
     try:
         clean_spaces(client)
     except Exception as e:
         pass
     finally:
         # get pid of running oneclient node
-        pid = run_cmd('root', client.docker_id,
-                      ' | '.join(
-                              ['ps aux',
-                               ('grep "./oneclient --insecure "' + 
-                                client.mount_path),
-                               'grep -v "grep"',
-                               'awk "{print $2}"']),
-                      output=True)
+        get_pid_cmd = ' | '.join(
+            ['ps aux', 'grep "oneclient .* {}"'.format(client.mount_path),
+             'grep -v "grep"', 'awk {\'print $2\'}']
+        )
+        pid = run_cmd('root', client.docker_id, get_pid_cmd, output=True)
 
         if pid != '':
             # kill oneclient process
             kill(client, pid)
 
         # unmount onedata
-        fusermount(client, client.mount_path, user=user, unmount=True)
+        fusermount(client, client.mount_path, user=user, unmount=True,
+                   lazy=lazy)
         rm(client, path=client.mount_path, recursive=True, force=True)
 
 
@@ -414,6 +414,15 @@ def md5sum(client, file_path):
     return m.hexdigest()
 
 
+def mkstemp(client, dir=None):
+    _handle, abs_path = client.rpyc_connection.modules.tempfile.mkstemp(dir=dir)
+    return abs_path
+
+
+def mkdtemp(client, dir=None):
+    return client.rpyc_connection.modules.tempfile.mkdtemp(dir=dir)
+
+
 def replace_pattern(client, file_path, pattern, new_text, user='root',
                     output=False):
     cmd = 'sed -i \'s/{pattern}/{new_text}/g\' {file_path}'\
@@ -441,3 +450,7 @@ def fusermount(client, path, user='root', unmount=False, lazy=False,
                 quiet='-q' if quiet else '',
                 path=escape_path(path))
     return run_cmd(user, client.docker_id, cmd, output=output)
+
+
+def user_home_dir(user='root'):
+    return os.path.join('/home', user)

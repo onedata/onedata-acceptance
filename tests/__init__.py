@@ -19,40 +19,39 @@ BAMBOOS_DIR = os.path.join(PROJECT_DIR, 'bamboos')
 DOCKER_DIR = os.path.join(BAMBOOS_DIR, 'docker')
 TEST_DIR = os.path.join(PROJECT_DIR, 'tests')
 UTILS_DIR = os.path.join(TEST_DIR, 'utils')
+
 ONECLIENT_DIR = os.path.join(TEST_DIR, 'oneclient')
 ONECLIENT_TEST_CONFIG = os.path.join(ONECLIENT_DIR, 'test_config.yaml')
-ENV_UP_DIR = os.path.join(TEST_DIR, 'env_up')
-GUI_DIR = os.path.join(TEST_DIR, 'gui')
-MIXED_DIR = os.path.join(TEST_DIR, 'mixed')
+ONECLIENT_ENV_DIR = os.path.join(ONECLIENT_DIR, 'environments')
+ONECLIENT_SCENARIO_DIR = os.path.join(ONECLIENT_ENV_DIR, 'scenarios')
+ONECLIENT_PATCHES_DIR = os.path.join(ONECLIENT_ENV_DIR, 'patches')
+ONECLIENT_LOGDIR = os.path.join(ONECLIENT_DIR, 'logs')
+
 ONEDATA_FS_DIR = os.path.join(TEST_DIR, 'onedata_fs')
 ONEDATA_FS_ENV_DIR = os.path.join(ONEDATA_FS_DIR, 'environments')
 ONEDATA_FS_SCENARIO_DIR = os.path.join(ONEDATA_FS_ENV_DIR, 'scenarios')
 ONEDATA_FS_PATCHES_DIR = os.path.join(ONEDATA_FS_ENV_DIR, 'patches')
 ONEDATA_FS_LOGDIR = os.path.join(ONEDATA_FS_DIR, 'logs')
-ONECLIENT_ENV_DIR = os.path.join(ONECLIENT_DIR, 'environments')
-ONECLIENT_SCENARIO_DIR = os.path.join(ONECLIENT_ENV_DIR, 'scenarios')
-ONECLIENT_PATCHES_DIR = os.path.join(ONECLIENT_ENV_DIR, 'patches')
+
+GUI_DIR = os.path.join(TEST_DIR, 'gui')
 GUI_ENV_DIR = os.path.join(GUI_DIR, 'environments')
+GUI_LOGDIR = os.path.join(GUI_DIR, 'logs')
+
+MIXED_DIR = os.path.join(TEST_DIR, 'mixed')
 MIXED_ENV_DIR = os.path.join(MIXED_DIR, 'environments')
 MIXED_SCENARIO_DIR = os.path.join(MIXED_ENV_DIR, 'scenarios')
-ONECLIENT_LOGDIR = os.path.join(ONECLIENT_DIR, 'logs')
-ENV_UP_LOGDIR = os.path.join(ENV_UP_DIR, 'logs')
-PROFILING_LOGDIR = os.path.join(ONECLIENT_DIR, 'profiling_data')
-GUI_LOGDIR = os.path.join(GUI_DIR, 'logs')
 MIXED_LOGDIR = os.path.join(MIXED_DIR, 'logs')
-EXAMPLE_ENV_DIR = os.path.join(BAMBOOS_DIR, 'example_env')
-PROVIDER_CERT_DIR = os.path.join('root', 'bin', 'node', 'etc', 'certs')
-PROVIDER_KEY_FILE = 'ozp_key.pem'
-PROVIDER_CERT_FILE = 'ozp_cert.pem'
-PROVIDER_KEY_PATH = os.path.join(PROVIDER_CERT_DIR, PROVIDER_KEY_FILE)
-PROVIDER_CERT_PATH = os.path.join(PROVIDER_CERT_DIR, PROVIDER_CERT_FILE)
-ENV_CONFIGURATOR_ESCRIPT = os.path.join(BAMBOOS_DIR, 'env_configurator',
-                                        'env_configurator.escript')
+
+PERFORMANCE_DIR = os.path.join(TEST_DIR, 'performance')
+PERFORMANCE_LOGDIR = os.path.join(PERFORMANCE_DIR, 'logs')
+PERFORMANCE_ENV_DIR = os.path.join(PERFORMANCE_DIR, 'environments')
+PERFORMANCE_SCENARIO_DIR = os.path.join(PERFORMANCE_ENV_DIR, 'scenarios')
+PERFORMANCE_PATCHES_DIR = os.path.join(PERFORMANCE_ENV_DIR, 'patches')
+PERFORMANCE_TEST_CONFIG = os.path.join(PERFORMANCE_DIR, 'test_config.yaml')
+PERFORMANCE_OUTPUT = os.path.join(PERFORMANCE_LOGDIR, 'performance.yaml')
+
 UPLOAD_FILES_DIR = os.path.join(GUI_DIR, 'upload_files')
 
-# env_up log files
-PREPARE_ENV_LOG_FILE = 'prepare_test_environment.log'
-PREPARE_ENV_ERROR_LOG_FILE = 'prepare_test_environment_error.log'
 
 HTTP_PORT = 80
 OZ_REST_PORT = 443
@@ -80,27 +79,32 @@ ENV_DIRS = {
     'oneclient': ONECLIENT_ENV_DIR,
     'gui': GUI_ENV_DIR,
     'mixed': MIXED_ENV_DIR,
-    'onedata_fs': ONEDATA_FS_ENV_DIR
+    'onedata_fs': ONEDATA_FS_ENV_DIR,
+    'performance': PERFORMANCE_ENV_DIR
 }
 
 LOGDIRS = {
     'oneclient': ONECLIENT_LOGDIR,
     'mixed': MIXED_LOGDIR,
     'gui': GUI_LOGDIR,
-    'onedata_fs': ONEDATA_FS_LOGDIR
+    'onedata_fs': ONEDATA_FS_LOGDIR,
+    'performance': PERFORMANCE_LOGDIR
 }
 
 CONFIG_FILES = {
-    'oneclient': ONECLIENT_TEST_CONFIG
+    'oneclient': ONECLIENT_TEST_CONFIG,
+    'performance': PERFORMANCE_TEST_CONFIG
 }
 
 SCENARIO_DIRS = {
     'oneclient': ONECLIENT_SCENARIO_DIR,
     'mixed': MIXED_SCENARIO_DIR,
-    'onedata_fs': ONEDATA_FS_SCENARIO_DIR
+    'onedata_fs': ONEDATA_FS_SCENARIO_DIR,
+    'performance': PERFORMANCE_SCENARIO_DIR
 }
 
 PATCHES_DIR = {
     'oneclient': ONECLIENT_PATCHES_DIR,
-    'onedata_fs': ONEDATA_FS_PATCHES_DIR
+    'onedata_fs': ONEDATA_FS_PATCHES_DIR,
+    'performance': PERFORMANCE_PATCHES_DIR
 }
