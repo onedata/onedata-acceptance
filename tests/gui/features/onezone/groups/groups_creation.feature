@@ -38,5 +38,5 @@ Feature: Basic creation/joining of groups with one user in Onezone GUI
   Scenario: User fails to create unnamed group using enter to confirm group name
     When user of browser clicks on Create group button in groups sidebar
     And user of browser presses enter on keyboard
-    Then user of browser sees that error modal with text "creating group failed" appeared
+    Then user of browser sees that error modal with text "Creating group failed" appeared
 

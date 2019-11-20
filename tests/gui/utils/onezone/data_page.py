@@ -22,6 +22,8 @@ class Space(Element):
 
     overview = NamedButton('.one-list-level-2 .item-header',
                            text='Overview')
+    data = NamedButton('.one-list-level-2 .item-header',
+                       text='Data')
     providers = NamedButton('.one-list-level-2 .item-header',
                             text='Providers')
     members = NamedButton('.one-list-level-2 .item-header',

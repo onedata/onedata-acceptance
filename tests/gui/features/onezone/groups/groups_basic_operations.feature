@@ -56,7 +56,7 @@ Feature: Basic management of groups with one user in Onezone GUI
     And user of browser pastes copied token into group token text field
     And user of browser confirms using <confirmation_method>
 
-    Then user of browser sees that error modal with text "joining group as subgroup failed" appeared
+    Then user of browser sees that error modal with text "Joining group as subgroup failed" appeared
 
     Examples:
       | confirmation_method |
