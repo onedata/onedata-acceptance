@@ -96,6 +96,7 @@ def join_space_to_harvester(selenium, browser_id, oz_page, space_name,
                                                       oz_page)
     click_button_in_harvester_spaces_page(selenium, browser_id, oz_page,
                                           button_name)
+    time.sleep(5)
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id,
                                                       space_name, modals,
                                                       element_type)
