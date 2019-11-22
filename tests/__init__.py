@@ -48,7 +48,6 @@ PERFORMANCE_ENV_DIR = os.path.join(PERFORMANCE_DIR, 'environments')
 PERFORMANCE_SCENARIO_DIR = os.path.join(PERFORMANCE_ENV_DIR, 'scenarios')
 PERFORMANCE_PATCHES_DIR = os.path.join(PERFORMANCE_ENV_DIR, 'patches')
 PERFORMANCE_TEST_CONFIG = os.path.join(PERFORMANCE_DIR, 'test_config.yaml')
-PERFORMANCE_OUTPUT = os.path.join(PERFORMANCE_LOGDIR, 'performance.yaml')
 
 UPLOAD_FILES_DIR = os.path.join(GUI_DIR, 'upload_files')
 

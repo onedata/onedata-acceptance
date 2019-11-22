@@ -94,6 +94,7 @@ class Client:
         while not started and timeout >= 0:
             try:
                 self.rpyc_connection = rpyc.classic.connect(self.ip, port)
+                self.rpyc_connection._config['sync_request_timeout'] = None
                 started = True
             except Exception as e:
                 print e

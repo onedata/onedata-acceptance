@@ -11,6 +11,7 @@ import inspect
 import yaml
 
 from tests import *
+from tests.conftest import export_logs, make_logdir, get_test_type
 from tests.utils.path_utils import get_file_name
 from tests.utils.git_utils import get_branch_name, get_commit, get_repository
 from tests.utils.performance_utils import *
@@ -25,8 +26,10 @@ def yaml_output(request):
     def fin():
         if not os.path.exists(PERFORMANCE_LOGDIR):
             os.makedirs(PERFORMANCE_LOGDIR)
-        f = open(PERFORMANCE_OUTPUT, 'w')
+        logdir = make_logdir(LOGDIRS.get(get_test_type(request)), 'report')
+        f = open(os.path.join(logdir, 'performance.yaml'), 'w')
         f.write(yaml.safe_dump(performance_report.report))
+        export_logs(request)
 
     request.addfinalizer(fin)
     return performance_report
