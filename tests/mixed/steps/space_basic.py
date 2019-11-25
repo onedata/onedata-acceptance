@@ -160,7 +160,7 @@ def add_users_to_space_in_oz(client, request, user_list, space_name, host,
 def remove_provider_support_for_space_in_oz(client, request, user,
                                             provider_name, space_name, host,
                                             selenium, users, hosts, spaces,
-                                            admin_credentials, onepanel,
+                                            onepanel_credentials, onepanel,
                                             popups):
 
     if client.lower() == 'rest':
@@ -169,7 +169,7 @@ def remove_provider_support_for_space_in_oz(client, request, user,
         remove_provider_support_for_space_in_oz_using_rest(user, users, host,
                                                            hosts, provider_name,
                                                            space_name, spaces,
-                                                           admin_credentials)
+                                                           onepanel_credentials)
     elif client.lower() == 'web gui':
         from tests.gui.meta_steps.onezone.spaces import \
                             remove_provider_support_for_space_in_oz_using_gui

@@ -11,7 +11,8 @@ __license__ = ("This software is released under the MIT license cited in "
 from tests.mixed.onezone_client import (UserApi, SpaceCreateRequest,
                                         SpaceApi, DefaultSpace,
                                         SpaceInviteToken, ProviderApi)
-from tests.mixed.utils.common import login_to_oz
+from tests.mixed.onepanel_client import OneproviderApi
+from tests.mixed.utils.common import login_to_oz, login_to_panel
 from tests.mixed.steps.rest.onezone.common import (get_user_space_with_name,
                                                    get_provider_with_name,
                                                    get_space_with_name)
@@ -91,17 +92,21 @@ def delete_users_from_space_in_oz_using_rest(user_list, users, zone_name, hosts,
 def remove_provider_support_for_space_in_oz_using_rest(user, users, zone_name,
                                                        hosts, provider_alias,
                                                        space_name, spaces,
-                                                       admin_credentials):
-    admin_client = login_to_oz(admin_credentials.username,
-                               admin_credentials.password,
-                               hosts[zone_name]['hostname'])
-    provider_name = hosts[provider_alias]['name']
-    provider = get_provider_with_name(admin_client, provider_name)
-    user_client = login_to_oz(user, users[user].password,
-                              hosts[zone_name]['hostname'])
-    space_api = SpaceApi(user_client)
-    space_api.remove_provider_supporting_space(spaces[space_name],
-                                               provider.provider_id)
+                                                       onepanel_credentials):
+    user_client_op = login_to_panel(onepanel_credentials.username,
+                                    onepanel_credentials.password,
+                                    hosts[provider_alias]['hostname'])
+    user_client_oz = login_to_oz(user, users[user].password,
+                                 hosts[zone_name]['hostname'])
+    provider_api = OneproviderApi(user_client_op)
+
+    space = get_space_with_name(user_client_oz, space_name)
+
+    space_details = provider_api.get_space_details(space.space_id)
+    storage_id = space_details.storage_id
+
+    space_api = SpaceApi(user_client_oz)
+    space_api.cease_support_by_storage(spaces[space_name], storage_id)
 
 
 def add_users_to_space_in_oz_using_rest(user_list, users, zone_name, hosts,
