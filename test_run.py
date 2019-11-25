@@ -43,7 +43,7 @@ def get_images_option(test_type='oneclient', oz_image=None, op_image=None,
     add_image_to_images_cfg(rest_cli_image, 'rest cli', '--rest-cli-image',
                             images_cfg)
 
-    if test_type in ['oneclient', 'mixed', 'onedata_fs']:
+    if test_type in ['oneclient', 'mixed', 'onedata_fs', 'performance']:
         add_image_to_images_cfg(oc_image, 'oneclient', '--oc-image',
                                 images_cfg)
         add_image_to_images_cfg(luma_image, 'LUMA', '--luma-image', images_cfg)
