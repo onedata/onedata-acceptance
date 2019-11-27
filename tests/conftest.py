@@ -422,13 +422,14 @@ def start_environment(scenario_path, request, hosts, patch_path,
             init_helm()
 
             if clean:
+                run_onenv_command('init', cwd='.')
                 run_onenv_command('up', up_args)
                 run_onenv_command('wait', wait_args)
             pods_cfg = check_deployment()
             parse_hosts_cfg(pods_cfg, hosts, request)
 
             if not local:
-                run_onenv_command('hosts')
+                run_onenv_command('hosts', sudo=True)
 
             if patch_path and clean:
                 run_onenv_command('patch', patch_args)
@@ -460,10 +461,10 @@ def check_deployment():
 
     if not env_ready:
         raise OnenvError('Environment error: timeout while waiting for '
-                          'deployment to be ready.')
+                         'deployment to be ready.')
     if not pods_cfg:
         raise OnenvError('Environment error: could not get deployment '
-                          'configuration.')
+                         'configuration.')
 
     return pods_cfg
 
