@@ -93,7 +93,7 @@ def pytest_generate_tests(metafunc):
                 metafunc.parametrize('env_description_file',
                                      [default_env_file], scope='session')
 
-        elif test_type == 'oneclient':
+        elif test_type in ['oneclient', 'performance']:
             env_file = metafunc.config.getoption('env_file')
             if env_file:
                 metafunc.parametrize('env_description_file', [env_file],
@@ -332,7 +332,7 @@ def env_desc(env_description_abs_path, hosts, request, users,
             )
         return env_desc
 
-    elif test_type in ['oneclient', 'onedata_fs']:
+    elif test_type in ['oneclient', 'onedata_fs', 'performance']:
         with open(env_description_abs_path, 'r') as env_desc_file:
             env_desc = yaml.load(env_desc_file)
 

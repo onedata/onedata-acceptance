@@ -1,0 +1,17 @@
+scenario: "2op.yaml"
+patch: "2op.yaml"
+
+oneclient:
+  oneclient-1:
+    clients:
+      client11:
+        provider: "oneprovider-1"
+        mode: directio
+        default timeout: 40
+  oneclient-2:
+    clients:
+      client21:
+        provider: "oneprovider-2"
+        mode: directio
+        default timeout: 40
+
