@@ -295,6 +295,7 @@ sys.exit(ret)
     )
 
     if args.update_etc_hosts:
+        call(['./onenv', 'init'], cwd='one_env')
         call(['./onenv', 'hosts'], cwd='one_env')
 
     if args.local:
