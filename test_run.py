@@ -23,6 +23,7 @@ from bamboos.docker.environment import docker
 PULL_DOCKER_IMAGE_RETRIES = 5
 
 ARTIFACTS_DIR = 'artifacts_dir'
+TEST_RUNNER_CONTAINER_NAME = 'test-runner'
 
 ZONE_IMAGES_CFG_PATH = 'onezone_images/docker-dev-build-list.json'
 PROVIDER_IMAGES_CFG_PATH = 'oneprovider_images/docker-dev-build-list.json'
@@ -110,11 +111,6 @@ def parse_image_for_service(file_path):
         return None
 
 
-def delete_test_runner_pod():
-    delete_test_runner_cmd = ['kubectl', 'delete', 'pod', 'test-runner']
-    call(delete_test_runner_cmd, stdin=None, stderr=DEVNULL, stdout=DEVNULL)
-
-
 def clean_env(image, script_dir, kube_config_path, minikube_config_path,
               one_env_data_dir):
     reflect = [
@@ -137,6 +133,11 @@ def clean_env(image, script_dir, kube_config_path, minikube_config_path,
         envs={'HOME': os.path.expanduser('~')},
         command=['./onenv', 'clean', '-a', '-v']
     )
+
+    container = docker.ps(all=True, quiet=True,
+                          filters=[('name', TEST_RUNNER_CONTAINER_NAME)])
+    if container:
+        docker.remove(container, force=True)
 
 
 def remove_one_env_container():
@@ -346,15 +347,14 @@ ALL       ALL = (ALL) NOPASSWD: ALL
             (one_env_data_dir, 'rw'),
             (kube_config_path, 'ro'),
             (minikube_config_path, 'ro'),
-            ('/etc/passwd', 'ro'),
-            ('/etc/hosts', 'rw')
+            ('/etc/passwd', 'ro')
         ]
 
         ret = docker.run(
             tty=True,
             rm=True,
             interactive=True,
-            name='test-runner',
+            name=TEST_RUNNER_CONTAINER_NAME,
             workdir=script_dir,
             network='host',
             reflect=reflect,

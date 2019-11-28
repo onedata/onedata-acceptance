@@ -20,4 +20,5 @@
 	branch = develop
 [submodule "one_env"]
 	path = one_env
-	url = ssh://git@git.onedata.org:7999/vfs/one-env.git
+	url = ../one-env.git
+    branch = develop
