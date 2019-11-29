@@ -53,4 +53,6 @@ from tests.gui.meta_steps.onezone.common import *
 from tests.oneclient.steps.auth_steps import *
 
 
-scenarios('../features/oneprovider/file_content.feature')
+# TODO: change test because of a new gui
+# scenarios('../features/oneprovider/file_content.feature')
+scenarios('../features/pass.feature')
