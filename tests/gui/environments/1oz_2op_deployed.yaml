@@ -6,7 +6,7 @@ scenario: "scenario-1oz-2op"
 # to be found in CWD (from where the 'up' script was run) or one dir above.
 sources: false
 
-createSpaces: false
+spaces: false
 
 # Onezone image to use. Note that if 'sources' option is enabled, it must
 # be based off onedata/worker image (it contains all the machinery to run the
