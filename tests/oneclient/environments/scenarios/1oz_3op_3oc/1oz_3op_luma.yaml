@@ -45,7 +45,7 @@ forceImagePull: true
 # By default spaces supported by all providers are created. For custom
 # space configuration please refer to one of MyValues.yaml file in
 # scenario directory.
-createSpaces: true
+spaces: true
 
 
 os-config:
