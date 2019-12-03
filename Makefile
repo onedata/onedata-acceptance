@@ -102,8 +102,15 @@ test_oneclient_src:
 	 --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} --sources
 
 test_onedata_fs:
-	${TEST_RUN} --test-type onedata_fs -vvv --test-dir tests/onedata_fs/scenarios/test_unit_tests.py -i onedata/acceptance_mixed:v6 -k=${KEYWORDS} \
+	${TEST_RUN} --test-type onedata_fs -vvv --test-dir tests/onedata_fs/scenarios/test_unit_tests.py -i onedata/acceptance_mixed:v7 -k=${KEYWORDS} \
      --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH}
+
+test_performance_pkg:
+	${TEST_RUN} --test-type performance -vvv --test-dir tests/performance --image onedata/acceptance_mixed:v7 -k=${KEYWORDS} --local-charts-path=${LOCAL_CHARTS_PATH}
+
+test_performance_src:
+	${TEST_RUN} --test-type performance -vvv --test-dir tests/performance --image onedata/acceptance_mixed:v7 -k=${KEYWORDS} --local-charts-path=${LOCAL_CHARTS_PATH} --sources
+
 
 ##
 ## Build python REST clients generated from swaggers. (used in mixed tests)
