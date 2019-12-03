@@ -1,0 +1,16 @@
+scenario: "1op.yaml"
+patch: "1op.yaml"
+
+oneclient:
+  oneclient-1:
+    clients:
+      client11:
+        provider: "oneprovider-1"
+        mode: directio
+        default timeout: 10
+  oneclient-2:
+    clients:
+      client21:
+        provider: "oneprovider-1"
+        mode: proxyio
+        default timeout: 10
