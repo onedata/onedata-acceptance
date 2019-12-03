@@ -82,7 +82,7 @@ Feature: Basic management of groups privileges in Onezone GUI
     And user of browser clicks on "group4" member relation menu button to "group1" group
     And user of browser clicks on "Remove relation" in group membership relation menu
     And user of browser clicks on "Remove" button in modal "REMOVE MEMBER"
-    Then user of browser sees that error modal with text "Insufficient permissions" appeared
+    Then user of browser sees that error modal with text "insufficient privileges" appeared
 
 
   Scenario: User removes relation with privilege "Remove child group" and without "Leave parent group"

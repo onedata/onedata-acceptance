@@ -59,7 +59,8 @@ from tests.mixed.utils.common import *
 
 
 scenarios('../features/onepanel/spaces.feature')
-scenarios('../features/onepanel/storage_sync.feature')
+# TODO: change test because of a new gui
+# scenarios('../features/onepanel/storage_sync.feature')
 scenarios('../features/onepanel/provider.feature')
 
 

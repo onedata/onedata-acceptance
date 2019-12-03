@@ -34,7 +34,7 @@ Feature: Basic cluster members management utilities using onepanel
     And user of browser2 expands "Cluster management" privilege for "user1" user in cluster members subpage
     And user of browser2 unchecks "View privileges" privilege toggle in "Cluster management" for "user1" user in cluster members subpage
     And user of browser2 clicks Save button for "user1" user in cluster members subpage
-    Then user of browser2 sees that error modal with text "Insufficient permissions" appeared
+    Then user of browser2 sees that error modal with text "insufficient privileges" appeared
 
 
   Scenario: User fails to remove cluster without remove cluster privileges
@@ -49,7 +49,7 @@ Feature: Basic cluster members management utilities using onepanel
     And user of browser2 clicks on deregister provider button in clusters page
     And user of browser2 checks the understand notice in clusters page
     And user of browser2 clicks on confirm deregistration button in clusters page
-    Then user of browser2 sees that error modal with text "Insufficient permissions" appeared
+    Then user of browser2 sees that error modal with text "insufficient privileges" appeared
 
 
   Scenario: User fails to remove user without remove user privileges
@@ -63,7 +63,7 @@ Feature: Basic cluster members management utilities using onepanel
     And user of browser2 clicks on Members item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser2 is idle for 2 seconds
     And user of browser2 removes "admin" user from "oneprovider-1" cluster members
-    Then user of browser2 sees that error modal with text "Insufficient permissions" appeared
+    Then user of browser2 sees that error modal with text "insufficient privileges" appeared
 
 
   Scenario: User fails to add user without add user privileges
@@ -92,7 +92,7 @@ Feature: Basic cluster members management utilities using onepanel
     # fail to remove group from cluster
     And user of browser2 clicks on Members item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser2 removes "group1" group from "oneprovider-1" cluster members
-    Then user of browser2 sees that error modal with text "Insufficient permissions" appeared
+    Then user of browser2 sees that error modal with text "insufficient privileges" appeared
 
 
   Scenario: User fails to add group to cluster without add group privileges
@@ -104,7 +104,7 @@ Feature: Basic cluster members management utilities using onepanel
 
     # fail to add group to cluster
     And user of browser2 adds "group1" group to "oneprovider-1" cluster
-    Then user of browser2 sees that error modal with text "Insufficient permissions" appeared
+    Then user of browser2 sees that error modal with text "insufficient privileges" appeared
 
   Scenario: User fails to see members without view cluster
     When user of browser1 invites user of browser2 to "oneprovider-1" cluster

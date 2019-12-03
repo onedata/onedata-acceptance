@@ -35,8 +35,8 @@ Feature: Basic management of spaces privileges in Onezone GUI
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Members of "space1" in the sidebar
     And user of browser clicks "user1" user in "space1" space members users list
-    And user of browser expands "Provider management" privilege for "user1" user in space members subpage
-    And user of browser unchecks "Add provider" privilege toggle in "Provider management" for "user1" user in space members subpage
+    And user of browser expands "Support management" privilege for "user1" user in space members subpage
+    And user of browser unchecks "Add support" privilege toggle in "Support management" for "user1" user in space members subpage
     And user of browser clicks Save button for "user1" user in space members subpage
     And user of browser clicks Providers of "space1" in the sidebar
     And user of browser clicks Add support button on providers page
@@ -93,7 +93,7 @@ Feature: Basic management of spaces privileges in Onezone GUI
     And user of browser clicks on "group2" member relation menu button to "space2" space
     And user of browser clicks on "Remove relation" in space membership relation menu
     And user of browser clicks on "Remove" button in modal "REMOVE MEMBER"
-    Then user of browser sees that error modal with text "Insufficient permissions" appeared
+    Then user of browser sees that error modal with text "insufficient privileges" appeared
 
 
   Scenario: User fails to remove user from space without remove user privileges
@@ -110,5 +110,5 @@ Feature: Basic management of spaces privileges in Onezone GUI
     And user of browser clicks on "user2" member relation menu button to "space3" space
     And user of browser clicks on "Remove relation" in space membership relation menu
     And user of browser clicks on "Remove" button in modal "REMOVE MEMBER"
-    Then user of browser sees that error modal with text "Insufficient permissions" appeared
+    Then user of browser sees that error modal with text "insufficient privileges" appeared
 
