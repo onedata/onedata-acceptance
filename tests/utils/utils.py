@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 
+import re
 import traceback
 import logging
 import subprocess as sp
@@ -79,3 +80,16 @@ def repeat_failed(attempts=10, timeout=None, interval=0.1,
         return fun(*args, **kwargs)
 
     return wrapper
+
+
+def get_copyright(mod):
+    return mod.__copyright__ if hasattr(mod, '__copyright__') else ''
+
+
+def get_authors(mod):
+    author = mod.__author__ if hasattr(mod, '__author__') else ''
+    return re.split(r'\s*,\s*', author)
+
+
+def get_suite_description(mod):
+    return mod.__doc__

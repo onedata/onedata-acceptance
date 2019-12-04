@@ -28,6 +28,7 @@ from tests import (CONFIG_FILES, PANEL_REST_PORT, ENV_DIRS, SCENARIO_DIRS,
 
 
 START_ENV_MAX_RETRIES = 3
+ONE_ENV_CONTAINER_NAME = 'one-env'
 
 
 def pytest_addoption(parser):
@@ -93,7 +94,7 @@ def pytest_generate_tests(metafunc):
                 metafunc.parametrize('env_description_file',
                                      [default_env_file], scope='session')
 
-        elif test_type == 'oneclient':
+        elif test_type in ['oneclient', 'performance']:
             env_file = metafunc.config.getoption('env_file')
             if env_file:
                 metafunc.parametrize('env_description_file', [env_file],
@@ -332,7 +333,7 @@ def env_desc(env_description_abs_path, hosts, request, users,
             )
         return env_desc
 
-    elif test_type in ['oneclient', 'onedata_fs']:
+    elif test_type in ['oneclient', 'onedata_fs', 'performance']:
         with open(env_description_abs_path, 'r') as env_desc_file:
             env_desc = yaml.load(env_desc_file)
 
@@ -408,6 +409,24 @@ def parse_wait_args(request):
     return wait_args
 
 
+def update_etc_hosts():
+    """
+    The 'onenv hosts' command updates entries in /etc/hosts file present in
+    one-env container. This file is a docker volume mounted from host machine.
+    As some tests modifies entries in /etc/hosts file, it is undesired to make
+    this volume available also in test-runner container. Thus this function
+    firstly updates /etc/hosts entries using the 'onenv hosts' command and then
+    copies modified /etc/hosts from one-env container to test-runner container.
+    """
+    run_onenv_command('hosts', sudo=True)
+    etc_hosts_path = '/etc/hosts'
+    tmp_hosts_path = '/tmp/hosts'
+    sp.call(['docker', 'cp', '{}:{}'.format(ONE_ENV_CONTAINER_NAME,
+                                            etc_hosts_path),
+             tmp_hosts_path])
+    sp.call(['sudo', 'cp', tmp_hosts_path, etc_hosts_path])
+
+
 def start_environment(scenario_path, request, hosts, patch_path,
                       users, env_description_abs_path):
     attempts = 0
@@ -420,15 +439,15 @@ def start_environment(scenario_path, request, hosts, patch_path,
     while attempts < START_ENV_MAX_RETRIES:
         try:
             init_helm()
-
+            run_onenv_command('init', cwd=None, onenv_path='one_env/onenv')
             if clean:
                 run_onenv_command('up', up_args)
                 run_onenv_command('wait', wait_args)
             pods_cfg = check_deployment()
-            parse_hosts_cfg(pods_cfg, hosts, request)
 
             if not local:
-                run_onenv_command('hosts')
+                update_etc_hosts()
+            parse_hosts_cfg(pods_cfg, hosts, request)
 
             if patch_path and clean:
                 run_onenv_command('patch', patch_args)
@@ -460,10 +479,10 @@ def check_deployment():
 
     if not env_ready:
         raise OnenvError('Environment error: timeout while waiting for '
-                          'deployment to be ready.')
+                         'deployment to be ready.')
     if not pods_cfg:
         raise OnenvError('Environment error: could not get deployment '
-                          'configuration.')
+                         'configuration.')
 
     return pods_cfg
 

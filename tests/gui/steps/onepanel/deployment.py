@@ -71,8 +71,9 @@ def wt_type_text_to_in_box_in_deployment_step(selenium, browser_id, text,
                '(?P<step>step 1|step 2|step 4|last step) of deployment '
                'process in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_type_text_to_in_box_in_deployment_step(selenium, browser_id,
-                                              input_box, step, onepanel):
+def wt_type_second_host_to_in_box_in_deployment_step(selenium, browser_id,
+                                                     input_box, step,
+                                                     onepanel):
     step = getattr(onepanel(selenium[browser_id]).content.deployment,
                    step.replace(' ', ''))
     text = step.hostname_label
