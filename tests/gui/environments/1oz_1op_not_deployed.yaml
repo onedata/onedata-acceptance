@@ -22,8 +22,6 @@ oneproviderImage: "docker.onedata.org/oneprovider-dev:develop"
 forceImagePull: true
 
 onezone:
-  onezone_ready_check:
-    enabled: false
   batchConfig: false
   workerOverlayConfig: |-
     [
@@ -40,7 +38,5 @@ onezone:
     ].
 
 oneprovider-1:
-  oneprovider_ready_check:
-    enabled: false
   batchConfig: false
   addTestDomain: true
