@@ -8,6 +8,7 @@ Feature: Basic spaces management utilities using onepanel
 
   Scenario Outline: Support space
     Given there are no spaces supported in Onepanel used by user of browser1
+    And there is no "<space>" space in Onezone used by user of browser1
     When user of browser1 creates "<space>" space in Onezone
 
     # receive support token

@@ -42,7 +42,7 @@ def wt_check_host_options_in_deployment_step1(selenium, browser_id, options,
                                               host_regexp, onepanel):
     options = [transform(option) for option in parse_seq(options)]
     # without this, deployment failed randomly when launched locally
-    time.sleep(1)
+    time.sleep(5)
     for host in onepanel(selenium[browser_id]).content.deployment.step1.hosts:
         if re.match(host_regexp, host.name):
             for option in options:

@@ -86,7 +86,7 @@ Feature: Storage management using onepanel
           storage type: POSIX
           mount point: /volumes/persistence/storage
     And using docker, admin renames /volumes/persistence/storage path to /volumes/persistence/storage2
-    And user of <client> is idle for 2 seconds
+    And user of <client> is idle for 5 seconds
     And user of <client> refreshes site
     And user of <client> expands toolbar for "<storage_name>" storage record in Storages page in Onepanel
     And user of <client> clicks on Modify storage details option in storage's toolbar in Onepanel
@@ -110,7 +110,7 @@ Feature: Storage management using onepanel
     When user of <client> adds "<storage_name>" storage in "oneprovider-1" Oneprovider panel service with following configuration:
           storage type: POSIX
           mount point: /volumes/persistence/storage
-    And user of <client> is idle for 2 seconds
+    And user of <client> is idle for 5 seconds
     And user of <client> refreshes site
     Then user of <client> expands toolbar for "<storage_name>" storage record in Storages page in Onepanel
     And user of <client> clicks on Remove storage option in storage's toolbar in Onepanel
