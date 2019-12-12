@@ -265,6 +265,14 @@ def main():
         help='Onenv wait timeout',
         dest='timeout')
 
+    parser.add_argument(
+        '--pull-only-missing-images',
+        action='store_true',
+        help='By default all tests scenarios force pulling docker images '
+             'even if they are already present on host machine. When this '
+             'option is passed only missing images will be downloaded.',
+        dest='pull_only_missing_images')
+
     [args, pass_args] = parser.parse_known_args()
     script_dir = os.path.abspath(os.path.join('..', os.path.dirname(os.path.abspath(__file__))))
 
@@ -280,7 +288,8 @@ if {shed_privileges}:
     os.setregid({gid}, {gid})
     os.setreuid({uid}, {uid})
         
-command = ['python'] + ['-m'] + ['py.test'] + ['--test-type={test_type}'] + ['{test_dir}'] + {args} + {env_file} + {local_charts_path} + {no_clean} + {timeout} + {images_opt} + ['--junitxml={report_path}'] + ['--add-test-domain']  
+command = ['python'] + ['-m'] + ['py.test'] + ['--test-type={test_type}'] + ['{test_dir}'] + {args} + {env_file} + {local_charts_path} + {no_clean} + {pull_only_missing_images} + {timeout} + {images_opt} + ['--junitxml={report_path}'] + ['--add-test-domain']
+
 ret = subprocess.call(command)
 sys.exit(ret)
 '''
@@ -329,7 +338,8 @@ ALL       ALL = (ALL) NOPASSWD: ALL
             env_file=['--env-file={}'.format(args.env_file)] if args.env_file else [],
             timeout=['--timeout={}'.format(args.timeout)] if args.timeout else [],
             images_opt=images_opt if images_opt else [],
-            home=os.path.expanduser('~')
+            home=os.path.expanduser('~'),
+            pull_only_missing_images=['--pull-only-missing-images'] if args.pull_only_missing_images else []
         )
 
         kube_config_path = os.path.expanduser(args.kube_config_path)

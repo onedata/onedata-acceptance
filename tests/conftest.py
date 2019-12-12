@@ -39,6 +39,11 @@ def pytest_addoption(parser):
     parser.addoption('--local', action='store_true',
                      help='If specified tests are assumed to be stared '
                           'on local machine')
+    parser.addoption('--pull-only-missing-images', action='store_true',
+                     help='By default all test scenarios force pulling docker '
+                          'images even if they are already present on host. '
+                          'When this option is passed only missing images '
+                          'will be downloaded.')
     parser.addoption('--ignore-xfail', action='store_true',
                      help='Ignores xfail mark')
     parser.addoption('--env-file', action='store', default=None,
@@ -364,6 +369,8 @@ def parse_up_args(request, scenario_path):
     sources = request.config.getoption('--sources')
     timeout = request.config.getoption('--timeout')
     local_charts_path = request.config.getoption('--local-charts-path')
+    pull_only_missing_images = request.config.getoption('--pull-only-missing-images')
+
     gui_pkg_verification = request.config.getoption('--gui-pkg-verification')
 
     if oz_image:
@@ -384,6 +391,8 @@ def parse_up_args(request, scenario_path):
         up_args.extend(['--timeout', timeout])
     if gui_pkg_verification:
         up_args.append('--gui-pkg-verification')
+    if pull_only_missing_images:
+        up_args.append('--no-pull')
 
     up_args.extend(['{}'.format(scenario_path)])
     return up_args
