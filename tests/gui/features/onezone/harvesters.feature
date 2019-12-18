@@ -38,6 +38,7 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser clicks "harvester3" on the harvesters list in the sidebar
     And user of browser clicks Spaces of "harvester3" harvester in the sidebar
     And user of browser clicks add one of your spaces button in harvester spaces page
+    And user of browser sees that "Add one of your spaces" modal has appeared
     And user of browser chooses "space1" from dropdown in add space modal
     And user of browser clicks on "Add" button in modal "Add one of spaces"
 
@@ -78,6 +79,7 @@ Feature: Basic management of harvester in Onezone GUI
 
 
   Scenario: User successfully creates index in harvester
+    Given there is no "harvester5" harvester in Onezone used by user of browser
     When user of browser creates "harvester5" harvester in Onezone page
 
     And user of browser clicks on Discovery in the main menu

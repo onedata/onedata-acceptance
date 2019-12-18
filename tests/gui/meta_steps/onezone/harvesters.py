@@ -7,6 +7,8 @@ __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+from pytest_bdd import given
+
 from tests.gui.steps.onezone.members import *
 from tests.gui.steps.onezone.discovery import (
     click_on_option_in_harvester_menu,
@@ -21,7 +23,8 @@ from tests.gui.steps.onezone.discovery import (
     choose_element_from_dropdown_in_add_element_modal,
     click_join_harvester_button_in_discovery_page,
     type_text_to_rename_input_field_in_discovery_page,
-    confirm_harvester_rename_using_button)
+    confirm_harvester_rename_using_button,
+    check_harvester_exists_on_harvesters_list)
 from tests.gui.steps.onezone.spaces import (
     click_on_option_in_the_sidebar,
     click_element_on_lists_on_left_sidebar_menu,
@@ -84,18 +87,20 @@ def create_harvester(selenium, browser_id, oz_page, harvester_name, hosts):
                   '"{harvester_name}" harvester using available spaces dropdown'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def join_space_to_harvester(selenium, browser_id, oz_page, space_name,
-                            harvester_name):
+                            harvester_name, tmp_memory):
     option = 'Spaces'
     button_name = 'add one of your spaces'
     button_in_modal = 'Add'
     modal = 'Add one of spaces'
     element_type = 'space'
+    modal_name = 'Add one of your spaces'
 
     click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id,
                                                       harvester_name, option,
                                                       oz_page)
     click_button_in_harvester_spaces_page(selenium, browser_id, oz_page,
                                           button_name)
+    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id,
                                                       space_name, modals,
                                                       element_type)
@@ -258,3 +263,11 @@ def rename_harvester(selenium, browser_id, oz_page, harvester_name,
                                                       oz_page, harvester_renamed)
     confirm_harvester_rename_using_button(selenium, browser_id, oz_page)
 
+
+@given(parsers.parse('there is no "{harvester_name}" harvester in Onezone used '
+                     'by user of {browser_id}'))
+def remove_harvester_in_onezone(selenium, browser_id, harvester_name, oz_page):
+    driver = selenium[browser_id]
+
+    if harvester_name in oz_page(driver)['discovery'].elements_list:
+        remove_harvester(selenium, browser_id, oz_page, harvester_name)
