@@ -370,7 +370,8 @@ def assert_mtime_not_earlier_than(client, file_path, selenium, user,
 @wt(parsers.re('using (?P<client>.*), (?P<user>\w+) sees that directory '
                'structure in "(?P<space>.*)" space in (?P<host>.*) is as '
                'previously created'))
-def assert_directory_structure_in_op(client, selenium, user, op_page, oz_page, 
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_directory_structure_in_op(client, selenium, user, op_page, oz_page,
                                      tmp_memory, tmpdir, space, host, spaces, 
                                      hosts, users, modals):
     config = tmp_memory['config']
