@@ -71,7 +71,6 @@ Feature: Multi Browser invitation group to spaces
 
     # user1 renames space
     And user of browser1 clicks "space1" on the spaces list in the sidebar
-    And user of browser1 clicks Overview of "space1" in the sidebar
     And user of browser1 writes "space2" into rename space text field
     And user of browser1 clicks on confirmation button on overview page
 

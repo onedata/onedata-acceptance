@@ -57,16 +57,11 @@ def send_support_token_in_oz_using_gui(selenium, user, space_name, browser_id,
 def leave_spaces_in_oz_using_gui(selenium, user, space_list, oz_page, popups):
     where = 'spaces'
     option = 'Leave space'
-    submenu_option = 'Overview'
     confirmation_button = 'yes'
 
     for space_name in parse_seq(space_list):
         click_element_on_lists_on_left_sidebar_menu(selenium, user, where,
                                                     space_name, oz_page)
-        click_on_option_of_space_on_left_sidebar_menu(selenium, user,
-                                                      space_name,
-                                                      submenu_option,
-                                                      oz_page)
         click_on_option_in_menu(selenium, user, option, oz_page, popups)
         click_confirm_or_cancel_button_on_leave_space_page(selenium, user,
                                                            confirmation_button)
@@ -76,16 +71,11 @@ def rename_spaces_in_oz_using_gui(selenium, user, oz_page, space_list,
                                   new_names_list):
     where = 'spaces'
     option = 'enter'
-    submenu_option = 'Overview'
 
     for space_name, new_space_name in zip(parse_seq(space_list),
                                           parse_seq(new_names_list)):
         click_element_on_lists_on_left_sidebar_menu(selenium, user, where,
                                                     space_name, oz_page)
-        click_on_option_of_space_on_left_sidebar_menu(selenium, user,
-                                                      space_name,
-                                                      submenu_option,
-                                                      oz_page)
         type_space_name_on_rename_space_input_on_overview_page(selenium,
                                                                user,
                                                                new_space_name,
@@ -97,14 +87,9 @@ def set_space_as_home_in_oz_using_gui(selenium, user, oz_page,
                                       space_name, popups):
     where = 'spaces'
     button = 'Toggle default space'
-    submenu_option = 'Overview'
 
     click_element_on_lists_on_left_sidebar_menu(selenium, user, where,
                                                 space_name, oz_page)
-    click_on_option_of_space_on_left_sidebar_menu(selenium, user,
-                                                  space_name,
-                                                  submenu_option,
-                                                  oz_page)
     click_on_option_in_menu(selenium, user, button, oz_page, popups)
 
 
