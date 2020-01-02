@@ -9,7 +9,7 @@ __license__ = ("This software is released under the MIT license cited in "
 
 from pytest_bdd import when, then, parsers
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.utils.generic import transform
 from tests.utils.utils import repeat_failed
 from tests.utils.acceptance_utils import wt
@@ -58,7 +58,7 @@ def wt_click_on_add_btn_in_storage_add_form_in_storage_page(selenium,
                     'storages list in storages page in Onepanel'))
 @then(parsers.parse('user of {browser_id} expands "{storage}" record on '
                     'storages list in storages page in Onepanel'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def wt_expand_storage_item_in_storages_page_op_panel(selenium, browser_id,
                                                      storage, onepanel):
     onepanel(selenium[browser_id]).content.storages.storages[storage].expand()
@@ -70,7 +70,7 @@ def wt_expand_storage_item_in_storages_page_op_panel(selenium, browser_id,
 @then(parsers.re('user of (?P<browser_id>.*?) sees that "(?P<storage>.*?)" '
                  '(?P<attr>Storage type|Mount point) is (?P<val>.*?) '
                  'in storages page in Onepanel'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def wt_assert_storage_attr_in_storages_page_op_panel(selenium, browser_id,
                                                      storage, attr, val,
                                                      onepanel):
@@ -83,7 +83,7 @@ def wt_assert_storage_attr_in_storages_page_op_panel(selenium, browser_id,
 
 @wt(parsers.parse('user of {browser_id} expands toolbar for "{name}" storage '
                   'record in Storages page in Onepanel'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def wt_expands_toolbar_for_storage_in_onepanel(selenium, browser_id,
                                                name, onepanel):
     driver = selenium[browser_id]

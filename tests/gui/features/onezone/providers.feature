@@ -23,13 +23,14 @@ Feature: Basic management of providers in Onezone GUI
     Then user of browser sees that provider popup for provider "oneprovider-1" has appeared on world map
 
 
-  Scenario: User can go to Oneprovider by clicking on Visit provider in provider's popup
-    When user of browser clicks on Providers in the main menu
-    And user of browser clicks on provider "oneprovider-1" in providers sidebar
-    And user of browser sees that provider popup for provider "oneprovider-1" has appeared on world map
-    And user of browser clicks on Visit provider button on provider popover
-    And user of browser sees that Oneprovider session has started
-    Then user of browser sees that URL matches: https?://[^/]*/opw/[^/]*/i#/onedata/data/.*
+# TODO: change test because of a new gui
+#  Scenario: User can go to Oneprovider by clicking on Visit provider in provider's popup
+#    When user of browser clicks on Providers in the main menu
+#    And user of browser clicks on provider "oneprovider-1" in providers sidebar
+#    And user of browser sees that provider popup for provider "oneprovider-1" has appeared on world map
+#    And user of browser clicks on Visit provider button on provider popover
+#    And user of browser sees that Oneprovider session has started
+#    Then user of browser sees that URL matches: https?://[^/]*/opw/[^/]*/i#/onedata/data/.*
 
 
   Scenario: User sees that provider popup can be closed with clicking on map

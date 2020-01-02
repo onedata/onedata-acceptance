@@ -100,8 +100,8 @@ def remove_provider_support_for_space_in_oz_using_rest(user, users, zone_name,
     user_client = login_to_oz(user, users[user].password,
                               hosts[zone_name]['hostname'])
     space_api = SpaceApi(user_client)
-    space_api.remove_provider_supporting_space(spaces[space_name],
-                                               provider.provider_id)
+    space_api.cease_support_by_provider(spaces[space_name],
+                                        provider.provider_id)
 
 
 def add_users_to_space_in_oz_using_rest(user_list, users, zone_name, hosts,

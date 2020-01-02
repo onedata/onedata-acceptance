@@ -64,4 +64,6 @@ def screens():
     return [0, 1]
 
 
-scenarios('../features/onepanel/storage_sync.feature')
+# TODO: change test because of a new gui
+# scenarios('../features/onepanel/storage_sync.feature')
+scenarios('../features/pass.feature')

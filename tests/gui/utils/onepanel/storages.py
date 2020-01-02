@@ -26,7 +26,7 @@ class POSIX(PageObject):
 
 class StorageAddForm(PageObject):
     storage_selector = DropdownSelector('.ember-basic-dropdown')
-    add = NamedButton('button', text='Add')
+    add = Button('.submit-group button')
     posix = WebItem('form', cls=POSIX)
 
 

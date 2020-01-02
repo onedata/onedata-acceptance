@@ -57,4 +57,7 @@ def screens():
     return [0]
 
 
-scenarios('../features/oneprovider/transfers/transfers.feature')
+# TODO: change test because of a new gui
+# scenarios('../features/oneprovider/transfers/transfers.feature')
+scenarios('../features/pass.feature')
+

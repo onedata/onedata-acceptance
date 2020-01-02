@@ -68,42 +68,53 @@ checkout_getting_started:
 ## Test
 ##
 
-RECORDING_OPTION     ?= failed
-BROWSER              ?= Chrome
-TIMEOUT			     ?= 300
-LOCAL_CHARTS_PATH    ?= ""
+RECORDING_OPTION            ?= failed
+BROWSER                     ?= Chrome
+TIMEOUT			            ?= 300
+LOCAL_CHARTS_PATH           ?= ""
+PULL_ONLY_MISSING_IMAGES    ?= ""
 
 ifdef bamboo_GUI_PKG_VERIFICATION
     GUI_PKG_VERIFICATION = --gui-pkg-verification
 endif
+ifdef PULL_ONLY_MISSING_IMAGES
+    PULL_IMAGES_OPT = --pull-only-missing-images
+endif
 
 test_gui_pkg:
 	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i onedata/acceptance_gui:v8 --xvfb --xvfb-recording=${RECORDING_OPTION} \
-	-k=${KEYWORDS} --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} --reruns 1 --reruns-delay 10 ${GUI_PKG_VERIFICATION}
+	-k=${KEYWORDS} --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} --reruns 1 --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${PULL_IMAGES_OPT}
 
 test_gui_src:
 	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i onedata/acceptance_gui:v8 --xvfb --xvfb-recording=${RECORDING_OPTION} --sources \
-	 -k=${KEYWORDS} --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} --reruns 1 --reruns-delay 10 ${GUI_PKG_VERIFICATION}
+	 -k=${KEYWORDS} --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} --reruns 1 --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${PULL_IMAGES_OPT}
 
 test_mixed_pkg:
 	${TEST_RUN} -t tests/mixed/scenarios/${SUITE}.py --test-type mixed -vvv --driver=${BROWSER} -i onedata/acceptance_mixed:v8 --xvfb --xvfb-recording=${RECORDING_OPTION} \
-	 --env-file=${ENV_FILE} -k=${KEYWORDS} --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH}  --reruns 1 --reruns-delay 10 ${GUI_PKG_VERIFICATION}
+	 --env-file=${ENV_FILE} -k=${KEYWORDS} --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH}  --reruns 1 --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${PULL_IMAGES_OPT}
 
 test_mixed_src:
 	${TEST_RUN} -t tests/mixed/scenarios/${SUITE}.py --test-type mixed -vvv --driver=${BROWSER} -i onedata/acceptance_mixed:v8 --xvfb --xvfb-recording=${RECORDING_OPTION} \
-	--env-file=${ENV_FILE} --sources -k=${KEYWORDS} --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} --reruns 1 --reruns-delay 10 ${GUI_PKG_VERIFICATION}
+	--env-file=${ENV_FILE} --sources -k=${KEYWORDS} --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} --reruns 1 --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${PULL_IMAGES_OPT}
 
 test_oneclient_pkg:
 	${TEST_RUN} --test-type oneclient -vvv --test-dir tests/oneclient/scenarios/${SUITE}.py -i onedata/acceptance_mixed:v8 -k=${KEYWORDS} \
-	 --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH}
+	 --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} ${PULL_IMAGES_OPT}
 
 test_oneclient_src:
 	${TEST_RUN} --test-type oneclient -vvv --test-dir tests/oneclient/scenarios/${SUITE}.py -i onedata/acceptance_mixed:v8 -k=${KEYWORDS} \
-	 --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} --sources
+	 --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} --sources ${PULL_IMAGES_OPT}
 
 test_onedata_fs:
-	${TEST_RUN} --test-type onedata_fs -vvv --test-dir tests/onedata_fs/scenarios/test_unit_tests.py -i onedata/acceptance_mixed:v6 -k=${KEYWORDS} \
-     --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH}
+	${TEST_RUN} --test-type onedata_fs -vvv --test-dir tests/onedata_fs/scenarios/test_unit_tests.py -i onedata/acceptance_mixed:v7 -k=${KEYWORDS} \
+     --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} ${PULL_IMAGES_OPT}
+
+test_performance_pkg:
+	${TEST_RUN} --test-type performance -vvv --test-dir tests/performance --image onedata/acceptance_mixed:v7 -k=${KEYWORDS} --local-charts-path=${LOCAL_CHARTS_PATH} ${PULL_IMAGES_OPT}
+
+test_performance_src:
+	${TEST_RUN} --test-type performance -vvv --test-dir tests/performance --image onedata/acceptance_mixed:v7 -k=${KEYWORDS} --local-charts-path=${LOCAL_CHARTS_PATH} --sources ${PULL_IMAGES_OPT}
+
 
 ##
 ## Build python REST clients generated from swaggers. (used in mixed tests)

@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in " \
 import os
 import re
 import sys
+import pty
 import collections
 import subprocess as sp
 
@@ -22,14 +23,19 @@ class OnenvError(BaseException):
     pass
 
 
-def run_onenv_command(command, args=None, fail_with_error=True):
-    cmd = ['./onenv', command]
+def run_onenv_command(command, args=None, fail_with_error=True, sudo=False,
+                      cwd='one_env', onenv_path='./onenv'):
+    master, slave = pty.openpty()
+
+    if sudo:
+        cmd = ['sudo', onenv_path, command]
+    else:
+        cmd = [onenv_path, command]
 
     if args:
         cmd.extend(args)
-
     print('Running command: {}'.format(cmd))
-    proc = sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.PIPE, cwd='one_env')
+    proc = sp.Popen(cmd, stdin=slave, stdout=sp.PIPE, stderr=sp.PIPE, cwd=cwd)
     output, err = proc.communicate()
 
     sys.stdout.write(output.decode('utf-8'))
@@ -37,8 +43,8 @@ def run_onenv_command(command, args=None, fail_with_error=True):
 
     if proc.returncode != 0 and fail_with_error:
         raise OnenvError('Environment error.\n'
-                          'Command: {} failed.\n'
-                          'Captured output: {}'.format(cmd, output))
+                         'Command: {} failed.\n'
+                         'Captured output: {}'.format(cmd, output))
 
     return output
 

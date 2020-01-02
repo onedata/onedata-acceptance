@@ -14,11 +14,11 @@
     path = cdmi_swagger
     url = ../cdmi-swagger.git
     branch = develop
-[submodule "one_env"]
-	path = one_env
-	url = ../one-env.git
-    branch = feature/VFS-3622-devise-new-env-up-conception
 [submodule "bamboos"]
 	path = bamboos
 	url = ../bamboos.git
 	branch = develop
+[submodule "one_env"]
+	path = one_env
+	url = ../one-env.git
+    branch = develop
