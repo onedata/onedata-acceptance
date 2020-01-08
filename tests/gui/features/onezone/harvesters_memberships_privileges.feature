@@ -221,7 +221,7 @@ Feature: Basic management of harvester in Onezone GUI
 
 
   Scenario: User successfully adds space with add space privilege
-    Given there is no "space1" space in Onezone used by admin user
+    Given admin user does not have access to any space
     When user of browser2 creates "space1" space in Onezone
 
     And user of browser1 creates "harvester11" harvester in Onezone page
@@ -243,7 +243,7 @@ Feature: Basic management of harvester in Onezone GUI
 
 
   Scenario: User successfully removes space with remove space privilege
-    Given there is no "space2" space in Onezone used by admin user
+    Given admin user does not have access to any space
     When user of browser1 creates "space2" space in Onezone
     And user of browser1 creates "harvester12" harvester in Onezone page
     And user of browser1 sends invitation token from "harvester12" harvester to user of browser2

@@ -51,12 +51,13 @@ def paste_space_invitation_token_to_input_on_join_to_space_page(selenium,
 
 
 @wt(parsers.parse('user of {browser_id} clicks Join the space button '
-                  'on Join {where} to a space page'))
+                  'on Join {what} to a space page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_join_the_space_button_on_join_to_space_page(selenium, browser_id,
-                                                      oz_page, where):
+                                                      oz_page, what):
+    # argument 'what' receives one of the following values: 'user', 'group'
     driver = selenium[browser_id]
-    where = 'data' if where == 'user' else 'groups'
+    where = 'data' if what == 'user' else 'groups'
     oz_page(driver)[where].input_box.confirm()
 
 

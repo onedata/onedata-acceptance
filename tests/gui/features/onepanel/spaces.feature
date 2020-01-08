@@ -22,7 +22,7 @@ Feature: Basic spaces management utilities using onepanel
     # support space
     And user of browser1 clicks on Clusters in the main menu
     And user of browser1 clicks on "oneprovider-1" in clusters menu
-    And user of browser is idle for 1 seconds
+    And user of browser is idle for 1 second
     And user of <client> clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of <client> clicks on Support space button in spaces page in Onepanel if there are some spaces already supported
     And user of <client> selects "posix" from storage selector in support space form in Onepanel
@@ -55,7 +55,7 @@ Feature: Basic spaces management utilities using onepanel
     # unsupport space
     And user of browser1 clicks on Clusters in the main menu
     And user of browser1 clicks on "oneprovider-1" in clusters menu
-    And user of browser is idle for 1 seconds
+    And user of browser is idle for 1 second
     And user of <client> clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of <client> expands toolbar for "<space>" space record in Spaces page in Onepanel
     And user of <client> clicks on Revoke space support option in space's toolbar in Onepanel

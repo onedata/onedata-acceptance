@@ -281,7 +281,7 @@ def is_success_rate_satisfied(successful_repeats, failed_repeats, rate):
 
 
 def flushed_print(msg):
-    print msg
+    print(msg)
     sys.stdout.flush()
 
 

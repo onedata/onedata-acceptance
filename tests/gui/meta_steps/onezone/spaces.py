@@ -295,8 +295,7 @@ def leave_space_in_onezone(selenium, browser_id, space_name, oz_page, popups):
         pass
 
 
-@given(parsers.parse('there is no "{space_name}" space in Onezone used '
-                     'by {user} user'))
+@given(parsers.parse('{user} user does not have access to any space'))
 def leave_users_space_in_onezone_using_rest(hosts, users, user):
     zone_hostname = hosts['onezone']['hostname']
 
