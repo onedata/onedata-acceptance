@@ -77,5 +77,6 @@ def confirm_join_the_space(selenium, browser_id, option, oz_page, where):
     if option == 'enter':
         press_enter_on_active_element(selenium, browser_id)
     else:
+        what = 'user' if where == 'data' else 'group'
         click_join_the_space_button_on_join_to_space_page(selenium, browser_id,
-                                                          oz_page, where)
+                                                          oz_page, what)
