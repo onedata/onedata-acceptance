@@ -18,6 +18,8 @@ from tests.gui.steps.onepanel.spaces import *
 from tests.gui.steps.onezone.multibrowser_spaces import *
 from tests.gui.steps.onezone.members import *
 from tests.gui.steps.common.miscellaneous import close_modal
+from tests import OZ_REST_PORT
+from tests.utils.rest_utils import http_get, get_zone_rest_path, http_delete
 
 
 @wt(parsers.parse('user of {user} creates "{space_list}" space in Onezone'))
@@ -180,6 +182,7 @@ def request_space_support_using_gui(selenium, user, oz_page, space_name,
 def join_space_in_oz_using_gui(selenium, user_list, oz_page, tmp_memory,
                                item_type):
     option = 'enter'
+    where = 'data'
 
     for user in parse_seq(user_list):
         click_join_some_space_using_space_invitation_token_button(selenium,
@@ -189,8 +192,9 @@ def join_space_in_oz_using_gui(selenium, user_list, oz_page, tmp_memory,
                                                                     user,
                                                                     tmp_memory,
                                                                     item_type,
-                                                                    oz_page)
-        confirm_join_the_space(selenium, user, option, oz_page)
+                                                                    oz_page,
+                                                                    where)
+        confirm_join_the_space(selenium, user, option, oz_page, where)
 
 
 def assert_spaces_have_appeared_in_oz_gui(selenium, user, oz_page, space_list):
@@ -283,9 +287,24 @@ def leave_space_in_onezone(selenium, browser_id, space_name, oz_page, popups):
     option = 'Data'
 
     click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
+    time.sleep(2)
     try:
         leave_spaces_in_oz_using_gui(selenium, browser_id, space_name,
                                      oz_page, popups)
     except RuntimeError:
         pass
+
+
+@given(parsers.parse('{user} user does not have access to any space'))
+def leave_users_space_in_onezone_using_rest(hosts, users, user):
+    zone_hostname = hosts['onezone']['hostname']
+
+    list_users_spaces = http_get(ip=zone_hostname, port=OZ_REST_PORT,
+                                 path=get_zone_rest_path('user', 'spaces'),
+                                 auth=(user, users[user].password)).json()
+
+    for space in list_users_spaces['spaces']:
+        http_delete(ip=zone_hostname, port=OZ_REST_PORT,
+                    path=get_zone_rest_path('user', 'spaces', space),
+                    auth=(user, users[user].password))
 

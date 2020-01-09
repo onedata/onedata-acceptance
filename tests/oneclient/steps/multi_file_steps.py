@@ -416,7 +416,7 @@ def set_xattr(user, file, name, value, client_node, users):
         value_bytes = None
         if isinstance(value, str):
             value_bytes = value
-        elif isinstance(value, unicode):
+        elif isinstance(value, str):
             value_bytes = value.encode('utf-8')
         else:
             value_bytes = str(value)
@@ -493,7 +493,7 @@ def check_string_xattr(user, file, name, value, client_node, users):
         value_utf = None
         if isinstance(value, str):
             value_utf = value
-        elif isinstance(value, unicode):
+        elif isinstance(value, str):
             value_utf = value.encode('utf-8')
         else:
             value_utf = str(value)

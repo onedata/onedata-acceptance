@@ -96,8 +96,8 @@ Feature: Basic management of spaces
   Scenario: User fails to join to space because of using invalid token
     When user of browser clicks on Data in the main menu
     And user of browser clicks Join some space using a space invitation token button
-    And user of browser writes "invalid token" into space token text field
-    And user of browser clicks Join the space button on Join to a space page
+    And user of browser writes "invalid token" into space token text field on data page
+    And user of browser clicks Join the space button on Join user to a space page
     Then user of browser sees that error popup has appeared
 
 

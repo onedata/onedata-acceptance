@@ -174,6 +174,8 @@ def revoke_all_space_supports(selenium, browser_id, onepanel, popups,
     click_on_option_in_the_sidebar(selenium, browser_id, sidebar, oz_page)
     click_on_record_in_clusters_menu(selenium, browser_id, oz_page, record,
                                      hosts)
+    # wait for load cluster
+    time.sleep(5)
     wt_click_on_subitem_for_item(selenium, browser_id, sidebar, sub_item,
                                  record, onepanel, hosts)
     # wait for load spaces list

@@ -28,4 +28,4 @@ def partial_write_to_file_using_cdmi(user, text, path, offset, provider, cdmi,
 def partial_read_from_file_using_cdmi(user, path, start, end, provider, cdmi,
                                       hosts, users):
     client = cdmi(hosts[provider]['ip'], users[user].token)
-    print client.read_from_file(path, read_range=(start, end))
+    print(client.read_from_file(path, read_range=(start, end)))

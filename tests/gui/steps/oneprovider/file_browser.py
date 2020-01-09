@@ -232,6 +232,7 @@ def select_files_from_file_list_using_shift(browser_id, item_list, tmp_memory):
     with browser.select_files() as selector:
         selector.shift_down()
         _select_files(browser, selector, item_list)
+    with browser.select_files() as selector:
         selector.shift_up()
 
 
@@ -246,7 +247,8 @@ def select_files_from_file_list_using_ctrl(browser_id, item_list,
     with browser.select_files() as selector:
         selector.ctrl_or_cmd_down()
         _select_files(browser, selector, item_list)
-        selector.ctrl_or_cmd_down()
+    with browser.select_files() as selector:
+        selector.ctrl_or_cmd_up()
 
 
 @when(parsers.parse('user of {browser_id} deselects {item_list} '
@@ -259,7 +261,7 @@ def deselect_items_from_file_browser(browser_id, item_list, tmp_memory):
     with browser.select_files() as selector:
         selector.ctrl_or_cmd_down()
         _deselect_files(browser, selector, item_list)
-        selector.ctrl_or_cmd_down()
+        selector.ctrl_or_cmd_up()
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
