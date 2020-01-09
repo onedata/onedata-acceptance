@@ -23,9 +23,7 @@ class HTTPErrorMeta(type):
         return new_cls
 
 
-class HTTPError(IOError):
-    __metaclass__ = HTTPErrorMeta
-
+class HTTPError(IOError, metaclass=HTTPErrorMeta):
     def __init__(self, response):
         self.response = response
 

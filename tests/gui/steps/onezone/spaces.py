@@ -244,7 +244,7 @@ def click_option_on_welcome_page(selenium, browser_id, option, oz_page):
 
 
 @wt(parsers.parse('user of {browser_id} writes "{token}" '
-                  'into space token text field'))
+                  'into space token text field on data page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def type_token_to_input_on_join_to_a_space_page(selenium, browser_id,
                                                 token, oz_page):
