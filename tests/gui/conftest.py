@@ -519,6 +519,6 @@ def pytest_collection_modifyitems(items):
 def pytest_bdd_before_step_call(request, step_func_args):
     for arg in step_func_args:
         v = request.getfixturevalue(arg)
-        if isinstance(v, basestring) and v and v[0] == '<' and v[-1] == '>':
+        if isinstance(v, str) and v and v[0] == '<' and v[-1] == '>':
             with suppress(FixtureLookupError):
                 step_func_args[arg] = request.getfixturevalue(v[1:-1]).lower()

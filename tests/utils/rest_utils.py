@@ -9,14 +9,14 @@ __license__ = "This software is released under the MIT license cited in " \
 from itertools import chain
 
 import requests
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
+import urllib3
 
 from tests import (OZ_REST_PATH_PREFIX, PANEL_REST_PATH_PREFIX, DEFAULT_HEADERS,
                    PROVIDER_REST_PATH_PREFIX, LUMA_REST_PATH_PREFIX,
                    TOKEN_DISPENSER_PATH_PREFIX)
 from .http_exceptions import raise_http_exception
 
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 def get_zone_rest_path(*args):

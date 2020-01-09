@@ -27,8 +27,8 @@ Feature: Multi Browser basic management of spaces
     And user of browser1 sends invitation token to "browser2"
     And user of browser1 closes "Invite using token" modal
     And user of browser2 clicks Join some space using a space invitation token button
-    And user of browser2 pastes Space invitation token into space token text field
-    And user of browser2 confirms join the space using <confirmation_method>
+    And user of browser2 pastes Space invitation token into space token text field on data page
+    And user of browser2 confirms join the space using <confirmation_method> on data page
     Then user of browser2 sees that "space1" has appeared on the spaces list in the sidebar
 
     Examples:
@@ -45,6 +45,6 @@ Feature: Multi Browser basic management of spaces
     And user of browser1 sends invitation token to "browser2"
     And user of browser1 closes "Invite using token" modal
     And user of browser2 clicks join an existing space on Welcome page
-    And user of browser2 pastes Space invitation token into space token text field
-    And user of browser2 clicks Join the space button on Join to a space page
+    And user of browser2 pastes Space invitation token into space token text field on data page
+    And user of browser2 clicks Join the space button on Join user to a space page
     Then user of browser2 sees that "space1" has appeared on the spaces list in the sidebar

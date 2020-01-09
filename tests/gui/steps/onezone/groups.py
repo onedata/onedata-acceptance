@@ -45,7 +45,7 @@ def join_space(selenium, browser_id, group, oz_page, tmp_memory, popups):
 @wt(parsers.parse('user of {browser_id} writes "{text}" '
                   'into group name text field'))
 @wt(parsers.parse('user of {browser_id} writes "{text}" '
-                  'into space token text field'))
+                  'into space token text field on groups page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def input_name_or_token_into_input_box_on_main_groups_page(selenium, browser_id,
                                                            text, oz_page):
@@ -60,7 +60,7 @@ def confirm_name_or_token_input_on_main_groups_page(selenium, browser_id,
 
 
 def _find_groups(page, group_name):
-    return filter(lambda g: g.name == group_name, page.elements_list)
+    return list(filter(lambda g: g.name == group_name, page.elements_list))
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) joins group using received token '

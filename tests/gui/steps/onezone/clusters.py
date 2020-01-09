@@ -11,7 +11,7 @@ from pytest_bdd import parsers
 
 from tests.utils.utils import repeat_failed
 from tests.utils.acceptance_utils import wt
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.utils.generic import transform
 from tests.gui.steps.common.miscellaneous import _enter_text
 
@@ -33,7 +33,7 @@ def copy_registration_cluster_token(selenium, browser_id, oz_page):
 
 
 @wt(parsers.parse('user of {browser_id} clicks on "{record}" in clusters menu'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def click_on_record_in_clusters_menu(selenium, browser_id, oz_page, record,
                                      hosts):
     driver = selenium[browser_id]

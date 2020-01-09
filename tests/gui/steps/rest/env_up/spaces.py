@@ -275,7 +275,7 @@ def _init_storage(owner_credentials, space_name, hosts, storage_conf):
     # if we make call to fast after deleting users from previous test
     # provider cache was not refreshed and call will create dir for
     # now nonexistent user, to avoid this wait some time
-    import time;
+    import time
     time.sleep(2)
 
     defaults = storage_conf['defaults']
@@ -284,7 +284,7 @@ def _init_storage(owner_credentials, space_name, hosts, storage_conf):
     def create_cdmi_object(path, data=None, repeats=10, auth=None,
                            headers={'X-Auth-Token': owner_credentials.token}):
         response = None
-        for _ in xrange(repeats):
+        for _ in range(repeats):
             try:
                 response = http_put(ip=provider_hostname, port=OP_REST_PORT,
                                     path='/cdmi/' + path, headers=headers, 

@@ -288,7 +288,7 @@ if {shed_privileges}:
     os.setregid({gid}, {gid})
     os.setreuid({uid}, {uid})
         
-command = ['python'] + ['-m'] + ['py.test'] + ['--test-type={test_type}'] + ['{test_dir}'] + {args} + {env_file} + {local_charts_path} + {no_clean} + {pull_only_missing_images} + {timeout} + {images_opt} + ['--junitxml={report_path}'] + ['--add-test-domain']
+command = ['python3'] + ['-m'] + ['pytest'] + ['--test-type={test_type}'] + ['{test_dir}'] + {args} + {env_file} + {local_charts_path} + {no_clean} + {pull_only_missing_images} + {timeout} + {images_opt} + ['--junitxml={report_path}'] + ['--add-test-domain']
 
 ret = subprocess.call(command)
 sys.exit(ret)
@@ -309,7 +309,7 @@ sys.exit(ret)
 
     if args.local:
         # TODO: change this after python3 will be used in tests
-        cmd = ['python2.7', '-m', 'py.test',
+        cmd = ['python3', '-m', 'pytest',
                '--test-type={}'.format(args.test_type),
                args.test_dir, '--junitxml={}'.format(args.report_path),
                '--local'] + pass_args

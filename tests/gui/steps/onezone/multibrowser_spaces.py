@@ -38,25 +38,27 @@ def click_join_some_space_using_space_invitation_token_button(selenium,
 
 
 @wt(parsers.parse('user of {browser_id} pastes Space invitation {item_type} '
-                  'into space token text field'))
+                  'into space token text field on {where} page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def paste_space_invitation_token_to_input_on_join_to_space_page(selenium,
                                                                 browser_id,
                                                                 tmp_memory,
                                                                 item_type,
-                                                                oz_page):
+                                                                oz_page, where):
     driver = selenium[browser_id]
     token = tmp_memory[browser_id]['mailbox'][item_type]
-    oz_page(driver)['data'].input_box.value = token
+    oz_page(driver)[where].input_box.value = token
 
 
 @wt(parsers.parse('user of {browser_id} clicks Join the space button '
-                  'on Join to a space page'))
+                  'on Join {what} to a space page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_join_the_space_button_on_join_to_space_page(selenium, browser_id,
-                                                      oz_page):
+                                                      oz_page, what):
+    # argument 'what' receives one of the following values: 'user', 'group'
     driver = selenium[browser_id]
-    oz_page(driver)['data'].input_box.confirm()
+    where = 'data' if what == 'user' else 'groups'
+    oz_page(driver)[where].input_box.confirm()
 
 
 @wt(parsers.parse('user of {browser_id} clicks "{group_name}" '
@@ -69,11 +71,12 @@ def click_group_on_groups_on_left_sidebar_menu(selenium, browser_id,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) confirms join the space '
-               'using (?P<option>.*)'))
+               'using (?P<option>.*) on (?P<where>.*) page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_join_the_space(selenium, browser_id, option, oz_page):
+def confirm_join_the_space(selenium, browser_id, option, oz_page, where):
     if option == 'enter':
         press_enter_on_active_element(selenium, browser_id)
     else:
+        what = 'user' if where == 'data' else 'group'
         click_join_the_space_button_on_join_to_space_page(selenium, browser_id,
-                                                          oz_page)
+                                                          oz_page, what)

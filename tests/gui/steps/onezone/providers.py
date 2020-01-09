@@ -7,8 +7,7 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-
-from itertools import izip_longest
+from itertools import zip_longest
 
 from pytest_bdd import parsers, given
 
@@ -109,8 +108,8 @@ def g_click_on_btn_in_provider_popup(selenium, browser_id_list, btn,
                                      provider_list, oz_page, hosts):
     browser_ids = parse_seq(browser_id_list)
     providers = parse_seq(provider_list)
-    for browser_id, provider in izip_longest(browser_ids, providers,
-                                             fillvalue=providers[-1]):
+    for browser_id, provider in zip_longest(browser_ids, providers,
+                                            fillvalue=providers[-1]):
         _click_on_btn_in_provider_popup(selenium[browser_id], btn,
                                         provider, oz_page, hosts)
 
@@ -286,8 +285,8 @@ def g_click_on_provider_in_go_to_your_files_oz_panel(selenium, browser_id_list,
                                                      hosts):
     browser_ids = parse_seq(browser_id_list)
     providers = parse_seq(providers)
-    for browser_id, provider in izip_longest(browser_ids, providers,
-                                             fillvalue=providers[-1]):
+    for browser_id, provider in zip_longest(browser_ids, providers,
+                                            fillvalue=providers[-1]):
         provider_name = hosts[provider]['name']
         (oz_page(selenium[browser_id])['go to your files']
          .providers[provider_name]

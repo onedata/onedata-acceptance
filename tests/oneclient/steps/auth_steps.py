@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 from pytest_bdd import given, parsers
 
-import multi_auth_steps
+from . import multi_auth_steps
 from tests.utils.client_utils import mount_users
 from tests.utils.acceptance_utils import wt, make_arg_list
 
