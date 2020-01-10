@@ -6,6 +6,7 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+from .create_dir import CreateDir
 from .data_distribution import DataDistributionModal
 from .add_storage import AddStorage
 from tests.gui.utils.core.web_elements import WebItem
@@ -13,8 +14,11 @@ from tests.gui.utils.common.modals.create_group import CreateGroup
 from tests.gui.utils.common.common import DropdownSelector
 
 from .data_distribution import DataDistributionModal
+from .data_row_menu import DataRowMenu
+from .delete_modal import DeleteModal
 from .login import LoginFormModal
 from .deploying_cluster import ClusterDeploymentModal
+from .rename_modal import RenameModal
 from .revoke_space_support import RevokeSpaceSupportModal
 from .edit_permissions import EditPermissionsModal
 from .configure_web_cert import ConfigureWebCertModal
@@ -75,6 +79,7 @@ class Modals(object):
     relation_menu = WebItem('.line-actions.one-webui-popover',
                             cls=GroupHierarchyMenu)
     create_group = WebItem('.modal-dialog', cls=CreateGroup)
+    create_dir = WebItem('.modal-dialog', cls=CreateDir)
     membership_relation_menu = WebItem('.relation-actions.one-webui-popover',
                                        cls=MembershipRelationMenu)
     emergency_interface = WebItem('.modal-dialog', cls=EmergencyInterface)
@@ -82,6 +87,9 @@ class Modals(object):
     add_one_of_spaces = WebItem('.modal-dialog', cls=AddOneOfElementsModal)
     remove_space_from_harvester = WebItem('.modal-dialog', cls=RemoveModal)
     dropdown = DropdownSelector('.ember-basic-dropdown-content')
+    data_row_menu = WebItem('.file-actions.dropdown-menu', cls=DataRowMenu)
+    delete_modal = WebItem('.modal-dialog', cls=DeleteModal)
+    rename_modal = WebItem('.modal-dialog', cls=RenameModal)
 
     def __init__(self, driver):
         self.driver = driver

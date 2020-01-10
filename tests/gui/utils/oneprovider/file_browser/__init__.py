@@ -15,18 +15,27 @@ from selenium.webdriver.common.keys import Keys
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (WebElement, WebElementsSequence,
-                                               Label, WebItemsSequence, WebItem)
-from tests.gui.utils.generic import iter_ahead
-from .file_row import FileRow
+                                               Label, WebItemsSequence, WebItem,
+                                               Button)
+from tests.gui.utils.generic import iter_ahead, rm_css_cls
+from .data_row import DataRow
 from .metadata_row import MetadataRow
+from ..breadcrumbs import Breadcrumbs
 
 
 class _FileBrowser(PageObject):
-    empty_dir_msg = Label('.empty-model-container')
-    files = WebItemsSequence('tbody tr.file-row', cls=FileRow)
+    breadcrumbs = Breadcrumbs('.fb-breadcrumbs')
+    new_directory = Button('.toolbar-buttons .file-action-newDirectory')
+    upload_file = Button('.toolbar-buttons .browser-upload')
+
+    data = WebItemsSequence('.data-row.fb-table-row', cls=DataRow)
+
+    empty_dir_msg = Label('.empty-dir-text')
     _empty_dir_icon = WebElement('.empty-dir-image')
     _files_with_metadata = WebElementsSequence('tbody tr.first-level')
     _bottom = WebElement('.file-row-load-more')
+
+    _upload_input = WebElement('.fb-upload-trigger input')
 
     def __str__(self):
         return 'file browser in {}'.format(self.parent)
@@ -43,7 +52,7 @@ class _FileBrowser(PageObject):
         for item1, item2 in iter_ahead(self._files_with_metadata):
             if 'file-row' in item1.get_attribute('class'):
                 if 'file-row' not in item2.get_attribute('class'):
-                    if FileRow(self.driver, item1, self).name == name:
+                    if DataRow(self.driver, item1, self).name == name:
                         return MetadataRow(self.driver, item2, self)
         else:
             raise RuntimeError('no metadata row for "{name}" in {item} '
@@ -71,6 +80,14 @@ class _FileBrowser(PageObject):
         yield action
 
         action.perform()
+
+    def upload_files(self, files):
+        """This interaction is very hacky, because uploading files with Selenium
+        needs to use input element, but we do not use it directly in frontend.
+        So we unhide an input element for a while and pass a local file path to it.
+        """
+        with rm_css_cls(self.driver, self._upload_input, 'hidden') as elem:
+            elem.send_keys(files)
 
 
 FileBrowser = partial(WebItem, cls=_FileBrowser)

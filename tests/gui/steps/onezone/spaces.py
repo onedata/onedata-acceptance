@@ -209,16 +209,16 @@ def assert_size_of_space_on_left_sidebar_menu(selenium, browser_id, number,
                              .format(space_name, number))
 
 
-@wt(parsers.re(
-    'user of (?P<browser_id>.*?) clicks (?P<option>Members|Overview|Providers) '
-    'of "(?P<space_name>.*?)" in the sidebar'))
+@wt(parsers.re('user of (?P<browser_id>.*?) clicks '
+               '(?P<option>Overview|Data|Transfers|Providers|Members) '
+               'of "(?P<space_name>.*?)" in the sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
                                                   space_name, option, oz_page):
     driver = selenium[browser_id]
-    oz_page(driver)['data'].elements_list[space_name].click()
-    getattr(oz_page(driver)['data'].elements_list[space_name],
-            transform(option)).click()
+    space_sidebar = oz_page(driver)['data'].elements_list[space_name]
+    space_sidebar.click()
+    getattr(space_sidebar, transform(option)).click()
 
 
 @wt(parsers.parse('user of {browser_id} clicks Get started in data sidebar'))

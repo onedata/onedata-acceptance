@@ -7,7 +7,6 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 import re
-import itertools
 
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 from selenium.webdriver.support.expected_conditions import staleness_of
@@ -70,7 +69,7 @@ def assert_non_empty_token_in_add_storage_modal(browser_id, tmp_memory):
 
 def _find_modal(driver, modal_name):
     def _find():
-        elements_list = ['group', 'token', 'cluster', 'harvester']
+        elements_list = ['group', 'token', 'cluster', 'harvester', 'rename']
         if any([name for name in elements_list
                 if name in modal_name]):
             modals = driver.find_elements_by_css_selector('.modal, '
@@ -246,7 +245,7 @@ def assert_modal_option_is_not_selected(browser_id, text, tmp_memory):
     options = modal.find_elements_by_css_selector('.one-option-button',
                                                   '.one-option-button .oneicon')
     err_msg = 'option "{}" is selected while it should not be'.format(text)
-    for option, checkbox in itertools.izip(options[::2], options[1::2]):
+    for option, checkbox in zip(options[::2], options[1::2]):
         if option.text == text:
             checkbox_css = checkbox.get_attribute('class')
             assert '.oneicon-checkbox-empty' in checkbox_css, err_msg
@@ -261,7 +260,7 @@ def assert_modal_option_is_not_selected(browser_id, text, tmp_memory):
     options = modal.find_elements_by_css_selector('.one-option-button, '
                                                   '.one-option-button .oneicon')
     err_msg = 'option "{}" is selected while it should not be'.format(text)
-    for option, checkbox in itertools.izip(options[::2], options[1::2]):
+    for option, checkbox in zip(options[::2], options[1::2]):
         if option.text == text:
             checkbox_css = checkbox.get_attribute('class')
             assert 'oneicon-checkbox-empty' in checkbox_css, err_msg
@@ -291,7 +290,7 @@ def select_option_with_text_in_modal(browser_id, text, tmp_memory):
     modal = tmp_memory[browser_id]['window']['modal']
     options = modal.find_elements_by_css_selector('.one-option-button, '
                                                   '.one-option-button .oneicon')
-    for option, checkbox in itertools.izip(options[::2], options[1::2]):
+    for option, checkbox in zip(options[::2], options[1::2]):
         if option.text == text:
             checkbox_css = checkbox.get_attribute('class')
             if 'oneicon-checkbox-empty' in checkbox_css:
@@ -332,3 +331,10 @@ def click_modal_button(selenium, browser_id, button, modal, modals):
     modal = modal.lower().replace(' ', '_')
     getattr(getattr(modals(selenium[browser_id]), modal), button)()
 
+
+@wt(parsers.parse('user of {browser_id} writes "{item_name}" '
+                  'into name directory text field in modal "Rename modal"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def write_name_into_text_field_in_modal(selenium, browser_id, item_name,
+                                        modals):
+    modals(selenium[browser_id]).rename_modal.input_rename = item_name

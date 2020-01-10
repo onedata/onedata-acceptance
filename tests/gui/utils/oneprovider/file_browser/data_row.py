@@ -11,18 +11,21 @@ __license__ = "This software is released under the MIT license cited in " \
 from selenium.webdriver import ActionChains
 
 from tests.gui.utils.core.base import PageObject
-from tests.gui.utils.core.web_elements import Label, WebElement
+from tests.gui.utils.core.web_elements import Label, WebElement, Button
 from tests.gui.utils.generic import click_on_web_elem
 
 
-class FileRow(PageObject):
-    name = id = Label('.file-label', parent_name='given file row')
-    size = Label('.file-list-col-size')
-    modification_date = Label('.file-list-col-modification')
+class DataRow(PageObject):
+    name = id = Label('.file-name-inner', parent_name='given data row')
+    size = Label('.fb-table-col-size .file-item-text')
+    modification_date = Label('.fb-table-col-modification .file-item-text')
 
-    _icon = WebElement('.file-icon .one-icon')
-    _metadata_tool = WebElement('.file-tool-metadata')
-    _share_tool = WebElement('.file-tool-share')
+    _icon = WebElement('.file-icon.one-icon')
+    menu_button = Button('.fb-table-col-actions-menu .menu-toggle')
+
+    # TODO: change test because of a new gui
+    # _metadata_tool = WebElement('.file-tool-metadata')
+    # _share_tool = WebElement('.file-tool-share')
 
     def __str__(self):
         return '{item} in {parent}'.format(item=self.name,
@@ -32,10 +35,10 @@ class FileRow(PageObject):
         return 'active' in self.web_elem.get_attribute('class')
 
     def is_file(self):
-        return 'file' in self._icon.get_attribute('class')
+        return 'browser-file' in self._icon.get_attribute('class')
 
     def is_directory(self):
-        return 'folder' in self._icon.get_attribute('class')
+        return 'browser-directory' in self._icon.get_attribute('class')
 
     def is_shared(self):
         return 'share' in self._icon.get_attribute('class')
@@ -52,4 +55,4 @@ class FileRow(PageObject):
                                   '{}'.format(name, self))
 
     def double_click(self):
-        ActionChains(self.driver).double_click(self.web_elem).perform()
+        ActionChains(self.driver).click(self.web_elem).click(self.web_elem).perform()
