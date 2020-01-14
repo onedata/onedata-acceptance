@@ -6,11 +6,10 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 
-from pytest_bdd import given, parsers, then
-
 from tests.utils.utils import assert_
 from tests.utils.client_utils import mount_users, ls
 from tests.utils.acceptance_utils import list_parser
+from tests.utils.bdd_utils import given, then, parsers
 
 
 @given(parsers.re('oneclients (?P<client_instances>.*)\n'

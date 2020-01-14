@@ -6,10 +6,8 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 
-from pytest_bdd import parsers, when
-
 from . import multi_dir_steps
-from tests.utils.acceptance_utils import wt
+from tests.utils.bdd_utils import when, wt, parsers
 
 
 @when(parsers.re('(?P<user>\w+) creates directories (?P<dirs>.*)'))
