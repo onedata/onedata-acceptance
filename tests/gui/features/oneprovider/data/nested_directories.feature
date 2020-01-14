@@ -49,21 +49,10 @@ Feature: Basic data tab operations on nested directory structure in file browser
 
 
 # TODO: change test because of a new gui
-#  Scenario: User changes directory using sidebar directory tree view (with unfolding of folded directories)
-#    When user of browser uses spaces select to change data space to "space1"
-#    And user of browser sees file browser in data tab in Oneprovider page
-#
-#    And user of browser sees that current working directory displayed in directory tree is /
-#    And user of browser does not see /dir2/dir4/ in directory tree
-#    And user of browser changes current working directory to /dir2/dir4/ using directory tree
-#    Then user of browser sees that current working directory displayed in directory tree is /dir2/dir4/
-#    And user of browser sees item(s) named ["file4", "file5", "file6", "file7", "file8"] in file browser in given order
-#
-#
 #  Scenario: User sees that with several directories selected only ["Create directory", "Create file", "Upload file", "Change element permissions", "Remove element"] buttons from toolbar are enabled
 #    When user of browser uses spaces select to change data space to "space1"
 #    And user of browser sees file browser in data tab in Oneprovider page
-#    And user of browser selects ["dir1", "dir2"] item(s) from file browser with pressed ctrl
+#    And user of browser selects ["dir1", "dir2"] items from file browser with pressed ctrl
 #    Then user of browser sees that ["Create directory", "Create file", "Upload file", "Change element permissions", "Remove element"] buttons are enabled in toolbar in data tab in Oneprovider gui
 #    And user of browser sees that ["Share element", "Edit metadata", "Rename element", "Copy element", "Cut element", "Show data distribution"] buttons are disabled in toolbar in data tab in Oneprovider gui
 #
@@ -71,7 +60,7 @@ Feature: Basic data tab operations on nested directory structure in file browser
 #  Scenario: User sees that with directory and file selected only ["Create directory", "Create file", "Upload file", "Remove element"] buttons from toolbar are enabled
 #    When user of browser uses spaces select to change data space to "space1"
 #    And user of browser sees file browser in data tab in Oneprovider page
-#    And user of browser selects ["dir1", "file1"] item(s) from file browser with pressed ctrl
+#    And user of browser selects ["dir1", "file1"] items from file browser with pressed ctrl
 #    Then user of browser sees that ["Create directory", "Create file", "Upload file", "Remove element"] buttons are enabled in toolbar in data tab in Oneprovider gui
 #    And user of browser sees that ["Share element", "Edit metadata", "Rename element", "Change element permissions", "Copy element", "Cut element", "Show data distribution"] buttons are disabled in toolbar in data tab in Oneprovider gui
 
@@ -95,7 +84,7 @@ Feature: Basic data tab operations on nested directory structure in file browser
     And user of browser sees file browser in data tab in Oneprovider page
 
     And user of browser double clicks on item named "dir1" in file browser
-    Then user of browser sees item(s) named ["file2", "file3"] in file browser in given order
+    Then user of browser sees items named ["file2", "file3"] in file browser in given order
 
 
 # TODO: change test because of a new gui
@@ -114,4 +103,4 @@ Feature: Basic data tab operations on nested directory structure in file browser
 #    And user of browser opens copied URL in browser's location bar
 #    Then user of browser sees that current working directory displayed in directory tree is /dir2/dir4/
 #    And user of browser sees file browser in data tab in Oneprovider page
-#    And user of browser sees item(s) named ["file4", "file5", "file6", "file7", "file8"] in file browser in given order
+#    And user of browser sees items named ["file4", "file5", "file6", "file7", "file8"] in file browser in given order

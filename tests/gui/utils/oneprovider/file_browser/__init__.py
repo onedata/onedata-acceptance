@@ -25,8 +25,9 @@ from ..breadcrumbs import Breadcrumbs
 
 class _FileBrowser(PageObject):
     breadcrumbs = Breadcrumbs('.fb-breadcrumbs')
-    new_directory = Button('.toolbar-buttons .file-action-newDirectory')
-    upload_file = Button('.toolbar-buttons .browser-upload')
+    new_directory_button = Button('.toolbar-buttons .file-action-newDirectory')
+    upload_files_button = Button('.toolbar-buttons .browser-upload')
+    selection_menu_button = Button('.fb-selection-toolkit .oneicon-arrow-down')
 
     data = WebItemsSequence('.data-row.fb-table-row', cls=DataRow)
 

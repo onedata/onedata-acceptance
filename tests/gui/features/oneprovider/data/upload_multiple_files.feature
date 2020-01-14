@@ -106,11 +106,11 @@ Feature: Uploading multiple files at once
 
     And user of browser uses upload button in toolbar to upload files from local directory "dir1" to remote current dir
     And user of browser waits for file upload to finish
-    And user of browser sees item(s) named ["file0.txt", "file20", "file10"] in file browser in given order
-    And user of browser sees item(s) named ["file1.txt", "file20", "file10"] in file browser in given order
-    And user of browser sees item(s) named ["file2.txt", "file20", "file10"] in file browser in given order
-    And user of browser sees item(s) named ["file3.txt", "file20", "file10"] in file browser in given order
-    And user of browser sees item(s) named ["file4.txt", "file20", "file10"] in file browser in given order
+    And user of browser sees items named ["file0.txt", "file20", "file10"] in file browser in given order
+    And user of browser sees items named ["file1.txt", "file20", "file10"] in file browser in given order
+    And user of browser sees items named ["file2.txt", "file20", "file10"] in file browser in given order
+    And user of browser sees items named ["file3.txt", "file20", "file10"] in file browser in given order
+    And user of browser sees items named ["file4.txt", "file20", "file10"] in file browser in given order
     And user of browser refreshes site
     And user of browser sees nonempty file browser in data tab in Oneprovider page
-    Then user of browser sees item(s) named ["file0.txt", "file1.txt", "file10", "file2.txt", "file20", "file3.txt", "file4.txt"] in file browser in given order
+    Then user of browser sees items named ["file0.txt", "file1.txt", "file10", "file2.txt", "file20", "file3.txt", "file4.txt"] in file browser in given order

@@ -195,7 +195,7 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser clicks on the "data" tab in main menu sidebar
     And user of browser uses spaces select to change data space to "space1"
     And user of browser sees file browser in data tab in Oneprovider page
-    And user of browser selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser selects "dir1" item from file browser with pressed ctrl
     And user of browser clicks the button from top menu bar with tooltip "Remove element"
     And user of browser sees that "Remove files" modal has appeared
     And user of browser clicks "Yes" confirmation button in displayed modal
@@ -342,7 +342,7 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser sees file browser in shared tab in Oneprovider page
     And user of browser double clicks on item named "dir2" in file browser
     And user of browser sees that current working directory path visible in share's file browser is as follows: share1/dir2
-    And user of browser sees item(s) named ["dir3", "file1", "file2"] in file browser in given order
+    And user of browser sees items named ["dir3", "file1", "file2"] in file browser in given order
 
     # return to data tab
     And user of browser clicks on the "data" tab in main menu sidebar
@@ -351,7 +351,7 @@ Feature: Basic share management in Oneprovider GUI
 
     # remove dir2/file1
     And user of browser double clicks on item named "dir2" in file browser
-    And user of browser selects "file1" item(s) from file browser with pressed ctrl
+    And user of browser selects "file1" item from file browser with pressed ctrl
     And user of browser clicks the button from top menu bar with tooltip "Remove element"
     And user of browser sees that "Remove files" modal has appeared
     And user of browser clicks "Yes" confirmation button in displayed modal
@@ -497,7 +497,7 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser clicks on the "data" tab in main menu sidebar
     And user of browser changes current working directory to space1 using breadcrumbs
     And user of browser sees file browser in data tab in Oneprovider page
-    And user of browser selects "dir2" item(s) from file browser with pressed ctrl
+    And user of browser selects "dir2" item from file browser with pressed ctrl
     And user of browser clicks the button from top menu bar with tooltip "Remove element"
     And user of browser sees that "Remove files" modal has appeared
     And user of browser clicks "Yes" confirmation button in displayed modal

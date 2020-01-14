@@ -70,11 +70,3 @@ Feature: Basic data tab operations on single directory in file browser
     | enter               |
     | button              |
 
-
-# TODO: change test because of a new gui
-#  Scenario: User sees that with only one directory selected only ["Create directory", "Create file", "Share element", "Edit metadata", "Upload file", "Rename element", "Change element permissions", "Remove element"] buttons from toolbar are enabled
-#    When user of browser uses spaces select to change data space to "space1"
-#    And user of browser sees file browser in data tab in Oneprovider page
-#    And user of browser selects "dir1" item(s) from file browser with pressed ctrl
-#    Then user of browser sees that ["Create directory", "Create file", "Share element", "Edit metadata", "Upload file", "Rename element", "Change element permissions", "Remove element", "Show data distribution"] buttons are enabled in toolbar in data tab in Oneprovider gui
-#    And user of browser sees that ["Copy element", "Cut element"] buttons are disabled in toolbar in data tab in Oneprovider gui

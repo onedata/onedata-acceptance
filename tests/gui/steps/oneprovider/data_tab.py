@@ -9,6 +9,7 @@ __license__ = ("This software is released under the MIT license cited in "
 
 import pytest
 from pytest_bdd import given, when, then, parsers
+from selenium.common.exceptions import NoSuchElementException
 
 from tests.utils.acceptance_utils import wt
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
@@ -50,13 +51,33 @@ def assert_if_list_contains_space_in_data_tab_in_op(selenium, browser_id,
             .format(space_name)
 
 
+@when(parsers.re(r'user of (?P<browser_id>.*?) clicks the button '
+                 r'from top menu bar with tooltip '
+                 r'"(?P<tooltip>Create directory|Create file|Share element|'
+                 r'Edit metadata|Rename element|Change element permissions|'
+                 r'Copy element|Cut element|Remove element|'
+                 r'Show data distribution)"'))
+@then(parsers.re(r'user of (?P<browser_id>.*?) clicks the button '
+                 r'from top menu bar with tooltip '
+                 r'"(?P<tooltip>Create directory|Create file|Share element|'
+                 r'Edit metadata|Rename element|Change element permissions|'
+                 r'Copy element|Cut element|Remove element|'
+                 r'Show data distribution)"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_tooltip_from_toolbar_in_data_tab_in_op(selenium, browser_id,
+                                                 tooltip, op_page):
+    driver = selenium[browser_id]
+    getattr(op_page(driver).data.toolbar, transform(tooltip)).click()
+
+
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks '
-               '"(?P<button>New directory)" button '
+               '"(?P<button>New directory|Upload files)" button '
                'from file browser menu bar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_from_file_browser_menu_bar(selenium, browser_id,
                                             button, op_page):
     driver = selenium[browser_id]
+    button = transform(button) + '_button'
     getattr(op_page(driver).file_browser, transform(button)).click()
 
 
@@ -225,14 +246,27 @@ def assert_empty_file_browser_in_data_tab_in_op(selenium, browser_id,
 
 @wt(parsers.parse('user of {browser_id} sees file browser '
                   'in data tab in Oneprovider page'))
-@repeat_failed(timeout=WAIT_BACKEND)
 def assert_file_browser_in_data_tab_in_op(selenium, browser_id,
                                           op_page, tmp_memory):
     driver = selenium[browser_id]
-    iframe = driver.find_element_by_tag_name('iframe')
-    driver.switch_to.frame(iframe)
-    file_browser = op_page(driver).file_browser
-    tmp_memory[browser_id]['file_browser'] = file_browser
+    import time
+    timeout = WAIT_BACKEND
+    limit = time.time() + timeout
+    while time.time() < limit:
+        try:
+            iframe = driver.find_element_by_tag_name('iframe')
+            driver.switch_to.frame(iframe)
+            # wait for file browser to load
+            time.sleep(1)
+            file_browser = op_page(driver).file_browser
+            tmp_memory[browser_id]['file_browser'] = file_browser
+        except NoSuchElementException:
+            time.sleep(1)
+            continue
+        else:
+            break
+    else:
+        raise NoSuchElementException
 
 
 @when(parsers.parse('user of {browser_id} records displayed name length for '
@@ -415,3 +449,15 @@ def has_downloaded_file_content(browser_id, file_name, content, tmpdir):
                  'instead got {}'.format(content, file_name, file_content))
     else:
         raise RuntimeError('file {} has not been downloaded'.format(file_name))
+
+
+@wt(parsers.parse('user of {browser_id} chooses {option} option '
+                  'from selection menu on file browser page'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def choose_option_from_selection_menu(browser_id, selenium, option, modals,
+                                      tmp_memory):
+    driver = selenium[browser_id]
+    file_browser = tmp_memory[browser_id]['file_browser']
+    file_browser.selection_menu_button()
+    modals(driver).menu_modal.menu[option].click()
+

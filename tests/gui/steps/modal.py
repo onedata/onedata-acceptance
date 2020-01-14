@@ -333,8 +333,9 @@ def click_modal_button(selenium, browser_id, button, modal, modals):
 
 
 @wt(parsers.parse('user of {browser_id} writes "{item_name}" '
-                  'into name directory text field in modal "Rename modal"'))
+                  'into name directory text field in modal "{modal_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def write_name_into_text_field_in_modal(selenium, browser_id, item_name,
-                                        modals):
-    modals(selenium[browser_id]).rename_modal.input_rename = item_name
+                                        modal_name, modals):
+    modal = getattr(modals(selenium[browser_id]), transform(modal_name))
+    modal.input_name = item_name

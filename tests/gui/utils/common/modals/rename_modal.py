@@ -11,7 +11,7 @@ from .modal import Modal
 
 
 class RenameModal(Modal):
-    input_rename = Input('.form-control.new-item-name')
+    input_name = Input('.form-control.new-item-name')
     rename = NamedButton('button', text='Rename')
     cancel = NamedButton('button', text='Cancel')
 

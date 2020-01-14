@@ -100,8 +100,8 @@ def assert_items_presence_in_file_browser(browser_id, item_list, tmp_memory):
                                     .format(item_name))
 
 
-@wt(parsers.parse('user of {browser_id} sees item(s) named '
-                  '{item_list} in file browser in given order'))
+@wt(parsers.re('user of (?P<browser_id>.+?) sees items? named '
+               '(?P<item_list>.+?) in file browser in given order'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_presence_in_file_browser_with_order(browser_id, item_list,
                                                tmp_memory):
@@ -204,10 +204,8 @@ def click_on_item_in_file_browser(browser_id, item_name, tmp_memory):
     browser.data[item_name].click()
 
 
-@when(parsers.parse('user of {browser_id} selects {item_list} '
-                    'item(s) from file browser with pressed shift'))
-@then(parsers.parse('user of {browser_id} selects {item_list} '
-                    'item(s) from file browser with pressed shift'))
+@wt(parsers.re('user of (?P<browser_id>.+?) selects (?P<item_list>.+?) '
+               'items? from file browser with pressed shift'))
 def select_files_from_file_list_using_shift(browser_id, item_list, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
     with browser.select_files() as selector:
@@ -217,10 +215,8 @@ def select_files_from_file_list_using_shift(browser_id, item_list, tmp_memory):
         selector.shift_up()
 
 
-@when(parsers.parse('user of {browser_id} selects {item_list} '
-                    'item(s) from file browser with pressed ctrl'))
-@then(parsers.parse('user of {browser_id} selects {item_list} '
-                    'item(s) from file browser with pressed ctrl'))
+@wt(parsers.re('user of (?P<browser_id>.+?) selects (?P<item_list>.+?) '
+               'items? from file browser with pressed ctrl'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def select_files_from_file_list_using_ctrl(browser_id, item_list,
                                            tmp_memory):
@@ -248,7 +244,7 @@ def deselect_items_from_file_browser(browser_id, item_list, tmp_memory):
 @repeat_failed(timeout=WAIT_BACKEND)
 def _select_files(browser, selector, item_list):
     for item_name in parse_seq(item_list):
-        item = browser.files[item_name]
+        item = browser.data[item_name]
         if not item.is_selected():
             selector.select(item)
 
@@ -273,39 +269,31 @@ def deselect_all_items_from_file_browser(browser_id, tmp_memory):
         item.click()
 
 
-@when(parsers.parse('user of {browser_id} sees that {item_list} '
-                    'item is selected in file browser'))
-@then(parsers.parse('user of {browser_id} sees that {item_list} '
-                    'item is selected in file browser'))
-@when(parsers.parse('user of {browser_id} sees that {item_list} '
-                    'items are selected in file browser'))
-@then(parsers.parse('user of {browser_id} sees that {item_list} '
-                    'items are selected in file browser'))
+@wt(parsers.parse('user of {browser_id} sees that {item_list} '
+                  'item is selected in file browser'))
+@wt(parsers.parse('user of {browser_id} sees that {item_list} '
+                  'items are selected in file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_items_are_selected_in_file_browser(browser_id, item_list,
                                               tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
     err_msg = 'item "{name}" is not selected while it should be'
     for item_name in parse_seq(item_list):
-        item = browser.files[item_name]
+        item = browser.data[item_name]
         assert item.is_selected(), err_msg.format(name=item_name)
 
 
-@when(parsers.parse('user of {browser_id} sees that {item_list} '
-                    'item is not selected in file browser'))
-@then(parsers.parse('user of {browser_id} sees that {item_list} '
-                    'item is not selected in file browser'))
-@when(parsers.parse('user of {browser_id} sees that {item_list} '
-                    'items are not selected in file browser'))
-@then(parsers.parse('user of {browser_id} sees that {item_list} '
-                    'items are not selected in file browser'))
+@wt(parsers.parse('user of {browser_id} sees that {item_list} '
+                  'item is not selected in file browser'))
+@wt(parsers.parse('user of {browser_id} sees that {item_list} '
+                  'items are not selected in file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_items_are_not_selected_in_file_browser(browser_id, item_list,
                                                   tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
     err_msg = 'item "{name}" is selected while it should not be'
     for item_name in parse_seq(item_list):
-        item = browser.files[item_name]
+        item = browser.data[item_name]
         assert not item.is_selected(), err_msg.format(name=item_name)
 
 

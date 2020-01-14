@@ -59,7 +59,7 @@ Feature: Basic data tab operations on single file in file browser
     Then user of browser sees that item named "20B-0.txt" has disappeared from files browser
 
 
-  Scenario Outline: User renames file (presses ENTER after entering file name)
+  Scenario Outline: User renames file
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
@@ -82,21 +82,11 @@ Feature: Basic data tab operations on single file in file browser
     | button              |
 
 
-# TODO: change test because of a new gui
-#  Scenario: User sees that after uploading file with name of already existing file, the uploaded file appeared with suffix
-#    When user of browser uses spaces select to change data space to "space1"
-#    And user of browser sees that current working directory displayed in breadcrumbs is space1
-#    And user of browser sees file browser in data tab in Oneprovider page
-#
-#    And user of browser uses upload button in toolbar to upload file "20B-0.txt" to current dir
-#    And user of browser sees an info notify with text matching to: .*[Cc]ompleted upload.*1.*
-#    Then user of browser sees that item named "20B-0(1).txt" has appeared in file browser
-#
-#
-#  Scenario: User sees that with one file selected only ["Create directory", "Create file", "Edit metadata", "Upload file", "Rename element", "Change element permissions", "Remove element", "Show data distribution"] buttons from toolbar are enabled
-#    When user of browser uses spaces select to change data space to "space1"
-#    And user of browser sees that current working directory displayed in breadcrumbs is space1
-#    And user of browser sees file browser in data tab in Oneprovider page
-#    And user of browser selects "20B-0.txt" item(s) from file browser with pressed ctrl
-#    Then user of browser sees that ["Create directory", "Create file", "Edit metadata", "Upload file", "Rename element", "Change element permissions", "Remove element", "Show data distribution"] buttons are enabled in toolbar in data tab in Oneprovider gui
-#    And user of browser sees that ["Share element", "Copy element", "Cut element"] buttons are disabled in toolbar in data tab in Oneprovider gui
+  Scenario: User sees that after uploading file with name of already existing file, the uploaded file appeared with suffix
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Data of "space1" in the sidebar
+    And user of browser sees file browser in data tab in Oneprovider page
+
+    And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
+    Then user of browser sees that item named "20B-0(1).txt" has appeared in file browser
+

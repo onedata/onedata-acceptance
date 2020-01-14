@@ -32,7 +32,7 @@ class DataRow(PageObject):
                                            parent=str(self.parent))
 
     def is_selected(self):
-        return 'active' in self.web_elem.get_attribute('class')
+        return 'file-selected' in self.web_elem.get_attribute('class')
 
     def is_file(self):
         return 'browser-file' in self._icon.get_attribute('class')

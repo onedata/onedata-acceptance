@@ -47,7 +47,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
 	# User1 changes permission code
     When user of browser1 uses spaces select to change data space to "space1"
     And user of browser1 sees file browser in data tab in Oneprovider page
-    And user of browser1 selects "file1" item(s) from file browser with pressed ctrl
+    And user of browser1 selects "file1" item from file browser with pressed ctrl
     And user of browser1 clicks the button from top menu bar with tooltip "Change element permissions"
     And user of browser1 sees that "Edit permissions" modal has appeared
     And user of browser1 selects "POSIX" permission type in active modal
@@ -59,7 +59,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
 	# User2 checks permission code
     Then user of browser2 uses spaces select to change data space to "space1"
     And user of browser2 sees file browser in data tab in Oneprovider page
-    And user of browser2 selects "file1" item(s) from file browser with pressed ctrl
+    And user of browser2 selects "file1" item from file browser with pressed ctrl
     And user of browser2 clicks the button from top menu bar with tooltip "Change element permissions"
     And user of browser2 sees that "Edit permissions" modal has appeared
     And user of browser2 selects "POSIX" permission type in active modal
@@ -74,7 +74,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
 	# User1 changes permission code
     When user of browser1 uses spaces select to change data space to "space1"
     And user of browser1 sees file browser in data tab in Oneprovider page
-    And user of browser1 selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser1 selects "dir1" item from file browser with pressed ctrl
     And user of browser1 clicks the button from top menu bar with tooltip "Change element permissions"
     And user of browser1 sees that "Edit permissions" modal has appeared
     And user of browser1 selects "POSIX" permission type in active modal
@@ -86,7 +86,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
 	# User2 checks permission code
     Then user of browser2 uses spaces select to change data space to "space1"
     And user of browser2 sees file browser in data tab in Oneprovider page
-    And user of browser2 selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser2 selects "dir1" item from file browser with pressed ctrl
     And user of browser2 clicks the button from top menu bar with tooltip "Change element permissions"
     And user of browser2 sees that "Edit permissions" modal has appeared
     And user of browser2 selects "POSIX" permission type in active modal
@@ -113,7 +113,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     And user of browser1 uses spaces select to change data space to "space2"
     And user of browser1 sees file browser in data tab in Oneprovider page
     And user of browser1 changes current working directory to space2 using breadcrumbs
-    And user of browser1 selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser1 selects "dir1" item from file browser with pressed ctrl
     And user of browser1 clicks the button from top menu bar with tooltip "Change element permissions"
     And user of browser1 sees that "Edit permissions" modal has appeared
     And user of browser1 selects "POSIX" permission type in active modal
@@ -123,7 +123,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     And user of browser1 sees that the modal has disappeared
 
 	# User2 fails to remove dir
-    Then user of browser2 selects "dir2" item(s) from file browser with pressed ctrl
+    Then user of browser2 selects "dir2" item from file browser with pressed ctrl
     And user of browser2 clicks the button from top menu bar with tooltip "Remove element"
     And user of browser2 sees that "Remove files" modal has appeared
     And user of browser2 clicks "Yes" confirmation button in displayed modal
@@ -148,7 +148,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     And user of browser1 uses spaces select to change data space to "space2"
     And user of browser1 sees file browser in data tab in Oneprovider page
     And user of browser1 changes current working directory to space2 using breadcrumbs
-    And user of browser1 selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser1 selects "dir1" item from file browser with pressed ctrl
     And user of browser1 clicks the button from top menu bar with tooltip "Change element permissions"
     And user of browser1 sees that "Edit permissions" modal has appeared
     And user of browser1 selects "POSIX" permission type in active modal
@@ -158,7 +158,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     And user of browser1 sees that the modal has disappeared
 
 	# User2 fails to rename dir
-    Then user of browser2 selects "dir2" item(s) from file browser with pressed ctrl
+    Then user of browser2 selects "dir2" item from file browser with pressed ctrl
     And user of browser2 clicks the button from top menu bar with tooltip "Rename element"
     And user of browser2 sees that "Rename file or directory" modal has appeared
     And user of browser2 clicks on input box in active modal
@@ -186,7 +186,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     And user of browser1 uses spaces select to change data space to "space2"
     And user of browser1 sees file browser in data tab in Oneprovider page
     And user of browser1 changes current working directory to space2 using breadcrumbs
-    And user of browser1 selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser1 selects "dir1" item from file browser with pressed ctrl
     And user of browser1 clicks the button from top menu bar with tooltip "Change element permissions"
     And user of browser1 sees that "Edit permissions" modal has appeared
     And user of browser1 selects "POSIX" permission type in active modal
@@ -223,7 +223,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     And user of browser1 uses spaces select to change data space to "space2"
     And user of browser1 sees file browser in data tab in Oneprovider page
     And user of browser1 changes current working directory to space2 using breadcrumbs
-    And user of browser1 selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser1 selects "dir1" item from file browser with pressed ctrl
     And user of browser1 clicks the button from top menu bar with tooltip "Change element permissions"
     And user of browser1 sees that "Edit permissions" modal has appeared
     And user of browser1 selects "POSIX" permission type in active modal
@@ -233,7 +233,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     And user of browser1 sees that the modal has disappeared
 
 	# User2 fails to remove file
-    Then user of browser2 selects "file1" item(s) from file browser with pressed ctrl
+    Then user of browser2 selects "file1" item from file browser with pressed ctrl
     And user of browser2 clicks the button from top menu bar with tooltip "Remove element"
     And user of browser2 sees that "Remove files" modal has appeared
     And user of browser2 clicks "Yes" confirmation button in displayed modal
@@ -259,7 +259,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     And user of browser1 uses spaces select to change data space to "space2"
     And user of browser1 sees file browser in data tab in Oneprovider page
     And user of browser1 changes current working directory to space2 using breadcrumbs
-    And user of browser1 selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser1 selects "dir1" item from file browser with pressed ctrl
     And user of browser1 clicks the button from top menu bar with tooltip "Change element permissions"
     And user of browser1 sees that "Edit permissions" modal has appeared
     And user of browser1 selects "POSIX" permission type in active modal
@@ -269,7 +269,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     And user of browser1 sees that the modal has disappeared
 
 	# User2 fails to rename file
-    Then user of browser2 selects "file1" item(s) from file browser with pressed ctrl
+    Then user of browser2 selects "file1" item from file browser with pressed ctrl
     And user of browser2 clicks the button from top menu bar with tooltip "Rename element"
     And user of browser2 sees that "Rename file or directory" modal has appeared
     And user of browser2 clicks on input box in active modal
@@ -297,7 +297,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     And user of browser1 uses spaces select to change data space to "space2"
     And user of browser1 sees file browser in data tab in Oneprovider page
     And user of browser1 changes current working directory to space2 using breadcrumbs
-    And user of browser1 selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser1 selects "dir1" item from file browser with pressed ctrl
     And user of browser1 clicks the button from top menu bar with tooltip "Change element permissions"
     And user of browser1 sees that "Edit permissions" modal has appeared
     And user of browser1 selects "POSIX" permission type in active modal
