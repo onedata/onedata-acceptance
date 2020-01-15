@@ -214,3 +214,4 @@ def revoke_all_space_supports_using_rest(selenium, hosts, users, provider_host):
         http_delete(ip=provider_hostname, port=OP_REST_PORT,
                     path=get_panel_rest_path('provider', 'spaces', space),
                     auth=(user, users[user].password))
+

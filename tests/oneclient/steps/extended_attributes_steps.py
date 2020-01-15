@@ -7,10 +7,8 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 
-from pytest_bdd import parsers
-
 from . import multi_file_steps
-from tests.utils.acceptance_utils import wt
+from tests.utils.bdd_utils import wt, parsers
 
 
 @wt(parsers.cfparse('{user} sets on {file} extended attribute <name> with '

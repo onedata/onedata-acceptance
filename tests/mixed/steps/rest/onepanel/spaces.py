@@ -69,8 +69,7 @@ def support_space_in_op_panel_using_rest(user, provider_host, hosts, users,
                 token=tmp_memory[user]['mailbox']['token'],
                 size=options['size'],
                 storage_id=storage_id,
-                storage_import=storage_import,
-                mount_in_root=options.get('mount in root', False))
+                storage_import=storage_import)
             provider_api.support_space(space_support_rq)
             break
     else:

@@ -16,10 +16,10 @@ import subprocess as sp
 
 import pytest
 import jsondiff
-from pytest_bdd import parsers, then, when
 
-from tests.utils.acceptance_utils import (wt, list_parser, make_arg_list,
+from tests.utils.acceptance_utils import (list_parser, make_arg_list,
                                           compare, time_attr)
+from tests.utils.bdd_utils import when, then, wt, parsers
 from tests.utils.utils import assert_, assert_generic
 from tests.utils.client_utils import (stat, ls, mv, osrename, create_file, rm,
                                       chmod, touch, setxattr, getxattr,
@@ -56,8 +56,8 @@ def create_reg_file_fail(user, files, client_node, users):
 
 @wt(parsers.re('(?P<user>\w+) creates child files of (?P<parent_dir>.*) '
                'with names in range \[(?P<lower>.*), (?P<upper>.*)\) on '
-               '(?P<client_node>.*)'), converters=dict(lower=int, upper=int))
-def create_many(user, lower, upper, parent_dir, client_node, users):
+               '(?P<client_node>.*)'))
+def create_many(user, lower: int, upper: int, parent_dir, client_node, users):
     for i in range(lower, upper):
         new_file = os.path.join(parent_dir, str(i))
         create_reg_file(user, make_arg_list(new_file), client_node, users)
@@ -108,8 +108,8 @@ def ls_empty(directory, user, client_node, users):
 
 @wt(parsers.re('(?P<user>\w+) lists children of (?P<parent_dir>.*) and gets '
                'names in range \[(?P<lower>.*), (?P<upper>.*)\) on '
-               '(?P<client_node>.*)'), converters=dict(lower=int, upper=int))
-def ls_children(user, parent_dir, lower, upper, client_node, users):
+               '(?P<client_node>.*)'))
+def ls_children(user, parent_dir, lower: int, upper: int, client_node, users):
     user = users[user]
     client = user.clients[client_node]
     path = client.absolute_path(parent_dir)

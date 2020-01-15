@@ -7,10 +7,8 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 
-from pytest_bdd import parsers, then, when
-
 from . import multi_file_steps
-from tests.utils.acceptance_utils import wt
+from tests.utils.bdd_utils import when, then, wt, parsers
 
 
 @wt(parsers.re('(?P<user>\w+) creates regular files (?P<files>.*)'))
@@ -19,9 +17,8 @@ def create_reg_file(user, files, users):
 
 
 @wt(parsers.re('(?P<user>\w+) creates child files of (?P<parent_dir>.*) '
-               'with names in range \[(?P<lower>.*), (?P<upper>.*)\)'),
-    converters=dict(lower=int, upper=int))
-def create_many(user, lower, upper, parent_dir, users):
+               'with names in range \[(?P<lower>.*), (?P<upper>.*)\)'))
+def create_many(user, lower: int, upper: int, parent_dir, users):
     multi_file_steps.create_many(user, lower, upper, parent_dir, 'client1',
                                  users)
 
@@ -37,9 +34,8 @@ def ls_present(user, files, path, users):
 
 
 @wt(parsers.re('(?P<user>\w+) lists children of (?P<parent_dir>.*) and gets '
-               'names in range \[(?P<lower>.*), (?P<upper>.*)\)'),
-    converters=dict(lower=int, upper=int))
-def ls_children(user, parent_dir, lower, upper, users):
+               'names in range \[(?P<lower>.*), (?P<upper>.*)\)'))
+def ls_children(user, parent_dir, lower: int, upper: int, users):
     multi_file_steps.ls_children(user, parent_dir, lower, upper, 'client1',
                                  users)
 

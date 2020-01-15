@@ -7,15 +7,13 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 
-from pytest_bdd import parsers, when, then
-
 from . import multi_file_steps
 from tests.utils.utils import assert_generic, assert_, assert_false
 from tests.utils.client_utils import (write, read, replace_pattern, dd, md5sum,
                                       cp, truncate, execute, open_file,
                                       close_file, read_from_opened_file,
                                       write_to_opened_file, seek)
-from tests.utils.acceptance_utils import wt
+from tests.utils.bdd_utils import when, then, wt, parsers
 
 
 def write_text_base(user, text, file, client_node, users, should_fail=False):
