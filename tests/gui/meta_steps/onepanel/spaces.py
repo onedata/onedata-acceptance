@@ -15,6 +15,8 @@ from tests.gui.steps.common.notifies import *
 from tests.gui.steps.onepanel.spaces import *
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
+from tests import OP_REST_PORT
+from tests.utils.rest_utils import http_get, get_panel_rest_path, http_delete
 
 
 @wt(parsers.re('user of (?P<user>.+?) supports "(?P<space_name>.*)" space '
@@ -194,3 +196,22 @@ def revoke_all_space_supports(selenium, browser_id, onepanel, popups,
         time.sleep(1)
         spaces_list = onepanel(selenium[browser_id]).content.spaces.spaces
     selenium[browser_id].refresh()
+
+
+@given(parsers.parse('there are no spaces supported by {provider_host} '
+                     'in Onepanel'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def revoke_all_space_supports_using_rest(selenium, hosts, users, provider_host):
+    user = 'onepanel'
+
+    provider_hostname = hosts[provider_host]['hostname']
+
+    spaces_list = http_get(ip=provider_hostname, port=OP_REST_PORT,
+                           path=get_panel_rest_path('provider', 'spaces'),
+                           auth=(user, users[user].password)).json()
+
+    for space in spaces_list['ids']:
+        http_delete(ip=provider_hostname, port=OP_REST_PORT,
+                    path=get_panel_rest_path('provider', 'spaces', space),
+                    auth=(user, users[user].password))
+

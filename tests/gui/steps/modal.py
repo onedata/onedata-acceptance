@@ -69,7 +69,8 @@ def assert_non_empty_token_in_add_storage_modal(browser_id, tmp_memory):
 
 def _find_modal(driver, modal_name):
     def _find():
-        elements_list = ['group', 'token', 'cluster', 'harvester', 'rename']
+        elements_list = ['group', 'token', 'cluster', 'harvester',
+                         'spaces', 'rename']
         if any([name for name in elements_list
                 if name in modal_name]):
             modals = driver.find_elements_by_css_selector('.modal, '

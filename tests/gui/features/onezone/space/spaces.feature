@@ -21,7 +21,6 @@ Feature: Basic management of spaces
   Scenario Outline: User successfully renames space
     When user of browser clicks on Data in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Overview of "space1" in the sidebar
     And user of browser writes "space2" into rename space text field
     And user of browser confirms rename the space using <confirmation_method>
     Then user of browser sees that "space2" has appeared on the spaces list in the sidebar
@@ -36,7 +35,6 @@ Feature: Basic management of spaces
   Scenario: User successfully cancels rename space
     When user of browser clicks on Data in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Overview of "space1" in the sidebar
     And user of browser writes "space2" into rename space text field
     And user of browser clicks on cancel button on overview page
     Then user of browser sees that "space1" has appeared on the spaces list in the sidebar
@@ -48,7 +46,6 @@ Feature: Basic management of spaces
 
     # leave space
     And user of browser clicks "space2" on the spaces list in the sidebar
-    And user of browser clicks Overview of "space2" in the sidebar
     And user of browser clicks on "Leave space" button in space menu
     And user of browser clicks on yes button
     Then user of browser sees that "space2" has disappeared on the spaces list in the sidebar
@@ -59,7 +56,6 @@ Feature: Basic management of spaces
 
     # leave space
     And user of browser clicks "space2" on the spaces list in the sidebar
-    And user of browser clicks Overview of "space2" in the sidebar
     And user of browser clicks on "Leave space" button in space menu
     And user of browser clicks on no button
     Then user of browser sees that "space2" has appeared on the spaces list in the sidebar
@@ -68,7 +64,6 @@ Feature: Basic management of spaces
   Scenario: User successfully sets space as home space
     When user of browser clicks on Data in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Overview of "space1" in the sidebar
     And user of browser clicks on "Toggle default space" button in space menu
     Then user of browser sees that home of "space1" has appeared in the sidebar
 
@@ -76,7 +71,6 @@ Feature: Basic management of spaces
   Scenario: User successfully unsets space as home space
     When user of browser clicks on Data in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Overview of "space1" in the sidebar
     And user of browser clicks on "Toggle default space" button in space menu
     And user of browser sees that home of "space1" has appeared in the sidebar
     And user of browser clicks on "Toggle default space" button in space menu

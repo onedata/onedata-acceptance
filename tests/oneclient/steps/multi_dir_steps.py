@@ -11,12 +11,11 @@ import os
 import errno
 import subprocess as sp
 
-from pytest_bdd import parsers, when, given
-
 from tests.utils.onenv_utils import cmd_exec
-from tests.utils.acceptance_utils import wt, list_parser
-from tests.utils.utils import assert_generic, assert_
+from tests.utils.acceptance_utils import list_parser
+from tests.utils.bdd_utils import given, when, wt, parsers
 from tests.utils.client_utils import mkdir, rmdir, ls, rm, cp
+from tests.utils.utils import assert_generic, assert_
 
 
 def create_base(user, dirs, client_node, users, should_fail=False):
