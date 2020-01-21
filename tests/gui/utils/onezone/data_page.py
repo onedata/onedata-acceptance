@@ -91,6 +91,10 @@ class DataPage(GenericPage):
     join_harvester_button = NamedButton('button span.spin-button-label',
                                         text='Join the harvester')
 
+    spaces_header_list = WebItemsSequence('.sidebar-spaces '
+                                          'li.one-list-item.clickable '
+                                          '.item-header', cls=Space)
+
     elements_list = WebItemsSequence('.sidebar-spaces '
                                      'li.one-list-item.clickable', cls=Space)
 

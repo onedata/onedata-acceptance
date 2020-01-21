@@ -84,18 +84,20 @@ def create_harvester(selenium, browser_id, oz_page, harvester_name, hosts):
                   '"{harvester_name}" harvester using available spaces dropdown'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def join_space_to_harvester(selenium, browser_id, oz_page, space_name,
-                            harvester_name):
+                            harvester_name, tmp_memory):
     option = 'Spaces'
     button_name = 'add one of your spaces'
     button_in_modal = 'Add'
     modal = 'Add one of spaces'
     element_type = 'space'
+    modal_name = 'Add one of your spaces'
 
     click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id,
                                                       harvester_name, option,
                                                       oz_page)
     click_button_in_harvester_spaces_page(selenium, browser_id, oz_page,
                                           button_name)
+    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id,
                                                       space_name, modals,
                                                       element_type)
@@ -107,13 +109,14 @@ def join_space_to_harvester(selenium, browser_id, oz_page, space_name,
                   'using available groups dropdown'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_group_to_harvester(selenium, browser_id, oz_page, group_name,
-                           harvester_name, onepanel, popups):
+                           harvester_name, onepanel, popups, tmp_memory):
     option = 'Members'
     button = 'Add one of your groups'
     where = 'group'
     member = 'harvester'
     button_in_modal = 'Add'
     modal = 'Add one of groups'
+    modal_name = 'Add one of your groups'
 
     click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id,
                                                       harvester_name, option,
@@ -121,6 +124,7 @@ def add_group_to_harvester(selenium, browser_id, oz_page, group_name,
     click_on_option_in_members_list_menu(selenium, browser_id, button,
                                          member, where + 's', oz_page,
                                          onepanel, popups)
+    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id,
                                                       group_name, modals,
                                                       where)

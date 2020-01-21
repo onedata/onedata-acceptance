@@ -57,7 +57,7 @@ def create_new_space_on_onezone_page(selenium, browser_id, space_name, oz_page):
 def assert_no_provider_for_space(selenium, browser_id, provider_name,
                                  space_name, hosts, oz_page):
     page = oz_page(selenium[browser_id])['data']
-    page.elements_list[space_name]()
+    page.spaces_header_list[space_name]()
     page.elements_list[space_name].providers()
     provider = hosts[provider_name]['name']
     try:
@@ -94,11 +94,16 @@ def click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page):
 def click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option,
                                                 name, oz_page):
     driver = selenium[browser_id]
+    if option == 'harvesters':
+        option = 'discovery'
+
     if option == 'spaces':
         option = 'data'
-    elif option == 'harvesters':
-        option = 'discovery'
-    oz_page(driver)[option].elements_list[name].click()
+        oz_page(driver)[option].spaces_header_list[name].click()
+    else:
+        oz_page(driver)[option].elements_list[name].click()
+
+
 
 
 @wt(parsers.parse('user of {browser_id} writes "{space_name}" '
@@ -216,7 +221,7 @@ def assert_size_of_space_on_left_sidebar_menu(selenium, browser_id, number,
 def click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
                                                   space_name, option, oz_page):
     driver = selenium[browser_id]
-    oz_page(driver)['data'].elements_list[space_name].click()
+    oz_page(driver)['data'].spaces_header_list[space_name].click()
     getattr(oz_page(driver)['data'].elements_list[space_name],
             transform(option)).click()
 
@@ -406,7 +411,7 @@ def generate_and_send_support_token(selenium, browser_id1, space_name, oz_page,
                                     browser_id2, clipboard, displays,
                                     tmp_memory):
     page = oz_page(selenium[browser_id1])['data']
-    page.elements_list[space_name]()
+    page.spaces_header_list[space_name]()
     page.elements_list[space_name].providers()
     page.providers_page.add_support()
     copy_token(selenium, browser_id1, oz_page)
