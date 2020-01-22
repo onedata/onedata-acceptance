@@ -183,16 +183,6 @@ def assert_spaces_have_been_renamed_in_oz_rest(user, users, zone_name, hosts,
                                                                  space_name)
 
 
-def assert_space_is_home_space_in_oz_rest(user, users, zone_name, hosts,
-                                          space_name, spaces):
-    user_client = login_to_oz(user, users[user].password,
-                              hosts[zone_name]['hostname'])
-    user_api = UserApi(user_client)
-    home_space_id = user_api.get_default_space()
-    assert home_space_id.space_id == spaces[space_name], \
-        'Space {} is not set as home space'.format(space_name)
-
-
 def assert_there_is_no_provider_for_space_in_oz_rest(user, users, zone_name,
                                                      hosts, space_name, spaces,
                                                      providers_alias_list,

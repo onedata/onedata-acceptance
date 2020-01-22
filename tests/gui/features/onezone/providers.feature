@@ -50,12 +50,6 @@ Feature: Basic management of providers in Onezone GUI
     Then user of browser sees "oneprovider-1" is on the providers list
 
 
-  Scenario: User sees that home space of provider should have "cloud with home" icon
-    When user of browser clicks on Providers in the main menu
-    And user of browser clicks on provider "oneprovider-1" in providers sidebar
-    And user of browser clicks on Toggle home provider button on provider popover
-    Then user of browser sees that home of "oneprovider-1" has appeared in the data sidebar
-
 # TODO VFS-5244 fix kill_providers() and change alert text
 #  Scenario: User sees that when no provider is working appropriate msg is shown
 #    Given there are no working provider(s) named oneprovider-1
