@@ -61,22 +61,6 @@ Feature: Basic management of spaces
     Then user of browser sees that "space2" has appeared on the spaces list in the sidebar
 
 
-  Scenario: User successfully sets space as home space
-    When user of browser clicks on Data in the main menu
-    And user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks on "Toggle default space" button in space menu
-    Then user of browser sees that home of "space1" has appeared in the sidebar
-
-
-  Scenario: User successfully unsets space as home space
-    When user of browser clicks on Data in the main menu
-    And user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks on "Toggle default space" button in space menu
-    And user of browser sees that home of "space1" has appeared in the sidebar
-    And user of browser clicks on "Toggle default space" button in space menu
-    Then user of browser sees that home of "space1" has disappeared in the sidebar
-
-
   Scenario: User sees no supporting providers after create new space
     When user of browser creates "space2" space in Onezone
     Then user of browser sees 0 number of supporting providers of "space2"
