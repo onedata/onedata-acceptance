@@ -221,64 +221,6 @@ def assert_item_counter_match_given_num(selenium, browser_id, counter_type,
                                                    num=number)
 
 
-@when(parsers.re(r'user of (?P<browser_id>.+?) sees that (?P<item_type>provider) '
-                 r'"(?P<item_name>.+?)" is set as home (?P=item_type) '
-                 r'in expanded "(?P<oz_panel>GO TO YOUR FILES)" '
-                 r'Onezone panel'))
-@then(parsers.re(r'user of (?P<browser_id>.+?) sees that (?P<item_type>provider) '
-                 r'"(?P<item_name>.+?)" is set as home (?P=item_type) '
-                 r'in expanded "(?P<oz_panel>GO TO YOUR FILES)" '
-                 r'Onezone panel'))
-@when(parsers.re(r'user of (?P<browser_id>.+?) sees that (?P<item_type>space) '
-                 r'named "(?P<item_name>.+?)" is set as home (?P=item_type) '
-                 r'in expanded "(?P<oz_panel>DATA SPACE MANAGEMENT)" '
-                 r'Onezone panel'))
-@then(parsers.re(r'user of (?P<browser_id>.+?) sees that (?P<item_type>space) '
-                 r'named "(?P<item_name>.+?)" is set as home (?P=item_type) '
-                 r'in expanded "(?P<oz_panel>DATA SPACE MANAGEMENT)" '
-                 r'Onezone panel'))
-@repeat_failed(timeout=WAIT_BACKEND)
-def assert_item_is_home_item_in_oz_panel(selenium, browser_id, item_type,
-                                         item_name, oz_panel, oz_page, hosts):
-    driver = selenium[browser_id]
-    if item_type == 'provider':
-        item_name = hosts[item_name]['name']
-    items = getattr(oz_page(driver)[oz_panel], '{}s'.format(item_type))
-    item = items[item_name]
-
-    err_msg = '{type} named "{name}" is not set as home while it should be ' \
-              'in {panel} oz panel'
-    assert item.is_home(), err_msg.format(type=item_type, name=item_name,
-                                          panel=oz_panel)
-
-
-@when(parsers.re(r'user of (?P<browser_id>.+?) sets (?P<item_type>provider) '
-                 r'"(?P<item_name>.+?)" as home by clicking on '
-                 r'home outline in that (?P=item_type) record in expanded '
-                 r'"(?P<oz_panel>GO TO YOUR FILES)" Onezone panel'))
-@then(parsers.re(r'user of (?P<browser_id>.+?) sets (?P<item_type>provider) '
-                 r'"(?P<item_name>.+?)" as home by clicking on '
-                 r'home outline in that (?P=item_type) record in expanded '
-                 r'"(?P<oz_panel>GO TO YOUR FILES)" Onezone panel'))
-@when(parsers.re(r'user of (?P<browser_id>.+?) sets (?P<item_type>space) named '
-                 r'"(?P<item_name>.+?)" as home by clicking on home outline '
-                 r'in that (?P=item_type) record in expanded '
-                 r'"(?P<oz_panel>DATA SPACE MANAGEMENT)" Onezone panel'))
-@then(parsers.re(r'user of (?P<browser_id>.+?) sets (?P<item_type>space) named '
-                 r'"(?P<item_name>.+?)" as home by clicking on home outline '
-                 r'in that (?P=item_type) record in expanded '
-                 r'"(?P<oz_panel>DATA SPACE MANAGEMENT)" Onezone panel'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def set_given_item_as_home_by_clicking_on_home_outline(selenium, browser_id,
-                                                       item_type, item_name,
-                                                       oz_panel, oz_page, hosts):
-    driver = selenium[browser_id]
-    if item_type == 'provider':
-        item_name = hosts[item_name]['name']
-    items = getattr(oz_page(driver)[oz_panel], '{}s'.format(item_type))
-    items[item_name].set_as_home()
-
-
 @when(parsers.re(r'user of (?P<browser_id>.+?) sees that (?P<counter_type>space)s '
                  r'counter for "(?P<item_name>.+?)" match number of displayed '
                  r'supported spaces in expanded submenu '
@@ -345,36 +287,6 @@ def expand_items_submenu_in_oz_panel(selenium, browser_id, item_type,
     item.expand()
     err_msg = 'submenu for {type} named "{name}" has not been expanded'
     assert item.is_expanded(), err_msg.format(type=item_type, name=item_name)
-
-
-@when(parsers.re(r'user of (?P<browser_id>.+?) sees that '
-                 r'(?P<subitem_type>space) named "(?P<subitem_name>.+?)" '
-                 r'in submenu of (?P<item_type>provider) "(?P<item_name>.+?)" '
-                 r'in expanded "(?P<oz_panel>GO TO YOUR FILES)" Onezone panel '
-                 r'is set as home'))
-@then(parsers.re(r'user of (?P<browser_id>.+?) sees that '
-                 r'(?P<subitem_type>space) named "(?P<subitem_name>.+?)" '
-                 r'in submenu of (?P<item_type>provider) "(?P<item_name>.+?)" '
-                 r'in expanded "(?P<oz_panel>GO TO YOUR FILES)" Onezone panel '
-                 r'is set as home'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_subitem_is_set_as_home(selenium, browser_id, subitem_type,
-                                  subitem_name, item_type, item_name,
-                                  oz_panel, oz_page, hosts):
-    driver = selenium[browser_id]
-    if item_type == 'provider':
-        item_name = hosts[item_name]['name']
-    items = getattr(oz_page(driver)[oz_panel], '{}s'.format(item_type))
-    item = items[item_name]
-    subitems = getattr(item, '{}s'.format(subitem_type))
-    subitem = subitems[subitem_name]
-
-    err_msg = '{subtype} named "{subitem}" is not set as home for {type} ' \
-              'named "{name}" while it should be'
-    assert subitem.is_home(), err_msg.format(subtype=subitem_type,
-                                             subitem=subitem_name,
-                                             type=item_type,
-                                             name=item_name)
 
 
 @when(parsers.re(r'user of (?P<browser_id>.+?) sees that there is '
