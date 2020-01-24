@@ -13,10 +13,10 @@ from .modal import Modal
 
 
 class _Chunk(PageObject):
-    start = Label('.file-size .start')
-    end = Label('.file-size .end')
+    start = Label('.chunks-scale.lower-size')
+    end = Label('.chunks-scale.upper-size')
     _canvas = WebElement('canvas')
-    _file_chunks = WebElement('.file-chunks')
+    _file_chunks = WebElement('.chunks-container')  # .chunks-text
 
     def __str__(self):
         return 'file blocks for {}'.format(self.parent)
@@ -24,7 +24,8 @@ class _Chunk(PageObject):
     @property
     def size(self):
         end, unit = self.end.split()
-        return int(end) - int(self.start), unit
+        start, _ = self.start.split()
+        return int(end) - int(start), unit
 
     @property
     def chunks(self):
@@ -38,14 +39,15 @@ class _Chunk(PageObject):
                                'are not filled with one color'.format(self))
 
     def is_never_synchronized(self):
-        return 'never-synchronized' in self._file_chunks.get_attribute('class')
+        return 'never-synchronized-text' in self._file_chunks.get_attribute('class')
 
 
 class _DataDistributionRecord(PageObject):
-    name = id = Label('.provider-name', parent_name='given provider')
-    distribution = WebItem('.chunks', cls=_Chunk)
-    migrate = Button('.btn-migrate')
-    replicate = Button('.btn-replicate')
+    name = id = Label('.oneprovider-name', parent_name='given provider')
+    distribution = WebItem('.chunks-container', cls=_Chunk)
+    menu_button = Button('.collapsible-toolbar-toggle')
+    # migrate = Button('.btn-migrate')
+    # replicate = Button('.btn-replicate')
 
     def __str__(self):
         return 'provider record for "{item}" in ' \
@@ -63,11 +65,11 @@ class MigrationRecord(PageObject):
 
 
 class DataDistributionModal(Modal):
-    file_name = Label('.modal-row strong')
-    providers = WebItemsSequence('table.file-blocks-table tbody tr',
+    file_name = Label('.file-name')
+    providers = WebItemsSequence('.oneproviders-distribution-item',
                                  cls=_DataDistributionRecord)
-    migrate = WebItemsSequence('.migrate-popover li.migrate-item',
-                               cls=MigrationRecord)
+    # migrate = WebItemsSequence('.migrate-popover li.migrate-item',
+    #                            cls=MigrationRecord)
 
     def __str__(self):
         return 'Data distribution modal for "{}"'.format(self.file_name)

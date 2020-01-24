@@ -7,7 +7,6 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 from .create_dir import CreateDir
-from .data_distribution import DataDistributionModal
 from .add_storage import AddStorage
 from tests.gui.utils.core.web_elements import WebItem
 from tests.gui.utils.common.modals.create_group import CreateGroup
@@ -40,7 +39,7 @@ from .modify_storage import ModifyStorage
 
 class Modals(object):
     add_storage = WebItem('.panel-onezone-modal.in', cls=AddStorage)
-    data_distribution = WebItem('#file-chunks-modal', cls=DataDistributionModal)
+    data_distribution = WebItem('.modal-dialog', cls=DataDistributionModal)
     cluster_deployment = WebItem('#cluster-deploy-progress-modal',
                                  cls=ClusterDeploymentModal)
     revoke_space_support = WebItem('.modal.in .modal-dialog',

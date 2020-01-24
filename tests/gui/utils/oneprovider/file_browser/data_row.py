@@ -55,4 +55,4 @@ class DataRow(PageObject):
                                   '{}'.format(name, self))
 
     def double_click(self):
-        ActionChains(self.driver).click(self.web_elem).click(self.web_elem).perform()
+        ActionChains(self.driver).double_click(self.web_elem).perform()

@@ -11,14 +11,12 @@ __license__ = ("This software is released under the MIT license cited in "
 from time import time
 from datetime import datetime
 
-from pytest_bdd import when, then, parsers
-
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.modal import click_modal_button
 from tests.gui.utils.generic import parse_seq
-from tests.utils.acceptance_utils import wt
 from tests.utils.utils import repeat_failed
+from tests.utils.bdd_utils import given, wt, parsers, when, then
 
 
 @when(parsers.parse('user of {browser_id} sees "{msg}" '
@@ -120,18 +118,16 @@ def assert_presence_in_file_browser_with_order(browser_id, item_list,
                                                              item=curr_item))
 
 
-@when(parsers.parse('user of {browser_id} sees that modification date of item '
-                    'named "{item_name}" is not earlier than {err_time:d} '
-                    'seconds ago in file browser'))
-@then(parsers.parse('user of {browser_id} sees that modification date of item '
-                    'named "{item_name}" is not earlier than {err_time:d} '
-                    'seconds ago in file browser'))
+@wt(parsers.parse('user of {browser_id} sees that modification date of item '
+                  'named "{item_name}" is not earlier than {err_time:d} '
+                  'seconds ago in file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_item_in_file_browser_is_of_mdate(browser_id, item_name,
                                             err_time, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
-    date_fmt = '%Y-%m-%d %H:%M'
-    item_date = datetime.strptime(browser.files[item_name].modification_date,
+    date_fmt = '%d %b %Y %H:%M'
+    # %b - abbreviated month name
+    item_date = datetime.strptime(browser.data[item_name].modification_date,
                                   date_fmt)
     expected_date = datetime.fromtimestamp(time())
     err_msg = 'displayed mod time {} for {} does not match expected {}'
@@ -139,15 +135,13 @@ def assert_item_in_file_browser_is_of_mdate(browser_id, item_name,
         err_msg.format(item_date, item_name, expected_date)
 
 
-@when(parsers.parse('user of {browser_id} sees that item named "{item_name}" '
-                    'is of {size} size in file browser'))
-@then(parsers.parse('user of {browser_id} sees that item named "{item_name}" '
-                    'is of {size} size in file browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@wt(parsers.parse('user of {browser_id} sees that item named "{item_name}" '
+                  'is of {size} size in file browser'))
+@repeat_failed(timeout=WAIT_BACKEND)
 def assert_item_in_file_browser_is_of_size(browser_id, item_name, size,
                                            tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
-    item_size = browser.files[item_name].size
+    item_size = browser.data[item_name].size
     err_msg = 'displayed size {} for {} does not match expected {}'
     assert size == item_size, err_msg.format(item_size, item_name, size)
 

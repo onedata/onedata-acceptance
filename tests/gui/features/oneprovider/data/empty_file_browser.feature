@@ -182,9 +182,9 @@ Feature: Data tab operations with empty file browser
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
-    And user of browser uses upload button in toolbar to upload file "20B-0.txt" to current dir
+    And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
     And user of browser sees that item named "20B-0.txt" has appeared in file browser
-#    Then user of browser sees that modification date of item named "20B-0.txt" is not earlier than 120 seconds ago in file browser
+    Then user of browser sees that modification date of item named "20B-0.txt" is not earlier than 120 seconds ago in file browser
 
 
 #  TODO: change test because of a new gui
@@ -202,54 +202,40 @@ Feature: Data tab operations with empty file browser
 #    And user of browser sees that the modal has disappeared
 #    And user of browser sees that item named "file1" has appeared in file browser
 #    Then user of browser sees that modification date of item named "file1" is not earlier than 120 seconds ago in file browser
-#
-#
-#  Scenario: User sees file size after upload and after site refresh
-#    When user of browser uses spaces select to change data space to "space1"
-#    And user of browser sees that current working directory displayed in breadcrumbs is space1
+
+
+  Scenario: User sees file size after upload and after site refresh
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Data of "space1" in the sidebar
+    And user of browser sees file browser in data tab in Oneprovider page
+
+    # upload file
+    And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
+    And user of browser sees that item named "20B-0.txt" has appeared in file browser
+
+    Then user of browser sees that item named "20B-0.txt" is of 20 B size in file browser
+    And user of browser refreshes site
+    And user of browser sees nonempty file browser in data tab in Oneprovider page
+    And user of browser sees that item named "20B-0.txt" is of 20 B size in file browser
+
+
+#  TODO: change test because of a new gui
+#  Scenario: User uploads file and checks if provider name is displayed in the data distribution panel
+#    When user of browser clicks "space1" on the spaces list in the sidebar
+#    And user of browser clicks Data of "space1" in the sidebar
 #    And user of browser sees file browser in data tab in Oneprovider page
 #
 #    # upload file
-#    And user of browser uses upload button in toolbar to upload file "20B-0.txt" to current dir
-#    And user of browser sees an info notify with text matching to: .*[Cc]ompleted upload.*1.*
-#    And user of browser sees that item named "20B-0.txt" has appeared in file browser
-#
-#    Then user of browser sees that item named "20B-0.txt" is of 20 B size in file browser
-#    And user of browser refreshes site
-#    And user of browser sees nonempty file browser in data tab in Oneprovider page
-#    And user of browser sees that item named "20B-0.txt" is of 20 B size in file browser
-#
-#
-#  Scenario: User uploads file and checks if provider name is displayed in the data distribution panel
-#    When user of browser uses spaces select to change data space to "space1"
-#    And user of browser sees that current working directory displayed in breadcrumbs is space1
-#    And user of browser sees file browser in data tab in Oneprovider page
-#
-#    And user of browser uses upload button in toolbar to upload file "20B-0.txt" to current dir
-#    And user of browser sees an info notify with text matching to: .*[Cc]ompleted upload.*1.*
+#    And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
 #    And user of browser sees that item named "20B-0.txt" has appeared in file browser
 #
 #    And user of browser selects "20B-0.txt" item from file browser with pressed ctrl
-#    And user of browser clicks the button from top menu bar with tooltip "Show data distribution"
-#    And user of browser sees that "data distribution" modal has appeared
+#
+#    And user of browser clicks on menu for "20B-0.txt" file in file browser
+#    And user of browser clicks "Data distribution" option in data row menu in file browser
+#
+#    And user of browser sees that "Data distribution" modal has appeared
 #    Then user of browser sees that chunk bar for provider "oneprovider-1" is entirely filled
 #    And user of browser clicks "Close" confirmation button in displayed modal
 #    And user of browser sees that the modal has disappeared
-#
-#
-#  Scenario: User sees that text area for directory name gets bigger while resizing directory tree sidebar
-#    When user of browser uses spaces select to change data space to "space1"
-#    And user of browser sees file browser in data tab in Oneprovider page
-#
-#    # create dir in space1
-#    And user of browser clicks the button from top menu bar with tooltip "Create directory"
-#    And user of browser sees that "New directory" modal has appeared
-#    And user of browser clicks on input box in active modal
-#    And user of browser types "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab" on keyboard
-#    And user of browser clicks "Create" confirmation button in displayed modal
-#    And user of browser sees that the modal has disappeared
-#    And user of browser sees that item named "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab" has appeared in file browser
-#
-#    And user of browser records displayed name length for /aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab/ in directory tree sidebar
-#    And user of browser expands data tab sidebar to the right of approximately 200px
-#    Then user of browser sees that displayed name length for /aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab/ in directory tree sidebar is larger than before
+

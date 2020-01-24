@@ -8,13 +8,34 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 import pytest
-from pytest_bdd import given, when, then, parsers
 from selenium.common.exceptions import NoSuchElementException
 
-from tests.utils.acceptance_utils import wt
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import (parse_seq, upload_file_path, transform)
 from tests.utils.utils import repeat_failed
+from tests.utils.bdd_utils import given, wt, parsers, when, then
+
+
+def _change_iframe_for_file_browser(selenium, browser_id, tmp_memory, op_page):
+    driver = selenium[browser_id]
+    import time
+    timeout = WAIT_BACKEND
+    limit = time.time() + timeout
+    while time.time() < limit:
+        try:
+            iframe = driver.find_element_by_tag_name('iframe')
+            driver.switch_to.frame(iframe)
+            # wait for file browser to load
+            time.sleep(1)
+            file_browser = op_page(driver).file_browser
+            tmp_memory[browser_id]['file_browser'] = file_browser
+        except NoSuchElementException:
+            time.sleep(1)
+            continue
+        else:
+            break
+    else:
+        raise NoSuchElementException
 
 
 @when(parsers.parse('user of {browser_id} uses spaces select to change '
@@ -216,18 +237,15 @@ def wt_is_space_tree_root(selenium, browser_id, is_home, space_name, op_page):
                                              space_name, op_page)
 
 
-@when(parsers.parse('user of {browser_id} sees nonempty file browser '
-                    'in data tab in Oneprovider page'))
-@then(parsers.parse('user of {browser_id} sees nonempty file browser '
-                    'in data tab in Oneprovider page'))
+@wt(parsers.parse('user of {browser_id} sees nonempty file browser '
+                  'in data tab in Oneprovider page'))
 @repeat_failed(timeout=WAIT_BACKEND * 2)
 def assert_nonempty_file_browser_in_data_tab_in_op(selenium, browser_id,
                                                    op_page, tmp_memory):
-    driver = selenium[browser_id]
-    file_browser = op_page(driver).data.file_browser
+    _change_iframe_for_file_browser(selenium, browser_id, tmp_memory, op_page)
+    file_browser = tmp_memory[browser_id]['file_browser']
     assert not file_browser.is_empty(), ('file browser in data tab in op'
                                          'should not be empty but is')
-    tmp_memory[browser_id]['file_browser'] = file_browser
 
 
 @wt(parsers.parse('user of {browser_id} sees empty file browser '
@@ -235,10 +253,8 @@ def assert_nonempty_file_browser_in_data_tab_in_op(selenium, browser_id,
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_empty_file_browser_in_data_tab_in_op(selenium, browser_id,
                                                 op_page, tmp_memory):
-    driver = selenium[browser_id]
-    iframe = driver.find_element_by_tag_name('iframe')
-    driver.switch_to.frame(iframe)
-    file_browser = op_page(driver).file_browser
+    _change_iframe_for_file_browser(selenium, browser_id, tmp_memory, op_page)
+    file_browser = tmp_memory[browser_id]['file_browser']
     assert file_browser.is_empty(), ('file browser in data tab in op'
                                      'should be empty but is not')
     tmp_memory[browser_id]['file_browser'] = file_browser
@@ -248,25 +264,7 @@ def assert_empty_file_browser_in_data_tab_in_op(selenium, browser_id,
                   'in data tab in Oneprovider page'))
 def assert_file_browser_in_data_tab_in_op(selenium, browser_id,
                                           op_page, tmp_memory):
-    driver = selenium[browser_id]
-    import time
-    timeout = WAIT_BACKEND
-    limit = time.time() + timeout
-    while time.time() < limit:
-        try:
-            iframe = driver.find_element_by_tag_name('iframe')
-            driver.switch_to.frame(iframe)
-            # wait for file browser to load
-            time.sleep(1)
-            file_browser = op_page(driver).file_browser
-            tmp_memory[browser_id]['file_browser'] = file_browser
-        except NoSuchElementException:
-            time.sleep(1)
-            continue
-        else:
-            break
-    else:
-        raise NoSuchElementException
+    _change_iframe_for_file_browser(selenium, browser_id, tmp_memory, op_page)
 
 
 @when(parsers.parse('user of {browser_id} records displayed name length for '
@@ -370,10 +368,8 @@ def assert_provider_chunk_in_data_distribution_size(selenium, browser_id,
                                    '{}'.format(displayed_size, size)
 
 
-@when(parsers.parse('user of {browser_id} sees that chunk bar for provider '
-                    '"{provider}" is entirely filled'))
-@then(parsers.parse('user of {browser_id} sees that chunk bar for provider '
-                    '"{provider}" is entirely filled'))
+@wt(parsers.parse('user of {browser_id} sees that chunk bar for provider '
+                  '"{provider}" is entirely filled'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_provider_chunk_in_data_distribution_filled(selenium, browser_id,
                                                       provider, modals, hosts):
