@@ -29,7 +29,7 @@ Feature: Basic data tab operations on directory metadata in file browser
     And user of browser sees file browser in data tab in Oneprovider page
 
     And user of browser does not see metadata icon for "dir1" in file browser
-    And user of browser selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser selects "dir1" item from file browser with pressed ctrl
     And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
     And user of browser sees that metadata panel for "dir1" in files list has appeared
     And user of browser types "attr" to attribute input box of new metadata basic entry in metadata panel opened for "dir1"
@@ -45,7 +45,7 @@ Feature: Basic data tab operations on directory metadata in file browser
     When user of browser uses spaces select to change data space to "space1"
     And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser selects "dir1" item from file browser with pressed ctrl
     And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
     And user of browser sees that metadata panel for "dir1" in files list has appeared
     And user of browser types "attr" to attribute input box of new metadata basic entry in metadata panel opened for "dir1"
@@ -56,7 +56,7 @@ Feature: Basic data tab operations on directory metadata in file browser
     When user of browser uses spaces select to change data space to "space1"
     And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser selects "dir1" item from file browser with pressed ctrl
     And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
     And user of browser sees that metadata panel for "dir1" in files list has appeared
     And user of browser types "attr" to attribute input box of new metadata basic entry in metadata panel opened for "dir1"
@@ -68,7 +68,7 @@ Feature: Basic data tab operations on directory metadata in file browser
     And user of browser refreshes site
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser sees that metadata panel for "dir1" in files list has disappeared
-    And user of browser selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser selects "dir1" item from file browser with pressed ctrl
     And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
     And user of browser sees that metadata panel for "dir1" in files list has appeared
     Then user of browser should see basic metadata entry with attribute named "attr" and value "val" in metadata panel opened for "dir1"
@@ -78,7 +78,7 @@ Feature: Basic data tab operations on directory metadata in file browser
     When user of browser uses spaces select to change data space to "space1"
     And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser selects "dir1" item from file browser with pressed ctrl
     And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
     And user of browser sees that metadata panel for "dir1" in files list has appeared
     And user of browser types "attr" to attribute input box of new metadata basic entry in metadata panel opened for "dir1"
@@ -90,7 +90,7 @@ Feature: Basic data tab operations on directory metadata in file browser
     And user of browser refreshes site
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser sees that metadata panel for "dir1" in files list has disappeared
-    And user of browser selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser selects "dir1" item from file browser with pressed ctrl
     And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
     And user of browser sees that metadata panel for "dir1" in files list has appeared
     Then user of browser should see basic metadata entry with attribute named "attr" and value "val" in metadata panel opened for "dir1"
@@ -100,7 +100,7 @@ Feature: Basic data tab operations on directory metadata in file browser
     When user of browser uses spaces select to change data space to "space1"
     And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser selects "dir1" item from file browser with pressed ctrl
     And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
     And user of browser sees that metadata panel for "dir1" in files list has appeared
     And user of browser types "attr" to attribute input box of new metadata basic entry in metadata panel opened for "dir1"
@@ -112,7 +112,7 @@ Feature: Basic data tab operations on directory metadata in file browser
     And user of browser refreshes site
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser sees that metadata panel for "dir1" in files list has disappeared
-    And user of browser selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser selects "dir1" item from file browser with pressed ctrl
     And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
     And user of browser sees that metadata panel for "dir1" in files list has appeared
     And user of browser clicks on delete basic metadata entry icon for basic metadata entry with attribute named "attr" in metadata panel opened for "dir1"
@@ -123,7 +123,7 @@ Feature: Basic data tab operations on directory metadata in file browser
     When user of browser uses spaces select to change data space to "space1"
     And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser selects "dir1" item from file browser with pressed ctrl
     And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
     And user of browser sees that metadata panel for "dir1" in files list has appeared
     And user of browser types "attr" to attribute input box of new metadata basic entry in metadata panel opened for "dir1"
@@ -134,14 +134,14 @@ Feature: Basic data tab operations on directory metadata in file browser
     And user of browser refreshes site
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser sees that metadata panel for "dir1" in files list has disappeared
-    And user of browser selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser selects "dir1" item from file browser with pressed ctrl
     And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
     And user of browser sees that metadata panel for "dir1" in files list has appeared
     And user of browser should see basic metadata entry with attribute named "attr" and value "val" in metadata panel opened for "dir1"
     And user of browser clicks on "Remove metadata" button in metadata panel opened for "dir1"
     And user of browser sees an info notify with text matching to: .*[Dd]eleted.*metadata.*dir1.*
     And user of browser sees that metadata panel for "dir1" in files list has disappeared
-    And user of browser selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser selects "dir1" item from file browser with pressed ctrl
     And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
     And user of browser sees that metadata panel for "dir1" in files list has appeared
     Then user of browser should not see basic metadata entry with attribute named "attr" in metadata panel opened for "dir1"
@@ -151,7 +151,7 @@ Feature: Basic data tab operations on directory metadata in file browser
     When user of browser uses spaces select to change data space to "space1"
     And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser selects "dir1" item from file browser with pressed ctrl
     And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
     And user of browser sees that metadata panel for "dir1" in files list has appeared
     And user of browser types "attr" to attribute input box of new metadata basic entry in metadata panel opened for "dir1"
@@ -160,7 +160,7 @@ Feature: Basic data tab operations on directory metadata in file browser
     And user of browser clicks on "Discard changes" button in metadata panel opened for "dir1"
     And user of browser sees that metadata panel for "dir1" in files list has disappeared
 
-    And user of browser selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser selects "dir1" item from file browser with pressed ctrl
     And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
     And user of browser sees that metadata panel for "dir1" in files list has appeared
     Then user of browser should not see basic metadata entry with attribute named "attr" in metadata panel opened for "dir1"
@@ -170,7 +170,7 @@ Feature: Basic data tab operations on directory metadata in file browser
     When user of browser uses spaces select to change data space to "space1"
     And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser selects "dir1" item from file browser with pressed ctrl
     And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
     And user of browser sees that metadata panel for "dir1" in files list has appeared
 
@@ -182,7 +182,7 @@ Feature: Basic data tab operations on directory metadata in file browser
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser sees that metadata panel for "dir1" in files list has disappeared
 
-    And user of browser selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser selects "dir1" item from file browser with pressed ctrl
     And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
     And user of browser sees that metadata panel for "dir1" in files list has appeared
     And user of browser clicks on JSON navigation tab in metadata panel opened for "dir1"
@@ -193,7 +193,7 @@ Feature: Basic data tab operations on directory metadata in file browser
     When user of browser uses spaces select to change data space to "space1"
     And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser selects "dir1" item from file browser with pressed ctrl
     And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
     And user of browser sees that metadata panel for "dir1" in files list has appeared
 
@@ -205,7 +205,7 @@ Feature: Basic data tab operations on directory metadata in file browser
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser sees that metadata panel for "dir1" in files list has disappeared
 
-    And user of browser selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser selects "dir1" item from file browser with pressed ctrl
     And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
     And user of browser sees that metadata panel for "dir1" in files list has appeared
     And user of browser clicks on JSON navigation tab in metadata panel opened for "dir1"
@@ -214,7 +214,7 @@ Feature: Basic data tab operations on directory metadata in file browser
     And user of browser sees an info notify with text matching to: .*[Dd]eleted.*metadata.*dir1.*
     And user of browser sees that metadata panel for "dir1" in files list has disappeared
 
-    And user of browser selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser selects "dir1" item from file browser with pressed ctrl
     And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
     And user of browser sees that metadata panel for "dir1" in files list has appeared
     And user of browser clicks on JSON navigation tab in metadata panel opened for "dir1"
@@ -225,7 +225,7 @@ Feature: Basic data tab operations on directory metadata in file browser
     When user of browser uses spaces select to change data space to "space1"
     And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser selects "dir1" item from file browser with pressed ctrl
     And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
     And user of browser sees that metadata panel for "dir1" in files list has appeared
 
@@ -234,7 +234,7 @@ Feature: Basic data tab operations on directory metadata in file browser
     And user of browser clicks on "Discard changes" button in metadata panel opened for "dir1"
     And user of browser sees that metadata panel for "dir1" in files list has disappeared
 
-    And user of browser selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser selects "dir1" item from file browser with pressed ctrl
     And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
     And user of browser sees that metadata panel for "dir1" in files list has appeared
     And user of browser clicks on JSON navigation tab in metadata panel opened for "dir1"
@@ -245,7 +245,7 @@ Feature: Basic data tab operations on directory metadata in file browser
     When user of browser uses spaces select to change data space to "space1"
     And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser selects "dir1" item from file browser with pressed ctrl
     And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
     And user of browser sees that metadata panel for "dir1" in files list has appeared
     And user of browser clicks on RDF navigation tab in metadata panel opened for "dir1"
@@ -256,7 +256,7 @@ Feature: Basic data tab operations on directory metadata in file browser
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser sees that metadata panel for "dir1" in files list has disappeared
 
-    And user of browser selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser selects "dir1" item from file browser with pressed ctrl
     And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
     And user of browser sees that metadata panel for "dir1" in files list has appeared
     And user of browser clicks on RDF navigation tab in metadata panel opened for "dir1"
@@ -267,7 +267,7 @@ Feature: Basic data tab operations on directory metadata in file browser
     When user of browser uses spaces select to change data space to "space1"
     And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser selects "dir1" item from file browser with pressed ctrl
     And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
     And user of browser sees that metadata panel for "dir1" in files list has appeared
 
@@ -279,7 +279,7 @@ Feature: Basic data tab operations on directory metadata in file browser
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser sees that metadata panel for "dir1" in files list has disappeared
 
-    And user of browser selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser selects "dir1" item from file browser with pressed ctrl
     And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
     And user of browser sees that metadata panel for "dir1" in files list has appeared
     And user of browser clicks on RDF navigation tab in metadata panel opened for "dir1"
@@ -288,7 +288,7 @@ Feature: Basic data tab operations on directory metadata in file browser
     And user of browser sees an info notify with text matching to: .*[Dd]eleted.*metadata.*dir1.*
     And user of browser sees that metadata panel for "dir1" in files list has disappeared
 
-    And user of browser selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser selects "dir1" item from file browser with pressed ctrl
     And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
     And user of browser sees that metadata panel for "dir1" in files list has appeared
     And user of browser clicks on RDF navigation tab in metadata panel opened for "dir1"
@@ -299,7 +299,7 @@ Feature: Basic data tab operations on directory metadata in file browser
     When user of browser uses spaces select to change data space to "space1"
     And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser selects "dir1" item from file browser with pressed ctrl
     And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
     And user of browser sees that metadata panel for "dir1" in files list has appeared
 
@@ -308,7 +308,7 @@ Feature: Basic data tab operations on directory metadata in file browser
     And user of browser clicks on "Discard changes" button in metadata panel opened for "dir1"
     And user of browser sees that metadata panel for "dir1" in files list has disappeared
 
-    And user of browser selects "dir1" item(s) from file browser with pressed ctrl
+    And user of browser selects "dir1" item from file browser with pressed ctrl
     And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
     And user of browser sees that metadata panel for "dir1" in files list has appeared
     And user of browser clicks on RDF navigation tab in metadata panel opened for "dir1"

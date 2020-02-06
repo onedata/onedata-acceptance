@@ -37,6 +37,8 @@ from tests.gui.steps.onezone.access_tokens import *
 from tests.gui.steps.onezone.data_space_management import *
 from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.manage_account import *
+from tests.gui.steps.onezone.spaces import *
+from tests.gui.steps.onezone.groups import *
 
 from tests.gui.steps.oneprovider.common import *
 from tests.gui.steps.oneprovider.data_tab import *
@@ -94,8 +96,7 @@ def screens():
 
 
 # scenarios('../features/oneprovider/data/empty_file_browser.feature')
-# scenarios('../features/oneprovider/data/single_file.feature')
+scenarios('../features/oneprovider/data/single_file.feature')
 # scenarios('../features/oneprovider/data/several_files.feature')
-# scenarios('../features/oneprovider/data/single_directory.feature')
-# scenarios('../features/oneprovider/data/nested_directories.feature')
-scenarios('../features/pass.feature')
+scenarios('../features/oneprovider/data/single_directory.feature')
+scenarios('../features/oneprovider/data/nested_directories.feature')
