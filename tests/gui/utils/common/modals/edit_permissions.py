@@ -6,98 +6,101 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-from tests.gui.utils.core.base import PageObject, ExpandableMixin
+from tests.gui.utils.common.common import Toggle
+from tests.gui.utils.common.modals import MenuModal
+from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.web_elements import (Label, WebItemsSequence, Input,
                                                WebItem, Button, NamedButton, 
                                                WebElement)
 
 
-class PermissionType(PageObject):
-    name = id = Label('.option-label')
-    _options = WebElement('.one-icon')
+class ACLPermissionType(PageObject):
+    name = id = Label('.checkbox-label')
+    checkbox = Button('.permission-checkbox')
 
     def is_checked(self):
-        classes = self._options.get_attribute("class")
-        if "oneicon-checkbox-option" in classes:
-            return True
-        if "oneicon-checkbox-filled" in classes:
+        classes = self.checkbox.get_attribute('class')
+        if 'checked' in classes:
             return True
         return False
-
-    def click(self):
-        self.web_elem.click()
 
     def __str__(self):
         return 'permission type option {} in {}'.format(self.name, self.parent)
 
 
+class PosixPermissionList(PageObject):
+    name = id = Label('.entity-name')
+    permission_type = WebItemsSequence('li.permission', cls=ACLPermissionType)
+
+
 class POSIX(PageObject):
     value = Input('input')
+    description = WebElement('.permissions-string-container')
+    entity_permission_list = WebItemsSequence('.row entity-permissions-row',
+                                              cls=PosixPermissionList)
 
     def __str__(self):
         return 'POSIX permission in {}'.format(self.parent)
 
 
-class ACLPermission(PageObject, ExpandableMixin):
-    remove = Button('.oneicon-remove')
-    move_up = Button('.oneicon-move-up')
-    move_down = Button('.oneicon-move-down')
-    _name_select = _toggle = WebElement('.col-permission-subject-select '
-                                        '.select2-arrow')
-    _type_select = WebElement('.col-permission-subject-type-select '
-                              '.select2-arrow')
-    _subject_type = WebElement('.col-permission-subject-type-select .oneicon')
-    subject_name = Label('.col-permission-subject-select')
-    options = WebItemsSequence('.one-option-button-container',
-                               cls=PermissionType)
+class AclPermission(PageObject):
+    name = id = Label('label')
+    toggle = Toggle('.one-way-toggle')
 
 
-    def select_group(self):
-        self._type_select.click()
-        self.driver.find_element_by_css_selector('li.select2-result .oneicon-'
-                                                 'group').click()
-    
-    def select_user(self):
-        self._type_select.click()
-        self.driver.find_element_by_css_selector('li.select2-result .oneicon-'
-                                                 'user').click()
+class AclPermissionGroup(PageObject):
+    name = id = Label('.one-tree-item-content > label')
+    toggle = Toggle('.one-tree-item-content .form-group .one-way-toggle')
+    permissions = WebItemsSequence('.tree-expanded li', cls=AclPermission)
+
+    def is_expanded(self):
+        return 'subtree-expanded' in self.web_elem.get_attribute('class')
 
     def expand(self):
-        super(ACLPermission, self).expand()
-        self.subjects_list = (self.driver
-                .find_elements_by_css_selector('.select2-result-label'))
+        if not self.is_expanded():
+            self.click()
 
-    def subject_type(self):
-        classes = self._subject_type.get_attribute("class")
-        if 'oneicon-user' in classes:
-            return 'user'
-        elif 'oneicon-group' in classes:
-            return 'group'
-        else:
-            return None
+
+class MemberAclPermission(PageObject):
+    name = id = Label('.subject-name')
+    menu_button = Button('.btn-menu-toggle')
+    menu = WebItem('.webui-popover-content '
+                   '.one-webui-popover.one-collapsible-toolbar-popover',
+                   cls=MenuModal)
+    acl_permission_group = WebItemsSequence('.privileges-tree-editor '
+                                            '.one-tree-item.has-subtree ',
+                                            cls=AclPermissionGroup)
+
+    allow_option = Button('.ace-type-allow')
+    deny_option = Button('.ace-type-deny')
+
+    def expand(self):
+        self.click()
 
 
 class ACL(PageObject):
-    add = NamedButton('.add-ace', text='add')
-    permissions = WebItemsSequence('.modal-row-main:not(:last-child)', 
-                                   cls=ACLPermission)
-    
+    member_permission_list = WebItemsSequence('.acl-editor '
+                                              '.ace.one-collapsible-list-item',
+                                              cls=MemberAclPermission)
+    _toggle = WebElement('.ember-basic-dropdown-trigger[role="button"]')
+
+    def expand_dropdown(self):
+        self._toggle.click()
+
 
 class EditPermissionsModal(Modal):
-    posix = WebItem('.modal-row-main.large-space', cls=POSIX)
-    acl = WebItem('.ace-items', cls=ACL)
-    options = WebItemsSequence('.one-option-button-container',
-                               cls=PermissionType)
+    posix = WebItem('.modal-body', cls=POSIX)
+    acl = WebItem('.modal-body', cls=ACL)
 
-    def select(self, perm_type):
-        for option in self.options:
-            if option.name.lower() == perm_type.lower():
-                option.click()
-                break
-        else:
-            raise RuntimeError('{} permission option in {} not found'\
-                               ''.format(perm_type, self))
-    
+    posix_button = Button('.permissions-type-posix')
+    acl_button = Button('.permissions-type-acl')
+
+    cancel_button = NamedButton('button', text='Cancel')
+    save_button = NamedButton('button', text='Save')
+
+    permission_denied_alert = WebElement('.alert.error')
+
     def __str__(self):
         return 'Edit permission modal'
+

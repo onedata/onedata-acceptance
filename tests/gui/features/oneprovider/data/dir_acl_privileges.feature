@@ -3,7 +3,8 @@ Feature: ACL directories privileges tests using sigle browser in Oneprovider GUI
   Examples:
   | subject_type  | subject_name  |
   | user          | user1         |
-  | group         | group1        |
+# TODO: change test because of a new gui
+#  | group         | group1        |
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -27,7 +28,6 @@ Feature: ACL directories privileges tests using sigle browser in Oneprovider GUI
                 - group1 
 
     And opened browser with user1 signed in to "onezone" service
-    And opened oneprovider-1 Oneprovider view in web GUI by user of browser
 
         
   Scenario Outline: Create subdirectory
@@ -35,81 +35,83 @@ Feature: ACL directories privileges tests using sigle browser in Oneprovider GUI
     Then user of browser <result> to create directory "subdir" in "dir1" in "space1"
 
     Examples:
-    | result   |  privileges                                         |
-    | succeeds |  [list files, add subdirectory, traverse directory] |
-    | fails    |  all except [add subdirectory]                      |
-    | fails    |  all except [traverse directory]                    |
+    | result   |  privileges                                                        |
+    | succeeds |  [data:list files, data:add subdirectory, data:traverse directory] |
+    | fails    |  all except [data:add subdirectory]                                |
+    | fails    |  all except [data:traverse directory]                              |
 
 
-  Scenario Outline: Create file in directory
-    When user of browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
-    Then user of browser <result> to create file "subfile" in "dir1" in "space1"
-
-    Examples:
-    | result   |  privileges                                  |
-    | succeeds |  [list files, add files, traverse directory] |
-    | fails    |  all except [add files]                      |
-    | fails    |  all except [traverse directory]             |
-
+# TODO: change test because of a new gui
+#  Scenario Outline: Create file in directory
+#    When user of browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
+#    Then user of browser <result> to create file "subfile" in "dir1" in "space1"
+#
+#    Examples:
+#    | result   |  privileges                                  |
+#    | succeeds |  [list files, add files, traverse directory] |
+#    | fails    |  all except [add files]                      |
+#    | fails    |  all except [traverse directory]             |
+#
 
   Scenario Outline: Rename directory
     When user of browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
     Then user of browser <result> to rename "dir1" to "new_name" in "space1"
 
     Examples:
-    | result   |  privileges           |                        
-    | succeeds |  [delete]             |
-    | fails    |  all except [delete]  |
-        
-        
+    | result   |  privileges                   |
+    | succeeds |  [general:delete]             |
+    | fails    |  all except [general:delete]  |
+
+
   Scenario Outline: Remove empty directory
     When user of browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
     Then user of browser <result> to remove "dir1" in "space1"
 
     Examples:
-    | result   |  privileges                 |               
-    | succeeds |  [delete, list files]       |
-    | fails    |  all except [delete]        |
-    | fails    |  all except [list files]    |
-        
-        
+    | result   |  privileges                              |
+    | succeeds |  [general:delete, data:list files]       |
+    | fails    |  all except [general:delete]             |
+    | fails    |  all except [data:list files]            |
+
+
   Scenario Outline: Read directory ACL
     When user of browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
     Then user of browser <result> to read "dir1" ACL in "space1"
 
     Examples:
-    | result   |  privileges               | 
-    | succeeds |  [read acl]               |
-    | fails    |  all except [read acl]    |
-        
-        
+    | result   |  privileges                   |
+    | succeeds |  [acl:read acl]               |
+    | fails    |  all except [acl:read acl]    |
+
+
   Scenario Outline: Change directory ACL
     When user of browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
-    Then user of browser <result> to change "dir1" ACL in "space1"
+    Then user of browser <result> to change "dir1" ACL for <subject_name> in "space1"
 
     Examples:
-    | result   |  privileges               |                        
-    | succeeds |  [change acl]             |
-    | fails    |  all except [change acl]  |
-        
-        
-  Scenario Outline: Write metadata to directory
-    When user of browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
-    Then user of browser <result> to write "dir1" basic metadata: "attr=val" in "space1"
+    | result   |  privileges                   |
+    | succeeds |  [acl]                        |
+    | fails    |  all except [acl:change acl]  |
 
-    Examples:
-    | result   |  privileges                       |            
-    | succeeds |  [read metadata, write metadata]  |
-    | fails    |  all except [write metadata]      |
-    | fails    |  all except [read metadata]       |
-        
-        
-  Scenario Outline: Read directory metadata
-    When user of browser succeeds to write "dir1" basic metadata: "attr=val" in "space1"
-    And user of browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
-    Then user of browser <result> to read "dir1" basic metadata "attr=val" in "space1"
 
-    Examples:
-    | result   |  privileges                   |            
-    | succeeds |  [read metadata]              |
-    | fails    |  all except [read metadata]   |
+# TODO: change test because of a new gui
+#  Scenario Outline: Write metadata to directory
+#    When user of browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
+#    Then user of browser <result> to write "dir1" basic metadata: "attr=val" in "space1"
+#
+#    Examples:
+#    | result   |  privileges                       |
+#    | succeeds |  [read metadata, write metadata]  |
+#    | fails    |  all except [write metadata]      |
+#    | fails    |  all except [read metadata]       |
+#
+#
+#  Scenario Outline: Read directory metadata
+#    When user of browser succeeds to write "dir1" basic metadata: "attr=val" in "space1"
+#    And user of browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
+#    Then user of browser <result> to read "dir1" basic metadata "attr=val" in "space1"
+#
+#    Examples:
+#    | result   |  privileges                   |
+#    | succeeds |  [read metadata]              |
+#    | fails    |  all except [read metadata]   |

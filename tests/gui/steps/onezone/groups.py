@@ -132,7 +132,7 @@ def assert_create_button_inactive(selenium, browser_id, oz_page):
 @wt(parsers.parse('user of {browser_id} sees that error modal with '
                   'text "{text}" appeared'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_error_modal_with_text_appeared(selenium, browser_id, text, oz_page):
+def assert_error_modal_with_text_appeared(selenium, browser_id, text):
     message = 'Modal does not contain text "{}"'.format(text)
     modal_text = modals(selenium[browser_id]).error.content.lower()
     assert text.lower() in modal_text, message

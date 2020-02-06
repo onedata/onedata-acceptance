@@ -102,43 +102,39 @@ def click_button_from_file_browser_menu_bar(selenium, browser_id,
     getattr(op_page(driver).file_browser, transform(button)).click()
 
 
-@when(parsers.parse('user of {browser_id} sees that {btn_list} button '
-                    'is enabled in toolbar in data tab in Oneprovider gui'))
-@then(parsers.parse('user of {browser_id} sees that {btn_list} button '
-                    'is enabled in toolbar in data tab in Oneprovider gui'))
-@when(parsers.parse('user of {browser_id} sees that {btn_list} buttons '
-                    'are enabled in toolbar in data tab in Oneprovider gui'))
-@then(parsers.parse('user of {browser_id} sees that {btn_list} buttons '
-                    'are enabled in toolbar in data tab in Oneprovider gui'))
+@wt(parsers.parse('user of {browser_id} sees that {btn_list} option '
+                  'is in selection menu on file browser page'))
+@wt(parsers.parse('user of {browser_id} sees that {btn_list} options '
+                  'are in selection menu on file browser page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_btn_enabled_in_toolbar_in_data_tab_in_op(selenium, browser_id,
-                                                    btn_list, op_page):
+def assert_btn_is_in_file_browser_menu_bar(selenium, browser_id, btn_list,
+                                           op_page, tmp_memory, modals):
     driver = selenium[browser_id]
-    toolbar = op_page(driver).data.toolbar
+    file_browser = tmp_memory[browser_id]['file_browser']
+    file_browser.selection_menu_button()
+
+    menu = modals(driver).menu_modal.menu
     for btn in parse_seq(btn_list):
-        item = getattr(toolbar, transform(btn))
-        assert item.is_enabled() is True, ('{} should be disabled but is not'
-                                           ''.format(item))
+        assert btn in menu, ('{} should be in selection menu but is not'
+                             .format(btn))
 
 
-@when(parsers.parse('user of {browser_id} sees that {btn_list} button is '
-                    'disabled in toolbar in data tab in Oneprovider gui'))
-@then(parsers.parse('user of {browser_id} sees that {btn_list} button is '
-                    'disabled in toolbar in data tab in Oneprovider gui'))
-@when(parsers.parse('user of {browser_id} sees that {btn_list} buttons are '
-                    'disabled in toolbar in data tab in Oneprovider gui'))
-@then(parsers.parse('user of {browser_id} sees that {btn_list} buttons are '
-                    'disabled in toolbar in data tab in Oneprovider gui'))
+@wt(parsers.parse('user of {browser_id} sees that {btn_list} option '
+                  'is not in selection menu on file browser page'))
+@wt(parsers.parse('user of {browser_id} sees that {btn_list} options '
+                  'are not in selection menu on file browser page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_btn_disabled_in_toolbar_in_data_tab_in_op(selenium, browser_id,
-                                                     btn_list, op_page):
+def assert_btn_is_not_in_file_browser_menu_bar(selenium, browser_id,
+                                               btn_list, op_page,
+                                               tmp_memory, modals):
     driver = selenium[browser_id]
-    toolbar = op_page(driver).data.toolbar
+    file_browser = tmp_memory[browser_id]['file_browser']
+    file_browser.selection_menu_button()
+
+    menu = modals(driver).menu_modal.menu
     for btn in parse_seq(btn_list):
-        item = getattr(toolbar, transform(btn))
-        assert item.is_enabled() is False, ('{} btn should be disabled but is '
-                                            'not in toolbar in op data tab'
-                                            ''.format(btn))
+        assert btn not in menu, ('{} should not be in selection menu'
+                                 .format(btn))
 
 
 @wt(parsers.parse('user of {browser_id} sees that current working directory '

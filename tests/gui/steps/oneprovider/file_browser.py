@@ -68,6 +68,12 @@ def click_on_tool_icon_for_file_in_file_browser(browser_id, tool_type,
     browser.files[item_name].click_on_tool(tool_type)
 
 
+def _get_items_list_from_file_browser(browser_id, tmp_memory):
+    file_browser = tmp_memory[browser_id]['file_browser']
+    data = {f.name for f in file_browser.data}
+    return data
+
+
 @wt(parsers.parse('user of {browser_id} sees that item named {item_list} '
                   'has disappeared from files browser'))
 @wt(parsers.parse('user of {browser_id} sees that items named {item_list} '
@@ -76,8 +82,7 @@ def click_on_tool_icon_for_file_in_file_browser(browser_id, tool_type,
                   '{item_list} in file browser'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_items_absence_in_file_browser(browser_id, item_list, tmp_memory):
-    file_browser = tmp_memory[browser_id]['file_browser']
-    data = {f.name for f in file_browser.data}
+    data = _get_items_list_from_file_browser(browser_id, tmp_memory)
     for item_name in parse_seq(item_list):
         assert item_name not in data, ('found "{}" in file browser, '
                                        'while it should not'.format(item_name))
@@ -91,11 +96,9 @@ def assert_items_absence_in_file_browser(browser_id, item_list, tmp_memory):
                   '{item_list} have appeared in file browser'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_items_presence_in_file_browser(browser_id, item_list, tmp_memory):
-    file_browser = tmp_memory[browser_id]['file_browser']
-    files = {f.name for f in file_browser.data}
+    data = _get_items_list_from_file_browser(browser_id, tmp_memory)
     for item_name in parse_seq(item_list):
-        assert item_name in files, ('not found "{}" in file browser'
-                                    .format(item_name))
+        assert item_name in data, f'not found "{item_name}" in file browser'
 
 
 @wt(parsers.re('user of (?P<browser_id>.+?) sees items? named '

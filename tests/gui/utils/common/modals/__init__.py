@@ -45,7 +45,7 @@ class Modals(object):
     revoke_space_support = WebItem('.modal.in .modal-dialog',
                                    cls=RevokeSpaceSupportModal)
     login = WebItem('#login-form-modal', cls=LoginFormModal)
-    edit_permissions = WebItem('#edit-permissions-modal',
+    edit_permissions = WebItem('.modal-dialog',
                                cls=EditPermissionsModal)
     configure_web_cert = WebItem('#configure-web-cert-modal',
                                  cls=ConfigureWebCertModal)

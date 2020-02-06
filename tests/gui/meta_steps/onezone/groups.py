@@ -225,7 +225,7 @@ def fail_to_rename_groups_using_op_gui(selenium, user, oz_page, group_list,
     for group, new_name in zip(parse_seq(group_list), parse_seq(new_names)):
         rename_groups_using_op_gui(selenium, user, oz_page, group,
                                    new_name, popups)
-        assert_error_modal_with_text_appeared(selenium, user, text, oz_page)
+        assert_error_modal_with_text_appeared(selenium, user, text)
 
 
 def fail_to_add_subgroups_using_op_gui(selenium, user, oz_page, parent,
@@ -241,7 +241,6 @@ def fail_to_add_subgroups_using_op_gui(selenium, user, oz_page, parent,
 
         add_group_as_subgroup(selenium, user, child, oz_page,
                               tmp_memory, popups)
-        assert_error_modal_with_text_appeared(selenium, user, error,
-                                              oz_page)
+        assert_error_modal_with_text_appeared(selenium, user, error)
         close_modal(selenium, user, modal, modals)
 

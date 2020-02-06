@@ -95,8 +95,8 @@ def screens():
 #     pass
 
 
-# scenarios('../features/oneprovider/data/empty_file_browser.feature')
+scenarios('../features/oneprovider/data/empty_file_browser.feature')
 scenarios('../features/oneprovider/data/single_file.feature')
-# scenarios('../features/oneprovider/data/several_files.feature')
+scenarios('../features/oneprovider/data/several_files.feature')
 scenarios('../features/oneprovider/data/single_directory.feature')
 scenarios('../features/oneprovider/data/nested_directories.feature')
