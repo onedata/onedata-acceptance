@@ -11,10 +11,9 @@ import re
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.common.keys import Keys
-from pytest_bdd import parsers, given, when, then
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
-from tests.utils.acceptance_utils import wt
+from tests.utils.bdd_utils import given, wt, parsers, when, then
 from tests.gui.utils.generic import click_on_web_elem, transform
 from tests.utils.utils import repeat_failed
 
