@@ -73,26 +73,6 @@ def rename_spaces_in_oz(client, request, user, space_list, new_names_list,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>.+?) set space named '
-                 '"(?P<space_name>.+?)" as home space in "(?P<host>.+?)" '
-                 'Onezone service'))
-def set_space_as_home_in_oz(client, request, user, space_name, host, selenium,
-                            oz_page, users, hosts, spaces, popups):
-
-    if client.lower() == 'rest':
-        from tests.mixed.steps.rest.onezone.space_management import \
-                                            set_space_as_home_in_oz_using_rest
-        set_space_as_home_in_oz_using_rest(user, users, host, hosts, space_name,
-                                           spaces)
-    elif client.lower() == 'web gui':
-        from tests.gui.meta_steps.onezone.spaces import \
-                                            set_space_as_home_in_oz_using_gui
-        set_space_as_home_in_oz_using_gui(selenium, user, oz_page,
-                                          space_name, popups)
-    else:
-        raise NoSuchClientException('Client: {} not found.'.format(client))
-
-
 @when(parsers.re('using (?P<client>.*), (?P<user>.+?) removes spaces? '
                  'named (?P<space_list>.+?) in "(?P<host>.+?)" Onezone '
                  'service'))
@@ -287,27 +267,6 @@ def assert_spaces_have_been_renamed_in_oz(client, request, user, space_list,
                                     assert_spaces_have_been_renamed_in_oz_gui
         assert_spaces_have_been_renamed_in_oz_gui(selenium, user, oz_page,
                                                   space_list, new_names_list)
-    else:
-        raise NoSuchClientException('Client: {} not found.'.format(client))
-
-
-@then(parsers.re('using (?P<client>.*), (?P<user>.+?) sees that space '
-                 'named "(?P<space_name>.+?)" has been set as home in '
-                 '"(?P<host>.+?)" Onezone service'))
-def assert_space_has_been_set_as_home_in_oz(client, request, user, space_name,
-                                            host, selenium, oz_page, users,
-                                            hosts, spaces):
-
-    if client.lower() == 'rest':
-        from tests.mixed.steps.rest.onezone.space_management import \
-                                        assert_space_is_home_space_in_oz_rest
-        assert_space_is_home_space_in_oz_rest(user, users, host, hosts,
-                                              space_name, spaces)
-    elif client.lower() == 'web gui':
-        from tests.gui.meta_steps.onezone.spaces import \
-                                        assert_space_is_home_space_in_oz_gui
-        assert_space_is_home_space_in_oz_gui(selenium, user, oz_page,
-                                             space_name)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
 

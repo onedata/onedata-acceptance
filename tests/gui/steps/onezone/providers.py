@@ -147,24 +147,6 @@ def wt_click_on_go_to_files_provider(selenium, browser_id_list, btn_name, oz_pag
         getattr(popup, transform(btn_name)).click()
 
 
-@when(parsers.parse(r'user of {browser_id} unsets provider named "{provider}" '
-                    r'from home by clicking on home icon in that provider '
-                    r'record in expanded "GO TO YOUR FILES" Onezone panel'))
-@then(parsers.parse(r'user of {browser_id} unsets provider named "{provider}" '
-                    r'from home by clicking on home icon in that provider '
-                    r'record in expanded "GO TO YOUR FILES" Onezone panel'))
-@repeat_failed(timeout=WAIT_BACKEND)
-def unset_given_item_from_home_by_clicking_on_home_icon(selenium, browser_id,
-                                                        provider_name, oz_page,
-                                                        hosts):
-    driver = selenium[browser_id]
-    provider_name = hosts[provider_name]['name']
-    provider = oz_page(driver)['go to your files'].providers[provider_name]
-    provider.unset_from_home()
-    assert not provider.is_home(), ('provider named "{}" is still set as home '
-                                    'but it should not'.format(provider))
-
-
 @when(parsers.re(r'user of (?P<browser_id>.+?) sees that there is no '
                  r'displayed provider popup next to '
                  r'(?P<ordinal>1st|2nd|3rd|\d*?[4567890]th|\d*?11th|'
