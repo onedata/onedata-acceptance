@@ -21,79 +21,52 @@ Feature: Basic data tab operations on single directory in file browser
     And user opened browser window
     And user of browser opened onezone page
     And user of browser logged as user1 to Onezone service
-    And opened oneprovider-1 Oneprovider view in web GUI by user of browser
 
 
   Scenario: User fails to create new directory because of existing directory with given name
-    When user of browser uses spaces select to change data space to "space1"
-    And user of browser sees that current working directory displayed in breadcrumbs is space1
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser sees that current working directory displayed in breadcrumbs is space1
 
-    And user of browser clicks the button from top menu bar with tooltip "Create directory"
-    And user of browser sees that "New directory" modal has appeared
-    And user of browser clicks on input box in active modal
-    And user of browser types "dir1" on keyboard
-    And user of browser clicks "Create" confirmation button in displayed modal
-    And user of browser sees that the modal has disappeared
-    Then user of browser sees an error notify with text matching to: .*failed.*
+    And user of browser clicks "New directory" button from file browser menu bar
+    And user of browser writes "dir1" into name directory text field in modal "Create dir"
+    And user of browser confirms create new directory using button
+    Then user of browser sees that error modal with text "File exists" appeared
 
 
   Scenario: User removes existing directory
-    When user of browser uses spaces select to change data space to "space1"
-    And user of browser sees that current working directory displayed in breadcrumbs is space1
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
-
-    And user of browser clicks once on item named "dir1" in file browser
-    And user of browser clicks the button from top menu bar with tooltip "Remove element"
-    And user of browser sees that "Remove files" modal has appeared
-    And user of browser clicks "Yes" confirmation button in displayed modal
-
-    Then user of browser sees an info notify with text matching to: .*removed.*
-    And user of browser sees that the modal has disappeared
-    And user of browser sees that item named "dir1" has disappeared from files browser
-
-
-  Scenario: User renames directory (presses ENTER after entering dir name)
-    When user of browser uses spaces select to change data space to "space1"
     And user of browser sees that current working directory displayed in breadcrumbs is space1
+
+    And user of browser clicks on menu for "dir1" directory in file browser
+    And user of browser clicks "Delete" option in data row menu in file browser
+    And user of browser clicks on "Yes" button in modal "Delete modal"
+
+    Then user of browser sees that item named "dir1" has disappeared from files browser
+
+
+  Scenario Outline: User renames directory
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser sees that current working directory displayed in breadcrumbs is space1
 
-    And user of browser clicks once on item named "dir1" in file browser
-    And user of browser clicks the button from top menu bar with tooltip "Rename element"
-    And user of browser sees that "Rename file or directory" modal has appeared
-    And user of browser clicks on input box in active modal
-    And user of browser types "new_dir1" on keyboard
-    And user of browser presses enter on keyboard
-    And user of browser sees that the modal has disappeared
+    And user of browser clicks on menu for "dir1" directory in file browser
+    And user of browser clicks "Rename" option in data row menu in file browser
 
-    Then user of browser sees an info notify with text matching to: .*renamed.*
-    And user of browser sees that item named "dir1" has disappeared from files browser
+    And user of browser sees that "Rename" modal has appeared
+    And user of browser writes "new_dir1" into name directory text field in modal "Rename modal"
+    And user of browser confirms rename directory using <confirmation_method>
+
+    Then user of browser sees that item named "dir1" has disappeared from files browser
     And user of browser sees that item named "new_dir1" has appeared in file browser
     And user of browser sees that item named "new_dir1" is directory in file browser
 
+    Examples:
+    | confirmation_method |
+    | enter               |
+    | button              |
 
-  Scenario: User renames directory (clicks OK confirmation button after entering dir name)
-    When user of browser uses spaces select to change data space to "space1"
-    And user of browser sees that current working directory displayed in breadcrumbs is space1
-    And user of browser sees file browser in data tab in Oneprovider page
-
-    And user of browser clicks once on item named "dir1" in file browser
-    And user of browser clicks the button from top menu bar with tooltip "Rename element"
-    And user of browser sees that "Rename file or directory" modal has appeared
-    And user of browser clicks on input box in active modal
-    And user of browser types "new_dir1" on keyboard
-    And user of browser clicks "OK" confirmation button in displayed modal
-    And user of browser sees that the modal has disappeared
-
-    Then user of browser sees an info notify with text matching to: .*renamed.*
-    And user of browser sees that item named "dir1" has disappeared from files browser
-    And user of browser sees that item named "new_dir1" has appeared in file browser
-    And user of browser sees that item named "new_dir1" is directory in file browser
-
-
-  Scenario: User sees that with only one directory selected only ["Create directory", "Create file", "Share element", "Edit metadata", "Upload file", "Rename element", "Change element permissions", "Remove element"] buttons from toolbar are enabled
-    When user of browser uses spaces select to change data space to "space1"
-    And user of browser sees file browser in data tab in Oneprovider page
-    And user of browser selects "dir1" item(s) from file browser with pressed ctrl
-    Then user of browser sees that ["Create directory", "Create file", "Share element", "Edit metadata", "Upload file", "Rename element", "Change element permissions", "Remove element", "Show data distribution"] buttons are enabled in toolbar in data tab in Oneprovider gui
-    And user of browser sees that ["Copy element", "Cut element"] buttons are disabled in toolbar in data tab in Oneprovider gui

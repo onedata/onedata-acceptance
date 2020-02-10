@@ -7,12 +7,10 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-from pytest_bdd import parsers
-from tests.utils.acceptance_utils import wt
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.utils.utils import repeat_failed
-from tests.gui.utils.generic import parse_seq, transform
-from tests.gui.utils.common.modals import Modals as modals
+from tests.utils.bdd_utils import wt, parsers
+from tests.gui.utils.generic import transform
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 
 
@@ -104,8 +102,6 @@ def click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option,
         oz_page(driver)[option].elements_list[name].click()
 
 
-
-
 @wt(parsers.parse('user of {browser_id} writes "{space_name}" '
                   'into rename space text field'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -149,7 +145,7 @@ def click_on_option_in_menu(selenium, browser_id, button, oz_page, popups):
                '(?P<button_name>yes|no) button'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_confirm_or_cancel_button_on_leave_space_page(selenium, browser_id,
-                                                       button_name):
+                                                       button_name, modals):
     getattr(modals(selenium[browser_id]).leave_space, button_name).click()
 
 
@@ -214,9 +210,9 @@ def assert_size_of_space_on_left_sidebar_menu(selenium, browser_id, number,
                              .format(space_name, number))
 
 
-@wt(parsers.re(
-    'user of (?P<browser_id>.*?) clicks (?P<option>Members|Overview|Providers) '
-    'of "(?P<space_name>.*?)" in the sidebar'))
+@wt(parsers.re('user of (?P<browser_id>.*?) clicks '
+               '(?P<option>Overview|Data|Transfers|Providers|Members) '
+               'of "(?P<space_name>.*?)" in the sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
                                                   space_name, option, oz_page):
@@ -254,7 +250,7 @@ def type_token_to_input_on_join_to_a_space_page(selenium, browser_id,
 
 @wt(parsers.parse('user of {browser_id} sees that error popup has appeared'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_error_popup_has_appeared(selenium, browser_id):
+def assert_error_popup_has_appeared(selenium, browser_id, modals):
     assert "failed" in modals(selenium[browser_id]).error.content, \
         'error popup not found'
 

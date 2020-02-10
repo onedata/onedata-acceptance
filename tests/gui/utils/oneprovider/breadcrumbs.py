@@ -15,13 +15,15 @@ except ImportError:
     izip = zip
 
 from tests.gui.utils.core.base import PageObject
-from tests.gui.utils.core.web_elements import WebItemsSequence, WebItem
+from tests.gui.utils.core.web_elements import WebItemsSequence, WebItem, Button
 from tests.gui.utils.core.web_objects import ButtonWithTextPageObject
 
 
 class _Breadcrumbs(PageObject):
-    _breadcrumbs = WebItemsSequence('a.file-breadcrumb-item-link',
+    _breadcrumbs = WebItemsSequence('.fb-breadcrumbs-dir '
+                                    '.fb-breadcrumbs-dir-name',
                                     cls=ButtonWithTextPageObject)
+    home = Button('.fb-breadcrumbs-dir-root')
 
     def __str__(self):
         return 'Breadcrumbs({path}) in {parent}'.format(path=self.pwd(),
