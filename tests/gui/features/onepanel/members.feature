@@ -129,5 +129,5 @@ Feature: Basic cluster members management utilities using onepanel
     And user of browser2 clicks on modify provider details button in clusters page
     And user of browser2 types "pro1" to Provider name input box in modify provider details form in Provider panel
     And user of browser2 clicks on confirm modify provider details button in clusters page
-    Then user of browser2 sees that error modal with text "Forbidden" appeared
+    Then user of browser2 sees that error modal with text "Provider data modification failed" appeared
 

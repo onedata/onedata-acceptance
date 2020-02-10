@@ -114,8 +114,6 @@ def _create_and_configure_spaces(config, zone_name, admin_credentials,
                                                          space_name)
         _add_users_to_space(zone_hostname, admin_credentials, space_id,
                             users_db, users_to_add)
-        _set_as_home_for_users(space_id, zone_hostname, users_db,
-                               description.get('home space for', []))
         _add_groups_to_space(zone_hostname, admin_credentials, space_id,
                              groups_db, description.get('groups', {}))
         _get_support(zone_hostname, onepanel_credentials, owner, space_id,
@@ -160,14 +158,6 @@ def _add_user_to_space(zone_hostname, admin_username, admin_password,
     http_put(ip=zone_hostname, port=OZ_REST_PORT,
              path=get_zone_rest_path('spaces', space_id, 'users', user_id),
              auth=(admin_username, admin_password), data=data)
-
-
-def _set_as_home_for_users(space_id, zone_hostname, users_db, users):
-    for user in (users_db[username] for username in users):
-        http_put(ip=zone_hostname, port=OZ_REST_PORT,
-                 path=get_zone_rest_path('user', 'default_space'),
-                 auth=(user.username, user.password),
-                 data=json.dumps({'spaceId': space_id}))
 
 
 def _add_groups_to_space(zone_hostname, admin_credentials, space_id,

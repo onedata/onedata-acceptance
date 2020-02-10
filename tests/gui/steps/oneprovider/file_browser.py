@@ -84,8 +84,8 @@ def _get_items_list_from_file_browser(browser_id, tmp_memory):
 def assert_items_absence_in_file_browser(browser_id, item_list, tmp_memory):
     data = _get_items_list_from_file_browser(browser_id, tmp_memory)
     for item_name in parse_seq(item_list):
-        assert item_name not in data, ('found "{}" in file browser, '
-                                       'while it should not'.format(item_name))
+        assert item_name not in data, (f'found "{item_name}" in file browser, '
+                                       f'while it should not')
 
 
 @wt(parsers.parse('user of {browser_id} sees item(s) '
@@ -316,10 +316,9 @@ def assert_empty_dir_msg_in_file_browser(browser_id, tmp_memory):
     expected_msg = 'empty directory'
     displayed_msg = browser.empty_dir_msg.lower()
 
-    assert expected_msg == displayed_msg, ('Displayed empty dir msg "{}" '
-                                           'does not match expected one '
-                                           '"{}"'.format(displayed_msg,
-                                                         expected_msg))
+    assert expected_msg == displayed_msg, (f'Displayed empty dir msg '
+                                           f'"{displayed_msg}" does not match '
+                                           f'expected one "{expected_msg}"')
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) confirms create new directory '
@@ -351,8 +350,7 @@ def confirm_rename_directory(selenium, browser_id, option, modals):
 @wt(parsers.parse('user of {browser_id} clicks on menu '
                   'for "{item_name}" file in file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_menu_for_elem_in_file_browser(selenium, browser_id, item_name,
-                                        tmp_memory):
+def click_menu_for_elem_in_file_browser(browser_id, item_name, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
     browser.data[item_name].menu_button()
 

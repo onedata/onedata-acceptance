@@ -34,16 +34,6 @@ Feature: Basic management
   | REST    | web GUI   |
 
 
-  Scenario Outline: User set space as home using <client1> and using <client2> he sees that it has been set as home space
-    When using <client1>, user1 set space named "space1" as home space in "onezone" Onezone service
-    Then using <client2>, user1 sees that space named "space1" has been set as home in "onezone" Onezone service
-
-  Examples:
-  | client1 | client2   |
-  | web GUI | REST      |
-  | REST    | web GUI   |
-
-
   Scenario Outline: Admin unsupport space using <client1> and using <client2> he sees that it has been unsupported
     When using <client1>, admin removes support from provider "oneprovider-1" for space named "space1" in "onezone" Onezone service
     Then using <client2>, user1 sees that there is no supporting provider "oneprovider-1" for space named "space1" in "onezone" Onezone service

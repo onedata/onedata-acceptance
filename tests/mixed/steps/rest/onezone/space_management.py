@@ -9,8 +9,7 @@ __license__ = ("This software is released under the MIT license cited in "
 
 
 from tests.mixed.onezone_client import (UserApi, SpaceCreateRequest,
-                                        SpaceApi, DefaultSpace,
-                                        SpaceInviteToken, ProviderApi)
+                                        SpaceApi, SpaceInviteToken, ProviderApi)
 from tests.mixed.utils.common import login_to_oz
 from tests.mixed.steps.rest.onezone.common import (get_user_space_with_name,
                                                    get_provider_with_name,
@@ -50,16 +49,6 @@ def rename_spaces_in_oz_using_rest(user, users, zone_name, hosts, space_list,
         space = user_api.get_user_space(spaces[space_name])
         space.name = new_space_name
         space_api.modify_space(spaces[space_name], space)
-
-
-def set_space_as_home_in_oz_using_rest(user, users, zone_name, hosts,
-                                       space_name, spaces):
-    user_client = login_to_oz(user, users[user].password,
-                              hosts[zone_name]['hostname'])
-
-    user_api = UserApi(user_client)
-    default_space = DefaultSpace(spaces[space_name])
-    user_api.set_default_space(default_space)
 
 
 def remove_spaces_in_oz_using_rest(user, users, zone_name, hosts, space_list,
@@ -181,16 +170,6 @@ def assert_spaces_have_been_renamed_in_oz_rest(user, users, zone_name, hosts,
         assert space_name == new_space_name,\
             'Space should has name {} but it has name {}'.format(new_space_name,
                                                                  space_name)
-
-
-def assert_space_is_home_space_in_oz_rest(user, users, zone_name, hosts,
-                                          space_name, spaces):
-    user_client = login_to_oz(user, users[user].password,
-                              hosts[zone_name]['hostname'])
-    user_api = UserApi(user_client)
-    home_space_id = user_api.get_default_space()
-    assert home_space_id.space_id == spaces[space_name], \
-        'Space {} is not set as home space'.format(space_name)
 
 
 def assert_there_is_no_provider_for_space_in_oz_rest(user, users, zone_name,

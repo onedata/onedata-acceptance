@@ -66,7 +66,8 @@ def leave_spaces_in_oz_using_gui(selenium, user, space_list, oz_page, popups):
                                                     space_name, oz_page)
         click_on_option_in_menu(selenium, user, option, oz_page, popups)
         click_confirm_or_cancel_button_on_leave_space_page(selenium, user,
-                                                           confirmation_button)
+                                                           confirmation_button,
+                                                           modals)
 
 
 def rename_spaces_in_oz_using_gui(selenium, user, oz_page, space_list,
@@ -83,16 +84,6 @@ def rename_spaces_in_oz_using_gui(selenium, user, oz_page, space_list,
                                                                new_space_name,
                                                                oz_page)
         confirm_rename_the_space(selenium, user, option, oz_page)
-
-
-def set_space_as_home_in_oz_using_gui(selenium, user, oz_page,
-                                      space_name, popups):
-    where = 'spaces'
-    button = 'Toggle default space'
-
-    click_element_on_lists_on_left_sidebar_menu(selenium, user, where,
-                                                space_name, oz_page)
-    click_on_option_in_menu(selenium, user, button, oz_page, popups)
 
 
 def remove_provider_support_for_space_in_oz_using_gui(selenium, user,

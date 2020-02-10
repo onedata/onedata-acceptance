@@ -18,8 +18,7 @@ class MenuItem(PageObject):
 
 
 class MenuModal(PageObject):
-    menu = WebItemsSequence('ul li',
-                            cls=MenuItem)
+    menu = WebItemsSequence('ul li', cls=MenuItem)
 
     def __str__(self):
         return 'Member menu popup'

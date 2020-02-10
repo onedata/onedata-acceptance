@@ -16,7 +16,7 @@ class _Chunk(PageObject):
     start = Label('.chunks-scale.lower-size')
     end = Label('.chunks-scale.upper-size')
     _canvas = WebElement('canvas')
-    _file_chunks = WebElement('.chunks-container')  # .chunks-text
+    _file_chunks = WebElement('.chunks-container')
 
     def __str__(self):
         return 'file blocks for {}'.format(self.parent)
@@ -46,6 +46,7 @@ class _DataDistributionRecord(PageObject):
     name = id = Label('.oneprovider-name', parent_name='given provider')
     distribution = WebItem('.chunks-container', cls=_Chunk)
     menu_button = Button('.collapsible-toolbar-toggle')
+    #  TODO: change test because of a new gui
     # migrate = Button('.btn-migrate')
     # replicate = Button('.btn-replicate')
 
@@ -68,6 +69,7 @@ class DataDistributionModal(Modal):
     file_name = Label('.file-name')
     providers = WebItemsSequence('.oneproviders-distribution-item',
                                  cls=_DataDistributionRecord)
+    #  TODO: change test because of a new gui
     # migrate = WebItemsSequence('.migrate-popover li.migrate-item',
     #                            cls=MigrationRecord)
 

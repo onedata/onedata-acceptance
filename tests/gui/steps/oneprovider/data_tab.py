@@ -7,6 +7,8 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import time
+
 import pytest
 from selenium.common.exceptions import NoSuchElementException
 
@@ -18,7 +20,6 @@ from tests.utils.bdd_utils import given, wt, parsers, when, then
 
 def _change_iframe_for_file_browser(selenium, browser_id, tmp_memory, op_page):
     driver = selenium[browser_id]
-    import time
     timeout = WAIT_BACKEND
     limit = time.time() + timeout
     while time.time() < limit:
@@ -144,8 +145,8 @@ def is_displayed_breadcrumbs_in_data_tab_in_op_correct(selenium, browser_id,
                                                        path, op_page):
     driver = selenium[browser_id]
     breadcrumbs = op_page(driver).file_browser.breadcrumbs.pwd()
-    assert path == breadcrumbs, ('expected breadcrumbs {}; displayed: {}'
-                                 .format(path, breadcrumbs))
+    assert path == breadcrumbs, (f'expected breadcrumbs {path}; '
+                                 f'displayed: {breadcrumbs}')
 
 
 @wt(parsers.parse('user of {browser_id} changes current working directory '
