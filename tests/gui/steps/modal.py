@@ -13,8 +13,9 @@ from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.common.keys import Keys
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
-from tests.utils.bdd_utils import given, wt, parsers, when, then
+from tests.gui.utils import Modals as modals
 from tests.gui.utils.generic import click_on_web_elem, transform
+from tests.utils.bdd_utils import given, wt, parsers, when, then
 from tests.utils.utils import repeat_failed
 
 
@@ -339,3 +340,13 @@ def write_name_into_text_field_in_modal(selenium, browser_id, item_name,
                                         modal_name, modals):
     modal = getattr(modals(selenium[browser_id]), transform(modal_name))
     modal.input_name = item_name
+
+
+@wt(parsers.parse('user of {browser_id} sees that error modal with '
+                  'text "{text}" appeared'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_error_modal_with_text_appeared(selenium, browser_id, text):
+    message = 'Modal does not contain text "{}"'.format(text)
+    modal_text = modals(selenium[browser_id]).error.content.lower()
+    assert text.lower() in modal_text, message
+

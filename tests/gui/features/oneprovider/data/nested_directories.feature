@@ -48,23 +48,6 @@ Feature: Basic data tab operations on nested directory structure in file browser
     Then user of browser sees that current working directory displayed in breadcrumbs is space1
 
 
-# TODO: change test because of a new gui
-#  Scenario: User sees that with several directories selected only ["Create directory", "Create file", "Upload file", "Change element permissions", "Remove element"] buttons from toolbar are enabled
-#    When user of browser uses spaces select to change data space to "space1"
-#    And user of browser sees file browser in data tab in Oneprovider page
-#    And user of browser selects ["dir1", "dir2"] items from file browser with pressed ctrl
-#    Then user of browser sees that ["Create directory", "Create file", "Upload file", "Change element permissions", "Remove element"] buttons are enabled in toolbar in data tab in Oneprovider gui
-#    And user of browser sees that ["Share element", "Edit metadata", "Rename element", "Copy element", "Cut element", "Show data distribution"] buttons are disabled in toolbar in data tab in Oneprovider gui
-#
-#
-#  Scenario: User sees that with directory and file selected only ["Create directory", "Create file", "Upload file", "Remove element"] buttons from toolbar are enabled
-#    When user of browser uses spaces select to change data space to "space1"
-#    And user of browser sees file browser in data tab in Oneprovider page
-#    And user of browser selects ["dir1", "file1"] items from file browser with pressed ctrl
-#    Then user of browser sees that ["Create directory", "Create file", "Upload file", "Remove element"] buttons are enabled in toolbar in data tab in Oneprovider gui
-#    And user of browser sees that ["Share element", "Edit metadata", "Rename element", "Change element permissions", "Copy element", "Cut element", "Show data distribution"] buttons are disabled in toolbar in data tab in Oneprovider gui
-
-
   Scenario: User removes directory containing several files
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Data of "space1" in the sidebar

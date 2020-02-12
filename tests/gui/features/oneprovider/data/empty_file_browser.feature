@@ -46,21 +46,16 @@ Feature: Data tab operations with empty file browser
 #    And user of browser sees that item named "file1" is file in file browser
 
 
-  Scenario Outline: User creates new directory
+  Scenario: User creates new directory
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser sees that current working directory displayed in breadcrumbs is space1
     And user of browser clicks "New directory" button from file browser menu bar
     And user of browser writes "dir1" into name directory text field in modal "Create dir"
-    And user of browser confirms create new directory using <confirmation_method>
+    And user of browser confirms create new directory using button
     Then user of browser sees that item named "dir1" has appeared in file browser
     And user of browser sees that item named "dir1" is directory in file browser
-
-    Examples:
-    | confirmation_method |
-    | enter               |
-    | button              |
 
 
   Scenario: User uploads a small file to space that accepts large files

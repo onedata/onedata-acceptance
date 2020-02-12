@@ -11,12 +11,13 @@ import yaml
 from tests.gui.steps.oneprovider.file_browser import *
 from tests.gui.steps.oneprovider.data_tab import *
 from tests.gui.steps.oneprovider.metadata import *
-from tests.gui.steps.modal import *
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.common.url import refresh_site
 from tests.gui.meta_steps.oneprovider.common import (
     navigate_to_tab_in_op_using_gui)
-from tests.gui.steps.onezone.groups import assert_error_modal_with_text_appeared
+from tests.gui.steps.modal import (assert_error_modal_with_text_appeared,
+                                   wt_wait_for_modal_to_appear,
+                                   write_name_into_text_field_in_modal)
 from tests.gui.steps.onezone.spaces import (
     click_on_option_of_space_on_left_sidebar_menu,
     click_element_on_lists_on_left_sidebar_menu)
@@ -35,14 +36,12 @@ def rename_item(selenium, browser_id, path, new_name, tmp_memory,
 
     try:
         go_to_path(selenium, browser_id, space, op_page, tmp_memory, path)
-        click_menu_for_elem_in_file_browser(selenium, browser_id, item_name,
-                                            tmp_memory)
+        click_menu_for_elem_in_file_browser(browser_id, item_name, tmp_memory)
     except KeyError:
         go_to_filebrowser(selenium, browser_id, oz_page, op_page, tmp_memory,
                           space)
         go_to_path(selenium, browser_id, space, op_page, tmp_memory, path)
-        click_menu_for_elem_in_file_browser(selenium, browser_id, item_name,
-                                            tmp_memory)
+        click_menu_for_elem_in_file_browser(browser_id, item_name, tmp_memory)
 
     click_option_in_data_row_menu_in_file_browser(selenium, browser_id,
                                                   option, modals)
@@ -69,14 +68,12 @@ def remove_item_in_op_gui(selenium, browser_id, path, tmp_memory, op_page,
 
     try:
         go_to_path(selenium, browser_id, space, op_page, tmp_memory, path)
-        click_menu_for_elem_in_file_browser(selenium, browser_id, item_name,
-                                            tmp_memory)
+        click_menu_for_elem_in_file_browser(browser_id, item_name, tmp_memory)
     except KeyError:
         go_to_filebrowser(selenium, browser_id, oz_page, op_page, tmp_memory,
                           space)
         go_to_path(selenium, browser_id, space, op_page, tmp_memory, path)
-        click_menu_for_elem_in_file_browser(selenium, browser_id, item_name,
-                                            tmp_memory)
+        click_menu_for_elem_in_file_browser(browser_id, item_name, tmp_memory)
 
     click_option_in_data_row_menu_in_file_browser(selenium, browser_id,
                                                   option, modals)
@@ -228,7 +225,7 @@ def create_item_in_op_gui(selenium, browser_id, path, item_type, name,
 
     try:
         _open_menu_for_item_in_file_browser()
-    except KeyError:
+    except RuntimeError:
         go_to_filebrowser(selenium, browser_id, oz_page, op_page,
                           tmp_memory, space)
         _open_menu_for_item_in_file_browser()
@@ -357,15 +354,22 @@ def _create_content(selenium, browser_id, content, cwd, space, tmp_memory,
         _create_item(selenium, browser_id, name, content, cwd, space, 
                      tmp_memory, op_page)
 
+
 @wt(parsers.re('user of (?P<browser_id>.*) uploads "(?P<path>.*)" to the '
-               'root directory of "(?P<space>.*)" using (?P<host>.*) GUI'))
+               'root directory of "(?P<space>.*)"'))
 def upload_file_to_op_gui(path, selenium, browser_id, space, op_page,
-                          tmp_memory):
-    item_name, path = get_item_name_and_containing_dir_path(path)
-    go_to_path(selenium, browser_id, space, op_page, tmp_memory, path)
-    upload_file_to_cwd_in_data_tab(selenium, browser_id, item_name, op_page)
-    notify_visible_with_text(selenium, browser_id, 'info',
-                             '.*[Cc]ompleted upload.*')
+                          tmp_memory, oz_page):
+    option = 'spaces'
+    submenu_option = 'Data'
+
+    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option,
+                                                space, oz_page)
+    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
+                                                  space, submenu_option, oz_page)
+    assert_file_browser_in_data_tab_in_op(selenium, browser_id,
+                                          op_page, tmp_memory)
+    upload_file_to_cwd_in_file_browser(selenium, browser_id, path, op_page)
+    assert_items_presence_in_file_browser(browser_id, path, tmp_memory)
 
 
 def assert_mtime_not_earlier_than_op_gui(path, selenium, time, browser_id,

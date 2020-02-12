@@ -11,7 +11,8 @@ from tests.gui.steps.common.miscellaneous import *
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.onezone.groups import *
 from tests.gui.steps.onezone.members import *
-from tests.gui.steps.modal import click_modal_button
+from tests.gui.steps.modal import (click_modal_button,
+                                   assert_error_modal_with_text_appeared)
 from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed
 

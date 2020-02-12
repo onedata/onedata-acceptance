@@ -72,11 +72,24 @@ class MemberAclPermission(PageObject):
                                             '.one-tree-item.has-subtree ',
                                             cls=AclPermissionGroup)
 
-    allow_option = Button('.ace-type-allow')
-    deny_option = Button('.ace-type-deny')
+    allow_option = WebElement('.ace-type-allow')
+    deny_option = WebElement('.ace-type-deny')
+    _subject_type = WebElement('.item-icon .oneicon')
 
     def expand(self):
         self.click()
+
+    def subject_type(self):
+        classes = self._subject_type.get_attribute('class')
+        if 'oneicon-user' in classes:
+            return 'user'
+        elif 'oneicon-group' in classes:
+            return 'group'
+        else:
+            return None
+
+    def is_allow_option_checked(self):
+        return 'active' in self.allow_option.get_attribute('class')
 
 
 class ACL(PageObject):

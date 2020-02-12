@@ -39,278 +39,162 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     And users opened [browser1, browser2] browsers' windows
     And users of [browser1, browser2] opened [onezone, onezone] page
     And users of [browser1, browser2] logged as [user1, user2] to [Onezone, Onezone] service
-    And opened oneprovider-1 Oneprovider view in web GUI by users of [browser1, browser2]
 
 
   Scenario: User1 changes file permission and user2 sees that it has changed
-
-	# User1 changes permission code
-    When user of browser1 uses spaces select to change data space to "space1"
-    And user of browser1 sees file browser in data tab in Oneprovider page
-    And user of browser1 selects "file1" item from file browser with pressed ctrl
-    And user of browser1 clicks the button from top menu bar with tooltip "Change element permissions"
-    And user of browser1 sees that "Edit permissions" modal has appeared
-    And user of browser1 selects "POSIX" permission type in active modal
-    And user of browser1 clicks on input box in active modal
-    And user of browser1 sets "775" permission code in active modal
-    And user of browser1 presses enter on keyboard
-    And user of browser1 sees that the modal has disappeared
+    When user of browser1 sets file1 POSIX 775 privileges in "space1"
 
 	# User2 checks permission code
-    Then user of browser2 uses spaces select to change data space to "space1"
+    Then user of browser2 clicks "space1" on the spaces list in the sidebar
+    And user of browser2 clicks Data of "space1" in the sidebar
     And user of browser2 sees file browser in data tab in Oneprovider page
-    And user of browser2 selects "file1" item from file browser with pressed ctrl
-    And user of browser2 clicks the button from top menu bar with tooltip "Change element permissions"
+    And user of browser2 clicks on menu for "file1" file in file browser
+    And user of browser2 clicks "Permissions" option in data row menu in file browser
     And user of browser2 sees that "Edit permissions" modal has appeared
-    And user of browser2 selects "POSIX" permission type in active modal
-    And user of browser2 clicks on input box in active modal
+    And user of browser2 selects "POSIX" permission type in edit permissions modal
     And user of browser2 sees that current permission is "775"
-    And user of browser2 clicks "Cancel" confirmation button in displayed modal
-    And user of browser2 sees that the modal has disappeared
+    And user of browser2 clicks "Cancel" button in displayed modal
 
 
   Scenario: User1 changes directory permission and user2 sees that it has changed
-
-	# User1 changes permission code
-    When user of browser1 uses spaces select to change data space to "space1"
-    And user of browser1 sees file browser in data tab in Oneprovider page
-    And user of browser1 selects "dir1" item from file browser with pressed ctrl
-    And user of browser1 clicks the button from top menu bar with tooltip "Change element permissions"
-    And user of browser1 sees that "Edit permissions" modal has appeared
-    And user of browser1 selects "POSIX" permission type in active modal
-    And user of browser1 clicks on input box in active modal
-    And user of browser1 sets "664" permission code in active modal
-    And user of browser1 presses enter on keyboard
-    And user of browser1 sees that the modal has disappeared
+    When user of browser1 sets dir1 POSIX 664 privileges in "space1"
 
 	# User2 checks permission code
-    Then user of browser2 uses spaces select to change data space to "space1"
+    Then user of browser2 clicks "space1" on the spaces list in the sidebar
+    And user of browser2 clicks Data of "space1" in the sidebar
     And user of browser2 sees file browser in data tab in Oneprovider page
-    And user of browser2 selects "dir1" item from file browser with pressed ctrl
-    And user of browser2 clicks the button from top menu bar with tooltip "Change element permissions"
+    And user of browser2 clicks on menu for "dir1" file in file browser
+    And user of browser2 clicks "Permissions" option in data row menu in file browser
     And user of browser2 sees that "Edit permissions" modal has appeared
-    And user of browser2 selects "POSIX" permission type in active modal
-    And user of browser2 clicks on input box in active modal
+    And user of browser2 selects "POSIX" permission type in edit permissions modal
     And user of browser2 sees that current permission is "664"
-    And user of browser2 clicks "Cancel" confirmation button in displayed modal
-    And user of browser2 sees that the modal has disappeared
+    And user of browser2 clicks "Cancel" button in displayed modal
 
 
   Scenario: User2 creates directory and fails to remove it because of change in parent directory permission
 
 	# User2 creates dir
-    When user of browser2 uses spaces select to change data space to "space2"
+    When user of browser2 clicks "space2" on the spaces list in the sidebar
+    And user of browser2 clicks Data of "space2" in the sidebar
     And user of browser2 sees file browser in data tab in Oneprovider page
     And user of browser2 double clicks on item named "dir1" in file browser
-    And user of browser2 clicks the button from top menu bar with tooltip "Create directory"
-    And user of browser2 sees that "New directory" modal has appeared
-    And user of browser2 clicks on input box in active modal
-    And user of browser2 types "dir2" on keyboard
-    And user of browser2 presses enter on keyboard
-    And user of browser2 sees that the modal has disappeared
+    And user of browser2 clicks "New directory" button from file browser menu bar
+    And user of browser2 writes "dir2" into name directory text field in modal "Create dir"
+    And user of browser2 confirms create new directory using button
 
 	# User1 changes permission code
-    And user of browser1 uses spaces select to change data space to "space2"
-    And user of browser1 sees file browser in data tab in Oneprovider page
-    And user of browser1 changes current working directory to space2 using breadcrumbs
-    And user of browser1 selects "dir1" item from file browser with pressed ctrl
-    And user of browser1 clicks the button from top menu bar with tooltip "Change element permissions"
-    And user of browser1 sees that "Edit permissions" modal has appeared
-    And user of browser1 selects "POSIX" permission type in active modal
-    And user of browser1 clicks on input box in active modal
-    And user of browser1 sets "753" permission code in active modal
-    And user of browser1 clicks "Ok" confirmation button in displayed modal
-    And user of browser1 sees that the modal has disappeared
+    And user of browser1 sets dir1 POSIX 753 privileges in "space2"
 
 	# User2 fails to remove dir
-    Then user of browser2 selects "dir2" item from file browser with pressed ctrl
-    And user of browser2 clicks the button from top menu bar with tooltip "Remove element"
-    And user of browser2 sees that "Remove files" modal has appeared
-    And user of browser2 clicks "Yes" confirmation button in displayed modal
-    And user of browser2 sees an error notify with text matching to: .*[Aa]ccess denied.*
-    And user of browser2 sees that the modal has disappeared
+    Then user of browser2 clicks on menu for "dir2" directory in file browser
+    And user of browser2 clicks "Delete" option in data row menu in file browser
+    And user of browser2 clicks on "Yes" button in modal "Delete modal"
+    And user of browser2 sees that error modal with text "Deleting file(s) failed" appeared
 
 
   Scenario: User2 creates directory and fails to rename it because of change in parent directory permission
 
 	# User2 creates dir
-    When user of browser2 uses spaces select to change data space to "space2"
+    When user of browser2 clicks "space2" on the spaces list in the sidebar
+    And user of browser2 clicks Data of "space2" in the sidebar
     And user of browser2 sees file browser in data tab in Oneprovider page
     And user of browser2 double clicks on item named "dir1" in file browser
-    And user of browser2 clicks the button from top menu bar with tooltip "Create directory"
-    And user of browser2 sees that "New directory" modal has appeared
-    And user of browser2 clicks on input box in active modal
-    And user of browser2 types "dir2" on keyboard
-    And user of browser2 presses enter on keyboard
-    And user of browser2 sees that the modal has disappeared
+    And user of browser2 clicks "New directory" button from file browser menu bar
+    And user of browser2 writes "dir2" into name directory text field in modal "Create dir"
+    And user of browser2 confirms create new directory using button
 
 	# User1 changes permission code
-    And user of browser1 uses spaces select to change data space to "space2"
-    And user of browser1 sees file browser in data tab in Oneprovider page
-    And user of browser1 changes current working directory to space2 using breadcrumbs
-    And user of browser1 selects "dir1" item from file browser with pressed ctrl
-    And user of browser1 clicks the button from top menu bar with tooltip "Change element permissions"
-    And user of browser1 sees that "Edit permissions" modal has appeared
-    And user of browser1 selects "POSIX" permission type in active modal
-    And user of browser1 clicks on input box in active modal
-    And user of browser1 sets "753" permission code in active modal
-    And user of browser1 clicks "Ok" confirmation button in displayed modal
-    And user of browser1 sees that the modal has disappeared
+    And user of browser1 sets dir1 POSIX 753 privileges in "space2"
 
 	# User2 fails to rename dir
-    Then user of browser2 selects "dir2" item from file browser with pressed ctrl
-    And user of browser2 clicks the button from top menu bar with tooltip "Rename element"
-    And user of browser2 sees that "Rename file or directory" modal has appeared
-    And user of browser2 clicks on input box in active modal
-    And user of browser2 types "new_dir1" on keyboard
-    And user of browser2 presses enter on keyboard
-    And user of browser2 sees an error notify with text matching to: .*[Aa]ccess denied.*
-    And user of browser2 sees that the modal has disappeared
+    Then user of browser2 clicks on menu for "dir2" directory in file browser
+    And user of browser2 clicks "Rename" option in data row menu in file browser
+    And user of browser2 sees that "Rename" modal has appeared
+    And user of browser2 writes "new_dir1" into name directory text field in modal "Rename modal"
+    And user of browser2 confirms rename directory using button
+    And user of browser2 sees that error modal with text "Renaming the file failed" appeared
 
 
   Scenario: User2 creates directory and fails to create another directory because of change in parent directory permission
 
 	# User2 creates dir
-    When user of browser2 uses spaces select to change data space to "space2"
-    And user of browser2 refreshes site
+    When user of browser2 clicks "space2" on the spaces list in the sidebar
+    And user of browser2 clicks Data of "space2" in the sidebar
     And user of browser2 sees file browser in data tab in Oneprovider page
     And user of browser2 double clicks on item named "dir1" in file browser
-    And user of browser2 clicks the button from top menu bar with tooltip "Create directory"
-    And user of browser2 sees that "New directory" modal has appeared
-    And user of browser2 clicks on input box in active modal
-    And user of browser2 types "dir2" on keyboard
-    And user of browser2 presses enter on keyboard
-    And user of browser2 sees that the modal has disappeared
+    And user of browser2 clicks "New directory" button from file browser menu bar
+    And user of browser2 writes "dir2" into name directory text field in modal "Create dir"
+    And user of browser2 confirms create new directory using button
 
 	# User1 changes permission code
-    And user of browser1 uses spaces select to change data space to "space2"
-    And user of browser1 sees file browser in data tab in Oneprovider page
-    And user of browser1 changes current working directory to space2 using breadcrumbs
-    And user of browser1 selects "dir1" item from file browser with pressed ctrl
-    And user of browser1 clicks the button from top menu bar with tooltip "Change element permissions"
-    And user of browser1 sees that "Edit permissions" modal has appeared
-    And user of browser1 selects "POSIX" permission type in active modal
-    And user of browser1 clicks on input box in active modal
-    And user of browser1 sets "753" permission code in active modal
-    And user of browser1 clicks "Ok" confirmation button in displayed modal
-    And user of browser1 sees that the modal has disappeared
+    And user of browser1 sets dir1 POSIX 753 privileges in "space2"
 
 	# User2 fails to create dir
-    Then user of browser2 clicks the button from top menu bar with tooltip "Create directory"
-    And user of browser2 sees that "New directory" modal has appeared
-    And user of browser2 clicks on input box in active modal
-    And user of browser2 types "dir3" on keyboard
-    And user of browser2 presses enter on keyboard
-    And user of browser2 sees an error notify with text matching to: .*[Aa]ccess denied.*
-    And user of browser2 sees that the modal has disappeared
+    Then user of browser2 clicks "New directory" button from file browser menu bar
+    And user of browser2 writes "dir3" into name directory text field in modal "Create dir"
+    And user of browser2 confirms create new directory using button
+    And user of browser2 sees that error modal with text "Creating directory failed" appeared
 
 
-  Scenario: User2 creates file and fails to remove it because of change in parent directory permission
+  Scenario: User2 fails to remove file because of change in parent directory permission
 
-	# User2 creates file
-    When user of browser2 uses spaces select to change data space to "space2"
-    And user of browser2 refreshes site
-    And user of browser2 sees file browser in data tab in Oneprovider page
-    And user of browser2 double clicks on item named "dir1" in file browser
-    And user of browser2 clicks the button from top menu bar with tooltip "Create file"
-    And user of browser2 sees that "New file" modal has appeared
-    And user of browser2 clicks on input box in active modal
-    And user of browser2 types "file1" on keyboard
-    And user of browser2 presses enter on keyboard
-    And user of browser2 sees that the modal has disappeared
-
-	# User1 changes permission code
-    And user of browser1 uses spaces select to change data space to "space2"
+	# User1 uploads file
+    When user of browser1 clicks "space2" on the spaces list in the sidebar
+    And user of browser1 clicks Data of "space2" in the sidebar
     And user of browser1 sees file browser in data tab in Oneprovider page
-    And user of browser1 changes current working directory to space2 using breadcrumbs
-    And user of browser1 selects "dir1" item from file browser with pressed ctrl
-    And user of browser1 clicks the button from top menu bar with tooltip "Change element permissions"
-    And user of browser1 sees that "Edit permissions" modal has appeared
-    And user of browser1 selects "POSIX" permission type in active modal
-    And user of browser1 clicks on input box in active modal
-    And user of browser1 sets "753" permission code in active modal
-    And user of browser1 clicks "Ok" confirmation button in displayed modal
-    And user of browser1 sees that the modal has disappeared
+    And user of browser1 double clicks on item named "dir1" in file browser
+    And user of browser1 uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
+    And user of browser1 changes current working directory to home using breadcrumbs
+
+   # User1 changes permission code
+    And user of browser1 sets dir1 POSIX 753 privileges in "space2"
 
 	# User2 fails to remove file
-    Then user of browser2 selects "file1" item from file browser with pressed ctrl
-    And user of browser2 clicks the button from top menu bar with tooltip "Remove element"
-    And user of browser2 sees that "Remove files" modal has appeared
-    And user of browser2 clicks "Yes" confirmation button in displayed modal
-    And user of browser2 sees an error notify with text matching to: .*[Aa]ccess denied.*
-    And user of browser2 sees that the modal has disappeared
-
-
-  Scenario: User2 creates file and fails to rename it because of change in parent directory permission
-
-	# User2 creates file
-    When user of browser2 uses spaces select to change data space to "space2"
-    And user of browser2 refreshes site
+    And user of browser2 clicks "space2" on the spaces list in the sidebar
+    And user of browser2 clicks Data of "space2" in the sidebar
     And user of browser2 sees file browser in data tab in Oneprovider page
     And user of browser2 double clicks on item named "dir1" in file browser
-    And user of browser2 clicks the button from top menu bar with tooltip "Create file"
-    And user of browser2 sees that "New file" modal has appeared
-    And user of browser2 clicks on input box in active modal
-    And user of browser2 types "file1" on keyboard
-    And user of browser2 presses enter on keyboard
-    And user of browser2 sees that the modal has disappeared
+    Then user of browser2 clicks on menu for "20B-0.txt" directory in file browser
+    And user of browser2 clicks "Delete" option in data row menu in file browser
+    And user of browser2 clicks on "Yes" button in modal "Delete modal"
+    And user of browser2 sees that error modal with text "Deleting file(s) failed" appeared
+
+
+  Scenario: User2 fails to rename file because of change in parent directory permission
+
+	# User1 uploads file
+    When user of browser1 clicks "space2" on the spaces list in the sidebar
+    And user of browser1 clicks Data of "space2" in the sidebar
+    And user of browser1 sees file browser in data tab in Oneprovider page
+    And user of browser1 double clicks on item named "dir1" in file browser
+    And user of browser1 uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
+    And user of browser1 changes current working directory to home using breadcrumbs
 
 	# User1 changes permission code
-    And user of browser1 uses spaces select to change data space to "space2"
-    And user of browser1 sees file browser in data tab in Oneprovider page
-    And user of browser1 changes current working directory to space2 using breadcrumbs
-    And user of browser1 selects "dir1" item from file browser with pressed ctrl
-    And user of browser1 clicks the button from top menu bar with tooltip "Change element permissions"
-    And user of browser1 sees that "Edit permissions" modal has appeared
-    And user of browser1 selects "POSIX" permission type in active modal
-    And user of browser1 clicks on input box in active modal
-    And user of browser1 sets "753" permission code in active modal
-    And user of browser1 clicks "Ok" confirmation button in displayed modal
-    And user of browser1 sees that the modal has disappeared
+    And user of browser1 sets dir1 POSIX 753 privileges in "space2"
 
 	# User2 fails to rename file
-    Then user of browser2 selects "file1" item from file browser with pressed ctrl
-    And user of browser2 clicks the button from top menu bar with tooltip "Rename element"
-    And user of browser2 sees that "Rename file or directory" modal has appeared
-    And user of browser2 clicks on input box in active modal
-    And user of browser2 types "new_file1" on keyboard
-    And user of browser2 presses enter on keyboard
-    And user of browser2 sees an error notify with text matching to: .*[Aa]ccess denied.*
-    And user of browser2 sees that the modal has disappeared
-
-
-  Scenario: User2 creates file and fails to create another file because of change in parent directory permission
-
-	# User2 creates file
-    When user of browser2 uses spaces select to change data space to "space2"
-    And user of browser2 refreshes site
+    And user of browser2 clicks "space2" on the spaces list in the sidebar
+    And user of browser2 clicks Data of "space2" in the sidebar
     And user of browser2 sees file browser in data tab in Oneprovider page
     And user of browser2 double clicks on item named "dir1" in file browser
-    And user of browser2 clicks the button from top menu bar with tooltip "Create file"
-    And user of browser2 sees that "New file" modal has appeared
-    And user of browser2 clicks on input box in active modal
-    And user of browser2 types "file1" on keyboard
-    And user of browser2 presses enter on keyboard
-    And user of browser2 sees that the modal has disappeared
+    Then user of browser2 clicks on menu for "20B-0.txt" directory in file browser
+    And user of browser2 clicks "Rename" option in data row menu in file browser
+    And user of browser2 sees that "Rename" modal has appeared
+    And user of browser2 writes "new_file1" into name directory text field in modal "Rename modal"
+    And user of browser2 confirms rename directory using button
+    And user of browser2 sees that error modal with text "Renaming the file failed" appeared
+
+
+  Scenario: User2 fails to upload file because of change in parent directory permission
 
 	# User1 changes permission code
-    And user of browser1 uses spaces select to change data space to "space2"
-    And user of browser1 sees file browser in data tab in Oneprovider page
-    And user of browser1 changes current working directory to space2 using breadcrumbs
-    And user of browser1 selects "dir1" item from file browser with pressed ctrl
-    And user of browser1 clicks the button from top menu bar with tooltip "Change element permissions"
-    And user of browser1 sees that "Edit permissions" modal has appeared
-    And user of browser1 selects "POSIX" permission type in active modal
-    And user of browser1 clicks on input box in active modal
-    And user of browser1 sets "753" permission code in active modal
-    And user of browser1 clicks "Ok" confirmation button in displayed modal
-    And user of browser1 sees that the modal has disappeared
+    When user of browser1 sets dir1 POSIX 753 privileges in "space2"
 
-	# User2 fails to create file
-    Then user of browser2 clicks the button from top menu bar with tooltip "Create file"
-    And user of browser2 sees that "New file" modal has appeared
-    And user of browser2 clicks on input box in active modal
-    And user of browser2 types "file2" on keyboard
-    And user of browser2 presses enter on keyboard
-    And user of browser2 sees an error notify with text matching to: .*[Aa]ccess denied.*
-    And user of browser2 sees that the modal has disappeared
+	# User2 fails to upload file
+    And user of browser2 clicks "space2" on the spaces list in the sidebar
+    And user of browser2 clicks Data of "space2" in the sidebar
+    And user of browser2 sees file browser in data tab in Oneprovider page
+    And user of browser2 double clicks on item named "dir1" in file browser
+    Then user of browser2 uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
+    And user of browser2 sees that upload file failed

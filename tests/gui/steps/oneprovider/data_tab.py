@@ -109,7 +109,7 @@ def click_button_from_file_browser_menu_bar(selenium, browser_id,
                   'are in selection menu on file browser page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_btn_is_in_file_browser_menu_bar(selenium, browser_id, btn_list,
-                                           op_page, tmp_memory, modals):
+                                           tmp_memory, modals):
     driver = selenium[browser_id]
     file_browser = tmp_memory[browser_id]['file_browser']
     file_browser.selection_menu_button()
@@ -454,3 +454,10 @@ def choose_option_from_selection_menu(browser_id, selenium, option, modals,
     file_browser.selection_menu_button()
     modals(driver).menu_modal.menu[option].click()
 
+
+@wt(parsers.parse('user of {browser_id} sees that upload file failed'))
+def check_error_in_upload_presenter(selenium, browser_id, popups):
+    driver = selenium[browser_id]
+    driver.switch_to.default_content()
+
+    assert popups(driver).upload_presenter.is_failed(), 'upload not failed'
