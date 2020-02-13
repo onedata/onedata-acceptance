@@ -32,19 +32,6 @@ Feature: Basic data tab operations on single file in file browser
     Then user of browser sees that content of downloaded file "20B-0.txt" is equal to: "11111111111111111111"
 
 
-# TODO: change test because of a new gui
-#  Scenario: User fails to create new file because of existing file with given name
-#    When user of browser uses spaces select to change data space to "space1"
-#    And user of browser sees that current working directory displayed in breadcrumbs is space1
-#    And user of browser clicks the button from top menu bar with tooltip "Create file"
-#    And user of browser sees that "New file" modal has appeared
-#    And user of browser clicks on input box in active modal
-#    And user of browser types "20B-0.txt" on keyboard
-#    And user of browser clicks "Create" confirmation button in displayed modal
-#    And user of browser sees that the modal has disappeared
-#    Then user of browser sees an error notify with text matching to: .*failed.*
-
-
   Scenario: User removes existing file
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Data of "space1" in the sidebar

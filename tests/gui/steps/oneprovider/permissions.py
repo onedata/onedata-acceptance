@@ -237,7 +237,6 @@ def assert_set_acl_privileges(selenium, browser_id, modals, num, numerals,
                                             f'should be checked')
 
 
-
 @wt(parsers.re('user of (?P<browser_id>\w+) sees that (?P<num>\w+) ACL record'
                ' in edit permissions modal is set for (?P<type>.*?) '
                '(?P<name>.*)'))

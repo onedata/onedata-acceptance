@@ -3,7 +3,7 @@ Feature: ACL directories privileges tests using multiple browsers in Oneprovider
   Examples:
   | subject_type  | subject_name  |
   | user          | user2         |
-# TODO: change test because of a new gui
+# TODO: change test because of a new gui (group subject in acl)
 #  | group         | group1        |
 
   Background:
@@ -44,16 +44,15 @@ Feature: ACL directories privileges tests using multiple browsers in Oneprovider
     | fails    |  all except [data:traverse directory]                              |
 
 
-# TODO: change test because of a new gui
-#  Scenario Outline: Create file in directory
-#    When user of browser1 sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
-#    Then user of browser2 <result> to create file "subfile" in "dir1" in "space1"
-#
-#    Examples:
-#    | result   |  privileges                                  |
-#    | succeeds |  [list files, add files, traverse directory] |
-#    | fails    |  all except [add files]                      |
-#    | fails    |  all except [traverse directory]             |
+  Scenario Outline: Upload file in directory
+    When user of browser1 sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
+    Then user of browser2 <result> to upload "20B-0.txt" to "dir1" in "space1"
+
+    Examples:
+    | result   |  privileges                                                 |
+    | succeeds |  [data:list files, data:add files, data:traverse directory] |
+    | fails    |  all except [data:add files]                                |
+    | fails    |  all except [data:traverse directory]                       |
 
 
   Scenario Outline: Rename directory
@@ -97,7 +96,7 @@ Feature: ACL directories privileges tests using multiple browsers in Oneprovider
     | fails    |  all except [acl:change acl]  |
 
 
-# TODO: change test because of a new gui
+# TODO: change test because of a new gui (metadata)
 #  Scenario Outline: Write metadata to directory
 #    When user of browser1 sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
 #    Then user of browser2 <result> to write "dir1" basic metadata: "attr=val" in "space1"

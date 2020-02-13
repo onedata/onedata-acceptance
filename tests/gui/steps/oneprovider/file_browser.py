@@ -16,7 +16,7 @@ from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.modal import click_modal_button
 from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed
-from tests.utils.bdd_utils import given, wt, parsers, when, then
+from tests.utils.bdd_utils import wt, parsers, when, then
 
 
 @when(parsers.parse('user of {browser_id} sees "{msg}" '
@@ -159,17 +159,15 @@ def scroll_to_bottom_of_file_browser(browser_id, tmp_memory):
     browser.scroll_to_bottom()
 
 
-@when(parsers.re('user of (?P<browser_id>.+?) sees that there '
-                 '(is 1|are (?P<num>\d+)) items? in file browser'))
-@then(parsers.re('user of (?P<browser_id>.+?) sees that there '
-                 '(is 1|are (?P<num>\d+)) items? in file browser'))
+@wt(parsers.re(r'user of (?P<browser_id>.+?) sees that there '
+               r'(is 1|are (?P<num>\d+)) items? in file browser'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_num_of_files_are_displayed_in_file_browser(browser_id, num,
                                                       tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
     err_msg = 'displayed number of files {} does not match expected {}'
-    files_num = browser.files.count()
-    num = int(num) if num is not None else 1
+    files_num = browser.data.count()
+    num = 1 if num is None else int(num)
     assert files_num == num, err_msg.format(files_num, num)
 
 

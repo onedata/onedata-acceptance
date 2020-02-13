@@ -30,3 +30,11 @@ class Popups(object):
 
     def __str__(self):
         return 'popups'
+
+    def is_upload_presenter(self):
+        try:
+            self.upload_presenter
+        except RuntimeError:
+            return False
+        else:
+            return True

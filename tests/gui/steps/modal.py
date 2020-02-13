@@ -70,7 +70,7 @@ def assert_non_empty_token_in_add_storage_modal(browser_id, tmp_memory):
 def _find_modal(driver, modal_name):
     def _find():
         elements_list = ['group', 'token', 'cluster', 'harvester',
-                         'spaces', 'rename', 'permissions', 'directory']
+                         'spaces', 'rename', 'permissions', 'directory', 'data']
         if any([name for name in elements_list
                 if name in modal_name]):
             modals = driver.find_elements_by_css_selector('.modal, '
@@ -100,10 +100,8 @@ def _wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory):
     tmp_memory[browser_id]['window']['modal'] = modal
 
 
-@when(parsers.parse('user of {browser_id} sees that '
-                    '"{modal_name}" modal has appeared'))
-@then(parsers.parse('user of {browser_id} sees that '
-                    '"{modal_name}" modal has appeared'))
+@wt(parsers.parse('user of {browser_id} sees that '
+                  '"{modal_name}" modal has appeared'))
 def wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory):
     driver = selenium[browser_id]
     _wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory)

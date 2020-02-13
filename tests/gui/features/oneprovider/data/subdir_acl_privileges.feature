@@ -3,7 +3,7 @@ Feature: ACL subdirectories privileges tests using sigle browser in Oneprovider 
   Examples:
   | subject_type  | subject_name  |
   | user          | user1         |
-# TODO: change test because of a new gui
+# TODO: change test because of a new gui (group subject in acl)
 #  | group         | group1        |
 
   Background:

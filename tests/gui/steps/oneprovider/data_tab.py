@@ -62,15 +62,14 @@ def assert_if_list_contains_space_in_data_tab_in_op(selenium, browser_id,
     space_selector = op_page(driver).data.sidebar.space_selector
     space_selector.expand()
     if option == 'is':
-        assert space_name in space_selector.spaces, ('space named "{}" found '
-                                                     'in spaces list, while it '
-                                                     'should not be')\
-            .format(space_name)
+        assert space_name in space_selector.spaces, (f'space named "{space_name}" '
+                                                     f'found in spaces list, '
+                                                     f'while it should not be')
     else:
-        assert space_name not in space_selector.spaces, ('space named "{}" not '
-                                                         'found in spaces list, '
-                                                         'while it should be')\
-            .format(space_name)
+        assert space_name not in space_selector.spaces, (f'space named '
+                                                         f'"{space_name}" not '
+                                                         f'found in spaces list, '
+                                                         f'while it should be')
 
 
 @when(parsers.re(r'user of (?P<browser_id>.*?) clicks the button '
@@ -126,8 +125,7 @@ def assert_btn_is_in_file_browser_menu_bar(selenium, browser_id, btn_list,
                   'are not in selection menu on file browser page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_btn_is_not_in_file_browser_menu_bar(selenium, browser_id,
-                                               btn_list, op_page,
-                                               tmp_memory, modals):
+                                               btn_list, tmp_memory, modals):
     driver = selenium[browser_id]
     file_browser = tmp_memory[browser_id]['file_browser']
     file_browser.selection_menu_button()
@@ -311,14 +309,12 @@ def resize_data_tab_sidebar(selenium, browser_id, direction, offset, op_page):
     sidebar.width += offset
 
 
-@when(parsers.parse('user of {browser_id} waits for file upload to finish'))
-@then(parsers.parse('user of {browser_id} waits for file upload to finish'))
+@wt(parsers.parse('user of {browser_id} waits for file upload to finish'))
 @repeat_failed(timeout=WAIT_BACKEND * 3)
-def wait_for_file_upload_to_finish(selenium, browser_id, op_page):
+def wait_for_file_upload_to_finish(selenium, browser_id, popups):
     driver = selenium[browser_id]
-    uploader = op_page(driver).data.file_uploader
-    assert not uploader.is_visible(), \
-        'file upload not finished within given time'
+    assert not popups(driver).is_upload_presenter(), ('file upload not finished '
+                                                      'within given time')
 
 
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
@@ -328,18 +324,15 @@ def upload_file_to_cwd_in_file_browser(selenium, browser_id, file_name, op_page)
     op_page(driver).file_browser.upload_files(upload_file_path(file_name))
 
 
-@when(parsers.parse('user of {browser_id} uses upload button in toolbar to '
-                    'upload files from local directory "{dir_path}" to remote '
-                    'current dir'))
-@then(parsers.parse('user of {browser_id} uses upload button in toolbar to '
-                    'upload files from local directory "{dir_path}" to remote '
-                    'current dir'))
+@wt(parsers.parse('user of {browser_id} uses upload button from file browser '
+                  'menu bar to upload files from local directory "{dir_path}" '
+                  'to remote current dir'))
 def upload_files_to_cwd_in_data_tab(selenium, browser_id, dir_path,
                                     tmpdir, op_page):
     driver = selenium[browser_id]
     directory = tmpdir.join(browser_id, *dir_path.split('/'))
     if directory.isdir():
-        op_page(driver).data.toolbar.upload_files('\n'.join(str(item) for item
+        op_page(driver).file_browser.upload_files('\n'.join(str(item) for item
                                                             in
                                                             directory.listdir()
                                                             if item.isfile()))
@@ -376,12 +369,12 @@ def assert_provider_chunk_in_data_distribution_filled(selenium, browser_id,
     distribution = prov_rec.distribution
     size, _ = distribution.size
     chunks = distribution.chunks
-    assert len(chunks) == 1, 'distribution for {} is not ' \
-                             'entirely filled'.format(provider)
+    assert len(chunks) == 1, (f'distribution for {provider} is not '
+                              f'entirely filled')
     chunk = chunks[0]
-    assert chunk[1] - chunk[0] == size, \
-        'distribution for {} is not filled entirely, but only from ' \
-        '{} to {}'.format(provider, chunk[0], chunk[1])
+    assert chunk[1] - chunk[0] == size, (f'distribution for {provider} is not '
+                                         f'filled entirely, but only '
+                                         f'from {chunk[0]} to {chunk[1]}')
 
 
 @when(parsers.parse('user of {browser_id} sees that chunk bar for provider '

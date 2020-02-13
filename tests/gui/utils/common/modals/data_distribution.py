@@ -99,7 +99,7 @@ function isCanvasFilled(cvs){
 
     var ctx = cvs.getContext("2d");
     var backgroundColor = [0, 0, 0, 0];
-    var fillColor = [85, 225, 145, 255];
+    var fillColor = [75, 209, 135, 255];
     var img_data = ctx.getImageData(0, 0, width, height).data;
 
     var idx = 0

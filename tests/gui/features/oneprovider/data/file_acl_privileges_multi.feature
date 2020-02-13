@@ -3,7 +3,7 @@ Feature: ACL files privileges tests using multiple browsers in Oneprovider GUI
   Examples:
   | subject_type  | subject_name  |
   | user          | user2         |
-# TODO: change test because of a new gui
+# TODO: change test because of a new gui (group subject in acl)
 #  | group         | group1        |
 
   Background:
@@ -41,8 +41,8 @@ Feature: ACL files privileges tests using multiple browsers in Oneprovider GUI
     | result   |  privileges                   |
     | succeeds |  [general:delete]             |
     | fails    |  all except [general:delete]  |
-        
-        
+
+
   Scenario Outline: Remove file
     When user of browser1 sets "file1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
     Then user of browser2 <result> to remove "file1" in "space1"
@@ -51,29 +51,29 @@ Feature: ACL files privileges tests using multiple browsers in Oneprovider GUI
     | result   |  privileges                   |
     | succeeds |  [general:delete]             |
     | fails    |  all except [general:delete]  |
-        
 
-# TODO: change test because of a new gui
-#  Scenario Outline: Read files ACL
-#    When user of browser1 sets "file1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
-#    Then user of browser2 <result> to read "file1" ACL in "space1"
-#
-#    Examples:
-#    | result   |  privileges           |
-#    | succeeds |  [read acl]           |
-#    | fails    |  all except [read acl]|
-#
-#
-#  Scenario Outline: Change files ACL
-#    When user of browser1 sets "file1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
-#    Then user of browser2 <result> to change "file1" ACL in "space1"
-#
-#    Examples:
-#    | result   |  privileges               |
-#    | succeeds |  [change acl]             |
-#    | fails    |  all except [change acl]  |
-#
-#
+
+  Scenario Outline: Read files ACL
+    When user of browser1 sets "file1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
+    Then user of browser2 <result> to read "file1" ACL in "space1"
+
+    Examples:
+    | result   |  privileges                 |
+    | succeeds |  [acl:read acl]             |
+    | fails    |  all except [acl:read acl]  |
+
+
+  Scenario Outline: Change files ACL
+    When user of browser1 sets "file1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
+    Then user of browser2 <result> to change "file1" ACL for user2 in "space1"
+
+    Examples:
+    | result   |  privileges                   |
+    | succeeds |  [acl]                        |
+    | fails    |  all except [acl:change acl]  |
+
+
+# TODO: change test because of a new gui (metadata)
 #  Scenario Outline: Write metadata to file
 #    When user of browser1 sets "file1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
 #    Then user of browser2 <result> to write "file1" basic metadata: "attr=val" in "space1"

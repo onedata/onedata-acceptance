@@ -3,7 +3,7 @@ Feature: ACL subdirectories privileges tests using multiple browsers in Oneprovi
   Examples:
   | subject_type  | subject_name  |
   | user          | user2         |
-# TODO: change test because of a new gui
+# TODO: change test because of a new gui (group subject in acl)
 #  | group         | group1        |
 
   Background:
