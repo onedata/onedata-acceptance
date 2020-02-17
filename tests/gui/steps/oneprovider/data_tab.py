@@ -454,3 +454,41 @@ def check_error_in_upload_presenter(selenium, browser_id, popups):
     driver.switch_to.default_content()
 
     assert popups(driver).upload_presenter.is_failed(), 'upload not failed'
+
+
+@wt(parsers.parse('user of {browser_id} clicks on "{provider}" provider '
+                  'on file browser page'))
+def choose_provider_in_file_browser(selenium, browser_id, provider,
+                                    hosts, op_page):
+    driver = selenium[browser_id]
+    provider = hosts[provider]['name']
+    driver.switch_to.default_content()
+
+    op_page(selenium[browser_id]).providers[provider].click()
+    iframe = driver.find_element_by_tag_name('iframe')
+    driver.switch_to.frame(iframe)
+
+
+def _assert_provider_in_space(selenium, browser_id, provider, op_page):
+    driver = selenium[browser_id]
+    driver.switch_to.default_content()
+
+    assert provider in op_page(selenium[browser_id]).providers, (f'{provider} '
+                                                                 f'provider '
+                                                                 f'not found '
+                                                                 f'on file '
+                                                                 f'browser page')
+
+
+@wt(parsers.parse('user of {browser_id} sees "{provider}" provider '
+                  'on file browser page'))
+def assert_provider_in_space(selenium, browser_id, provider, hosts, op_page):
+    provider = hosts[provider]['name']
+    _assert_provider_in_space(selenium, browser_id, provider, op_page)
+
+
+@wt(parsers.parse('user of {browser_id} sees provider named "{provider}" sudo '
+                  'on file browser page'))
+def assert_provider_name_in_space(selenium, browser_id, provider, hosts, op_page):
+    provider = hosts[provider]['name']
+    _assert_provider_in_space(selenium, browser_id, provider, op_page)

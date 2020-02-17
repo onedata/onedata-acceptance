@@ -13,11 +13,16 @@ from .groups import GroupContentPage
 from .spaces import SpacesContentPage
 from .transfers import TransfersTab
 from .file_browser import FileBrowser
+from ..core.base import PageObject
+from ..core.web_elements import WebItemsSequence, Label
+
+
+class _Provider(PageObject):
+    name = id = Label('a .tab-name')
 
 
 class OPLoggedIn(object):
-    # TODO: change test because of a new gui
-    # tab with providers, map
+    providers = WebItemsSequence('.provider-online ', cls=_Provider)
     file_browser = FileBrowser('.content-file-browser')
 
     def __init__(self, driver):

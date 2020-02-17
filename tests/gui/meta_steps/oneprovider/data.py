@@ -221,7 +221,7 @@ def create_item_in_op_gui(selenium, browser_id, path, item_type, name,
 
     try:
         _open_menu_for_item_in_file_browser()
-    except RuntimeError:
+    except (RuntimeError, KeyError) as e:
         go_to_filebrowser(selenium, browser_id, oz_page, op_page,
                           tmp_memory, space)
         _open_menu_for_item_in_file_browser()
@@ -393,7 +393,8 @@ def _select_item(browser_id, tmp_memory, path):
 
 def go_to_path(browser_id, tmp_memory, path):
     if '/' in path:
-        path_list, _ = get_item_name_and_containing_dir_path(path)
+        path_list, item_name = get_item_name_and_containing_dir_path(path)
+        path_list.append(item_name)
     else:
         path_list = [path]
     for directory in path_list:
@@ -404,7 +405,7 @@ def go_to_path(browser_id, tmp_memory, path):
 def go_to_path_without_last_elem(browser_id, tmp_memory, path):
     if '/' in path:
         path_list, _ = get_item_name_and_containing_dir_path(path)
-        for directory in path_list[:-1]:
+        for directory in path_list:
             double_click_on_item_in_file_browser(browser_id, directory,
                                                  tmp_memory)
 

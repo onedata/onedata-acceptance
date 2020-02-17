@@ -57,5 +57,4 @@ def screens():
 
 
 scenarios('../features/oneprovider/data/acl/basic.feature')
-# TODO: change test because of a new gui (group subject in acl)
-# scenarios('../features/oneprovider/data/acl/subjects.feature')
+scenarios('../features/oneprovider/data/acl/subjects.feature')

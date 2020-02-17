@@ -134,9 +134,10 @@ def read_items_acl(selenium, browser_id, path, tmp_memory, res,
                  '"(?P<space>\w+)" (has|have) (?P<priv>.*) privileges? set for '
                  '(?P<type>.*?) (?P<name>.*) in (?P<num>.*) ACL record'))
 def assert_ace_in_op_gui(selenium, browser_id, priv, type, name, num, space,
-                         path, tmp_memory, modals, numerals):
+                         path, tmp_memory, modals, numerals, oz_page, op_page):
     selenium[browser_id].refresh()
-    open_acl_modal(selenium, browser_id, path, tmp_memory, modals)
+    open_acl_modal(selenium, browser_id, path, tmp_memory, modals,
+                   oz_page, op_page, space)
     assert_acl_subject(selenium, browser_id, modals, num, numerals, type, name)
     assert_set_acl_privileges(selenium, browser_id, modals, num, numerals, priv)
     wt_click_on_confirmation_btn_in_modal(selenium, browser_id, "Cancel",

@@ -3,8 +3,7 @@ Feature: ACL files privileges tests using sigle browser in Oneprovider GUI
   Examples:
   | subject_type  | subject_name  |
   | user          | user1         |
-# TODO: change test because of a new gui (group subject acl)
-#  | group         | group1        |
+  | group         | group1        |
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -62,7 +61,7 @@ Feature: ACL files privileges tests using sigle browser in Oneprovider GUI
 
   Scenario Outline: Change files ACL
     When user of browser sets "file1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
-    Then user of browser <result> to change "file1" ACL for user1 in "space1"
+    Then user of browser <result> to change "file1" ACL for <subject_name> in "space1"
 
     Examples:
     | result   |  privileges                   |

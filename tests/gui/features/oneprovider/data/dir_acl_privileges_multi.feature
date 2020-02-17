@@ -3,8 +3,7 @@ Feature: ACL directories privileges tests using multiple browsers in Oneprovider
   Examples:
   | subject_type  | subject_name  |
   | user          | user2         |
-# TODO: change test because of a new gui (group subject in acl)
-#  | group         | group1        |
+  | group         | group1        |
 
   Background:
     Given initial users configuration in "onezone" Onezone service:

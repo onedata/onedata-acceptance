@@ -27,39 +27,39 @@ Feature: ACL basic tests using sigle browser in Oneprovider GUI
     And opened browser with user1 signed in to "onezone" service
 
 
-#  TODO: change test because of a new gui (group subject in acl)
-#  Scenario Outline: User sets one ACL record for directory in Edit permissions modal
-#    When user of browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
-#
-#    # Check ACL record
-#    And user of browser clicks the button from top menu bar with tooltip "Change element permissions"
-#    And user of browser sees that "Edit permissions" modal has appeared
-#    And user of browser selects "ACL" permission type in active modal
-#    Then user of browser sees exactly 1 ACL record in edit permissions modal
-#    And user of browser sees that first ACL record in edit permissions modal is set for <subject_type> <subject_name>
-#    And user of browser sees that only <privileges> privileges are set in first ACL record in edit permissions modal
-#    And user of browser sees that subject type is not editable in first ACL record in edit permissions modal
-#
-#    Examples:
-#    |  privileges           |  subject_type |  subject_name |
-#    |  [allow, read acl]    |  group        |  group1       |
-#
-#
-#  Scenario Outline: User sets one ACL record for file in Edit permissions modal
-#    When user of browser sets "file1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
-#
-#    # Check ACL record
-#    And user of browser clicks the button from top menu bar with tooltip "Change element permissions"
-#    And user of browser sees that "Edit permissions" modal has appeared
-#    And user of browser selects "ACL" permission type in active modal
-#    Then user of browser sees exactly 1 ACL record in edit permissions modal
-#    And user of browser sees that first ACL record in edit permissions modal is set for <subject_type> <subject_name>
-#    And user of browser sees that only <privileges> privileges are set in first ACL record in edit permissions modal
-#    And user of browser sees that subject type is not editable in first ACL record in edit permissions modal
-#
-#    Examples:
-#    |  privileges           |  subject_type |  subject_name |
-#    |  [allow, read acl]    |  group        |  group1       |
+  Scenario Outline: User sets one ACL record for directory in Edit permissions modal
+    When user of browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
+
+    # Check ACL record
+    And user of browser clicks on menu for "dir1" directory in file browser
+    And user of browser clicks "Permissions" option in data row menu in file browser
+    And user of browser sees that "Edit permissions" modal has appeared
+    And user of browser selects "ACL" permission type in edit permissions modal
+    Then user of browser sees exactly 1 ACL record in edit permissions modal
+    And user of browser sees that first ACL record in edit permissions modal is set for <subject_type> <subject_name>
+    And user of browser sees that only <privileges> privileges are set in first ACL record in edit permissions modal
+
+    Examples:
+    |  privileges               |  subject_type |  subject_name |
+    |  [allow, acl:read acl]    |  group        |  group1       |
+
+
+  Scenario Outline: User sets one ACL record for file in Edit permissions modal
+    When user of browser sets "file1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
+
+    # Check ACL record
+    And user of browser clicks on menu for "file1" directory in file browser
+    And user of browser clicks "Permissions" option in data row menu in file browser
+    And user of browser sees that "Edit permissions" modal has appeared
+    And user of browser selects "ACL" permission type in edit permissions modal
+    Then user of browser sees exactly 1 ACL record in edit permissions modal
+
+    And user of browser sees that first ACL record in edit permissions modal is set for <subject_type> <subject_name>
+    And user of browser sees that only <privileges> privileges are set in first ACL record in edit permissions modal
+
+    Examples:
+    |  privileges               |  subject_type |  subject_name |
+    |  [allow, acl:read acl]    |  group        |  group1       |
 
 
   Scenario: User cancels ACL editing
@@ -137,26 +137,29 @@ Feature: ACL basic tests using sigle browser in Oneprovider GUI
     | [allow, acl:read acl] | user          | user1         |
 
 
-#  TODO: change test because of a new gui (group subject in acl)
-#  Scenario: User sets 2 ACL records
-#    # Set ACL record
-#    When user of browser sees file browser in data tab in Oneprovider page
-#    And user of browser clicks once on item named "file1" in file browser
-#    And user of browser clicks the button from top menu bar with tooltip "Change element permissions"
-#    And user of browser sees that "Edit permissions" modal has appeared
-#    And user of browser selects "ACL" permission type in active modal
-#    And user of browser adds ACE with "read" privilege set for group group1
-#    And user of browser adds ACE with [delete, read acl] privileges set for user user1
-#    And user of browser clicks "OK" confirmation button in displayed modal
-#    And user of browser sees that the modal has disappeared
-#
-#    # Check ACL records
-#    And user of browser clicks the button from top menu bar with tooltip "Change element permissions"
-#    And user of browser sees that "Edit permissions" modal has appeared
-#    And user of browser selects "ACL" permission type in active modal
-#    Then user of browser sees exactly 2 ACL records in edit permissions modal
-#    And user of browser sees that first ACL record in edit permissions modal is set for group group1
-#    And user of browser sees that second ACL record in edit permissions modal is set for user "user1"
+  Scenario: User sets 2 ACL records
+    # Set ACL record
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Data of "space1" in the sidebar
+    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser clicks once on item named "file1" in file browser
+    And user of browser clicks on menu for "file1" file in file browser
+    And user of browser clicks "Permissions" option in data row menu in file browser
+    And user of browser sees that "Edit permissions" modal has appeared
+    And user of browser selects "ACL" permission type in edit permissions modal
+
+    And user of browser adds ACE with "attributes:read attributes" privilege set for group group1
+    And user of browser adds ACE with [general:delete, acl:read acl] privileges set for user user1
+    And user of browser clicks "Save" confirmation button in displayed modal
+
+    # Check ACL records
+    And user of browser clicks on menu for "file1" file in file browser
+    And user of browser clicks "Permissions" option in data row menu in file browser
+    And user of browser sees that "Edit permissions" modal has appeared
+    And user of browser selects "ACL" permission type in edit permissions modal
+    Then user of browser sees exactly 2 ACL records in edit permissions modal
+    And user of browser sees that first ACL record in edit permissions modal is set for group group1
+    And user of browser sees that second ACL record in edit permissions modal is set for user "user1"
 
 
   Scenario Outline: User removes ACL record
@@ -172,23 +175,22 @@ Feature: ACL basic tests using sigle browser in Oneprovider GUI
     | [acl:read acl]   | user          | user1         |
 
 
-#  TODO: change test because of a new gui (group subject in acl)
-#  Scenario Outline: User changes order of ACL entries
-#    When user of browser clicks "space1" on the spaces list in the sidebar
-#    And user of browser clicks Data of "space1" in the sidebar
-#    And user of browser sees file browser in data tab in Oneprovider page
-#    And user of browser clicks on menu for "file1" file in file browser
-#    And user of browser clicks "Permissions" option in data row menu in file browser
-#    And user of browser sees that "Edit permissions" modal has appeared
-#    And user of browser selects "ACL" permission type in edit permissions modal
-#
-#    And user of browser adds ACE with "delete" privilege set for group group1
-#    And user of browser adds ACE with "delete" privilege set for user user1
-#    And user of browser clicks on <button> button in <numeral> ACL record in edit permissions modal
-#    Then user of browser sees that first ACL record in edit permissions modal is set for user user1
-#    And user of browser sees that second ACL record in edit permissions modal is set for group group1
-#
-#    Examples:
-#    | button    | numeral|
-#    | move up   | second |
-#    | move down | first  |
+  Scenario Outline: User changes order of ACL entries
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Data of "space1" in the sidebar
+    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser clicks on menu for "file1" file in file browser
+    And user of browser clicks "Permissions" option in data row menu in file browser
+    And user of browser sees that "Edit permissions" modal has appeared
+    And user of browser selects "ACL" permission type in edit permissions modal
+
+    And user of browser adds ACE with "general:delete" privilege set for group group1
+    And user of browser adds ACE with "general:delete" privilege set for user user1
+    And user of browser clicks on "<button>" button in <numeral> ACL record in edit permissions modal
+    Then user of browser sees that first ACL record in edit permissions modal is set for user user1
+    And user of browser sees that second ACL record in edit permissions modal is set for group group1
+
+    Examples:
+    | button    | numeral|
+    | move up   | second |
+    | move down | first  |

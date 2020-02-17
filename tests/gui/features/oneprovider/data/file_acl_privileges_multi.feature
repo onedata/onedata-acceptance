@@ -3,8 +3,7 @@ Feature: ACL files privileges tests using multiple browsers in Oneprovider GUI
   Examples:
   | subject_type  | subject_name  |
   | user          | user2         |
-# TODO: change test because of a new gui (group subject in acl)
-#  | group         | group1        |
+  | group         | group1        |
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -65,7 +64,7 @@ Feature: ACL files privileges tests using multiple browsers in Oneprovider GUI
 
   Scenario Outline: Change files ACL
     When user of browser1 sets "file1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
-    Then user of browser2 <result> to change "file1" ACL for user2 in "space1"
+    Then user of browser2 <result> to change "file1" ACL for <subject_name> in "space1"
 
     Examples:
     | result   |  privileges                   |

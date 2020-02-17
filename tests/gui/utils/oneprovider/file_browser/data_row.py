@@ -23,7 +23,7 @@ class DataRow(PageObject):
     _icon = WebElement('.file-icon.one-icon')
     menu_button = Button('.fb-table-col-actions-menu .menu-toggle')
 
-    # TODO: change test because of a new gui
+    # TODO: change test because of a new gui (metadata, share)
     # _metadata_tool = WebElement('.file-tool-metadata')
     # _share_tool = WebElement('.file-tool-share')
 
@@ -55,4 +55,5 @@ class DataRow(PageObject):
                                   '{}'.format(name, self))
 
     def double_click(self):
-        ActionChains(self.driver).double_click(self.web_elem).perform()
+        ActionChains(self.driver).click(self.web_elem).perform()
+        ActionChains(self.driver).click(self.web_elem).perform()

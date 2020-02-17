@@ -23,7 +23,7 @@ Feature: Basic management of providers in Onezone GUI
     Then user of browser sees that provider popup for provider "oneprovider-1" has appeared on world map
 
 
-# TODO: change test because of a new gui
+# TODO: change test because of a new gui (go to oneprovider)
 #  Scenario: User can go to Oneprovider by clicking on Visit provider in provider's popup
 #    When user of browser clicks on Providers in the main menu
 #    And user of browser clicks on provider "oneprovider-1" in providers sidebar

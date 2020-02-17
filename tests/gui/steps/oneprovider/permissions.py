@@ -260,28 +260,21 @@ def click_on_btn_in_acl_record(selenium, browser_id, modals, btn, num, numerals)
     driver = selenium[browser_id]
     n = _get_index(selenium, browser_id, num, modals, numerals)
 
-    btn = btn.strip('\"').replace(' ', '_')
+    btn = btn.strip('\"')
     perm = (modals(driver).edit_permissions.acl
             .member_permission_list[n])
     perm.menu_button()
     modals(driver).menu_in_edit_permissions.menu[btn.capitalize()]()
 
 
-@when(parsers.re('user of (?P<browser_id>\w+) sees that (?P<subjects>.*) '
-                  '(is|are) in subject list in (?P<num>.*) ACL record'))
-@then(parsers.re('user of (?P<browser_id>\w+) sees that (?P<subjects>.*) '
-                  '(is|are) in subject list in (?P<num>.*) ACL record'))
-def assert_subject_in_list_in_acl_record(selenium, browser_id, subjects, modals,
-                                         num, numerals):
-    n = _get_index(selenium, browser_id, num, modals, numerals)
-    
-    perm = modals(selenium[browser_id]).edit_permissions.acl.permissions[n]
-    perm.expand()
-    subjects_list = [x.text.lower() for x in perm.subjects_list]
+@wt(parsers.re('user of (?P<browser_id>\w+) sees that (?P<subjects>.*) '
+               '(is|are) in subject list in ACL record'))
+def assert_subject_in_list_in_acl_record(selenium, browser_id, subjects, modals, tmp_memory):
+    driver = selenium[browser_id]
+    modals(driver).edit_permissions.acl.expand_dropdown()
+    subject_list = modals(driver).dropdown.options
     for subject in parse_seq(subjects):
-        assert subject.lower() in subjects_list,( "{} not in subjects list in "
-                                           "{} ACL record".format(subject, num))
-    perm.expand()
+        assert subject in subject_list, f'{subject} not found in subjects list'
 
 
 @when(parsers.re('user of (?P<browser_id>\w+) does not see (?P<subjects>.*) '
