@@ -20,7 +20,7 @@ from tests.utils.bdd_utils import given, wt, parsers, when, then
 
 def _change_iframe_for_file_browser(selenium, browser_id, tmp_memory, op_page):
     driver = selenium[browser_id]
-    timeout = WAIT_BACKEND
+    timeout = 2 * WAIT_BACKEND
     limit = time.time() + timeout
     while time.time() < limit:
         try:
@@ -30,7 +30,7 @@ def _change_iframe_for_file_browser(selenium, browser_id, tmp_memory, op_page):
             time.sleep(1)
             file_browser = op_page(driver).file_browser
             tmp_memory[browser_id]['file_browser'] = file_browser
-        except NoSuchElementException:
+        except (NoSuchElementException, RuntimeError):
             time.sleep(1)
             continue
         else:
@@ -365,10 +365,10 @@ def assert_provider_chunk_in_data_distribution_filled(selenium, browser_id,
                                                       provider, modals, hosts):
     driver = selenium[browser_id]
     provider = hosts[provider]['name']
-    prov_rec = modals(driver).data_distribution.providers[provider]
-    distribution = prov_rec.distribution
-    size, _ = distribution.size
-    chunks = distribution.chunks
+    data_distribution = modals(driver).data_distribution
+    distribution = data_distribution.providers[provider].distribution
+    size = data_distribution.size()
+    chunks = distribution.chunks(size)
     assert len(chunks) == 1, (f'distribution for {provider} is not '
                               f'entirely filled')
     chunk = chunks[0]
@@ -394,19 +394,17 @@ def assert_provider_chunk_in_data_distribution_empty(selenium, browser_id,
                        'Visible chunks: {}'.format(provider, chunks)
 
 
-@when(parsers.parse('user of {browser_id} sees {chunks} chunk(s) for provider '
-                    '"{provider}" in chunk bar'))
-@then(parsers.parse('user of {browser_id} sees {chunks} chunk(s) for provider '
-                    '"{provider}" in chunk bar'))
+@wt(parsers.parse('user of {browser_id} sees {chunks} chunk(s) for provider '
+                  '"{provider}" in chunk bar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_provider_chunks_in_data_distribution(selenium, browser_id, chunks,
                                                 provider, modals, hosts):
     driver = selenium[browser_id]
     provider = hosts[provider]['name']
-    prov_rec = modals(driver).data_distribution.providers[provider]
-    distribution = prov_rec.distribution
-    size, _ = distribution.size
-    displayed_chunks = distribution.chunks
+    data_distribution = modals(driver).data_distribution
+    distribution = data_distribution.providers[provider].distribution
+    size = data_distribution.size()
+    displayed_chunks = distribution.chunks(size)
     expected_chunks = parse_seq(chunks, pattern=r'\(.+?\)')
     assert len(displayed_chunks) == len(expected_chunks), \
         'displayed {} chunks instead of expected {}'.format(
@@ -469,26 +467,51 @@ def choose_provider_in_file_browser(selenium, browser_id, provider,
     driver.switch_to.frame(iframe)
 
 
+@wt(parsers.parse('user of {browser_id} clicks on Choose other Oneprovider '
+                  'on file browser page'))
+def click_choose_other_oneprovider_on_file_browser(selenium, browser_id,
+                                                   op_page):
+    driver = selenium[browser_id]
+    driver.switch_to.default_content()
+    op_page(selenium[browser_id]).choose_other_provider()
+
+
+def _assert_current_provider_in_space(selenium, browser_id, provider, op_page):
+    driver = selenium[browser_id]
+    driver.switch_to.default_content()
+    current_provider = op_page(selenium[browser_id]).current_provider
+
+    assert provider == current_provider, (f'{provider} is not current provider '
+                                          f'on file browser page')
+
+
 def _assert_provider_in_space(selenium, browser_id, provider, op_page):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
+    providers = op_page(selenium[browser_id]).providers
 
-    assert provider in op_page(selenium[browser_id]).providers, (f'{provider} '
-                                                                 f'provider '
-                                                                 f'not found '
-                                                                 f'on file '
-                                                                 f'browser page')
+    assert provider in providers, (f'{provider} provider not found '
+                                   f'on file browser page')
 
 
-@wt(parsers.parse('user of {browser_id} sees "{provider}" provider '
-                  'on file browser page'))
-def assert_provider_in_space(selenium, browser_id, provider, hosts, op_page):
+@wt(parsers.parse('user of {browser_id} sees that current provider is '
+                  '"{provider}" on file browser page'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_current_provider_in_space(selenium, browser_id, provider, hosts, op_page):
+    _assert_current_provider_in_space(selenium, browser_id, provider, op_page)
+
+
+@wt(parsers.parse('user of {browser_id} sees current provider named '
+                  '"{provider}" on file browser page'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_current_provider_name_in_space(selenium, browser_id, provider, hosts, op_page):
     provider = hosts[provider]['name']
-    _assert_provider_in_space(selenium, browser_id, provider, op_page)
+    _assert_current_provider_in_space(selenium, browser_id, provider, op_page)
 
 
-@wt(parsers.parse('user of {browser_id} sees provider named "{provider}" sudo '
-                  'on file browser page'))
-def assert_provider_name_in_space(selenium, browser_id, provider, hosts, op_page):
+@wt(parsers.parse('user of {browser_id} sees provider named '
+                  '"{provider}" on file browser page'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_provider_in_space(selenium, browser_id, provider, hosts, op_page):
     provider = hosts[provider]['name']
     _assert_provider_in_space(selenium, browser_id, provider, op_page)

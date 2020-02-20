@@ -118,7 +118,9 @@ Feature: Basic management of harvester in Onezone GUI
 
   Scenario: User successfully checks harvesting progress
     Given there is no "space1" space in Onezone used by user of browser
+
     When user of browser creates "space1" space in Onezone
+
     # support space
     And user of browser sends support token for "space1" to user of browser
     And user of browser clicks on Clusters in the main menu

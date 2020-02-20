@@ -3,7 +3,6 @@ using web GUI
 """
 
 import yaml
-from pytest_bdd import given, parsers
 
 from tests.gui.meta_steps.onezone.common import g_wt_visit_op
 from tests.gui.steps.oneprovider.transfers import (
@@ -23,12 +22,13 @@ from tests.gui.steps.oneprovider.data_tab import (
 from tests.gui.steps.oneprovider.file_browser import (
     select_files_from_file_list_using_ctrl,
     assert_items_presence_in_file_browser,
-    deselect_items_from_file_browser, confirm_create_new_directory)
+    deselect_items_from_file_browser,
+    confirm_create_new_directory)
 from tests.gui.steps.modal import (wt_wait_for_modal_to_appear,
                                    wt_click_on_confirmation_btn_in_modal,
                                    wt_wait_for_modal_to_disappear,
                                    write_name_into_text_field_in_modal)
-from tests.utils.acceptance_utils import wt
+from tests.utils.bdd_utils import wt, given, parsers
 from tests.utils.utils import repeat_failed
 from tests.gui.conftest import WAIT_BACKEND
 

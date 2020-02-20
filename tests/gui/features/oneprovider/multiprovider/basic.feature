@@ -32,6 +32,7 @@ Feature: Oneprovider functionality using multiple providers
           unit: GiB
     And user of browser1 clicks Data of "space1" in the sidebar
     And user of browser1 sees file browser in data tab in Oneprovider page
-    And user of browser1 sees "oneprovider-1" provider on file browser page
-    And user of browser1 sees "oneprovider-2" provider on file browser page
-    And user of browser1 clicks on "oneprovider-1" provider on file browser page
+    Then user of browser1 sees current provider named "oneprovider-1" on file browser page
+    And user of browser1 clicks on Choose other Oneprovider on file browser page
+    And user of browser1 sees provider named "oneprovider-2" on file browser page
+    And user of browser1 clicks on "oneprovider-2" provider on file browser page

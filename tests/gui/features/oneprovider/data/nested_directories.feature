@@ -58,7 +58,7 @@ Feature: Basic data tab operations on nested directory structure in file browser
     And user of browser clicks "Delete" option in data row menu in file browser
     And user of browser clicks on "Yes" button in modal "Delete modal"
 
-    And user of browser sees that item named "dir1" has disappeared from files browser
+    Then user of browser sees that item named "dir1" has disappeared from files browser
 
 
   Scenario: User enters directory and views files in it

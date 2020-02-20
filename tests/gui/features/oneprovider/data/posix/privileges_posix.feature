@@ -66,7 +66,7 @@ Feature: Oneprovider POSIX privileges GUI tests
     And user of browser clicks "Permissions" option in data row menu in file browser
     And user of browser sees that "Edit permissions" modal has appeared
     And user of browser selects "POSIX" permission type in edit permissions modal
-    And user of browser sees that current permission is "775"
+    Then user of browser sees that current permission is "775"
     And user of browser clicks "Cancel" button in displayed modal
 
 
@@ -88,7 +88,7 @@ Feature: Oneprovider POSIX privileges GUI tests
     And user of browser clicks "Permissions" option in data row menu in file browser
     And user of browser sees that "Edit permissions" modal has appeared
     And user of browser selects "POSIX" permission type in edit permissions modal
-    And user of browser sees that current permission is "664"
+    Then user of browser sees that current permission is "664"
     And user of browser clicks "Cancel" button in displayed modal
 
 
@@ -96,7 +96,7 @@ Feature: Oneprovider POSIX privileges GUI tests
     When user of browser sets file1 POSIX 220 privileges in "space1"
 
 	# Fail to download file
-    And user of browser double clicks on item named "file1" in file browser
+    Then user of browser double clicks on item named "file1" in file browser
     And user of browser sees that error modal with text "Starting file download failed" appeared
 
 
@@ -113,7 +113,7 @@ Feature: Oneprovider POSIX privileges GUI tests
     When user of browser sets dir1 POSIX 553 privileges in "space1"
 
 	# Fail to remove file
-    And user of browser double clicks on item named "dir1" in file browser
+    Then user of browser double clicks on item named "dir1" in file browser
     And user of browser clicks on menu for "file11" file in file browser
     And user of browser clicks "Delete" option in data row menu in file browser
     And user of browser clicks on "Yes" button in modal "Delete modal"
@@ -130,7 +130,7 @@ Feature: Oneprovider POSIX privileges GUI tests
     And user of browser sees that "Rename" modal has appeared
     And user of browser writes "new_file11" into name directory text field in modal "Rename modal"
     And user of browser confirms rename directory using button
-    And user of browser sees that error modal with text "Renaming the file failed" appeared
+    Then user of browser sees that error modal with text "Renaming the file failed" appeared
 
 
   Scenario: User fails to remove directory because of lack in privileges
@@ -141,7 +141,7 @@ Feature: Oneprovider POSIX privileges GUI tests
     And user of browser clicks on menu for "dir12" directory in file browser
     And user of browser clicks "Delete" option in data row menu in file browser
     And user of browser clicks on "Yes" button in modal "Delete modal"
-    And user of browser sees that error modal with text "Deleting file(s) failed" appeared
+    Then user of browser sees that error modal with text "Deleting file(s) failed" appeared
 
 
   Scenario: User fails to remove directory containing file because of lack in privileges
@@ -151,7 +151,7 @@ Feature: Oneprovider POSIX privileges GUI tests
     And user of browser clicks on menu for "dir1" directory in file browser
     And user of browser clicks "Delete" option in data row menu in file browser
     And user of browser clicks on "Yes" button in modal "Delete modal"
-    And user of browser sees that error modal with text "Deleting file(s) failed" appeared
+    Then user of browser sees that error modal with text "Deleting file(s) failed" appeared
 
 
   Scenario: "Ok" confirmation button is disabled after entering incorrect permission code (3 char)
