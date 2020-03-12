@@ -24,6 +24,8 @@ class Space(Element):
                            text='Overview')
     data = NamedButton('.one-list-level-2 .item-header',
                        text='Data')
+    shares = NamedButton('.one-list-level-2 .item-header',
+                         text='Shares')
     transfers = NamedButton('.one-list-level-2 .item-header',
                             text='Transfers')
     providers = NamedButton('.one-list-level-2 .item-header',
@@ -115,4 +117,3 @@ class DataPage(GenericPage):
                                  '.one-collapsible-toolbar-popover '
                                  '.dropdown-menu .one-collapsible-toolbar-item',
                                  cls=MenuItem)
-

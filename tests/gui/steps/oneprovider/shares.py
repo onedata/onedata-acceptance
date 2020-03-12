@@ -12,6 +12,7 @@ import re
 from pytest_bdd import when, then, parsers
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
+from tests.utils.acceptance_utils import wt
 from tests.utils.utils import repeat_failed
 
 
@@ -113,18 +114,6 @@ def change_cwd_using_breadcrumbs(selenium, browser_id, path, op_page):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_dir_in_abs_path(selenium, browser_id, path, op_page):
     op_page(selenium[browser_id]).shares.path.chdir(path)
-
-
-@when(parsers.parse('user of {browser_id} sees that selected share '
-                    'is named "{share_name}"'))
-@then(parsers.parse('user of {browser_id} sees that selected share '
-                    'is named "{share_name}"'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def is_selected_share_named(selenium, browser_id, share_name, op_page):
-    displayed_name = op_page(selenium[browser_id]).shares.name
-    assert displayed_name == share_name, \
-        ('displayed share name is "{}" instead of '
-         'expected "{}"'.format(displayed_name, share_name))
 
 
 @when(parsers.parse('user of {browser_id} sees that '
@@ -237,3 +226,73 @@ def is_public_share_cwd_correct(selenium, browser_id, cwd, public_share):
 def change_public_share_cwd_using_breadcrumbs(selenium, browser_id, path,
                                               public_share):
     public_share(selenium[browser_id]).breadcrumbs.chdir(path)
+
+
+@wt(parsers.parse('user of {browser_id} sees that item named "{item_name}" '
+                  'has appeared in file browser on shares page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_item_in_file_browser_in_shares_page(selenium, browser_id, item_name, op_page):
+    file_browser = op_page(selenium[browser_id]).shares_page.file_browser
+    data = {f.name for f in file_browser.data}
+    assert item_name in data, ("Item  {} not in file browser".format(item_name))
+
+
+@wt(parsers.parse('user of {browser_id} sees that selected share '
+                  'is named "{share_name}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def is_selected_share_named(selenium, browser_id, share_name, op_page):
+    displayed_name = op_page(selenium[browser_id]).shares_page.name
+    assert displayed_name == share_name, \
+        ('displayed share name is "{}" instead of '
+         'expected "{}"'.format(displayed_name, share_name))
+
+
+@wt(parsers.parse('user of {browser_id} clicks on menu on shares_page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_menu_button(selenium, browser_id, op_page):
+    op_page(selenium[browser_id]).shares_page.menu_button.click()
+
+
+@wt(parsers.parse('user of {browser_id} clicks "{option}" option '
+                  'in shares actions row menu in file browser'))
+@wt(parsers.parse('user of {browser_id} clicks "{option}" option '
+                  'in shares actions row menu in shares browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_option_in_data_row_menu_in_file_browser(selenium, browser_id,
+                                                  option, modals):
+    modals(selenium[browser_id]).shares_row_menu.options[option].click()
+
+
+@wt(parsers.parse('user of {browser_id} sees there are no shares on Shares page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def no_shares_message(selenium, browser_id, op_page):
+    msg = op_page(selenium[browser_id]).shares_page.no_shares_msg
+    assert "no shares" in msg.lower()
+
+
+@wt(parsers.parse('user of browser sees that there is no "{share_name}" '
+                  'share on SharesPage'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_not_share_in_share_browser_in_shares_page(selenium, browser_id,
+                                                     op_page, share_name):
+    shares_browser = op_page(selenium[browser_id]).shares_page.shares_browser
+    data = {f.name for f in shares_browser}
+    assert share_name not in data, ("Item {} in file browser".format(share_name))
+
+
+@wt(parsers.parse('user of browser sees that there is "{share_name}" '
+                  'share on SharesPage'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_share_in_share_browser_in_shares_page(selenium, browser_id,
+                                                 op_page, share_name):
+    shares_browser = op_page(selenium[browser_id]).shares_page.shares_browser
+    data = {f.name for f in shares_browser}
+    assert share_name in data, ("Item {} not in file browser".format(share_name))
+
+
+@wt(parsers.parse('user of {browser_id} clicks on menu '
+                  'for "{item_name}" share in shares browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_menu_for_elem_in_file_browser(selenium, browser_id, item_name, op_page):
+    browser = op_page(selenium[browser_id]).shares_page.shares_browser
+    browser[item_name].menu_button.click()

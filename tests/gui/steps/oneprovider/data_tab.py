@@ -18,7 +18,7 @@ from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import given, wt, parsers, when, then
 
 
-def _change_iframe_for_file_browser(selenium, browser_id, tmp_memory, op_page):
+def _change_iframe_for_file_browser(selenium, browser_id, tmp_memory, op_page, browser):
     driver = selenium[browser_id]
     timeout = WAIT_BACKEND
     limit = time.time() + timeout
@@ -28,8 +28,11 @@ def _change_iframe_for_file_browser(selenium, browser_id, tmp_memory, op_page):
             driver.switch_to.frame(iframe)
             # wait for file browser to load
             time.sleep(1)
-            file_browser = op_page(driver).file_browser
-            tmp_memory[browser_id]['file_browser'] = file_browser
+            if browser == 'file browser':
+                items_browser = op_page(driver).file_browser
+            else:
+                items_browser = op_page(driver).shares_page.shares_browser
+            tmp_memory[browser_id][transform(browser)] = items_browser
         except NoSuchElementException:
             time.sleep(1)
             continue
@@ -261,11 +264,11 @@ def assert_empty_file_browser_in_data_tab_in_op(selenium, browser_id,
     tmp_memory[browser_id]['file_browser'] = file_browser
 
 
-@wt(parsers.parse('user of {browser_id} sees file browser '
+@wt(parsers.parse('user of {browser_id} sees {items_browser} '
                   'in data tab in Oneprovider page'))
 def assert_file_browser_in_data_tab_in_op(selenium, browser_id,
-                                          op_page, tmp_memory):
-    _change_iframe_for_file_browser(selenium, browser_id, tmp_memory, op_page)
+                                          op_page, tmp_memory, items_browser):
+    _change_iframe_for_file_browser(selenium, browser_id, tmp_memory, op_page, items_browser)
 
 
 @when(parsers.parse('user of {browser_id} records displayed name length for '

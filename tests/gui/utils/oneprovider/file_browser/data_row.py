@@ -21,6 +21,7 @@ class DataRow(PageObject):
     modification_date = Label('.fb-table-col-modification .file-item-text')
 
     _icon = WebElement('.file-icon.one-icon')
+    _shared_icon = WebElement('.file-status-icon .one-icon')
     menu_button = Button('.fb-table-col-actions-menu .menu-toggle')
 
     # TODO: change test because of a new gui
@@ -41,7 +42,7 @@ class DataRow(PageObject):
         return 'browser-directory' in self._icon.get_attribute('class')
 
     def is_shared(self):
-        return 'share' in self._icon.get_attribute('class')
+        return 'oneicon-browser-share' in self._shared_icon.get_attribute('class')
 
     def is_tool_visible(self, name):
         tool = getattr(self, '_{tool}_tool'.format(tool=name))
