@@ -13,12 +13,15 @@ from .groups import GroupContentPage
 from .spaces import SpacesContentPage
 from .transfers import TransfersTab
 from .file_browser import FileBrowser
+from ..core.web_elements import WebItem, Label
 
 
 class OPLoggedIn(object):
     # TODO: change test because of a new gui
     # tab with providers, map
     file_browser = FileBrowser('.content-file-browser')
+    data_icon = Label('.header-row ')
+    shares_page = WebItem('.content-space-shares', cls=SharesContentPage)
 
     def __init__(self, driver):
         self.web_elem = self.driver = driver
