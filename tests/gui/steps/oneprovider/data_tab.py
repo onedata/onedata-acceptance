@@ -241,23 +241,23 @@ def wt_is_space_tree_root(selenium, browser_id, is_home, space_name, op_page):
                                              space_name, op_page)
 
 
-@wt(parsers.parse('user of {browser_id} sees nonempty file browser '
+@wt(parsers.parse('user of {browser_id} sees nonempty {item_browser} '
                   'in data tab in Oneprovider page'))
 @repeat_failed(timeout=WAIT_BACKEND * 2)
 def assert_nonempty_file_browser_in_data_tab_in_op(selenium, browser_id,
-                                                   op_page, tmp_memory):
-    _change_iframe_for_file_browser(selenium, browser_id, tmp_memory, op_page)
+                                                   op_page, tmp_memory, item_browser):
+    _change_iframe_for_file_browser(selenium, browser_id, tmp_memory, op_page, item_browser)
     file_browser = tmp_memory[browser_id]['file_browser']
     assert not file_browser.is_empty(), ('file browser in data tab in op'
                                          'should not be empty but is')
 
 
-@wt(parsers.parse('user of {browser_id} sees empty file browser '
+@wt(parsers.parse('user of {browser_id} sees empty {item_browser} '
                   'in data tab in Oneprovider page'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_empty_file_browser_in_data_tab_in_op(selenium, browser_id,
-                                                op_page, tmp_memory):
-    _change_iframe_for_file_browser(selenium, browser_id, tmp_memory, op_page)
+                                                op_page, tmp_memory, item_browser):
+    _change_iframe_for_file_browser(selenium, browser_id, tmp_memory, op_page, item_browser)
     file_browser = tmp_memory[browser_id]['file_browser']
     assert file_browser.is_empty(), ('file browser in data tab in op'
                                      'should be empty but is not')
