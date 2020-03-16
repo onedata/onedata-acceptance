@@ -30,7 +30,7 @@ def open_permission_modal(selenium, browser_id, path, space,
 
     try:
         click_menu_for_elem_in_file_browser(browser_id, path, tmp_memory)
-    except KeyError:
+    except (KeyError, TypeError):
         go_to_filebrowser(selenium, browser_id, oz_page, op_page,
                           tmp_memory, space)
         click_menu_for_elem_in_file_browser(browser_id, path, tmp_memory)
@@ -43,13 +43,13 @@ def open_permission_modal(selenium, browser_id, path, space,
 
 
 def open_acl_modal(selenium, browser_id, path, space, tmp_memory, modals,
-                          oz_page, op_page):
+                   oz_page, op_page):
     open_permission_modal(selenium, browser_id, path, space,
                           tmp_memory, modals, oz_page, op_page, 'acl')
 
 
 def open_posix_modal(selenium, browser_id, path, space, tmp_memory, modals,
-                          oz_page, op_page):
+                     oz_page, op_page):
     open_permission_modal(selenium, browser_id, path, space,
                           tmp_memory, modals, oz_page, op_page, 'posix')
 
@@ -118,8 +118,8 @@ def grant_acl_privileges_in_op_gui(selenium, browser_id, path, priv, name,
                  ' ACL in "(?P<space>.*)"'))
 def read_items_acl(selenium, browser_id, path, tmp_memory, res,
                    space, modals, oz_page, op_page):
-    open_acl_modal(selenium, browser_id, path, tmp_memory, modals,
-                   oz_page, op_page, space)
+    open_acl_modal(selenium, browser_id, path, space, tmp_memory, modals,
+                   oz_page, op_page)
 
     if res == "fails":
         check_permission_denied_alert_in_edit_permissions_modal(selenium,
@@ -138,8 +138,8 @@ def read_items_acl(selenium, browser_id, path, tmp_memory, res,
 def assert_ace_in_op_gui(selenium, browser_id, priv, type, name, num, space,
                          path, tmp_memory, modals, numerals, oz_page, op_page):
     selenium[browser_id].refresh()
-    open_acl_modal(selenium, browser_id, path, tmp_memory, modals,
-                   oz_page, op_page, space)
+    open_acl_modal(selenium, browser_id, path, space, tmp_memory, modals,
+                   oz_page, op_page)
     assert_acl_subject(selenium, browser_id, modals, num, numerals, type, name)
     assert_set_acl_privileges(selenium, browser_id, modals, num, numerals, priv)
     wt_click_on_confirmation_btn_in_modal(selenium, browser_id, "Cancel",
@@ -153,8 +153,8 @@ def change_acl_privileges(selenium, browser_id, path, tmp_memory, res,
     priv = '[attributes]' if res == 'succeeds' else '[acl:change acl]'
     text = 'Modifying permissions failed'
 
-    open_acl_modal(selenium, browser_id, path, tmp_memory, modals,
-                   oz_page, op_page, space)
+    open_acl_modal(selenium, browser_id, path, space, tmp_memory, modals,
+                   oz_page, op_page)
     expand_subject_record_in_edit_permissions_modal(selenium, browser_id,
                                                     modals, name)
     select_acl_options(selenium, browser_id, priv, modals, name)
@@ -165,8 +165,8 @@ def change_acl_privileges(selenium, browser_id, path, tmp_memory, res,
         assert_error_modal_with_text_appeared(selenium, browser_id, text)
 
     else:
-        open_acl_modal(selenium, browser_id, path, tmp_memory, modals,
-                       oz_page, op_page, space)
+        open_acl_modal(selenium, browser_id, path, space, tmp_memory, modals,
+                       oz_page, op_page)
         check_permissions_list_in_edit_permissions_modal(selenium, browser_id,
                                                          modals)
 
