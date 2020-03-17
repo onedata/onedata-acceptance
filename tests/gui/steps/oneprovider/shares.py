@@ -315,8 +315,12 @@ def change_cwd_using_breadcrumbs(selenium, browser_id, path, op_page):
 @wt(parsers.parse('user of {browser_id} changes current working'
                   ' directory to current share using breadcrumbs in shares page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def change_cwd_using_breadcrumbs(selenium, browser_id, path, op_page):
-    op_page(selenium[browser_id]).shares_page.breadcrumbs.home.click()
+def change_cwd_to_home_using_breadcrumbs(selenium, browser_id, path, op_page, tmp_memory):
+    browser = tmp_memory[browser_id]['file_browser']
+    with browser.select_files() as selector:
+        selector.shift_up()
+        selector.ctrl_or_cmd_up()
+    op_page(selenium[browser_id]).shares_page.breadcrumbs.home()
 
 
 @wt(parsers.parse('user of {browser_id} clicks on {path} '
