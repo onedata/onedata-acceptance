@@ -115,9 +115,13 @@ class Client:
             ['ps -u {}'.format(user_name), 'grep "rpyc_classic.py"',
              'grep -v "grep"', 'awk \'{print $1}\'']
         )
-        pid = run_cmd(user_name, self.docker_id, get_pid_cmd, output=True)
 
-        self.rpyc_server_pid = pid
+        def condition():
+            pid = run_cmd(user_name, self.docker_id, get_pid_cmd, output=True)
+            self.rpyc_server_pid = pid
+
+        self._repeat_until(condition, 30)
+
 
     def stop_rpyc_server(self):
         if self.rpyc_server_pid:
@@ -414,7 +418,7 @@ def execute(client, command, output=False):
 def md5sum(client, file_path):
     m = hashlib.md5()
     with client.rpyc_connection.builtins.open(file_path, 'r') as f:
-        m.update(f.read())
+        m.update(f.read().encode('utf-8'))
     return m.hexdigest()
 
 

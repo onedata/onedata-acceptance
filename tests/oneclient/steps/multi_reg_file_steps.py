@@ -27,7 +27,7 @@ def write_text_base(user, text, file, client_node, users, should_fail=False):
     assert_generic(client.perform, should_fail, condition, timeout=0)
 
 
-@wt(parsers.re('(?P<user>\w+) writes "(?P<text>.*)" to (?P<file>.*) on '
+@wt(parsers.re('(?P<user>\w+) writes "(?P<text>.*)" to (?P<file>[^\s]+) on '
                '(?P<client_node>.*)'))
 def write_text(user, text, file, client_node, users):
     write_text_base(user, text, file, client_node, users)
@@ -119,7 +119,6 @@ def read_text(user, text, file, client_node, users):
 def read_opened(user, text, file, client_node, users):
     user = users[user]
     client = user.clients[client_node]
-    text = text.decode('string_escape')
 
     def condition():
         read_text = read_from_opened_file(client, client.absolute_path(file))
