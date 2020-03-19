@@ -349,15 +349,17 @@ def assert_number_of_shares_in_modal(selenium, browser_id, item_name,
     assert number in modal.share_info, ("Item is not shared {} times".format(number))
 
 
-@wt(parsers.re(r'user of (?P<browser_id>.*?) clicks on ("(?P<name>.*?)" )?browser share icon'
+@wt(parsers.re(r'user of (?P<browser_id>.*?) clicks on ("(?P<owner_name>.*?)" )?(?P<icon_name>.*?) icon'
                ' in modal "(?P<modal_name>.*?)"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_share_info_icon_in_share_directory_modal(selenium, browser_id,
-                                                   modal_name, modals, name):
+def click_icon_in_share_directory_modal(selenium, browser_id,
+                                        modal_name, modals, owner_name, icon_name):
     modal = modals(selenium[browser_id]).share_directory
-
-    if name:
-        icon = modal.browser_share_icon[name]
+    icon_name = transform(icon_name) + '_icon'
+    # icon_name = 'browser share'
+    icons_group = getattr(modal, icon_name)
+    if owner_name:
+        icon = icons_group[owner_name]
     else:
-        icon = modal.browser_share_icon[0]
+        icon = icons_group[0]
     icon.click()

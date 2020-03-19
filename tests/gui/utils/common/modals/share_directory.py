@@ -20,9 +20,8 @@ class ShareDirectory(Modal):
     create = NamedButton('button', text='Create')
     close = NamedButton('button', text='Close')
 
-    # browser_share_icon = WebElement('.oneicon-browser-share')
     browser_share_icon = WebItemsSequence('.share-name', cls=SharesOptions)
-    copy_icon = Button('.oneicon-browser-copy')
+    copy_icon = WebItemsSequence('.oneicon-browser-copy', cls=SharesOptions)
     create_another_share = NamedButton('button', text='Create another share')
     share_info = Label('.row-share-intro')
 
