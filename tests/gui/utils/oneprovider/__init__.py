@@ -20,7 +20,6 @@ class OPLoggedIn(object):
     # TODO: change test because of a new gui
     # tab with providers, map
     file_browser = FileBrowser('.content-file-browser')
-    data_icon = Label('.header-row ')
     shares_page = WebItem('.content-space-shares', cls=SharesContentPage)
 
     def __init__(self, driver):

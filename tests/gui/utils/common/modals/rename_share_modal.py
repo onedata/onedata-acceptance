@@ -1,4 +1,4 @@
-"""Utils and fixtures to facilitate operations on share modal.
+"""Utils and fixtures to facilitate operations on rename share modal.
 """
 
 __author__ = "Natalia Organek"

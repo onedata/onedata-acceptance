@@ -9,11 +9,10 @@ __license__ = ("This software is released under the MIT license cited in "
 
 import re
 
-from pytest_bdd import when, then, parsers
+from tests.utils.bdd_utils import wt, when, then, parsers
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.utils.generic import transform
-from tests.utils.acceptance_utils import wt
 from tests.utils.utils import repeat_failed
 
 
@@ -76,9 +75,11 @@ def has_share_been_renamed(selenium, browser_id, prev_name, next_name, op_page):
 
 
 @when(parsers.parse('user of {browser_id} sees that current working directory '
-                    'path visible in share\'s file browser is as follows: {cwd}'))
+                    'path visible in share\'s file browser '
+                    'is as follows: {cwd}'))
 @then(parsers.parse('user of {browser_id} sees that current working directory '
-                    'path visible in share\'s file browser is as follows: {cwd}'))
+                    'path visible in share\'s file browser '
+                    'is as follows: {cwd}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def is_cwd_correct(selenium, browser_id, cwd, op_page):
     displayed_cwd = op_page(selenium[browser_id]).shares.breadcrumbs.pwd()
@@ -202,10 +203,11 @@ def change_public_share_cwd_using_breadcrumbs(selenium, browser_id, path,
 @wt(parsers.parse('user of {browser_id} sees that item named "{item_name}" '
                   'has appeared in file browser on shares page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_item_in_file_browser_in_shares_page(selenium, browser_id, item_name, op_page):
+def assert_item_in_file_browser_in_shares_page(selenium, browser_id, item_name,
+                                               op_page):
     file_browser = op_page(selenium[browser_id]).shares_page.file_browser
     data = {f.name for f in file_browser.data}
-    assert item_name in data, ("Item  {} not in file browser".format(item_name))
+    assert item_name in data, ('Item  {} not in file browser'.format(item_name))
 
 
 @wt(parsers.parse('user of {browser_id} sees that selected share '
@@ -220,7 +222,7 @@ def is_selected_share_named(selenium, browser_id, share_name, op_page):
 
 @wt(parsers.parse('user of {browser_id} clicks on menu on shares_page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_menu_button(selenium, browser_id, op_page):
+def click_menu_button_on_shares_page(selenium, browser_id, op_page):
     op_page(selenium[browser_id]).shares_page.menu_button.click()
 
 
@@ -234,11 +236,13 @@ def click_option_in_data_row_menu_in_file_browser(selenium, browser_id,
     modals(selenium[browser_id]).shares_row_menu.options[option].click()
 
 
-@wt(parsers.parse('user of {browser_id} sees there are no shares on Shares page'))
+@wt(parsers.parse('user of {browser_id} sees there are no shares '
+                  'on Shares page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def no_shares_message(selenium, browser_id, op_page):
     msg = op_page(selenium[browser_id]).shares_page.no_shares_msg
-    assert "no shares" in msg.lower()
+    assert "no shares" in msg.lower(), ('There are shares on page but '
+                                        'shouldn\'t be any')
 
 
 @wt(parsers.parse('user of browser sees that there is no "{share_name}" '
@@ -248,7 +252,8 @@ def assert_not_share_in_shares_browser_in_shares_page(selenium, browser_id,
                                                       op_page, share_name):
     shares_browser = op_page(selenium[browser_id]).shares_page.shares_browser
     data = {f.name for f in shares_browser}
-    assert share_name not in data, ("Item {} in file browser".format(share_name))
+    assert share_name not in data, ('Item {} in file browser'
+                                    .format(share_name))
 
 
 @wt(parsers.parse('user of browser sees that there is "{share_name}" '
@@ -258,13 +263,15 @@ def assert_share_in_shares_browser_in_shares_page(selenium, browser_id,
                                                   op_page, share_name):
     shares_browser = op_page(selenium[browser_id]).shares_page.shares_browser
     data = {f.name for f in shares_browser}
-    assert share_name in data, ("Item {} not in file browser".format(share_name))
+    assert share_name in data, ('Item {} not in file browser'
+                                .format(share_name))
 
 
 @wt(parsers.parse('user of {browser_id} clicks on menu '
                   'for "{item_name}" share in shares browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_menu_for_elem_in_shares_browser(selenium, browser_id, item_name, op_page):
+def click_menu_for_elem_in_shares_browser(selenium, browser_id, item_name,
+                                          op_page):
     browser = op_page(selenium[browser_id]).shares_page.shares_browser
     browser[item_name].menu_button.click()
 
@@ -279,7 +286,7 @@ def click_share_in_shares_browser(selenium, browser_id, share_name, op_page):
 
 @wt(parsers.parse('user of {browser_id} sees file browser on Shares Page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def change_shares_browser_to_file_browser(selenium, browser_id, share_name,
+def change_shares_browser_to_file_browser(selenium, browser_id,
                                           op_page, tmp_memory):
     browser = op_page(selenium[browser_id]).file_browser
     tmp_memory[browser_id]['file_browser'] = browser
@@ -313,9 +320,11 @@ def change_cwd_using_breadcrumbs(selenium, browser_id, path, op_page):
 
 
 @wt(parsers.parse('user of {browser_id} changes current working'
-                  ' directory to current share using breadcrumbs in shares page'))
+                  ' directory to current share using breadcrumbs'
+                  ' in shares page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def change_cwd_to_home_using_breadcrumbs(selenium, browser_id, path, op_page, tmp_memory):
+def change_cwd_to_home_using_breadcrumbs(selenium, browser_id,
+                                         op_page, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
     with browser.select_files() as selector:
         selector.shift_up()
@@ -328,10 +337,3 @@ def change_cwd_to_home_using_breadcrumbs(selenium, browser_id, path, op_page, tm
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_dir_in_abs_path(selenium, browser_id, path, op_page):
     op_page(selenium[browser_id]).shares_page.path.chdir(path)
-
-
-@wt(parsers.parse('user of {browser_id} sees "data" icon'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def check_on_right_page(selenium, browser_id, op_page):
-    label = op_page(selenium[browser_id]).data_icon
-    assert label.lower() == "data", 'User not on data page'

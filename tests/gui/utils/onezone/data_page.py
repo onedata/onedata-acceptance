@@ -117,3 +117,6 @@ class DataPage(GenericPage):
                                  '.one-collapsible-toolbar-popover '
                                  '.dropdown-menu .one-collapsible-toolbar-item',
                                  cls=MenuItem)
+
+    tab_name = Label('.header-row')
+

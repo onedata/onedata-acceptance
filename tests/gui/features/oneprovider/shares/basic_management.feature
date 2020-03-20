@@ -45,7 +45,6 @@ Feature: Basic share management in Oneprovider GUI
 
 
   Scenario: User shares a directory and views information about it (clicks "Share icon" in "Share directory" modal)
-
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
@@ -107,9 +106,6 @@ Feature: Basic share management in Oneprovider GUI
     Then user of browser sees there are no shares on Shares page
 
 
-
-  #new
-
   Scenario: User removes share (two shares of one directory)
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Data of "space1" in the sidebar
@@ -169,10 +165,6 @@ Feature: Basic share management in Oneprovider GUI
     Then user of browser sees that there is no "share_dir1" share on Shares Page
     And user of browser sees that there is "share2_dir1" share on Shares Page
 
-
-
-
-      #new
 
   Scenario: User renames share from shares browser in Shares page
     When user of browser clicks "space1" on the spaces list in the sidebar
@@ -316,7 +308,7 @@ Scenario: User can jump to data tab by clicking on dir in breadcrumbs from share
     And user of browser sees that current working directory path visible in share's file browser is as follows: /dir3
     And user of browser clicks on /dir2 using breadcrumbs from share's info header
 
-    Then user of browser sees "data" icon
+    Then user of browser sees "data" label of current page
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser sees items named ["dir3", "file1", "file2"] in file browser in given order
 
