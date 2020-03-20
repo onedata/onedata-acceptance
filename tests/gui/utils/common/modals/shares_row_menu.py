@@ -1,4 +1,4 @@
-"""Utils and fixtures to facilitate operations on data row menu modal.
+"""Utils and fixtures to facilitate operations on shares row menu modal.
 """
 
 __author__ = "Natalia Organek"
