@@ -6,15 +6,12 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-import time
-
-from pytest_bdd import given, when, then, parsers
 from selenium.webdriver.common.keys import Keys
 
 from tests.gui.utils.generic import transform
-from tests.utils.utils import repeat_failed
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.utils.acceptance_utils import wt
+from tests.utils.utils import repeat_failed
+from tests.utils.bdd_utils import given, when, then, wt, parsers
 
 
 @repeat_failed(attempts=WAIT_FRONTEND)

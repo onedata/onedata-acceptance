@@ -3,7 +3,6 @@ using web GUI
 """
 
 import yaml
-from pytest_bdd import given, parsers
 
 from tests.gui.meta_steps.onezone.common import g_wt_visit_op
 from tests.gui.steps.oneprovider.transfers import (
@@ -18,17 +17,18 @@ from tests.gui.steps.oneprovider.data_tab import (
     click_tooltip_from_toolbar_in_data_tab_in_op,
     assert_provider_chunk_in_data_distribution_empty,
     assert_provider_chunk_in_data_distribution_filled,
-    assert_nonempty_file_browser_in_data_tab_in_op)
+    assert_nonempty_file_browser_in_data_tab_in_op,
+    click_button_from_file_browser_menu_bar)
 from tests.gui.steps.oneprovider.file_browser import (
     select_files_from_file_list_using_ctrl,
     assert_items_presence_in_file_browser,
-    deselect_items_from_file_browser)
+    deselect_items_from_file_browser,
+    confirm_create_new_directory)
 from tests.gui.steps.modal import (wt_wait_for_modal_to_appear,
                                    wt_click_on_confirmation_btn_in_modal,
                                    wt_wait_for_modal_to_disappear,
-                                   activate_input_box_in_modal)
-from tests.gui.steps.common.miscellaneous import type_string_into_active_element
-from tests.utils.acceptance_utils import wt
+                                   write_name_into_text_field_in_modal)
+from tests.utils.bdd_utils import wt, given, parsers
 from tests.utils.utils import repeat_failed
 from tests.gui.conftest import WAIT_BACKEND
 
@@ -109,19 +109,18 @@ def _assert_file_chunks(selenium, browser_id, hosts, desc, modals):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) creates directory "(?P<name>.*)"'))
-def create_directory(selenium, browser_id, name, tmp_memory, op_page):
-    tooltip = 'Create directory'
-    modal_name = 'New directory'
-    assert_file_browser_in_data_tab_in_op(selenium, browser_id, op_page,
-                                          tmp_memory)
-    click_tooltip_from_toolbar_in_data_tab_in_op(selenium, browser_id, tooltip,
-                                                 op_page)
-    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    activate_input_box_in_modal(browser_id, '', tmp_memory)
-    type_string_into_active_element(selenium, browser_id, name)
-    wt_click_on_confirmation_btn_in_modal(selenium, browser_id, 'Create',
-                                          tmp_memory)
-    wt_wait_for_modal_to_disappear(selenium, browser_id, tmp_memory)
+def create_directory(selenium, browser_id, name, tmp_memory, op_page, modals):
+    button = 'New directory'
+    modal_header = f'Create new directory:'
+    modal_name = 'Create dir'
+    option = 'enter'
+
+    click_button_from_file_browser_menu_bar(selenium, browser_id,
+                                            button, op_page)
+    wt_wait_for_modal_to_appear(selenium, browser_id, modal_header, tmp_memory)
+    write_name_into_text_field_in_modal(selenium, browser_id, name,
+                                        modal_name, modals)
+    confirm_create_new_directory(selenium, browser_id, option, modals)
     assert_items_presence_in_file_browser(browser_id, name, tmp_memory)
 
 

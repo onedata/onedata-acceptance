@@ -43,6 +43,4 @@ def screens():
     return [0]
 
 
-# TODO: change test because of a new gui
-# scenarios('../features/oneprovider/data/file_acl_privileges.feature')
-scenarios('../features/pass.feature')
+scenarios('../features/oneprovider/data/file_acl_privileges.feature')

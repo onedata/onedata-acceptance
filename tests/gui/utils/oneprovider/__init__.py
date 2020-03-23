@@ -9,15 +9,21 @@ __license__ = "This software is released under the MIT license cited in " \
 from .data_tab import DataTab
 from .user_profile import UserProfile
 from .shares import SharesContentPage
-from .groups import GroupContentPage
 from .spaces import SpacesContentPage
 from .transfers import TransfersTab
 from .file_browser import FileBrowser
+from ..core.base import PageObject
+from ..core.web_elements import WebItemsSequence, Label, Button
+
+
+class _Provider(PageObject):
+    name = id = Label('a .tab-name')
 
 
 class OPLoggedIn(object):
-    # TODO: change test because of a new gui
-    # tab with providers, map
+    current_provider = Label('.current-oneprovider-name')
+    providers = WebItemsSequence('.provider-online', cls=_Provider)
+    choose_other_provider = Button('.choose-oneprovider-link')
     file_browser = FileBrowser('.content-file-browser')
 
     def __init__(self, driver):

@@ -20,7 +20,7 @@ from tests.utils.bdd_utils import given, wt, parsers, when, then
 
 def _change_iframe_for_file_browser(selenium, browser_id, tmp_memory, op_page):
     driver = selenium[browser_id]
-    timeout = WAIT_BACKEND
+    timeout = 2 * WAIT_BACKEND
     limit = time.time() + timeout
     while time.time() < limit:
         try:
@@ -30,7 +30,7 @@ def _change_iframe_for_file_browser(selenium, browser_id, tmp_memory, op_page):
             time.sleep(1)
             file_browser = op_page(driver).file_browser
             tmp_memory[browser_id]['file_browser'] = file_browser
-        except NoSuchElementException:
+        except (NoSuchElementException, RuntimeError):
             time.sleep(1)
             continue
         else:
@@ -62,15 +62,14 @@ def assert_if_list_contains_space_in_data_tab_in_op(selenium, browser_id,
     space_selector = op_page(driver).data.sidebar.space_selector
     space_selector.expand()
     if option == 'is':
-        assert space_name in space_selector.spaces, ('space named "{}" found '
-                                                     'in spaces list, while it '
-                                                     'should not be')\
-            .format(space_name)
+        assert space_name in space_selector.spaces, (f'space named "{space_name}" '
+                                                     f'found in spaces list, '
+                                                     f'while it should not be')
     else:
-        assert space_name not in space_selector.spaces, ('space named "{}" not '
-                                                         'found in spaces list, '
-                                                         'while it should be')\
-            .format(space_name)
+        assert space_name not in space_selector.spaces, (f'space named '
+                                                         f'"{space_name}" not '
+                                                         f'found in spaces list, '
+                                                         f'while it should be')
 
 
 @when(parsers.re(r'user of (?P<browser_id>.*?) clicks the button '
@@ -103,43 +102,38 @@ def click_button_from_file_browser_menu_bar(selenium, browser_id,
     getattr(op_page(driver).file_browser, transform(button)).click()
 
 
-@when(parsers.parse('user of {browser_id} sees that {btn_list} button '
-                    'is enabled in toolbar in data tab in Oneprovider gui'))
-@then(parsers.parse('user of {browser_id} sees that {btn_list} button '
-                    'is enabled in toolbar in data tab in Oneprovider gui'))
-@when(parsers.parse('user of {browser_id} sees that {btn_list} buttons '
-                    'are enabled in toolbar in data tab in Oneprovider gui'))
-@then(parsers.parse('user of {browser_id} sees that {btn_list} buttons '
-                    'are enabled in toolbar in data tab in Oneprovider gui'))
+@wt(parsers.parse('user of {browser_id} sees that {btn_list} option '
+                  'is in selection menu on file browser page'))
+@wt(parsers.parse('user of {browser_id} sees that {btn_list} options '
+                  'are in selection menu on file browser page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_btn_enabled_in_toolbar_in_data_tab_in_op(selenium, browser_id,
-                                                    btn_list, op_page):
+def assert_btn_is_in_file_browser_menu_bar(selenium, browser_id, btn_list,
+                                           tmp_memory, modals):
     driver = selenium[browser_id]
-    toolbar = op_page(driver).data.toolbar
+    file_browser = tmp_memory[browser_id]['file_browser']
+    file_browser.selection_menu_button()
+
+    menu = modals(driver).menu_modal.menu
     for btn in parse_seq(btn_list):
-        item = getattr(toolbar, transform(btn))
-        assert item.is_enabled() is True, ('{} should be disabled but is not'
-                                           ''.format(item))
+        assert btn in menu, ('{} should be in selection menu but is not'
+                             .format(btn))
 
 
-@when(parsers.parse('user of {browser_id} sees that {btn_list} button is '
-                    'disabled in toolbar in data tab in Oneprovider gui'))
-@then(parsers.parse('user of {browser_id} sees that {btn_list} button is '
-                    'disabled in toolbar in data tab in Oneprovider gui'))
-@when(parsers.parse('user of {browser_id} sees that {btn_list} buttons are '
-                    'disabled in toolbar in data tab in Oneprovider gui'))
-@then(parsers.parse('user of {browser_id} sees that {btn_list} buttons are '
-                    'disabled in toolbar in data tab in Oneprovider gui'))
+@wt(parsers.parse('user of {browser_id} sees that {btn_list} option '
+                  'is not in selection menu on file browser page'))
+@wt(parsers.parse('user of {browser_id} sees that {btn_list} options '
+                  'are not in selection menu on file browser page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_btn_disabled_in_toolbar_in_data_tab_in_op(selenium, browser_id,
-                                                     btn_list, op_page):
+def assert_btn_is_not_in_file_browser_menu_bar(selenium, browser_id,
+                                               btn_list, tmp_memory, modals):
     driver = selenium[browser_id]
-    toolbar = op_page(driver).data.toolbar
+    file_browser = tmp_memory[browser_id]['file_browser']
+    file_browser.selection_menu_button()
+
+    menu = modals(driver).menu_modal.menu
     for btn in parse_seq(btn_list):
-        item = getattr(toolbar, transform(btn))
-        assert item.is_enabled() is False, ('{} btn should be disabled but is '
-                                            'not in toolbar in op data tab'
-                                            ''.format(btn))
+        assert btn not in menu, ('{} should not be in selection menu'
+                                 .format(btn))
 
 
 @wt(parsers.parse('user of {browser_id} sees that current working directory '
@@ -315,14 +309,12 @@ def resize_data_tab_sidebar(selenium, browser_id, direction, offset, op_page):
     sidebar.width += offset
 
 
-@when(parsers.parse('user of {browser_id} waits for file upload to finish'))
-@then(parsers.parse('user of {browser_id} waits for file upload to finish'))
+@wt(parsers.parse('user of {browser_id} waits for file upload to finish'))
 @repeat_failed(timeout=WAIT_BACKEND * 3)
-def wait_for_file_upload_to_finish(selenium, browser_id, op_page):
+def wait_for_file_upload_to_finish(selenium, browser_id, popups):
     driver = selenium[browser_id]
-    uploader = op_page(driver).data.file_uploader
-    assert not uploader.is_visible(), \
-        'file upload not finished within given time'
+    assert not popups(driver).is_upload_presenter(), ('file upload not finished '
+                                                      'within given time')
 
 
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
@@ -332,18 +324,15 @@ def upload_file_to_cwd_in_file_browser(selenium, browser_id, file_name, op_page)
     op_page(driver).file_browser.upload_files(upload_file_path(file_name))
 
 
-@when(parsers.parse('user of {browser_id} uses upload button in toolbar to '
-                    'upload files from local directory "{dir_path}" to remote '
-                    'current dir'))
-@then(parsers.parse('user of {browser_id} uses upload button in toolbar to '
-                    'upload files from local directory "{dir_path}" to remote '
-                    'current dir'))
+@wt(parsers.parse('user of {browser_id} uses upload button from file browser '
+                  'menu bar to upload files from local directory "{dir_path}" '
+                  'to remote current dir'))
 def upload_files_to_cwd_in_data_tab(selenium, browser_id, dir_path,
                                     tmpdir, op_page):
     driver = selenium[browser_id]
     directory = tmpdir.join(browser_id, *dir_path.split('/'))
     if directory.isdir():
-        op_page(driver).data.toolbar.upload_files('\n'.join(str(item) for item
+        op_page(driver).file_browser.upload_files('\n'.join(str(item) for item
                                                             in
                                                             directory.listdir()
                                                             if item.isfile()))
@@ -376,16 +365,16 @@ def assert_provider_chunk_in_data_distribution_filled(selenium, browser_id,
                                                       provider, modals, hosts):
     driver = selenium[browser_id]
     provider = hosts[provider]['name']
-    prov_rec = modals(driver).data_distribution.providers[provider]
-    distribution = prov_rec.distribution
-    size, _ = distribution.size
-    chunks = distribution.chunks
-    assert len(chunks) == 1, 'distribution for {} is not ' \
-                             'entirely filled'.format(provider)
+    data_distribution = modals(driver).data_distribution
+    distribution = data_distribution.providers[provider].distribution
+    size = data_distribution.size()
+    chunks = distribution.chunks(size)
+    assert len(chunks) == 1, (f'distribution for {provider} is not '
+                              f'entirely filled')
     chunk = chunks[0]
-    assert chunk[1] - chunk[0] == size, \
-        'distribution for {} is not filled entirely, but only from ' \
-        '{} to {}'.format(provider, chunk[0], chunk[1])
+    assert chunk[1] - chunk[0] == size, (f'distribution for {provider} is not '
+                                         f'filled entirely, but only '
+                                         f'from {chunk[0]} to {chunk[1]}')
 
 
 @when(parsers.parse('user of {browser_id} sees that chunk bar for provider '
@@ -405,19 +394,17 @@ def assert_provider_chunk_in_data_distribution_empty(selenium, browser_id,
                        'Visible chunks: {}'.format(provider, chunks)
 
 
-@when(parsers.parse('user of {browser_id} sees {chunks} chunk(s) for provider '
-                    '"{provider}" in chunk bar'))
-@then(parsers.parse('user of {browser_id} sees {chunks} chunk(s) for provider '
-                    '"{provider}" in chunk bar'))
+@wt(parsers.parse('user of {browser_id} sees {chunks} chunk(s) for provider '
+                  '"{provider}" in chunk bar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_provider_chunks_in_data_distribution(selenium, browser_id, chunks,
                                                 provider, modals, hosts):
     driver = selenium[browser_id]
     provider = hosts[provider]['name']
-    prov_rec = modals(driver).data_distribution.providers[provider]
-    distribution = prov_rec.distribution
-    size, _ = distribution.size
-    displayed_chunks = distribution.chunks
+    data_distribution = modals(driver).data_distribution
+    distribution = data_distribution.providers[provider].distribution
+    size = data_distribution.size()
+    displayed_chunks = distribution.chunks(size)
     expected_chunks = parse_seq(chunks, pattern=r'\(.+?\)')
     assert len(displayed_chunks) == len(expected_chunks), \
         'displayed {} chunks instead of expected {}'.format(
@@ -458,3 +445,73 @@ def choose_option_from_selection_menu(browser_id, selenium, option, modals,
     file_browser.selection_menu_button()
     modals(driver).menu_modal.menu[option].click()
 
+
+@wt(parsers.parse('user of {browser_id} sees that upload file failed'))
+def check_error_in_upload_presenter(selenium, browser_id, popups):
+    driver = selenium[browser_id]
+    driver.switch_to.default_content()
+
+    assert popups(driver).upload_presenter.is_failed(), 'upload not failed'
+
+
+@wt(parsers.parse('user of {browser_id} clicks on "{provider}" provider '
+                  'on file browser page'))
+def choose_provider_in_file_browser(selenium, browser_id, provider,
+                                    hosts, op_page):
+    driver = selenium[browser_id]
+    provider = hosts[provider]['name']
+    driver.switch_to.default_content()
+
+    op_page(selenium[browser_id]).providers[provider].click()
+    iframe = driver.find_element_by_tag_name('iframe')
+    driver.switch_to.frame(iframe)
+
+
+@wt(parsers.parse('user of {browser_id} clicks on Choose other Oneprovider '
+                  'on file browser page'))
+def click_choose_other_oneprovider_on_file_browser(selenium, browser_id,
+                                                   op_page):
+    driver = selenium[browser_id]
+    driver.switch_to.default_content()
+    op_page(selenium[browser_id]).choose_other_provider()
+
+
+def _assert_current_provider_in_space(selenium, browser_id, provider, op_page):
+    driver = selenium[browser_id]
+    driver.switch_to.default_content()
+    current_provider = op_page(selenium[browser_id]).current_provider
+
+    assert provider == current_provider, (f'{provider} is not current provider '
+                                          f'on file browser page')
+
+
+def _assert_provider_in_space(selenium, browser_id, provider, op_page):
+    driver = selenium[browser_id]
+    driver.switch_to.default_content()
+    providers = op_page(selenium[browser_id]).providers
+
+    assert provider in providers, (f'{provider} provider not found '
+                                   f'on file browser page')
+
+
+@wt(parsers.parse('user of {browser_id} sees that current provider is '
+                  '"{provider}" on file browser page'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_current_provider_in_space(selenium, browser_id, provider, hosts, op_page):
+    _assert_current_provider_in_space(selenium, browser_id, provider, op_page)
+
+
+@wt(parsers.parse('user of {browser_id} sees current provider named '
+                  '"{provider}" on file browser page'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_current_provider_name_in_space(selenium, browser_id, provider, hosts, op_page):
+    provider = hosts[provider]['name']
+    _assert_current_provider_in_space(selenium, browser_id, provider, op_page)
+
+
+@wt(parsers.parse('user of {browser_id} sees provider named '
+                  '"{provider}" on file browser page'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_provider_in_space(selenium, browser_id, provider, hosts, op_page):
+    provider = hosts[provider]['name']
+    _assert_provider_in_space(selenium, browser_id, provider, op_page)
