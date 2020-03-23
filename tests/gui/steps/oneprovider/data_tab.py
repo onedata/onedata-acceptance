@@ -18,25 +18,20 @@ from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import given, wt, parsers, when, then
 
 
+@repeat_failed(interval=1, timeout=90,
+               exceptions=(NoSuchElementException, RuntimeError))
 def _change_iframe_for_file_browser(selenium, browser_id, tmp_memory, op_page):
     driver = selenium[browser_id]
-    timeout = 2 * WAIT_BACKEND
-    limit = time.time() + timeout
-    while time.time() < limit:
-        try:
-            iframe = driver.find_element_by_tag_name('iframe')
-            driver.switch_to.frame(iframe)
-            # wait for file browser to load
-            time.sleep(1)
-            file_browser = op_page(driver).file_browser
-            tmp_memory[browser_id]['file_browser'] = file_browser
-        except (NoSuchElementException, RuntimeError):
-            time.sleep(1)
-            continue
-        else:
-            break
-    else:
-        raise NoSuchElementException
+    driver.switch_to.default_content()
+    iframe = driver.find_element_by_tag_name('iframe')
+    driver.switch_to.frame(iframe)
+
+
+@repeat_failed(timeout=WAIT_BACKEND)
+def _check_file_browser_to_load(selenium, browser_id, tmp_memory, op_page):
+    driver = selenium[browser_id]
+    file_browser = op_page(driver).file_browser
+    tmp_memory[browser_id]['file_browser'] = file_browser
 
 
 @when(parsers.parse('user of {browser_id} uses spaces select to change '
@@ -238,6 +233,7 @@ def wt_is_space_tree_root(selenium, browser_id, is_home, space_name, op_page):
 def assert_nonempty_file_browser_in_data_tab_in_op(selenium, browser_id,
                                                    op_page, tmp_memory):
     _change_iframe_for_file_browser(selenium, browser_id, tmp_memory, op_page)
+    _check_file_browser_to_load(selenium, browser_id, tmp_memory, op_page)
     file_browser = tmp_memory[browser_id]['file_browser']
     assert not file_browser.is_empty(), ('file browser in data tab in op'
                                          'should not be empty but is')
@@ -249,6 +245,7 @@ def assert_nonempty_file_browser_in_data_tab_in_op(selenium, browser_id,
 def assert_empty_file_browser_in_data_tab_in_op(selenium, browser_id,
                                                 op_page, tmp_memory):
     _change_iframe_for_file_browser(selenium, browser_id, tmp_memory, op_page)
+    _check_file_browser_to_load(selenium, browser_id, tmp_memory, op_page)
     file_browser = tmp_memory[browser_id]['file_browser']
     assert file_browser.is_empty(), ('file browser in data tab in op'
                                      'should be empty but is not')
@@ -260,6 +257,7 @@ def assert_empty_file_browser_in_data_tab_in_op(selenium, browser_id,
 def assert_file_browser_in_data_tab_in_op(selenium, browser_id,
                                           op_page, tmp_memory):
     _change_iframe_for_file_browser(selenium, browser_id, tmp_memory, op_page)
+    _check_file_browser_to_load(selenium, browser_id, tmp_memory, op_page)
 
 
 @when(parsers.parse('user of {browser_id} records displayed name length for '
@@ -386,12 +384,25 @@ def assert_provider_chunk_in_data_distribution_empty(selenium, browser_id,
                                                      provider, modals, hosts):
     driver = selenium[browser_id]
     provider = hosts[provider]['name']
-    prov_rec = modals(driver).data_distribution.providers[provider]
-    distribution = prov_rec.distribution
-    size, _ = distribution.size
-    chunks = distribution.chunks
+    data_distribution = modals(driver).data_distribution
+    distribution = data_distribution.providers[provider].distribution
+    size = data_distribution.size()
+    chunks = distribution.chunks(size)
     assert not chunks, 'distribution for {} is not entirely empty. ' \
                        'Visible chunks: {}'.format(provider, chunks)
+
+
+@wt(parsers.parse('user of {browser_id} sees that chunk bar for provider '
+                  '"{provider}" is never synchronized'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_provider_chunk_in_data_distribution_never_synchronized(selenium,
+                                                                  browser_id,
+                                                                  provider,
+                                                                  modals, hosts):
+    driver = selenium[browser_id]
+    provider = hosts[provider]['name']
+    data_distribution = modals(driver).data_distribution
+    data_distribution.providers[provider].never_synchronized_text
 
 
 @wt(parsers.parse('user of {browser_id} sees {chunks} chunk(s) for provider '
@@ -463,8 +474,6 @@ def choose_provider_in_file_browser(selenium, browser_id, provider,
     driver.switch_to.default_content()
 
     op_page(selenium[browser_id]).providers[provider].click()
-    iframe = driver.find_element_by_tag_name('iframe')
-    driver.switch_to.frame(iframe)
 
 
 @wt(parsers.parse('user of {browser_id} clicks on Choose other Oneprovider '

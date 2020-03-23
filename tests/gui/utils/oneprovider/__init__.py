@@ -25,6 +25,7 @@ class OPLoggedIn(object):
     providers = WebItemsSequence('.provider-online', cls=_Provider)
     choose_other_provider = Button('.choose-oneprovider-link')
     file_browser = FileBrowser('.content-file-browser')
+    transfers = TransfersTab('.content-space-transfers')
 
     def __init__(self, driver):
         self.web_elem = self.driver = driver

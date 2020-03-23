@@ -45,6 +45,7 @@ class _DataDistributionRecord(PageObject):
     name = id = Label('.oneprovider-name', parent_name='given provider')
     distribution = WebItem('.chunks-container', cls=_Chunk)
     menu_button = Button('.collapsible-toolbar-toggle')
+    never_synchronized_text = WebElement('.never-synchronized-text')
     #  TODO: change test because of a new gui
     # migrate = Button('.btn-migrate')
     # replicate = Button('.btn-replicate')

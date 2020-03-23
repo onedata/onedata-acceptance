@@ -29,43 +29,39 @@ Feature: Onepanel features auto-cleaning
     And user of browser1 clicks on File popularity navigation tab in space "space2"
     And user of browser1 enables file-popularity in "space2" space in Onepanel
 
-    # confirm support of space and go to provider
+    # confirm support of space and go to file browser
     And user of browser2 clicks "space2" on the spaces list in the sidebar
-    And user of browser2 clicks Providers of "space2" in the sidebar
-    And user of browser2 sees "oneprovider-1" is on the providers list
-    And user of browser2 opens oneprovider-1 Oneprovider view in web GUI
-    And user of browser2 sees that Oneprovider session has started
-    And user of browser2 uses spaces select to change data space to "space2"
+    And user of browser2 clicks Data of "space2" in the sidebar
+    And user of browser2 sees file browser in data tab in Oneprovider page
 
     # upload files to created directory
     And user of browser2 creates directory "dir1"
     And user of browser2 double clicks on item named "dir1" in file browser
-    And user of browser2 uses upload button in toolbar to upload file "large_file.txt" to current dir
-    And user of browser2 uses upload button in toolbar to upload file "large_file.txt" to current dir
-    And user of browser2 uses upload button in toolbar to upload file "20B-0.txt" to current dir
+    And user of browser2 uses upload button from file browser menu bar to upload file "large_file.txt" to current dir
+    And user of browser2 uses upload button from file browser menu bar to upload file "large_file.txt" to current dir
+    And user of browser2 uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
+    And user of browser2 changes current working directory to home using breadcrumbs
     And user of browser2 is idle for 10 seconds
     And user of browser2 refreshes site
     And user of browser2 sees file browser in data tab in Oneprovider page
-    And user of browser2 changes current working directory to space2 using breadcrumbs
 
     # replicate data
     And user of browser2 replicates "dir1" to provider "oneprovider-2"
-    And user of browser2 clicks on the "transfers" tab in main menu sidebar
-    And user of browser2 selects "space2" space in transfers tab
+    And user of browser2 clicks Transfers of "space2" in the sidebar
+    And user of browser2 waits for Transfers page to load
     And user of browser2 waits for all transfers to start
     And user of browser2 waits for all transfers to finish
     And user of browser2 sees directory in ended transfers:
             name: dir1
             destination: oneprovider-2
             username: user1
-            total files: 3
             transferred: 100 MiB
             type: replication
             status: completed
 
     # check data distribution
-    And user of browser2 clicks on the "data" tab in main menu sidebar
-    And user of browser2 uses spaces select to change data space to "space2"
+    And user of browser2 clicks Data of "space2" in the sidebar
+    And user of browser2 is idle for 5 seconds
     And user of browser2 sees file browser in data tab in Oneprovider page
     And user of browser2 double clicks on item named "dir1" in file browser
     And user of browser2 sees file chunks for file "large_file.txt" as follows:
@@ -117,42 +113,38 @@ Feature: Onepanel features auto-cleaning
     And user of browser1 clicks on File popularity navigation tab in space "space2"
     And user of browser1 enables file-popularity in "space2" space in Onepanel
 
-    # confirm support of space and go to provider
-    And user of browser2 clicks "space2" on the spaces list in the sidebar
-    And user of browser2 clicks Providers of "space2" in the sidebar
-    And user of browser2 sees "oneprovider-1" is on the providers list
-    And user of browser2 opens oneprovider-1 Oneprovider view in web GUI
-    And user of browser2 sees that Oneprovider session has started
-    And user of browser2 uses spaces select to change data space to "space2"
+    # confirm support of space and go to file browser
+    When user of browser2 clicks "space2" on the spaces list in the sidebar
+    And user of browser2 clicks Data of "space2" in the sidebar
+    And user of browser2 sees file browser in data tab in Oneprovider page
 
     # upload files to created directory
     And user of browser2 creates directory "dir1"
     And user of browser2 double clicks on item named "dir1" in file browser
-    And user of browser2 uses upload button in toolbar to upload file "large_file.txt" to current dir
-    And user of browser2 uses upload button in toolbar to upload file "large_file.txt" to current dir
+    And user of browser2 uses upload button from file browser menu bar to upload file "large_file.txt" to current dir
+    And user of browser2 uses upload button from file browser menu bar to upload file "large_file.txt" to current dir
+    And user of browser2 changes current working directory to home using breadcrumbs
     And user of browser2 is idle for 10 seconds
     And user of browser2 refreshes site
     And user of browser2 sees file browser in data tab in Oneprovider page
-    And user of browser2 changes current working directory to space2 using breadcrumbs
 
     # replicate data
     And user of browser2 replicates "dir1" to provider "oneprovider-2"
-    And user of browser2 clicks on the "transfers" tab in main menu sidebar
-    And user of browser2 selects "space2" space in transfers tab
+    And user of browser2 clicks Transfers of "space2" in the sidebar
+    And user of browser2 waits for Transfers page to load
     And user of browser2 waits for all transfers to start
     And user of browser2 waits for all transfers to finish
     And user of browser2 sees directory in ended transfers:
             name: dir1
             destination: oneprovider-2
             username: user1
-            total files: 2
             transferred: 100 MiB
             type: replication
             status: completed
 
     # check data distribution
-    And user of browser2 clicks on the "data" tab in main menu sidebar
-    And user of browser2 uses spaces select to change data space to "space2"
+    And user of browser2 clicks Data of "space2" in the sidebar
+    And user of browser2 is idle for 5 seconds
     And user of browser2 sees file browser in data tab in Oneprovider page
     And user of browser2 double clicks on item named "dir1" in file browser
     And user of browser2 sees file chunks for file "large_file.txt" as follows:
@@ -210,41 +202,37 @@ Feature: Onepanel features auto-cleaning
 
     # confirm support of space and go to provider
     And user of browser2 clicks "space2" on the spaces list in the sidebar
-    And user of browser2 clicks Providers of "space2" in the sidebar
-    And user of browser2 sees "oneprovider-1" is on the providers list
-    And user of browser2 opens oneprovider-1 Oneprovider view in web GUI
-    And user of browser2 sees that Oneprovider session has started
-    And user of browser2 uses spaces select to change data space to "space2"
+    And user of browser2 clicks Data of "space2" in the sidebar
+    And user of browser2 sees file browser in data tab in Oneprovider page
 
     # upload files to created directory
     And user of browser2 creates directory "dir1"
     And user of browser2 double clicks on item named "dir1" in file browser
-    And user of browser2 uses upload button in toolbar to upload file "large_file.txt" to current dir
-    And user of browser2 uses upload button in toolbar to upload file "large_file.txt" to current dir
-    And user of browser2 uses upload button in toolbar to upload file "20B-0.txt" to current dir
+    And user of browser2 uses upload button from file browser menu bar to upload file "large_file.txt" to current dir
+    And user of browser2 uses upload button from file browser menu bar to upload file "large_file.txt" to current dir
+    And user of browser2 uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
     And user of browser2 is idle for 10 seconds
     And user of browser2 refreshes site
     And user of browser2 sees file browser in data tab in Oneprovider page
-    And user of browser2 changes current working directory to space2 using breadcrumbs
+    And user of browser2 changes current working directory to home using breadcrumbs
 
     # replicate data
     And user of browser2 replicates "dir1" to provider "oneprovider-2"
-    And user of browser2 clicks on the "transfers" tab in main menu sidebar
-    And user of browser2 selects "space2" space in transfers tab
+    And user of browser2 clicks Transfers of "space2" in the sidebar
+    And user of browser2 waits for Transfers page to load
     And user of browser2 waits for all transfers to start
     And user of browser2 waits for all transfers to finish
     And user of browser2 sees directory in ended transfers:
             name: dir1
             destination: oneprovider-2
             username: user1
-            total files: 3
             transferred: 100 MiB
             type: replication
             status: completed
 
     # check data distribution
-    And user of browser2 clicks on the "data" tab in main menu sidebar
-    And user of browser2 uses spaces select to change data space to "space2"
+    And user of browser2 clicks Data of "space2" in the sidebar
+    And user of browser2 is idle for 5 seconds
     And user of browser2 sees file browser in data tab in Oneprovider page
     And user of browser2 double clicks on item named "dir1" in file browser
     And user of browser2 sees file chunks for file "large_file.txt" as follows:

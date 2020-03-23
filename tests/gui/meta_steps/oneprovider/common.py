@@ -23,7 +23,8 @@ from tests.gui.steps.oneprovider.file_browser import (
     select_files_from_file_list_using_ctrl,
     assert_items_presence_in_file_browser,
     deselect_items_from_file_browser,
-    confirm_create_new_directory)
+    confirm_create_new_directory, click_menu_for_elem_in_file_browser,
+    click_option_in_data_row_menu_in_file_browser)
 from tests.gui.steps.modal import (wt_wait_for_modal_to_appear,
                                    wt_click_on_confirmation_btn_in_modal,
                                    wt_wait_for_modal_to_disappear,
@@ -53,40 +54,35 @@ def navigate_to_tab_in_op_using_gui(selenium, user, oz_page, provider,
 @wt(parsers.re('user of (?P<browser_id>.*) replicates "(?P<name>.*)" to '
                'provider "(?P<provider>.*)"'))
 def meta_replicate_item(selenium, browser_id, name, tmp_memory,
-                        provider, op_page, hosts):
-    tooltip = 'Show data distribution'
+                        provider, op_page, hosts, modals, popups):
+    option = 'Data distribution'
     modal_name = 'Data distribution'
-    assert_nonempty_file_browser_in_data_tab_in_op(selenium, browser_id,
-                                                   op_page, tmp_memory)
-    select_files_from_file_list_using_ctrl(browser_id, name, tmp_memory)
-    click_tooltip_from_toolbar_in_data_tab_in_op(selenium, browser_id, tooltip,
-                                                 op_page)
+
+    click_menu_for_elem_in_file_browser(browser_id, name, tmp_memory)
+    click_option_in_data_row_menu_in_file_browser(selenium, browser_id,
+                                                  option, modals)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    replicate_item(selenium, browser_id, provider, hosts)
+
+    replicate_item(selenium, browser_id, provider, hosts, popups)
+
     wt_click_on_confirmation_btn_in_modal(selenium, browser_id, 'Close',
                                           tmp_memory)
-    wt_wait_for_modal_to_disappear(selenium, browser_id, tmp_memory)
-    deselect_items_from_file_browser(browser_id, name, tmp_memory)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees file chunks for file '
                '"(?P<file_name>.*)" as follows:\n(?P<desc>(.|\s)*)'))
 def wt_assert_file_chunks(selenium, browser_id, file_name, desc, tmp_memory,
                           op_page, hosts, modals):
-    tooltip = 'Show data distribution'
+    option = 'Data distribution'
     modal_name = 'Data distribution'
 
-    assert_file_browser_in_data_tab_in_op(selenium, browser_id, op_page,
-                                          tmp_memory)
-    select_files_from_file_list_using_ctrl(browser_id, file_name, tmp_memory)
-    click_tooltip_from_toolbar_in_data_tab_in_op(selenium, browser_id, tooltip,
-                                                 op_page)
+    click_menu_for_elem_in_file_browser(browser_id, file_name, tmp_memory)
+    click_option_in_data_row_menu_in_file_browser(selenium, browser_id,
+                                                  option, modals)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     _assert_file_chunks(selenium, browser_id, hosts, desc, modals)
     wt_click_on_confirmation_btn_in_modal(selenium, browser_id, 'Close',
                                           tmp_memory)
-    wt_wait_for_modal_to_disappear(selenium, browser_id, tmp_memory)
-    deselect_items_from_file_browser(browser_id, file_name, tmp_memory)
 
 
 @repeat_failed(timeout=WAIT_BACKEND)

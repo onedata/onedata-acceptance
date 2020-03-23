@@ -36,6 +36,7 @@ from tests.gui.steps.onezone.access_tokens import *
 from tests.gui.steps.onezone.data_space_management import *
 from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.manage_account import *
+from tests.gui.steps.onezone.spaces import *
 
 from tests.gui.steps.oneprovider.common import *
 from tests.gui.steps.oneprovider.data_tab import *
@@ -57,6 +58,4 @@ def screens():
     return [0, 1]
 
 
-# TODO: change test because of a new gui
-# scenarios('../features/oneprovider/multiprovider/multi_browser.feature')
-scenarios('../features/pass.feature')
+scenarios('../features/oneprovider/multiprovider/multi_browser.feature')

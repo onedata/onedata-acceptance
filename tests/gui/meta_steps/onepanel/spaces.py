@@ -94,7 +94,7 @@ def revoke_space_support_in_op_panel_using_gui(selenium, user, provider_name,
                                                   onepanel)
     wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, user, option, popups)
     wt_clicks_on_btn_in_revoke_space_support(selenium, user, button, modals)
-    notify_visible_with_text(selenium, user, notify_type, notify_text_regexp)
+    # notify_visible_with_text(selenium, user, notify_type, notify_text_regexp)
 
 
 def configure_sync_parameters_for_space_in_op_panel_gui(selenium, user, space,

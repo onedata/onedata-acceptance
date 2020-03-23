@@ -8,13 +8,14 @@ __license__ = "This software is released under the MIT license cited in " \
 
 import yaml
 
-from selenium.common.exceptions import StaleElementReferenceException
+from selenium.common.exceptions import StaleElementReferenceException, \
+    NoSuchElementException
 from pytest_bdd import parsers
 
 from tests.gui.utils.common.modals import Modals as modals
 from tests.utils.utils import repeat_failed
 from tests.utils.acceptance_utils import wt
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 
 
 def _assert_transfer(transfer, item_type, desc, sufix, hosts):
@@ -98,12 +99,16 @@ def migrate_item(selenium, browser_id, source, target, hosts):
 
 @wt(parsers.re('user of (?P<browser_id>.*) replicates selected item'
                ' to provider "(?P<provider>.*)"'))
-def replicate_item(selenium, browser_id, provider, hosts):
+def replicate_item(selenium, browser_id, provider, hosts, popups):
+    menu_option = 'Replicate here'
+    driver = selenium[browser_id]
+
     provider_name = hosts[provider]['name']
-    (modals(selenium[browser_id])
+    (modals(driver)
      .data_distribution
      .providers[provider_name]
-     .replicate())
+     .menu_button())
+    popups(driver).data_distribution_menu.menu[menu_option]()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees that item is never '
@@ -123,3 +128,14 @@ def assert_item_never_synchronized(selenium, browser_id, provider, hosts):
                'in transfers tab'))
 def change_transfer_space(selenium, browser_id, space, op_page):
     op_page(selenium[browser_id]).transfers.spaces[space].select()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) waits for Transfers page to load'))
+@repeat_failed(interval=1, timeout=90,
+               exceptions=(RuntimeError, NoSuchElementException))
+def wait_for_transfers_page_to_load(selenium, browser_id, op_page):
+    driver = selenium[browser_id]
+    iframe = driver.find_element_by_tag_name('iframe')
+    driver.switch_to.frame(iframe)
+    op_page(driver).transfers.ongoing_map_header
+

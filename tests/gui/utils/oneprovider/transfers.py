@@ -6,11 +6,14 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+from functools import partial
+
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.oneprovider.data_tab.space_selector import SpaceRecord
 from tests.gui.utils.core.web_elements import (Label, WebElement,
                                                Icon, WebItemsSequence,
-                                               ButtonWithTextPageObject)
+                                               ButtonWithTextPageObject,
+                                               WebItem)
 
 TransferStatusList = ['completed', 'skipped', 'cancelled', 'failed', 'active',
                       'evicting', 'scheduled', 'enqueued']
@@ -51,10 +54,10 @@ class TransferRecord(PageObject):
             self.web_elem.click()
 
     def is_file(self):
-        return 'oneicon-file' in self.icon.get_attribute('class')
+        return 'oneicon-browser-file' in self.icon.get_attribute('class')
 
     def is_directory(self):
-        return 'oneicon-folder' in self.icon.get_attribute('class')
+        return 'oneicon-browser-directory' in self.icon.get_attribute('class')
 
     def __str__(self):
         return 'Transfer row {} in {}'.format(self.name, self.parent)
@@ -85,21 +88,22 @@ class TransferChart(PageObject):
 
 
 class TabHeader(PageObject):
-    name = Label('.nav-link')
+    name = Label('.tab-label')
 
     def click(self):
         self.web_elem.click()
 
 
-class TransfersTab(PageObject):
+class _TransfersTab(PageObject):
+    ongoing_map_header = WebElement('.col-providers-map h2')
     spaces = WebItemsSequence('ul.spaces-list li', cls=SpaceRecord)
     tabs = WebItemsSequence('.row-transfers-tables .nav-tabs li',
                             cls=TabHeader)
-    _ended_list = WebItemsSequence('.col-completed-transfers tr.data-row',
+    _ended_list = WebItemsSequence('.col-ended-transfers tr.data-row',
                                    cls=TransferRecordHistory)
-    _ongoing_list = WebItemsSequence('.col-active-transfers tr.data-row',
+    _ongoing_list = WebItemsSequence('.col-ongoing-transfers tr.data-row',
                                      cls=TransferRecordActive)
-    _waiting_list = WebItemsSequence('.col-scheduled-transfers tr.data-row',
+    _waiting_list = WebItemsSequence('.col-waiting-transfers tr.data-row',
                                      cls=TransferRecordHistory)
 
     @property
@@ -123,3 +127,6 @@ class TransfersTab(PageObject):
                 return tab
         else:
             raise RuntimeError('no tab named {} in transfer tab'.format(name))
+
+
+TransfersTab = partial(WebItem, cls=_TransfersTab)
