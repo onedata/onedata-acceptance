@@ -41,9 +41,11 @@ def change_public_share_cwd_using_breadcrumbs(selenium, browser_id, path,
 
 
 @wt(parsers.parse('user of {browser_id} changes current working'
-                  ' directory to current share using breadcrumbs on public share page'))
+                  'directory to current share using breadcrumbs on public '
+                  'share page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def change_cwd_using_breadcrumbs(selenium, browser_id, public_share):
+def change_public_share_to_home_cwd_using_breadcrumbs(selenium, browser_id,
+                                                      public_share):
     public_share(selenium[browser_id]).breadcrumbs.home.click()
 
 
@@ -186,13 +188,6 @@ def click_on_dir_in_abs_path(selenium, browser_id, path, op_page):
     op_page(selenium[browser_id]).shares_page.path.chdir(path)
 
 
-@wt(parsers.parse('user of {browser_id} sees "data" icon'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def check_on_right_page(selenium, browser_id, op_page):
-    label = op_page(selenium[browser_id]).data_icon
-    assert label.lower() == "data", 'User not on data page'
-
-
 def _change_iframe_for_public_share_page(selenium, browser_id, public_share):
     driver = selenium[browser_id]
     timeout = WAIT_BACKEND
@@ -217,7 +212,8 @@ def _change_iframe_for_public_share_page(selenium, browser_id, public_share):
 @repeat_failed(timeout=WAIT_BACKEND, interval=0.5)
 def is_public_share_named(selenium, browser_id, share_name, public_share):
     driver = selenium[browser_id]
-    displayed_name = _change_iframe_for_public_share_page(selenium, browser_id, public_share)
+    displayed_name = _change_iframe_for_public_share_page(selenium, browser_id,
+                                                          public_share)
     if displayed_name != share_name:
         raise RuntimeError('displayed public share name is "{}" instead of '
                            'expected "{}"'.format(displayed_name, share_name))
@@ -263,4 +259,4 @@ def no_public_share_view(selenium, browser_id, error_msg, public_share):
     error_msg = error_msg.lower()
     driver = selenium[browser_id]
     assert error_msg in public_share(driver).error_msg.lower(), \
-        ('displayed error msg doe not contain {}'.format(error_msg))
+        ('displayed error msg does not contain {}'.format(error_msg))

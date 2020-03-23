@@ -185,35 +185,35 @@ Feature: Basic data tab operations on public shares in file browser
 
 
 #  TODO: wait until gui bug fixed
-    Scenario: User changes working directory using breadcrumbs from file browser in public share view
-      When user of browser1 clicks "space1" on the spaces list in the sidebar
-      And user of browser1 clicks Data of "space1" in the sidebar
-      And user of browser1 sees file browser in data tab in Oneprovider page
-#      share dir1
-      And user of browser1 clicks on menu for "dir1" directory in file browser
-      And user of browser1 clicks "Share" option in data row menu in file browser
-      And user of browser1 sees that "Share directory" modal has appeared
-      And user of browser1 writes "share_dir1" into share name text field in modal "Share directory"
-      And user of browser1 clicks on "Create" button in modal "Share directory"
-#      public share_dir1
-      And user of browser1 clicks on copy icon in modal "Share directory"
-      And user of browser1 sends copied URL to user of browser2
-      And user of browser1 clicks on "Close" button in modal "Share directory"
-#      user of browser2
-      And user of browser2 opens received URL
-      And user of browser2 sees that public share is named "share_dir1"
-      And user of browser2 sees that current working directory path visible in public share's file browser is as follows: share_dir1
-      And user of browser2 sees file browser in public share page
-      And user of browser2 double clicks on item named "dir1" in file browser
-      And user of browser2 sees that current working directory path visible in public share's file browser is as follows: /dir1
-      And user of browser2 double clicks on item named "dir2" in file browser
-      And user of browser2 sees that current working directory path visible in public share's file browser is as follows: /dir1/dir2
-#      jumping using breadcrumbs
-      And user of browser2 changes current working directory to /dir1 using breadcrumbs on public share page
-      Then user of browser2 sees that current working directory path visible in public share's file browser is as follows: /dir1
-      And user of browser2 changes current working directory to current share using breadcrumbs on public share page
-      Then user of browser2 sees that current working directory path visible in public share's file browser is as follows: share_dir1
-
+#    Scenario: User changes working directory using breadcrumbs from file browser in public share view
+#      When user of browser1 clicks "space1" on the spaces list in the sidebar
+#      And user of browser1 clicks Data of "space1" in the sidebar
+#      And user of browser1 sees file browser in data tab in Oneprovider page
+##      share dir1
+#      And user of browser1 clicks on menu for "dir1" directory in file browser
+#      And user of browser1 clicks "Share" option in data row menu in file browser
+#      And user of browser1 sees that "Share directory" modal has appeared
+#      And user of browser1 writes "share_dir1" into share name text field in modal "Share directory"
+#      And user of browser1 clicks on "Create" button in modal "Share directory"
+##      public share_dir1
+#      And user of browser1 clicks on copy icon in modal "Share directory"
+#      And user of browser1 sends copied URL to user of browser2
+#      And user of browser1 clicks on "Close" button in modal "Share directory"
+##      user of browser2
+#      And user of browser2 opens received URL
+#      And user of browser2 sees that public share is named "share_dir1"
+#      And user of browser2 sees that current working directory path visible in public share's file browser is as follows: share_dir1
+#      And user of browser2 sees file browser in public share page
+#      And user of browser2 double clicks on item named "dir1" in file browser
+#      And user of browser2 sees that current working directory path visible in public share's file browser is as follows: /dir1
+#      And user of browser2 double clicks on item named "dir2" in file browser
+#      And user of browser2 sees that current working directory path visible in public share's file browser is as follows: /dir1/dir2
+##      jumping using breadcrumbs
+#      And user of browser2 changes current working directory to /dir1 using breadcrumbs on public share page
+#      Then user of browser2 sees that current working directory path visible in public share's file browser is as follows: /dir1
+#      And user of browser2 changes current working directory to current share using breadcrumbs on public share page
+#      Then user of browser2 sees that current working directory path visible in public share's file browser is as follows: share_dir1
+#
 
     Scenario: User can copy url of received share and share it further
       When user of browser1 clicks "space1" on the spaces list in the sidebar
