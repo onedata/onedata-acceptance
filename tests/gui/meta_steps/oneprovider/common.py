@@ -107,7 +107,7 @@ def _assert_file_chunks(selenium, browser_id, hosts, desc, modals):
 @wt(parsers.re('user of (?P<browser_id>.*) creates directory "(?P<name>.*)"'))
 def create_directory(selenium, browser_id, name, tmp_memory, op_page, modals):
     button = 'New directory'
-    modal_header = f'Create new directory:'
+    modal_header = 'Create new directory:'
     modal_name = 'Create dir'
     option = 'enter'
 
@@ -123,18 +123,15 @@ def create_directory(selenium, browser_id, name, tmp_memory, op_page, modals):
 @wt(parsers.re('user of (?P<browser_id>.*) migrates "(?P<name>.*)" from '
                'provider "(?P<source>.*)" to provider "(?P<target>.*)"'))
 def meta_migrate_item(selenium, browser_id, name, tmp_memory, source,
-                      target, op_page, hosts):
-    tooltip = 'Show data distribution'
+                      target, op_page, hosts, modals, popups):
+    option = 'Data distribution'
     modal_name = 'Data distribution'
-    assert_file_browser_in_data_tab_in_op(selenium, browser_id, op_page,
-                                          tmp_memory)
-    select_files_from_file_list_using_ctrl(browser_id, name, tmp_memory)
-    click_tooltip_from_toolbar_in_data_tab_in_op(selenium, browser_id, tooltip,
-                                                 op_page)
+
+    click_menu_for_elem_in_file_browser(browser_id, name, tmp_memory)
+    click_option_in_data_row_menu_in_file_browser(selenium, browser_id,
+                                                  option, modals)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    migrate_item(selenium, browser_id, source, target, hosts)
+    migrate_item(selenium, browser_id, source, target, hosts, popups)
     wt_click_on_confirmation_btn_in_modal(selenium, browser_id, 'Close',
                                           tmp_memory)
-    wt_wait_for_modal_to_disappear(selenium, browser_id, tmp_memory)
-    deselect_items_from_file_browser(browser_id, name, tmp_memory)
 

@@ -6,16 +6,17 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+import time
+
 import yaml
 
-from selenium.common.exceptions import StaleElementReferenceException, \
-    NoSuchElementException
-from pytest_bdd import parsers
+from selenium.common.exceptions import (StaleElementReferenceException,
+                                        NoSuchElementException)
 
 from tests.gui.utils.common.modals import Modals as modals
 from tests.utils.utils import repeat_failed
-from tests.utils.acceptance_utils import wt
-from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
+from tests.utils.bdd_utils import wt, parsers
+from tests.gui.conftest import WAIT_FRONTEND
 
 
 def _assert_transfer(transfer, item_type, desc, sufix, hosts):
@@ -89,12 +90,24 @@ def assert_non_zero_transfer_speed(selenium, browser_id, op_page):
 
 @wt(parsers.re('user of (?P<browser_id>.*) migrates selected item from '
                'provider "(?P<source>.*)" to provider "(?P<target>.*)"'))
-def migrate_item(selenium, browser_id, source, target, hosts):
-    modal = modals(selenium[browser_id])
+def migrate_item(selenium, browser_id, source, target, hosts, popups):
+    menu_option = 'Migrate...'
+
+    driver = selenium[browser_id]
     source_name = hosts[source]['name']
     target_name = hosts[target]['name']
-    modal.data_distribution.providers[source_name].migrate()
-    modal.data_distribution.migrate[target_name].select()
+
+    data_distribution_modal = modals(driver).data_distribution
+    data_distribution_modal.providers[source_name].menu_button()
+    popups(driver).data_distribution_menu.menu[menu_option]()
+
+    # wait for migrate record to load
+    time.sleep(1)
+
+    data_distribution_modal.migrate.expand_dropdown()
+    modals(driver).dropdown.options[target_name].click()
+
+    data_distribution_modal.migrate.migrate_button()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) replicates selected item'

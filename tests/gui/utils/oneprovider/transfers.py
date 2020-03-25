@@ -36,9 +36,6 @@ class TransferRecord(PageObject):
         self.type = [x for x in type_class if x in TransferTypeList][0]
 
     def get_chart(self):
-        if not 'expanded-row' in self.web_elem.get_attribute('class'):
-            raise RuntimeError('Transfer record for file {} is not expanded'.
-                               format(self.name))
         return TransferChart(self.driver, self.web_elem.find_element_by_xpath(
             ' .//following-sibling::tr'), self.web_elem)
 
@@ -46,8 +43,7 @@ class TransferRecord(PageObject):
         return 'expanded-row' in self.web_elem.get_attribute('class')
 
     def expand(self):
-        if not self.is_expanded():
-            self.web_elem.click()
+        self.web_elem.click()
 
     def collapse(self):
         if self.is_expanded():
