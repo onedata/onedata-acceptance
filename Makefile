@@ -110,10 +110,10 @@ test_onedata_fs:
      --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} ${PULL_IMAGES_OPT}
 
 test_performance_pkg:
-	${TEST_RUN} --test-type performance -vvv --test-dir tests/performance --image onedata/acceptance_mixed:v7 -k=${KEYWORDS} --local-charts-path=${LOCAL_CHARTS_PATH} ${PULL_IMAGES_OPT}
+	${TEST_RUN} --test-type performance -vvv --test-dir tests/performance --image onedata/acceptance_mixed:v8 -k=${KEYWORDS} --local-charts-path=${LOCAL_CHARTS_PATH} ${PULL_IMAGES_OPT}
 
 test_performance_src:
-	${TEST_RUN} --test-type performance -vvv --test-dir tests/performance --image onedata/acceptance_mixed:v7 -k=${KEYWORDS} --local-charts-path=${LOCAL_CHARTS_PATH} --sources ${PULL_IMAGES_OPT}
+	${TEST_RUN} --test-type performance -vvv --test-dir tests/performance --image onedata/acceptance_mixed:v8 -k=${KEYWORDS} --local-charts-path=${LOCAL_CHARTS_PATH} --sources ${PULL_IMAGES_OPT}
 
 
 ##
