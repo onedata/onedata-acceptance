@@ -53,14 +53,14 @@ def navigate_to_tab_in_op_using_gui(selenium, user, oz_page, provider,
 @wt(parsers.re('user of (?P<browser_id>.*) replicates "(?P<name>.*)" to '
                'provider "(?P<provider>.*)"'))
 def meta_replicate_item(selenium, browser_id, name, tmp_memory,
-                        provider, op_page, hosts):
+                        provider, op_container, hosts):
     tooltip = 'Show data distribution'
     modal_name = 'Data distribution'
     assert_nonempty_file_browser_in_data_tab_in_op(selenium, browser_id,
-                                                   op_page, tmp_memory)
+                                                   op_container, tmp_memory)
     select_files_from_file_list_using_ctrl(browser_id, name, tmp_memory)
     click_tooltip_from_toolbar_in_data_tab_in_op(selenium, browser_id, tooltip,
-                                                 op_page)
+                                                 op_container)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     replicate_item(selenium, browser_id, provider, hosts)
     wt_click_on_confirmation_btn_in_modal(selenium, browser_id, 'Close',
@@ -72,15 +72,15 @@ def meta_replicate_item(selenium, browser_id, name, tmp_memory,
 @wt(parsers.re('user of (?P<browser_id>.*) sees file chunks for file '
                '"(?P<file_name>.*)" as follows:\n(?P<desc>(.|\s)*)'))
 def wt_assert_file_chunks(selenium, browser_id, file_name, desc, tmp_memory,
-                          op_page, hosts, modals):
+                          op_container, hosts, modals):
     tooltip = 'Show data distribution'
     modal_name = 'Data distribution'
 
-    assert_file_browser_in_data_tab_in_op(selenium, browser_id, op_page,
+    assert_file_browser_in_data_tab_in_op(selenium, browser_id, op_container,
                                           tmp_memory)
     select_files_from_file_list_using_ctrl(browser_id, file_name, tmp_memory)
     click_tooltip_from_toolbar_in_data_tab_in_op(selenium, browser_id, tooltip,
-                                                 op_page)
+                                                 op_container)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     _assert_file_chunks(selenium, browser_id, hosts, desc, modals)
     wt_click_on_confirmation_btn_in_modal(selenium, browser_id, 'Close',
@@ -109,14 +109,15 @@ def _assert_file_chunks(selenium, browser_id, hosts, desc, modals):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) creates directory "(?P<name>.*)"'))
-def create_directory(selenium, browser_id, name, tmp_memory, op_page, modals):
+def create_directory(selenium, browser_id, name, tmp_memory,
+                     op_container, modals):
     button = 'New directory'
     modal_header = f'Create new directory:'
     modal_name = 'Create dir'
     option = 'enter'
 
     click_button_from_file_browser_menu_bar(selenium, browser_id,
-                                            button, op_page)
+                                            button, op_container)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_header, tmp_memory)
     write_name_into_text_field_in_modal(selenium, browser_id, name,
                                         modal_name, modals)
@@ -127,14 +128,14 @@ def create_directory(selenium, browser_id, name, tmp_memory, op_page, modals):
 @wt(parsers.re('user of (?P<browser_id>.*) migrates "(?P<name>.*)" from '
                'provider "(?P<source>.*)" to provider "(?P<target>.*)"'))
 def meta_migrate_item(selenium, browser_id, name, tmp_memory, source,
-                      target, op_page, hosts):
+                      target, op_container, hosts):
     tooltip = 'Show data distribution'
     modal_name = 'Data distribution'
-    assert_file_browser_in_data_tab_in_op(selenium, browser_id, op_page,
+    assert_file_browser_in_data_tab_in_op(selenium, browser_id, op_container,
                                           tmp_memory)
     select_files_from_file_list_using_ctrl(browser_id, name, tmp_memory)
     click_tooltip_from_toolbar_in_data_tab_in_op(selenium, browser_id, tooltip,
-                                                 op_page)
+                                                 op_container)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     migrate_item(selenium, browser_id, source, target, hosts)
     wt_click_on_confirmation_btn_in_modal(selenium, browser_id, 'Close',

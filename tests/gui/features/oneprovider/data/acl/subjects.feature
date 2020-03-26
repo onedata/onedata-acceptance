@@ -48,11 +48,10 @@ Feature: ACL basic subjects tests in Oneprovider GUI
     And user of browser sees that "Edit permissions" modal has appeared
     And user of browser selects "ACL" permission type in edit permissions modal
     Then user of browser sees that [user1, user2, user3] are in subject list in ACL record
-    And user of browser selects "ACL" permission type in edit permissions modal
     And user of browser sees that [group1, group2, group3] are in subject list in ACL record
 
 
-  Scenario Outline: User sets ACL for parent group of a group that belongs to space
+  Scenario Outline: User sets ACL for parent group of a group (child group belongs to space)
     Given initial spaces configuration in "onezone" Onezone service:
         space1:
             owner: user1
@@ -79,7 +78,7 @@ Feature: ACL basic subjects tests in Oneprovider GUI
     | [general:delete]              | group         | group2        | succeeds  |
 
 
-  Scenario Outline: User sets ACL for parent group of a group that does not belong to space
+  Scenario Outline: User sets ACL for parent group of a group (child group does not belong to space)
     Given initial spaces configuration in "onezone" Onezone service:
         space1:
             owner: user1

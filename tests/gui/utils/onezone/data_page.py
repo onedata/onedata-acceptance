@@ -86,6 +86,10 @@ class MenuItem(PageObject):
         self.click()
 
 
+class _Provider(PageObject):
+    name = id = Label('a .tab-name')
+
+
 class DataPage(GenericPage):
     create_space_button = Button('.one-sidebar-toolbar-button '
                                  '.oneicon-add-filled')
@@ -115,4 +119,8 @@ class DataPage(GenericPage):
                                  '.one-collapsible-toolbar-popover '
                                  '.dropdown-menu .one-collapsible-toolbar-item',
                                  cls=MenuItem)
+
+    current_provider = Label('.current-oneprovider-name')
+    providers = WebItemsSequence('.provider-online', cls=_Provider)
+    choose_other_provider = Button('.choose-oneprovider-link')
 

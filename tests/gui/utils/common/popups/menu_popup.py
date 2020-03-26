@@ -1,4 +1,4 @@
-"""Utils and fixtures to facilitate operations on menu modal.
+"""Utils and fixtures to facilitate operations on menu popup.
 """
 
 __author__ = "Agnieszka Warchol"
@@ -17,7 +17,7 @@ class MenuItem(PageObject):
         self.click()
 
 
-class MenuModal(PageObject):
+class MenuPopup(PageObject):
     menu = WebItemsSequence('ul li', cls=MenuItem)
 
     def __str__(self):

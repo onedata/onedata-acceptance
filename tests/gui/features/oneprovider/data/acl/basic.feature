@@ -137,7 +137,7 @@ Feature: ACL basic tests using sigle browser in Oneprovider GUI
     | [allow, acl:read acl] | user          | user1         |
 
 
-  Scenario: User sets 2 ACL records
+  Scenario: User saves ACL entries for user and group
     # Set ACL record
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Data of "space1" in the sidebar
@@ -189,6 +189,16 @@ Feature: ACL basic tests using sigle browser in Oneprovider GUI
     And user of browser clicks on "<button>" button in <numeral> ACL record in edit permissions modal
     Then user of browser sees that first ACL record in edit permissions modal is set for user user1
     And user of browser sees that second ACL record in edit permissions modal is set for group group1
+    And user of browser clicks "Save" confirmation button in displayed modal
+
+    # check order after close and open modal again
+    And user of browser clicks on menu for "file1" file in file browser
+    And user of browser clicks "Permissions" option in data row menu in file browser
+    And user of browser sees that "Edit permissions" modal has appeared
+    And user of browser selects "ACL" permission type in edit permissions modal
+    And user of browser sees that first ACL record in edit permissions modal is set for user user1
+    And user of browser sees that second ACL record in edit permissions modal is set for group group1
+
 
     Examples:
     | button    | numeral|

@@ -18,8 +18,8 @@ from tests.utils.utils import repeat_failed
                     'from spaces sidebar list'))
 @then(parsers.parse('user of {browser_id} selects "{space_name}" '
                     'from spaces sidebar list'))
-def select_sapce_from_sidebar_list(selenium, browser_id, space_name, op_page):
-    op_page(selenium[browser_id]).spaces.sidebar.spaces[space_name].click()
+def select_sapce_from_sidebar_list(selenium, browser_id, space_name, op_container):
+    op_container(selenium[browser_id]).spaces.sidebar.spaces[space_name].click()
 
 
 @when(parsers.parse('user of {browser_id} clicks on settings icon displayed '
@@ -27,8 +27,8 @@ def select_sapce_from_sidebar_list(selenium, browser_id, space_name, op_page):
 @then(parsers.parse('user of {browser_id} clicks on settings icon displayed '
                     'for "{space_name}" item on the spaces sidebar list'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_settings_icon_for_space(selenium, browser_id, space_name, op_page):
-    (op_page(selenium[browser_id])
+def click_settings_icon_for_space(selenium, browser_id, space_name, op_container):
+    (op_container(selenium[browser_id])
      .spaces
      .sidebar
      .spaces[space_name]
@@ -42,8 +42,8 @@ def click_settings_icon_for_space(selenium, browser_id, space_name, op_page):
                     'in settings dropdown for space named "{spaces_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_item_in_space_settings_dropdown(selenium, browser_id, option_name,
-                                             space_name, op_page):
-    (op_page(selenium[browser_id])
+                                             space_name, op_container):
+    (op_container(selenium[browser_id])
      .spaces
      .sidebar
      .spaces[space_name]
@@ -60,9 +60,9 @@ def click_on_item_in_space_settings_dropdown(selenium, browser_id, option_name,
                  r'permissions table in Spaces tab'))
 @repeat_failed(timeout=WAIT_BACKEND, interval=1.5)
 def assert_item_appeared_in_spaces_perm_table(selenium, browser_id, name,
-                                              caption, op_page):
+                                              caption, op_container):
     driver = selenium[browser_id]
-    items = getattr(op_page(driver).spaces.permission_table, caption.lower())
+    items = getattr(op_container(driver).spaces.permission_table, caption.lower())
     items_names = {item.name for item in items}
     if name not in items_names:
         driver.refresh()

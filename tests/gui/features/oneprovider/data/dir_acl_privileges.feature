@@ -40,7 +40,7 @@ Feature: ACL directories privileges tests using sigle browser in Oneprovider GUI
     | fails    |  all except [data:traverse directory]                              |
 
 
-  Scenario Outline: Upload file in directory
+  Scenario Outline: Upload file to directory
     When user of browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
     Then user of browser <result> to upload "20B-0.txt" to "dir1" in "space1"
 
