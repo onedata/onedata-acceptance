@@ -56,6 +56,6 @@ def screens():
     return [0]
 
 
-# TODO: change test because of a new gui
+# TODO: change test because of a new gui (shares)
 # scenarios('../features/oneprovider/shares/basic_management.feature')
 scenarios('../features/pass.feature')

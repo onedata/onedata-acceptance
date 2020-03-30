@@ -20,7 +20,7 @@ class Space(PageObject):
 class ProviderPopover(PageObject):
     provider_name = id = Label('.provider-label')
     provider_hostname = Input('.provider-host-text')
-    copy_hostname = Button('.provider-host-copy-btn .oneicon-clipboard-copy')
+    copy_hostname = Button('.provider-host-copy-btn .one-icon')
     spaces_list = WebItemsSequence('.spaces-list li.provider-place-drop-space',
                                    cls=Space)
     toggle_home_provider = NamedButton('.btn-container .btn-toggle-default',

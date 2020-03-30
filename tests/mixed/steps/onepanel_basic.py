@@ -530,7 +530,7 @@ def configure_sync_parameters_for_space_in_op_panel(client, request, user,
                  'Oneprovider service is as follow:\n(?P<config>(.|\s)*)'))
 @repeat_failed(timeout=WAIT_BACKEND, interval=1.5)
 def assert_space_content_in_op(client, request, config, selenium, user,
-                               op_page, tmp_memory, tmpdir, users, hosts,
+                               op_container, tmp_memory, tmpdir, users, hosts,
                                space_name, spaces, host, oz_page, modals):
     """ Assert space has given content in provider.
 
@@ -551,7 +551,7 @@ def assert_space_content_in_op(client, request, config, selenium, user,
     if client.lower() == 'web gui':
         from tests.gui.meta_steps.oneprovider.data import \
                                                 assert_space_content_in_op_gui
-        assert_space_content_in_op_gui(config, selenium, user, op_page,
+        assert_space_content_in_op_gui(config, selenium, user, op_container,
                                        tmp_memory, tmpdir, space_name, oz_page,
                                        host, hosts, modals)
     elif client.lower() == 'rest':

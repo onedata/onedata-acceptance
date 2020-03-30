@@ -17,7 +17,7 @@ from .data_row_menu import DataRowMenu
 from .delete_modal import DeleteModal
 from .login import LoginFormModal
 from .deploying_cluster import ClusterDeploymentModal
-from .menu_modal import MenuModal
+from .menu_in_edit_permissions_modal import EditPermissionsRecordMenu
 from .rename_modal import RenameModal
 from .revoke_space_support import RevokeSpaceSupportModal
 from .edit_permissions import EditPermissionsModal
@@ -45,7 +45,7 @@ class Modals(object):
     revoke_space_support = WebItem('.modal.in .modal-dialog',
                                    cls=RevokeSpaceSupportModal)
     login = WebItem('#login-form-modal', cls=LoginFormModal)
-    edit_permissions = WebItem('#edit-permissions-modal',
+    edit_permissions = WebItem('.modal-dialog',
                                cls=EditPermissionsModal)
     configure_web_cert = WebItem('#configure-web-cert-modal',
                                  cls=ConfigureWebCertModal)
@@ -90,8 +90,9 @@ class Modals(object):
     data_row_menu = WebItem('.file-actions.dropdown-menu', cls=DataRowMenu)
     delete_modal = WebItem('.modal-dialog', cls=DeleteModal)
     rename_modal = WebItem('.modal-dialog', cls=RenameModal)
-    menu_modal = WebItem('.webui-popover-content .one-webui-popover',
-                         cls=MenuModal)
+    menu_in_edit_permissions = WebItem('.over-modals .webui-popover-content '
+                                       '.one-webui-popover',
+                                       cls=EditPermissionsRecordMenu)
 
     def __init__(self, driver):
         self.driver = driver
