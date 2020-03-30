@@ -201,7 +201,7 @@ def change_public_share_cwd_using_breadcrumbs(selenium, browser_id, path,
 
 
 @wt(parsers.parse('user of {browser_id} sees that item named "{item_name}" '
-                  'has appeared in file browser on shares page'))
+                  'has appeared in file browser on single share view'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_item_in_file_browser_in_shares_page(selenium, browser_id, item_name,
                                                op_page):
@@ -220,33 +220,33 @@ def is_selected_share_named(selenium, browser_id, share_name, op_page):
          'expected "{}"'.format(displayed_name, share_name))
 
 
-@wt(parsers.parse('user of {browser_id} clicks on menu on shares_page'))
+@wt(parsers.parse('user of {browser_id} clicks on menu on share view'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_menu_button_on_shares_page(selenium, browser_id, op_page):
     op_page(selenium[browser_id]).shares_page.menu_button.click()
 
 
 @wt(parsers.parse('user of {browser_id} clicks "{option}" option '
-                  'in shares actions row menu in file browser'))
+                  'in shares actions row menu'))
 @wt(parsers.parse('user of {browser_id} clicks "{option}" option '
                   'in shares actions row menu in shares browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_option_in_data_row_menu_in_file_browser(selenium, browser_id,
+def click_option_in_share_row_menu(selenium, browser_id,
                                                   option, modals):
     modals(selenium[browser_id]).shares_row_menu.options[option].click()
 
 
 @wt(parsers.parse('user of {browser_id} sees there are no shares '
-                  'on Shares page'))
+                  'on shares view'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def no_shares_message(selenium, browser_id, op_page):
     msg = op_page(selenium[browser_id]).shares_page.no_shares_msg
-    assert "no shares" in msg.lower(), ('There are shares on page but '
+    assert "no shares" in msg.lower(), ('There are shares on the view but '
                                         'shouldn\'t be any')
 
 
 @wt(parsers.parse('user of browser sees that there is no "{share_name}" '
-                  'share on Shares Page'))
+                  'share on shares view'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_not_share_in_shares_browser_in_shares_page(selenium, browser_id,
                                                       op_page, share_name):
@@ -257,7 +257,7 @@ def assert_not_share_in_shares_browser_in_shares_page(selenium, browser_id,
 
 
 @wt(parsers.parse('user of browser sees that there is "{share_name}" '
-                  'share on Shares Page'))
+                  'share on shares view'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_share_in_shares_browser_in_shares_page(selenium, browser_id,
                                                   op_page, share_name):
@@ -277,14 +277,14 @@ def click_menu_for_elem_in_shares_browser(selenium, browser_id, item_name,
 
 
 @wt(parsers.parse('user of {browser_id} clicks "{share_name}" '
-                  'share in shares browser on Shares Page'))
+                  'share in shares browser on shares view'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_share_in_shares_browser(selenium, browser_id, share_name, op_page):
     browser = op_page(selenium[browser_id]).shares_page.shares_browser
     browser[share_name].click()
 
 
-@wt(parsers.parse('user of {browser_id} sees file browser on Shares Page'))
+@wt(parsers.parse('user of {browser_id} sees file browser on single share view'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_shares_browser_to_file_browser(selenium, browser_id,
                                           op_page, tmp_memory):
@@ -321,7 +321,7 @@ def change_cwd_using_breadcrumbs(selenium, browser_id, path, op_page):
 
 @wt(parsers.parse('user of {browser_id} changes current working'
                   ' directory to current share using breadcrumbs'
-                  ' in shares page'))
+                  ' in shares view'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_cwd_to_home_using_breadcrumbs(selenium, browser_id,
                                          op_page, tmp_memory):

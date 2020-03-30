@@ -340,24 +340,29 @@ def write_name_into_text_field_in_modal(selenium, browser_id, item_name,
     modal.input_name = item_name
 
 
-@wt(parsers.re(r'user of (?P<browser_id>.*?) sees that item named "(?P<item_name>.*?)" '
+@wt(parsers.re(r'user of (?P<browser_id>.*?) sees that item named'
+               r' "(?P<item_name>.*?)" '
                'is shared (?P<number>.*?) times? in modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_of_shares_in_modal(selenium, browser_id, item_name,
                                      number, modals):
     modal = modals(selenium[browser_id]).share_directory
-    assert number in modal.share_info, ("Item is not shared {} times".format(number))
+    links = modal.browser_share_icon
+    info = modal.share_info
+    err_msg = 'Item {item_name} is not shared {number} times'
+    assert _asert_number_of_shares_in_modal(number, links, info), err_msg
 
 
-@wt(parsers.re(r'user of (?P<browser_id>.*?) clicks on ("(?P<name>.*?)" )?browser share icon'
-               ' in modal "(?P<modal_name>.*?)"'))
+def _asert_number_of_shares_in_modal(number, links, info):
+    return number in info and len(links) == int(number)
+
+
+@wt(parsers.parse('user of {browser_id} clicks on "{share_name}" share link '
+                  'with icon in modal "Share directory"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_share_info_icon_in_share_directory_modal(selenium, browser_id,
-                                                   modal_name, modals, name):
+                                                   modals, share_name):
     modal = modals(selenium[browser_id]).share_directory
 
-    if name:
-        icon = modal.browser_share_icon[name]
-    else:
-        icon = modal.browser_share_icon[0]
+    icon = modal.browser_share_icon[share_name]
     icon.click()
