@@ -24,7 +24,7 @@ Feature: Oneprovider POSIX privileges GUI tests
     And user of browser logged as user1 to Onezone service
 
 
-  Scenario: User sees that new updated file default permission code is 664
+  Scenario: User sees that default permission code for uploaded file is 644
     When user of browser uploads "20B-0.txt" to the root directory of "space1"
 
 	# Check permission code
@@ -152,19 +152,4 @@ Feature: Oneprovider POSIX privileges GUI tests
     And user of browser clicks "Delete" option in data row menu in file browser
     And user of browser clicks on "Yes" button in modal "Delete modal"
     Then user of browser sees that error modal with text "Deleting file(s) failed" appeared
-
-
-  Scenario: "Ok" confirmation button is disabled after entering incorrect permission code (3 char)
-
-	# Change permission code
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
-    And user of browser clicks on menu for "file1" file in file browser
-    And user of browser clicks "Permissions" option in data row menu in file browser
-    And user of browser sees that "Edit permissions" modal has appeared
-    And user of browser selects "POSIX" permission type in edit permissions modal
-    And user of browser sets incorrect 3 char permission code in active modal
-    Then user of browser sees that "Save" item displayed in modal is disabled
-    And user of browser clicks "Cancel" button in displayed modal
 

@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 from tests.gui.utils.common.common import Toggle
-from tests.gui.utils.common.modals import MenuModal
+from tests.gui.utils.common.popups import MenuPopup
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.web_elements import (Label, WebItemsSequence, Input,
@@ -67,7 +67,7 @@ class MemberAclPermission(PageObject):
     menu_button = Button('.btn-menu-toggle')
     menu = WebItem('.webui-popover-content '
                    '.one-webui-popover.one-collapsible-toolbar-popover',
-                   cls=MenuModal)
+                   cls=MenuPopup)
     acl_permission_group = WebItemsSequence('.privileges-tree-editor '
                                             '.one-tree-item.has-subtree ',
                                             cls=AclPermissionGroup)
@@ -99,7 +99,9 @@ class ACL(PageObject):
     _toggle = WebElement('.ember-basic-dropdown-trigger[role="button"]')
 
     def expand_dropdown(self):
-        self._toggle.click()
+        toggle_class = self._toggle.get_attribute('class')
+        if 'ember-basic-dropdown-trigger--left' not in toggle_class:
+            self._toggle.click()
 
 
 class EditPermissionsModal(Modal):

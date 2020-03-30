@@ -51,17 +51,6 @@ def set_posix_permission(selenium, browser_id, perm, modals):
     modals(selenium[browser_id]).edit_permissions.posix.value = perm
 
 
-@wt(parsers.parse('user of {browser_id} sets incorrect {num:d} char '
-                  'permission code in active modal'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def set_incorrect_posix_permission(selenium, browser_id, num, modals):
-    random.seed()
-    val = random.choice('89')
-    for _ in range(num-1):
-        val += random.choice(string.digits)
-    modals(selenium[browser_id]).edit_permissions.posix.value = val
-
-
 def _change_acl_options(option_list, subject, change):
     for option in parse_seq(option_list):
         if option in ['allow', 'deny']:

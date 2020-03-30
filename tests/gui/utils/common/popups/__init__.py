@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 
 from tests.gui.utils.core.web_elements import WebItem
+from .menu_popup import MenuPopup
 from .upload_presenter import UploadPresenter
 from .user_account_menu import UserAccountPopup
 from .toolbar import ToolbarPopup
@@ -25,6 +26,8 @@ class Popups(object):
     data_distribution_menu = WebItem('.webui-popover.in', cls=PopoverMenu)
     upload_presenter = WebItem('.hidden-xs .up-single-upload',
                                cls=UploadPresenter)
+    menu_popup = WebItem('.webui-popover-content .one-webui-popover',
+                         cls=MenuPopup)
 
     def __init__(self, driver):
         self.driver = self.web_elem = driver

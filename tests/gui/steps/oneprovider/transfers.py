@@ -37,8 +37,8 @@ def _assert_transfer(transfer, item_type, desc, sufix, hosts):
                ' in ongoing transfers:\n(?P<desc>(.|\s)*)'))
 @repeat_failed(interval=0.5)
 def assert_ongoing_transfer(selenium, browser_id, item_type, desc, hosts,
-                            op_page):
-    transfer = op_page(selenium[browser_id]).transfers.ongoing[0]
+                            op_container):
+    transfer = op_container(selenium[browser_id]).transfers.ongoing[0]
     _assert_transfer(transfer, item_type, desc, 'ongoing', hosts)
 
 
@@ -46,8 +46,8 @@ def assert_ongoing_transfer(selenium, browser_id, item_type, desc, hosts,
                ' in ended transfers:\n(?P<desc>(.|\s)*)'))
 @repeat_failed(interval=0.5, timeout=90)
 def assert_ended_transfer(selenium, browser_id, item_type, desc, hosts,
-                          op_page):
-    transfer = op_page(selenium[browser_id]).transfers.ended[0]
+                          op_container):
+    transfer = op_container(selenium[browser_id]).transfers.ended[0]
     _assert_transfer(transfer, item_type, desc, 'ended', hosts)
 
 
@@ -55,36 +55,36 @@ def assert_ended_transfer(selenium, browser_id, item_type, desc, hosts,
                ' in waiting transfers:\n(?P<desc>(.|\s)*)'))
 @repeat_failed(interval=0.5, timeout=40)
 def assert_waiting_transfer(selenium, browser_id, item_type, desc, hosts,
-                              op_page):
-    transfer = op_page(selenium[browser_id]).transfers.waiting[0]
+                              op_container):
+    transfer = op_container(selenium[browser_id]).transfers.waiting[0]
     _assert_transfer(transfer, item_type, desc, 'waiting', hosts)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) waits for all transfers to start'))
 @repeat_failed(interval=1, timeout=90,
                exceptions=(AssertionError, StaleElementReferenceException))
-def wait_for_waiting_tranfers_to_start(selenium, browser_id, op_page):
-    assert len(op_page(selenium[browser_id]).transfers.waiting) == 0, \
+def wait_for_waiting_tranfers_to_start(selenium, browser_id, op_container):
+    assert len(op_container(selenium[browser_id]).transfers.waiting) == 0, \
         'Waiting transfers did not start'
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) waits for all transfers to finish'))
 @repeat_failed(interval=1, timeout=90,
                exceptions=(AssertionError, StaleElementReferenceException))
-def wait_for_ongoing_tranfers_to_finish(selenium, browser_id, op_page):
-    assert len(op_page(selenium[browser_id]).transfers.ongoing) == 0, \
+def wait_for_ongoing_tranfers_to_finish(selenium, browser_id, op_container):
+    assert len(op_container(selenium[browser_id]).transfers.ongoing) == 0, \
         'Ongoing transfers did not finish'
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) expands first transfer record'))
-def expand_transfer_record(selenium, browser_id, op_page):
-    op_page(selenium[browser_id]).transfers.ended[0].expand()
+def expand_transfer_record(selenium, browser_id, op_container):
+    op_container(selenium[browser_id]).transfers.ended[0].expand()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees that there is non-zero '
                'throughput in transfer chart'))
-def assert_non_zero_transfer_speed(selenium, browser_id, op_page):
-    chart = op_page(selenium[browser_id]).transfers.ended[0].get_chart()
+def assert_non_zero_transfer_speed(selenium, browser_id, op_container):
+    chart = op_container(selenium[browser_id]).transfers.ended[0].get_chart()
     assert chart.get_speed() != '0', 'Transfer throughput is 0'
 
 
@@ -139,16 +139,16 @@ def assert_item_never_synchronized(selenium, browser_id, provider, hosts):
 
 @wt(parsers.re('user of (?P<browser_id>.*) selects "(?P<space>.*)" space '
                'in transfers tab'))
-def change_transfer_space(selenium, browser_id, space, op_page):
-    op_page(selenium[browser_id]).transfers.spaces[space].select()
+def change_transfer_space(selenium, browser_id, space, op_container):
+    op_container(selenium[browser_id]).transfers.spaces[space].select()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) waits for Transfers page to load'))
 @repeat_failed(interval=1, timeout=90,
                exceptions=(RuntimeError, NoSuchElementException))
-def wait_for_transfers_page_to_load(selenium, browser_id, op_page):
+def wait_for_transfers_page_to_load(selenium, browser_id, op_container):
     driver = selenium[browser_id]
     iframe = driver.find_element_by_tag_name('iframe')
     driver.switch_to.frame(iframe)
-    op_page(driver).transfers.ongoing_map_header
+    op_container(driver).transfers.ongoing_map_header
 
