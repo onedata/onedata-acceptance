@@ -55,9 +55,9 @@ def wt_wait_for_op_session_to_start(selenium, browser_id_list):
 @then(parsers.parse('user of {browser_id} sees that provider name displayed in '
                     'Oneprovider page is equal to the name of "{val}" provider'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_assert_provider_name_in_op(selenium, browser_id, val, op_page, hosts):
+def wt_assert_provider_name_in_op(selenium, browser_id, val, op_container, hosts):
     val = hosts[val]['name']
-    displayed_name = op_page(selenium[browser_id]).provider_name
+    displayed_name = op_container(selenium[browser_id]).provider_name
     assert displayed_name == val, \
         ('displayed {} provider name in Oneprovider GUI instead of '
          'expected {}'.format(displayed_name, val))
@@ -68,8 +68,8 @@ def wt_assert_provider_name_in_op(selenium, browser_id, val, op_page, hosts):
 @then(parsers.parse('user of {browser_id} sees that provider name displayed in '
                     'Oneprovider page is equal to "{val}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_assert_provider_name_in_op(selenium, browser_id, val, op_page, hosts):
-    displayed_name = op_page(selenium[browser_id]).provider_name
+def wt_assert_provider_name_in_op(selenium, browser_id, val, op_container, hosts):
+    displayed_name = op_container(selenium[browser_id]).provider_name
     assert displayed_name == val, \
         ('displayed {} provider name in Oneprovider GUI instead of '
          'expected {}'.format(displayed_name, val))

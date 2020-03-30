@@ -24,7 +24,7 @@ class DataRow(PageObject):
     _shared_icon = WebElement('.file-status-icon .one-icon')
     menu_button = Button('.fb-table-col-actions-menu .menu-toggle')
 
-    # TODO: change test because of a new gui
+    # TODO: change test because of a new gui (metadata, share)
     # _metadata_tool = WebElement('.file-tool-metadata')
     # _share_tool = WebElement('.file-tool-share')
 

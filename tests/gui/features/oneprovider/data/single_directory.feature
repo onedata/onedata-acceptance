@@ -48,7 +48,7 @@ Feature: Basic data tab operations on single directory in file browser
     Then user of browser sees that item named "dir1" has disappeared from files browser
 
 
-  Scenario Outline: User renames directory
+  Scenario: User renames directory
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
@@ -56,17 +56,11 @@ Feature: Basic data tab operations on single directory in file browser
 
     And user of browser clicks on menu for "dir1" directory in file browser
     And user of browser clicks "Rename" option in data row menu in file browser
-
     And user of browser sees that "Rename" modal has appeared
     And user of browser writes "new_dir1" into name directory text field in modal "Rename modal"
-    And user of browser confirms rename directory using <confirmation_method>
+    And user of browser confirms rename directory using enter
 
     Then user of browser sees that item named "dir1" has disappeared from files browser
     And user of browser sees that item named "new_dir1" has appeared in file browser
     And user of browser sees that item named "new_dir1" is directory in file browser
-
-    Examples:
-    | confirmation_method |
-    | enter               |
-    | button              |
 

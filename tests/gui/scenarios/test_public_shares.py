@@ -57,6 +57,6 @@ def screens():
     return [0, 1]
 
 
-# TODO: change test because of a new gui
+# TODO: change test because of a new gui (public shares)
 # scenarios('../features/oneprovider/shares/public_shares.feature')
 scenarios('../features/pass.feature')

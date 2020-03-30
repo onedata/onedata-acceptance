@@ -1,4 +1,4 @@
-"""Utils and fixtures to facilitate operations on menu modal.
+"""Utils and fixtures to facilitate operations on menu in edit permissions modal.
 """
 
 __author__ = "Agnieszka Warchol"
@@ -11,15 +11,14 @@ from tests.gui.utils.core.web_elements import Label, WebItemsSequence
 
 
 class MenuItem(PageObject):
-    name = id = Label('a.clickable .one-label')
+    name = id = Label('a.clickable .text')
 
     def __call__(self):
         self.click()
 
 
-class MenuModal(PageObject):
+class EditPermissionsRecordMenu(PageObject):
     menu = WebItemsSequence('ul li', cls=MenuItem)
 
     def __str__(self):
-        return 'Member menu popup'
-
+        return 'Edit permissions record menu popup'

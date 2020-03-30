@@ -7,10 +7,8 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-from pytest_bdd import parsers
-
 from tests.utils.utils import repeat_failed
-from tests.utils.acceptance_utils import wt
+from tests.utils.bdd_utils import wt, parsers
 from tests.gui.utils.common.modals import Modals as modals
 from tests.gui.utils.generic import parse_seq
 from tests.gui.conftest import WAIT_FRONTEND
@@ -127,15 +125,6 @@ def assert_create_button_inactive(selenium, browser_id, oz_page):
     page = oz_page(selenium[browser_id])['groups']
     assert not page.input_box.confirm.is_enabled(), ('"Create group" button '
                                                      'is enabled')
-
-
-@wt(parsers.parse('user of {browser_id} sees that error modal with '
-                  'text "{text}" appeared'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_error_modal_with_text_appeared(selenium, browser_id, text, oz_page):
-    message = 'Modal does not contain text "{}"'.format(text)
-    modal_text = modals(selenium[browser_id]).error.content.lower()
-    assert text.lower() in modal_text, message
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) goes to group "(?P<group>.*)" '

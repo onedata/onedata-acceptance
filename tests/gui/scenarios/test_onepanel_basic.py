@@ -77,8 +77,7 @@ def screens():
 
 
 scenarios('../features/onepanel/storages.feature')
-# TODO: change test because of a new gui
-# scenarios('../features/onepanel/provider.feature')
+scenarios('../features/onepanel/provider.feature')
 scenarios('../features/onepanel/spaces.feature')
 scenarios('../features/onepanel/members.feature')
 scenarios('../features/onepanel/emergency_passphrase.feature')

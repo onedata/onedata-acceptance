@@ -13,9 +13,11 @@ from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.common.keys import Keys
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
-from tests.utils.bdd_utils import given, wt, parsers, when, then
+from tests.gui.utils import Modals as modals
 from tests.gui.utils.generic import click_on_web_elem, transform
+from tests.utils.bdd_utils import given, wt, parsers, when, then
 from tests.utils.utils import repeat_failed
+
 
 in_type_to_id = {'username': 'login-form-username-input',
                  'password': 'login-form-password-input'}
@@ -68,7 +70,8 @@ def assert_non_empty_token_in_add_storage_modal(browser_id, tmp_memory):
 def _find_modal(driver, modal_name):
     def _find():
         elements_list = ['group', 'token', 'cluster', 'harvester',
-                         'spaces', 'rename', 'share']
+                         'spaces', 'rename', 'share', 'permissions',
+                         'directory', 'data']
         if any([name for name in elements_list
                 if name in modal_name]):
             modals = driver.find_elements_by_css_selector('.modal, '
@@ -83,7 +86,7 @@ def _find_modal(driver, modal_name):
                                                           '.modal-title')
 
         for name, modal in zip(modals[1::2], modals[::2]):
-            if name.text.lower() == modal_name:
+            if name.text.lower() == modal_name.lower():
                 return modal
 
     modal_name = modal_name.lower()
@@ -98,10 +101,8 @@ def _wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory):
     tmp_memory[browser_id]['window']['modal'] = modal
 
 
-@when(parsers.parse('user of {browser_id} sees that '
-                    '"{modal_name}" modal has appeared'))
-@then(parsers.parse('user of {browser_id} sees that '
-                    '"{modal_name}" modal has appeared'))
+@wt(parsers.parse('user of {browser_id} sees that '
+                  '"{modal_name}" modal has appeared'))
 def wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory):
     driver = selenium[browser_id]
     _wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory)
@@ -366,3 +367,13 @@ def click_share_info_icon_in_share_directory_modal(selenium, browser_id,
 
     icon = modal.browser_share_icon[share_name]
     icon.click()
+
+
+@wt(parsers.parse('user of {browser_id} sees that error modal with '
+                  'text "{text}" appeared'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_error_modal_with_text_appeared(selenium, browser_id, text):
+    message = 'Modal does not contain text "{}"'.format(text)
+    modal_text = modals(selenium[browser_id]).error.content.lower()
+    assert text.lower() in modal_text, message
+

@@ -8,6 +8,8 @@ __license__ = "This software is released under the MIT license cited in " \
 
 
 from tests.gui.utils.core.web_elements import WebItem
+from .menu_popup import MenuPopup
+from .upload_presenter import UploadPresenter
 from .user_account_menu import UserAccountPopup
 from .toolbar import ToolbarPopup
 from .deregister_provider import DeregisterProvider
@@ -21,9 +23,21 @@ class Popups(object):
     user_account_menu = WebItem('.webui-popover-content .user-account-menu',
                                 cls=UserAccountPopup)
     member_menu = WebItem('.webui-popover.in', cls=MemberMenu)
+    upload_presenter = WebItem('.hidden-xs .up-single-upload',
+                               cls=UploadPresenter)
+    menu_popup = WebItem('.webui-popover-content .one-webui-popover',
+                         cls=MenuPopup)
 
     def __init__(self, driver):
         self.driver = self.web_elem = driver
 
     def __str__(self):
         return 'popups'
+
+    def is_upload_presenter(self):
+        try:
+            self.upload_presenter
+        except RuntimeError:
+            return False
+        else:
+            return True
