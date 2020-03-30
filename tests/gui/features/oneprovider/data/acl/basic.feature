@@ -185,7 +185,7 @@ Feature: ACL basic tests using sigle browser in Oneprovider GUI
     And user of browser selects "ACL" permission type in edit permissions modal
 
     And user of browser adds ACE with "general:delete" privilege set for group group1
-    And user of browser adds ACE with "general:delete" privilege set for user user1
+    And user of browser adds ACE with "acl:read acl" privilege set for user user1
     And user of browser clicks on "<button>" button in <numeral> ACL record in edit permissions modal
     Then user of browser sees that first ACL record in edit permissions modal is set for user user1
     And user of browser sees that second ACL record in edit permissions modal is set for group group1

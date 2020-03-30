@@ -462,7 +462,7 @@ def choose_provider_in_file_browser(selenium, browser_id, provider,
     provider = hosts[provider]['name']
     driver.switch_to.default_content()
 
-    oz_page(driver).providers[provider].click()
+    oz_page(driver)['data'].providers[provider].click()
     iframe = driver.find_element_by_tag_name('iframe')
     driver.switch_to.frame(iframe)
 
@@ -489,7 +489,7 @@ def _assert_current_provider_in_space(selenium, browser_id, provider,
 def _assert_provider_in_space(selenium, browser_id, provider, oz_page):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    providers = oz_page(selenium[browser_id]).providers
+    providers = oz_page(selenium[browser_id])['data'].providers
 
     assert provider in providers, (f'{provider} provider not found '
                                    f'on file browser page')
