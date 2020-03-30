@@ -336,7 +336,7 @@ def click_modal_button(selenium, browser_id, button, modal, modals):
                   'into {text_field} text field in modal "{modal_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def write_name_into_text_field_in_modal(selenium, browser_id, item_name,
-                                        modal_name, modals, text_field):
+                                        modal_name, modals):
     modal = getattr(modals(selenium[browser_id]), transform(modal_name))
     modal.input_name = item_name
 
@@ -351,10 +351,10 @@ def assert_number_of_shares_in_modal(selenium, browser_id, item_name,
     links = modal.browser_share_icon
     info = modal.share_info
     err_msg = 'Item {item_name} is not shared {number} times'
-    assert _asert_number_of_shares_in_modal(number, links, info), err_msg
+    assert _assert_number_of_shares_in_modal(number, links, info), err_msg
 
 
-def _asert_number_of_shares_in_modal(number, links, info):
+def _assert_number_of_shares_in_modal(number, links, info):
     return number in info and len(links) == int(number)
 
 
