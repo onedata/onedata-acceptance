@@ -25,6 +25,8 @@ from tests.gui.conftest import *
 
 from tests.oneclient.steps.auth_steps import *
 
+from tests.gui.steps.common.miscellaneous import *
+
 
 # TODO: change test because of a new gui
 # scenarios('../features/oneprovider/directories_metadata.feature')
