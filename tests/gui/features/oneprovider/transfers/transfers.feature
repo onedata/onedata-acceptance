@@ -336,7 +336,7 @@ Feature: Oneprovider transfers functionality
     And user of browser migrates "dir1" from provider "oneprovider-1" to provider "oneprovider-2"
 
     # Check that transfer appeared in transfer tab
-    And user of browser clicks Transfers of "smallSpace" in the sidebar
+    And user of browser clicks Transfers of "space1" in the sidebar
     And user of browser is idle for 2 seconds
     And user of browser waits for Transfers page to load
 
