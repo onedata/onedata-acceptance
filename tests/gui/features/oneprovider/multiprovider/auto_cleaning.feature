@@ -125,8 +125,6 @@ Feature: Onepanel features auto-cleaning
     And user of browser2 uses upload button from file browser menu bar to upload file "large_file.txt" to current dir
     And user of browser2 changes current working directory to home using breadcrumbs
     And user of browser2 is idle for 10 seconds
-    And user of browser2 refreshes site
-    And user of browser2 sees file browser in data tab in Oneprovider page
 
     # replicate data
     And user of browser2 replicates "dir1" to provider "oneprovider-2"
