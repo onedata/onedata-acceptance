@@ -7,24 +7,13 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-import time
-
 import pytest
-from selenium.common.exceptions import NoSuchElementException
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.steps.common.miscellaneous import change_iframe
 from tests.gui.utils.generic import (parse_seq, upload_file_path, transform)
 from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import given, wt, parsers, when, then
-
-
-@repeat_failed(interval=1, timeout=90,
-               exceptions=NoSuchElementException)
-def _change_iframe_for_file_browser(selenium, browser_id):
-    driver = selenium[browser_id]
-    driver.switch_to.default_content()
-    iframe = driver.find_element_by_tag_name('iframe')
-    driver.switch_to.frame(iframe)
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -233,7 +222,7 @@ def wt_is_space_tree_root(selenium, browser_id, is_home, space_name,
 @repeat_failed(timeout=WAIT_BACKEND * 2)
 def assert_nonempty_file_browser_in_data_tab_in_op(selenium, browser_id,
                                                    op_container, tmp_memory):
-    _change_iframe_for_file_browser(selenium, browser_id)
+    change_iframe(selenium, browser_id)
     _check_file_browser_to_load(selenium, browser_id, tmp_memory, op_container)
     file_browser = tmp_memory[browser_id]['file_browser']
     assert not file_browser.is_empty(), ('file browser in data tab in op'
@@ -245,7 +234,7 @@ def assert_nonempty_file_browser_in_data_tab_in_op(selenium, browser_id,
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_empty_file_browser_in_data_tab_in_op(selenium, browser_id,
                                                 op_container, tmp_memory):
-    _change_iframe_for_file_browser(selenium, browser_id)
+    change_iframe(selenium, browser_id)
     _check_file_browser_to_load(selenium, browser_id, tmp_memory, op_container)
     file_browser = tmp_memory[browser_id]['file_browser']
     assert file_browser.is_empty(), ('file browser in data tab in op'
@@ -257,7 +246,7 @@ def assert_empty_file_browser_in_data_tab_in_op(selenium, browser_id,
                   'in data tab in Oneprovider page'))
 def assert_file_browser_in_data_tab_in_op(selenium, browser_id,
                                           op_container, tmp_memory):
-    _change_iframe_for_file_browser(selenium, browser_id)
+    change_iframe(selenium, browser_id)
     _check_file_browser_to_load(selenium, browser_id, tmp_memory, op_container)
 
 
@@ -489,12 +478,17 @@ def click_choose_other_oneprovider_on_file_browser(selenium, browser_id,
     oz_page(driver)['data'].choose_other_provider()
 
 
-def _assert_current_provider_in_space(selenium, browser_id, provider,
-                                      oz_page):
+def check_current_provider_in_space(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
     current_provider = oz_page(driver)['data'].current_provider
+    return current_provider
 
+
+def _assert_current_provider_in_space(selenium, browser_id, provider,
+                                      oz_page):
+    current_provider = check_current_provider_in_space(selenium, browser_id,
+                                                       oz_page)
     assert provider == current_provider, (f'{provider} is not current provider '
                                           f'on file browser page')
 

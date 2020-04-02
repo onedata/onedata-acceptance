@@ -28,9 +28,7 @@ Feature: Oneprovider transfers functionality
 
 
   Scenario: User replicates file to remote provider
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    When user of browser opens oneprovider-1 Oneprovider file browser for "space1" space
     And user of browser uses upload button from file browser menu bar to upload file "large_file.txt" to current dir
 
     # Wait to ensure synchronization between providers
@@ -42,9 +40,7 @@ Feature: Oneprovider transfers functionality
 
     # Check that transfer appeared in transfer tab
     And user of browser clicks Transfers of "space1" in the sidebar
-    And user of browser is idle for 2 seconds
     And user of browser waits for Transfers page to load
-
     Then user of browser waits for all transfers to start
     And user of browser waits for all transfers to finish
     And user of browser sees file in ended transfers:
@@ -67,9 +63,7 @@ Feature: Oneprovider transfers functionality
 
 
   Scenario: User replicates directory to remote provider
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    When user of browser opens oneprovider-1 Oneprovider file browser for "space1" space
     And user of browser creates directory "dir1"
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser uses upload button from file browser menu bar to upload file "large_file.txt" to current dir
@@ -77,15 +71,14 @@ Feature: Oneprovider transfers functionality
             oneprovider-1: entirely filled
             oneprovider-2: never synchronized
     And user of browser changes current working directory to home using breadcrumbs
+
     # Wait to ensure synchronization between providers
     And user of browser is idle for 2 seconds
+
     And user of browser replicates "dir1" to provider "oneprovider-2"
 
     # Check that transfer appeared in transfer tab
-    And user of browser clicks Transfers of "space1" in the sidebar
-    And user of browser is idle for 2 seconds
-    And user of browser waits for Transfers page to load
-
+    And user of browser opens oneprovider-1 Oneprovider transfers for "space1" space
     Then user of browser waits for all transfers to start
     And user of browser waits for all transfers to finish
     And user of browser sees directory in ended transfers:
@@ -109,19 +102,16 @@ Feature: Oneprovider transfers functionality
 
 
   Scenario: User tries to migrate file to too small space on remote provider
-    When user of browser clicks "smallSpace" on the spaces list in the sidebar
-    And user of browser clicks Data of "smallSpace" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    When user of browser opens oneprovider-1 Oneprovider file browser for "smallSpace" space
     And user of browser uses upload button from file browser menu bar to upload file "large_file.txt" to current dir
 
     # Wait to ensure synchronization between providers
     And user of browser is idle for 2 seconds
+
     And user of browser migrates "large_file.txt" from provider "oneprovider-1" to provider "oneprovider-2"
 
     # Check that transfer appeared in transfer tab
-    And user of browser clicks Transfers of "smallSpace" in the sidebar
-    And user of browser is idle for 2 seconds
-    And user of browser waits for Transfers page to load
+    And user of browser opens oneprovider-1 Oneprovider transfers for "smallSpace" space
     Then user of browser waits for all transfers to start
     And user of browser waits for all transfers to finish
     And user of browser sees file in ended transfers:
@@ -140,9 +130,7 @@ Feature: Oneprovider transfers functionality
 
 
   Scenario: User tries to migrate directory to too small space on remote provider
-    When user of browser clicks "smallSpace" on the spaces list in the sidebar
-    And user of browser clicks Data of "smallSpace" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    When user of browser opens oneprovider-1 Oneprovider file browser for "smallSpace" space
     And user of browser creates directory "dir1"
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser uses upload button from file browser menu bar to upload file "large_file.txt" to current dir
@@ -150,13 +138,11 @@ Feature: Oneprovider transfers functionality
 
     # Wait to ensure synchronization between providers
     And user of browser is idle for 2 seconds
+
     And user of browser migrates "dir1" from provider "oneprovider-1" to provider "oneprovider-2"
 
     # Check that transfer appeared in transfer tab
-    And user of browser clicks Transfers of "smallSpace" in the sidebar
-    And user of browser is idle for 2 seconds
-    And user of browser waits for Transfers page to load
-
+    And user of browser opens oneprovider-1 Oneprovider transfers for "smallSpace" space
     Then user of browser waits for all transfers to start
     And user of browser waits for all transfers to finish
     And user of browser sees directory in ended transfers:
@@ -176,20 +162,16 @@ Feature: Oneprovider transfers functionality
 
 
   Scenario: User tries to replicate file to too small space on remote provider
-    When user of browser clicks "smallSpace" on the spaces list in the sidebar
-    And user of browser clicks Data of "smallSpace" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    When user of browser opens oneprovider-1 Oneprovider file browser for "smallSpace" space
     And user of browser uses upload button from file browser menu bar to upload file "large_file.txt" to current dir
 
     # Wait to ensure synchronization between providers
     And user of browser is idle for 2 seconds
+
     And user of browser replicates "large_file.txt" to provider "oneprovider-2"
 
     # Check that transfer appeared in transfer tab
-    And user of browser clicks Transfers of "smallSpace" in the sidebar
-    And user of browser is idle for 2 seconds
-    And user of browser waits for Transfers page to load
-
+    And user of browser opens oneprovider-1 Oneprovider transfers for "smallSpace" space
     Then user of browser waits for all transfers to start
     And user of browser waits for all transfers to finish
     And user of browser sees file in ended transfers:
@@ -208,9 +190,7 @@ Feature: Oneprovider transfers functionality
 
 
   Scenario: User tries to replicate directory to too small space on remote provider
-    When user of browser clicks "smallSpace" on the spaces list in the sidebar
-    And user of browser clicks Data of "smallSpace" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    When user of browser opens oneprovider-1 Oneprovider file browser for "smallSpace" space
     And user of browser creates directory "dir1"
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser uses upload button from file browser menu bar to upload file "large_file.txt" to current dir
@@ -218,13 +198,11 @@ Feature: Oneprovider transfers functionality
 
     # Wait to ensure synchronization between providers
     And user of browser is idle for 2 seconds
+
     And user of browser replicates "dir1" to provider "oneprovider-2"
 
     # Check that transfer appeared in transfer tab
-    And user of browser clicks Transfers of "smallSpace" in the sidebar
-    And user of browser is idle for 2 seconds
-    And user of browser waits for Transfers page to load
-
+    And user of browser opens oneprovider-1 Oneprovider transfers for "smallSpace" space
     Then user of browser waits for all transfers to start
     And user of browser waits for all transfers to finish
     And user of browser sees directory in ended transfers:
@@ -244,9 +222,7 @@ Feature: Oneprovider transfers functionality
 
 
   Scenario: User replicates directory with file on current provider to the same provider
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    When user of browser opens oneprovider-1 Oneprovider file browser for "space1" space
     And user of browser creates directory "dir1"
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser uses upload button from file browser menu bar to upload file "large_file.txt" to current dir
@@ -254,13 +230,11 @@ Feature: Oneprovider transfers functionality
 
     # Wait to ensure synchronization between providers
     And user of browser is idle for 2 seconds
+
     And user of browser replicates "dir1" to provider "oneprovider-1"
 
     # Check that transfer appeared in transfer tab
-    And user of browser clicks Transfers of "space1" in the sidebar
-    And user of browser is idle for 2 seconds
-    And user of browser waits for Transfers page to load
-
+    And user of browser opens oneprovider-1 Oneprovider transfers for "space1" space
     Then user of browser waits for all transfers to start
     And user of browser waits for all transfers to finish
     And user of browser sees directory in ended transfers:
@@ -280,9 +254,7 @@ Feature: Oneprovider transfers functionality
 
 
   Scenario: User migrates file to remote provider
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    When user of browser opens oneprovider-1 Oneprovider file browser for "space1" space
     And user of browser uses upload button from file browser menu bar to upload file "large_file.txt" to current dir
 
     # Wait to ensure synchronization between providers
@@ -294,10 +266,7 @@ Feature: Oneprovider transfers functionality
     And user of browser migrates "large_file.txt" from provider "oneprovider-1" to provider "oneprovider-2"
 
     # Check that transfer appeared in transfer tab
-    And user of browser clicks Transfers of "space1" in the sidebar
-    And user of browser is idle for 2 seconds
-    And user of browser waits for Transfers page to load
-
+    And user of browser opens oneprovider-1 Oneprovider transfers for "sapce1" space
     Then user of browser waits for all transfers to start
     And user of browser waits for all transfers to finish
     And user of browser sees file in ended transfers:
@@ -320,9 +289,7 @@ Feature: Oneprovider transfers functionality
 
 
   Scenario: User migrates directory to remote provider
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    When user of browser opens oneprovider-1 Oneprovider file browser for "space1" space
     And user of browser creates directory "dir1"
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser uses upload button from file browser menu bar to upload file "large_file.txt" to current dir
@@ -333,13 +300,11 @@ Feature: Oneprovider transfers functionality
 
     # Wait to ensure synchronization between providers
     And user of browser is idle for 2 seconds
+
     And user of browser migrates "dir1" from provider "oneprovider-1" to provider "oneprovider-2"
 
     # Check that transfer appeared in transfer tab
-    And user of browser clicks Transfers of "space1" in the sidebar
-    And user of browser is idle for 2 seconds
-    And user of browser waits for Transfers page to load
-
+    And user of browser opens oneprovider-1 Oneprovider transfers for "space1" space
     Then user of browser waits for all transfers to start
     And user of browser waits for all transfers to finish
     And user of browser sees directory in ended transfers:

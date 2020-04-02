@@ -65,6 +65,7 @@ from tests.gui.meta_steps.onepanel.provider import *
 
 from tests.gui.meta_steps.oneprovider.common import *
 from tests.gui.meta_steps.oneprovider.common import *
+from tests.gui.meta_steps.oneprovider.transfers import *
 
 from tests.utils.acceptance_utils import *
 

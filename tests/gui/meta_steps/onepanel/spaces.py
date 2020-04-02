@@ -85,8 +85,6 @@ def revoke_space_support_in_op_panel_using_gui(selenium, user, provider_name,
     sub_item = 'Spaces'
     option = 'Revoke space support'
     button = 'Yes, revoke'
-    notify_type = 'info'
-    notify_text_regexp = '.*[Ss]upport.*revoked.*'
 
     wt_click_on_subitem_for_item(selenium, user, sidebar, sub_item,
                                  provider_name, onepanel, hosts)
@@ -94,7 +92,6 @@ def revoke_space_support_in_op_panel_using_gui(selenium, user, provider_name,
                                                   onepanel)
     wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, user, option, popups)
     wt_clicks_on_btn_in_revoke_space_support(selenium, user, button, modals)
-    # notify_visible_with_text(selenium, user, notify_type, notify_text_regexp)
 
 
 def configure_sync_parameters_for_space_in_op_panel_gui(selenium, user, space,
@@ -215,3 +212,11 @@ def revoke_all_space_supports_using_rest(selenium, hosts, users, provider_host):
                     path=get_panel_rest_path('provider', 'spaces', space),
                     auth=(user, users[user].password))
 
+
+@wt(parsers.parse('user of {browser_id} sets {quota} quota to {value} value '
+                  'in auto-cleaning tab in Onepanel'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def set_quota_in_auto_cleaning(selenium, browser_id, quota, value, onepanel):
+    click_change_quota_button(selenium, browser_id, quota, onepanel)
+    type_value_to_quota_input(selenium, browser_id, quota, value, onepanel)
+    confirm_quota_value_change(selenium, browser_id, quota, onepanel)

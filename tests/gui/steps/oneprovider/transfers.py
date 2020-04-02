@@ -10,13 +10,13 @@ import time
 
 import yaml
 
-from selenium.common.exceptions import (StaleElementReferenceException,
-                                        NoSuchElementException)
+from selenium.common.exceptions import StaleElementReferenceException
 
+from tests.gui.steps.common.miscellaneous import change_iframe
 from tests.gui.utils.common.modals import Modals as modals
 from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import wt, parsers
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 
 
 def _assert_transfer(transfer, item_type, desc, sufix, hosts):
@@ -144,11 +144,8 @@ def change_transfer_space(selenium, browser_id, space, op_container):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) waits for Transfers page to load'))
-@repeat_failed(interval=1, timeout=90,
-               exceptions=(RuntimeError, NoSuchElementException))
+@repeat_failed(timeout=WAIT_BACKEND)
 def wait_for_transfers_page_to_load(selenium, browser_id, op_container):
-    driver = selenium[browser_id]
-    iframe = driver.find_element_by_tag_name('iframe')
-    driver.switch_to.frame(iframe)
-    op_container(driver).transfers.ongoing_map_header
+    change_iframe(selenium, browser_id)
+    op_container(selenium[browser_id]).transfers.ongoing_map_header
 
