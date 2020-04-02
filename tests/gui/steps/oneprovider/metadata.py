@@ -2,268 +2,221 @@
 files metadata in oneprovider web GUI.
 """
 
-__author__ = "Bartosz Walkowicz"
-__copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
+__author__ = "Bartosz Walkowicz, Natalia Organek"
+__copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-
 import json
 
-from pytest_bdd import when, then, parsers
+from tests.gui.steps.common.miscellaneous import (
+    press_tab_on_active_element, press_backspace_on_active_element)
+from tests.gui.utils.generic import transform
+from tests.utils.bdd_utils import wt, parsers
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed
 
 
-@when(parsers.parse('user of {browser_id} sees that metadata panel for '
-                    '"{item_name}" in files list is displayed'))
-@then(parsers.parse('user of {browser_id} sees that metadata panel for '
-                    '"{item_name}" in files list is displayed'))
-@when(parsers.parse('user of {browser_id} sees that metadata panel for '
-                    '"{item_name}" in files list has appeared'))
-@then(parsers.parse('user of {browser_id} sees that metadata panel for '
-                    '"{item_name}" in files list has appeared'))
+@wt(parsers.parse('user of {browser_id} sees {tab_list} navigation tabs in '
+                  '"{modal_name}" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_files_metadata_panel_displayed(browser_id, item_name, tmp_memory):
-    browser = tmp_memory[browser_id]['file_browser']
-    browser.get_metadata_for(item_name)
-
-
-@when(parsers.parse('user of {browser_id} sees that metadata panel for '
-                    '"{item_name}" in files list is not displayed'))
-@then(parsers.parse('user of {browser_id} sees that metadata panel for '
-                    '"{item_name}" in files list is not displayed'))
-@when(parsers.parse('user of {browser_id} sees that metadata panel for '
-                    '"{item_name}" in files list has disappeared'))
-@then(parsers.parse('user of {browser_id} sees that metadata panel for '
-                    '"{item_name}" in files list has disappeared'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_not_files_metadata_panel_displayed(browser_id, item_name, tmp_memory):
-    browser = tmp_memory[browser_id]['file_browser']
-    try:
-        browser.get_metadata_for(item_name)
-    except RuntimeError:
-        pass
-    else:
-        raise RuntimeError('metadata for "{}" found in file browser '
-                           'while it should not be'.format(item_name))
-
-
-@when(parsers.parse('user of {browser_id} sees {tab_list} navigation tabs in '
-                    'metadata panel opened for "{item_name}"'))
-@then(parsers.parse('user of {browser_id} sees {tab_list} navigation tabs in '
-                    'metadata panel opened for "{item_name}"'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def are_nav_tabs_for_metadata_panel_displayed(browser_id, tab_list, item_name,
-                                              tmp_memory):
-    browser = tmp_memory[browser_id]['file_browser']
-    nav = browser.get_metadata_for(item_name).navigation
+def are_nav_tabs_for_metadata_panel_displayed(selenium, browser_id, tab_list,
+                                              modal_name, modals):
+    modal = getattr(modals(selenium[browser_id]), transform(modal_name))
+    nav = modal.navigation
     for tab in parse_seq(tab_list):
-        assert getattr(nav, tab.lower()) is not None, \
-            'no navigation tab {} found'.format(tab)
+        assert getattr(nav, tab.lower()) is not None, (
+            f'no navigation tab {tab} found')
 
 
-@when(parsers.parse('user of {browser_id} types "{text}" to attribute input '
-                    'box of new metadata basic entry in metadata panel '
-                    'opened for "{item_name}"'))
-@then(parsers.parse('user of {browser_id} types "{text}" to attribute input '
-                    'box of new metadata basic entry in metadata panel '
-                    'opened for "{item_name}"'))
+@wt(parsers.re('user of (?P<browser_id>.*?) sees that there is no basic '
+               'metadata for (?P<item>file|directory)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def type_text_to_attr_input_in_new_basic_entry(browser_id, text, item_name,
-                                               tmp_memory):
-    browser = tmp_memory[browser_id]['file_browser']
-    browser.get_metadata_for(item_name).basic.new_entry.attribute = text
+def no_basic_metadata_for_item(selenium, browser_id, item, modals):
+    if item == 'file':
+        modal_name = 'File metadata'
+    else:
+        modal_name = 'Directory metadata'
+
+    modal = getattr(modals(selenium[browser_id]), transform(modal_name))
+    assert len(modal.basic.entries) == 0, ('There is basic metadata while'
+                                           ' should not be')
 
 
-@when(parsers.parse('user of {browser_id} types "{text}" to value input '
-                    'box of new metadata basic entry in metadata panel '
-                    'opened for "{item_name}"'))
-@then(parsers.parse('user of {browser_id} types "{text}" to value input '
-                    'box of new metadata basic entry in metadata panel '
-                    'opened for "{item_name}"'))
+@wt(parsers.parse('user of {browser_id} types "{text}" to key input '
+                  'box of new metadata basic entry in "{modal_name}" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def type_text_to_val_input_in_new_basic_entry(browser_id, text, item_name,
-                                              tmp_memory):
-    browser = tmp_memory[browser_id]['file_browser']
-    browser.get_metadata_for(item_name).basic.new_entry.value = text
+def type_text_to_attr_input_in_new_basic_entry(selenium, browser_id, text,
+                                               modal_name, modals):
+    modal = getattr(modals(selenium[browser_id]), transform(modal_name))
+    modal.basic.new_entry.key = text
+    press_tab_on_active_element(selenium, browser_id)
 
 
-@when(parsers.parse('user of {browser_id} clicks on "{button_name}" button '
-                    'in metadata panel opened for "{item_name}"'))
-@then(parsers.parse('user of {browser_id} clicks on "{button_name}" button '
-                    'in metadata panel opened for "{item_name}"'))
+@wt(parsers.parse('user of {browser_id} types "{text}" to value input '
+                  'box of new metadata basic entry in "{modal_name}" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_button_in_metadata_panel(browser_id, button_name,
-                                      item_name, tmp_memory):
-    browser = tmp_memory[browser_id]['file_browser']
-    metadata_row = browser.get_metadata_for(item_name)
-    btn = getattr(metadata_row, button_name.lower().replace(' ', '_'))()
-    btn.click()
+def type_text_to_val_input_in_new_basic_entry(selenium, browser_id, text,
+                                              modal_name, modals):
+    modal = getattr(modals(selenium[browser_id]), transform(modal_name))
+    modal.basic.new_entry.value = text
 
 
-@when(parsers.parse('user of {browser_id} sees that "{button_name}" button '
-                    'in metadata panel opened for "{item_name}" is disabled'))
-@then(parsers.parse('user of {browser_id} sees that "{button_name}" button '
-                    'in metadata panel opened for "{item_name}" is disabled'))
+@wt(parsers.parse('user of browser types "{text}" to value input box of '
+                  'attribute "{attribute_name}" metadata basic entry in'
+                  ' "{modal_name}" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_btn_disabled_in_metadata_footer(browser_id, button_name,
-                                           item_name, tmp_memory):
-    browser = tmp_memory[browser_id]['file_browser']
-    metadata_row = browser.get_metadata_for(item_name)
-    btn = getattr(metadata_row, button_name.lower().replace(' ', '_'))()
-    assert not btn.is_enabled()
+def type_text_to_val_of_attr_in_new_basic_entry(selenium, browser_id, text,
+                                                modal_name, modals,
+                                                attribute_name):
+    modal = getattr(modals(selenium[browser_id]), transform(modal_name))
+    modal.basic.entries[attribute_name].value = text
 
 
-@when(parsers.parse('user of {browser_id} should not see basic metadata entry '
-                    'with attribute named "{attribute_name}" in metadata panel '
-                    'opened for "{item_name}"'))
-@then(parsers.parse('user of {browser_id} should not see basic metadata entry '
-                    'with attribute named "{attribute_name}" in metadata panel '
-                    'opened for "{item_name}"'))
+@wt(parsers.parse('user of {browser_id} sees basic metadata entry '
+                  'with attribute named "{attr_name}" and value "{attr_val}" '
+                  'in "{modal_name}" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_there_is_no_such_meta_record(browser_id, attribute_name,
-                                        item_name, tmp_memory):
-    browser = tmp_memory[browser_id]['file_browser']
-    metadata_row = browser.get_metadata_for(item_name)
-    assert attribute_name not in metadata_row.basic.entries, \
-        'metadata entry "{}" found, while should not be'.format(attribute_name)
+def assert_there_is_such_basic_meta_record(selenium, browser_id, attr_name,
+                                           attr_val, modal_name, modals):
+    modal = getattr(modals(selenium[browser_id]), transform(modal_name))
+    err_msg = f'no metadata entry "{attr_name}" with value "{attr_val}" found'
+    assert modal.basic.entries[attr_name].value == attr_val, err_msg
 
 
-@when(parsers.parse('user of {browser_id} should see basic metadata entry '
-                    'with attribute named "{attr_name}" and value "{attr_val}" '
-                    'in metadata panel opened for "{item_name}"'))
-@then(parsers.parse('user of {browser_id} should see basic metadata entry '
-                    'with attribute named "{attr_name}" and value "{attr_val}" '
-                    'in metadata panel opened for "{item_name}"'))
+@wt(parsers.parse('user of {browser_id} does not see basic metadata entry '
+                  'with attribute named "{attribute_name}" in '
+                  '"{modal_name}" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_there_is_such_meta_record(browser_id, attr_name, attr_val,
-                                     item_name, tmp_memory):
-    browser = tmp_memory[browser_id]['file_browser']
-    metadata_row = browser.get_metadata_for(item_name)
-    err_msg = 'no metadata entry "{}" with value "{}" found'.format(attr_name,
-                                                                    attr_val)
-    assert metadata_row.basic.entries[attr_name].value == attr_val, err_msg
+def assert_there_is_no_such_meta_record(selenium, browser_id, attribute_name,
+                                        modal_name, modals):
+    modal = getattr(modals(selenium[browser_id]), transform(modal_name))
+    err_msg = f'metadata entry {attribute_name} found while should not be'
+    assert attribute_name not in modal.basic.entries, err_msg
 
 
-@when(parsers.parse('user of {browser_id} should not see any basic metadata '
-                    'entry in metadata panel opened for "{item_name}"'))
-@then(parsers.parse('user of {browser_id} should not see any basic metadata '
-                    'entry in metadata panel opened for "{item_name}"'))
+@wt(parsers.parse('user of {browser_id} sees that edited attribute key in '
+                  '"{modal_name}" modal is highlighted as invalid'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_lack_of_metadata_entries(browser_id, item_name, tmp_memory):
-    browser = tmp_memory[browser_id]['file_browser']
-    metadata_row = browser.get_metadata_for(item_name)
-    entries = metadata_row.basic.entries
-    assert entries.count() == 0, \
-        'found metadata entries for "{}" while not expected'.format(item_name)
+def assert_entered_attr_key_is_invalid(selenium, browser_id, modals,
+                                       modal_name):
+    modal = getattr(modals(selenium[browser_id]), transform(modal_name))
+    entry = modal.basic.find_edited_entry()
+    assert entry.is_invalid(), 'Entry is valid but should not be'
 
 
-@when(parsers.parse('user of {browser_id} clicks on delete basic metadata entry '
-                    'icon for basic metadata entry with attribute named '
-                    '"{attr_name}" in metadata panel opened for "{item_name}"'))
-@then(parsers.parse('user of {browser_id} clicks on delete basic metadata entry '
-                    'icon for basic metadata entry with attribute named '
-                    '"{attr_name}" in metadata panel opened for "{item_name}"'))
+@wt(parsers.parse('user of {browser_id} cleans key input box of edited '
+                  'metadata basic entry in "{modal_name}" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_del_metadata_record_button(browser_id, attr_name, item_name,
-                                        tmp_memory):
-    browser = tmp_memory[browser_id]['file_browser']
-    browser.get_metadata_for(item_name).basic.entries[attr_name].remove()
+def clean_key_input_of_edited_basic_entry(selenium, browser_id, modals,
+                                          modal_name):
+    modal = getattr(modals(selenium[browser_id]), transform(modal_name))
+    entry = modal.basic.find_edited_entry()
+    entry.edit_key = ''
 
 
-@when(parsers.parse('user of {browser_id} clicks on add basic metadata '
-                    'entry icon in metadata panel opened for "{item_name}"'))
-@then(parsers.parse('user of {browser_id} clicks on add basic metadata '
-                    'entry icon in metadata panel opened for "{item_name}"'))
+@wt(parsers.parse('user of {browser_id} types "{text}" to attribute input '
+                  'box of edited metadata basic entry in '
+                  '"{modal_name}" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_add_meta_rec_btn_in_metadata_panel(browser_id, item_name,
-                                                tmp_memory):
-    browser = tmp_memory[browser_id]['file_browser']
-    browser.get_metadata_for(item_name).basic.new_entry.add()
+def clean_key_input_of_edited_basic_entry(selenium, browser_id, modals, text,
+                                          modal_name):
+    modal = getattr(modals(selenium[browser_id]), transform(modal_name))
+    entry = modal.basic.find_edited_entry()
+    entry.edit_key = text
 
 
-@when(parsers.parse('user of {browser_id} sees that edited attribute key in '
-                    'metadata panel opened for "{item_name}" is highlighted '
-                    'as invalid'))
-@then(parsers.parse('user of {browser_id} sees that edited attribute key in '
-                    'metadata panel opened for "{item_name}" is highlighted '
-                    'as invalid'))
+@wt(parsers.parse('user of {browser_id} clicks on delete basic metadata entry '
+                  'icon for basic metadata entry with attribute named '
+                  '"{attr_name}" in "{modal_name}" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_entered_attr_key_is_invalid(browser_id, item_name, tmp_memory):
-    browser = tmp_memory[browser_id]['file_browser']
-    entry = browser.get_metadata_for(item_name).basic.new_entry
-    assert not entry.is_valid(), \
-        'basic metadata new entry for "{}" is valid, ' \
-        'while it should not'.format(item_name)
+def click_on_del_metadata_record_button(selenium, browser_id, attr_name,
+                                        modal_name, modals):
+    modal = getattr(modals(selenium[browser_id]), transform(modal_name))
+    entry = modal.basic.entries[attr_name]
+    entry.remove()
 
 
-@when(parsers.parse('user of {browser_id} clicks on {tab_name} navigation '
-                    'tab in metadata panel opened for "{item_name}"'))
-@then(parsers.parse('user of {browser_id} clicks on {tab_name} navigation '
-                    'tab in metadata panel opened for "{item_name}"'))
+@wt(parsers.parse('user of {browser_id} clicks on {tab_name} navigation '
+                  'tab in "{modal_name}" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_navigation_tab_in_metadata_panel(browser_id, tab_name,
-                                              item_name, tmp_memory):
-    browser = tmp_memory[browser_id]['file_browser']
-    tab = getattr(browser.get_metadata_for(item_name).navigation,
-                  tab_name.lower())
+def click_on_navigation_tab_in_metadata_panel(selenium, browser_id, tab_name,
+                                              modal_name, modals):
+    modal = getattr(modals(selenium[browser_id]), transform(modal_name))
+    tab = getattr(modal.navigation, tab_name.lower())
     tab()
 
 
-@when(parsers.re('user of (?P<browser_id>.+?) sees that (?P<tab_name>JSON|RDF) '
-                 'textarea placed in metadata panel opened for '
-                 '"(?P<item_name>.+?)" contains (?P<expected_metadata>.*)'))
-@then(parsers.re('user of (?P<browser_id>.+?) sees that (?P<tab_name>JSON|RDF) '
-                 'textarea placed in metadata panel opened for '
-                 '"(?P<item_name>.+?)" contains (?P<expected_metadata>.*)'))
+@wt(parsers.re('user of (?P<browser_id>.+?) types "(?P<text>.+?)" '
+               'to (?P<tab>JSON|RDF) textarea in "(?P<modal_name>.+?)" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_textarea_contains_record(browser_id, expected_metadata, tab_name,
-                                    item_name, tmp_memory):
-    browser = tmp_memory[browser_id]['file_browser']
-    metadata_row = browser.get_metadata_for(item_name)
-    tab = getattr(metadata_row, tab_name.lower())
+def type_text_to_metadata_textarea(selenium, browser_id, text, tab, modal_name,
+                                   modals):
+    modal = getattr(modals(selenium[browser_id]), transform(modal_name))
+    tab = getattr(modal, tab.lower())
+    tab.text_area = text
+
+
+@wt(parsers.re('user of (?P<browser_id>.+?) sees that (?P<tab_name>JSON|RDF) '
+               'textarea in "(?P<modal_name>.+?)" modal '
+               'contains (?P<expected_metadata>.*)'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_textarea_contains_record(selenium, browser_id, expected_metadata,
+                                    tab_name, modal_name, modals):
+    modal = getattr(modals(selenium[browser_id]), transform(modal_name))
+    tab = getattr(modal, tab_name.lower())
     if tab_name.lower() == 'json':
         expected_metadata = json.loads(expected_metadata)
         metadata = json.loads(tab.text_area)
-        assert all(metadata.get(key, None) == value 
-                   for key, value in expected_metadata.items()), \
-            'got {} instead of expected {}'.format(metadata, expected_metadata)
+        err_msg = f'got {metadata} instead of expected {expected_metadata}'
+        assert all(metadata.get(key, None) == value for key, value in
+                   expected_metadata.items()), err_msg
     else:
-        assert expected_metadata in tab.text_area, \
-            'text in textarea : {} does not contain {}'.format(tab.text_area,
-                                                               expected_metadata)
+        err_msg = (f'text in textarea: {tab.text_area} does not contain '
+                   f'{expected_metadata}')
+        assert expected_metadata in tab.text_area, err_msg
 
 
-@when(parsers.re('user of (?P<browser_id>.+?) sees that content of '
-                 '(?P<tab>JSON|RDF) textarea placed in metadata panel opened '
-                 'for "(?P<item_name>.+?)" is equal to: "(?P<content>.*?)"'))
-@then(parsers.re('user of (?P<browser_id>.+?) sees that content of '
-                 '(?P<tab>JSON|RDF) textarea placed in metadata panel opened '
-                 'for "(?P<item_name>.+?)" is equal to: "(?P<content>.*?)"'))
+@wt(parsers.re('user of (?P<browser_id>.+?) sees that (?P<tab_name>JSON|RDF) '
+               'textarea in "(?P<modal_name>.+?)" modal is empty'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_textarea_content_is_eq_to(browser_id, item_name, content,
-                                     tab, tmp_memory):
-    browser = tmp_memory[browser_id]['file_browser']
-    metadata_row = browser.get_metadata_for(item_name)
-    tab = getattr(metadata_row, tab.lower())
-    assert tab.text_area == content, \
-        'expected: {}, got: {} in textarea for ' \
-        'metadata in {}'.format(content, tab.text_area, tab)
+def assert_textarea_is_empty_for_metadata(selenium, browser_id, tab_name,
+                                          modal_name, modals):
+    modal = getattr(modals(selenium[browser_id]), transform(modal_name))
+    tab = getattr(modal, tab_name.lower())
+    err_msg = f'{tab_name} textarea is not empty'
+    assert tab.text_area == '', err_msg
 
 
-@when(parsers.re('user of (?P<browser_id>.+?) types "(?P<text>.+?)" '
-                 'to (?P<tab>JSON|RDF) textarea placed in metadata panel '
-                 'opened for "(?P<item_name>.+?)"'))
-@then(parsers.re('user of (?P<browser_id>.+?) types "(?P<text>.+?)" '
-                 'to (?P<tab>JSON|RDF) textarea placed in metadata panel '
-                 'opened for "(?P<item_name>.+?)"'))
+@wt(parsers.re('user of (?P<browser_id>.+?) cleans (?P<tab_name>JSON|RDF) '
+               'textarea in "(?P<modal_name>.+?)" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def type_text_to_metadata_textarea(browser_id, item_name, text, tab,
-                                   tmp_memory):
-    browser = tmp_memory[browser_id]['file_browser']
-    metadata_row = browser.get_metadata_for(item_name)
-    tab = getattr(metadata_row, tab.lower())
-    tab.text_area = text
+def clean_tab_textarea_in_metadata_modal(selenium, browser_id, tab_name,
+                                         modal_name, modals):
+    modal = getattr(modals(selenium[browser_id]), transform(modal_name))
+    tab = getattr(modal, tab_name.lower())
+    tab.text_area = ' '
+    press_backspace_on_active_element(selenium, browser_id)
+
+
+@wt(parsers.parse('user of {browser_id} sees that "{button_name}" button '
+                  'in "{modal_name}" modal is disabled'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_btn_disabled_in_metadata_footer(selenium, browser_id, button_name,
+                                           modal_name, modals):
+    modal = getattr(modals(selenium[browser_id]), transform(modal_name))
+    btn = getattr(modal, button_name.lower().replace(' ', '_'))
+    assert not btn.is_enabled()
+
+
+@wt(parsers.re('user of (?P<browser_id>.+?) sees that (?P<tab_name>JSON|RDF) '
+               'textarea is highlighted as invalid '
+               'in "(?P<modal_name>.+?)" modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_entered_json_rdf_is_invalid(selenium, browser_id, modals, modal_name,
+                                       tab_name):
+    modal = getattr(modals(selenium[browser_id]), transform(modal_name))
+    entry = getattr(modal, transform(tab_name))
+    assert entry.is_invalid(), 'Entry is valid but should not be'

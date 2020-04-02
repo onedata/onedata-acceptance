@@ -41,7 +41,7 @@ def assert_not_tool_icon_for_file_in_file_browser(browser_id, tool_type,
     browser = tmp_memory[browser_id]['file_browser']
     err_msg = ('{} tool for {} in file browser visible, '
                'while should not be'.format(tool_type, item_name))
-    assert not browser.files[item_name].is_tool_visible(tool_type), err_msg
+    assert not browser.data[item_name].is_tool_visible(tool_type), err_msg
 
 
 @when(parsers.parse('user of {browser_id} sees {tool_type} '
@@ -54,7 +54,7 @@ def assert_tool_icon_for_file_in_file_browser(browser_id, tool_type,
     browser = tmp_memory[browser_id]['file_browser']
     err_msg = '{} tool for {} in file browser not visible'.format(tool_type,
                                                                   item_name)
-    assert browser.files[item_name].is_tool_visible(tool_type), err_msg
+    assert browser.data[item_name].is_tool_visible(tool_type), err_msg
 
 
 @when(parsers.parse('user of {browser_id} clicks on {tool_type} tool icon '

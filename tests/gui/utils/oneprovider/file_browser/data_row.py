@@ -22,9 +22,8 @@ class DataRow(PageObject):
 
     _icon = WebElement('.file-icon.one-icon')
     menu_button = Button('.fb-table-col-actions-menu .menu-toggle')
-
     # TODO: change test because of a new gui
-    # _metadata_tool = WebElement('.file-tool-metadata')
+    _metadata_tool = WebElement('.oneicon-browser-metadata')
     # _share_tool = WebElement('.file-tool-share')
 
     def __str__(self):
@@ -44,8 +43,11 @@ class DataRow(PageObject):
         return 'share' in self._icon.get_attribute('class')
 
     def is_tool_visible(self, name):
-        tool = getattr(self, '_{tool}_tool'.format(tool=name))
-        return '25p' in tool.get_attribute('class')
+        try:
+            getattr(self, '_{tool}_tool'.format(tool=name))
+            return True
+        except RuntimeError:
+            return False
 
     def click_on_tool(self, name):
         tool = getattr(self, '_{tool}_tool'.format(tool=name))

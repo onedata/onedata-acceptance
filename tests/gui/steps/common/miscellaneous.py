@@ -48,6 +48,20 @@ def press_enter_on_active_element(selenium, browser_id):
     driver.switch_to.active_element.send_keys(Keys.RETURN)
 
 
+@when(parsers.parse('user of {browser_id} presses tab on keyboard'))
+@then(parsers.parse('user of {browser_id} presses tab on keyboard'))
+def press_tab_on_active_element(selenium, browser_id):
+    driver = selenium[browser_id]
+    driver.switch_to.active_element.send_keys(Keys.TAB)
+
+
+@when(parsers.parse('user of {browser_id} presses backspace on keyboard'))
+@then(parsers.parse('user of {browser_id} presses backspace on keyboard'))
+def press_backspace_on_active_element(selenium, browser_id):
+    driver = selenium[browser_id]
+    driver.switch_to.active_element.send_keys(Keys.BACKSPACE)
+
+
 @when(parsers.parse('user of {browser_id} should see that the page title '
                     'contains "{text}"'))
 @then(parsers.parse('user of {browser_id} should see that the page title '

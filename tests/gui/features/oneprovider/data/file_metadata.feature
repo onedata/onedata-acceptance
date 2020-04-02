@@ -20,304 +20,245 @@ Feature: Basic data tab operations on file metadata in file browser
     And user opened browser window
     And user of browser opened onezone page
     And user of browser logged as user1 to Onezone service
-    And opened oneprovider-1 Oneprovider view in web GUI by user of browser
-
 
   Scenario: Open metadata panel and check presence of navigation tabs
-    When user of browser uses spaces select to change data space to "space1"
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser selects "file1" item from file browser with pressed ctrl
-    And user of browser clicks the button from top menu bar with tooltip "Edit metadata"
-    And user of browser sees that metadata panel for "file1" in files list has appeared
-    Then user of browser sees [Basic, JSON, RDF] navigation tabs in metadata panel opened for "file1"
+    And user of browser clicks on menu for "file1" file in file browser
+    And user of browser clicks "Metadata" option in data row menu in file browser
+    And user of browser sees that "File metadata" modal has appeared
+    Then user of browser sees [Basic, JSON, RDF] navigation tabs in "File metadata" modal
 
 
-  Scenario: Edit metadata icon is visible if file has basic metadata entry
-    When user of browser uses spaces select to change data space to "space1"
+  Scenario: Metadata icon is visible if file has basic metadata entry
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
 
     And user of browser does not see metadata icon for "file1" in file browser
-    And user of browser selects "file1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "file1" in file browser
-    And user of browser sees that metadata panel for "file1" in files list has appeared
-    And user of browser types "attr" to attribute input box of new metadata basic entry in metadata panel opened for "file1"
-    And user of browser types "val" to value input box of new metadata basic entry in metadata panel opened for "file1"
-    And user of browser clicks on "Save all changes" button in metadata panel opened for "file1"
-    And user of browser sees an info notify with text matching to: .*[Mm]etadata.*saved.*successfully.*
-    And user of browser refreshes site
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser opens "File metadata" modal for "file1" file
+    And user of browser types "attr" to key input box of new metadata basic entry in "File metadata" modal
+    And user of browser types "val" to value input box of attribute "attr" metadata basic entry in "File metadata" modal
+    And user of browser clicks on "Save all" button in modal "File metadata"
     Then user of browser sees metadata icon for "file1" in file browser
 
 
-  Scenario: Invalid basic metadata entry for file should be colored red
-    When user of browser uses spaces select to change data space to "space1"
+  Scenario: Invalid entry for basic metadata entry for file is highlighted
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser selects "file1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "file1" in file browser
-    And user of browser sees that metadata panel for "file1" in files list has appeared
-    And user of browser types "attr" to attribute input box of new metadata basic entry in metadata panel opened for "file1"
-    Then user of browser sees that edited attribute key in metadata panel opened for "file1" is highlighted as invalid
+    # duplicate key
+    And user of browser opens "File metadata" modal for "file1" file
+    And user of browser types "attr" to key input box of new metadata basic entry in "File metadata" modal
+    And user of browser types "attr" to key input box of new metadata basic entry in "File metadata" modal
+    Then user of browser sees that edited attribute key in "File metadata" modal is highlighted as invalid
+
+    # 'onedata_' key
+    And user of browser cleans key input box of edited metadata basic entry in "File metadata" modal
+    And user of browser types "onedata_item" to key input box of new metadata basic entry in "File metadata" modal
+    Then user of browser sees that edited attribute key in "File metadata" modal is highlighted as invalid
 
 
-  Scenario: Add metadata to file (clicks both add icon and "Save all changes" button)
-    When user of browser uses spaces select to change data space to "space1"
-    And user of browser sees file browser in data tab in Oneprovider page
+    Scenario: User cannot save changes while entry is invalid
+      When user of browser clicks "space1" on the spaces list in the sidebar
+      And user of browser clicks Data of "space1" in the sidebar
+      And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser selects "file1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "file1" in file browser
-    And user of browser sees that metadata panel for "file1" in files list has appeared
-    And user of browser types "attr" to attribute input box of new metadata basic entry in metadata panel opened for "file1"
-    And user of browser types "val" to value input box of new metadata basic entry in metadata panel opened for "file1"
-    And user of browser clicks on add basic metadata entry icon in metadata panel opened for "file1"
-    And user of browser clicks on "Save all changes" button in metadata panel opened for "file1"
-    And user of browser sees an info notify with text matching to: .*[Mm]etadata.*saved.*successfully.*
+      # duplicate key
+      And user of browser opens "File metadata" modal for "file1" file
+      And user of browser types "attr" to key input box of new metadata basic entry in "File metadata" modal
+      And user of browser types "attr" to key input box of new metadata basic entry in "File metadata" modal
 
-    And user of browser refreshes site
-    And user of browser sees file browser in data tab in Oneprovider page
-    And user of browser sees that metadata panel for "file1" in files list has disappeared
-    And user of browser selects "file1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "file1" in file browser
-    And user of browser sees that metadata panel for "file1" in files list has appeared
-    Then user of browser should see basic metadata entry with attribute named "attr" and value "val" in metadata panel opened for "file1"
+      Then user of browser sees that "Save all" button in "File metadata" modal is disabled
 
 
-  Scenario: Add metadata to file (clicks only "Save all changes" button)
-    When user of browser uses spaces select to change data space to "space1"
-    And user of browser sees file browser in data tab in Oneprovider page
+    Scenario: Add basic metadata to file and check their presence after reopening
+      When user of browser clicks "space1" on the spaces list in the sidebar
+      And user of browser clicks Data of "space1" in the sidebar
+      And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser selects "file1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "file1" in file browser
-    And user of browser sees that metadata panel for "file1" in files list has appeared
-    And user of browser types "attr" to attribute input box of new metadata basic entry in metadata panel opened for "file1"
-    And user of browser types "val" to value input box of new metadata basic entry in metadata panel opened for "file1"
-    And user of browser clicks on "Save all changes" button in metadata panel opened for "file1"
-    And user of browser sees an info notify with text matching to: .*[Mm]etadata.*saved.*successfully.*
+      And user of browser opens "File metadata" modal for "file1" file
+      And user of browser adds basic entry with key "attr" and value "val" for file
+      And user of browser clicks on "Save all" button in modal "File metadata"
+      Then user of browser sees metadata icon for "file1" in file browser
 
-    And user of browser refreshes site
-    And user of browser sees file browser in data tab in Oneprovider page
-    And user of browser sees that metadata panel for "file1" in files list has disappeared
-    And user of browser selects "file1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "file1" in file browser
-    And user of browser sees that metadata panel for "file1" in files list has appeared
-    Then user of browser should see basic metadata entry with attribute named "attr" and value "val" in metadata panel opened for "file1"
+      And user of browser opens "File metadata" modal for "file1" file
+      Then user of browser sees basic metadata entry with attribute named "attr" and value "val" in "File metadata" modal
 
 
-  Scenario: Delete single basic metadata entry for file
-    When user of browser uses spaces select to change data space to "space1"
-    And user of browser sees file browser in data tab in Oneprovider page
+    Scenario: Delete one of two basic metadata entry for file
+      When user of browser clicks "space1" on the spaces list in the sidebar
+      And user of browser clicks Data of "space1" in the sidebar
+      And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser selects "file1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "file1" in file browser
-    And user of browser sees that metadata panel for "file1" in files list has appeared
-    And user of browser types "attr" to attribute input box of new metadata basic entry in metadata panel opened for "file1"
-    And user of browser types "val" to value input box of new metadata basic entry in metadata panel opened for "file1"
-    And user of browser clicks on add basic metadata entry icon in metadata panel opened for "file1"
-    And user of browser clicks on "Save all changes" button in metadata panel opened for "file1"
-    And user of browser sees an info notify with text matching to: .*[Mm]etadata.*saved.*successfully.*
+      And user of browser opens "File metadata" modal for "file1" file
+      And user of browser adds basic entry with key "attr1" and value "val1" for file
+      And user of browser adds basic entry with key "attr2" and value "val2" for file
+      And user of browser clicks on "Save all" button in modal "File metadata"
+      And user of browser opens "File metadata" modal for "file1" file
 
-    And user of browser refreshes site
-    And user of browser sees file browser in data tab in Oneprovider page
-    And user of browser sees that metadata panel for "file1" in files list has disappeared
-    And user of browser selects "file1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "file1" in file browser
-    And user of browser sees that metadata panel for "file1" in files list has appeared
-    And user of browser clicks on delete basic metadata entry icon for basic metadata entry with attribute named "attr" in metadata panel opened for "file1"
-    Then user of browser should not see basic metadata entry with attribute named "attr" in metadata panel opened for "file1"
+      And user of browser clicks on delete basic metadata entry icon for basic metadata entry with attribute named "attr1" in "File metadata" modal
+      Then user of browser does not see basic metadata entry with attribute named "attr1" in "File metadata" modal
+      And user of browser sees basic metadata entry with attribute named "attr2" and value "val2" in "File metadata" modal
+      And user of browser clicks on "Save all" button in modal "File metadata"
 
-
-  Scenario: User should not see any metadata for file after clicking "Remove metadata" button
-    When user of browser uses spaces select to change data space to "space1"
-    And user of browser sees file browser in data tab in Oneprovider page
-
-    And user of browser selects "file1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "file1" in file browser
-    And user of browser sees that metadata panel for "file1" in files list has appeared
-    And user of browser types "attr" to attribute input box of new metadata basic entry in metadata panel opened for "file1"
-    And user of browser types "val" to value input box of new metadata basic entry in metadata panel opened for "file1"
-    And user of browser clicks on "Save all changes" button in metadata panel opened for "file1"
-    And user of browser sees an info notify with text matching to: .*[Mm]etadata.*saved.*successfully.*
-
-    And user of browser refreshes site
-    And user of browser sees file browser in data tab in Oneprovider page
-    And user of browser sees that metadata panel for "file1" in files list has disappeared
-    And user of browser selects "file1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "file1" in file browser
-    And user of browser sees that metadata panel for "file1" in files list has appeared
-    And user of browser should see basic metadata entry with attribute named "attr" and value "val" in metadata panel opened for "file1"
-    And user of browser clicks on "Remove metadata" button in metadata panel opened for "file1"
-    And user of browser sees an info notify with text matching to: .*[Dd]eleted.*metadata.*file1.*
-    And user of browser sees that metadata panel for "file1" in files list has disappeared
-    And user of browser selects "file1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "file1" in file browser
-    And user of browser sees that metadata panel for "file1" in files list has appeared
-    Then user of browser should not see basic metadata entry with attribute named "attr" in metadata panel opened for "file1"
+      # reopen modal for assurance
+      And user of browser opens "File metadata" modal for "file1" file
+      Then user of browser does not see basic metadata entry with attribute named "attr1" in "File metadata" modal
+      And user of browser sees basic metadata entry with attribute named "attr2" and value "val2" in "File metadata" modal
 
 
-  Scenario: User starts adding metadata to file but discards changes
-    When user of browser uses spaces select to change data space to "space1"
-    And user of browser sees file browser in data tab in Oneprovider page
+    Scenario: Delete basic metadata for file after saving it
+      When user of browser clicks "space1" on the spaces list in the sidebar
+      And user of browser clicks Data of "space1" in the sidebar
+      And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser selects "file1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "file1" in file browser
-    And user of browser sees that metadata panel for "file1" in files list has appeared
-    And user of browser types "attr" to attribute input box of new metadata basic entry in metadata panel opened for "file1"
-    And user of browser types "val" to value input box of new metadata basic entry in metadata panel opened for "file1"
-    And user of browser clicks on add basic metadata entry icon in metadata panel opened for "file1"
-    And user of browser clicks on "Discard changes" button in metadata panel opened for "file1"
-    And user of browser sees that metadata panel for "file1" in files list has disappeared
+      And user of browser opens "File metadata" modal for "file1" file
+      And user of browser adds basic entry with key "attr" and value "val" for file
+      And user of browser clicks on "Save all" button in modal "File metadata"
 
-    And user of browser selects "file1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "file1" in file browser
-    And user of browser sees that metadata panel for "file1" in files list has appeared
-    Then user of browser should not see basic metadata entry with attribute named "attr" in metadata panel opened for "file1"
+      And user of browser opens "File metadata" modal for "file1" file
+      And user of browser clicks on delete basic metadata entry icon for basic metadata entry with attribute named "attr" in "File metadata" modal
+      Then user of browser sees that there is no basic metadata for file
+      And user of browser clicks on "Save all" button in modal "File metadata"
+      Then user of browser does not see metadata icon for "file1" in file browser
 
-
-  Scenario: Add valid metadata to file in JSON format
-    When user of browser uses spaces select to change data space to "space1"
-    And user of browser sees file browser in data tab in Oneprovider page
-
-    And user of browser selects "file1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "file1" in file browser
-    And user of browser sees that metadata panel for "file1" in files list has appeared
-
-    And user of browser clicks on JSON navigation tab in metadata panel opened for "file1"
-    And user of browser types "{"id": 1}" to JSON textarea placed in metadata panel opened for "file1"
-    And user of browser clicks on "Save all changes" button in metadata panel opened for "file1"
-    And user of browser sees an info notify with text matching to: .*[Mm]etadata.*saved.*successfully.*
-    And user of browser refreshes site
-    And user of browser sees file browser in data tab in Oneprovider page
-    And user of browser sees that metadata panel for "file1" in files list has disappeared
-
-    And user of browser selects "file1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "file1" in file browser
-    And user of browser sees that metadata panel for "file1" in files list has appeared
-    And user of browser clicks on JSON navigation tab in metadata panel opened for "file1"
-    Then user of browser sees that JSON textarea placed in metadata panel opened for "file1" contains {"id": 1}
+      # reopen modal for assurance
+      And user of browser opens "File metadata" modal for "file1" file
+      Then user of browser sees that there is no basic metadata for file
 
 
-  Scenario: Delete file metadata in JSON format
-    When user of browser uses spaces select to change data space to "space1"
-    And user of browser sees file browser in data tab in Oneprovider page
+    Scenario: Delete single basic metadata entry for file (one visit in modal)
+      When user of browser clicks "space1" on the spaces list in the sidebar
+      And user of browser clicks Data of "space1" in the sidebar
+      And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser selects "file1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "file1" in file browser
-    And user of browser sees that metadata panel for "file1" in files list has appeared
+      And user of browser opens "File metadata" modal for "file1" file
+      And user of browser adds basic entry with key "attr" and value "val" for file
+      And user of browser sees basic metadata entry with attribute named "attr" and value "val" in "File metadata" modal
+      And user of browser clicks on delete basic metadata entry icon for basic metadata entry with attribute named "attr" in "File metadata" modal
+      Then user of browser sees that there is no basic metadata for file
 
-    And user of browser clicks on JSON navigation tab in metadata panel opened for "file1"
-    And user of browser types "{"id": 1}" to JSON textarea placed in metadata panel opened for "file1"
-    And user of browser clicks on "Save all changes" button in metadata panel opened for "file1"
-    And user of browser sees an info notify with text matching to: .*[Mm]etadata.*saved.*successfully.*
-    And user of browser refreshes site
-    And user of browser sees file browser in data tab in Oneprovider page
-    And user of browser sees that metadata panel for "file1" in files list has disappeared
+      And user of browser clicks on "Close" button in modal "File metadata"
+      Then user of browser does not see metadata icon for "file1" in file browser
 
-    And user of browser selects "file1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "file1" in file browser
-    And user of browser sees that metadata panel for "file1" in files list has appeared
-    And user of browser clicks on JSON navigation tab in metadata panel opened for "file1"
-    And user of browser sees that JSON textarea placed in metadata panel opened for "file1" contains {"id": 1}
-    And user of browser clicks on "Remove metadata" button in metadata panel opened for "file1"
-    And user of browser sees an info notify with text matching to: .*[Dd]eleted.*metadata.*file1.*
-    And user of browser sees that metadata panel for "file1" in files list has disappeared
-
-    And user of browser selects "file1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "file1" in file browser
-    And user of browser sees that metadata panel for "file1" in files list has appeared
-    And user of browser clicks on JSON navigation tab in metadata panel opened for "file1"
-    Then user of browser sees that content of JSON textarea placed in metadata panel opened for "file1" is equal to: "null"
+      And user of browser opens "File metadata" modal for "file1" file
+      Then user of browser sees that there is no basic metadata for file
 
 
-  Scenario: Discard changes while entering metadata for file in JSON format
-    When user of browser uses spaces select to change data space to "space1"
-    And user of browser sees file browser in data tab in Oneprovider page
+    Scenario: User starts adding basic metadata to file but discards changes
+      When user of browser clicks "space1" on the spaces list in the sidebar
+      And user of browser clicks Data of "space1" in the sidebar
+      And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser selects "file1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "file1" in file browser
-    And user of browser sees that metadata panel for "file1" in files list has appeared
-
-    And user of browser clicks on JSON navigation tab in metadata panel opened for "file1"
-    And user of browser types "{"id": 1}" to JSON textarea placed in metadata panel opened for "file1"
-    And user of browser clicks on "Discard changes" button in metadata panel opened for "file1"
-    And user of browser sees that metadata panel for "file1" in files list has disappeared
-
-    And user of browser selects "file1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "file1" in file browser
-    And user of browser sees that metadata panel for "file1" in files list has appeared
-    And user of browser clicks on JSON navigation tab in metadata panel opened for "file1"
-    Then user of browser sees that content of JSON textarea placed in metadata panel opened for "file1" is equal to: "null"
+      And user of browser opens "File metadata" modal for "file1" file
+      And user of browser adds basic entry with key "attr" and value "val" for file
+      And user of browser clicks on "Discard changes" button in modal "File metadata"
+      And user of browser opens "File metadata" modal for "file1" file
+      Then user of browser does not see basic metadata entry with attribute named "attr" in "File metadata" modal
 
 
-  Scenario: Add valid metadata to file in XML format
-    When user of browser uses spaces select to change data space to "space1"
-    And user of browser sees file browser in data tab in Oneprovider page
+    Scenario: Add valid metadata to file in JSON format
+      When user of browser clicks "space1" on the spaces list in the sidebar
+      And user of browser clicks Data of "space1" in the sidebar
+      And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser selects "file1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "file1" in file browser
-    And user of browser sees that metadata panel for "file1" in files list has appeared
-    And user of browser clicks on RDF navigation tab in metadata panel opened for "file1"
-    And user of browser types "<rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML>" to RDF textarea placed in metadata panel opened for "file1"
-    And user of browser clicks on "Save all changes" button in metadata panel opened for "file1"
-    And user of browser sees an info notify with text matching to: .*[Mm]etadata.*saved.*successfully.*
-    And user of browser refreshes site
-    And user of browser sees file browser in data tab in Oneprovider page
-    And user of browser sees that metadata panel for "file1" in files list has disappeared
-
-    And user of browser selects "file1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "file1" in file browser
-    And user of browser sees that metadata panel for "file1" in files list has appeared
-    And user of browser clicks on RDF navigation tab in metadata panel opened for "file1"
-    Then user of browser sees that RDF textarea placed in metadata panel opened for "file1" contains <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML>
+      And user of browser opens "File metadata" modal for "file1" file
+      And user of browser clicks on JSON navigation tab in "File metadata" modal
+      And user of browser types "{"id": 1}" to JSON textarea in "File metadata" modal
+      And user of browser clicks on "Save all" button in modal "File metadata"
+      Then user of browser sees metadata icon for "file1" in file browser
+      And user of browser opens "File metadata" modal for "file1" file
+      And user of browser clicks on JSON navigation tab in "File metadata" modal
+      Then user of browser sees that JSON textarea in "File metadata" modal contains {"id": 1}
 
 
-  Scenario: Delete file metadata in XML format
-    When user of browser uses spaces select to change data space to "space1"
-    And user of browser sees file browser in data tab in Oneprovider page
+    Scenario: User doesn't see JSON metadata and metadata icon after deleting JSON metadata
+      When user of browser clicks "space1" on the spaces list in the sidebar
+      And user of browser clicks Data of "space1" in the sidebar
+      And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser selects "file1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "file1" in file browser
-    And user of browser sees that metadata panel for "file1" in files list has appeared
+      And user of browser adds "{"id": 1}" JSON metadata for "file1" file
+      And user of browser opens JSON metadata tab for "file1" file
 
-    And user of browser clicks on RDF navigation tab in metadata panel opened for "file1"
-    And user of browser types "<rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML>" to RDF textarea placed in metadata panel opened for "file1"
-    And user of browser clicks on "Save all changes" button in metadata panel opened for "file1"
-    And user of browser sees an info notify with text matching to: .*[Mm]etadata.*saved.*successfully.*
-    And user of browser refreshes site
-    And user of browser sees file browser in data tab in Oneprovider page
-    And user of browser sees that metadata panel for "file1" in files list has disappeared
+      # remove JSON metadata
+      And user of browser sees that JSON textarea in "File metadata" modal contains {"id": 1}
+      And user of browser cleans JSON textarea in "File metadata" modal
+      And user of browser clicks on "Save all" button in modal "File metadata"
 
-    And user of browser selects "file1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "file1" in file browser
-    And user of browser sees that metadata panel for "file1" in files list has appeared
-    And user of browser clicks on RDF navigation tab in metadata panel opened for "file1"
-    And user of browser sees that RDF textarea placed in metadata panel opened for "file1" contains <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML>
-    And user of browser clicks on "Remove metadata" button in metadata panel opened for "file1"
-    And user of browser sees an info notify with text matching to: .*[Dd]eleted.*metadata.*file1.*
-    And user of browser sees that metadata panel for "file1" in files list has disappeared
-
-    And user of browser selects "file1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "file1" in file browser
-    And user of browser sees that metadata panel for "file1" in files list has appeared
-    And user of browser clicks on RDF navigation tab in metadata panel opened for "file1"
-    Then user of browser sees that content of RDF textarea placed in metadata panel opened for "file1" is equal to: ""
+      Then user of browser does not see metadata icon for "file1" in file browser
+      And user of browser opens JSON metadata tab for "file1" file
+      Then user of browser sees that JSON textarea in "File metadata" modal is empty
 
 
-  Scenario: Discard changes while entering metadata for file in XML format
-    When user of browser uses spaces select to change data space to "space1"
-    And user of browser sees file browser in data tab in Oneprovider page
+    Scenario: Discard changes while entering metadata in JSON format
+      When user of browser clicks "space1" on the spaces list in the sidebar
+      And user of browser clicks Data of "space1" in the sidebar
+      And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser selects "file1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "file1" in file browser
-    And user of browser sees that metadata panel for "file1" in files list has appeared
+      And user of browser opens JSON metadata tab for "file1" file
+      And user of browser types "{"id": 1}" to JSON textarea in "File metadata" modal
+      And user of browser clicks on "Discard changes" button in modal "File metadata"
 
-    And user of browser clicks on RDF navigation tab in metadata panel opened for "file1"
-    And user of browser types "<rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML>" to RDF textarea placed in metadata panel opened for "file1"
-    And user of browser clicks on "Discard changes" button in metadata panel opened for "file1"
-    And user of browser sees that metadata panel for "file1" in files list has disappeared
+      And user of browser opens JSON metadata tab for "file1" file
+      Then user of browser sees that JSON textarea in "File metadata" modal is empty
 
-    And user of browser selects "file1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "file1" in file browser
-    And user of browser sees that metadata panel for "file1" in files list has appeared
-    And user of browser clicks on RDF navigation tab in metadata panel opened for "file1"
-    Then user of browser sees that content of RDF textarea placed in metadata panel opened for "file1" is equal to: ""
+
+    Scenario: Invalid entry for JSON metadata entry for file is highlighted
+      When user of browser clicks "space1" on the spaces list in the sidebar
+      And user of browser clicks Data of "space1" in the sidebar
+      And user of browser sees file browser in data tab in Oneprovider page
+
+      And user of browser opens JSON metadata tab for "file1" file
+      And user of browser types "{"id": 1" to JSON textarea in "File metadata" modal
+      Then user of browser sees that JSON textarea is highlighted as invalid in "File metadata" modal
+      And user of browser sees that "Save all" button in "File metadata" modal is disabled
+
+
+    Scenario: Add valid metadata to file in XML format
+      When user of browser clicks "space1" on the spaces list in the sidebar
+      And user of browser clicks Data of "space1" in the sidebar
+      And user of browser sees file browser in data tab in Oneprovider page
+
+      And user of browser opens "File metadata" modal for "file1" file
+      And user of browser clicks on RDF navigation tab in "File metadata" modal
+      And user of browser types "<rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML>" to RDF textarea in "File metadata" modal
+      And user of browser clicks on "Save all" button in modal "File metadata"
+      Then user of browser sees metadata icon for "file1" in file browser
+      And user of browser opens "File metadata" modal for "file1" file
+      And user of browser clicks on RDF navigation tab in "File metadata" modal
+      Then user of browser sees that RDF textarea in "File metadata" modal contains <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML>
+
+
+    Scenario: User doesn't see RDF metadata and metadata icon after deleting metadata in XML format
+      When user of browser clicks "space1" on the spaces list in the sidebar
+      And user of browser clicks Data of "space1" in the sidebar
+      And user of browser sees file browser in data tab in Oneprovider page
+
+      And user of browser adds "<rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML>" RDF metadata for "file1" file
+      And user of browser opens RDF metadata tab for "file1" file
+
+      # remove RDF metadata
+      And user of browser sees that RDF textarea in "File metadata" modal contains <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML>
+      And user of browser cleans RDF textarea in "File metadata" modal
+      And user of browser clicks on "Save all" button in modal "File metadata"
+
+      Then user of browser does not see metadata icon for "file1" in file browser
+      And user of browser opens RDF metadata tab for "file1" file
+      Then user of browser sees that RDF textarea in "File metadata" modal is empty
+
+
+    Scenario: Discard changes while entering metadata for file in XML format
+      When user of browser clicks "space1" on the spaces list in the sidebar
+      And user of browser clicks Data of "space1" in the sidebar
+      And user of browser sees file browser in data tab in Oneprovider page
+
+      And user of browser opens RDF metadata tab for "file1" file
+      And user of browser types "<rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML>" to RDF textarea in "File metadata" modal
+      And user of browser clicks on "Discard changes" button in modal "File metadata"
+
+      And user of browser opens RDF metadata tab for "file1" file
+      Then user of browser sees that RDF textarea in "File metadata" modal is empty

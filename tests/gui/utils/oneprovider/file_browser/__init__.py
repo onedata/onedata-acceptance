@@ -19,7 +19,6 @@ from tests.gui.utils.core.web_elements import (WebElement, WebElementsSequence,
                                                Button)
 from tests.gui.utils.generic import iter_ahead, rm_css_cls
 from .data_row import DataRow
-from .metadata_row import MetadataRow
 from ..breadcrumbs import Breadcrumbs
 
 
@@ -33,7 +32,6 @@ class _FileBrowser(PageObject):
 
     empty_dir_msg = Label('.empty-dir-text')
     _empty_dir_icon = WebElement('.empty-dir-image')
-    _files_with_metadata = WebElementsSequence('tbody tr.first-level')
     _bottom = WebElement('.file-row-load-more')
 
     _upload_input = WebElement('.fb-upload-trigger input')
@@ -48,16 +46,6 @@ class _FileBrowser(PageObject):
             return False
         else:
             return True
-
-    def get_metadata_for(self, name):
-        for item1, item2 in iter_ahead(self._files_with_metadata):
-            if 'file-row' in item1.get_attribute('class'):
-                if 'file-row' not in item2.get_attribute('class'):
-                    if DataRow(self.driver, item1, self).name == name:
-                        return MetadataRow(self.driver, item2, self)
-        else:
-            raise RuntimeError('no metadata row for "{name}" in {item} '
-                               'found'.format(name=name, item=self))
 
     def scroll_to_bottom(self):
         self.driver.execute_script('arguments[0].scrollIntoView();',

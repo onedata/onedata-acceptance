@@ -18,6 +18,7 @@ from .delete_modal import DeleteModal
 from .login import LoginFormModal
 from .deploying_cluster import ClusterDeploymentModal
 from .menu_modal import MenuModal
+from .metadata_modal import MetadataModal
 from .rename_modal import RenameModal
 from .revoke_space_support import RevokeSpaceSupportModal
 from .edit_permissions import EditPermissionsModal
@@ -92,6 +93,7 @@ class Modals(object):
     rename_modal = WebItem('.modal-dialog', cls=RenameModal)
     menu_modal = WebItem('.webui-popover-content .one-webui-popover',
                          cls=MenuModal)
+    file_metadata = WebItem('.modal-dialog', cls=MetadataModal)
 
     def __init__(self, driver):
         self.driver = driver
