@@ -17,7 +17,6 @@ from .data_row_menu import DataRowMenu
 from .delete_modal import DeleteModal
 from .login import LoginFormModal
 from .deploying_cluster import ClusterDeploymentModal
-from .menu_modal import MenuModal
 from .metadata_modal import MetadataModal
 from .menu_in_edit_permissions_modal import EditPermissionsRecordMenu
 from .rename_modal import RenameModal
