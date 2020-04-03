@@ -22,9 +22,7 @@ class DataRow(PageObject):
 
     _icon = WebElement('.file-icon.one-icon')
     menu_button = Button('.fb-table-col-actions-menu .menu-toggle')
-    # TODO: change test because of a new gui
     _metadata_tool = WebElement('.oneicon-browser-metadata')
-    # _share_tool = WebElement('.file-tool-share')
 
     def __str__(self):
         return '{item} in {parent}'.format(item=self.name,

@@ -54,7 +54,7 @@ def write_at_offset(user_name, data, offset, file, client_node, users):
     def condition():
         f = open_file(client, path, 'r+b')
         f.seek(int(offset))
-        f.write(data)
+        f.write(data.encode('utf-8'))
         f.close()
 
     assert_(client.perform, condition)
@@ -107,6 +107,8 @@ def read_text(user, text, file, client_node, users):
 
     def condition():
         read_text = read(client, file_path)
+        if text != read_text:
+            print("Read " + read_text + " instead of expected " + text + " on " + client_node)
         assert read_text == text
         t.append(read_text)
 

@@ -88,16 +88,6 @@ def test_stat_change_time_chmod(env_description_file):
     pass
 
 
-@pytest.mark.skip_env(
-    envs=["multiprovider_proxy_s3"],
-    reason="valid only on posix storage"
-)
-@scenario('Status-change time when renaming on posix storage')
-def test_stat_change_time_mv_on_posix(env_description_file):
-    pass
-
-
-@pytest.mark.skip
-@scenario('Status-change time when renaming on nonposix storage')
-def test_stat_change_time_mv_on_nonposix(env_description_file):
+@scenario('Status-change time when renaming on storage')
+def test_stat_change_time_mv(env_description_file):
     pass

@@ -71,6 +71,7 @@ Feature: Multiprovider_replication
     And user1 waits 10 seconds
     And user1 appends "c" to space1/file1 on client11
     Then user1 reads "abc" from file space1/file1 on client11
+    And user2 waits 10 seconds
     And user2 reads "abc" from file space1/file1 on client21
 
 
@@ -81,5 +82,6 @@ Feature: Multiprovider_replication
     And mode of user2's space1/file1 is 666 on client21
     And user2 writes "defg" at offset 3 to space1/file1 on client21
     And user1 writes "abc" at offset 0 to space1/file1 on client11
+    And user1 waits 10 seconds
     Then user1 reads "abcdefg" from file space1/file1 on client11
     And user2 reads "abcdefg" from file space1/file1 on client21

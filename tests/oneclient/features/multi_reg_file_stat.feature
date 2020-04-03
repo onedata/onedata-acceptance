@@ -128,7 +128,7 @@ Feature: Multi_regular_file_stat
     And status-change time of user2's space1/file1 is greater than access time on client21
 
 
-  Scenario: Status-change time when renaming on posix storage
+  Scenario: Status-change time when renaming on storage
     When user1 creates regular files [space1/file1] on client11
     And user1 sees [file1] in space1 on client11
     And user2 sees [file1] in space1 on client21
@@ -138,19 +138,5 @@ Feature: Multi_regular_file_stat
     And user1 renames space1/file1 to space1/file2 on client11
     Then user2 sees [file2] in space1 on client21
     And access time of user2's space1/file2 is equal to recorded one of space1/file1 on client21
-    And modification time of user2's space1/file2 is equal to access time on client21
-    And status-change time of user2's space1/file2 is not less than access time on client21
-
-
-  Scenario: Status-change time when renaming on nonposix storage
-    When user1 creates regular files [space1/file1] on client11
-    And user1 sees [file1] in space1 on client11
-    And user2 sees [file1] in space1 on client21
-    And user2 records [space1/file1] stats on client21
-    And user1 waits 2 second
-    # call sleep, to be sure that time of above and below operations is different
-    And user1 renames space1/file1 to space1/file2 on client11
-    Then user2 sees [file2] in space1 on client21
-    And access time of user2's space1/file2 is greater than recorded one of space1/file1
     And modification time of user2's space1/file2 is equal to access time on client21
     And status-change time of user2's space1/file2 is not less than access time on client21

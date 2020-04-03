@@ -17,6 +17,7 @@ class _Chunk(PageObject):
     end = Label('.chunks-scale.upper-size')
     _canvas = WebElement('canvas')
     _file_chunks = WebElement('.chunks-container')
+    _file_chunks_text = WebElement('.chunks-container .chunks-text')
 
     def __str__(self):
         return 'file blocks for {}'.format(self.parent)
@@ -27,9 +28,7 @@ class _Chunk(PageObject):
         start, _ = self.start.split()
         return int(end) - int(start), unit
 
-    @property
-    def chunks(self):
-        file_size, _ = self.size
+    def chunks(self, file_size):
         chunks = self.driver.execute_script(_canvas_fill, self._canvas)
         if chunks is not False:
             return [(chunk[0]*file_size, chunk[1]*file_size)
@@ -39,7 +38,7 @@ class _Chunk(PageObject):
                                'are not filled with one color'.format(self))
 
     def is_never_synchronized(self):
-        return 'never-synchronized-text' in self._file_chunks.get_attribute('class')
+        return 'never-synchronized-text' in self._file_chunks_text.get_attribute('class')
 
 
 class _DataDistributionRecord(PageObject):
@@ -76,6 +75,12 @@ class DataDistributionModal(Modal):
     def __str__(self):
         return 'Data distribution modal for "{}"'.format(self.file_name)
 
+    def size(self):
+        provider_record = self.providers[0].distribution
+        end, unit = provider_record.end.split()
+        start, _ = provider_record.start.split()
+        return int(end) - int(start)
+
 
 # TODO fix not working commented code
 # In case when fill color of canvas is changed,
@@ -99,7 +104,7 @@ function isCanvasFilled(cvs){
 
     var ctx = cvs.getContext("2d");
     var backgroundColor = [0, 0, 0, 0];
-    var fillColor = [85, 225, 145, 255];
+    var fillColor = [75, 209, 135, 255];
     var img_data = ctx.getImageData(0, 0, width, height).data;
 
     var idx = 0

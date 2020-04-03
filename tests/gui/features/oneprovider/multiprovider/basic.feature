@@ -9,79 +9,30 @@ Feature: Oneprovider functionality using multiple providers
     And initial spaces configuration in "onezone" Onezone service:
           space1:
               owner: user1
-              providers:
-                  - oneprovider-1:
-                      storage: posix
-                      size: 1000000
-                  - oneprovider-2:
-                      storage: posix
-                      size: 1000000
-          space2:
-              owner: user1
-              providers:
-                  - oneprovider-1:
-                      storage: posix
-                      size: 1000000
-                  - oneprovider-2:
-                      storage: posix
-                      size: 1000000
 
-    And user opened browser window
-    And user of browser opened Onezone page
-    And user of browser logged as user1 to Onezone service
+    And users opened [browser1, browser2] browsers' windows
+    And users of [browser1, browser2] opened [Onezone, Onezone] page
+    And user of [browser1, browser2] logged as [user1, admin] to [Onezone, Onezone] service
 
 
-  Scenario: User creates space in one provider and sees that it was created also in other provider
-    # create space in onezone
-    When user of browser clicks on Create space button in spaces sidebar
-    And user of browser writes "multiprov" into space name text field
-    And user of browser clicks on Create new space button
-    And user of browser sees that "multiprov" has appeared on the spaces list in the sidebar
-
-    # check space in first provider
-    And user of browser opens oneprovider-1 Oneprovider view in web GUI
-    And user of browser sees that Oneprovider session has started
-    And user of browser sees "multiprov" is in spaces list on Oneprovider page
-
-    # check space in second provider
-    And user of browser opens Onezone page
-    And user of browser opens oneprovider-2 Oneprovider view in web GUI
-    And user of browser sees that Oneprovider session has started
-    Then user of browser sees "multiprov" is in spaces list on Oneprovider page
-
-
-  Scenario: User changes name of space in one provider and sees that it was changed also in other provider
-    # rename space in onezone
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser writes "NewNameSpace" into rename space text field
-    And user of browser presses enter on keyboard
-    And user of browser sees that "NewNameSpace" has appeared on the spaces list in the sidebar
-    And user of browser sees that "space1" has disappeared on the spaces list in the sidebar
-
-    # check space in first provider
-    And user of browser opens oneprovider-1 Oneprovider view in web GUI
-    And user of browser sees that Oneprovider session has started
-    And user of browser sees "NewNameSpace" is in spaces list on Oneprovider page
-    And user of browser sees "space1" is not in spaces list on Oneprovider page
-
-    # check space in second provider
-    And user of browser opens Onezone page
-    And user of browser opens oneprovider-2 Oneprovider view in web GUI
-    And user of browser sees that Oneprovider session has started
-    Then user of browser sees "NewNameSpace" is in spaces list on Oneprovider page
-    And user of browser sees "space1" is not in spaces list on Oneprovider page
-
-  Scenario: User leaves space in one provider and sees that it was leaved from also in other provider
-    # leave space in onezone
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks on "Leave space" button in space menu
-    And user of browser clicks on yes button
-
-    # check space in first provider
-    And user of browser opens oneprovider-1 Oneprovider view in web GUI
-    And user of browser sees "space1" is not in spaces list on Oneprovider page
-
-    # check space in first provider
-    And user of browser opens Onezone page
-    And user of browser opens oneprovider-2 Oneprovider view in web GUI
-    Then user of browser sees "space1" is not in spaces list on Oneprovider page
+  Scenario: User supports space by two providers and sees that there are two provider in file browser
+    Given there are no spaces supported by oneprovider-1 in Onepanel
+    When user of browser1 sends support token for "space1" to user of browser2
+    And user of browser2 clicks on Clusters in the main menu
+    And user of browser2 clicks on "oneprovider-2" in clusters menu
+    And user of browser2 supports "space1" space in "oneprovider-2" Oneprovider panel service with following configuration:
+          storage: posix
+          size: 1
+          unit: GiB
+    And user of browser1 sends support token for "space1" to user of browser2
+    And user of browser2 clicks on "oneprovider-1" in clusters menu
+    And user of browser2 supports "space1" space in "oneprovider-1" Oneprovider panel service with following configuration:
+          storage: posix
+          size: 1
+          unit: GiB
+    And user of browser1 clicks Data of "space1" in the sidebar
+    And user of browser1 sees file browser in data tab in Oneprovider page
+    Then user of browser1 sees current provider named "oneprovider-1" on file browser page
+    And user of browser1 clicks on Choose other Oneprovider on file browser page
+    And user of browser1 sees provider named "oneprovider-2" on file browser page
+    And user of browser1 clicks on "oneprovider-2" provider on file browser page
