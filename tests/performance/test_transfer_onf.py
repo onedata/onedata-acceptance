@@ -11,7 +11,7 @@ import time
 import os.path
 from itertools import repeat, chain
 from threading import Thread
-from Queue import Queue, Empty
+from queue import Queue, Empty
 
 from tests.performance import CLIENT_CONF
 from tests.performance.conftest import AbstractPerformanceTest
