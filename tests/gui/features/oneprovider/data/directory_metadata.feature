@@ -18,298 +18,248 @@ Feature: Basic data tab operations on directory metadata in file browser
                     - dir1:
                         - file1: 11111
 
-    And user opened browser window
-    And user of browser opened onezone page
-    And user of browser logged as user1 to Onezone service
-    And opened oneprovider-1 Oneprovider view in web GUI by user of browser
+  And user opened browser window
+  And user of browser opened onezone page
+  And user of browser logged as user1 to Onezone service
+
+  Scenario: Open metadata panel and check presence of navigation tabs
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Data of "space1" in the sidebar
+    And user of browser sees file browser in data tab in Oneprovider page
+
+    And user of browser clicks on menu for "dir1" directory in file browser
+    And user of browser clicks "Metadata" option in data row menu in file browser
+    And user of browser sees that "Directory metadata" modal has appeared
+    Then user of browser sees [Basic, JSON, RDF] navigation tabs in "Directory metadata" modal
 
 
-  Scenario: Edit metadata icon is visible if directory has basic metadata entry
-    When user of browser uses spaces select to change data space to "space1"
+  Scenario: Metadata icon is visible if directory has basic metadata entry
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
 
     And user of browser does not see metadata icon for "dir1" in file browser
-    And user of browser selects "dir1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
-    And user of browser sees that metadata panel for "dir1" in files list has appeared
-    And user of browser types "attr" to attribute input box of new metadata basic entry in metadata panel opened for "dir1"
-    And user of browser types "val" to value input box of new metadata basic entry in metadata panel opened for "dir1"
-    And user of browser clicks on "Save all changes" button in metadata panel opened for "dir1"
-    And user of browser sees an info notify with text matching to: .*[Mm]etadata.*saved.*successfully.*
-    And user of browser refreshes site
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser opens "Directory metadata" modal for "dir1" directory
+    And user of browser types "attr" to key input box of new metadata basic entry in "Directory metadata" modal
+    And user of browser types "val" to value input box of attribute "attr" metadata basic entry in "Directory metadata" modal
+    And user of browser clicks on "Save all" button in modal "Directory metadata"
     Then user of browser sees metadata icon for "dir1" in file browser
 
 
-  Scenario: Invalid basic metadata entry for directory should be colored red
-    When user of browser uses spaces select to change data space to "space1"
+  Scenario: Invalid entry for basic metadata entry for directory is highlighted
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser selects "dir1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
-    And user of browser sees that metadata panel for "dir1" in files list has appeared
-    And user of browser types "attr" to attribute input box of new metadata basic entry in metadata panel opened for "dir1"
-    Then user of browser sees that edited attribute key in metadata panel opened for "dir1" is highlighted as invalid
+    # duplicate key
+    And user of browser opens "Directory metadata" modal for "dir1" directory
+    And user of browser types "attr" to key input box of new metadata basic entry in "Directory metadata" modal
+    And user of browser types "attr" to key input box of new metadata basic entry in "Directory metadata" modal
+    Then user of browser sees that edited attribute key in "Directory metadata" modal is highlighted as invalid
+
+    # 'onedata_' key
+    And user of browser cleans key input box of edited metadata basic entry in "Directory metadata" modal
+    And user of browser types "onedata_item" to key input box of new metadata basic entry in "Directory metadata" modal
+    Then user of browser sees that edited attribute key in "Directory metadata" modal is highlighted as invalid
 
 
-  Scenario: Add metadata to directory (clicks both add icon and "Save all changes" button)
-    When user of browser uses spaces select to change data space to "space1"
-    And user of browser sees file browser in data tab in Oneprovider page
+    Scenario: User cannot save changes while entry is invalid
+      When user of browser clicks "space1" on the spaces list in the sidebar
+      And user of browser clicks Data of "space1" in the sidebar
+      And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser selects "dir1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
-    And user of browser sees that metadata panel for "dir1" in files list has appeared
-    And user of browser types "attr" to attribute input box of new metadata basic entry in metadata panel opened for "dir1"
-    And user of browser types "val" to value input box of new metadata basic entry in metadata panel opened for "dir1"
-    And user of browser clicks on add basic metadata entry icon in metadata panel opened for "dir1"
-    And user of browser clicks on "Save all changes" button in metadata panel opened for "dir1"
-    And user of browser sees an info notify with text matching to: .*[Mm]etadata.*saved.*successfully.*
+      # duplicate key
+      And user of browser opens "Directory metadata" modal for "dir1" directory
+      And user of browser types "attr" to key input box of new metadata basic entry in "Directory metadata" modal
+      And user of browser types "attr" to key input box of new metadata basic entry in "Directory metadata" modal
 
-    And user of browser refreshes site
-    And user of browser sees file browser in data tab in Oneprovider page
-    And user of browser sees that metadata panel for "dir1" in files list has disappeared
-    And user of browser selects "dir1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
-    And user of browser sees that metadata panel for "dir1" in files list has appeared
-    Then user of browser should see basic metadata entry with attribute named "attr" and value "val" in metadata panel opened for "dir1"
+      Then user of browser sees that "Save all" button in "Directory metadata" modal is disabled
 
 
-  Scenario: Add metadata to directory (clicks only "Save all changes" button)
-    When user of browser uses spaces select to change data space to "space1"
-    And user of browser sees file browser in data tab in Oneprovider page
+    Scenario: Add basic metadata to directory and check their presence after reopening
+      When user of browser clicks "space1" on the spaces list in the sidebar
+      And user of browser clicks Data of "space1" in the sidebar
+      And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser selects "dir1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
-    And user of browser sees that metadata panel for "dir1" in files list has appeared
-    And user of browser types "attr" to attribute input box of new metadata basic entry in metadata panel opened for "dir1"
-    And user of browser types "val" to value input box of new metadata basic entry in metadata panel opened for "dir1"
-    And user of browser clicks on add basic metadata entry icon in metadata panel opened for "dir1"
-    And user of browser clicks on "Save all changes" button in metadata panel opened for "dir1"
-    And user of browser sees an info notify with text matching to: .*[Mm]etadata.*saved.*successfully.*
+      And user of browser opens "Directory metadata" modal for "dir1" directory
+      And user of browser adds basic entry with key "attr" and value "val" for directory
+      And user of browser clicks on "Save all" button in modal "Directory metadata"
+      Then user of browser sees metadata icon for "dir1" in file browser
 
-    And user of browser refreshes site
-    And user of browser sees file browser in data tab in Oneprovider page
-    And user of browser sees that metadata panel for "dir1" in files list has disappeared
-    And user of browser selects "dir1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
-    And user of browser sees that metadata panel for "dir1" in files list has appeared
-    Then user of browser should see basic metadata entry with attribute named "attr" and value "val" in metadata panel opened for "dir1"
+      And user of browser opens "Directory metadata" modal for "dir1" directory
+      Then user of browser sees basic metadata entry with attribute named "attr" and value "val" in "Directory metadata" modal
 
 
-  Scenario: Delete single basic metadata entry for directory
-    When user of browser uses spaces select to change data space to "space1"
-    And user of browser sees file browser in data tab in Oneprovider page
+    Scenario: Delete one of two basic metadata entry for directory
+      When user of browser clicks "space1" on the spaces list in the sidebar
+      And user of browser clicks Data of "space1" in the sidebar
+      And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser selects "dir1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
-    And user of browser sees that metadata panel for "dir1" in files list has appeared
-    And user of browser types "attr" to attribute input box of new metadata basic entry in metadata panel opened for "dir1"
-    And user of browser types "val" to value input box of new metadata basic entry in metadata panel opened for "dir1"
-    And user of browser clicks on add basic metadata entry icon in metadata panel opened for "dir1"
-    And user of browser clicks on "Save all changes" button in metadata panel opened for "dir1"
-    And user of browser sees an info notify with text matching to: .*[Mm]etadata.*saved.*successfully.*
+      And user of browser opens "Directory metadata" modal for "dir1" directory
+      And user of browser adds basic entry with key "attr1" and value "val1" for directory
+      And user of browser adds basic entry with key "attr2" and value "val2" for directory
+      And user of browser clicks on "Save all" button in modal "Directory metadata"
+      And user of browser opens "Directory metadata" modal for "dir1" directory
 
-    And user of browser refreshes site
-    And user of browser sees file browser in data tab in Oneprovider page
-    And user of browser sees that metadata panel for "dir1" in files list has disappeared
-    And user of browser selects "dir1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
-    And user of browser sees that metadata panel for "dir1" in files list has appeared
-    And user of browser clicks on delete basic metadata entry icon for basic metadata entry with attribute named "attr" in metadata panel opened for "dir1"
-    Then user of browser should not see basic metadata entry with attribute named "attr" in metadata panel opened for "dir1"
+      And user of browser clicks on delete basic metadata entry icon for basic metadata entry with attribute named "attr1" in "Directory metadata" modal
+      Then user of browser does not see basic metadata entry with attribute named "attr1" in "Directory metadata" modal
+      And user of browser sees basic metadata entry with attribute named "attr2" and value "val2" in "Directory metadata" modal
+      And user of browser clicks on "Save all" button in modal "Directory metadata"
 
-
-  Scenario: User should not see any metadata for directory after clicking "Remove metadata" button
-    When user of browser uses spaces select to change data space to "space1"
-    And user of browser sees file browser in data tab in Oneprovider page
-
-    And user of browser selects "dir1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
-    And user of browser sees that metadata panel for "dir1" in files list has appeared
-    And user of browser types "attr" to attribute input box of new metadata basic entry in metadata panel opened for "dir1"
-    And user of browser types "val" to value input box of new metadata basic entry in metadata panel opened for "dir1"
-    And user of browser clicks on "Save all changes" button in metadata panel opened for "dir1"
-    And user of browser sees an info notify with text matching to: .*[Mm]etadata.*saved.*successfully.*
-
-    And user of browser refreshes site
-    And user of browser sees file browser in data tab in Oneprovider page
-    And user of browser sees that metadata panel for "dir1" in files list has disappeared
-    And user of browser selects "dir1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
-    And user of browser sees that metadata panel for "dir1" in files list has appeared
-    And user of browser should see basic metadata entry with attribute named "attr" and value "val" in metadata panel opened for "dir1"
-    And user of browser clicks on "Remove metadata" button in metadata panel opened for "dir1"
-    And user of browser sees an info notify with text matching to: .*[Dd]eleted.*metadata.*dir1.*
-    And user of browser sees that metadata panel for "dir1" in files list has disappeared
-    And user of browser selects "dir1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
-    And user of browser sees that metadata panel for "dir1" in files list has appeared
-    Then user of browser should not see basic metadata entry with attribute named "attr" in metadata panel opened for "dir1"
+      # reopen modal for assurance
+      And user of browser opens "Directory metadata" modal for "dir1" directory
+      Then user of browser does not see basic metadata entry with attribute named "attr1" in "Directory metadata" modal
+      And user of browser sees basic metadata entry with attribute named "attr2" and value "val2" in "Directory metadata" modal
 
 
-  Scenario: User starts adding metadata to directory but discards changes
-    When user of browser uses spaces select to change data space to "space1"
-    And user of browser sees file browser in data tab in Oneprovider page
+    Scenario: Delete basic metadata for directory after saving it
+      When user of browser clicks "space1" on the spaces list in the sidebar
+      And user of browser clicks Data of "space1" in the sidebar
+      And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser selects "dir1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
-    And user of browser sees that metadata panel for "dir1" in files list has appeared
-    And user of browser types "attr" to attribute input box of new metadata basic entry in metadata panel opened for "dir1"
-    And user of browser types "val" to value input box of new metadata basic entry in metadata panel opened for "dir1"
-    And user of browser clicks on add basic metadata entry icon in metadata panel opened for "dir1"
-    And user of browser clicks on "Discard changes" button in metadata panel opened for "dir1"
-    And user of browser sees that metadata panel for "dir1" in files list has disappeared
+      And user of browser opens "Directory metadata" modal for "dir1" directory
+      And user of browser adds basic entry with key "attr" and value "val" for directory
+      And user of browser clicks on "Save all" button in modal "Directory metadata"
 
-    And user of browser selects "dir1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
-    And user of browser sees that metadata panel for "dir1" in files list has appeared
-    Then user of browser should not see basic metadata entry with attribute named "attr" in metadata panel opened for "dir1"
+      And user of browser opens "Directory metadata" modal for "dir1" directory
+      And user of browser clicks on delete basic metadata entry icon for basic metadata entry with attribute named "attr" in "Directory metadata" modal
+      Then user of browser sees that there is no basic metadata for directory
+      And user of browser clicks on "Save all" button in modal "Directory metadata"
+      Then user of browser does not see metadata icon for "dir1" in file browser
 
-
-  Scenario: Add valid metadata to directory in JSON format
-    When user of browser uses spaces select to change data space to "space1"
-    And user of browser sees file browser in data tab in Oneprovider page
-
-    And user of browser selects "dir1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
-    And user of browser sees that metadata panel for "dir1" in files list has appeared
-
-    And user of browser clicks on JSON navigation tab in metadata panel opened for "dir1"
-    And user of browser types "{"id": 1}" to JSON textarea placed in metadata panel opened for "dir1"
-    And user of browser clicks on "Save all changes" button in metadata panel opened for "dir1"
-    And user of browser sees an info notify with text matching to: .*[Mm]etadata.*saved.*successfully.*
-    And user of browser refreshes site
-    And user of browser sees file browser in data tab in Oneprovider page
-    And user of browser sees that metadata panel for "dir1" in files list has disappeared
-
-    And user of browser selects "dir1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
-    And user of browser sees that metadata panel for "dir1" in files list has appeared
-    And user of browser clicks on JSON navigation tab in metadata panel opened for "dir1"
-    Then user of browser sees that JSON textarea placed in metadata panel opened for "dir1" contains {"id": 1}
+      # reopen modal for assurance
+      And user of browser opens "Directory metadata" modal for "dir1" directory
+      Then user of browser sees that there is no basic metadata for directory
 
 
-  Scenario: Delete directory metadata in JSON format
-    When user of browser uses spaces select to change data space to "space1"
-    And user of browser sees file browser in data tab in Oneprovider page
+    Scenario: Delete single basic metadata entry for directory (one visit in modal)
+      When user of browser clicks "space1" on the spaces list in the sidebar
+      And user of browser clicks Data of "space1" in the sidebar
+      And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser selects "dir1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
-    And user of browser sees that metadata panel for "dir1" in files list has appeared
+      And user of browser opens "Directory metadata" modal for "dir1" directory
+      And user of browser adds basic entry with key "attr" and value "val" for directory
+      And user of browser sees basic metadata entry with attribute named "attr" and value "val" in "Directory metadata" modal
+      And user of browser clicks on delete basic metadata entry icon for basic metadata entry with attribute named "attr" in "Directory metadata" modal
+      Then user of browser sees that there is no basic metadata for directory
 
-    And user of browser clicks on JSON navigation tab in metadata panel opened for "dir1"
-    And user of browser types "{"id": 1}" to JSON textarea placed in metadata panel opened for "dir1"
-    And user of browser clicks on "Save all changes" button in metadata panel opened for "dir1"
-    And user of browser sees an info notify with text matching to: .*[Mm]etadata.*saved.*successfully.*
-    And user of browser refreshes site
-    And user of browser sees file browser in data tab in Oneprovider page
-    And user of browser sees that metadata panel for "dir1" in files list has disappeared
+      And user of browser clicks on "Close" button in modal "Directory metadata"
+      Then user of browser does not see metadata icon for "dir1" in file browser
 
-    And user of browser selects "dir1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
-    And user of browser sees that metadata panel for "dir1" in files list has appeared
-    And user of browser clicks on JSON navigation tab in metadata panel opened for "dir1"
-    And user of browser sees that JSON textarea placed in metadata panel opened for "dir1" contains {"id": 1}
-    And user of browser clicks on "Remove metadata" button in metadata panel opened for "dir1"
-    And user of browser sees an info notify with text matching to: .*[Dd]eleted.*metadata.*dir1.*
-    And user of browser sees that metadata panel for "dir1" in files list has disappeared
-
-    And user of browser selects "dir1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
-    And user of browser sees that metadata panel for "dir1" in files list has appeared
-    And user of browser clicks on JSON navigation tab in metadata panel opened for "dir1"
-    Then user of browser sees that content of JSON textarea placed in metadata panel opened for "dir1" is equal to: "null"
+      And user of browser opens "Directory metadata" modal for "dir1" directory
+      Then user of browser sees that there is no basic metadata for directory
 
 
-  Scenario: Discard changes while entering metadata for directory in JSON format
-    When user of browser uses spaces select to change data space to "space1"
-    And user of browser sees file browser in data tab in Oneprovider page
+    Scenario: User starts adding basic metadata to directory but discards changes
+      When user of browser clicks "space1" on the spaces list in the sidebar
+      And user of browser clicks Data of "space1" in the sidebar
+      And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser selects "dir1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
-    And user of browser sees that metadata panel for "dir1" in files list has appeared
-
-    And user of browser clicks on JSON navigation tab in metadata panel opened for "dir1"
-    And user of browser types "{"id": 1}" to JSON textarea placed in metadata panel opened for "dir1"
-    And user of browser clicks on "Discard changes" button in metadata panel opened for "dir1"
-    And user of browser sees that metadata panel for "dir1" in files list has disappeared
-
-    And user of browser selects "dir1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
-    And user of browser sees that metadata panel for "dir1" in files list has appeared
-    And user of browser clicks on JSON navigation tab in metadata panel opened for "dir1"
-    Then user of browser sees that content of JSON textarea placed in metadata panel opened for "dir1" is equal to: "null"
+      And user of browser opens "Directory metadata" modal for "dir1" directory
+      And user of browser adds basic entry with key "attr" and value "val" for directory
+      And user of browser clicks on "Discard changes" button in modal "Directory metadata"
+      And user of browser opens "Directory metadata" modal for "dir1" directory
+      Then user of browser does not see basic metadata entry with attribute named "attr" in "Directory metadata" modal
 
 
-  Scenario: Add valid metadata to directory in RDF format
-    When user of browser uses spaces select to change data space to "space1"
-    And user of browser sees file browser in data tab in Oneprovider page
+    Scenario: Add valid metadata to directory in JSON format
+      When user of browser clicks "space1" on the spaces list in the sidebar
+      And user of browser clicks Data of "space1" in the sidebar
+      And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser selects "dir1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
-    And user of browser sees that metadata panel for "dir1" in files list has appeared
-    And user of browser clicks on RDF navigation tab in metadata panel opened for "dir1"
-    And user of browser types "<rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML>" to RDF textarea placed in metadata panel opened for "dir1"
-    And user of browser clicks on "Save all changes" button in metadata panel opened for "dir1"
-    And user of browser sees an info notify with text matching to: .*[Mm]etadata.*saved.*successfully.*
-    And user of browser refreshes site
-    And user of browser sees file browser in data tab in Oneprovider page
-    And user of browser sees that metadata panel for "dir1" in files list has disappeared
-
-    And user of browser selects "dir1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
-    And user of browser sees that metadata panel for "dir1" in files list has appeared
-    And user of browser clicks on RDF navigation tab in metadata panel opened for "dir1"
-    Then user of browser sees that RDF textarea placed in metadata panel opened for "dir1" contains <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML>
+      And user of browser opens "Directory metadata" modal for "dir1" directory
+      And user of browser clicks on JSON navigation tab in "Directory metadata" modal
+      And user of browser types "{"id": 1}" to JSON textarea in "Directory metadata" modal
+      And user of browser clicks on "Save all" button in modal "Directory metadata"
+      Then user of browser sees metadata icon for "dir1" in file browser
+      And user of browser opens "Directory metadata" modal for "dir1" directory
+      And user of browser clicks on JSON navigation tab in "Directory metadata" modal
+      Then user of browser sees that JSON textarea in "Directory metadata" modal contains {"id": 1}
 
 
-  Scenario: Delete directory metadata in XML format
-    When user of browser uses spaces select to change data space to "space1"
-    And user of browser sees file browser in data tab in Oneprovider page
+    Scenario: User doesn't see JSON metadata and metadata icon after deleting JSON metadata
+      When user of browser clicks "space1" on the spaces list in the sidebar
+      And user of browser clicks Data of "space1" in the sidebar
+      And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser selects "dir1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
-    And user of browser sees that metadata panel for "dir1" in files list has appeared
+      And user of browser adds "{"id": 1}" JSON metadata for "dir1" directory
+      And user of browser opens JSON metadata tab for "dir1" directory
 
-    And user of browser clicks on RDF navigation tab in metadata panel opened for "dir1"
-    And user of browser types "<rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML>" to RDF textarea placed in metadata panel opened for "dir1"
-    And user of browser clicks on "Save all changes" button in metadata panel opened for "dir1"
-    And user of browser sees an info notify with text matching to: .*[Mm]etadata.*saved.*successfully.*
-    And user of browser refreshes site
-    And user of browser sees file browser in data tab in Oneprovider page
-    And user of browser sees that metadata panel for "dir1" in files list has disappeared
+      # remove JSON metadata
+      And user of browser sees that JSON textarea in "Directory metadata" modal contains {"id": 1}
+      And user of browser cleans JSON textarea in "Directory metadata" modal
+      And user of browser clicks on "Save all" button in modal "Directory metadata"
 
-    And user of browser selects "dir1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
-    And user of browser sees that metadata panel for "dir1" in files list has appeared
-    And user of browser clicks on RDF navigation tab in metadata panel opened for "dir1"
-    And user of browser sees that RDF textarea placed in metadata panel opened for "dir1" contains <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML>
-    And user of browser clicks on "Remove metadata" button in metadata panel opened for "dir1"
-    And user of browser sees an info notify with text matching to: .*[Dd]eleted.*metadata.*dir1.*
-    And user of browser sees that metadata panel for "dir1" in files list has disappeared
-
-    And user of browser selects "dir1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
-    And user of browser sees that metadata panel for "dir1" in files list has appeared
-    And user of browser clicks on RDF navigation tab in metadata panel opened for "dir1"
-    Then user of browser sees that content of RDF textarea placed in metadata panel opened for "dir1" is equal to: ""
+      Then user of browser does not see metadata icon for "dir1" in file browser
+      And user of browser opens JSON metadata tab for "dir1" directory
+      Then user of browser sees that JSON textarea in "Directory metadata" modal is empty
 
 
-  Scenario: Discard changes while entering metadata for directory in XML format
-    When user of browser uses spaces select to change data space to "space1"
-    And user of browser sees file browser in data tab in Oneprovider page
+    Scenario: Discard changes while entering metadata in JSON format
+      When user of browser clicks "space1" on the spaces list in the sidebar
+      And user of browser clicks Data of "space1" in the sidebar
+      And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser selects "dir1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
-    And user of browser sees that metadata panel for "dir1" in files list has appeared
+      And user of browser opens JSON metadata tab for "dir1" directory
+      And user of browser types "{"id": 1}" to JSON textarea in "Directory metadata" modal
+      And user of browser clicks on "Discard changes" button in modal "Directory metadata"
 
-    And user of browser clicks on RDF navigation tab in metadata panel opened for "dir1"
-    And user of browser types "<rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML>" to RDF textarea placed in metadata panel opened for "dir1"
-    And user of browser clicks on "Discard changes" button in metadata panel opened for "dir1"
-    And user of browser sees that metadata panel for "dir1" in files list has disappeared
+      And user of browser opens JSON metadata tab for "dir1" directory
+      Then user of browser sees that JSON textarea in "Directory metadata" modal is empty
 
-    And user of browser selects "dir1" item from file browser with pressed ctrl
-    And user of browser clicks on metadata tool icon in file row for "dir1" in file browser
-    And user of browser sees that metadata panel for "dir1" in files list has appeared
-    And user of browser clicks on RDF navigation tab in metadata panel opened for "dir1"
-    Then user of browser sees that content of RDF textarea placed in metadata panel opened for "dir1" is equal to: ""
+
+    Scenario: Invalid entry for JSON metadata entry for directory is highlighted
+      When user of browser clicks "space1" on the spaces list in the sidebar
+      And user of browser clicks Data of "space1" in the sidebar
+      And user of browser sees file browser in data tab in Oneprovider page
+
+      And user of browser opens JSON metadata tab for "dir1" directory
+      And user of browser types "{"id": 1" to JSON textarea in "Directory metadata" modal
+      Then user of browser sees that JSON textarea is highlighted as invalid in "Directory metadata" modal
+      And user of browser sees that "Save all" button in "Directory metadata" modal is disabled
+
+
+    Scenario: Add valid metadata to directory in XML format
+      When user of browser clicks "space1" on the spaces list in the sidebar
+      And user of browser clicks Data of "space1" in the sidebar
+      And user of browser sees file browser in data tab in Oneprovider page
+
+      And user of browser opens "Directory metadata" modal for "dir1" directory
+      And user of browser clicks on RDF navigation tab in "Directory metadata" modal
+      And user of browser types "<rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML>" to RDF textarea in "Directory metadata" modal
+      And user of browser clicks on "Save all" button in modal "Directory metadata"
+      Then user of browser sees metadata icon for "dir1" in file browser
+      And user of browser opens "Directory metadata" modal for "dir1" directory
+      And user of browser clicks on RDF navigation tab in "Directory metadata" modal
+      Then user of browser sees that RDF textarea in "Directory metadata" modal contains <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML>
+
+
+    Scenario: User doesn't see RDF metadata and metadata icon after deleting metadata in XML format
+      When user of browser clicks "space1" on the spaces list in the sidebar
+      And user of browser clicks Data of "space1" in the sidebar
+      And user of browser sees file browser in data tab in Oneprovider page
+
+      And user of browser adds "<rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML>" RDF metadata for "dir1" directory
+      And user of browser opens RDF metadata tab for "dir1" directory
+
+      # remove RDF metadata
+      And user of browser sees that RDF textarea in "Directory metadata" modal contains <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML>
+      And user of browser cleans RDF textarea in "Directory metadata" modal
+      And user of browser clicks on "Save all" button in modal "Directory metadata"
+
+      Then user of browser does not see metadata icon for "dir1" in file browser
+      And user of browser opens RDF metadata tab for "dir1" directory
+      Then user of browser sees that RDF textarea in "Directory metadata" modal is empty
+
+
+    Scenario: Discard changes while entering metadata for directory in XML format
+      When user of browser clicks "space1" on the spaces list in the sidebar
+      And user of browser clicks Data of "space1" in the sidebar
+      And user of browser sees file browser in data tab in Oneprovider page
+
+      And user of browser opens RDF metadata tab for "dir1" directory
+      And user of browser types "<rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML>" to RDF textarea in "Directory metadata" modal
+      And user of browser clicks on "Discard changes" button in modal "Directory metadata"
+
+      And user of browser opens RDF metadata tab for "dir1" directory
+      Then user of browser sees that RDF textarea in "Directory metadata" modal is empty

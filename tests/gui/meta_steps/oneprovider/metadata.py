@@ -14,8 +14,8 @@ from tests.gui.steps.oneprovider.metadata import *
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) opens '
-               '"(?P<modal_name>File metadata|Directory metadata)" modal '
-               'for "(?P<item_name>.*?)" file|directory'))
+               '"(?P<modal_name>Directory metadata|File metadata)" modal '
+               'for "(?P<item_name>.*?)" (directory|file)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_metadata_modal(selenium, browser_id, modals, modal_name,
                         item_name, tmp_memory):

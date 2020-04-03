@@ -94,6 +94,7 @@ class Modals(object):
     menu_modal = WebItem('.webui-popover-content .one-webui-popover',
                          cls=MenuModal)
     file_metadata = WebItem('.modal-dialog', cls=MetadataModal)
+    directory_metadata = WebItem('.modal-dialog', cls=MetadataModal)
 
     def __init__(self, driver):
         self.driver = driver

@@ -121,7 +121,7 @@ def clean_key_input_of_edited_basic_entry(selenium, browser_id, modals,
                   'box of edited metadata basic entry in '
                   '"{modal_name}" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def clean_key_input_of_edited_basic_entry(selenium, browser_id, modals, text,
+def type_key_input_of_edited_basic_entry(selenium, browser_id, modals, text,
                                           modal_name):
     modal = getattr(modals(selenium[browser_id]), transform(modal_name))
     entry = modal.basic.find_edited_entry()
