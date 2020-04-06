@@ -56,7 +56,7 @@ def screens():
     return [0]
 
 
-# TODO: change test because of a new gui
+# TODO: change test because of a new gui (metadata)
 # scenarios('../features/oneprovider/data/file_metadata.feature')
 # scenarios('../features/oneprovider/data/directory_metadata.feature')
 scenarios('../features/pass.feature')

@@ -246,12 +246,12 @@ def fail_to_rename_groups(client, user, group_list, host, hosts, users,
 @then(parsers.re('using (?P<client>.*), (?P<user>\w+) fails to remove'
                  ' groups? (?P<group_list>.*?) in "(?P<host>.*)" Onezone service'))
 def fail_to_remove_groups(client, user, group_list, request, host, hosts, users,
-                          selenium, op_page, tmp_memory):
+                          selenium, op_container, tmp_memory):
 
     if client.lower() == 'rest':
         fail_to_remove_groups_using_rest(user, users, hosts, group_list, host)
     elif client.lower() == 'web gui':
-        fail_to_remove_groups_using_op_gui(selenium, user, op_page, group_list,
+        fail_to_remove_groups_using_op_gui(selenium, user, op_container, group_list,
                                            tmp_memory)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))

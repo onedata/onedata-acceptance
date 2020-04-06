@@ -27,7 +27,7 @@ def write_text_base(user, text, file, client_node, users, should_fail=False):
     assert_generic(client.perform, should_fail, condition, timeout=0)
 
 
-@wt(parsers.re('(?P<user>\w+) writes "(?P<text>.*)" to (?P<file>.*) on '
+@wt(parsers.re('(?P<user>\w+) writes "(?P<text>.*)" to (?P<file>[^\s]+) on '
                '(?P<client_node>.*)'))
 def write_text(user, text, file, client_node, users):
     write_text_base(user, text, file, client_node, users)
@@ -54,7 +54,7 @@ def write_at_offset(user_name, data, offset, file, client_node, users):
     def condition():
         f = open_file(client, path, 'r+b')
         f.seek(int(offset))
-        f.write(data)
+        f.write(data.encode('utf-8'))
         f.close()
 
     assert_(client.perform, condition)
@@ -107,6 +107,8 @@ def read_text(user, text, file, client_node, users):
 
     def condition():
         read_text = read(client, file_path)
+        if text != read_text:
+            print("Read " + read_text + " instead of expected " + text + " on " + client_node)
         assert read_text == text
         t.append(read_text)
 
@@ -119,7 +121,6 @@ def read_text(user, text, file, client_node, users):
 def read_opened(user, text, file, client_node, users):
     user = users[user]
     client = user.clients[client_node]
-    text = text.decode('string_escape')
 
     def condition():
         read_text = read_from_opened_file(client, client.absolute_path(file))

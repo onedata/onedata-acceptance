@@ -11,11 +11,11 @@ import random
 import string
 
 import pytest
-from pytest_bdd import parsers, when, then
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed
+from tests.utils.bdd_utils import wt, parsers, when, then
 
 
 def _get_index(selenium, browser_id, num, modals, numerals):
@@ -26,19 +26,17 @@ def _get_index(selenium, browser_id, num, modals, numerals):
     return n
 
 
-@when(parsers.parse('user of {browser_id} selects "{permission_type}" '
-                    'permission type in active modal'))
-@then(parsers.parse('user of {browser_id} selects "{permission_type}" '
-                    'permission type in active modal'))
+@wt(parsers.parse('user of {browser_id} selects "{permission_type}" '
+                  'permission type in edit permissions modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def select_permission_type(selenium, browser_id, permission_type, modals):
-    modals(selenium[browser_id]).edit_permissions.select(permission_type)
-   
+    driver = selenium[browser_id]
+    button_name = f'{permission_type.lower()}_button'
+    getattr(modals(driver).edit_permissions, button_name).click()
 
-@when(parsers.parse('user of {browser_id} sees that current permission is '
-                    '"{perm}"'))
-@then(parsers.parse('user of {browser_id} sees that current permission is '
-                    '"{perm}"'))
+
+@wt(parsers.parse('user of {browser_id} sees that current permission is '
+                  '"{perm}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_permission(selenium, browser_id, perm, modals):
     perm_value = modals(selenium[browser_id]).edit_permissions.posix.value
@@ -46,74 +44,58 @@ def check_permission(selenium, browser_id, perm, modals):
                                 ' expected {}'.format(perm_value, perm))
 
 
-@when(parsers.parse('user of {browser_id} sets "{perm}" permission code in '
-                    'active modal'))
-@then(parsers.parse('user of {browser_id} sets "{perm}" permission code in '
-                    'active modal'))
+@wt(parsers.parse('user of {browser_id} sets "{perm}" permission code in '
+                  'edit permissions modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def set_permission(selenium, browser_id, perm, modals):
+def set_posix_permission(selenium, browser_id, perm, modals):
     modals(selenium[browser_id]).edit_permissions.posix.value = perm
 
 
-@when(parsers.parse('user of {browser_id} sets incorrect {num:d} char '
-                    'permission code in active modal'))
-@then(parsers.parse('user of {browser_id} sets incorrect {num:d} char '
-                    'permission code in active modal'))
+def _change_acl_options(option_list, subject, change):
+    for option in parse_seq(option_list):
+        if option in ['allow', 'deny']:
+            button_name = f'{option}_option'
+            getattr(subject, button_name).click()
+        else:
+            permissions = option.split(':')
+            parent_permission_name = (permissions[0].capitalize()
+                                      .replace('Acl', 'ACL'))
+            parent_permission = subject.acl_permission_group[
+                parent_permission_name]
+
+            if len(permissions) == 1:
+                getattr(parent_permission.toggle, change)()
+            else:
+                child_permission = (permissions[1].capitalize()
+                                    .replace('acl', 'ACL'))
+                parent_permission.expand()
+                getattr(parent_permission.permissions[
+                            child_permission].toggle, change)()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) sets (?P<option_list>.*) options? '
+               'in ACL record in edit permissions modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def set_incorect_permission(selenium, browser_id, num, numerals, modals):
-    random.seed()
-    val = random.choice('89')
-    for _ in range(num-1):
-        val += random.choice(string.digits)
-    modals(selenium[browser_id]).edit_permissions.posix.value = val
+def select_acl_options(selenium, browser_id, option_list, modals, subject):
+    # argument 'option_list' is one of the following patterns:
+    # [<parent_permission>|<parent_permission>:<child_permission>, ...]
+    # all except [<parent_permission>|<parent_permission>:<child_permission>, ...]
+    # [allow|deny, <parent_permission>|<parent_permission>:<child_permission>, ...]
 
+    driver = selenium[browser_id]
+    change = 'check'
+    subject = modals(driver).edit_permissions.acl.member_permission_list[subject]
 
-@when(parsers.parse('user of {browser_id} clicks "Add" in ACL edit '
-                    'permissions modal'))
-@then(parsers.parse('user of {browser_id} clicks "Add" in ACL edit '
-                    'permissions modal'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def add_acl(selenium, browser_id, modals):
-    modals(selenium[browser_id]).edit_permissions.acl.add()
-
-
-@when(parsers.re('user of (?P<browser_id>.*) sets (?P<option_list>.*) options? '
-                 'in (?P<num>\w+) ACL record in edit permissions modal'))
-@then(parsers.re('user of (?P<browser_id>.*) sets (?P<option_list>.*) options? '
-                 'in (?P<num>\w+) ACL record in edit permissions modal'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def select_acl_options(selenium, browser_id, option_list, modals, num, numerals):
-    n = _get_index(selenium, browser_id, num, modals, numerals)
-    perm = modals(selenium[browser_id]).edit_permissions.acl.permissions[n]
-    option_list = option_list.strip('\"')
-    select_all = False
     re_options = re.match("[Aa]ll( except )?(.*)", option_list)
     if re_options:
-        select_all = True
         option_list = re_options.group(2)
-    options = [x.lower() for x in parse_seq(option_list)]
-    for o in perm.options:
-        if o.name.lower() == 'deny' and not 'deny' in options:
-            continue
-        if select_all ^ o.is_checked():
-            o.click()
-        if o.name.lower() in options:
-            o.click()
 
+        for parent_permission in subject.acl_permission_group:
+            parent_permission.toggle.check()
 
-@when(parsers.re('user of (?P<browser_id>\w+) selects (?P<subject_type>user|group)'
-                 ' as subject type in (?P<num>\w+) ACL record in edit '
-                 'permissions modal'))
-@then(parsers.re('user of (?P<browser_id>\w+) selects (?P<subject_type>user|group)'
-                 ' as subject type in (?P<num>\w+) ACL record in edit '
-                 'permissions modal'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def select_acl_subject_type(selenium, browser_id, subject_type, num, numerals, 
-                            modals):
-    n = _get_index(selenium, browser_id, num, modals, numerals)
-    
-    perm = modals(selenium[browser_id]).edit_permissions.acl.permissions[n]
-    getattr(perm, 'select_{}'.format(subject_type))()
+        change = f'un{change}'
+
+    _change_acl_options(option_list, subject, change)
 
 
 @when(parsers.parse('user of {browser_id} expands select list for {num} ACL '
@@ -123,57 +105,39 @@ def select_acl_subject_type(selenium, browser_id, subject_type, num, numerals,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def expand_acl_modal(selenium, browser_id, num, numerals, modals):
     n = _get_index(selenium, browser_id, num, modals, numerals)
-    
+
     modals(selenium[browser_id]).edit_permissions.acl.permissions[n].expand()
 
 
-@when(parsers.parse('user of {browser_id} selects {subject} from subject list'
-                    ' in {num} ACL record in edit permissions modal'))
-@then(parsers.parse('user of {browser_id} selects {subject} from subject list'
-                    ' in {num} ACL record in edit permissions modal'))
+@wt(parsers.parse('user of {browser_id} selects {subject} from subject list '
+                  'in ACL record in edit permissions modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def select_acl_subject(selenium, browser_id, subject, num, numerals, modals):
-    n = _get_index(selenium, browser_id, num, modals, numerals)
-    perm = modals(selenium[browser_id]).edit_permissions.acl.permissions[n]
-    perm.expand()
-    for s in perm.subjects_list:
-        if s.text == subject:
-            s.click()
-            break
-    else:
-        raise RuntimeError("No {} subject in subject list in {} ACL record".
-                           format(subject, num))
+def select_acl_subject(selenium, browser_id, subject, modals):
+    driver = selenium[browser_id]
+    modals(driver).edit_permissions.acl.expand_dropdown()
+    modals(driver).dropdown.options[subject].click()
 
 
-@when(parsers.re('user of (?P<browser_id>.*) sees exactly (?P<val>\d+) ACL '
-                 'records? in edit permissions modal'), 
-                 converters=dict(val=int))
-@then(parsers.re('user of (?P<browser_id>.*) sees exactly (?P<val>\d+) ACL '
-                 'records? in edit permissions modal'), 
-                 converters=dict(val=int))
+@wt(parsers.re('user of (?P<browser_id>.*) sees exactly (?P<val>\d+) ACL '
+               'records? in edit permissions modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_amount_of_acls(selenium, browser_id, modals, val):        
-    perm = modals(selenium[browser_id]).edit_permissions.acl.permissions
-    assert val == len(perm), "There are {} instead of {} ACL records".format(
-                                len(perm), val)
-    
+def assert_amount_of_acls(selenium, browser_id, modals, val: int):
+    driver = selenium[browser_id]
+    perm = modals(driver).edit_permissions.acl.member_permission_list
+    assert val == len(perm), f'There are {len(perm)} instead of {val} ACL records'
 
-@when(parsers.re('user of (?P<browser_id>\w+) sees that (?P<num>\w+) ACL record'
-                 ' has (?P<subject_type>group|user) subject type in edit '
-                 'permissions modal'))
-@then(parsers.re('user of (?P<browser_id>\w+) sees that (?P<num>\w+) ACL record'
-                 ' has (?P<subject_type>group|user) subject type in edit '
-                 'permissions modal'))
+
+@wt(parsers.re('user of (?P<browser_id>\w+) sees that (?P<num>\w+) ACL record '
+               'has (?P<subject_type>group|user) subject type '
+               'in edit permissions modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_subject_type(selenium, browser_id, modals, subject_type, num, numerals):
     n = _get_index(selenium, browser_id, num, modals, numerals)
     
-    assert subject_type == (modals(selenium[browser_id]).
-                                edit_permissions.
-                                acl.
-                                permissions[n].
-                                subject_type()), ("{} is not subject type in {}"
-                                        " ACL record".format(subject_type, num))
+    assert subject_type == (modals(selenium[browser_id]).edit_permissions.
+                            acl.permissions[n].
+                            subject_type()), (f'{subject_type} is not subject '
+                                              f'type in {num} ACL record')
 
 
 @when(parsers.re('user of (?P<browser_id>\w+) sees that there is no subject in '
@@ -225,79 +189,81 @@ def assert_acl_record_not_editable(selenium, browser_id, modals, num, numerals,
         _ = getattr(perm, '_{}_select'.format(name))
         
 
-@when(parsers.re('user of (?P<browser_id>\w+) sees that only (?P<option_list>.*) '
-                 'privileges? (are|is) set in (?P<num>\w+) ACL record in edit '
-                 'permissions modal'))
-@then(parsers.re('user of (?P<browser_id>\w+) sees that only (?P<option_list>.*) '
-                 'privileges? (are|is) set in (?P<num>\w+) ACL record in edit '
-                 'permissions modal'))
+@wt(parsers.re('user of (?P<browser_id>\w+) sees that only (?P<option_list>.*) '
+               'privileges? (are|is) set in (?P<num>\w+) ACL record in edit '
+               'permissions modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_set_acl_privileges(selenium, browser_id, modals, num, numerals, 
                               option_list):
+    driver = selenium[browser_id]
     n = _get_index(selenium, browser_id, num, modals, numerals)
-    
-    perm = modals(selenium[browser_id]).edit_permissions.acl.permissions[n]
-    
+
+    perm = modals(driver).edit_permissions.acl.member_permission_list[n]
+    perm.click()
+
     options = [x.lower() for x in parse_seq(option_list)]
-    if not 'deny' in options:
-        options.append('allow')
-    for o in perm.options:
-        if o.is_checked():
-            assert o.name.lower() in options, ("{} privilege is set in {} ACL "
-                                        "record".format(o.name.lower(), num))
+    is_allow_checked = perm.is_allow_option_checked()
+    if options[0] in ['allow', 'deny']:
+        if 'deny' in options and is_allow_checked:
+            assert False, 'Checked permissions type should be "deny" not "allow"'
+        elif 'allow' in options and not is_allow_checked:
+            assert False, 'Checked permissions type should be "allow" not "deny"'
+        options.pop(0)
+
+    for option in options:
+        permissions = option.split(':')
+        parent_permission_name = permissions[0].capitalize().replace('Acl', 'ACL')
+        parent_permission = perm.acl_permission_group[parent_permission_name]
+        if len(permissions) == 1:
+            assert parent_permission.toggle.is_checked(), (f'{parent_permission_name} '
+                                                           f'should be checked')
         else:
-            assert o.name.lower() not in options, ("{} privilege is not set "
-                                "in {} ACL record".format(o.name.lower(), num))
+            parent_permission.expand()
+            child_permission_name = permissions[1].capitalize().replace('acl',
+                                                                        'ACL')
+            assert (parent_permission.permissions[child_permission_name]
+                    .toggle.is_checked()), (f'{child_permission_name} '
+                                            f'should be checked')
 
 
-@when(parsers.re('user of (?P<browser_id>\w+) sees that (?P<num>\w+) ACL record'
-                 ' in edit permissions modal is set for (?P<type>.*?) '
-                 '(?P<name>.*)'))
-@then(parsers.re('user of (?P<browser_id>\w+) sees that (?P<num>\w+) ACL record'
-                 ' in edit permissions modal is set for (?P<type>.*?) '
-                 '(?P<name>.*)'))
+@wt(parsers.re('user of (?P<browser_id>\w+) sees that (?P<num>\w+) ACL record'
+               ' in edit permissions modal is set for (?P<type>.*?) '
+               '(?P<name>.*)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_acl_subject(selenium, browser_id, modals, num, numerals, type, name):
+    driver = selenium[browser_id]
     n = _get_index(selenium, browser_id, num, modals, numerals)
-    
-    perm = modals(selenium[browser_id]).edit_permissions.acl.permissions[n]
+
+    perm = modals(driver).edit_permissions.acl.member_permission_list[n]
     name = name.strip('\"')
 
-        
-    assert perm.subject_type() == type, ("Subject type is not {} in {}"
-                                        " ACL record".format(type, num))
-    assert perm.subject_name == name, ("Subject name is not {} in {} "
-                                        "ACL record".format(name, num))
+    assert perm.subject_type() == type, (f'Subject type is not {type} '
+                                         f'in {num} ACL record')
+    assert perm.name == name, 'Subject name is not {name} in {num} ACL record'
 
 
-@when(parsers.re('user of (?P<browser_id>\w+) clicks on (?P<btn>.*) button '
-                 'in (?P<num>.*) ACL record in edit permissions modal'))    
-@then(parsers.re('user of (?P<browser_id>\w+) clicks on "(?P<btn>.*)" button '
-                 'in (?P<num>.*) ACL record in edit permissions modal'))    
+@wt(parsers.re(r'user of (?P<browser_id>\w+) clicks on "(?P<btn>.*)" button '
+               'in (?P<num>.*) ACL record in edit permissions modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_btn_in_acl_record(selenium, browser_id, modals, btn, num, numerals):
+    driver = selenium[browser_id]
     n = _get_index(selenium, browser_id, num, modals, numerals)
-    
-    btn = btn.strip('\"').replace(' ', '_')
-    perm = modals(selenium[browser_id]).edit_permissions.acl.permissions[n]
-    getattr(perm, btn.lower())()
+
+    btn = btn.strip('\"')
+    perm = (modals(driver).edit_permissions.acl
+            .member_permission_list[n])
+    perm.menu_button()
+    modals(driver).menu_in_edit_permissions.menu[btn.capitalize()]()
 
 
-@when(parsers.re('user of (?P<browser_id>\w+) sees that (?P<subjects>.*) '
-                  '(is|are) in subject list in (?P<num>.*) ACL record'))
-@then(parsers.re('user of (?P<browser_id>\w+) sees that (?P<subjects>.*) '
-                  '(is|are) in subject list in (?P<num>.*) ACL record'))
-def assert_subject_in_list_in_acl_record(selenium, browser_id, subjects, modals,
-                                         num, numerals):
-    n = _get_index(selenium, browser_id, num, modals, numerals)
-    
-    perm = modals(selenium[browser_id]).edit_permissions.acl.permissions[n]
-    perm.expand()
-    subjects_list = [x.text.lower() for x in perm.subjects_list]
+@wt(parsers.re('user of (?P<browser_id>\w+) sees that (?P<subjects>.*) '
+               '(is|are) in subject list in ACL record'))
+def assert_subject_in_list_in_acl_record(selenium, browser_id, subjects, modals, tmp_memory):
+    driver = selenium[browser_id]
+    modals(driver).edit_permissions.acl.expand_dropdown()
+    subject_list = modals(driver).dropdown.options
     for subject in parse_seq(subjects):
-        assert subject.lower() in subjects_list,( "{} not in subjects list in "
-                                           "{} ACL record".format(subject, num))
-    perm.expand()
+        assert subject in subject_list, f'{subject} not found in subjects list'
 
 
 @when(parsers.re('user of (?P<browser_id>\w+) does not see (?P<subjects>.*) '
@@ -315,4 +281,23 @@ def assert_subject_not_in_list_in_acl_record(selenium, browser_id, subjects,
         assert subject.lower() not in subjects_list,( "{} in subjects list in "
                                            "{} ACL record".format(subject, num))
     perm.expand()
+
+
+def expand_subject_record_in_edit_permissions_modal(selenium, browser_id,
+                                                    modals, subject):
+    driver = selenium[browser_id]
+    modals(driver).edit_permissions.acl.member_permission_list[subject].click()
+
+
+def check_permission_denied_alert_in_edit_permissions_modal(selenium,
+                                                            browser_id, modals):
+    edit_permissions_modal = modals(selenium[browser_id]).edit_permissions
+    assert edit_permissions_modal.permission_denied_alert
+
+
+def check_permissions_list_in_edit_permissions_modal(selenium, browser_id,
+                                                     modals):
+    driver = selenium[browser_id]
+    edit_permissions_modal = modals(driver).edit_permissions
+    assert len(edit_permissions_modal.acl.member_permission_list) > 0
 

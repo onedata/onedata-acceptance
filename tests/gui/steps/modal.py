@@ -13,8 +13,9 @@ from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.common.keys import Keys
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
-from tests.utils.bdd_utils import given, wt, parsers, when, then
+from tests.gui.utils import Modals as modals
 from tests.gui.utils.generic import click_on_web_elem, transform
+from tests.utils.bdd_utils import given, wt, parsers, when, then
 from tests.utils.utils import repeat_failed
 
 in_type_to_id = {'username': 'login-form-username-input',
@@ -68,7 +69,8 @@ def assert_non_empty_token_in_add_storage_modal(browser_id, tmp_memory):
 def _find_modal(driver, modal_name):
     def _find():
         elements_list = ['group', 'token', 'cluster', 'harvester',
-                         'spaces', 'rename', 'share']
+                         'spaces', 'rename', 'share', 'permissions',
+                         'directory', 'data']
         if any([name for name in elements_list
                 if name in modal_name]):
             modals = driver.find_elements_by_css_selector('.modal, '
@@ -83,7 +85,7 @@ def _find_modal(driver, modal_name):
                                                           '.modal-title')
 
         for name, modal in zip(modals[1::2], modals[::2]):
-            if name.text.lower() == modal_name:
+            if name.text.lower() == modal_name.lower():
                 return modal
 
     modal_name = modal_name.lower()
@@ -98,10 +100,8 @@ def _wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory):
     tmp_memory[browser_id]['window']['modal'] = modal
 
 
-@when(parsers.parse('user of {browser_id} sees that '
-                    '"{modal_name}" modal has appeared'))
-@then(parsers.parse('user of {browser_id} sees that '
-                    '"{modal_name}" modal has appeared'))
+@wt(parsers.parse('user of {browser_id} sees that '
+                  '"{modal_name}" modal has appeared'))
 def wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory):
     driver = selenium[browser_id]
     _wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory)
@@ -335,31 +335,44 @@ def click_modal_button(selenium, browser_id, button, modal, modals):
                   'into {text_field} text field in modal "{modal_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def write_name_into_text_field_in_modal(selenium, browser_id, item_name,
-                                        modal_name, modals, text_field):
+                                        modal_name, modals):
     modal = getattr(modals(selenium[browser_id]), transform(modal_name))
     modal.input_name = item_name
 
 
-@wt(parsers.re(r'user of (?P<browser_id>.*?) sees that item named "(?P<item_name>.*?)" '
+@wt(parsers.re(r'user of (?P<browser_id>.*?) sees that item named'
+               r' "(?P<item_name>.*?)" '
                'is shared (?P<number>.*?) times? in modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_of_shares_in_modal(selenium, browser_id, item_name,
                                      number, modals):
     modal = modals(selenium[browser_id]).share_directory
-    assert number in modal.share_info, ("Item is not shared {} times".format(number))
+    links = modal.browser_share_icon
+    info = modal.share_info
+    err_msg = 'Item {item_name} is not shared {number} times'
+    assert _assert_number_of_shares_in_modal(number, links, info), err_msg
 
 
-@wt(parsers.re(r'user of (?P<browser_id>.*?) clicks on ("(?P<owner_name>.*?)" )?(?P<icon_name>.*?) icon'
-               ' in modal "(?P<modal_name>.*?)"'))
+def _assert_number_of_shares_in_modal(number, links, info):
+    return number in info and len(links) == int(number)
+
+
+@wt(parsers.parse('user of {browser_id} clicks on "{share_name}" share link '
+                  'with icon in modal "Share directory"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_icon_in_share_directory_modal(selenium, browser_id,
-                                        modal_name, modals, owner_name, icon_name):
+def click_share_info_icon_in_share_directory_modal(selenium, browser_id,
+                                                   modals, share_name):
     modal = modals(selenium[browser_id]).share_directory
-    icon_name = transform(icon_name) + '_icon'
-    # icon_name = 'browser share'
-    icons_group = getattr(modal, icon_name)
-    if owner_name:
-        icon = icons_group[owner_name]
-    else:
-        icon = icons_group[0]
+
+    icon = modal.browser_share_icon[share_name]
     icon.click()
+
+
+@wt(parsers.parse('user of {browser_id} sees that error modal with '
+                  'text "{text}" appeared'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_error_modal_with_text_appeared(selenium, browser_id, text):
+    message = 'Modal does not contain text "{}"'.format(text)
+    modal_text = modals(selenium[browser_id]).error.content.lower()
+    assert text.lower() in modal_text, message
+

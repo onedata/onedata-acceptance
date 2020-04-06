@@ -83,6 +83,7 @@ def assert_new_created_space_has_appeared_on_spaces(selenium, browser_id,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page):
     driver = selenium[browser_id]
+    driver.switch_to.default_content()
     oz_page(driver)[str(option).lower()]
 
 

@@ -29,7 +29,6 @@ Feature: ACL subdirectories privileges tests using sigle browser in Oneprovider 
                 - group1 
 
     And opened browser with user1 signed in to "onezone" service
-    And opened oneprovider-1 Oneprovider view in web GUI by user of browser
 
         
   Scenario Outline: List directory items
@@ -37,10 +36,10 @@ Feature: ACL subdirectories privileges tests using sigle browser in Oneprovider 
     Then user of browser <result> to see [file1, dir2] in "dir1" in "space1"
 
     Examples:
-    | result   |  privileges                       |                        
-    | succeeds |  [list files, traverse directory] |
-    | fails    |  all except [traverse directory]  |
-    | fails    |  all except [list files]          |
+    | result   |  privileges                                 |
+    | succeeds |  [data:list files, data:traverse directory] |
+    | fails    |  all except [data:traverse directory]       |
+    | fails    |  all except [data:list files]               |
 
 
   Scenario Outline: Rename subdirectory
@@ -48,47 +47,44 @@ Feature: ACL subdirectories privileges tests using sigle browser in Oneprovider 
     Then user of browser <result> to rename "dir1/dir2" to "new_name" in "space1"
 
     Examples:
-    | result   |  privileges                                                              |
-    | succeeds |  [list files, delete child, traverse directory, add subdirectory]        |
-    | fails    |  all except [add subdirectory]                                           |
-    | fails    |  all except [delete child]                                               |
-    | fails    |  all except [traverse directory]                                         |
-        
-        
+    | result   |  privileges                                                                                  |
+    | succeeds |  [data:list files, data:delete child, data:traverse directory, data:add subdirectory]        |
+    | fails    |  all except [data:add subdirectory]                                                          |
+    | fails    |  all except [data:delete child]                                                              |
+
+
   Scenario Outline: Rename subfile
     When user of browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
     Then user of browser <result> to rename "dir1/file1" to "new_name" in "space1"
 
     Examples:
-    | result   |  privileges                                                       |
-    | succeeds |  [list files, delete child, traverse directory, add files]        |
-    | fails    |  all except [add files]                                           |
-    | fails    |  all except [delete child]                                        |
-    | fails    |  all except [traverse directory]                                  |
-        
-        
+    | result   |  privileges                                                                           |
+    | succeeds |  [data:list files, data:delete child, data:traverse directory, data:add files]        |
+    | fails    |  all except [data:add files]                                                          |
+    | fails    |  all except [data:delete child]                                                       |
+
+
   Scenario Outline: Remove non-empty directory
     When user of browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
     Then user of browser <result> to remove "dir1" in "space1"
 
     Examples:
-    | result   |  privileges                                                   |
-    | succeeds |  [delete, delete child, list files, traverse directory]       |
-    | fails    |  all except [delete]                                          |
-    | fails    |  all except [delete child]                                    |
-    | fails    |  all except [list files]                                      |
-    | fails    |  all except [traverse directory]                              |
-        
-        
+    | result   |  privileges                                                                       |
+    | succeeds |  [general:delete, data:delete child, data:list files, data:traverse directory]    |
+    | fails    |  all except [general:delete]                                                      |
+    | fails    |  all except [data:delete child]                                                   |
+    | fails    |  all except [data:list files]                                                     |
+    | fails    |  all except [data:traverse directory]                                             |
+
+
   Scenario Outline: Remove subdirectory
     When user of browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
     Then user of browser <result> to remove "dir1/dir2" in "space1"
 
     Examples:
-    | result   |  privileges                                            |
-    | succeeds |  [delete child, traverse directory, list files]        |
-    | fails    |  all except [traverse directory]                       |
-    | fails    |  all except [delete child]                             |
+    | result   |  privileges                                                           |
+    | succeeds |  [data:delete child, data:traverse directory, data:list files]        |
+    | fails    |  all except [data:delete child]                                       |
 
 
   Scenario Outline: Remove subfile
@@ -96,7 +92,6 @@ Feature: ACL subdirectories privileges tests using sigle browser in Oneprovider 
     Then user of browser <result> to remove "dir1/file1" in "space1"
 
     Examples:
-    | result   |  privileges                                            |
-    | succeeds |  [delete child, traverse directory, list files]        |
-    | fails    |  all except [traverse directory]                       |
-    | fails    |  all except [delete child]                             |
+    | result   |  privileges                                                      |
+    | succeeds |  [data:delete child, data:traverse directory, data:list files]   |
+    | fails    |  all except [data:delete child]                                  |

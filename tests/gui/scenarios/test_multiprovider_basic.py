@@ -53,17 +53,18 @@ from tests.gui.steps.oneprovider.transfers import *
 
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
-from tests.gui.meta_steps.onezone.common import *
 
+from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.onezone.groups import *
-from tests.gui.meta_steps.onepanel.spaces import *
-from tests.gui.meta_steps.oneprovider.common import *
 from tests.gui.meta_steps.onezone.spaces import *
+from tests.gui.meta_steps.onezone.common import *
 
 from tests.gui.meta_steps.onepanel.spaces import *
-from tests.gui.meta_steps.oneprovider.common import *
-from tests.gui.meta_steps.onezone.common import *
+from tests.gui.meta_steps.onepanel.spaces import *
 from tests.gui.meta_steps.onepanel.provider import *
+
+from tests.gui.meta_steps.oneprovider.common import *
+from tests.gui.meta_steps.oneprovider.common import *
 
 from tests.utils.acceptance_utils import *
 
@@ -73,8 +74,7 @@ def screens():
     return [0, 1]
 
 
+scenarios('../features/oneprovider/multiprovider/basic.feature')
+scenarios('../features/oneprovider/multiprovider/cdmi.feature')
 # TODO: change test because of a new gui
-# scenarios('../features/oneprovider/multiprovider/cdmi.feature')
-# scenarios('../features/oneprovider/multiprovider/basic.feature')
 # scenarios('../features/oneprovider/multiprovider/auto_cleaning.feature')
-scenarios('../features/pass.feature')

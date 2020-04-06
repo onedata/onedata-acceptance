@@ -39,8 +39,6 @@ class SharesOptions(PageObject):
 
 
 class SharesContentPage(PageObject):
-    # TODO: change because of new gui
-    # sidebar = WebItem('.secondary-sidebar', cls=SharesSidebar)
     no_shares_msg = Label('.content-info-content-container')
     name = Label('.fb-breadcrumbs-dir-root .truncate ')
     shares_browser = WebItemsSequence('.one-collapsible-list .list-header-row', cls=SharesOptions)
