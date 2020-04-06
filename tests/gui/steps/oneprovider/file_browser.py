@@ -101,6 +101,18 @@ def assert_items_presence_in_file_browser(browser_id, item_list, tmp_memory):
         assert item_name in data, f'not found "{item_name}" in file browser'
 
 
+@wt(parsers.parse('user of {browser_id} sees only items named {item_list}'
+                  ' in file browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_only_given_items_in_file_browser(browser_id, item_list, tmp_memory):
+    file_browser = tmp_memory[browser_id]['file_browser']
+    files = {f.name for f in file_browser.data}
+    items = parse_seq(item_list)
+    assert len(files) == len(items), 'numbers of items are not equal'
+    for item_name in items:
+        assert item_name in files, f'not found "{item_name}" in file browser'
+
+
 @wt(parsers.re('user of (?P<browser_id>.+?) sees items? named '
                '(?P<item_list>.+?) in file browser in given order'))
 @repeat_failed(timeout=WAIT_BACKEND)
