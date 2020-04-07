@@ -365,7 +365,7 @@ def click_share_info_icon_in_share_directory_modal(selenium, browser_id,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
-               r'("(?P<owner_name>.*?)" )?(?P<icon_name>.*?) icon'
+               r'("(?P<owner_name>.*?)" )?(?P<icon_name>copy) icon'
                ' in modal "(?P<modal_name>.*?)"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_icon_in_share_directory_modal(selenium, browser_id, modal_name,

@@ -33,7 +33,7 @@ def change_public_share_to_home_cwd_using_breadcrumbs(selenium, browser_id,
 
 
 @wt(parsers.parse('user of {browser_id} sees that item named "{item_name}" '
-                  'has appeared in file browser on shares page'))
+                  'has appeared in file browser on single share view'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_item_in_file_browser_in_shares_page(selenium, browser_id, item_name,
                                                op_container):
@@ -50,15 +50,6 @@ def assert_item_in_file_browser_in_shares_page(selenium, browser_id, item_name,
 def click_option_in_data_row_menu_in_share_file_browser(selenium, browser_id,
                                                         option, modals):
     modals(selenium[browser_id]).shares_row_menu.options[option].click()
-
-
-@wt(parsers.parse('user of {browser_id} clicks "{share_name}" '
-                  'share in shares browser on Shares Page'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_share_in_shares_browser(selenium, browser_id, share_name,
-                                  op_container):
-    browser = op_container(selenium[browser_id]).shares_page.shares_browser
-    browser[share_name].click()
 
 
 @wt(parsers.parse('user of {browser_id} sees that absolute share path '
@@ -85,8 +76,8 @@ def is_cwd_correct(selenium, browser_id, cwd, op_container):
 @wt(parsers.parse('user of {browser_id} clicks on {path} '
                   'using breadcrumbs from share\'s info header'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_dir_in_abs_path(selenium, browser_id, path, op_page):
-    op_page(selenium[browser_id]).shares_page.path.chdir(path)
+def click_on_dir_in_abs_path(selenium, browser_id, path, op_container):
+    op_container(selenium[browser_id]).shares_page.path.chdir(path)
 
 
 def _change_iframe_for_public_share_page(selenium, browser_id, public_share):
