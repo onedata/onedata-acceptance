@@ -44,6 +44,8 @@ from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
+from tests.gui.meta_steps.oneprovider.shares import *
+from tests.gui.meta_steps.oneprovider.data import *
 
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
