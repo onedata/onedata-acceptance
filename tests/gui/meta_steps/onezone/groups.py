@@ -9,10 +9,18 @@ __license__ = ("This software is released under the MIT license cited in "
 
 from tests.gui.steps.common.miscellaneous import *
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
+from tests.gui.steps.onezone.access_tokens import (
+    click_on_consume_token_in_oz_access_tokens_panel,
+    select_member_from_dropdown, click_on_join_button_on_tokens_page)
+from tests.gui.meta_steps.onezone.tokens import (
+    paste_copied_token_into_text_field,
+    paste_token_from_another_browser_into_text_field,
+    consume_token_from_another_browser)
 from tests.gui.steps.onezone.groups import *
 from tests.gui.steps.onezone.members import *
 from tests.gui.steps.modal import (click_modal_button,
                                    assert_error_modal_with_text_appeared)
+from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed
 
@@ -64,16 +72,12 @@ def remove_group(selenium, browser_id, group_list, oz_page, popups):
 @wt(parsers.parse('user of {browser_id} creates group "{group_list}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_groups_using_op_gui(selenium, browser_id, group_list, oz_page):
-    operation = 'Create'
-
     for group in parse_seq(group_list):
-        click_create_or_join_group_button_in_panel(selenium, browser_id,
-                                                   operation, oz_page)
-        input_name_or_token_into_input_box_on_main_groups_page(selenium,
-                                                               browser_id,
-                                                               group, oz_page)
-        confirm_name_or_token_input_on_main_groups_page(selenium, browser_id,
-                                                        oz_page)
+        click_create_group_button_in_panel(selenium, browser_id, oz_page)
+        input_name_into_input_box_on_main_groups_page(selenium, browser_id,
+                                                      group, oz_page)
+        confirm_name_input_on_main_groups_page(selenium, browser_id,
+                                               oz_page)
 
 
 def see_groups_using_op_gui(selenium, user, oz_page, group_list):
@@ -158,12 +162,13 @@ def _create_group_token(selenium, user, user2, oz_page, name, tmp_memory,
     member += 's'
     modal = 'Invite using token'
     subpage = 'members'
+    cancel_button = 'Cancel'
 
     go_to_group_subpage(selenium, user, name, subpage, oz_page)
     click_on_option_in_members_list_menu(selenium, user, button,
                                          where, member, oz_page, onepanel, popups)
     copy_token_from_modal(selenium, user)
-    close_modal(selenium, user, modal, modals)
+    click_modal_button(selenium, user, cancel_button, modal, modals)
     send_copied_item_to_other_users(user, item_type, user2,
                                     tmp_memory, displays, clipboard)
 
@@ -188,12 +193,8 @@ def create_group_token_to_invite_group_using_op_gui(selenium, user, user2,
                         displays, clipboard, member, onepanel, popups)
 
 
-@wt(parsers.re('(?P<user>\w+) joins group he was invited to using '
-               'Oneprovider web GUI'))
-def join_group_using_op_gui(selenium, user, oz_page, tmp_memory):
-    confirm_type = 'enter'
-
-    join_group(selenium, user, confirm_type, oz_page, tmp_memory)
+def join_group_using_op_gui(selenium, browser_id, oz_page, tmp_memory):
+    consume_token_from_another_browser(selenium, browser_id, oz_page, tmp_memory)
 
 
 def add_subgroups_using_op_gui(selenium, user, oz_page, parent, group_list,
@@ -205,8 +206,8 @@ def add_subgroups_using_op_gui(selenium, user, oz_page, parent, group_list,
                                                         tmp_memory, displays,
                                                         clipboard, onepanel,
                                                         popups)
-        add_group_as_subgroup(selenium, user, child, oz_page,
-                              tmp_memory, popups)
+        add_group_as_subgroup_with_copied_token(selenium, user, child, oz_page,
+                                                tmp_memory)
 
 
 def remove_subgroups_using_op_gui(selenium, user, oz_page, group_list,
@@ -237,11 +238,43 @@ def fail_to_add_subgroups_using_op_gui(selenium, user, oz_page, parent,
                                                     displays, clipboard,
                                                     onepanel, popups)
     for child in parse_seq(group_list):
-        error = 'joining group as subgroup failed'
+        error = 'Consuming token failed'
         modal = 'error'
 
-        add_group_as_subgroup(selenium, user, child, oz_page,
-                              tmp_memory, popups)
+        add_group_as_subgroup_with_copied_token(selenium, user, child, oz_page,
+                                                tmp_memory)
         assert_error_modal_with_text_appeared(selenium, user, error)
         close_modal(selenium, user, modal, modals)
+
+
+@wt(parsers.parse('user of {browser_id} adds group "{group}" as subgroup '
+                  'using received token'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def add_group_as_subgroup_with_received_token(selenium, browser_id, group,
+                                              oz_page, tmp_memory):
+    option = 'Tokens'
+
+    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
+    click_on_consume_token_in_oz_access_tokens_panel(selenium, browser_id,
+                                                     oz_page)
+    paste_token_from_another_browser_into_text_field(selenium, browser_id,
+                                                     oz_page, tmp_memory)
+    select_member_from_dropdown(selenium, browser_id, group, modals, oz_page)
+    click_on_join_button_on_tokens_page(selenium, browser_id, oz_page)
+
+
+@wt(parsers.parse('user of {browser_id} adds group "{group}" as subgroup '
+                  'using copied token'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def add_group_as_subgroup_with_copied_token(selenium, browser_id, group,
+                                            oz_page, clipboard, displays):
+    option = 'Tokens'
+
+    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
+    click_on_consume_token_in_oz_access_tokens_panel(selenium, browser_id,
+                                                     oz_page)
+    paste_copied_token_into_text_field(selenium, browser_id, oz_page,
+                                       clipboard, displays)
+    select_member_from_dropdown(selenium, browser_id, group, modals, oz_page)
+    click_on_join_button_on_tokens_page(selenium, browser_id, oz_page)
 

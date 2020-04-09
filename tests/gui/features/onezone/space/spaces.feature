@@ -71,41 +71,12 @@ Feature: Basic management of spaces
     Then user of browser sees 0 B size of the "space2"
 
 
-  Scenario: User fails to join to space because of using invalid token
-    When user of browser clicks on Data in the main menu
-    And user of browser clicks Join some space using a space invitation token button
-    And user of browser writes "invalid token" into space token text field on data page
-    And user of browser clicks Join the space button on Join user to a space page
-    Then user of browser sees that error popup has appeared
-
-
   Scenario: User sees that provider is added to supporters list after supporting space
     When user of browser clicks on Data in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Providers of "space1" in the sidebar
     Then user of browser sees "oneprovider-1" is on the providers list
     And user of browser sees that length of providers list equals number of supporting providers of "space1"
-
-
-  Scenario: User generates different support tokens (space has already supported by one provider)
-    When user of browser clicks on Data in the main menu
-    And user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Providers of "space1" in the sidebar
-    And user of browser clicks Add support button on providers page
-    And user of browser clicks Copy button on Add support page
-    And user of browser clicks Generate another token on Add support page
-    Then user of browser sees that another token is different than first one
-
-
-  Scenario: User generates different deploy provider tokens (space has already supported by one provider)
-    When user of browser clicks on Data in the main menu
-    And user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Providers of "space1" in the sidebar
-    And user of browser clicks Add support button on providers page
-    And user of browser clicks Deploy your own provider tab on Add support page
-    And user of browser clicks Copy button on Add support page
-    And user of browser clicks Generate another token on Add support page
-    Then user of browser sees that another token is different than first one
 
 
   Scenario: User successfully copies support token (space has already supported by one provider)

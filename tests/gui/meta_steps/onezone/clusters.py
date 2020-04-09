@@ -7,14 +7,16 @@ __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+from tests.gui.steps.onezone.access_tokens import (
+    click_on_consume_token_in_oz_access_tokens_panel,
+    click_on_join_button_on_tokens_page)
+from tests.gui.meta_steps.onezone.tokens import (
+    paste_copied_token_into_text_field)
 from tests.gui.steps.onezone.members import *
 from tests.utils.utils import repeat_failed
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
-from tests.gui.steps.onezone.clusters import (click_on_record_in_clusters_menu,
-                                              click_button_in_cluster_page,
-                                              enter_copied_join_cluster_token_into_token_input_field)
+from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
-from tests.gui.steps.common.miscellaneous import close_modal
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.onezone.discovery import (
     choose_element_from_dropdown_in_add_element_modal)
@@ -34,6 +36,7 @@ def invite_user_to_cluster(selenium, browser_id, browser, cluster, oz_page,
     member = 'users'
     modal = 'Invite using token'
     item_type = 'token'
+    cancel_button = 'Cancel'
 
     click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
     click_on_record_in_clusters_menu(selenium, browser_id, oz_page, cluster,
@@ -45,7 +48,7 @@ def invite_user_to_cluster(selenium, browser_id, browser, cluster, oz_page,
                                          where, member, oz_page,
                                          onepanel, popups)
     copy_token_from_modal(selenium, browser_id)
-    close_modal(selenium, browser_id, modal, modals)
+    click_modal_button(selenium, browser_id, cancel_button, modal, modals)
     send_copied_item_to_other_users(browser_id, item_type, browser,
                                     tmp_memory, displays, clipboard)
 
@@ -53,16 +56,14 @@ def invite_user_to_cluster(selenium, browser_id, browser, cluster, oz_page,
 @wt(parsers.parse('user of {browser_id} joins to cluster'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def join_to_cluster(selenium, browser_id, oz_page, displays, clipboard):
-    option = 'Clusters'
-    button = 'join cluster'
-    button2 = 'join the cluster'
+    option = 'Tokens'
 
     click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
-    click_button_in_cluster_page(selenium, browser_id, oz_page, button)
-    enter_copied_join_cluster_token_into_token_input_field(selenium, browser_id,
-                                                           oz_page, displays,
-                                                           clipboard)
-    click_button_in_cluster_page(selenium, browser_id, oz_page, button2)
+    click_on_consume_token_in_oz_access_tokens_panel(selenium, browser_id,
+                                                     oz_page)
+    paste_copied_token_into_text_field(selenium, browser_id, oz_page,
+                                       clipboard, displays)
+    click_on_join_button_on_tokens_page(selenium, browser_id, oz_page)
 
 
 @wt(parsers.parse('user of {browser_id} {option} nested "{nested_privilege}" '

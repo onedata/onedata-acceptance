@@ -43,7 +43,7 @@ from .shares_row_menu import SharesRowMenu
 class Modals(object):
     add_storage = WebItem('.panel-onezone-modal.in', cls=AddStorage)
     data_distribution = WebItem('.modal-dialog', cls=DataDistributionModal)
-    cluster_deployment = WebItem('#cluster-deploy-progress-modal',
+    cluster_deployment = WebItem('.new-cluster-deploy-progress.modal-body',
                                  cls=ClusterDeploymentModal)
     revoke_space_support = WebItem('.modal.in .modal-dialog',
                                    cls=RevokeSpaceSupportModal)
@@ -74,7 +74,7 @@ class Modals(object):
                              cls=RemoveModal)
     error = WebItem('.alert-global.modal.in .modal-dialog',
                     cls=ErrorModal)
-    invite_using_token = WebItem('.invite-using-token-modal.modal.in '
+    invite_using_token = WebItem('.generate-invite-token-modal.modal.in '
                                  '.modal-dialog',
                                  cls=InviteUsingTokenModal)
     group_hierarchy_menu = WebItem('.group-actions.one-webui-popover',

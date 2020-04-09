@@ -44,7 +44,6 @@ class GroupsPage(GenericPage):
                                      cls=Group)
 
     create_group = Button('.oneicon-add-filled')
-    join_group = Button('.oneicon-join-plug')
 
     menu = WebItemsSequence('.webui-popover-content '
                             '.one-collapsible-toolbar-popover '
@@ -57,7 +56,4 @@ class GroupsPage(GenericPage):
 
     main_page = WebItem('.col-content', cls=GroupDetailsPage)
     members_page = WebItem('.main-content', cls=MembersPage)
-
-    join_space = Button('.minimized-item.clickable.join-space-action '
-                        '.oneicon-space-join')
 

@@ -14,6 +14,7 @@ from pytest_bdd import given, when, then, parsers
 
 from tests.gui.conftest import WAIT_BACKEND, SELENIUM_IMPLICIT_WAIT
 from tests.gui.utils.generic import implicit_wait
+from tests.utils.bdd_utils import wt
 from tests.utils.utils import repeat_failed
 
 
@@ -103,6 +104,14 @@ def click_on_create_new_token_in_oz_access_tokens_panel(selenium, browser_id,
     oz_page(selenium[browser_id])['tokens'].create_token()
 
 
+@wt(parsers.parse('user of {browser_id} clicks on "Consume token" button '
+                  'in tokens sidebar'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def click_on_consume_token_in_oz_access_tokens_panel(selenium, browser_id,
+                                                     oz_page):
+    oz_page(selenium[browser_id])['tokens'].consume_token()
+
+
 @given(parsers.parse('user of {browser_id} created and recorded access token '
                      'for later use with CDMI API'))
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -133,4 +142,22 @@ def create_and_record_access_token_for_cdmi(selenium, browser_id,
                                    "access token in oz")
     token = clipboard.paste(display=displays[browser_id])
     tmp_memory[browser_id]['access_token'] = token
+
+
+@wt(parsers.parse('user of {browser_id} clicks on Join button '
+                  'on tokens page'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def click_on_join_button_on_tokens_page(selenium, browser_id, oz_page):
+    oz_page(selenium[browser_id])['tokens'].join_button()
+
+
+@wt(parsers.parse('user of {browser_id} chooses "{member_name}" {type} '
+                  'from dropdown on tokens page'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def select_member_from_dropdown(selenium, browser_id, member_name,
+                                modals, oz_page):
+    driver = selenium[browser_id]
+
+    oz_page(driver)['tokens'].expand_dropdown()
+    modals(driver).dropdown.options[member_name].click()
 

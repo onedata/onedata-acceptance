@@ -27,23 +27,16 @@ Feature: Basic management of groups with multiple users in Onezone GUI
     And user of [browser1, browser2] logged as [user1, user2] to [Onezone, Onezone] service
 
 
-  Scenario Outline: Single user adds subgroup
+  Scenario: Single user adds subgroup
     When user of browser1 clicks on Groups in the main menu
     And user of browser1 clicks "group3" on the groups list in the sidebar
     And user of browser1 clicks on "Invite group using token" button in groups list menu in "group3" group members view
     And user of browser1 copies invitation token from modal
-    And user of browser1 closes "Invite using token" modal
+    And user of browser1 clicks on "Cancel" button in modal "Invite using token"
 
-    And user of browser1 clicks on "Join as subgroup" button in group "group1" menu in the sidebar
-    And user of browser1 pastes copied token into group token text field
-    And user of browser1 confirms using <confirmation_method>
+    And user of browser1 adds group "group1" as subgroup using copied token
 
     Then user of browser1 sees "group1" as "group3" child
-
-    Examples:
-      | confirmation_method |
-      | enter               |
-      | button              |
 
 
   Scenario: User adds subgroup

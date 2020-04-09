@@ -13,7 +13,7 @@ from tests.gui.utils.core.base import PageObject
 
 
 class TokenPage(PageObject):
-    copy = NamedButton('button', text='Copy')
+    copy = Button('.copy-btn')
 
 
 class MenuItem(PageObject):
@@ -32,12 +32,11 @@ class SubmenuItem(PageObject):
 
 class ClustersPage(GenericPage):
     add_new_provider_cluster = Button('.add-cluster-btn')
-    join_cluster = Button('.join-cluster-btn')
 
     token_page = WebItem('.main-content', cls=TokenPage)
 
     menu_button = Button('.with-menu .collapsible-toolbar-toggle')
-    menu = WebItemsSequence('.two-level-sidebar.sidebar-clusters '
+    menu = WebItemsSequence('.sidebar-clusters .two-level-sidebar '
                             '.one-list-wrapper .one-label',
                             cls=MenuItem)
     submenu = WebItemsSequence('.second-level-items .item-header',
@@ -51,8 +50,4 @@ class ClustersPage(GenericPage):
                                      '.btn-modify-provider')
     confirm_modify_provider_details = NamedButton('button span',
                                                   text='Modify provider details')
-
-    join_cluster_token_input = WebElement('.join-cluster-token')
-    join_the_cluster = NamedButton('button .spin-button-label',
-                                   text='Join the cluster')
 

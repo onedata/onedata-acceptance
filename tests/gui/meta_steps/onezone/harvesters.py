@@ -19,15 +19,12 @@ from tests.gui.steps.onezone.discovery import (
     type_index_name_to_input_field_in_indices_page,
     click_create_button_in_indices_page, click_button_in_harvester_spaces_page,
     choose_element_from_dropdown_in_add_element_modal,
-    click_join_harvester_button_in_discovery_page,
     type_text_to_rename_input_field_in_discovery_page,
     confirm_harvester_rename_using_button)
 from tests.gui.steps.onezone.spaces import (
     click_on_option_in_the_sidebar,
-    click_element_on_lists_on_left_sidebar_menu,
-    paste_harvester_invitation_token_into_text_field)
+    click_element_on_lists_on_left_sidebar_menu)
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
-from tests.gui.steps.common.miscellaneous import close_modal
 from tests.gui.steps.modal import click_modal_button
 
 
@@ -156,6 +153,7 @@ def send_invitation_token(selenium, browser_id1, oz_page, harvester_name,
     list_type = 'harvester'
     option = 'Members'
     button = 'Invite user using token'
+    cancel_button = 'Cancel'
     member = 'users'
     modal = 'Invite using token'
     item_type = 'token'
@@ -171,24 +169,9 @@ def send_invitation_token(selenium, browser_id1, oz_page, harvester_name,
                                          list_type, member, oz_page,
                                          onepanel, popups)
     copy_token_from_modal(selenium, browser_id1)
-    close_modal(selenium, browser_id1, modal, modals)
+    click_modal_button(selenium, browser_id1, cancel_button, modal, modals)
     send_copied_item_to_other_users(browser_id1, item_type, browser_id2,
                                     tmp_memory, displays, clipboard)
-
-
-@wt(parsers.parse('user of {browser_id} joins to harvester in Onezone page'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def join_to_harvester(selenium, browser_id, oz_page, clipboard, displays):
-    button_name = 'Join to harvester'
-    where = 'discovery'
-
-    click_button_on_discovery_on_left_sidebar_menu(selenium, browser_id,
-                                                   button_name, oz_page)
-    paste_harvester_invitation_token_into_text_field(selenium, browser_id,
-                                                     oz_page, clipboard,
-                                                     displays, where)
-    click_join_harvester_button_in_discovery_page(selenium, browser_id,
-                                                  oz_page)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>checks|unchecks) '
