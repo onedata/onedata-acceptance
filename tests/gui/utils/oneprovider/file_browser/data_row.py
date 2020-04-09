@@ -20,13 +20,13 @@ class DataRow(PageObject):
     size = Label('.fb-table-col-size .file-item-text')
     modification_date = Label('.fb-table-col-modification .file-item-text')
 
-    _icon = WebElement('.file-icon.one-icon')
-    _shared_icon = WebElement('.file-status-icon .one-icon')
+    _icon = WebElement('.file-icon')
     menu_button = Button('.fb-table-col-actions-menu .menu-toggle')
 
-    # TODO: change test because of a new gui (metadata, share)
+    share_icon = WebElement('.file-status-icon.file-status-shared')
+
+    # TODO: change test because of a new gui (metadata)
     # _metadata_tool = WebElement('.file-tool-metadata')
-    # _share_tool = WebElement('.file-tool-share')
 
     def __str__(self):
         return '{item} in {parent}'.format(item=self.name,
@@ -41,12 +41,9 @@ class DataRow(PageObject):
     def is_directory(self):
         return 'browser-directory' in self._icon.get_attribute('class')
 
-    def is_shared(self):
-        return 'oneicon-browser-share' in self._shared_icon.get_attribute('class')
-
-    def is_tool_visible(self, name):
-        tool = getattr(self, '_{tool}_tool'.format(tool=name))
-        return '25p' in tool.get_attribute('class')
+    def is_icon_visible(self, name):
+        icon = getattr(self, '{icon}_icon'.format(icon=name))
+        return 'file-status-icon' in icon.get_attribute('class')
 
     def click_on_tool(self, name):
         tool = getattr(self, '_{tool}_tool'.format(tool=name))
