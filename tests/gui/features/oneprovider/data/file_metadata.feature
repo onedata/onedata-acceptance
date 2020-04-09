@@ -45,36 +45,6 @@ Feature: Basic data tab operations on file metadata in file browser
     Then user of browser sees metadata icon for "file1" in file browser
 
 
-  Scenario: Invalid entry for basic metadata entry for file is highlighted
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
-
-    # duplicate key
-    And user of browser opens "File metadata" modal for "file1" file
-    And user of browser types "attr" to key input box of new metadata basic entry in "File metadata" modal
-    And user of browser types "attr" to key input box of new metadata basic entry in "File metadata" modal
-    Then user of browser sees that edited attribute key in "File metadata" modal is highlighted as invalid
-
-    # 'onedata_' key
-    And user of browser cleans key input box of edited metadata basic entry in "File metadata" modal
-    And user of browser types "onedata_item" to key input box of new metadata basic entry in "File metadata" modal
-    Then user of browser sees that edited attribute key in "File metadata" modal is highlighted as invalid
-
-
-    Scenario: User cannot save changes while entry is invalid
-      When user of browser clicks "space1" on the spaces list in the sidebar
-      And user of browser clicks Data of "space1" in the sidebar
-      And user of browser sees file browser in data tab in Oneprovider page
-
-      # duplicate key
-      And user of browser opens "File metadata" modal for "file1" file
-      And user of browser types "attr" to key input box of new metadata basic entry in "File metadata" modal
-      And user of browser types "attr" to key input box of new metadata basic entry in "File metadata" modal
-
-      Then user of browser sees that "Save all" button in "File metadata" modal is disabled
-
-
     Scenario: Add basic metadata to file and check their presence after reopening
       When user of browser clicks "space1" on the spaces list in the sidebar
       And user of browser clicks Data of "space1" in the sidebar
@@ -205,17 +175,6 @@ Feature: Basic data tab operations on file metadata in file browser
 
       And user of browser opens JSON metadata tab for "file1" file
       Then user of browser sees that JSON textarea in "File metadata" modal is empty
-
-
-    Scenario: Invalid entry for JSON metadata entry for file is highlighted
-      When user of browser clicks "space1" on the spaces list in the sidebar
-      And user of browser clicks Data of "space1" in the sidebar
-      And user of browser sees file browser in data tab in Oneprovider page
-
-      And user of browser opens JSON metadata tab for "file1" file
-      And user of browser types "{"id": 1" to JSON textarea in "File metadata" modal
-      Then user of browser sees that JSON textarea is highlighted as invalid in "File metadata" modal
-      And user of browser sees that "Save all" button in "File metadata" modal is disabled
 
 
     Scenario: Add valid metadata to file in XML format

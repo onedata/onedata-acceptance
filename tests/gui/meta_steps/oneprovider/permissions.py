@@ -71,6 +71,24 @@ def set_acl_entry_in_op_gui(selenium, browser_id, priv, name, modals):
     select_acl_options(selenium, browser_id, priv, modals, name)
 
 
+@when(parsers.re('user of (?P<browser_id>\w+) sets selected items ACL '
+                 '(?P<priv>.*) privileges for (?P<type>.*) (?P<name>.*)'))
+def grant_acl_privileges_to_selected(selenium, browser_id, priv,
+                                     name, op_container, tmp_memory, popups,
+                                     oz_page, modals):
+    option_for_dir = 'Permissions'
+    modal_name = 'Edit Permissions'
+
+    assert_file_browser_in_data_tab_in_op(selenium, browser_id, op_container,
+                                          tmp_memory)
+    choose_option_from_selection_menu(browser_id, selenium, option_for_dir,
+                                      popups, tmp_memory)
+    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
+    set_acl_entry_in_op_gui(selenium, browser_id, priv, name, modals)
+    wt_click_on_confirmation_btn_in_modal(selenium, browser_id, 'Save',
+                                          tmp_memory)
+
+
 @when(parsers.re('user of (?P<browser_id>\w+) sets (?P<item_list>.*) ACL '
                  '(?P<priv>.*) privileges for (?P<type>.*) (?P<name>.*) '
                  'in "(?P<space>.*)"'))

@@ -46,36 +46,6 @@ Feature: Basic data tab operations on directory metadata in file browser
     Then user of browser sees metadata icon for "dir1" in file browser
 
 
-  Scenario: Invalid entry for basic metadata entry for directory is highlighted
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
-
-    # duplicate key
-    And user of browser opens "Directory metadata" modal for "dir1" directory
-    And user of browser types "attr" to key input box of new metadata basic entry in "Directory metadata" modal
-    And user of browser types "attr" to key input box of new metadata basic entry in "Directory metadata" modal
-    Then user of browser sees that edited attribute key in "Directory metadata" modal is highlighted as invalid
-
-    # 'onedata_' key
-    And user of browser cleans key input box of edited metadata basic entry in "Directory metadata" modal
-    And user of browser types "onedata_item" to key input box of new metadata basic entry in "Directory metadata" modal
-    Then user of browser sees that edited attribute key in "Directory metadata" modal is highlighted as invalid
-
-
-    Scenario: User cannot save changes while entry is invalid
-      When user of browser clicks "space1" on the spaces list in the sidebar
-      And user of browser clicks Data of "space1" in the sidebar
-      And user of browser sees file browser in data tab in Oneprovider page
-
-      # duplicate key
-      And user of browser opens "Directory metadata" modal for "dir1" directory
-      And user of browser types "attr" to key input box of new metadata basic entry in "Directory metadata" modal
-      And user of browser types "attr" to key input box of new metadata basic entry in "Directory metadata" modal
-
-      Then user of browser sees that "Save all" button in "Directory metadata" modal is disabled
-
-
     Scenario: Add basic metadata to directory and check their presence after reopening
       When user of browser clicks "space1" on the spaces list in the sidebar
       And user of browser clicks Data of "space1" in the sidebar
@@ -206,17 +176,6 @@ Feature: Basic data tab operations on directory metadata in file browser
 
       And user of browser opens JSON metadata tab for "dir1" directory
       Then user of browser sees that JSON textarea in "Directory metadata" modal is empty
-
-
-    Scenario: Invalid entry for JSON metadata entry for directory is highlighted
-      When user of browser clicks "space1" on the spaces list in the sidebar
-      And user of browser clicks Data of "space1" in the sidebar
-      And user of browser sees file browser in data tab in Oneprovider page
-
-      And user of browser opens JSON metadata tab for "dir1" directory
-      And user of browser types "{"id": 1" to JSON textarea in "Directory metadata" modal
-      Then user of browser sees that JSON textarea is highlighted as invalid in "Directory metadata" modal
-      And user of browser sees that "Save all" button in "Directory metadata" modal is disabled
 
 
     Scenario: Add valid metadata to directory in XML format

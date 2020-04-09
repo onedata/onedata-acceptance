@@ -97,37 +97,6 @@ def assert_there_is_no_such_meta_record(selenium, browser_id, attribute_name,
     assert attribute_name not in modal.basic.entries, err_msg
 
 
-@wt(parsers.parse('user of {browser_id} sees that edited attribute key in '
-                  '"{modal_name}" modal is highlighted as invalid'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_entered_attr_key_is_invalid(selenium, browser_id, modals,
-                                       modal_name):
-    modal = getattr(modals(selenium[browser_id]), transform(modal_name))
-    entry = modal.basic.find_edited_entry()
-    assert entry.is_invalid(), 'Entry is valid but should not be'
-
-
-@wt(parsers.parse('user of {browser_id} cleans key input box of edited '
-                  'metadata basic entry in "{modal_name}" modal'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def clean_key_input_of_edited_basic_entry(selenium, browser_id, modals,
-                                          modal_name):
-    modal = getattr(modals(selenium[browser_id]), transform(modal_name))
-    entry = modal.basic.find_edited_entry()
-    entry.edit_key = ''
-
-
-@wt(parsers.parse('user of {browser_id} types "{text}" to attribute input '
-                  'box of edited metadata basic entry in '
-                  '"{modal_name}" modal'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def type_key_input_of_edited_basic_entry(selenium, browser_id, modals, text,
-                                          modal_name):
-    modal = getattr(modals(selenium[browser_id]), transform(modal_name))
-    entry = modal.basic.find_edited_entry()
-    entry.edit_key = text
-
-
 @wt(parsers.parse('user of {browser_id} clicks on delete basic metadata entry '
                   'icon for basic metadata entry with attribute named '
                   '"{attr_name}" in "{modal_name}" modal'))

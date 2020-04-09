@@ -22,10 +22,6 @@ class BasicMetadataEntry(PageObject):
     def __str__(self):
         return 'metadata basic entry'
 
-    def is_invalid(self):
-        self.web_elem.get_attribute('class')
-        return 'has-error' in self.web_elem.get_attribute('class')
-
 
 class BasicMetadataNewEntry(PageObject):
     key = Input('.form-control[placeholder="Key"]')
@@ -37,22 +33,10 @@ class BasicMetadataPanel(PageObject):
     entries = WebItemsSequence('.form-group-editable:not([class~=last-record])',
                                cls=BasicMetadataEntry)
 
-    def find_edited_entry(self):
-        for entry in self.entries:
-            try:
-                edit_input = entry.edit_key
-                return entry
-            except RuntimeError:
-                continue
-
 
 class JSONMetadataPanel(PageObject):
     text_area = Input('.json-textarea')
     status = WebElement('.tab-pane.active .form-group')
-
-    def is_invalid(self):
-        self.status.get_attribute('class')
-        return 'has-error' in self.status.get_attribute('class')
 
 
 class RDFMetadataPanel(PageObject):
