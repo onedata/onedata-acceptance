@@ -43,7 +43,7 @@ from .shares_row_menu import SharesRowMenu
 class Modals(object):
     add_storage = WebItem('.panel-onezone-modal.in', cls=AddStorage)
     data_distribution = WebItem('.modal-dialog', cls=DataDistributionModal)
-    cluster_deployment = WebItem('#cluster-deploy-progress-modal',
+    cluster_deployment = WebItem('.new-cluster-deploy-progress.modal-body',
                                  cls=ClusterDeploymentModal)
     revoke_space_support = WebItem('.modal.in .modal-dialog',
                                    cls=RevokeSpaceSupportModal)
