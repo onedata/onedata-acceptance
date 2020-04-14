@@ -23,7 +23,9 @@ class DataRow(PageObject):
     _icon = WebElement('.file-icon')
     menu_button = Button('.fb-table-col-actions-menu .menu-toggle')
 
+    _status_bar = WebElement('.file-status-bar')
     share_icon = WebElement('.file-status-icon.file-status-shared')
+    _clickable_field = WebElement('.file-name')
 
     # TODO: change test because of a new gui (metadata)
     # _metadata_tool = WebElement('.file-tool-metadata')
@@ -45,12 +47,20 @@ class DataRow(PageObject):
         icon = getattr(self, '{icon}_icon'.format(icon=name))
         return 'file-status-icon' in icon.get_attribute('class')
 
-    def click_on_tool(self, name):
-        tool = getattr(self, '_{tool}_tool'.format(tool=name))
-        tool_icon = tool.find_element_by_css_selector('.oneicon')
-        click_on_web_elem(self.driver, tool_icon,
+    def is_any_icon_visible(self):
+        try:
+            getattr(self, '_status_bar')
+        except RuntimeError:
+            return None
+
+    def click_on_status_icon(self, name):
+        icon = getattr(self, '{icon}_icon'.format(icon=name))
+        click_on_web_elem(self.driver, icon,
                           lambda: 'cannot click on "{}" in '
                                   '{}'.format(name, self))
 
     def double_click(self):
-        ActionChains(self.driver).double_click(self.web_elem).perform()
+        if self.is_any_icon_visible():
+            ActionChains(self.driver).double_click(self._clickable_field).perform()
+        else:
+            ActionChains(self.driver).double_click(self.web_elem).perform()
