@@ -181,9 +181,9 @@ def g_click_on_confirmation_btn_in_modal(selenium, browser_id, button_name,
 def is_modal_msg_matching(browser_id, regexp, tmp_memory):
     modal = tmp_memory[browser_id]['window']['modal']
     msg = modal.find_element_by_css_selector('.modal-body .message-text').text
-    assert re.match(regexp, msg), \
-        'mag displayed in modal: {msg} ' \
-        'does not match {regexp}'.format(regexp=regexp, msg=msg)
+    assert re.match(regexp, msg), 'mag displayed in modal: {msg} ' \
+                                  'does not match {regexp}'.format(
+        regexp=regexp, msg=msg)
 
 
 @when(parsers.parse('user of {browser_id} sees '
@@ -340,8 +340,8 @@ def write_name_into_text_field_in_modal(selenium, browser_id, item_name,
                r' "(?P<item_name>.*?)" '
                'is shared (?P<number>.*?) times? in modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_number_of_shares_in_modal(selenium, browser_id, item_name,
-                                     number, modals):
+def assert_number_of_shares_in_modal(selenium, browser_id, item_name, number,
+                                     modals):
     modal = modals(selenium[browser_id]).share_directory
     links = modal.browser_share_icon
     info = modal.share_info
@@ -356,8 +356,8 @@ def _assert_number_of_shares_in_modal(number, links, info):
 @wt(parsers.parse('user of {browser_id} clicks on "{share_name}" share link '
                   'with icon in modal "Share directory"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_share_info_icon_in_share_directory_modal(selenium, browser_id,
-                                                   modals, share_name):
+def click_share_info_icon_in_share_directory_modal(selenium, browser_id, modals,
+                                                   share_name):
     modal = modals(selenium[browser_id]).share_directory
 
     icon = modal.browser_share_icon[share_name]

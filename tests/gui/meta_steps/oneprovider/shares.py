@@ -115,20 +115,20 @@ def move_to_single_share_view_by_sidebar(selenium, browser_id, share_name,
                                           tmp_memory)
 
 
-@wt(parsers.parse('user of {browser_id} publish "{share_name}" share to user '
-                  'of {browser2_id} using modal'))
+@wt(parsers.parse('user of {browser_id} hands "{share_name}" share\'s URL to '
+                  'user of {browser2_id} using modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def publish_share_to_another_user(selenium, browser_id, browser2_id, tmp_memory,
-                                  modals, displays, clipboard):
+def hand_share_url_to_another_user(selenium, browser_id, browser2_id,
+                                   tmp_memory, modals, displays, clipboard):
     modal_name = "Share directory"
     owner_name = None
     icon_name = "copy"
     item_type = 'URL'
-    browser_list = browser2_id
     button = 'Close'
+
     click_icon_in_share_directory_modal(selenium, browser_id, modal_name,
-                                            modals, owner_name, icon_name)
-    send_copied_item_to_other_users(browser_id, item_type, browser_list,
+                                        modals, owner_name, icon_name)
+    send_copied_item_to_other_users(browser_id, item_type, browser2_id,
                                     tmp_memory, displays, clipboard)
     click_modal_button(selenium, browser_id, button, modal_name, modals)
 
@@ -141,6 +141,7 @@ def rename_share_from_single_view(selenium, browser_id, new_name, op_container,
     option = 'Rename'
     modal_name = 'Rename share'
     button = 'Rename'
+
     click_menu_button_on_shares_page(selenium, browser_id, op_container)
     click_option_in_data_row_menu_in_share_file_browser(selenium, browser_id,
                                                         option, modals)

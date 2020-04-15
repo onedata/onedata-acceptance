@@ -80,32 +80,19 @@ def click_on_dir_in_abs_path(selenium, browser_id, path, op_container):
     op_container(selenium[browser_id]).shares_page.path.chdir(path)
 
 
-def _change_iframe_for_public_share_page(selenium, browser_id, public_share):
+def _change_iframe_for_public_share_page(selenium, browser_id):
     driver = selenium[browser_id]
-    timeout = WAIT_BACKEND
-    limit = time.time() + timeout
-    while time.time() < limit:
-        try:
-            iframe = driver.find_element_by_tag_name('iframe')
-            driver.switch_to.frame(iframe)
-            time.sleep(1)
-            displayed_name = public_share(driver).name
-        except NoSuchElementException:
-            time.sleep(1)
-            continue
-        else:
-            return displayed_name
-    else:
-        raise NoSuchElementException
+    driver.switch_to.default_content()
+    iframe = driver.find_element_by_tag_name('iframe')
+    driver.switch_to.frame(iframe)
 
 
 @wt(parsers.parse('user of {browser_id} sees that '
                   'public share is named "{share_name}"'))
 @repeat_failed(timeout=WAIT_BACKEND, interval=0.5)
-def is_public_share_named(selenium, browser_id, share_name, public_share):
-    driver = selenium[browser_id]
-    displayed_name = _change_iframe_for_public_share_page(selenium, browser_id,
-                                                          public_share)
+def assert_public_share_named(selenium, browser_id, share_name, public_share):
+    _change_iframe_for_public_share_page(selenium, browser_id)
+    displayed_name = public_share(selenium[browser_id]).name
     assert displayed_name == share_name, (f'displayed public share name '
                                           f'is "{displayed_name}" instead of '
                                           f'expected "{share_name}"')
@@ -248,10 +235,16 @@ def change_cwd_using_breadcrumbs(selenium, browser_id, path, op_container):
                   ' directory to current share using breadcrumbs'
                   ' in shares view'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def change_cwd_to_home_using_breadcrumbs(selenium, browser_id, op_container,
-                                         tmp_memory):
-    browser = tmp_memory[browser_id]['file_browser']
-    with browser.select_files() as selector:
-        selector.shift_up()
-        selector.ctrl_or_cmd_up()
+def change_cwd_to_home_using_breadcrumbs(selenium, browser_id, op_container):
     op_container(selenium[browser_id]).shares_page.breadcrumbs.home()
+
+
+@wt(parsers.parse('user of {browser_id} sees that share\'s '
+                  'URL is the same as URL from clipboard'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def check_urls_are_equal(selenium, browser_id, op_container, clipboard,
+                         displays):
+    share_url = op_container(selenium[browser_id]).shares_page.url
+    modal_url = clipboard.paste(display=displays[browser_id])
+    err_msg = f'modal URL is {modal_url} and share URL is {share_url}'
+    assert share_url == modal_url, err_msg

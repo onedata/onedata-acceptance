@@ -26,14 +26,14 @@ Feature: Basic data tab operations on public shares in file browser
 
 
 
-    Scenario: User views and downloads files from public interface of share published from "Share directory" modal
+    Scenario: User views and downloads files from public interface of share shared from another user from "Share directory" modal
       When user of browser1 clicks "space1" on the spaces list in the sidebar
       And user of browser1 clicks Data of "space1" in the sidebar
       And user of browser1 sees file browser in data tab in Oneprovider page
 
       And user of browser1 creates "share_dir1" share of "dir1" directory
 
-      # publish share_dir1
+      # hand share_dir1 URL to user of browser2
       And user of browser1 clicks on copy icon in modal "Share directory"
       And user of browser1 sends copied URL to user of browser2
       And user of browser1 clicks on "Close" button in modal "Share directory"
@@ -53,21 +53,15 @@ Feature: Basic data tab operations on public shares in file browser
       Then user of browser2 sees that content of downloaded file "file2" is equal to: "22222"
 
 
-    Scenario: User views files from public interface of share published from full Onezone interface
+    Scenario: User sees public URLs of share are equal
       When user of browser1 clicks "space1" on the spaces list in the sidebar
       And user of browser1 clicks Data of "space1" in the sidebar
       And user of browser1 sees file browser in data tab in Oneprovider page
 
       And user of browser1 creates "share_dir1" share of "dir1" directory
+      And user of browser1 clicks on copy icon in modal "Share directory"
       And user of browser1 moves to "share_dir1" single share view using modal icon
-
-      # publish share_dir1
-      And user of browser1 clicks on copy icon on shares view
-      And user of browser1 sends copied URL to user of browser2
-
-      And user of browser2 opens received URL
-      Then user of browser2 sees that public share is named "share_dir1"
-      And user of browser2 sees that current working directory path visible in share's public interface file browser is as follows: share_dir1
+      Then user of browser1 sees that share's URL is the same as URL from clipboard
 
 
     Scenario: User sees that share name in public interface has changed after owner renamed it
@@ -76,7 +70,7 @@ Feature: Basic data tab operations on public shares in file browser
       And user of browser1 sees file browser in data tab in Oneprovider page
 
       And user of browser1 creates "share_dir1" share of "dir1" directory
-      And user of browser1 publish "share_dir1" share to user of browser2 using modal
+      And user of browser1 hands "share_dir1" share's URL to user of browser2 using modal
 
       And user of browser2 opens received URL
       And user of browser2 sees that public share is named "share_dir1"
@@ -94,7 +88,7 @@ Feature: Basic data tab operations on public shares in file browser
       And user of browser1 sees file browser in data tab in Oneprovider page
 
       And user of browser1 creates "share_dir1" share of "dir1" directory
-      And user of browser1 publish "share_dir1" share to user of browser2 using modal
+      And user of browser1 hands "share_dir1" share's URL to user of browser2 using modal
 
       And user of browser2 opens received URL
       And user of browser2 sees that public share is named "share_dir1"
@@ -112,7 +106,7 @@ Feature: Basic data tab operations on public shares in file browser
       And user of browser1 sees file browser in data tab in Oneprovider page
 
       And user of browser1 creates "share_dir1" share of "dir1" directory
-      And user of browser1 publish "share_dir1" share to user of browser2 using modal
+      And user of browser1 hands "share_dir1" share's URL to user of browser2 using modal
 
       And user of browser2 opens received URL
       And user of browser2 sees that public share is named "share_dir1"
@@ -137,7 +131,7 @@ Feature: Basic data tab operations on public shares in file browser
       And user of browser1 sees file browser in data tab in Oneprovider page
 
       And user of browser1 creates "share_dir1" share of "dir1" directory
-      And user of browser1 publish "share_dir1" share to user of browser2 using modal
+      And user of browser1 hands "share_dir1" share's URL to user of browser2 using modal
 
       And user of browser2 opens received URL
       And user of browser2 sees that public share is named "share_dir1"
@@ -154,38 +148,37 @@ Feature: Basic data tab operations on public shares in file browser
       Then user of browser2 does not see any item(s) named "file1" in file browser
 
 
-#  TODO: wait until gui bug fixed
-#    Scenario: User changes working directory using breadcrumbs from file browser in share's public interface
-#      When user of browser1 clicks "space1" on the spaces list in the sidebar
-#      And user of browser1 clicks Data of "space1" in the sidebar
-#      And user of browser1 sees file browser in data tab in Oneprovider page
-#
-#      And user of browser1 creates "share_dir1" share of "dir1" directory
-#      And user of browser1 publish "share_dir1" share to user of browser2 using modal
-#
-#      And user of browser2 opens received URL
-#      And user of browser2 sees that public share is named "share_dir1"
-#      And user of browser2 sees that current working directory path visible in share's public interface file browser is as follows: share_dir1
-#      And user of browser2 sees file browser on share's public interface
-#      And user of browser2 double clicks on item named "dir1" in file browser
-#      And user of browser2 sees that current working directory path visible in share's public interface file browser is as follows: /dir1
-#      And user of browser2 double clicks on item named "dir2" in file browser
-#      And user of browser2 sees that current working directory path visible in share's public interface file browser is as follows: /dir1/dir2
-#
-#      # using breadcrumbs
-#      And user of browser2 changes current working directory to /dir1 using breadcrumbs on share's public interface
-#      Then user of browser2 sees that current working directory path visible in share's public interface file browser is as follows: /dir1
-#      And user of browser2 changes current working directory to current share using breadcrumbs on share's public interface
-#      Then user of browser2 sees that current working directory path visible in share's public interface file browser is as follows: share_dir1
-
-
-    Scenario: User can copy url of received share on share's public interface and share it further
+    Scenario: User changes working directory using breadcrumbs from file browser in share's public interface
       When user of browser1 clicks "space1" on the spaces list in the sidebar
       And user of browser1 clicks Data of "space1" in the sidebar
       And user of browser1 sees file browser in data tab in Oneprovider page
 
       And user of browser1 creates "share_dir1" share of "dir1" directory
-      And user of browser1 publish "share_dir1" share to user of browser2 using modal
+      And user of browser1 hands "share_dir1" share's URL to user of browser2 using modal
+
+      And user of browser2 opens received URL
+      And user of browser2 sees that public share is named "share_dir1"
+      And user of browser2 sees that current working directory path visible in share's public interface file browser is as follows: share_dir1
+      And user of browser2 sees file browser on share's public interface
+      And user of browser2 double clicks on item named "dir1" in file browser
+      And user of browser2 sees that current working directory path visible in share's public interface file browser is as follows: /dir1
+      And user of browser2 double clicks on item named "dir2" in file browser
+      And user of browser2 sees that current working directory path visible in share's public interface file browser is as follows: /dir1/dir2
+
+      # using breadcrumbs
+      And user of browser2 changes current working directory to /dir1 using breadcrumbs on share's public interface
+      Then user of browser2 sees that current working directory path visible in share's public interface file browser is as follows: /dir1
+      And user of browser2 changes current working directory to current share using breadcrumbs on share's public interface
+      Then user of browser2 sees that current working directory path visible in share's public interface file browser is as follows: share_dir1
+
+
+    Scenario: User can copy URL of received share on share's public interface and share it further
+      When user of browser1 clicks "space1" on the spaces list in the sidebar
+      And user of browser1 clicks Data of "space1" in the sidebar
+      And user of browser1 sees file browser in data tab in Oneprovider page
+
+      And user of browser1 creates "share_dir1" share of "dir1" directory
+      And user of browser1 hands "share_dir1" share's URL to user of browser2 using modal
 
       And user of browser2 opens received URL
       And user of browser2 sees that public share is named "share_dir1"
