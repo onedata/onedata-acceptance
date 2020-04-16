@@ -7,7 +7,6 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-
 from time import time
 from datetime import datetime
 
@@ -31,41 +30,34 @@ def assert_msg_instead_of_browser(browser_id, msg, tmp_memory):
                                   '{}'.format(displayed_msg, msg))
 
 
-@when(parsers.parse('user of {browser_id} does not see {tool_type} '
-                    'icon for "{item_name}" in file browser'))
-@then(parsers.parse('user of {browser_id} does not see {tool_type} '
-                    'icon for "{item_name}" in file browser'))
+@wt(parsers.parse('user of {browser_id} does not see {status_type} '
+                  'status tag for "{item_name}" in file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_not_tool_icon_for_file_in_file_browser(browser_id, tool_type,
-                                                  item_name, tmp_memory):
+def assert_not_status_tag_for_file_in_file_browser(browser_id, status_type,
+                                                   item_name, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
-    err_msg = ('{} tool for {} in file browser visible, '
-               'while should not be'.format(tool_type, item_name))
-    assert not browser.files[item_name].is_tool_visible(tool_type), err_msg
+    err_msg = (f'{status_type} tag for {item_name} in file browser visible, '
+               f'while should not be')
+    assert not browser.data[item_name].is_tag_visible(status_type), err_msg
 
 
-@when(parsers.parse('user of {browser_id} sees {tool_type} '
-                    'icon for "{item_name}" in file browser'))
-@then(parsers.parse('user of {browser_id} sees {tool_type} '
-                    'icon for "{item_name}" in file browser'))
+@wt(parsers.parse('user of {browser_id} sees {status_type} '
+                  'status tag for "{item_name}" in file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_tool_icon_for_file_in_file_browser(browser_id, tool_type,
-                                              item_name, tmp_memory):
+def assert_status_tag_for_file_in_file_browser(browser_id, status_type,
+                                               item_name, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
-    err_msg = '{} tool for {} in file browser not visible'.format(tool_type,
-                                                                  item_name)
-    assert browser.files[item_name].is_tool_visible(tool_type), err_msg
+    err_msg = f'{status_type} tag for {item_name} in file browser not visible'
+    assert browser.data[item_name].is_tag_visible(status_type), err_msg
 
 
-@when(parsers.parse('user of {browser_id} clicks on {tool_type} tool icon '
-                    'in file row for "{item_name}" in file browser'))
-@then(parsers.parse('user of {browser_id} clicks on {tool_type} tool icon '
-                    'in file row for "{item_name}" in file browser'))
+@wt(parsers.parse('user of {browser_id} clicks on {status_type} status tag '
+                  'for "{item_name}" in file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_tool_icon_for_file_in_file_browser(browser_id, tool_type,
-                                                item_name, tmp_memory):
+def click_on_status_tag_for_file_in_file_browser(browser_id, status_type,
+                                                 item_name, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
-    browser.files[item_name].click_on_tool(tool_type)
+    browser.data[item_name].click_on_status_tag(status_type)
 
 
 def _get_items_list_from_file_browser(browser_id, tmp_memory):
@@ -137,8 +129,8 @@ def assert_presence_in_file_browser_with_order(browser_id, item_list,
                   'named "{item_name}" is not earlier than {err_time:d} '
                   'seconds ago in file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_item_in_file_browser_is_of_mdate(browser_id, item_name,
-                                            err_time, tmp_memory):
+def assert_item_in_file_browser_is_of_mdate(browser_id, item_name, err_time,
+                                            tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
     date_fmt = '%d %b %Y %H:%M'
     # %b - abbreviated month name
@@ -146,8 +138,8 @@ def assert_item_in_file_browser_is_of_mdate(browser_id, item_name,
                                   date_fmt)
     expected_date = datetime.fromtimestamp(time())
     err_msg = 'displayed mod time {} for {} does not match expected {}'
-    assert abs(expected_date - item_date).seconds < err_time, \
-        err_msg.format(item_date, item_name, expected_date)
+    assert abs(expected_date - item_date).seconds < err_time, err_msg.format(
+        item_date, item_name, expected_date)
 
 
 @wt(parsers.parse('user of {browser_id} sees that item named "{item_name}" '
@@ -184,7 +176,7 @@ def assert_num_of_files_are_displayed_in_file_browser(browser_id, num,
 
 
 @wt(parsers.re(r'user of (?P<browser_id>.*?) sees that item named '
-               r'"(?P<item_name>.*?)" is (?P<item_attr>file|directory|shared) '
+               r'"(?P<item_name>.*?)" is (?P<item_attr>file|directory) '
                r'in file browser'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_item_in_file_browser_is_of_type(browser_id, item_name, item_attr,
@@ -225,8 +217,7 @@ def select_files_from_file_list_using_shift(browser_id, item_list, tmp_memory):
 @wt(parsers.re('user of (?P<browser_id>.+?) selects (?P<item_list>.+?) '
                'items? from file browser with pressed ctrl'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def select_files_from_file_list_using_ctrl(browser_id, item_list,
-                                           tmp_memory):
+def select_files_from_file_list_using_ctrl(browser_id, item_list, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
     with browser.select_files() as selector:
         selector.ctrl_or_cmd_down()
@@ -368,7 +359,6 @@ def click_menu_for_elem_in_file_browser(browser_id, item_name, tmp_memory):
 @wt(parsers.parse('user of {browser_id} clicks "{option}" option '
                   'in data row menu in file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_option_in_data_row_menu_in_file_browser(selenium, browser_id,
-                                                  option, modals):
+def click_option_in_data_row_menu_in_file_browser(selenium, browser_id, option,
+                                                  modals):
     modals(selenium[browser_id]).data_row_menu.options[option].click()
-
