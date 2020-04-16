@@ -27,7 +27,7 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser opened onezone page
     And user of browser logged as user1 to Onezone service
 
-  Scenario: User sees share icon on directory after sharing it
+  Scenario: User sees shared status tag for directory after sharing it
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
@@ -41,7 +41,7 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser sees that item named "dir1" is shared 1 time in modal
     And user of browser clicks on "Close" button in modal "Share directory"
 
-    Then user of browser sees share icon for "dir1" in file browser
+    Then user of browser sees shared status tag for "dir1" in file browser
 
 
   Scenario: User shares a directory and opens its view in full Onezone interface from modal
@@ -77,14 +77,14 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser sees that there is "share2_dir1" share on shares view
 
 
-  Scenario: User creates share of directory and sees modal using shared status icon
+  Scenario: User creates share of directory and sees modal using shared status tag
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
 
     And user of browser creates "share_dir1" share of "dir1" directory
     And user of browser clicks on "Close" button in modal "Share directory"
-    And user of browser clicks on share status icon for "dir1" in file browser
+    And user of browser clicks on shared status tag for "dir1" in file browser
     Then user of browser sees that "Share directory" modal has appeared
     And user of browser sees that item named "dir1" is shared 1 time in modal
 

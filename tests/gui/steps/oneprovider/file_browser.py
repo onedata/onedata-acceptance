@@ -31,34 +31,33 @@ def assert_msg_instead_of_browser(browser_id, msg, tmp_memory):
 
 
 @wt(parsers.parse('user of {browser_id} does not see {status_type} '
-                  'status icon for "{item_name}" in file browser'))
+                  'status tag for "{item_name}" in file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_not_status_icon_for_file_in_file_browser(browser_id, status_type,
-                                                    item_name, tmp_memory):
+def assert_not_status_tag_for_file_in_file_browser(browser_id, status_type,
+                                                   item_name, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
-    err_msg = ('{} tool for {} in file browser visible, '
-               'while should not be'.format(status_type, item_name))
-    assert not browser.data[item_name].is_icon_visible(status_type), err_msg
+    err_msg = (f'{status_type} tag for {item_name} in file browser visible, '
+               f'while should not be')
+    assert not browser.data[item_name].is_tag_visible(status_type), err_msg
 
 
 @wt(parsers.parse('user of {browser_id} sees {status_type} '
-                  'status icon for "{item_name}" in file browser'))
+                  'status tag for "{item_name}" in file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_status_icon_for_file_in_file_browser(browser_id, status_type,
-                                                item_name, tmp_memory):
+def assert_status_tag_for_file_in_file_browser(browser_id, status_type,
+                                               item_name, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
-    err_msg = '{} tool for {} in file browser not visible'.format(status_type,
-                                                                  item_name)
-    assert browser.data[item_name].is_icon_visible(status_type), err_msg
+    err_msg = f'{status_type} tag for {item_name} in file browser not visible'
+    assert browser.data[item_name].is_tag_visible(status_type), err_msg
 
 
-@wt(parsers.parse('user of {browser_id} clicks on {status_type} status icon '
+@wt(parsers.parse('user of {browser_id} clicks on {status_type} status tag '
                   'for "{item_name}" in file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_status_icon_for_file_in_file_browser(browser_id, status_type,
-                                                  item_name, tmp_memory):
+def click_on_status_tag_for_file_in_file_browser(browser_id, status_type,
+                                                 item_name, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
-    browser.data[item_name].click_on_status_icon(status_type)
+    browser.data[item_name].click_on_status_tag(status_type)
 
 
 def _get_items_list_from_file_browser(browser_id, tmp_memory):

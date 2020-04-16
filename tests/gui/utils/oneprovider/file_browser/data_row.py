@@ -24,7 +24,7 @@ class DataRow(PageObject):
     menu_button = Button('.fb-table-col-actions-menu .menu-toggle')
 
     _status_bar = WebElement('.file-status-bar')
-    share_icon = WebElement('.file-status-icon.file-status-shared')
+    shared_tag = WebElement('.file-status-shared')
     _clickable_field = WebElement('.file-name')
 
     # TODO: change test because of a new gui (metadata)
@@ -43,24 +43,29 @@ class DataRow(PageObject):
     def is_directory(self):
         return 'browser-directory' in self._icon.get_attribute('class')
 
-    def is_icon_visible(self, name):
-        icon = getattr(self, '{icon}_icon'.format(icon=name))
-        return 'file-status-icon' in icon.get_attribute('class')
-
-    def is_any_icon_visible(self):
+    def is_tag_visible(self, name):
         try:
-            getattr(self, '_status_bar')
+            getattr(self, '{tag}_tag'.format(tag=name))
         except RuntimeError:
-            return None
+            return False
+        else:
+            return True
 
-    def click_on_status_icon(self, name):
-        icon = getattr(self, '{icon}_icon'.format(icon=name))
-        click_on_web_elem(self.driver, icon,
-                          lambda: 'cannot click on "{}" in '
-                                  '{}'.format(name, self))
+    def is_any_tag_visible(self):
+        try:
+            self._status_bar.get_attribute('class')
+        except RuntimeError:
+            return False
+        else:
+            return True
+
+    def click_on_status_tag(self, name):
+        tag = getattr(self, '{tag}_tag'.format(tag=name))
+        click_on_web_elem(self.driver, tag,
+                          f'cannot click on "{name}" in {self}')
 
     def double_click(self):
-        if self.is_any_icon_visible():
+        if self.is_any_tag_visible():
             ActionChains(self.driver).double_click(self._clickable_field).perform()
         else:
             ActionChains(self.driver).double_click(self.web_elem).perform()
