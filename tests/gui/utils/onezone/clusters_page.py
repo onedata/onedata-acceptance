@@ -13,7 +13,7 @@ from tests.gui.utils.core.base import PageObject
 
 
 class TokenPage(PageObject):
-    copy = NamedButton('button', text='Copy')
+    copy = Button('.copy-btn')
 
 
 class MenuItem(PageObject):
@@ -37,7 +37,7 @@ class ClustersPage(GenericPage):
     token_page = WebItem('.main-content', cls=TokenPage)
 
     menu_button = Button('.with-menu .collapsible-toolbar-toggle')
-    menu = WebItemsSequence('.two-level-sidebar.sidebar-clusters '
+    menu = WebItemsSequence('.sidebar-clusters .two-level-sidebar '
                             '.one-list-wrapper .one-label',
                             cls=MenuItem)
     submenu = WebItemsSequence('.second-level-items .item-header',
