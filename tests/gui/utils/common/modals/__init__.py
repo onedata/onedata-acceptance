@@ -20,6 +20,7 @@ from .deploying_cluster import ClusterDeploymentModal
 from .metadata_modal import MetadataModal
 from .menu_in_edit_permissions_modal import EditPermissionsRecordMenu
 from .rename_modal import RenameModal
+from .rename_share_modal import RenameShareModal
 from .revoke_space_support import RevokeSpaceSupportModal
 from .edit_permissions import EditPermissionsModal
 from .configure_web_cert import ConfigureWebCertModal
@@ -36,12 +37,14 @@ from .emergency_interface import EmergencyInterface
 from .add_one_of_elements import AddOneOfElementsModal
 from .leave_element import LeaveElementModal
 from .modify_storage import ModifyStorage
+from .share_directory import ShareDirectory
+from .shares_row_menu import SharesRowMenu
 
 
 class Modals(object):
     add_storage = WebItem('.panel-onezone-modal.in', cls=AddStorage)
     data_distribution = WebItem('.modal-dialog', cls=DataDistributionModal)
-    cluster_deployment = WebItem('#cluster-deploy-progress-modal',
+    cluster_deployment = WebItem('.new-cluster-deploy-progress.modal-body',
                                  cls=ClusterDeploymentModal)
     revoke_space_support = WebItem('.modal.in .modal-dialog',
                                    cls=RevokeSpaceSupportModal)
@@ -96,6 +99,10 @@ class Modals(object):
     menu_in_edit_permissions = WebItem('.over-modals .webui-popover-content '
                                        '.one-webui-popover',
                                        cls=EditPermissionsRecordMenu)
+    share_directory = WebItem('.modal-dialog', cls=ShareDirectory)
+    shares_row_menu = WebItem('.share-actions.dropdown-menu', cls=SharesRowMenu)
+    rename_share = WebItem('.modal-dialog', cls=RenameShareModal)
+    remove_share = WebItem('.modal-dialog', cls=RemoveModal)
 
     def __init__(self, driver):
         self.driver = driver

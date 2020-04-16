@@ -13,7 +13,7 @@ from tests.gui.steps.modal import (
 from tests.gui.steps.oneprovider.file_browser import (
     click_menu_for_elem_in_file_browser,
     click_option_in_data_row_menu_in_file_browser,
-    assert_tool_icon_for_file_in_file_browser)
+    assert_status_icon_for_file_in_file_browser)
 from tests.gui.steps.oneprovider.metadata import *
 
 
@@ -24,6 +24,7 @@ from tests.gui.steps.oneprovider.metadata import *
 def open_metadata_modal(selenium, browser_id, modals, modal_name, item_name,
                         tmp_memory):
     option = 'Metadata'
+
     click_menu_for_elem_in_file_browser(browser_id, item_name, tmp_memory)
     click_option_in_data_row_menu_in_file_browser(selenium, browser_id, option,
                                                   modals)
@@ -57,6 +58,7 @@ def add_json_rdf_metadata_for_item(selenium, browser_id, modals, text,
     else:
         modal_name = 'Directory metadata'
     button = 'Save all'
+
     open_metadata_modal(selenium, browser_id, modals, modal_name, item_name,
                         tmp_memory)
     click_on_navigation_tab_in_metadata_panel(selenium, browser_id, input_type,
@@ -98,7 +100,7 @@ def set_metadata_in_op_gui(selenium, browser_id, path, tmp_memory, op_container,
     option = 'Metadata'
     button = 'Save all'
     text = 'Updating metadata failed'
-    tool_type = 'metadata'
+    status_type = 'metadata'
 
     _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id, path,
                                                    space, tmp_memory, oz_page,
@@ -122,8 +124,8 @@ def set_metadata_in_op_gui(selenium, browser_id, path, tmp_memory, op_container,
     if res == 'fails':
         assert_error_modal_with_text_appeared(selenium, browser_id, text)
     else:
-        assert_tool_icon_for_file_in_file_browser(browser_id, tool_type, path,
-                                                  tmp_memory)
+        assert_status_icon_for_file_in_file_browser(browser_id, status_type,
+                                                    path, tmp_memory)
 
 
 def _assert_metadata_loading_alert(selenium, browser_id, modal_name, modals):
@@ -147,6 +149,7 @@ def assert_metadata_in_op_gui(selenium, browser_id, path, tmp_memory,
         modal_name = 'Directory metadata'
 
     option = 'Metadata'
+
     _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id, path,
                                                    space, tmp_memory, oz_page,
                                                    op_container)
@@ -181,6 +184,7 @@ def remove_all_metadata_in_op_gui(selenium, browser_id, space, op_container,
 
     option = 'Metadata'
     button = 'Save all'
+
     _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id, path,
                                                    space, tmp_memory, oz_page,
                                                    op_container)

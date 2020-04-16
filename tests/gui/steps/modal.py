@@ -70,8 +70,8 @@ def assert_non_empty_token_in_add_storage_modal(browser_id, tmp_memory):
 def _find_modal(driver, modal_name):
     def _find():
         elements_list = ['group', 'token', 'cluster', 'harvester',
-                         'spaces', 'rename', 'metadata', 'permissions',
-                         'directory', 'data']
+                         'spaces', 'rename', 'permissions', 'directory', 'data',
+                         'share', 'metadata']
         if any([name for name in elements_list
                 if name in modal_name]):
             modals = driver.find_elements_by_css_selector('.modal, '
@@ -333,12 +333,40 @@ def click_modal_button(selenium, browser_id, button, modal, modals):
 
 
 @wt(parsers.parse('user of {browser_id} writes "{item_name}" '
-                  'into name directory text field in modal "{modal_name}"'))
+                  'into {text_field} text field in modal "{modal_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def write_name_into_text_field_in_modal(selenium, browser_id, item_name,
                                         modal_name, modals):
     modal = getattr(modals(selenium[browser_id]), transform(modal_name))
     modal.input_name = item_name
+
+
+@wt(parsers.re(r'user of (?P<browser_id>.*?) sees that item named'
+               r' "(?P<item_name>.*?)" '
+               'is shared (?P<number>.*?) times? in modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_number_of_shares_in_modal(selenium, browser_id, item_name,
+                                     number, modals):
+    modal = modals(selenium[browser_id]).share_directory
+    links = modal.browser_share_icon
+    info = modal.share_info
+    err_msg = 'Item {item_name} is not shared {number} times'
+    assert _assert_number_of_shares_in_modal(number, links, info), err_msg
+
+
+def _assert_number_of_shares_in_modal(number, links, info):
+    return number in info and len(links) == int(number)
+
+
+@wt(parsers.parse('user of {browser_id} clicks on "{share_name}" share link '
+                  'with icon in modal "Share directory"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_share_info_icon_in_share_directory_modal(selenium, browser_id,
+                                                   modals, share_name):
+    modal = modals(selenium[browser_id]).share_directory
+
+    icon = modal.browser_share_icon[share_name]
+    icon.click()
 
 
 @wt(parsers.parse('user of {browser_id} sees that error modal with '

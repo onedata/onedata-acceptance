@@ -20,9 +20,13 @@ class DataRow(PageObject):
     size = Label('.fb-table-col-size .file-item-text')
     modification_date = Label('.fb-table-col-modification .file-item-text')
 
-    _icon = WebElement('.file-icon.one-icon')
+    _icon = WebElement('.file-icon')
     menu_button = Button('.fb-table-col-actions-menu .menu-toggle')
-    _metadata_tool = WebElement('.oneicon-browser-metadata')
+
+    _status_bar = WebElement('.file-status-bar')
+    share_icon = WebElement('.file-status-icon.file-status-shared')
+    metadata_icon = WebElement('.file-status-icon.file-status-metadata')
+    _clickable_field = WebElement('.file-name')
 
     def __str__(self):
         return '{item} in {parent}'.format(item=self.name,
@@ -37,22 +41,28 @@ class DataRow(PageObject):
     def is_directory(self):
         return 'browser-directory' in self._icon.get_attribute('class')
 
-    def is_shared(self):
-        return 'share' in self._icon.get_attribute('class')
-
-    def is_tool_visible(self, name):
+    def is_icon_visible(self, name):
         try:
-            getattr(self, '_{tool}_tool'.format(tool=name))
+            getattr(self, '{icon}_icon'.format(icon=name))
             return True
         except RuntimeError:
             return False
 
-    def click_on_tool(self, name):
-        tool = getattr(self, '_{tool}_tool'.format(tool=name))
-        tool_icon = tool.find_element_by_css_selector('.oneicon')
-        click_on_web_elem(self.driver, tool_icon,
+    def is_any_icon_visible(self):
+        try:
+            getattr(self, '_status_bar')
+            return True
+        except RuntimeError:
+            return False
+
+    def click_on_status_icon(self, name):
+        icon = getattr(self, '{icon}_icon'.format(icon=name))
+        click_on_web_elem(self.driver, icon,
                           lambda: 'cannot click on "{}" in '
                                   '{}'.format(name, self))
 
     def double_click(self):
-        ActionChains(self.driver).double_click(self.web_elem).perform()
+        if self.is_any_icon_visible():
+            ActionChains(self.driver).double_click(self._clickable_field).perform()
+        else:
+            ActionChains(self.driver).double_click(self.web_elem).perform()
