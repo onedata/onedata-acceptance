@@ -29,7 +29,6 @@ def create_share(selenium, browser_id, share_name, item_name, tmp_memory,
                  modals):
     option = 'Share'
     modal_name = 'Share directory'
-    text_field = 'share name'
     button = 'Create'
 
     click_menu_for_elem_in_file_browser(browser_id, item_name, tmp_memory)
@@ -46,16 +45,13 @@ def create_share(selenium, browser_id, share_name, item_name, tmp_memory,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def move_to_single_share_view_by_modal(selenium, browser_id, share_name, modals,
                                        op_container, tmp_memory):
-    modal_name = 'Share directory'
-    items_browser = 'file_browser'
+    items_browser = 'file browser'
 
     click_share_info_icon_in_share_directory_modal(selenium, browser_id, modals,
                                                    share_name)
     assert_file_browser_in_data_tab_in_op(selenium, browser_id, op_container,
                                           tmp_memory, items_browser)
     is_selected_share_named(selenium, browser_id, share_name, op_container)
-    change_shares_browser_to_file_browser(selenium, browser_id, op_container,
-                                          tmp_memory)
 
 
 @wt(parsers.parse('user of {browser_id} creates another '
@@ -64,7 +60,6 @@ def move_to_single_share_view_by_modal(selenium, browser_id, share_name, modals,
 def create_another_share(selenium, browser_id, share_name, modals):
     button = 'Create another share'
     modal_name = 'Share directory'
-    text_field = 'share name'
     create_button = 'Create'
 
     click_modal_button(selenium, browser_id, button, modal_name, modals)
