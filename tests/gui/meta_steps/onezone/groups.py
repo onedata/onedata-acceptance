@@ -10,12 +10,12 @@ __license__ = ("This software is released under the MIT license cited in "
 from tests.gui.steps.common.miscellaneous import *
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.onezone.access_tokens import (
-    click_on_consume_token_in_oz_access_tokens_panel,
+    click_on_consume_token_in_tokens_oz_page,
     select_member_from_dropdown, click_on_join_button_on_tokens_page)
 from tests.gui.meta_steps.onezone.tokens import (
     paste_copied_token_into_text_field,
-    paste_token_from_another_browser_into_text_field,
-    consume_token_from_another_browser)
+    paste_received_token_into_text_field,
+    consume_received_token)
 from tests.gui.steps.onezone.groups import *
 from tests.gui.steps.onezone.members import *
 from tests.gui.steps.modal import (click_modal_button,
@@ -194,7 +194,7 @@ def create_group_token_to_invite_group_using_op_gui(selenium, user, user2,
 
 
 def join_group_using_op_gui(selenium, browser_id, oz_page, tmp_memory):
-    consume_token_from_another_browser(selenium, browser_id, oz_page, tmp_memory)
+    consume_received_token(selenium, browser_id, oz_page, tmp_memory)
 
 
 def add_subgroups_using_op_gui(selenium, user, oz_page, parent, group_list,
@@ -207,7 +207,7 @@ def add_subgroups_using_op_gui(selenium, user, oz_page, parent, group_list,
                                                         clipboard, onepanel,
                                                         popups)
         add_group_as_subgroup_with_copied_token(selenium, user, child, oz_page,
-                                                tmp_memory)
+                                                clipboard, displays)
 
 
 def remove_subgroups_using_op_gui(selenium, user, oz_page, group_list,
@@ -242,7 +242,7 @@ def fail_to_add_subgroups_using_op_gui(selenium, user, oz_page, parent,
         modal = 'error'
 
         add_group_as_subgroup_with_copied_token(selenium, user, child, oz_page,
-                                                tmp_memory)
+                                                clipboard, displays)
         assert_error_modal_with_text_appeared(selenium, user, error)
         close_modal(selenium, user, modal, modals)
 
@@ -255,10 +255,10 @@ def add_group_as_subgroup_with_received_token(selenium, browser_id, group,
     option = 'Tokens'
 
     click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
-    click_on_consume_token_in_oz_access_tokens_panel(selenium, browser_id,
-                                                     oz_page)
-    paste_token_from_another_browser_into_text_field(selenium, browser_id,
-                                                     oz_page, tmp_memory)
+    click_on_consume_token_in_tokens_oz_page(selenium, browser_id,
+                                             oz_page)
+    paste_received_token_into_text_field(selenium, browser_id,
+                                         oz_page, tmp_memory)
     select_member_from_dropdown(selenium, browser_id, group, modals, oz_page)
     click_on_join_button_on_tokens_page(selenium, browser_id, oz_page)
 
@@ -271,8 +271,8 @@ def add_group_as_subgroup_with_copied_token(selenium, browser_id, group,
     option = 'Tokens'
 
     click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
-    click_on_consume_token_in_oz_access_tokens_panel(selenium, browser_id,
-                                                     oz_page)
+    click_on_consume_token_in_tokens_oz_page(selenium, browser_id,
+                                             oz_page)
     paste_copied_token_into_text_field(selenium, browser_id, oz_page,
                                        clipboard, displays)
     select_member_from_dropdown(selenium, browser_id, group, modals, oz_page)

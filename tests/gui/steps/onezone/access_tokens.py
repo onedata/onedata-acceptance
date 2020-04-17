@@ -107,8 +107,8 @@ def click_on_create_new_token_in_oz_access_tokens_panel(selenium, browser_id,
 @wt(parsers.parse('user of {browser_id} clicks on "Consume token" button '
                   'in tokens sidebar'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def click_on_consume_token_in_oz_access_tokens_panel(selenium, browser_id,
-                                                     oz_page):
+def click_on_consume_token_in_tokens_oz_page(selenium, browser_id,
+                                             oz_page):
     oz_page(selenium[browser_id])['tokens'].consume_token()
 
 

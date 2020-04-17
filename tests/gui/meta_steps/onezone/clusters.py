@@ -7,11 +7,8 @@ __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-from tests.gui.steps.onezone.access_tokens import (
-    click_on_consume_token_in_oz_access_tokens_panel,
-    click_on_join_button_on_tokens_page)
 from tests.gui.meta_steps.onezone.tokens import (
-    paste_copied_token_into_text_field)
+    consume_token_from_copied_token)
 from tests.gui.steps.onezone.members import *
 from tests.utils.utils import repeat_failed
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
@@ -56,14 +53,8 @@ def invite_user_to_cluster(selenium, browser_id, browser, cluster, oz_page,
 @wt(parsers.parse('user of {browser_id} joins to cluster'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def join_to_cluster(selenium, browser_id, oz_page, displays, clipboard):
-    option = 'Tokens'
-
-    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
-    click_on_consume_token_in_oz_access_tokens_panel(selenium, browser_id,
-                                                     oz_page)
-    paste_copied_token_into_text_field(selenium, browser_id, oz_page,
-                                       clipboard, displays)
-    click_on_join_button_on_tokens_page(selenium, browser_id, oz_page)
+    consume_token_from_copied_token(selenium, browser_id, oz_page,
+                                    clipboard, displays)
 
 
 @wt(parsers.parse('user of {browser_id} {option} nested "{nested_privilege}" '

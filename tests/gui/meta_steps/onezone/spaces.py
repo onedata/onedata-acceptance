@@ -10,7 +10,7 @@ __license__ = ("This software is released under the MIT license cited in "
 from pytest_bdd import given
 
 from tests.gui.meta_steps.onezone.tokens import (
-    consume_token_from_another_browser)
+    consume_received_token)
 from tests.gui.steps.common.notifies import *
 from tests.gui.steps.common.copy_paste import *
 from tests.gui.steps.common.url import refresh_site
@@ -160,8 +160,8 @@ def request_space_support_using_gui(selenium, user, oz_page, space_name,
 
 def join_space_in_oz_using_gui(selenium, user_list, oz_page, tmp_memory):
     for user in parse_seq(user_list):
-        consume_token_from_another_browser(selenium, user, oz_page,
-                                           tmp_memory)
+        consume_received_token(selenium, user, oz_page,
+                               tmp_memory)
 
 
 def assert_spaces_have_appeared_in_oz_gui(selenium, user, oz_page, space_list):
