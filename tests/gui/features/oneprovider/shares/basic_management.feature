@@ -236,7 +236,7 @@ Feature: Basic share management in Oneprovider GUI
     Then user of browser sees that current working directory path visible in share's file browser is as follows: /dir2/dir3/dir4
     And user of browser changes current working directory to /dir2 using breadcrumbs from share's file browser
     Then user of browser sees that current working directory path visible in share's file browser is as follows: /dir2
-    And user of browser changes current working directory to current share using breadcrumbs in shares page
+    And user of browser changes current working directory to current share using breadcrumbs in shares view
     Then user of browser sees that current working directory path visible in share's file browser is as follows: share_dir2
 
 

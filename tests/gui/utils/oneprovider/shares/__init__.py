@@ -39,15 +39,12 @@ class SharesOptions(PageObject):
 
 
 class SharesContentPage(PageObject):
-    # TODO: change because of new gui
-    # sidebar = WebItem('.secondary-sidebar', cls=SharesSidebar)
     no_shares_msg = Label('.content-info-content-container')
     name = Label('.fb-breadcrumbs-dir-root .truncate ')
     shares_browser = WebItemsSequence('.one-collapsible-list .list-header-row', cls=SharesOptions)
     path = Breadcrumbs('.share-header-path')
-    # TODO: change because of new gui
-    # url = Input('table input')
-    # copy_url = Button('table button.copy-btn')
+    url = Input('.clipboard-input.form-control')
+    copy_icon = Button('.copy-btn-icon')
     breadcrumbs = Breadcrumbs('.file-browser-head-container')
     menu_button = Button('.menu-toggle-frame')
     file_browser = FileBrowser('.file-browser')
