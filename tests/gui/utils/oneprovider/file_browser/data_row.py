@@ -25,7 +25,7 @@ class DataRow(PageObject):
 
     _status_bar = WebElement('.file-status-bar')
     shared_tag = WebElement('.file-status-shared')
-    _clickable_field = WebElement('.file-name')
+    clickable_field = WebElement('.file-name')
 
     # TODO: change test because of a new gui (metadata)
     # _metadata_tool = WebElement('.file-tool-metadata')
@@ -66,6 +66,6 @@ class DataRow(PageObject):
 
     def double_click(self):
         if self.is_any_tag_visible():
-            ActionChains(self.driver).double_click(self._clickable_field).perform()
+            ActionChains(self.driver).double_click(self.clickable_field).perform()
         else:
             ActionChains(self.driver).double_click(self.web_elem).perform()
