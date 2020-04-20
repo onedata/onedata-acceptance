@@ -119,8 +119,7 @@ def _wait_for_modal_to_disappear(driver, browser_id, tmp_memory):
     modal = tmp_memory[browser_id]['window']['modal']
     Wait(driver, WAIT_BACKEND).until_not(
         lambda _: not staleness_of(modal) or modal.is_displayed(),
-        message='waiting for modal to disappear'
-    )
+        message='waiting for modal to disappear')
     tmp_memory[browser_id]['window']['modal'] = None
 
 
@@ -185,9 +184,9 @@ def g_click_on_confirmation_btn_in_modal(selenium, browser_id, button_name,
 def is_modal_msg_matching(browser_id, regexp, tmp_memory):
     modal = tmp_memory[browser_id]['window']['modal']
     msg = modal.find_element_by_css_selector('.modal-body .message-text').text
-    assert re.match(regexp, msg), \
-        'mag displayed in modal: {msg} ' \
-        'does not match {regexp}'.format(regexp=regexp, msg=msg)
+    assert re.match(regexp, msg), 'mag displayed in modal: {msg} ' \
+                                  'does not match {regexp}'.format(
+        regexp=regexp, msg=msg)
 
 
 @when(parsers.parse('user of {browser_id} sees '
@@ -200,8 +199,7 @@ def get_token_from_modal(selenium, browser_id, tmp_memory):
     token_box = modal.find_element_by_css_selector('input[readonly]')
     token = Wait(driver, WAIT_BACKEND).until(
         lambda _: token_box.get_attribute('value'),
-        message='waiting for token to appear'
-    )
+        message='waiting for token to appear')
     tmp_memory[browser_id]['token'] = token
 
 
@@ -232,8 +230,8 @@ def click_on_button_in_active_modal(selenium, browser_id, tmp_memory, option):
     def click_on_btn(d, btn, err_msg):
         click_on_web_elem(d, btn, err_msg)
 
-    click_on_btn(driver, button, '{} btn for displayed modal disabled'
-                 .format(option))
+    click_on_btn(driver, button,
+                 '{} btn for displayed modal disabled'.format(option))
 
 
 @when(parsers.parse('user of {browser_id} sees that "{text}" option '
@@ -319,8 +317,8 @@ def assert_alert_text_in_modal(selenium, browser_id, modals, modal, text):
     driver = selenium[browser_id]
     modal = transform(modal)
     forbidden_alert_text = getattr(modals(driver), modal).forbidden_alert.text
-    assert text in forbidden_alert_text, ('found {} text instead of {}'
-                                          .format(forbidden_alert_text, text))
+    assert text in forbidden_alert_text, (
+        'found {} text instead of {}'.format(forbidden_alert_text, text))
 
 
 @wt(parsers.parse('user of {browser_id} clicks on "{button}" button in '
@@ -345,8 +343,8 @@ def write_name_into_text_field_in_modal(selenium, browser_id, item_name,
                r' "(?P<item_name>.*?)" '
                'is shared (?P<number>.*?) times? in modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_number_of_shares_in_modal(selenium, browser_id, item_name,
-                                     number, modals):
+def assert_number_of_shares_in_modal(selenium, browser_id, item_name, number,
+                                     modals):
     modal = modals(selenium[browser_id]).share_directory
     links = modal.browser_share_icon
     info = modal.share_info
@@ -361,11 +359,27 @@ def _assert_number_of_shares_in_modal(number, links, info):
 @wt(parsers.parse('user of {browser_id} clicks on "{share_name}" share link '
                   'with icon in modal "Share directory"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_share_info_icon_in_share_directory_modal(selenium, browser_id,
-                                                   modals, share_name):
+def click_share_info_icon_in_share_directory_modal(selenium, browser_id, modals,
+                                                   share_name):
     modal = modals(selenium[browser_id]).share_directory
 
     icon = modal.browser_share_icon[share_name]
+    icon.click()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
+               r'("(?P<owner_name>.*?)" )?(?P<icon_name>copy) icon'
+               ' in modal "(?P<modal_name>.*?)"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_icon_in_share_directory_modal(selenium, browser_id, modal_name,
+                                        modals, owner_name, icon_name):
+    modal = modals(selenium[browser_id]).share_directory
+    icon_name = transform(icon_name) + '_icon'
+    icons_group = getattr(modal, icon_name)
+    if owner_name:
+        icon = icons_group[owner_name]
+    else:
+        icon = icons_group[0]
     icon.click()
 
 
