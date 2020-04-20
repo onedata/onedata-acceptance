@@ -38,12 +38,12 @@ Feature: Basic data tab operations on directory metadata in file browser
     And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser does not see metadata icon for "dir1" in file browser
+    And user of browser does not see metadata status tag for "dir1" in file browser
     And user of browser opens "Directory metadata" modal for "dir1" directory
     And user of browser types "attr" to key input box of new metadata basic entry in "Directory metadata" modal
     And user of browser types "val" to value input box of attribute "attr" metadata basic entry in "Directory metadata" modal
     And user of browser clicks on "Save all" button in modal "Directory metadata"
-    Then user of browser sees metadata icon for "dir1" in file browser
+    Then user of browser sees metadata status tag for "dir1" in file browser
 
 
     Scenario: Add basic metadata to directory and check their presence after reopening
@@ -54,7 +54,7 @@ Feature: Basic data tab operations on directory metadata in file browser
       And user of browser opens "Directory metadata" modal for "dir1" directory
       And user of browser adds basic entry with key "attr" and value "val" for directory
       And user of browser clicks on "Save all" button in modal "Directory metadata"
-      Then user of browser sees metadata icon for "dir1" in file browser
+      Then user of browser sees metadata status tag for "dir1" in file browser
 
       And user of browser opens "Directory metadata" modal for "dir1" directory
       Then user of browser sees basic metadata entry with attribute named "attr" and value "val" in "Directory metadata" modal
@@ -95,7 +95,7 @@ Feature: Basic data tab operations on directory metadata in file browser
       And user of browser clicks on delete basic metadata entry icon for basic metadata entry with attribute named "attr" in "Directory metadata" modal
       Then user of browser sees that there is no basic metadata for directory
       And user of browser clicks on "Save all" button in modal "Directory metadata"
-      Then user of browser does not see metadata icon for "dir1" in file browser
+      Then user of browser does not see metadata status tag for "dir1" in file browser
 
       # reopen modal for assurance
       And user of browser opens "Directory metadata" modal for "dir1" directory
@@ -114,7 +114,7 @@ Feature: Basic data tab operations on directory metadata in file browser
       Then user of browser sees that there is no basic metadata for directory
 
       And user of browser clicks on "Close" button in modal "Directory metadata"
-      Then user of browser does not see metadata icon for "dir1" in file browser
+      Then user of browser does not see metadata status tag for "dir1" in file browser
 
       And user of browser opens "Directory metadata" modal for "dir1" directory
       Then user of browser sees that there is no basic metadata for directory
@@ -141,13 +141,13 @@ Feature: Basic data tab operations on directory metadata in file browser
       And user of browser clicks on JSON navigation tab in "Directory metadata" modal
       And user of browser types "{"id": 1}" to JSON textarea in "Directory metadata" modal
       And user of browser clicks on "Save all" button in modal "Directory metadata"
-      Then user of browser sees metadata icon for "dir1" in file browser
+      Then user of browser sees metadata status tag for "dir1" in file browser
       And user of browser opens "Directory metadata" modal for "dir1" directory
       And user of browser clicks on JSON navigation tab in "Directory metadata" modal
       Then user of browser sees that JSON textarea in "Directory metadata" modal contains {"id": 1}
 
 
-    Scenario: User doesn't see JSON metadata and metadata icon after deleting JSON metadata
+    Scenario: User doesn't see JSON metadata and metadata status tag after deleting JSON metadata
       When user of browser clicks "space1" on the spaces list in the sidebar
       And user of browser clicks Data of "space1" in the sidebar
       And user of browser sees file browser in data tab in Oneprovider page
@@ -160,7 +160,7 @@ Feature: Basic data tab operations on directory metadata in file browser
       And user of browser cleans JSON textarea in "Directory metadata" modal
       And user of browser clicks on "Save all" button in modal "Directory metadata"
 
-      Then user of browser does not see metadata icon for "dir1" in file browser
+      Then user of browser does not see metadata status tag for "dir1" in file browser
       And user of browser opens JSON metadata tab for "dir1" directory
       Then user of browser sees that JSON textarea in "Directory metadata" modal is empty
 
@@ -187,13 +187,13 @@ Feature: Basic data tab operations on directory metadata in file browser
       And user of browser clicks on RDF navigation tab in "Directory metadata" modal
       And user of browser types "<rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML>" to RDF textarea in "Directory metadata" modal
       And user of browser clicks on "Save all" button in modal "Directory metadata"
-      Then user of browser sees metadata icon for "dir1" in file browser
+      Then user of browser sees metadata status tag for "dir1" in file browser
       And user of browser opens "Directory metadata" modal for "dir1" directory
       And user of browser clicks on RDF navigation tab in "Directory metadata" modal
       Then user of browser sees that RDF textarea in "Directory metadata" modal contains <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML>
 
 
-    Scenario: User doesn't see RDF metadata and metadata icon after deleting metadata in XML format
+    Scenario: User doesn't see RDF metadata and metadata status tag after deleting metadata in XML format
       When user of browser clicks "space1" on the spaces list in the sidebar
       And user of browser clicks Data of "space1" in the sidebar
       And user of browser sees file browser in data tab in Oneprovider page
@@ -206,7 +206,7 @@ Feature: Basic data tab operations on directory metadata in file browser
       And user of browser cleans RDF textarea in "Directory metadata" modal
       And user of browser clicks on "Save all" button in modal "Directory metadata"
 
-      Then user of browser does not see metadata icon for "dir1" in file browser
+      Then user of browser does not see metadata status tag for "dir1" in file browser
       And user of browser opens RDF metadata tab for "dir1" directory
       Then user of browser sees that RDF textarea in "Directory metadata" modal is empty
 
