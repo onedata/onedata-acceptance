@@ -145,7 +145,7 @@ def create_and_record_access_token_for_cdmi(selenium, browser_id,
 
 
 @wt(parsers.parse('user of {browser_id} clicks on Join button '
-                  'on tokens page'))
+                  'on consume token page'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_on_join_button_on_tokens_page(selenium, browser_id, oz_page):
     oz_page(selenium[browser_id])['tokens'].join_button()

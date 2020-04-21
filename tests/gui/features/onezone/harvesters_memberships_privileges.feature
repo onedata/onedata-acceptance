@@ -19,14 +19,11 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser1 clicks Members of "harvester10" harvester in the sidebar
     And user of browser1 clicks on "Invite user using token" button in users list menu in "harvester10" harvester members view
     And user of browser1 copies invitation token from modal
-    And user of browser1 clicks on "Cancel" button in modal "Invite using token"
+    And user of browser1 closes "Invite using token" modal
     And user of browser1 sends copied token to user of browser2
 
     # join to harvester
-    And user of browser2 clicks on Tokens in the main menu
-    And user of browser2 clicks on "Consume token" button in tokens sidebar
-    And user of browser2 pastes copied token into token text field
-    And user of browser2 clicks on Join button on tokens page
+    And user of browser2 joins to harvester in Onezone page
 
     Then user of browser2 sees that "harvester10" has appeared on the harvesters list in the sidebar
 
@@ -144,7 +141,7 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser2 clicks Members of "harvester16" harvester in the sidebar
     And user of browser2 clicks on "Invite user using token" button in users list menu in "harvester16" harvester members view
     And user of browser2 sees This resource could not be loaded alert in Invite user using token modal
-    And user of browser2 clicks on "Cancel" button in modal "Invite using token"
+    And user of browser2 closes "Invite using token" modal
 
     And user of browser1 checks "Add user" privilege in "User management" privileges group for user1 user in "harvester16" harvester
 

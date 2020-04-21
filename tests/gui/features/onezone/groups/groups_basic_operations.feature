@@ -50,13 +50,13 @@ Feature: Basic management of groups with one user in Onezone GUI
   Scenario: User fails to add group as its subgroup
     When user of browser clicks on "generate an invitation token" text in group "group1" members groups list
     And user of browser copies invitation token from modal
-    And user of browser clicks on "Cancel" button in modal "Invite using token"
+    And user of browser closes "Invite using token" modal
 
     And user of browser clicks on Tokens in the main menu
     And user of browser clicks on "Consume token" button in tokens sidebar
     And user of browser pastes copied token into token text field
     And user of browser chooses "group1" group from dropdown on tokens page
-    And user of browser clicks on Join button on tokens page
+    And user of browser clicks on Join button on consume token page
 
     Then user of browser sees that error modal with text "Consuming token failed" appeared
 

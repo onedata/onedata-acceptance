@@ -32,7 +32,7 @@ Feature: Basic management of groups with multiple users in Onezone GUI
     And user of browser1 clicks "group3" on the groups list in the sidebar
     And user of browser1 clicks on "Invite group using token" button in groups list menu in "group3" group members view
     And user of browser1 copies invitation token from modal
-    And user of browser1 clicks on "Cancel" button in modal "Invite using token"
+    And user of browser1 closes "Invite using token" modal
 
     And user of browser1 adds group "group1" as subgroup using copied token
 

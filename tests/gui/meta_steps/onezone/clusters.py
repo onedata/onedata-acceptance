@@ -17,7 +17,7 @@ from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.onezone.discovery import (
     choose_element_from_dropdown_in_add_element_modal)
-from tests.gui.steps.modal import click_modal_button
+from tests.gui.steps.modal import click_modal_button, close_modal
 
 
 @wt(parsers.parse('user of {browser_id} invites user of {browser} '
@@ -33,7 +33,6 @@ def invite_user_to_cluster(selenium, browser_id, browser, cluster, oz_page,
     member = 'users'
     modal = 'Invite using token'
     item_type = 'token'
-    cancel_button = 'Cancel'
 
     click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
     click_on_record_in_clusters_menu(selenium, browser_id, oz_page, cluster,
@@ -45,7 +44,7 @@ def invite_user_to_cluster(selenium, browser_id, browser, cluster, oz_page,
                                          where, member, oz_page,
                                          onepanel, popups)
     copy_token_from_modal(selenium, browser_id)
-    click_modal_button(selenium, browser_id, cancel_button, modal, modals)
+    close_modal(selenium, browser_id, modal, modals)
     send_copied_item_to_other_users(browser_id, item_type, browser,
                                     tmp_memory, displays, clipboard)
 

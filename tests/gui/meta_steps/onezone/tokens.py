@@ -9,10 +9,10 @@ __license__ = ("This software is released under the MIT license cited in "
 
 from pytest_bdd import parsers
 
-from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.onezone.access_tokens import (
     click_on_consume_token_in_tokens_oz_page,
-    click_on_join_button_on_tokens_page)
+    click_on_join_button_on_tokens_page, select_member_from_dropdown)
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.utils.bdd_utils import wt
 from tests.utils.utils import repeat_failed
@@ -63,4 +63,38 @@ def consume_token_from_copied_token(selenium, browser_id, oz_page,
                                              oz_page)
     paste_copied_token_into_text_field(selenium, browser_id, oz_page,
                                        clipboard, displays)
+    click_on_join_button_on_tokens_page(selenium, browser_id, oz_page)
+
+
+@wt(parsers.parse('user of {browser_id} adds group "{elem_name}" as subgroup '
+                  'using copied token'))
+@wt(parsers.parse('user of {browser_id} adds space "{elem_name}" to harvester '
+                  'using copied token'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def add_element_with_copied_token(selenium, browser_id, elem_name,
+                                  oz_page, clipboard, displays, modals):
+    option = 'Tokens'
+
+    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
+    click_on_consume_token_in_tokens_oz_page(selenium, browser_id,
+                                             oz_page)
+    paste_copied_token_into_text_field(selenium, browser_id, oz_page,
+                                       clipboard, displays)
+    select_member_from_dropdown(selenium, browser_id, elem_name, modals, oz_page)
+    click_on_join_button_on_tokens_page(selenium, browser_id, oz_page)
+
+
+@wt(parsers.parse('user of {browser_id} adds group "{group}" as subgroup '
+                  'using received token'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def add_element_with_received_token(selenium, browser_id, group,
+                                    oz_page, tmp_memory, modals):
+    option = 'Tokens'
+
+    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
+    click_on_consume_token_in_tokens_oz_page(selenium, browser_id,
+                                             oz_page)
+    paste_received_token_into_text_field(selenium, browser_id,
+                                         oz_page, tmp_memory)
+    select_member_from_dropdown(selenium, browser_id, group, modals, oz_page)
     click_on_join_button_on_tokens_page(selenium, browser_id, oz_page)

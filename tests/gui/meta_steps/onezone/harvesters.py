@@ -25,7 +25,7 @@ from tests.gui.steps.onezone.spaces import (
     click_on_option_in_the_sidebar,
     click_element_on_lists_on_left_sidebar_menu)
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
-from tests.gui.steps.modal import click_modal_button
+from tests.gui.steps.modal import click_modal_button, close_modal
 
 
 @wt(parsers.parse('user of {browser_id} removes "{space_name}" space '
@@ -153,7 +153,6 @@ def send_invitation_token(selenium, browser_id1, oz_page, harvester_name,
     list_type = 'harvester'
     option = 'Members'
     button = 'Invite user using token'
-    cancel_button = 'Cancel'
     member = 'users'
     modal = 'Invite using token'
     item_type = 'token'
@@ -169,7 +168,7 @@ def send_invitation_token(selenium, browser_id1, oz_page, harvester_name,
                                          list_type, member, oz_page,
                                          onepanel, popups)
     copy_token_from_modal(selenium, browser_id1)
-    click_modal_button(selenium, browser_id1, cancel_button, modal, modals)
+    close_modal(selenium, browser_id1, modal, modals)
     send_copied_item_to_other_users(browser_id1, item_type, browser_id2,
                                     tmp_memory, displays, clipboard)
 

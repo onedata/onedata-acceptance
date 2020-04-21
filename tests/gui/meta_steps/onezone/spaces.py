@@ -14,7 +14,7 @@ from tests.gui.meta_steps.onezone.tokens import (
 from tests.gui.steps.common.notifies import *
 from tests.gui.steps.common.copy_paste import *
 from tests.gui.steps.common.url import refresh_site
-from tests.gui.steps.modal import click_modal_button
+from tests.gui.steps.modal import close_modal
 from tests.gui.steps.onezone.spaces import *
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
 from tests.gui.steps.onepanel.spaces import *
@@ -121,7 +121,6 @@ def invite_other_users_to_space_using_gui(selenium, user,
     item_type = 'space invitation token'
     member = 'users'
     modal = 'Invite using token'
-    cancel_button = 'Cancel'
 
     click_element_on_lists_on_left_sidebar_menu(selenium, user, option,
                                                 space_name, oz_page)
@@ -134,7 +133,7 @@ def invite_other_users_to_space_using_gui(selenium, user,
     send_invitation_token_to_browser(selenium, user, item_type, oz_page,
                                      displays, clipboard, user_list,
                                      tmp_memory)
-    click_modal_button(selenium, user, cancel_button, modal, modals)
+    close_modal(selenium, user, modal, modals)
 
 
 def request_space_support_using_gui(selenium, user, oz_page, space_name,

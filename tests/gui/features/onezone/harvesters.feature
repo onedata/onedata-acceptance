@@ -61,14 +61,10 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser clicks invite space using token button in harvester spaces page
     And user of browser sees that "Invite space using token" modal has appeared
     And user of browser clicks on copy button in active modal
-    And user of browser clicks on "Cancel" button in modal "Invite using token"
+    And user of browser closes "Invite using token" modal
 
     # join to harvester
-    And user of browser clicks on Tokens in the main menu
-    And user of browser clicks on "Consume token" button in tokens sidebar
-    And user of browser pastes copied token into token text field
-    And user of browser chooses "space1" space from dropdown on tokens page
-    And user of browser clicks on Join button on tokens page
+    And user of browser adds space "space1" to harvester using copied token
 
     Then user of browser clicks on Discovery in the main menu
     And user of browser clicks "harvester4" on the harvesters list in the sidebar

@@ -28,7 +28,7 @@ Feature: Joining a group in Onezone GUI
     And user of browser1 clicks "group1" on the groups list in the sidebar
     And user of browser1 clicks on "Invite user using token" button in users list menu in "group1" group members view
     And user of browser1 copies invitation token from modal
-    And user of browser1 clicks on "Cancel" button in modal "Invite using token"
+    And user of browser1 closes "Invite using token" modal
     And user of browser1 sends copied token to user of browser2
 
     And user of browser2 joins group using received token
@@ -42,7 +42,7 @@ Feature: Joining a group in Onezone GUI
     And user of browser1 clicks "group1" on the groups list in the sidebar
     And user of browser1 clicks on "Invite user using token" button in users list menu in "group1" group members view
     And user of browser1 copies invitation token from modal
-    And user of browser1 clicks on "Cancel" button in modal "Invite using token"
+    And user of browser1 closes "Invite using token" modal
 
     And user of browser1 joins group using copied token
 
