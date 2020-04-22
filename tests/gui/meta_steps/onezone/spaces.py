@@ -9,15 +9,17 @@ __license__ = ("This software is released under the MIT license cited in "
 
 from pytest_bdd import given
 
+from tests.gui.meta_steps.onezone.tokens import (
+    consume_received_token)
 from tests.gui.steps.common.notifies import *
 from tests.gui.steps.common.copy_paste import *
 from tests.gui.steps.common.url import refresh_site
+from tests.gui.steps.modal import close_modal
 from tests.gui.steps.onezone.spaces import *
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
 from tests.gui.steps.onepanel.spaces import *
 from tests.gui.steps.onezone.multibrowser_spaces import *
 from tests.gui.steps.onezone.members import *
-from tests.gui.steps.common.miscellaneous import close_modal
 from tests import OZ_REST_PORT
 from tests.utils.rest_utils import http_get, get_zone_rest_path, http_delete
 
@@ -155,22 +157,10 @@ def request_space_support_using_gui(selenium, user, oz_page, space_name,
                                     tmp_memory, displays, clipboard)
 
 
-def join_space_in_oz_using_gui(selenium, user_list, oz_page, tmp_memory,
-                               item_type):
-    option = 'enter'
-    where = 'data'
-
+def join_space_in_oz_using_gui(selenium, user_list, oz_page, tmp_memory):
     for user in parse_seq(user_list):
-        click_join_some_space_using_space_invitation_token_button(selenium,
-                                                                  user,
-                                                                  oz_page)
-        paste_space_invitation_token_to_input_on_join_to_space_page(selenium,
-                                                                    user,
-                                                                    tmp_memory,
-                                                                    item_type,
-                                                                    oz_page,
-                                                                    where)
-        confirm_join_the_space(selenium, user, option, oz_page, where)
+        consume_received_token(selenium, user, oz_page,
+                               tmp_memory)
 
 
 def assert_spaces_have_appeared_in_oz_gui(selenium, user, oz_page, space_list):
@@ -193,13 +183,6 @@ def assert_spaces_have_been_renamed_in_oz_gui(selenium, user, oz_page,
                                                         new_space_name, oz_page)
         assert_space_has_disappeared_on_spaces(selenium, user, space_name,
                                                oz_page)
-
-
-def assert_space_is_home_space_in_oz_gui(selenium, user, oz_page, space_name):
-    assert_home_space_has_appeared_on_spaces_on_left_sidebar_menu(selenium,
-                                                                  user,
-                                                                  space_name,
-                                                                  oz_page)
 
 
 def assert_there_is_no_provider_for_space_in_oz_gui(selenium, user, oz_page,

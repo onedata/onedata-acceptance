@@ -54,6 +54,7 @@ from tests.gui.steps.oneprovider.permissions import *
 
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.onezone.spaces import *
+from tests.gui.meta_steps.onezone.tokens import *
 
 from tests.utils.acceptance_utils import *
 
@@ -65,7 +66,6 @@ def screens():
 
 scenarios('../features/onezone/space/spaces.feature')
 scenarios('../features/onezone/space/create_new_space.feature')
-scenarios('../features/onezone/space/no_supported_space.feature')
 scenarios('../features/onezone/space/multispace.feature')
 scenarios('../features/onezone/space/spaces_memberships.feature')
 scenarios('../features/onezone/space/spaces_memberships_privileges.feature')

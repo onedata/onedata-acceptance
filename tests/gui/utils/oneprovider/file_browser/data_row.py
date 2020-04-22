@@ -23,9 +23,9 @@ class DataRow(PageObject):
     _icon = WebElement('.file-icon')
     menu_button = Button('.fb-table-col-actions-menu .menu-toggle')
 
-    _status_bar = WebElement('.file-status-bar')
+    _status_tag = WebElement('.file-status-tag')
     shared_tag = WebElement('.file-status-shared')
-    _clickable_field = WebElement('.file-name')
+    clickable_field = WebElement('.file-name')
 
     # TODO: change test because of a new gui (metadata)
     # _metadata_tool = WebElement('.file-tool-metadata')
@@ -53,7 +53,7 @@ class DataRow(PageObject):
 
     def is_any_tag_visible(self):
         try:
-            self._status_bar.get_attribute('class')
+            self._status_tag.get_attribute('class')
         except RuntimeError:
             return False
         else:
@@ -66,6 +66,6 @@ class DataRow(PageObject):
 
     def double_click(self):
         if self.is_any_tag_visible():
-            ActionChains(self.driver).double_click(self._clickable_field).perform()
+            ActionChains(self.driver).double_click(self.clickable_field).perform()
         else:
             ActionChains(self.driver).double_click(self.web_elem).perform()
