@@ -444,13 +444,14 @@ def assert_ace_in_op(client, selenium, user, cdmi, op_container, space, path, ho
                  ' in (?P<host>.*)'))
 def grant_acl_privileges_in_op(client, selenium, user, cdmi, op_container, space,
                                path, host, hosts, users, priv, type, name,
-                               numerals, groups, tmp_memory, popups, modals):
+                               numerals, groups, tmp_memory, popups, modals,
+                               oz_page):
     full_path = '{}/{}'.format(space, path)
     client_lower = client.lower()
     if client_lower == 'web gui':
-        grant_acl_privileges_in_op_gui(selenium, user, path, priv, type, name, 
-                                      op_container, tmp_memory, popups, space,
-                                      numerals, modals)
+        grant_acl_privileges_in_op_gui(selenium, user, path, priv, name,
+                                       op_container, tmp_memory, popups, space,
+                                       oz_page, modals)
     elif client_lower == 'rest':
         grant_acl_privileges_in_op_rest(user, users, host, hosts, cdmi, 
                                         full_path, priv,

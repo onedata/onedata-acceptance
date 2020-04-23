@@ -56,5 +56,5 @@ from tests.oneclient.steps.auth_steps import *
 
 
 # TODO: change test because of a new gui
-# scenarios('../features/oneprovider/acl_basic.feature')
-scenarios('../features/pass.feature')
+scenarios('../features/oneprovider/acl_basic.feature')
+# scenarios('../features/pass.feature')
