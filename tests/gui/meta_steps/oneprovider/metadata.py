@@ -13,8 +13,10 @@ from tests.gui.steps.modal import (
 from tests.gui.steps.oneprovider.file_browser import (
     click_menu_for_elem_in_file_browser,
     click_option_in_data_row_menu_in_file_browser,
-    assert_status_tag_for_file_in_file_browser)
+    assert_status_tag_for_file_in_file_browser,
+    click_on_status_tag_for_file_in_file_browser)
 from tests.gui.steps.oneprovider.metadata import *
+from tests.utils.acceptance_utils import wait_given_time
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) opens '

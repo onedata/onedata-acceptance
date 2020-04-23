@@ -60,6 +60,8 @@ class MetadataModal(Modal):
     save_all = NamedButton('.btn-primary', text='Save all')
     discard_changes = NamedButton('.btn-warning', text='Discard changes')
 
+    loading_alert = Label('.resource-load-error')
+
     def __str__(self):
         return 'Metadata modal'
 

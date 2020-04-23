@@ -33,7 +33,7 @@ Feature: Basic data tab operations on directory metadata in file browser
     Then user of browser sees [Basic, JSON, RDF] navigation tabs in "Directory metadata" modal
 
 
-  Scenario: Metadata icon is visible if directory has basic metadata entry
+  Scenario: Metadata tag is visible if directory has basic metadata entry and it can open metadata modal
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
@@ -44,6 +44,8 @@ Feature: Basic data tab operations on directory metadata in file browser
     And user of browser types "val" to value input box of attribute "attr" metadata basic entry in "Directory metadata" modal
     And user of browser clicks on "Save all" button in modal "Directory metadata"
     Then user of browser sees metadata status tag for "dir1" in file browser
+    And user of browser clicks on metadata status tag for "dir1" in file browser
+    Then user of browser sees that "Directory metadata" modal has appeared
 
 
     Scenario: Add basic metadata to directory and check their presence after reopening

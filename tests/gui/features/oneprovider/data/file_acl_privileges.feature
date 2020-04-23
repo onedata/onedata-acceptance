@@ -77,7 +77,7 @@ Feature: ACL files privileges tests using sigle browser in Oneprovider GUI
     | result   |  privileges                                         |
     | succeeds |  [metadata:read metadata, metadata:write metadata]  |
     | fails    |  all except [metadata:write metadata]               |
-    | succeeds |  all except [metadata:file metadata]                |
+    | succeeds |  all except [metadata:read metadata]                |
 
 
   Scenario Outline: Read files metadata
