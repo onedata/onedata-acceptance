@@ -75,7 +75,7 @@ class Modals(object):
                              cls=RemoveModal)
     error = WebItem('.alert-global.modal.in .modal-dialog',
                     cls=ErrorModal)
-    invite_using_token = WebItem('.invite-using-token-modal.modal.in '
+    invite_using_token = WebItem('.generate-invite-token-modal.modal.in '
                                  '.modal-dialog',
                                  cls=InviteUsingTokenModal)
     group_hierarchy_menu = WebItem('.group-actions.one-webui-popover',

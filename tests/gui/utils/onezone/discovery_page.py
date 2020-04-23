@@ -36,10 +36,6 @@ class IndicesPage(PageObject):
                                     'li.one-collapsible-list-item', cls=Index)
 
 
-class JoinToHarvester(PageObject):
-    join_harvester_button = NamedButton('button', text='Join the harvester')
-
-
 class Harvester(Element):
     menu_button = Button('.collapsible-toolbar-toggle')
 
@@ -86,16 +82,11 @@ class DiscoveryPage(GenericPage):
     get_started = Button('.btn.btn-default.hide-sm-active.ember-view')
     create_new_harvester_button = Button('.one-sidebar-toolbar-button'
                                          '.create-harvester-btn')
-    join_to_harvester_button = Button('.join-harvester-btn'
-                                      '.one-sidebar-toolbar-button '
-                                      '.oneicon-join-plug')
 
     name = WebElement('.field-create-name')
     plugin_selector = DropdownSelector('.ember-basic-dropdown')
     endpoint = WebElement('.field-create-endpoint')
     create_button = NamedButton('button', text='Create')
-
-    join_harvester_button = NamedButton('button', text='Join the harvester')
 
     rename_input = WebElement('.name-editor input')
     rename_button = Button('.save-icon')
