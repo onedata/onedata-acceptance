@@ -15,9 +15,9 @@ from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.common.url import refresh_site
 from tests.gui.meta_steps.oneprovider.common import (
     navigate_to_tab_in_op_using_gui)
-from tests.gui.steps.modal import (assert_error_modal_with_text_appeared,
-                                   wt_wait_for_modal_to_appear,
-                                   write_name_into_text_field_in_modal)
+from tests.gui.steps.modal import (
+    assert_error_modal_with_text_appeared, wt_wait_for_modal_to_appear,
+    write_name_into_text_field_in_modal)
 from tests.gui.steps.onezone.spaces import (
     click_on_option_of_space_on_left_sidebar_menu,
     click_element_on_lists_on_left_sidebar_menu)
@@ -32,16 +32,16 @@ def _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id, path,
         go_to_path_without_last_elem(browser_id, tmp_memory, path)
         click_menu_for_elem_in_file_browser(browser_id, item_name, tmp_memory)
     except KeyError:
-        go_to_filebrowser(selenium, browser_id, oz_page, op_container, tmp_memory,
-                          space)
+        go_to_filebrowser(selenium, browser_id, oz_page, op_container,
+                          tmp_memory, space)
         go_to_path_without_last_elem(browser_id, tmp_memory, path)
         click_menu_for_elem_in_file_browser(browser_id, item_name, tmp_memory)
 
 
 @then(parsers.re('user of (?P<browser_id>\w+) (?P<res>.*) to rename '
                  '"(?P<path>.*)" to "(?P<new_name>.*)" in "(?P<space>.*)"'))
-def rename_item(selenium, browser_id, path, new_name, tmp_memory,
-                res, space, modals, oz_page, op_container):
+def rename_item(selenium, browser_id, path, new_name, tmp_memory, res, space,
+                modals, oz_page, op_container):
     option = 'Rename'
     modal_header = 'Rename'
     modal_name = 'Rename modal'
@@ -52,8 +52,8 @@ def rename_item(selenium, browser_id, path, new_name, tmp_memory,
                                                    space, tmp_memory, oz_page,
                                                    op_container)
 
-    click_option_in_data_row_menu_in_file_browser(selenium, browser_id,
-                                                  option, modals)
+    click_option_in_data_row_menu_in_file_browser(selenium, browser_id, option,
+                                                  modals)
 
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_header, tmp_memory)
     write_name_into_text_field_in_modal(selenium, browser_id, new_name,
@@ -65,9 +65,9 @@ def rename_item(selenium, browser_id, path, new_name, tmp_memory,
         assert_items_presence_in_file_browser(browser_id, new_name, tmp_memory)
 
 
-@then(parsers.re('user of (?P<browser_id>\w+) (?P<res>.*) to remove '
-                 '"(?P<path>.*)" in "(?P<space>.*)"'))
-def remove_item_in_op_gui(selenium, browser_id, path, tmp_memory, op_container, 
+@wt(parsers.re('user of (?P<browser_id>\w+) (?P<res>.*) to remove '
+               '"(?P<path>.*)" in "(?P<space>.*)"'))
+def remove_item_in_op_gui(selenium, browser_id, path, tmp_memory, op_container,
                           res, space, modals, oz_page):
     option = 'Delete'
     button = 'Yes'
@@ -77,8 +77,8 @@ def remove_item_in_op_gui(selenium, browser_id, path, tmp_memory, op_container,
     _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id, path,
                                                    space, tmp_memory, oz_page,
                                                    op_container)
-    click_option_in_data_row_menu_in_file_browser(selenium, browser_id,
-                                                  option, modals)
+    click_option_in_data_row_menu_in_file_browser(selenium, browser_id, option,
+                                                  modals)
     click_modal_button(selenium, browser_id, button, modal, modals)
 
     if res == 'fails':
@@ -267,12 +267,13 @@ def _check_files_tree(subtree, user, tmp_memory, cwd, selenium, op_container,
                     _check_files_tree(item_subtree, user,
                                       tmp_memory, path,
                                       selenium, op_container, tmpdir)
-                change_cwd_using_dir_tree_in_data_tab_in_op(selenium, user,
-                                                            cwd, op_container)
+                change_cwd_using_dir_tree_in_data_tab_in_op(selenium, user, cwd,
+                                                            op_container)
             else:
                 has_downloaded_file_content(user, item_name, str(item_subtree),
                                             tmpdir)
-    change_cwd_using_dir_tree_in_data_tab_in_op(selenium, user, cwd, op_container)
+    change_cwd_using_dir_tree_in_data_tab_in_op(selenium, user, cwd,
+                                                op_container)
 
 
 def assert_space_content_in_op_gui(config, selenium, user, op_container,
@@ -283,7 +284,8 @@ def assert_space_content_in_op_gui(config, selenium, user, op_container,
     navigate_to_tab_in_op_using_gui(selenium, user, oz_page, provider, tab_name,
                                     hosts, modals)
     refresh_site(selenium, user)
-    change_space_view_in_data_tab_in_op(selenium, user, space_name, op_container)
+    change_space_view_in_data_tab_in_op(selenium, user, space_name,
+                                        op_container)
     assert_file_browser_in_data_tab_in_op(selenium, user, op_container,
                                           tmp_memory)
     _check_files_tree(yaml.load(config), user, tmp_memory, '/', selenium,
@@ -295,8 +297,8 @@ def see_num_of_items_in_path_in_op_gui(selenium, user, tmp_memory, op_container,
                                        hosts, modals):
     tab_name = 'data'
 
-    navigate_to_tab_in_op_using_gui(selenium, user, oz_page, provider,
-                                    tab_name, hosts, modals)
+    navigate_to_tab_in_op_using_gui(selenium, user, oz_page, provider, tab_name,
+                                    hosts, modals)
     _select_item(user, tmp_memory, path)
     refresh_site(selenium, user)
     assert_file_browser_in_data_tab_in_op(selenium, user, op_container,
@@ -309,8 +311,8 @@ def assert_file_content_in_op_gui(text, path, space, selenium, user, users,
                                   tmp_memory, tmpdir, modals):
     tab_name = 'data'
 
-    navigate_to_tab_in_op_using_gui(selenium, user, oz_page, provider,
-                                    tab_name, hosts, modals)
+    navigate_to_tab_in_op_using_gui(selenium, user, oz_page, provider, tab_name,
+                                    hosts, modals)
     item_name = _select_item(user, tmp_memory, path)
     double_click_on_item_in_file_browser(user, item_name, tmp_memory)
     has_downloaded_file_content(user, item_name, text, tmpdir)
@@ -347,7 +349,7 @@ def _create_item(selenium, browser_id, name, content, cwd, space, tmp_memory,
 def _create_content(selenium, browser_id, content, cwd, space, tmp_memory, 
                     op_container):
     for item in content:
-        try: 
+        try:
             [(name, content)] = item.items()
         except AttributeError:
             name = item
@@ -360,8 +362,8 @@ def _create_content(selenium, browser_id, content, cwd, space, tmp_memory,
                'root directory of "(?P<space>.*)"'))
 def successfully_upload_file_to_op_gui(path, selenium, browser_id, space,
                                        op_container, tmp_memory, oz_page):
-    go_to_filebrowser(selenium, browser_id, oz_page, op_container,
-                      tmp_memory, space)
+    go_to_filebrowser(selenium, browser_id, oz_page, op_container, tmp_memory,
+                      space)
     upload_file_to_cwd_in_file_browser(selenium, browser_id, path, op_container)
     assert_items_presence_in_file_browser(browser_id, path, tmp_memory)
 
@@ -376,7 +378,8 @@ def upload_file_to_op_gui(path, selenium, browser_id, space, res, filename,
         go_to_filebrowser(selenium, browser_id, oz_page, op_container,
                           tmp_memory, space)
         go_to_path(browser_id, tmp_memory, path)
-    upload_file_to_cwd_in_file_browser(selenium, browser_id, filename, op_container)
+    upload_file_to_cwd_in_file_browser(selenium, browser_id, filename,
+                                       op_container)
     if res == 'succeeds':
         assert_items_presence_in_file_browser(browser_id, filename, tmp_memory)
     else:
@@ -403,8 +406,7 @@ def go_to_path(browser_id, tmp_memory, path):
     else:
         path_list = [path]
     for directory in path_list:
-        double_click_on_item_in_file_browser(browser_id, directory,
-                                             tmp_memory)
+        double_click_on_item_in_file_browser(browser_id, directory, tmp_memory)
 
 
 def go_to_path_without_last_elem(browser_id, tmp_memory, path):
@@ -428,9 +430,7 @@ def go_to_filebrowser(selenium, browser_id, oz_page, op_container,
 
     click_element_on_lists_on_left_sidebar_menu(selenium, browser_id,
                                                 option_in_menu, space, oz_page)
-    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
-                                                  space, option_in_submenu,
-                                                  oz_page)
-    assert_file_browser_in_data_tab_in_op(selenium, browser_id,
-                                          op_container, tmp_memory)
-
+    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id, space,
+                                                  option_in_submenu, oz_page)
+    assert_file_browser_in_data_tab_in_op(selenium, browser_id, op_container,
+                                          tmp_memory)

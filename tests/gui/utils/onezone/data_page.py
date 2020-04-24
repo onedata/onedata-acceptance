@@ -24,6 +24,8 @@ class Space(Element):
                            text='Overview')
     data = NamedButton('.one-list-level-2 .item-header',
                        text='Data')
+    shares = NamedButton('.one-list-level-2 .item-header',
+                         text='Shares')
     transfers = NamedButton('.one-list-level-2 .item-header',
                             text='Transfers')
     providers = NamedButton('.one-list-level-2 .item-header',
@@ -65,10 +67,8 @@ class GetSupportPage(PageObject):
                                              text='Expose existing data set')
 
     token_textarea = Label('.active textarea')
-    copy = NamedButton('.copy-btn', text='Copy')
-    generate_another_token = NamedButton('.active .btn-get-token',
-                                         text='Generate another token')
-    forbidden_alert = WebElement('.alert.forbidden')
+    copy = Button('.request-support-tab .copy-btn')
+    forbidden_alert = WebElement('.error')
 
 
 class SpaceProvidersPage(PageObject):
@@ -79,13 +79,6 @@ class SpaceProvidersPage(PageObject):
     get_support_page = WebItem('.ember-view', cls=GetSupportPage)
 
 
-class MenuItem(PageObject):
-    name = id = Label('a.clickable .text')
-
-    def __call__(self):
-        self.click()
-
-
 class _Provider(PageObject):
     name = id = Label('a .tab-name')
 
@@ -93,9 +86,6 @@ class _Provider(PageObject):
 class DataPage(GenericPage):
     create_space_button = Button('.one-sidebar-toolbar-button '
                                  '.oneicon-add-filled')
-    join_space_button = Button('.oneicon-join-plug')
-    join_harvester_button = NamedButton('button span.spin-button-label',
-                                        text='Join the harvester')
 
     spaces_header_list = WebItemsSequence('.sidebar-spaces '
                                           'li.one-list-item.clickable '
@@ -115,10 +105,7 @@ class DataPage(GenericPage):
 
     get_started = Button('.btn.btn-default.hide-sm-active.ember-view')
 
-    left_menu = WebItemsSequence('.webui-popover-content '
-                                 '.one-collapsible-toolbar-popover '
-                                 '.dropdown-menu .one-collapsible-toolbar-item',
-                                 cls=MenuItem)
+    tab_name = Label('.header-row')
 
     current_provider = Label('.current-oneprovider-name')
     providers = WebItemsSequence('.provider-online', cls=_Provider)

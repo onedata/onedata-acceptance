@@ -53,6 +53,8 @@ from tests.gui.steps.oneprovider_common import *
 from tests.gui.steps.oneprovider.permissions import *
 
 from tests.gui.meta_steps.onezone.common import *
+from tests.gui.meta_steps.onezone.tokens import *
+from tests.gui.meta_steps.onezone.groups import *
 
 from tests.utils.acceptance_utils import *
 

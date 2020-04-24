@@ -160,30 +160,6 @@ def assert_space_has_disappeared_on_spaces(selenium, browser_id, space_name,
     assert space_name not in spaces, 'space "{}" found'.format(space_name)
 
 
-@wt(parsers.parse('user of {browser_id} sees that home of "{space_name}" '
-                  'has appeared in the sidebar'))
-@repeat_failed(timeout=WAIT_FRONTEND * 2)
-def assert_home_space_has_appeared_on_spaces_on_left_sidebar_menu(selenium,
-                                                                  browser_id,
-                                                                  space_name,
-                                                                  oz_page):
-    driver = selenium[browser_id]
-    assert oz_page(driver)['data'].elements_list[space_name].is_home_icon(), \
-        'home of space "{}" not found'.format(space_name)
-
-
-@wt(parsers.parse('user of {browser_id} sees that home of "{space_name}" '
-                  'has disappeared in the sidebar'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_home_space_has_disappeared_on_spaces_on_left_sidebar_menu(selenium,
-                                                                     browser_id,
-                                                                     space_name,
-                                                                     oz_page):
-    driver = selenium[browser_id]
-    assert not oz_page(driver)['data'].elements_list[space_name].is_home_icon(), \
-        'home of space "{}" found'.format(space_name)
-
-
 @wt(parsers.parse('user of {browser_id} sees {number} number of supporting '
                   'providers of "{space_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -212,7 +188,7 @@ def assert_size_of_space_on_left_sidebar_menu(selenium, browser_id, number,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks '
-               '(?P<option>Overview|Data|Transfers|Providers|Members) '
+               '(?P<option>Overview|Data|Shares|Transfers|Providers|Members) '
                'of "(?P<space_name>.*?)" in the sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
@@ -239,15 +215,6 @@ def click_get_started_on_data_on_left_sidebar_menu(selenium, browser_id,
 def click_option_on_welcome_page(selenium, browser_id, option, oz_page):
     driver = selenium[browser_id]
     getattr(oz_page(driver)['data'].welcome_page, transform(option)).click()
-
-
-@wt(parsers.parse('user of {browser_id} writes "{token}" '
-                  'into space token text field on data page'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def type_token_to_input_on_join_to_a_space_page(selenium, browser_id,
-                                                token, oz_page):
-    driver = selenium[browser_id]
-    oz_page(driver)['data'].input_box.value = token
 
 
 @wt(parsers.parse('user of {browser_id} sees that error popup has appeared'))
@@ -303,8 +270,7 @@ def click_get_support_button_on_providers_page(selenium, browser_id, oz_page):
     oz_page(driver)['data'].providers_page.add_support()
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) sees '
-               '(?P<alert_text>Insufficient permissions) alert '
+@wt(parsers.re('user of (?P<browser_id>.*) sees (?P<alert_text>.*) alert '
                'on providers page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def see_insufficient_permissions_alert_on_providers_page(selenium, browser_id,
@@ -348,29 +314,6 @@ def click_copy_button_on_request_support_page(selenium, browser_id, oz_page,
 
     item = clipboard.paste(display=displays[browser_id])
     tmp_memory[browser_id]['mailbox']['token'] = item
-
-
-@wt(parsers.parse('user of {browser_id} clicks Generate another token '
-                  'on Add support page'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_generate_another_token_on_request_support_page(selenium, browser_id,
-                                                         oz_page):
-    driver = selenium[browser_id]
-    oz_page(driver)['data'].providers_page.get_support_page \
-        .generate_another_token()
-
-
-@wt(parsers.parse('user of {browser_id} sees that another token is different '
-                  'than first one'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_two_tokens_are_different(selenium, browser_id, oz_page, displays,
-                                       clipboard, tmp_memory):
-    driver = selenium[browser_id]
-    first_token = tmp_memory[browser_id]['mailbox']['token']
-    oz_page(driver)['data'].providers_page.get_support_page.copy()
-
-    second_token = clipboard.paste(display=displays[browser_id])
-    assert first_token != second_token, 'two tokens are the same'
 
 
 @wt(parsers.parse('user of {browser_id} sees copy token and token '
@@ -448,29 +391,9 @@ def confirm_rename_the_space(selenium, browser_id, option, oz_page):
                                                                       oz_page)
 
 
-@wt(parsers.parse('user of {browser_id} clicks join to harvester in menu '
-                  'for "{space_name}" in spaces list'))
-def click_join_to_harvester_option_in_menu_in_data_page(selenium, browser_id,
-                                                       space_name, oz_page):
-    driver = selenium[browser_id]
-    page = oz_page(driver)['data']
-    page.elements_list[space_name].click_menu()
-    page.left_menu['Join to harvester'].click()
-
-
-@wt(parsers.parse('user of {browser_id} pastes harvester invitation token '
-                  'into harvester token text field in {where} page'))
-def paste_harvester_invitation_token_into_text_field(selenium, browser_id,
-                                                     oz_page, clipboard,
-                                                     displays, where):
-    driver = selenium[browser_id]
-    token = clipboard.paste(display=displays[browser_id])
-    oz_page(driver)[where].input_box.value = token
-
-
-@wt(parsers.parse('user of {browser_id} clicks Join the harvester button '
-                  'in data page'))
-def click_join_harvester_button_in_data_page(selenium, browser_id, oz_page):
-    driver = selenium[browser_id]
-    oz_page(driver)['data'].join_harvester_button()
-
+@wt(parsers.parse('user of {browser_id} sees "{tab_name}" '
+                  'label of current page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def check_on_right_page(selenium, browser_id, tab_name, oz_page):
+    label = oz_page(selenium[browser_id])['data'].tab_name
+    assert label.lower() == tab_name, f'User not on {tab_name} page'

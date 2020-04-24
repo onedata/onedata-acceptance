@@ -33,12 +33,18 @@ class SharesSidebar(PageObject):
                               cls=SharesSidebarRecord)
 
 
+class SharesOptions(PageObject):
+    name = id = Label('.item-name')
+    menu_button = Button('.menu-toggle-frame')
+
+
 class SharesContentPage(PageObject):
-    sidebar = WebItem('.secondary-sidebar', cls=SharesSidebar)
-    no_shares_msg = Label('#content-scroll .empty-model-message')
-    name = Label('#content-scroll .share-name')
-    path = Breadcrumbs('table .file-breadcrumbs-list')
-    url = Input('table input')
-    copy_url = Button('table button.copy-btn')
-    breadcrumbs = Breadcrumbs('.data-files-list .file-breadcrumbs-list')
-    file_browser = FileBrowser('.files-list')
+    no_shares_msg = Label('.content-info-content-container')
+    name = Label('.fb-breadcrumbs-dir-root .truncate ')
+    shares_browser = WebItemsSequence('.one-collapsible-list .list-header-row', cls=SharesOptions)
+    path = Breadcrumbs('.share-header-path')
+    url = Input('.clipboard-input.form-control')
+    copy_icon = Button('.copy-btn-icon')
+    breadcrumbs = Breadcrumbs('.file-browser-head-container')
+    menu_button = Button('.menu-toggle-frame')
+    file_browser = FileBrowser('.file-browser')

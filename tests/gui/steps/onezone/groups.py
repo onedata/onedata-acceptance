@@ -16,64 +16,30 @@ from selenium.webdriver.common.keys import Keys
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) clicks on (?P<operation>Create|Join) '
+@wt(parsers.re('user of (?P<browser_id>.*) clicks on Create '
                'group button in groups sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_create_or_join_group_button_in_panel(selenium, browser_id, operation,
-                                               oz_page):
-    button_name = '{}_group'.format(operation.lower())
-    getattr(oz_page(selenium[browser_id])['groups'], button_name)()
+def click_create_group_button_in_panel(selenium, browser_id, oz_page):
+    oz_page(selenium[browser_id])['groups'].create_group()
 
 
-@wt(parsers.parse('user of {browser_id} joins group "{group}" to space'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def join_space(selenium, browser_id, group, oz_page, tmp_memory, popups):
-    driver = selenium[browser_id]
-    page = oz_page(driver)['groups']
-    page.elements_list[group]()
-    page.elements_list[group].menu()
-    popups(driver).member_menu.menu['Join to space']()
-    token = tmp_memory[browser_id]['mailbox']['token']
-    page.input_box.value = token
-    page.input_box.edit_box.confirm()
-
-
-@wt(parsers.parse('user of {browser_id} writes "{text}" '
-                  'into group token text field'))
 @wt(parsers.parse('user of {browser_id} writes "{text}" '
                   'into group name text field'))
-@wt(parsers.parse('user of {browser_id} writes "{text}" '
-                  'into space token text field on groups page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def input_name_or_token_into_input_box_on_main_groups_page(selenium, browser_id,
-                                                           text, oz_page):
+def input_name_into_input_box_on_main_groups_page(selenium, browser_id,
+                                                  text, oz_page):
     oz_page(selenium[browser_id])['groups'].input_box.value = text
 
 
 @wt(parsers.parse('user of {browser_id} clicks on confirmation button'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_name_or_token_input_on_main_groups_page(selenium, browser_id,
-                                                    oz_page):
+def confirm_name_input_on_main_groups_page(selenium, browser_id,
+                                           oz_page):
     oz_page(selenium[browser_id])['groups'].input_box.confirm()
 
 
 def _find_groups(page, group_name):
     return list(filter(lambda g: g.name == group_name, page.elements_list))
-
-
-@wt(parsers.re('user of (?P<browser_id>.*) joins group using received token '
-               'and uses (?P<confirm_type>button|enter) to confirm'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def join_group(selenium, browser_id, confirm_type, oz_page, tmp_memory):
-
-    page = oz_page(selenium[browser_id])['groups']
-    token = tmp_memory[browser_id]['mailbox']['token']
-    page.join_group()
-    page.input_box.value = token
-    if confirm_type == 'button':
-        page.input_box.confirm()
-    else:
-        selenium[browser_id].switch_to.active_element.send_keys(Keys.RETURN)
 
 
 @wt(parsers.re('users? of (?P<browser_ids>.*) (?P<option>does not see|sees) '
@@ -90,7 +56,7 @@ def assert_group_exists(selenium, browser_ids, option, group, oz_page):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on '
-               '"(?P<option>Rename|Join to space|Join as subgroup|Leave|Remove)" '
+               '"(?P<option>Rename|Leave|Remove)" '
                'button in group "(?P<group>.*)" menu in the sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_group_menu_button(selenium, browser_id, option, group,
@@ -137,33 +103,6 @@ def go_to_group_subpage(selenium, browser_id, group, subpage, oz_page):
         getattr(page.elements_list[group], subpage)()
 
 
-@wt(parsers.parse('user of {browser_id} pastes copied token into group '
-                  'token text field'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def input_token_into_token_input_field(selenium, browser_id, oz_page,
-                                       displays, clipboard):
-    token = clipboard.paste(display=displays[browser_id])
-    page = oz_page(selenium[browser_id])['groups']
-    page.input_box.value = token
-
-
-@wt(parsers.parse('user of {browser_id} adds group "{group}" as subgroup '
-                  'using received token'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def add_group_as_subgroup(selenium, browser_id, group, oz_page,
-                          tmp_memory, popups):
-    option = 'Join as subgroup'
-    click_on_group_menu_button(selenium, browser_id, option, group,
-                               oz_page, popups)
-
-    token = tmp_memory[browser_id]['mailbox']['token']
-    page = oz_page(selenium[browser_id])['groups']
-    page.input_box.value = token
-
-    confirm_name_or_token_input_on_main_groups_page(selenium, browser_id,
-                                                    oz_page)
-
-
 @wt(parsers.parse('user of {browser_id} see that page with text '
                   '"{text}" appeared'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -190,8 +129,8 @@ def confirm_add_group(selenium, browser_id, option, oz_page):
     if option == 'enter':
         press_enter_on_active_element(selenium, browser_id)
     else:
-        confirm_name_or_token_input_on_main_groups_page(selenium, browser_id,
-                                                        oz_page)
+        confirm_name_input_on_main_groups_page(selenium, browser_id,
+                                               oz_page)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on group '

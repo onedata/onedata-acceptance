@@ -11,7 +11,7 @@ from .modal import Modal
 
 
 class ClusterDeploymentModal(Modal):
-    msg = Label('.new-cluster-deploy-progress h1')
+    msg = Label('h1')
     progress = Label('.progress-bar')
 
     def __str__(self):

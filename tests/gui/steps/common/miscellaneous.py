@@ -75,13 +75,6 @@ def g_click_on_btn_in_popup(selenium, browser_id, btn, popup, popups):
             transform(popup)).buttons[btn].click()
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) closes "(?P<modal>.*)" modal'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def close_modal(selenium, browser_id, modal, modals):
-    modal = transform(modal)
-    getattr(modals(selenium[browser_id]), modal).close()
-
-
 @wt(parsers.re('pass'))
 def pass_test():
     pass

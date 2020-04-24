@@ -47,21 +47,18 @@ Feature: Basic management of groups with one user in Onezone GUI
     Then user of browser does not see group "group1" on groups list
 
 
-  Scenario Outline: User fails to add group as its subgroup
+  Scenario: User fails to add group as its subgroup
     When user of browser clicks on "generate an invitation token" text in group "group1" members groups list
     And user of browser copies invitation token from modal
     And user of browser closes "Invite using token" modal
 
-    And user of browser clicks on "Join as subgroup" button in group "group1" menu in the sidebar
-    And user of browser pastes copied token into group token text field
-    And user of browser confirms using <confirmation_method>
+    And user of browser clicks on Tokens in the main menu
+    And user of browser clicks on "Consume token" button in tokens sidebar
+    And user of browser pastes copied token into token text field
+    And user of browser chooses "group1" group from dropdown on tokens page
+    And user of browser clicks on Join button on consume token page
 
-    Then user of browser sees that error modal with text "Joining group as subgroup failed" appeared
-
-    Examples:
-      | confirmation_method |
-      | enter               |
-      | button              |
+    Then user of browser sees that error modal with text "Consuming token failed" appeared
 
 
   Scenario: User generates group invitation token

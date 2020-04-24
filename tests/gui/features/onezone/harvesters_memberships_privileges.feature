@@ -23,9 +23,7 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser1 sends copied token to user of browser2
 
     # join to harvester
-    And user of browser2 clicks on Join to harvester button in discovery sidebar
-    And user of browser2 pastes harvester invitation token into harvester token text field in discovery page
-    And user of browser2 clicks Join the harvester button in discovery page
+    And user of browser2 joins to harvester in Onezone page
 
     Then user of browser2 sees that "harvester10" has appeared on the harvesters list in the sidebar
 
@@ -142,7 +140,7 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser2 clicks "harvester16" on the harvesters list in the sidebar
     And user of browser2 clicks Members of "harvester16" harvester in the sidebar
     And user of browser2 clicks on "Invite user using token" button in users list menu in "harvester16" harvester members view
-    And user of browser2 sees Insufficient permissions alert in Invite user using token modal
+    And user of browser2 sees This resource could not be loaded alert in Invite user using token modal
     And user of browser2 closes "Invite using token" modal
 
     And user of browser1 checks "Add user" privilege in "User management" privileges group for user1 user in "harvester16" harvester

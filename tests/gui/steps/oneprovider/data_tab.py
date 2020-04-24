@@ -17,10 +17,14 @@ from tests.utils.bdd_utils import given, wt, parsers, when, then
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def _check_file_browser_to_load(selenium, browser_id, tmp_memory, op_container):
+def _check_file_browser_to_load(selenium, browser_id, tmp_memory, op_container,
+                                browser):
     driver = selenium[browser_id]
-    file_browser = op_container(driver).file_browser
-    tmp_memory[browser_id]['file_browser'] = file_browser
+    if browser == 'file browser':
+        items_browser = op_container(driver).file_browser
+    else:
+        items_browser = op_container(driver).shares_page.shares_browser
+    tmp_memory[browser_id][transform(browser)] = items_browser
 
 
 @when(parsers.parse('user of {browser_id} uses spaces select to change '
@@ -28,8 +32,8 @@ def _check_file_browser_to_load(selenium, browser_id, tmp_memory, op_container):
 @then(parsers.parse('user of {browser_id} uses spaces select to change '
                     'data space to "{space_name}"'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def change_space_view_in_data_tab_in_op(selenium, browser_id,
-                                        space_name, op_container):
+def change_space_view_in_data_tab_in_op(selenium, browser_id, space_name,
+                                        op_container):
     driver = selenium[browser_id]
     selector = op_container(driver).data.sidebar.space_selector
     selector.expand()
@@ -46,13 +50,15 @@ def assert_if_list_contains_space_in_data_tab_in_op(selenium, browser_id,
     space_selector = op_container(driver).data.sidebar.space_selector
     space_selector.expand()
     if option == 'is':
-        assert space_name in space_selector.spaces, (f'space named "{space_name}" '
-                                                     f'found in spaces list, '
-                                                     f'while it should not be')
+        assert space_name in space_selector.spaces, (
+            f'space named "{space_name}" '
+            f'found in spaces list, '
+            f'while it should not be')
     else:
         assert space_name not in space_selector.spaces, (f'space named '
                                                          f'"{space_name}" not '
-                                                         f'found in spaces list, '
+                                                         f'found in spaces '
+                                                         f'list, '
                                                          f'while it should be')
 
 
@@ -69,8 +75,8 @@ def assert_if_list_contains_space_in_data_tab_in_op(selenium, browser_id,
                  r'Copy element|Cut element|Remove element|'
                  r'Show data distribution)"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_tooltip_from_toolbar_in_data_tab_in_op(selenium, browser_id,
-                                                 tooltip, op_container):
+def click_tooltip_from_toolbar_in_data_tab_in_op(selenium, browser_id, tooltip,
+                                                 op_container):
     driver = selenium[browser_id]
     getattr(op_container(driver).data.toolbar, transform(tooltip)).click()
 
@@ -79,8 +85,8 @@ def click_tooltip_from_toolbar_in_data_tab_in_op(selenium, browser_id,
                '"(?P<button>New directory|Upload files)" button '
                'from file browser menu bar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_from_file_browser_menu_bar(selenium, browser_id,
-                                            button, op_container):
+def click_button_from_file_browser_menu_bar(selenium, browser_id, button,
+                                            op_container):
     driver = selenium[browser_id]
     button = transform(button) + '_button'
     getattr(op_container(driver).file_browser, transform(button)).click()
@@ -99,8 +105,8 @@ def assert_btn_is_in_file_browser_menu_bar(selenium, browser_id, btn_list,
 
     menu = popups(driver).menu_popup.menu
     for btn in parse_seq(btn_list):
-        assert btn in menu, ('{} should be in selection menu but is not'
-                             .format(btn))
+        assert btn in menu, (
+            '{} should be in selection menu but is not'.format(btn))
 
 
 @wt(parsers.parse('user of {browser_id} sees that {btn_list} option '
@@ -108,16 +114,16 @@ def assert_btn_is_in_file_browser_menu_bar(selenium, browser_id, btn_list,
 @wt(parsers.parse('user of {browser_id} sees that {btn_list} options '
                   'are not in selection menu on file browser page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_btn_is_not_in_file_browser_menu_bar(selenium, browser_id,
-                                               btn_list, tmp_memory, popups):
+def assert_btn_is_not_in_file_browser_menu_bar(selenium, browser_id, btn_list,
+                                               tmp_memory, popups):
     driver = selenium[browser_id]
     file_browser = tmp_memory[browser_id]['file_browser']
     file_browser.selection_menu_button()
 
     menu = popups(driver).menu_popup.menu
     for btn in parse_seq(btn_list):
-        assert btn not in menu, ('{} should not be in selection menu'
-                                 .format(btn))
+        assert btn not in menu, (
+            '{} should not be in selection menu'.format(btn))
 
 
 @wt(parsers.parse('user of {browser_id} sees that current working directory '
@@ -134,8 +140,8 @@ def is_displayed_breadcrumbs_in_data_tab_in_op_correct(selenium, browser_id,
 @wt(parsers.parse('user of {browser_id} changes current working directory '
                   'to {path} using breadcrumbs'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, browser_id,
-                                                   path, op_container):
+def change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, browser_id, path,
+                                                   op_container):
     if path == 'home':
         op_container(selenium[browser_id]).file_browser.breadcrumbs.home()
     else:
@@ -147,8 +153,8 @@ def change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, browser_id,
 @then(parsers.parse('user of {browser_id} sees that current working directory '
                     'displayed in directory tree is {path}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def is_displayed_dir_tree_in_data_tab_in_op_correct(selenium, browser_id,
-                                                    path, op_container):
+def is_displayed_dir_tree_in_data_tab_in_op_correct(selenium, browser_id, path,
+                                                    op_container):
     driver = selenium[browser_id]
     cwd = op_container(driver).data.sidebar.cwd.pwd()
     assert path == cwd, 'expected path {}\n got: {}'.format(path, cwd)
@@ -159,8 +165,8 @@ def is_displayed_dir_tree_in_data_tab_in_op_correct(selenium, browser_id,
 @then(parsers.parse('user of {browser_id} changes current working directory '
                     'to {path} using directory tree'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def change_cwd_using_dir_tree_in_data_tab_in_op(selenium, browser_id,
-                                                path, op_container):
+def change_cwd_using_dir_tree_in_data_tab_in_op(selenium, browser_id, path,
+                                                op_container):
     driver = selenium[browser_id]
     cwd = op_container(driver).data.sidebar.root_dir
     cwd.click()
@@ -171,10 +177,13 @@ def change_cwd_using_dir_tree_in_data_tab_in_op(selenium, browser_id,
         cwd.click()
 
 
-@when(parsers.parse('user of {browser_id} does not see {path} in directory tree'))
-@then(parsers.parse('user of {browser_id} does not see {path} in directory tree'))
+@when(
+    parsers.parse('user of {browser_id} does not see {path} in directory tree'))
+@then(
+    parsers.parse('user of {browser_id} does not see {path} in directory tree'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_absence_of_path_in_dir_tree(selenium, browser_id, path, op_container):
+def assert_absence_of_path_in_dir_tree(selenium, browser_id, path,
+                                       op_container):
     driver = selenium[browser_id]
     curr_dir = op_container(driver).data.sidebar.root_dir
     with pytest.raises(RuntimeError):
@@ -191,14 +200,17 @@ def _is_space_viewed_space_in_data_tab_in_op(driver, is_home, space_name,
     assert displayed_name == space_name, err_msg.format(displayed_name,
                                                         space_name)
     if is_home:
-        assert selector.is_selected_space_home() is True, \
-            'space {} is not home space'.format(displayed_name)
+        assert selector.is_selected_space_home() is True, 'space {} is not ' \
+                                                          'home space'.format(
+            displayed_name)
 
 
 @given(parsers.re('user of (?P<browser_id>.+?) seen that displayed directory '
-                  'tree in sidebar panel belonged to (?P<is_home>(home )?)space '
+                  'tree in sidebar panel belonged to (?P<is_home>(home '
+                  ')?)space '
                   'named "(?P<space_name>.+?)'))
-def g_is_space_tree_root(selenium, browser_id, is_home, space_name, op_container):
+def g_is_space_tree_root(selenium, browser_id, is_home, space_name,
+                         op_container):
     driver = selenium[browser_id]
     _is_space_viewed_space_in_data_tab_in_op(driver, True if is_home else False,
                                              space_name, op_container)
@@ -217,37 +229,43 @@ def wt_is_space_tree_root(selenium, browser_id, is_home, space_name,
                                              space_name, op_container)
 
 
-@wt(parsers.parse('user of {browser_id} sees nonempty file browser '
+@wt(parsers.parse('user of {browser_id} sees nonempty {item_browser} '
                   'in data tab in Oneprovider page'))
 @repeat_failed(timeout=WAIT_BACKEND * 2)
 def assert_nonempty_file_browser_in_data_tab_in_op(selenium, browser_id,
-                                                   op_container, tmp_memory):
+                                                   op_container, tmp_memory,
+                                                   item_browser='file browser'):
     change_iframe(selenium, browser_id)
-    _check_file_browser_to_load(selenium, browser_id, tmp_memory, op_container)
-    file_browser = tmp_memory[browser_id]['file_browser']
-    assert not file_browser.is_empty(), ('file browser in data tab in op'
-                                         'should not be empty but is')
+    _check_file_browser_to_load(selenium, browser_id, tmp_memory, op_container,
+                                item_browser)
+    items_browser = tmp_memory[browser_id][transform(item_browser)]
+    assert not items_browser.is_empty(), (f'{item_browser} in data tab in op'
+                                          'should not be empty but is')
 
 
-@wt(parsers.parse('user of {browser_id} sees empty file browser '
+@wt(parsers.parse('user of {browser_id} sees empty {item_browser} '
                   'in data tab in Oneprovider page'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_empty_file_browser_in_data_tab_in_op(selenium, browser_id,
-                                                op_container, tmp_memory):
+                                                op_container, tmp_memory,
+                                                item_browser='file browser'):
     change_iframe(selenium, browser_id)
-    _check_file_browser_to_load(selenium, browser_id, tmp_memory, op_container)
-    file_browser = tmp_memory[browser_id]['file_browser']
-    assert file_browser.is_empty(), ('file browser in data tab in op'
-                                     'should be empty but is not')
-    tmp_memory[browser_id]['file_browser'] = file_browser
+    _check_file_browser_to_load(selenium, browser_id, tmp_memory, op_container,
+                                item_browser)
+    items_browser = tmp_memory[browser_id][transform(item_browser)]
+    assert items_browser.is_empty(), (f'{item_browser} in data tab in op'
+                                      'should be empty but is not')
+    tmp_memory[browser_id][transform(item_browser)] = items_browser
 
 
-@wt(parsers.parse('user of {browser_id} sees file browser '
+@wt(parsers.parse('user of {browser_id} sees {item_browser} '
                   'in data tab in Oneprovider page'))
-def assert_file_browser_in_data_tab_in_op(selenium, browser_id,
-                                          op_container, tmp_memory):
+def assert_file_browser_in_data_tab_in_op(selenium, browser_id, op_container,
+                                          tmp_memory,
+                                          item_browser='file browser'):
     change_iframe(selenium, browser_id)
-    _check_file_browser_to_load(selenium, browser_id, tmp_memory, op_container)
+    _check_file_browser_to_load(selenium, browser_id, tmp_memory, op_container,
+                                item_browser)
 
 
 @when(parsers.parse('user of {browser_id} records displayed name length for '
@@ -281,16 +299,19 @@ def assert_diff_in_len_of_dir_name_before_and_now(selenium, browser_id, path,
 
     prev_len = tmp_memory[browser_id][path]
     curr_len = cwd.displayed_name_width
-    assert prev_len != curr_len, \
-        'name len of {} is the same as before {}'.format(path, curr_len)
+    assert prev_len != curr_len, 'name len of {} is the same as before {' \
+                                 '}'.format(path, curr_len)
 
 
 @when(parsers.re(r'user of (?P<browser_id>.+?) expands data tab sidebar to the '
-                 r'(?P<direction>right|left) of approximately (?P<offset>\d+)px'))
+                 r'(?P<direction>right|left) of approximately ('
+                 r'?P<offset>\d+)px'))
 @then(parsers.re(r'user of (?P<browser_id>.+?) expands data tab sidebar to the '
-                 r'(?P<direction>right|left) of approximately (?P<offset>\d+)px'))
+                 r'(?P<direction>right|left) of approximately ('
+                 r'?P<offset>\d+)px'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def resize_data_tab_sidebar(selenium, browser_id, direction, offset, op_container):
+def resize_data_tab_sidebar(selenium, browser_id, direction, offset,
+                            op_container):
     driver = selenium[browser_id]
     sidebar = op_container(driver).data.sidebar
     offset = (-1 if direction == 'left' else 1) * int(offset)
@@ -301,8 +322,9 @@ def resize_data_tab_sidebar(selenium, browser_id, direction, offset, op_containe
 @repeat_failed(timeout=WAIT_BACKEND * 3)
 def wait_for_file_upload_to_finish(selenium, browser_id, popups):
     driver = selenium[browser_id]
-    assert not popups(driver).is_upload_presenter(), ('file upload not finished '
-                                                      'within given time')
+    assert not popups(driver).is_upload_presenter(), (
+        'file upload not finished '
+        'within given time')
 
 
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
@@ -316,15 +338,13 @@ def upload_file_to_cwd_in_file_browser(selenium, browser_id, file_name,
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
                   'menu bar to upload files from local directory "{dir_path}" '
                   'to remote current dir'))
-def upload_files_to_cwd_in_data_tab(selenium, browser_id, dir_path,
-                                    tmpdir, op_container):
+def upload_files_to_cwd_in_data_tab(selenium, browser_id, dir_path, tmpdir,
+                                    op_container):
     driver = selenium[browser_id]
     directory = tmpdir.join(browser_id, *dir_path.split('/'))
     if directory.isdir():
-        op_container(driver).file_browser.upload_files('\n'.join(str(item) for item
-                                                            in
-                                                            directory.listdir()
-                                                            if item.isfile()))
+        op_container(driver).file_browser.upload_files('\n'.join(
+            str(item) for item in directory.listdir() if item.isfile()))
     else:
         raise RuntimeError('directory {} does not exist'.format(str(directory)))
 
@@ -334,16 +354,16 @@ def upload_files_to_cwd_in_data_tab(selenium, browser_id, dir_path,
 @then(parsers.parse('user of {browser_id} sees that chunk bar for provider '
                     '"{provider}" is of {size} size'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_provider_chunk_in_data_distribution_size(selenium, browser_id,
-                                                    size, provider, modals,
-                                                    hosts):
+def assert_provider_chunk_in_data_distribution_size(selenium, browser_id, size,
+                                                    provider, modals, hosts):
     driver = selenium[browser_id]
     provider = hosts[provider]['name']
     prov_rec = modals(driver).data_distribution.providers[provider]
     distribution = prov_rec.distribution
     displayed_size = distribution.end
     assert displayed_size == size, 'displayed chunk size {} in data' \
-                                   'distribution modal does not match expected ' \
+                                   'distribution modal does not match ' \
+                                   'expected ' \
                                    '{}'.format(displayed_size, size)
 
 
@@ -408,16 +428,14 @@ def assert_provider_chunks_in_data_distribution(selenium, browser_id, chunks,
     size = data_distribution.size()
     displayed_chunks = distribution.chunks(size)
     expected_chunks = parse_seq(chunks, pattern=r'\(.+?\)')
-    assert len(displayed_chunks) == len(expected_chunks), \
-        'displayed {} chunks instead of expected {}'.format(
-            len(displayed_chunks),
-            len(expected_chunks))
+    assert len(displayed_chunks) == len(
+        expected_chunks), 'displayed {} chunks instead of expected {}'.format(
+        len(displayed_chunks), len(expected_chunks))
     for chunk1, chunk2 in zip(displayed_chunks, expected_chunks):
-        assert all(round(x - z) == 0 for x, z in zip(chunk1,
-                                                     parse_seq(chunk2,
-                                                               pattern='\d+',
-                                                               default=int))), \
-            'displayed chunk {} instead of expected {}'.format(chunk1, chunk2)
+        assert all(round(x - z) == 0 for x, z in zip(chunk1, parse_seq(chunk2,
+                                                                       pattern='\d+',
+                                                                       default=int))), 'displayed chunk {} instead of expected {}'.format(
+            chunk1, chunk2)
 
 
 @when(parsers.parse('user of {browser_id} sees that content of downloaded '
@@ -430,9 +448,10 @@ def has_downloaded_file_content(browser_id, file_name, content, tmpdir):
     if downloaded_file.isfile():
         with downloaded_file.open() as f:
             file_content = ''.join(f.readlines())
-            assert content == file_content, \
-                ('expected {} as {} content, '
-                 'instead got {}'.format(content, file_name, file_content))
+            assert content == file_content, ('expected {} as {} content, '
+                                             'instead got {}'.format(content,
+                                                                     file_name,
+                                                                     file_content))
     else:
         raise RuntimeError('file {} has not been downloaded'.format(file_name))
 
@@ -458,8 +477,8 @@ def check_error_in_upload_presenter(selenium, browser_id, popups):
 
 @wt(parsers.parse('user of {browser_id} clicks on "{provider}" provider '
                   'on file browser page'))
-def choose_provider_in_file_browser(selenium, browser_id, provider,
-                                    hosts, oz_page):
+def choose_provider_in_file_browser(selenium, browser_id, provider, hosts,
+                                    oz_page):
     driver = selenium[browser_id]
     provider = hosts[provider]['name']
     driver.switch_to.default_content()
@@ -507,24 +526,21 @@ def _assert_provider_in_space(selenium, browser_id, provider, oz_page):
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_current_provider_in_space(selenium, browser_id, provider, hosts,
                                      oz_page):
-    _assert_current_provider_in_space(selenium, browser_id, provider,
-                                      oz_page)
+    _assert_current_provider_in_space(selenium, browser_id, provider, oz_page)
 
 
 @wt(parsers.parse('user of {browser_id} sees current provider named '
                   '"{provider}" on file browser page'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_current_provider_name_in_space(selenium, browser_id, provider,
-                                          hosts, oz_page):
+def assert_current_provider_name_in_space(selenium, browser_id, provider, hosts,
+                                          oz_page):
     provider = hosts[provider]['name']
-    _assert_current_provider_in_space(selenium, browser_id, provider,
-                                      oz_page)
+    _assert_current_provider_in_space(selenium, browser_id, provider, oz_page)
 
 
 @wt(parsers.parse('user of {browser_id} sees provider named '
                   '"{provider}" on file browser page'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_provider_in_space(selenium, browser_id, provider, hosts,
-                             oz_page):
+def assert_provider_in_space(selenium, browser_id, provider, hosts, oz_page):
     provider = hosts[provider]['name']
     _assert_provider_in_space(selenium, browser_id, provider, oz_page)
