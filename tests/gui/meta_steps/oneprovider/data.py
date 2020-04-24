@@ -8,6 +8,8 @@ __license__ = ("This software is released under the MIT license cited in "
 
 import yaml
 
+from selenium.common.exceptions import NoSuchElementException
+
 from tests.gui.steps.oneprovider.file_browser import *
 from tests.gui.steps.oneprovider.data_tab import *
 from tests.gui.steps.oneprovider.metadata import *

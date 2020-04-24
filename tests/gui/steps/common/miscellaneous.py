@@ -81,7 +81,7 @@ def pass_test():
 
 
 @repeat_failed(interval=1, timeout=90, exceptions=NoSuchElementException)
-def change_iframe(selenium, browser_id):
+def switch_to_iframe(selenium, browser_id):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
     iframe = driver.find_element_by_tag_name('iframe')

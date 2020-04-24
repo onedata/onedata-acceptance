@@ -53,7 +53,8 @@ Feature: Onepanel features auto-cleaning
             status: completed
 
     # check data distribution
-    And user of browser2 opens oneprovider-1 Oneprovider file browser for "space2" space
+    And user of browser2 clicks Data of "space2" in the sidebar
+    And user of browser2 sees file browser in data tab in Oneprovider page
     And user of browser2 double clicks on item named "dir1" in file browser
     And user of browser2 sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
@@ -129,7 +130,8 @@ Feature: Onepanel features auto-cleaning
             status: completed
 
     # check data distribution
-    And user of browser2 opens oneprovider-1 Oneprovider file browser for "space2" space
+    And user of browser2 clicks Data of "space2" in the sidebar
+    And user of browser2 sees file browser in data tab in Oneprovider page
     And user of browser2 double clicks on item named "dir1" in file browser
     And user of browser2 sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
@@ -203,7 +205,8 @@ Feature: Onepanel features auto-cleaning
             status: completed
 
     # check data distribution
-    And user of browser2 opens oneprovider-1 Oneprovider file browser for "space2" space
+    And user of browser2 clicks Data of "space2" in the sidebar
+    And user of browser2 sees file browser in data tab in Oneprovider page
     And user of browser2 double clicks on item named "dir1" in file browser
     And user of browser2 sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled

@@ -266,7 +266,7 @@ Feature: Oneprovider transfers functionality
     And user of browser migrates "large_file.txt" from provider "oneprovider-1" to provider "oneprovider-2"
 
     # Check that transfer appeared in transfer tab
-    And user of browser opens oneprovider-1 Oneprovider transfers for "sapce1" space
+    And user of browser opens oneprovider-1 Oneprovider transfers for "space1" space
     Then user of browser waits for all transfers to start
     And user of browser waits for all transfers to finish
     And user of browser sees file in ended transfers:

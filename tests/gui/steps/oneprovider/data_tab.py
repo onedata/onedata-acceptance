@@ -10,7 +10,7 @@ __license__ = ("This software is released under the MIT license cited in "
 import pytest
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.steps.common.miscellaneous import change_iframe
+from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.utils.generic import (parse_seq, upload_file_path, transform)
 from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import given, wt, parsers, when, then
@@ -235,7 +235,7 @@ def wt_is_space_tree_root(selenium, browser_id, is_home, space_name,
 def assert_nonempty_file_browser_in_data_tab_in_op(selenium, browser_id,
                                                    op_container, tmp_memory,
                                                    item_browser='file browser'):
-    change_iframe(selenium, browser_id)
+    switch_to_iframe(selenium, browser_id)
     _check_file_browser_to_load(selenium, browser_id, tmp_memory, op_container,
                                 item_browser)
     items_browser = tmp_memory[browser_id][transform(item_browser)]
@@ -249,7 +249,7 @@ def assert_nonempty_file_browser_in_data_tab_in_op(selenium, browser_id,
 def assert_empty_file_browser_in_data_tab_in_op(selenium, browser_id,
                                                 op_container, tmp_memory,
                                                 item_browser='file browser'):
-    change_iframe(selenium, browser_id)
+    switch_to_iframe(selenium, browser_id)
     _check_file_browser_to_load(selenium, browser_id, tmp_memory, op_container,
                                 item_browser)
     items_browser = tmp_memory[browser_id][transform(item_browser)]
@@ -263,7 +263,7 @@ def assert_empty_file_browser_in_data_tab_in_op(selenium, browser_id,
 def assert_file_browser_in_data_tab_in_op(selenium, browser_id, op_container,
                                           tmp_memory,
                                           item_browser='file browser'):
-    change_iframe(selenium, browser_id)
+    switch_to_iframe(selenium, browser_id)
     _check_file_browser_to_load(selenium, browser_id, tmp_memory, op_container,
                                 item_browser)
 

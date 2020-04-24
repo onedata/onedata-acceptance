@@ -12,7 +12,7 @@ import yaml
 
 from selenium.common.exceptions import StaleElementReferenceException
 
-from tests.gui.steps.common.miscellaneous import change_iframe
+from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.utils.common.modals import Modals as modals
 from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import wt, parsers
@@ -88,6 +88,12 @@ def assert_non_zero_transfer_speed(selenium, browser_id, op_container):
     assert chart.get_speed() != '0', 'Transfer throughput is 0'
 
 
+@repeat_failed(timeout=WAIT_BACKEND)
+def _expand_dropdown_in_migrate_record(driver):
+    data_distribution_modal = modals(driver).data_distribution
+    data_distribution_modal.migrate.expand_dropdown()
+
+
 @wt(parsers.re('user of (?P<browser_id>.*) migrates selected item from '
                'provider "(?P<source>.*)" to provider "(?P<target>.*)"'))
 def migrate_item(selenium, browser_id, source, target, hosts, popups):
@@ -101,10 +107,7 @@ def migrate_item(selenium, browser_id, source, target, hosts, popups):
     data_distribution_modal.providers[source_name].menu_button()
     popups(driver).data_distribution_menu.menu[menu_option]()
 
-    # wait for migrate record to load
-    time.sleep(1)
-
-    data_distribution_modal.migrate.expand_dropdown()
+    _expand_dropdown_in_migrate_record(driver)
     modals(driver).dropdown.options[target_name].click()
 
     data_distribution_modal.migrate.migrate_button()
@@ -146,6 +149,6 @@ def change_transfer_space(selenium, browser_id, space, op_container):
 @wt(parsers.re('user of (?P<browser_id>.*) waits for Transfers page to load'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def wait_for_transfers_page_to_load(selenium, browser_id, op_container):
-    change_iframe(selenium, browser_id)
+    switch_to_iframe(selenium, browser_id)
     op_container(selenium[browser_id]).transfers.ongoing_map_header
 
