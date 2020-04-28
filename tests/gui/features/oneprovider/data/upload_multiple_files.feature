@@ -19,6 +19,10 @@ Feature: Uploading multiple files at once
           browser:
               - dir1: 5
               - dir2: 70
+              - dir3: 4
+              - dir4:
+                  - file10.txt: 10
+                  - file23.txt: 23
 
 
   Scenario: User uploads 5 files at once
@@ -47,7 +51,6 @@ Feature: Uploading multiple files at once
     And user of browser refreshes site
     And user of browser sees nonempty file browser in data tab in Oneprovider page
     And user of browser sees that content of current directory has been loaded
-    And user of browser sees that there are 20 items in file browser
     Then user of browser scrolls to the bottom of file browser and sees there are 70 files
 
 
@@ -74,3 +77,16 @@ Feature: Uploading multiple files at once
     And user of browser sees that current working directory displayed in breadcrumbs is /dir1
     Then user of browser scrolls to the bottom of file browser and sees there are 70 files
 
+
+  Scenario: User uploads files and sees their ordering
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Data of "space1" in the sidebar
+    And user of browser sees file browser in data tab in Oneprovider page
+
+    And user of browser uses upload button from file browser menu bar to upload files from local directory "dir3" to remote current dir
+    And user of browser is idle for 5 seconds
+    And user of browser waits for file upload to finish
+    And user of browser uses upload button from file browser menu bar to upload files from local directory "dir4" to remote current dir
+    And user of browser is idle for 5 seconds
+    And user of browser waits for file upload to finish
+    Then user of browser sees items named ["file0.txt", "file1.txt", "file10.txt", "file2.txt", "file23.txt", "file3.txt"] in file browser in given order

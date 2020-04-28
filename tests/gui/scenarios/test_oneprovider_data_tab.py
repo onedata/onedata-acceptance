@@ -89,10 +89,10 @@ def test_user_changes_directory_while_uploading_bunch_of_files():
     pass
 
 
-# @skip_if_not_chrome
-# @scenario('User uploads files and sees their ordering (uploads a bunch of files at once)')
-# def test_user_uploads_files_and_sees_their_ordering():
-#     pass
+@skip_if_not_chrome
+@scenario('User uploads files and sees their ordering')
+def test_user_uploads_files_and_sees_their_ordering():
+    pass
 
 
 scenarios('../features/oneprovider/data/empty_file_browser.feature')
