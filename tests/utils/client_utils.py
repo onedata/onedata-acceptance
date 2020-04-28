@@ -108,9 +108,11 @@ class Client:
 
     def _start_rpyc_server(self, user_name, port):
         """start rpc server on client docker"""
-        cmd = ('/usr/local/bin/rpyc_classic.py --host 0.0.0.0 --port {}'
+        cmd = ('python3 `which rpyc_classic.py` --host 0.0.0.0 --port {}'
                .format(port))
-        run_cmd(user_name, self.docker_id, cmd, detach=True)
+        print("starting rpyc server on client {}".format(self.ip))
+        run_cmd(user_name, self.docker_id, cmd, output=True, detach=True)
+        print("rpyc server on client {} successfully started".format(self.ip))
         get_pid_cmd = ' | '.join(
             ['ps -u {}'.format(user_name), 'grep "rpyc_classic.py"',
              'grep -v "grep"', 'awk \'{print $1}\'']
