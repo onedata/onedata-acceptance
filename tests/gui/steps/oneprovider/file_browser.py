@@ -200,7 +200,7 @@ def double_click_on_item_in_file_browser(browser_id, item_name, tmp_memory):
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_on_item_in_file_browser(browser_id, item_name, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
-    browser.data[item_name].click()
+    browser.data[item_name].clickable_field.click()
 
 
 @wt(parsers.re('user of (?P<browser_id>.+?) selects (?P<item_list>.+?) '

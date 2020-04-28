@@ -208,15 +208,6 @@ def click_remove_space_option_in_menu_in_discover_spaces_page(selenium,
     page.menu['Remove this space'].click()
 
 
-@wt(parsers.parse('user of {browser_id} clicks Join the harvester button '
-                  'in discovery page'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_join_harvester_button_in_discovery_page(selenium, browser_id,
-                                                  oz_page):
-    driver = selenium[browser_id]
-    oz_page(driver)['discovery'].join_harvester_button.click()
-
-
 @wt(parsers.re('user of (?P<browser_id>.*) sees '
                '(?P<alert_text>Insufficient permissions) alert '
                'on (?P<where>Spaces|Indices) subpage'))

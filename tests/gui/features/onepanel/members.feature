@@ -77,7 +77,7 @@ Feature: Basic cluster members management utilities using onepanel
     And user of browser2 clicks on Members item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser2 clicks on "Invite user using token" button in users list menu in "oneprovider-1" cluster members view
     And user of browser2 is idle for 2 seconds
-    Then user of browser2 sees Insufficient permissions alert in "Invite using token" modal
+    Then user of browser2 sees This resource could not be loaded alert in "Invite using token" modal
 
 
   Scenario: User fails to remove group from cluster without remove group privileges

@@ -22,7 +22,7 @@ Feature: Multi Browser invitation group to spaces
     And users of [browser1, browser2] logged as [user1, user2] to [Onezone, Onezone] service
 
 
-  Scenario Outline: User joins a space with group invitation token
+  Scenario: User joins a space with group invitation token
     When user of browser1 clicks on Data in the main menu
     And user of browser1 clicks "space1" on the spaces list in the sidebar
     And user of browser1 clicks Members of "space1" in the sidebar
@@ -31,26 +31,9 @@ Feature: Multi Browser invitation group to spaces
     And user of browser1 closes "Invite using token" modal
     And user of browser1 sends copied token to user of browser2
 
-    And user of browser2 clicks on Groups in the main menu
-    And user of browser2 clicks "group2" on the groups list in the sidebar
-    And user of browser2 clicks on "Join to space" button in group "group2" menu in the sidebar
-    And user of browser2 pastes Space invitation token into space token text field on groups page
-    And user of browser2 confirms join the space using <confirmation_method> on groups page
+    And user of browser2 adds group "group2" as subgroup using copied token
+
     Then user of browser2 sees that "space1" has appeared on the spaces list in the sidebar
-
-    Examples:
-      | confirmation_method |
-      | enter               |
-      | button              |
-
-
-  Scenario: User fails to join a space with invalid group invitation token
-    When user of browser2 clicks on Groups in the main menu
-    And user of browser2 clicks "group2" on the groups list in the sidebar
-    And user of browser2 clicks on "Join to space" button in group "group2" menu in the sidebar
-    And user of browser2 writes "invalid token" into space token text field on groups page
-    And user of browser2 clicks Join the space button on Join group to a space page
-    Then user of browser2 sees that error popup has appeared
 
 
   Scenario: User joins a space with group invitation token and see space was renamed
@@ -63,11 +46,7 @@ Feature: Multi Browser invitation group to spaces
     And user of browser1 closes "Invite using token" modal
     And user of browser1 sends copied token to user of browser2
 
-    And user of browser2 clicks on Groups in the main menu
-    And user of browser2 clicks "group2" on the groups list in the sidebar
-    And user of browser2 clicks on "Join to space" button in group "group2" menu in the sidebar
-    And user of browser2 pastes Space invitation token into space token text field on groups page
-    And user of browser2 clicks Join the space button on Join group to a space page
+    And user of browser2 adds group "group2" as subgroup using received token
 
     # user1 renames space
     And user of browser1 clicks "space1" on the spaces list in the sidebar
