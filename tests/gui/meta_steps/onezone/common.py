@@ -65,7 +65,6 @@ def g_wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts,
                                             fillvalue=providers_list[-1]):
         visit_op(selenium, browser_id, oz_page, hosts[provider]['name'],
                  modals)
-    g_wait_for_op_session_to_start(selenium, browser_id_list)
 
 
 @given(parsers.re('opened (?P<providers_list>.*) Oneprovider view in web GUI by '

@@ -51,8 +51,7 @@ class SpaceSupportAddForm(PageObject):
     size = Input('input.field-main-size')
     units = WebItemsSequence('.field-main-sizeUnit label.clickable',
                              cls=ButtonWithTextPageObject)
-    mount_in_root = Toggle('.toggle-field-main-mountInRoot')
-    import_storage_data = Toggle('.toggle-field-main-_importEnabled')
+    import_storage_data = Toggle('.toggle-field-main-importEnabled')
 
     import_configuration = WebItem('.import-configuration-section',
                                    cls=ImportConfigurationForm)

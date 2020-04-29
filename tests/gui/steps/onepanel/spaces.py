@@ -93,11 +93,8 @@ def wt_type_text_to_input_box_in_space_support_form(selenium, browser_id, text,
     setattr(form, transform(input_box), text)
 
 
-@when(parsers.re(r'user of (?P<browser_id>.*?) enables '
-                 r'(?P<toggle>Mount in root|Import storage data) option '
-                 r'in support space form in Onepanel'))
-@then(parsers.re(r'user of (?P<browser_id>.*?) enables '
-                 r'(?P<toggle>Mount in root|Import storage data) option '
+@wt(parsers.re(r'user of (?P<browser_id>.*?) enables '
+                 r'(?P<toggle>Import storage data) option '
                  r'in support space form in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_enable_option_box_in_space_support_form(selenium, browser_id,

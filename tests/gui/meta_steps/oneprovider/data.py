@@ -285,7 +285,7 @@ def assert_space_content_in_op_gui(config, selenium, user, op_container,
                                     hosts, modals)
     refresh_site(selenium, user)
     change_space_view_in_data_tab_in_op(selenium, user, space_name,
-                                        op_container)
+                                        oz_page)
     assert_file_browser_in_data_tab_in_op(selenium, user, op_container,
                                           tmp_memory)
     _check_files_tree(yaml.load(config), user, tmp_memory, '/', selenium,

@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 
 from tests.gui.utils.generic import parse_seq
+from tests.utils.bdd_utils import wt
 from tests.utils.utils import repeat_failed
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 
@@ -53,9 +54,7 @@ def g_click_on_the_given_main_menu_tab(selenium, browser_id_list,
         _click_on_tab_in_main_menu_sidebar(driver, main_menu_tab)
 
 
-@when(parsers.re('users? of (?P<browser_id_list>.*) clicks on the '
-                 '"(?P<main_menu_tab>.*)" tab in main menu sidebar'))
-@then(parsers.re('users? of (?P<browser_id_list>.*) clicks on the '
+@wt(parsers.re('users? of (?P<browser_id_list>.*) clicks on the '
                  '"(?P<main_menu_tab>.*)" tab in main menu sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_the_given_main_menu_tab(selenium, browser_id_list,

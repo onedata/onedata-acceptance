@@ -19,7 +19,8 @@ from tests.gui.steps.onepanel.storages import (
     assert_storage_disappeared_from_list,
     wt_select_storage_type_in_storage_page_op_panel,
     wt_type_text_to_in_box_in_storages_page_op_panel,
-    wt_click_on_add_btn_in_storage_add_form_in_storage_page)
+    wt_click_on_add_btn_in_storage_add_form_in_storage_page,
+    enable_import_in_add_storage_form)
 from tests.gui.steps.modal import click_modal_button
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
@@ -94,6 +95,10 @@ def add_storage_in_op_panel_using_gui(selenium, browser_id, name,
     wt_type_text_to_in_box_in_storages_page_op_panel(selenium, browser_id,
                                                      mount_point, form, onepanel,
                                                      mount_point_option)
+    if 'imported storage' in options:
+        if options['imported storage']:
+            enable_import_in_add_storage_form(selenium, browser_id, onepanel)
+
     wt_click_on_add_btn_in_storage_add_form_in_storage_page(selenium,
                                                             browser_id,
                                                             onepanel)

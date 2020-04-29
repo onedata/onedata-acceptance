@@ -15,9 +15,7 @@ from tests.utils.utils import repeat_failed
 from tests.utils.acceptance_utils import wt
 
 
-@when(parsers.parse('user of {browser_id} selects {storage_type} from storage '
-                    'selector in storages page in Onepanel'))
-@then(parsers.parse('user of {browser_id} selects {storage_type} from storage '
+@wt(parsers.parse('user of {browser_id} selects {storage_type} from storage '
                     'selector in storages page in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_select_storage_type_in_storage_page_op_panel(selenium, browser_id,
@@ -28,10 +26,7 @@ def wt_select_storage_type_in_storage_page_op_panel(selenium, browser_id,
     storage_selector.options[storage_type].click()
 
 
-@when(parsers.re('user of (?P<browser_id>.*?) types "(?P<text>.*?)" to '
-                 '(?P<input_box>.*?) field in (?P<form>POSIX) form '
-                 'in storages page in Onepanel'))
-@then(parsers.re('user of (?P<browser_id>.*?) types "(?P<text>.*?)" to '
+@wt(parsers.re('user of (?P<browser_id>.*?) types "(?P<text>.*?)" to '
                  '(?P<input_box>.*?) field in (?P<form>POSIX) form '
                  'in storages page in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -43,9 +38,12 @@ def wt_type_text_to_in_box_in_storages_page_op_panel(selenium, browser_id,
     setattr(form, transform(input_box), text)
 
 
-@when(parsers.parse('user of {browser_id} clicks on Add button in add storage '
-                    'form in storages page in Onepanel'))
-@then(parsers.parse('user of {browser_id} clicks on Add button in add storage '
+def enable_import_in_add_storage_form(selenium, browser_id, onepanel):
+    form = onepanel(selenium[browser_id]).content.storages.form
+    form.posix.imported_storage.check()
+
+
+@wt(parsers.parse('user of {browser_id} clicks on Add button in add storage '
                     'form in storages page in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_add_btn_in_storage_add_form_in_storage_page(selenium,
@@ -54,9 +52,7 @@ def wt_click_on_add_btn_in_storage_add_form_in_storage_page(selenium,
     onepanel(selenium[browser_id]).content.storages.form.add()
 
 
-@when(parsers.parse('user of {browser_id} expands "{storage}" record on '
-                    'storages list in storages page in Onepanel'))
-@then(parsers.parse('user of {browser_id} expands "{storage}" record on '
+@wt(parsers.parse('user of {browser_id} expands "{storage}" record on '
                     'storages list in storages page in Onepanel'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def wt_expand_storage_item_in_storages_page_op_panel(selenium, browser_id,
@@ -64,10 +60,7 @@ def wt_expand_storage_item_in_storages_page_op_panel(selenium, browser_id,
     onepanel(selenium[browser_id]).content.storages.storages[storage].expand()
 
 
-@when(parsers.re('user of (?P<browser_id>.*?) sees that "(?P<storage>.*?)" '
-                 '(?P<attr>Storage type|Mount point) is (?P<val>.*?) '
-                 'in storages page in Onepanel'))
-@then(parsers.re('user of (?P<browser_id>.*?) sees that "(?P<storage>.*?)" '
+@wt(parsers.re('user of (?P<browser_id>.*?) sees that "(?P<storage>.*?)" '
                  '(?P<attr>Storage type|Mount point) is (?P<val>.*?) '
                  'in storages page in Onepanel'))
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -132,4 +125,8 @@ def click_on_button_in_edit_form(selenium, browser_id, name, onepanel, storage):
     button = name.lower() + '_button'
     getattr(onepanel(driver).content.storages.storages[storage]
             .edit_form.posix_editor, button)()
+
+
+
+
 
