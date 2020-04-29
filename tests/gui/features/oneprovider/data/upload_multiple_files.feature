@@ -72,7 +72,7 @@ Feature: Uploading multiple files at once
     And user of browser is idle for 7 seconds
     And user of browser sees that there is 1 item in file browser
 
-    # go to dir 10 and see if every file has been uploaded
+    # go to dir and see if every file has been uploaded
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser sees that current working directory displayed in breadcrumbs is /dir1
     Then user of browser scrolls to the bottom of file browser and sees there are 70 files
