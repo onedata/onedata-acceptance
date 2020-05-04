@@ -94,8 +94,7 @@ class Modals(object):
     data_row_menu = WebItem('.file-actions.dropdown-menu', cls=DataRowMenu)
     delete_modal = WebItem('.modal-dialog', cls=DeleteModal)
     rename_modal = WebItem('.modal-dialog', cls=RenameModal)
-    file_metadata = WebItem('.modal-dialog', cls=MetadataModal)
-    directory_metadata = WebItem('.modal-dialog', cls=MetadataModal)
+    metadata = WebItem('.modal-dialog', cls=MetadataModal)
     menu_in_edit_permissions = WebItem('.over-modals .webui-popover-content '
                                        '.one-webui-popover',
                                        cls=EditPermissionsRecordMenu)

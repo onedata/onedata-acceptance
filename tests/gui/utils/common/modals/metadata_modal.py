@@ -43,15 +43,17 @@ class RDFMetadataPanel(PageObject):
     text_area = Input('.rdf-textarea')
 
 
-class NavigationHeader(PageObject):
-    basic = NamedButton('.nav-link-metadata-type', text='BASIC')
-    json = NamedButton('.nav-link-metadata-type', text='JSON')
-    rdf = NamedButton('.nav-link-metadata-type', text='RDF')
+class NavigationTab(PageObject):
+    name = id = Label('.tab-name')
+    status = WebElement('.tab-state')
+
+    def is_empty(self):
+        return 'inactive' in self.status.get_attribute('class')
 
 
 class MetadataModal(Modal):
     modal_name = Label('.modal-header')
-    navigation = WebItem('.nav-tabs-metadata', cls=NavigationHeader)
+    navigation = WebItemsSequence('.nav-link', cls=NavigationTab)
     basic = WebItem('.relative', cls=BasicMetadataPanel)
     json = WebItem('.relative', cls=JSONMetadataPanel)
     rdf = WebItem('.relative', cls=RDFMetadataPanel)

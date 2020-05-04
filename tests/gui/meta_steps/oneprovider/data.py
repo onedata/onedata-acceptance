@@ -48,14 +48,9 @@ def rename_item(selenium, browser_id, path, new_name, tmp_memory, res, space,
     confirmation_option = 'button'
     text = 'Renaming the file failed'
 
-    _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id, path,
-                                                   space, tmp_memory, oz_page,
-                                                   op_container)
-
-    click_option_in_data_row_menu_in_file_browser(selenium, browser_id, option,
-                                                  modals)
-
-    wt_wait_for_modal_to_appear(selenium, browser_id, modal_header, tmp_memory)
+    open_modal_for_file_browser_item(selenium, browser_id, modals, modal_header,
+                                     path, tmp_memory, option, space, oz_page,
+                                     op_container)
     write_name_into_text_field_in_modal(selenium, browser_id, new_name,
                                         modal_name, modals)
     confirm_rename_directory(selenium, browser_id, confirmation_option, modals)
@@ -72,13 +67,12 @@ def remove_item_in_op_gui(selenium, browser_id, path, tmp_memory, op_container,
     option = 'Delete'
     button = 'Yes'
     modal = 'Delete modal'
+    modal_header = 'Delete'
     text = 'Deleting file(s) failed'
 
-    _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id, path,
-                                                   space, tmp_memory, oz_page,
-                                                   op_container)
-    click_option_in_data_row_menu_in_file_browser(selenium, browser_id, option,
-                                                  modals)
+    open_modal_for_file_browser_item(selenium, browser_id, modals, modal_header,
+                                     path, tmp_memory, option, space, oz_page,
+                                     op_container)
     click_modal_button(selenium, browser_id, button, modal, modals)
 
     if res == 'fails':
@@ -348,3 +342,14 @@ def go_to_filebrowser(selenium, browser_id, oz_page, op_container,
                                                   option_in_submenu, oz_page)
     assert_file_browser_in_data_tab_in_op(selenium, browser_id, op_container,
                                           tmp_memory)
+
+
+def open_modal_for_file_browser_item(selenium, browser_id, modals, modal_name,
+                                     path, tmp_memory, option, space,
+                                     oz_page, op_container):
+    _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id, path,
+                                                   space, tmp_memory, oz_page,
+                                                   op_container)
+    click_option_in_data_row_menu_in_file_browser(selenium, browser_id, option,
+                                                  modals)
+    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
