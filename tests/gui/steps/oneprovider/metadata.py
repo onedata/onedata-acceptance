@@ -11,6 +11,7 @@ import json
 
 from tests.gui.steps.common.miscellaneous import (
     press_tab_on_active_element, press_backspace_on_active_element)
+from tests.gui.steps.modal import click_modal_button
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import wt, parsers
 
@@ -173,6 +174,5 @@ def clean_tab_textarea_in_metadata_modal(selenium, browser_id, tab_name,
                   'metadata modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_metadata_modal_button(selenium, browser_id, button, modals):
-    button = transform(button)
-    modal = modals(selenium[browser_id]).metadata
-    getattr(modal, button)()
+    modal_name = "Metadata"
+    click_modal_button(selenium, browser_id, button, modal_name, modals)
