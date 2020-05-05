@@ -51,6 +51,7 @@ from tests.gui.steps.oneprovider.spaces import *
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
 from tests.gui.meta_steps.onezone.common import *
+from tests.gui.meta_steps.oneprovider.common import *
 
 from . import BROWSER
 
@@ -76,23 +77,22 @@ def test_user_uploads_5_files_at_once():
     pass
 
 
-# TODO: change test because of a new gui
-# @skip_if_not_chrome
-# @scenario('User uploads more than 50 files and uses files list lazy loading')
-# def test_user_uploads_more_than_50_files_and_uses_files_list_lazy_loading():
-#     pass
-#
-#
-# @skip_if_not_chrome
-# @scenario('User changes directory while uploading bunch of files')
-# def test_user_changes_directory_while_uploading_bunch_of_files():
-#     pass
-#
-#
-# @skip_if_not_chrome
-# @scenario('User uploads files and sees their ordering (uploads a bunch of files at once)')
-# def test_user_uploads_files_and_sees_their_ordering():
-#     pass
+@skip_if_not_chrome
+@scenario('User uploads more than 50 files and uses files list lazy loading')
+def test_user_uploads_more_than_50_files_and_uses_files_list_lazy_loading():
+    pass
+
+
+@skip_if_not_chrome
+@scenario('User can change directory while uploading files')
+def test_user_can_change_directory_while_uploading_files():
+    pass
+
+
+@skip_if_not_chrome
+@scenario('Files uploaded by user are ordered by name')
+def test_files_uploaded_by_user_are_ordered_by_name():
+    pass
 
 
 scenarios('../features/oneprovider/data/empty_file_browser.feature')
