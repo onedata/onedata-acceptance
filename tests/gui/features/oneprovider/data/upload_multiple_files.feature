@@ -44,7 +44,6 @@ Feature: Uploading multiple files at once
     And user of browser uses upload button from file browser menu bar to upload files from local directory "dir2" to remote current dir
     And user of browser is idle for 5 seconds
     And user of browser waits for file upload to finish
-
     And user of browser sees that there are 9 items in file browser
 
     # refresh site and check working of lazy loading
@@ -54,7 +53,7 @@ Feature: Uploading multiple files at once
     Then user of browser scrolls to the bottom of file browser and sees there are 70 files
 
 
-  Scenario: User changes directory while uploading bunch of files
+  Scenario: User can change directory while uploading files
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
@@ -66,10 +65,9 @@ Feature: Uploading multiple files at once
 
     # start uploading files in dir1 and go back to root directory
     And user of browser uses upload button from file browser menu bar to upload files from local directory "dir2" to remote current dir
-    And user of browser is idle for 0.02 seconds
     And user of browser changes current working directory to home using breadcrumbs
     And user of browser sees that current working directory displayed in breadcrumbs is space1
-    And user of browser is idle for 7 seconds
+    And user of browser waits for file upload to finish
     And user of browser sees that there is 1 item in file browser
 
     # go to dir and see if every file has been uploaded
@@ -78,7 +76,7 @@ Feature: Uploading multiple files at once
     Then user of browser scrolls to the bottom of file browser and sees there are 70 files
 
 
-  Scenario: User uploads files and sees their ordering
+  Scenario: Files uploaded by user are ordered by name
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page

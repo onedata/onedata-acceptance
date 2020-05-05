@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 
 from tests.gui.utils.generic import parse_seq
+from tests.utils.bdd_utils import wt
 from tests.utils.utils import repeat_failed
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 
@@ -86,9 +87,7 @@ def g_has_dir_content_been_loaded(selenium, browser_id):
     _has_dir_content_been_loaded(driver)
 
 
-@when(parsers.parse('user of {browser_id} sees that content of current '
-                    'directory has been loaded'))
-@then(parsers.parse('user of {browser_id} sees that content of current '
+@wt(parsers.parse('user of {browser_id} sees that content of current '
                     'directory has been loaded'))
 def wt_has_dir_content_been_loaded(selenium, browser_id):
     driver = selenium[browser_id]

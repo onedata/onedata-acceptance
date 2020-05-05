@@ -65,8 +65,6 @@ class _FileBrowser(PageObject):
                                    self.web_elem, self._bottom)
 
     def names_of_visible_elems(self):
-        self.driver.execute_script('arguments[0].scrollTo(arguments[1]);',
-                                   self.web_elem, self._bottom)
         files = self._data
         names = [f.text.split('\n')[0] for f in files]
         return names

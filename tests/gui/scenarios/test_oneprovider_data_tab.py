@@ -84,14 +84,14 @@ def test_user_uploads_more_than_50_files_and_uses_files_list_lazy_loading():
 
 
 @skip_if_not_chrome
-@scenario('User changes directory while uploading bunch of files')
-def test_user_changes_directory_while_uploading_bunch_of_files():
+@scenario('User can change directory while uploading files')
+def test_user_can_change_directory_while_uploading_files():
     pass
 
 
 @skip_if_not_chrome
-@scenario('User uploads files and sees their ordering')
-def test_user_uploads_files_and_sees_their_ordering():
+@scenario('Files uploaded by user are ordered by name')
+def test_files_uploaded_by_user_are_ordered_by_name():
     pass
 
 
