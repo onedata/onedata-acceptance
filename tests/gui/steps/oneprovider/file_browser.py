@@ -362,3 +362,21 @@ def click_menu_for_elem_in_file_browser(browser_id, item_name, tmp_memory):
 def click_option_in_data_row_menu_in_file_browser(selenium, browser_id, option,
                                                   modals):
     modals(selenium[browser_id]).data_row_menu.options[option].click()
+
+
+@wt(parsers.parse('user of {browser_id} scrolls to the bottom of file browser '
+                  'and sees there are {count} files'))
+def count_files_while_scrolling(browser_id, count: int, tmp_memory):
+    browser = tmp_memory[browser_id]['file_browser']
+    detected_files = []
+    tmp_files = browser.names_of_visible_elems()
+    new_files = [f for f in tmp_files if f]
+    while new_files:
+        detected_files.extend(new_files)
+        browser.scroll_to_bottom()
+        tmp_files = browser.names_of_visible_elems()
+        new_files = [f for f in tmp_files if f and f not in detected_files]
+    else:
+        err_msg = (f'There are {len(detected_files)} files in file browser '
+                   f'when should be {count}')
+        assert len(detected_files) == count, err_msg

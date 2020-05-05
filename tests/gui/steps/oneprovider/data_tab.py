@@ -332,9 +332,11 @@ def resize_data_tab_sidebar(selenium, browser_id, direction, offset,
 @repeat_failed(timeout=WAIT_BACKEND * 3)
 def wait_for_file_upload_to_finish(selenium, browser_id, popups):
     driver = selenium[browser_id]
+    driver.switch_to.default_content()
     assert not popups(driver).is_upload_presenter(), (
         'file upload not finished '
         'within given time')
+    _change_iframe_for_file_browser(selenium, browser_id)
 
 
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
