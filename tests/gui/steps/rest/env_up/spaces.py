@@ -119,8 +119,8 @@ def _create_and_configure_spaces(config, zone_name, admin_credentials,
         _get_support(zone_hostname, onepanel_credentials, owner, space_id,
                      storages_db, hosts, description.get('providers', {}),
                      users_to_add, users_db)
-        _init_storage(owner, space_name, hosts,
-                      description.get('storage', {}))
+        _init_storage_from_config(owner, space_name, hosts,
+                                  description.get('storage', {}))
 
 
 def _create_space(zone_hostname, owner_username, owner_password, space_name):
@@ -258,18 +258,26 @@ def _get_storage_id(provider_hostname, onepanel_username,
             return storage_id
 
 
-def _init_storage(owner_credentials, space_name, hosts, storage_conf):
+def _init_storage_from_config(owner_credentials, space_name, hosts,
+                              storage_conf):
     if not storage_conf:
         return
 
+    defaults = storage_conf['defaults']
+    provider_hostname = hosts[defaults['provider']]['hostname']
+    directory_tree = storage_conf['directory tree']
+
+    init_storage(owner_credentials, space_name, hosts,
+                 provider_hostname, directory_tree)
+
+
+def init_storage(owner_credentials, space_name, hosts,
+                 provider_hostname, directory_tree):
     # if we make call to fast after deleting users from previous test
     # provider cache was not refreshed and call will create dir for
     # now nonexistent user, to avoid this wait some time
     import time
     time.sleep(2)
-
-    defaults = storage_conf['defaults']
-    provider_hostname = hosts[defaults['provider']]['hostname']
 
     def create_cdmi_object(path, data=None, repeats=10, auth=None,
                            headers={'X-Auth-Token': owner_credentials.token}):
@@ -288,8 +296,7 @@ def _init_storage(owner_credentials, space_name, hosts, storage_conf):
 
         return response
 
-    _mkdirs(create_cdmi_object, space_name, hosts,
-            storage_conf['directory tree'])
+    _mkdirs(create_cdmi_object, space_name, hosts, directory_tree)
 
 
 def _mkdirs(create_cdmi_obj, cwd, hosts, dir_content=None):

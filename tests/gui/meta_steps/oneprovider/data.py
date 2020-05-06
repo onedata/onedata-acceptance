@@ -21,6 +21,7 @@ from tests.gui.steps.modal import (
 from tests.gui.steps.onezone.spaces import (
     click_on_option_of_space_on_left_sidebar_menu,
     click_element_on_lists_on_left_sidebar_menu)
+from tests.gui.steps.rest.env_up.spaces import init_storage
 
 
 def _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id, path,
@@ -318,36 +319,41 @@ def assert_file_content_in_op_gui(text, path, space, selenium, user, users,
     has_downloaded_file_content(user, item_name, text, tmpdir)
 
 
-@given(parsers.re('directory structure created by user of (?P<browser_id>\w+) '
+@given(parsers.re('directory structure created by (?P<user>\w+) '
                   'in "(?P<space>.*)" space on (?P<host>.*) as follows:\n'
                   '(?P<config>(.|\s)*)'))
-def g_create_directory_structure_in_op_gui(selenium, user, op_container, config,
-                                           space, tmp_memory):
-    create_directory_structure_in_op_gui(selenium, user, op_container, config,
-                                         space, tmp_memory)
+def g_create_directory_structure(user, config, space, host, users, hosts):
+    owner = users[user]
+    items = yaml.load(config)
+    provider_hostname = hosts[host]['hostname']
+
+    init_storage(owner, space, hosts, provider_hostname, items)
 
 
 def create_directory_structure_in_op_gui(selenium, user, op_container, config,
-                                         space, tmp_memory):
+                                         space, tmp_memory, modals, oz_page):
     items = yaml.load(config)
     cwd = ''
-    _create_content(selenium, user, items, cwd, space, tmp_memory, op_container)
+
+    _create_content(selenium, user, items, cwd, space, tmp_memory,
+                    op_container, modals, oz_page)
     
 
 def _create_item(selenium, browser_id, name, content, cwd, space, tmp_memory,
-                 op_container):
+                 op_container, modals, oz_page):
     item_type = 'directory' if name.startswith('dir') else 'file'
     create_item_in_op_gui(selenium, browser_id, cwd, item_type, name, 
-                          tmp_memory, op_container, "succeeds", space)
+                          tmp_memory, op_container, "succeeds", space,
+                          modals, oz_page)
     if not content:
         return 
     cwd += '/' + name
     _create_content(selenium, browser_id, content, cwd, space, tmp_memory, 
-                    op_container)
+                    op_container, modals, oz_page)
 
 
 def _create_content(selenium, browser_id, content, cwd, space, tmp_memory, 
-                    op_container):
+                    op_container, modals, oz_page):
     for item in content:
         try:
             [(name, content)] = item.items()
@@ -355,7 +361,7 @@ def _create_content(selenium, browser_id, content, cwd, space, tmp_memory,
             name = item
             content = None
         _create_item(selenium, browser_id, name, content, cwd, space, 
-                     tmp_memory, op_container)
+                     tmp_memory, op_container, modals, oz_page)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) uploads "(?P<path>.*)" to the '

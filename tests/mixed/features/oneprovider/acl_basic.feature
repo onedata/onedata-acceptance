@@ -29,33 +29,31 @@ Feature: ACL basic tests
                     size: 1000000
     And oneclient mounted in /home/user1/onedata using token by user1
     And opened browser with user1 signed in to "onezone" service
-    And opened oneprovider-1 Oneprovider view in web GUI by user1
-    And directory structure created by user of browser in "space1" space on oneprovider-1 as follows:
+    And directory structure created by user1 in "space1" space on oneprovider-1 as follows:
             - file1
             - dir1
 
 
-
-  Scenario: User sets ACL with one entry
+  Scenario Outline: User sets ACL with one entry
     When using <client1>, user1 sets new ACE for <item> in space "space1" with <privileges> privileges set for <subject_type> <subject_name> in oneprovider-1
     Then using <client2>, user1 sees that <item> in space "space1" has <privileges> privileges set for <subject_type> <subject_name> in first ACL record in oneprovider-1
 
     Examples:
-    | privileges            | subject_type  | subject_name  | item  |
-    | [read acl, change acl]| user          | user1         | file1 |
-    | [read acl, change acl]| user          | user1         | dir1  |
-#   Uncomment after resolving issue VFS-3786
-#    | [read acl, change acl]| group         | group1        | file1 |
+    | privileges                     | subject_type  | subject_name  | item  |
+    | [acl:read acl, acl:change acl] | user          | user1         | file1 |
+    | [acl:read acl, acl:change acl] | user          | user1         | dir1  |
+    | [acl:read acl, acl:change acl] | group         | group1        | file1 |
 
 
-#  Scenario: User sets ACL with two entries
-#    When using <client1>, user1 sets new ACE for <item> in space "space1" with [read acl, change acl] privileges set for user user1 in oneprovider-1
-#    And using <client1>, user1 sets new ACE for <item> in space "space1" with <privileges2> privileges set for <subject_type2> <subject_name2> in oneprovider-1
-#    Then using <client2>, user1 sees that <item> in space "space1" has <privileges> privileges set for <subject_type> <subject_name> in first ACL record oneprovider-1
-#
-#    Examples:
-#    | privileges            | subject_type  | subject_name  | item  |
-#    | [read, write]         | user          | user2         | file1 |
-#    | [read, write]         | user          | user2         | dir1  |
-#    | [deny, read, write]   | user          | user2         | file1 |
-#    | [deny, read, write]   | user          | user2         | dir1  |
+  Scenario Outline: User sets ACL with two entries
+    When using <client1>, user1 sets new ACE for <item> in space "space1" with [acl:read acl, acl:change acl] privileges set for user user1 in oneprovider-1
+    When using <client1>, user1 sets new ACE for <item> in space "space1" with <privileges> privileges set for <subject_type> <subject_name> in oneprovider-1
+    Then using <client2>, user1 sees that <item> in space "space1" has <privileges> privileges set for <subject_type> <subject_name> in second ACL record in oneprovider-1
+    And using <client2>, user1 sees that <item> in space "space1" has [acl:read acl, acl:change acl] privileges set for user user1 in first ACL record in oneprovider-1
+
+    Examples:
+    | privileges                              | subject_type  | subject_name  | item  |
+    | [data:read, data:write]                 | user          | user2         | file1 |
+    | [data:list files, data:add files]       | user          | user2         | dir1  |
+    | [deny, data:read, data:write]           | user          | user2         | file1 |
+    | [deny, data:list files, data:add files] | user          | user2         | dir1  |

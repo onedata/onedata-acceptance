@@ -192,6 +192,7 @@ def grant_acl_privileges_in_op_oneclient(user, users, host, path, priv,
                                          item_type, groups, name):
     try:
         acl = multi_file_steps.get_metadata(user, path, host, users)['cdmi_acl']
+        acl = json.loads(acl)
     except KeyError:
         acl = []
     acl = get_acl_metadata(acl, priv, item_type, groups, name, users, path)

@@ -9,6 +9,7 @@ __license__ = ("This software is released under the MIT license cited in "
 
 import os
 import json
+import re
 from functools import partial
 from datetime import datetime
 
