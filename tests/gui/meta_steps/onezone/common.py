@@ -6,9 +6,15 @@ from itertools import zip_longest
 
 from pytest_bdd import given, parsers
 
+from tests.gui.steps.oneprovider.data_tab import (
+    assert_file_browser_in_data_tab_in_op,
+     click_choose_other_oneprovider_on_file_browser,
+     choose_provider_in_file_browser)
+from tests.gui.steps.onezone.spaces import (
+    click_element_on_lists_on_left_sidebar_menu,
+     click_on_option_of_space_on_left_sidebar_menu)
 from tests.utils.utils import repeat_failed
-from tests.gui.steps.common.browser_creation import \
-    create_instances_of_webdriver
+from tests.gui.steps.common.browser_creation import create_instances_of_webdriver
 from tests.utils.acceptance_utils import wt
 from tests.gui.steps.oneprovider.common import g_wait_for_op_session_to_start
 from tests.gui.steps.onezone.providers import parse_seq
@@ -84,6 +90,45 @@ def wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts,
                 modals):
     g_wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts,
                   modals)
+
+
+def visit_file_browser(selenium, oz_page, providers_list, spaces_list,
+                       browser_id_list, op_container, tmp_memory, hosts):
+    option = 'spaces'
+    option_in_submenu = 'Data'
+
+    for browser_id, provider, space in zip_longest(parse_seq(browser_id_list),
+                                                   parse_seq(providers_list),
+                                                   parse_seq(spaces_list)):
+        click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option,
+                                                    space, oz_page)
+        click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
+                                                      space, option_in_submenu,
+                                                      oz_page)
+        click_choose_other_oneprovider_on_file_browser(selenium, browser_id,
+                                                       oz_page)
+        choose_provider_in_file_browser(selenium, browser_id, provider,
+                                        hosts, oz_page)
+        assert_file_browser_in_data_tab_in_op(selenium, browser_id,
+                                              op_container, tmp_memory)
+
+
+@given(parsers.re('opened (?P<providers_list>.*) Oneprovider file browser '
+                  'for (?P<spaces_list>.*) space in web GUI '
+                  'by (users? of )?(?P<browser_id_list>.*)'))
+def g_visit_file_browser(selenium, oz_page, providers_list, spaces_list,
+                         browser_id_list, op_container, tmp_memory, hosts):
+    visit_file_browser(selenium, oz_page, providers_list, spaces_list,
+                       browser_id_list, op_container, tmp_memory, hosts)
+
+
+@wt(parsers.re('users? of (?P<browser_id_list>.*) opens? '
+               '(?P<providers_list>.*) Oneprovider file browser '
+               'for (?P<spaces_list>.*) space'))
+def wt_visit_file_browser(selenium, oz_page, providers_list, spaces_list,
+                          browser_id_list, op_container, tmp_memory, hosts):
+    visit_file_browser(selenium, oz_page, providers_list, spaces_list,
+                       browser_id_list, op_container, tmp_memory, hosts)
 
 
 def search_for_members(records, member_name, parent_name, fun):

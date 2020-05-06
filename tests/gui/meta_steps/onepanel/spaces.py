@@ -215,3 +215,11 @@ def revoke_all_space_supports_using_rest(selenium, hosts, users, provider_host):
                     path=get_panel_rest_path('provider', 'spaces', space),
                     auth=(user, users[user].password))
 
+
+@wt(parsers.parse('user of {browser_id} sets {quota} quota to {value} value '
+                  'in auto-cleaning tab in Onepanel'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def set_quota_in_auto_cleaning(selenium, browser_id, quota, value, onepanel):
+    click_change_quota_button(selenium, browser_id, quota, onepanel)
+    type_value_to_quota_input(selenium, browser_id, quota, value, onepanel)
+    confirm_quota_value_change(selenium, browser_id, quota, onepanel)

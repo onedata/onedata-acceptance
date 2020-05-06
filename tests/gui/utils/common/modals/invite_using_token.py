@@ -14,7 +14,7 @@ from .modal import Modal
 class InviteUsingTokenModal(Modal):
     token = Input('textarea')
     copy = Button('.copy-btn')
-    cancel = NamedButton('button', text='Cancel')
+    close = NamedButton('button', text='Close')
 
     forbidden_alert = WebElement('.alert.error')
 

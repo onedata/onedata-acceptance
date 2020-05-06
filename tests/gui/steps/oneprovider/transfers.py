@@ -6,15 +6,17 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+import time
+
 import yaml
 
 from selenium.common.exceptions import StaleElementReferenceException
-from pytest_bdd import parsers
 
+from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.utils.common.modals import Modals as modals
 from tests.utils.utils import repeat_failed
-from tests.utils.acceptance_utils import wt
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.utils.bdd_utils import wt, parsers
+from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 
 
 def _assert_transfer(transfer, item_type, desc, sufix, hosts):
@@ -86,24 +88,43 @@ def assert_non_zero_transfer_speed(selenium, browser_id, op_container):
     assert chart.get_speed() != '0', 'Transfer throughput is 0'
 
 
+@repeat_failed(timeout=WAIT_BACKEND)
+def _expand_dropdown_in_migrate_record(driver):
+    data_distribution_modal = modals(driver).data_distribution
+    data_distribution_modal.migrate.expand_dropdown()
+
+
 @wt(parsers.re('user of (?P<browser_id>.*) migrates selected item from '
                'provider "(?P<source>.*)" to provider "(?P<target>.*)"'))
-def migrate_item(selenium, browser_id, source, target, hosts):
-    modal = modals(selenium[browser_id])
+def migrate_item(selenium, browser_id, source, target, hosts, popups):
+    menu_option = 'Migrate...'
+
+    driver = selenium[browser_id]
     source_name = hosts[source]['name']
     target_name = hosts[target]['name']
-    modal.data_distribution.providers[source_name].migrate()
-    modal.data_distribution.migrate[target_name].select()
+
+    data_distribution_modal = modals(driver).data_distribution
+    data_distribution_modal.providers[source_name].menu_button()
+    popups(driver).data_distribution_menu.menu[menu_option]()
+
+    _expand_dropdown_in_migrate_record(driver)
+    modals(driver).dropdown.options[target_name].click()
+
+    data_distribution_modal.migrate.migrate_button()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) replicates selected item'
                ' to provider "(?P<provider>.*)"'))
-def replicate_item(selenium, browser_id, provider, hosts):
+def replicate_item(selenium, browser_id, provider, hosts, popups):
+    menu_option = 'Replicate here'
+    driver = selenium[browser_id]
+
     provider_name = hosts[provider]['name']
-    (modals(selenium[browser_id])
+    (modals(driver)
      .data_distribution
      .providers[provider_name]
-     .replicate())
+     .menu_button())
+    popups(driver).data_distribution_menu.menu[menu_option]()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees that item is never '
@@ -123,3 +144,11 @@ def assert_item_never_synchronized(selenium, browser_id, provider, hosts):
                'in transfers tab'))
 def change_transfer_space(selenium, browser_id, space, op_container):
     op_container(selenium[browser_id]).transfers.spaces[space].select()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) waits for Transfers page to load'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def wait_for_transfers_page_to_load(selenium, browser_id, op_container):
+    switch_to_iframe(selenium, browser_id)
+    op_container(selenium[browser_id]).transfers.ongoing_map_header
+

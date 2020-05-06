@@ -17,7 +17,7 @@ class MenuItem(PageObject):
         self.click()
 
 
-class MemberMenu(PageObject):
+class PopoverMenu(PageObject):
     menu = WebItemsSequence('.webui-popover-content '
                             '.one-collapsible-toolbar-popover .dropdown-menu '
                             '.one-collapsible-toolbar-item', cls=MenuItem)

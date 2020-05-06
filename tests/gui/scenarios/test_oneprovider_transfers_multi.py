@@ -23,6 +23,7 @@ from tests.gui.steps.common.local_file_system import *
 from tests.gui.steps.common.notifies import *
 from tests.gui.steps.common.miscellaneous import *
 from tests.gui.steps.common.login import *
+from tests.gui.steps.onezone.spaces import *
 
 from tests.gui.steps.common import *
 from tests.gui.steps.modal import *
@@ -49,6 +50,7 @@ from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.oneprovider.data import *
+from tests.gui.meta_steps.oneprovider.transfers import *
 
 from tests.utils.acceptance_utils import *
 
@@ -58,6 +60,4 @@ def screens():
     return [0, 1]
 
 
-# TODO: change test because of a new gui
-# scenarios('../features/oneprovider/transfers/transfers_multi.feature')
-scenarios('../features/pass.feature')
+scenarios('../features/oneprovider/transfers/transfers_multi.feature')
