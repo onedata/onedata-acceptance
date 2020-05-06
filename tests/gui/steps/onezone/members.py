@@ -328,7 +328,7 @@ def copy_invitation_token(selenium, browser_id, group, who, oz_page,
 
     wt_wait_for_modal_to_appear(selenium, browser_id, button, tmp_memory)
     modals(selenium[browser_id]).invite_using_token.copy()
-    modals(selenium[browser_id]).invite_using_token.cancel()
+    modals(selenium[browser_id]).invite_using_token.close()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) gets group "(?P<group>.*)" '
