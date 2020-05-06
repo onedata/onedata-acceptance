@@ -387,3 +387,14 @@ def assert_error_modal_with_text_appeared(selenium, browser_id, text):
     message = 'Modal does not contain text "{}"'.format(text)
     modal_text = modals(selenium[browser_id]).error.content.lower()
     assert text.lower() in modal_text, message
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) closes "(?P<modal>.*)" modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def close_modal(selenium, browser_id, modal, modals):
+    modal = transform(modal)
+    try:
+        getattr(modals(selenium[browser_id]), modal).close()
+    except AttributeError:
+        getattr(modals(selenium[browser_id]), modal).cancel()
+

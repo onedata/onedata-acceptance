@@ -7,12 +7,14 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-from tests.gui.steps.common.miscellaneous import *
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
+from tests.gui.meta_steps.onezone.tokens import (
+    consume_received_token, add_element_with_copied_token)
 from tests.gui.steps.onezone.groups import *
 from tests.gui.steps.onezone.members import *
 from tests.gui.steps.modal import (click_modal_button,
-                                   assert_error_modal_with_text_appeared)
+                                   assert_error_modal_with_text_appeared,
+                                   close_modal)
 from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed
 
@@ -64,16 +66,12 @@ def remove_group(selenium, browser_id, group_list, oz_page, popups):
 @wt(parsers.parse('user of {browser_id} creates group "{group_list}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_groups_using_op_gui(selenium, browser_id, group_list, oz_page):
-    operation = 'Create'
-
     for group in parse_seq(group_list):
-        click_create_or_join_group_button_in_panel(selenium, browser_id,
-                                                   operation, oz_page)
-        input_name_or_token_into_input_box_on_main_groups_page(selenium,
-                                                               browser_id,
-                                                               group, oz_page)
-        confirm_name_or_token_input_on_main_groups_page(selenium, browser_id,
-                                                        oz_page)
+        click_create_group_button_in_panel(selenium, browser_id, oz_page)
+        input_name_into_input_box_on_main_groups_page(selenium, browser_id,
+                                                      group, oz_page)
+        confirm_name_input_on_main_groups_page(selenium, browser_id,
+                                               oz_page)
 
 
 def see_groups_using_op_gui(selenium, user, oz_page, group_list):
@@ -188,12 +186,8 @@ def create_group_token_to_invite_group_using_op_gui(selenium, user, user2,
                         displays, clipboard, member, onepanel, popups)
 
 
-@wt(parsers.re('(?P<user>\w+) joins group he was invited to using '
-               'Oneprovider web GUI'))
-def join_group_using_op_gui(selenium, user, oz_page, tmp_memory):
-    confirm_type = 'enter'
-
-    join_group(selenium, user, confirm_type, oz_page, tmp_memory)
+def join_group_using_op_gui(selenium, browser_id, oz_page, tmp_memory):
+    consume_received_token(selenium, browser_id, oz_page, tmp_memory)
 
 
 def add_subgroups_using_op_gui(selenium, user, oz_page, parent, group_list,
@@ -205,8 +199,8 @@ def add_subgroups_using_op_gui(selenium, user, oz_page, parent, group_list,
                                                         tmp_memory, displays,
                                                         clipboard, onepanel,
                                                         popups)
-        add_group_as_subgroup(selenium, user, child, oz_page,
-                              tmp_memory, popups)
+        add_element_with_copied_token(selenium, user, child, oz_page,
+                                      clipboard, displays, modals)
 
 
 def remove_subgroups_using_op_gui(selenium, user, oz_page, group_list,
@@ -237,11 +231,12 @@ def fail_to_add_subgroups_using_op_gui(selenium, user, oz_page, parent,
                                                     displays, clipboard,
                                                     onepanel, popups)
     for child in parse_seq(group_list):
-        error = 'joining group as subgroup failed'
+        error = 'Consuming token failed'
         modal = 'error'
 
-        add_group_as_subgroup(selenium, user, child, oz_page,
-                              tmp_memory, popups)
+        add_element_with_copied_token(selenium, user, child, oz_page,
+                                      clipboard, displays, modals)
         assert_error_modal_with_text_appeared(selenium, user, error)
         close_modal(selenium, user, modal, modals)
+
 

@@ -7,23 +7,13 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-import time
-
 import pytest
-from selenium.common.exceptions import NoSuchElementException
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.utils.generic import (parse_seq, upload_file_path, transform)
 from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import given, wt, parsers, when, then
-
-
-@repeat_failed(interval=1, timeout=90, exceptions=NoSuchElementException)
-def _change_iframe_for_file_browser(selenium, browser_id):
-    driver = selenium[browser_id]
-    driver.switch_to.default_content()
-    iframe = driver.find_element_by_tag_name('iframe')
-    driver.switch_to.frame(iframe)
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -245,7 +235,7 @@ def wt_is_space_tree_root(selenium, browser_id, is_home, space_name,
 def assert_nonempty_file_browser_in_data_tab_in_op(selenium, browser_id,
                                                    op_container, tmp_memory,
                                                    item_browser='file browser'):
-    _change_iframe_for_file_browser(selenium, browser_id)
+    switch_to_iframe(selenium, browser_id)
     _check_file_browser_to_load(selenium, browser_id, tmp_memory, op_container,
                                 item_browser)
     items_browser = tmp_memory[browser_id][transform(item_browser)]
@@ -259,7 +249,7 @@ def assert_nonempty_file_browser_in_data_tab_in_op(selenium, browser_id,
 def assert_empty_file_browser_in_data_tab_in_op(selenium, browser_id,
                                                 op_container, tmp_memory,
                                                 item_browser='file browser'):
-    _change_iframe_for_file_browser(selenium, browser_id)
+    switch_to_iframe(selenium, browser_id)
     _check_file_browser_to_load(selenium, browser_id, tmp_memory, op_container,
                                 item_browser)
     items_browser = tmp_memory[browser_id][transform(item_browser)]
@@ -273,7 +263,7 @@ def assert_empty_file_browser_in_data_tab_in_op(selenium, browser_id,
 def assert_file_browser_in_data_tab_in_op(selenium, browser_id, op_container,
                                           tmp_memory,
                                           item_browser='file browser'):
-    _change_iframe_for_file_browser(selenium, browser_id)
+    switch_to_iframe(selenium, browser_id)
     _check_file_browser_to_load(selenium, browser_id, tmp_memory, op_container,
                                 item_browser)
 
@@ -332,9 +322,11 @@ def resize_data_tab_sidebar(selenium, browser_id, direction, offset,
 @repeat_failed(timeout=WAIT_BACKEND * 3)
 def wait_for_file_upload_to_finish(selenium, browser_id, popups):
     driver = selenium[browser_id]
+    driver.switch_to.default_content()
     assert not popups(driver).is_upload_presenter(), (
         'file upload not finished '
         'within given time')
+    _change_iframe_for_file_browser(selenium, browser_id)
 
 
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
@@ -405,12 +397,25 @@ def assert_provider_chunk_in_data_distribution_empty(selenium, browser_id,
                                                      provider, modals, hosts):
     driver = selenium[browser_id]
     provider = hosts[provider]['name']
-    prov_rec = modals(driver).data_distribution.providers[provider]
-    distribution = prov_rec.distribution
-    size, _ = distribution.size
-    chunks = distribution.chunks
+    data_distribution = modals(driver).data_distribution
+    distribution = data_distribution.providers[provider].distribution
+    size = data_distribution.size()
+    chunks = distribution.chunks(size)
     assert not chunks, 'distribution for {} is not entirely empty. ' \
                        'Visible chunks: {}'.format(provider, chunks)
+
+
+@wt(parsers.parse('user of {browser_id} sees that chunk bar for provider '
+                  '"{provider}" is never synchronized'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_provider_chunk_in_data_distribution_never_synchronized(selenium,
+                                                                  browser_id,
+                                                                  provider,
+                                                                  modals, hosts):
+    driver = selenium[browser_id]
+    provider = hosts[provider]['name']
+    data_distribution = modals(driver).data_distribution
+    data_distribution.providers[provider].never_synchronized_text
 
 
 @wt(parsers.parse('user of {browser_id} sees {chunks} chunk(s) for provider '
@@ -494,11 +499,17 @@ def click_choose_other_oneprovider_on_file_browser(selenium, browser_id,
     oz_page(driver)['data'].choose_other_provider()
 
 
-def _assert_current_provider_in_space(selenium, browser_id, provider, oz_page):
+def check_current_provider_in_space(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
     current_provider = oz_page(driver)['data'].current_provider
+    return current_provider
 
+
+def _assert_current_provider_in_space(selenium, browser_id, provider,
+                                      oz_page):
+    current_provider = check_current_provider_in_space(selenium, browser_id,
+                                                       oz_page)
     assert provider == current_provider, (f'{provider} is not current provider '
                                           f'on file browser page')
 

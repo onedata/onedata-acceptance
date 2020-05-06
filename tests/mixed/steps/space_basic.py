@@ -200,8 +200,7 @@ def join_space_in_oz(client, request, user_list, item_name, host, selenium,
     elif client.lower() == 'web gui':
         from tests.gui.meta_steps.onezone.spaces import \
                                                     join_space_in_oz_using_gui
-        join_space_in_oz_using_gui(selenium, user_list, oz_page, tmp_memory,
-                                   item_name)
+        join_space_in_oz_using_gui(selenium, user_list, oz_page, tmp_memory)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
 

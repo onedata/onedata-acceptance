@@ -30,11 +30,12 @@ class _FileBrowser(PageObject):
     selection_menu_button = Button('.fb-selection-toolkit .oneicon-arrow-down')
 
     data = WebItemsSequence('.data-row.fb-table-row', cls=DataRow)
+    _data = WebElementsSequence('.data-row.fb-table-row')
 
     empty_dir_msg = Label('.empty-dir-text')
     _empty_dir_icon = WebElement('.empty-dir-image')
     _files_with_metadata = WebElementsSequence('tbody tr.first-level')
-    _bottom = WebElement('.file-row-load-more')
+    _bottom = WebElement('.table-bottom-spacing')
 
     _upload_input = WebElement('.fb-upload-trigger input')
 
@@ -60,8 +61,13 @@ class _FileBrowser(PageObject):
                                'found'.format(name=name, item=self))
 
     def scroll_to_bottom(self):
-        self.driver.execute_script('arguments[0].scrollIntoView();',
-                                   self._bottom)
+        self.driver.execute_script('arguments[0].scrollTo(arguments[1]);',
+                                   self.web_elem, self._bottom)
+
+    def names_of_visible_elems(self):
+        files = self._data
+        names = [f.text.split('\n')[0] for f in files]
+        return names
 
     @contextmanager
     def select_files(self):
