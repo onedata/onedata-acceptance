@@ -7,7 +7,7 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-import tests.oneclient.steps.multi_file_steps
+from tests.gui.meta_steps.oneprovider.metadata import *
 from tests.mixed.steps.oneclient.data_basic import *
 from tests.mixed.steps.rest.oneprovider.data import *
 from tests.gui.meta_steps.oneprovider.data import *
@@ -465,15 +465,15 @@ def grant_acl_privileges_in_op(client, selenium, user, cdmi, op_container, space
 
 
 @when(parsers.re('using (?P<client>.*), (?P<user>\w+) sets new '
-                 '(?P<tab_name>.*) metadata: (?P<val>.*) for "(?P<path>.*?)" '
-                 'in space "(?P<space>.*)" in (?P<host>.*)'))
+                 '(?P<tab_name>.*) metadata: (?P<val>.*) for "(?P<path>.*?)"'
+                 ' (?P<item>file|directory) in space "(?P<space>.*)" in (?P<host>.*)'))
 def set_metadata_in_op(client, selenium, user, tab_name, val, cdmi, op_container, 
-                       space, path, host, hosts, users, tmp_memory):   
+                       space, path, host, hosts, users, tmp_memory, modals, oz_page):
     full_path = '{}/{}'.format(space, path)
     client_lower = client.lower()
     if client_lower == 'web gui':
         set_metadata_in_op_gui(selenium, user, path, tmp_memory, op_container, 's',
-                               space, tab_name, val) 
+                               space, tab_name, val, modals, oz_page, 'file')
     elif client_lower == 'rest':
         set_metadata_in_op_rest(user, users, host, hosts, cdmi, full_path,
                                 tab_name, val)
@@ -486,15 +486,18 @@ def set_metadata_in_op(client, selenium, user, tab_name, val, cdmi, op_container
 
 
 @wt(parsers.re('using (?P<client>.*), (?P<user>\w+) sees that '
-               '(?P<tab_name>.*) metadata for "(?P<path>.*?)" is '
+               '(?P<tab_name>.*) metadata for "(?P<path>.*?)" '
+               '(?P<item>file|directory) is '
                '(?P<val>.*) in space "(?P<space>.*)" in (?P<host>.*)'))
 def assert_metadata_in_op(client, selenium, user, tab_name, val, cdmi, op_container,
-                          space, path, host, hosts, users, tmp_memory):
+                          space, path, host, hosts, users, tmp_memory, item, modals,
+                          oz_page):
     full_path = '{}/{}'.format(space, path)
     client_lower = client.lower()
     if client_lower == 'web gui':
         assert_metadata_in_op_gui(selenium, user, path, tmp_memory, op_container, 
-                                  's', space, tab_name, val)
+                                  's', space, tab_name, val, modals, oz_page,
+                                  item)
     elif client_lower == 'rest':
         assert_metadata_in_op_rest(user, users, host, hosts, cdmi, 
                                    full_path, tab_name, val)
@@ -507,15 +510,17 @@ def assert_metadata_in_op(client, selenium, user, tab_name, val, cdmi, op_contai
 
 
 @when(parsers.re('using (?P<client>.*), (?P<user>\w+) removes all '
-                 '"(?P<path>.*)" metadata in space "(?P<space>\w+)" '
+                 '"(?P<path>.*)" (?P<item>file|directory) '
+                 'metadata in space "(?P<space>\w+)" '
                  'in (?P<host>.*)'))
 def remove_all_metadata_in_op(client, selenium, user, users, space, op_container, 
-                              tmp_memory, path, host, hosts, cdmi):
+                              tmp_memory, path, host, hosts, cdmi, oz_page,
+                              modals, item):
     full_path = '{}/{}'.format(space, path)
     client_lower = client.lower()
     if client_lower == 'web gui':
         remove_all_metadata_in_op_gui(selenium, user, space, op_container, 
-                                      tmp_memory, path) 
+                                      tmp_memory, path, oz_page, modals, item)
     elif client_lower == 'rest':
         remove_all_metadata_in_op_rest(user, users, host, hosts, cdmi, 
                                        full_path)
@@ -528,17 +533,18 @@ def remove_all_metadata_in_op(client, selenium, user, users, space, op_container
 
 
 @then(parsers.re('using (?P<client>.*), (?P<user>\w+) sees that '
-                 '(?P<tab_name>.*) metadata for "(?P<path>.*)" in space '
+                 '(?P<tab_name>.*) metadata for "(?P<path>.*)" '
+                 '(?P<item>file|directory) in space '
                  '"(?P<space>.*)" does not contain (?P<val>.*) in '
                  '(?P<host>.*)'))
 def assert_no_such_metadata_in_op(client, selenium, user, users, space, op_container,
                                   tmp_memory, path, host, hosts, cdmi, val, 
-                                  tab_name):
+                                  tab_name, item, modals, oz_page):
     full_path = '{}/{}'.format(space, path)
     client_lower = client.lower()
     if client_lower == 'web gui':
         assert_metadata_in_op_gui(selenium, user, path, tmp_memory, op_container, 
-                                  'fails', space, tab_name, val) 
+                                  'fails', space, tab_name, val, modals, oz_page)
     elif client_lower == 'rest':
         assert_no_such_metadata_in_op_rest(user, users, host, hosts, cdmi, 
                                            full_path, tab_name, val)

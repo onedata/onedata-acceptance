@@ -17,6 +17,7 @@ from .data_row_menu import DataRowMenu
 from .delete_modal import DeleteModal
 from .login import LoginFormModal
 from .deploying_cluster import ClusterDeploymentModal
+from .metadata_modal import MetadataModal
 from .menu_in_edit_permissions_modal import EditPermissionsRecordMenu
 from .rename_modal import RenameModal
 from .rename_share_modal import RenameShareModal
@@ -93,6 +94,7 @@ class Modals(object):
     data_row_menu = WebItem('.file-actions.dropdown-menu', cls=DataRowMenu)
     delete_modal = WebItem('.modal-dialog', cls=DeleteModal)
     rename_modal = WebItem('.modal-dialog', cls=RenameModal)
+    metadata = WebItem('.modal-dialog', cls=MetadataModal)
     menu_in_edit_permissions = WebItem('.over-modals .webui-popover-content '
                                        '.one-webui-popover',
                                        cls=EditPermissionsRecordMenu)

@@ -28,8 +28,8 @@ Feature: Files metadata tests
 
 
   Scenario: User sets metadata
-    When using <client1>, user1 sets new <fmt> metadata: <metadata> for "file1" in space "space1" in oneprovider-1
-    Then using <client2>, user1 sees that <fmt> metadata for "file1" is <metadata> in space "space1" in oneprovider-1
+    When using <client1>, user1 sets new <fmt> metadata: <metadata> for "file1" file in space "space1" in oneprovider-1
+    Then using <client2>, user1 sees that <fmt> metadata for "file1" file is <metadata> in space "space1" in oneprovider-1
 
     Examples:
     | fmt   | metadata  |
@@ -39,10 +39,10 @@ Feature: Files metadata tests
 
 
   Scenario: User removes metadata
-    When using <client1>, user1 sets new <fmt> metadata: <metadata> for "file1" in space "space1" in oneprovider-1
-    And using <client1>, user1 sees that <fmt> metadata for "file1" is <metadata> in space "space1" in oneprovider-1
-    And using <client2>, user1 removes all "file1" metadata in space "space1" in oneprovider-1
-    Then using <client1>, user1 sees that <fmt> metadata for "file1" in space "space1" does not contain <metadata> in oneprovider-1
+    When using <client1>, user1 sets new <fmt> metadata: <metadata> for "file1" file in space "space1" in oneprovider-1
+    And using <client1>, user1 sees that <fmt> metadata for "file1" file is <metadata> in space "space1" in oneprovider-1
+    And using <client2>, user1 removes all "file1" file metadata in space "space1" in oneprovider-1
+    Then using <client1>, user1 sees that <fmt> metadata for "file1" file in space "space1" does not contain <metadata> in oneprovider-1
 
     Examples:
     | fmt   | metadata  |

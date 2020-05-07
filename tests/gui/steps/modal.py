@@ -18,6 +18,7 @@ from tests.gui.utils.generic import click_on_web_elem, transform
 from tests.utils.bdd_utils import given, wt, parsers, when, then
 from tests.utils.utils import repeat_failed
 
+
 in_type_to_id = {'username': 'login-form-username-input',
                  'password': 'login-form-password-input'}
 
@@ -68,9 +69,11 @@ def assert_non_empty_token_in_add_storage_modal(browser_id, tmp_memory):
 
 def _find_modal(driver, modal_name):
     def _find():
-        elements_list = ['group', 'token', 'cluster', 'harvester', 'spaces',
-                         'rename', 'share', 'permissions', 'directory', 'data']
-        if any([name for name in elements_list if name in modal_name]):
+        elements_list = ['group', 'token', 'cluster', 'harvester',
+                         'spaces', 'rename', 'permissions', 'directory', 'data',
+                         'share', 'metadata', 'delete']
+        if any([name for name in elements_list
+                if name in modal_name.lower()]):
             modals = driver.find_elements_by_css_selector('.modal, '
                                                           '.modal '
                                                           '.modal-header h1')

@@ -25,10 +25,8 @@ class DataRow(PageObject):
 
     _status_tag = WebElement('.file-status-tag')
     shared_tag = WebElement('.file-status-shared')
+    metadata_tag = WebElement('.file-status-metadata')
     clickable_field = WebElement('.file-name')
-
-    # TODO: change test because of a new gui (metadata)
-    # _metadata_tool = WebElement('.file-tool-metadata')
 
     def __str__(self):
         return '{item} in {parent}'.format(item=self.name,
