@@ -6,6 +6,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
 
 from tests.gui.utils.generic import transform
@@ -81,3 +82,12 @@ def g_click_on_btn_in_popup(selenium, browser_id, btn, popup, popups):
 @wt(parsers.re('pass'))
 def pass_test():
     pass
+
+
+@repeat_failed(interval=1, timeout=90, exceptions=NoSuchElementException)
+def switch_to_iframe(selenium, browser_id):
+    driver = selenium[browser_id]
+    driver.switch_to.default_content()
+    iframe = driver.find_element_by_tag_name('iframe')
+    driver.switch_to.frame(iframe)
+
