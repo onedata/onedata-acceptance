@@ -326,7 +326,7 @@ def wait_for_file_upload_to_finish(selenium, browser_id, popups):
     assert not popups(driver).is_upload_presenter(), (
         'file upload not finished '
         'within given time')
-    _change_iframe_for_file_browser(selenium, browser_id)
+    switch_to_iframe(selenium, browser_id)
 
 
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
