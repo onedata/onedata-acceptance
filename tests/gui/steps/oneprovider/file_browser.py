@@ -88,10 +88,12 @@ def assert_items_absence_in_file_browser(browser_id, item_list, tmp_memory):
                   '{item_list} have appeared in file browser'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_items_presence_in_file_browser(browser_id, item_list, tmp_memory):
+    file_browser = tmp_memory[browser_id]['file_browser']
     data = _get_items_list_from_file_browser(browser_id, tmp_memory)
     for item_name in parse_seq(item_list):
-        assert item_name in data, f'not found "{item_name}" in file browser'
-
+        assert (item_name in data and
+                file_browser.data[item_name].size), (f'not found "{item_name}" '
+                                                     f'in file browser')
 
 @wt(parsers.parse('user of {browser_id} sees only items named {item_list}'
                   ' in file browser'))

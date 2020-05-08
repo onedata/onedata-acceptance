@@ -35,20 +35,21 @@ def paste_copied_token_into_text_field(selenium, browser_id, oz_page,
 @wt(parsers.parse('user of {browser_id} pastes received token '
                   'into token text field'))
 def paste_received_token_into_text_field(selenium, browser_id,
-                                         oz_page, tmp_memory):
-    token = tmp_memory[browser_id]['mailbox']['token']
+                                         oz_page, tmp_memory, item_type='token'):
+    token = tmp_memory[browser_id]['mailbox'][item_type]
     _paste_token_into_text_field(selenium, browser_id, oz_page, token)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) joins group using received token'))
-def consume_received_token(selenium, browser_id, oz_page, tmp_memory):
+def consume_received_token(selenium, browser_id, oz_page, tmp_memory,
+                           item_type='token'):
     option = 'Tokens'
 
     click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
     click_on_consume_token_in_tokens_oz_page(selenium, browser_id,
                                              oz_page)
     paste_received_token_into_text_field(selenium, browser_id,
-                                         oz_page, tmp_memory)
+                                         oz_page, tmp_memory, item_type)
     click_on_join_button_on_tokens_page(selenium, browser_id, oz_page)
 
 

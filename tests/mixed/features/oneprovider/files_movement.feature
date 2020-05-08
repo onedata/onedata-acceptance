@@ -1,11 +1,11 @@
 Feature: Files movement tests
 
   Examples:
-  | client1    | client2    |
-  | web GUI    | oneclient1 |
-  | REST       | oneclient1 |
-  | web GUI	   | REST	    |
-  | oneclient1 | REST       |
+  | client1    | client2    | client3     |
+  | web GUI    | oneclient1 | oneclient1  |
+  | REST       | oneclient1 | REST        |
+  | web GUI	   | REST	    | REST        |
+  | oneclient1 | REST       | oneclient1  |
 
 
   Background:
@@ -20,11 +20,10 @@ Feature: Files movement tests
                     size: 1000000
     And oneclient mounted in /home/user1/onedata using token by user1
     And opened browser with user1 signed in to "onezone" service
-    And opened oneprovider-1 Oneprovider view in web GUI by user1
 
 
  Scenario Outline: User moves file using <client2> and using <client1> sees that file has been moved
-    When using <client1>, user1 creates directory structure in "space1" space on oneprovider-1 as follow:
+    When using <client3>, user1 creates directory structure in "space1" space on oneprovider-1 as follow:
           - dir1:
               - dir2:
                   - file1
@@ -39,7 +38,7 @@ Feature: Files movement tests
 
 
   Scenario Outline: User moves non-empty file using <client2> and using <client1> sees that its content has not changed
-    When using <client1>, user1 creates directory structure in "space1" space on oneprovider-1 as follow:
+    When using <client3>, user1 creates directory structure in "space1" space on oneprovider-1 as follow:
             - dir1:
                 - dir2:
                     - file1
@@ -56,7 +55,7 @@ Feature: Files movement tests
 
 
   Scenario Outline: User copies file using <client2> and using <client1> sees that it has been copied
-    When using <client1>, user1 creates directory structure in "space1" space on oneprovider-1 as follow:
+    When using <client3>, user1 creates directory structure in "space1" space on oneprovider-1 as follow:
           - dir1:
               - dir2:
                   - file1
@@ -72,7 +71,7 @@ Feature: Files movement tests
 
 
   Scenario Outline: User copies non-empty file using <client2> and using <client1> sees that it has not changed
-    When using <client1>, user1 creates directory structure in "space1" space on oneprovider-1 as follow:
+    When using <client3>, user1 creates directory structure in "space1" space on oneprovider-1 as follow:
           - dir1:
               - dir2:
                   - file1

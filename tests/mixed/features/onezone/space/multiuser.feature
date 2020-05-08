@@ -20,8 +20,6 @@ Feature: Multiuser
                     storage: posix
                     size: 1000000
     And opened browsers with [user1, user2] signed in to [onezone, onezone] service
-    And opened oneprovider-1 Oneprovider view in web GUI by user2
-    And opened "spaces" tab in web GUI by user2
 
   Scenario Outline: User invites other user to space using <client1>, that user joins to space using <client2> and using <client3> he sees that he has joined to new space
     When using <client1>, user2 invites user1 to space named "space1" in "onezone" Onezone service

@@ -159,8 +159,10 @@ def request_space_support_using_gui(selenium, user, oz_page, space_name,
 
 def join_space_in_oz_using_gui(selenium, user_list, oz_page, tmp_memory):
     for user in parse_seq(user_list):
+        item_type = 'space invitation token'
+
         consume_received_token(selenium, user, oz_page,
-                               tmp_memory)
+                               tmp_memory, item_type)
 
 
 def assert_spaces_have_appeared_in_oz_gui(selenium, user, oz_page, space_list):

@@ -104,7 +104,7 @@ def add_users_to_space_in_oz_using_rest(user_list, users, zone_name, hosts,
         space_api.add_space_user(spaces[space_name], users[user].id)
 
 
-def invite_otehr_users_to_space_using_rest(user, users, zone_name, hosts,
+def invite_other_users_to_space_using_rest(user, users, zone_name, hosts,
                                            space_name, spaces, tmp_memory,
                                            receiver):
     user_client = login_to_oz(user, users[user].password,
@@ -131,7 +131,7 @@ def join_space_in_oz_using_rest(user_list, users, zone_name, hosts, space_name,
         user_client = login_to_oz(user, users[user].password,
                                   hosts[zone_name]['hostname'])
         user_api = UserApi(user_client)
-        token = SpaceInviteToken(tmp_memory[user]['mailbox'][space_name])
+        token = SpaceInviteToken(tmp_memory[user]['mailbox']['space invitation token'])
         user_api.join_space(token)
 
 
