@@ -8,6 +8,8 @@ __license__ = ("This software is released under the MIT license cited in "
 
 import yaml
 
+from selenium.common.exceptions import NoSuchElementException
+
 from tests.gui.steps.oneprovider.file_browser import *
 from tests.gui.steps.oneprovider.data_tab import *
 from tests.gui.steps.oneprovider.metadata import *
@@ -48,14 +50,9 @@ def rename_item(selenium, browser_id, path, new_name, tmp_memory, res, space,
     confirmation_option = 'button'
     text = 'Renaming the file failed'
 
-    _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id, path,
-                                                   space, tmp_memory, oz_page,
-                                                   op_container)
-
-    click_option_in_data_row_menu_in_file_browser(selenium, browser_id, option,
-                                                  modals)
-
-    wt_wait_for_modal_to_appear(selenium, browser_id, modal_header, tmp_memory)
+    open_modal_for_file_browser_item(selenium, browser_id, modals, modal_header,
+                                     path, tmp_memory, option, space, oz_page,
+                                     op_container)
     write_name_into_text_field_in_modal(selenium, browser_id, new_name,
                                         modal_name, modals)
     confirm_rename_directory(selenium, browser_id, confirmation_option, modals)
@@ -72,13 +69,12 @@ def remove_item_in_op_gui(selenium, browser_id, path, tmp_memory, op_container,
     option = 'Delete'
     button = 'Yes'
     modal = 'Delete modal'
+    modal_header = 'Delete'
     text = 'Deleting file(s) failed'
 
-    _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id, path,
-                                                   space, tmp_memory, oz_page,
-                                                   op_container)
-    click_option_in_data_row_menu_in_file_browser(selenium, browser_id, option,
-                                                  modals)
+    open_modal_for_file_browser_item(selenium, browser_id, modals, modal_header,
+                                     path, tmp_memory, option, space, oz_page,
+                                     op_container)
     click_modal_button(selenium, browser_id, button, modal, modals)
 
     if res == 'fails':
@@ -92,92 +88,6 @@ def remove_dir_and_parents_in_op_gui(selenium, browser_id, path, tmp_memory,
     item_name = _select_item(browser_id, tmp_memory, path)
     remove_item_in_op_gui(selenium, browser_id, item_name, tmp_memory,
                           op_container, res, space)
-
-
-@when(parsers.re('user of (?P<browser_id>\w+) (?P<res>.*) to write '
-                 '"(?P<path>.*)" (?P<tab_name>basic|JSON|RDF) metadata:'
-                 ' "(?P<val>.*)" in "(?P<space>.*)"'))
-@then(parsers.re('user of (?P<browser_id>\w+) (?P<res>.*) to write '
-                 '"(?P<path>.*)" (?P<tab_name>basic|JSON|RDF) metadata:'
-                 ' "(?P<val>.*)" in "(?P<space>.*)"'))
-def set_metadata_in_op_gui(selenium, browser_id, path, tmp_memory, op_container, 
-                           res, space, tab_name, val):
-    tooltip = "Edit metadata"
-    button_name = "Save all changes"
-    item_name = _select_item(browser_id, tmp_memory, path)
-    click_tooltip_from_toolbar_in_data_tab_in_op(selenium, browser_id, tooltip, 
-                                                 op_container)
-    assert_files_metadata_panel_displayed(browser_id, item_name, tmp_memory)
-    if tab_name == "basic":
-        attr, val = val.split('=')
-        type_text_to_attr_input_in_new_basic_entry(browser_id, attr, item_name, 
-                                                   tmp_memory)
-        type_text_to_val_input_in_new_basic_entry(browser_id, val, item_name, 
-                                                  tmp_memory)
-        click_on_add_meta_rec_btn_in_metadata_panel(browser_id, item_name, 
-                                                    tmp_memory)
-    else:
-        click_on_navigation_tab_in_metadata_panel(browser_id, tab_name, 
-                                                  item_name, tmp_memory)
-        type_text_to_metadata_textarea(browser_id, item_name, val, tab_name, 
-                                       tmp_memory)
-    click_on_button_in_metadata_panel(browser_id, button_name, item_name, 
-                                      tmp_memory)
-    if res == 'fails':
-        notify_visible_with_text(selenium, browser_id, 'error', '.*Cannot.*'
-                                 'save.*metadata.*')
-    else:
-        notify_visible_with_text(selenium, browser_id, 'info',
-                                 '.*successfully.*')
-    click_tooltip_from_toolbar_in_data_tab_in_op(selenium, browser_id, tooltip, 
-                                                 op_container)
-
-
-@then(parsers.re('user of (?P<browser_id>\w+) (?P<res>.*) to read '
-                 '"(?P<path>.*)" (?P<tab_name>basic|JSON|RDF) metadata '
-                 '"(?P<val>.*)" in "(?P<space>.*)"'))
-def assert_metadata_in_op_gui(selenium, browser_id, path, tmp_memory,
-                              op_container, res, space, tab_name, val):
-    selenium[browser_id].refresh()
-    tooltip = 'Edit metadata'
-    item_name = _select_item(browser_id, tmp_memory, path)
-    click_tooltip_from_toolbar_in_data_tab_in_op(selenium, browser_id, tooltip, 
-                                                 op_container)
-    assert_files_metadata_panel_displayed(browser_id, item_name, tmp_memory)
-    if tab_name == 'basic':
-        (attr, val) = val.split('=')
-        if res == 'fails':
-            file_browser = tmp_memory[browser_id]['file_browser']
-            metadata_row = file_browser.get_metadata_for(item_name)
-            if not metadata_row.is_resource_load_error():
-                assert_there_is_no_such_meta_record(browser_id, attr, item_name, 
-                                                    tmp_memory)
-        else:
-            assert_there_is_such_meta_record(browser_id, attr, val, item_name, 
-                                             tmp_memory)
-    else:
-        click_on_navigation_tab_in_metadata_panel(browser_id, tab_name, 
-                                                  item_name, tmp_memory)
-        if res == 'fails':
-            assert_textarea_content_is_eq_to(browser_id, item_name,
-                                             'null' if tab_name == 'json' else '',
-                                             tab_name, tmp_memory)
-        else:
-            assert_textarea_contains_record(browser_id, val, tab_name, 
-                                            item_name, tmp_memory)
-
-
-def remove_all_metadata_in_op_gui(selenium, browser_id, space, op_container, 
-                                  tmp_memory, path):
-    selenium[browser_id].refresh()
-    tooltip = "Edit metadata"
-    item_name = _select_item(browser_id, tmp_memory, path)
-    click_tooltip_from_toolbar_in_data_tab_in_op(selenium, browser_id, tooltip, 
-                                                 op_container)
-    assert_files_metadata_panel_displayed(browser_id, item_name, tmp_memory)
-    click_on_button_in_metadata_panel(browser_id, 'Remove metadata', item_name, 
-                                      tmp_memory)
-    notify_visible_with_text(selenium, browser_id, 'info', '.*[Dd]eleted.*')
 
 
 @then(parsers.re('user of (?P<browser_id>\w+) (?P<res>.*) to see '
@@ -434,3 +344,14 @@ def go_to_filebrowser(selenium, browser_id, oz_page, op_container,
                                                   option_in_submenu, oz_page)
     assert_file_browser_in_data_tab_in_op(selenium, browser_id, op_container,
                                           tmp_memory)
+
+
+def open_modal_for_file_browser_item(selenium, browser_id, modals, modal_name,
+                                     path, tmp_memory, option, space,
+                                     oz_page, op_container):
+    _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id, path,
+                                                   space, tmp_memory, oz_page,
+                                                   op_container)
+    click_option_in_data_row_menu_in_file_browser(selenium, browser_id, option,
+                                                  modals)
+    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)

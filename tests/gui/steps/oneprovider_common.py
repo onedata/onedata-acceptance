@@ -85,9 +85,7 @@ def g_has_dir_content_been_loaded(selenium, browser_id):
     _has_dir_content_been_loaded(driver)
 
 
-@when(parsers.parse('user of {browser_id} sees that content of current '
-                    'directory has been loaded'))
-@then(parsers.parse('user of {browser_id} sees that content of current '
+@wt(parsers.parse('user of {browser_id} sees that content of current '
                     'directory has been loaded'))
 def wt_has_dir_content_been_loaded(selenium, browser_id):
     driver = selenium[browser_id]

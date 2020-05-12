@@ -6,6 +6,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
 
 from tests.gui.utils.generic import transform
@@ -22,15 +23,12 @@ def _enter_text(input_box, text):
         raise RuntimeError('entering "{}" to input box failed'.format(text))
 
 
-@when(parsers.parse('user of {browser_id} types "{text}" on keyboard'))
-@then(parsers.parse('user of {browser_id} types "{text}" on keyboard'))
+@wt(parsers.parse('user of {browser_id} types "{text}" on keyboard'))
 def type_string_into_active_element(selenium, browser_id, text):
     _enter_text(selenium[browser_id].switch_to.active_element, text)
 
 
-@when(parsers.parse('user of {browser_id} types received '
-                    '{item_type} on keyboard'))
-@then(parsers.parse('user of {browser_id} types received '
+@wt(parsers.parse('user of {browser_id} types received '
                     '{item_type} on keyboard'))
 def type_item_into_active_element(selenium, browser_id, item_type,
                                   tmp_memory):
@@ -38,16 +36,25 @@ def type_item_into_active_element(selenium, browser_id, item_type,
     _enter_text(selenium[browser_id].switch_to.active_element, item)
 
 
-@when(parsers.parse('user of {browser_id} presses enter on keyboard'))
-@then(parsers.parse('user of {browser_id} presses enter on keyboard'))
+@wt(parsers.parse('user of {browser_id} presses enter on keyboard'))
 def press_enter_on_active_element(selenium, browser_id):
     driver = selenium[browser_id]
     driver.switch_to.active_element.send_keys(Keys.RETURN)
 
 
-@when(parsers.parse('user of {browser_id} should see that the page title '
-                    'contains "{text}"'))
-@then(parsers.parse('user of {browser_id} should see that the page title '
+@wt(parsers.parse('user of {browser_id} presses tab on keyboard'))
+def press_tab_on_active_element(selenium, browser_id):
+    driver = selenium[browser_id]
+    driver.switch_to.active_element.send_keys(Keys.TAB)
+
+
+@wt(parsers.parse('user of {browser_id} presses backspace on keyboard'))
+def press_backspace_on_active_element(selenium, browser_id):
+    driver = selenium[browser_id]
+    driver.switch_to.active_element.send_keys(Keys.BACKSPACE)
+
+
+@wt(parsers.parse('user of {browser_id} should see that the page title '
                     'contains "{text}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def title_contains(selenium, browser_id, text):
@@ -56,9 +63,7 @@ def title_contains(selenium, browser_id, text):
         '{} page title should contain {}'.format(page_title, text)
 
 
-@when(parsers.re('users? of (?P<browser_id_list>.*) clicks on '
-                 '"(?P<btn_name>.+?)" button in "(?P<popup>.+?)" popup'))
-@then(parsers.re('users? of (?P<browser_id_list>.*) clicks on '
+@wt(parsers.re('users? of (?P<browser_id_list>.*) clicks on '
                  '"(?P<btn_name>.+?)" button in "(?P<popup>.+?)" popup'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_btn_in_popup(selenium, browser_id, btn, popup, popups):
@@ -77,3 +82,12 @@ def g_click_on_btn_in_popup(selenium, browser_id, btn, popup, popups):
 @wt(parsers.re('pass'))
 def pass_test():
     pass
+
+
+@repeat_failed(interval=1, timeout=90, exceptions=NoSuchElementException)
+def switch_to_iframe(selenium, browser_id):
+    driver = selenium[browser_id]
+    driver.switch_to.default_content()
+    iframe = driver.find_element_by_tag_name('iframe')
+    driver.switch_to.frame(iframe)
+

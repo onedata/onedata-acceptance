@@ -19,7 +19,6 @@ from tests.gui.utils.core.web_elements import (WebElement, WebElementsSequence,
                                                Button)
 from tests.gui.utils.generic import iter_ahead, rm_css_cls
 from .data_row import DataRow
-from .metadata_row import MetadataRow
 from ..breadcrumbs import Breadcrumbs
 
 
@@ -30,11 +29,11 @@ class _FileBrowser(PageObject):
     selection_menu_button = Button('.fb-selection-toolkit .oneicon-arrow-down')
 
     data = WebItemsSequence('.data-row.fb-table-row', cls=DataRow)
+    _data = WebElementsSequence('.data-row.fb-table-row')
 
     empty_dir_msg = Label('.empty-dir-text')
     _empty_dir_icon = WebElement('.empty-dir-image')
-    _files_with_metadata = WebElementsSequence('tbody tr.first-level')
-    _bottom = WebElement('.file-row-load-more')
+    _bottom = WebElement('.table-bottom-spacing')
 
     _upload_input = WebElement('.fb-upload-trigger input')
 
@@ -49,19 +48,14 @@ class _FileBrowser(PageObject):
         else:
             return True
 
-    def get_metadata_for(self, name):
-        for item1, item2 in iter_ahead(self._files_with_metadata):
-            if 'file-row' in item1.get_attribute('class'):
-                if 'file-row' not in item2.get_attribute('class'):
-                    if DataRow(self.driver, item1, self).name == name:
-                        return MetadataRow(self.driver, item2, self)
-        else:
-            raise RuntimeError('no metadata row for "{name}" in {item} '
-                               'found'.format(name=name, item=self))
-
     def scroll_to_bottom(self):
-        self.driver.execute_script('arguments[0].scrollIntoView();',
-                                   self._bottom)
+        self.driver.execute_script('arguments[0].scrollTo(arguments[1]);',
+                                   self.web_elem, self._bottom)
+
+    def names_of_visible_elems(self):
+        files = self._data
+        names = [f.text.split('\n')[0] for f in files]
+        return names
 
     @contextmanager
     def select_files(self):

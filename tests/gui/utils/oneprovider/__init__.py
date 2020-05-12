@@ -18,6 +18,7 @@ from ..core.web_elements import WebItem, Label
 class OPLoggedIn(object):
     file_browser = FileBrowser('.content-file-browser')
     shares_page = WebItem('.content-space-shares', cls=SharesContentPage)
+    transfers = TransfersTab('.content-space-transfers')
 
     def __init__(self, driver):
         self.web_elem = self.driver = driver

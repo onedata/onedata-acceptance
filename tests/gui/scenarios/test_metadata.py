@@ -35,6 +35,7 @@ from tests.gui.steps.onezone.access_tokens import *
 from tests.gui.steps.onezone.data_space_management import *
 from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.manage_account import *
+from tests.gui.steps.onezone.spaces import *
 
 from tests.gui.steps.oneprovider.common import *
 from tests.gui.steps.oneprovider.data_tab import *
@@ -43,6 +44,7 @@ from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
+from tests.gui.meta_steps.oneprovider.metadata import *
 
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
@@ -56,7 +58,4 @@ def screens():
     return [0]
 
 
-# TODO: change test because of a new gui (metadata)
-# scenarios('../features/oneprovider/data/file_metadata.feature')
-# scenarios('../features/oneprovider/data/directory_metadata.feature')
-scenarios('../features/pass.feature')
+scenarios('../features/oneprovider/data/metadata.feature')

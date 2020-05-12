@@ -8,7 +8,8 @@ __license__ = "This software is released under the MIT license cited in " \
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (WebElement, WebItemsSequence,
-                                               WebItem, Label, Button)
+                                               WebItem, Label, Button,
+                                               NamedButton)
 from .modal import Modal
 
 
@@ -45,9 +46,7 @@ class _DataDistributionRecord(PageObject):
     name = id = Label('.oneprovider-name', parent_name='given provider')
     distribution = WebItem('.chunks-container', cls=_Chunk)
     menu_button = Button('.collapsible-toolbar-toggle')
-    #  TODO: change test because of a new gui
-    # migrate = Button('.btn-migrate')
-    # replicate = Button('.btn-replicate')
+    never_synchronized_text = WebElement('.never-synchronized-text')
 
     def __str__(self):
         return 'provider record for "{item}" in ' \
@@ -55,10 +54,17 @@ class _DataDistributionRecord(PageObject):
 
 
 class MigrationRecord(PageObject):
-    name = id = Label('.item-label')
+    source_provider = Label('.source-oneprovider-visualization '
+                            '.oneprovider-name')
+    target_provider = Label('.ember-basic-dropdown-trigger '
+                            '.oneprovider-name')
+    _toggle = WebElement('.ember-basic-dropdown-trigger')
 
-    def select(self):
-        self.web_elem.click()
+    cancel_button = NamedButton('button', text='Cancel')
+    migrate_button = NamedButton('button', text='Migrate')
+
+    def expand_dropdown(self):
+        self._toggle.click()
 
     def __str__(self):
         return 'provider record in migration menu in {}'.format(self.parent)
@@ -68,9 +74,7 @@ class DataDistributionModal(Modal):
     file_name = Label('.file-name')
     providers = WebItemsSequence('.oneproviders-distribution-item',
                                  cls=_DataDistributionRecord)
-    #  TODO: change test because of a new gui
-    # migrate = WebItemsSequence('.migrate-popover li.migrate-item',
-    #                            cls=MigrationRecord)
+    migrate = WebItem('.destination-oneprovider-selector', cls=MigrationRecord)
 
     def __str__(self):
         return 'Data distribution modal for "{}"'.format(self.file_name)

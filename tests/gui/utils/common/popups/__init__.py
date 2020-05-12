@@ -13,7 +13,7 @@ from .upload_presenter import UploadPresenter
 from .user_account_menu import UserAccountPopup
 from .toolbar import ToolbarPopup
 from .deregister_provider import DeregisterProvider
-from .member_menu import MemberMenu
+from .member_menu import PopoverMenu
 
 
 class Popups(object):
@@ -22,11 +22,11 @@ class Popups(object):
                                   cls=DeregisterProvider)
     user_account_menu = WebItem('.webui-popover-content .user-account-menu',
                                 cls=UserAccountPopup)
-    member_menu = WebItem('.webui-popover.in', cls=MemberMenu)
+    member_menu = WebItem('.webui-popover.in', cls=PopoverMenu)
+    data_distribution_menu = WebItem('.webui-popover.in', cls=PopoverMenu)
     upload_presenter = WebItem('.hidden-xs .up-single-upload',
                                cls=UploadPresenter)
-    menu_popup = WebItem('.webui-popover-content .one-webui-popover',
-                         cls=MenuPopup)
+    menu_popup = WebItem('#webuiPopover1', cls=MenuPopup)
 
     def __init__(self, driver):
         self.driver = self.web_elem = driver

@@ -25,8 +25,7 @@ from tests.gui.steps.common.miscellaneous import _enter_text
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_select_storage_in_support_space_form(selenium, browser_id, storage,
                                             onepanel):
-    storage_selector = (
-        onepanel(selenium[browser_id]).content.spaces.form.storage_selector)
+    storage_selector = (onepanel(selenium[browser_id]).content.spaces.form.storage_selector)
     storage_selector.expand()
     storage_selector.options[storage].click()
 
@@ -377,8 +376,7 @@ def enable_space_option_in_onepanel(selenium, browser_id, onepanel, option):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def enable_selective_cleaning(selenium, browser_id, onepanel):
     driver = selenium[browser_id]
-    onepanel(
-        driver).content.spaces.space.auto_cleaning.selective_cleaning.check()
+    onepanel(driver).content.spaces.space.auto_cleaning.selective_cleaning.check()
 
 
 @wt(parsers.parse('user of {browser_id} enables {option} '
@@ -443,10 +441,12 @@ def click_start_cleaning_now(selenium, browser_id, onepanel):
                exceptions=(AssertionError, StaleElementReferenceException))
 def see_released_size_in_cleaning_report(selenium, browser_id, onepanel, size):
     driver = selenium[browser_id]
-    cleaning_report = \
-        (onepanel(driver).content.spaces.space.auto_cleaning.cleaning_reports)[
-            0]
-    released_size = re.match(r'((\d+) (MiB|B)) \(out of (\d*\.\d+|\d+) MiB\)',
-                             cleaning_report.released_size.text).group(1)
-    assert released_size == size, (
-        'released size is {} instead of {}'.format(released_size, size))
+    cleaning_reports = (onepanel(driver).content.spaces.space
+                        .auto_cleaning.cleaning_reports)
+    for cleaning_report in cleaning_reports:
+        released_size = re.match(r'((\d+) (MiB|B)) \(out of (\d*\.\d+|\d+) MiB\)',
+                                 cleaning_report.released_size.text).group(1)
+        if released_size == size:
+            return
+    assert False, f'released size is not {size}'
+
