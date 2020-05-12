@@ -441,6 +441,7 @@ def has_downloaded_file_content(browser_id, file_name, content, tmpdir):
     if downloaded_file.isfile():
         with downloaded_file.open() as f:
             file_content = ''.join(f.readlines())
+            file_content = file_content.strip()
             assert content == file_content, ('expected {} as {} content, '
                                              'instead got {}'.format(content,
                                                                      file_name,

@@ -55,6 +55,7 @@ from tests.gui.meta_steps.onezone.spaces import *
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
 from tests.gui.meta_steps.onepanel.spaces import *
+from tests.gui.meta_steps.onepanel.storages import *
 
 from tests.utils.acceptance_utils import *
 
@@ -65,5 +66,5 @@ def screens():
 
 
 # TODO: change test because of a new gui
-# scenarios('../features/onepanel/storage_sync.feature')
-scenarios('../features/pass.feature')
+scenarios('../features/onepanel/storage_sync.feature')
+# scenarios('../features/pass.feature')

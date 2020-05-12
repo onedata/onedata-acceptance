@@ -20,133 +20,27 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
                   - file1.txt: 22222
 
 
-  Scenario: User supports space with storage sync and enabled options: Mount in root
+  Scenario: User sees imported files after supporting space with import-enabled storage and sees difference after update configuration
     Given there are no spaces supported in Onepanel used by user of browser1
-    When user of browser2 creates "space2" space in Onezone
-    And user of browser2 sends support token for "space2" to user of browser1
-    And user of browser2 copies dir2 to provider's storage mount point
-
-    # support space
-    And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of browser1 clicks on Support space button in spaces page in Onepanel if there are some spaces already supported
-    And user of browser1 selects "posix" from storage selector in support space form in Onepanel
-    And user of browser1 types received token to Support token field in support space form in Onepanel
-    And user of browser1 types "1" to Size input field in support space form in Onepanel
-    And user of browser1 selects GiB radio button in support space form in Onepanel
-
-    # configure import parameters
-    And user of browser1 enables Mount in root option in support space form in Onepanel
-    And user of browser1 enables Import storage data option in support space form in Onepanel
-    And user of browser1 selects Simple scan strategy from strategy selector in IMPORT CONFIGURATION in support space form in Onepanel
-    And user of browser1 types "2" to Max depth input field in IMPORT CONFIGURATION in support space form in Onepanel
-    And user of browser1 clicks on Support space button in support space form in Onepanel
-    And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
-    And user of browser1 sees that space support record for "space2" has appeared in Spaces page in Onepanel
-
-    # confirm correct import configuration
-    And user of browser1 expands "space2" record on spaces list in Spaces page in Onepanel
-    And user of browser1 sees that Import strategy configuration for "space2" is as follow:
-          Import strategy: Simple scan
-          Max depth: 2
-
-    # confirm support of space and go to provider
-    And user of browser2 clicks "space2" on the spaces list in the sidebar
-    And user of browser2 clicks Providers of "space2" in the sidebar
-    And user of browser2 sees "oneprovider-1" is on the providers list
-    And user of browser2 opens oneprovider-1 Oneprovider view in web GUI
-    And user of browser2 sees that Oneprovider session has started
-    And user of browser2 uses spaces select to change data space to "space2"
-
-    # confirm import of files
-    And user of browser2 is idle for 8 seconds
-    And user of browser2 refreshes site
-    And user of browser2 sees file browser in data tab in Oneprovider page
-
-    Then user of browser2 sees that there is 1 item in file browser
-    And user of browser2 sees item(s) named "dir2" in file browser
-    And user of browser2 double clicks on item named "dir2" in file browser
-
-    And user of browser2 sees that there are 3 items in file browser
-    And user of browser2 sees item(s) named ["dir21", "dir22", "file1.txt"] in file browser
-
-    And user of browser2 double clicks on item named "dir21" in file browser
-    And user of browser2 sees empty directory message in file browser
-    And user of browser2 changes current working directory to space2/dir2 using breadcrumbs
-
-    And user of browser2 double clicks on item named "dir22" in file browser
-    And user of browser2 sees empty directory message in file browser
-    And user of browser2 changes current working directory to space2/dir2 using breadcrumbs
-
-    And user of browser2 double clicks on item named "file1.txt" in file browser
-    And user of browser2 sees that content of downloaded file "file1.txt" is equal to: "22222"
-
-    # configure update parameters
-    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space2"
-    And user of browser1 clicks settings in Storage synchronization in Spaces page
-    And user of browser1 selects Simple scan strategy from strategy selector in UPDATE CONFIGURATION in "space2" record in Spaces page in Onepanel
-    And user of browser1 types "3" to Max depth input field in UPDATE CONFIGURATION in "space2" record in Spaces page in Onepanel
-    And user of browser1 types "1" to Scan interval input field in UPDATE CONFIGURATION in "space2" record in Spaces page in Onepanel
-    And user of browser1 clicks on Save configuration button in "space2" record in Spaces page in Onepanel
-    And user of browser1 sees an info notify with text matching to: .*[Cc]onfiguration.*space.*support.*changed.*
-
-    # confirm correct update configuration
-    And user of browser1 sees that Update strategy configuration for "space2" is as follow:
-          Update strategy: Simple scan
-          Max depth: 3
-          Scan interval [s]: 1
-          Write once: false
-          Delete enabled: false
-
-    # confirm update of files
-    And user of browser2 is idle for 8 seconds
-    And user of browser2 refreshes site
-    And user of browser2 sees file browser in data tab in Oneprovider page
-
-    And user of browser2 sees that there are 3 items in file browser
-    And user of browser2 sees item(s) named ["dir21", "dir22", "file1.txt"] in file browser
-
-    And user of browser2 double clicks on item named "dir21" in file browser
-    And user of browser2 sees that there are 2 items in file browser
-    And user of browser2 sees item(s) named ["dir211", "file2.txt"] in file browser
-    And user of browser2 double clicks on item named "file2.txt" in file browser
-    And user of browser2 sees that content of downloaded file "file2.txt" is equal to: "11111"
-    And user of browser2 double clicks on item named "dir211" in file browser
-    And user of browser2 sees empty directory message in file browser
-    And user of browser2 changes current working directory to space2/dir2 using breadcrumbs
-
-    And user of browser2 double clicks on item named "dir22" in file browser
-    And user of browser2 sees that there are 10 items in file browser
-
-    And user of browser1 revokes "space2" space support in "oneprovider-1" provider in Onepanel
-
-
-  Scenario: User supports space with storage sync and no enabled options
-    Given there are no spaces supported in Onepanel used by user of browser1
+    And there is "new_storage" storage in "oneprovider-1" Oneprovider panel service used by user of browser1 with following configuration:
+          storage type: POSIX
+          mount point: /volumes/persistence/storage
+          imported storage: true
     When user of browser2 creates "space1" space in Onezone
     And user of browser2 sends support token for "space1" to user of browser1
-
-    # support space
-    And user of browser1 supports "space1" space in "oneprovider-1" Oneprovider panel service with following configuration:
-          storage: posix
-          size: 1
-          unit: GiB
-    And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
-    And user of browser1 sees that space support record for "space1" has appeared in Spaces page in Onepanel
-
-    # copy files to provider storage
-    And user of browser1 expands "space1" record on spaces list in Spaces page in Onepanel
-    And user of browser1 copies Id of "space1" space in Spaces page in Onepanel
-    And user of browser2 copies dir2 to the root directory of "space1" space
+    And user of browser2 copies dir2 to provider's storage mount point
 
     # configure import parameters
-    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space1"
-    And user of browser1 clicks on Configure button in "space1" record in Spaces page in Onepanel
-    And user of browser1 selects Simple scan strategy from strategy selector in IMPORT CONFIGURATION in "space1" record in Spaces page in Onepanel
-    And user of browser1 types "2" to Max depth input field in IMPORT CONFIGURATION in "space1" record in Spaces page in Onepanel
-    And user of browser1 clicks on Start synchronization button in "space1" record in Spaces page in Onepanel
-    And user of browser1 sees an info notify with text matching to: .*[Cc]onfiguration.*space.*support.*changed.*
+    And user of browser1 supports "space1" space in "oneprovider-1" Oneprovider panel service with following configuration:
+          storage: new_storage (import-enabled)
+          size: 1
+          unit: GiB
+          storage import:
+                strategy: Simple scan
+                max depth: 2
 
     # confirm correct import configuration
+    When user of browser1 expands "space1" record on spaces list in Spaces page in Onepanel
     And user of browser1 sees that Import strategy configuration for "space1" is as follow:
           Import strategy: Simple scan
           Max depth: 2
@@ -156,13 +50,12 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 clicks Providers of "space1" in the sidebar
     And user of browser2 sees "oneprovider-1" is on the providers list
     And user of browser2 opens oneprovider-1 Oneprovider view in web GUI
-    And user of browser2 sees that Oneprovider session has started
     And user of browser2 uses spaces select to change data space to "space1"
 
     # confirm import of files
     And user of browser2 is idle for 8 seconds
     And user of browser2 refreshes site
-    And user of browser2 sees file browser in data tab in Oneprovider page
+    And user of browser2 moves to Data view of space "space1"
 
     Then user of browser2 sees that there is 1 item in file browser
     And user of browser2 sees item(s) named "dir2" in file browser
@@ -173,11 +66,11 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     And user of browser2 double clicks on item named "dir21" in file browser
     And user of browser2 sees empty directory message in file browser
-    And user of browser2 changes current working directory to space1/dir2 using breadcrumbs
+    And user of browser2 changes current working directory to /dir2 using breadcrumbs
 
     And user of browser2 double clicks on item named "dir22" in file browser
     And user of browser2 sees empty directory message in file browser
-    And user of browser2 changes current working directory to space1/dir2 using breadcrumbs
+    And user of browser2 changes current working directory to /dir2 using breadcrumbs
 
     And user of browser2 double clicks on item named "file1.txt" in file browser
     And user of browser2 sees that content of downloaded file "file1.txt" is equal to: "22222"
@@ -185,11 +78,11 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     # configure update parameters
     And user of browser1 clicks on "Storage synchronization" navigation tab in space "space1"
     And user of browser1 clicks settings in Storage synchronization in Spaces page
-    And user of browser1 selects Simple scan strategy from strategy selector in UPDATE CONFIGURATION in "space1" record in Spaces page in Onepanel
-    And user of browser1 types "3" to Max depth input field in UPDATE CONFIGURATION in "space1" record in Spaces page in Onepanel
-    And user of browser1 types "1" to Scan interval input field in UPDATE CONFIGURATION in "space1" record in Spaces page in Onepanel
-    And user of browser1 clicks on Save configuration button in "space1" record in Spaces page in Onepanel
-    And user of browser1 sees an info notify with text matching to: .*[Cc]onfiguration.*space.*support.*changed.*
+    And user of browser1 sets update configuration in Storage synchronization tab as following:
+        storage update:
+              strategy: Simple scan
+              max depth: 3
+              scan interval [s]: 1
 
     # confirm correct update configuration
     And user of browser1 sees that Update strategy configuration for "space1" is as follow:
@@ -214,7 +107,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sees that content of downloaded file "file2.txt" is equal to: "11111"
     And user of browser2 double clicks on item named "dir211" in file browser
     And user of browser2 sees empty directory message in file browser
-    And user of browser2 changes current working directory to space1/dir2 using breadcrumbs
+    And user of browser2 changes current working directory to /dir2 using breadcrumbs
 
     And user of browser2 double clicks on item named "dir22" in file browser
     And user of browser2 sees that there are 10 items in file browser
@@ -222,90 +115,50 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser1 revokes "space1" space support in "oneprovider-1" provider in Onepanel
 
 
-  Scenario: User supports space with storage sync and enabled options: Delete
+  Scenario: Imported files are visible to wider level when import and update configuration is set during support configuration
     Given there are no spaces supported in Onepanel used by user of browser1
-    When user of browser2 creates "space3" space in Onezone
-    And user of browser2 sends support token for "space3" to user of browser1
+    And there is "new_storage" storage in "oneprovider-1" Oneprovider panel service used by user of browser1 with following configuration:
+          storage type: POSIX
+          mount point: /volumes/persistence/storage
+          imported storage: true
+
+    When user of browser2 creates "space1" space in Onezone
+    And user of browser2 sends support token for "space1" to user of browser1
+    And user of browser2 copies dir2 to provider's storage mount point
 
     # support space
-    And user of browser1 supports "space3" space in "oneprovider-1" Oneprovider panel service with following configuration:
-          storage: posix
+    And user of browser1 supports "space1" space in "oneprovider-1" Oneprovider panel service with following configuration:
+          storage: new_storage (import-enabled)
           size: 1
           unit: GiB
-    And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
-    And user of browser1 sees that space support record for "space3" has appeared in Spaces page in Onepanel
+          storage import:
+                strategy: Simple scan
+                max depth: 2
+          storage update:
+                strategy: Simple scan
+                max depth: 3
+                scan interval [s]: 1
 
-    # copy files to provider storage
-    And user of browser1 expands "space3" record on spaces list in Spaces page in Onepanel
-    And user of browser1 copies Id of "space3" space in Spaces page in Onepanel
-    And user of browser2 copies dir2 to the root directory of "space3" space
-
-    # configure import parameters
-    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space3"
-    And user of browser1 clicks on Configure button in "space3" record in Spaces page in Onepanel
-    And user of browser1 selects Simple scan strategy from strategy selector in IMPORT CONFIGURATION in "space3" record in Spaces page in Onepanel
-    And user of browser1 types "2" to Max depth input field in IMPORT CONFIGURATION in "space3" record in Spaces page in Onepanel
-    And user of browser1 clicks on Start synchronization button in "space3" record in Spaces page in Onepanel
-    And user of browser1 sees an info notify with text matching to: .*[Cc]onfiguration.*space.*support.*changed.*
-
-    # confirm correct import configuration
-    And user of browser1 sees that Import strategy configuration for "space3" is as follow:
+    # confirm import and update strategy
+    When user of browser1 expands "space1" record on spaces list in Spaces page in Onepanel
+    And user of browser1 sees that Import strategy configuration for "space1" is as follow:
           Import strategy: Simple scan
           Max depth: 2
-
-    # confirm support of space and go to provider
-    And user of browser2 clicks "space3" on the spaces list in the sidebar
-    And user of browser2 clicks Providers of "space3" in the sidebar
-    And user of browser2 sees "oneprovider-1" is on the providers list
-    And user of browser2 opens oneprovider-1 Oneprovider view in web GUI
-    And user of browser2 sees that Oneprovider session has started
-    And user of browser2 uses spaces select to change data space to "space3"
-
-    # confirm import of files
-    And user of browser2 is idle for 8 seconds
-    And user of browser2 refreshes site
-    And user of browser2 sees file browser in data tab in Oneprovider page
-
-    And user of browser2 sees that there is 1 item in file browser
-    And user of browser2 sees item(s) named "dir2" in file browser
-    And user of browser2 double clicks on item named "dir2" in file browser
-
-    And user of browser2 sees that there are 3 items in file browser
-    And user of browser2 sees item(s) named ["dir21", "dir22", "file1.txt"] in file browser
-
-    And user of browser2 double clicks on item named "dir21" in file browser
-    And user of browser2 sees empty directory message in file browser
-    And user of browser2 changes current working directory to space3/dir2 using breadcrumbs
-
-    And user of browser2 double clicks on item named "dir22" in file browser
-    And user of browser2 sees empty directory message in file browser
-    And user of browser2 changes current working directory to space3/dir2 using breadcrumbs
-
-    And user of browser2 double clicks on item named "file1.txt" in file browser
-    And user of browser2 sees that content of downloaded file "file1.txt" is equal to: "22222"
-
-    # configure update parameters
-    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space3"
-    And user of browser1 clicks settings in Storage synchronization in Spaces page
-    And user of browser1 selects Simple scan strategy from strategy selector in UPDATE CONFIGURATION in "space3" record in Spaces page in Onepanel
-    And user of browser1 types "3" to Max depth input field in UPDATE CONFIGURATION in "space3" record in Spaces page in Onepanel
-    And user of browser1 types "1" to Scan interval input field in UPDATE CONFIGURATION in "space3" record in Spaces page in Onepanel
-    And user of browser1 enables Delete enabled option UPDATE CONFIGURATION in "space3" record in Spaces page in Onepanel
-    And user of browser1 clicks on Save configuration button in "space3" record in Spaces page in Onepanel
-    And user of browser1 sees an info notify with text matching to: .*[Cc]onfiguration.*space.*support.*changed.*
-
-    # confirm correct update configuration
-    And user of browser1 sees that Update strategy configuration for "space3" is as follow:
+    And user of browser1 sees that Update strategy configuration for "space1" is as follow:
           Update strategy: Simple scan
           Max depth: 3
           Scan interval [s]: 1
           Write once: false
-          Delete enabled: true
+          Delete enabled: false
 
-    # confirm update of files
+    # confirm import and update of files
     And user of browser2 is idle for 8 seconds
     And user of browser2 refreshes site
-    And user of browser2 sees file browser in data tab in Oneprovider page
+    And user of browser2 moves to Data view of space "space1"
+
+    Then user of browser2 sees that there is 1 item in file browser
+    And user of browser2 sees item(s) named "dir2" in file browser
+    And user of browser2 double clicks on item named "dir2" in file browser
 
     And user of browser2 sees that there are 3 items in file browser
     And user of browser2 sees item(s) named ["dir21", "dir22", "file1.txt"] in file browser
@@ -317,71 +170,58 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sees that content of downloaded file "file2.txt" is equal to: "11111"
     And user of browser2 double clicks on item named "dir211" in file browser
     And user of browser2 sees empty directory message in file browser
-    And user of browser2 changes current working directory to space3/dir2 using breadcrumbs
+    And user of browser2 changes current working directory to /dir2 using breadcrumbs
 
     And user of browser2 double clicks on item named "dir22" in file browser
     And user of browser2 sees that there are 10 items in file browser
 
-    # confirm detection of deleted files
-    And user of browser2 removes dir2/dir21 from the root directory of "space3" space
-    And user of browser2 removes dir2/file1.txt from the root directory of "space3" space
-
-    And user of browser2 changes current working directory to space3/dir2 using breadcrumbs
-    And user of browser2 is idle for 8 seconds
-    And user of browser2 refreshes site
-    And user of browser2 sees file browser in data tab in Oneprovider page
-
-    Then user of browser2 sees that there is 1 item in file browser
-    And user of browser2 sees item(s) named "dir22" in file browser
-
-    And user of browser1 revokes "space3" space support in "oneprovider-1" provider in Onepanel
+    And user of browser1 revokes "space1" space support in "oneprovider-1" provider in Onepanel
 
 
-  Scenario: User supports space with storage sync and enabled options: Write once
+  Scenario: User doesn't see deleted items after they've been removed locally with enabled delete option
     Given there are no spaces supported in Onepanel used by user of browser1
-    When user of browser2 creates "space4" space in Onezone
-    And user of browser2 sends support token for "space4" to user of browser1
+    And there is "new_storage" storage in "oneprovider-1" Oneprovider panel service used by user of browser1 with following configuration:
+          storage type: POSIX
+          mount point: /volumes/persistence/storage
+          imported storage: true
+    When user of browser2 creates "space1" space in Onezone
+    And user of browser2 sends support token for "space1" to user of browser1
+    And user of browser2 copies dir2 to provider's storage mount point
 
     # support space
-    And user of browser1 supports "space4" space in "oneprovider-1" Oneprovider panel service with following configuration:
-          storage: posix
+    And user of browser1 supports "space1" space in "oneprovider-1" Oneprovider panel service with following configuration:
+          storage: new_storage (import-enabled)
           size: 1
           unit: GiB
+          storage import:
+                strategy: Simple scan
+                max depth: 2
+
     And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
-    And user of browser1 sees that space support record for "space4" has appeared in Spaces page in Onepanel
+    And user of browser1 sees that space support record for "space1" has appeared in Spaces page in Onepanel
+    And user of browser1 expands "space1" record on spaces list in Spaces page in Onepanel
 
-    # copy files to provider storage
-    And user of browser1 expands "space4" record on spaces list in Spaces page in Onepanel
-    And user of browser1 copies Id of "space4" space in Spaces page in Onepanel
-    And user of browser2 copies dir2 to the root directory of "space4" space
+    # configure update parameters
+    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space1"
+    And user of browser1 clicks settings in Storage synchronization in Spaces page
 
-    # configure import parameters
-    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space4"
-    And user of browser1 clicks on Configure button in "space4" record in Spaces page in Onepanel
-    And user of browser1 selects Simple scan strategy from strategy selector in IMPORT CONFIGURATION in "space4" record in Spaces page in Onepanel
-    And user of browser1 types "2" to Max depth input field in IMPORT CONFIGURATION in "space4" record in Spaces page in Onepanel
-    And user of browser1 clicks on Start synchronization button in "space4" record in Spaces page in Onepanel
-    And user of browser1 sees an info notify with text matching to: .*[Cc]onfiguration.*space.*support.*changed.*
+    And user of browser1 sets update configuration in Storage synchronization tab as following:
+        storage update:
+              strategy: Simple scan
+              max depth: 3
+              scan interval [s]: 1
+              delete enabled: true
 
-    # confirm correct import configuration
-    And user of browser1 sees that Import strategy configuration for "space4" is as follow:
-          Import strategy: Simple scan
-          Max depth: 2
+    And user of browser2 moves to "oneprovider-1" provider's view of "space1"
+    And user of browser2 uses spaces select to change data space to "space1"
 
-    # confirm support of space and go to provider
-    And user of browser2 clicks "space4" on the spaces list in the sidebar
-    And user of browser2 clicks Providers of "space4" in the sidebar
-    And user of browser2 sees "oneprovider-1" is on the providers list
-    And user of browser2 opens oneprovider-1 Oneprovider view in web GUI
-    And user of browser2 sees that Oneprovider session has started
-    And user of browser2 uses spaces select to change data space to "space4"
-
-    # confirm import of files
+    # confirm update of files
     And user of browser2 is idle for 8 seconds
     And user of browser2 refreshes site
+    And user of browser2 moves to Data view of space "space1"
     And user of browser2 sees file browser in data tab in Oneprovider page
 
-    Then user of browser2 sees that there is 1 item in file browser
+    And user of browser2 sees that there is 1 item in file browser
     And user of browser2 sees item(s) named "dir2" in file browser
     And user of browser2 double clicks on item named "dir2" in file browser
 
@@ -389,28 +229,171 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sees item(s) named ["dir21", "dir22", "file1.txt"] in file browser
 
     And user of browser2 double clicks on item named "dir21" in file browser
+    And user of browser2 sees that there are 2 items in file browser
+    And user of browser2 sees item(s) named ["dir211", "file2.txt"] in file browser
+    And user of browser2 double clicks on item named "file2.txt" in file browser
+    And user of browser2 sees that content of downloaded file "file2.txt" is equal to: "11111"
+    And user of browser2 double clicks on item named "dir211" in file browser
     And user of browser2 sees empty directory message in file browser
-    And user of browser2 changes current working directory to space4/dir2 using breadcrumbs
+    And user of browser2 changes current working directory to /dir2 using breadcrumbs
 
     And user of browser2 double clicks on item named "dir22" in file browser
-    And user of browser2 sees empty directory message in file browser
-    And user of browser2 changes current working directory to space4/dir2 using breadcrumbs
+    And user of browser2 sees that there are 10 items in file browser
 
+    # confirm detection of deleted files
+    And user of browser2 removes dir2/dir21 from provider's storage mount point
+    And user of browser2 removes dir2/file1.txt from provider's storage mount point
+
+    And user of browser2 changes current working directory to /dir2 using breadcrumbs
+    And user of browser2 is idle for 8 seconds
+    And user of browser2 refreshes site
+    And user of browser2 sees file browser in data tab in Oneprovider page
+
+    Then user of browser2 sees that there is 1 item in file browser
+    And user of browser2 sees item(s) named "dir22" in file browser
+
+    And user of browser1 revokes "space1" space support in "oneprovider-1" provider in Onepanel
+
+
+  Scenario: User sees file's update when update configuration is set
+    Given there are no spaces supported in Onepanel used by user of browser1
+    And there is "new_storage" storage in "oneprovider-1" Oneprovider panel service used by user of browser1 with following configuration:
+          storage type: POSIX
+          mount point: /volumes/persistence/storage
+          imported storage: true
+    When user of browser2 creates "space1" space in Onezone
+    And user of browser2 sends support token for "space1" to user of browser1
+    And user of browser2 copies dir2 to provider's storage mount point
+
+    # support space
+    And user of browser1 supports "space1" space in "oneprovider-1" Oneprovider panel service with following configuration:
+          storage: new_storage (import-enabled)
+          size: 1
+          unit: GiB
+          storage import:
+                strategy: Simple scan
+                max depth: 2
+
+    And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
+    And user of browser1 sees that space support record for "space1" has appeared in Spaces page in Onepanel
+
+    And user of browser1 expands "space1" record on spaces list in Spaces page in Onepanel
+
+    # check content of imported file
+    And user of browser2 moves to "oneprovider-1" provider's view of "space1"
+    And user of browser2 uses spaces select to change data space to "space1"
+
+    And user of browser2 is idle for 8 seconds
+    And user of browser2 refreshes site
+    And user of browser2 moves to Data view of space "space1"
+    And user of browser2 sees file browser in data tab in Oneprovider page
+
+    And user of browser2 sees only items named "dir2" in file browser
+    And user of browser2 double clicks on item named "dir2" in file browser
+
+    And user of browser2 sees only items named ["dir21", "dir22", "file1.txt"] in file browser
     And user of browser2 double clicks on item named "file1.txt" in file browser
     And user of browser2 sees that content of downloaded file "file1.txt" is equal to: "22222"
 
     # configure update parameters
-    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space4"
+    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space1"
     And user of browser1 clicks settings in Storage synchronization in Spaces page
-    And user of browser1 selects Simple scan strategy from strategy selector in UPDATE CONFIGURATION in "space4" record in Spaces page in Onepanel
-    And user of browser1 types "3" to Max depth input field in UPDATE CONFIGURATION in "space4" record in Spaces page in Onepanel
-    And user of browser1 types "1" to Scan interval input field in UPDATE CONFIGURATION in "space4" record in Spaces page in Onepanel
-    And user of browser1 enables Write once option UPDATE CONFIGURATION in "space4" record in Spaces page in Onepanel
-    And user of browser1 clicks on Save configuration button in "space4" record in Spaces page in Onepanel
-    And user of browser1 sees an info notify with text matching to: .*[Cc]onfiguration.*space.*support.*changed.*
+    And user of browser1 sets update configuration in Storage synchronization tab as following:
+        storage update:
+              strategy: Simple scan
+              max depth: 3
+              scan interval [s]: 1
 
     # confirm correct update configuration
-    And user of browser1 sees that Update strategy configuration for "space4" is as follow:
+    And user of browser1 sees that Update strategy configuration for "space1" is as follow:
+          Update strategy: Simple scan
+          Max depth: 3
+          Scan interval [s]: 1
+          Write once: false
+          Delete enabled: false
+
+    # confirm update of files
+    And user of browser2 is idle for 8 seconds
+    And user of browser2 refreshes site
+    And user of browser2 sees file browser in data tab in Oneprovider page
+
+    And user of browser2 sees only items named ["dir21", "dir22", "file1.txt"] in file browser
+
+    And user of browser2 double clicks on item named "dir21" in file browser
+    And user of browser2 sees only items named ["dir211", "file2.txt"] in file browser
+    And user of browser2 double clicks on item named "file2.txt" in file browser
+    And user of browser2 sees that content of downloaded file "file2.txt" is equal to: "11111"
+    And user of browser2 double clicks on item named "dir211" in file browser
+    And user of browser2 sees empty directory message in file browser
+    And user of browser2 changes current working directory to /dir2 using breadcrumbs
+
+    And user of browser2 double clicks on item named "dir22" in file browser
+    And user of browser2 sees that there are 10 items in file browser
+    And user of browser2 changes current working directory to /dir2 using breadcrumbs
+
+    # confirm change of file content
+    And user of browser2 appends dir2/file1.txt file with "34" in provider's storage mount point
+
+    And user of browser2 is idle for 10 seconds
+    And user of browser2 refreshes site
+    And user of browser2 sees file browser in data tab in Oneprovider page
+    And user of browser2 double clicks on item named "file1.txt" in file browser
+    And user of browser2 sees that content of downloaded file "file1 (1).txt" is equal to: "2222234"
+
+    And user of browser1 revokes "space1" space support in "oneprovider-1" provider in Onepanel
+
+
+  Scenario: User does not see file's update when write once option is enabled
+    Given there are no spaces supported in Onepanel used by user of browser1
+    And there is "new_storage" storage in "oneprovider-1" Oneprovider panel service used by user of browser1 with following configuration:
+          storage type: POSIX
+          mount point: /volumes/persistence/storage
+          imported storage: true
+    When user of browser2 creates "space1" space in Onezone
+    And user of browser2 sends support token for "space1" to user of browser1
+    And user of browser2 copies dir2 to provider's storage mount point
+
+    # support space
+    And user of browser1 supports "space1" space in "oneprovider-1" Oneprovider panel service with following configuration:
+          storage: new_storage (import-enabled)
+          size: 1
+          unit: GiB
+          storage import:
+                strategy: Simple scan
+                max depth: 2
+
+    And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
+    And user of browser1 sees that space support record for "space1" has appeared in Spaces page in Onepanel
+    And user of browser1 expands "space1" record on spaces list in Spaces page in Onepanel
+
+    # check content of imported file
+    And user of browser2 moves to "oneprovider-1" provider's view of "space1"
+    And user of browser2 uses spaces select to change data space to "space1"
+
+    And user of browser2 is idle for 8 seconds
+    And user of browser2 refreshes site
+    And user of browser2 moves to Data view of space "space1"
+    And user of browser2 sees file browser in data tab in Oneprovider page
+
+    And user of browser2 sees only items named "dir2" in file browser
+    And user of browser2 double clicks on item named "dir2" in file browser
+
+    And user of browser2 sees only items named ["dir21", "dir22", "file1.txt"] in file browser
+    And user of browser2 double clicks on item named "file1.txt" in file browser
+    And user of browser2 sees that content of downloaded file "file1.txt" is equal to: "22222"
+
+    # configure update parameters
+    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space1"
+    And user of browser1 clicks settings in Storage synchronization in Spaces page
+    And user of browser1 sets update configuration in Storage synchronization tab as following:
+        storage update:
+              strategy: Simple scan
+              max depth: 3
+              scan interval [s]: 1
+              write once: true
+
+    # confirm correct update configuration
+    And user of browser1 sees that Update strategy configuration for "space1" is as follow:
           Update strategy: Simple scan
           Max depth: 3
           Scan interval [s]: 1
@@ -432,251 +415,190 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sees that content of downloaded file "file2.txt" is equal to: "11111"
     And user of browser2 double clicks on item named "dir211" in file browser
     And user of browser2 sees empty directory message in file browser
-    And user of browser2 changes current working directory to space4/dir2 using breadcrumbs
+    And user of browser2 changes current working directory to /dir2 using breadcrumbs
 
     And user of browser2 double clicks on item named "dir22" in file browser
     And user of browser2 sees that there are 10 items in file browser
+    And user of browser2 changes current working directory to /dir2 using breadcrumbs
 
-    And user of browser1 revokes "space4" space support in "oneprovider-1" provider in Onepanel
+    # files in gui are not updated after local changes
+    And user of browser2 appends dir2/file1.txt file with "34" in provider's storage mount point
 
-
-  Scenario: User supports space with storage sync and enabled options: Delete and Write once
-    Given there are no spaces supported in Onepanel used by user of browser1
-    When user of browser2 creates "space5" space in Onezone
-    And user of browser2 sends support token for "space5" to user of browser1
-
-    # support space
-    And user of browser1 supports "space5" space in "oneprovider-1" Oneprovider panel service with following configuration:
-          storage: posix
-          size: 1
-          unit: GiB
-    And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
-    And user of browser1 sees that space support record for "space5" has appeared in Spaces page in Onepanel
-
-    # copy files to provider storage
-    And user of browser1 expands "space5" record on spaces list in Spaces page in Onepanel
-    And user of browser1 copies Id of "space5" space in Spaces page in Onepanel
-    And user of browser2 copies dir2 to the root directory of "space5" space
-
-    # configure import parameters
-    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space5"
-    And user of browser1 clicks on Configure button in "space5" record in Spaces page in Onepanel
-    And user of browser1 selects Simple scan strategy from strategy selector in IMPORT CONFIGURATION in "space5" record in Spaces page in Onepanel
-    And user of browser1 types "2" to Max depth input field in IMPORT CONFIGURATION in "space5" record in Spaces page in Onepanel
-    And user of browser1 clicks on Start synchronization button in "space5" record in Spaces page in Onepanel
-    And user of browser1 sees an info notify with text matching to: .*[Cc]onfiguration.*space.*support.*changed.*
-
-    # confirm correct import configuration
-    And user of browser1 sees that Import strategy configuration for "space5" is as follow:
-          Import strategy: Simple scan
-          Max depth: 2
-
-    # confirm support of space and go to provider
-    And user of browser2 clicks "space5" on the spaces list in the sidebar
-    And user of browser2 clicks Providers of "space5" in the sidebar
-    And user of browser2 sees "oneprovider-1" is on the providers list
-    And user of browser2 opens oneprovider-1 Oneprovider view in web GUI
-    And user of browser2 sees that Oneprovider session has started
-    And user of browser2 uses spaces select to change data space to "space5"
-
-    # confirm import of files
-    And user of browser2 is idle for 8 seconds
+    And user of browser2 is idle for 10 seconds
     And user of browser2 refreshes site
     And user of browser2 sees file browser in data tab in Oneprovider page
-
-    Then user of browser2 sees that there is 1 item in file browser
-    And user of browser2 sees item(s) named "dir2" in file browser
-    And user of browser2 double clicks on item named "dir2" in file browser
-
-    And user of browser2 sees that there are 3 items in file browser
-    And user of browser2 sees item(s) named ["dir21", "dir22", "file1.txt"] in file browser
-
-    And user of browser2 double clicks on item named "dir21" in file browser
-    And user of browser2 sees empty directory message in file browser
-    And user of browser2 changes current working directory to space5/dir2 using breadcrumbs
-
-    And user of browser2 double clicks on item named "dir22" in file browser
-    And user of browser2 sees empty directory message in file browser
-    And user of browser2 changes current working directory to space5/dir2 using breadcrumbs
-
     And user of browser2 double clicks on item named "file1.txt" in file browser
-    And user of browser2 sees that content of downloaded file "file1.txt" is equal to: "22222"
-
-    # configure update parameters
-    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space5"
-    And user of browser1 clicks settings in Storage synchronization in Spaces page
-    And user of browser1 selects Simple scan strategy from strategy selector in UPDATE CONFIGURATION in "space5" record in Spaces page in Onepanel
-    And user of browser1 types "3" to Max depth input field in UPDATE CONFIGURATION in "space5" record in Spaces page in Onepanel
-    And user of browser1 types "1" to Scan interval input field in UPDATE CONFIGURATION in "space5" record in Spaces page in Onepanel
-    And user of browser1 enables Write once option UPDATE CONFIGURATION in "space5" record in Spaces page in Onepanel
-    And user of browser1 enables Delete enabled option UPDATE CONFIGURATION in "space5" record in Spaces page in Onepanel
-    And user of browser1 clicks on Save configuration button in "space5" record in Spaces page in Onepanel
-    And user of browser1 sees an info notify with text matching to: .*[Cc]onfiguration.*space.*support.*changed.*
-
-    # confirm correct update configuration
-    And user of browser1 sees that Update strategy configuration for "space5" is as follow:
-          Update strategy: Simple scan
-          Max depth: 3
-          Scan interval [s]: 1
-          Write once: true
-          Delete enabled: true
-
-    # confirm update of files
-    And user of browser2 is idle for 8 seconds
-    And user of browser2 refreshes site
-    And user of browser2 sees file browser in data tab in Oneprovider page
-
-    And user of browser2 sees that there are 3 items in file browser
-    And user of browser2 sees item(s) named ["dir21", "dir22", "file1.txt"] in file browser
-
-    And user of browser2 double clicks on item named "dir21" in file browser
-    And user of browser2 sees that there are 2 items in file browser
-    And user of browser2 sees item(s) named ["dir211", "file2.txt"] in file browser
-    And user of browser2 double clicks on item named "file2.txt" in file browser
-    And user of browser2 sees that content of downloaded file "file2.txt" is equal to: "11111"
-    And user of browser2 double clicks on item named "dir211" in file browser
-    And user of browser2 sees empty directory message in file browser
-    And user of browser2 changes current working directory to space5/dir2 using breadcrumbs
-
-    And user of browser2 double clicks on item named "dir22" in file browser
-    And user of browser2 sees that there are 10 items in file browser
-
-    # confirm detection of deleted files
-    And user of browser2 removes dir2/dir21 from the root directory of "space5" space
-    And user of browser2 removes dir2/file1.txt from the root directory of "space5" space
-
-    And user of browser2 changes current working directory to space5/dir2 using breadcrumbs
-    And user of browser2 is idle for 8 seconds
-    And user of browser2 refreshes site
-    And user of browser2 sees file browser in data tab in Oneprovider page
-
-    And user of browser2 sees that there is 1 item in file browser
-    And user of browser2 sees item(s) named "dir22" in file browser
-
-    And user of browser1 revokes "space5" space support in "oneprovider-1" provider in Onepanel
+    And user of browser2 sees that content of downloaded file "file1 (1).txt" is equal to: "22222"
+    And user of browser1 revokes "space1" space support in "oneprovider-1" provider in Onepanel
 
 
-  Scenario: User disables files update
-    Given there are no spaces supported in Onepanel used by user of browser1
-    When user of browser2 creates "space6" space in Onezone
-    And user of browser2 sends support token for "space6" to user of browser1
-
-    # support space
-    And user of browser1 supports "space6" space in "oneprovider-1" Oneprovider panel service with following configuration:
-          storage: posix
-          size: 1
-          unit: GiB
-    And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
-    And user of browser1 sees that space support record for "space6" has appeared in Spaces page in Onepanel
-
-    # copy files to provider storage
-    And user of browser1 expands "space6" record on spaces list in Spaces page in Onepanel
-    And user of browser1 copies Id of "space6" space in Spaces page in Onepanel
-    And user of browser2 copies dir2 to the root directory of "space6" space
-
-    # configure import parameters
-    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space6"
-    And user of browser1 clicks on Configure button in "space6" record in Spaces page in Onepanel
-    And user of browser1 selects Simple scan strategy from strategy selector in IMPORT CONFIGURATION in "space6" record in Spaces page in Onepanel
-    And user of browser1 types "2" to Max depth input field in IMPORT CONFIGURATION in "space6" record in Spaces page in Onepanel
-    And user of browser1 clicks on Start synchronization button in "space6" record in Spaces page in Onepanel
-    And user of browser1 sees an info notify with text matching to: .*[Cc]onfiguration.*space.*support.*changed.*
-
-    # confirm correct import configuration
-    And user of browser1 sees that Import strategy configuration for "space6" is as follow:
-          Import strategy: Simple scan
-          Max depth: 2
-
-    # confirm support of space and go to provider
-    And user of browser2 clicks "space6" on the spaces list in the sidebar
-    And user of browser2 clicks Providers of "space6" in the sidebar
-    And user of browser2 sees "oneprovider-1" is on the providers list
-    And user of browser2 opens oneprovider-1 Oneprovider view in web GUI
-    And user of browser2 sees that Oneprovider session has started
-    And user of browser2 uses spaces select to change data space to "space6"
-
-    # confirm import of files
-    And user of browser2 is idle for 8 seconds
-    And user of browser2 refreshes site
-    And user of browser2 sees file browser in data tab in Oneprovider page
-
-    And user of browser2 sees that there is 1 item in file browser
-    And user of browser2 sees item(s) named "dir2" in file browser
-    And user of browser2 double clicks on item named "dir2" in file browser
-
-    And user of browser2 sees that there are 3 items in file browser
-    And user of browser2 sees item(s) named ["dir21", "dir22", "file1.txt"] in file browser
-
-    And user of browser2 double clicks on item named "dir21" in file browser
-    And user of browser2 sees empty directory message in file browser
-    And user of browser2 changes current working directory to space6/dir2 using breadcrumbs
-
-    And user of browser2 double clicks on item named "dir22" in file browser
-    And user of browser2 sees empty directory message in file browser
-    And user of browser2 changes current working directory to space6/dir2 using breadcrumbs
-
-    And user of browser2 double clicks on item named "file1.txt" in file browser
-    And user of browser2 sees that content of downloaded file "file1.txt" is equal to: "22222"
-
-    # configure update parameters
-    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space6"
-    And user of browser1 clicks settings in Storage synchronization in Spaces page
-    And user of browser1 selects Simple scan strategy from strategy selector in UPDATE CONFIGURATION in "space6" record in Spaces page in Onepanel
-    And user of browser1 types "3" to Max depth input field in UPDATE CONFIGURATION in "space6" record in Spaces page in Onepanel
-    And user of browser1 types "1" to Scan interval input field in UPDATE CONFIGURATION in "space6" record in Spaces page in Onepanel
-    And user of browser1 clicks on Save configuration button in "space6" record in Spaces page in Onepanel
-    And user of browser1 sees an info notify with text matching to: .*[Cc]onfiguration.*space.*support.*changed.*
-
-    # confirm correct update configuration
-    And user of browser1 sees that Update strategy configuration for "space6" is as follow:
-          Update strategy: Simple scan
-          Max depth: 3
-          Scan interval [s]: 1
-          Write once: false
-          Delete enabled: false
-
-    # confirm update of files
-    And user of browser2 is idle for 8 seconds
-    And user of browser2 refreshes site
-    And user of browser2 sees file browser in data tab in Oneprovider page
-
-    And user of browser2 sees that there are 3 items in file browser
-    And user of browser2 sees item(s) named ["dir21", "dir22", "file1.txt"] in file browser
-
-    And user of browser2 double clicks on item named "dir21" in file browser
-    And user of browser2 sees that there are 2 items in file browser
-    And user of browser2 sees item(s) named ["dir211", "file2.txt"] in file browser
-    And user of browser2 double clicks on item named "file2.txt" in file browser
-    And user of browser2 sees that content of downloaded file "file2.txt" is equal to: "11111"
-    And user of browser2 double clicks on item named "dir211" in file browser
-    And user of browser2 sees empty directory message in file browser
-    And user of browser2 changes current working directory to space6/dir2 using breadcrumbs
-
-    And user of browser2 double clicks on item named "dir22" in file browser
-    And user of browser2 sees that there are 10 items in file browser
-
-    # disable files update
-    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space6"
-    And user of browser1 clicks settings in Storage synchronization in Spaces page
-    And user of browser1 selects Disabled strategy from strategy selector in UPDATE CONFIGURATION in "space6" record in Spaces page in Onepanel
-    And user of browser1 clicks on Save configuration button in "space6" record in Spaces page in Onepanel
-    And user of browser1 sees an info notify with text matching to: .*[Cc]onfiguration.*space.*support.*changed.*
-
-    # confirm correct update configuration
-    And user of browser1 sees that Update strategy configuration for "space6" is as follow:
-          Update strategy: Disabled
-
-    # copy files to provider storage
-    And user of browser2 copies dir1 to dir2 directory of "space6" space
-
-    # confirm that new files were not detected
-    And user of browser2 changes current working directory to space6/dir2 using breadcrumbs
-    And user of browser2 is idle for 8 seconds
-    And user of browser2 refreshes site
-    And user of browser2 sees file browser in data tab in Oneprovider page
-
-    And user of browser2 sees that there are 3 items in file browser
-    And user of browser2 sees item(s) named ["dir21", "dir22", "file1.txt"] in file browser
-    Then user of browser2 does not see any item(s) named "dir1" in file browser
-
-    And user of browser1 revokes "space6" space support in "oneprovider-1" provider in Onepanel
+#  Scenario: User sees delete detection when delete and write once options are enabled
+#    Given there are no spaces supported in Onepanel used by user of browser1
+#    And there is "new_storage" storage in "oneprovider-1" Oneprovider panel service used by user of browser1 with following configuration:
+#          storage type: POSIX
+#          mount point: /volumes/persistence/storage
+#          imported storage: true
+#    When user of browser2 creates "space1" space in Onezone
+#    And user of browser2 sends support token for "space1" to user of browser1
+#    And user of browser2 copies dir2 to provider's storage mount point
+#
+#    # support space
+#    And user of browser1 supports "space1" space in "oneprovider-1" Oneprovider panel service with following configuration:
+#          storage: new_storage (import-enabled)
+#          size: 1
+#          unit: GiB
+#          storage import:
+#                strategy: Simple scan
+#                max depth: 2
+#
+#    And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
+#    And user of browser1 sees that space support record for "space1" has appeared in Spaces page in Onepanel
+#    And user of browser1 expands "space1" record on spaces list in Spaces page in Onepanel
+#
+#    # configure update parameters
+#    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space1"
+#    And user of browser1 clicks settings in Storage synchronization in Spaces page
+#    And user of browser1 sets update configuration in Storage synchronization tab as following:
+#        storage update:
+#              strategy: Simple scan
+#              max depth: 3
+#              scan interval [s]: 1
+#              delete enabled: true
+#              write once: true
+#
+#    # confirm correct update configuration
+#    And user of browser1 sees that Update strategy configuration for "space1" is as follow:
+#          Update strategy: Simple scan
+#          Max depth: 3
+#          Scan interval [s]: 1
+#          Write once: true
+#          Delete enabled: true
+#
+#    And user of browser2 moves to "oneprovider-1" provider's view of "space1"
+#    And user of browser2 uses spaces select to change data space to "space1"
+#
+#    # confirm update of files
+#    And user of browser2 is idle for 8 seconds
+#    And user of browser2 refreshes site
+#    And user of browser2 moves to Data view of space "space1"
+#    And user of browser2 sees file browser in data tab in Oneprovider page
+#
+#    And user of browser2 sees only items named "dir2" in file browser
+#    And user of browser2 double clicks on item named "dir2" in file browser
+#
+#    And user of browser2 sees only items named ["dir21", "dir22", "file1.txt"] in file browser
+#
+#    And user of browser2 double clicks on item named "dir21" in file browser
+#    And user of browser2 sees only items named ["dir211", "file2.txt"] in file browser
+#    And user of browser2 double clicks on item named "file2.txt" in file browser
+#    And user of browser2 sees that content of downloaded file "file2.txt" is equal to: "11111"
+#    And user of browser2 double clicks on item named "dir211" in file browser
+#    And user of browser2 sees empty directory message in file browser
+#    And user of browser2 changes current working directory to /dir2 using breadcrumbs
+#
+#    And user of browser2 double clicks on item named "dir22" in file browser
+#    And user of browser2 sees that there are 10 items in file browser
+#
+#    # confirm detection of deleted files
+#    And user of browser2 removes dir2/dir21 from provider's storage mount point
+#    And user of browser2 removes dir2/file1.txt from provider's storage mount point
+#
+#    And user of browser2 changes current working directory to /dir2 using breadcrumbs
+#    And user of browser2 is idle for 8 seconds
+#    And user of browser2 refreshes site
+#    And user of browser2 sees file browser in data tab in Oneprovider page
+#
+#    And user of browser2 sees only items named "dir22" in file browser
+#
+#    And user of browser1 revokes "space1" space support in "oneprovider-1" provider in Onepanel
+#
+#
+#  Scenario: User doesn't see file update after files update disable
+#    Given there are no spaces supported in Onepanel used by user of browser1
+#    And there is "new_storage" storage in "oneprovider-1" Oneprovider panel service used by user of browser1 with following configuration:
+#          storage type: POSIX
+#          mount point: /volumes/persistence/storage
+#          imported storage: true
+#    When user of browser2 creates "space1" space in Onezone
+#    And user of browser2 sends support token for "space1" to user of browser1
+#    And user of browser2 copies dir2 to provider's storage mount point
+#
+#    #support space
+#    And user of browser1 supports "space1" space in "oneprovider-1" Oneprovider panel service with following configuration:
+#          storage: new_storage (import-enabled)
+#          size: 1
+#          unit: GiB
+#          storage import:
+#                strategy: Simple scan
+#                max depth: 2
+#
+#    And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
+#    And user of browser1 sees that space support record for "space1" has appeared in Spaces page in Onepanel
+#    And user of browser1 expands "space1" record on spaces list in Spaces page in Onepanel
+#
+#    # configure update parameters
+#    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space1"
+#    And user of browser1 clicks settings in Storage synchronization in Spaces page
+#    And user of browser1 sets update configuration in Storage synchronization tab as following:
+#        storage update:
+#              strategy: Simple scan
+#              max depth: 3
+#              scan interval [s]: 1
+#
+#    # confirm correct update configuration
+#    And user of browser1 sees that Update strategy configuration for "space1" is as follow:
+#          Update strategy: Simple scan
+#          Max depth: 3
+#          Scan interval [s]: 1
+#          Write once: false
+#          Delete enabled: false
+#
+#    And user of browser2 moves to "oneprovider-1" provider's view of "space1"
+#    And user of browser2 uses spaces select to change data space to "space1"
+#
+#    # confirm update of files
+#    And user of browser2 is idle for 8 seconds
+#    And user of browser2 refreshes site
+#    And user of browser2 moves to Data view of space "space1"
+#    And user of browser2 sees file browser in data tab in Oneprovider page
+#
+#    And user of browser2 sees only items named "dir2" in file browser
+#    And user of browser2 double clicks on item named "dir2" in file browser
+#    And user of browser2 sees only items named ["dir21", "dir22", "file1.txt"] in file browser
+#
+#    And user of browser2 double clicks on item named "dir21" in file browser
+#    And user of browser2 sees only items named ["dir211", "file2.txt"] in file browser
+#    And user of browser2 double clicks on item named "file2.txt" in file browser
+#    And user of browser2 sees that content of downloaded file "file2.txt" is equal to: "11111"
+#    And user of browser2 double clicks on item named "dir211" in file browser
+#    And user of browser2 sees empty directory message in file browser
+#    And user of browser2 changes current working directory to /dir2 using breadcrumbs
+#
+#    And user of browser2 double clicks on item named "dir22" in file browser
+#    And user of browser2 sees that there are 10 items in file browser
+#
+#    # disable files update
+#    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space1"
+#    And user of browser1 clicks settings in Storage synchronization in Spaces page
+#    And user of browser1 selects Disabled strategy from strategy selector in UPDATE CONFIGURATION in "space1" record in Spaces page in Onepanel
+#    And user of browser1 clicks on Save configuration button in "space1" record in Spaces page in Onepanel
+#    And user of browser1 sees an info notify with text matching to: .*[Cc]onfiguration.*space.*support.*changed.*
+#
+#    # confirm correct update configuration
+#    And user of browser1 sees that Update strategy configuration for "space1" is as follow:
+#          Update strategy: Disabled
+#
+#    # copy files to provider storage
+#     And user of browser2 copies dir1 to dir2 in provider's storage mount point
+#
+#    # confirm that new files were not detected
+#    And user of browser2 changes current working directory to /dir2 using breadcrumbs
+#    And user of browser2 is idle for 8 seconds
+#    And user of browser2 refreshes site
+#    And user of browser2 sees file browser in data tab in Oneprovider page
+#
+#    And user of browser2 sees that there are 3 items in file browser
+#    And user of browser2 sees item(s) named ["dir21", "dir22", "file1.txt"] in file browser
+#    Then user of browser2 does not see any item(s) named "dir1" in file browser
+#
+#    And user of browser1 revokes "space1" space support in "oneprovider-1" provider in Onepanel

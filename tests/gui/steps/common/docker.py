@@ -46,12 +46,24 @@ def _docker_mv(path, new_path, hosts):
     subprocess.check_call(cmd)
 
 
-@when(parsers.parse('user of {browser_id} copies {src_path} '
-                    'to provider\'s storage mount point'))
-@then(parsers.parse('user of {browser_id} copies {src_path} '
-                    'to provider\'s storage mount point'))
+def _docker_append(text, path, hosts):
+    cmd = ['docker', 'exec', hosts[PROVIDER_CONTAINER_NAME]['container-id'],
+           'sh', '-c', f'echo {text} >> {path}']
+    subprocess.check_call(cmd)
+
+
+@wt(parsers.parse('user of {browser_id} copies {src_path} '
+                  'to provider\'s storage mount point'))
 def wt_cp_files_to_storage_mount_point(browser_id, src_path, tmpdir, hosts):
     _docker_cp(tmpdir, browser_id, src_path, hosts)
+
+
+@wt(parsers.parse('user of {browser_id} copies {src_path} '
+                  'to {dst_path} in provider\'s storage mount point'))
+def wt_cp_files_to_storage_mount_point(browser_id, src_path, tmpdir, hosts,
+                                       dst_path):
+    _docker_cp(tmpdir, browser_id, src_path, hosts,
+               os.path.join(MOUNT_POINT, dst_path))
 
 
 @when(parsers.parse('user of {browser_id} copies {src_path} '
@@ -87,6 +99,12 @@ def wt_cp_files_to_dst_path(browser_id, src_path, dst_path, tmpdir, hosts):
                     'from provider\'s storage mount point'))
 def wt_rm_files_to_storage_mount_point(src_path, hosts):
     _docker_rm(os.path.join(MOUNT_POINT, src_path), hosts)
+
+
+@wt(parsers.parse('user of {browser_id} appends {path} file with "{text}" '
+                  'in provider\'s storage mount point'))
+def wt_append_files_in_storage_mount_point(path, text, hosts):
+    _docker_append(text, os.path.join(MOUNT_POINT, path), hosts)
 
 
 @when(parsers.parse('user of {browser_id} removes {src_path} '

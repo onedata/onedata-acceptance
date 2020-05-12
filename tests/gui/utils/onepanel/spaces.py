@@ -60,6 +60,15 @@ class SpaceSupportAddForm(PageObject):
 
     support_space = Button('button.ready')
 
+    def is_import_uncheckable(self):
+        if 'checked' in self.import_storage_data.web_elem.get_attribute('class'):
+            return False
+        try:
+            self.import_storage_data.check()
+            return False
+        except RuntimeError:
+            return True
+
 
 class SpaceInfo(PageObject):
     space_name = Label('.space-name')

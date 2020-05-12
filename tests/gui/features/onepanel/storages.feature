@@ -85,7 +85,7 @@ Feature: Storage management using onepanel
     And user of <client> types "/volumes/persistence/storage2" to Mount point field in POSIX edit form for "<storage_name>" storage in Onepanel
     And user of <client> clicks on Save button in edit form for "<storage_name>" storage in Onepanel
     And user of <client> clicks on "Proceed" button in modal "Modify Storage"
-    And user of browser1 is idle for 2 seconds
+    And user of <client> is idle for 2 seconds
     And user of <client> refreshes site
     And user of <client> expands "<storage_name>" record on storages list in storages page in Onepanel
     Then user of <client> sees that "<storage_name>" Mount point is /volumes/persistence/storage2 in storages page in Onepanel
@@ -117,7 +117,7 @@ Feature: Storage management using onepanel
     | browser2 | new_storage6 |
 
 
-  Scenario: User changes the name of a directory which is the mount point for storage
+  Scenario: User can change name of a directory which is the mount point for storage
     When user of browser1 creates "space3" space in Onezone
     And user of browser1 copies dir1 to /volumes/persistence/storage/dir directory
     And user of browser1 adds "new_storage7" storage in "oneprovider-1" Oneprovider panel service with following configuration:
@@ -126,7 +126,7 @@ Feature: Storage management using onepanel
           imported storage: true
     And user of browser1 sends support token for "space3" to user of browser1
 
-#     support space
+    # support space
     And user of browser1 clicks on Clusters in the main menu
     And user of browser1 clicks on "oneprovider-1" in clusters menu
     And user of browser1 supports "space3" space in "oneprovider-1" Oneprovider panel service with following configuration:
@@ -144,7 +144,6 @@ Feature: Storage management using onepanel
 
     And user of browser1 opens oneprovider-1 Oneprovider view in web GUI
     And user of browser1 uses spaces select to change data space to "space3"
-
 
     # confirm import of files
     And user of browser1 is idle for 8 seconds
@@ -185,3 +184,20 @@ Feature: Storage management using onepanel
 
     And user of browser1 sees that there are 2 items in file browser
     And user of browser1 sees item(s) named "dir2" in file browser
+
+
+  Scenario: User cannot configure import in storage that is not import-enabled
+    When user of browser1 creates "space5" space in Onezone
+    And user of browser1 copies dir1 to /volumes/persistence/storage/dir directory
+    And user of browser1 adds "new_storage8" storage in "oneprovider-1" Oneprovider panel service with following configuration:
+          storage type: POSIX
+          mount point: /volumes/persistence/storage/dir
+    And user of browser1 sends support token for "space5" to user of browser1
+
+    And user of browser1 clicks on Clusters in the main menu
+    And user of browser1 clicks on "oneprovider-1" in clusters menu
+    And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+    And user of browser1 clicks on Support space button in spaces page in Onepanel if there are some spaces already supported
+    And user of browser1 selects "new_storage8" from storage selector in support space form in Onepanel
+    And user of browser1 types received token to Support token field in support space form in Onepanel
+    Then user of browser1 cannot enable storage data import option
