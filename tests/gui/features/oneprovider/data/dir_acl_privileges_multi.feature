@@ -95,24 +95,23 @@ Feature: ACL directories privileges tests using multiple browsers in Oneprovider
     | fails    |  all except [acl:change acl]  |
 
 
-# TODO: change test because of a new gui (metadata)
-#  Scenario Outline: Write metadata to directory
-#    When user of browser1 sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
-#    Then user of browser2 <result> to write "dir1" basic metadata: "attr=val" in "space1"
-#
-#    Examples:
-#    | result   |  privileges                       |
-#    | succeeds |  [read metadata, write metadata]  |
-#    | fails    |  all except [write metadata]      |
-#    | fails    |  all except [read metadata]       |
-#
-#
-#  Scenario Outline: Read directory metadata
-#    When user of browser1 succeeds to write "dir1" basic metadata: "attr=val" in "space1"
-#    And user of browser1 sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
-#    Then user of browser2 <result> to read "dir1" basic metadata "attr=val" in "space1"
-#
-#    Examples:
-#    | result   |  privileges                   |
-#    | succeeds |  [read metadata]              |
-#    | fails    |  all except [read metadata]   |
+  Scenario Outline: Write metadata to directory
+    When user of browser1 sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
+    Then user of browser2 <result> to write "dir1" directory basic metadata: "attr=val" in "space1"
+
+    Examples:
+    | result   |  privileges                                         |
+    | succeeds |  [metadata:read metadata, metadata:write metadata]  |
+    | fails    |  all except [metadata:write metadata]               |
+    | succeeds |  all except [metadata:read metadata]                |
+
+
+  Scenario Outline: Read directory metadata
+    When user of browser1 succeeds to write "dir1" directory basic metadata: "attr=val" in "space1"
+    And user of browser1 sets selected items ACL <privileges> privileges for <subject_type> <subject_name>
+    Then user of browser2 <result> to read "dir1" directory basic metadata: "attr=val" in "space1"
+
+    Examples:
+    | result   |  privileges                            |
+    | succeeds |  [metadata:read metadata]              |
+    | fails    |  all except [metadata:read metadata]   |

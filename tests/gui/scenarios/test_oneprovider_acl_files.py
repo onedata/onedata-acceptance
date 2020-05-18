@@ -33,6 +33,7 @@ from tests.gui.steps.onezone.providers import *
 
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.oneprovider.data import *
+from tests.gui.meta_steps.oneprovider.metadata import *
 from tests.gui.meta_steps.oneprovider.permissions import *
 
 from tests.utils.acceptance_utils import *

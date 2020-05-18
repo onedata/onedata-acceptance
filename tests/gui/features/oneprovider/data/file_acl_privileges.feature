@@ -69,23 +69,23 @@ Feature: ACL files privileges tests using sigle browser in Oneprovider GUI
     | fails    |  all except [acl:change acl]  |
 
 
-# TODO: change test because of a new gui (metadata)
-#  Scenario Outline: Write metadata to file
-#    When user of browser sets "file1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
-#    Then user of browser <result> to write "file1" basic metadata: "attr=val" in "space1"
-#
-#    Examples:
-#    | result   |  privileges                       |
-#    | succeeds |  [read metadata, write metadata]  |
-#    | fails    |  all except [write metadata]      |
-#
-#
-#  Scenario Outline: Read files metadata
-#    When user of browser succeeds to write "file1" basic metadata: "attr=val" in "space1"
-#    And user of browser sets "file1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
-#    Then user of browser <result> to read "file1" basic metadata "attr=val" in "space1"
-#
-#    Examples:
-#    | result   |  privileges                   |
-#    | succeeds |  [read metadata]              |
-#    | fails    |  all except [read metadata]   |
+  Scenario Outline: Write metadata to file
+    When user of browser sets "file1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
+    Then user of browser <result> to write "file1" file basic metadata: "attr=val" in "space1"
+
+    Examples:
+    | result   |  privileges                                         |
+    | succeeds |  [metadata:read metadata, metadata:write metadata]  |
+    | fails    |  all except [metadata:write metadata]               |
+    | succeeds |  all except [metadata:read metadata]                |
+
+
+  Scenario Outline: Read files metadata
+    When user of browser succeeds to write "file1" file basic metadata: "attr=val" in "space1"
+    And user of browser sets selected items ACL <privileges> privileges for <subject_type> <subject_name>
+    Then user of browser <result> to read "file1" file basic metadata: "attr=val" in "space1"
+
+    Examples:
+    | result   |  privileges                            |
+    | succeeds |  [metadata:read metadata]              |
+    | fails    |  all except [metadata:read metadata]   |
