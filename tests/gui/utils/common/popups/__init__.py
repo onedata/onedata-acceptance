@@ -27,6 +27,7 @@ class Popups(object):
     upload_presenter = WebItem('.hidden-xs .up-single-upload',
                                cls=UploadPresenter)
     menu_popup = WebItem('#webuiPopover1', cls=MenuPopup)
+    token_row_menu = WebItem('.bottom-right', cls=PopoverMenu)
 
     def __init__(self, driver):
         self.driver = self.web_elem = driver

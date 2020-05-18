@@ -17,91 +17,63 @@ from tests.gui.utils.generic import implicit_wait
 from tests.utils.bdd_utils import wt
 from tests.utils.utils import repeat_failed
 
+def get_token_by_ordinal(oz_page, ordinal, driver):
+    return oz_page(driver)['tokens'].sidebar.tokens[int(ordinal[:-2]) - 1]
 
-def _click_on_btn_for_token(driver, oz_page, ordinal, btn):
-    action = btn + '_token'
-    oz_page(driver)['tokens'].elements_list[int(ordinal[:-2]) - 1].click()
-    getattr(oz_page(driver)['tokens'], action).click()
+def _open_menu_for_token(driver, oz_page, ordinal):
+    get_token_by_ordinal(oz_page, ordinal, driver).menu_button.click()
 
 
-@given(parsers.re(r'user of (?P<browser_id>.*?) clicked on (?P<btn>copy|remove) '
-                  r'icon for (?P<ordinal>1st|2nd|3rd|\d*?[4567890]th|\d*?11th|'
-                  r'\d*?12th|\d*?13th|\d*?[^1]1st|\d*?[^1]2nd|\d*?[^1]3rd) '
-                  r'item on tokens list in tokens sidebar'))
+def _click_option_for_token_row_menu(driver, option, popups):
+    popups(driver).token_row_menu.menu[option.capitalize()]()
+
+
+def _click_on_btn_for_token(driver, oz_page, ordinal, btn, modals):
+    _open_menu_for_token(driver, oz_page, ordinal)
+    _click_option_for_token_row_menu(driver, btn, modals)
+
+
+@wt(parsers.re(r'user of (?P<browser_id>.*?) clicks on (?P<btn>rename|remove) '
+               r'button for (?P<ordinal>1st|2nd|3rd|\d*?[4567890]th|\d*?11th|'
+               r'\d*?12th|\d*?13th|\d*?[^1]1st|\d*?[^1]2nd|\d*?[^1]3rd) '
+               r'item on tokens list in tokens page'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def g_click_on_btn_for_oz_access_token(selenium, browser_id, btn,
-                                       ordinal, oz_page):
+def wt_click_on_btn_for_oz_token(selenium, browser_id, btn,
+                                        ordinal, oz_page, popups):
     driver = selenium[browser_id]
-    _click_on_btn_for_token(driver, oz_page, ordinal, btn)
+    _click_on_btn_for_token(driver, oz_page, ordinal, btn, popups)
 
 
-@when(parsers.re(r'user of (?P<browser_id>.*?) clicks on (?P<btn>copy|remove) '
-                 r'button for (?P<ordinal>1st|2nd|3rd|\d*?[4567890]th|\d*?11th|'
-                 r'\d*?12th|\d*?13th|\d*?[^1]1st|\d*?[^1]2nd|\d*?[^1]3rd) '
-                 r'item on tokens list in tokens page'))
-@then(parsers.re(r'user of (?P<browser_id>.*?) clicks on (?P<btn>copy|remove) '
-                 r'button for (?P<ordinal>1st|2nd|3rd|\d*?[4567890]th|\d*?11th|'
-                 r'\d*?12th|\d*?13th|\d*?[^1]1st|\d*?[^1]2nd|\d*?[^1]3rd) '
-                 r'item on tokens list in tokens page'))
-@repeat_failed(timeout=WAIT_BACKEND)
-def wt_click_on_btn_for_oz_access_token(selenium, browser_id, btn,
-                                        ordinal, oz_page):
-    driver = selenium[browser_id]
-    _click_on_btn_for_token(driver, oz_page, ordinal, btn)
-
-
-@given(parsers.parse(r'user of {browser_id} recorded copied access token '
-                     r'for future use'))
-@repeat_failed(timeout=WAIT_BACKEND)
-def g_record_copied_access_token(browser_id, tmp_memory, displays, clipboard):
-    token = clipboard.paste(display=displays[browser_id])
-    tmp_memory[browser_id]['access_token'] = token
-
-
-@when(parsers.re(r'user of (?P<browser_id>.+?) sees that token for '
-                 r'(?P<ordinal>1st|2nd|3rd|\d*?[4567890]th|\d*?11th|'
-                 r'\d*?12th|\d*?13th|\d*?[^1]1st|\d*?[^1]2nd|\d*?[^1]3rd) '
-                 r'item on tokens list in tokens sidebar '
-                 r'has been copied correctly'))
-@then(parsers.re(r'user of (?P<browser_id>.+?) sees that token for '
-                 r'(?P<ordinal>1st|2nd|3rd|\d*?[4567890]th|\d*?11th|'
-                 r'\d*?12th|\d*?13th|\d*?[^1]1st|\d*?[^1]2nd|\d*?[^1]3rd) '
-                 r'item on tokens list in tokens sidebar '
-                 r'has been copied correctly'))
+@wt(parsers.parse('user of {browser_id} sees that token '
+                  'has been copied correctly'))
 def assert_oz_access_token_has_been_copied_correctly(selenium, browser_id,
                                                      ordinal, oz_page,
                                                      displays, clipboard):
     driver = selenium[browser_id]
-    oz_page(driver)['tokens'].elements_list[int(ordinal[:-2]) - 1].click()
     val = oz_page(driver)['tokens'].token
     copied_val = clipboard.paste(display=displays[browser_id])
-    assert val == copied_val, 'Access Token has been copied incorrectly. ' \
-                              'Expected {}, got {}'.format(val, copied_val)
+    assert val == copied_val, (f'Token has been copied incorrectly. '
+                               f'Expected {val}, got {copied_val}')
 
 
-@when(parsers.parse('user of {browser_id} sees exactly {expected_num:d} item(s) '
-                    'on tokens list in tokens sidebar'))
-@then(parsers.parse('user of {browser_id} sees exactly {expected_num:d} item(s) '
-                    'on tokens list in tokens sidebar'))
+@wt(parsers.parse('user of {browser_id} sees exactly {expected_num:d} item(s) '
+                  'on tokens list in tokens sidebar'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_oz_access_tokens_list_has_num_tokens(selenium, browser_id,
                                                 expected_num, oz_page):
     driver = selenium[browser_id]
-    displayed_tokens_num = len(oz_page(driver)['tokens'].elements_list)
+    displayed_tokens_num = len(oz_page(driver)['tokens'].sidebar.tokens)
     assert displayed_tokens_num == expected_num, \
-        ('Displayed number of tokens in ACCESS TOKENS oz panel: {seen} '
-         'instead of excepted: {excepted}'.format(seen=displayed_tokens_num,
-                                                  excepted=expected_num))
+        (f'Displayed number of tokens in TOKENS oz panel: {displayed_tokens_num}'
+         f' instead of excepted: {expected_num}')
 
 
-@when(parsers.parse('user of {browser_id} clicks on "Create new '
-                    'token" button in tokens sidebar'))
-@then(parsers.parse('user of {browser_id} clicks on "Create new '
-                    'token" button in tokens sidebar'))
+@wt(parsers.parse('user of {browser_id} clicks on create new token '
+                  'button in tokens sidebar'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_on_create_new_token_in_oz_access_tokens_panel(selenium, browser_id,
                                                         oz_page):
-    oz_page(selenium[browser_id])['tokens'].create_token()
+    oz_page(selenium[browser_id])['tokens'].sidebar.create_token()
 
 
 @wt(parsers.parse('user of {browser_id} clicks on "Consume token" button '
@@ -109,39 +81,7 @@ def click_on_create_new_token_in_oz_access_tokens_panel(selenium, browser_id,
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_on_consume_token_in_tokens_oz_page(selenium, browser_id,
                                              oz_page):
-    oz_page(selenium[browser_id])['tokens'].consume_token()
-
-
-@given(parsers.parse('user of {browser_id} created and recorded access token '
-                     'for later use with CDMI API'))
-@repeat_failed(timeout=WAIT_BACKEND)
-def create_and_record_access_token_for_cdmi(selenium, browser_id,
-                                            oz_page, tmp_memory,
-                                            displays, clipboard):
-    driver = selenium[browser_id]
-    panel = oz_page(driver)['access tokens']
-    panel.expand()
-
-    with implicit_wait(driver, 0.05, SELENIUM_IMPLICIT_WAIT):
-        if panel.tokens.count() > 0:
-            panel.tokens[0].copy()
-        else:
-            panel.create_new_access_token()
-            now = time.time()
-            time_limit = now + 10
-            while now < time_limit:
-                try:
-                    panel.tokens[0].copy()
-                except (RuntimeError, Exception) as ex:
-                    print(ex)
-                    now = time.time()
-                else:
-                    break
-            else:
-                raise RuntimeError("couldn't create and copy "
-                                   "access token in oz")
-    token = clipboard.paste(display=displays[browser_id])
-    tmp_memory[browser_id]['access_token'] = token
+    oz_page(selenium[browser_id])['tokens'].sidebar.consume_token()
 
 
 @wt(parsers.parse('user of {browser_id} clicks on Join button '
@@ -161,3 +101,56 @@ def select_member_from_dropdown(selenium, browser_id, member_name,
     oz_page(driver)['tokens'].expand_dropdown()
     modals(driver).dropdown.options[member_name].click()
 
+
+@wt(parsers.parse('user of {browser_id} clicks on "Create token" button '
+                  'in "Create new token" view'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def click_create_token_button_in_create_token_page(selenium, browser_id,
+                                                   oz_page):
+    driver = selenium[browser_id]
+    oz_page(driver)['tokens'].create_token_page.create_token()
+
+
+@wt(parsers.parse('user of {browser_id} chooses {token_type} token type in '
+                  '"Create new token" view'))
+def choose_token_type_to_create(selenium, browser_id, oz_page, token_type):
+    driver = selenium[browser_id]
+    option = f'{token_type}_option'
+    getattr(oz_page(driver)['tokens'].create_token_page, option).click()
+
+
+@wt(parsers.re(r'user of (?P<browser_id>.*?) clicks on '
+               r'(?P<ordinal>1st|2nd|3rd|\d*?[4567890]th|\d*?11th|'
+               r'\d*?12th|\d*?13th|\d*?[^1]1st|\d*?[^1]2nd|\d*?[^1]3rd) '
+               r'item on tokens list in tokens sidebar'))
+def click_on_token_in_sidebar_by_ordinal(selenium, browser_id, oz_page,
+                                         ordinal):
+    driver = selenium[browser_id]
+    get_token_by_ordinal(oz_page, ordinal, driver).click()
+
+
+@wt(parsers.parse('user of {browser_id} clicks on copy button in token view'))
+def click_copy_button_in_token_view(selenium, browser_id, oz_page):
+    driver = selenium[browser_id]
+    oz_page(driver)['tokens'].copy_token()
+
+
+@wt(parsers.parse('user of {browser_id} chooses "{invite_type}" invite type'))
+def choose_invite_type_in_oz_token_page(selenium, browser_id, oz_page,
+                                        invite_type):
+    driver = selenium[browser_id]
+    new_token_page = oz_page(driver)['tokens'].create_token_page
+    new_token_page.expand_invite_type_dropdown()
+    new_token_page.invite_types[invite_type].click()
+
+
+#TODO to nie działa
+@wt(parsers.parse(r'user of (?P<browser_id>.*?) sees that '
+                  r'(?P<ordinal>1st|2nd|3rd|\d*?[4567890]th|\d*?11th|'
+                  r'\d*?12th|\d*?13th|\d*?[^1]1st|\d*?[^1]2nd|\d*?[^1]3rd) '
+                  r'token type is (?P<token_type>.*?)'))
+def assert_token_is_type(selenium, browser_id, token_type, oz_page, ordinal):
+    driver = selenium[browser_id]
+    token = get_token_by_ordinal(oz_page, ordinal, driver)
+    assert token.is_type_of(token_type), (f'Token should be type of '
+                                          f'{token_type} but is not')
