@@ -32,7 +32,7 @@ from tests.gui.steps.onepanel.spaces import *
 
 from tests.gui.steps.onezone.logged_in_common import *
 from tests.gui.steps.onezone.user_full_name import *
-from tests.gui.steps.onezone.access_tokens import *
+from tests.gui.steps.onezone.tokens import *
 from tests.gui.steps.onezone.data_space_management import *
 from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.manage_account import *
@@ -72,22 +72,22 @@ def screens():
     return [0]
 
 
-# scenarios('../features/onezone/login_page.feature')
-# scenarios('../features/onezone/providers.feature')
-# scenarios('../features/onezone/providers_multibrowser.feature')
-scenarios('../features/onezone/access_tokens.feature')
-# scenarios('../features/onezone/full_name.feature')
-#
-# scenarios('../features/onezone/groups/groups_creation.feature')
-# scenarios('../features/onezone/groups/groups_basic_operations.feature')
-# scenarios('../features/onezone/groups/groups_join.feature')
-# scenarios('../features/onezone/groups/'
-#           'groups_multiple_users_with_single_group.feature')
-# scenarios('../features/onezone/groups/groups_subgroup.feature')
-# scenarios('../features/onezone/groups/'
-#           'groups_multiple_users_with_multiple_groups.feature')
-# scenarios('../features/onezone/groups/groups_hierarchy.feature')
-# scenarios('../features/onezone/groups/groups_memberships.feature')
-# scenarios('../features/onezone/groups/groups_memberships_multibrowser.feature')
-# scenarios('../features/onezone/groups/groups_memberships_privileges.feature')
+scenarios('../features/onezone/login_page.feature')
+scenarios('../features/onezone/providers.feature')
+scenarios('../features/onezone/providers_multibrowser.feature')
+scenarios('../features/onezone/tokens_basic.feature')
+scenarios('../features/onezone/full_name.feature')
+
+scenarios('../features/onezone/groups/groups_creation.feature')
+scenarios('../features/onezone/groups/groups_basic_operations.feature')
+scenarios('../features/onezone/groups/groups_join.feature')
+scenarios('../features/onezone/groups/'
+          'groups_multiple_users_with_single_group.feature')
+scenarios('../features/onezone/groups/groups_subgroup.feature')
+scenarios('../features/onezone/groups/'
+          'groups_multiple_users_with_multiple_groups.feature')
+scenarios('../features/onezone/groups/groups_hierarchy.feature')
+scenarios('../features/onezone/groups/groups_memberships.feature')
+scenarios('../features/onezone/groups/groups_memberships_multibrowser.feature')
+scenarios('../features/onezone/groups/groups_memberships_privileges.feature')
 

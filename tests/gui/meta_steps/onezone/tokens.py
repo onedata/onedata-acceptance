@@ -10,9 +10,7 @@ __license__ = ("This software is released under the MIT license cited in "
 from pytest_bdd import parsers
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.steps.onezone.access_tokens import (
-    click_on_consume_token_in_tokens_oz_page,
-    click_on_join_button_on_tokens_page, select_member_from_dropdown)
+from tests.gui.steps.onezone.tokens import *
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.utils.bdd_utils import wt
 from tests.utils.utils import repeat_failed
@@ -26,16 +24,16 @@ def _paste_token_into_text_field(selenium, browser_id, oz_page, token):
 @wt(parsers.parse('user of {browser_id} pastes copied token '
                   'into token text field'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def paste_copied_token_into_text_field(selenium, browser_id, oz_page,
-                                       clipboard, displays):
+def paste_copied_token_into_text_field(selenium, browser_id, oz_page, clipboard,
+                                       displays):
     token = clipboard.paste(display=displays[browser_id])
     _paste_token_into_text_field(selenium, browser_id, oz_page, token)
 
 
 @wt(parsers.parse('user of {browser_id} pastes received token '
                   'into token text field'))
-def paste_received_token_into_text_field(selenium, browser_id,
-                                         oz_page, tmp_memory):
+def paste_received_token_into_text_field(selenium, browser_id, oz_page,
+                                         tmp_memory):
     token = tmp_memory[browser_id]['mailbox']['token']
     _paste_token_into_text_field(selenium, browser_id, oz_page, token)
 
@@ -45,24 +43,22 @@ def consume_received_token(selenium, browser_id, oz_page, tmp_memory):
     option = 'Tokens'
 
     click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
-    click_on_consume_token_in_tokens_oz_page(selenium, browser_id,
-                                             oz_page)
-    paste_received_token_into_text_field(selenium, browser_id,
-                                         oz_page, tmp_memory)
+    click_on_consume_token_in_tokens_oz_page(selenium, browser_id, oz_page)
+    paste_received_token_into_text_field(selenium, browser_id, oz_page,
+                                         tmp_memory)
     click_on_join_button_on_tokens_page(selenium, browser_id, oz_page)
 
 
 @wt(parsers.parse('user of {browser_id} joins group using copied token'))
 @wt(parsers.parse('user of {browser_id} joins to harvester in Onezone page'))
-def consume_token_from_copied_token(selenium, browser_id, oz_page,
-                                    clipboard, displays):
+def consume_token_from_copied_token(selenium, browser_id, oz_page, clipboard,
+                                    displays):
     option = 'Tokens'
 
     click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
-    click_on_consume_token_in_tokens_oz_page(selenium, browser_id,
-                                             oz_page)
-    paste_copied_token_into_text_field(selenium, browser_id, oz_page,
-                                       clipboard, displays)
+    click_on_consume_token_in_tokens_oz_page(selenium, browser_id, oz_page)
+    paste_copied_token_into_text_field(selenium, browser_id, oz_page, clipboard,
+                                       displays)
     click_on_join_button_on_tokens_page(selenium, browser_id, oz_page)
 
 
@@ -71,30 +67,53 @@ def consume_token_from_copied_token(selenium, browser_id, oz_page,
 @wt(parsers.parse('user of {browser_id} adds space "{elem_name}" to harvester '
                   'using copied token'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def add_element_with_copied_token(selenium, browser_id, elem_name,
-                                  oz_page, clipboard, displays, modals):
+def add_element_with_copied_token(selenium, browser_id, elem_name, oz_page,
+                                  clipboard, displays, modals):
     option = 'Tokens'
 
     click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
-    click_on_consume_token_in_tokens_oz_page(selenium, browser_id,
-                                             oz_page)
-    paste_copied_token_into_text_field(selenium, browser_id, oz_page,
-                                       clipboard, displays)
-    select_member_from_dropdown(selenium, browser_id, elem_name, modals, oz_page)
+    click_on_consume_token_in_tokens_oz_page(selenium, browser_id, oz_page)
+    paste_copied_token_into_text_field(selenium, browser_id, oz_page, clipboard,
+                                       displays)
+    select_member_from_dropdown(selenium, browser_id, elem_name, modals,
+                                oz_page)
     click_on_join_button_on_tokens_page(selenium, browser_id, oz_page)
 
 
 @wt(parsers.parse('user of {browser_id} adds group "{group}" as subgroup '
                   'using received token'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def add_element_with_received_token(selenium, browser_id, group,
-                                    oz_page, tmp_memory, modals):
+def add_element_with_received_token(selenium, browser_id, group, oz_page,
+                                    tmp_memory, modals):
     option = 'Tokens'
 
     click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
-    click_on_consume_token_in_tokens_oz_page(selenium, browser_id,
-                                             oz_page)
-    paste_received_token_into_text_field(selenium, browser_id,
-                                         oz_page, tmp_memory)
+    click_on_consume_token_in_tokens_oz_page(selenium, browser_id, oz_page)
+    paste_received_token_into_text_field(selenium, browser_id, oz_page,
+                                         tmp_memory)
     select_member_from_dropdown(selenium, browser_id, group, modals, oz_page)
     click_on_join_button_on_tokens_page(selenium, browser_id, oz_page)
+
+
+def _create_token_of_type(selenium, browser_id, token_type, oz_page,
+                          iteration=None):
+    click_on_create_new_token_in_oz_tokens_panel(selenium, browser_id,
+                                                        oz_page)
+    choose_token_type_to_create(selenium, browser_id, oz_page, token_type)
+    if token_type == 'invite':
+        invite_type = 'Register Oneprovider'
+        choose_invite_type_in_oz_token_page(selenium, browser_id, oz_page,
+                                            invite_type)
+    if iteration:
+        append_token_name_in_create_token_page(selenium, browser_id, oz_page,
+                                               str(iteration))
+    click_create_token_button_in_create_token_page(selenium, browser_id,
+                                                   oz_page)
+
+
+@wt(parsers.re('user of (?P<browser_id>.*?) creates (?P<number>\d*?) '
+               '(?P<token_type>.*?) tokens?'))
+def create_number_of_typed_token(selenium, browser_id, number: int, token_type,
+                                 oz_page):
+    for i in range(number):
+        _create_token_of_type(selenium, browser_id, token_type, oz_page, i)

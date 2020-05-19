@@ -28,6 +28,7 @@ class Popups(object):
                                cls=UploadPresenter)
     menu_popup = WebItem('#webuiPopover1', cls=MenuPopup)
     token_row_menu = WebItem('.bottom-right', cls=PopoverMenu)
+    tokens_page_menu = WebItem('.bottom-left.in', cls=PopoverMenu)
 
     def __init__(self, driver):
         self.driver = self.web_elem = driver
