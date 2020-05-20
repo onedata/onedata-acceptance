@@ -539,15 +539,16 @@ def upload_file_to_op(client, selenium, user, path, space, host, hosts,
 @wt(parsers.re('using (?P<client>.*), (?P<user>\w+) sees '
                'that POSIX permission for item named "(?P<item_path>.*)" in '
                '"(?P<space>.*)" is "(?P<mode>.*)" in (?P<host>.*)'))
+@repeat_failed(timeout=WAIT_BACKEND)
 def assert_posix_permissions_in_op(client, user, item_path, space, mode,
-                                   host, selenium, op_container, tmp_memory, modals,
-                                   users, hosts):
+                                   host, selenium, op_container, tmp_memory,
+                                   modals, users, hosts, oz_page):
     full_path = '{}/{}'.format(space, item_path)
     client_lower = client.lower()
     if client_lower == 'web gui':
         assert_posix_permissions_in_op_gui(selenium, user, space, item_path,
-                                           mode, op_container, tmp_memory,
-                                           modals)
+                                           mode, oz_page, op_container,
+                                           tmp_memory, modals)
     elif client_lower == 'rest':
         assert_posix_permissions_in_op_rest(full_path, mode, user, users,
                                             host, hosts)
@@ -564,13 +565,13 @@ def assert_posix_permissions_in_op(client, user, item_path, space, mode,
                '"(?P<item_path>.*)" in "(?P<space>.*)" in (?P<host>.*)'))
 def set_posix_permissions_in_op(client, user, item_path, space, mode, result,
                                 host, selenium, op_container, tmp_memory, modals,
-                                users, hosts):
+                                users, hosts, oz_page):
     full_path = '{}/{}'.format(space, item_path)
     client_lower = client.lower()
     if client_lower == 'web gui':
         set_posix_permissions_in_op_gui(selenium, user, space, item_path,
-                                        mode, result, op_container, tmp_memory,
-                                        modals)
+                                        mode, op_container, tmp_memory,
+                                        modals, oz_page)
     elif client_lower == 'rest':
         set_posix_permissions_in_op_rest(full_path, mode, user, users, host,
                                          hosts, result)

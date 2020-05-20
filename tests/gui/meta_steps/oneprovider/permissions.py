@@ -141,7 +141,6 @@ def read_items_acl(selenium, browser_id, path, tmp_memory, res, space, modals,
 def assert_ace_in_op_gui(selenium, browser_id, priv, type, name, num, space,
                          path, tmp_memory, modals, numerals, oz_page,
                          op_container):
-    selenium[browser_id].refresh()
     open_permission_modal(selenium, browser_id, path, space, tmp_memory, modals,
                           oz_page, op_container, 'acl')
     assert_acl_subject(selenium, browser_id, modals, num, numerals, type, name)

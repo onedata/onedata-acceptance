@@ -23,7 +23,8 @@ from tests.mixed.utils.data import (check_files_tree, create_content,
 from tests.mixed.utils.common import *
 from tests.gui.utils.generic import parse_seq
 from tests.mixed.cdmi_client import ContainerApi, DataObjectApi
-from tests.mixed.oneprovider_client import DeprecatedFileApi
+from tests.mixed.oneprovider_client import BasicFileOperationsApi
+from tests.mixed.oneprovider_client import ResolveFilePathApi
 from tests.mixed.cdmi_client.rest import ApiException as CdmiException
 from tests.mixed.oneprovider_client.rest import ApiException as OPException
 from tests.utils.acceptance_utils import time_attr, compare
@@ -38,8 +39,10 @@ def _read_file(path, user, users, provider, hosts):
 def _list_files(path, user, users, provider, hosts):
     user_client_op = login_to_provider(user, users,
                                        hosts[provider]['hostname'])
-    file_api = DeprecatedFileApi(user_client_op)
-    return [os.path.basename(file.path) for file in file_api.list_files(path)]
+    file_api = BasicFileOperationsApi(user_client_op)
+    resolve_file_path_api = ResolveFilePathApi(user_client_op)
+    file_id = resolve_file_path_api.lookup_file_id(path).file_id
+    return [file.name for file in file_api.list_children(file_id).children]
 
 
 def assert_file_content_in_op_rest(path, text, user, users, provider, hosts):
@@ -65,8 +68,10 @@ def assert_space_content_in_op_rest(user, users, hosts, config, space_name,
 def assert_num_of_files_in_path_in_op_rest(num, path, user, users, host,
                                            hosts):
     user_client_op = login_to_provider(user, users, hosts[host]['hostname'])
-    file_api = DeprecatedFileApi(user_client_op)
-    children = file_api.list_files(path)
+    file_api = BasicFileOperationsApi(user_client_op)
+    resolve_file_path_api = ResolveFilePathApi(user_client_op)
+    file_id = resolve_file_path_api.lookup_file_id(path)
+    children = file_api.list_children(file_id).children
     assert_msg = ('Expected exactly {} items in {} but found '
                   '{} items'.format(num, path, len(children)))
     assert num == len(children), assert_msg
@@ -115,15 +120,18 @@ def remove_file_in_op_rest(user, users, host, hosts, path, result):
 
 def see_items_in_op_rest(user, users, host, hosts, path_list, result, space):
     client = login_to_provider(user, users, hosts[host]['hostname'])
-    file_api = DeprecatedFileApi(client)
+    file_api = BasicFileOperationsApi(client)
+    resolve_file_path_api = ResolveFilePathApi(client)
     for path in parse_seq(path_list):
         path = '{}/{}'.format(space, path)
+        file_id = resolve_file_path_api.lookup_file_id(path)
+
         if result == 'fails':
             with pytest.raises(OPException, 
                                message='There is item {}'.format(path)):
-                file_api.list_files(path)
+                file_api.list_children(file_id)
         else:
-            file_api.list_files(path)
+            file_api.list_children(file_id)
 
 
 def create_directory_structure_in_op_rest(user, users, hosts, host, config, 
@@ -264,8 +272,10 @@ def copy_item_in_op_rest(src_path, dst_path, cdmi, host, hosts, user,
 def assert_posix_permissions_in_op_rest(path, perms, user, users, host, hosts):
     user_client_op = login_to_provider(user, users,
                                        hosts[host]['hostname'])
-    file_api = DeprecatedFileApi(user_client_op)
-    file_attrs = file_api.get_file_attrs(path, attribute='mode')
+    file_api = BasicFileOperationsApi(user_client_op)
+    resolve_file_path_api = ResolveFilePathApi(user_client_op)
+    file_id = resolve_file_path_api.lookup_file_id(path)
+    file_attrs = file_api.get_attrs(file_id, attribute='mode')
 
     try:
         file_perms = int(file_attrs['mode']) % 1000
@@ -281,13 +291,15 @@ def set_posix_permissions_in_op_rest(path, perm, user, users, host, hosts,
                                      result):
     user_client_op = login_to_provider(user, users,
                                        hosts[host]['hostname'])
-    file_api = DeprecatedFileApi(user_client_op)
+    file_api = BasicFileOperationsApi(user_client_op)
+    resolve_file_path_api = ResolveFilePathApi(user_client_op)
+    file_id = resolve_file_path_api.lookup_file_id(path)
 
     if result == 'fails':
         with pytest.raises(ApiException):
-            file_api.set_file_attr(path, attribute={'mode': perm})
+            file_api.set_attr(file_id, attribute={'mode': perm})
     else:
-        file_api.set_file_attr(path, attribute={'mode': perm})
+        file_api.set_attr(file_id, attribute={'mode': perm})
 
 
 def assert_time_relation_in_op_rest(path, time1_name, time2_name, comparator,
