@@ -13,11 +13,13 @@ from functools import partial
 
 import yaml
 
+from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.utils.generic import parse_seq
 from tests.mixed.utils.data import (check_files_tree, create_content,
                                     assert_ace, get_acl_metadata)
 from tests.oneclient.steps import (multi_dir_steps, multi_reg_file_steps,
                                    multi_file_steps)
+from tests.utils.utils import repeat_failed
 
 
 def create_dir_in_op_oneclient(user, full_path, users, result, host):
@@ -120,6 +122,7 @@ def move_item_in_op_oneclient(user, src_path, dst_path, users, result, host):
         multi_file_steps.rename(user, src_path, dst_path, host, users)
 
 
+@repeat_failed(timeout=WAIT_BACKEND)
 def assert_posix_permissions_in_op_oneclient(user, path, perm, host, users):
     multi_file_steps.check_mode(user, path, perm, host, users)
 

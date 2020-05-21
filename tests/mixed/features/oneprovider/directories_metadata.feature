@@ -22,14 +22,13 @@ Feature: Directory metadata tests
                     size: 1000000
     And oneclient mounted in /home/user1/onedata using token by user1
     And opened browser with user1 signed in to "onezone" service
-    And opened oneprovider-1 Oneprovider view in web GUI by user1
-    And directory structure created by user of browser in "space1" space on oneprovider-1 as follows:
+    And directory structure created by user1 in "space1" space on oneprovider-1 as follows:
             - dir1
 
 
   Scenario: User sets metadata
     When using <client1>, user1 sets new <fmt> metadata: <metadata> for "dir1" directory in space "space1" in oneprovider-1
-    Then using <client2>, user1 sees that <fmt> metadata for "dir1" is <metadata> in space "space1" in oneprovider-1
+    Then using <client2>, user1 sees that <fmt> metadata for "dir1" directory is <metadata> in space "space1" in oneprovider-1
 
     Examples:
     | fmt   | metadata  |

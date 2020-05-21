@@ -8,6 +8,10 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 import tests.oneclient.steps.multi_file_steps
+from tests.gui.meta_steps.oneprovider.metadata import (
+    assert_metadata_in_op_gui,
+    set_metadata_in_op_gui, remove_all_metadata_in_op_gui,
+    assert_such_metadata_not_exist_in_op_gui)
 from tests.mixed.steps.oneclient.data_basic import *
 from tests.mixed.steps.rest.oneprovider.data import *
 from tests.gui.meta_steps.oneprovider.data import *
@@ -436,12 +440,14 @@ def assert_directory_structure_in_op(client, selenium, user, op_container, oz_pa
                  '(?P<tab_name>.*) metadata: (?P<val>.*) for "(?P<path>.*?)"'
                  ' (?P<item>file|directory) in space "(?P<space>.*)" in (?P<host>.*)'))
 def set_metadata_in_op(client, selenium, user, tab_name, val, cdmi, op_container, 
-                       space, path, host, hosts, users, tmp_memory, modals, oz_page):
+                       space, path, host, hosts, users, tmp_memory, modals,
+                       oz_page, item):
     full_path = '{}/{}'.format(space, path)
     client_lower = client.lower()
     if client_lower == 'web gui':
+        tab_name = tab_name.upper() if tab_name != 'basic' else tab_name
         set_metadata_in_op_gui(selenium, user, path, tmp_memory, op_container, 's',
-                               space, tab_name, val, modals, oz_page, 'file')
+                               space, tab_name, val, modals, oz_page, item)
     elif client_lower == 'rest':
         set_metadata_in_op_rest(user, users, host, hosts, cdmi, full_path,
                                 tab_name, val)
@@ -463,6 +469,7 @@ def assert_metadata_in_op(client, selenium, user, tab_name, val, cdmi, op_contai
     full_path = '{}/{}'.format(space, path)
     client_lower = client.lower()
     if client_lower == 'web gui':
+        tab_name = tab_name.upper() if tab_name != 'basic' else tab_name
         assert_metadata_in_op_gui(selenium, user, path, tmp_memory, op_container, 
                                   's', space, tab_name, val, modals, oz_page,
                                   item)
@@ -487,7 +494,7 @@ def remove_all_metadata_in_op(client, selenium, user, users, space, op_container
     full_path = '{}/{}'.format(space, path)
     client_lower = client.lower()
     if client_lower == 'web gui':
-        remove_all_metadata_in_op_gui(selenium, user, space, op_container, 
+        remove_all_metadata_in_op_gui(selenium, user, space, op_container,
                                       tmp_memory, path, oz_page, modals, item)
     elif client_lower == 'rest':
         remove_all_metadata_in_op_rest(user, users, host, hosts, cdmi, 
@@ -511,8 +518,11 @@ def assert_no_such_metadata_in_op(client, selenium, user, users, space, op_conta
     full_path = '{}/{}'.format(space, path)
     client_lower = client.lower()
     if client_lower == 'web gui':
-        assert_metadata_in_op_gui(selenium, user, path, tmp_memory, op_container, 
-                                  'fails', space, tab_name, val, modals, oz_page)
+        tab_name = tab_name.upper() if tab_name != 'basic' else tab_name
+        assert_such_metadata_not_exist_in_op_gui(selenium, user, path,
+                                                 tmp_memory, op_container,
+                                                 space, tab_name, val, modals,
+                                                 oz_page, item)
     elif client_lower == 'rest':
         assert_no_such_metadata_in_op_rest(user, users, host, hosts, cdmi, 
                                            full_path, tab_name, val)
