@@ -70,7 +70,7 @@ def assert_num_of_files_in_path_in_op_rest(num, path, user, users, host,
     user_client_op = login_to_provider(user, users, hosts[host]['hostname'])
     file_api = BasicFileOperationsApi(user_client_op)
     resolve_file_path_api = ResolveFilePathApi(user_client_op)
-    file_id = resolve_file_path_api.lookup_file_id(path)
+    file_id = resolve_file_path_api.lookup_file_id(path).file_id
     children = file_api.list_children(file_id).children
     assert_msg = ('Expected exactly {} items in {} but found '
                   '{} items'.format(num, path, len(children)))
@@ -124,13 +124,14 @@ def see_items_in_op_rest(user, users, host, hosts, path_list, result, space):
     resolve_file_path_api = ResolveFilePathApi(client)
     for path in parse_seq(path_list):
         path = '{}/{}'.format(space, path)
-        file_id = resolve_file_path_api.lookup_file_id(path)
 
         if result == 'fails':
             with pytest.raises(OPException, 
                                message='There is item {}'.format(path)):
+                file_id = resolve_file_path_api.lookup_file_id(path).file_id
                 file_api.list_children(file_id)
         else:
+            file_id = resolve_file_path_api.lookup_file_id(path).file_id
             file_api.list_children(file_id)
 
 
@@ -274,7 +275,7 @@ def assert_posix_permissions_in_op_rest(path, perms, user, users, host, hosts):
                                        hosts[host]['hostname'])
     file_api = BasicFileOperationsApi(user_client_op)
     resolve_file_path_api = ResolveFilePathApi(user_client_op)
-    file_id = resolve_file_path_api.lookup_file_id(path)
+    file_id = resolve_file_path_api.lookup_file_id(path).file_id
     file_attrs = file_api.get_attrs(file_id, attribute='mode')
 
     try:
@@ -293,7 +294,7 @@ def set_posix_permissions_in_op_rest(path, perm, user, users, host, hosts,
                                        hosts[host]['hostname'])
     file_api = BasicFileOperationsApi(user_client_op)
     resolve_file_path_api = ResolveFilePathApi(user_client_op)
-    file_id = resolve_file_path_api.lookup_file_id(path)
+    file_id = resolve_file_path_api.lookup_file_id(path).file_id
 
     if result == 'fails':
         with pytest.raises(ApiException):

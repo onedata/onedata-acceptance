@@ -224,8 +224,11 @@ def assert_file_content_in_op_gui(text, path, space, selenium, user, users,
                                   provider, hosts, oz_page, op_container,
                                   tmp_memory, tmpdir, modals):
     try:
+        assert_file_browser_in_data_tab_in_op(selenium, user,
+                                              op_container,
+                                              tmp_memory)
         go_to_path_without_last_elem(user, tmp_memory, path)
-    except KeyError:
+    except (KeyError, NoSuchElementException):
         go_to_filebrowser(selenium, user, oz_page, op_container,
                           tmp_memory, space)
         go_to_path_without_last_elem(user, tmp_memory, path)
