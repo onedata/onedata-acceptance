@@ -204,10 +204,10 @@ def wt_clicks_on_button_in_space_record(selenium, browser_id, onepanel, button):
     getattr(sync_chart, transform(button)).click()
 
 
-@wt(parsers.parse('user of {browser_id} expands "{space}" record on '
+@wt(parsers.parse('user of {browser_id} opens "{space}" record on '
                   'spaces list in Spaces page in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_expand_space_item_in_spaces_page_op_panel(selenium, browser_id, space,
+def wt_open_space_item_in_spaces_page_op_panel(selenium, browser_id, space,
                                                  onepanel):
     onepanel(selenium[browser_id]).content.spaces.spaces[space].click()
 

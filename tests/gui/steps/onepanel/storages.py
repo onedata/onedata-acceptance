@@ -108,9 +108,8 @@ def assert_storage_disappeared_from_list(selenium, browser_id, name, onepanel):
                   'on the storages list'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_storage_on_storage_list(selenium, browser_id, name, onepanel):
-    driver = selenium[browser_id]
-    storages_list = onepanel(driver).content.storages.storages
-    assert name in storages_list, '{} not visible on storages list'.format(name)
+    assert is_storage_on_storage_list(selenium, browser_id, name, onepanel), (
+        f'{name} not visible on storages list')
 
 
 def is_storage_on_storage_list(selenium, browser_id, name, onepanel):
