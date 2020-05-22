@@ -8,6 +8,7 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 from pytest_bdd import parsers
+import yaml
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.onezone.tokens import *
@@ -117,3 +118,48 @@ def create_number_of_typed_token(selenium, browser_id, number: int, token_type,
                                  oz_page):
     for i in range(number):
         _create_token_of_type(selenium, browser_id, token_type, oz_page, i)
+
+
+@wt(parsers.parse('user of {browser_id} creates invite token with following '
+                  'configuration:\n{config}'))
+def create_invite_token_with_config(selenium, browser_id, config, oz_page,
+                                    popups, users):
+    token_type = 'invite'
+
+    click_on_create_new_token_in_oz_tokens_panel(selenium, browser_id, oz_page)
+    choose_token_type_to_create(selenium, browser_id, oz_page, token_type)
+
+    data = yaml.load(config)
+    invite_type = data['invite type']
+    invite_target = data['invite target']
+    usage_limit = data['usage limit']
+    caveats = data['caveats']
+
+    choose_invite_type_in_oz_token_page(selenium, browser_id, oz_page,
+                                        invite_type)
+    choose_invite_select(selenium, browser_id, oz_page, invite_target)
+    select_token_usage_limit(selenium, browser_id, usage_limit, oz_page)
+    _set_tokens_caveats(selenium, browser_id, oz_page, caveats, popups, users)
+
+
+def _set_tokens_caveats(selenium, browser_id, oz_page, caveats, popups, users):
+    expand_caveats(selenium, browser_id, oz_page)
+    consumer_caveats = caveats.get('consumer', False)
+    if consumer_caveats:
+        _set_consumer_caveats(selenium, browser_id, popups, consumer_caveats,
+                              oz_page, users)
+
+
+def _set_consumer_caveats(selenium, browser_id, popups, consumer_caveats,
+                          oz_page, users):
+    caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'consumer')
+    caveat.activate()
+    for consumer in consumer_caveats:
+        consumer_type = consumer.get('type')
+        method = consumer.get('by')
+        value = consumer.get('value')
+        if method == 'id':
+            value = users[value].id
+        caveat.new_item()
+        set_consumer_in_consumer_caveat(selenium, browser_id, popups,
+                                        consumer_type, method, value)

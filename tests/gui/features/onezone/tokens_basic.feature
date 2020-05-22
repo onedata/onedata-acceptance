@@ -1,4 +1,4 @@
-Feature: Management of access tokens in Onezone GUI
+Feature: Management of tokens basic features in Onezone GUI
 
 
   Background:

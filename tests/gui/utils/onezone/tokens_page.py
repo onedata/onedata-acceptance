@@ -48,8 +48,26 @@ class TokensSidebar(PageObject):
         return 'Tokens sidebar'
 
 
-class InviteType(PageObject):
+class UsageLimitBar(PageObject):
+    infinity_option = WebElement('.option-infinity .one-way-radio-control')
+    number_option = WebElement('.option-number')
+    number_input = Input('form-control')
+
+
+class TypeItem(PageObject):
     name = id = Label('.text')
+
+
+class CaveatField(PageObject):
+    name = id = Label('.control-label')
+    toggle = Toggle('.one-way-toggle-control')
+    new_item = Button('.oneicon-plus')
+
+    def activate(self):
+        self.toggle.check()
+
+    def deactivate(self):
+        self.toggle.uncheck()
 
 
 class CreateNewTokenPage(PageObject):
@@ -60,14 +78,38 @@ class CreateNewTokenPage(PageObject):
 
     token_name_input = WebItem('.name-field .field-component', cls=InputBox)
 
-    invite_types = WebItemsSequence('.ember-power-select-option', cls=InviteType)
+    invite_types = WebItemsSequence('.ember-power-select-option', cls=TypeItem)
     invite_type = WebElement('.inviteType-field .dropdown-field-trigger')
+    invite_targets = WebItemsSequence('.ember-power-select-options.ember-view',
+                                      cls=TypeItem)
+    invite_target = WebElement('.target-field .dropdown-field-trigger')
+    usage_limit = WebItem('.usageLimit-collapse', cls=UsageLimitBar)
+
+    caveats_expand = WebElement('.caveats-expand')
+    consumer_caveat = WebItem('.consumerCaveat-field', cls=CaveatField)
+
+    footer = WebElement('.footer-buttons')
 
     def __str__(self):
         return 'Create new token page'
 
     def expand_invite_type_dropdown(self):
         self.invite_type.click()
+
+    def expand_invite_target_dropdown(self):
+        self.invite_target.click()
+
+    def expand_caveats(self):
+        self.caveats_expand.click()
+
+    def scroll_to_bottom(self):
+        self.driver.execute_script('arguments[0].scrollTo(arguments[1]);',
+                                   self.web_elem, self.footer)
+
+    def get_caveat(self, name):
+        self.scroll_to_bottom()
+        return getattr(self, f'{name}_caveat')
+
 
 
 class TokensPage(GenericPage):

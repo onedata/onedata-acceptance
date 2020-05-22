@@ -49,7 +49,7 @@ def wt_click_on_btn_for_oz_token(selenium, browser_id, btn, ordinal, oz_page,
 @wt(parsers.parse('user of {browser_id} sees that token '
                   'has been copied correctly'))
 def assert_oz_access_token_has_been_copied_correctly(selenium, browser_id,
-                                                     ordinal, oz_page, displays,
+                                                     oz_page, displays,
                                                      clipboard):
     driver = selenium[browser_id]
     val = oz_page(driver)['tokens'].token
@@ -62,7 +62,7 @@ def assert_oz_access_token_has_been_copied_correctly(selenium, browser_id,
                   'on tokens list in tokens sidebar'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_oz_tokens_list_has_num_tokens(selenium, browser_id,
-                                                expected_num, oz_page):
+                                         expected_num, oz_page):
     driver = selenium[browser_id]
     displayed_tokens_num = len(oz_page(driver)['tokens'].sidebar.tokens)
     assert displayed_tokens_num == expected_num, (
@@ -74,7 +74,7 @@ def assert_oz_tokens_list_has_num_tokens(selenium, browser_id,
                   'button in tokens sidebar'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_on_create_new_token_in_oz_tokens_panel(selenium, browser_id,
-                                                        oz_page):
+                                                 oz_page):
     oz_page(selenium[browser_id])['tokens'].sidebar.create_token()
 
 
@@ -146,6 +146,23 @@ def choose_invite_type_in_oz_token_page(selenium, browser_id, oz_page,
     new_token_page = oz_page(driver)['tokens'].create_token_page
     new_token_page.expand_invite_type_dropdown()
     new_token_page.invite_types[invite_type].click()
+
+
+def choose_invite_select(selenium, browser_id, oz_page, target):
+    driver = selenium[browser_id]
+    new_token_page = oz_page(driver)['tokens'].create_token_page
+    new_token_page.expand_invite_target_dropdown()
+    new_token_page.invite_types[target].click()
+
+
+def select_token_usage_limit(selenium, browser_id, limit, oz_page):
+    driver = selenium[browser_id]
+    limits = oz_page(driver)['tokens'].create_token_page.usage_limit
+    if limit == 'infinity':
+        limits.infinity_option.click()
+    else:
+        limits.number_option.click()
+        limits.number_input = limit
 
 
 @wt(parsers.re(r'user of (?P<browser_id>.*?) sees that '
@@ -278,3 +295,29 @@ def assert_token_name_not_includes(selenium, browser_id, ordinal, text, oz_page)
     driver = selenium[browser_id]
     token = get_token_by_ordinal(oz_page, ordinal, driver)
     assert text not in token.name, f'Token name includes {text}'
+
+
+def expand_caveats(selenium, browser_id, oz_page):
+    driver = selenium[browser_id]
+    oz_page(driver)['tokens'].create_token_page.expand_caveats()
+
+
+def get_caveat_by_name(selenium, browser_id, oz_page, caveat_name):
+    driver = selenium[browser_id]
+    new_token_page = oz_page(driver)['tokens'].create_token_page
+    return new_token_page.get_caveat(caveat_name)
+
+
+def set_consumer_in_consumer_caveat(selenium, browser_id, popups, consumer_type,
+                                    method, value):
+    driver = selenium[browser_id]
+    popup = popups(driver).consumer_caveat_popup
+    popup.expand_consumer_types()
+    popup.consumer_types[consumer_type.capitalize()]()
+    if method == 'name':
+        popup.list_option()
+        popup.consumers[value]()
+    else:
+        popup.id_option()
+        popup.input = value
+        popup.add_button()
