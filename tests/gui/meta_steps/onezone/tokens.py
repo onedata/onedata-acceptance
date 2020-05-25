@@ -41,9 +41,10 @@ def paste_received_token_into_text_field(selenium, browser_id, oz_page,
 @wt(parsers.re('user of (?P<browser_id>.*) joins group using received token'))
 def consume_received_token(selenium, browser_id, oz_page, tmp_memory):
     option = 'Tokens'
+    button = 'Consume token'
 
     click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
-    click_on_consume_token_in_tokens_oz_page(selenium, browser_id, oz_page)
+    click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button)
     paste_received_token_into_text_field(selenium, browser_id, oz_page,
                                          tmp_memory)
     click_on_join_button_on_tokens_page(selenium, browser_id, oz_page)
@@ -54,9 +55,10 @@ def consume_received_token(selenium, browser_id, oz_page, tmp_memory):
 def consume_token_from_copied_token(selenium, browser_id, oz_page, clipboard,
                                     displays):
     option = 'Tokens'
+    button = 'Consume token'
 
     click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
-    click_on_consume_token_in_tokens_oz_page(selenium, browser_id, oz_page)
+    click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button)
     paste_copied_token_into_text_field(selenium, browser_id, oz_page, clipboard,
                                        displays)
     click_on_join_button_on_tokens_page(selenium, browser_id, oz_page)
@@ -70,9 +72,10 @@ def consume_token_from_copied_token(selenium, browser_id, oz_page, clipboard,
 def add_element_with_copied_token(selenium, browser_id, elem_name, oz_page,
                                   clipboard, displays, modals):
     option = 'Tokens'
+    button = 'Consume token'
 
     click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
-    click_on_consume_token_in_tokens_oz_page(selenium, browser_id, oz_page)
+    click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button)
     paste_copied_token_into_text_field(selenium, browser_id, oz_page, clipboard,
                                        displays)
     select_member_from_dropdown(selenium, browser_id, elem_name, modals,
@@ -86,9 +89,10 @@ def add_element_with_copied_token(selenium, browser_id, elem_name, oz_page,
 def add_element_with_received_token(selenium, browser_id, group, oz_page,
                                     tmp_memory, modals):
     option = 'Tokens'
+    button = 'Consume token'
 
     click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
-    click_on_consume_token_in_tokens_oz_page(selenium, browser_id, oz_page)
+    click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button)
     paste_received_token_into_text_field(selenium, browser_id, oz_page,
                                          tmp_memory)
     select_member_from_dropdown(selenium, browser_id, group, modals, oz_page)
@@ -97,16 +101,18 @@ def add_element_with_received_token(selenium, browser_id, group, oz_page,
 
 def _create_token_of_type(selenium, browser_id, token_type, oz_page,
                           iteration=None):
-    click_on_create_new_token_in_oz_tokens_panel(selenium, browser_id,
-                                                        oz_page)
+    button = 'Create new token'
+    token_name = f'{token_type}_token'
+    if iteration:
+        token_name = token_name + str(iteration)
+
+    click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button)
+    type_new_token_name(selenium, browser_id, oz_page, token_name)
     choose_token_type_to_create(selenium, browser_id, oz_page, token_type)
     if token_type == 'invite':
         invite_type = 'Register Oneprovider'
         choose_invite_type_in_oz_token_page(selenium, browser_id, oz_page,
                                             invite_type)
-    if iteration:
-        append_token_name_in_create_token_page(selenium, browser_id, oz_page,
-                                               str(iteration))
     click_create_token_button_in_create_token_page(selenium, browser_id,
                                                    oz_page)
 
