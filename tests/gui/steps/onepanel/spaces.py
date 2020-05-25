@@ -321,20 +321,26 @@ def wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, browser_id,
         raise RuntimeError('no space toolbar found in Onepanel')
 
 
-@when(parsers.re(r'user of (?P<browser_id>.*?) clicks on '
-                 r'(?P<button>Yes, revoke|No, keep the support) '
-                 r'button in REVOKE SPACE SUPPORT modal in Onepanel'))
-@then(parsers.re(r'user of (?P<browser_id>.*?) clicks on '
-                 r'(?P<button>Yes, revoke|No, keep the support) '
-                 r'button in REVOKE SPACE SUPPORT modal in Onepanel'))
+@wt(parsers.re(r'user of (?P<browser_id>.*?) clicks on '
+               r'(?P<button>Cease support|Cancel) button '
+               r'in cease oneprovider support for space modal in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_clicks_on_btn_in_revoke_space_support(selenium, browser_id,
-                                             button, modals):
-    modal = modals(selenium[browser_id]).revoke_space_support
-    if button == 'Yes, revoke':
-        modal.yes()
+def wt_clicks_on_btn_in_cease_support_modal(selenium, browser_id,
+                                            button, modals):
+    modal = modals(selenium[browser_id]).cease_support_for_space
+    if button == 'Cease support':
+        modal.cease_support()
     else:
-        modal.no()
+        modal.cancel()
+
+
+@wt(parsers.parse('user of {browser_id} checks the understand notice '
+                  'in cease oneprovider support for space modal in Onepanel'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def wt_clicks_on_understand_risk_in_cease_support_modal(selenium, browser_id,
+                                                        modals):
+    (modals(selenium[browser_id]).cease_support_for_space
+     .understand_risk_checkbox())
 
 
 @when(parsers.parse('user of {browser_id} clicks on '
