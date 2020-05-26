@@ -17,9 +17,6 @@ class TokenRow(PageObject):
     id = name = Label('.item-name')
     menu_button = Button('.token-menu-trigger')
     icon = WebElement('.one-icon')
-    name_input = Input('.form-control')
-    confirm = Button('.save-icon')
-    discard = Button('.cancel-icon')
 
     def is_type_of(self, exp_type):
         return exp_type in self.icon.get_attribute('class')
@@ -39,10 +36,14 @@ class TokenFilter(PageObject):
 
 
 class TokensSidebar(PageObject):
-    create_token = Button('.one-sidebar-toolbar-button .oneicon-add-filled')
+    create_new_token = Button('.one-sidebar-toolbar-button .oneicon-add-filled')
     tokens = WebItemsSequence('.token-item', cls=TokenRow)
     consume_token = Button('.oneicon-consume-token')
     filter = WebItem('.filter-control', cls=TokenFilter)
+
+    name_input = Input('.one-list-wrapper .form-control')
+    confirm = Button('.save-icon')
+    discard = Button('.cancel-icon')
 
     def __str__(self):
         return 'Tokens sidebar'
