@@ -34,32 +34,32 @@ Feature: Directories times tests
   | REST       | oneclient1 |
 
 
-#  Scenario Outline: User changes directory using <client2> and using <client1> he sees that modification time has changed
-#    When using <client1>, user1 succeeds to create directory named "dir1" in "space1" in oneprovider-1
-#
-#    # call sleep, to be sure that time of above and below operations is different
-#    And user1 waits 2 second
-#    And using <client2>, user1 succeeds to create directory named "dir1/dir2" in "space1" in oneprovider-1
-#    Then using <client1>, user1 sees that modification time of item named "dir1" in "space1" space is greater than access time in oneprovider-1
-#    And using <client1>, user1 sees that modification time of item named "dir1" in "space1" space is equal to status-change time in oneprovider-1
-#
-#  Examples:
-#  | client1    | client2    |
-#  | oneclient1 | REST       |
-#  | oneclient1 | web GUI    |
-#  | REST	   | web GUI	|
-#  | REST       | oneclient1 |
-#
-#
-#  Scenario Outline: User changes directory using <client1> and using <client2> sees that modification time has changed
-#    When using <client1>, user1 succeeds to create directory named "dir1" in "space1" in oneprovider-1
-#
-#    # call sleep, to be sure that time of above and below operations is different
-#    And user1 waits 80 second
-#    And using <client2>, user1 succeeds to create directory named "dir1/dir2" in "space1" in oneprovider-1
-#    Then using <client1>, user1 sees that modification time of item named "dir1" in "space1" space is not earlier than 70 seconds ago in oneprovider-1
-#
-#  Examples:
-#  | client1   | client2    |
-#  | web GUI   | REST       |
-#  | web GUI   | oneclient1 |
+  Scenario Outline: User changes directory using <client2> and using <client1> he sees that modification time has changed
+    When using <client1>, user1 succeeds to create directory named "dir1" in "space1" in oneprovider-1
+
+    # call sleep, to be sure that time of above and below operations is different
+    And user1 waits 2 second
+    And using <client2>, user1 succeeds to create directory named "dir1/dir2" in "space1" in oneprovider-1
+    Then using <client1>, user1 sees that modification time of item named "dir1" in "space1" space is greater than access time in oneprovider-1
+    And using <client1>, user1 sees that modification time of item named "dir1" in "space1" space is equal to status-change time in oneprovider-1
+
+  Examples:
+  | client1    | client2    |
+  | oneclient1 | REST       |
+  | oneclient1 | web GUI    |
+  | REST	   | web GUI	|
+  | REST       | oneclient1 |
+
+
+  Scenario Outline: User changes directory using <client1> and using <client2> sees that modification time has changed
+    When using <client1>, user1 succeeds to create directory named "dir1" in "space1" in oneprovider-1
+
+    # call sleep, to be sure that time of above and below operations is different
+    And user1 waits 80 second
+    And using <client2>, user1 succeeds to create directory named "dir1/dir2" in "space1" in oneprovider-1
+    Then using <client1>, user1 sees that modification time of item named "dir1" in "space1" space is not earlier than 70 seconds ago in oneprovider-1
+
+  Examples:
+  | client1   | client2    |
+  | web GUI   | REST       |
+  | web GUI   | oneclient1 |

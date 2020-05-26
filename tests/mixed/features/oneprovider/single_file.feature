@@ -25,7 +25,8 @@ Feature: Tests for basic operations on single file in Oneprovider
 
 
   Scenario Outline: User creates file using <client1> and using <client2> sees that it has appeared
-    When using <client1>, user1 succeeds to create file named "file1" in "space1" in oneprovider-1
+    When using <client1>, user1 fails to see item named "file1" in "space1" in oneprovider-1
+    And using <client3>, user1 succeeds to create file named "file1" in "space1" in oneprovider-1
     Then using <client2>, user1 succeeds to see item named "file1" in "space1" in oneprovider-1
 
 
