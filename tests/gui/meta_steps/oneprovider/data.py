@@ -351,6 +351,8 @@ def get_item_name_and_containing_dir_path(path):
     return item_name, path_list
 
 
+@wt(parsers.parse('user of {browser_id} opens file browser for "{space}" '
+                  'space'))
 def go_to_filebrowser(selenium, browser_id, oz_page, op_container,
                       tmp_memory, space):
     option_in_menu = 'spaces'

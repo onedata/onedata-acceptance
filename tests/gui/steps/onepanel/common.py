@@ -7,7 +7,6 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-
 from pytest_bdd import parsers, given
 
 from tests.utils.acceptance_utils import *
@@ -23,23 +22,20 @@ from tests.utils.utils import repeat_failed
                  'button in (?P<content>welcome|spaces|account management|'
                  'storages|provider) page in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_on_btn_in_content(selenium, browser_id_list,
-                               btn, content, onepanel):
+def wt_click_on_btn_in_content(selenium, browser_id_list, btn, content,
+                               onepanel):
     for browser_id in parse_seq(browser_id_list):
         content = getattr(onepanel(selenium[browser_id]).content,
                           transform(content))
         getattr(content, transform(btn)).click()
 
 
-@when(parsers.re('users? of (?P<browser_id_list>.+?) clicks? on '
-                 '(?P<sub_item>.+?) item in submenu of "(?P<record>.+?)" '
-                 'item in (?P<sidebar>CLUSTERS) sidebar in Onepanel'))
-@then(parsers.re('users? of (?P<browser_id_list>.+?) clicks? on '
-                 '(?P<sub_item>.+?) item in submenu of "(?P<record>.+?)" '
-                 'item in (?P<sidebar>CLUSTERS) sidebar in Onepanel'))
+@wt(parsers.re('users? of (?P<browser_id_list>.+?) clicks? on '
+               '(?P<sub_item>.+?) item in submenu of "(?P<record>.+?)" '
+               'item in (?P<sidebar>CLUSTERS) sidebar in Onepanel'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def wt_click_on_subitem_for_item(selenium, browser_id_list, sidebar,
-                                 sub_item, record, onepanel, hosts):
+def wt_click_on_subitem_for_item(selenium, browser_id_list, sidebar, sub_item,
+                                 record, onepanel, hosts):
     record = hosts[record]['name']
     for browser_id in parse_seq(browser_id_list):
         nav = getattr(onepanel(selenium[browser_id]).sidebar,
@@ -52,10 +48,10 @@ def wt_click_on_subitem_for_item(selenium, browser_id_list, sidebar,
 @given(parsers.re('users? of (?P<browser_id_list>.+?) clicks? on '
                   '(?P<sub_item>.+?) item in submenu of "(?P<record>.+?)" '
                   'item in (?P<sidebar>CLUSTERS) sidebar in Onepanel'))
-def g_click_on_subitem_for_item(selenium, browser_id_list, sidebar,
-                                sub_item, record, onepanel, hosts):
-    wt_click_on_subitem_for_item(selenium, browser_id_list, sidebar,
-                                 sub_item, record, onepanel, hosts)
+def g_click_on_subitem_for_item(selenium, browser_id_list, sidebar, sub_item,
+                                record, onepanel, hosts):
+    wt_click_on_subitem_for_item(selenium, browser_id_list, sidebar, sub_item,
+                                 record, onepanel, hosts)
 
 
 @wt(parsers.re('users? of (?P<browser_id_list>.+?) clicks? on '
@@ -78,8 +74,8 @@ def wt_click_on_subitem_for_item_with_name(selenium, browser_id_list, sidebar,
                  '"(?P<record>.+?)" item in (?P<sidebar>CLUSTERS) '
                  'sidebar in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_on_sidebar_item(selenium, browser_id_list, sidebar,
-                             record, onepanel):
+def wt_click_on_sidebar_item(selenium, browser_id_list, sidebar, record,
+                             onepanel):
     for browser_id in parse_seq(browser_id_list):
         nav = getattr(onepanel(selenium[browser_id]).sidebar,
                       transform(sidebar))
@@ -105,4 +101,3 @@ def click_open_in_onezone_in_modal(selenium, browser_id, modals):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_open_in_onezone(selenium, browser_id, login_page):
     login_page(selenium[browser_id]).open_in_onezone()
-

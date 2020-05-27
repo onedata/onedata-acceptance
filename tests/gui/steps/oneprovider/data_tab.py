@@ -27,19 +27,6 @@ def check_file_browser_to_load(selenium, browser_id, tmp_memory, op_container,
     tmp_memory[browser_id][transform(browser)] = items_browser
 
 
-@when(parsers.parse('user of {browser_id} uses spaces select to change '
-                    'data space to "{space_name}"'))
-@then(parsers.parse('user of {browser_id} uses spaces select to change '
-                    'data space to "{space_name}"'))
-@repeat_failed(timeout=WAIT_BACKEND)
-def change_space_view_in_data_tab_in_op(selenium, browser_id, space_name,
-                                        op_container):
-    driver = selenium[browser_id]
-    selector = op_container(driver).data.sidebar.space_selector
-    selector.expand()
-    selector.spaces[space_name].click()
-
-
 @wt(parsers.re('user of (?P<browser_id>.*?) sees "(?P<space_name>.*?)" '
                '(?P<option>is|is not) in spaces list on Oneprovider page'))
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -450,6 +437,7 @@ def has_downloaded_file_content(browser_id, file_name, content, tmpdir):
     if downloaded_file.isfile():
         with downloaded_file.open() as f:
             file_content = ''.join(f.readlines())
+            file_content = file_content.strip()
             assert content == file_content, ('expected {} as {} content, '
                                              'instead got {}'.format(content,
                                                                      file_name,

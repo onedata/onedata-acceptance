@@ -8,8 +8,6 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 
-import yaml
-
 from tests.gui.steps.onepanel.common import *
 from tests.gui.steps.common.notifies import *
 from tests.gui.steps.onepanel.spaces import *
@@ -48,9 +46,7 @@ def support_space_in_op_panel_using_gui(selenium, user, config, onepanel,
         selenium, user, str(options['size']), input_box, onepanel)
     wt_select_unit_in_space_support_add_form(selenium, user, unit,
                                              onepanel)
-    if options.get('mount in root', False):
-        wt_enable_option_box_in_space_support_form(selenium, user,
-                                                   'Mount in root', onepanel)
+
     if options.get('storage import', False):
         storage_import_options = options.get('storage import', None)
         wt_enable_option_box_in_space_support_form(
@@ -68,12 +64,53 @@ def support_space_in_op_panel_using_gui(selenium, user, config, onepanel,
             wt_select_strategy_in_conf_in_support_space_form(
                 selenium, user, storage_update_options['strategy'],
                 sync_type_update, onepanel)
+            if 'max depth' in storage_update_options:
+                wt_type_text_to_input_box_in_conf_in_space_support_form(
+                    selenium, user, str(storage_update_options['max depth']),
+                    'Max depth', sync_type_update, onepanel)
+            if 'scan interval [s]' in storage_update_options:
+                wt_type_text_to_input_box_in_conf_in_space_support_form(
+                    selenium, user, str(storage_update_options['scan interval [s]']),
+                    'Scan interval', sync_type_update, onepanel)
 
     wt_click_on_btn_in_space_support_add_form(selenium, user, onepanel)
     notify_visible_with_text(selenium, user, notify_type,
                              notify_text_regexp)
     wt_assert_existence_of_space_support_record(selenium, user, space_name,
                                                 onepanel)
+
+
+@wt(parsers.parse('user of {browser_id} sets update configuration in '
+                  'Storage synchronization tab as following:\n{config}'))
+def set_update_configuration_in_storage_sync(selenium, browser_id, config,
+                                             onepanel):
+    sync_type_update = 'UPDATE'
+    options = yaml.load(config)
+
+    if options.get('storage update', False):
+        storage_update_options = options.get('storage update', None)
+        wt_select_strategy_in_conf_in_space_record(selenium, browser_id,
+            storage_update_options['strategy'], sync_type_update, onepanel)
+        if 'max depth' in storage_update_options:
+            wt_type_text_to_input_box_in_conf_in_space_record(selenium,
+                browser_id, str(storage_update_options['max depth']),
+                'Max depth', sync_type_update, onepanel)
+        if 'scan interval [s]' in storage_update_options:
+            wt_type_text_to_input_box_in_conf_in_space_record(selenium,
+                browser_id, str(storage_update_options['scan interval [s]']),
+                'Scan interval', sync_type_update, onepanel)
+        if storage_update_options.get('delete enabled', False):
+            wt_enable_option_box_in_conf_in_space_record(selenium, browser_id,
+                'delete enabled', onepanel)
+        if storage_update_options.get('write once', False):
+            wt_enable_option_box_in_conf_in_space_record(selenium, browser_id,
+                'write once', onepanel)
+
+    button = 'Save configuration'
+    notify_type = 'info'
+    text_regexp = '.*[Cc]onfiguration.*space.*support.*changed.*'
+    wt_clicks_on_button_in_space_record(selenium, browser_id, onepanel, button)
+    notify_visible_with_text(selenium, browser_id, notify_type, text_regexp)
 
 
 @wt(parsers.parse('user of {user} revokes "{space_name}" space support '
@@ -143,7 +180,7 @@ def configure_sync_parameters_for_space_in_op_panel_gui(selenium, user, space,
 
 
 def copy_id_of_space_gui(selenium, user, space_name, onepanel, tmp_memory):
-    wt_expand_space_item_in_spaces_page_op_panel(selenium, user, space_name,
+    wt_open_space_item_in_spaces_page_op_panel(selenium, user, space_name,
                                                  onepanel)
     wt_copy_space_id_in_spaces_page_in_onepanel(selenium, user, space_name,
                                                 onepanel, tmp_memory)
@@ -156,7 +193,7 @@ def assert_proper_space_configuration_in_op_panel_gui(selenium, user, space,
     sub_item = 'Spaces'
     wt_click_on_subitem_for_item(selenium, user, sidebar, sub_item,
                                  provider_name, onepanel, hosts)
-    wt_expand_space_item_in_spaces_page_op_panel(selenium, user, space,
+    wt_open_space_item_in_spaces_page_op_panel(selenium, user, space,
                                                  onepanel)
     wt_assert_proper_space_configuration_in_panel(selenium, user, sync_type,
                                                   space, conf, onepanel)

@@ -64,6 +64,9 @@ from tests.gui.meta_steps.onezone.groups import *
 from tests.gui.meta_steps.onezone.spaces import *
 from tests.gui.meta_steps.onepanel.account_management import *
 from tests.gui.meta_steps.onepanel.storages import *
+from tests.gui.meta_steps.oneprovider.common import *
+from tests.gui.meta_steps.oneprovider.data import *
+
 
 from tests.mixed.steps.onepanel_basic import *
 from tests.mixed.steps.space_basic import *

@@ -19,6 +19,7 @@ from tests.gui.utils.core.web_elements import (WebItemsSequence, Label,
 
 class POSIX(PageObject):
     storage_name = Input('input.field-generic-name')
+    imported_storage = Toggle('.toggle-field-generic-importedStorage')
     mount_point = Input('input.field-posix-mountPoint')
     timeout = Input('input.field-posix-timeout')
     read_only = Toggle('.toggle-field-posix-readonly')
