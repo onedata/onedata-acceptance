@@ -54,10 +54,8 @@ def g_click_on_the_given_main_menu_tab(selenium, browser_id_list,
         _click_on_tab_in_main_menu_sidebar(driver, main_menu_tab)
 
 
-@when(parsers.re('users? of (?P<browser_id_list>.*) clicks on the '
-                 '"(?P<main_menu_tab>.*)" tab in main menu sidebar'))
-@then(parsers.re('users? of (?P<browser_id_list>.*) clicks on the '
-                 '"(?P<main_menu_tab>.*)" tab in main menu sidebar'))
+@wt(parsers.re('users? of (?P<browser_id_list>.*) clicks on the '
+               '"(?P<main_menu_tab>.*)" tab in main menu sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_the_given_main_menu_tab(selenium, browser_id_list,
                                         main_menu_tab):

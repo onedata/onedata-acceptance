@@ -51,8 +51,7 @@ class SpaceSupportAddForm(PageObject):
     size = Input('input.field-main-size')
     units = WebItemsSequence('.field-main-sizeUnit label.clickable',
                              cls=ButtonWithTextPageObject)
-    mount_in_root = Toggle('.toggle-field-main-mountInRoot')
-    import_storage_data = Toggle('.toggle-field-main-_importEnabled')
+    import_storage_data = Toggle('.toggle-field-main-importEnabled')
 
     import_configuration = WebItem('.import-configuration-section',
                                    cls=ImportConfigurationForm)
@@ -60,6 +59,15 @@ class SpaceSupportAddForm(PageObject):
                                    cls=UpdateConfigurationForm)
 
     support_space = Button('button.ready')
+
+    def is_import_uncheckable(self):
+        if 'checked' in self.import_storage_data.web_elem.get_attribute('class'):
+            return False
+        try:
+            self.import_storage_data.check()
+            return False
+        except RuntimeError:
+            return True
 
 
 class SpaceInfo(PageObject):
