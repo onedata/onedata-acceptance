@@ -38,8 +38,9 @@ Feature: Basic management of providers in Onezone GUI
     And user of browser2 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser2 expands toolbar for "space2" space record in Spaces page in Onepanel
     And user of browser2 clicks on Revoke space support option in space's toolbar in Onepanel
-    And user of browser2 clicks on Yes, revoke button in REVOKE SPACE SUPPORT modal in Onepanel
-    And user of browser2 sees an info notify with text matching to: .*[Ss]upport.*revoked.*
+    And user of browser2 checks the understand notice in cease oneprovider support for space modal in Onepanel
+    And user of browser2 clicks on Cease support button in cease oneprovider support for space modal in Onepanel
+    And user of browser2 sees an info notify with text matching to: Ceased.*[Ss]upport.*
 
     # confirm results
     And user of browser1 is idle for 8 seconds
