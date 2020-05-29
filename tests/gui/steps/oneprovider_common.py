@@ -55,7 +55,7 @@ def g_click_on_the_given_main_menu_tab(selenium, browser_id_list,
 
 
 @wt(parsers.re('users? of (?P<browser_id_list>.*) clicks on the '
-                 '"(?P<main_menu_tab>.*)" tab in main menu sidebar'))
+               '"(?P<main_menu_tab>.*)" tab in main menu sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_the_given_main_menu_tab(selenium, browser_id_list,
                                         main_menu_tab):

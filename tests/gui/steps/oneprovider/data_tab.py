@@ -27,15 +27,6 @@ def _check_file_browser_to_load(selenium, browser_id, tmp_memory, op_container,
     tmp_memory[browser_id][transform(browser)] = items_browser
 
 
-@wt(parsers.parse('user of {browser_id} uses spaces select to change '
-                  'data space to "{space_name}"'))
-@repeat_failed(timeout=WAIT_BACKEND)
-def change_space_view_in_data_tab_in_op(selenium, browser_id, space_name,
-                                        oz_page):
-    driver = selenium[browser_id]
-    oz_page(driver)['data'].spaces_header_list[space_name].click()
-
-
 @wt(parsers.re('user of (?P<browser_id>.*?) sees "(?P<space_name>.*?)" '
                '(?P<option>is|is not) in spaces list on Oneprovider page'))
 @repeat_failed(timeout=WAIT_BACKEND)
