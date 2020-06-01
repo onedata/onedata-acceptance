@@ -128,37 +128,11 @@ def _add_storage_in_op_panel_using_gui(selenium, browser_id, config, onepanel,
                                                      mount_point, form,
                                                      onepanel,
                                                      mount_point_option)
-    if 'imported storage' in options:
-        if options['imported storage']:
-            enable_import_in_add_storage_form(selenium, browser_id, onepanel)
+    if options.get('imported storage', False):
+        enable_import_in_add_storage_form(selenium, browser_id, onepanel)
 
     wt_click_on_add_btn_in_storage_add_form_in_storage_page(selenium,
                                                             browser_id,
                                                             onepanel)
     notify_visible_with_text(selenium, browser_id, notify_type, text_regexp)
 
-
-@wt(parsers.parse('user of {browser_id} moves to Data view of '
-                  'space "{space_name}"'))
-def go_to_data_of_space(selenium, browser_id, space_name, oz_page,
-                        op_container, tmp_memory):
-    option = 'Data'
-
-    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
-                                                  space_name, option, oz_page)
-    assert_file_browser_in_data_tab_in_op(selenium, browser_id, op_container,
-                                          tmp_memory, 'file browser')
-
-
-@wt(parsers.parse('user of {browser_id} moves to "{provider_name}" provider\'s '
-                  'view of "{space_name}"'))
-def go_to_provider_of_space(selenium, browser_id, provider_name, space_name,
-                            oz_page, hosts, modals):
-    option = 'Providers'
-
-    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
-                                                  space_name, option, oz_page)
-    assert_providers_list_contains_provider(selenium, browser_id, provider_name,
-                                            hosts, oz_page)
-    wt_visit_op(selenium, oz_page, browser_id, provider_name, hosts,
-                modals)

@@ -25,7 +25,7 @@ Feature: Onepanel features auto-cleaning
            unit: GiB
 
     # enable file popularity
-    And user of browser1 expands "space2" record on spaces list in Spaces page in Onepanel
+    And user of browser1 opens "space2" record on spaces list in Spaces page in Onepanel
     And user of browser1 clicks on File popularity navigation tab in space "space2"
     And user of browser1 enables file-popularity in "space2" space in Onepanel
 
@@ -103,7 +103,7 @@ Feature: Onepanel features auto-cleaning
             unit: GiB
 
     # enable file popularity
-    And user of browser1 expands "space2" record on spaces list in Spaces page in Onepanel
+    And user of browser1 opens "space2" record on spaces list in Spaces page in Onepanel
     And user of browser1 clicks on File popularity navigation tab in space "space2"
     And user of browser1 enables file-popularity in "space2" space in Onepanel
 
@@ -177,7 +177,7 @@ Feature: Onepanel features auto-cleaning
             unit: GiB
 
     # enable file popularity
-    And user of browser1 expands "space2" record on spaces list in Spaces page in Onepanel
+    And user of browser1 opens "space2" record on spaces list in Spaces page in Onepanel
     And user of browser1 clicks on File popularity navigation tab in space "space2"
     And user of browser1 enables file-popularity in "space2" space in Onepanel
 

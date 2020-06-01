@@ -14,8 +14,8 @@ from selenium.common.exceptions import StaleElementReferenceException
 
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
-from tests.gui.conftest import (
-    WAIT_FRONTEND, WAIT_BACKEND, SELENIUM_IMPLICIT_WAIT)
+from tests.gui.conftest import (WAIT_FRONTEND, WAIT_BACKEND,
+                                SELENIUM_IMPLICIT_WAIT)
 from tests.gui.utils.generic import transform, implicit_wait, parse_seq
 from tests.gui.steps.common.miscellaneous import _enter_text
 
@@ -92,10 +92,10 @@ def wt_enable_option_box_in_space_support_form(selenium, browser_id, toggle,
 @repeat_failed(timeout=WAIT_BACKEND)
 def wt_assert_existence_of_space_support_record(selenium, browser_id,
                                                 space_name, onepanel):
-    spaces = {space.name for space in
-              onepanel(selenium[browser_id]).content.spaces.spaces}
-    assert space_name in spaces, (
-        'not found "{}" in spaces in Onepanel'.format(space_name))
+    spaces = {space.name for space
+              in onepanel(selenium[browser_id]).content.spaces.spaces}
+    assert space_name in spaces, ('not found "{}" in spaces in Onepanel'
+                                  .format(space_name))
 
 
 @wt(parsers.parse('user of {browser_id} sees that list of supported spaces '
@@ -103,9 +103,8 @@ def wt_assert_existence_of_space_support_record(selenium, browser_id,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_supported_spaces_list_is_empty(selenium, browser_id, onepanel):
     count = onepanel(selenium[browser_id]).content.spaces.spaces.count()
-    assert count == 0, 'There is(are) {} supported spaces instead of expected ' \
-                       '' \
-                       'none'.format(count)
+    assert count == 0, \
+        'There is(are) {} supported spaces instead of expected none'.format(count)
 
 
 @wt(parsers.re(r'user of (?P<browser_id>.*?) selects (?P<strategy>.*?) '
@@ -160,9 +159,8 @@ def wt_assert_storage_import_toggle_uncheckable(browser_id, selenium, onepanel):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_select_strategy_in_conf_in_space_record(selenium, browser_id, strategy,
                                                conf, onepanel):
-    config = getattr(
-        onepanel(selenium[browser_id]).content.spaces.space.sync_chart,
-        conf.lower() + '_configuration')
+    config = getattr(onepanel(selenium[browser_id]).content.spaces.space.
+                     sync_chart, conf.lower() + '_configuration')
     strategy_selector = config.strategy_selector
     strategy_selector.expand()
     strategy_selector.options[strategy].click()
@@ -176,9 +174,8 @@ def wt_select_strategy_in_conf_in_space_record(selenium, browser_id, strategy,
 def wt_type_text_to_input_box_in_conf_in_space_record(selenium, browser_id,
                                                       text, input_box, conf,
                                                       onepanel):
-    config = getattr(
-        onepanel(selenium[browser_id]).content.spaces.space.sync_chart,
-        conf.lower() + '_configuration')
+    config = getattr(onepanel(selenium[browser_id]).content.spaces.space.
+                     sync_chart, conf.lower() + '_configuration')
     setattr(config, transform(input_box), text)
 
 
@@ -187,11 +184,10 @@ def wt_type_text_to_input_box_in_conf_in_space_record(selenium, browser_id,
                r'CONFIGURATION in "(?P<space>.*?)" record in Spaces page '
                r'in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_enable_option_box_in_conf_in_space_record(selenium, browser_id, toggle,
-                                                 onepanel):
-    config = (onepanel(selenium[
-                           browser_id]).content.spaces.space.sync_chart
-              .update_configuration)
+def wt_enable_option_box_in_conf_in_space_record(selenium, browser_id,
+                                                 toggle, onepanel):
+    config = (onepanel(selenium[browser_id]).content.spaces.space.
+              sync_chart.update_configuration)
     getattr(config, transform(toggle)).check()
 
 
@@ -204,11 +200,11 @@ def wt_clicks_on_button_in_space_record(selenium, browser_id, onepanel, button):
     getattr(sync_chart, transform(button)).click()
 
 
-@wt(parsers.parse('user of {browser_id} expands "{space}" record on '
+@wt(parsers.parse('user of {browser_id} opens "{space}" record on '
                   'spaces list in Spaces page in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_expand_space_item_in_spaces_page_op_panel(selenium, browser_id, space,
-                                                 onepanel):
+def wt_open_space_item_in_spaces_page_op_panel(selenium, browser_id, space,
+                                               onepanel):
     onepanel(selenium[browser_id]).content.spaces.spaces[space].click()
 
 
@@ -277,16 +273,25 @@ def wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, browser_id, option,
 
 
 @wt(parsers.re(r'user of (?P<browser_id>.*?) clicks on '
-               r'(?P<button>Yes, revoke|No, keep the support) '
-               r'button in REVOKE SPACE SUPPORT modal in Onepanel'))
+               r'(?P<button>Cease support|Cancel) button '
+               r'in cease oneprovider support for space modal in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_clicks_on_btn_in_revoke_space_support(selenium, browser_id, button,
-                                             modals):
-    modal = modals(selenium[browser_id]).revoke_space_support
-    if button == 'Yes, revoke':
-        modal.yes()
+def wt_clicks_on_btn_in_cease_support_modal(selenium, browser_id,
+                                            button, modals):
+    modal = modals(selenium[browser_id]).cease_support_for_space
+    if button == 'Cease support':
+        modal.cease_support()
     else:
-        modal.no()
+        modal.cancel()
+
+
+@wt(parsers.parse('user of {browser_id} checks the understand notice '
+                  'in cease oneprovider support for space modal in Onepanel'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def wt_clicks_on_understand_risk_in_cease_support_modal(selenium, browser_id,
+                                                        modals):
+    (modals(selenium[browser_id]).cease_support_for_space
+     .understand_risk_checkbox())
 
 
 @wt(parsers.parse('user of {browser_id} clicks on '
@@ -330,10 +335,8 @@ def are_nav_tabs_for_space_displayed(selenium, browser_id, tab_list, space_name,
         space_name].navigation
 
     for tab in parse_seq(tab_list):
-        assert getattr(nav, transform(tab,
-                                      strip_char='"')) is not None, \
-            'no navigation tab {} found'.format(
-            tab)
+        assert getattr(nav, transform(tab, strip_char='"')) is not None, \
+            'no navigation tab {} found'.format(tab)
 
 
 @wt(parsers.parse('user of {browser_id} clicks on {tab_name} navigation '

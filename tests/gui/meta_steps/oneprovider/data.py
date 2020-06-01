@@ -194,8 +194,8 @@ def assert_space_content_in_op_gui(config, selenium, user, op_container,
     navigate_to_tab_in_op_using_gui(selenium, user, oz_page, provider, tab_name,
                                     hosts, modals)
     refresh_site(selenium, user)
-    change_space_view_in_data_tab_in_op(selenium, user, space_name,
-                                        oz_page)
+    click_element_on_lists_on_left_sidebar_menu(selenium, user, 'data',
+                                                space_name, oz_page)
     assert_file_browser_in_data_tab_in_op(selenium, user, op_container,
                                           tmp_memory)
     _check_files_tree(yaml.load(config), user, tmp_memory, '/', selenium,
@@ -333,6 +333,8 @@ def get_item_name_and_containing_dir_path(path):
     return item_name, path_list
 
 
+@wt(parsers.parse('user of {browser_id} opens file browser for "{space}" '
+                  'space'))
 def go_to_filebrowser(selenium, browser_id, oz_page, op_container,
                       tmp_memory, space):
     option_in_menu = 'spaces'

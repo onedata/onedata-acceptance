@@ -94,9 +94,9 @@ def remove_provider_support_for_space_in_oz_using_gui(selenium, user,
     sidebar = 'CLUSTERS'
     record = 'Spaces'
     option = 'Revoke space support'
-    confirmation_button = 'Yes, revoke'
+    confirmation_button = 'Cease support'
     notify_type = 'info'
-    text_regexp = '.*[Ss]upport.*revoked.*'
+    text_regexp = 'Ceased.*[Ss]upport.*'
     provider_name = 'oneprovider-1'
 
     wt_click_on_subitem_for_item(selenium, user, sidebar, record,
@@ -105,8 +105,10 @@ def remove_provider_support_for_space_in_oz_using_gui(selenium, user,
                                                   onepanel)
     wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, user,
                                                option, popups)
-    wt_clicks_on_btn_in_revoke_space_support(selenium, user,
-                                             confirmation_button, modals)
+    wt_clicks_on_understand_risk_in_cease_support_modal(selenium, user,
+                                                        modals)
+    wt_clicks_on_btn_in_cease_support_modal(selenium, user,
+                                            confirmation_button, modals)
     notify_visible_with_text(selenium, user, notify_type, text_regexp)
 
 
