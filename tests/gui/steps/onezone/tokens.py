@@ -60,8 +60,13 @@ def assert_oz_tokens_list_has_num_tokens(selenium, browser_id,
                   'in tokens sidebar'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button):
-    sidebar = oz_page(selenium[browser_id])['tokens'].sidebar
-    getattr(sidebar, transform(button))()
+    driver = selenium[browser_id]
+
+    if button == 'Create new token':
+        oz_page(driver)['tokens'].sidebar.click_create_new_token(driver)
+    else:
+        sidebar = oz_page(selenium[browser_id])['tokens'].sidebar
+        getattr(sidebar, transform(button))()
 
 
 @wt(parsers.parse('user of {browser_id} clicks on Join button '
