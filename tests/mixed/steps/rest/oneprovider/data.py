@@ -30,6 +30,11 @@ from tests.mixed.oneprovider_client.rest import ApiException as OPException
 from tests.utils.acceptance_utils import time_attr, compare
 
 
+def _lookup_file_id(path, user_client_op):
+    resolve_file_path_api = ResolveFilePathApi(user_client_op)
+    file_id = resolve_file_path_api.lookup_file_id(path).file_id
+    return file_id
+
 def _read_file(path, user, users, provider, hosts):
     cli = login_to_cdmi(user, users, hosts[provider]['hostname'])
     dao = DataObjectApi(cli)
@@ -40,8 +45,7 @@ def _list_files(path, user, users, provider, hosts):
     user_client_op = login_to_provider(user, users,
                                        hosts[provider]['hostname'])
     file_api = BasicFileOperationsApi(user_client_op)
-    resolve_file_path_api = ResolveFilePathApi(user_client_op)
-    file_id = resolve_file_path_api.lookup_file_id(path).file_id
+    file_id = _lookup_file_id(path, user_client_op)
     return [file.name for file in file_api.list_children(file_id).children]
 
 
@@ -69,8 +73,7 @@ def assert_num_of_files_in_path_in_op_rest(num, path, user, users, host,
                                            hosts):
     user_client_op = login_to_provider(user, users, hosts[host]['hostname'])
     file_api = BasicFileOperationsApi(user_client_op)
-    resolve_file_path_api = ResolveFilePathApi(user_client_op)
-    file_id = resolve_file_path_api.lookup_file_id(path).file_id
+    file_id = _lookup_file_id(path, user_client_op)
     children = file_api.list_children(file_id).children
     assert_msg = ('Expected exactly {} items in {} but found '
                   '{} items'.format(num, path, len(children)))
@@ -121,17 +124,16 @@ def remove_file_in_op_rest(user, users, host, hosts, path, result):
 def see_items_in_op_rest(user, users, host, hosts, path_list, result, space):
     client = login_to_provider(user, users, hosts[host]['hostname'])
     file_api = BasicFileOperationsApi(client)
-    resolve_file_path_api = ResolveFilePathApi(client)
     for path in parse_seq(path_list):
         path = '{}/{}'.format(space, path)
 
         if result == 'fails':
             with pytest.raises(OPException, 
                                message='There is item {}'.format(path)):
-                file_id = resolve_file_path_api.lookup_file_id(path).file_id
+                file_id = _lookup_file_id(path, client)
                 file_api.list_children(file_id)
         else:
-            file_id = resolve_file_path_api.lookup_file_id(path).file_id
+            file_id = _lookup_file_id(path, client)
             file_api.list_children(file_id)
 
 
@@ -274,8 +276,7 @@ def assert_posix_permissions_in_op_rest(path, perms, user, users, host, hosts):
     user_client_op = login_to_provider(user, users,
                                        hosts[host]['hostname'])
     file_api = BasicFileOperationsApi(user_client_op)
-    resolve_file_path_api = ResolveFilePathApi(user_client_op)
-    file_id = resolve_file_path_api.lookup_file_id(path).file_id
+    file_id = _lookup_file_id(path, user_client_op)
     file_attrs = file_api.get_attrs(file_id, attribute='mode')
 
     try:
@@ -293,8 +294,7 @@ def set_posix_permissions_in_op_rest(path, perm, user, users, host, hosts,
     user_client_op = login_to_provider(user, users,
                                        hosts[host]['hostname'])
     file_api = BasicFileOperationsApi(user_client_op)
-    resolve_file_path_api = ResolveFilePathApi(user_client_op)
-    file_id = resolve_file_path_api.lookup_file_id(path).file_id
+    file_id = _lookup_file_id(path, user_client_op)
 
     if result == 'fails':
         with pytest.raises(ApiException):

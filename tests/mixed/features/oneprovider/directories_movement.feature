@@ -4,7 +4,7 @@ Feature: Directories movement tests
   | client1    | client2    |
   | web GUI    | oneclient1 |
   | REST       | oneclient1 |
-  | web GUI	   | REST	    |
+  | web GUI    | REST       |
   | oneclient1 | REST       |
 
 

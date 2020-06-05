@@ -35,7 +35,7 @@ Feature: POSIX privileges tests
   Examples:
   | client1    | client2    |
   | REST       | web GUI    |
-  | web GUI	   | REST	    |
+  | web GUI    | REST       |
   | oneclient1 | REST       |
   | REST       | oneclient1 |
   | oneclient1 | web GUI    |
@@ -50,7 +50,7 @@ Feature: POSIX privileges tests
   Examples:
   | client1    | client2    | client3    |
   | REST       | web GUI    | REST       |
-  | web GUI	   | REST	    | REST       |
+  | web GUI    | REST       | REST       |
   | oneclient1 | REST       | oneclient1 |
   | REST       | oneclient1 | REST       |
   | oneclient1 | web GUI    | oneclient1 |
@@ -65,7 +65,7 @@ Feature: POSIX privileges tests
   Examples:
   | client1    | client2    |
   | REST       | web GUI    |
-  | web GUI	   | REST	    |
+  | web GUI    | REST       |
   | oneclient1 | REST       |
   | REST       | oneclient1 |
   | oneclient1 | web GUI    |
@@ -83,9 +83,9 @@ Feature: POSIX privileges tests
 
   Examples:
   | client1    | client2    | client3     |
-  | web GUI	   | REST	    | REST	      |
+  | web GUI    | REST       | REST        |
   | oneclient1 | REST       | oneclient1  |
-  | REST       | oneclient1 | REST	      |
+  | REST       | oneclient1 | REST        |
   | web GUI    | oneclient1 | oneclient1  |
 
 
@@ -98,7 +98,7 @@ Feature: POSIX privileges tests
 
   Examples:
   | client1    | client2    |
-  | web GUI	   | REST	    |
+  | web GUI    | REST       |
   | oneclient1 | REST       |
   | REST       | oneclient1 |
   | web GUI    | oneclient1 |
@@ -114,7 +114,7 @@ Feature: POSIX privileges tests
   Examples:
   | client1    | client2    |
   | REST       | web GUI    |
-  | web GUI	   | REST	    |
+  | web GUI    | REST       |
   | oneclient1 | REST       |
   | REST       | oneclient1 |
   | oneclient1 | web GUI    |
@@ -130,7 +130,7 @@ Feature: POSIX privileges tests
   Examples:
   | client1    | client2    |
   | REST       | web GUI    |
-  | web GUI	   | REST	    |
+  | web GUI    | REST       |
   | oneclient1 | REST       |
   | REST       | oneclient1 |
   | oneclient1 | web GUI    |

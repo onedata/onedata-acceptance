@@ -118,8 +118,7 @@ def see_items_in_op_gui(selenium, browser_id, path, subfiles, tmp_memory,
 def create_item_in_op_gui(selenium, browser_id, path, item_type, name,
                           tmp_memory, op_container, res, space, modals, oz_page):
     # change None to empty string if path not given
-    path = path if path else ''
-    path = path[1:] if path and path[0] == '/' else path
+    path = path.lstrip('/') if path else ''
     button = f'New {item_type}'
     modal_header = f'Create new {item_type}:'
     modal_name = 'Create dir'
@@ -175,7 +174,7 @@ def _check_files_tree(subtree, user, tmp_memory, cwd, selenium, op_container,
                     assert_num_of_files_are_displayed_in_file_browser(
                         user, item_subtree, tmp_memory)
                 else:
-                    path_tmp = '{}/{}'.format(cwd, item_name)
+                    path_tmp = f'{cwd}/{item_name}'
                     _check_files_tree(item_subtree, user,
                                       tmp_memory, path_tmp,
                                       selenium, op_container, tmpdir)
@@ -251,31 +250,36 @@ def g_create_directory_structure(user, config, space, host, users, hosts):
 
 
 def create_directory_structure_in_op_gui(selenium, user, op_container, config,
-                                         space, tmp_memory, modals, oz_page):
+                                         space, tmp_memory, modals, oz_page,
+                                         popups):
     items = yaml.load(config)
     cwd = ''
 
     _create_content(selenium, user, items, cwd, space, tmp_memory,
-                    op_container, modals, oz_page)
+                    op_container, modals, oz_page, popups)
     
 
 def _create_item(selenium, browser_id, name, content, cwd, space, tmp_memory,
-                 op_container, modals, oz_page):
+                 op_container, modals, oz_page, popups):
     item_type = 'directory' if name.startswith('dir') else 'file'
-    create_item_in_op_gui(selenium, browser_id, cwd, item_type, name,
-                          tmp_memory, op_container, "succeeds", space,
-                          modals, oz_page)
+    if item_type == 'directory':
+        create_item_in_op_gui(selenium, browser_id, cwd, item_type, name,
+                              tmp_memory, op_container, "succeeds", space,
+                              modals, oz_page)
+    else:
+        upload_file_to_op_gui(cwd, selenium, browser_id, space, "succeeds", name,
+                              op_container, tmp_memory, oz_page, popups)
     change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, browser_id,
                                                    'home', op_container)
     if not content:
         return 
     cwd += '/' + name
     _create_content(selenium, browser_id, content, cwd, space, tmp_memory, 
-                    op_container, modals, oz_page)
+                    op_container, modals, oz_page, popups)
 
 
 def _create_content(selenium, browser_id, content, cwd, space, tmp_memory, 
-                    op_container, modals, oz_page):
+                    op_container, modals, oz_page, popups):
     for item in content:
         try:
             [(name, content)] = item.items()
@@ -283,7 +287,7 @@ def _create_content(selenium, browser_id, content, cwd, space, tmp_memory,
             name = item
             content = None
         _create_item(selenium, browser_id, name, content, cwd, space, 
-                     tmp_memory, op_container, modals, oz_page)
+                     tmp_memory, op_container, modals, oz_page, popups)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) uploads "(?P<path>.*)" to the '
@@ -301,8 +305,10 @@ def successfully_upload_file_to_op_gui(path, selenium, browser_id, space,
 def upload_file_to_op_gui(path, selenium, browser_id, space, res, filename,
                           op_container, tmp_memory, oz_page, popups):
     try:
+        assert_file_browser_in_data_tab_in_op(selenium, browser_id,
+                                              op_container, tmp_memory)
         go_to_path(browser_id, tmp_memory, path)
-    except KeyError:
+    except (KeyError, NoSuchElementException):
         go_to_filebrowser(selenium, browser_id, oz_page, op_container,
                           tmp_memory, space)
         go_to_path(browser_id, tmp_memory, path)
@@ -334,7 +340,8 @@ def go_to_path(browser_id, tmp_memory, path):
     else:
         path_list = [path]
     for directory in path_list:
-        double_click_on_item_in_file_browser(browser_id, directory, tmp_memory)
+        if directory != '':
+            double_click_on_item_in_file_browser(browser_id, directory, tmp_memory)
 
 
 def go_to_path_without_last_elem(browser_id, tmp_memory, path):
