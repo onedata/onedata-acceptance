@@ -3,7 +3,7 @@ Feature: Tests for basic operations on single file in Oneprovider
   Examples:
   | client1    | client2    | client3    |
   | REST       | web GUI    | REST       |
-  | web GUI	   | REST	    | REST	     |
+  | web GUI    | REST       | REST       |
   | oneclient1 | REST       | oneclient1 |
   | REST       | oneclient1 | REST       |
   | oneclient1 | web GUI    | oneclient1 |

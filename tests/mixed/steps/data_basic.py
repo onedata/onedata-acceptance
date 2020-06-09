@@ -19,6 +19,10 @@ from tests.gui.meta_steps.oneprovider.permissions import *
 from tests.utils.path_utils import get_first_path_element
 
 
+def change_client_name_to_hostname(client_name):
+    return client_name.replace('oneclient', 'client')
+
+
 @wt(parsers.re('using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to create '
                'file named "(?P<name>.*)" in "(?P<space>.*)" in (?P<host>.*)'))
 def create_file_in_op(client, user, users, space, name, hosts, tmp_memory, host,
@@ -33,7 +37,7 @@ def create_file_in_op(client, user, users, space, name, hosts, tmp_memory, host,
     elif client_lower == 'rest':
         create_file_in_op_rest(user, users, host, hosts, full_path, result)
     elif 'oneclient' in client_lower:
-        oneclient_host = client_lower.replace('oneclient', 'client')
+        oneclient_host = change_client_name_to_hostname(client_lower)
         create_file_in_op_oneclient(user, full_path, users, result,
                                     oneclient_host)
     else:
@@ -64,7 +68,7 @@ def create_dir_in_op(client, user, users, space, name, hosts, tmp_memory, host,
     elif client_lower == 'rest':
         create_dir_in_op_rest(user, users, host, hosts, full_path, result)
     elif 'oneclient' in client_lower:
-        oneclient_host = client_lower.replace('oneclient', 'client')
+        oneclient_host = change_client_name_to_hostname(client_lower)
         create_dir_in_op_oneclient(user, full_path, users, result,
                                    oneclient_host)
     else:
@@ -84,7 +88,7 @@ def see_item_in_op(client, user, users, result, name_list, space, host, hosts,
         see_items_in_op_rest(user, users, host, hosts, name_list, 
                              result, space)
     elif 'oneclient' in client_lower:
-        oneclient_host = client_lower.replace('oneclient', 'client')
+        oneclient_host = change_client_name_to_hostname(client_lower)
         see_items_in_op_oneclient(name_list, space, user, users, result,
                                   oneclient_host)
     else:
@@ -105,7 +109,7 @@ def remove_empty_dir_in_op(client, user, users, result, space, name, hosts,
     elif client_lower == 'rest':
         remove_dir_in_op_rest(user, users, host, hosts, full_path)
     elif 'oneclient' in client_lower:
-        oneclient_host = client_lower.replace('oneclient', 'client')
+        oneclient_host = change_client_name_to_hostname(client_lower)
         delete_empty_directory_in_op_oneclient(full_path, user, users, result,
                                                oneclient_host)
     else:
@@ -128,7 +132,7 @@ def remove_empty_dir_and_parents_in_op(client, user, users, space, name, hosts,
         remove_dir_in_op_rest(user, users, host, hosts,
                               '{}/{}'.format(space, first_path_elem))
     elif 'oneclient' in client_lower:
-        oneclient_host = client_lower.replace('oneclient', 'client')
+        oneclient_host = change_client_name_to_hostname(client_lower)
         multi_dir_steps.delete_parents(user, '{}/{}'.format(space, name),
                                        oneclient_host, users)
     else:
@@ -148,7 +152,7 @@ def remove_dir_in_op(client, user, users, space, name, hosts, selenium,
     elif client_lower == 'rest':
         remove_dir_in_op_rest(user, users, host, hosts, full_path)
     elif 'oneclient' in client_lower:
-        oneclient_host = client_lower.replace('oneclient', 'client')
+        oneclient_host = change_client_name_to_hostname(client_lower)
         multi_dir_steps.delete_non_empty(user, full_path, oneclient_host,
                                          users)
     else:
@@ -169,7 +173,7 @@ def remove_file_in_op(client, user, name, space, host, users, hosts,
     elif client_lower == 'rest':
         remove_file_in_op_rest(user, users, host, hosts, full_path, result)
     elif 'oneclient' in client_lower:
-        oneclient_host = client_lower.replace('oneclient', 'client')
+        oneclient_host = change_client_name_to_hostname(client_lower)
         remove_file_in_op_oneclient(user, full_path, oneclient_host,
                                     users, result)
     else:
@@ -192,7 +196,7 @@ def rename_item_in_op(client, user, users, result, space, old_name, new_name,
         move_item_in_op_rest(old_path, new_path, result, cdmi, host, hosts,
                              user, users)
     elif 'oneclient' in client_lower:
-        oneclient_host = client_lower.replace('oneclient', 'client')
+        oneclient_host = change_client_name_to_hostname(client_lower)
         multi_file_steps.rename(user, old_path, new_path, oneclient_host,
                                 users)
     else:
@@ -215,7 +219,7 @@ def see_num_of_items_in_op(client, user, num, space, host, users,
         assert_num_of_files_in_path_in_op_rest(num, space, user, users, host,
                                                hosts)
     elif 'oneclient' in client_lower:
-        oneclient_host = client_lower.replace('oneclient', 'client')
+        oneclient_host = change_client_name_to_hostname(client_lower)
         assert_num_of_files_in_path_in_op_oneclient(num, space, user, users,
                                                     oneclient_host)
     else:
@@ -233,7 +237,7 @@ def write_to_file_in_op(client, user, text, file_name, space, host, users,
         write_to_file_in_op_rest(user, users, host, hosts, cdmi, full_path,
                                  text)
     elif 'oneclient' in client_lower:
-        oneclient_host = client_lower.replace('oneclient', 'client')
+        oneclient_host = change_client_name_to_hostname(client_lower)
         multi_reg_file_steps.write_text(user, text, full_path, oneclient_host,
                                         users)
     else:
@@ -256,7 +260,7 @@ def read_from_file_in_op(client, user, text, file_name, space, host, users,
         assert_file_content_in_op_rest(full_path, text, user, users,
                                        host, hosts)
     elif 'oneclient' in client_lower:
-        oneclient_host = client_lower.replace('oneclient', 'client')
+        oneclient_host = change_client_name_to_hostname(client_lower)
         multi_reg_file_steps.read_text(user, text, full_path, oneclient_host,
                                        users)
     else:
@@ -274,7 +278,7 @@ def append_to_file_in_op(client, user, text, file_name, space, host, users,
         append_to_file_in_op_rest(user, users, host, hosts, cdmi, full_path,
                                   text)
     elif 'oneclient' in client_lower:
-        oneclient_host = client_lower.replace('oneclient', 'client')
+        oneclient_host = change_client_name_to_hostname(client_lower)
         multi_reg_file_steps.append(user, text, full_path, oneclient_host,
                                     users)
     else:
@@ -290,7 +294,7 @@ def replace_in_file_in_op(client, user, old_text, new_text, file_name, space,
     full_path = '{}/{}'.format(space, file_name)
     client_lower = client.lower()
     if 'oneclient' in client_lower:
-        oneclient_host = client_lower.replace('oneclient', 'client')
+        oneclient_host = change_client_name_to_hostname(client_lower)
         multi_reg_file_steps.replace(user, old_text, new_text, full_path,
                                      oneclient_host, users)
     else:
@@ -307,7 +311,7 @@ def move_file_in_op(client, user, result, src_path, dst_path, host, users,
         move_item_in_op_rest(src_path, dst_path, result, cdmi, host, hosts,
                              user, users)
     elif 'oneclient' in client_lower:
-        oneclient_host = client_lower.replace('oneclient', 'client')
+        oneclient_host = change_client_name_to_hostname(client_lower)
         move_item_in_op_oneclient(user, src_path, dst_path, users, result,
                                   oneclient_host)
     else:
@@ -325,7 +329,7 @@ def copy_item_in_op(client, user, item_type, src_path, dst_path, host, users,
         copy_item_in_op_rest(src_path, dst_path, cdmi, host, hosts, user,
                              users)
     elif 'oneclient' in client_lower:
-        oneclient_host = client_lower.replace('oneclient', 'client')
+        oneclient_host = change_client_name_to_hostname(client_lower)
         copy_item_in_op_oneclient(item_type, src_path, dst_path,
                                   user, users, oneclient_host)
     else:
@@ -337,17 +341,17 @@ def copy_item_in_op(client, user, item_type, src_path, dst_path, host, users,
                  'as follow:\n(?P<config>(.|\s)*)'))
 def create_directory_structure_in_op(selenium, user, op_container, config, space, 
                                      tmp_memory, users, hosts, host, client,
-                                     modals, oz_page):
+                                     modals, oz_page, popups):
     client_lower = client.lower()
     if client_lower == 'web gui':
         create_directory_structure_in_op_gui(selenium, user, op_container, 
                                              config, space, tmp_memory,
-                                             modals, oz_page)
+                                             modals, oz_page, popups)
     elif client_lower == 'rest':
         create_directory_structure_in_op_rest(user, users, hosts, host,
                                               config, space)
     elif 'oneclient' in client_lower:
-        oneclient_host = client_lower.replace('oneclient', 'client')
+        oneclient_host = change_client_name_to_hostname(client_lower)
         create_directory_structure_in_op_oneclient(user, users, config, space,
                                                    oneclient_host, hosts)
     else:
@@ -368,7 +372,7 @@ def assert_time_relation(user, time1, file_name, space, comparator, time2,
         assert_time_relation_in_op_rest(full_path, time1, time2, comparator,
                                         host, hosts, user, users, cdmi)
     elif 'oneclient' in client_lower:
-        oneclient_host = client_lower.replace('oneclient', 'client')
+        oneclient_host = change_client_name_to_hostname(client_lower)
         multi_file_steps.check_time(user, time1, time2, comparator, full_path,
                                     oneclient_host, users)
     else:
@@ -407,7 +411,7 @@ def assert_directory_structure_in_op(client, selenium, user, op_container, oz_pa
         assert_space_content_in_op_rest(user, users, hosts, config, space, 
                                         spaces, host)
     elif 'oneclient' in client_lower:
-        oneclient_host = client_lower.replace('oneclient', 'client')
+        oneclient_host = change_client_name_to_hostname(client_lower)
         assert_space_content_in_op_oneclient(config, space, user, users,
                                              oneclient_host)
     else:
@@ -429,7 +433,7 @@ def assert_directory_structure_in_op(client, selenium, user, op_container, oz_pa
         assert_space_content_in_op_rest(user, users, hosts, config, space,
                                         spaces, host)
     elif 'oneclient' in client_lower:
-        oneclient_host = client_lower.replace('oneclient', 'client')
+        oneclient_host = change_client_name_to_hostname(client_lower)
         assert_space_content_in_op_oneclient(config, space, user, users,
                                              oneclient_host)
     else:
@@ -452,7 +456,7 @@ def set_metadata_in_op(client, selenium, user, tab_name, val, cdmi, op_container
         set_metadata_in_op_rest(user, users, host, hosts, cdmi, full_path,
                                 tab_name, val)
     elif 'oneclient' in client_lower:
-        oneclient_host = client_lower.replace('oneclient', 'client')
+        oneclient_host = change_client_name_to_hostname(client_lower)
         set_metadata_in_op_oneclient(val, tab_name, full_path, user, users,
                                      oneclient_host)
     else:
@@ -477,7 +481,7 @@ def assert_metadata_in_op(client, selenium, user, tab_name, val, cdmi, op_contai
         assert_metadata_in_op_rest(user, users, host, hosts, cdmi, 
                                    full_path, tab_name, val)
     elif 'oneclient' in client_lower:
-        oneclient_host = client_lower.replace('oneclient', 'client')
+        oneclient_host = change_client_name_to_hostname(client_lower)
         assert_metadata_in_op_oneclient(val, tab_name, full_path, user, users,
                                         oneclient_host)
     else:
@@ -500,7 +504,7 @@ def remove_all_metadata_in_op(client, selenium, user, users, space, op_container
         remove_all_metadata_in_op_rest(user, users, host, hosts, cdmi, 
                                        full_path)
     elif 'oneclient' in client_lower:
-        oneclient_host = client_lower.replace('oneclient', 'client')
+        oneclient_host = change_client_name_to_hostname(client_lower)
         remove_all_metadata_in_op_oneclient(user, users, oneclient_host,
                                             full_path)
     else:
@@ -527,7 +531,7 @@ def assert_no_such_metadata_in_op(client, selenium, user, users, space, op_conta
         assert_no_such_metadata_in_op_rest(user, users, host, hosts, cdmi, 
                                            full_path, tab_name, val)
     elif 'oneclient' in client_lower:
-        oneclient_host = client_lower.replace('oneclient', 'client')
+        oneclient_host = change_client_name_to_hostname(client_lower)
         assert_no_such_metadata_in_op_oneclient(user, users, oneclient_host,
                                                 full_path, tab_name, val)
     else:
@@ -563,7 +567,7 @@ def assert_posix_permissions_in_op(client, user, item_path, space, mode,
         assert_posix_permissions_in_op_rest(full_path, mode, user, users,
                                             host, hosts)
     elif 'oneclient' in client_lower:
-        oneclient_host = client_lower.replace('oneclient', 'client')
+        oneclient_host = change_client_name_to_hostname(client_lower)
         assert_posix_permissions_in_op_oneclient(user, full_path, mode,
                                                  oneclient_host, users)
     else:
@@ -586,7 +590,7 @@ def set_posix_permissions_in_op(client, user, item_path, space, mode, result,
         set_posix_permissions_in_op_rest(full_path, mode, user, users, host,
                                          hosts, result)
     elif 'oneclient' in client_lower:
-        oneclient_host = client_lower.replace('oneclient', 'client')
+        oneclient_host = change_client_name_to_hostname(client_lower)
         set_posix_permissions_in_op_oneclient(user, full_path, mode,
                                               oneclient_host, users, result)
     else:
@@ -601,7 +605,7 @@ def assert_file_stats(client, user, path, space, uid, gid, res, users):
     full_path = '{}/{}'.format(space, path)
     client_lower = client.lower()
     if 'oneclient' in client_lower:
-        oneclient_host = client_lower.replace('oneclient', 'client')
+        oneclient_host = change_client_name_to_hostname(client_lower)
         multi_file_steps.assert_file_ownership(user, full_path, res, uid, gid,
                                                oneclient_host, users)
     else:
@@ -614,7 +618,7 @@ def assert_file_stats(client, user, path, space, users):
     full_path = '{}/{}'.format(space, path)
     client_lower = client.lower()
     if 'oneclient' in client_lower:
-        oneclient_host = client_lower.replace('oneclient', 'client')
+        oneclient_host = change_client_name_to_hostname(client_lower)
         multi_reg_file_steps.open(user, full_path, '664', oneclient_host,
                                   users)
     else:

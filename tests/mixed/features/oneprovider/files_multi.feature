@@ -3,7 +3,7 @@ Feature: Files multiclient tests
   Examples:
   | client1    | client2    |
   | REST       | web GUI    |
-  | web GUI	   | REST	    |
+  | web GUI    | REST       |
   | oneclient1 | REST       |
   | REST       | oneclient2 |
   | oneclient1 | web GUI    |

@@ -13,6 +13,7 @@ from pytest_bdd import parsers
 
 from tests.gui.meta_steps.oneprovider.permissions import (
     grant_acl_privileges_in_op_gui, assert_ace_in_op_gui)
+from tests.mixed.steps.data_basic import change_client_name_to_hostname
 from tests.mixed.steps.oneclient.data_basic import (
     grant_acl_privileges_in_op_oneclient, assert_ace_in_op_oneclient)
 from tests.mixed.steps.rest.oneprovider.data import (
@@ -46,7 +47,7 @@ def grant_acl_privileges_in_op(client, selenium, user, cdmi, op_container, space
                                         full_path, priv,
                                         type, name, groups)
     elif 'oneclient' in client_lower:
-        oneclient_host = client_lower.replace('oneclient', 'client')
+        oneclient_host = change_client_name_to_hostname(client_lower)
         priv = _remove_parent_acl_from_string(priv)
         grant_acl_privileges_in_op_oneclient(user, users, oneclient_host,
                                              full_path, priv, type, groups,
@@ -76,7 +77,7 @@ def assert_ace_in_op(client, selenium, user, cdmi, op_container, space, path, ho
                               name)
     elif 'oneclient' in client_lower:
         priv = _remove_parent_acl_from_string(priv)
-        oneclient_host = client_lower.replace('oneclient', 'client')
+        oneclient_host = change_client_name_to_hostname(client_lower)
         assert_ace_in_op_oneclient(user, users, oneclient_host, full_path, num,
                                    priv, type, name, numerals)
     else:

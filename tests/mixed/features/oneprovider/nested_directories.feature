@@ -26,7 +26,7 @@ Feature: Tests for basic operations on nested directories
   Examples:
   | client1    | client2    |
   | REST       | web GUI    |
-  | web GUI	   | REST	    |
+  | web GUI    | REST       |
   | oneclient1 | REST       |
   | REST       | oneclient1 |
   | oneclient1 | web GUI    |
@@ -64,7 +64,7 @@ Feature: Tests for basic operations on nested directories
   Examples:
   | client1    | client2    |
   | REST       | web GUI    |
-  | web GUI	   | REST	    |
+  | web GUI    | REST       |
   | oneclient1 | REST       |
   | REST       | oneclient1 |
   | oneclient1 | web GUI    |
@@ -73,48 +73,51 @@ Feature: Tests for basic operations on nested directories
 
   Scenario Outline: User create directory structure using <client1> and using <client2> sees that it has appeared
     When using <client1>, user1 creates directory structure in "space1" space on oneprovider-1 as follow:
-            - file1
+            - 20B-0.txt
             - dir1:
                 - dir2:
                     - dir3
                     - dir4:
-                        - file2
-                        - file3
+                        - 20B-0.txt
+                        - 20B-1.txt
                         - dir5:
                             - dir6:
                                 - dir7
                 - dir8
-                - file4
-                - file5
+                - 20B-0.txt
+                - 20B-1.txt
                 - dir9:
-                    - file6
+                    - 20B-0.txt
             - dir0
     Then using <client2>, user1 sees that directory structure in "space1" space in oneprovider-1 is as previously created
 
   Examples:
   | client1    | client2    |
   | REST       | web GUI    |
+  | web GUI	   | REST	    |
   | oneclient1 | REST       |
   | REST       | oneclient1 |
   | oneclient1 | web GUI    |
+  | web GUI    | oneclient1 |
 
 
   Scenario Outline: User create directory structure using <client1> and using <client2> sees that it has appeared v2
     When using <client1>, user1 creates directory structure in "space1" space on oneprovider-1 as follow:
-            - file1
+            - 20B-0.txt
             - dir1:
                 - dir2:
                     - dir3:
-                        - child1
-                    - child1
-                - child1
-
+                        - 20B-0.txt
+                    - 20B-0.txt
+                - 20B-0.txt
             - dir0
     Then using <client2>, user1 sees that directory structure in "space1" space in oneprovider-1 is as previously created
 
   Examples:
   | client1    | client2    |
   | REST       | web GUI    |
+  | web GUI	   | REST	    |
   | oneclient1 | REST       |
   | REST       | oneclient1 |
   | oneclient1 | web GUI    |
+  | web GUI    | oneclient1 |

@@ -1,11 +1,11 @@
 Feature: Files movement tests
 
   Examples:
-  | client1    | client2    | client3     |
-  | web GUI    | oneclient1 | oneclient1  |
-  | REST       | oneclient1 | REST        |
-  | web GUI	   | REST	    | REST        |
-  | oneclient1 | REST       | oneclient1  |
+  | client1    | client2    |
+  | web GUI    | oneclient1 |
+  | REST       | oneclient1 |
+  | web GUI	   | REST	    |
+  | oneclient1 | REST       |
 
 
   Background:
@@ -23,67 +23,67 @@ Feature: Files movement tests
 
 
  Scenario Outline: User moves file using <client2> and using <client1> sees that file has been moved
-    When using <client3>, user1 creates directory structure in "space1" space on oneprovider-1 as follow:
+    When using <client1>, user1 creates directory structure in "space1" space on oneprovider-1 as follow:
           - dir1:
               - dir2:
-                  - file1
+                  - 20B-0.txt
           - dir3
     And using <client2>, user1 sees that directory structure in "space1" space in oneprovider-1 is as previously created
-    And using <client2>, user1 succeeds to move "space1/dir1/dir2/file1" to "space1/dir3/file1" in oneprovider-1
+    And using <client2>, user1 succeeds to move "space1/dir1/dir2/20B-0.txt" to "space1/dir3/20B-0.txt" in oneprovider-1
     Then using <client1>, user1 sees that directory structure in "space1" space in oneprovider-1 is as follow:
           - dir1:
               - dir2
           - dir3:
-              - file1
+              - 20B-0.txt
 
 
   Scenario Outline: User moves non-empty file using <client2> and using <client1> sees that its content has not changed
-    When using <client3>, user1 creates directory structure in "space1" space on oneprovider-1 as follow:
+    When using <client1>, user1 creates directory structure in "space1" space on oneprovider-1 as follow:
             - dir1:
                 - dir2:
-                    - file1
+                    - 20B-0.txt
             - dir3
     And using <client2>, user1 sees that directory structure in "space1" space in oneprovider-1 is as previously created
-    And using <client2>, user1 writes "TEST TEXT ONEDATA" to file named "dir1/dir2/file1" in "space1" in oneprovider-1
-    And using <client2>, user1 succeeds to move "space1/dir1/dir2/file1" to "space1/dir3/file1" in oneprovider-1
+    And using <client2>, user1 writes "TEST TEXT ONEDATA FILE" to file named "dir1/dir2/20B-0.txt" in "space1" in oneprovider-1
+    And using <client2>, user1 succeeds to move "space1/dir1/dir2/20B-0.txt" to "space1/dir3/20B-0.txt" in oneprovider-1
     Then using <client1>, user1 sees that directory structure in "space1" space in oneprovider-1 is as follow:
             - dir1:
                 - dir2
             - dir3:
-                - file1
-    And using <client1>, user1 reads "TEST TEXT ONEDATA" from file named "dir3/file1" in "space1" in oneprovider-1
+                - 20B-0.txt
+    And using <client1>, user1 reads "TEST TEXT ONEDATA FILE" from file named "dir3/20B-0.txt" in "space1" in oneprovider-1
 
 
   Scenario Outline: User copies file using <client2> and using <client1> sees that it has been copied
-    When using <client3>, user1 creates directory structure in "space1" space on oneprovider-1 as follow:
+    When using <client1>, user1 creates directory structure in "space1" space on oneprovider-1 as follow:
           - dir1:
               - dir2:
-                  - file1
+                  - 20B-0.txt
           - dir3
     And using <client2>, user1 sees that directory structure in "space1" space in oneprovider-1 is as previously created
-    And using <client2>, user1 copies file named "space1/dir1/dir2/file1" to "space1/dir3/file1" in oneprovider-1
+    And using <client2>, user1 copies file named "space1/dir1/dir2/20B-0.txt" to "space1/dir3/20B-0.txt" in oneprovider-1
     Then using <client1>, user1 sees that directory structure in "space1" space in oneprovider-1 is as follow:
           - dir1:
               - dir2:
-                  - file1
+                  - 20B-0.txt
           - dir3:
-              - file1
+              - 20B-0.txt
 
 
   Scenario Outline: User copies non-empty file using <client2> and using <client1> sees that it has not changed
-    When using <client3>, user1 creates directory structure in "space1" space on oneprovider-1 as follow:
+    When using <client1>, user1 creates directory structure in "space1" space on oneprovider-1 as follow:
           - dir1:
               - dir2:
-                  - file1
+                  - 20B-0.txt
           - dir3
     And using <client2>, user1 sees that directory structure in "space1" space in oneprovider-1 is as previously created
-    And using <client2>, user1 writes "TEST TEXT ONEDATA" to file named "dir1/dir2/file1" in "space1" in oneprovider-1
-    And using <client2>, user1 copies file named "space1/dir1/dir2/file1" to "space1/dir3/file1" in oneprovider-1
+    And using <client2>, user1 writes "TEST TEXT ONEDATA FILE" to file named "dir1/dir2/20B-0.txt" in "space1" in oneprovider-1
+    And using <client2>, user1 copies file named "space1/dir1/dir2/20B-0.txt" to "space1/dir3/20B-0.txt" in oneprovider-1
     Then using <client1>, user1 sees that directory structure in "space1" space in oneprovider-1 is as follow:
           - dir1:
               - dir2:
-                  - file1
+                  - 20B-0.txt
           - dir3:
-              - file1
-    And using <client1>, user1 reads "TEST TEXT ONEDATA" from file named "dir3/file1" in "space1" in oneprovider-1
-    And using <client1>, user1 reads "TEST TEXT ONEDATA" from file named "dir1/dir2/file1" in "space1" in oneprovider-1
+              - 20B-0.txt
+    And using <client1>, user1 reads "TEST TEXT ONEDATA FILE" from file named "dir3/20B-0.txt" in "space1" in oneprovider-1
+    And using <client1>, user1 reads "TEST TEXT ONEDATA FILE" from file named "dir1/dir2/20B-0.txt" in "space1" in oneprovider-1
