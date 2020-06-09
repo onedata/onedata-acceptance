@@ -28,6 +28,4 @@ from tests.oneclient.steps.auth_steps import *
 from tests.gui.steps.common.miscellaneous import *
 
 
-# TODO: change test because of a new gui
-# scenarios('../features/oneprovider/files_metadata.feature')
-scenarios('../features/pass.feature')
+scenarios('../features/oneprovider/files_metadata.feature')

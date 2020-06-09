@@ -54,6 +54,4 @@ from tests.oneclient.steps.auth_steps import *
 from tests.oneclient.steps.multi_auth_steps import *
 
 
-# TODO: change test because of a new gui
-# scenarios('../features/oneprovider/permission_posix_multi.feature')
-scenarios('../features/pass.feature')
+scenarios('../features/oneprovider/permission_posix_multi.feature')
