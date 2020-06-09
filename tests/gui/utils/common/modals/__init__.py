@@ -102,6 +102,7 @@ class Modals(object):
     shares_row_menu = WebItem('.share-actions.dropdown-menu', cls=SharesRowMenu)
     rename_share = WebItem('.modal-dialog', cls=RenameShareModal)
     remove_share = WebItem('.modal-dialog', cls=RemoveModal)
+    remove_token = WebItem('.modal-dialog', cls=RemoveModal)
 
     def __init__(self, driver):
         self.driver = driver
