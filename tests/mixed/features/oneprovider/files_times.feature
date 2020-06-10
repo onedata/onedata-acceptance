@@ -38,9 +38,9 @@ Feature: Files times tests
     And using <client2>, user1 succeeds to see item named "file1" in "space1" in oneprovider-1
     And user1 waits 80 second
     And using <client2>, user1 writes "TEST TEXT ONEDATA" to file named "file1" in "space1" in oneprovider-1
-    Then using <client1>, user1 sees that modification time of item named "file1" in "space1" space is not earlier than 70 seconds ago in oneprovider-1
+    Then using <client3>, user1 sees that modification time of item named "file1" in "space1" space is not earlier than 70 seconds ago in oneprovider-1
 
   Examples:
-  | client1   | client2    |
-  | web GUI   | REST       |
-  | web GUI   | oneclient1 |
+  | client1    | client2    | client3    |
+  | oneclient1 | REST       | web GUI    |
+  | REST       | oneclient1 | web GUI    |

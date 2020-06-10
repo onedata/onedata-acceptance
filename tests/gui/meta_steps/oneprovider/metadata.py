@@ -5,6 +5,8 @@ __copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import time
+
 from tests.gui.meta_steps.oneprovider.data import (
     open_modal_for_file_browser_item)
 from tests.gui.steps.modal import (
@@ -187,6 +189,7 @@ def remove_all_basic_metadata(selenium, browser_id, modals):
     modal = modals(selenium[browser_id]).metadata
     while len(modal.basic.entries) > 0:
         modal.basic.entries[0].remove()
+        time.sleep(0.5)
 
 
 def remove_all_metadata_in_op_gui(selenium, browser_id, space, op_container,

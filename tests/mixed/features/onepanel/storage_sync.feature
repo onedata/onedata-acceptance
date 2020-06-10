@@ -29,6 +29,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
 
   Scenario Outline: User supports space with storage sync and enabled options: Mount in root
+    Given there are no spaces supported by oneprovider-1 in Onepanel
     When using <client1>, user1 creates space "space2" in "onezone" Onezone service
     And using <client1>, user1 generates space support token for space named "space2" in "onezone" Onezone service and sends it to onepanel
     And using docker, user1 copies dir2 to provider's storage mount point
@@ -72,6 +73,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
 
   Scenario Outline: User supports space with storage sync with no options enabled
+    Given there are no spaces supported by oneprovider-1 in Onepanel
     When using <client1>, user1 creates space "space1" in "onezone" Onezone service
     And using <client1>, user1 generates space support token for space named "space1" in "onezone" Onezone service and sends it to onepanel
     And using <client2>, onepanel supports "space1" space in "oneprovider-1" Oneprovider panel service with following configuration:
@@ -114,6 +116,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
 
   Scenario: User supports space with storage sync and enabled options: Delete
+    Given there are no spaces supported by oneprovider-1 in Onepanel
     When using <client1>, user1 creates space "space3" in "onezone" Onezone service
     And using <client1>, user1 generates space support token for space named "space3" in "onezone" Onezone service and sends it to onepanel
     And using <client2>, onepanel supports "space3" space in "oneprovider-1" Oneprovider panel service with following configuration:
@@ -162,6 +165,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And using <client3>, user1 removes space named "space3" in "onezone" Onezone service
 
   Scenario: User supports space with storage sync and enabled options: Write once
+    Given there are no spaces supported by oneprovider-1 in Onepanel
     When using <client1>, user1 creates space "space4" in "onezone" Onezone service
     And using <client1>, user1 generates space support token for space named "space4" in "onezone" Onezone service and sends it to onepanel
     And using <client2>, onepanel supports "space4" space in "oneprovider-1" Oneprovider panel service with following configuration:
@@ -205,6 +209,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
 
   Scenario: User supports space with storage sync and enabled options: Delete and Write once
+    Given there are no spaces supported by oneprovider-1 in Onepanel
     When using <client1>, user1 creates space "space5" in "onezone" Onezone service
     And using <client1>, user1 generates space support token for space named "space5" in "onezone" Onezone service and sends it to onepanel
     And using <client2>, onepanel supports "space5" space in "oneprovider-1" Oneprovider panel service with following configuration:
@@ -254,6 +259,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
 
   Scenario: User disables files update
+    Given there are no spaces supported by oneprovider-1 in Onepanel
     When using <client1>, user1 creates space "space7" in "onezone" Onezone service
     And using <client1>, user1 generates space support token for space named "space7" in "onezone" Onezone service and sends it to onepanel
     And using <client2>, onepanel supports "space7" space in "oneprovider-1" Oneprovider panel service with following configuration:
