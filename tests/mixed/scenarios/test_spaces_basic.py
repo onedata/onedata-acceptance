@@ -52,6 +52,5 @@ from tests.gui.meta_steps.oneprovider.common import *
 
 scenarios('../features/onezone/space/creation.feature')
 scenarios('../features/onezone/space/basic_management.feature')
-# TODO: change test because of a new gui
-# scenarios('../features/onezone/space/multiuser.feature')
+scenarios('../features/onezone/space/multiuser.feature')
 scenarios('../features/onezone/space/multiuser_with_admin.feature')

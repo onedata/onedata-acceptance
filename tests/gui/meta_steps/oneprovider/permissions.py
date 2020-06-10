@@ -19,7 +19,8 @@ from tests.gui.steps.modal import (
 from tests.gui.steps.common.url import refresh_site
 from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
-    click_on_option_of_space_on_left_sidebar_menu)
+    click_on_option_of_space_on_left_sidebar_menu,
+    click_on_option_in_the_sidebar)
 
 
 def open_permission_modal(selenium, browser_id, path, space, tmp_memory, modals,
@@ -98,10 +99,12 @@ def grant_acl_privileges_to_selected_in_filebrowser(selenium, browser_id, priv,
 def grant_acl_privileges_in_op_gui(selenium, browser_id, item_list, priv, name,
                                    op_container, tmp_memory, popups, space,
                                    oz_page, modals):
+    option_in_menu = 'Data'
     option = 'spaces'
     option_in_submenu = 'Data'
     path = item_list.replace('"', '')
 
+    click_on_option_in_the_sidebar(selenium, browser_id, option_in_menu, oz_page)
     click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option,
                                                 space, oz_page)
     click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id, space,
@@ -138,7 +141,6 @@ def read_items_acl(selenium, browser_id, path, tmp_memory, res, space, modals,
 def assert_ace_in_op_gui(selenium, browser_id, priv, type, name, num, space,
                          path, tmp_memory, modals, numerals, oz_page,
                          op_container):
-    selenium[browser_id].refresh()
     open_permission_modal(selenium, browser_id, path, space, tmp_memory, modals,
                           oz_page, op_container, 'acl')
     assert_acl_subject(selenium, browser_id, modals, num, numerals, type, name)

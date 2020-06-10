@@ -148,6 +148,13 @@ def assert_textarea_contains_record(selenium, browser_id, expected_metadata,
         assert expected_metadata in tab.text_area, err_msg
 
 
+def assert_textarea_not_contain_record(selenium, browser_id, expected_metadata,
+                                       tab_name, modals):
+    modal = modals(selenium[browser_id]).metadata
+    tab = getattr(modal, tab_name.lower())
+    assert expected_metadata not in tab.text_area
+
+
 @wt(parsers.re('user of (?P<browser_id>.+?) sees that (?P<tab_name>JSON|RDF) '
                'textarea in metadata modal is empty'))
 @repeat_failed(timeout=WAIT_FRONTEND)

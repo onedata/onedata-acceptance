@@ -4,7 +4,7 @@ Feature: Directories movement tests
   | client1    | client2    |
   | web GUI    | oneclient1 |
   | REST       | oneclient1 |
-  | web GUI	   | REST	    |
+  | web GUI    | REST       |
   | oneclient1 | REST       |
 
 
@@ -20,7 +20,6 @@ Feature: Directories movement tests
                     size: 1000000
     And oneclient mounted in /home/user1/onedata using token by user1
     And opened browser with user1 signed in to "onezone" service
-    And opened oneprovider-1 Oneprovider view in web GUI by user1
 
 
   Scenario Outline: User moves directory using <client2> and using <client1> sees that it has been moved

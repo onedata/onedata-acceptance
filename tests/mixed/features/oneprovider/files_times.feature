@@ -29,7 +29,7 @@ Feature: Files times tests
   | client1    | client2    |
   | oneclient1 | REST       |
   | oneclient1 | web GUI    |
-  | REST	   | web GUI	|
+  | REST       | web GUI    |
   | REST       | oneclient1 |
 
 

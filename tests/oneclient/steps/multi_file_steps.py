@@ -20,7 +20,7 @@ import jsondiff
 from tests.utils.acceptance_utils import (list_parser, make_arg_list,
                                           compare, time_attr)
 from tests.utils.bdd_utils import when, then, wt, parsers
-from tests.utils.utils import assert_, assert_generic
+from tests.utils.utils import assert_, assert_generic, repeat_failed
 from tests.utils.client_utils import (stat, ls, mv, osrename, create_file, rm,
                                       chmod, touch, setxattr, getxattr,
                                       removexattr, listxattr, get_all_xattr,
@@ -291,6 +291,7 @@ def shell_check_type(user, file, file_type, client_node, users):
 
 @wt(parsers.re('mode of (?P<user>\w+)\'s (?P<file>.*) is (?P<mode>.*) on '
                '(?P<client_node>.*)'))
+@repeat_failed(interval=1, timeout=180, exceptions=AssertionError)
 def check_mode(user, file, mode, client_node, users):
     user = users[user]
     client = user.clients[client_node]

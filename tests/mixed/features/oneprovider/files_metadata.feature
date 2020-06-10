@@ -3,7 +3,7 @@ Feature: Files metadata tests
   Examples:
   | client1    | client2    |
   | REST       | web GUI    |
-  | web GUI	   | REST	    |
+  | web GUI    | REST       |
   | oneclient1 | REST       |
   | REST       | oneclient1 |
   | oneclient1 | web GUI    |
@@ -22,8 +22,7 @@ Feature: Files metadata tests
                     size: 1000000
     And oneclient mounted in /home/user1/onedata using token by user1
     And opened browser with user1 signed in to "onezone" service
-    And opened oneprovider-1 Oneprovider view in web GUI by user1
-    And directory structure created by user of browser in "space1" space on oneprovider-1 as follows:
+    And directory structure created by user1 in "space1" space on oneprovider-1 as follows:
             - file1
 
 

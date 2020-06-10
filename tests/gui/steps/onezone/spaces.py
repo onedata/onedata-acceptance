@@ -98,7 +98,7 @@ def click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option,
 
     if option == 'spaces':
         option = 'data'
-        oz_page(driver)[option].spaces_header_list[name].click()
+        oz_page(driver)[option].spaces_header_list[name]()
     else:
         oz_page(driver)[option].elements_list[name].click()
 

@@ -120,7 +120,7 @@ def invite_other_users_to_space_using_gui(selenium, user,
     option_in_space = 'Members'
     button = 'Invite user using token'
     where = 'space'
-    item_type = 'space invitation token'
+    item_type = 'token'
     member = 'users'
     modal = 'Invite using token'
 

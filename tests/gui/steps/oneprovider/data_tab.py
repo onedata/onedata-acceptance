@@ -17,8 +17,8 @@ from tests.utils.bdd_utils import given, wt, parsers, when, then
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def _check_file_browser_to_load(selenium, browser_id, tmp_memory, op_container,
-                                browser):
+def check_file_browser_to_load(selenium, browser_id, tmp_memory, op_container,
+                               browser):
     driver = selenium[browser_id]
     if browser == 'file browser':
         items_browser = op_container(driver).file_browser
@@ -223,8 +223,8 @@ def assert_nonempty_file_browser_in_data_tab_in_op(selenium, browser_id,
                                                    op_container, tmp_memory,
                                                    item_browser='file browser'):
     switch_to_iframe(selenium, browser_id)
-    _check_file_browser_to_load(selenium, browser_id, tmp_memory, op_container,
-                                item_browser)
+    check_file_browser_to_load(selenium, browser_id, tmp_memory, op_container,
+                               item_browser)
     items_browser = tmp_memory[browser_id][transform(item_browser)]
     assert not items_browser.is_empty(), (f'{item_browser} in data tab in op'
                                           'should not be empty but is')
@@ -237,8 +237,8 @@ def assert_empty_file_browser_in_data_tab_in_op(selenium, browser_id,
                                                 op_container, tmp_memory,
                                                 item_browser='file browser'):
     switch_to_iframe(selenium, browser_id)
-    _check_file_browser_to_load(selenium, browser_id, tmp_memory, op_container,
-                                item_browser)
+    check_file_browser_to_load(selenium, browser_id, tmp_memory, op_container,
+                               item_browser)
     items_browser = tmp_memory[browser_id][transform(item_browser)]
     assert items_browser.is_empty(), (f'{item_browser} in data tab in op'
                                       'should be empty but is not')
@@ -251,8 +251,8 @@ def assert_file_browser_in_data_tab_in_op(selenium, browser_id, op_container,
                                           tmp_memory,
                                           item_browser='file browser'):
     switch_to_iframe(selenium, browser_id)
-    _check_file_browser_to_load(selenium, browser_id, tmp_memory, op_container,
-                                item_browser)
+    check_file_browser_to_load(selenium, browser_id, tmp_memory, op_container,
+                               item_browser)
 
 
 @when(parsers.parse('user of {browser_id} records displayed name length for '

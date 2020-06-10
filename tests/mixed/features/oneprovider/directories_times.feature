@@ -12,7 +12,6 @@ Feature: Directories times tests
                     size: 1000000
     And oneclient mounted in /home/user1/onedata using token by user1
     And opened browser with user1 signed in to "onezone" service
-    And opened oneprovider-1 Oneprovider view in web GUI by user1
 
 
  Scenario Outline: User renames directory using <client2> and check status-change time using <client1>
@@ -31,7 +30,7 @@ Feature: Directories times tests
   | client1    | client2    |
   | oneclient1 | REST       |
   | oneclient1 | web GUI    |
-  | REST	   | web GUI	|
+  | REST       | web GUI    |
   | REST       | oneclient1 |
 
 
@@ -48,7 +47,7 @@ Feature: Directories times tests
   | client1    | client2    |
   | oneclient1 | REST       |
   | oneclient1 | web GUI    |
-  | REST	   | web GUI	|
+  | REST       | web GUI    |
   | REST       | oneclient1 |
 
 
