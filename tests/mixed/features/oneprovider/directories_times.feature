@@ -57,6 +57,7 @@ Feature: Directories times tests
     # call sleep, to be sure that time of above and below operations is different
     And user1 waits 80 second
     And using <client2>, user1 succeeds to create directory named "dir1/dir2" in "space1" in oneprovider-1
+    And using web GUI, user1 refreshes site
     Then using <client1>, user1 sees that modification time of item named "dir1" in "space1" space is not earlier than 70 seconds ago in oneprovider-1
 
   Examples:

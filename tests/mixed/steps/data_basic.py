@@ -387,7 +387,8 @@ def assert_mtime_not_earlier_than(client, file_path, selenium, user,
                                   space, op_container, time, tmp_memory):
     client_lower = client.lower()
     if client_lower == 'web gui':
-        assert_mtime_not_earlier_than_op_gui(file_path, time, user, tmp_memory)
+        assert_mtime_not_earlier_than_op_gui(file_path, time, user, tmp_memory,
+                                             selenium, op_container)
     else:
         raise NoSuchClientException('Client: {} not found'.format(client))
 

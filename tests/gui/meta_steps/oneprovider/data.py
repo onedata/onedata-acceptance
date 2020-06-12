@@ -320,7 +320,12 @@ def upload_file_to_op_gui(path, selenium, browser_id, space, res, filename,
         check_error_in_upload_presenter(selenium, browser_id, popups)
 
 
-def assert_mtime_not_earlier_than_op_gui(path, time, browser_id, tmp_memory):
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_mtime_not_earlier_than_op_gui(path, time, browser_id, tmp_memory,
+                                         selenium, op_container):
+    assert_nonempty_file_browser_in_data_tab_in_op(selenium, browser_id,
+                                                   op_container, tmp_memory,
+                                                   item_browser='file browser')
     item_name = _select_item(browser_id, tmp_memory, path)
     assert_item_in_file_browser_is_of_mdate(browser_id, item_name, time,
                                             tmp_memory)
