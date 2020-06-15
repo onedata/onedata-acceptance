@@ -30,11 +30,15 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
   Scenario Outline: User supports space with storage sync and enabled options: Mount in root
     Given there are no spaces supported by oneprovider-1 in Onepanel
+    And there is "new_storage" storage in "oneprovider-1" Oneprovider panel service used by user of onepanel with following configuration:
+          storage type: POSIX
+          mount point: /volumes/persistence/storage
+          imported storage: true
     When using <client1>, user1 creates space "space2" in "onezone" Onezone service
     And using <client1>, user1 generates space support token for space named "space2" in "onezone" Onezone service and sends it to onepanel
     And using docker, user1 copies dir2 to provider's storage mount point
     And using <client2>, onepanel supports "space2" space in "oneprovider-1" Oneprovider panel service with following configuration:
-        storage: "posix"
+        storage: "new_storage"
         size: 1000000
         mount in root: True
         storage import:

@@ -75,6 +75,14 @@ def create_dir_in_op(client, user, users, space, name, hosts, tmp_memory, host,
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
+@wt(parsers.re('using web GUI, (?P<user>\w+) double clicks on item '
+               'named "(?P<item_name>.*)" in "(?P<space>.*)" in (?P<host>.*)'))
+def go_to_dir(selenium, user, item_name, tmp_memory, op_container, space, oz_page):
+    go_to_filebrowser(selenium, user, oz_page, op_container,
+                      tmp_memory, space)
+    double_click_on_item_in_file_browser(user, item_name, tmp_memory)
+
+
 @wt(parsers.re('using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to see '
                'items? named (?P<name_list>.*) in "(?P<space>.*)" in '
                '(?P<host>.*)'))
