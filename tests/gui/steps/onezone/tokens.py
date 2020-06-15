@@ -35,6 +35,11 @@ def _click_on_btn_for_token(driver, oz_page, token_name, btn, modals):
     _click_option_for_token_row_menu(driver, btn, modals)
 
 
+def click_on_token_on_tokens_list(selenium, browser_id, token_name, oz_page):
+    driver = selenium[browser_id]
+    get_token_by_name(oz_page, token_name, driver).click()
+
+
 @wt(parsers.re(r'user of (?P<browser_id>.*?) clicks on (?P<btn>rename|remove) '
                r'button for token named "(?P<token_name>.*?)" on tokens list'))
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -47,8 +52,8 @@ def wt_click_on_btn_for_oz_token(selenium, browser_id, btn, token_name, oz_page,
 @wt(parsers.parse('user of {browser_id} sees exactly {expected_num:d} item(s) '
                   'on tokens list in tokens sidebar'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_oz_tokens_list_has_num_tokens(selenium, browser_id,
-                                         expected_num, oz_page):
+def assert_oz_tokens_list_has_num_tokens(selenium, browser_id, expected_num,
+                                         oz_page):
     driver = selenium[browser_id]
     displayed_tokens_num = len(oz_page(driver)['tokens'].sidebar.tokens)
     assert displayed_tokens_num == expected_num, (
@@ -116,7 +121,10 @@ def choose_invite_type_in_oz_token_page(selenium, browser_id, oz_page,
     new_token_page.invite_types[invite_type].click()
 
 
-def choose_invite_select(selenium, browser_id, oz_page, target):
+def choose_invite_select(selenium, browser_id, oz_page, target, hosts):
+    if 'oneprovider' in target:
+        target = hosts[target]['name']
+
     driver = selenium[browser_id]
     new_token_page = oz_page(driver)['tokens'].create_token_page
     new_token_page.expand_invite_target_dropdown()
@@ -157,8 +165,7 @@ def choose_token_filter(selenium, browser_id, token_filter, oz_page):
 def assert_all_tokens_are_type(selenium, browser_id, token_type, oz_page):
     tokens = oz_page(selenium[browser_id])['tokens'].sidebar.tokens
     assert all([token.is_type_of(token_type) for token in tokens]), (
-        f'Not all visible tokens are type of {token_type}'
-    )
+        f'Not all visible tokens are type of {token_type}')
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) sees that '
@@ -216,8 +223,7 @@ def append_token_name_in_sidebar(selenium, browser_id, text, token_name,
 
 @wt(parsers.parse('user of {browser_id} confirms changes in '
                   'token named {token_name}'))
-def confirm_token_changes_in_sidebar(selenium, browser_id, token_name,
-                                     oz_page):
+def confirm_token_changes_in_sidebar(selenium, browser_id, token_name, oz_page):
     driver = selenium[browser_id]
     oz_page(driver)['tokens'].sidebar.confirm()
 
@@ -240,6 +246,60 @@ def type_new_token_name(selenium, browser_id, oz_page, token_name):
     input_box.value = token_name
 
 
+def assert_token_name(selenium, browser_id, oz_page, token_name):
+    driver = selenium[browser_id]
+    given_name = oz_page(driver)['tokens'].token_name
+    assert given_name == token_name, (f'Given name {given_name} is not like '
+                                      f'expected {token_name}')
+
+
+def assert_token_revoked(selenium, browser_id, oz_page, revoke_expectation):
+    driver = selenium[browser_id]
+    if revoke_expectation:
+        msg = 'Token is not revoked while should be'
+    else:
+        msg = 'Token is revoked while should not be'
+    assert (
+    oz_page(driver)['tokens'].is_token_revoked() == revoke_expectation, msg)
+
+
+def assert_token_type(selenium, browser_id, oz_page, expected_type):
+    driver = selenium[browser_id]
+    actual_type = oz_page(driver)['tokens'].token_type
+    assert actual_type == expected_type, (f'Expected type {expected_type} '
+                                          f'does not match actual '
+                                          f'{actual_type}')
+
+
+def assert_invite_type(selenium, browser_id, oz_page, expected_type):
+    driver = selenium[browser_id]
+    actual_type = oz_page(driver)['tokens'].invite_type
+    assert actual_type == expected_type, (f'Expected invite type '
+                                          f'{expected_type} '
+                                          f'does not match actual '
+                                          f'{actual_type}')
+
+
+def assert_invite_target(selenium, browser_id, oz_page, expected_target, hosts):
+    if 'oneprovider' in expected_target:
+        expected_target = hosts[expected_target]['name']
+
+    driver = selenium[browser_id]
+    actual_type = oz_page(driver)['tokens'].invite_target
+    assert actual_type == expected_target, (f'Expected invite target '
+                                            f'{expected_target} '
+                                            f'does not match actual '
+                                            f'{actual_type}')
+
+
+@wt(parsers.parse('user of {browser_id} sees that token usage count is '
+                  '"{count}"'))
+def assert_token_usage_count_value(selenium, browser_id, count, oz_page):
+    driver = selenium[browser_id]
+    text = oz_page(driver)['tokens'].usage_count
+    assert count == text, f'Expected usage count {count} does not equal {text}'
+
+
 def expand_caveats(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
     oz_page(driver)['tokens'].create_token_page.expand_caveats()
@@ -251,16 +311,6 @@ def get_caveat_by_name(selenium, browser_id, oz_page, caveat_name):
     return new_token_page.get_caveat(caveat_name)
 
 
-def set_consumer_in_consumer_caveat(selenium, browser_id, popups, consumer_type,
-                                    method, value):
+def get_privileges_tree(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
-    popup = popups(driver).consumer_caveat_popup
-    popup.expand_consumer_types()
-    popup.consumer_types[consumer_type.capitalize()]()
-    if method == 'name':
-        popup.list_option()
-        popup.consumers[value]()
-    else:
-        popup.id_option()
-        popup.input = value
-        popup.add_button()
+    return oz_page(driver)['tokens'].privilege_tree

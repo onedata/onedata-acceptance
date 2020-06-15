@@ -20,7 +20,8 @@ from tests.gui.steps.onezone.discovery import (
     click_create_button_in_indices_page, click_button_in_harvester_spaces_page,
     choose_element_from_dropdown_in_add_element_modal,
     type_text_to_rename_input_field_in_discovery_page,
-    confirm_harvester_rename_using_button)
+    confirm_harvester_rename_using_button,
+    assert_space_has_appeared_in_discovery_page)
 from tests.gui.steps.onezone.spaces import (
     click_on_option_in_the_sidebar,
     click_element_on_lists_on_left_sidebar_menu)
@@ -244,3 +245,20 @@ def rename_harvester(selenium, browser_id, oz_page, harvester_name,
                                                       oz_page, harvester_renamed)
     confirm_harvester_rename_using_button(selenium, browser_id, oz_page)
 
+
+@wt(parsers.parse('user of {browser_id} sees that "{space}" has appeared on '
+                  'the spaces list of "{harvester}" harvester'))
+def assert_space_on_harvester_list(selenium, browser_id, space, harvester,
+                                   oz_page):
+    option = 'Discovery'
+    option2 = 'harvesters'
+    option3 = 'Spaces'
+
+    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
+    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option2,
+                                                harvester, oz_page)
+    click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id,
+                                                      harvester, option3,
+                                                      oz_page)
+    assert_space_has_appeared_in_discovery_page(selenium, browser_id,
+                                                space, oz_page)

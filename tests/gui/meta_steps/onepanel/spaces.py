@@ -7,7 +7,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-
+from tests.gui.steps.modal import assert_error_modal_with_text_appeared
 from tests.gui.steps.onepanel.common import *
 from tests.gui.steps.common.notifies import *
 from tests.gui.steps.onepanel.spaces import *
@@ -24,13 +24,48 @@ from tests.utils.rest_utils import http_get, get_panel_rest_path, http_delete
 def support_space_in_op_panel_using_gui(selenium, user, config, onepanel,
                                         tmp_memory, space_name, provider_name,
                                         hosts):
+    notify_type = 'info'
+    notify_text_regexp = '.*[Aa]dded.*support.*space.*'
+
+    _support_space_in_op_panel_using_gui(selenium, user, config, onepanel,
+                                         tmp_memory, space_name, provider_name,
+                                         hosts)
+    notify_visible_with_text(selenium, user, notify_type,
+                             notify_text_regexp)
+    wt_assert_existence_of_space_support_record(selenium, user, space_name,
+                                                onepanel)
+
+
+@wt(parsers.parse('user of {user} {result} to support "{space_name}" space '
+                  'in "{provider_name}" Oneprovider panel service with '
+                  'following configuration:\n{config}'))
+def result_to_support_space_in_op_panel_using_gui(selenium, user, config,
+                                                  result, onepanel, tmp_memory,
+                                                  space_name, provider_name,
+                                                  hosts):
+    notify_type = 'info'
+    notify_text_regexp = '.*[Aa]dded.*support.*space.*'
+
+    _support_space_in_op_panel_using_gui(selenium, user, config, onepanel,
+                                         tmp_memory, space_name, provider_name,
+                                         hosts)
+    if result == 'succeeds':
+        notify_visible_with_text(selenium, user, notify_type, notify_text_regexp)
+        wt_assert_existence_of_space_support_record(selenium, user, space_name,
+                                                    onepanel)
+    else:
+        text = 'Error'
+        assert_error_modal_with_text_appeared(selenium, user, text)
+
+
+def _support_space_in_op_panel_using_gui(selenium, user, config, onepanel,
+                                        tmp_memory, space_name, provider_name,
+                                        hosts):
     sidebar = 'Clusters'
     sub_item = 'Spaces'
     input_box = 'Size'
     sync_type_import = 'IMPORT'
     sync_type_update = 'UPDATE'
-    notify_type = 'info'
-    notify_text_regexp = '.*[Aa]dded.*support.*space.*'
 
     options = yaml.load(config)
     unit = options.get('unit', 'MiB')
@@ -42,42 +77,36 @@ def support_space_in_op_panel_using_gui(selenium, user, config, onepanel,
                                             onepanel)
     wt_type_received_token_to_support_token_field(selenium, user, onepanel,
                                                   tmp_memory)
-    wt_type_text_to_input_box_in_space_support_form(
-        selenium, user, str(options['size']), input_box, onepanel)
-    wt_select_unit_in_space_support_add_form(selenium, user, unit,
-                                             onepanel)
+    wt_type_text_to_input_box_in_space_support_form(selenium, user,
+        str(options['size']), input_box, onepanel)
+    wt_select_unit_in_space_support_add_form(selenium, user, unit, onepanel)
 
     if options.get('storage import', False):
         storage_import_options = options.get('storage import', None)
-        wt_enable_option_box_in_space_support_form(
-            selenium, user, 'Import storage data', onepanel)
-        wt_select_strategy_in_conf_in_support_space_form(
-            selenium, user, storage_import_options['strategy'],
-            sync_type_import, onepanel)
+        wt_enable_option_box_in_space_support_form(selenium, user,
+            'Import storage data', onepanel)
+        wt_select_strategy_in_conf_in_support_space_form(selenium, user,
+            storage_import_options['strategy'], sync_type_import, onepanel)
         if 'max depth' in storage_import_options:
-            wt_type_text_to_input_box_in_conf_in_space_support_form(
-                selenium, user, str(storage_import_options['max depth']),
-                'Max depth', sync_type_import, onepanel)
+            wt_type_text_to_input_box_in_conf_in_space_support_form(selenium,
+                user, str(storage_import_options['max depth']), 'Max depth',
+                sync_type_import, onepanel)
 
         if options.get('storage update', False):
             storage_update_options = options.get('storage update', None)
-            wt_select_strategy_in_conf_in_support_space_form(
-                selenium, user, storage_update_options['strategy'],
-                sync_type_update, onepanel)
+            wt_select_strategy_in_conf_in_support_space_form(selenium, user,
+                storage_update_options['strategy'], sync_type_update, onepanel)
             if 'max depth' in storage_update_options:
                 wt_type_text_to_input_box_in_conf_in_space_support_form(
                     selenium, user, str(storage_update_options['max depth']),
                     'Max depth', sync_type_update, onepanel)
             if 'scan interval [s]' in storage_update_options:
                 wt_type_text_to_input_box_in_conf_in_space_support_form(
-                    selenium, user, str(storage_update_options['scan interval [s]']),
+                    selenium, user,
+                    str(storage_update_options['scan interval [s]']),
                     'Scan interval', sync_type_update, onepanel)
 
     wt_click_on_btn_in_space_support_add_form(selenium, user, onepanel)
-    notify_visible_with_text(selenium, user, notify_type,
-                             notify_text_regexp)
-    wt_assert_existence_of_space_support_record(selenium, user, space_name,
-                                                onepanel)
 
 
 @wt(parsers.parse('user of {browser_id} sets update configuration in '
