@@ -170,8 +170,8 @@ def invite_other_users_to_space(client, request, user, user_list, space_name,
 
     if client.lower() == 'rest':
         from tests.mixed.steps.rest.onezone.space_management import \
-                                        invite_otehr_users_to_space_using_rest
-        invite_otehr_users_to_space_using_rest(user, users, host, hosts,
+                                        invite_other_users_to_space_using_rest
+        invite_other_users_to_space_using_rest(user, users, host, hosts,
                                                space_name, spaces, tmp_memory,
                                                user_list)
 

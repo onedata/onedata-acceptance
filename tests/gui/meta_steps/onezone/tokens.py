@@ -36,8 +36,8 @@ def paste_copied_token_into_text_field(selenium, browser_id, oz_page, clipboard,
 
 @wt(parsers.parse('user of {browser_id} pastes received token '
                   'into token text field'))
-def paste_received_token_into_text_field(selenium, browser_id, oz_page,
-                                         tmp_memory):
+def paste_received_token_into_text_field(selenium, browser_id,
+                                         oz_page, tmp_memory):
     token = tmp_memory[browser_id]['mailbox']['token']
     _paste_token_into_text_field(selenium, browser_id, oz_page, token)
 

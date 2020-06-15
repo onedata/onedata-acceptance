@@ -49,12 +49,11 @@ from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.conftest import *
 
 from tests.mixed.steps.data_basic import *
+from tests.mixed.steps.data_permissions import *
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.onezone.common import *
 
 from tests.oneclient.steps.auth_steps import *
 
 
-# TODO: change test because of a new gui
-# scenarios('../features/oneprovider/acl_basic.feature')
-scenarios('../features/pass.feature')
+scenarios('../features/oneprovider/acl_basic.feature')

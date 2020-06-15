@@ -48,6 +48,10 @@ class TokensSidebar(PageObject):
     confirm = Button('.save-icon')
     discard = Button('.cancel-icon')
 
+    def click_create_new_token(self, driver):
+        driver.execute_script("arguments[0].click();",
+                              self.web_elem.find_element_by_css_selector('.create-token-link-trigger'))
+
     def __str__(self):
         return 'Tokens sidebar'
 

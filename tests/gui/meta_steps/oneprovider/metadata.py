@@ -105,7 +105,7 @@ def set_metadata_in_op_gui(selenium, browser_id, path, tmp_memory, op_container,
     else:
         click_on_navigation_tab_in_metadata_modal(selenium, browser_id,
                                                   tab_name, modals)
-        type_text_to_metadata_textarea(selenium, browser_id, text, tab_name,
+        type_text_to_metadata_textarea(selenium, browser_id, val, tab_name,
                                        modals)
     click_metadata_modal_button(selenium, browser_id, button, modals)
 
@@ -149,8 +149,38 @@ def assert_metadata_in_op_gui(selenium, browser_id, path, tmp_memory,
             assert_there_is_such_basic_meta_record(selenium, browser_id, attr,
                                                    val, modals)
         else:
+            click_on_navigation_tab_in_metadata_modal(selenium, browser_id,
+                                                      tab_name,
+                                                      modals)
             assert_textarea_contains_record(selenium, browser_id, val, tab_name,
                                             modals)
+    click_metadata_modal_button(selenium, browser_id, 'Close', modals)
+
+
+def assert_such_metadata_not_exist_in_op_gui(selenium, browser_id, path, tmp_memory,
+                                             op_container, space, tab_name, val, modals,
+                                             oz_page, item):
+    if item == 'file':
+        modal_name = 'File metadata'
+    else:
+        modal_name = 'Directory metadata'
+
+    option = 'Metadata'
+
+    open_modal_for_file_browser_item(selenium, browser_id, modals, modal_name,
+                                     path, tmp_memory, option, space, oz_page,
+                                     op_container)
+
+    if tab_name == 'basic':
+        attr, val = val.split('=')
+        assert_there_is_no_such_meta_record(selenium, browser_id, attr,
+                                            modals)
+    else:
+        click_on_navigation_tab_in_metadata_modal(selenium, browser_id, tab_name,
+                                                  modals)
+        assert_textarea_not_contain_record(selenium, browser_id, val,
+                                           tab_name, modals)
+    click_metadata_modal_button(selenium, browser_id, 'Close', modals)
 
 
 def remove_all_basic_metadata(selenium, browser_id, modals):
@@ -172,15 +202,15 @@ def remove_all_metadata_in_op_gui(selenium, browser_id, space, op_container,
     open_modal_for_file_browser_item(selenium, browser_id, modals, modal_name,
                                      path, tmp_memory, option, space, oz_page,
                                      op_container)
-    click_on_navigation_tab_in_metadata_modal(selenium, browser_id, 'basic',
+    click_on_navigation_tab_in_metadata_modal(selenium, browser_id, 'Basic',
                                               modals)
     remove_all_basic_metadata(selenium, browser_id, modals)
-    click_on_navigation_tab_in_metadata_modal(selenium, browser_id, 'json',
+    click_on_navigation_tab_in_metadata_modal(selenium, browser_id, 'JSON',
                                               modals)
-    clean_tab_textarea_in_metadata_modal(selenium, browser_id, 'json', modals)
-    click_on_navigation_tab_in_metadata_modal(selenium, browser_id, 'rdf',
+    clean_tab_textarea_in_metadata_modal(selenium, browser_id, 'JSON', modals)
+    click_on_navigation_tab_in_metadata_modal(selenium, browser_id, 'RDF',
                                               modals)
-    clean_tab_textarea_in_metadata_modal(selenium, browser_id, 'rdf', modals)
+    clean_tab_textarea_in_metadata_modal(selenium, browser_id, 'RDF', modals)
     click_metadata_modal_button(selenium, browser_id, button, modals)
 
 

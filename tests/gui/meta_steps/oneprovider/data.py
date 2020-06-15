@@ -23,6 +23,7 @@ from tests.gui.steps.modal import (
 from tests.gui.steps.onezone.spaces import (
     click_on_option_of_space_on_left_sidebar_menu,
     click_element_on_lists_on_left_sidebar_menu)
+from tests.gui.steps.rest.env_up.spaces import init_storage
 
 
 def _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id, path,
@@ -84,10 +85,10 @@ def remove_item_in_op_gui(selenium, browser_id, path, tmp_memory, op_container,
 
 
 def remove_dir_and_parents_in_op_gui(selenium, browser_id, path, tmp_memory,
-                                     op_container, res, space):
+                                     op_container, res, space, modals, oz_page):
     item_name = _select_item(browser_id, tmp_memory, path)
     remove_item_in_op_gui(selenium, browser_id, item_name, tmp_memory,
-                          op_container, res, space)
+                          op_container, res, space, modals, oz_page)
 
 
 @then(parsers.re('user of (?P<browser_id>\w+) (?P<res>.*) to see '
@@ -117,8 +118,7 @@ def see_items_in_op_gui(selenium, browser_id, path, subfiles, tmp_memory,
 def create_item_in_op_gui(selenium, browser_id, path, item_type, name,
                           tmp_memory, op_container, res, space, modals, oz_page):
     # change None to empty string if path not given
-    path = path if path else ''
-
+    path = path.lstrip('/') if path else ''
     button = f'New {item_type}'
     modal_header = f'Create new {item_type}:'
     modal_name = 'Create dir'
@@ -127,7 +127,7 @@ def create_item_in_op_gui(selenium, browser_id, path, item_type, name,
 
     def _open_menu_for_item_in_file_browser():
         if path:
-            double_click_on_item_in_file_browser(browser_id, path, tmp_memory)
+            go_to_path(browser_id, tmp_memory, path)
         click_button_from_file_browser_menu_bar(selenium, browser_id,
                                                 button, op_container)
 
@@ -160,8 +160,9 @@ def _check_files_tree(subtree, user, tmp_memory, cwd, selenium, op_container,
                 assert_empty_file_browser_in_data_tab_in_op(selenium, user,
                                                             op_container,
                                                             tmp_memory)
-                change_cwd_using_dir_tree_in_data_tab_in_op(selenium, user,
-                                                            cwd, op_container)
+                change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium,
+                                                               user, cwd,
+                                                               op_container)
         else:
             assert_items_presence_in_file_browser(user, item_name, tmp_memory)
             double_click_on_item_in_file_browser(user, item_name,
@@ -173,32 +174,30 @@ def _check_files_tree(subtree, user, tmp_memory, cwd, selenium, op_container,
                     assert_num_of_files_are_displayed_in_file_browser(
                         user, item_subtree, tmp_memory)
                 else:
-                    path = '{}{}/'.format(cwd, item_name)
+                    path_tmp = f'{cwd}/{item_name}'
                     _check_files_tree(item_subtree, user,
-                                      tmp_memory, path,
+                                      tmp_memory, path_tmp,
                                       selenium, op_container, tmpdir)
-                change_cwd_using_dir_tree_in_data_tab_in_op(selenium, user, cwd,
-                                                            op_container)
+                change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium,
+                                                               user, cwd,
+                                                               op_container)
             else:
                 has_downloaded_file_content(user, item_name, str(item_subtree),
                                             tmpdir)
-    change_cwd_using_dir_tree_in_data_tab_in_op(selenium, user, cwd,
-                                                op_container)
+    change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, user, cwd,
+                                                   op_container)
 
 
 def assert_space_content_in_op_gui(config, selenium, user, op_container,
                                    tmp_memory, tmpdir, space_name, oz_page,
                                    provider, hosts, modals):
-    tab_name = 'data'
-
-    navigate_to_tab_in_op_using_gui(selenium, user, oz_page, provider, tab_name,
-                                    hosts, modals)
-    refresh_site(selenium, user)
-    change_space_view_in_data_tab_in_op(selenium, user, space_name,
-                                        oz_page)
-    assert_file_browser_in_data_tab_in_op(selenium, user, op_container,
-                                          tmp_memory)
-    _check_files_tree(yaml.load(config), user, tmp_memory, '/', selenium,
+    try:
+        assert_file_browser_in_data_tab_in_op(selenium, user, op_container,
+                                              tmp_memory)
+    except (KeyError, NoSuchElementException):
+        go_to_filebrowser(selenium, user, oz_page, op_container,
+                          tmp_memory, space_name)
+    _check_files_tree(yaml.load(config), user, tmp_memory, '', selenium,
                       op_container, tmpdir)
 
 
@@ -207,57 +206,80 @@ def see_num_of_items_in_path_in_op_gui(selenium, user, tmp_memory, op_container,
                                        hosts, modals):
     tab_name = 'data'
 
-    navigate_to_tab_in_op_using_gui(selenium, user, oz_page, provider, tab_name,
-                                    hosts, modals)
-    _select_item(user, tmp_memory, path)
-    refresh_site(selenium, user)
-    assert_file_browser_in_data_tab_in_op(selenium, user, op_container,
-                                          tmp_memory)
+    try:
+        assert_file_browser_in_data_tab_in_op(selenium, user, op_container,
+                                              tmp_memory)
+    except KeyError:
+        navigate_to_tab_in_op_using_gui(selenium, user, oz_page, provider, tab_name,
+                                        hosts, modals)
+        _select_item(user, tmp_memory, path)
+        refresh_site(selenium, user)
+        assert_file_browser_in_data_tab_in_op(selenium, user, op_container,
+                                              tmp_memory)
     assert_num_of_files_are_displayed_in_file_browser(user, num, tmp_memory)
 
 
 def assert_file_content_in_op_gui(text, path, space, selenium, user, users,
                                   provider, hosts, oz_page, op_container,
                                   tmp_memory, tmpdir, modals):
-    tab_name = 'data'
-
-    navigate_to_tab_in_op_using_gui(selenium, user, oz_page, provider, tab_name,
-                                    hosts, modals)
+    try:
+        assert_file_browser_in_data_tab_in_op(selenium, user,
+                                              op_container,
+                                              tmp_memory)
+        go_to_path_without_last_elem(user, tmp_memory, path)
+    except (KeyError, NoSuchElementException):
+        go_to_filebrowser(selenium, user, oz_page, op_container,
+                          tmp_memory, space)
+        go_to_path_without_last_elem(user, tmp_memory, path)
     item_name = _select_item(user, tmp_memory, path)
     double_click_on_item_in_file_browser(user, item_name, tmp_memory)
     has_downloaded_file_content(user, item_name, text, tmpdir)
+    change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, user,
+                                                   'home', op_container)
 
 
-@given(parsers.re('directory structure created by user of (?P<browser_id>\w+) '
+@given(parsers.re('directory structure created by (?P<user>\w+) '
                   'in "(?P<space>.*)" space on (?P<host>.*) as follows:\n'
                   '(?P<config>(.|\s)*)'))
-def g_create_directory_structure_in_op_gui(selenium, user, op_container, config,
-                                           space, tmp_memory):
-    create_directory_structure_in_op_gui(selenium, user, op_container, config,
-                                         space, tmp_memory)
+def g_create_directory_structure(user, config, space, host, users, hosts):
+    owner = users[user]
+    items = yaml.load(config)
+    provider_hostname = hosts[host]['hostname']
+
+    init_storage(owner, space, hosts, provider_hostname, items)
 
 
 def create_directory_structure_in_op_gui(selenium, user, op_container, config,
-                                         space, tmp_memory):
+                                         space, tmp_memory, modals, oz_page,
+                                         popups):
     items = yaml.load(config)
     cwd = ''
-    _create_content(selenium, user, items, cwd, space, tmp_memory, op_container)
+
+    _create_content(selenium, user, items, cwd, space, tmp_memory,
+                    op_container, modals, oz_page, popups)
     
 
 def _create_item(selenium, browser_id, name, content, cwd, space, tmp_memory,
-                 op_container):
+                 op_container, modals, oz_page, popups):
     item_type = 'directory' if name.startswith('dir') else 'file'
-    create_item_in_op_gui(selenium, browser_id, cwd, item_type, name, 
-                          tmp_memory, op_container, "succeeds", space)
+    if item_type == 'directory':
+        create_item_in_op_gui(selenium, browser_id, cwd, item_type, name,
+                              tmp_memory, op_container, "succeeds", space,
+                              modals, oz_page)
+    else:
+        upload_file_to_op_gui(cwd, selenium, browser_id, space, "succeeds", name,
+                              op_container, tmp_memory, oz_page, popups)
+    change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, browser_id,
+                                                   'home', op_container)
     if not content:
         return 
     cwd += '/' + name
     _create_content(selenium, browser_id, content, cwd, space, tmp_memory, 
-                    op_container)
+                    op_container, modals, oz_page, popups)
 
 
 def _create_content(selenium, browser_id, content, cwd, space, tmp_memory, 
-                    op_container):
+                    op_container, modals, oz_page, popups):
     for item in content:
         try:
             [(name, content)] = item.items()
@@ -265,7 +287,7 @@ def _create_content(selenium, browser_id, content, cwd, space, tmp_memory,
             name = item
             content = None
         _create_item(selenium, browser_id, name, content, cwd, space, 
-                     tmp_memory, op_container)
+                     tmp_memory, op_container, modals, oz_page, popups)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) uploads "(?P<path>.*)" to the '
@@ -283,8 +305,10 @@ def successfully_upload_file_to_op_gui(path, selenium, browser_id, space,
 def upload_file_to_op_gui(path, selenium, browser_id, space, res, filename,
                           op_container, tmp_memory, oz_page, popups):
     try:
+        assert_file_browser_in_data_tab_in_op(selenium, browser_id,
+                                              op_container, tmp_memory)
         go_to_path(browser_id, tmp_memory, path)
-    except KeyError:
+    except (KeyError, NoSuchElementException):
         go_to_filebrowser(selenium, browser_id, oz_page, op_container,
                           tmp_memory, space)
         go_to_path(browser_id, tmp_memory, path)
@@ -316,7 +340,8 @@ def go_to_path(browser_id, tmp_memory, path):
     else:
         path_list = [path]
     for directory in path_list:
-        double_click_on_item_in_file_browser(browser_id, directory, tmp_memory)
+        if directory != '':
+            double_click_on_item_in_file_browser(browser_id, directory, tmp_memory)
 
 
 def go_to_path_without_last_elem(browser_id, tmp_memory, path):
@@ -333,6 +358,8 @@ def get_item_name_and_containing_dir_path(path):
     return item_name, path_list
 
 
+@wt(parsers.parse('user of {browser_id} opens file browser for "{space}" '
+                  'space'))
 def go_to_filebrowser(selenium, browser_id, oz_page, op_container,
                       tmp_memory, space):
     option_in_menu = 'spaces'

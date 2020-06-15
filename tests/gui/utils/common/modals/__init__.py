@@ -22,7 +22,7 @@ from .metadata_modal import MetadataModal
 from .menu_in_edit_permissions_modal import EditPermissionsRecordMenu
 from .rename_modal import RenameModal
 from .rename_share_modal import RenameShareModal
-from .revoke_space_support import RevokeSpaceSupportModal
+from .cease_support_for_space import CeaseSupportForSpaceModal
 from .edit_permissions import EditPermissionsModal
 from .configure_web_cert import ConfigureWebCertModal
 from .remove import RemoveModal
@@ -47,8 +47,8 @@ class Modals(object):
     data_distribution = WebItem('.modal-dialog', cls=DataDistributionModal)
     cluster_deployment = WebItem('.new-cluster-deploy-progress.modal-body',
                                  cls=ClusterDeploymentModal)
-    revoke_space_support = WebItem('.modal.in .modal-dialog',
-                                   cls=RevokeSpaceSupportModal)
+    cease_support_for_space = WebItem('.modal.in .modal-dialog',
+                                      cls=CeaseSupportForSpaceModal)
     login = WebItem('#login-form-modal', cls=LoginFormModal)
     edit_permissions = WebItem('.modal-dialog',
                                cls=EditPermissionsModal)

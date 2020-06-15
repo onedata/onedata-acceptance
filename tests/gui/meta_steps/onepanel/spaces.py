@@ -128,14 +128,12 @@ def set_update_configuration_in_storage_sync(selenium, browser_id, config,
             wt_type_text_to_input_box_in_conf_in_space_record(selenium,
                 browser_id, str(storage_update_options['scan interval [s]']),
                 'Scan interval', sync_type_update, onepanel)
-        if 'delete enabled' in storage_update_options:
-            if storage_update_options['delete enabled']:
-                wt_enable_option_box_in_conf_in_space_record(selenium,
-                    browser_id, 'delete enabled', onepanel)
-        if 'write once' in storage_update_options:
-            if storage_update_options['write once']:
-                wt_enable_option_box_in_conf_in_space_record(selenium,
-                    browser_id, 'write once', onepanel)
+        if storage_update_options.get('delete enabled', False):
+            wt_enable_option_box_in_conf_in_space_record(selenium, browser_id,
+                'delete enabled', onepanel)
+        if storage_update_options.get('write once', False):
+            wt_enable_option_box_in_conf_in_space_record(selenium, browser_id,
+                'write once', onepanel)
 
     button = 'Save configuration'
     notify_type = 'info'
@@ -152,16 +150,17 @@ def revoke_space_support_in_op_panel_using_gui(selenium, user, provider_name,
     sidebar = 'Clusters'
     sub_item = 'Spaces'
     option = 'Revoke space support'
-    button = 'Yes, revoke'
+    button = 'Cease support'
     notify_type = 'info'
-    notify_text_regexp = '.*[Ss]upport.*revoked.*'
+    notify_text_regexp = 'Ceased.*[Ss]upport.*'
 
     wt_click_on_subitem_for_item(selenium, user, sidebar, sub_item,
                                  provider_name, onepanel, hosts)
     wt_expands_toolbar_icon_for_space_in_onepanel(selenium, user, space_name,
                                                   onepanel)
     wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, user, option, popups)
-    wt_clicks_on_btn_in_revoke_space_support(selenium, user, button, modals)
+    wt_clicks_on_understand_risk_in_cease_support_modal(selenium, user, modals)
+    wt_clicks_on_btn_in_cease_support_modal(selenium, user, button, modals)
     notify_visible_with_text(selenium, user, notify_type, notify_text_regexp)
 
 
@@ -210,7 +209,7 @@ def configure_sync_parameters_for_space_in_op_panel_gui(selenium, user, space,
 
 
 def copy_id_of_space_gui(selenium, user, space_name, onepanel, tmp_memory):
-    wt_expand_space_item_in_spaces_page_op_panel(selenium, user, space_name,
+    wt_open_space_item_in_spaces_page_op_panel(selenium, user, space_name,
                                                  onepanel)
     wt_copy_space_id_in_spaces_page_in_onepanel(selenium, user, space_name,
                                                 onepanel, tmp_memory)
@@ -223,7 +222,7 @@ def assert_proper_space_configuration_in_op_panel_gui(selenium, user, space,
     sub_item = 'Spaces'
     wt_click_on_subitem_for_item(selenium, user, sidebar, sub_item,
                                  provider_name, onepanel, hosts)
-    wt_expand_space_item_in_spaces_page_op_panel(selenium, user, space,
+    wt_open_space_item_in_spaces_page_op_panel(selenium, user, space,
                                                  onepanel)
     wt_assert_proper_space_configuration_in_panel(selenium, user, sync_type,
                                                   space, conf, onepanel)
@@ -239,7 +238,7 @@ def revoke_all_space_supports(selenium, browser_id, onepanel, popups,
     record = 'oneprovider-1'
 
     option = 'Revoke space support'
-    button = 'Yes, revoke'
+    button = 'Cease support'
 
     click_on_option_in_the_sidebar(selenium, browser_id, sidebar, oz_page)
     click_on_record_in_clusters_menu(selenium, browser_id, oz_page, record,
@@ -258,8 +257,11 @@ def revoke_all_space_supports(selenium, browser_id, onepanel, popups,
                                                       space.name, onepanel)
         wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, browser_id,
                                                    option, popups)
-        wt_clicks_on_btn_in_revoke_space_support(selenium, browser_id,
-                                                 button, modals)
+        wt_clicks_on_understand_risk_in_cease_support_modal(selenium,
+                                                            browser_id,
+                                                            modals)
+        wt_clicks_on_btn_in_cease_support_modal(selenium, browser_id,
+                                                button, modals)
         # wait for update spaces list
         time.sleep(1)
         spaces_list = onepanel(selenium[browser_id]).content.spaces.spaces
