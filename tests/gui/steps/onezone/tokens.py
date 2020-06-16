@@ -26,13 +26,13 @@ def _open_menu_for_token(driver, oz_page, token_name):
     get_token_by_name(oz_page, token_name, driver).menu_button.click()
 
 
-def _click_option_for_token_row_menu(driver, option, popups):
+def click_option_for_token_row_menu(driver, option, popups):
     popups(driver).popover_menu.menu[option.capitalize()]()
 
 
-def _click_on_btn_for_token(driver, oz_page, token_name, btn, modals):
+def _click_on_btn_for_token(driver, oz_page, token_name, btn, popups):
     _open_menu_for_token(driver, oz_page, token_name)
-    _click_option_for_token_row_menu(driver, btn, modals)
+    click_option_for_token_row_menu(driver, btn, popups)
 
 
 def click_on_token_on_tokens_list(selenium, browser_id, token_name, oz_page):

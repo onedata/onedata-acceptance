@@ -78,7 +78,7 @@ Feature: Management of invite tokens in Onezone GUI
     Then user of browser2 sees an success notify with text matching to: .*joined.*
     And user of browser2 sees that "space1" has appeared on the spaces list in the sidebar
     And user of browser2 sees that space space1 has following privilege configuration for group group1:
-      privileges:
+          privileges:
             Space management:
               granted: Partially
               privilege subtypes:
@@ -87,6 +87,8 @@ Feature: Management of invite tokens in Onezone GUI
                 View privileges: True
             User management:
               granted: False
+
+    And user of browser1 removes all tokens
 
 
   Scenario: Unprivileged user fails to consume group to space invite token with consumer caveat
@@ -120,6 +122,9 @@ Feature: Management of invite tokens in Onezone GUI
     And user of browser2 clicks on Join button on consume token page
     Then user of browser2 sees that error modal with text "Consuming token failed" appeared
 
+    And user of browser1 removes all tokens
+
+
 
   Scenario: User successfully consumes group to space invite token with consumer caveat set for Any user
     When user of browser1 creates token with following configuration:
@@ -144,6 +149,8 @@ Feature: Management of invite tokens in Onezone GUI
     And user of browser1 clicks on copy button in token view
     And user of browser1 sends copied token to user of browser2
     Then user of browser2 succeeds to consume token for "group1" group
+
+    And user of browser1 removes all tokens
 
 
   Scenario: Group has default space member privileges after user consumes group to space invite token with default settings
@@ -184,7 +191,7 @@ Feature: Management of invite tokens in Onezone GUI
                 Cancel replication: False
                 Schedule eviction: False
                 Cancel eviction: False
-            QOS management:
+            QoS management:
               granted: False
             User management:
               granted: False
@@ -198,10 +205,10 @@ Feature: Management of invite tokens in Onezone GUI
     And user of browser1 sends copied token to user of browser2
 
     # consume invite token
-    Then user of browser2 succeeds to consume token for "group1" group
+    And user of browser2 succeeds to consume token for "group1" group
     And user of browser2 sees that "space1" has appeared on the spaces list in the sidebar
 
-    And user of browser1 sees that space space1 has following privilege configuration for group group1:
+    Then user of browser1 sees that space space1 has following privilege configuration for group group1:
       privileges:
             Space management:
               granted: Partially
@@ -230,7 +237,7 @@ Feature: Management of invite tokens in Onezone GUI
                 Cancel replication: False
                 Schedule eviction: False
                 Cancel eviction: False
-            QOS management:
+            QoS management:
               granted: False
             User management:
               granted: False
@@ -240,6 +247,9 @@ Feature: Management of invite tokens in Onezone GUI
               granted: False
             Harvester management:
               granted: False
+
+    And user of browser1 removes all tokens
+
 
 
   Scenario: Privileged group succeeds to join space using invite token with consumer caveat
@@ -292,6 +302,8 @@ Feature: Management of invite tokens in Onezone GUI
             Group management:
               granted: True
 
+    And user of browser1 removes all tokens
+
 
   Scenario: Unprivileged group fails to join space using invite token with consumer caveat
     When user of browser1 creates token with following configuration:
@@ -315,8 +327,9 @@ Feature: Management of invite tokens in Onezone GUI
                 by: name
                 consumer name: group2
     And user of browser1 sends copied token to user of browser2
-
     Then user of browser2 fails to consume token for "group1" group
+
+    And user of browser1 removes all tokens
 
 
   Scenario: Group succeeds to join space invite token with consumer caveat set for Any group
@@ -342,6 +355,8 @@ Feature: Management of invite tokens in Onezone GUI
     And user of browser1 clicks on copy button in token view
     And user of browser1 sends copied token to user of browser2
     Then user of browser2 succeeds to consume token for "group1" group
+
+    And user of browser1 removes all tokens
 
 
   Scenario: User successfully consumes harvester to space invite token until usage limit is not expired
@@ -372,14 +387,14 @@ Feature: Management of invite tokens in Onezone GUI
 
 
   Scenario: Group has default harvester member privileges after user consumes group to harvester invite token with default settings
-    When user of browser1 creates "harvester1" harvester in Onezone page
+    When user of browser1 creates "harvester4" harvester in Onezone page
     And user of browser1 creates token with following configuration:
           type: invite
           invite type: Invite group to harvester
-          invite target: harvester1
+          invite target: harvester4
     And user of browser1 sees that created token configuration is as following:
           invite type: Invite group to harvester
-          invite target: harvester1
+          invite target: harvester4
           privileges:
             Harvester management:
               granted: Partially
@@ -398,8 +413,8 @@ Feature: Management of invite tokens in Onezone GUI
     And user of browser1 sends copied token to user of browser2
 
     And user of browser2 succeeds to consume token for "group1" group
-    Then user of browser2 sees that "harvester1" has appeared on the harvesters list in the sidebar
-    And user of browser1 sees that harvester harvester1 has following privilege configuration for group group1:
+    And user of browser2 sees that "harvester4" has appeared on the harvesters list in the sidebar
+    Then user of browser1 sees that harvester harvester4 has following privilege configuration for group group1:
           privileges:
             Harvester management:
               granted: Partially
@@ -415,9 +430,11 @@ Feature: Management of invite tokens in Onezone GUI
             Space management:
               granted: False
 
+    And user of browser1 removes all tokens
+
 
   Scenario: User successfully cleans up obsolete tokens
-    When user of browser1 creates "harvester1" harvester in Onezone page
+    When user of browser1 creates "harvester5" harvester in Onezone page
     And user of browser1 creates token with following configuration:
           type: invite
           name: ToSurvive
@@ -434,13 +451,13 @@ Feature: Management of invite tokens in Onezone GUI
           name: ToRemove
           type: invite
           invite type: Invite group to harvester
-          invite target: harvester1
+          invite target: harvester5
           usage limit: 1
     And user of browser1 sees that created token configuration is as following:
           name: ToRemove
           type: Invite
           invite type: Invite group to harvester
-          invite target: harvester1
+          invite target: harvester5
           usage count: 0 / 1
     And user of browser1 clicks on copy button in token view
     And user of browser1 sends copied token to user of browser2
@@ -456,42 +473,46 @@ Feature: Management of invite tokens in Onezone GUI
     Then user of browser1 sees exactly 1 item(s) on tokens list in tokens sidebar
     And user of browser1 sees that there is token named "ToSurvive" on tokens list
 
+    And user of browser1 removes all tokens
+
 
   Scenario: User fails to consume revoked token
-    When user of browser1 creates "harvester1" harvester in Onezone page
+    When user of browser1 creates "harvester6" harvester in Onezone page
     And user of browser1 creates token with following configuration:
           name: token1
           type: invite
           invite type: Invite group to harvester
-          invite target: harvester1
+          invite target: harvester6
     And user of browser1 revokes token named "token1"
     And user of browser1 sees that created token configuration is as following:
           name: token1
           invite type: Invite group to harvester
-          invite target: harvester1
+          invite target: harvester6
           revoked: True
     And user of browser1 clicks on copy button in token view
     And user of browser1 sends copied token to user of browser2
+    Then user of browser2 fails to consume token for "group1" group
 
-    And user of browser2 fails to consume token for "group1" group
+    And user of browser1 removes all tokens
 
 
   Scenario: User fails to consume deleted token
-    When user of browser1 creates "harvester1" harvester in Onezone page
+    When user of browser1 creates "harvester7" harvester in Onezone page
     And user of browser1 creates token with following configuration:
           name: token1
           type: invite
           invite type: Invite group to harvester
-          invite target: harvester1
+          invite target: harvester7
     And user of browser1 sees that created token configuration is as following:
       name: token1
       invite type: Invite group to harvester
-      invite target: harvester1
+      invite target: harvester7
     And user of browser1 clicks on copy button in token view
     And user of browser1 sends copied token to user of browser2
     And user of browser1 removes token named "token1"
+    Then user of browser2 fails to consume token for "group1" group
 
-    And user of browser2 fails to consume token for "group1" group
+    And user of browser1 removes all tokens
 
 
   Scenario: User has default group member privileges after consuming user to group invite token with default settings
@@ -523,7 +544,7 @@ Feature: Management of invite tokens in Onezone GUI
     And user of browser1 sends copied token to user of browser2
 
     And user of browser2 succeeds to consume token
-    And user of browser2 sees that group group3 has following privilege configuration for user user1:
+    Then user of browser2 sees that group group3 has following privilege configuration for user user1:
           privileges:
             Group management:
               granted: Partially
@@ -541,6 +562,8 @@ Feature: Management of invite tokens in Onezone GUI
                 granted: False
             Handle management:
                 granted: False
+
+    And user of browser1 removes all tokens
 
 
   Scenario: User has default cluster member privileges after consuming user to cluster invite token with default settings
@@ -568,7 +591,7 @@ Feature: Management of invite tokens in Onezone GUI
     And user of browser1 sends copied token to user of browser2
 
     And user of browser2 succeeds to consume token
-    And user of browser2 sees that cluster oneprovider-1 has following privilege configuration for user user1:
+    Then user of browser2 sees that cluster oneprovider-1 has following privilege configuration for user user1:
           privileges:
             Cluster management:
               granted: Partially
@@ -583,8 +606,10 @@ Feature: Management of invite tokens in Onezone GUI
             Group management:
                 granted: False
 
+    And user of browser1 removes all tokens
 
-  Scenario: Privileged provider can support space with invite token with consumer caveat
+
+  Scenario: Privileged provider succeeds to support space with invite token with consumer caveat
     When user of browser2 creates token with following configuration:
           type: invite
           invite type: Support space
@@ -606,14 +631,13 @@ Feature: Management of invite tokens in Onezone GUI
     And user of browser2 sends copied token to user of browser1
     And user of browser1 clicks on Clusters in the main menu
     And user of browser1 clicks on "oneprovider-1" in clusters menu
-    And user of browser1 succeeds to support "space1" space in "oneprovider-1" Oneprovider panel service with following configuration:
+    Then user of browser1 succeeds to support "space1" space in "oneprovider-1" Oneprovider panel service with following configuration:
           storage: posix
           size: 1
           unit: GiB
 
 
-  #todo: change after error code fix
-  Scenario: Unprivileged provider can support space with invite token with consumer caveat
+  Scenario: Unprivileged provider fails to support space with invite token with consumer caveat
     When user of browser2 creates token with following configuration:
             type: invite
             invite type: Support space
@@ -635,15 +659,14 @@ Feature: Management of invite tokens in Onezone GUI
     And user of browser2 sends copied token to user of browser1
     And user of browser1 clicks on Clusters in the main menu
     And user of browser1 clicks on "oneprovider-2" in clusters menu
-    #todo: error text in following step
-    And user of browser1 fails to support "space1" space in "oneprovider-2" Oneprovider panel service with following configuration:
+    Then user of browser1 fails to support "space1" space in "oneprovider-2" Oneprovider panel service with following configuration:
           storage: posix
           size: 1
           unit: GiB
 
 
-  Scenario: Provider can support space with invite token with consumer caveat set for Any Oneprovider
-    When user of browser2 creates invite token with following configuration:
+  Scenario: Provider succeeds to support space with invite token with consumer caveat set for Any Oneprovider
+    When user of browser2 creates token with following configuration:
             type: invite
             invite type: Support space
             invite target: space2
@@ -664,7 +687,7 @@ Feature: Management of invite tokens in Onezone GUI
     And user of browser2 sends copied token to user of browser1
     And user of browser1 clicks on Clusters in the main menu
     And user of browser1 clicks on "oneprovider-1" in clusters menu
-    And user of browser1 succeeds to support "space1" space in "oneprovider-1" Oneprovider panel service with following configuration:
+    Then user of browser1 succeeds to support "space1" space in "oneprovider-1" Oneprovider panel service with following configuration:
           storage: posix
           size: 1
           unit: GiB
@@ -687,7 +710,7 @@ Feature: Management of invite tokens in Onezone GUI
               country codes:
                 - PL
                 - BS
-    And user of browser1 sees that created token configuration is as following:
+    Then user of browser1 sees that created token configuration is as following:
           invite type: Register Oneprovider
           caveats:
             expiration:
@@ -703,8 +726,10 @@ Feature: Management of invite tokens in Onezone GUI
                 - PL
                 - BS
 
+    And user of browser1 removes all tokens
 
-  Scenario: User sees ip and region deny caveats in token configuration after setting them in new invite token
+
+  Scenario: User sees IP and region deny caveats in token configuration after setting them in new invite token
     When user of browser1 creates token with following configuration:
           type: invite
           invite type: Register Oneprovider
@@ -714,11 +739,11 @@ Feature: Management of invite tokens in Onezone GUI
               region codes:
                 - Europe
                 - Asia
-            ip:
+            IP:
               - 192.0.2.1
               - 192.0.2.0/24
 
-    And user of browser1 sees that created token configuration is as following:
+    Then user of browser1 sees that created token configuration is as following:
           invite type: Register Oneprovider
           caveats:
             region:
@@ -726,12 +751,14 @@ Feature: Management of invite tokens in Onezone GUI
               region codes:
                 - Asia
                 - Europe
-            ip:
+            IP:
               - 192.0.2.1/32
               - 192.0.2.0/24
 
+    And user of browser1 removes all tokens
 
-  Scenario: User sees ip and region deny caveats in token configuration after setting them in new invite token
+
+  Scenario: User sees ASN and region deny caveats in token configuration after setting them in new invite token
     When user of browser1 creates token with following configuration:
           type: invite
           invite type: Register Oneprovider
@@ -741,11 +768,11 @@ Feature: Management of invite tokens in Onezone GUI
               country codes:
                 - PL
                 - BS
-            asn:
+            ASN:
               - 64496
               - 64498
 
-    And user of browser1 sees that created token configuration is as following:
+    Then user of browser1 sees that created token configuration is as following:
           invite type: Register Oneprovider
           caveats:
             country:
@@ -753,9 +780,11 @@ Feature: Management of invite tokens in Onezone GUI
               country codes:
                 - PL
                 - BS
-            asn:
+            ASN:
               - 64496
               - 64498
+
+    And user of browser1 removes all tokens
 
 
   Scenario: User sees all token caveats in token configuration after setting them in new invite token
@@ -773,15 +802,15 @@ Feature: Management of invite tokens in Onezone GUI
               allow: True
               country codes:
                 - BS
-            asn:
+            ASN:
               - 64496
-            ip:
+            IP:
               - 192.0.2.1
             consumer:
               - type: user
                 by: id
                 consumer name: user1
-    And user of browser1 sees that created token configuration is as following:
+    Then user of browser1 sees that created token configuration is as following:
           invite type: Register Oneprovider
           caveats:
             expiration:
@@ -794,38 +823,14 @@ Feature: Management of invite tokens in Onezone GUI
               allow: True
               country codes:
                 - BS
-            asn:
+            ASN:
               - 64496
-            ip:
+            IP:
               - 192.0.2.1/32
             consumer:
               - type: user
                 by: name
                 consumer name: user1
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    And user of browser1 removes all tokens
 

@@ -54,7 +54,7 @@ def result_to_support_space_in_op_panel_using_gui(selenium, user, config,
         wt_assert_existence_of_space_support_record(selenium, user, space_name,
                                                     onepanel)
     else:
-        text = 'Error'
+        text = 'Space supporting failed'
         assert_error_modal_with_text_appeared(selenium, user, text)
 
 

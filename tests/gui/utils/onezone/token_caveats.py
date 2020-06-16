@@ -107,7 +107,7 @@ class CaveatField(PageObject):
         now = datetime.now()
         delta = timedelta(minutes=delta)
         then = now + delta
-        return then.strftime("%Y/%m/%d %H:%M")
+        return then.strftime("%Y/%m/%d %-H:%M")
 
     # region caveat
     def set_region_caveats(self, selenium, browser_id, region_caveat, popups):

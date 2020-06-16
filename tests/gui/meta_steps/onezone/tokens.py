@@ -10,12 +10,12 @@ __license__ = ("This software is released under the MIT license cited in "
 from pytest_bdd import parsers
 import yaml
 
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.modal import (
     assert_error_modal_with_text_appeared, click_modal_button)
 from tests.gui.steps.onezone.tokens import *
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
+from tests.gui.steps.onezone.tokens import click_option_for_token_row_menu
 from tests.utils.bdd_utils import wt
 from tests.utils.utils import repeat_failed
 
@@ -252,12 +252,11 @@ def _create_token_with_config(selenium, browser_id, config, oz_page,
 
 def _set_tokens_caveats(selenium, browser_id, oz_page, caveats, popups, users,
                         groups, hosts, tmp_memory):
-    expand_caveats(selenium, browser_id, oz_page)
     expiration_caveat = caveats.get('expiration')
     region_caveats = caveats.get('region', False)
     country_caveats = caveats.get('country', False)
-    asn_caveats = caveats.get('asn', False)
-    ip_caveats = caveats.get('ip', False)
+    asn_caveats = caveats.get('ASN', False)
+    ip_caveats = caveats.get('IP', False)
     consumer_caveats = caveats.get('consumer', False)
     if expiration_caveat:
         caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'expiration')
@@ -269,10 +268,10 @@ def _set_tokens_caveats(selenium, browser_id, oz_page, caveats, popups, users,
         caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'country')
         caveat.set_country_caveats(selenium, browser_id, country_caveats)
     if asn_caveats:
-        caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'asn')
+        caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'ASN')
         caveat.set_asn_caveats(selenium, browser_id, asn_caveats)
     if ip_caveats:
-        caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'ip')
+        caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'IP')
         caveat.set_ip_caveats(selenium, browser_id, ip_caveats)
     if consumer_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'consumer')
@@ -371,8 +370,8 @@ def assert_token_caveats(selenium, browser_id, oz_page, caveats, users,
     expiration_caveat = caveats.get('expiration', False)
     region_caveats = caveats.get('region', False)
     country_caveats = caveats.get('country', False)
-    asn_caveats = caveats.get('asn', False)
-    ip_caveats = caveats.get('ip', False)
+    asn_caveats = caveats.get('ASN', False)
+    ip_caveats = caveats.get('IP', False)
     consumer_caveats = caveats.get('consumer', False)
     if expiration_caveat:
         caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'expiration')
@@ -384,10 +383,10 @@ def assert_token_caveats(selenium, browser_id, oz_page, caveats, users,
         caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'country')
         caveat.assert_country_caveats(country_caveats)
     if asn_caveats:
-        caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'asn')
+        caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'ASN')
         caveat.assert_asn_caveats(asn_caveats)
     if ip_caveats:
-        caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'ip')
+        caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'IP')
         caveat.assert_ip_caveats(ip_caveats)
     if consumer_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'consumer')
@@ -415,4 +414,18 @@ def remove_token(selenium, browser_id, token_name, oz_page, popups, modals):
     wt_click_on_btn_for_oz_token(selenium, browser_id, btn, token_name, oz_page,
                                  popups)
     click_modal_button(selenium, browser_id, button, modal, modals)
+
+
+@wt(parsers.parse('user of {browser_id} removes all tokens'))
+def remove_all_tokens(selenium, browser_id, oz_page, popups, modals):
+    btn = 'remove'
+    button = 'Remove'
+    modal = 'Remove token'
+
+    driver = selenium[browser_id]
+    for token in oz_page(driver)['tokens'].sidebar.tokens:
+        token.click()
+        token.menu_button.click()
+        click_option_for_token_row_menu(driver, btn, popups)
+        click_modal_button(selenium, browser_id, button, modal, modals)
 
