@@ -13,8 +13,7 @@ from selenium.webdriver.common.keys import Keys
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
-    Label, WebElement, Button, WebItemsSequence, Input, WebItem)
-from tests.gui.utils.onezone.common import InputBox
+    Label, WebElement, Button, WebItemsSequence, Input)
 
 
 class CaveatTag(PageObject):
@@ -27,28 +26,46 @@ class CaveatTag(PageObject):
         return i_type in self.icon.get_attribute('class')
 
 
-class AllowOption(PageObject):
+class Option(PageObject):
     name = id = Label('.text')
 
     def __call__(self):
         self.click()
 
 
+class PathEntry(PageObject):
+    space_name = id = Label('.pathSpace-field')
+    path = Label('.pathString-field')
+
+
+class ObjectIdEntry(PageObject):
+    name = id = Label('.text-like-field')
+
+
 class CaveatField(PageObject):
     name = id = Label('.control-label')
-    toggle = Toggle('.one-way-toggle-control')
+    toggle = Toggle('.one-way-toggle')
 
     new_item = Button('.oneicon-plus')
+    add_item = Button('.add-field-button')
 
-    allowance_label = Label('.dropdown-field')
-    allow_expander = Button('.ember-power-select-trigger')
-    allow_options = WebItemsSequence('.ember-power-select-option',
-                                     cls=AllowOption)
+    item_label = Label('.dropdown-field')
+    expander = Button('.ember-power-select-trigger')
+    options = WebItemsSequence('.ember-power-select-option', cls=Option)
     time_input = Input('.form-control.date-time-picker')
     time_label = Label('.datetime-field')
     inner_input = Input('.tag-creator .text-editor-input')
+    input = Input('.text-like-field .form-control')
+
+    rest_control = Button('.option-rest .one-way-radio-control')
+    oneclient_control = Button('.option-oneclient .one-way-radio-control')
 
     tags = WebItemsSequence('.tag-item', cls=CaveatTag)
+    interface_label = Label('.radio-field')
+    readonly_toggle = Toggle('.readonlyView-field .one-way-toggle')
+    path_entries = WebItemsSequence('.pathEntry-collapse', cls=PathEntry)
+    object_id_entries = WebItemsSequence('.objectIdEntry-field',
+                                         cls=ObjectIdEntry)
 
     def activate(self):
         self.toggle.check()
@@ -57,17 +74,17 @@ class CaveatField(PageObject):
         self.toggle.uncheck()
 
     def is_allow(self):
-        return self.allowance_label == 'Allow'
+        return self.item_label == 'Allow'
 
     def set_allow(self):
         if not self.is_allow():
-            self.allow_expander()
-            self.allow_options['Allow']()
+            self.expander()
+            self.options['Allow']()
 
     def set_deny(self):
         if self.is_allow():
-            self.allow_expander()
-            self.allow_options['Deny']()
+            self.expander()
+            self.options['Deny']()
 
     def set_allowance(self, allow):
         if allow:
@@ -179,6 +196,66 @@ class CaveatField(PageObject):
             popup.input = value
             popup.add_button()
 
+    # service caveat
+    def set_service_caveats(self, selenium, browser_id, service_caveats,
+                            popups):
+        self.activate()
+        service_cav = service_caveats.get('Service', [])
+        service_onepanel_cav = service_caveats.get('Service Onepanel', [])
+
+        for service in service_cav:
+            if service != 'Any Oneprovider':
+                self.set_service_in_service_caveat(selenium, browser_id,
+                                                   popups, 'Service',
+                                                   service)
+        for service in service_onepanel_cav:
+            self.set_service_in_service_caveat(selenium, browser_id, popups,
+                                               'Service Onepanel', service)
+
+    def set_service_in_service_caveat(self, selenium, browser_id, popups,
+                                      consumer_type, value):
+        self.new_item()
+        driver = selenium[browser_id]
+        popup = popups(driver).consumer_caveat_popup
+        popup.expand_consumer_types()
+        popup.consumer_types[consumer_type]()
+        popup.list_option()
+        popup.consumers[value]()
+
+    # interface caveat
+    def set_interface_caveat(self, caveat):
+        self.activate()
+        getattr(self, f'{caveat.lower()}_control').click()
+
+    # readonly caveat
+    def set_readonly_caveat(self):
+        self.activate()
+
+    # path caveat
+    def set_path_caveats(self, path_caveats):
+        self.activate()
+        for path_caveat in path_caveats:
+            self.set_path_caveat(path_caveat)
+
+    def set_path_caveat(self, path_caveat):
+        space = path_caveat['space']
+        path = path_caveat['path']
+        self.add_item()
+        if not self.item_label == space:
+            self.expander()
+            self.options[space]()
+        self.input = path
+
+    # object id caveat
+    def set_object_id_caveats(self, ids):
+        self.activate()
+        for object_id in ids:
+            self.set_object_id_caveat(object_id)
+
+    def set_object_id_caveat(self, object_id):
+        self.add_item()
+        self.input = str(object_id)
+
     # assertions
 
     # expiration caveat
@@ -265,4 +342,42 @@ class CaveatField(PageObject):
         assert tag.is_icon_type(consumer_type), (f'Consumer caveat for {value}'
                                                  f' is not {consumer_type}')
 
+    # service caveat
+    def assert_service_caveats(self, services):
+        self.assert_num_caveats_equal(services)
+        for service in services:
+            self.assert_ip_in_ip_caveats(service)
+
+    def assert_service_in_service_caveat(self, service):
+        assert service in self.tags, (f'{service} should be amongst services '
+                                      f'caveats but is not')
+
+    # interface caveat
+    def assert_interface_caveat(self, interface):
+        assert self.interface_label == interface
+
+    # readonly caveat
+    def assert_readonly_caveat(self):
+        assert self.readonly_toggle.is_checked(), 'Readonly not set'
+
+    # path caveat
+    def assert_path_caveats(self, paths):
+        for path in paths:
+            self.assert_path_caveat(path)
+
+    def assert_path_caveat(self, path_caveat):
+        space = path_caveat['space']
+        path = path_caveat['path']
+        entry = self.path_entries[space]
+        assert entry.path == path, (f'Invalid path: {space} {path}. Actual: '
+                                    f'{entry.space_name} {entry.path}')
+
+    # object id caveat
+    def assert_object_id_caveats(self, ids):
+        for object_id in ids:
+            self.assert_object_id_caveat(object_id)
+
+    def assert_object_id_caveat(self, object_id):
+        assert object_id in self.object_id_entries, (f'Object id {object_id} '
+                                                     f'not in object ids')
 

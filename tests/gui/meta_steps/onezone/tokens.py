@@ -199,7 +199,7 @@ def create_token_with_config(selenium, browser_id, config, oz_page,
                 region codes:
                     - Europe
                     - Asia
-            ip:
+            IP:
               - 127.0.0.1
             consumer:
               - type: group
@@ -258,6 +258,11 @@ def _set_tokens_caveats(selenium, browser_id, oz_page, caveats, popups, users,
     asn_caveats = caveats.get('ASN', False)
     ip_caveats = caveats.get('IP', False)
     consumer_caveats = caveats.get('consumer', False)
+    service_caveats = caveats.get('service', False)
+    interface_caveat = caveats.get('interface', False)
+    readonly_caveat = caveats.get('read only', False)
+    path_caveats = caveats.get('path', False)
+    object_id_caveats = caveats.get('object ID', False)
     if expiration_caveat:
         caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'expiration')
         caveat.set_expiration_caveat(expiration_caveat, tmp_memory)
@@ -268,15 +273,31 @@ def _set_tokens_caveats(selenium, browser_id, oz_page, caveats, popups, users,
         caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'country')
         caveat.set_country_caveats(selenium, browser_id, country_caveats)
     if asn_caveats:
-        caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'ASN')
+        caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'asn')
         caveat.set_asn_caveats(selenium, browser_id, asn_caveats)
     if ip_caveats:
-        caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'IP')
+        caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'ip')
         caveat.set_ip_caveats(selenium, browser_id, ip_caveats)
     if consumer_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'consumer')
         caveat.set_consumer_caveats(selenium, browser_id, popups,
                                     consumer_caveats, users, groups, hosts)
+    if service_caveats:
+        caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'service')
+        caveat.set_service_caveats(selenium, browser_id, service_caveats,
+                                   popups)
+    if interface_caveat:
+        caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'interface')
+        caveat.set_interface_caveat(interface_caveat)
+    if readonly_caveat:
+        caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'readonly')
+        caveat.set_readonly_caveat()
+    if path_caveats:
+        caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'path')
+        caveat.set_path_caveats(path_caveats)
+    if object_id_caveats:
+        caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'object_id')
+        caveat.set_object_id_caveats(object_id_caveats)
 
 
 @wt(parsers.parse('user of {browser_id} sees that created token configuration '
@@ -373,6 +394,11 @@ def assert_token_caveats(selenium, browser_id, oz_page, caveats, users,
     asn_caveats = caveats.get('ASN', False)
     ip_caveats = caveats.get('IP', False)
     consumer_caveats = caveats.get('consumer', False)
+    service_caveats = caveats.get('service', False)
+    interface_caveat = caveats.get('interface', False)
+    readonly_caveat = caveats.get('read only', False)
+    path_caveats = caveats.get('path', False)
+    object_id_caveats = caveats.get('object ID', False)
     if expiration_caveat:
         caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'expiration')
         caveat.assert_expiration_caveat(expiration_caveat, tmp_memory)
@@ -383,14 +409,29 @@ def assert_token_caveats(selenium, browser_id, oz_page, caveats, users,
         caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'country')
         caveat.assert_country_caveats(country_caveats)
     if asn_caveats:
-        caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'ASN')
+        caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'asn')
         caveat.assert_asn_caveats(asn_caveats)
     if ip_caveats:
-        caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'IP')
+        caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'ip')
         caveat.assert_ip_caveats(ip_caveats)
     if consumer_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'consumer')
         caveat.assert_consumer_caveats(consumer_caveats, users, groups, hosts)
+    if service_caveats:
+        caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'service')
+        caveat.assert_service_caveats(service_caveats)
+    if interface_caveat:
+        caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'interface')
+        caveat.assert_interface_caveat(interface_caveat)
+    if readonly_caveat:
+        caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'readonly')
+        caveat.assert_readonly_caveat()
+    if path_caveats:
+        caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'path')
+        caveat.assert_path_caveats(path_caveats)
+    if object_id_caveats:
+        caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'object_id')
+        caveat.assert_object_id_caveats(object_id_caveats)
 
 
 @wt(parsers.parse('user of {browser_id} revokes token named "{token_name}"'))

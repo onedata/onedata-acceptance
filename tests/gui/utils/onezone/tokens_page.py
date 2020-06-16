@@ -88,6 +88,11 @@ class CreateNewTokenPage(PageObject):
     asn_caveat = WebItem('.asnCaveat-field', cls=CaveatField)
     ip_caveat = WebItem('.ipCaveat-field', cls=CaveatField)
     consumer_caveat = WebItem('.consumerCaveat-field', cls=CaveatField)
+    service_caveat = WebItem('.serviceCaveat-field', cls=CaveatField)
+    interface_caveat = WebItem('.interfaceCaveat-field', cls=CaveatField)
+    readonly_caveat = WebItem('.readonlyCaveat-field', cls=CaveatField)
+    path_caveat = WebItem('.pathCaveat-field', cls=CaveatField)
+    object_id_caveat = WebItem('.objectIdCaveat-field', cls=CaveatField)
 
     footer = WebElement('.footer-buttons')
 
