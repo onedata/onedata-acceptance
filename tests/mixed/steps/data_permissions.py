@@ -11,15 +11,20 @@ import re
 
 from pytest_bdd import parsers
 
+from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.meta_steps.oneprovider.permissions import (
-    grant_acl_privileges_in_op_gui, assert_ace_in_op_gui)
+    grant_acl_privileges_in_op_gui, assert_ace_in_op_gui, assert_posix_permissions_in_op_gui,
+    set_posix_permissions_in_op_gui)
 from tests.mixed.steps.data_basic import change_client_name_to_hostname
 from tests.mixed.steps.oneclient.data_basic import (
-    grant_acl_privileges_in_op_oneclient, assert_ace_in_op_oneclient)
+    grant_acl_privileges_in_op_oneclient, assert_ace_in_op_oneclient, assert_posix_permissions_in_op_oneclient,
+    set_posix_permissions_in_op_oneclient)
 from tests.mixed.steps.rest.oneprovider.data import (
-    grant_acl_privileges_in_op_rest, assert_ace_in_op_rest)
+    grant_acl_privileges_in_op_rest, assert_ace_in_op_rest, assert_posix_permissions_in_op_rest,
+    set_posix_permissions_in_op_rest)
 from tests.mixed.utils.common import NoSuchClientException
-from tests.utils.bdd_utils import when, then
+from tests.utils.bdd_utils import when, then, wt
+from tests.utils.utils import repeat_failed
 
 
 def _remove_parent_acl_from_string(priv):
@@ -82,3 +87,51 @@ def assert_ace_in_op(client, selenium, user, cdmi, op_container, space, path, ho
                                    priv, type, name, numerals)
     else:
         raise NoSuchClientException('Client: {} not found'.format(client))
+
+
+@wt(parsers.re('using (?P<client>.*), (?P<user>\w+) sees '
+               'that POSIX permission for item named "(?P<item_path>.*)" in '
+               '"(?P<space>.*)" is "(?P<mode>.*)" in (?P<host>.*)'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_posix_permissions_in_op(client, user, item_path, space, mode,
+                                   host, selenium, op_container, tmp_memory,
+                                   modals, users, hosts, oz_page):
+    full_path = '{}/{}'.format(space, item_path)
+    client_lower = client.lower()
+    if client_lower == 'web gui':
+        assert_posix_permissions_in_op_gui(selenium, user, space, item_path,
+                                           mode, oz_page, op_container,
+                                           tmp_memory, modals)
+    elif client_lower == 'rest':
+        assert_posix_permissions_in_op_rest(full_path, mode, user, users,
+                                            host, hosts)
+    elif 'oneclient' in client_lower:
+        oneclient_host = change_client_name_to_hostname(client_lower)
+        assert_posix_permissions_in_op_oneclient(user, full_path, mode,
+                                                 oneclient_host, users)
+    else:
+        raise NoSuchClientException('Client: {} not found'.format(client))
+
+
+@wt(parsers.re('using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to set '
+               '"(?P<mode>.*)" POSIX permission for item named '
+               '"(?P<item_path>.*)" in "(?P<space>.*)" in (?P<host>.*)'))
+def set_posix_permissions_in_op(client, user, item_path, space, mode, result,
+                                host, selenium, op_container, tmp_memory, modals,
+                                users, hosts, oz_page):
+    full_path = '{}/{}'.format(space, item_path)
+    client_lower = client.lower()
+    if client_lower == 'web gui':
+        set_posix_permissions_in_op_gui(selenium, user, space, item_path,
+                                        mode, op_container, tmp_memory,
+                                        modals, oz_page)
+    elif client_lower == 'rest':
+        set_posix_permissions_in_op_rest(full_path, mode, user, users, host,
+                                         hosts, result)
+    elif 'oneclient' in client_lower:
+        oneclient_host = change_client_name_to_hostname(client_lower)
+        set_posix_permissions_in_op_oneclient(user, full_path, mode,
+                                              oneclient_host, users, result)
+    else:
+        raise NoSuchClientException('Client: {} not found'.format(client))
+

@@ -18,6 +18,7 @@ from tests.gui.meta_steps.onezone import *
 from tests.gui.meta_steps.oneprovider.data import *
 
 from tests.mixed.steps.data_basic import *
+from tests.mixed.steps.onepanel_basic import *
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.onezone.common import *
 

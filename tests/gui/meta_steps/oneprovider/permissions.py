@@ -38,10 +38,11 @@ def open_permission_modal(selenium, browser_id, path, space, tmp_memory, modals,
 def assert_posix_permissions_in_op_gui(selenium, browser_id, space, path, perm,
                                        oz_page, op_container, tmp_memory,
                                        modals):
-    refresh_site(selenium, browser_id)
     open_permission_modal(selenium, browser_id, path, space, tmp_memory, modals,
                           oz_page, op_container, 'posix')
     check_permission(selenium, browser_id, perm, modals)
+    wt_click_on_confirmation_btn_in_modal(selenium, browser_id, "Cancel",
+                                          tmp_memory)
 
 
 @wt(parsers.re(r'user of (?P<browser_id>\w+) sets (?P<path>.*) POSIX '

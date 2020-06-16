@@ -47,11 +47,17 @@ from tests.gui.meta_steps.onezone import *
 from tests.gui.conftest import *
 
 from tests.mixed.steps.data_basic import *
+from tests.mixed.steps.data_permissions import *
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.onezone.common import *
 
 from tests.oneclient.steps.auth_steps import *
 from tests.oneclient.steps.multi_auth_steps import *
+
+
+@fixture(scope='module')
+def screens():
+    return [0, 1]
 
 
 scenarios('../features/oneprovider/permission_posix_multi.feature')

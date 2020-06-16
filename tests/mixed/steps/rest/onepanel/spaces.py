@@ -7,9 +7,11 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import re
 
 import yaml
 
+from tests.gui.conftest import WAIT_BACKEND
 from tests.mixed.utils.common import (login_to_panel, login_to_oz)
 from tests.mixed.steps.rest.onezone.common import get_space_with_name
 from tests.mixed.onepanel_client import (OneproviderApi,
@@ -17,6 +19,7 @@ from tests.mixed.onepanel_client import (OneproviderApi,
                                          SpaceModifyRequest,
                                          StorageImportDetails,
                                          SpaceSupportRequest)
+from tests.utils.utils import repeat_failed
 
 attrs_mapping = {
         'Delete enabled': 'Delete enable',
@@ -60,20 +63,23 @@ def support_space_in_op_panel_using_rest(user, provider_host, hosts, users,
         storage_import = StorageImportDetails(strategy, max_depth)
     else:
         storage_import = None
+    storage_update = StorageUpdateDetails(strategy='no_update')
 
     storages = provider_api.get_storages().ids
+    storage_name = re.sub(r' \(.*\)', '', options['storage'])
     for storage_id in storages:
         storage = provider_api.get_storage_details(storage_id)
-        if storage.name == options['storage']:
+        if storage.name == storage_name:
             space_support_rq = SpaceSupportRequest(
                 token=tmp_memory[user]['mailbox']['token'],
                 size=options['size'],
                 storage_id=storage_id,
-                storage_import=storage_import)
+                storage_import=storage_import,
+                storage_update=storage_update)
             provider_api.support_space(space_support_rq)
             break
     else:
-        raise RuntimeError('No storage named "{}"'.format(options['storage']))
+        raise RuntimeError('No storage named "{}"'.format(storage_name))
 
 
 def configure_sync_parameters_for_space_in_op_panel_rest(user, users,
@@ -115,6 +121,7 @@ def configure_sync_parameters_for_space_in_op_panel_rest(user, users,
     provider_api.modify_space(space.space_id, space_modify_rq)
 
 
+@repeat_failed(timeout=WAIT_BACKEND*4)
 def assert_proper_space_configuration_in_op_panel_rest(space_name, user, users,
                                                        provider_host, hosts,
                                                        conf, sync_type,

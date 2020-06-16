@@ -32,13 +32,17 @@ Feature: POSIX privileges multiclient tests
 
 
   Scenario Outline: User1 creates file using <client1> and user2 fails to change its permission using <client2>
-    When using <client1>, user1 succeeds to create file named "file1" in "space1" in oneprovider-1
+    When using <client0>, user1 succeeds to create file named "file1" in "space1" in oneprovider-1
     And  using <client2>, user2 succeeds to see item named "file1" in "space1" in oneprovider-1
     And using <client2>, user2 sees that POSIX permission for item named "file1" in "space1" is "664" in oneprovider-1
     And using <client2>, user2 fails to set "775" POSIX permission for item named "file1" in "space1" in oneprovider-1
     Then using <client2>, user2 sees that POSIX permission for item named "file1" in "space1" is "664" in oneprovider-1
     And using <client1>, user1 sees that POSIX permission for item named "file1" in "space1" is "664" in oneprovider-1
 
+    Examples:
+    | client0    |
+    | REST       |
+    | oneclient1 |
 
   Scenario Outline: User1 creates directory using <client1> and user2 fails to change its permission using <client2>
     When using <client1>, user1 succeeds to create directory named "dir1" in "space1" in oneprovider-1

@@ -411,6 +411,13 @@ def cp_files_to_storage_mount_point(user, src_path, tmpdir, hosts):
 
 
 @when(parsers.re('using docker, (?P<user>.+?) copies (?P<src_path>.+?) '
+                 'to (?P<dst_path>.+?) provider\'s storage mount point'))
+def cp_files_to_path_in_storage_mount_point(user, src_path, tmpdir, hosts, dst_path):
+    from tests.gui.steps.common.docker import wt_cp_files_to_dir_in_storage_mount_point
+    wt_cp_files_to_dir_in_storage_mount_point(user, src_path, tmpdir, hosts, dst_path)
+
+
+@when(parsers.re('using docker, (?P<user>.+?) copies (?P<src_path>.+?) '
                  'to the root directory of "(?P<space_name>.+?)" space'))
 def cp_files_to_space_root_dir(user, src_path, space_name, tmpdir, tmp_memory,
                                hosts):
@@ -422,7 +429,7 @@ def cp_files_to_space_root_dir(user, src_path, space_name, tmpdir, tmp_memory,
 @when(parsers.re('using docker, (?P<user>.+?) copies (?P<src_path>.+?) '
                  'to (?P<dst_path>.+?) regular directory of '
                  '"(?P<space_name>.+?)" space'))
-def cp_files_to_space_root_dir(user, src_path, dst_path, space_name, tmpdir,
+def cp_files_to_path_in_space_root_dir(user, src_path, dst_path, space_name, tmpdir,
                                tmp_memory, hosts):
     from tests.gui.steps.common.docker import wt_cp_files_to_dst_path_in_space
     wt_cp_files_to_dst_path_in_space(user, src_path, dst_path, space_name,
@@ -497,6 +504,7 @@ def configure_sync_parameters_for_space_in_op_panel(client, request, user,
         Scan interval [s]: 10
         Write once: true
         Delete enabled: false
+        Synchronize ACL: false
 
     For import strategy:
 
@@ -568,6 +576,13 @@ def assert_space_content_in_op(client, request, config, selenium, user,
 def rm_files_from_space_root_dir(user, src_path, space_name, tmp_memory, hosts):
     from tests.gui.steps.common.docker import wt_rm_files_to_space_root_dir
     wt_rm_files_to_space_root_dir(src_path, space_name, tmp_memory, hosts)
+
+
+@when(parsers.re('using docker, (?P<user>.+?) removes (?P<src_path>.+?) '
+                 'from provider\'s storage mount point'))
+def rm_files_from_storage_mount_point(user, src_path, hosts):
+    from tests.gui.steps.common.docker import wt_rm_files_to_storage_mount_point
+    wt_rm_files_to_storage_mount_point(src_path, hosts)
 
 
 @when(parsers.re('using (?P<client>.*), (?P<user>.+?) copies Id of '

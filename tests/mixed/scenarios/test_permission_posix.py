@@ -47,6 +47,7 @@ from tests.gui.meta_steps.onezone import *
 from tests.gui.conftest import *
 
 from tests.mixed.steps.data_basic import *
+from tests.mixed.steps.data_permissions import *
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.onezone.common import *
 
