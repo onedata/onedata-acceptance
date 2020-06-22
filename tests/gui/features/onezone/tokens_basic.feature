@@ -128,12 +128,45 @@ Feature: Management of tokens basic features in Onezone GUI
     | invite    | invite_token   |
 
 
-    Scenario: User successfully creates access token with all caveats
-      When user of browser creates token with following configuration:
-          type: access
+  Scenario: User successfully creates access token with all caveats
+    When user of browser creates token with following configuration:
+        type: access
+        caveats:
+          expiration:
+            after: 10
+          region:
+            allow: True
+            region codes:
+              - Europe
+          country:
+            allow: True
+            country codes:
+              - BS
+          ASN:
+            - 64496
+          IP:
+            - 192.0.2.1
+          consumer:
+            - type: user
+              by: id
+              consumer name: user1
+          service:
+            Service:
+              - Any Oneprovider
+            Service Onepanel:
+              - Any Oneprovider Onepanel
+          interface: REST
+          read only: True
+          path:
+            - space: space1
+              path: /
+          object ID:
+            - 0000000000522CB067756964233739396665383433613330383664376465393632636539643462666561313362636835363837233166373864336661623561326166633135373739363737653532656166636231636837653434
+    Then user of browser sees that created token configuration is as following:
+          type: Access
           caveats:
             expiration:
-              after: 10
+              set: True
             region:
               allow: True
               region codes:
@@ -145,16 +178,14 @@ Feature: Management of tokens basic features in Onezone GUI
             ASN:
               - 64496
             IP:
-              - 192.0.2.1
+              - 192.0.2.1/32
             consumer:
               - type: user
-                by: id
+                by: name
                 consumer name: user1
             service:
-              Service:
-                - Any Oneprovider
-              Service Onepanel:
-                - Any Oneprovider Onepanel
+              - Any Oneprovider
+              - Any Oneprovider Onepanel
             interface: REST
             read only: True
             path:
@@ -162,34 +193,3 @@ Feature: Management of tokens basic features in Onezone GUI
                 path: /
             object ID:
               - 0000000000522CB067756964233739396665383433613330383664376465393632636539643462666561313362636835363837233166373864336661623561326166633135373739363737653532656166636231636837653434
-      Then user of browser sees that created token configuration is as following:
-            type: Access
-            caveats:
-              expiration:
-                set: True
-              region:
-                allow: True
-                region codes:
-                  - Europe
-              country:
-                allow: True
-                country codes:
-                  - BS
-              ASN:
-                - 64496
-              IP:
-                - 192.0.2.1/32
-              consumer:
-                - type: user
-                  by: name
-                  consumer name: user1
-              service:
-                - Any Oneprovider
-                - Any Oneprovider Onepanel
-              interface: REST
-              read only: True
-              path:
-                - space: space1
-                  path: /
-              object ID:
-                - 0000000000522CB067756964233739396665383433613330383664376465393632636539643462666561313362636835363837233166373864336661623561326166633135373739363737653532656166636231636837653434

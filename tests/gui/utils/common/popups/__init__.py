@@ -31,7 +31,8 @@ class Popups(object):
     menu_popup = WebItem('#webuiPopover1', cls=MenuPopup)
     popover_menu = WebItem('.webui-popover.in', cls=PopoverMenu)
     selector_popup = WebItem('.webui-popover.in', cls=SelectorPopup)
-    consumer_caveat_popup = WebItem('.tags-selector', cls=ConsumerCaveat)
+    consumer_caveat_popup = WebItem('.webui-popover-tags-selector',
+                                    cls=ConsumerCaveat)
 
     def __init__(self, driver):
         self.driver = self.web_elem = driver
