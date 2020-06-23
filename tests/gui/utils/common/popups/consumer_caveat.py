@@ -15,10 +15,10 @@ class TypeItem(PageObject):
     name = id = Label('.text')
 
     def __call__(self):
-        self.click()
+        self.web_elem.click()
 
     def __str__(self):
-        return 'Consumer type item'
+        return f'Consumer type item with text {self.name}'
 
 
 class Consumer(PageObject):
@@ -35,7 +35,8 @@ class ConsumerCaveat(PageObject):
     list_option = Button('.btn-list')
     id_option = Button('.btn-by-id')
     consumer_type = WebElement('.ember-power-select-trigger')
-    consumer_types = WebItemsSequence('.ember-power-select-option', cls=TypeItem)
+    consumer_types = WebItemsSequence(
+        '.ember-power-select-option', cls=TypeItem)
     consumers = WebItemsSequence('.selector-item', cls=Consumer)
     input = Input('.record-id')
     add_button = Button('.add-id')

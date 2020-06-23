@@ -6,6 +6,7 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+import time
 from datetime import datetime, timedelta
 
 from selenium.webdriver.common.keys import Keys
@@ -187,7 +188,9 @@ class CaveatField(PageObject):
         driver = selenium[browser_id]
         popup = popups(driver).consumer_caveat_popup
         popup.expand_consumer_types()
+        time.sleep(1)
         popup.consumer_types[consumer_type.capitalize()]()
+        time.sleep(1)
         if method == 'name':
             popup.list_option()
             popup.consumers[value]()

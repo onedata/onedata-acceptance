@@ -65,11 +65,12 @@ from tests.gui.meta_steps.onepanel.spaces import *
 from tests.gui.meta_steps.oneprovider.data import *
 
 from tests.utils.acceptance_utils import *
+from tests.mixed.steps.space_basic import *
 
 
 @fixture(scope='module')
 def screens():
-    return [0]
+    return [0, 1]
 
 
 scenarios('../features/onezone/login_page.feature')

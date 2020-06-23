@@ -63,7 +63,14 @@ def leave_spaces_in_oz_using_gui(selenium, user, space_list, oz_page, popups):
     option = 'Leave space'
     confirmation_button = 'yes'
 
-    for space_name in parse_seq(space_list):
+    if space_list == 'all':
+        oz_page(selenium[user])['data'].spaces_header_list
+        space_list = [elem.name for elem in
+                      oz_page(selenium[user])['data'].spaces_header_list]
+    else:
+        space_list = parse_seq(space_list)
+
+    for space_name in space_list:
         click_element_on_lists_on_left_sidebar_menu(selenium, user, where,
                                                     space_name, oz_page)
         click_on_option_in_menu(selenium, user, option, oz_page, popups)
@@ -244,6 +251,8 @@ def assert_space_is_supported_by_provider_in_oz_gui(selenium, user, oz_page,
 
 @given(parsers.parse('there is no "{space_name}" space in Onezone used '
                      'by user of {browser_id}'))
+@wt(parsers.parse('user of {browser_id} leaves {space_name} spaces in '
+                  'Onezone'))
 def leave_space_in_onezone(selenium, browser_id, space_name, oz_page, popups):
     option = 'Data'
 

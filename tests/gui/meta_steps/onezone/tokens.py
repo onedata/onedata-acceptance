@@ -464,8 +464,11 @@ def remove_all_tokens(selenium, browser_id, oz_page, popups, modals):
     modal = 'Remove token'
 
     driver = selenium[browser_id]
+    tokens = oz_page(driver)['tokens'].sidebar.tokens
+    if len(tokens):
+        tokens[0].click()
+
     for token in oz_page(driver)['tokens'].sidebar.tokens:
-        token.click()
         token.menu_button.click()
         click_option_for_token_row_menu(driver, btn, popups)
         click_modal_button(selenium, browser_id, button, modal, modals)
