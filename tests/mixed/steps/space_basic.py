@@ -11,6 +11,7 @@ __license__ = ("This software is released under the MIT license cited in "
 from pytest_bdd import when, then, parsers
 
 from tests.mixed.utils.common import NoSuchClientException
+from tests.utils.bdd_utils import wt
 
 
 @when(parsers.re('using (?P<client>.*), (?P<user>.+?) creates '
@@ -34,6 +35,9 @@ def create_spaces_in_oz(client, user, space_list, host, hosts, users, selenium,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
+@then(parsers.re('using (?P<client>.*), user of (?P<user>.+?) leaves spaces? '
+                 'named (?P<space_list>.+?) in "(?P<host>.+?)" Onezone '
+                 'service'))
 @when(parsers.re('using (?P<client>.*), (?P<user>.+?) leaves spaces? '
                  'named (?P<space_list>.+?) in "(?P<host>.+?)" Onezone '
                  'service'))
@@ -74,6 +78,9 @@ def rename_spaces_in_oz(client, request, user, space_list, new_names_list,
 
 
 @when(parsers.re('using (?P<client>.*), (?P<user>.+?) removes spaces? '
+                 'named (?P<space_list>.+?) in "(?P<host>.+?)" Onezone '
+                 'service'))
+@when(parsers.re('using (?P<client>.*), user of (?P<user>.+?) removes spaces? '
                  'named (?P<space_list>.+?) in "(?P<host>.+?)" Onezone '
                  'service'))
 @then(parsers.re('using (?P<client>.*), (?P<user>.+?) removes spaces? '
