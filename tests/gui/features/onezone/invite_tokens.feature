@@ -832,33 +832,3 @@ Feature: Management of invite tokens in Onezone GUI
 
     And user of browser1 leaves all spaces in Onezone
 
-
-  Scenario: Unprivileged provider fails to support space with invite token with consumer caveat
-    When user of browser2 creates token with following configuration:
-            type: invite
-            invite type: Support space
-            invite target: space2
-            caveats:
-              consumer:
-                - type: oneprovider
-                  by: name
-                  consumer name: oneprovider-1
-    And user of browser2 sees that created token configuration is as following:
-            invite type: Support space
-            invite target: space2
-            caveats:
-              consumer:
-                - type: oneprovider
-                  by: name
-                  consumer name: oneprovider-1
-    And user of browser2 clicks on copy button in token view
-    And user of browser2 sends copied token to user of browser1
-    And user of browser1 clicks on Clusters in the main menu
-    And user of browser1 clicks on "oneprovider-2" in clusters menu
-    Then user of browser1 fails to support "space1" space in "oneprovider-2" Oneprovider panel service with following configuration:
-          storage: posix
-          size: 1
-          unit: GiB
-
-    And user of browser1 leaves all spaces in Onezone
-
