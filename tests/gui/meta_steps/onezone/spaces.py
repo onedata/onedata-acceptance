@@ -251,9 +251,21 @@ def assert_space_is_supported_by_provider_in_oz_gui(selenium, user, oz_page,
 
 @given(parsers.parse('there is no "{space_name}" space in Onezone used '
                      'by user of {browser_id}'))
+def leave_space_in_onezone(selenium, browser_id, space_name, oz_page, popups):
+    option = 'Data'
+
+    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
+    time.sleep(2)
+    try:
+        leave_spaces_in_oz_using_gui(selenium, browser_id, space_name,
+                                     oz_page, popups)
+    except RuntimeError:
+        pass
+
+
 @wt(parsers.parse('user of {browser_id} leaves {space_name} spaces in '
                   'Onezone'))
-def leave_space_in_onezone(selenium, browser_id, space_name, oz_page, popups):
+def leave_space_in_onezone_wt(selenium, browser_id, space_name, oz_page, popups):
     option = 'Data'
 
     click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
