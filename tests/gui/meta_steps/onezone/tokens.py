@@ -100,12 +100,16 @@ def result_to_consume_token_for_elem(selenium, browser_id, oz_page, elem_name,
         notify_visible_with_text(selenium, browser_id, notify_type, text_regexp)
     else:
         text = 'Consuming token failed'
+        button = 'Close'
+        modal = 'Error'
+
         assert_error_modal_with_text_appeared(selenium, browser_id, text)
+        click_modal_button(selenium, browser_id, button, modal, modals)
 
 
 @wt(parsers.parse('user of {browser_id} {result} to consume token'))
-def result_to_consume_token_for_elem(selenium, browser_id, oz_page,
-                                     result, clipboard, displays):
+def result_to_consume_token(selenium, browser_id, oz_page, result, clipboard,
+                            displays, modals):
     consume_token_from_copied_token(selenium, browser_id, oz_page, clipboard,
                                     displays)
     if result == 'succeeds':
@@ -115,7 +119,11 @@ def result_to_consume_token_for_elem(selenium, browser_id, oz_page,
         notify_visible_with_text(selenium, browser_id, notify_type, text_regexp)
     else:
         text = 'Consuming token failed'
+        button = 'Close'
+        modal = 'Error'
+
         assert_error_modal_with_text_appeared(selenium, browser_id, text)
+        click_modal_button(selenium, browser_id, button, modal, modals)
 
 
 @wt(parsers.parse('user of {browser_id} adds group "{group}" as subgroup '

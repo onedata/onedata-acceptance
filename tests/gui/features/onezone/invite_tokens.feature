@@ -5,7 +5,7 @@ Feature: Management of invite tokens in Onezone GUI
             - user1
             - user2
     And initial spaces configuration in "onezone" Onezone service:
-            space0:
+            space8:
                 owner: user1
                 providers:
                 - oneprovider-1:
@@ -365,7 +365,8 @@ Feature: Management of invite tokens in Onezone GUI
 
 
   Scenario: User successfully consumes harvester to space invite token until usage limit is not expired
-    When user of browser1 creates "harvester1" harvester in Onezone page
+    When user of browser1 removes all harvesters in Onezone page
+    And user of browser1 creates "harvester1" harvester in Onezone page
     And user of browser1 creates "harvester2" harvester in Onezone page
     And user of browser1 creates "harvester3" harvester in Onezone page
 
@@ -379,24 +380,26 @@ Feature: Management of invite tokens in Onezone GUI
     And user of browser2 sends copied token to user of browser1
 
     Then user of browser1 succeeds to consume token for "harvester1" harvester
-    And user of browser2 is idle for 4 seconds
+    And user of browser2 is idle for 3 seconds
+    And user of browser2 refreshes site
+    And user of browser2 is idle for 2 seconds
     And user of browser2 sees that token usage count is "1 / 2"
     And user of browser1 sees that "space2" has appeared on the spaces list of "harvester1" harvester
 
     Then user of browser1 succeeds to consume token for "harvester2" harvester
-    And user of browser2 is idle for 4 seconds
+    And user of browser2 is idle for 3 seconds
+    And user of browser2 refreshes site
+    And user of browser2 is idle for 2 seconds
     And user of browser2 sees that token usage count is "2 / 2"
     And user of browser1 sees that "space2" has appeared on the spaces list of "harvester1" harvester
 
     Then user of browser1 fails to consume token for "harvester3" harvester
-    And user of browser1 removes "harvester1" harvester in Onezone page
-    And user of browser1 removes "harvester2" harvester in Onezone page
-    And user of browser1 removes "harvester3" harvester in Onezone page
     And user of browser1 leaves all spaces in Onezone
 
 
   Scenario: Group has default harvester member privileges after user consumes group to harvester invite token with default settings
-    When user of browser1 creates "harvester4" harvester in Onezone page
+    When user of browser1 removes all harvesters in Onezone page
+    And user of browser1 creates "harvester4" harvester in Onezone page
     And user of browser1 creates token with following configuration:
           type: invite
           invite type: Invite group to harvester
@@ -440,12 +443,12 @@ Feature: Management of invite tokens in Onezone GUI
               granted: False
 
     And user of browser1 removes all tokens
-    And user of browser1 removes "harvester4" harvester in Onezone page
     And user of browser1 leaves all spaces in Onezone
 
 
   Scenario: User successfully cleans up obsolete tokens
-    When user of browser1 creates "harvester5" harvester in Onezone page
+    When user of browser1 removes all harvesters in Onezone page
+    And user of browser1 creates "harvester5" harvester in Onezone page
     And user of browser1 removes all tokens
     And user of browser1 creates token with following configuration:
           type: invite
@@ -486,12 +489,12 @@ Feature: Management of invite tokens in Onezone GUI
     And user of browser1 sees that there is token named "ToSurvive" on tokens list
 
     And user of browser1 removes all tokens
-    And user of browser1 removes "harvester5" harvester in Onezone page
     And user of browser1 leaves all spaces in Onezone
 
 
   Scenario: User fails to consume revoked token
-    When user of browser1 creates "harvester6" harvester in Onezone page
+    When user of browser1 removes all harvesters in Onezone page
+    And user of browser1 creates "harvester6" harvester in Onezone page
     And user of browser1 creates token with following configuration:
           name: token1
           type: invite
@@ -507,15 +510,15 @@ Feature: Management of invite tokens in Onezone GUI
     And user of browser1 sends copied token to user of browser2
     Then user of browser2 fails to consume token for "group1" group
 
-    And user of browser1 removes all token
-    And user of browser1 removes "harvester6" harvester in Onezone page
+    And user of browser1 removes all tokens
     And user of browser1 leaves all spaces in Onezone
 
 
   Scenario: User fails to consume deleted token
-    When user of browser1 creates "harvester7" harvester in Onezone page
+    When user of browser1 removes all harvesters in Onezone page
+    And user of browser1 creates "harvester7" harvester in Onezone page
     And user of browser1 creates token with following configuration:
-          name: token1
+          name: token2
           type: invite
           invite type: Invite group to harvester
           invite target: harvester7
@@ -529,7 +532,6 @@ Feature: Management of invite tokens in Onezone GUI
     Then user of browser2 fails to consume token for "group1" group
 
     And user of browser1 removes all tokens
-    And user of browser1 removes "harvester7" harvester in Onezone page
     And user of browser1 leaves all spaces in Onezone
 
 
@@ -831,4 +833,3 @@ Feature: Management of invite tokens in Onezone GUI
           unit: GiB
 
     And user of browser1 leaves all spaces in Onezone
-

@@ -51,6 +51,8 @@ Feature: Storage management using onepanel
     # go to provider
     And user of browser_unified is idle for 2 seconds
     And user of browser_unified refreshes site
+    And user of browser_unified is idle for 2 seconds
+
 
     # create tmp dir and upload there 10 files
     And user of browser_unified opens file browser for "space1" space
