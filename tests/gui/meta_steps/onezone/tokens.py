@@ -89,6 +89,7 @@ def add_element_with_copied_token(selenium, browser_id, elem_name, oz_page,
 
 @wt(parsers.parse('user of {browser_id} {result} to consume token for '
                   '"{elem_name}" {elem}'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def result_to_consume_token_for_elem(selenium, browser_id, oz_page, elem_name,
                                      result, clipboard, displays, modals):
     add_element_with_copied_token(selenium, browser_id, elem_name, oz_page,
@@ -108,6 +109,7 @@ def result_to_consume_token_for_elem(selenium, browser_id, oz_page, elem_name,
 
 
 @wt(parsers.parse('user of {browser_id} {result} to consume token'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def result_to_consume_token(selenium, browser_id, oz_page, result, clipboard,
                             displays, modals):
     consume_token_from_copied_token(selenium, browser_id, oz_page, clipboard,
@@ -170,6 +172,7 @@ def create_number_of_typed_token(selenium, browser_id, number: int, token_type,
 
 @wt(parsers.parse('user of {browser_id} creates token with following '
                   'configuration:\n{config}'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def create_token_with_config(selenium, browser_id, config, oz_page,
                              popups, users, groups, hosts, tmp_memory):
     """Create invite token according to given config.
@@ -310,6 +313,7 @@ def _set_tokens_caveats(selenium, browser_id, oz_page, caveats, popups, users,
 
 @wt(parsers.parse('user of {browser_id} sees that created token configuration '
                   'is as following:\n{config}'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_token_configuration(selenium, browser_id, config, oz_page, users,
                                groups, hosts, tmp_memory):
     """Assert token is corresponding to given config.
@@ -443,6 +447,7 @@ def assert_token_caveats(selenium, browser_id, oz_page, caveats, users,
 
 
 @wt(parsers.parse('user of {browser_id} revokes token named "{token_name}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def revoke_token(selenium, browser_id, token_name, oz_page, popups):
     option = 'Modify'
     action = 'revoke'
@@ -455,6 +460,7 @@ def revoke_token(selenium, browser_id, token_name, oz_page, popups):
 
 
 @wt(parsers.parse('user of {browser_id} removes token named "{token_name}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def remove_token(selenium, browser_id, token_name, oz_page, popups, modals):
     btn = 'remove'
     button = 'Remove'
@@ -466,6 +472,7 @@ def remove_token(selenium, browser_id, token_name, oz_page, popups, modals):
 
 
 @wt(parsers.parse('user of {browser_id} removes all tokens'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def remove_all_tokens(selenium, browser_id, oz_page, popups, modals):
     btn = 'remove'
     button = 'Remove'

@@ -56,7 +56,7 @@ Feature: Oneprovider functionality using multiple providers
                   consumer name: oneprovider-1
     And user of browser1 sees that created token configuration is as following:
             invite type: Support space
-            invite target: space2
+            invite target: space1
             caveats:
               consumer:
                 - type: oneprovider

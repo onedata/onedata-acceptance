@@ -523,9 +523,9 @@ Feature: Management of invite tokens in Onezone GUI
           invite type: Invite group to harvester
           invite target: harvester7
     And user of browser1 sees that created token configuration is as following:
-      name: token1
-      invite type: Invite group to harvester
-      invite target: harvester7
+          name: token2
+          invite type: Invite group to harvester
+          invite target: harvester7
     And user of browser1 clicks on copy button in token view
     And user of browser1 sends copied token to user of browser2
     And user of browser1 removes token named "token1"

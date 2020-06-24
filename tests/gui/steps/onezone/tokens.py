@@ -18,6 +18,7 @@ from tests.utils.bdd_utils import wt
 from tests.utils.utils import repeat_failed
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
 def get_token_by_name(oz_page, token_name, driver):
     return oz_page(driver)['tokens'].sidebar.tokens[token_name]
 
@@ -118,6 +119,7 @@ def click_copy_button_in_token_view(selenium, browser_id, oz_page):
 
 
 @wt(parsers.parse('user of {browser_id} chooses "{invite_type}" invite type'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def choose_invite_type_in_oz_token_page(selenium, browser_id, oz_page,
                                         invite_type):
     driver = selenium[browser_id]
@@ -126,6 +128,7 @@ def choose_invite_type_in_oz_token_page(selenium, browser_id, oz_page,
     new_token_page.invite_types[invite_type].click()
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
 def choose_invite_select(selenium, browser_id, oz_page, target, hosts):
     if 'oneprovider' in target:
         target = hosts[target]['name']
@@ -136,6 +139,7 @@ def choose_invite_select(selenium, browser_id, oz_page, target, hosts):
     new_token_page.invite_types[target].click()
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
 def select_token_usage_limit(selenium, browser_id, limit, oz_page):
     driver = selenium[browser_id]
     limits = oz_page(driver)['tokens'].create_token_page.usage_limit
@@ -203,6 +207,7 @@ def click_option_in_token_page_menu(selenium, browser_id, option, popups):
 
 @wt(parsers.parse('user of {browser_id} clicks "Revoke" toggle to '
                   '{action} token'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def switch_toggle_to_change_token(selenium, browser_id, action, oz_page):
     driver = selenium[browser_id]
     if action == 'revoke':
@@ -212,6 +217,7 @@ def switch_toggle_to_change_token(selenium, browser_id, action, oz_page):
 
 
 @wt(parsers.parse('user of {browser_id} clicks "Save" button on tokens view'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def click_save_button_on_tokens_page(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
     oz_page(driver)['tokens'].save_button()
@@ -219,6 +225,7 @@ def click_save_button_on_tokens_page(selenium, browser_id, oz_page):
 
 @wt(parsers.parse('user of {browser_id} appends "{text}" to name of token '
                   'named "{token_name}'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def append_token_name_in_sidebar(selenium, browser_id, text, token_name,
                                  oz_page):
     driver = selenium[browser_id]
@@ -228,6 +235,7 @@ def append_token_name_in_sidebar(selenium, browser_id, text, token_name,
 
 @wt(parsers.parse('user of {browser_id} confirms changes in '
                   'token named {token_name}'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_token_changes_in_sidebar(selenium, browser_id, token_name, oz_page):
     driver = selenium[browser_id]
     oz_page(driver)['tokens'].sidebar.confirm()
@@ -251,6 +259,7 @@ def type_new_token_name(selenium, browser_id, oz_page, token_name):
     input_box.value = token_name
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_token_name(selenium, browser_id, oz_page, token_name):
     driver = selenium[browser_id]
     given_name = oz_page(driver)['tokens'].token_name
@@ -258,6 +267,7 @@ def assert_token_name(selenium, browser_id, oz_page, token_name):
                                       f'expected {token_name}')
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_token_revoked(selenium, browser_id, oz_page, revoke_expectation):
     driver = selenium[browser_id]
     if revoke_expectation:
@@ -268,6 +278,7 @@ def assert_token_revoked(selenium, browser_id, oz_page, revoke_expectation):
     oz_page(driver)['tokens'].is_token_revoked() == revoke_expectation, msg)
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_token_type(selenium, browser_id, oz_page, expected_type):
     driver = selenium[browser_id]
     actual_type = oz_page(driver)['tokens'].token_type
@@ -276,6 +287,7 @@ def assert_token_type(selenium, browser_id, oz_page, expected_type):
                                           f'{actual_type}')
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_invite_type(selenium, browser_id, oz_page, expected_type):
     driver = selenium[browser_id]
     actual_type = oz_page(driver)['tokens'].invite_type
@@ -285,6 +297,7 @@ def assert_invite_type(selenium, browser_id, oz_page, expected_type):
                                           f'{actual_type}')
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_invite_target(selenium, browser_id, oz_page, expected_target, hosts):
     if 'oneprovider' in expected_target:
         expected_target = hosts[expected_target]['name']
@@ -299,23 +312,27 @@ def assert_invite_target(selenium, browser_id, oz_page, expected_target, hosts):
 
 @wt(parsers.parse('user of {browser_id} sees that token usage count is '
                   '"{count}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_token_usage_count_value(selenium, browser_id, count, oz_page):
     driver = selenium[browser_id]
     text = oz_page(driver)['tokens'].usage_count
     assert count == text, f'Expected usage count {count} does not equal {text}'
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
 def expand_caveats(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
     oz_page(driver)['tokens'].create_token_page.expand_caveats()
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
 def get_caveat_by_name(selenium, browser_id, oz_page, caveat_name):
     driver = selenium[browser_id]
     new_token_page = oz_page(driver)['tokens'].create_token_page
     return new_token_page.get_caveat(caveat_name)
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
 def get_privileges_tree(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
     return oz_page(driver)['tokens'].privilege_tree
