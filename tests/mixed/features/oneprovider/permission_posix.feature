@@ -45,6 +45,7 @@ Feature: POSIX privileges tests
   Scenario Outline: User changes file permission using <client1> and sees its permission using <client2>
     When using <client1>, user1 succeeds to create file named "file1" in "space1" in oneprovider-1
     And using <client2>, user1 succeeds to set "775" POSIX permission for item named "file1" in "space1" in oneprovider-1
+    And using web GUI, user1 refreshes site
     Then using <client3>, user1 sees that POSIX permission for item named "file1" in "space1" is "775" in oneprovider-1
 
   Examples:
@@ -60,6 +61,7 @@ Feature: POSIX privileges tests
   Scenario Outline: User changes directory permission using <client1> and sees its permission using <client2>
     When using <client1>, user1 succeeds to create directory named "dir1" in "space1" in oneprovider-1
     And using <client1>, user1 succeeds to set "664" POSIX permission for item named "dir1" in "space1" in oneprovider-1
+    And using web GUI, user1 refreshes site
     Then using <client2>, user1 sees that POSIX permission for item named "dir1" in "space1" is "664" in oneprovider-1
 
   Examples:
@@ -108,6 +110,7 @@ Feature: POSIX privileges tests
     When using <client1>, user1 succeeds to create file named "file1" in "space1" in oneprovider-1
     And using <client2>, user1 succeeds to see item named "file1" in "space1" in oneprovider-1
     Then using <client2>, user1 succeeds to set "775" POSIX permission for item named "file1" in "space1" in oneprovider-1
+    And using web GUI, user1 refreshes site
     And using <client2>, user1 sees that POSIX permission for item named "file1" in "space1" is "775" in oneprovider-1
     And using <client3>, user1 sees that POSIX permission for item named "file1" in "space1" is "775" in oneprovider-1
 
@@ -124,6 +127,7 @@ Feature: POSIX privileges tests
     When using <client1>, user1 succeeds to create directory named "dir1" in "space1" in oneprovider-1
     And using <client2>, user1 succeeds to see item named "dir1" in "space1" in oneprovider-1
     Then using <client2>, user1 succeeds to set "664" POSIX permission for item named "dir1" in "space1" in oneprovider-1
+    And using web GUI, user1 refreshes site
     And using <client2>, user1 sees that POSIX permission for item named "dir1" in "space1" is "664" in oneprovider-1
     And using <client1>, user1 sees that POSIX permission for item named "dir1" in "space1" is "664" in oneprovider-1
 

@@ -267,7 +267,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
           Scan interval [s]: 1
           Write once: true
           Delete enabled: true
-    And using web GUI, user1 is idle for 5 seconds
+    And using web GUI, user1 is idle for 10 seconds
     And using <client1>, user1 sees that content for "space5" in "oneprovider-1" Oneprovider service is as follow:
           - dir2:
               - dir21:

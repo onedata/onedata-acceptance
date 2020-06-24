@@ -12,6 +12,7 @@ __license__ = ("This software is released under the MIT license cited in "
 from pytest_bdd import when, then, parsers
 
 from tests.gui.conftest import WAIT_BACKEND
+from tests.utils.bdd_utils import wt
 from tests.utils.utils import repeat_failed
 from tests.mixed.utils.common import NoSuchClientException
 
@@ -604,8 +605,8 @@ def copy_id_of_space(client, request, user, space_name, selenium, onepanel,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>.+?) is idle for '
-                 '(?P<seconds>\d*\.?\d+([eE][-+]?\d+)?) seconds?'))
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) is idle for '
+               '(?P<seconds>\d*\.?\d+([eE][-+]?\d+)?) seconds?'))
 def client_wait_given_time(client, request, user, seconds):
     from tests.utils.acceptance_utils import wait_given_time
     wait_given_time(seconds)

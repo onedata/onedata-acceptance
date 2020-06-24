@@ -7,7 +7,7 @@ Feature: Files multiclient tests
   | oneclient1 | REST       | oneclient1 |
   | REST       | oneclient2 | REST       |
   | oneclient1 | web GUI    | oneclient1 |
-  | oneclient2 | oneclient2 | web GUI    |
+  | oneclient1 | oneclient2 | web GUI    |
 
 
   Background:

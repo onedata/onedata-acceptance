@@ -8,7 +8,7 @@ __license__ = ("This software is released under the MIT license cited in "
 
 import yaml
 
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
 
 from tests.gui.steps.oneprovider.file_browser import *
 from tests.gui.steps.oneprovider.data_tab import *
@@ -34,7 +34,7 @@ def _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id, path,
     try:
         go_to_path_without_last_elem(browser_id, tmp_memory, path)
         click_menu_for_elem_in_file_browser(browser_id, item_name, tmp_memory)
-    except KeyError:
+    except (KeyError, StaleElementReferenceException):
         go_to_filebrowser(selenium, browser_id, oz_page, op_container,
                           tmp_memory, space)
         go_to_path_without_last_elem(browser_id, tmp_memory, path)

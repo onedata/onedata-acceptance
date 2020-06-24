@@ -5,6 +5,9 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+from selenium.common.exceptions import StaleElementReferenceException
+
+from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.steps.oneprovider.permissions import *
 from tests.gui.meta_steps.oneprovider.data import (
     assert_file_browser_in_data_tab_in_op, choose_option_from_selection_menu,
@@ -35,14 +38,30 @@ def open_permission_modal(selenium, browser_id, path, space, tmp_memory, modals,
     select_permission_type(selenium, browser_id, permission_type, modals)
 
 
-def assert_posix_permissions_in_op_gui(selenium, browser_id, space, path, perm,
-                                       oz_page, op_container, tmp_memory,
-                                       modals):
+def _assert_posix_permissions(selenium, browser_id, space, path, perm,
+                              oz_page, op_container, tmp_memory,
+                              modals):
     open_permission_modal(selenium, browser_id, path, space, tmp_memory, modals,
                           oz_page, op_container, 'posix')
     check_permission(selenium, browser_id, perm, modals)
     wt_click_on_confirmation_btn_in_modal(selenium, browser_id, "Cancel",
                                           tmp_memory)
+
+
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_posix_permissions_in_op_gui(selenium, browser_id, space, path, perm,
+                                       oz_page, op_container, tmp_memory,
+                                       modals):
+    try:
+        wt_click_on_confirmation_btn_in_modal(selenium, browser_id, "Cancel",
+                                              tmp_memory)
+        _assert_posix_permissions(selenium, browser_id, space, path, perm,
+                                  oz_page, op_container, tmp_memory,
+                                  modals)
+    except (AttributeError, StaleElementReferenceException):
+        _assert_posix_permissions(selenium, browser_id, space, path, perm,
+                                  oz_page, op_container, tmp_memory,
+                                  modals)
 
 
 @wt(parsers.re(r'user of (?P<browser_id>\w+) sets (?P<path>.*) POSIX '
