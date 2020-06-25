@@ -528,7 +528,7 @@ Feature: Management of invite tokens in Onezone GUI
           invite target: harvester7
     And user of browser1 clicks on copy button in token view
     And user of browser1 sends copied token to user of browser2
-    And user of browser1 removes token named "token1"
+    And user of browser1 removes token named "token2"
     Then user of browser2 fails to consume token for "group1" group
 
     And user of browser1 removes all tokens

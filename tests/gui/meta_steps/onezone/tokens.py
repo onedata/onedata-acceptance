@@ -483,8 +483,8 @@ def remove_all_tokens(selenium, browser_id, oz_page, popups, modals):
     if len(tokens):
         tokens[0].click()
 
-    for token in oz_page(driver)['tokens'].sidebar.tokens:
-        token.menu_button.click()
-        click_option_for_token_row_menu(driver, btn, popups)
-        click_modal_button(selenium, browser_id, button, modal, modals)
+        for token in oz_page(driver)['tokens'].sidebar.tokens:
+            token.menu_button.click()
+            click_option_for_token_row_menu(driver, btn, popups)
+            click_modal_button(selenium, browser_id, button, modal, modals)
 
