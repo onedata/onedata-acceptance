@@ -14,6 +14,8 @@ from ...core.base import PageObject
 
 class SharesOptions(PageObject):
     name = id = Label('.item-name')
+    browser_share_icon = Button('.oneicon-browser-copy')
+    copy_icon = Button('.oneicon-browser-copy')
 
 
 class ShareDirectory(Modal):
@@ -21,8 +23,7 @@ class ShareDirectory(Modal):
     create = NamedButton('button', text='Create')
     close = NamedButton('button', text='Close')
 
-    browser_share_icon = WebItemsSequence('.share-name', cls=SharesOptions)
-    copy_icon = WebItemsSequence('.oneicon-browser-copy', cls=SharesOptions)
+    share_options = WebItemsSequence('.fb-share-modal-item', cls=SharesOptions)
     create_another_share = NamedButton('button', text='Create another share')
     share_info = Label('.row-share-intro')
 

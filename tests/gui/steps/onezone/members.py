@@ -186,7 +186,7 @@ def click_on_option_in_members_list_menu(selenium, browser_id, button,
     page = _find_members_page(onepanel, oz_page, driver, where)
     getattr(page, member).header.menu_button()
 
-    popups(driver).member_menu.menu[button]()
+    popups(driver).popover_menu.menu[button]()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees that area with '
@@ -306,7 +306,7 @@ def remove_member_from_parent(selenium, browser_id, member_name, member_type,
         modal_name = 'remove subgroup from '
     modal_name += where
 
-    popups(driver).member_menu.menu['Remove this member']()
+    popups(driver).popover_menu.menu['Remove this member']()
 
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     modals(driver).remove_member.remove()
@@ -324,7 +324,7 @@ def copy_invitation_token(selenium, browser_id, group, who, oz_page,
     getattr(page.main_page.members, who + 's').header.menu_button()
     button = 'Invite {} using token'.format(who)
 
-    popups(driver).member_menu.menu[button].click()
+    popups(driver).popover_menu.menu[button].click()
 
     wt_wait_for_modal_to_appear(selenium, browser_id, button, tmp_memory)
     modals(selenium[browser_id]).invite_using_token.copy()
@@ -340,7 +340,7 @@ def get_invitation_token(selenium, browser_id, group, who, oz_page,
     page = oz_page(driver)['groups']
     page.elements_list[group]()
     page.main_page.menu_button()
-    popups(driver).member_menu.menu['Invite ' + who]()
+    popups(driver).popover_menu.menu['Invite ' + who]()
     token = page.members_page.token.token
     tmp_memory[browser_id]['token'] = token
 
@@ -354,7 +354,7 @@ def click_invite_on_menu_of_members(selenium, browser_id, who, where,
     where = _change_to_tab_name(where)
     elem = oz_page(driver)[where]
     elem.menu_button()
-    popups(driver).member_menu.menu['Invite ' + who]()
+    popups(driver).popover_menu.menu['Invite ' + who]()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>checks|unchecks) '
