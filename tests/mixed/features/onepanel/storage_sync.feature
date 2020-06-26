@@ -172,7 +172,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
               - file1.txt: 22222
     And using docker, user1 removes dir2/dir21 from provider's storage mount point
     And using docker, user1 removes dir2/file1.txt from provider's storage mount point
-    And using web GUI, user1 is idle for 1 seconds
+    And using web GUI, user1 is idle for 10 seconds
     And using <client1>, user1 sees that content for "space3" in "oneprovider-1" Oneprovider service is as follow:
           - dir2: 1
           - dir2:
@@ -277,7 +277,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
               - file1.txt: 22222
     And using docker, user1 removes dir2/dir21 from provider's storage mount point
     And using docker, user1 removes dir2/file1.txt from provider's storage mount point
-    And using web GUI, user1 is idle for 1 seconds
+    And using web GUI, user1 is idle for 10 seconds
     And using <client1>, user1 sees that content for "space5" in "oneprovider-1" Oneprovider service is as follow:
           - dir2: 1
           - dir2:

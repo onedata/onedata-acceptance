@@ -38,6 +38,7 @@ Feature: Files times tests
     And using <client1>, user1 succeeds to see item named "file1" in "space1" in oneprovider-1
     And user1 waits 80 second
     And using <client1>, user1 writes "TEST TEXT ONEDATA" to file named "file1" in "space1" in oneprovider-1
+    And using web GUI, user1 refreshes site
     Then using <client2>, user1 sees that modification time of item named "file1" in "space1" space is not earlier than 70 seconds ago in oneprovider-1
 
   Examples:

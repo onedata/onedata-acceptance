@@ -27,6 +27,7 @@ from tests.gui.conftest import *
 from tests.oneclient.steps.auth_steps import *
 
 from tests.gui.steps.common.miscellaneous import *
+from tests.gui.steps.common.url import *
 
 
 scenarios('../features/oneprovider/files_metadata.feature')

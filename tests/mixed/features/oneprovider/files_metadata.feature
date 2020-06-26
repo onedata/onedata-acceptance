@@ -41,7 +41,7 @@ Feature: Files metadata tests
     When using <client1>, user1 sets new <fmt> metadata: <metadata> for "file1" file in space "space1" in oneprovider-1
     And using <client1>, user1 sees that <fmt> metadata for "file1" file is <metadata> in space "space1" in oneprovider-1
     And using <client2>, user1 removes all "file1" file metadata in space "space1" in oneprovider-1
-    And using web GUI, user1 is idle for 10 seconds
+    And using web GUI, user1 refreshes site
     Then using <client1>, user1 sees that <fmt> metadata for "file1" file in space "space1" does not contain <metadata> in oneprovider-1
 
     Examples:
