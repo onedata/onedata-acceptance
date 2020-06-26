@@ -23,20 +23,12 @@ Feature: Basic data tab operations on public shares in file browser
     And users opened [browser1, browser2] browsers' windows
     And user of browser1 opened onezone page
     And user of browser1 logged as user1 to Onezone service
-
+    And using REST, user user1 creates "share_dir1" share of "space1/dir1" supported by "oneprovider-1" provider
 
 
   Scenario: User views and downloads files from public interface of share shared from another user from "Share directory" modal
-    When user of browser1 clicks "space1" on the spaces list in the sidebar
-    And user of browser1 clicks Data of "space1" in the sidebar
-    And user of browser1 sees file browser in data tab in Oneprovider page
-
-    And user of browser1 creates "share_dir1" share of "dir1" directory
-
-    # hand share_dir1 URL to user of browser2
-    And user of browser1 clicks on copy icon in modal "Share directory"
-    And user of browser1 sends copied URL to user of browser2
-    And user of browser1 clicks on "Close" button in modal "Share directory"
+    When user of browser1 opens file browser for "space1" space
+    And user of browser1 hands "share_dir1" share's URL of "dir1" to user of browser2
 
     # opening share by user of browser2
     And user of browser2 opens received URL
@@ -54,28 +46,20 @@ Feature: Basic data tab operations on public shares in file browser
 
 
   Scenario: User sees public URLs of share are equal
-    When user of browser1 clicks "space1" on the spaces list in the sidebar
-    And user of browser1 clicks Data of "space1" in the sidebar
-    And user of browser1 sees file browser in data tab in Oneprovider page
-
-    And user of browser1 creates "share_dir1" share of "dir1" directory
-    And user of browser1 clicks on copy icon in modal "Share directory"
-    And user of browser1 moves to "share_dir1" single share view using modal icon
+    When user of browser1 opens file browser for "space1" space
+    And user of browser1 copies share URL of "share_dir1" share of "dir1"
+    And user of browser1 opens "share_dir1" single share view of "dir1" using modal icon
     Then user of browser1 sees that share's URL is the same as URL from clipboard
 
 
   Scenario: User sees that share name in public interface has changed after owner renamed it
-    When user of browser1 clicks "space1" on the spaces list in the sidebar
-    And user of browser1 clicks Data of "space1" in the sidebar
-    And user of browser1 sees file browser in data tab in Oneprovider page
-
-    And user of browser1 creates "share_dir1" share of "dir1" directory
-    And user of browser1 hands "share_dir1" share's URL to user of browser2 using modal
+    When user of browser1 opens file browser for "space1" space
+    And user of browser1 hands "share_dir1" share's URL of "dir1" to user of browser2
 
     And user of browser2 opens received URL
     And user of browser2 sees that public share is named "share_dir1"
 
-    And user of browser1 moves to "share_dir1" single share view using sidebar
+    And user of browser1 opens "share_dir1" single share view of space "space1" using sidebar
     And user of browser1 renames current share to "renamed_share_dir1" in single share view
 
     And user of browser2 refreshes site
@@ -83,17 +67,13 @@ Feature: Basic data tab operations on public shares in file browser
 
 
   Scenario: User sees that he no longer can view public share after owner removed it
-    When user of browser1 clicks "space1" on the spaces list in the sidebar
-    And user of browser1 clicks Data of "space1" in the sidebar
-    And user of browser1 sees file browser in data tab in Oneprovider page
-
-    And user of browser1 creates "share_dir1" share of "dir1" directory
-    And user of browser1 hands "share_dir1" share's URL to user of browser2 using modal
+    When user of browser1 opens file browser for "space1" space
+    And user of browser1 hands "share_dir1" share's URL of "dir1" to user of browser2
 
     And user of browser2 opens received URL
     And user of browser2 sees that public share is named "share_dir1"
 
-    And user of browser1 moves to "share_dir1" single share view using sidebar
+    And user of browser1 opens "share_dir1" single share view of space "space1" using sidebar
     And user of browser1 removes current share
 
     And user of browser2 refreshes site
@@ -101,12 +81,8 @@ Feature: Basic data tab operations on public shares in file browser
 
 
   Scenario: User sees new files in share's public interface after owner added them to shared directory
-    When user of browser1 clicks "space1" on the spaces list in the sidebar
-    And user of browser1 clicks Data of "space1" in the sidebar
-    And user of browser1 sees file browser in data tab in Oneprovider page
-
-    And user of browser1 creates "share_dir1" share of "dir1" directory
-    And user of browser1 hands "share_dir1" share's URL to user of browser2 using modal
+    When user of browser1 opens file browser for "space1" space
+    And user of browser1 hands "share_dir1" share's URL of "dir1" to user of browser2
 
     And user of browser2 opens received URL
     And user of browser2 sees that public share is named "share_dir1"
@@ -126,12 +102,8 @@ Feature: Basic data tab operations on public shares in file browser
 
 
   Scenario: User does not see file in share's public interface after owner removed them from shared directory
-    When user of browser1 clicks "space1" on the spaces list in the sidebar
-    And user of browser1 clicks Data of "space1" in the sidebar
-    And user of browser1 sees file browser in data tab in Oneprovider page
-
-    And user of browser1 creates "share_dir1" share of "dir1" directory
-    And user of browser1 hands "share_dir1" share's URL to user of browser2 using modal
+    When user of browser1 opens file browser for "space1" space
+    And user of browser1 hands "share_dir1" share's URL of "dir1" to user of browser2
 
     And user of browser2 opens received URL
     And user of browser2 sees that public share is named "share_dir1"
@@ -149,12 +121,8 @@ Feature: Basic data tab operations on public shares in file browser
 
 
   Scenario: User changes working directory using breadcrumbs from file browser in share's public interface
-    When user of browser1 clicks "space1" on the spaces list in the sidebar
-    And user of browser1 clicks Data of "space1" in the sidebar
-    And user of browser1 sees file browser in data tab in Oneprovider page
-
-    And user of browser1 creates "share_dir1" share of "dir1" directory
-    And user of browser1 hands "share_dir1" share's URL to user of browser2 using modal
+    When user of browser1 opens file browser for "space1" space
+    And user of browser1 hands "share_dir1" share's URL of "dir1" to user of browser2
 
     And user of browser2 opens received URL
     And user of browser2 sees that public share is named "share_dir1"
@@ -173,12 +141,8 @@ Feature: Basic data tab operations on public shares in file browser
 
 
   Scenario: User can copy URL of received share on share's public interface and share it further
-    When user of browser1 clicks "space1" on the spaces list in the sidebar
-    And user of browser1 clicks Data of "space1" in the sidebar
-    And user of browser1 sees file browser in data tab in Oneprovider page
-
-    And user of browser1 creates "share_dir1" share of "dir1" directory
-    And user of browser1 hands "share_dir1" share's URL to user of browser2 using modal
+    When user of browser1 opens file browser for "space1" space
+    And user of browser1 hands "share_dir1" share's URL of "dir1" to user of browser2
 
     And user of browser2 opens received URL
     And user of browser2 sees that public share is named "share_dir1"
