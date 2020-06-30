@@ -2,33 +2,36 @@ Feature: Management of invite tokens in Onezone GUI
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
-            - user1
-            - user2
+          - user1
+          - user2
+
+    # unused_space is used only to introduce "oneprovider-1" for use of user1
+    # thanks to this "oneprovider-1" is listed in consumer caveats popup
     And initial spaces configuration in "onezone" Onezone service:
-            space8:
-                owner: user1
-                providers:
-                - oneprovider-1:
-                    storage: posix
-                    size: 1000000
-            space1:
-                owner: admin
-            space2:
-                owner: user1
+          unused_space:
+            owner: user1
+            providers:
+            - oneprovider-1:
+                storage: posix
+                size: 1000000
+          space1:
+            owner: admin
+          space2:
+            owner: user1
     And initial groups configuration in "onezone" Onezone service:
-            group1:
-                owner: user1
-            group2:
-                owner: user2
-            group3:
-                owner: admin
+          group1:
+            owner: user1
+          group2:
+            owner: user2
+          group3:
+            owner: admin
     And users opened [browser1, browser2] browsers' windows
     And users of [browser1, browser2] opened [Onezone, Onezone] page
     And user of [browser1, browser2] logged as [admin, user1] to [Onezone, Onezone] service
 
 
-  Scenario: Privileged user successfully consumes group to space invite token with consumer caveat
-    When user of browser1 creates token with following configuration:
+  Scenario: User successfully consumes group to space invite token with consumer caveat set for them
+    When user of browser1 creates and checks token with following configuration:
           type: invite
           invite type: Invite group to space
           invite target: space1
@@ -46,25 +49,6 @@ Feature: Management of invite tokens in Onezone GUI
             consumer:
               - type: user
                 by: id
-                consumer name: user1
-    And user of browser1 sees that created token configuration is as following:
-          type: Invite
-          invite type: Invite group to space
-          invite target: space1
-          usage count: 0 / infinity
-          privileges:
-            Space management:
-              granted: Partially
-              privilege subtypes:
-                View space: True
-                Remove space: False
-                View privileges: True
-            User management:
-              granted: False
-          caveats:
-            consumer:
-              - type: user
-                by: name
                 consumer name: user1
     And user of browser1 clicks on copy button in token view
     And user of browser1 sends copied token to user of browser2
@@ -92,8 +76,8 @@ Feature: Management of invite tokens in Onezone GUI
     And user of browser1 leaves all spaces in Onezone
 
 
-  Scenario: Unprivileged user fails to consume group to space invite token with consumer caveat
-    When user of browser1 creates token with following configuration:
+  Scenario: User fails to consume group to space invite token with consumer caveat set not for them
+    When user of browser1 creates and checks token with following configuration:
           type: invite
           invite type: Invite group to space
           invite target: space1
@@ -102,15 +86,6 @@ Feature: Management of invite tokens in Onezone GUI
             consumer:
               - type: user
                 by: id
-                consumer name: user2
-    And user of browser1 sees that created token configuration is as following:
-          invite type: Invite group to space
-          invite target: space1
-          usage limit: infinity
-          caveats:
-            consumer:
-              - type: user
-                by: name
                 consumer name: user2
     And user of browser1 clicks on copy button in token view
     And user of browser1 sends copied token to user of browser2
@@ -128,20 +103,10 @@ Feature: Management of invite tokens in Onezone GUI
 
 
   Scenario: User successfully consumes group to space invite token with consumer caveat set for Any user
-    When user of browser1 creates token with following configuration:
+    When user of browser1 creates and checks token with following configuration:
           type: invite
           invite type: Invite group to space
           invite target: space1
-          caveats:
-            consumer:
-              - type: user
-                by: name
-                consumer name: Any user
-    And user of browser1 sees that created token configuration is as following:
-          type: Invite
-          invite type: Invite group to space
-          invite target: space1
-          usage count: 0 / infinity
           caveats:
             consumer:
               - type: user
@@ -161,10 +126,10 @@ Feature: Management of invite tokens in Onezone GUI
           invite type: Invite group to space
           invite target: space1
     And user of browser1 sees that created token configuration is as following:
-          type: Invite
+          type: invite
           invite type: Invite group to space
           invite target: space1
-          usage count: 0 / infinity
+          usage count: 0/infinity
           privileges:
             Space management:
               granted: Partially
@@ -211,7 +176,7 @@ Feature: Management of invite tokens in Onezone GUI
     And user of browser2 sees that "space1" has appeared on the spaces list in the sidebar
 
     Then user of browser1 sees that space space1 has following privilege configuration for group group1:
-      privileges:
+          privileges:
             Space management:
               granted: Partially
               privilege subtypes:
@@ -254,8 +219,8 @@ Feature: Management of invite tokens in Onezone GUI
     And user of browser1 leaves all spaces in Onezone
 
 
-  Scenario: Privileged group succeeds to join space using invite token with consumer caveat
-    When user of browser1 creates token with following configuration:
+  Scenario: Group succeeds to join space using invite token with consumer caveat set for it
+    When user of browser1 creates and checks token with following configuration:
           type: invite
           invite type: Invite group to space
           invite target: space1
@@ -272,23 +237,6 @@ Feature: Management of invite tokens in Onezone GUI
             consumer:
               - type: group
                 by: id
-                consumer name: group1
-    And user of browser1 sees that created token configuration is as following:
-          invite type: Invite group to space
-          invite target: space1
-          usage limit: infinity
-          privileges:
-            Space management:
-              granted: Partially
-              privilege subtypes:
-                View space: True
-                View privileges: True
-            Group management:
-              granted: True
-          caveats:
-            consumer:
-              - type: group
-                by: name
                 consumer name: group1
     And user of browser1 clicks on copy button in token view
     And user of browser1 sends copied token to user of browser2
@@ -308,8 +256,8 @@ Feature: Management of invite tokens in Onezone GUI
     And user of browser1 leaves all spaces in Onezone
 
 
-  Scenario: Unprivileged group fails to join space using invite token with consumer caveat
-    When user of browser1 creates token with following configuration:
+  Scenario: Group fails to join space using invite token with consumer caveat set not for it
+    When user of browser1 creates and checks token with following configuration:
           type: invite
           invite type: Invite group to space
           invite target: space1
@@ -320,15 +268,6 @@ Feature: Management of invite tokens in Onezone GUI
                 by: id
                 consumer name: group2
     And user of browser1 clicks on copy button in token view
-    And user of browser1 sees that created token configuration is as following:
-          invite type: Invite group to space
-          invite target: space1
-          usage limit: infinity
-          caveats:
-            consumer:
-              - type: group
-                by: name
-                consumer name: group2
     And user of browser1 sends copied token to user of browser2
     Then user of browser2 fails to consume token for "group1" group
 
@@ -337,20 +276,10 @@ Feature: Management of invite tokens in Onezone GUI
 
 
   Scenario: Group succeeds to join space invite token with consumer caveat set for Any group
-    When user of browser1 creates token with following configuration:
+    When user of browser1 creates and checks token with following configuration:
           type: invite
           invite type: Invite group to space
           invite target: space1
-          caveats:
-            consumer:
-              - type: group
-                by: name
-                consumer name: Any group
-    And user of browser1 sees that created token configuration is as following:
-          type: Invite
-          invite type: Invite group to space
-          invite target: space1
-          usage count: 0 / infinity
           caveats:
             consumer:
               - type: group
@@ -375,22 +304,20 @@ Feature: Management of invite tokens in Onezone GUI
           invite type: Invite harvester to space
           invite target: space2
           usage limit: 2
-    And user of browser2 sees that token usage count is "0 / 2"
+    And user of browser2 sees that token usage count is "0/2"
     And user of browser2 clicks on copy button in token view
     And user of browser2 sends copied token to user of browser1
 
     Then user of browser1 succeeds to consume token for "harvester1" harvester
-    And user of browser2 is idle for 3 seconds
     And user of browser2 refreshes site
     And user of browser2 is idle for 2 seconds
-    And user of browser2 sees that token usage count is "1 / 2"
+    And user of browser2 sees that token usage count is "1/2"
     And user of browser1 sees that "space2" has appeared on the spaces list of "harvester1" harvester
 
     Then user of browser1 succeeds to consume token for "harvester2" harvester
-    And user of browser2 is idle for 3 seconds
     And user of browser2 refreshes site
     And user of browser2 is idle for 2 seconds
-    And user of browser2 sees that token usage count is "2 / 2"
+    And user of browser2 sees that token usage count is "2/2"
     And user of browser1 sees that "space2" has appeared on the spaces list of "harvester1" harvester
 
     Then user of browser1 fails to consume token for "harvester3" harvester
@@ -450,30 +377,18 @@ Feature: Management of invite tokens in Onezone GUI
     When user of browser1 removes all harvesters in Onezone page
     And user of browser1 creates "harvester5" harvester in Onezone page
     And user of browser1 removes all tokens
-    And user of browser1 creates token with following configuration:
+    And user of browser1 creates and checks token with following configuration:
           type: invite
           name: ToSurvive
           invite type: Invite user to space
           invite target: space1
           usage limit: 1
-    And user of browser1 sees that created token configuration is as following:
-          name: ToSurvive
-          type: Invite
-          invite type: Invite user to space
-          invite target: space1
-          usage count: 0 / 1
-    And user of browser1 creates token with following configuration:
+    And user of browser1 creates and checks token with following configuration:
           name: ToRemove
           type: invite
           invite type: Invite group to harvester
           invite target: harvester5
           usage limit: 1
-    And user of browser1 sees that created token configuration is as following:
-          name: ToRemove
-          type: Invite
-          invite type: Invite group to harvester
-          invite target: harvester5
-          usage count: 0 / 1
     And user of browser1 clicks on copy button in token view
     And user of browser1 sends copied token to user of browser2
 
@@ -517,13 +432,9 @@ Feature: Management of invite tokens in Onezone GUI
   Scenario: User fails to consume deleted token
     When user of browser1 removes all harvesters in Onezone page
     And user of browser1 creates "harvester7" harvester in Onezone page
-    And user of browser1 creates token with following configuration:
+    And user of browser1 creates and checks token with following configuration:
           name: token2
           type: invite
-          invite type: Invite group to harvester
-          invite target: harvester7
-    And user of browser1 sees that created token configuration is as following:
-          name: token2
           invite type: Invite group to harvester
           invite target: harvester7
     And user of browser1 clicks on copy button in token view
@@ -631,17 +542,9 @@ Feature: Management of invite tokens in Onezone GUI
     And user of browser1 leaves all spaces in Onezone
 
 
-  Scenario: Privileged provider succeeds to support space with invite token with consumer caveat
-    When user of browser2 creates token with following configuration:
+  Scenario: Provider succeeds to support space with invite token with consumer caveat set for them
+    When user of browser2 creates and checks token with following configuration:
           type: invite
-          invite type: Support space
-          invite target: space2
-          caveats:
-            consumer:
-              - type: oneprovider
-                by: name
-                consumer name: oneprovider-1
-    And user of browser2 sees that created token configuration is as following:
           invite type: Support space
           invite target: space2
           caveats:
@@ -805,24 +708,16 @@ Feature: Management of invite tokens in Onezone GUI
     And user of browser1 leaves all spaces in Onezone
 
 
-  Scenario: Provider succeeds to support space with invite token with consumer caveat set for Any Oneprovider
-    When user of browser2 creates token with following configuration:
-            type: invite
-            invite type: Support space
-            invite target: space2
-            caveats:
-              consumer:
-                - type: oneprovider
-                  by: name
-                  consumer name: Any Oneprovider
-    And user of browser2 sees that created token configuration is as following:
-            invite type: Support space
-            invite target: space2
-            caveats:
-              consumer:
-                - type: oneprovider
-                  by: name
-                  consumer name: Any Oneprovider
+  Scenario: Provider succeeds to support space using invite token with consumer caveat set for Any Oneprovider
+    When user of browser2 creates and checks token with following configuration:
+          type: invite
+          invite type: Support space
+          invite target: space2
+          caveats:
+            consumer:
+              - type: oneprovider
+                by: name
+                consumer name: Any Oneprovider
     And user of browser2 clicks on copy button in token view
     And user of browser2 sends copied token to user of browser1
     And user of browser1 clicks on Clusters in the main menu

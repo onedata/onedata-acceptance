@@ -24,16 +24,12 @@ from tests.utils.rest_utils import http_get, get_panel_rest_path, http_delete
 def support_space_in_op_panel_using_gui(selenium, user, config, onepanel,
                                         tmp_memory, space_name, provider_name,
                                         hosts):
-    notify_type = 'info'
-    notify_text_regexp = '.*[Aa]dded.*support.*space.*'
+    result = 'succeeds'
 
-    _support_space_in_op_panel_using_gui(selenium, user, config, onepanel,
-                                         tmp_memory, space_name, provider_name,
-                                         hosts)
-    notify_visible_with_text(selenium, user, notify_type,
-                             notify_text_regexp)
-    wt_assert_existence_of_space_support_record(selenium, user, space_name,
-                                                onepanel)
+    result_to_support_space_in_op_panel_using_gui(selenium, user, config,
+                                                  result, onepanel, tmp_memory,
+                                                  space_name, provider_name,
+                                                  hosts)
 
 
 @wt(parsers.parse('user of {user} {result} to support "{space_name}" space '

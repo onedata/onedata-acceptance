@@ -274,17 +274,18 @@ def assert_token_revoked(selenium, browser_id, oz_page, revoke_expectation):
         msg = 'Token is not revoked while should be'
     else:
         msg = 'Token is revoked while should not be'
-    assert (
-    oz_page(driver)['tokens'].is_token_revoked() == revoke_expectation, msg)
+    assert (oz_page(driver)[
+                'tokens'].is_token_revoked() == revoke_expectation), msg
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_token_type(selenium, browser_id, oz_page, expected_type):
     driver = selenium[browser_id]
     actual_type = oz_page(driver)['tokens'].token_type
-    assert actual_type == expected_type, (f'Expected type {expected_type} '
-                                          f'does not match actual '
-                                          f'{actual_type}')
+    assert actual_type == expected_type.capitalize(), (f'Expected type'
+                                                       f' {expected_type} '
+                                                       f'does not match actual '
+                                                       f'{actual_type}')
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -316,7 +317,8 @@ def assert_invite_target(selenium, browser_id, oz_page, expected_target, hosts):
 def assert_token_usage_count_value(selenium, browser_id, count, oz_page):
     driver = selenium[browser_id]
     text = oz_page(driver)['tokens'].usage_count
-    assert count == text, f'Expected usage count {count} does not equal {text}'
+    count1, count2 = count.split("/")
+    parse_and_compare_usage_count(text, count1, count2)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -336,3 +338,9 @@ def get_caveat_by_name(selenium, browser_id, oz_page, caveat_name):
 def get_privileges_tree(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
     return oz_page(driver)['tokens'].privilege_tree
+
+
+def parse_and_compare_usage_count(text, given1, given2):
+    no1, _, no2 = text.split
+    assert str(no1) == str(given1), f'First number should be {given1}'
+    assert str(no2) == str(given2), f'First number should be {given2}'

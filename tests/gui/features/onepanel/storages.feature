@@ -49,10 +49,7 @@ Feature: Storage management using onepanel
     And user of <browser> sees that space support record for "space1" has appeared in Spaces page in Onepanel
 
     # go to provider
-    And user of browser_unified is idle for 2 seconds
-    And user of browser_unified refreshes site
-    And user of browser_unified is idle for 2 seconds
-
+    And user of browser_unified is idle for 4 seconds
 
     # create tmp dir and upload there 10 files
     And user of browser_unified opens file browser for "space1" space

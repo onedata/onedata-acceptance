@@ -44,7 +44,7 @@ Feature: Oneprovider functionality using multiple providers
     And user of browser1 clicks on "oneprovider-2" provider on file browser page
 
 
-  Scenario: Unprivileged provider fails to support space with invite token with consumer caveat
+  Scenario: Provider fails to support space using invite token with consumer caveat set not for them
     When user of browser1 creates token with following configuration:
             type: invite
             invite type: Support space

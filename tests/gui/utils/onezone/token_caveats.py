@@ -321,7 +321,10 @@ class CaveatField(PageObject):
                                  f'caveats but is not')
 
     # consumer caveat
-    def assert_consumer_caveats(self, consumer_caveats, users, groups, hosts):
+    # creation parameter is to check if assertion is done directly after
+    # creation - then consumer is checked only by name
+    def assert_consumer_caveats(self, consumer_caveats, users, groups, hosts,
+                                creation):
         for consumer in consumer_caveats:
             consumer_type = consumer.get('type')
             method = consumer.get('by')
@@ -335,9 +338,12 @@ class CaveatField(PageObject):
                     not in value:
                 value = hosts[value]['name']
             self.assert_consumer_in_consumer_caveat(consumer_type, method,
-                                                    value)
+                                                    value, creation)
 
-    def assert_consumer_in_consumer_caveat(self, consumer_type, method, value):
+    def assert_consumer_in_consumer_caveat(self, consumer_type, method,
+                                           value, creation):
+        if creation:
+            method = 'name'
         if method == 'name':
             tag = self.tags[value]
         else:

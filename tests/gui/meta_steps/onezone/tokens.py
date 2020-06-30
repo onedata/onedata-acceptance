@@ -94,18 +94,7 @@ def result_to_consume_token_for_elem(selenium, browser_id, oz_page, elem_name,
                                      result, clipboard, displays, modals):
     add_element_with_copied_token(selenium, browser_id, elem_name, oz_page,
                                   clipboard, displays, modals)
-    if result == 'succeeds':
-        notify_type = 'success'
-        text_regexp = '.*joined.*'
-
-        notify_visible_with_text(selenium, browser_id, notify_type, text_regexp)
-    else:
-        text = 'Consuming token failed'
-        button = 'Close'
-        modal = 'Error'
-
-        assert_error_modal_with_text_appeared(selenium, browser_id, text)
-        click_modal_button(selenium, browser_id, button, modal, modals)
+    _result_to_consume_token(selenium, browser_id, result, modals)
 
 
 @wt(parsers.parse('user of {browser_id} {result} to consume token'))
@@ -114,6 +103,10 @@ def result_to_consume_token(selenium, browser_id, oz_page, result, clipboard,
                             displays, modals):
     consume_token_from_copied_token(selenium, browser_id, oz_page, clipboard,
                                     displays)
+    _result_to_consume_token(selenium, browser_id, result, modals)
+
+
+def _result_to_consume_token(selenium, browser_id, result, modals):
     if result == 'succeeds':
         notify_type = 'success'
         text_regexp = '.*joined.*'
@@ -274,6 +267,7 @@ def _set_tokens_caveats(selenium, browser_id, oz_page, caveats, popups, users,
     readonly_caveat = caveats.get('read only', False)
     path_caveats = caveats.get('path', False)
     object_id_caveats = caveats.get('object ID', False)
+
     if expiration_caveat:
         caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'expiration')
         caveat.set_expiration_caveat(expiration_caveat, tmp_memory)
@@ -366,7 +360,7 @@ def assert_token_configuration(selenium, browser_id, config, oz_page, users,
 
 
 def _assert_token_configuration(selenium, browser_id, config, oz_page, users,
-                                groups, hosts, tmp_memory):
+                                groups, hosts, tmp_memory, creation=False):
     data = yaml.load(config)
     token_name = data.get('name', False)
     revoked = data.get('revoked', False)
@@ -374,6 +368,7 @@ def _assert_token_configuration(selenium, browser_id, config, oz_page, users,
     invite_type = data.get('invite type', False)
     invite_target = data.get('invite target', False)
     usage_count = data.get('usage count', False)
+    usage_limit = data.get('usage limit', False)
     privileges = data.get('privileges', False)
     caveats = data.get('caveats', False)
 
@@ -390,16 +385,20 @@ def _assert_token_configuration(selenium, browser_id, config, oz_page, users,
     if usage_count:
         assert_token_usage_count_value(selenium, browser_id, usage_count,
                                        oz_page)
+    if usage_limit:
+        usage_starter = f'0/{usage_limit}'
+        assert_token_usage_count_value(selenium, browser_id, usage_starter,
+                                       oz_page)
     if privileges:
         tree = get_privileges_tree(selenium, browser_id, oz_page)
         tree.assert_privileges(privileges)
     if caveats:
         assert_token_caveats(selenium, browser_id, oz_page, caveats, users,
-                             groups, hosts, tmp_memory)
+                             groups, hosts, tmp_memory, creation)
 
 
 def assert_token_caveats(selenium, browser_id, oz_page, caveats, users,
-                         groups, hosts, tmp_memory):
+                         groups, hosts, tmp_memory, creation):
     expiration_caveat = caveats.get('expiration', False)
     region_caveats = caveats.get('region', False)
     country_caveats = caveats.get('country', False)
@@ -411,6 +410,7 @@ def assert_token_caveats(selenium, browser_id, oz_page, caveats, users,
     readonly_caveat = caveats.get('read only', False)
     path_caveats = caveats.get('path', False)
     object_id_caveats = caveats.get('object ID', False)
+
     if expiration_caveat:
         caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'expiration')
         caveat.assert_expiration_caveat(expiration_caveat, tmp_memory)
@@ -428,7 +428,8 @@ def assert_token_caveats(selenium, browser_id, oz_page, caveats, users,
         caveat.assert_ip_caveats(ip_caveats)
     if consumer_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'consumer')
-        caveat.assert_consumer_caveats(consumer_caveats, users, groups, hosts)
+        caveat.assert_consumer_caveats(consumer_caveats, users, groups,
+                                       hosts, creation)
     if service_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'service')
         caveat.assert_service_caveats(service_caveats)
@@ -488,3 +489,12 @@ def remove_all_tokens(selenium, browser_id, oz_page, popups, modals):
             click_option_for_token_row_menu(driver, btn, popups)
             click_modal_button(selenium, browser_id, button, modal, modals)
 
+
+@wt(parsers.parse('user of {browser_id} creates and checks token with '
+                  'following configuration:/n{config}'))
+def create_and_check_token(browser_id, config, selenium, oz_page, popups,
+                           users, groups, hosts, tmp_memory):
+    _create_token_with_config(selenium, browser_id, config, oz_page, popups,
+                              users, groups, hosts, tmp_memory)
+    _assert_token_configuration(selenium, browser_id, config, oz_page, users,
+                                groups, hosts, tmp_memory, creation=True)
