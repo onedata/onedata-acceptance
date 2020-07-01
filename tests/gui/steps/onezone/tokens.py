@@ -317,8 +317,16 @@ def assert_invite_target(selenium, browser_id, oz_page, expected_target, hosts):
 def assert_token_usage_count_value(selenium, browser_id, count, oz_page):
     driver = selenium[browser_id]
     text = oz_page(driver)['tokens'].usage_count
-    count1, count2 = count.split("/")
-    parse_and_compare_usage_count(text, count1, count2)
+    parse_and_compare_usage_count(text, count)
+
+
+def parse_and_compare_usage_count(text_given, text_expected):
+    no1, no2 = text_given.split('/')
+    exp1, exp2 = text_expected.split('/')
+    assert str(no1).strip() == str(exp1).strip(), (f'First number should be' 
+                                                   f' {exp1}')
+    assert str(no2).strip() == str(exp2).strip(), (f'First number should be '
+                                                   f'{exp2}')
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -338,9 +346,3 @@ def get_caveat_by_name(selenium, browser_id, oz_page, caveat_name):
 def get_privileges_tree(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
     return oz_page(driver)['tokens'].privilege_tree
-
-
-def parse_and_compare_usage_count(text, given1, given2):
-    no1, _, no2 = text.split
-    assert str(no1) == str(given1), f'First number should be {given1}'
-    assert str(no2) == str(given2), f'First number should be {given2}'

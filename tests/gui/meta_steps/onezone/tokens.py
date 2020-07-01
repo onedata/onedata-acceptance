@@ -491,7 +491,7 @@ def remove_all_tokens(selenium, browser_id, oz_page, popups, modals):
 
 
 @wt(parsers.parse('user of {browser_id} creates and checks token with '
-                  'following configuration:/n{config}'))
+                  'following configuration:\n{config}'))
 def create_and_check_token(browser_id, config, selenium, oz_page, popups,
                            users, groups, hosts, tmp_memory):
     _create_token_with_config(selenium, browser_id, config, oz_page, popups,
