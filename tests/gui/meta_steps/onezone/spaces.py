@@ -269,3 +269,17 @@ def leave_users_space_in_onezone_using_rest(hosts, users, user):
                     path=get_zone_rest_path('user', 'spaces', space),
                     auth=(user, users[user].password))
 
+
+@wt(parsers.parse('{user} user leaves all spaces using REST'))
+def wt_leave_users_space_in_onezone_using_rest(hosts, users, user):
+    zone_hostname = hosts['onezone']['hostname']
+
+    list_users_spaces = http_get(ip=zone_hostname, port=OZ_REST_PORT,
+                                 path=get_zone_rest_path('user', 'spaces'),
+                                 auth=(user, users[user].password)).json()
+
+    for space in list_users_spaces['spaces']:
+        http_delete(ip=zone_hostname, port=OZ_REST_PORT,
+                    path=get_zone_rest_path('user', 'spaces', space),
+                    auth=(user, users[user].password))
+

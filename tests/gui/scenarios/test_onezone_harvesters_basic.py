@@ -13,6 +13,7 @@ from pytest_bdd import scenario, scenarios
 from tests.gui.steps.rest.env_up.users import *
 from tests.gui.steps.rest.env_up.groups import *
 from tests.gui.steps.rest.env_up.spaces import *
+from tests.gui.steps.rest.env_up.harvesters import *
 
 from tests.gui.steps.common.url import *
 from tests.gui.steps.common.browser_creation import *
@@ -72,5 +73,5 @@ def screens():
 
 
 scenarios('../features/onezone/harvesters.feature')
-scenarios('../features/onezone/harvesters_memberships_privileges.feature')
+# scenarios('../features/onezone/harvesters_memberships_privileges.feature')
 

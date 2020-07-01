@@ -257,6 +257,24 @@ def revoke_all_space_supports_using_rest(selenium, hosts, users, provider_host):
                     auth=(user, users[user].password))
 
 
+@wt(parsers.parse('{provider_host} revokes all spaces support in Onepanel '
+                  'using REST'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def wt_revoke_all_space_supports_using_rest(hosts, users, provider_host):
+    user = 'onepanel'
+
+    provider_hostname = hosts[provider_host]['hostname']
+
+    spaces_list = http_get(ip=provider_hostname, port=OP_REST_PORT,
+                           path=get_panel_rest_path('provider', 'spaces'),
+                           auth=(user, users[user].password)).json()
+
+    for space in spaces_list['ids']:
+        http_delete(ip=provider_hostname, port=OP_REST_PORT,
+                    path=get_panel_rest_path('provider', 'spaces', space),
+                    auth=(user, users[user].password))
+
+
 @wt(parsers.parse('user of {browser_id} sets {quota} quota to {value} value '
                   'in auto-cleaning tab in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)

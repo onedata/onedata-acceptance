@@ -279,4 +279,3 @@ Feature: Basic share management in Oneprovider GUI
 
     And user of browser opens shares view of "space1"
     Then user of browser sees there are no shares on shares view
-

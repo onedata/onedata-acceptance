@@ -21,7 +21,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
 
   Scenario: User sees imported files after supporting space with import-enabled storage and sees difference after update configuration
-    Given there are no spaces supported in Onepanel used by user of browser1
+    Given there are no spaces supported by oneprovider-1 in Onepanel
     And there is "new_storage" storage in "oneprovider-1" Oneprovider panel service used by user of browser1 with following configuration:
           storage type: POSIX
           mount point: /volumes/persistence/storage
@@ -108,11 +108,9 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 double clicks on item named "dir22" in file browser
     And user of browser2 sees that there are 10 items in file browser
 
-    And user of browser1 revokes "space1" space support in "oneprovider-1" provider in Onepanel
-
 
   Scenario: User sees that files are imported to depth defined by update configuration if it is larger than depth of import configuration
-    Given there are no spaces supported in Onepanel used by user of browser1
+    Given there are no spaces supported by oneprovider-1 in Onepanel
     And there is "new_storage" storage in "oneprovider-1" Oneprovider panel service used by user of browser1 with following configuration:
           storage type: POSIX
           mount point: /volumes/persistence/storage
@@ -177,7 +175,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
 
   Scenario: User does not see files and directories that have been removed in storage mount point when delete option was enabled
-    Given there are no spaces supported in Onepanel used by user of browser1
+    Given there are no spaces supported by oneprovider-1 in Onepanel
     And there is "new_storage" storage in "oneprovider-1" Oneprovider panel service used by user of browser1 with following configuration:
           storage type: POSIX
           mount point: /volumes/persistence/storage
@@ -248,11 +246,9 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     Then user of browser2 sees that there is 1 item in file browser
     And user of browser2 sees item(s) named "dir22" in file browser
 
-    And user of browser1 revokes "space1" space support in "oneprovider-1" provider in Onepanel
-
 
   Scenario: User sees file's update when update configuration is set
-    Given there are no spaces supported in Onepanel used by user of browser1
+    Given there are no spaces supported by oneprovider-1 in Onepanel
     And there is "new_storage" storage in "oneprovider-1" Oneprovider panel service used by user of browser1 with following configuration:
           storage type: POSIX
           mount point: /volumes/persistence/storage
@@ -334,11 +330,9 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 double clicks on item named "file1.txt" in file browser
     And user of browser2 sees that content of downloaded file "file1 (1).txt" is equal to: "2222234"
 
-    And user of browser1 revokes "space1" space support in "oneprovider-1" provider in Onepanel
-
 
   Scenario: User does not see file's update when write once option is enabled
-    Given there are no spaces supported in Onepanel used by user of browser1
+    Given there are no spaces supported by oneprovider-1 in Onepanel
     And there is "new_storage" storage in "oneprovider-1" Oneprovider panel service used by user of browser1 with following configuration:
           storage type: POSIX
           mount point: /volumes/persistence/storage
@@ -421,11 +415,10 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sees file browser in data tab in Oneprovider page
     And user of browser2 double clicks on item named "file1.txt" in file browser
     And user of browser2 sees that content of downloaded file "file1 (1).txt" is equal to: "22222"
-    And user of browser1 revokes "space1" space support in "oneprovider-1" provider in Onepanel
 
 
   Scenario: User sees that files are deleted after synchronization when delete and write once options are enabled
-    Given there are no spaces supported in Onepanel used by user of browser1
+    Given there are no spaces supported by oneprovider-1 in Onepanel
     And there is "new_storage" storage in "oneprovider-1" Oneprovider panel service used by user of browser1 with following configuration:
           storage type: POSIX
           mount point: /volumes/persistence/storage
@@ -500,11 +493,9 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     Then user of browser2 sees only items named "dir22" in file browser
 
-    And user of browser1 revokes "space1" space support in "oneprovider-1" provider in Onepanel
-
 
   Scenario: User sees that directory is not synchronized after files update disable
-    Given there are no spaces supported in Onepanel used by user of browser1
+    Given there are no spaces supported by oneprovider-1 in Onepanel
     And there is "new_storage" storage in "oneprovider-1" Oneprovider panel service used by user of browser1 with following configuration:
           storage type: POSIX
           mount point: /volumes/persistence/storage
@@ -588,5 +579,3 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     Then user of browser2 sees that there are 3 items in file browser
     And user of browser2 sees item(s) named ["dir21", "dir22", "file1.txt"] in file browser
     And user of browser2 does not see any item(s) named "dir1" in file browser
-
-    And user of browser1 revokes "space1" space support in "oneprovider-1" provider in Onepanel
