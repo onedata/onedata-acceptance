@@ -67,12 +67,12 @@ def remove_harvesters(selenium, browser_id, oz_page):
     list_type = 'harvesters'
     option = 'Remove'
     modal = 'Remove harvester'
+    button = 'create new harvester'
 
     driver = selenium[browser_id]
     click_on_option_in_the_sidebar(selenium, browser_id, where, oz_page)
     click_button_on_discovery_on_left_sidebar_menu(selenium, browser_id,
-                                                   'create new harvester',
-                                                   oz_page)
+                                                   button, oz_page)
     elem_list = [h.name for h in oz_page(driver)['discovery'].elements_list]
     for harvester_name in elem_list:
         click_element_on_lists_on_left_sidebar_menu(selenium, browser_id,

@@ -4,16 +4,7 @@ Feature: Management of invite tokens in Onezone GUI
     Given initial users configuration in "onezone" Onezone service:
           - user1
           - user2
-
-    # unused_space is used only to introduce "oneprovider-1" for use of user1
-    # thanks to this "oneprovider-1" is listed in consumer caveats popup
     And initial spaces configuration in "onezone" Onezone service:
-          unused_space:
-            owner: user1
-            providers:
-            - oneprovider-1:
-                storage: posix
-                size: 1000000
           space1:
             owner: admin
           space2:
@@ -543,6 +534,15 @@ Feature: Management of invite tokens in Onezone GUI
 
 
   Scenario: Provider succeeds to support space with invite token with consumer caveat set for them
+    # unused_space is used only to introduce "oneprovider-1" for use of user1
+    # thanks to this "oneprovider-1" is listed in consumer caveats popup
+    Given additional spaces configuration in "onezone" Onezone service:
+          unused_space:
+            owner: user1
+            providers:
+              - oneprovider-1:
+                storage: posix
+                size: 1000000
     When user of browser2 creates and checks token with following configuration:
           type: invite
           invite type: Support space
@@ -709,6 +709,15 @@ Feature: Management of invite tokens in Onezone GUI
 
 
   Scenario: Provider succeeds to support space using invite token with consumer caveat set for Any Oneprovider
+    # unused_space is used only to introduce "oneprovider-1" for use of user1
+    # thanks to this "oneprovider-1" is listed in consumer caveats popup
+    Given additional spaces configuration in "onezone" Onezone service:
+            unused_space:
+              owner: user1
+              providers:
+                - oneprovider-1:
+                  storage: posix
+                  size: 1000000
     When user of browser2 creates and checks token with following configuration:
           type: invite
           invite type: Support space

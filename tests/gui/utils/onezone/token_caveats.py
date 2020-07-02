@@ -327,7 +327,10 @@ class CaveatField(PageObject):
                                 creation):
         for consumer in consumer_caveats:
             consumer_type = consumer.get('type')
-            method = consumer.get('by')
+            if creation:
+                method = 'name'
+            else:
+                method = consumer.get('by')
             value = consumer.get('consumer name')
             if method == 'id':
                 if consumer_type == 'user':
@@ -341,9 +344,7 @@ class CaveatField(PageObject):
                                                     value, creation)
 
     def assert_consumer_in_consumer_caveat(self, consumer_type, method,
-                                           value, creation):
-        if creation:
-            method = 'name'
+                                           value):
         if method == 'name':
             tag = self.tags[value]
         else:
