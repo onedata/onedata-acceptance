@@ -71,6 +71,7 @@ Feature: Deployment process using panel of zone and provider
     # step5 in provider panel
     And user of browser2 selects Null Device from storage selector in step 5 of deployment process in Onepanel
     And user of browser2 types "storage" to Storage name field in POSIX form in step 5 of deployment process in Onepanel
+    And user of browser2 checks "Skip storage detection" toggle in storage form in step 5 of deployment process in Onepanel
 
     And user of browser2 clicks on Add button in add storage form in step 5 of deployment process in Onepanel
     And user of browser2 sees an info notify with text matching to: .*[Ss]torage.*added.*
