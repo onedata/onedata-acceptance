@@ -341,7 +341,7 @@ class CaveatField(PageObject):
                     not in value:
                 value = hosts[value]['name']
             self.assert_consumer_in_consumer_caveat(consumer_type, method,
-                                                    value, creation)
+                                                    value)
 
     def assert_consumer_in_consumer_caveat(self, consumer_type, method,
                                            value):

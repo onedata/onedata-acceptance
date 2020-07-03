@@ -55,7 +55,7 @@ def send_support_token_in_oz_using_gui(selenium, user, space_name, browser_id,
                                     tmp_memory, displays, clipboard)
 
 
-@wt(parsers.re('user of (?P<user>.*) leaves "(?P<space_list>.+?)" space '
+@wt(parsers.re('user of (?P<user>.*) leaves "(?P<space_list>.+?)" spaces? '
                'in Onezone page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def leave_spaces_in_oz_using_gui(selenium, user, space_list, oz_page, popups):
@@ -271,8 +271,11 @@ def go_to_oz_and_leave_spaces_wt(selenium, browser_id, spaces_list,
 
     click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
     time.sleep(4)
-    leave_spaces_in_oz_using_gui(selenium, browser_id, spaces_list,
-                                 oz_page, popups)
+    try:
+        leave_spaces_in_oz_using_gui(selenium, browser_id, spaces_list, oz_page,
+                                     popups)
+    except RuntimeError:
+        pass
 
 
 @given(parsers.parse('{user} user does not have access to any space'))

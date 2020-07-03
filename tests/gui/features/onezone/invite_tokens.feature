@@ -541,8 +541,8 @@ Feature: Management of invite tokens in Onezone GUI
             owner: user1
             providers:
               - oneprovider-1:
-                storage: posix
-                size: 1000000
+                  storage: posix
+                  size: 1000000
     When user of browser2 creates and checks token with following configuration:
           type: invite
           invite type: Support space
@@ -716,8 +716,8 @@ Feature: Management of invite tokens in Onezone GUI
               owner: user1
               providers:
                 - oneprovider-1:
-                  storage: posix
-                  size: 1000000
+                    storage: posix
+                    size: 1000000
     When user of browser2 creates and checks token with following configuration:
           type: invite
           invite type: Support space
