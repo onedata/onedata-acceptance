@@ -100,6 +100,16 @@ def create_and_configure_spaces(config, zone_host, admin_credentials,
                                  users, groups, storages, spaces)
 
 
+@given(parsers.parse('additional spaces configuration in "{zone_host}" '
+                     'Onezone service:\n{config}'))
+def add_spaces_configuration(config, zone_host, admin_credentials,
+                             onepanel_credentials, hosts,
+                             users, groups, storages, spaces):
+    _create_and_configure_spaces(config, zone_host, admin_credentials,
+                                 onepanel_credentials, hosts, users, groups,
+                                 storages, spaces)
+
+
 def _create_and_configure_spaces(config, zone_name, admin_credentials,
                                  onepanel_credentials, hosts,
                                  users_db, groups_db, storages_db, spaces_db):

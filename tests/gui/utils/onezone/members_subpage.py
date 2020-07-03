@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 from selenium.webdriver import ActionChains
 
+from tests.gui.utils.common.privilege_tree import PrivilegeTree
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.core.web_elements import (Button, NamedButton,
@@ -58,6 +59,7 @@ class MembersItemRow(PageObject):
     privileges = WebItemsSequence('.one-collapsible-list-item-content '
                                   '.form.ember-view > div > ul > li', 
                                   cls=PrivilegeGroup)
+    privilege_tree = WebItem('.one-tree', cls=PrivilegeTree)
     forbidden_alert = WebElement('.alert.forbidden')
 
 

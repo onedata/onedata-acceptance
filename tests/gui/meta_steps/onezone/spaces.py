@@ -55,7 +55,7 @@ def send_support_token_in_oz_using_gui(selenium, user, space_name, browser_id,
                                     tmp_memory, displays, clipboard)
 
 
-@wt(parsers.re('user of (?P<user>.*) leaves "(?P<space_list>.+?)" space '
+@wt(parsers.re('user of (?P<user>.*) leaves "(?P<space_list>.+?)" spaces? '
                'in Onezone page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def leave_spaces_in_oz_using_gui(selenium, user, space_list, oz_page, popups):
@@ -63,7 +63,14 @@ def leave_spaces_in_oz_using_gui(selenium, user, space_list, oz_page, popups):
     option = 'Leave space'
     confirmation_button = 'yes'
 
-    for space_name in parse_seq(space_list):
+    if space_list == 'all':
+        oz_page(selenium[user])['data'].spaces_header_list
+        space_list = [elem.name for elem in
+                      oz_page(selenium[user])['data'].spaces_header_list]
+    else:
+        space_list = parse_seq(space_list)
+
+    for space_name in space_list:
         click_element_on_lists_on_left_sidebar_menu(selenium, user, where,
                                                     space_name, oz_page)
         click_on_option_in_menu(selenium, user, option, oz_page, popups)
@@ -252,6 +259,21 @@ def leave_space_in_onezone(selenium, browser_id, space_name, oz_page, popups):
     try:
         leave_spaces_in_oz_using_gui(selenium, browser_id, space_name,
                                      oz_page, popups)
+    except RuntimeError:
+        pass
+
+
+@wt(parsers.parse('user of {browser_id} leaves {spaces_list} spaces in '
+                  'Onezone'))
+def go_to_oz_and_leave_spaces_wt(selenium, browser_id, spaces_list,
+                                 oz_page, popups):
+    option = 'Data'
+
+    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
+    time.sleep(4)
+    try:
+        leave_spaces_in_oz_using_gui(selenium, browser_id, spaces_list, oz_page,
+                                     popups)
     except RuntimeError:
         pass
 
