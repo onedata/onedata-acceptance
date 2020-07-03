@@ -114,7 +114,7 @@ class EditPermissionsModal(Modal):
     cancel_button = NamedButton('button', text='Cancel')
     save_button = NamedButton('button', text='Save')
 
-    permission_denied_alert = WebElement('.alert.error')
+    permission_denied_alert = WebElement('.alert.alert-warning.forbidden')
 
     def __str__(self):
         return 'Edit permission modal'
