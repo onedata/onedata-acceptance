@@ -41,6 +41,7 @@ from tests.gui.steps.onezone.spaces import *
 from tests.gui.steps.onezone.multibrowser_spaces import *
 from tests.gui.steps.onezone.groups import *
 from tests.gui.steps.onezone.clusters import *
+from tests.gui.steps.onezone.tokens import *
 
 from tests.gui.steps.oneprovider.common import *
 from tests.gui.steps.oneprovider.data_tab import *
@@ -57,6 +58,7 @@ from tests.gui.steps.oneprovider_common import *
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.onezone.groups import *
 from tests.gui.meta_steps.onezone.spaces import *
+from tests.gui.meta_steps.onezone.tokens import *
 from tests.gui.meta_steps.onezone.common import *
 
 from tests.gui.meta_steps.onepanel.spaces import *
@@ -66,6 +68,7 @@ from tests.gui.meta_steps.onepanel.provider import *
 from tests.gui.meta_steps.oneprovider.common import *
 from tests.gui.meta_steps.oneprovider.common import *
 from tests.gui.meta_steps.oneprovider.transfers import *
+from tests.mixed.steps.space_basic import *
 
 from tests.utils.acceptance_utils import *
 

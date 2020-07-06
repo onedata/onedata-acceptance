@@ -7,11 +7,21 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import yaml
 from pytest_bdd import parsers
 
 import time
 
 from tests.gui.steps.modal import wt_wait_for_modal_to_appear
+from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
+from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
+from tests.gui.steps.onezone.discovery import \
+    click_on_option_of_harvester_on_left_sidebar_menu
+from tests.gui.steps.onezone.groups import go_to_group_subpage
+from tests.gui.steps.onezone.spaces import (
+    click_on_option_of_space_on_left_sidebar_menu,
+    assert_new_created_space_has_appeared_on_spaces,
+    click_element_on_lists_on_left_sidebar_menu)
 from tests.utils.utils import repeat_failed
 from tests.utils.acceptance_utils import wt
 from tests.gui.conftest import WAIT_FRONTEND
@@ -528,3 +538,51 @@ def assert_insufficient_permissions_in_modal(selenium, browser_id, alert_text):
                                            .format(alert_text))
 
 
+@wt(parsers.parse('user of {browser_id} sees that {where} {item_name} has '
+                  'following privilege configuration for {target} {name}:'
+                  '\n{config}'))
+def assert_privilege_config_for_user(selenium, browser_id, item_name, where,
+                                     name, config, oz_page, onepanel, target,
+                                     hosts):
+
+    list_type = target + 's'
+    option = where + 's'
+    option2 = 'Members'
+
+    data = yaml.load(config)
+    privileges = data['privileges']
+
+    if where != 'cluster':
+        click_element_on_lists_on_left_sidebar_menu(selenium, browser_id,
+                                                    option, item_name, oz_page)
+    if where == 'space':
+        click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
+                                                      item_name, option2,
+                                                      oz_page)
+    elif where == 'harvester':
+        click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id,
+                                                          item_name, option2,
+                                                          oz_page)
+    elif where == 'group':
+        go_to_group_subpage(selenium, browser_id, item_name, option2.lower(),
+                            oz_page)
+    elif where == 'cluster':
+        click_on_record_in_clusters_menu(selenium, browser_id, oz_page,
+                                         item_name,
+                                         hosts)
+        wt_click_on_subitem_for_item(selenium, browser_id, option, option2,
+                                     item_name, onepanel, hosts)
+
+    click_element_in_members_list(selenium, browser_id, name, oz_page,
+                                  where, list_type, onepanel)
+    privilege_tree = get_privilege_tree(selenium, browser_id, onepanel,
+                                        oz_page, where, list_type,
+                                        name)
+    privilege_tree.assert_privileges(privileges)
+
+
+def get_privilege_tree(selenium, browser_id, onepanel, oz_page,
+                       where, list_type, member_name):
+    driver = selenium[browser_id]
+    page = _find_members_page(onepanel, oz_page, driver, where)
+    return getattr(page, list_type).items[member_name].privilege_tree
