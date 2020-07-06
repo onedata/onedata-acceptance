@@ -64,7 +64,7 @@ Feature: Management of invite tokens in Onezone GUI
               granted: False
 
     And user of browser1 removes all tokens
-    And user of browser1 leaves all spaces in Onezone
+    And admin user leaves all spaces using REST
 
 
   Scenario: User fails to consume group to space invite token with consumer caveat set not for them
@@ -90,7 +90,7 @@ Feature: Management of invite tokens in Onezone GUI
     Then user of browser2 sees that error modal with text "Consuming token failed" appeared
 
     And user of browser1 removes all tokens
-    And user of browser1 leaves all spaces in Onezone
+    And admin user leaves all spaces using REST
 
 
   Scenario: User successfully consumes group to space invite token with consumer caveat set for Any user
@@ -108,7 +108,7 @@ Feature: Management of invite tokens in Onezone GUI
     Then user of browser2 succeeds to consume token for "group1" group
 
     And user of browser1 removes all tokens
-    And user of browser1 leaves all spaces in Onezone
+    And admin user leaves all spaces using REST
 
 
   Scenario: Group has default space member privileges after user consumes group to space invite token with default settings
@@ -207,7 +207,7 @@ Feature: Management of invite tokens in Onezone GUI
               granted: False
 
     And user of browser1 removes all tokens
-    And user of browser1 leaves all spaces in Onezone
+    And admin user leaves all spaces using REST
 
 
   Scenario: Group succeeds to join space using invite token with consumer caveat set for it
@@ -244,7 +244,7 @@ Feature: Management of invite tokens in Onezone GUI
               granted: True
 
     And user of browser1 removes all tokens
-    And user of browser1 leaves all spaces in Onezone
+    And admin user leaves all spaces using REST
 
 
   Scenario: Group fails to join space using invite token with consumer caveat set not for it
@@ -263,7 +263,7 @@ Feature: Management of invite tokens in Onezone GUI
     Then user of browser2 fails to consume token for "group1" group
 
     And user of browser1 removes all tokens
-    And user of browser1 leaves all spaces in Onezone
+    And admin user leaves all spaces using REST
 
 
   Scenario: Group succeeds to join space invite token with consumer caveat set for Any group
@@ -281,16 +281,14 @@ Feature: Management of invite tokens in Onezone GUI
     Then user of browser2 succeeds to consume token for "group1" group
 
     And user of browser1 removes all tokens
-    And user of browser1 leaves all spaces in Onezone
+    And admin user leaves all spaces using REST
 
 
   Scenario: User successfully consumes harvester to space invite token until usage limit is not expired
-    When user of browser1 removes all harvesters in Onezone page
-    And user of browser1 creates "harvester1" harvester in Onezone page
-    And user of browser1 creates "harvester2" harvester in Onezone page
-    And user of browser1 creates "harvester3" harvester in Onezone page
+    Given user admin has no harvesters
+    And using REST, user admin creates ["harvester1", "harvester2", "harvester3"] harvesters in "onezone" Onezone service
 
-    And user of browser2 creates token with following configuration:
+    When user of browser2 creates token with following configuration:
           type: invite
           invite type: Invite harvester to space
           invite target: space2
@@ -312,13 +310,13 @@ Feature: Management of invite tokens in Onezone GUI
     And user of browser1 sees that "space2" has appeared on the spaces list of "harvester1" harvester
 
     Then user of browser1 fails to consume token for "harvester3" harvester
-    And user of browser1 leaves all spaces in Onezone
+    And admin user leaves all spaces using REST
 
 
   Scenario: Group has default harvester member privileges after user consumes group to harvester invite token with default settings
-    When user of browser1 removes all harvesters in Onezone page
-    And user of browser1 creates "harvester4" harvester in Onezone page
-    And user of browser1 creates token with following configuration:
+    Given user admin has no harvesters
+    And using REST, user admin creates "harvester4" harvester in "onezone" Onezone service
+    When user of browser1 creates token with following configuration:
           type: invite
           invite type: Invite group to harvester
           invite target: harvester4
@@ -361,13 +359,13 @@ Feature: Management of invite tokens in Onezone GUI
               granted: False
 
     And user of browser1 removes all tokens
-    And user of browser1 leaves all spaces in Onezone
+    And admin user leaves all spaces using REST
 
 
   Scenario: User successfully cleans up obsolete tokens
-    When user of browser1 removes all harvesters in Onezone page
-    And user of browser1 creates "harvester5" harvester in Onezone page
-    And user of browser1 removes all tokens
+    Given user admin has no harvesters
+    And using REST, user admin creates "harvester5" harvester in "onezone" Onezone service
+    When user of browser1 removes all tokens
     And user of browser1 creates and checks token with following configuration:
           type: invite
           name: ToSurvive
@@ -395,13 +393,13 @@ Feature: Management of invite tokens in Onezone GUI
     And user of browser1 sees that there is token named "ToSurvive" on tokens list
 
     And user of browser1 removes all tokens
-    And user of browser1 leaves all spaces in Onezone
+    And admin user leaves all spaces using REST
 
 
   Scenario: User fails to consume revoked token
-    When user of browser1 removes all harvesters in Onezone page
-    And user of browser1 creates "harvester6" harvester in Onezone page
-    And user of browser1 creates token with following configuration:
+    Given user admin has no harvesters
+    And using REST, user admin creates "harvester6" harvester in "onezone" Onezone service
+    When user of browser1 creates token with following configuration:
           name: token1
           type: invite
           invite type: Invite group to harvester
@@ -417,13 +415,13 @@ Feature: Management of invite tokens in Onezone GUI
     Then user of browser2 fails to consume token for "group1" group
 
     And user of browser1 removes all tokens
-    And user of browser1 leaves all spaces in Onezone
+    And admin user leaves all spaces using REST
 
 
   Scenario: User fails to consume deleted token
-    When user of browser1 removes all harvesters in Onezone page
-    And user of browser1 creates "harvester7" harvester in Onezone page
-    And user of browser1 creates and checks token with following configuration:
+    Given user admin has no harvesters
+    And using REST, user admin creates "harvester7" harvester in "onezone" Onezone service
+    When user of browser1 creates and checks token with following configuration:
           name: token2
           type: invite
           invite type: Invite group to harvester
@@ -434,7 +432,7 @@ Feature: Management of invite tokens in Onezone GUI
     Then user of browser2 fails to consume token for "group1" group
 
     And user of browser1 removes all tokens
-    And user of browser1 leaves all spaces in Onezone
+    And admin user leaves all spaces using REST
 
 
   Scenario: User has default group member privileges after consuming user to group invite token with default settings
@@ -486,7 +484,7 @@ Feature: Management of invite tokens in Onezone GUI
                 granted: False
 
     And user of browser1 removes all tokens
-    And user of browser1 leaves all spaces in Onezone
+    And admin user leaves all spaces using REST
 
 
   Scenario: User has default cluster member privileges after consuming user to cluster invite token with default settings
@@ -530,7 +528,7 @@ Feature: Management of invite tokens in Onezone GUI
                 granted: False
 
     And user of browser1 removes all tokens
-    And user of browser1 leaves all spaces in Onezone
+    And admin user leaves all spaces using REST
 
 
   Scenario: Provider succeeds to support space with invite token with consumer caveat set for them
@@ -561,7 +559,7 @@ Feature: Management of invite tokens in Onezone GUI
           size: 1
           unit: GiB
 
-    And user of browser1 leaves all spaces in Onezone
+    And admin user leaves all spaces using REST
 
 
   Scenario: User sees expiration and region allow caveats in token configuration after setting them in new invite token
@@ -598,7 +596,7 @@ Feature: Management of invite tokens in Onezone GUI
                 - BS
 
     And user of browser1 removes all tokens
-    And user of browser1 leaves all spaces in Onezone
+    And admin user leaves all spaces using REST
 
 
   Scenario: User sees IP and region deny caveats in token configuration after setting them in new invite token
@@ -627,7 +625,7 @@ Feature: Management of invite tokens in Onezone GUI
               - 192.0.2.0/24
 
     And user of browser1 removes all tokens
-    And user of browser1 leaves all spaces in Onezone
+    And admin user leaves all spaces using REST
 
 
   Scenario: User sees ASN and region deny caveats in token configuration after setting them in new invite token
@@ -656,7 +654,7 @@ Feature: Management of invite tokens in Onezone GUI
               - 64498
 
     And user of browser1 removes all tokens
-    And user of browser1 leaves all spaces in Onezone
+    And admin user leaves all spaces using REST
 
 
   Scenario: User sees all token caveats in token configuration after setting them in new invite token
@@ -705,7 +703,7 @@ Feature: Management of invite tokens in Onezone GUI
                 consumer name: user1
 
     And user of browser1 removes all tokens
-    And user of browser1 leaves all spaces in Onezone
+    And admin user leaves all spaces using REST
 
 
   Scenario: Provider succeeds to support space using invite token with consumer caveat set for Any Oneprovider
@@ -736,4 +734,4 @@ Feature: Management of invite tokens in Onezone GUI
           size: 1
           unit: GiB
 
-    And user of browser1 leaves all spaces in Onezone
+    And admin user leaves all spaces using REST

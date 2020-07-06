@@ -59,30 +59,6 @@ def remove_harvester(selenium, browser_id, oz_page, harvester_name):
     click_modal_button(selenium, browser_id, option, modal, modals)
 
 
-@wt(parsers.parse('user of {browser_id} removes all harvesters in Onezone '
-                  'page'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def remove_harvesters(selenium, browser_id, oz_page):
-    where = 'Discovery'
-    list_type = 'harvesters'
-    option = 'Remove'
-    modal = 'Remove harvester'
-    button = 'create new harvester'
-
-    driver = selenium[browser_id]
-    click_on_option_in_the_sidebar(selenium, browser_id, where, oz_page)
-    click_button_on_discovery_on_left_sidebar_menu(selenium, browser_id,
-                                                   button, oz_page)
-    elem_list = [h.name for h in oz_page(driver)['discovery'].elements_list]
-    for harvester_name in elem_list:
-        click_element_on_lists_on_left_sidebar_menu(selenium, browser_id,
-                                                    list_type, harvester_name,
-                                                    oz_page)
-        click_on_option_in_harvester_menu(selenium, browser_id, option,
-                                          harvester_name, oz_page)
-        click_modal_button(selenium, browser_id, option, modal, modals)
-
-
 @wt(parsers.parse('user of {browser_id} creates "{harvester_name}" harvester '
                   'in Onezone page'))
 @repeat_failed(timeout=WAIT_FRONTEND)

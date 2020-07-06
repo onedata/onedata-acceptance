@@ -16,7 +16,7 @@ from tests.utils.rest_utils import (
 
 
 @given(parsers.re('using REST, user (?P<user>.*) creates '
-                  '"(?P<harvesters_list>.*)" harvesters? in "(?P<service>.*)" '
+                  '(?P<harvesters_list>.*) harvesters? in "(?P<service>.*)" '
                   'Onezone service'))
 def create_harvesters_rest(user, harvesters_list, service, hosts, users):
     zone_hostname = hosts[service]['hostname']
