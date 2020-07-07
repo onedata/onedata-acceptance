@@ -81,10 +81,10 @@ def screens():
     return [0, 1]
 
 
-# scenarios('../features/onepanel/storages.feature')
-# scenarios('../features/onepanel/provider.feature')
-# scenarios('../features/onepanel/spaces.feature')
-# scenarios('../features/onepanel/members.feature')
-# scenarios('../features/onepanel/emergency_passphrase.feature')
+scenarios('../features/onepanel/storages.feature')
+scenarios('../features/onepanel/provider.feature')
+scenarios('../features/onepanel/spaces.feature')
+scenarios('../features/onepanel/members.feature')
+scenarios('../features/onepanel/emergency_passphrase.feature')
 scenarios('../features/onepanel/invite_member.feature')
 
