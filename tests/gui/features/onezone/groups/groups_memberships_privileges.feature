@@ -51,7 +51,6 @@ Feature: Basic management of groups privileges in Onezone GUI
     When user of browser goes to group "group1" members subpage
     And user of browser clicks "user2" user in "group1" group members users list
     And user of browser sees privileges for "user2" user in group members subpage
-    And user of browser refreshes site
     And user of browser clicks "user1" user in "group1" group members users list
     And user of browser expands "Group management" privilege for "user1" user in group members subpage
     And user of browser unchecks "View privileges" privilege toggle in "Group management" for "user1" user in group members subpage
