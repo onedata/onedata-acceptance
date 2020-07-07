@@ -32,6 +32,7 @@ from tests.gui.steps.onepanel.deployment import *
 from tests.gui.steps.onepanel.spaces import *
 from tests.gui.steps.onepanel.storages import *
 from tests.gui.steps.onepanel.emergency_passphrase import *
+from tests.gui.steps.onepanel.members import *
 
 from tests.gui.steps.onezone.logged_in_common import *
 from tests.gui.steps.onezone.user_full_name import *
@@ -62,6 +63,7 @@ from tests.gui.meta_steps.onepanel.spaces import *
 from tests.gui.meta_steps.onezone.clusters import *
 from tests.gui.meta_steps.onezone.groups import *
 from tests.gui.meta_steps.onezone.spaces import *
+from tests.gui.meta_steps.onezone.tokens import *
 from tests.gui.meta_steps.onepanel.account_management import *
 from tests.gui.meta_steps.onepanel.storages import *
 from tests.gui.meta_steps.oneprovider.common import *
@@ -79,9 +81,10 @@ def screens():
     return [0, 1]
 
 
-scenarios('../features/onepanel/storages.feature')
-scenarios('../features/onepanel/provider.feature')
-scenarios('../features/onepanel/spaces.feature')
-scenarios('../features/onepanel/members.feature')
-scenarios('../features/onepanel/emergency_passphrase.feature')
+# scenarios('../features/onepanel/storages.feature')
+# scenarios('../features/onepanel/provider.feature')
+# scenarios('../features/onepanel/spaces.feature')
+# scenarios('../features/onepanel/members.feature')
+# scenarios('../features/onepanel/emergency_passphrase.feature')
+scenarios('../features/onepanel/invite_member.feature')
 
