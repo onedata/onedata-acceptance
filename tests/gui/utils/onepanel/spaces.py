@@ -112,7 +112,7 @@ class SyncChart(PageObject):
                                    cls=UpdateConfigurationForm)
 
     start_synchronization = NamedButton('button', text='Start synchronization')
-    save_configuration = NamedButton('button', text='Save configuration')
+    save_configuration = Button('.btn-primary')
 
     _inserted = WebElementsSequence('.space-sync-chart-operations '
                                     'g.ct-series-0 line')
