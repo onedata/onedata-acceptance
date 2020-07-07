@@ -148,6 +148,19 @@ def create_item_in_op_gui(selenium, browser_id, path, item_type, name,
         assert_items_presence_in_file_browser(browser_id, name, tmp_memory)
 
 
+@wt(parsers.re('user of (?P<browser_id>\w+) sees that the file structure in '
+               'file browser is as follow:\n'
+                  '(?P<config>(.|\s)*)'))
+
+def check_file_structure_in_file_browser(browser_id, config, selenium,
+                                         tmp_memory, op_container, tmpdir):
+    # import pdb
+    # pdb.set_trace()
+    subtree = yaml.load(config)
+    # pdb.set_trace()
+    _check_files_tree(subtree, browser_id, tmp_memory, '', selenium,
+                      op_container, tmpdir)
+
 def _check_files_tree(subtree, user, tmp_memory, cwd, selenium, op_container,
                       tmpdir):
     for item in subtree:
