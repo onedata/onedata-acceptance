@@ -158,6 +158,20 @@ def click_option_in_relation_menu_button(selenium, browser_id, option):
     modals(driver).membership_relation_menu.options[option].click()
 
 
+
+@wt(parsers.re('user of (?P<browser_id>.*) closes "(?P<member_name>.*)" '
+               '(?P<member_type>user|group) in "(?P<name>.*)" '
+               '(?P<where>space|group|cluster|harvester) members '
+               '(?P<list_type>users|groups) list'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_element_in_members_list(selenium, browser_id, member_name,
+                                  oz_page, where, list_type, onepanel):
+
+    driver = selenium[browser_id]
+    page = _find_members_page(onepanel, oz_page, driver, where)
+    getattr(page, list_type).items[member_name].header.click()
+
+
 @wt(parsers.re('user of (?P<browser_id>.*) clicks "(?P<member_name>.*)" '
                '(?P<member_type>user|group) in "(?P<name>.*)" '
                '(?P<where>space|group|cluster|harvester) members '
