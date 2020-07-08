@@ -10,11 +10,13 @@ __license__ = ("This software is released under the MIT license cited in "
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (Button, Input, NamedButton,
-                                               WebItemsSequence)
+                                               WebItemsSequence, Label)
 
 
 class Requirement(PageObject):
     delete = Button('.oneicon-checkbox-filled-x')
+    fulfilled = Label('.qos-status-fulfilled')
+    impossible = Label('.qos-status-impossible')
 
 
 class QualityOfServicePopover(Modal):

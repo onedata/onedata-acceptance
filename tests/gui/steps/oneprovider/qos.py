@@ -22,3 +22,25 @@ def delete_all_qualities_of_service(selenium, browser_id, modals, popups):
     while len(modal.requirements):
         modal.requirements[0].delete.click()
         popups(driver).delete_qos_popup.confirm.click()
+
+
+@wt(parsers.parse('user of {browser_id} sees all qualities of service are '
+                  'fulfilled'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_all_qualities_of_service_are_fulfilled(selenium, browser_id,
+                                                  modals,):
+    driver = selenium[browser_id]
+    modal = modals(driver).quality_of_service
+    for requirement in modal.requirements:
+        assert hasattr(requirement, 'fulfilled'), f'fulfilled field not found'
+
+
+@wt(parsers.parse('user of {browser_id} sees all qualities of service are '
+                  'impossible'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_all_qualities_of_service_are_impossible(selenium, browser_id,
+                                                   modals,):
+    driver = selenium[browser_id]
+    modal = modals(driver).quality_of_service
+    for requirement in modal.requirements:
+        assert hasattr(requirement, 'impossible'), f'impossible field not found'

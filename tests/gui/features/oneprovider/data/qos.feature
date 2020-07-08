@@ -29,3 +29,13 @@ Feature: Quality of Service tests using sigle browser in Oneprovider GUI
       And user of browser deletes all qualities of service
       And user of browser clicks on "CLose" button in modal "Quality of Service"
       Then user of browser does not see qos status tag for "file1" in file browser
+
+    Scenario: Adding fulfilled qos
+      When user of browser creates "anyStorage" quality of service for "file1"
+      Then user of browser clicks on qos status tag for "file1" in file browser
+      And user of browser sees all qualities of service are fulfilled
+
+    Scenario: Adding impossible qos
+      When user of browser creates "hello=WORLD" quality of service for "file1"
+      Then user of browser clicks on qos status tag for "file1" in file browser
+      And user of browser sees all qualities of service are impossible
