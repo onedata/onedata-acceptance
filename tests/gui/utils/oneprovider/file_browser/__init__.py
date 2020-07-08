@@ -27,6 +27,7 @@ class _FileBrowser(PageObject):
     new_directory_button = Button('.toolbar-buttons .file-action-newDirectory')
     upload_files_button = Button('.toolbar-buttons .browser-upload')
     selection_menu_button = Button('.fb-selection-toolkit .oneicon-arrow-down')
+    paste_button = Button('.toolbar-buttons .oneicon-browser-paste')
 
     data = WebItemsSequence('.data-row.fb-table-row', cls=DataRow)
     _data = WebElementsSequence('.data-row.fb-table-row')
