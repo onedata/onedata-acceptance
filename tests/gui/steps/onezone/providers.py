@@ -434,3 +434,6 @@ def assert_len_of_spaces_list_in_provider_popover(selenium, browser_id,
     assert int(number) == len(spaces_list), ('number of supported spaces '
                                              'is not equal {}'.format(number))
 
+@wt(parsers.parse('user of {browser_id} clicks on menu button"{provider_name}" on providers list'))
+def click_on_menu_button_of_provider_on_providers_list(selenium, browser_id, provider_name):
+    driver = selenium[browser_id]
