@@ -11,6 +11,10 @@ from itertools import zip_longest
 
 from pytest_bdd import parsers, given
 
+from tests.gui.steps.common.notifies import notify_visible_with_text
+from tests.gui.steps.onepanel.spaces import \
+    wt_clicks_on_understand_risk_in_cease_support_modal, \
+    wt_clicks_on_btn_in_cease_support_modal
 from tests.utils.acceptance_utils import *
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq, transform
@@ -434,6 +438,24 @@ def assert_len_of_spaces_list_in_provider_popover(selenium, browser_id,
     assert int(number) == len(spaces_list), ('number of supported spaces '
                                              'is not equal {}'.format(number))
 
-@wt(parsers.parse('user of {browser_id} clicks on menu button"{provider_name}" on providers list'))
-def click_on_menu_button_of_provider_on_providers_list(selenium, browser_id, provider_name):
+
+@wt(parsers.parse('user of {browser_id} revokes space support of "{provider}" provider in oneproviders list'))
+def revoke_support_of_provider_in_list(selenium, browser_id, provider, oz_page, popups, modals, hosts):
     driver = selenium[browser_id]
+    provider_name = hosts[provider]['name']
+    button = 'Cease support'
+    notify_type = 'info'
+    notify_text_regexp = 'Ceased.*[Ss]upport.*'
+    click_on_menu_button_of_provider_on_providers_list(driver, provider_name, oz_page)
+    click_on_cease_support_in_menu_of_provider_on_providers_list(driver, popups)
+    wt_clicks_on_understand_risk_in_cease_support_modal(selenium, browser_id, modals)
+    wt_clicks_on_btn_in_cease_support_modal(selenium, browser_id, button, modals)
+    notify_visible_with_text(selenium, browser_id, notify_type, notify_text_regexp)
+
+
+def click_on_menu_button_of_provider_on_providers_list(driver, provider_name, oz_page):
+    oz_page(driver)['data'].providers_page.providers_list[provider_name].menu_button()
+
+
+def click_on_cease_support_in_menu_of_provider_on_providers_list(driver, popups):
+    popups(driver).cease_support_from_providers_list_menu()

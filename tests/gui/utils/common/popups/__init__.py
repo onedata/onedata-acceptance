@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 
-from tests.gui.utils.core.web_elements import WebItem
+from tests.gui.utils.core.web_elements import WebItem, Button
 from .consumer_caveat import ConsumerCaveat
 from .menu_popup import MenuPopup
 from .selector_popup import SelectorPopup
@@ -33,6 +33,7 @@ class Popups(object):
     selector_popup = WebItem('.webui-popover.in', cls=SelectorPopup)
     consumer_caveat_popup = WebItem('.webui-popover-tags-selector',
                                     cls=ConsumerCaveat)
+    cease_support_from_providers_list_menu = Button('.cease-oneprovider-support-btn')
 
     def __init__(self, driver):
         self.driver = self.web_elem = driver
