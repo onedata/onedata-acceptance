@@ -43,7 +43,6 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser1 unchecks "View harvester" privilege toggle in "Harvester management" for "user1" user in harvester members subpage
     And user of browser1 clicks Save button for "user1" user in harvester members subpage
 
-    And user of browser2 refreshes site
     And user of browser2 clicks Members of "harvester11" harvester in the sidebar
     Then user of browser2 sees Insufficient permissions alert in harvester members subpage
     And user of browser2 clicks Spaces of "harvester11" harvester in the sidebar
@@ -100,7 +99,6 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser1 checks "View privileges" privilege in "Harvester management" privileges group for user1 user in "harvester14" harvester
 
     # view privileges
-    And user of browser2 refreshes site
     And user of browser2 clicks "user1" user in "harvester14" harvester members users list
     Then user of browser2 sees privileges for "user1" user in harvester members subpage
 
@@ -119,10 +117,8 @@ Feature: Basic management of harvester in Onezone GUI
 
     And user of browser1 checks "Set privileges" privilege in "Harvester management" privileges group for user1 user in "harvester15" harvester
 
-    Then user of browser2 refreshes site
     And user of browser2 checks "Harvester management" privileges group for user1 user in "harvester15" harvester
 
-    And user of browser1 refreshes site
     And user of browser1 clicks "user1" user in "harvester15" harvester members users list
     And user of browser1 sees that "Harvester management" is checked for "user1" user in harvester members subpage
 
