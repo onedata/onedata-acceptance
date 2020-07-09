@@ -15,7 +15,7 @@ from .upload_presenter import UploadPresenter
 from .user_account_menu import UserAccountPopup
 from .toolbar import ToolbarPopup
 from .deregister_provider import DeregisterProvider
-from .member_menu import PopoverMenu
+from .member_menu import PopoverMenu, UserDeleteAccountPopoverMenu
 
 
 class Popups(object):
@@ -33,6 +33,7 @@ class Popups(object):
     selector_popup = WebItem('.webui-popover.in', cls=SelectorPopup)
     consumer_caveat_popup = WebItem('.webui-popover-tags-selector',
                                     cls=ConsumerCaveat)
+    user_delete_account_popover_menu = WebItem('.in  .webui-popover-inner', cls=UserDeleteAccountPopoverMenu)
 
     def __init__(self, driver):
         self.driver = self.web_elem = driver

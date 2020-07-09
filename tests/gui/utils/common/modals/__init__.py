@@ -40,6 +40,7 @@ from .leave_element import LeaveElementModal
 from .modify_storage import ModifyStorage
 from .share_directory import ShareDirectory
 from .shares_row_menu import SharesRowMenu
+from .delete_user_account import DeleteUserAccountModal
 
 
 class Modals(object):
@@ -106,6 +107,9 @@ class Modals(object):
     remove_token = WebItem('.modal-dialog', cls=RemoveModal)
     clean_up_obsolete_tokens = WebItem('.modal-dialog',
                                        cls=CleanUpObsoleteTokensModal)
+
+    delete_user_account = WebItem('.modal-dialog', cls=DeleteUserAccountModal)
+
 
     def __init__(self, driver):
         self.driver = driver

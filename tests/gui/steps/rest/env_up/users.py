@@ -47,6 +47,31 @@ def users_creation(host, config, admin_credentials, onepanel_credentials,
     _rm_users(zone_hostname, admin_credentials, users_db)
 
 
+@given(parsers.parse('initial user for future delete configuration in "{host}" '
+                     'Onezone service:\n{config}'))
+def users_creation_for_future_delete(host, config, admin_credentials, onepanel_credentials,
+                   hosts, users, rm_users):
+    zone_hostname = hosts[host]['hostname']
+    users_db = {}
+    for user_config in yaml.load(config):
+        username, options = _parse_user_info(user_config)
+        try:
+            user_cred = _create_user(zone_hostname, onepanel_credentials,
+                                     admin_credentials, username, options,
+                                     rm_users)
+            _configure_user(zone_hostname, admin_credentials, user_cred,
+                            options)
+        except Exception as ex:
+            _rm_users(zone_hostname, admin_credentials, users_db)
+            raise ex
+        else:
+            users[username] = users_db[username] = user_cred
+
+
+
+
+
+
 def _parse_user_info(user_config):
     try:
         [(username, options)] = user_config.items()
