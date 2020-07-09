@@ -45,12 +45,10 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
           Import strategy: Simple scan
           Max depth: 2
 
-    And user of browser2 refreshes site
     And user of browser2 opens file browser for "space1" space
 
     # confirm import of files
     And user of browser2 is idle for 8 seconds
-    And user of browser2 refreshes site
     And user of browser2 sees file browser in data tab in Oneprovider page
 
     Then user of browser2 sees that there is 1 item in file browser
@@ -90,7 +88,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # confirm update of files
     And user of browser2 is idle for 8 seconds
-    And user of browser2 refreshes site
     And user of browser2 sees file browser in data tab in Oneprovider page
 
     And user of browser2 sees that there are 3 items in file browser
@@ -151,7 +148,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 opens file browser for "space1" space
 
     And user of browser2 is idle for 8 seconds
-    And user of browser2 refreshes site
+
     And user of browser2 sees file browser in data tab in Oneprovider page
 
     Then user of browser2 sees that there is 1 item in file browser
@@ -214,7 +211,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 opens file browser for "space1" space
 
     And user of browser2 is idle for 8 seconds
-    And user of browser2 refreshes site
     And user of browser2 sees file browser in data tab in Oneprovider page
 
     And user of browser2 sees that there is 1 item in file browser
@@ -279,7 +275,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 opens file browser for "space1" space
 
     And user of browser2 is idle for 8 seconds
-    And user of browser2 refreshes site
     And user of browser2 sees file browser in data tab in Oneprovider page
 
     And user of browser2 sees only items named "dir2" in file browser
@@ -308,7 +303,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # confirm update of files
     And user of browser2 is idle for 8 seconds
-    And user of browser2 refreshes site
     And user of browser2 sees file browser in data tab in Oneprovider page
 
     And user of browser2 sees only items named ["dir21", "dir22", "file1.txt"] in file browser
@@ -329,7 +323,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 appends "34" to dir2/file1.txt file in provider's storage mount point
 
     And user of browser2 is idle for 10 seconds
-    And user of browser2 refreshes site
     And user of browser2 sees file browser in data tab in Oneprovider page
     And user of browser2 double clicks on item named "file1.txt" in file browser
     And user of browser2 sees that content of downloaded file "file1 (1).txt" is equal to: "2222234"
@@ -364,7 +357,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 opens file browser for "space1" space
 
     And user of browser2 is idle for 8 seconds
-    And user of browser2 refreshes site
     And user of browser2 sees file browser in data tab in Oneprovider page
 
     And user of browser2 sees only items named "dir2" in file browser
@@ -394,7 +386,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # confirm update of files
     And user of browser2 is idle for 8 seconds
-    And user of browser2 refreshes site
     And user of browser2 sees file browser in data tab in Oneprovider page
 
     Then user of browser2 sees that there are 3 items in file browser
@@ -417,7 +408,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 appends "34" to dir2/file1.txt file in provider's storage mount point
 
     And user of browser2 is idle for 10 seconds
-    And user of browser2 refreshes site
     And user of browser2 sees file browser in data tab in Oneprovider page
     And user of browser2 double clicks on item named "file1.txt" in file browser
     And user of browser2 sees that content of downloaded file "file1 (1).txt" is equal to: "22222"
@@ -470,7 +460,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # confirm update of files
     And user of browser2 is idle for 8 seconds
-    And user of browser2 refreshes site
     And user of browser2 sees file browser in data tab in Oneprovider page
 
     And user of browser2 sees only items named "dir2" in file browser
@@ -547,7 +536,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # confirm update of files
     And user of browser2 is idle for 8 seconds
-    And user of browser2 refreshes site
     And user of browser2 sees file browser in data tab in Oneprovider page
 
     And user of browser2 sees only items named "dir2" in file browser
@@ -582,7 +570,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     # confirm that new files were not detected
     And user of browser2 changes current working directory to /dir2 using breadcrumbs
     And user of browser2 is idle for 8 seconds
-    And user of browser2 refreshes site
     And user of browser2 sees file browser in data tab in Oneprovider page
 
     Then user of browser2 sees that there are 3 items in file browser
