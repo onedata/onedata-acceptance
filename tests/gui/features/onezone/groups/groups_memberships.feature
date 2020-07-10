@@ -18,6 +18,12 @@ Feature: Basic management of groups memberships in Onezone GUI
                 - group3
           group3:
             owner: user1
+    And initial spaces configuration in "onezone" Onezone service:
+          space1:
+            owner: user2
+
+            groups:
+              - group1
 
     And user opened browser window
     And user of browser opened Onezone page
@@ -38,6 +44,13 @@ Feature: Basic management of groups memberships in Onezone GUI
     And user of browser sees that "group2" group is member of "group1" group in group memberships mode
     And user of browser sees that "group3" group is member of "group2" group in group memberships mode
 
+    #go to space overview, check
+    And user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser sees 1 direct groups on space overview page
+    And user of browser sees 1 direct users on space overview page
+    And user of browser sees 3 effective groups on space overview page
+    And user of browser sees 2 effective users on space overview page
+
 
   Scenario: User removes relation between user and group in members subpage
     When user of browser goes to group "group1" members subpage
@@ -50,9 +63,15 @@ Feature: Basic management of groups memberships in Onezone GUI
     And user of browser clicks on "user1" member relation menu button to "group1" group
     And user of browser clicks on "Remove relation" in group membership relation menu
     And user of browser clicks on "Leave" button in modal "LEAVE GROUP"
-
     Then user of browser sees 2 membership rows in group memberships mode
     And user of browser does not see that "user1" user is member of "group1" group in group memberships mode
+
+    #go to space overview, check
+    And user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser sees 1 direct group on space overview page
+    And user of browser sees 0 direct users on space overview page
+    And user of browser sees 3 effective groups on space overview page
+    And user of browser sees 2 effective users on space overview page
 
 
   Scenario: User removes relation between two groups (direct)
@@ -70,3 +89,9 @@ Feature: Basic management of groups memberships in Onezone GUI
     Then user of browser sees 1 membership row in group memberships mode
     And user of browser does not see that "group3" group is member of "group2" group in group memberships mode
 
+     #go to space overview, check
+    And user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser sees 1 direct groups on space overview page
+    And user of browser sees 1 direct users on space overview page
+    And user of browser sees 2 effective groups on space overview page
+    And user of browser sees 2 effective users on space overview page

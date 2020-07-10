@@ -51,6 +51,11 @@ class SpaceOverviewPage(PageObject):
     rename = Button('.edit-icon')
     edit_name_box = WebItem('.editor', cls=EditBox)
 
+    direct_groups = Label('.direct-groups-counter')
+    direct_users = Label('.direct-users-counter')
+    effective_groups = Label('.effective-groups-counter')
+    effective_users = Label('.effective-users-counter')
+
 
 class WelcomePage(PageObject):
     create_a_space = NamedButton('.info .ember-view', text='Create a space')

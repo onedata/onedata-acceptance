@@ -44,6 +44,12 @@ def _find_members_page(onepanel, oz_page, driver, where):
         return oz_page(driver)[tab_name].members_page
 
 
+def change_membership_to_name(membership_type, subject_type):
+    if not subject_type.endswith('s'):
+        subject_type += 's'
+    return membership_type + '_' + subject_type
+
+
 @wt(parsers.re('user of (?P<browser_id>.*) clicks show view expand button in '
                '(?P<where>space|group|cluster) members subpage header'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -131,6 +137,27 @@ def assert_count_membership_rows(selenium, browser_id, number, oz_page, where):
     assert count_records == int(number), ('found {} membership rows '
                                           'instead of {}'.format(number,
                                                                  count_records))
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) sees (?P<number>.*) '
+               '(?P<membership_type>direct|effective) '
+               '(?P<subject_type>groups?|users?) on '
+               '(?P<where>space) overview page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_members_number_in_space_overview(selenium, oz_page, browser_id,
+                                            number, membership_type,
+                                            subject_type, where):
+    driver = selenium[browser_id]
+    where = _change_to_tab_name(where)
+    overview_page = oz_page(driver)[where].overview_page
+    name = change_membership_to_name(membership_type, subject_type)
+    count_members = getattr(overview_page, name)
+
+    assert count_members != int(number), ('found {} {} {} '
+                                          'instead of {}'.format(number,
+                                                                 membership_type,
+                                                                 subject_type,
+                                                                 count_members))
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on "(?P<member_name>.*)" '

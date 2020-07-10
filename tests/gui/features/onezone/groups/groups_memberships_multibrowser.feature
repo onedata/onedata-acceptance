@@ -20,6 +20,12 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
             owner: user1
             groups:
                 - group3
+    And initial spaces configuration in "onezone" Onezone service:
+          space1:
+            owner: user1
+
+            groups:
+              - group4
 
     And users opened [browser1, browser2] browsers' windows
     And user of [browser1, browser2] opened [Onezone, Onezone] page
@@ -27,7 +33,13 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
 
 
   Scenario: User removes relation between two groups (effective)
-    When user of browser2 goes to group "group2" members subpage
+    When user of browser1 clicks "space1" on the spaces list in the sidebar
+    And user of browser1 sees 1 direct groups on space overview page
+    And user of browser1 sees 1 direct users on space overview page
+    And user of browser1 sees 4 effective groups on space overview page
+    And user of browser1 sees 2 effective users on space overview page
+
+    And user of browser2 goes to group "group2" members subpage
     And user of browser2 clicks "group1" group in "group2" group members groups list
     And user of browser2 expands "Group hierarchy management" privilege for "group1" group in group members subpage
     And user of browser2 checks "Leave parent group" privilege toggle in "Group hierarchy management" for "group1" group in group members subpage
@@ -46,3 +58,12 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
 
     Then user of browser1 sees 1 membership row in group memberships mode
     And user of browser1 does not see that "group2" group is member of "group3" group in group memberships mode
+
+    And user of browser1 clicks "space1" on the spaces list in the sidebar
+    And user of browser1 sees 1 direct groups on space overview page
+    And user of browser1 sees 1 direct users on space overview page
+    And user of browser1 sees 2 effective groups on space overview page
+    And user of browser1 sees 2 effective users on space overview page
+    And user of browser2 clicks "space1" on the spaces list in the sidebar
+    And user of browser2 sees 2 effective groups on space overview page
+
