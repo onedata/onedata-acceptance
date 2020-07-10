@@ -47,7 +47,6 @@ class Provider(Element):
     menu_button = Button('.provider-menu-toggle')
     id = name = Label('.one-label')
 
-#providers_list[nazwa].menu_nutton
 
 class SpaceOverviewPage(PageObject):
     space_name = Label('.with-menu .one-label')
@@ -82,9 +81,9 @@ class SpaceProvidersPage(PageObject):
     get_support_page = WebItem('.ember-view', cls=GetSupportPage)
 
 
-
 class _Provider(PageObject):
     name = id = Label('a .tab-name')
+
 
 class DataPage(GenericPage):
     create_space_button = Button('.one-sidebar-toolbar-button '
