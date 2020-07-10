@@ -32,6 +32,26 @@ def copy_registration_cluster_token(selenium, browser_id, oz_page):
     oz_page(driver)['clusters'].token_page.copy()
 
 
+@wt(parsers.parse('user of {browser_id} sees "{record}" in clusters '
+                  'menu'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_record_in_clusters_menu(selenium, browser_id, oz_page, record,
+                                     hosts):
+    driver = selenium[browser_id]
+    record = hosts[record]['name']
+    assert record in oz_page(driver)['clusters'].menu
+
+
+@wt(parsers.parse('user of {browser_id} does not see "{record}" in clusters '
+                  'menu'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_record_not_in_clusters_menu(selenium, browser_id, oz_page, record,
+                                     hosts):
+    driver = selenium[browser_id]
+    record = hosts[record]['name']
+    assert record not in oz_page(driver)['clusters'].menu
+
+
 @wt(parsers.parse('user of {browser_id} clicks on "{record}" in clusters menu'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_on_record_in_clusters_menu(selenium, browser_id, oz_page, record,

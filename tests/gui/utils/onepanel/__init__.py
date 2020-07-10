@@ -20,6 +20,7 @@ from .spaces import SpacesContentPage
 from .storages import StorageContentPage
 from .init_page import PanelInitPage
 from .emergency_passphrase import EmergencyPassphrase
+from .members import MembersContentPage
 
 
 class Sidebar(PageObject):
@@ -39,6 +40,7 @@ class Content(BaseContent):
     storages = WebItem(_main_content, cls=StorageContentPage)
     spaces = WebItem(_main_content, cls=SpacesContentPage)
     members = WebItem(_main_content, cls=MembersPage)
+    members_emergency_interface = WebItem(_main_content, cls=MembersContentPage)
     emergency_passphrase = WebItem(_main_content, cls=EmergencyPassphrase)
 
 

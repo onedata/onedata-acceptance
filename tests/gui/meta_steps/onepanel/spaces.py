@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import time
 from tests.gui.steps.modal import assert_error_modal_with_text_appeared
 from tests.gui.steps.onepanel.common import *
 from tests.gui.steps.common.notifies import *
