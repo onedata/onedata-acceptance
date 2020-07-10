@@ -33,9 +33,9 @@ Feature: Quality of Service tests using sigle browser in Oneprovider GUI
     Scenario: Adding fulfilled qos
       When user of browser creates "anyStorage" quality of service for "file1"
       Then user of browser clicks on qos status tag for "file1" in file browser
-      And user of browser sees all qualities of service are fulfilled
+      And user of browser sees that all qualities of service are fulfilled
 
     Scenario: Adding impossible qos
       When user of browser creates "hello=WORLD" quality of service for "file1"
       Then user of browser clicks on qos status tag for "file1" in file browser
-      And user of browser sees all qualities of service are impossible
+      And user of browser sees that all qualities of service are impossible

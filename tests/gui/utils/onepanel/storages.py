@@ -55,6 +55,8 @@ class StorageRecord(PageObject, ExpandableMixin):
     mount_point = Label('.item-table .field-posix_static-mountPoint')
     _toggle = WebElement('.one-collapsible-list-item-header')
 
+    copy_id_button = Button('.copy-btn-icon')
+
     menu_button = Button('.collapsible-toolbar-toggle')
     _toolbar = WebElement('.one-collapsible-toolbar')
 

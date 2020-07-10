@@ -30,6 +30,7 @@ from tests.gui.steps.onepanel.nodes import *
 from tests.gui.steps.onepanel.common import *
 from tests.gui.steps.onepanel.deployment import *
 from tests.gui.steps.onepanel.spaces import *
+from tests.gui.steps.onepanel.storages import *
 
 from tests.gui.steps.onezone.logged_in_common import *
 from tests.gui.steps.onezone.user_full_name import *
@@ -51,6 +52,7 @@ from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
 from tests.gui.steps.oneprovider.transfers import *
+from tests.gui.steps.oneprovider.qos import *
 
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
@@ -59,15 +61,13 @@ from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.onezone.groups import *
 from tests.gui.meta_steps.onezone.spaces import *
 from tests.gui.meta_steps.onezone.tokens import *
-from tests.gui.meta_steps.onezone.common import *
 
-from tests.gui.meta_steps.onepanel.spaces import *
 from tests.gui.meta_steps.onepanel.spaces import *
 from tests.gui.meta_steps.onepanel.provider import *
 
 from tests.gui.meta_steps.oneprovider.common import *
-from tests.gui.meta_steps.oneprovider.common import *
 from tests.gui.meta_steps.oneprovider.transfers import *
+from tests.gui.meta_steps.oneprovider.qos import *
 from tests.mixed.steps.space_basic import *
 
 from tests.utils.acceptance_utils import *
@@ -81,3 +81,6 @@ def screens():
 scenarios('../features/oneprovider/multiprovider/basic.feature')
 scenarios('../features/oneprovider/multiprovider/cdmi.feature')
 scenarios('../features/oneprovider/multiprovider/auto_cleaning.feature')
+scenarios('../features/oneprovider/multiprovider/qos_2_providers.feature')
+scenarios('../features/oneprovider/multiprovider/qos_2_providers_multibrowser'
+          '.feature')

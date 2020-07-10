@@ -7,8 +7,9 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 from pytest_bdd import parsers
+from selenium.common.exceptions import NoSuchElementException
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.steps.modal import click_modal_button
 from tests.utils.bdd_utils import wt
 from tests.utils.utils import repeat_failed
@@ -24,9 +25,10 @@ def delete_all_qualities_of_service(selenium, browser_id, modals, popups):
         popups(driver).delete_qos_popup.confirm.click()
 
 
-@wt(parsers.parse('user of {browser_id} sees all qualities of service are '
+@wt(parsers.parse('user of {browser_id} sees that all qualities of service are '
                   'fulfilled'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(interval=1, timeout=90,
+               exceptions=(NoSuchElementException, RuntimeError))
 def assert_all_qualities_of_service_are_fulfilled(selenium, browser_id,
                                                   modals,):
     driver = selenium[browser_id]
@@ -35,7 +37,7 @@ def assert_all_qualities_of_service_are_fulfilled(selenium, browser_id,
         assert hasattr(requirement, 'fulfilled'), f'fulfilled field not found'
 
 
-@wt(parsers.parse('user of {browser_id} sees all qualities of service are '
+@wt(parsers.parse('user of {browser_id} sees that all qualities of service are '
                   'impossible'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_all_qualities_of_service_are_impossible(selenium, browser_id,

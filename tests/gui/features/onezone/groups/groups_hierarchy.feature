@@ -28,7 +28,7 @@ Feature: Basic management of groups hierarchy with one user in Onezone GUI
     And user of browser clicks on group "group1" menu button in hierarchy subpage
     And user of browser clicks on "Add child group" in group hierarchy menu
     And user of browser clicks on "Create new group" in group hierarchy menu
-    And user of browser writes "group4" into group name text field in create group modal
+    And user of browser writes "group4" into text field in create group modal
     And user of browser clicks on "Create" button in modal "CREATE GROUP"
     Then user of browser sees "group4" as a child of "group1" in hierarchy subpage
 
@@ -38,7 +38,7 @@ Feature: Basic management of groups hierarchy with one user in Onezone GUI
     And user of browser clicks on group "group1" menu button in hierarchy subpage
     And user of browser clicks on "Add parent group" in group hierarchy menu
     And user of browser clicks on "Create new group" in group hierarchy menu
-    And user of browser writes "group4" into group name text field in create group modal
+    And user of browser writes "group4" into text field in create group modal
     And user of browser clicks on "Create" button in modal "CREATE GROUP"
     And user of browser clicks show parent groups in hierarchy subpage
     Then user of browser sees "group4" as a parent of "group1" in hierarchy subpage

@@ -22,6 +22,7 @@ class Requirement(PageObject):
 class QualityOfServicePopover(Modal):
     add_requirement = NamedButton('.btn-primary', text='Add Requirement')
     input_name = Input('.code-textarea')
+    replicas_number = Input('.replicas-number-input')
     save = NamedButton('.ready', text='Save')
     close = NamedButton('.btn-default', text='Close')
     requirements = WebItemsSequence('.qos-entry', cls=Requirement)

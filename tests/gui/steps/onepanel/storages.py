@@ -137,3 +137,15 @@ def click_on_button_in_edit_form(selenium, browser_id, name, onepanel, storage):
     button = name.lower() + '_button'
     getattr(onepanel(driver).content.storages.storages[
                 storage].edit_form.posix_editor, button)()
+
+
+@wt(parsers.parse('user of {browser_id} copies id of "{storage_name}" storage '
+                  'to clipboard via copy button'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_button_in_edit_form(selenium, browser_id, storage_name, onepanel):
+    driver = selenium[browser_id]
+    for storage in onepanel(driver).content.storages.storages:
+        if storage.name == storage_name:
+            storage.copy_id_button.click()
+            continue
+        f'Storage {storage_name} not found'

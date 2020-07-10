@@ -79,7 +79,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     And user of browser2 sees file browser in data tab in Oneprovider page
     And user of browser2 double clicks on item named "dir1" in file browser
     And user of browser2 clicks "New directory" button from file browser menu bar
-    And user of browser2 writes "dir2" into name directory text field in modal "Create dir"
+    And user of browser2 writes "dir2" into text field in modal "Create dir"
     And user of browser2 confirms create new directory using button
 
 	# User1 changes permission code
@@ -100,7 +100,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     And user of browser2 sees file browser in data tab in Oneprovider page
     And user of browser2 double clicks on item named "dir1" in file browser
     And user of browser2 clicks "New directory" button from file browser menu bar
-    And user of browser2 writes "dir2" into name directory text field in modal "Create dir"
+    And user of browser2 writes "dir2" into text field in modal "Create dir"
     And user of browser2 confirms create new directory using button
 
 	# User1 changes permission code
@@ -110,7 +110,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     Then user of browser2 clicks on menu for "dir2" directory in file browser
     And user of browser2 clicks "Rename" option in data row menu in file browser
     And user of browser2 sees that "Rename" modal has appeared
-    And user of browser2 writes "new_dir1" into name directory text field in modal "Rename modal"
+    And user of browser2 writes "new_dir1" into text field in modal "Rename modal"
     And user of browser2 confirms rename directory using button
     And user of browser2 sees that error modal with text "Renaming the file failed" appeared
 
@@ -123,7 +123,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     And user of browser2 sees file browser in data tab in Oneprovider page
     And user of browser2 double clicks on item named "dir1" in file browser
     And user of browser2 clicks "New directory" button from file browser menu bar
-    And user of browser2 writes "dir2" into name directory text field in modal "Create dir"
+    And user of browser2 writes "dir2" into text field in modal "Create dir"
     And user of browser2 confirms create new directory using button
 
 	# User1 changes permission code
@@ -131,7 +131,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
 
 	# User2 fails to create dir
     Then user of browser2 clicks "New directory" button from file browser menu bar
-    And user of browser2 writes "dir3" into name directory text field in modal "Create dir"
+    And user of browser2 writes "dir3" into text field in modal "Create dir"
     And user of browser2 confirms create new directory using button
     And user of browser2 sees that error modal with text "Creating directory failed" appeared
 
@@ -181,7 +181,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     Then user of browser2 clicks on menu for "20B-0.txt" directory in file browser
     And user of browser2 clicks "Rename" option in data row menu in file browser
     And user of browser2 sees that "Rename" modal has appeared
-    And user of browser2 writes "new_file1" into name directory text field in modal "Rename modal"
+    And user of browser2 writes "new_file1" into text field in modal "Rename modal"
     And user of browser2 confirms rename directory using button
     And user of browser2 sees that error modal with text "Renaming the file failed" appeared
 
