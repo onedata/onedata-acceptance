@@ -28,7 +28,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And user of browser sees that item named "20B-0.txt" has appeared in file browser
 
     And user of browser is idle for 90 seconds
-    And user of browser clicks refresh button
+    And user of browser clicks file browser refresh button
     And user of browser sees file browser in data tab in Oneprovider page
 
     And user of browser clicks on menu for "20B-0.txt" file in file browser
@@ -42,7 +42,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
 
     And using CDMI API user1 writes "ABCD" to "/space1/20B-0.txt" starting at offset 20 in "oneprovider-2" provider
     And user of browser is idle for 90 seconds
-    And user of browser clicks refresh button
+    And user of browser clicks file browser refresh button
     And user of browser sees file browser in data tab in Oneprovider page
 
     And user of browser clicks on menu for "20B-0.txt" file in file browser
@@ -71,7 +71,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
 
     And using CDMI API user1 writes "ABCD" to "/space1/20B-0.txt" starting at offset 20 in "oneprovider-1" provider
     And user of browser is idle for 90 seconds
-    And user of browser clicks refresh button
+    And user of browser clicks file browser refresh button
     And user of browser sees file browser in data tab in Oneprovider page
 
     And user of browser sees that item named "20B-0.txt" is of 24 B size in file browser
@@ -90,7 +90,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And user of browser sees that item named "20B-0.txt" has appeared in file browser
 
     And user of browser is idle for 90 seconds
-    And user of browser clicks refresh button
+    And user of browser clicks file browser refresh button
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser clicks on menu for "20B-0.txt" file in file browser
     And user of browser clicks "Data distribution" option in data row menu in file browser
@@ -101,7 +101,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
 
     And using CDMI API user1 reads from "/space1/20B-0.txt" in range 10 to 20 in "oneprovider-2" provider
     And user of browser is idle for 90 seconds
-    And user of browser clicks refresh button
+    And user of browser clicks file browser refresh button
     And user of browser sees file browser in data tab in Oneprovider page
 
     And user of browser clicks on menu for "20B-0.txt" file in file browser
@@ -128,7 +128,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
 
     And using CDMI API user1 writes "ABCD" to "/space1/20B-0.txt" starting at offset 40 in "oneprovider-1" provider
     And user of browser is idle for 90 seconds
-    And user of browser clicks refresh button
+    And user of browser clicks file browser refresh button
     And user of browser sees file browser in data tab in Oneprovider page
 
     And user of browser clicks on menu for "20B-0.txt" file in file browser
@@ -148,7 +148,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
 
     And using CDMI API user1 writes "ABCD" to "/space1/20B-0.txt" starting at offset 20 in "oneprovider-1" provider
     And user of browser is idle for 90 seconds
-    And user of browser clicks refresh button
+    And user of browser clicks file browser refresh button
     And user of browser sees file browser in data tab in Oneprovider page
 
     And user of browser double clicks on item named "20B-0.txt" in file browser

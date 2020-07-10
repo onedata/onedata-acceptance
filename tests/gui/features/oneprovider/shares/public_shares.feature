@@ -118,7 +118,7 @@ Feature: Basic data tab operations on public shares in file browser
     # upload dir1/20B-0.txt
     And user of browser1 double clicks on item named "dir1" in file browser
     And user of browser1 uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
-    And user of browser2 clicks refresh shares button
+    And user of browser2 clicks file browser refresh button
     And user of browser2 sees file browser on share's public interface
     Then user of browser2 sees item(s) named "20B-0.txt" in file browser
 
@@ -139,7 +139,7 @@ Feature: Basic data tab operations on public shares in file browser
 
     And user of browser1 succeeds to remove "dir1/file1" in "space1"
 
-    And user of browser2 clicks refresh shares button
+    And user of browser2 clicks file browser refresh button
     And user of browser2 sees file browser on share's public interface
     Then user of browser2 does not see any item(s) named "file1" in file browser
 

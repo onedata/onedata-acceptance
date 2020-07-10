@@ -249,7 +249,3 @@ def check_urls_are_equal(selenium, browser_id, op_container, clipboard,
     err_msg = f'modal URL is {modal_url} and share URL is {share_url}'
     assert share_url == modal_url, err_msg
 
-@wt(parsers.parse('user of {browser_id} clicks refresh shares button'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_refresh_shares_button(selenium, browser_id, public_share):
-    public_share(selenium[browser_id]).refresh_shares_button.click()

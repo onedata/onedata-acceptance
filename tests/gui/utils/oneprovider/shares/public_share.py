@@ -18,8 +18,6 @@ class PublicShareView(object):
     breadcrumbs = Breadcrumbs('.file-browser-head-container')
     file_browser = FileBrowser('.content-file-browser')
     error_msg = Label('.error-details.active')
-    refresh_shares_button = Button('.fb-toolbar-button .oneicon-refresh')
-
 
     def __init__(self, driver):
         self.web_elem = self.driver = driver
