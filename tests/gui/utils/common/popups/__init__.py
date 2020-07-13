@@ -6,8 +6,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-
-from tests.gui.utils.core.web_elements import WebItem, Button
+from tests.gui.utils.core.web_elements import WebItem, Button, WebItemsSequence
 from .consumer_caveat import ConsumerCaveat
 from .menu_popup import MenuPopup
 from .selector_popup import SelectorPopup
@@ -26,14 +25,16 @@ class Popups(object):
                                 cls=UserAccountPopup)
     member_menu = WebItem('.webui-popover.in', cls=PopoverMenu)
     data_distribution_menu = WebItem('.webui-popover.in', cls=PopoverMenu)
-    upload_presenter = WebItem('.hidden-xs .up-single-upload',
-                               cls=UploadPresenter)
+    upload_presenter = WebItemsSequence('.hidden-xs .up-single-upload',
+                                        cls=UploadPresenter)
     menu_popup = WebItem('#webuiPopover1', cls=MenuPopup)
     popover_menu = WebItem('.webui-popover.in', cls=PopoverMenu)
     selector_popup = WebItem('.webui-popover.in', cls=SelectorPopup)
     consumer_caveat_popup = WebItem('.webui-popover-tags-selector',
                                     cls=ConsumerCaveat)
-    cease_support_from_providers_list_menu = Button('.cease-oneprovider-support-btn')
+    cease_support_from_providers_list_menu = Button(
+        '.cease-oneprovider-support-btn')
+    confirm_cancel_button = Button('.btn-danger')
 
     def __init__(self, driver):
         self.driver = self.web_elem = driver

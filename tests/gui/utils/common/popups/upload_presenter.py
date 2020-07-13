@@ -6,12 +6,22 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 from tests.gui.utils.core.base import PageObject
-from tests.gui.utils.core.web_elements import WebElement
+from tests.gui.utils.core.web_elements import WebElement, Button, \
+    WebItemsSequence, Label
+from tests.gui.utils.onezone.generic_page import Element
+
+
+class UploadPopUp(PageObject):
+    cancel_button = Button('.cancel-action.upload-summary-header-cancel')
 
 
 class UploadPresenter(PageObject):
     upload_state = WebElement('.header-text')
     _summary_state = WebElement('.summary-state .one-icon')
+
+    minimize_summary_button = Button('.upload-summary-header-toggle-minimize')
+    cancel_button_list = WebItemsSequence('.upload-summary-header-progress-bar', cls=UploadPopUp)
+    cancel_button = Button('.cancel-action.upload-summary-header-cancel')
 
     def is_failed(self):
         return ('upload-object-error-icon'
