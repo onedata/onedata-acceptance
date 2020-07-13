@@ -7,20 +7,15 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-from pytest_bdd import parsers, given
-
-from tests.utils.acceptance_utils import *
+from tests.utils.bdd_utils import parsers, wt, given, when, then
 from tests.gui.conftest import WAIT_FRONTEND, modals, WAIT_BACKEND
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.utils import repeat_failed
 
 
-@when(parsers.re('users? of (?P<browser_id_list>.+?) clicks? on (?P<btn>.+?) '
-                 'button in (?P<content>welcome|spaces|account management|'
-                 'storages|provider) page in Onepanel'))
-@then(parsers.re('users? of (?P<browser_id_list>.+?) clicks? on (?P<btn>.+?) '
-                 'button in (?P<content>welcome|spaces|account management|'
-                 'storages|provider) page in Onepanel'))
+@wt(parsers.re('users? of (?P<browser_id_list>.+?) clicks? on (?P<btn>.+?) '
+               'button in (?P<content>welcome|spaces|account management|'
+               'storages|provider|member) page in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_btn_in_content(selenium, browser_id_list, btn, content,
                                onepanel):
@@ -67,12 +62,8 @@ def wt_click_on_subitem_for_item_with_name(selenium, browser_id_list, sidebar,
         nav.items[record].submenu[sub_item].click()
 
 
-@when(parsers.re('users? of (?P<browser_id_list>.+?) clicks? on '
-                 '"(?P<record>.+?)" item in (?P<sidebar>CLUSTERS) '
-                 'sidebar in Onepanel'))
-@then(parsers.re('users? of (?P<browser_id_list>.+?) clicks? on '
-                 '"(?P<record>.+?)" item in (?P<sidebar>CLUSTERS) '
-                 'sidebar in Onepanel'))
+@wt(parsers.re('users? of (?P<browser_id_list>.+?) clicks? on "(?P<record>.+?)"'
+               ' item in (?P<sidebar>CLUSTERS) sidebar in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_sidebar_item(selenium, browser_id_list, sidebar, record,
                              onepanel):
