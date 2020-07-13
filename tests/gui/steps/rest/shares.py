@@ -17,7 +17,8 @@ from tests.utils.rest_utils import http_get, get_provider_rest_path, http_post
 
 @given(parsers.parse('using REST, user {user} creates "{share_name}" share of '
                      '"{item_path}" supported by "{provider}" provider'))
-def create_share_rest(item_path, provider, user, share_name, hosts, users):
+def create_share_using_rest(item_path, provider, user, share_name, hosts,
+                            users):
     provider_hostname = hosts[provider]['hostname']
     file_id = get_file_id_by_rest(item_path, provider_hostname, user, users)
     print(file_id)
@@ -32,7 +33,7 @@ def create_share_rest(item_path, provider, user, share_name, hosts, users):
 
 @given(parsers.parse('using REST, user {user} creates following shares:\n'
                      '{config}'))
-def create_many_shares_rest(user, config, hosts, users):
+def create_many_shares_using_rest(user, config, hosts, users):
     """Config:
 
         - name: share name
@@ -40,17 +41,17 @@ def create_many_shares_rest(user, config, hosts, users):
           provider: provider that supports space
 
     """
-    _create_many_shares_rest(user, config, hosts, users)
+    _create_many_shares_using_rest(user, config, hosts, users)
 
 
-def _create_many_shares_rest(user, config, hosts, users):
+def _create_many_shares_using_rest(user, config, hosts, users):
     data = yaml.load(config)
     for share in data:
         name = share['name']
         path = share['path']
         provider = share['provider']
 
-        create_share_rest(path, provider, user, name, hosts, users)
+        create_share_using_rest(path, provider, user, name, hosts, users)
 
 
 def get_file_id_by_rest(file_path, provider_hostname, user, users):

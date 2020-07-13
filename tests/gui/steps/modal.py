@@ -373,12 +373,12 @@ def click_share_info_icon_in_share_directory_modal(selenium, browser_id, modals,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_icon_in_share_directory_modal(selenium, browser_id, modal_name,
                                         modals, owner_name, icon_name):
-    groups = modals(selenium[browser_id]).share_directory.share_options
+    elem_groups = modals(selenium[browser_id]).share_directory.share_options
     icon_name = transform(icon_name) + '_icon'
     if owner_name:
-        icon = getattr(groups[owner_name], icon_name)
+        icon = getattr(elem_groups[owner_name], icon_name)
     else:
-        icon = getattr(groups[0], icon_name)
+        icon = getattr(elem_groups[0], icon_name)
     icon.click()
 
 
