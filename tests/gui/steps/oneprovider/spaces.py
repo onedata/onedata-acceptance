@@ -15,10 +15,10 @@ from tests.utils.bdd_utils import wt
 from tests.utils.utils import repeat_failed
 
 
-
 @wt(parsers.parse('user of {browser_id} selects "{space_name}" '
-                    'from spaces sidebar list'))
-def select_sapce_from_sidebar_list(selenium, browser_id, space_name, op_container):
+                  'from spaces sidebar list'))
+def select_sapce_from_sidebar_list(selenium, browser_id, space_name,
+                                   op_container):
     op_container(selenium[browser_id]).spaces.sidebar.spaces[space_name].click()
 
 

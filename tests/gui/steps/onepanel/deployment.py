@@ -314,24 +314,6 @@ def wt_type_text_to_in_box_in_deployment_step5(selenium, browser_id, text,
 def wt_click_on_add_btn_in_storage_add_form(selenium, browser_id, onepanel):
     onepanel(selenium[browser_id]).content.deployment.step5.form.add()
 
-@wt(parsers.parse('user of {browser_id} clicks on {button_name} button '
-                    'in laststep of deployment process in Onepanel'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_on_manage_cluster_via_onezone_laststep(selenium, browser_id,
-                                               button_name, onepanel):
-    onepanel(selenium[browser_id]).content.deployment.laststep.manage_cluster_via_onezone.click()
-
-
-@wt(parsers.parse('user of {browser_id} clicks on {button_name} button '
-                    'in step 5 of deployment process in Onepanel'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_on_finish_button_step5(selenium, browser_id,
-                                               button_name, onepanel):
-    finish_button =onepanel(selenium[browser_id]).content.deployment.step5.finish
-    finish_button.click()
-    onepanel(selenium[browser_id]).content.deployment.laststep.manage_cluster_via_onezone.click()
-
-
 
 @when(parsers.parse('user of {browser_id} expands "{storage}" record on '
                     'storages list in step 5 of deployment process '
