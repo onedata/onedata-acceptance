@@ -1,4 +1,4 @@
-"""Utils and fixtures to facilitate operations on create child modal.
+"""Utils and fixtures to facilitate operations on delete user account popup.
 """
 
 __author__ = "Piotr Duleba"

@@ -68,10 +68,6 @@ def users_creation_for_future_delete(host, config, admin_credentials, onepanel_c
             users[username] = users_db[username] = user_cred
 
 
-
-
-
-
 def _parse_user_info(user_config):
     try:
         [(username, options)] = user_config.items()

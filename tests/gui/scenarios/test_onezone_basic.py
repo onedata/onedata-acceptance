@@ -32,8 +32,6 @@ from tests.gui.steps.onepanel.spaces import *
 
 from tests.gui.steps.onezone.logged_in_common import *
 from tests.gui.steps.onezone.user_full_name import *
-from tests.gui.steps.onezone.user_name import *
-from tests.gui.steps.onezone.user_password import *
 
 from tests.gui.steps.onezone.tokens import *
 from tests.gui.steps.onezone.data_space_management import *
@@ -97,5 +95,5 @@ scenarios('../features/onezone/groups/groups_memberships.feature')
 scenarios('../features/onezone/groups/groups_memberships_multibrowser.feature')
 scenarios('../features/onezone/groups/groups_memberships_privileges.feature')
 
-# TEN SCENARISZ NA KOŃCU, BO ZOSTAWIA ŚMIECI
+# THIS SCENARIO HAS TO BE EXECUTED IN THE END
 scenarios('../features/onezone/delete_account.feature')

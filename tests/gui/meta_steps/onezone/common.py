@@ -140,3 +140,42 @@ def search_for_members(records, member_name, parent_name, fun):
                     return True
     return False
 
+
+@wt(parsers.parse('user of {browser_id} logs out'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def logout(selenium, browser_id, oz_page, popups):
+    driver = selenium[browser_id]
+    oz_page(driver)['profile'].profile()
+    popups(driver).user_account_menu.options["Logout"].click()
+
+
+@wt(parsers.parse('user of {browser_id} changes username to {new_username}'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def change_username(selenium, browser_id, new_username, oz_page, popups):
+    driver = selenium[browser_id]
+    oz_page(driver)['profile'].profile()
+    popups(driver).user_account_menu.options["Manage account"].click()
+
+    oz_page(selenium[browser_id])['profile'].rename_username()
+    oz_page(selenium[browser_id])['profile'].edit_user_name_box.value \
+        = new_username
+    getattr(oz_page(selenium[browser_id])['profile'].edit_user_name_box,
+            "confirm").click()
+
+
+@wt(parsers.parse('user of {browser_id} changes {username} password'
+                  ' to {new_password}'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def change_password(selenium, browser_id, new_password, username, oz_page,
+                    users, popups):
+    driver = selenium[browser_id]
+    cur_passwd = users[username].password
+    oz_page(driver)['profile'].profile()
+    popups(driver).user_account_menu.options["Manage account"].click()
+    oz_page(selenium[browser_id])['profile'].rename_password()
+    oz_page(selenium[browser_id])['profile'].current_password_box = cur_passwd
+    oz_page(selenium[browser_id])['profile']\
+        .type_new_password_box = new_password
+    oz_page(selenium[browser_id])['profile']\
+        .retype_new_password_box = new_password
+    oz_page(selenium[browser_id])['profile'].change_password.click()

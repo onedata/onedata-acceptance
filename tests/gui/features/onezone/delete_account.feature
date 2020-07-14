@@ -3,18 +3,20 @@
             - user1
     And user opened browser window
     And user of browser opened onezone page
+    And user of browser logged as user1 to Onezone service
 
 
-  Scenario: User deletes his account, and can not login any more.
-    Given user of browser logged as user1 to Onezone service
+  Scenario: User deletes account and fails to login using old credentials.
     When user of browser expands account settings dropdown in the sidebar
     And user of browser clicks on Manage account item in expanded settings dropdown in the sidebar
+
     # delete account
     And user of browser clicks on remove user toolbar
     And user of browser clicks on remove user button
-    And user of browser clicks on understand consequences checkbox
-    And user of browser clicks on delete account button
-    # log again
+    And user of browser checks understand consequences checkbox
+    And user of browser clicks on delete account button in modal
+
+    # log in again
     And user of browser types "user1" to Username input in Onezone login form
     And user of browser types "password" to Password input in Onezone login form
     And user of browser presses Sign in button in Onezone login page
