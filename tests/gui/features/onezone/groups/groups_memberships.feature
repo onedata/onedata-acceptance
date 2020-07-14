@@ -21,7 +21,6 @@ Feature: Basic management of groups memberships in Onezone GUI
     And initial spaces configuration in "onezone" Onezone service:
           space1:
             owner: user2
-
             groups:
               - group1
 
@@ -44,7 +43,7 @@ Feature: Basic management of groups memberships in Onezone GUI
     And user of browser sees that "group2" group is member of "group1" group in group memberships mode
     And user of browser sees that "group3" group is member of "group2" group in group memberships mode
 
-    #go to space overview, check
+    # go to space overview and check membership
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser sees 1 direct groups on space overview page
     And user of browser sees 1 direct users on space overview page
@@ -66,7 +65,7 @@ Feature: Basic management of groups memberships in Onezone GUI
     Then user of browser sees 2 membership rows in group memberships mode
     And user of browser does not see that "user1" user is member of "group1" group in group memberships mode
 
-    #go to space overview, check
+    # go to space overview and check membership
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser sees 1 direct group on space overview page
     And user of browser sees 0 direct users on space overview page
@@ -89,7 +88,7 @@ Feature: Basic management of groups memberships in Onezone GUI
     Then user of browser sees 1 membership row in group memberships mode
     And user of browser does not see that "group3" group is member of "group2" group in group memberships mode
 
-     #go to space overview, check
+    # go to space overview and check membership
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser sees 1 direct groups on space overview page
     And user of browser sees 1 direct users on space overview page

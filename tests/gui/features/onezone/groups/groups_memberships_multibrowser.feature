@@ -23,7 +23,6 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
     And initial spaces configuration in "onezone" Onezone service:
           space1:
             owner: user1
-
             groups:
               - group4
 

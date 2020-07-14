@@ -151,13 +151,11 @@ def assert_members_number_in_space_overview(selenium, oz_page, browser_id,
     where = _change_to_tab_name(where)
     overview_page = oz_page(driver)[where].overview_page
     name = change_membership_to_name(membership_type, subject_type)
-    count_members = getattr(overview_page, name)
+    members_count = getattr(overview_page, name)
 
-    assert count_members != int(number), ('found {} {} {} '
-                                          'instead of {}'.format(number,
-                                                                 membership_type,
-                                                                 subject_type,
-                                                                 count_members))
+    error_msg = f'found {number} {membership_type} {subject_type} instead of ' \
+                f'{members_count}'
+    assert members_count != int(number), (error_msg)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on "(?P<member_name>.*)" '
