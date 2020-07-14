@@ -127,6 +127,27 @@ def replicate_item(selenium, browser_id, provider, hosts, popups):
     popups(driver).data_distribution_menu.menu[menu_option]()
 
 
+@wt(parsers.re('user of (?P<browser_id>.*) evicts selected item'
+               ' from provider "(?P<provider>.*)"'))
+def evict_item(selenium, browser_id, provider, hosts, popups):
+    menu_option = 'Evict'
+    driver = selenium[browser_id]
+
+    provider_name = hosts[provider]['name']
+    (modals(driver)
+     .data_distribution
+     .providers[provider_name]
+     .menu_button())
+    popups(driver).data_distribution_menu.menu[menu_option]()
+
+
+@wt(parsers.re('user of {browser_id} sees "see history" button'))
+@repeat_failed(interval=1, timeout=90, exceptions=RuntimeError)
+def assert_see_history_btn_shown(selenium, browser_id):
+    driver = selenium[browser_id]
+    assert hasattr(modals(driver).data_distribution, 'see_history_btn')
+
+
 @wt(parsers.re('user of (?P<browser_id>.*) sees that item is never '
                'synchronized in provider "(?P<provider>.*)"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
