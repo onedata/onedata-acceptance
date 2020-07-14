@@ -35,32 +35,17 @@ class MembersItemHeader(PageObject):
         self.menu_button.click()
 
 
-class Privilege(PageObject):
-    name = id = Label('label')
-    toggle = Toggle('.one-way-toggle')
-
-
-class PrivilegeGroup(PageObject):
-    name = id = Label('div.tree-item-content-container > '
-                      'div.one-tree-item-content > label')
-    toggle = Toggle('div.tree-item-content-container > '
-                    'div.one-tree-item-content > div > '
-                    'div.one-way-toggle')
-    privileges = WebItemsSequence('div > div.one-tree > ul > li', cls=Privilege)
-    show_hide_button = Button('.tree-circle')
-
-    def __call__(self):
-        self.show_hide_button.click()
-
-
 class MembersItemRow(PageObject):
     header = WebItem('.list-header-row', cls=MembersItemHeader)
     name = id = Label('.one-label')
-    privileges = WebItemsSequence('.one-collapsible-list-item-content '
-                                  '.form.ember-view > div > ul > li', 
-                                  cls=PrivilegeGroup)
     privilege_tree = WebItem('.one-tree', cls=PrivilegeTree)
     forbidden_alert = WebElement('.alert.forbidden')
+
+    def are_privileges_visible(self):
+        try:
+            return self.privilege_tree
+        except RuntimeError:
+            return False
 
 
 class MembersList(PageObject):

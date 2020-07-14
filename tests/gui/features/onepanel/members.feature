@@ -11,7 +11,11 @@ Feature: Basic cluster members management utilities using onepanel
   Scenario: User fails to see privileges without view privileges
     When user of browser1 invites user of browser2 to "oneprovider-1" cluster
     And user of browser2 joins to cluster
-    And user of browser1 unchecks nested "View privileges" privilege in "Cluster management" privilege for user1 user in cluster page
+    And user of browser1 sets following privileges for user1 user in cluster page:
+          Cluster management:
+            granted: Partially
+            privilege subtypes:
+              View privileges: False
 
     # fail to view privileges
     And user of browser2 clicks on Clusters in the main menu
@@ -24,23 +28,33 @@ Feature: Basic cluster members management utilities using onepanel
   Scenario: User fails to set privileges without set privileges
     When user of browser1 invites user of browser2 to "oneprovider-1" cluster
     And user of browser2 joins to cluster
-    And user of browser1 unchecks nested "Set privileges" privilege in "Cluster management" privilege for user1 user in cluster page
+    And user of browser1 sets following privileges for user1 user in cluster page:
+          Cluster management:
+            granted: Partially
+            privilege subtypes:
+              Set privileges: False
 
     # fail to uncheck privileges
     And user of browser2 clicks on Clusters in the main menu
     And user of browser2 clicks on "oneprovider-1" in clusters menu
     And user of browser2 clicks on Members item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser2 clicks "user1" user in "oneprovider-1" cluster members users list
-    And user of browser2 expands "Cluster management" privilege for "user1" user in cluster members subpage
-    And user of browser2 unchecks "View privileges" privilege toggle in "Cluster management" for "user1" user in cluster members subpage
-    And user of browser2 clicks Save button for "user1" user in cluster members subpage
+    And user of browser2 sets following privileges for "user1" user in cluster members subpage:
+          Cluster management:
+            granted: Partially
+            privilege subtypes:
+              View privileges: False
     Then user of browser2 sees that error modal with text "insufficient privileges" appeared
 
 
   Scenario: User fails to remove cluster without remove cluster privileges
     When user of browser1 invites user of browser2 to "oneprovider-1" cluster
     And user of browser2 joins to cluster
-    And user of browser1 unchecks nested "Remove cluster" privilege in "Cluster management" privilege for user1 user in cluster page
+    And user of browser1 sets following privileges for user1 user in cluster page:
+          Cluster management:
+            granted: Partially
+            privilege subtypes:
+              Remove cluster: False
 
     # fail to remove cluster
     And user of browser2 clicks on Clusters in the main menu
@@ -55,8 +69,11 @@ Feature: Basic cluster members management utilities using onepanel
   Scenario: User fails to remove user without remove user privileges
     When user of browser1 invites user of browser2 to "oneprovider-1" cluster
     And user of browser2 joins to cluster
-    And user of browser1 unchecks nested "Remove user" privilege in "User management" privilege for user1 user in cluster page
-
+    And user of browser1 sets following privileges for user1 user in cluster page:
+          User management:
+            granted: Partially
+            privilege subtypes:
+              Remove user: False
     # fail to remove user
     And user of browser2 clicks on Clusters in the main menu
     And user of browser2 clicks on "oneprovider-1" in clusters menu
@@ -69,8 +86,11 @@ Feature: Basic cluster members management utilities using onepanel
   Scenario: User fails to add user without add user privileges
     When user of browser1 invites user of browser2 to "oneprovider-1" cluster
     And user of browser2 joins to cluster
-    And user of browser1 unchecks nested "Add user" privilege in "User management" privilege for user1 user in cluster page
-
+    And user of browser1 sets following privileges for user1 user in cluster page:
+          User management:
+            granted: Partially
+            privilege subtypes:
+              Add user: False
     # fail to add user
     And user of browser2 clicks on Clusters in the main menu
     And user of browser2 clicks on "oneprovider-1" in clusters menu
@@ -87,8 +107,11 @@ Feature: Basic cluster members management utilities using onepanel
 
     And user of browser1 invites user of browser2 to "oneprovider-1" cluster
     And user of browser2 joins to cluster
-    And user of browser1 unchecks nested "Remove group" privilege in "Group management" privilege for user1 user in cluster page
-
+    And user of browser1 sets following privileges for user1 user in cluster page:
+          Group management:
+            granted: Partially
+            privilege subtypes:
+              Remove group: False
     # fail to remove group from cluster
     And user of browser2 clicks on Members item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser2 removes "group1" group from "oneprovider-1" cluster members
@@ -100,7 +123,11 @@ Feature: Basic cluster members management utilities using onepanel
 
     And user of browser1 invites user of browser2 to "oneprovider-1" cluster
     And user of browser2 joins to cluster
-    And user of browser1 unchecks nested "Add group" privilege in "Group management" privilege for user1 user in cluster page
+    And user of browser1 sets following privileges for user1 user in cluster page:
+          Group management:
+            granted: Partially
+            privilege subtypes:
+              Add group: False
 
     # fail to add group to cluster
     And user of browser2 adds "group1" group to "oneprovider-1" cluster
@@ -109,7 +136,11 @@ Feature: Basic cluster members management utilities using onepanel
   Scenario: User fails to see members without view cluster
     When user of browser1 invites user of browser2 to "oneprovider-1" cluster
     And user of browser2 joins to cluster
-    And user of browser1 unchecks nested "View cluster" privilege in "Cluster management" privilege for user1 user in cluster page
+    And user of browser1 sets following privileges for user1 user in cluster page:
+          Cluster management:
+            granted: Partially
+            privilege subtypes:
+              View cluster: False
 
     And user of browser2 clicks on Members item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser2 refreshes site
@@ -119,7 +150,11 @@ Feature: Basic cluster members management utilities using onepanel
   Scenario: User fails to modify cluster without modify cluster privileges
     When user of browser1 invites user of browser2 to "oneprovider-1" cluster
     And user of browser2 joins to cluster
-    And user of browser1 unchecks nested "Modify cluster" privilege in "Cluster management" privilege for user1 user in cluster page
+    And user of browser1 sets following privileges for user1 user in cluster page:
+          Cluster management:
+            granted: Partially
+            privilege subtypes:
+              Modify cluster: False
 
     # fail to modify cluster
     And user of browser2 clicks on Clusters in the main menu
