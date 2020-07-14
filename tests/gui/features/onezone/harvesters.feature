@@ -81,6 +81,7 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser clicks on Discovery in the main menu
     And user of browser clicks "harvester5" on the harvesters list in the sidebar
     And user of browser clicks Indices of "harvester5" harvester in the sidebar
+    And user of browser clicks on 3dots top right button and then clicks on create new index popup in discovery page
     And user of browser types "index1" to name input field in indices page
     And user of browser clicks on Create button in indices page
     Then user of browser sees that "index1" has appeared on the indices list

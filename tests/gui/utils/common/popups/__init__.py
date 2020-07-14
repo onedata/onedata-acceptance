@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 from tests.gui.utils.core.web_elements import WebItem
 from .consumer_caveat import ConsumerCaveat
+from .create_new_index import CreateNewIndex
 from .menu_popup import MenuPopup
 from .selector_popup import SelectorPopup
 from .upload_presenter import UploadPresenter
@@ -33,6 +34,7 @@ class Popups(object):
     selector_popup = WebItem('.webui-popover.in', cls=SelectorPopup)
     consumer_caveat_popup = WebItem('.webui-popover-tags-selector',
                                     cls=ConsumerCaveat)
+    create_new_index = WebItem('.in .webui-popover-inner',cls=CreateNewIndex)
 
     def __init__(self, driver):
         self.driver = self.web_elem = driver
