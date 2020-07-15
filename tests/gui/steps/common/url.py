@@ -129,6 +129,20 @@ def open_received_url(selenium, browser_id, tmp_memory, base_url):
     )
 
 
+@when(parsers.re('user of (?P<browser_id>.+?) opens copied (?:url|URL)'))
+@then(parsers.re('user of (?P<browser_id>.+?) opens copied (?:url|URL)'))
+def open_copied_url(selenium, browser_id, tmp_memory):
+    driver = selenium[browser_id]
+    old_page = driver.find_element_by_css_selector('html')
+    url = tmp_memory[browser_id]['mailbox']['url']
+    driver.get(url)
+
+    Wait(driver, WAIT_BACKEND).until(
+        staleness_of(old_page),
+        message='waiting for page {:s} to load'.format(url)
+    )
+
+
 @when(parsers.re(r'user of (?P<browser_id>.*?) changes webapp path to '
                  r'"?(?P<path>.+?)"? concatenated with copied item'))
 @then(parsers.re(r'user of (?P<browser_id>.*?) changes webapp path to '

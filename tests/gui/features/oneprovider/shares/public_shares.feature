@@ -186,7 +186,7 @@ Feature: Basic data tab operations on public shares in file browser
     And user of browser2 clicks on copy icon on share's public interface
     # ^^ that's the one, copies from URL
     Then user of browser2 sends copied URL to user of browser1
-    And user of browser1 opens received URL
+    And user of browser1 opens copied URL
     And user of browser1 is idle for 30 seconds
     And user of browser1 sees that public share is named "share_dir1"
     # ^^ this too
