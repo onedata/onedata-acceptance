@@ -93,7 +93,7 @@ def assert_create_button_inactive(selenium, browser_id, oz_page):
                                                      'is enabled')
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) goes to group "(?P<group>.*)" '
+@wt(parsers.re('user of (?P<browser_id>.*) opens group "(?P<group>.*)" '
                '(?P<subpage>members|hierarchy|main) subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def go_to_group_subpage(selenium, browser_id, group, subpage, oz_page):

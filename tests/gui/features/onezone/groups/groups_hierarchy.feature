@@ -24,7 +24,7 @@ Feature: Basic management of groups hierarchy with one user in Onezone GUI
 
 
   Scenario: User adds newly created children group
-    When user of browser goes to group "group1" hierarchy subpage
+    When user of browser opens group "group1" hierarchy subpage
     And user of browser clicks on group "group1" menu button in hierarchy subpage
     And user of browser clicks on "Add child group" in group hierarchy menu
     And user of browser clicks on "Create new group" in group hierarchy menu
@@ -34,7 +34,7 @@ Feature: Basic management of groups hierarchy with one user in Onezone GUI
 
 
   Scenario: User adds newly created parent group
-    When user of browser goes to group "group1" hierarchy subpage
+    When user of browser opens group "group1" hierarchy subpage
     And user of browser clicks on group "group1" menu button in hierarchy subpage
     And user of browser clicks on "Add parent group" in group hierarchy menu
     And user of browser clicks on "Create new group" in group hierarchy menu
@@ -45,7 +45,7 @@ Feature: Basic management of groups hierarchy with one user in Onezone GUI
 
 
   Scenario: User removes child group
-    When user of browser goes to group "group2" hierarchy subpage
+    When user of browser opens group "group2" hierarchy subpage
     And user of browser clicks on group "group3" menu button in hierarchy subpage
     And user of browser clicks on "Remove" in group hierarchy menu
     And user of browser clicks on "Remove" button in modal "REMOVE GROUP"
@@ -54,7 +54,7 @@ Feature: Basic management of groups hierarchy with one user in Onezone GUI
 
 
   Scenario: User removes parent group
-    When user of browser goes to group "group2" hierarchy subpage
+    When user of browser opens group "group2" hierarchy subpage
     And user of browser clicks show parent groups in hierarchy subpage
     And user of browser clicks on group "group1" menu button in hierarchy subpage
     And user of browser clicks on "Remove" in group hierarchy menu
@@ -64,7 +64,7 @@ Feature: Basic management of groups hierarchy with one user in Onezone GUI
 
 
   Scenario: User removes relation with child group
-    When user of browser goes to group "group1" hierarchy subpage
+    When user of browser opens group "group1" hierarchy subpage
     And user of browser clicks on group "group2" menu button to parent relation in hierarchy subpage
     And user of browser clicks on "Remove relation" in relation menu
     And user of browser clicks on "Remove" button in modal "REMOVE MEMBER"
@@ -72,7 +72,7 @@ Feature: Basic management of groups hierarchy with one user in Onezone GUI
 
 
   Scenario: User removes relation with parent group
-    When user of browser goes to group "group2" hierarchy subpage
+    When user of browser opens group "group2" hierarchy subpage
     And user of browser clicks show parent groups in hierarchy subpage
     And user of browser clicks on group "group1" menu button to child relation in hierarchy subpage
     And user of browser clicks on "Remove relation" in relation menu

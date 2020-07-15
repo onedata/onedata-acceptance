@@ -51,7 +51,7 @@ Feature: Joining a group in Onezone GUI
 
   Scenario: User fails to view group he does not belong to
     When user of browser1 clicks on Groups in the main menu
-    And user of browser1 goes to group "group1" main subpage
+    And user of browser1 opens group "group1" main subpage
     And user of browser1 copies a first resource ID from URL
     And user of browser1 sends copied ID to user of browser2
     And user of browser2 changes webapp path to "/i#/onedata/groups" concatenated with received ID

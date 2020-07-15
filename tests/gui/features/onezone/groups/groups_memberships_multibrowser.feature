@@ -38,13 +38,13 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
     And user of browser1 sees 4 effective groups on space overview page
     And user of browser1 sees 2 effective users on space overview page
 
-    And user of browser2 goes to group "group2" members subpage
+    And user of browser2 opens group "group2" members subpage
     And user of browser2 clicks "group1" group in "group2" group members groups list
     And user of browser2 expands "Group hierarchy management" privilege for "group1" group in group members subpage
     And user of browser2 checks "Leave parent group" privilege toggle in "Group hierarchy management" for "group1" group in group members subpage
     And user of browser2 clicks Save button for "group1" group in group members subpage
 
-    And user of browser1 goes to group "group4" members subpage
+    And user of browser1 opens group "group4" members subpage
     And user of browser1 clicks show view expand button in group members subpage header
     And user of browser1 clicks effective view mode in group members subpage
     And user of browser1 clicks memberships view mode in group members subpage
