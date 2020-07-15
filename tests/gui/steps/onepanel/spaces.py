@@ -348,6 +348,26 @@ def click_on_navigation_tab_in_space(browser_id, tab_name, onepanel, selenium):
     getattr(nav, tab).click()
 
 
+@wt(parsers.parse('user of {browser_id} clicks on "{space_name}" record in spaces list'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_space(browser_id, space_name, onepanel, selenium):
+    for index, space in enumerate(onepanel(selenium[browser_id]).content.spaces.spaces):
+        if space.name == space_name:
+            onepanel(selenium[browser_id]).content.spaces.spaces[index].click()
+
+
+@wt(parsers.parse('user of {browser_id} clicks on {tab_name} tab in space overview page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_space_tab(browser_id, tab_name, onepanel, selenium):
+    getattr(onepanel(selenium[browser_id]).content.spaces.space.navigation, transform(tab_name)).click()
+
+
+@wt(parsers.parse('user of {browser_id} clicks on {interval} update view'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_space_tab(browser_id, interval, onepanel, selenium):
+    getattr(onepanel(selenium[browser_id]).content.spaces.space.sync_chart, transform(interval + ' view')).click()
+
+
 @wt(parsers.parse('user of {browser_id} cannot click on {tab_name} '
                   'navigation tab in space "{space_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
