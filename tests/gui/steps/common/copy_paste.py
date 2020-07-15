@@ -22,6 +22,8 @@ from tests.gui.utils.generic import parse_seq
 def send_copied_item_to_other_users(browser_id, item_type, browser_list,
                                     tmp_memory, displays, clipboard):
     item = clipboard.paste(display=displays[browser_id])
+    import pdb
+    pdb.set_trace()
     for browser in parse_seq(browser_list):
         tmp_memory[browser]['mailbox'][item_type.lower()] = item
 

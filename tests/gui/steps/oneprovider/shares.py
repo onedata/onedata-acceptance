@@ -83,6 +83,8 @@ def click_on_dir_in_abs_path(selenium, browser_id, path, op_container):
 def _change_iframe_for_public_share_page(selenium, browser_id):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
+    # import pdb
+    # pdb.set_trace()
     iframe = driver.find_element_by_tag_name('iframe')
     driver.switch_to.frame(iframe)
 
@@ -92,6 +94,8 @@ def _change_iframe_for_public_share_page(selenium, browser_id):
 @repeat_failed(timeout=WAIT_BACKEND, interval=0.5)
 def assert_public_share_named(selenium, browser_id, share_name, public_share):
     _change_iframe_for_public_share_page(selenium, browser_id)
+    # import pdb
+    # pdb.set_trace()
     displayed_name = public_share(selenium[browser_id]).name
     assert displayed_name == share_name, (f'displayed public share name '
                                           f'is "{displayed_name}" instead of '
@@ -128,8 +132,12 @@ def click_copy_icon_on_shares_view(selenium, browser_id, op_container):
 @wt(parsers.parse('user of {browser_id} clicks on '
                   'copy icon on share\'s public interface'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_copy_icon_on_public_shares_view(selenium, browser_id, public_share):
-    public_share(selenium[browser_id]).copy_icon()
+def click_copy_icon_on_public_shares_view(selenium, browser_id, clipboard, displays, tmp_memory):
+    driver = selenium[browser_id]
+    # import pdb
+    # pdb.set_trace()
+    # tmp_memory['browser1']['mailbox']['url'] = driver.current_url
+    clipboard.copy(driver.current_url, display=displays[browser_id])
 
 
 @wt(parsers.parse('user of {browser_id} sees "{error_msg}" error'))
