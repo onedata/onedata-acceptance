@@ -43,9 +43,4 @@ class Popups(object):
         return 'popups'
 
     def is_upload_presenter(self):
-        try:
-            self.upload_presenter
-        except RuntimeError:
-            return False
-        else:
-            return True
+        return len(self.upload_presenter) > 0

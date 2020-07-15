@@ -462,7 +462,7 @@ def check_error_in_upload_presenter(selenium, browser_id, popups):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
 
-    assert popups(driver).upload_presenter.is_failed(), 'upload not failed'
+    assert popups(driver).upload_presenter[0].is_failed(), 'upload not failed'
 
 
 @wt(parsers.parse('user of {browser_id} clicks on "{provider}" provider '
