@@ -91,3 +91,5 @@ scenarios('../features/oneprovider/multiprovider/qos_2_providers_directory'
           '.feature')
 scenarios('../features/oneprovider/multiprovider/'
           'qos_2_providers_directory_multibrowser.feature')
+scenarios('../features/oneprovider/multiprovider/'
+          'qos_2_providers_second_browser_same_storage.feature')

@@ -5,8 +5,7 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-from tests.gui.steps.modal import write_name_into_text_field_in_modal, \
-    write_name_into_specific_text_field_in_modal
+from tests.gui.steps.modal import write_name_into_text_field_in_modal
 from tests.gui.steps.oneprovider.data_tab import \
     assert_file_browser_in_data_tab_in_op, choose_option_from_selection_menu
 from tests.gui.steps.oneprovider.file_browser import \
@@ -71,9 +70,8 @@ def create_qos_modal_with_replicas(selenium, browser_id, modals, item_name,
     write_name_into_text_field_in_modal(selenium, browser_id, expression,
                                         modal, modals)
     text_area = 'Replicas number'
-    write_name_into_specific_text_field_in_modal(selenium, browser_id,
-                                                 replicas_number, modal, modals,
-                                                 text_area)
+    write_name_into_text_field_in_modal(selenium, browser_id, replicas_number,
+                                        modal, modals, text_area)
     button = 'Save'
     click_modal_button(selenium, browser_id, button, modal, modals)
     button = 'CLose'
