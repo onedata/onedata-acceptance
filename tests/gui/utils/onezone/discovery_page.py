@@ -34,7 +34,7 @@ class IndicesPage(PageObject):
                                 text='Create')
     indices_list = WebItemsSequence('.content-harvesters-indices .row '
                                     'li.one-collapsible-list-item', cls=Index)
-    create_index_3dots_button = Button('.with-menu .collapsible-toolbar-toggle')
+    menu_button = Button('.with-menu .collapsible-toolbar-toggle')
 
 
 class Harvester(Element):

@@ -158,13 +158,13 @@ def add_group_to_harvester(selenium, browser_id, oz_page, group_name,
                   'in "{harvester_name}" harvester in Discovery page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_index_in_harvester(selenium, browser_id, oz_page, index_name,
-                              harvester_name,popups):
+                              harvester_name, popups):
     option = 'Indices'
 
     click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id,
                                                       harvester_name, option,
                                                       oz_page)
-    navigate_to_create_index_page(selenium, browser_id,oz_page,popups)
+    navigate_to_create_index_page(selenium, browser_id, oz_page, popups)
     type_index_name_to_input_field_in_indices_page(selenium, browser_id,
                                                    oz_page, index_name)
     click_create_button_in_indices_page(selenium, browser_id, oz_page)

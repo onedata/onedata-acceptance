@@ -49,13 +49,13 @@ def type_endpoint_to_input_field_in_discovery_page(selenium, browser_id,
     _enter_text(input_field, text)
 
 
-@wt(parsers.parse('user of {browser_id} clicks on 3dots top right button and '
-                  'then clicks on create new index popup in discovery page'))
+@wt(parsers.parse('user of {browser_id} clicks "Create new index" in harvester '
+                  'indices page menu'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def navigate_to_create_index_page(selenium, browser_id, oz_page, popups):
     driver = selenium[browser_id]
-    oz_page(driver)['discovery'].indices_page.create_index_3dots_button.click()
-    popups(selenium[browser_id]).create_new_index.click()
+    oz_page(driver)['discovery'].indices_page.menu_button.click()
+    popups(driver).popover_menu.menu['Create new index']()
 
 
 @wt(parsers.parse('user of {browser_id} clicks on Create button '
