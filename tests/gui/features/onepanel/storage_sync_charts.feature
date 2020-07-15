@@ -53,7 +53,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
               write once: false
               delete enabled: true
 
-
     And user of browser2 copies dir2 to provider's storage mount point
     And user of browser1 is idle for 30 seconds
 
