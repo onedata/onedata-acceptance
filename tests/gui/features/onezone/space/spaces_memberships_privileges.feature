@@ -55,8 +55,9 @@ Feature: Basic management of spaces privileges in Onezone GUI
     And user of browser sets following privileges for "user1" user in space members subpage:
           User management:
             granted: False
-    Then user of browser sees that "User management" is not checked for "user1" user in space members subpage
-
+    Then user of browser sees following privileges of "user1" user in space members subpage:
+          User management:
+            granted: False
 
   Scenario: User fails to see privileges without view privileges
     When user of browser clicks "space1" on the spaces list in the sidebar
