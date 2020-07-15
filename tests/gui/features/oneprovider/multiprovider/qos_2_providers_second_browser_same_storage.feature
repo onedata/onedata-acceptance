@@ -1,4 +1,4 @@
-Feature: Quality of Service tests for 2 providers using multiple browsers in Oneprovider GUI
+Feature: Quality of Service tests for 2 providers using multiple browsers where second is provider panel of the same provider that supports space in Oneprovider GUI
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -40,4 +40,20 @@ Feature: Quality of Service tests for 2 providers using multiple browsers in One
       And user of browser1 migrates "file1" from provider "oneprovider-1" to provider "oneprovider-2"
       Then user of browser1 sees file chunks for file "file1" as follows:
             oneprovider-1: entirely filled
+            oneprovider-2: entirely filled
+
+
+    Scenario: Adding anyStorage - storageId quality of service
+      When user of browser1 clicks "space1" on the spaces list in the sidebar
+      And user of browser1 clicks Data of "space1" in the sidebar
+      And user of browser1 sees file browser in data tab in Oneprovider page
+
+      And user of browser2 clicks on Storages item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+      And user of browser2 expands "posix" record on storages list in storages page in Onepanel
+      And user of browser2 copies id of "posix" storage to clipboard via copy button
+      And user of browser1 creates anyStorage quality of service excluding storage from clipboard for "file1" from file browser
+      Then user of browser1 clicks on qos status tag for "file1" in file browser
+      And user of browser1 sees that all qualities of service are fulfilled
+      And user of browser1 clicks on "Close" button in modal "Quality of Service"
+      And user of browser1 sees file chunks for file "file1" as follows:
             oneprovider-2: entirely filled

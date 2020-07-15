@@ -96,3 +96,25 @@ def create_qos_modal(selenium, browser_id, modals, item_name, tmp_memory,
     click_modal_button(selenium, browser_id, button, modal, modals)
     button = 'CLose'
     click_modal_button(selenium, browser_id, button, modal, modals)
+
+
+@wt(parsers.parse('user of {browser_id} creates anyStorage quality of service '
+                  'excluding storage from clipboard for "{item_name}" '
+                  'from file browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def create_qos_modal(selenium, browser_id, modals, item_name, tmp_memory,
+                     oz_page, op_container, popups, clipboard, displays):
+    click_on_item_in_file_browser(browser_id, item_name, tmp_memory)
+    option = modal = 'Quality of Service'
+    choose_option_from_selection_menu(browser_id, selenium, option, popups,
+                                      tmp_memory)
+    button = 'Add Requirement'
+    click_modal_button(selenium, browser_id, button, modal, modals)
+    expression = 'anyStorage - storageId=' +\
+                 clipboard.paste(display=displays[browser_id])
+    write_name_into_text_field_in_modal(selenium, browser_id, expression,
+                                        modal, modals)
+    button = 'Save'
+    click_modal_button(selenium, browser_id, button, modal, modals)
+    button = 'CLose'
+    click_modal_button(selenium, browser_id, button, modal, modals)
