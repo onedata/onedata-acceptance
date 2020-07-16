@@ -199,8 +199,8 @@ def send_invitation_token(selenium, browser_id1, oz_page, harvester_name,
 
 
 @wt(parsers.parse('user of {browser_id} sets following privileges for '
-                  '"{user_name}" user in "{harvester_name}" harvester:\n{'
-                  'config}'))
+                  '"{user_name}" user in "{harvester_name}" harvester:'
+                  '\n{config}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_privilege_config_in_harvester(selenium, browser_id, oz_page,
                                          onepanel, config, user_name,
