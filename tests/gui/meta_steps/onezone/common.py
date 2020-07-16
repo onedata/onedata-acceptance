@@ -141,9 +141,9 @@ def search_for_members(records, member_name, parent_name, fun):
     return False
 
 
-@wt(parsers.parse('user of {browser_id} logs out'))
+@wt(parsers.parse('user of {browser_id} logs out from Onezone page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def logout(selenium, browser_id, oz_page, popups):
+def logout_from_onezone_page(selenium, browser_id, oz_page, popups):
     driver = selenium[browser_id]
     oz_page(driver)['profile'].profile()
     popups(driver).user_account_menu.options["Logout"].click()

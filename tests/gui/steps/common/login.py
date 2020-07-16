@@ -44,7 +44,8 @@ def _login_to_service(selenium, browser_id_list, user_id_list, service_list,
         driver = selenium[browser_id]
 
         if 'emergency interface' in service:
-            click_sign_in_to_emergency_interface(selenium, browser_id, login_page)
+            click_sign_in_to_emergency_interface(selenium, browser_id,
+                                                 login_page)
             time.sleep(1)
             _login_using_passphrase(login_page(driver),
                                     users[username].password)
@@ -83,16 +84,13 @@ def wt_enter_text_to_field_in_login_form(selenium, browser_id, in_box,
             transform(in_box), text)
 
 
-@wt(parsers.re(r'user of (?P<browser_id>.*?) types password of "(?P<username>.*?)" '
-               r'to Password input in Onezone login form'))
+@wt(parsers.re(r'user of (?P<browser_id>.*?) types password of '
+               r'"(?P<username>.*?)" to Password input in Onezone login form'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_enter_password_of_user(selenium, browser_id, username, login_page, users):
+def wt_enter_password_of_user(selenium, browser_id, username,
+                              login_page, users):
     password = users[username].password
-    setattr(login_page(selenium[browser_id]),
-            transform('Password'), password)
-
-
-
+    setattr(login_page(selenium[browser_id]), 'password', password)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) presses Sign in button '

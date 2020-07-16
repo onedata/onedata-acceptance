@@ -1,3 +1,6 @@
+Feature: Delete Onezone user account
+
+
   Background:
     Given initial user for future delete configuration in "onezone" Onezone service:
             - user1
@@ -11,9 +14,9 @@
     And user of browser clicks on Manage account item in expanded settings dropdown in the sidebar
 
     # delete account
-    And user of browser clicks on remove user toolbar
-    And user of browser clicks on remove user button
-    And user of browser checks understand consequences checkbox
+    And user of browser clicks on menu button on Profile page
+    And user of browser clicks on remove user button in menu
+    And user of browser checks understand consequences checkbox in modal
     And user of browser clicks on delete account button in modal
 
     # log in again
