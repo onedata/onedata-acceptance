@@ -99,8 +99,8 @@ class InvitationTokenArea(PageObject):
 
 
 class MembersPage(PageObject):
-    groups = WebItem('.row:nth-of-type(2) > ul', cls=MembersList)
-    users = WebItem('.row:nth-of-type(3) > ul', cls=MembersList)
+    groups = WebItem('.group-list', cls=MembersList)
+    users = WebItem('.user-list', cls=MembersList)
     token = WebItem('.invitation-token-presenter', cls=InvitationTokenArea)
     show_view_option = Button('.view-tools-toggle')
     effective_button = NamedButton('.direct-selector button', text='Effective')

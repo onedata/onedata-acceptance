@@ -45,31 +45,16 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
           Import strategy: Simple scan
           Max depth: 2
 
-    And user of browser2 refreshes site
     And user of browser2 opens file browser for "space1" space
 
     # confirm import of files
     And user of browser2 is idle for 8 seconds
-    And user of browser2 refreshes site
     And user of browser2 sees file browser in data tab in Oneprovider page
-
-    Then user of browser2 sees that there is 1 item in file browser
-    And user of browser2 sees item(s) named "dir2" in file browser
-    And user of browser2 double clicks on item named "dir2" in file browser
-
-    And user of browser2 sees that there are 3 items in file browser
-    And user of browser2 sees item(s) named ["dir21", "dir22", "file1.txt"] in file browser
-
-    And user of browser2 double clicks on item named "dir21" in file browser
-    And user of browser2 sees empty directory message in file browser
-    And user of browser2 changes current working directory to /dir2 using breadcrumbs
-
-    And user of browser2 double clicks on item named "dir22" in file browser
-    And user of browser2 sees empty directory message in file browser
-    And user of browser2 changes current working directory to /dir2 using breadcrumbs
-
-    And user of browser2 double clicks on item named "file1.txt" in file browser
-    And user of browser2 sees that content of downloaded file "file1.txt" is equal to: "22222"
+    Then user of browser2 sees that the file structure in file browser is as follow:
+              - dir2:
+                  - dir21
+                  - dir22
+                  - file1.txt: 22222
 
     # configure update parameters
     And user of browser1 clicks on "Storage synchronization" navigation tab in space "space1"
@@ -90,23 +75,14 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # confirm update of files
     And user of browser2 is idle for 8 seconds
-    And user of browser2 refreshes site
     And user of browser2 sees file browser in data tab in Oneprovider page
-
-    And user of browser2 sees that there are 3 items in file browser
-    And user of browser2 sees item(s) named ["dir21", "dir22", "file1.txt"] in file browser
-
-    And user of browser2 double clicks on item named "dir21" in file browser
-    And user of browser2 sees that there are 2 items in file browser
-    And user of browser2 sees item(s) named ["dir211", "file2.txt"] in file browser
-    And user of browser2 double clicks on item named "file2.txt" in file browser
-    And user of browser2 sees that content of downloaded file "file2.txt" is equal to: "11111"
-    And user of browser2 double clicks on item named "dir211" in file browser
-    And user of browser2 sees empty directory message in file browser
-    And user of browser2 changes current working directory to /dir2 using breadcrumbs
-
-    And user of browser2 double clicks on item named "dir22" in file browser
-    And user of browser2 sees that there are 10 items in file browser
+    And user of browser2 sees that the file structure in file browser is as follow:
+              - dir2:
+                  - dir21:
+                      - dir211
+                      - file2.txt: 11111
+                  - dir22: 10
+                  - file1.txt
 
 
   Scenario: User sees that files are imported to depth defined by update configuration if it is larger than depth of import configuration
@@ -134,7 +110,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
                 scan interval [s]: 1
 
     # confirm import and update strategy
-    When user of browser1 opens "space1" record on spaces list in Spaces page in Onepanel
+    And user of browser1 opens "space1" record on spaces list in Spaces page in Onepanel
     And user of browser1 sees that Import strategy configuration for "space1" is as follow:
           Import strategy: Simple scan
           Max depth: 2
@@ -147,29 +123,16 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # confirm import and update of files
     And user of browser2 opens file browser for "space1" space
-
     And user of browser2 is idle for 8 seconds
-    And user of browser2 refreshes site
+
     And user of browser2 sees file browser in data tab in Oneprovider page
-
-    Then user of browser2 sees that there is 1 item in file browser
-    And user of browser2 sees item(s) named "dir2" in file browser
-    And user of browser2 double clicks on item named "dir2" in file browser
-
-    And user of browser2 sees that there are 3 items in file browser
-    And user of browser2 sees item(s) named ["dir21", "dir22", "file1.txt"] in file browser
-
-    And user of browser2 double clicks on item named "dir21" in file browser
-    And user of browser2 sees that there are 2 items in file browser
-    And user of browser2 sees item(s) named ["dir211", "file2.txt"] in file browser
-    And user of browser2 double clicks on item named "file2.txt" in file browser
-    And user of browser2 sees that content of downloaded file "file2.txt" is equal to: "11111"
-    And user of browser2 double clicks on item named "dir211" in file browser
-    And user of browser2 sees empty directory message in file browser
-    And user of browser2 changes current working directory to /dir2 using breadcrumbs
-
-    And user of browser2 double clicks on item named "dir22" in file browser
-    And user of browser2 sees that there are 10 items in file browser
+    Then user of browser2 sees that the file structure in file browser is as follow:
+              - dir2:
+                  - dir21:
+                      - dir211
+                      - file2.txt: 11111
+                  - dir22: 10
+                  - file1.txt: 22222
 
     And user of browser1 revokes "space1" space support in "oneprovider-1" provider in Onepanel
 
@@ -212,39 +175,25 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 opens file browser for "space1" space
 
     And user of browser2 is idle for 8 seconds
-    And user of browser2 refreshes site
     And user of browser2 sees file browser in data tab in Oneprovider page
-
-    And user of browser2 sees that there is 1 item in file browser
-    And user of browser2 sees item(s) named "dir2" in file browser
-    And user of browser2 double clicks on item named "dir2" in file browser
-
-    And user of browser2 sees that there are 3 items in file browser
-    And user of browser2 sees item(s) named ["dir21", "dir22", "file1.txt"] in file browser
-
-    And user of browser2 double clicks on item named "dir21" in file browser
-    And user of browser2 sees that there are 2 items in file browser
-    And user of browser2 sees item(s) named ["dir211", "file2.txt"] in file browser
-    And user of browser2 double clicks on item named "file2.txt" in file browser
-    And user of browser2 sees that content of downloaded file "file2.txt" is equal to: "11111"
-    And user of browser2 double clicks on item named "dir211" in file browser
-    And user of browser2 sees empty directory message in file browser
-    And user of browser2 changes current working directory to /dir2 using breadcrumbs
-
-    And user of browser2 double clicks on item named "dir22" in file browser
-    And user of browser2 sees that there are 10 items in file browser
+    And user of browser2 sees that the file structure in file browser is as follow:
+              - dir2:
+                  - dir21:
+                      - dir211
+                      - file2.txt: 11111
+                  - dir22: 10
+                  - file1.txt
 
     # confirm detection of deleted files
     And user of browser2 removes dir2/dir21 from provider's storage mount point
     And user of browser2 removes dir2/file1.txt from provider's storage mount point
 
-    And user of browser2 changes current working directory to /dir2 using breadcrumbs
     And user of browser2 is idle for 8 seconds
     And user of browser2 refreshes site
     And user of browser2 sees file browser in data tab in Oneprovider page
-
-    Then user of browser2 sees that there is 1 item in file browser
-    And user of browser2 sees item(s) named "dir22" in file browser
+    And user of browser2 sees that the file structure in file browser is as follow:
+              - dir2:
+                  - dir22: 10
 
 
   Scenario: User sees file's update when update configuration is set
@@ -275,15 +224,13 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 opens file browser for "space1" space
 
     And user of browser2 is idle for 8 seconds
-    And user of browser2 refreshes site
     And user of browser2 sees file browser in data tab in Oneprovider page
 
-    And user of browser2 sees only items named "dir2" in file browser
-    And user of browser2 double clicks on item named "dir2" in file browser
-
-    And user of browser2 sees only items named ["dir21", "dir22", "file1.txt"] in file browser
-    And user of browser2 double clicks on item named "file1.txt" in file browser
-    And user of browser2 sees that content of downloaded file "file1.txt" is equal to: "22222"
+    And user of browser2 sees that the file structure in file browser is as follow:
+              - dir2:
+                  - dir21
+                  - dir22
+                  - file1.txt: 22222
 
     # configure update parameters
     And user of browser1 clicks on "Storage synchronization" navigation tab in space "space1"
@@ -304,29 +251,22 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # confirm update of files
     And user of browser2 is idle for 8 seconds
-    And user of browser2 refreshes site
     And user of browser2 sees file browser in data tab in Oneprovider page
 
-    And user of browser2 sees only items named ["dir21", "dir22", "file1.txt"] in file browser
-
-    And user of browser2 double clicks on item named "dir21" in file browser
-    And user of browser2 sees only items named ["dir211", "file2.txt"] in file browser
-    And user of browser2 double clicks on item named "file2.txt" in file browser
-    And user of browser2 sees that content of downloaded file "file2.txt" is equal to: "11111"
-    And user of browser2 double clicks on item named "dir211" in file browser
-    And user of browser2 sees empty directory message in file browser
-    And user of browser2 changes current working directory to /dir2 using breadcrumbs
-
-    And user of browser2 double clicks on item named "dir22" in file browser
-    And user of browser2 sees that there are 10 items in file browser
-    And user of browser2 changes current working directory to /dir2 using breadcrumbs
+    And user of browser2 sees that the file structure in file browser is as follow:
+              - dir2:
+                  - dir21:
+                      - dir211
+                      - file2.txt: 11111
+                  - dir22: 10
+                  - file1.txt
 
     # confirm change of file content
     And user of browser2 appends "34" to dir2/file1.txt file in provider's storage mount point
 
     And user of browser2 is idle for 10 seconds
-    And user of browser2 refreshes site
     And user of browser2 sees file browser in data tab in Oneprovider page
+    And user of browser2 double clicks on item named "dir2" in file browser
     And user of browser2 double clicks on item named "file1.txt" in file browser
     And user of browser2 sees that content of downloaded file "file1 (1).txt" is equal to: "2222234"
 
@@ -358,15 +298,13 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 opens file browser for "space1" space
 
     And user of browser2 is idle for 8 seconds
-    And user of browser2 refreshes site
     And user of browser2 sees file browser in data tab in Oneprovider page
 
-    And user of browser2 sees only items named "dir2" in file browser
-    And user of browser2 double clicks on item named "dir2" in file browser
-
-    And user of browser2 sees only items named ["dir21", "dir22", "file1.txt"] in file browser
-    And user of browser2 double clicks on item named "file1.txt" in file browser
-    And user of browser2 sees that content of downloaded file "file1.txt" is equal to: "22222"
+    And user of browser2 sees that the file structure in file browser is as follow:
+              - dir2:
+                  - dir21
+                  - dir22
+                  - file1.txt: 22222
 
     # configure update parameters
     And user of browser1 clicks on "Storage synchronization" navigation tab in space "space1"
@@ -388,31 +326,22 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # confirm update of files
     And user of browser2 is idle for 8 seconds
-    And user of browser2 refreshes site
     And user of browser2 sees file browser in data tab in Oneprovider page
 
-    Then user of browser2 sees that there are 3 items in file browser
-    And user of browser2 sees item(s) named ["dir21", "dir22", "file1.txt"] in file browser
-
-    And user of browser2 double clicks on item named "dir21" in file browser
-    And user of browser2 sees that there are 2 items in file browser
-    And user of browser2 sees item(s) named ["dir211", "file2.txt"] in file browser
-    And user of browser2 double clicks on item named "file2.txt" in file browser
-    And user of browser2 sees that content of downloaded file "file2.txt" is equal to: "11111"
-    And user of browser2 double clicks on item named "dir211" in file browser
-    And user of browser2 sees empty directory message in file browser
-    And user of browser2 changes current working directory to /dir2 using breadcrumbs
-
-    And user of browser2 double clicks on item named "dir22" in file browser
-    And user of browser2 sees that there are 10 items in file browser
-    And user of browser2 changes current working directory to /dir2 using breadcrumbs
+    Then user of browser2 sees that the file structure in file browser is as follow:
+              - dir2:
+                  - dir21:
+                      - dir211
+                      - file2.txt: 11111
+                  - dir22: 10
+                  - file1.txt
 
     # files in gui are not updated after local changes
     And user of browser2 appends "34" to dir2/file1.txt file in provider's storage mount point
 
     And user of browser2 is idle for 10 seconds
-    And user of browser2 refreshes site
     And user of browser2 sees file browser in data tab in Oneprovider page
+    And user of browser2 double clicks on item named "dir2" in file browser
     And user of browser2 double clicks on item named "file1.txt" in file browser
     And user of browser2 sees that content of downloaded file "file1 (1).txt" is equal to: "22222"
 
@@ -463,35 +392,27 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # confirm update of files
     And user of browser2 is idle for 8 seconds
-    And user of browser2 refreshes site
     And user of browser2 sees file browser in data tab in Oneprovider page
 
-    And user of browser2 sees only items named "dir2" in file browser
-    And user of browser2 double clicks on item named "dir2" in file browser
-
-    And user of browser2 sees only items named ["dir21", "dir22", "file1.txt"] in file browser
-
-    And user of browser2 double clicks on item named "dir21" in file browser
-    And user of browser2 sees only items named ["dir211", "file2.txt"] in file browser
-    And user of browser2 double clicks on item named "file2.txt" in file browser
-    And user of browser2 sees that content of downloaded file "file2.txt" is equal to: "11111"
-    And user of browser2 double clicks on item named "dir211" in file browser
-    And user of browser2 sees empty directory message in file browser
-    And user of browser2 changes current working directory to /dir2 using breadcrumbs
-
-    And user of browser2 double clicks on item named "dir22" in file browser
-    And user of browser2 sees that there are 10 items in file browser
+    And user of browser2 sees that the file structure in file browser is as follow:
+              - dir2:
+                  - dir21:
+                      - dir211
+                      - file2.txt: 11111
+                  - dir22: 10
+                  - file1.txt
 
     # confirm detection of deleted files
     And user of browser2 removes dir2/dir21 from provider's storage mount point
     And user of browser2 removes dir2/file1.txt from provider's storage mount point
 
-    And user of browser2 changes current working directory to /dir2 using breadcrumbs
     And user of browser2 is idle for 8 seconds
     And user of browser2 refreshes site
     And user of browser2 sees file browser in data tab in Oneprovider page
 
-    Then user of browser2 sees only items named "dir22" in file browser
+    Then user of browser2 sees that the file structure in file browser is as follow:
+              - dir2:
+                  - dir22: 10
 
 
   Scenario: User sees that directory is not synchronized after files update disable
@@ -538,23 +459,15 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # confirm update of files
     And user of browser2 is idle for 8 seconds
-    And user of browser2 refreshes site
     And user of browser2 sees file browser in data tab in Oneprovider page
 
-    And user of browser2 sees only items named "dir2" in file browser
-    And user of browser2 double clicks on item named "dir2" in file browser
-    And user of browser2 sees only items named ["dir21", "dir22", "file1.txt"] in file browser
-
-    And user of browser2 double clicks on item named "dir21" in file browser
-    And user of browser2 sees only items named ["dir211", "file2.txt"] in file browser
-    And user of browser2 double clicks on item named "file2.txt" in file browser
-    And user of browser2 sees that content of downloaded file "file2.txt" is equal to: "11111"
-    And user of browser2 double clicks on item named "dir211" in file browser
-    And user of browser2 sees empty directory message in file browser
-    And user of browser2 changes current working directory to /dir2 using breadcrumbs
-
-    And user of browser2 double clicks on item named "dir22" in file browser
-    And user of browser2 sees that there are 10 items in file browser
+    And user of browser2 sees that the file structure in file browser is as follow:
+              - dir2:
+                  - dir21:
+                      - dir211
+                      - file2.txt: 11111
+                  - dir22: 10
+                  - file1.txt
 
     # disable files update
     And user of browser1 clicks on "Storage synchronization" navigation tab in space "space1"
@@ -571,11 +484,13 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
      And user of browser2 copies dir1 to dir2 in provider's storage mount point
 
     # confirm that new files were not detected
-    And user of browser2 changes current working directory to /dir2 using breadcrumbs
     And user of browser2 is idle for 8 seconds
-    And user of browser2 refreshes site
     And user of browser2 sees file browser in data tab in Oneprovider page
 
-    Then user of browser2 sees that there are 3 items in file browser
-    And user of browser2 sees item(s) named ["dir21", "dir22", "file1.txt"] in file browser
-    And user of browser2 does not see any item(s) named "dir1" in file browser
+    Then user of browser2 sees that the file structure in file browser is as follow:
+              - dir2:
+                  - dir21:
+                      - dir211
+                      - file2.txt
+                  - dir22: 10
+                  - file1.txt
