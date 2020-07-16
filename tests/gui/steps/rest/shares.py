@@ -21,7 +21,6 @@ def create_share_using_rest(item_path, provider, user, share_name, hosts,
                             users):
     provider_hostname = hosts[provider]['hostname']
     file_id = get_file_id_by_rest(item_path, provider_hostname, user, users)
-    print(file_id)
 
     share_details = {'name': share_name, 'fileId': file_id}
 

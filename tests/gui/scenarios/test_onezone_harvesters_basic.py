@@ -73,5 +73,5 @@ def screens():
 
 
 scenarios('../features/onezone/harvesters.feature')
-# scenarios('../features/onezone/harvesters_memberships_privileges.feature')
+scenarios('../features/onezone/harvesters_memberships_privileges.feature')
 
