@@ -139,6 +139,30 @@ def assert_count_membership_rows(selenium, browser_id, number, oz_page, where):
                                                                  count_records))
 
 
+@wt(parsers.re('user of (?P<browser_id>.*) sees (?P<ndirect_groups>.*) direct '
+               '(?P<neffective_groups>.*) effective groups and '
+               '(?P<ndirect_users>.*) direct (?P<neffective_users>.*) '
+               'effective users on (?P<where>space) overview page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_all_members_number_in_space_overview(selenium, oz_page, browser_id,
+                                                ndirect_groups,
+                                                neffective_groups,
+                                                ndirect_users, neffective_users,
+                                                where):
+    assert_members_number_in_space_overview(selenium, oz_page, browser_id,
+                                            ndirect_groups, 'direct',
+                                            'groups', where)
+    assert_members_number_in_space_overview(selenium, oz_page, browser_id,
+                                            neffective_groups, 'effective',
+                                            'groups', where)
+    assert_members_number_in_space_overview(selenium, oz_page, browser_id,
+                                            ndirect_users, 'direct',
+                                            'users', where)
+    assert_members_number_in_space_overview(selenium, oz_page, browser_id,
+                                            neffective_users, 'effective',
+                                            'users', where)
+
+
 @wt(parsers.re('user of (?P<browser_id>.*) sees (?P<number>.*) '
                '(?P<membership_type>direct|effective) '
                '(?P<subject_type>groups?|users?) on '
@@ -155,7 +179,7 @@ def assert_members_number_in_space_overview(selenium, oz_page, browser_id,
 
     error_msg = f'found {number} {membership_type} {subject_type} instead of ' \
                 f'{members_count}'
-    assert members_count != int(number), (error_msg)
+    assert int(members_count) == int(number), (error_msg)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on "(?P<member_name>.*)" '
