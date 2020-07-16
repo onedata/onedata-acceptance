@@ -9,7 +9,7 @@ __license__ = ("This software is released under the MIT license cited in "
 
 
 from pytest_bdd import parsers, when, then
-from tests.utils.acceptance_utils import wt
+from tests.utils.bdd_utils import wt
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.utils.utils import repeat_failed
 from tests.gui.utils.common.popups import Popups as popups
@@ -74,8 +74,7 @@ def assert_correct_user_name_in_oz(selenium, browser_id, expected_user_name,
                                    oz_page):
     driver = selenium[browser_id]
     displayed_user_name = oz_page(driver)['profile'].user_name
-    err_msg = ('expected "{}" as user name, but instead displayed is "{}" '
-               'in USER NAME oz panel'.format(expected_user_name,
-                                              displayed_user_name))
+    err_msg = (f'expected {expected_user_name} as user name, but instead '
+               f'displayed is {displayed_user_name} in USER NAME oz panel')
     assert displayed_user_name == expected_user_name, err_msg
 
