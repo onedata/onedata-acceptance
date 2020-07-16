@@ -32,11 +32,19 @@ class StorageAddForm(PageObject):
     posix = WebItem('form', cls=POSIX)
 
 
+class POSIXEditorKeyValue(PageObject):
+    key = Input('.manual .form-control')
+    value = Input('.last-record .qos-field')
+
+
 class POSIXEditor(PageObject):
     storage_name = Input('input.field-generic_editor-name')
     mount_point = Input('input.field-posix_editor-mountPoint')
     timeout = Input('input.field-posix_editor-timeout')
     read_only = Toggle('.toggle-field-posix_editor-readonly')
+
+    key_values = WebItemsSequence('.text-input.group-with-tip',
+                                  cls=POSIXEditorKeyValue)
 
     save_button = Button('button.btn-primary')
     cancel_button = NamedButton('button', text='Cancel')
