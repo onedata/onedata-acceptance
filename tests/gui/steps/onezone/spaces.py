@@ -399,3 +399,13 @@ def check_on_right_page(selenium, browser_id, tab_name, oz_page):
     driver.switch_to.window(window_name=driver.window_handles[1])
     label = oz_page(selenium[browser_id])['data'].tab_name
     assert label.lower() == tab_name, f'User not on {tab_name} page'
+
+
+@wt(parsers.parse('user of {browser_id} sees in the INFO section of Overview '
+                  'page that number of shares is {number}'))
+def assert_number_of_shares_on_overview_page(browser_id, selenium, oz_page, number):
+    driver = selenium[browser_id]
+    shares_count = oz_page(driver)['data'].overview_page.info_page.shares_count
+    assert int(number) == int(shares_count), ('number of shares equals {},'
+                                         ' not {} as expected'.format(
+                                          shares_count, int(number)))

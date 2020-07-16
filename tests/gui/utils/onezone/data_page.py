@@ -46,10 +46,15 @@ class Provider(Element):
     support = Label('.outer-text')
 
 
+class SpaceInfoPage(PageObject):
+    shares_count = Label('.shares-count')
+
+
 class SpaceOverviewPage(PageObject):
     space_name = Label('.with-menu .one-label')
     rename = Button('.edit-icon')
     edit_name_box = WebItem('.editor', cls=EditBox)
+    info_page = WebItem('.resource-info-tile', cls=SpaceInfoPage)
 
 
 class WelcomePage(PageObject):
