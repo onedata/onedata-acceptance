@@ -101,17 +101,21 @@ def wt_clicks_on_btn_in_storage_toolbar_in_panel(selenium, browser_id, option,
 def types_key_in_posix_storage_edit_page(selenium, browser_id,
                                          in_value, onepanel):
     driver = selenium[browser_id]
-    storages_list = onepanel(driver).content.storages.storages
-    assert 'posix' in storages_list, 'posix storage not found'
-    for storage in storages_list:
-        if storage.name == 'posix':
-            import pdb
-            pdb.set_trace()
-            size = len(storage.edit_form.posix_editor.key_values)
-            record = storage.edit_form.posix_editor.key_values[size - 1]
-            setattr(storage.edit_form.posix_editor.key_values[size - 1], 'key', in_value)
+    storage_posix = onepanel(driver).content.storages.storages['posix']
+    # assert 'posix' in storages_list, 'posix storage not found'
+    # for storage in storages_list:
+    #     if storage.name == 'posix':
+
+    size = len(storage_posix.edit_form.posix_editor.key_values)
+    record = storage_posix.edit_form.posix_editor.key_values[size - 1]
+    record.set_key()
+    # import pdb
+    # pdb.set_trace()
+    record2 = storage_posix.edit_form.posix_editor.key_values[size - 1]
+    record2.set_value()
+            # setattr(storage.edit_form.posix_editor.key_values[size - 1], 'key', in_value)
             #storage.edit_form.posix_editor.key_values[size - 1].key = in_value
-            continue
+            # continue
 
 
 @wt(parsers.parse('user of {browser_id} types "{in_value}" into last but one '
@@ -134,12 +138,13 @@ def types_value_in_posix_storage_edit_page(selenium, browser_id,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def saves_changes_in_posix_storage_edit_page(selenium, browser_id, onepanel):
     driver = selenium[browser_id]
-    storages_list = onepanel(driver).content.storages.storages
-    assert 'posix' in storages_list, 'posix storage not found'
-    for storage in storages_list:
-        if storage.name == 'posix':
-            storage.edit_from.posix_editor.save_button.click()
-            continue
+    storage = onepanel(driver).content.storages.storages['posix']
+    # assert 'posix' in storages_list, 'posix storage not found'
+    # for storage in storages_list:
+    #     if storage.name == 'posix':
+    # import pdb
+    # pdb.set_trace()
+    storage.edit_form.posix_editor.save_button.click()
 
 
 @wt(parsers.parse('user of {browser_id} sees that "{name}" has disappeared '

@@ -33,8 +33,19 @@ class StorageAddForm(PageObject):
 
 
 class POSIXEditorKeyValue(PageObject):
-    key = Input('.manual .form-control')
-    value = Input('.last-record .qos-field')
+    key_field = Input('.manual .form-control')
+    value_field = Input('input[placeholder="Value"]')
+
+    def set_key(self):
+        # import pdb
+        # pdb.set_trace()
+        self.key_field = 'fdas'
+
+    def set_value(self):
+        # import pdb
+        # pdb.set_trace()
+        self.value_field = 'dsafsd'
+
 
 
 class POSIXEditor(PageObject):
