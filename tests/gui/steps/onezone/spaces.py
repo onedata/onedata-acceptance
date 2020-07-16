@@ -395,5 +395,7 @@ def confirm_rename_the_space(selenium, browser_id, option, oz_page):
                   'label of current page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_on_right_page(selenium, browser_id, tab_name, oz_page):
+    driver = selenium[browser_id]
+    driver.switch_to.window(window_name=driver.window_handles[1])
     label = oz_page(selenium[browser_id])['data'].tab_name
     assert label.lower() == tab_name, f'User not on {tab_name} page'
