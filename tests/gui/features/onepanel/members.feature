@@ -143,7 +143,6 @@ Feature: Basic cluster members management utilities using onepanel
               View cluster: False
 
     And user of browser2 clicks on Members item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of browser2 refreshes site
     Then user of browser2 sees Insufficient permissions alert in cluster members subpage
 
 

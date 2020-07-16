@@ -64,7 +64,7 @@ Feature: Basic management of spaces privileges in Onezone GUI
     And user of browser clicks Members of "space1" in the sidebar
     And user of browser clicks "user2" user in "space1" space members users list
     And user of browser sees privileges for "user2" user in space members subpage
-    And user of browser refreshes site
+    And user of browser clicks "user2" user to close his dropdown list in "space1" space members users list
     And user of browser clicks "user1" user in "space1" space members users list
     And user of browser sets following privileges for "user1" user in space members subpage:
           Space management:

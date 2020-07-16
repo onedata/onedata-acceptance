@@ -41,7 +41,6 @@ Feature: Basic management of harvester in Onezone GUI
             privilege subtypes:
               View harvester: False
 
-    And user of browser2 refreshes site
     And user of browser2 clicks Members of "harvester11" harvester in the sidebar
     Then user of browser2 sees Insufficient permissions alert in harvester members subpage
     And user of browser2 clicks Spaces of "harvester11" harvester in the sidebar
@@ -110,7 +109,6 @@ Feature: Basic management of harvester in Onezone GUI
               View privileges: True
 
     # view privileges
-    And user of browser2 refreshes site
     And user of browser2 clicks "user1" user in "harvester14" harvester members users list
     Then user of browser2 sees privileges for "user1" user in harvester members subpage
 
@@ -134,13 +132,9 @@ Feature: Basic management of harvester in Onezone GUI
             granted: Partially
             privilege subtypes:
               Set privileges: True
-    Then user of browser2 refreshes site
-
-    And user of browser2 sets following privileges for "user1" user in "harvester15" harvester:
+    Then user of browser2 sets following privileges for "user1" user in "harvester15" harvester:
           Harvester management:
             granted: True
-
-    And user of browser1 refreshes site
     And user of browser1 clicks "user1" user in "harvester15" harvester members users list
     And user of browser1 sees following privileges of "user1" user in harvester members subpage:
           Harvester management:
