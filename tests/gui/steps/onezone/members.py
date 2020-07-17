@@ -413,8 +413,8 @@ def set_privileges_in_members_subpage(selenium, browser_id, member_name,
                'in (?P<where>space|group|harvester) members subpage:'
                '\n(?P<config>(.|\s)*)'))
 def assert_privileges_in_members_subpage(selenium, browser_id, member_name,
-                                      member_type, where, config, onepanel,
-                                      oz_page):
+                                         member_type, where, config, onepanel,
+                                         oz_page):
     member_type = member_type + 's'
 
     privileges = yaml.load(config)
