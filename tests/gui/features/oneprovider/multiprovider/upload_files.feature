@@ -20,12 +20,7 @@ Feature: uploading files to multiple providers
     And user of browser logged as user1 to Onezone service
     And directory tree structure on local file system:
           browser:
-              - dir1: 5
-              - dir2: 70
-              - dir3: 4
-              - dir4:
-                  - file10.txt: 10
-                  - file23.txt: 23
+              - dir2: 200
 
 
   Scenario: User uploads different files to one provider and other, sees that they are both uploaded and accessible.
@@ -72,8 +67,8 @@ Feature: uploading files to multiple providers
 
     # upload file and cancel
     And user of browser uses upload button from file browser menu bar to upload files from local directory "dir2" to remote current dir
-    # And user of browser minimizes upload popup
     And user of browser uses upload button from file browser menu bar to upload file "large_file.txt" to current dir
+    # And user of browser minimizes upload popup
     And user of browser clicks cancel button on upload popup number 2
     And user of browser confirms canceling the upload
     And user of browser is idle for 15 seconds
@@ -81,9 +76,9 @@ Feature: uploading files to multiple providers
     # Go to uploads and see that there is only 70/0
     Then user of browser clicks on Uploads in the main menu
     And user of browser clicks on "All uploads" in uploads sidebar
-    And user of browser sees that number of files uploaded is equal 71
+    And user of browser sees that number of files uploaded is equal 201
     And user of browser clicks on Data in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
-    And user of browser scrolls to the bottom of file browser and sees there are 70 files
+    And user of browser scrolls to the bottom of file browser and sees there are 200 files
