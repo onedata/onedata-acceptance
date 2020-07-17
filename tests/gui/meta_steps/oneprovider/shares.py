@@ -16,7 +16,8 @@ from tests.gui.steps.modal import (
     click_icon_in_share_directory_modal)
 from tests.gui.steps.oneprovider.file_browser import (
     click_menu_for_elem_in_file_browser,
-    click_option_in_data_row_menu_in_file_browser)
+    click_option_in_data_row_menu_in_file_browser,
+    click_on_status_tag_for_file_in_file_browser)
 from tests.gui.steps.oneprovider.shares import *
 
 
@@ -40,13 +41,16 @@ def create_share(selenium, browser_id, share_name, item_name, tmp_memory,
     click_modal_button(selenium, browser_id, button, modal_name, modals)
 
 
-@wt(parsers.parse('user of {browser_id} moves to "{share_name}" single share '
-                  'view using modal icon'))
+@wt(parsers.parse('user of {browser_id} opens "{share_name}" single share '
+                  'view of "{item_name}" using modal icon'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def move_to_single_share_view_by_modal(selenium, browser_id, share_name, modals,
-                                       op_container, tmp_memory):
+def open_single_share_view_by_modal(selenium, browser_id, share_name, modals,
+                                    op_container, tmp_memory, item_name):
     items_browser = 'file browser'
+    status_type = 'shared'
 
+    click_on_status_tag_for_file_in_file_browser(browser_id, status_type,
+                                                 item_name, tmp_memory)
     click_share_info_icon_in_share_directory_modal(selenium, browser_id, modals,
                                                    share_name)
     assert_file_browser_in_data_tab_in_op(selenium, browser_id, op_container,
@@ -82,11 +86,11 @@ def remove_current_share(selenium, browser_id, op_container, modals,
     click_modal_button(selenium, browser_id, button, modal_name, modals)
 
 
-@wt(parsers.parse('user of {browser_id} moves to shares view'
+@wt(parsers.parse('user of {browser_id} opens shares view'
                   ' of "{space_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def move_to_shares_view_of_given_space(selenium, browser_id, oz_page,
-                                       space_name, op_container, tmp_memory):
+def open_shares_view_of_given_space(selenium, browser_id, oz_page, space_name,
+                                    op_container, tmp_memory):
     option = 'Shares'
     items_browser = 'shares_browser'
 
@@ -96,36 +100,49 @@ def move_to_shares_view_of_given_space(selenium, browser_id, oz_page,
                                           tmp_memory, items_browser)
 
 
-@wt(parsers.parse('user of {browser_id} moves to "{share_name}" single share '
-                  'view using sidebar'))
+@wt(parsers.parse('user of {browser_id} opens "{share_name}" single '
+                  'share view of space "{space_name}" using sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def move_to_single_share_view_by_sidebar(selenium, browser_id, share_name,
-                                         op_container, tmp_memory, oz_page,
-                                         space_name):
-    move_to_shares_view_of_given_space(selenium, browser_id, oz_page,
-                                       space_name, op_container, tmp_memory)
+def open_single_share_view_by_sidebar(selenium, browser_id, share_name,
+                                      op_container, tmp_memory, oz_page,
+                                      space_name):
+    open_shares_view_of_given_space(selenium, browser_id, oz_page, space_name,
+                                    op_container, tmp_memory)
     click_share_in_shares_browser(selenium, browser_id, share_name,
                                   op_container)
     change_shares_browser_to_file_browser(selenium, browser_id, op_container,
                                           tmp_memory)
 
 
-@wt(parsers.parse('user of {browser_id} hands "{share_name}" share\'s URL to '
-                  'user of {browser2_id} using modal'))
+@wt(parsers.parse('user of {browser_id} hands "{share_name}" share\'s URL of '
+                  '"{item_name}" to user of {browser2_id}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def hand_share_url_to_another_user(selenium, browser_id, browser2_id,
-                                   tmp_memory, modals, displays, clipboard):
+                                   share_name, item_name, tmp_memory, modals,
+                                   displays, clipboard):
     modal_name = "Share directory"
-    owner_name = None
-    icon_name = "copy"
     item_type = 'URL'
     button = 'Close'
 
-    click_icon_in_share_directory_modal(selenium, browser_id, modal_name,
-                                        modals, owner_name, icon_name)
+    copy_url_of_share(selenium, browser_id, share_name, item_name, modals,
+                      tmp_memory)
     send_copied_item_to_other_users(browser_id, item_type, browser2_id,
                                     tmp_memory, displays, clipboard)
     click_modal_button(selenium, browser_id, button, modal_name, modals)
+
+
+@wt(parsers.parse('user of {browser_id} copies share URL of "{share_name}" '
+                  'share of "{item_name}"'))
+def copy_url_of_share(selenium, browser_id, share_name, item_name, modals,
+                      tmp_memory):
+    modal_name = 'Share directory'
+    icon_name = 'copy'
+    status_type = 'shared'
+
+    click_on_status_tag_for_file_in_file_browser(browser_id, status_type,
+                                                 item_name, tmp_memory)
+    click_icon_in_share_directory_modal(selenium, browser_id, modal_name,
+                                        modals, share_name, icon_name)
 
 
 @wt(parsers.parse('user of {browser_id} renames current share to "{new_name}"'

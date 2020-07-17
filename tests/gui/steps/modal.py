@@ -346,7 +346,7 @@ def write_name_into_text_field_in_modal(selenium, browser_id, item_name,
 def assert_number_of_shares_in_modal(selenium, browser_id, item_name, number,
                                      modals):
     modal = modals(selenium[browser_id]).share_directory
-    links = modal.browser_share_icon
+    links = modal.share_options
     info = modal.share_info
     err_msg = 'Item {item_name} is not shared {number} times'
     assert _assert_number_of_shares_in_modal(number, links, info), err_msg
@@ -363,7 +363,7 @@ def click_share_info_icon_in_share_directory_modal(selenium, browser_id, modals,
                                                    share_name):
     modal = modals(selenium[browser_id]).share_directory
 
-    icon = modal.browser_share_icon[share_name]
+    icon = modal.share_options[share_name].browser_share_icon
     icon.click()
 
 
@@ -373,13 +373,12 @@ def click_share_info_icon_in_share_directory_modal(selenium, browser_id, modals,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_icon_in_share_directory_modal(selenium, browser_id, modal_name,
                                         modals, owner_name, icon_name):
-    modal = modals(selenium[browser_id]).share_directory
+    elem_groups = modals(selenium[browser_id]).share_directory.share_options
     icon_name = transform(icon_name) + '_icon'
-    icons_group = getattr(modal, icon_name)
     if owner_name:
-        icon = icons_group[owner_name]
+        icon = getattr(elem_groups[owner_name], icon_name)
     else:
-        icon = icons_group[0]
+        icon = getattr(elem_groups[0], icon_name)
     icon.click()
 
 
