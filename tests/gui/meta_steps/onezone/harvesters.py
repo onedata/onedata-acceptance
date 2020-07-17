@@ -174,18 +174,15 @@ def send_invitation_token(selenium, browser_id1, oz_page, harvester_name,
                                     tmp_memory, displays, clipboard)
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>checks|unchecks) '
-               '"(?P<privilege>.*)" privilege in '
-               '"(?P<privilege_group>.*)" privileges group for '
-               '(?P<user_name>.*) user in "(?P<harvester_name>.*)" harvester'))
+@wt(parsers.parse('user of {browser_id} sets following privileges for '
+                  '"{user_name}" user in "{harvester_name}" harvester:'
+                  '\n{config}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def change_nested_privilege_in_harvester(selenium, browser_id, oz_page,
-                                         onepanel, privilege, option,
-                                         privilege_group, user_name,
+def change_privilege_config_in_harvester(selenium, browser_id, oz_page,
+                                         onepanel, config, user_name,
                                          harvester_name):
     where = 'harvester'
     list_type = 'user'
-    button_name = 'Save'
     menu_option = 'Members'
 
     click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id,
@@ -193,40 +190,9 @@ def change_nested_privilege_in_harvester(selenium, browser_id, oz_page,
                                                       menu_option, oz_page)
     click_element_in_members_list(selenium, browser_id, user_name, oz_page,
                                   where, list_type + 's', onepanel)
-    expand_privilege_for_member(selenium, browser_id, privilege_group, oz_page,
-                                where, user_name, list_type, onepanel)
-    click_nested_privilege_toggle_for_member(selenium, browser_id, option,
-                                             where, privilege, user_name,
-                                             oz_page, list_type,
-                                             privilege_group, onepanel)
-    click_button_on_element_header_in_members(selenium, browser_id, button_name,
-                                              oz_page, where, user_name,
-                                              list_type, onepanel)
-
-
-@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>checks|unchecks) '
-               '"(?P<privilege_name>.*?)" privileges group for '
-               '(?P<user_name>.*) user in "(?P<harvester_name>.*)" harvester'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def change_privilege_in_harvester(selenium, browser_id, oz_page, onepanel,
-                                  privilege_name, option, user_name,
-                                  harvester_name):
-    where = 'harvester'
-    list_type = 'user'
-    button_name = 'Save'
-    menu_option = 'Members'
-
-    click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id,
-                                                      harvester_name,
-                                                      menu_option, oz_page)
-    click_element_in_members_list(selenium, browser_id, user_name, oz_page,
-                                  where, list_type + 's', onepanel)
-    click_privilege_toggle_for_member(selenium, browser_id, option, where,
-                                      privilege_name, user_name, oz_page,
-                                      list_type)
-    click_button_on_element_header_in_members(selenium, browser_id, button_name,
-                                              oz_page, where, user_name,
-                                              list_type, onepanel)
+    set_privileges_in_members_subpage(selenium, browser_id, user_name,
+                                      list_type, where, config, onepanel,
+                                      oz_page)
 
 
 @wt(parsers.parse('user of {browser_id} renames "{harvester_name}" harvester '
