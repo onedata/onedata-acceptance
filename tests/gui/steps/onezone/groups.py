@@ -210,3 +210,19 @@ def assert_error_detail_text(selenium, browser_id, oz_page, text):
     assert text in page.main_page.error_details, ('page with text "{}" '
                                                   'not found'.format(text))
 
+
+@wt(parsers.parse('user of {browser_id} clicks on "{button_name}" button '
+                  'in popup group menu on hierarchy subpage'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_group_menu_popup_button(selenium, browser_id, button_name,
+                                     popups):
+    driver = selenium[browser_id]
+    popups(driver).group_menu.menu[button_name]()
+
+
+@wt(parsers.parse('user of {browser_id} sees "{group_name}" group '
+                  'members page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_user_sees_group_page(selenium, oz_page, browser_id, group_name):
+    driver = selenium[browser_id]
+    assert oz_page(driver)['groups'].selected_group_name == group_name

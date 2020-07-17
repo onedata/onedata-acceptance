@@ -79,3 +79,19 @@ Feature: Basic management of groups hierarchy with one user in Onezone GUI
     And user of browser clicks on "Remove" button in modal "REMOVE MEMBER"
     Then user of browser does not see "group1" as a parent of "group2" in hierarchy subpage
 
+
+  Scenario Outline: User goes to <group_B> page from <group_A> hierarchy subpage using popup group menu
+    When user of browser goes to group "<group_A>" hierarchy subpage
+    And user of browser clicks on group "<group_B>" menu button in hierarchy subpage
+    And user of browser clicks on "View group" button in popup group menu on hierarchy subpage
+    Then user of browser sees "<group_B>" group members page
+
+    Examples:
+    | group_A  | group_B  |
+    | group2   | group2   |
+    | group2   | group3   |
+    | group1   | group1   |
+    | group1   | group2   |
+
+
+
