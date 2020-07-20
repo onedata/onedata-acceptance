@@ -36,7 +36,8 @@ def run_cmd(username, client, cmd, detach=False, output=False, error=False):
 
     return docker.exec_(container=client, command=cmd, output=output,
                         tty=True, stderr=subprocess.STDOUT if error else None,
-                        detach=detach)
+                        # always run in detached mode because otherwise docker exec hangs
+                        detach=True)
 
 
 def docker_ip(container):

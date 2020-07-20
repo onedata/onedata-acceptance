@@ -13,12 +13,12 @@ import time
 import errno
 import stat as stat_lib
 import hashlib
+import subprocess
 
 import rpyc
 import pytest
 
 from .docker_utils import run_cmd
-from environment import docker
 from tests.utils.utils import (log_exception, assert_)
 from tests.utils.path_utils import escape_path
 from tests.utils.user_utils import User
@@ -40,7 +40,8 @@ class Client:
         self.opened_files = {}
         self.file_stats = {}
 
-    def mount(self, username, hosts, access_token, mode, gdb=False):
+    def mount(self, username, hosts, access_token, mode, gdb=False, retries=5):
+        clean_mount_path(username, self)
         if 'proxy' in mode:
             mode_flag = '--force-proxy-io'
         # TODO: Change to --force-direct-io after resolving VFS-4914
@@ -49,40 +50,31 @@ class Client:
 
         print('Mounting client with {} flag'.format(mode_flag))
 
+        mkdir(self, self.mount_path, recursive=True, exist_ok=True)
+        mkdir(self, "/tmp/oc_logs", recursive=True, exist_ok=True)
+        self.rpyc_connection.modules.os.environ['ONECLIENT_PROVIDER_HOST'] = \
+            hosts[self.provider]['hostname']
+        self.rpyc_connection.modules.os.environ['ONECLIENT_ACCESS_TOKEN'] = access_token
+
         if gdb:
-            cmd = ('mkdir -p {mount_path}'
-                   ' && mkdir -p /tmp/oc_logs'
-                   ' && export ONECLIENT_PROVIDER_HOST={op_domain}'
-                   ' && echo {token} > {token_path}'
-                   ' && gdb oneclient -batch -return-child-result -ex'
+            cmd = ('gdb oneclient -batch -return-child-result -ex'
                    ' \'run --log-dir /tmp/oc_logs {mode} --insecure {mount_path}'
-                   ' --token $(cat {token_path})\' -ex \'bt\''
-                   ' 2>&1').format(mount_path=self.mount_path,
-                                   op_domain=hosts[self.provider]['hostname'],
-                                   token=access_token,
-                                   token_path=TOKEN_PATH,
-                                   mode=mode_flag)
+                   ' \' -ex \'bt\'').format(
+                mount_path=self.mount_path,
+                mode=mode_flag)
         else:
-            cmd = ('mkdir -p {mount_path}'
-                   ' && mkdir -p /tmp/oc_logs'
-                   ' && export ONECLIENT_PROVIDER_HOST={op_domain}'
-                   ' && echo {token} > {token_path}'
-                   ' && oneclient --log-dir /tmp/oc_logs {mode} --insecure '
-                   '{mount_path} --token "$(cat {token_path})"'
-                   ' 2>&1').format(mount_path=self.mount_path,
-                                   op_domain=hosts[self.provider]['hostname'],
-                                   token=access_token,
-                                   token_path=TOKEN_PATH,
-                                   mode=mode_flag)
+            cmd = ['oneclient', '--log-dir', '/tmp/oc_logs', mode_flag,
+                   '--insecure', self.mount_path]
+        print(" ".join(cmd))
 
-        ret = run_cmd(username, self.docker_id, cmd, output=False)
+        returncode = rpyc_run_cmd(self.rpyc_connection, cmd,
+                                  on_error=lambda: clean_mount_path(username, self),
+                                  verbose=True)
 
-        # remove access token to mount many clients on one docker
-        rm(self, TOKEN_PATH, force=True)
         rm(self, path=os.path.join(os.path.dirname(self.mount_path), '.local'),
            recursive=True, force=True)
 
-        return ret
+        return returncode
 
     def absolute_path(self, path):
         return os.path.join(self.mount_path, str(path))
@@ -123,7 +115,6 @@ class Client:
             self.rpyc_server_pid = pid
 
         self._repeat_until(condition, 30)
-
 
     def stop_rpyc_server(self):
         if self.rpyc_server_pid:
@@ -242,15 +233,14 @@ def clean_mount_path(user, client, lazy=False):
             ['ps aux', 'grep "oneclient .* {}"'.format(client.mount_path),
              'grep -v "grep"', 'awk {\'print $2\'}']
         )
-        pid = run_cmd('root', client.docker_id, get_pid_cmd, output=True)
+        pid = rpyc_run_cmd(client.rpyc_connection, get_pid_cmd, retries=0, output=True)
 
-        if pid != '':
+        if pid:
             # kill oneclient process
             kill(client, pid)
 
-        # unmount onedata
-        fusermount(client, client.mount_path, user=user, unmount=True,
-                   lazy=lazy)
+        # unmount oneclient
+        fusermount(client, client.mount_path, unmount=True, lazy=lazy)
         rm(client, path=client.mount_path, recursive=True, force=True)
 
 
@@ -309,9 +299,9 @@ def rmdir(client, dir_path, recursive=False):
         client.rpyc_connection.modules.os.rmdir(dir_path)
 
 
-def mkdir(client, dir_path, recursive=False):
+def mkdir(client, dir_path, recursive=False, exist_ok=False):
     if recursive:
-        client.rpyc_connection.modules.os.makedirs(dir_path)
+        client.rpyc_connection.modules.os.makedirs(dir_path, exist_ok=exist_ok)
     else:
         client.rpyc_connection.modules.os.mkdir(dir_path)
 
@@ -442,7 +432,7 @@ def replace_pattern(client, file_path, pattern, new_text, user='root',
     return run_cmd(user, client.docker_id, cmd, output=output)
 
 
-def dd(client, block_size, count, output_file, unit='M', 
+def dd(client, block_size, count, output_file, unit='M',
        input_file='/dev/zero', user='root', output=False, error=False):
     cmd = 'dd {input} {output} {bs} {count}'\
         .format(input='if={}'.format(escape_path(input_file)),
@@ -452,15 +442,43 @@ def dd(client, block_size, count, output_file, unit='M',
     return run_cmd(user, client.docker_id, cmd, output=output, error=error)
 
 
-def fusermount(client, path, user='root', unmount=False, lazy=False,
-               quiet=False, output=False):
-    cmd = 'fusermount {unmount} {lazy} {quiet} {path}'\
-        .format(unmount='-u' if unmount else '',
-                lazy='-z' if lazy else '',
-                quiet='-q' if quiet else '',
-                path=escape_path(path))
-    return run_cmd(user, client.docker_id, cmd, output=output)
+def fusermount(client, path, unmount=False, lazy=False, quiet=False):
+    unmount = '-u' if unmount else ''
+    lazy = '-z' if lazy else ''
+    quiet = '-q' if quiet else ''
+    path = escape_path(path)
+    cmd = ['fusermount', unmount, lazy, quiet, path]
+    rpyc_run_cmd(client.rpyc_connection, cmd, retries=0)
 
 
 def user_home_dir(user='root'):
     return os.path.join('/home', user)
+
+
+def rpyc_run_cmd(rpyc_connection, cmd, retries=5, retry_sleep=8,
+                 on_error=None, output=False, verbose=False):
+    if isinstance(cmd, list):
+        cmd = [x for x in cmd if x]  # remove empty command tokens
+        shell = False
+    else:
+        shell = True
+    if verbose: print("rpyc running command: {}".format(cmd))
+    proc = rpyc_connection.modules.subprocess.Popen(
+        cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=shell)
+
+    if proc.wait() == 0:
+        stdout = proc.stdout.read().decode()
+        if verbose: print(stdout)
+        return stdout if output else 0
+    else:
+        if verbose: print(proc.stdout.read().decode())
+        if verbose: print(proc.stderr.read().decode())
+        if retries > 0:
+            if verbose: print("Command {} failed. Retries left: {}".format(" ".join(cmd), retries))
+            if on_error: on_error()
+            time.sleep(retry_sleep)
+            return rpyc_run_cmd(rpyc_connection, cmd, retries-1, retry_sleep,
+                                on_error=on_error, output=output, verbose=verbose)
+
+    return None if output else proc.returncode
+
