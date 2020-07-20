@@ -101,36 +101,19 @@ def wt_clicks_on_btn_in_storage_toolbar_in_panel(selenium, browser_id, option,
 def types_key_in_posix_storage_edit_page(selenium, browser_id,
                                          in_value, onepanel):
     driver = selenium[browser_id]
+    onepanel(driver).content.storages.storages['posix'].edit_form
     storage_posix = onepanel(driver).content.storages.storages['posix']
-    # assert 'posix' in storages_list, 'posix storage not found'
-    # for storage in storages_list:
-    #     if storage.name == 'posix':
-
-    size = len(storage_posix.edit_form.posix_editor.key_values)
-    record = storage_posix.edit_form.posix_editor.key_values[size - 1]
-    record.set_key()
-    # import pdb
-    # pdb.set_trace()
-    record2 = storage_posix.edit_form.posix_editor.key_values[size - 1]
-    record2.set_value()
-            # setattr(storage.edit_form.posix_editor.key_values[size - 1], 'key', in_value)
-            #storage.edit_form.posix_editor.key_values[size - 1].key = in_value
-            # continue
+    storage_posix.edit_form.posix_editor.params.set_last_key(in_value)
 
 
-@wt(parsers.parse('user of {browser_id} types "{in_value}" into last but one '
-                  'value in posix storage edit page'))
+@wt(parsers.parse('user of {browser_id} clicks last but one value in posix '
+                  'storage edit page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def types_value_in_posix_storage_edit_page(selenium, browser_id,
-                                           in_value, onepanel):
+def click_value_in_posix_storage_edit_page(selenium, browser_id, onepanel):
     driver = selenium[browser_id]
-    storages_list = onepanel(driver).content.storages.storages
-    assert 'posix' in storages_list, 'posix storage not found'
-    for storage in storages_list:
-        if storage.name == 'posix':
-            size = len(storage.edit_form.posix_editor.key_values)
-            storage.edit_form.posix_editor.key_values[size - 2].value = in_value
-            continue
+    onepanel(driver).content.storages.storages['posix'].edit_form
+    storage_posix = onepanel(driver).content.storages.storages['posix']
+    storage_posix.edit_form.posix_editor.params.click_last_but_one_value()
 
 
 @wt(parsers.parse('user of {browser_id} saves changes in posix storage edit '
@@ -139,11 +122,6 @@ def types_value_in_posix_storage_edit_page(selenium, browser_id,
 def saves_changes_in_posix_storage_edit_page(selenium, browser_id, onepanel):
     driver = selenium[browser_id]
     storage = onepanel(driver).content.storages.storages['posix']
-    # assert 'posix' in storages_list, 'posix storage not found'
-    # for storage in storages_list:
-    #     if storage.name == 'posix':
-    # import pdb
-    # pdb.set_trace()
     storage.edit_form.posix_editor.save_button.click()
 
 

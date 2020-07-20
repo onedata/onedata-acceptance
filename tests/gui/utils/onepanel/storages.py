@@ -15,6 +15,7 @@ from tests.gui.utils.core.base import PageObject, ExpandableMixin
 from tests.gui.utils.core.web_elements import (WebItemsSequence, Label,
                                                NamedButton, Input,
                                                WebItem, WebElement, Button)
+from tests.gui.utils.onezone.common import InputBox
 
 
 class POSIX(PageObject):
@@ -33,19 +34,22 @@ class StorageAddForm(PageObject):
 
 
 class POSIXEditorKeyValue(PageObject):
-    key_field = Input('.manual .form-control')
-    value_field = Input('input[placeholder="Value"]')
+    key = WebItem('.form-group .text-left', cls=InputBox)
+    val = WebItem('.form-group .form-control-column', cls=InputBox)
 
-    def set_key(self):
-        # import pdb
-        # pdb.set_trace()
-        self.key_field = 'fdas'
 
-    def set_value(self):
-        # import pdb
-        # pdb.set_trace()
-        self.value_field = 'dsafsd'
+class QOSParams(PageObject):
+    key_values = WebItemsSequence('.text-input.group-with-tip',
+                                  cls=POSIXEditorKeyValue)
 
+    def set_last_key(self, key):
+        size = len(self.key_values)
+        self.key_values[size - 1].key.value = key
+
+    def click_last_but_one_value(self):
+        size = len(self.key_values)
+        self.key_values[size - 2].key.click()
+        self.key_values[size - 2].val.click()
 
 
 class POSIXEditor(PageObject):
@@ -54,8 +58,7 @@ class POSIXEditor(PageObject):
     timeout = Input('input.field-posix_editor-timeout')
     read_only = Toggle('.toggle-field-posix_editor-readonly')
 
-    key_values = WebItemsSequence('.text-input.group-with-tip',
-                                  cls=POSIXEditorKeyValue)
+    params = WebItem('.qos-params-editor', cls=QOSParams)
 
     save_button = Button('button.btn-primary')
     cancel_button = NamedButton('button', text='Cancel')

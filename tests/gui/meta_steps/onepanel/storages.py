@@ -13,6 +13,7 @@ import yaml
 from pytest_bdd import parsers
 
 from tests.gui.meta_steps.onezone.common import wt_visit_op
+from tests.gui.steps.common.miscellaneous import type_string_into_active_element
 from tests.gui.steps.oneprovider.data_tab import \
     assert_file_browser_in_data_tab_in_op
 from tests.utils.acceptance_utils import wt
@@ -27,8 +28,8 @@ from tests.gui.steps.onepanel.storages import (
     wt_assert_storage_attr_in_storages_page_op_panel,
     assert_storage_on_storage_list, is_storage_on_storage_list,
     types_key_in_posix_storage_edit_page,
-    types_value_in_posix_storage_edit_page,
-    saves_changes_in_posix_storage_edit_page)
+    saves_changes_in_posix_storage_edit_page,
+    click_value_in_posix_storage_edit_page)
 from tests.gui.steps.modal import click_modal_button
 from tests.gui.steps.onezone.spaces import (
     click_on_option_in_the_sidebar, click_element_on_lists_on_left_sidebar_menu,
@@ -142,7 +143,12 @@ def _add_storage_in_op_panel_using_gui(selenium, browser_id, config, onepanel,
 
 @wt(parsers.parse('user of {browser_id} adds key="{key}" value="{val}" in '
                   'storage edit page'))
-def add_key_value_in_storage_page(selenium, browser_id, key, val, onepanel):
+def add_key_value_in_storage_page(selenium, browser_id, key,
+                                  val, onepanel, modals):
     types_key_in_posix_storage_edit_page(selenium, browser_id, key, onepanel)
-    types_value_in_posix_storage_edit_page(selenium, browser_id, val, onepanel)
+    click_value_in_posix_storage_edit_page(selenium, browser_id, onepanel)
+    type_string_into_active_element(selenium, browser_id, val)
     saves_changes_in_posix_storage_edit_page(selenium, browser_id, onepanel)
+    button = 'Proceed'
+    modal = 'Modify Storage'
+    click_modal_button(selenium, browser_id, button, modal, modals)
