@@ -56,7 +56,7 @@ Feature: Basic data tab operations on single file in file browser
     And user of browser clicks on menu for "20B-0.txt" file in file browser
     And user of browser clicks "Rename" option in data row menu in file browser
     And user of browser sees that "Rename" modal has appeared
-    And user of browser writes "new_file1" into text field in modal "Rename modal"
+    And user of browser writes "new_file1" into input name text field in modal "Rename modal"
     And user of browser confirms rename directory using enter
 
     Then user of browser sees that item named "20B-0.txt" has disappeared from files browser
