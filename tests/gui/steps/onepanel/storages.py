@@ -116,6 +116,16 @@ def click_value_in_posix_storage_edit_page(selenium, browser_id, onepanel):
     storage_posix.edit_form.posix_editor.params.click_last_but_one_value()
 
 
+@wt(parsers.parse('user of {browser_id} deletes first additional param in posix'
+                  ' storage edit page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def delete_additional_param_in_posix_storage_edit_page(selenium, browser_id,
+                                                       onepanel):
+    driver = selenium[browser_id]
+    storage_posix = onepanel(driver).content.storages.storages['posix']
+    storage_posix.edit_form.posix_editor.params.delete_first_additional_param()
+
+
 @wt(parsers.parse('user of {browser_id} saves changes in posix storage edit '
                   'page'))
 @repeat_failed(timeout=WAIT_FRONTEND)

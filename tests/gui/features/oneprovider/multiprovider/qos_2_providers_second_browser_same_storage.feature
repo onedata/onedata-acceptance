@@ -23,6 +23,8 @@ Feature: Quality of Service tests for 2 providers using multiple browsers where 
     And users opened [browser1, browser2] browsers' windows
     And users of [browser1, browser2] opened [Onezone, oneprovider-1 provider panel] page
     And user of [browser1, browser2] logged as [user1, admin] to [Onezone, emergency interface of Onepanel] service
+    And user of browser2 clicks on Storages item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+    And user of browser2 deletes all additional params in storage edit page
 
 
     Scenario: Adding storage id as quality of service
@@ -30,7 +32,6 @@ Feature: Quality of Service tests for 2 providers using multiple browsers where 
       And user of browser1 clicks Data of "space1" in the sidebar
       And user of browser1 sees file browser in data tab in Oneprovider page
 
-      And user of browser2 clicks on Storages item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
       And user of browser2 expands "posix" record on storages list in storages page in Onepanel
       And user of browser2 copies id of "posix" storage to clipboard via copy button
       And user of browser1 copies storageId quality of service from clipboard for "file1" from file browser
@@ -48,7 +49,6 @@ Feature: Quality of Service tests for 2 providers using multiple browsers where 
       And user of browser1 clicks Data of "space1" in the sidebar
       And user of browser1 sees file browser in data tab in Oneprovider page
 
-      And user of browser2 clicks on Storages item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
       And user of browser2 expands "posix" record on storages list in storages page in Onepanel
       And user of browser2 copies id of "posix" storage to clipboard via copy button
       And user of browser1 creates anyStorage quality of service excluding storage from clipboard for "file1" from file browser
@@ -63,8 +63,37 @@ Feature: Quality of Service tests for 2 providers using multiple browsers where 
       When user of browser1 creates "type=posix" quality of service for "file1"
       And user of browser1 clicks on qos status tag for "file1" in file browser
       And user of browser1 sees that all qualities of service are impossible
-      And user of browser2 clicks on Storages item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
       And user of browser2 expands toolbar for "posix" storage record in Storages page in Onepanel
       And user of browser2 clicks on Modify storage details option in storage's toolbar in Onepanel
       And user of browser2 adds key="type" value="posix" in storage edit page
+      Then user of browser1 sees that all qualities of service are fulfilled
+
+
+    Scenario: Adding qos with and
+      When user of browser1 creates "type=posix & geo=PL" quality of service for "file1"
+      And user of browser1 clicks on qos status tag for "file1" in file browser
+      And user of browser1 sees that all qualities of service are impossible
+      And user of browser2 expands toolbar for "posix" storage record in Storages page in Onepanel
+      And user of browser2 clicks on Modify storage details option in storage's toolbar in Onepanel
+      And user of browser2 adds key="type" value="posix" in storage edit page
+      And user of browser1 is idle for 8 seconds
+      And user of browser1 sees that all qualities of service are impossible
+      And user of browser2 expands toolbar for "posix" storage record in Storages page in Onepanel
+      And user of browser2 clicks on Modify storage details option in storage's toolbar in Onepanel
+      And user of browser2 adds key="geo" value="PL" in storage edit page
+      Then user of browser1 sees that all qualities of service are fulfilled
+
+
+    Scenario: Adding qos with or
+      When user of browser1 creates "type=posix | geo=PL" quality of service for "file1"
+      And user of browser1 clicks on qos status tag for "file1" in file browser
+      And user of browser1 sees that all qualities of service are impossible
+      And user of browser2 expands toolbar for "posix" storage record in Storages page in Onepanel
+      And user of browser2 clicks on Modify storage details option in storage's toolbar in Onepanel
+      And user of browser2 adds key="type" value="posix" in storage edit page
+      And user of browser1 sees that all qualities of service are fulfilled
+      And user of browser2 deletes all additional params in storage edit page
+      And user of browser2 expands toolbar for "posix" storage record in Storages page in Onepanel
+      And user of browser2 clicks on Modify storage details option in storage's toolbar in Onepanel
+      And user of browser2 adds key="geo" value="PL" in storage edit page
       Then user of browser1 sees that all qualities of service are fulfilled
