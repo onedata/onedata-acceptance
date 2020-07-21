@@ -143,3 +143,69 @@ Feature: Basic management of groups privileges in Onezone GUI
     And user of browser clicks on "Remove" button in modal "REMOVE MEMBER"
     Then user of browser sees 1 membership row in space memberships mode
     And user of browser does not see that "group4" group is member of "group1" group in group memberships mode
+
+
+  Scenario: User sees and bulk modifies privileges of all groups nested in his parent group
+    When user of browser goes to group "group1" members subpage
+    And user of browser clicks on groups checkbox
+    And user of browser clicks on bulk edit button
+    And user of browser sees following privileges on popup:
+          User management:
+            granted: False
+    And user of browser sets following privileges on popup:
+          User management:
+            granted: True
+    And user of browser clicks "group2" group in "group1" group members groups list
+    Then user of browser sees following privileges of "group2" group in space members subpage:
+          User management:
+            granted: True
+    And user of browser clicks "group4" group in "group1" group members groups list
+    And user of browser clicks "group4" group in "group1" group members groups list
+    And user of browser sees following privileges of "group4" group in space members subpage:
+          User management:
+            granted: True
+
+
+  Scenario: User sees and bulk modifies privileges to his group
+    When user of browser goes to group "group1" members subpage
+    And user of browser clicks on users checkbox
+    And user of browser clicks on bulk edit button
+    And user of browser sees following privileges on popup:
+          User management:
+            granted: Partially
+            privilege subtypes:
+              Add user: Partially
+              Remove user: Partially
+    And user of browser sets following privileges on popup:
+          User management:
+            granted: False
+    And user of browser clicks "user1" user in "group1" group members users list
+    Then user of browser sees following privileges of "user1" user in space members subpage:
+          User management:
+            granted: False
+    And user of browser clicks "user2" user in "group1" group members users list
+    And user of browser clicks "user2" user in "group1" group members users list
+    And user of browser sees following privileges of "user2" user in space members subpage:
+          User management:
+            granted: False
+
+  Scenario: User sees and bulk modifies privileges to a group and user
+    When user of browser goes to group "group1" members subpage
+    And user of browser clicks on "user2" users checkbox
+    And user of browser clicks on "group2" groups checkbox
+    And user of browser clicks on bulk edit button
+    And user of browser sees following privileges on popup:
+          User management:
+            granted: False
+    And user of browser sets following privileges on popup:
+          User management:
+            granted: True
+    And user of browser clicks "group2" group in "group1" group members groups list
+    Then user of browser sees following privileges of "group2" group in space members subpage:
+          User management:
+            granted: True
+    And user of browser clicks "user2" user in "group1" group members users list
+    And user of browser clicks "user2" user in "group1" group members users list
+    And user of browser sees following privileges of "user2" user in space members subpage:
+          User management:
+            granted: True
