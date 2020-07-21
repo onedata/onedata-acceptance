@@ -24,9 +24,6 @@ class Popups(object):
                                   cls=DeregisterProvider)
     user_account_menu = WebItem('.webui-popover-content .user-account-menu',
                                 cls=UserAccountPopup)
-    member_menu = WebItem('.webui-popover.in', cls=PopoverMenu)
-    group_menu = WebItem('.webui-popover-content .group-actions', cls=MenuPopup)
-    data_distribution_menu = WebItem('.webui-popover.in', cls=PopoverMenu)
     upload_presenter = WebItem('.hidden-xs .up-single-upload',
                                cls=UploadPresenter)
     menu_popup = WebItem('#webuiPopover1', cls=MenuPopup)

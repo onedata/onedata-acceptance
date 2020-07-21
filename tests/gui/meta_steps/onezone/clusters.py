@@ -56,31 +56,21 @@ def join_to_cluster(selenium, browser_id, oz_page, displays, clipboard):
                                     clipboard, displays)
 
 
-@wt(parsers.parse('user of {browser_id} {option} nested "{nested_privilege}" '
-                  'privilege in "{parent_privilege}" privilege '
-                  'for {user_name} user in {where} page'))
+@wt(parsers.parse('user of {browser_id} sets following privileges '
+                  'for {user_name} user in {where} page:\n{config}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def change_nested_privilege_in_cluster(selenium, browser_id, oz_page,
-                                       onepanel, nested_privilege, option,
-                                       parent_privilege, where, user_name):
+def change_privilege_config_in_cluster(selenium, browser_id, oz_page,
+                                       onepanel, where, user_name, config):
     member_type = 'user'
-    button = 'Save'
     list_type = 'users'
 
     click_element_in_members_list(selenium, browser_id, user_name,
                                   oz_page, where, list_type, onepanel)
     see_privileges_for_member(selenium, browser_id, oz_page, where,
                               member_type, user_name, onepanel)
-    expand_privilege_for_member(selenium, browser_id, parent_privilege,
-                                oz_page, where, user_name,
-                                member_type, onepanel)
-    click_nested_privilege_toggle_for_member(selenium, browser_id, option,
-                                             where, nested_privilege,
-                                             user_name, oz_page, member_type,
-                                             parent_privilege, onepanel)
-    click_button_on_element_header_in_members(selenium, browser_id, button,
-                                              oz_page, where, user_name,
-                                              member_type, onepanel)
+    set_privileges_in_members_subpage(selenium, browser_id, user_name,
+                                      member_type, where, config, onepanel,
+                                      oz_page)
 
 
 @wt(parsers.parse('user of {browser_id} adds "{group_name}" group to '

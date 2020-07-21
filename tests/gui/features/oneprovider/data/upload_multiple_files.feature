@@ -46,8 +46,7 @@ Feature: Uploading multiple files at once
     And user of browser waits for file upload to finish
     And user of browser sees that there are 9 items in file browser
 
-    # refresh site and check working of lazy loading
-    And user of browser refreshes site
+    # check working of lazy loading
     And user of browser sees nonempty file browser in data tab in Oneprovider page
     And user of browser sees that content of current directory has been loaded
     Then user of browser scrolls to the bottom of file browser and sees there are 70 files
