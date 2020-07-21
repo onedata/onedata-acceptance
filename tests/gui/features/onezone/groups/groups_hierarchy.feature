@@ -94,4 +94,19 @@ Feature: Basic management of groups hierarchy with one user in Onezone GUI
     | group1   | group2   |
 
 
+  Scenario Outline: User resets <group_A> hierarchy view after expanding parents and childrens
+    When user of browser goes to group "<group_A>" hierarchy subpage
+    And user of browser sees default group hierarchy view
+    And user of browser toggles show "<group_A>" group <relation> button
+    And user of browser clicks "Reset view" button in group hierarchy view menu
+    Then user of browser sees the same group hierarchy view as default one
+
+    Examples:
+    |  group_A  |  relation  |
+    |  group1   |  parent    |
+    |  group1   |  children  |
+    |  group2   |  parent    |
+    |  group2   |  children  |
+    |  group3   |  parent    |
+    |  group3   |  children  |
 

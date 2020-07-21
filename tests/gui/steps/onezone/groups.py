@@ -10,7 +10,7 @@ __license__ = ("This software is released under the MIT license cited in "
 from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import wt, parsers
 from tests.gui.utils.common.modals import Modals as modals
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import parse_seq, transform
 from tests.gui.conftest import WAIT_FRONTEND
 from selenium.webdriver.common.keys import Keys
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
@@ -226,3 +226,44 @@ def click_on_group_menu_popup_button(selenium, browser_id, button_name,
 def assert_user_sees_group_page(selenium, oz_page, browser_id, group_name):
     driver = selenium[browser_id]
     assert oz_page(driver)['groups'].selected_group_name == group_name
+
+
+@wt(parsers.parse('user of {browser_id} sees default group hierarchy view'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def default_hierarchy_view(selenium, browser_id, oz_page, tmp_memory):
+    driver = selenium[browser_id]
+    default_groups_view = []
+    for group in oz_page(driver)['groups'].main_page.hierarchy.groups:
+        default_groups_view.append(group.name)
+    tmp_memory['default_groups_view'] = default_groups_view
+
+
+@wt(parsers.parse('user of {browser_id} toggles show "{group_name}" '
+                  'group {relation_type} button'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def expand_all_relations(selenium, browser_id, oz_page, relation_type):
+    driver = selenium[browser_id]
+    getattr(oz_page(driver)['groups'].main_page.hierarchy,
+             transform('show '+relation_type+' groups')).click()
+
+
+@wt(parsers.parse('user of {browser_id} clicks "{btn_name}" button in group '
+                  'hierarchy view menu'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def expand_all_relations(selenium, browser_id, btn_name, oz_page, popups):
+    driver = selenium[browser_id]
+    oz_page(driver)['groups'].main_page.hierarchy.hierarchy_view_menu.click()
+    popups(selenium[browser_id]).toolbar.options[btn_name].click()
+
+
+@wt(parsers.parse('user of {browser_id} sees the same group hierarchy view '
+                  'as default one'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def expand_all_relations(selenium, browser_id, oz_page, tmp_memory):
+    driver = selenium[browser_id]
+    reset_groups_view = []
+    for group in oz_page(driver)['groups'].main_page.hierarchy.groups:
+        reset_groups_view.append(group.name)
+    default_groups_view = tmp_memory['default_groups_view']
+
+    assert default_groups_view == reset_groups_view
