@@ -160,12 +160,13 @@ def add_group_to_harvester(selenium, browser_id, oz_page, group_name,
 def create_index_in_harvester(selenium, browser_id, oz_page, index_name,
                               harvester_name, popups):
     option = 'Indices'
+    member_menu_option = 'Create new index'
 
     click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id,
                                                       harvester_name, option,
                                                       oz_page)
     click_on_member_menu_option_in_harvester_indices_page(selenium, browser_id,
-                                                          'Create new index',
+                                                          member_menu_option,
                                                           oz_page, popups)
     type_index_name_to_input_field_in_indices_page(selenium, browser_id,
                                                    oz_page, index_name)
