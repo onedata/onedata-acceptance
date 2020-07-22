@@ -159,7 +159,7 @@ Feature: Basic management of groups privileges in Onezone GUI
     Then user of browser sees following privileges of "group2" group in space members subpage:
           User management:
             granted: True
-    And user of browser clicks "group4" group in "group1" group members groups list
+    And user of browser clicks "group2" group in "group1" group members groups list
     And user of browser clicks "group4" group in "group1" group members groups list
     And user of browser sees following privileges of "group4" group in space members subpage:
           User management:
@@ -183,7 +183,7 @@ Feature: Basic management of groups privileges in Onezone GUI
     Then user of browser sees following privileges of "user1" user in space members subpage:
           User management:
             granted: False
-    And user of browser clicks "user2" user in "group1" group members users list
+    And user of browser clicks "user1" user in "group1" group members users list
     And user of browser clicks "user2" user in "group1" group members users list
     And user of browser sees following privileges of "user2" user in space members subpage:
           User management:
@@ -204,7 +204,7 @@ Feature: Basic management of groups privileges in Onezone GUI
     Then user of browser sees following privileges of "group2" group in space members subpage:
           User management:
             granted: True
-    And user of browser clicks "user2" user in "group1" group members users list
+    And user of browser clicks "group2" group in "group1" group members groups list
     And user of browser clicks "user2" user in "group1" group members users list
     And user of browser sees following privileges of "user2" user in space members subpage:
           User management:
