@@ -249,3 +249,54 @@ def check_urls_are_equal(selenium, browser_id, op_container, clipboard,
     err_msg = f'modal URL is {modal_url} and share URL is {share_url}'
     assert share_url == modal_url, err_msg
 
+
+@wt(parsers.parse('user of {browser_id} opens description tab on share view'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def open_description_tab(selenium, browser_id, op_container):
+    op_container(selenium[browser_id]).shares_page.description_tab()
+
+
+@wt(parsers.parse('user of {browser_id} clicks on add description button '
+                  'on share description tab'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_add_description_button(selenium, browser_id, op_container):
+    op_container(selenium[browser_id]).shares_page.create_description()
+
+
+@wt(parsers.parse('user of {browser_id} appends "{description}" '
+                  'to description on share description tab'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def append_description(selenium, browser_id, description, op_container):
+    driver = selenium[browser_id]
+    # check if editor is in preview or edit mode
+    if op_container(driver).shares_page.editor_mode == 'Edit Markdown':
+        op_container(driver).shares_page.switch_editor_markdown()
+    op_container(driver).shares_page.description_input += description
+
+
+@wt(parsers.parse('user of {browser_id} clicks on save changes '
+                  'in description button'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def save_description_changes(selenium, browser_id, op_container):
+    driver = selenium[browser_id]
+    op_container(driver).shares_page.save_description()
+
+
+@wt(parsers.parse('user of {browser_id} opens description tab '
+                  'on share\'s public interface'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def open_description_tab_in_public_share(selenium, browser_id, public_share):
+    driver = selenium[browser_id]
+    _change_iframe_for_public_share_page(selenium, browser_id)
+    public_share(driver).description_tab()
+
+
+@wt(parsers.parse('user of {browser_id} sees "{description}" description '
+                  'on share\'s public interface'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_proper_description(selenium, browser_id,
+                              description, public_share):
+    driver = selenium[browser_id]
+    _change_iframe_for_public_share_page(selenium, browser_id)
+    err_msg = f'wrong description'
+    assert public_share(driver).description == description, err_msg

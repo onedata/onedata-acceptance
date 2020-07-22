@@ -48,3 +48,10 @@ class SharesContentPage(PageObject):
     breadcrumbs = Breadcrumbs('.file-browser-head-container')
     menu_button = Button('.menu-toggle-frame')
     file_browser = FileBrowser('.file-browser')
+    description_tab = Button('.nav-link-description')
+    create_description = Button('.btn-content-info')
+    description_input = Input('.code-textarea')
+    save_description = Button('.btn.ready')
+    switch_editor_markdown = Button('.btn-switch-editor-mode')
+    editor_mode = Label('.btn-switch-editor-mode .text')
+

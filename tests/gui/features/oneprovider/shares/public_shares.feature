@@ -147,3 +147,29 @@ Feature: Basic data tab operations on public shares in file browser
     Then user of browser2 sends copied URL to user of browser1
     And user of browser1 opens received URL
     And user of browser1 sees that public share is named "share_dir1"
+
+
+  Scenario: User sees that share description changed after owner updated it
+    When user of browser1 opens file browser for "space1" space
+    And user of browser1 hands "share_dir1" share's URL of "dir1" to user of browser2
+
+    And user of browser2 opens received URL
+    And user of browser2 sees that public share is named "share_dir1"
+    And user of browser1 opens "share_dir1" single share view of space "space1" using sidebar
+
+    # create description
+    And user of browser1 opens description tab on share view
+    And user of browser1 clicks on add description button on share description tab
+    And user of browser1 appends "##use this share with responsibility" to description on share description tab
+    And user of browser1 clicks on save changes in description button
+
+    And user of browser2 refreshes site
+    And user of browser2 opens description tab on share's public interface
+    And user of browser2 sees "use this share with responsibility" description on share's public interface
+
+    # update description
+    And user of browser1 appends " and joy" to description on share description tab
+    And user of browser1 clicks on save changes in description button
+    And user of browser2 refreshes site
+    And user of browser2 opens description tab on share's public interface
+    And user of browser2 sees "use this share with responsibility and joy" description on share's public interface
