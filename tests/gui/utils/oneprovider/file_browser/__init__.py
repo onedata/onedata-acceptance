@@ -38,6 +38,8 @@ class _FileBrowser(PageObject):
 
     _upload_input = WebElement('.fb-upload-trigger input')
 
+    refresh_button = Button('.fb-toolbar-button .oneicon-refresh')
+
     def __str__(self):
         return 'file browser in {}'.format(self.parent)
 

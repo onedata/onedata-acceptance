@@ -66,9 +66,11 @@ Feature: Basic management of spaces memberships in Onezone GUI
     And user of browser2 clicks "space2" on the spaces list in the sidebar
     And user of browser2 clicks Members of "space2" in the sidebar
     And user of browser2 clicks "group2" group in "space2" space members groups list
-    And user of browser2 expands "Group management" privilege for "group2" group in space members subpage
-    And user of browser2 checks "Remove group" privilege toggle in "Group management" for "group2" group in space members subpage
-    And user of browser2 clicks Save button for "group2" group in space members subpage
+    And user of browser2 sets following privileges for "group2" group in space members subpage:
+            Group management:
+              granted: Partially
+              privilege subtypes:
+                Remove group: True
 
     And user of browser1 clicks on Data in the main menu
     And user of browser1 clicks "space2" on the spaces list in the sidebar

@@ -248,3 +248,4 @@ def check_urls_are_equal(selenium, browser_id, op_container, clipboard,
     modal_url = clipboard.paste(display=displays[browser_id])
     err_msg = f'modal URL is {modal_url} and share URL is {share_url}'
     assert share_url == modal_url, err_msg
+

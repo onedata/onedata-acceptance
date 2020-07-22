@@ -11,14 +11,14 @@ __license__ = ("This software is released under the MIT license cited in "
 from pytest_bdd import when, then, parsers
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.utils.bdd_utils import wt
 from tests.utils.utils import repeat_failed
 
 
-@when(parsers.parse('user of {browser_id} selects "{space_name}" '
-                    'from spaces sidebar list'))
-@then(parsers.parse('user of {browser_id} selects "{space_name}" '
-                    'from spaces sidebar list'))
-def select_sapce_from_sidebar_list(selenium, browser_id, space_name, op_container):
+@wt(parsers.parse('user of {browser_id} selects "{space_name}" '
+                  'from spaces sidebar list'))
+def select_sapce_from_sidebar_list(selenium, browser_id, space_name,
+                                   op_container):
     op_container(selenium[browser_id]).spaces.sidebar.spaces[space_name].click()
 
 

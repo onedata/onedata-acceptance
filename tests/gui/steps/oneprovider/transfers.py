@@ -105,7 +105,7 @@ def migrate_item(selenium, browser_id, source, target, hosts, popups):
 
     data_distribution_modal = modals(driver).data_distribution
     data_distribution_modal.providers[source_name].menu_button()
-    popups(driver).data_distribution_menu.menu[menu_option]()
+    popups(driver).popover_menu.menu[menu_option]()
 
     _expand_dropdown_in_migrate_record(driver)
     modals(driver).dropdown.options[target_name].click()
@@ -124,7 +124,7 @@ def replicate_item(selenium, browser_id, provider, hosts, popups):
      .data_distribution
      .providers[provider_name]
      .menu_button())
-    popups(driver).data_distribution_menu.menu[menu_option]()
+    popups(driver).popover_menu.menu[menu_option]()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) evicts selected item'

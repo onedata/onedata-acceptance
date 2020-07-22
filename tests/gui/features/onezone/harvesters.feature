@@ -139,4 +139,3 @@ Feature: Basic management of harvester in Onezone GUI
 
     And user of browser removes "harvester9" harvester in Onezone page
     And user of browser leaves "space1" space in Onezone page
-

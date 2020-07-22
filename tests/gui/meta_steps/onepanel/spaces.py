@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import time
 from tests.gui.steps.modal import assert_error_modal_with_text_appeared
 from tests.gui.steps.onepanel.common import *
 from tests.gui.steps.common.notifies import *
@@ -287,8 +288,8 @@ def g_revoke_all_space_supports_using_rest(selenium, hosts, users,
     _revoke_all_space_supports_using_rest(selenium, hosts, users, provider_host)
 
 
-@wt(parsers.parse('there are no spaces supported by {provider_host} '
-                  'in Onepanel'))
+@wt(parsers.parse('{provider_host} revokes all spaces support in Onepanel '
+                  'using REST'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_revoke_all_space_supports_using_rest(selenium, hosts, users,
                                             provider_host):
