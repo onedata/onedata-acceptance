@@ -25,7 +25,7 @@ Feature: Quality of Service tests for 2 providers using multiple browsers in One
     And user of [browser_unified, browser_emergency] logged as [user1, admin] to [Onezone, emergency interface of Onepanel] service
 
 
-    Scenario: Adding storage id as quality of service
+    Scenario: Adding storage id as qos requirement
       When user of browser_unified clicks "space1" on the spaces list in the sidebar
       And user of browser_unified clicks Data of "space1" in the sidebar
       And user of browser_unified sees file browser in data tab in Oneprovider page
@@ -38,14 +38,14 @@ Feature: Quality of Service tests for 2 providers using multiple browsers in One
       And user of browser_emergency copies id of "posix" storage to clipboard via copy button
       And user of browser_unified copies storageId quality of service from clipboard for "file1" from file browser
       Then user of browser_unified clicks on qos status tag for "file1" in file browser
-      And user of browser_unified sees that all qualities of service are fulfilled
+      And user of browser_unified sees that all qos requirements are fulfilled
       And user of browser_unified clicks on "Close" button in modal "Quality of Service"
       And user of browser_unified sees file chunks for file "file1" as follows:
             oneprovider-1: entirely filled
             oneprovider-2: entirely filled
 
 
-    Scenario: Auto-cleaning with quality of service set
+    Scenario: Auto-cleaning with qos requirement set
       When user of browser_emergency clicks on Spaces item in submenu of "oneprovider-2" item in CLUSTERS sidebar in Onepanel
       And user of browser_emergency opens "space1" record on spaces list in Spaces page in Onepanel
       And user of browser_emergency clicks on File popularity navigation tab in space "space1"
@@ -56,7 +56,7 @@ Feature: Quality of Service tests for 2 providers using multiple browsers in One
       And user of browser_unified uploads "20B-0.txt" to the root directory of "space1"
       And user of browser_unified uses upload button from file browser menu bar to upload file "large_file.txt" to current dir
       And user of browser_unified clicks on Data in the main menu
-      And user of browser_unified creates 2 replicas of "anyStorage" quality of service for "large_file.txt"
+      And user of browser_unified creates 2 replicas of "anyStorage" qos requirement for "large_file.txt"
       And user of browser_unified replicates "20B-0.txt" to provider "oneprovider-2"
       And user of browser_emergency is idle for 8 seconds
 

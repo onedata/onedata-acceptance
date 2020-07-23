@@ -138,7 +138,7 @@ def evict_item(selenium, browser_id, provider, hosts, popups):
      .data_distribution
      .providers[provider_name]
      .menu_button())
-    popups(driver).data_distribution_menu.menu[menu_option]()
+    popups(driver).popover_menu.menu[menu_option]()
 
 
 @wt(parsers.re('user of {browser_id} sees "see history" button'))

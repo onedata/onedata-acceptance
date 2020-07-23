@@ -18,24 +18,24 @@ Feature: Quality of Service tests using sigle browser in Oneprovider GUI
 
     And opened browser with user1 signed in to "onezone" service
 
-    Scenario: Adding quality of service
-      When user of browser creates "geo=PL" quality of service for "file1"
+    Scenario: Adding qos requirement
+      When user of browser creates "geo=PL" qos requirement for "file1"
       Then user of browser sees qos status tag for "file1" in file browser
 
-    Scenario: Deleting quality of service
-      When user of browser creates "geo=PL" quality of service for "file1"
+    Scenario: Deleting qos requirement
+      When user of browser creates "geo=PL" qos requirement for "file1"
       And user of browser sees qos status tag for "file1" in file browser
       And user of browser clicks on qos status tag for "file1" in file browser
-      And user of browser deletes all qualities of service
+      And user of browser deletes all qos requirements
       And user of browser clicks on "CLose" button in modal "Quality of Service"
       Then user of browser does not see qos status tag for "file1" in file browser
 
     Scenario: Adding fulfilled qos
-      When user of browser creates "anyStorage" quality of service for "file1"
-      Then user of browser clicks on qos status tag for "file1" in file browser
-      And user of browser sees that all qualities of service are fulfilled
+      When user of browser creates "anyStorage" qos requirement for "file1"
+      And user of browser clicks on qos status tag for "file1" in file browser
+      Then user of browser sees that all qualities of service are fulfilled
 
     Scenario: Adding impossible qos
       When user of browser creates "hello=WORLD" quality of service for "file1"
       Then user of browser clicks on qos status tag for "file1" in file browser
-      And user of browser sees that all qualities of service are impossible
+      And user of browser sees that all qos requirements are impossible

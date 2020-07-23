@@ -21,17 +21,17 @@ Feature: Quality of Service tests for 2 providers using sigle browser in Oneprov
 
     And opened browser with user1 signed in to "onezone" service
 
-    Scenario: Adding "anyStorage" quality of service with 2 replicas
-      When user of browser creates 2 replicas of "anyStorage" quality of service for "file1"
+    Scenario: Adding "anyStorage" qos requirement with 2 replicas
+      When user of browser creates 2 replicas of "anyStorage" qos requirement for "file1"
       Then user of browser clicks on qos status tag for "file1" in file browser
-      And user of browser sees that all qualities of service are fulfilled
+      And user of browser sees that all qos requirements are fulfilled
       And user of browser clicks on "Close" button in modal "Quality of Service"
       And user of browser sees file chunks for file "file1" as follows:
             oneprovider-1: entirely filled
             oneprovider-2: entirely filled
 
-    Scenario: Evicting from storage with quality of service with 2 replicas
-      When user of browser creates 2 replicas of "anyStorage" quality of service for "file1"
+    Scenario: Evicting from storage with qos requirement with 2 replicas
+      When user of browser creates 2 replicas of "anyStorage" qos requirement for "file1"
       And user of browser clicks on qos status tag for "file1" in file browser
       And user of browser sees that all qualities of service are fulfilled
       And user of browser clicks on "Close" button in modal "Quality of Service"

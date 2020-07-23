@@ -16,8 +16,8 @@ from tests.gui.steps.onezone.spaces import \
     click_on_option_of_space_on_left_sidebar_menu
 
 
-@wt(parsers.parse('user of {browser_id} creates "{expression}" quality of '
-                  'service for "{item_name}"'))
+@wt(parsers.parse('user of {browser_id} creates "{expression}" qos requirement '
+                  'for "{item_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_qos_modal(selenium, browser_id, modals, item_name, tmp_memory,
                      expression, oz_page, op_container, popups):
@@ -46,7 +46,7 @@ def create_qos_modal(selenium, browser_id, modals, item_name, tmp_memory,
 
 
 @wt(parsers.parse('user of {browser_id} creates {replicas_number} replicas of '
-                  '"{expression}" quality of service for "{item_name}"'))
+                  '"{expression}" qos requirement for "{item_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_qos_modal_with_replicas(selenium, browser_id, modals, item_name,
                                    tmp_memory, expression, oz_page,
@@ -78,7 +78,7 @@ def create_qos_modal_with_replicas(selenium, browser_id, modals, item_name,
     click_modal_button(selenium, browser_id, button, modal, modals)
 
 
-@wt(parsers.parse('user of {browser_id} copies storageId quality of service '
+@wt(parsers.parse('user of {browser_id} copies storageId qos requirement '
                   'from clipboard for "{item_name}" from file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_qos_modal(selenium, browser_id, modals, item_name, tmp_memory,
@@ -98,7 +98,7 @@ def create_qos_modal(selenium, browser_id, modals, item_name, tmp_memory,
     click_modal_button(selenium, browser_id, button, modal, modals)
 
 
-@wt(parsers.parse('user of {browser_id} creates anyStorage quality of service '
+@wt(parsers.parse('user of {browser_id} creates anyStorage qos requirement '
                   'excluding storage from clipboard for "{item_name}" '
                   'from file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)

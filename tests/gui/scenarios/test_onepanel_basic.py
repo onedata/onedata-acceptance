@@ -86,5 +86,5 @@ scenarios('../features/onepanel/provider.feature')
 scenarios('../features/onepanel/spaces.feature')
 scenarios('../features/onepanel/members.feature')
 scenarios('../features/onepanel/emergency_passphrase.feature')
-scenarios('../features/onepanel/invite_member.feature')
+scenarios('../features/onepanel/cluster_users_emergency.feature')
 

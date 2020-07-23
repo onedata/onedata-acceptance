@@ -15,7 +15,7 @@ from tests.utils.bdd_utils import wt
 from tests.utils.utils import repeat_failed
 
 
-@wt(parsers.parse('user of {browser_id} deletes all qualities of service'))
+@wt(parsers.parse('user of {browser_id} deletes all qos requirements'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def delete_all_qualities_of_service(selenium, browser_id, modals, popups):
     driver = selenium[browser_id]
@@ -25,7 +25,7 @@ def delete_all_qualities_of_service(selenium, browser_id, modals, popups):
         popups(driver).delete_qos_popup.confirm.click()
 
 
-@wt(parsers.parse('user of {browser_id} sees that all qualities of service are '
+@wt(parsers.parse('user of {browser_id} sees that all qos requirements are '
                   'fulfilled'))
 @repeat_failed(interval=1, timeout=90,
                exceptions=(NoSuchElementException, RuntimeError))
@@ -37,7 +37,7 @@ def assert_all_qualities_of_service_are_fulfilled(selenium, browser_id,
         assert hasattr(requirement, 'fulfilled'), f'fulfilled field not found'
 
 
-@wt(parsers.parse('user of {browser_id} sees that all qualities of service are '
+@wt(parsers.parse('user of {browser_id} sees that all qos requirements are '
                   'impossible'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_all_qualities_of_service_are_impossible(selenium, browser_id,
