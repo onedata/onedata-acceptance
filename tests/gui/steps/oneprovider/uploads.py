@@ -30,7 +30,7 @@ def click_on_confirm_cancel_upload(selenium, browser_id, popups):
 
 @wt(parsers.parse('user of {browser_id} sees that number of uploads is'
                   ' equal {number}'))
-@repeat_failed(timeout=WAIT_BACKEND)
+@repeat_failed(timeout=2 * WAIT_BACKEND)
 def assert_number_of_files_in_uploaded_files_list(selenium, browser_id, oz_page,
                                                   number: int):
     driver = selenium[browser_id]

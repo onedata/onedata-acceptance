@@ -54,7 +54,7 @@ Feature: Basic management of providers in Onezone GUI
     When user of browser clicks on Data in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Providers of "space1" in the sidebar
-    And user of browser revokes "space1" space support in "oneprovider-1" provider in Onepanel
+    And user of browser revokes space support of "oneprovider-1" provider in oneproviders list in data sidebar
     Then user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Providers of "space1" in the sidebar
     And user of browser sees that length of providers list of "space1" equals "0"

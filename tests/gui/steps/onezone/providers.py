@@ -454,27 +454,6 @@ def assert_len_of_spaces_list_in_provider_popover(selenium, browser_id,
                                              'is not equal {}'.format(number))
 
 
-# @wt(parsers.parse('user of {browser_id} revokes space support of "{provider}" '
-#                   'provider in oneproviders list'))
-# def revoke_support_of_provider_in_list(selenium, browser_id, provider, oz_page,
-#                                        popups, modals, hosts):
-#     driver = selenium[browser_id]
-#     provider_name = hosts[provider]['name']
-#     button = 'Cease support'
-#     notify_type = 'info'
-#     notify_text_regexp = 'Ceased.*[Ss]upport.*'
-#
-#     click_on_menu_button_of_provider_on_providers_list(driver, provider_name,
-#                                                        oz_page)
-#     click_on_cease_support_in_menu_of_provider_on_providers_list(driver, popups)
-#     wt_clicks_on_understand_risk_in_cease_support_modal(selenium, browser_id,
-#                                                         modals)
-#     wt_clicks_on_btn_in_cease_support_modal(selenium, browser_id, button,
-#                                             modals)
-#     notify_visible_with_text(selenium, browser_id, notify_type,
-#                              notify_text_regexp)
-
-
 def click_on_menu_button_of_provider_on_providers_list(driver, provider_name,
                                                        oz_page):
     oz_page(driver)['data'].providers_page.providers_list[

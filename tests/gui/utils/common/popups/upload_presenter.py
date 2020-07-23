@@ -10,16 +10,11 @@ from tests.gui.utils.core.web_elements import (WebElement, Button,
                                                WebItemsSequence)
 
 
-class UploadPopup(PageObject):
-    cancel_button = Button('.cancel-action.upload-summary-header-cancel')
-
-
 class UploadPresenter(PageObject):
     upload_state = WebElement('.header-text')
     _summary_state = WebElement('.summary-state .one-icon')
 
     minimize_summary_button = Button('.upload-summary-header-toggle-minimize')
-    cancel_button_list = WebItemsSequence('.upload-summary-header-progress-bar', cls=UploadPopup)
     cancel_button = Button('.cancel-action.upload-summary-header-cancel')
 
     def is_failed(self):

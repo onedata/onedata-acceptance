@@ -43,9 +43,9 @@ class Space(Element):
 
 
 class Provider(Element):
+    id = name = Label('.one-label')
     support = Label('.outer-text')
     menu_button = Button('.provider-menu-toggle')
-    id = name = Label('.one-label')
 
 
 class SpaceOverviewPage(PageObject):
@@ -112,4 +112,3 @@ class DataPage(GenericPage):
     current_provider = Label('.current-oneprovider-name')
     providers = WebItemsSequence('.provider-online', cls=_Provider)
     choose_other_provider = Button('.choose-oneprovider-link')
-
