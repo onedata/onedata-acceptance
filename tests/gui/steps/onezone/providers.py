@@ -462,4 +462,4 @@ def click_on_menu_button_of_provider_on_providers_list(driver, provider_name,
 
 def click_on_cease_support_in_menu_of_provider_on_providers_list(driver,
                                                                  popups):
-    popups(driver).cease_support_from_providers_list_menu()
+    popups(driver).popover_menu.cease_support_from_providers_list_menu()
