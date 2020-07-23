@@ -91,8 +91,6 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser clicks on shared status tag for "dir1" in file browser
     Then user of browser sees that "Share directory" modal has appeared
     And user of browser sees that item named "dir1" is shared 1 time in modal
-    And user of browser clicks Overview of "space1" in the sidebar
-    And user of browser sees in the INFO section of Overview page that number of shares is 1
 
 
 
@@ -111,8 +109,6 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser writes "renamed_share_dir1" into share name text field in modal "Rename share"
     And user of browser clicks on "Rename" button in modal "Rename share"
     Then user of browser sees that selected share is named "renamed_share_dir1"
-    And user of browser clicks Overview of "space1" in the sidebar
-    And user of browser sees in the INFO section of Overview page that number of shares is 1
 
 
   Scenario: User removes share from single share view
@@ -207,8 +203,6 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser sees file browser on single share view
     And user of browser double clicks on item named "dir1" in file browser
     Then user of browser sees that item named "20B-0.txt" has appeared in file browser on single share view
-    And user of browser clicks Overview of "space1" in the sidebar
-    And user of browser sees in the INFO section of Overview page that number of shares is 1
 
 
   Scenario: User does not see files in single share view in full Onezone interface after removing them from shared directory
@@ -232,8 +226,6 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser moves to "share_dir2" single share view using sidebar
     And user of browser double clicks on item named "dir2" in file browser
     Then user of browser sees only items named ["dir3", "file2"] in file browser
-    And user of browser clicks Overview of "space1" in the sidebar
-    And user of browser sees in the INFO section of Overview page that number of shares is 1
 
 
   Scenario: User can change working directory using breadcrumbs

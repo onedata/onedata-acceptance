@@ -171,8 +171,9 @@ def assert_number_of_supporting_providers_of_space(selenium, browser_id,
                                       .supporting_providers_number)
     assert int(number) == supporting_providers_number, ('found {} supporting '
                                                         'providers instead of {}'
-                                                        .format(supporting_providers_number,
-                                                                number))
+                                                        .format(
+        supporting_providers_number,
+        number))
 
 
 @wt(parsers.parse('user of {browser_id} sees {number} size of '
@@ -233,7 +234,8 @@ def assert_providers_list_contains_provider(selenium, browser_id, provider,
     if provider in hosts:
         provider = hosts[provider]['name']
     providers_list = oz_page(driver)['data'].providers_page.providers_list
-    assert provider in providers_list, 'provider "{}" not found'.format(provider)
+    assert provider in providers_list, 'provider "{}" not found'.format(
+        provider)
 
 
 @wt(parsers.parse('user of {browser_id} sees that length of providers list '
@@ -320,7 +322,7 @@ def click_copy_button_on_request_support_page(selenium, browser_id, oz_page,
                   'in support token text field are the same'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_copy_token_and_input_token_are_the_same(selenium, browser_id,
-                                                      oz_page, tmp_memory):
+                                                   oz_page, tmp_memory):
     driver = selenium[browser_id]
     first_token = tmp_memory[browser_id]['mailbox']['token']
     second_token = oz_page(driver)['data'].providers_page.get_support_page \
@@ -403,9 +405,10 @@ def check_on_right_page(selenium, browser_id, tab_name, oz_page):
 
 @wt(parsers.parse('user of {browser_id} sees in the INFO section of Overview '
                   'page that number of shares is {number}'))
-def assert_number_of_shares_on_overview_page(browser_id, selenium, oz_page, number):
+def assert_number_of_shares_on_overview_page(browser_id, selenium, oz_page,
+                                             number: int):
     driver = selenium[browser_id]
-    shares_count = oz_page(driver)['data'].overview_page.info_page.shares_count
-    assert int(number) == int(shares_count), ('number of shares equals {},'
-                                         ' not {} as expected'.format(
-                                          shares_count, int(number)))
+    shares_count = int(
+        oz_page(driver)['data'].overview_page.info_page.shares_count)
+    assert number == shares_count, (f'number of shares equals {shares_count},'
+                                    ' not {number} as expected')
