@@ -43,9 +43,9 @@ Feature: Basic management of groups memberships in Onezone GUI
     And user of browser sees that "group2" group is member of "group1" group in group memberships mode
     And user of browser sees that "group3" group is member of "group2" group in group memberships mode
 
-    # go to space overview and check membership membership has changed
+    # go to space overview and check if membership membership has changed
     And user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser sees 1 direct 3 effective groups and 1 direct 2 effective users on space overview page
+    And user of browser sees 1 direct, 3 effective groups and 1 direct, 2 effective users on space overview page
 
 
   Scenario: User removes relation between user and group in members subpage
@@ -78,6 +78,6 @@ Feature: Basic management of groups memberships in Onezone GUI
     Then user of browser sees 1 membership row in group memberships mode
     And user of browser does not see that "group3" group is member of "group2" group in group memberships mode
 
-    # go to space overview and check membership has changed
+    # go to space overview and check if membership has changed
     And user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser sees 1 direct 2 effective groups and 1 direct 2 effective users on space overview page
+    And user of browser sees 1 direct, 2 effective groups and 1 direct, 2 effective users on space overview page

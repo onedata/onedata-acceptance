@@ -39,7 +39,7 @@ Feature: Joining a group in Onezone GUI
     And user of browser2 sees group "group1" on groups list
 
     And user of browser2 clicks "space1" on the spaces list in the sidebar
-    And user of browser2 sees 1 direct 1 effective groups and 1 direct 2 effective users on space overview page
+    And user of browser2 sees 1 direct, 1 effective groups and 1 direct, 2 effective users on space overview page
 
 
   Scenario: User fails to join group he already belongs to
@@ -64,7 +64,7 @@ Feature: Joining a group in Onezone GUI
     Then user of browser2 sees "DON’T HAVE ACCESS" in error details on groups page
 
 
-  Scenario: User adds new group to existing one and checks space page
+  Scenario: User adds new group to existing one and checks member info on space page
     When user of browser2 creates group "group2"
     And user of browser1 opens group "group1" members subpage
     And user of browser1 clicks "group1" on the groups list in the sidebar
@@ -76,5 +76,5 @@ Feature: Joining a group in Onezone GUI
     And user of browser2 adds group "group2" as subgroup using copied token
 
     And user of browser2 clicks "space1" on the spaces list in the sidebar
-    And user of browser2 sees 1 direct 2 effective groups and 1 direct 2 effective users on space overview page
+    And user of browser2 sees 1 direct, 2 effective groups and 1 direct, 2 effective users on space overview page
 

@@ -46,15 +46,18 @@ class Provider(Element):
     support = Label('.outer-text')
 
 
-class SpaceOverviewPage(PageObject):
-    space_name = Label('.with-menu .one-label')
-    rename = Button('.edit-icon')
-    edit_name_box = WebItem('.editor', cls=EditBox)
-
+class MembersTile(PageObject):
     direct_groups = Label('.direct-groups-counter')
     direct_users = Label('.direct-users-counter')
     effective_groups = Label('.effective-groups-counter')
     effective_users = Label('.effective-users-counter')
+
+
+class SpaceOverviewPage(PageObject):
+    space_name = Label('.with-menu .one-label')
+    rename = Button('.edit-icon')
+    edit_name_box = WebItem('.editor', cls=EditBox)
+    members_tile = WebItem('.resource-members-tile .tile-main', cls=MembersTile)
 
 
 class WelcomePage(PageObject):

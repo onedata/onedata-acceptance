@@ -33,7 +33,7 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
 
   Scenario: User removes relation between two groups (effective)
     When user of browser1 clicks "space1" on the spaces list in the sidebar
-    And user of browser1 sees 1 direct 4 effective groups and 1 direct 2 effective users on space overview page
+    And user of browser1 sees 1 direct, 4 effective groups and 1 direct, 2 effective users on space overview page
 
     And user of browser2 opens group "group2" members subpage
     And user of browser2 clicks "group1" group in "group2" group members groups list
@@ -56,7 +56,7 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
     And user of browser1 does not see that "group2" group is member of "group3" group in group memberships mode
 
     And user of browser1 clicks "space1" on the spaces list in the sidebar
-    And user of browser1 sees 1 direct 2 effective groups and 1 direct 2 effective users on space overview page
+    And user of browser1 sees 1 direct, 2 effective groups and 1 direct, 2 effective users on space overview page
     And user of browser2 clicks "space1" on the spaces list in the sidebar
     And user of browser2 sees 2 effective groups on space overview page
 
