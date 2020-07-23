@@ -110,7 +110,8 @@ def type_space_name_on_rename_space_input_on_overview_page(selenium, browser_id,
                                                            space_name, oz_page):
     driver = selenium[browser_id]
     oz_page(driver)['data'].overview_page.info_tile.rename()
-    oz_page(driver)['data'].overview_page.info_tile.edit_name_box.value = space_name
+    oz_page(driver)[
+        'data'].overview_page.info_tile.edit_name_box.value = space_name
 
 
 @wt(parsers.parse('user of {browser_id} clicks on confirmation button '
@@ -164,16 +165,15 @@ def assert_space_has_disappeared_on_spaces(selenium, browser_id, space_name,
                   'providers of "{space_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_of_supporting_providers_of_space(selenium, browser_id,
-                                                   number, space_name, oz_page):
+                                                   number: int, space_name,
+                                                   oz_page):
     driver = selenium[browser_id]
     supporting_providers_number = int(oz_page(driver)['data']
                                       .elements_list[space_name]
                                       .supporting_providers_number)
-    assert int(number) == supporting_providers_number, ('found {} supporting '
-                                                        'providers instead of {}'
-                                                        .format(
-        supporting_providers_number,
-        number))
+    assert number == supporting_providers_number, (
+        f'found {supporting_providers_number} supporting providers instead of '
+        f'{number}')
 
 
 @wt(parsers.parse('user of {browser_id} sees {number} size of '
@@ -343,7 +343,8 @@ def assert_copy_token_is_not_empty(selenium, browser_id, tmp_memory):
 def assert_name_label_of_space_on_overview_page(selenium, browser_id,
                                                 space_name, oz_page):
     driver = selenium[browser_id]
-    assert oz_page(driver)['data'].overview_page.info_tile.space_name == space_name, \
+    assert oz_page(driver)[
+               'data'].overview_page.info_tile.space_name == space_name, \
         'space "{}" not found on overview page'.format(space_name)
 
 
