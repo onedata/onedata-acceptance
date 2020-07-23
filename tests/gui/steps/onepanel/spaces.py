@@ -348,24 +348,9 @@ def click_on_navigation_tab_in_space(browser_id, tab_name, onepanel, selenium):
     getattr(nav, tab).click()
 
 
-@wt(parsers.parse('user of {browser_id} clicks on "{space_name}" '
-                  'record in spaces list'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_space(browser_id, space_name, onepanel, selenium):
-    onepanel(selenium[browser_id]).content.spaces.spaces[space_name].click()
-
-
-@wt(parsers.parse('user of {browser_id} clicks on {tab_name} tab '
-                  'in space overview page'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_space_tab(browser_id, tab_name, onepanel, selenium):
-    getattr(onepanel(selenium[browser_id]).content.spaces.space.navigation,
-            transform(tab_name)).click()
-
-
 @wt(parsers.parse('user of {browser_id} clicks on {interval} update view'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_space_tab(browser_id, interval, onepanel, selenium):
+def click_on_interval_update(browser_id, interval, onepanel, selenium):
     getattr(onepanel(selenium[browser_id]).content.spaces.space.sync_chart,
             transform(interval + ' view')).click()
 
@@ -401,8 +386,8 @@ def enable_space_option_in_onepanel(selenium, browser_id, onepanel, option):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def enable_selective_cleaning(selenium, browser_id, onepanel):
     driver = selenium[browser_id]
-    onepanel(driver).content.spaces.space.auto_cleaning.selective_cleaning\
-        .check()
+    op = onepanel(driver)
+    op.content.spaces.space.auto_cleaning.selective_cleaning.check()
 
 
 @wt(parsers.parse('user of {browser_id} enables {option} '

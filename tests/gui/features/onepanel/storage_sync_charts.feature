@@ -21,7 +21,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
             mount point: /volumes/persistence/storage
             imported storage: true
 
-    # create space
     When user of browser2 creates "space1" space in Onezone
 
     And user of browser2 sends support token for "space1" to user of browser1
@@ -37,8 +36,8 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser1 is idle for 30 seconds
 
     # open chart tab
-    And user of browser1 clicks on "space1" record in spaces list
-    And user of browser1 clicks on storage synchronization tab in space overview page
+    And user of browser1 opens "space1" record on spaces list in Spaces page in Onepanel
+    And user of browser1 clicks on storage synchronization navigation tab in space "space1"
 
     # check charts after storage import
     Then user of browser1 clicks on last hour update view
