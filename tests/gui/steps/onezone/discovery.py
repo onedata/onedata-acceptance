@@ -49,6 +49,17 @@ def type_endpoint_to_input_field_in_discovery_page(selenium, browser_id,
     _enter_text(input_field, text)
 
 
+@wt(parsers.parse('user of {browser_id} clicks "{text}" in '
+                  'harvester indices page menu'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_member_menu_option_in_harvester_indices_page(selenium, browser_id,
+                                                          text, oz_page,
+                                                          popups):
+    driver = selenium[browser_id]
+    oz_page(driver)['discovery'].indices_page.menu_button.click()
+    popups(driver).popover_menu.menu[text]()
+
+
 @wt(parsers.parse('user of {browser_id} clicks on Create button '
                   'in discovery page'))
 @repeat_failed(timeout=WAIT_FRONTEND)

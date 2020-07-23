@@ -40,9 +40,6 @@ Feature: Provider management in Onepanel GUI
     And user of browser1 sees that Domain attribute is equal to test hostname of "oneprovider-1" in Provider panel
 
     # check if provider details were modified also in oz and op
-    And user of browser2 is idle for 10 seconds
-    And user of browser2 refreshes site
-    And user of browser2 is idle for 2 seconds
     Then user of browser2 sees that current provider is "pro1" on file browser page
 
     And user of browser2 clicks on Data in the main menu
