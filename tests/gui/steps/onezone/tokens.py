@@ -325,7 +325,7 @@ def parse_and_compare_usage_count(text_given, text_expected):
     exp1, exp2 = text_expected.split('/')
     assert str(no1).strip() == str(exp1).strip(), (f'First number should be' 
                                                    f' {exp1}')
-    assert str(no2).strip() == str(exp2).strip(), (f'First number should be '
+    assert str(no2).strip() == str(exp2).strip(), (f'Second number should be '
                                                    f'{exp2}')
 
 

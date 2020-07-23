@@ -32,30 +32,42 @@ Feature: Basic management of groups privileges in Onezone GUI
   Scenario: User sees and modifies privileges to group, which is nested in his parent group
     When user of browser goes to group "group1" members subpage
     And user of browser clicks "group2" group in "group1" group members groups list
-    And user of browser sees that "User management" is not checked for "group2" group in group members subpage
-    And user of browser checks "User management" privilege toggle for "group2" group in group members subpage
+    And user of browser sees following privileges of "group2" group in space members subpage:
+          User management:
+            granted: False
+    And user of browser sets following privileges for "group2" group in space members subpage:
+          User management:
+            granted: True
     And user of browser clicks Save button for "group2" group in group members subpage
-    Then user of browser sees that "User management" is checked for "group2" group in group members subpage
+    Then user of browser sees following privileges of "group2" group in space members subpage:
+          User management:
+            granted: True
 
 
   Scenario: User sees and modifies privileges to his group
     When user of browser goes to group "group1" members subpage
     And user of browser clicks "user1" user in "group1" group members users list
-    And user of browser sees that "User management" is checked for "user1" user in group members subpage
-    And user of browser unchecks "User management" privilege toggle for "user1" user in group members subpage
-    And user of browser clicks Save button for "user1" user in group members subpage
-    Then user of browser sees that "User management" is not checked for "user1" user in group members subpage
+    And user of browser sees following privileges of "user1" user in space members subpage:
+          User management:
+            granted: True
+    And user of browser sets following privileges for "user1" user in space members subpage:
+          User management:
+            granted: False
+    Then user of browser sees following privileges of "user1" user in space members subpage:
+          User management:
+            granted: False
 
 
   Scenario: User fails to see privileges without view privileges
     When user of browser goes to group "group1" members subpage
     And user of browser clicks "user2" user in "group1" group members users list
     And user of browser sees privileges for "user2" user in group members subpage
-    And user of browser refreshes site
     And user of browser clicks "user1" user in "group1" group members users list
-    And user of browser expands "Group management" privilege for "user1" user in group members subpage
-    And user of browser unchecks "View privileges" privilege toggle in "Group management" for "user1" user in group members subpage
-    And user of browser clicks Save button for "user1" user in group members subpage
+    And user of browser sets following privileges for "user1" user in group members subpage:
+          Group management:
+            granted: Partially
+            privilege subtypes:
+              View privileges: False
     And user of browser refreshes site
     And user of browser clicks "user2" user in "group1" group members users list
     Then user of browser sees Insufficient permissions alert for "user2" user in group members subpage
@@ -64,15 +76,19 @@ Feature: Basic management of groups privileges in Onezone GUI
   Scenario: User fails to remove relation without privileges
     When user of browser goes to group "group1" members subpage
     And user of browser clicks "user1" user in "group1" group members users list
-    And user of browser expands "Group hierarchy management" privilege for "user1" user in group members subpage
-    And user of browser unchecks "Remove child group" privilege toggle in "Group hierarchy management" for "user1" user in group members subpage
-    And user of browser clicks Save button for "user1" user in group members subpage
+    And user of browser sets following privileges for "user1" user in group members subpage:
+          Group hierarchy management:
+            granted: Partially
+            privilege subtypes:
+              Remove child group: False
 
     And user of browser goes to group "group4" members subpage
     And user of browser clicks "user1" user in "group1" group members users list
-    And user of browser expands "Group hierarchy management" privilege for "user1" user in group members subpage
-    And user of browser unchecks "Leave parent group" privilege toggle in "Group hierarchy management" for "user1" user in group members subpage
-    And user of browser clicks Save button for "user1" user in group members subpage
+    And user of browser sets following privileges for "user1" user in group members subpage:
+          Group hierarchy management:
+            granted: Partially
+            privilege subtypes:
+              Leave parent group: False
 
     And user of browser goes to group "group1" members subpage
     And user of browser clicks show view expand button in group members subpage header
@@ -88,9 +104,11 @@ Feature: Basic management of groups privileges in Onezone GUI
   Scenario: User removes relation with privilege "Remove child group" and without "Leave parent group"
     When user of browser goes to group "group4" members subpage
     And user of browser clicks "user1" user in "group1" group members users list
-    And user of browser expands "Group hierarchy management" privilege for "user1" user in group members subpage
-    And user of browser unchecks "Leave parent group" privilege toggle in "Group hierarchy management" for "user1" user in group members subpage
-    And user of browser clicks Save button for "user1" user in group members subpage
+    And user of browser sets following privileges for "user1" user in group members subpage:
+          Group hierarchy management:
+            granted: Partially
+            privilege subtypes:
+              Leave parent group: False
 
     And user of browser goes to group "group1" members subpage
     And user of browser clicks show view expand button in group members subpage header
@@ -108,9 +126,11 @@ Feature: Basic management of groups privileges in Onezone GUI
   Scenario: User removes relation with privilege "Leave parent group" and without "Remove child group"
     When user of browser goes to group "group1" members subpage
     And user of browser clicks "user1" user in "group1" group members users list
-    And user of browser expands "Group hierarchy management" privilege for "user1" user in group members subpage
-    And user of browser unchecks "Remove child group" privilege toggle in "Group hierarchy management" for "user1" user in group members subpage
-    And user of browser clicks Save button for "user1" user in group members subpage
+    And user of browser sets following privileges for "user1" user in group members subpage:
+          Group hierarchy management:
+            granted: Partially
+            privilege subtypes:
+              Remove child group: False
 
     And user of browser goes to group "group1" members subpage
     And user of browser clicks show view expand button in group members subpage header
