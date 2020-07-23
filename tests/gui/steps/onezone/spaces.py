@@ -109,8 +109,8 @@ def click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option,
 def type_space_name_on_rename_space_input_on_overview_page(selenium, browser_id,
                                                            space_name, oz_page):
     driver = selenium[browser_id]
-    oz_page(driver)['data'].overview_page.rename()
-    oz_page(driver)['data'].overview_page.edit_name_box.value = space_name
+    oz_page(driver)['data'].overview_page.info_tile.rename()
+    oz_page(driver)['data'].overview_page.info_tile.edit_name_box.value = space_name
 
 
 @wt(parsers.parse('user of {browser_id} clicks on confirmation button '
@@ -120,7 +120,7 @@ def rename_space_by_click_on_confirmation_button_on_overview_page(selenium,
                                                                   browser_id,
                                                                   oz_page):
     driver = selenium[browser_id]
-    oz_page(driver)['data'].overview_page.edit_name_box.confirm()
+    oz_page(driver)['data'].overview_page.info_tile.edit_name_box.confirm()
 
 
 @wt(parsers.parse('user of {browser_id} clicks on cancel button '
@@ -128,7 +128,7 @@ def rename_space_by_click_on_confirmation_button_on_overview_page(selenium,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_cancel_rename_button_on_overview_page(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
-    oz_page(driver)['data'].overview_page.edit_name_box.cancel()
+    oz_page(driver)['data'].overview_page.info_tile.edit_name_box.cancel()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on '
@@ -343,7 +343,7 @@ def assert_copy_token_is_not_empty(selenium, browser_id, tmp_memory):
 def assert_name_label_of_space_on_overview_page(selenium, browser_id,
                                                 space_name, oz_page):
     driver = selenium[browser_id]
-    assert oz_page(driver)['data'].overview_page.space_name == space_name, \
+    assert oz_page(driver)['data'].overview_page.info_tile.space_name == space_name, \
         'space "{}" not found on overview page'.format(space_name)
 
 
@@ -396,7 +396,7 @@ def confirm_rename_the_space(selenium, browser_id, option, oz_page):
 @wt(parsers.parse('user of {browser_id} sees "{tab_name}" '
                   'label of current page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_on_right_page(selenium, browser_id, tab_name, oz_page):
+def check_tab_name_label(selenium, browser_id, tab_name, oz_page):
     driver = selenium[browser_id]
     driver.switch_to.window(window_name=driver.window_handles[1])
     label = oz_page(selenium[browser_id])['data'].tab_name
@@ -409,6 +409,6 @@ def assert_number_of_shares_on_overview_page(browser_id, selenium, oz_page,
                                              number: int):
     driver = selenium[browser_id]
     shares_count = int(
-        oz_page(driver)['data'].overview_page.info_page.shares_count)
+        oz_page(driver)['data'].overview_page.info_tile.shares_count)
     assert number == shares_count, (f'number of shares equals {shares_count},'
                                     ' not {number} as expected')

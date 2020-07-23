@@ -7,7 +7,6 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-
 import re
 
 from pytest_bdd import given, when, then, parsers
@@ -66,10 +65,8 @@ def wt_open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):
     open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts)
 
 
-@when(parsers.re('user of (?P<browser_id>.+) should be '
-                 'redirected to (?P<page>.+) page'))
-@then(parsers.re('user of (?P<browser_id>.+) should be '
-                 'redirected to (?P<page>.+) page'))
+@wt(parsers.re('user of (?P<browser_id>.+) should be '
+               'redirected to (?P<page>.+) page'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_being_redirected_to_page(page, selenium, browser_id):
     driver = selenium[browser_id]
@@ -79,28 +76,22 @@ def assert_being_redirected_to_page(page, selenium, browser_id):
                                '{}'.format(curr_page, page))
 
 
-@when(parsers.re(r'user of (?P<browser_id>.+) changes '
-                 r'the relative URL to (?P<path>.+)'))
-@then(parsers.re(r'user of (?P<browser_id>.+) changes '
-                 r'the relative URL to (?P<path>.+)'))
+@wt(parsers.re(r'user of (?P<browser_id>.+) changes '
+               r'the relative URL to (?P<path>.+)'))
 def change_relative_url(selenium, browser_id, path):
     driver = selenium[browser_id]
     driver.get(parse_url(driver.current_url).group('base_url') + path)
 
 
-@when(parsers.re(r'user of (?P<browser_id>.*?) changes '
-                 r'application path to plain (?P<path>.+)'))
-@then(parsers.re(r'user of (?P<browser_id>.*?) changes '
-                 r'application path to plain (?P<path>.+)'))
+@wt(parsers.re(r'user of (?P<browser_id>.*?) changes '
+               r'application path to plain (?P<path>.+)'))
 def change_application_path(selenium, browser_id, path):
     driver = selenium[browser_id]
     driver.get(parse_url(driver.current_url).group('base_url') + '/#' + path)
 
 
-@when(parsers.re('user of (?P<browser_id>.+?) sees that '
-                 '(?:url|URL) matches: (?P<path>.+)'))
-@then(parsers.re('user of (?P<browser_id>.+?) sees that '
-                 '(?:url|URL) matches: (?P<path>.+)'))
+@wt(parsers.re('user of (?P<browser_id>.+?) sees that '
+               '(?:url|URL) matches: (?P<path>.+)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def is_url_matching(selenium, browser_id, path):
     driver = selenium[browser_id]
@@ -115,26 +106,9 @@ def is_url_matching(selenium, browser_id, path):
     assert_url_match(driver, regexp, err_msg)
 
 
-@when(parsers.re('user of (?P<browser_id>.+?) opens received (?:url|URL)'))
-@then(parsers.re('user of (?P<browser_id>.+?) opens received (?:url|URL)'))
-def open_received_url(selenium, browser_id, tmp_memory, base_url):
+def _open_url(selenium, browser_id, url):
     driver = selenium[browser_id]
     old_page = driver.find_element_by_css_selector('html')
-    url = tmp_memory[browser_id]['mailbox']['url']
-    driver.get(url.replace(parse_url(url).group('base_url'), base_url, 1))
-
-    Wait(driver, WAIT_BACKEND).until(
-        staleness_of(old_page),
-        message='waiting for page {:s} to load'.format(url)
-    )
-
-
-@when(parsers.re('user of (?P<browser_id>.+?) opens copied (?:url|URL)'))
-@then(parsers.re('user of (?P<browser_id>.+?) opens copied (?:url|URL)'))
-def open_copied_url(selenium, browser_id, tmp_memory):
-    driver = selenium[browser_id]
-    old_page = driver.find_element_by_css_selector('html')
-    url = tmp_memory[browser_id]['mailbox']['url']
     driver.get(url)
 
     Wait(driver, WAIT_BACKEND).until(
@@ -143,51 +117,59 @@ def open_copied_url(selenium, browser_id, tmp_memory):
     )
 
 
-@when(parsers.re(r'user of (?P<browser_id>.*?) changes webapp path to '
-                 r'"?(?P<path>.+?)"? concatenated with copied item'))
-@then(parsers.re(r'user of (?P<browser_id>.*?) changes webapp path to '
-                 r'"?(?P<path>.+?)"? concatenated with copied item'))
+@wt(parsers.re('user of (?P<browser_id>.+?) opens received (?:url|URL)'))
+def open_received_url_with_base_url(selenium, browser_id, tmp_memory, base_url):
+    url = tmp_memory[browser_id]['mailbox']['url']
+    url = url.replace(parse_url(url).group('base_url'), base_url, 1)
+
+    _open_url(selenium, browser_id, url)
+
+
+@wt(parsers.re('user of (?P<browser_id>.+?) opens (?:url|URL) received from '
+               'user of (?P<browser_id2>.+?)'))
+def open_exactly_received_url(selenium, browser_id, tmp_memory):
+    url = tmp_memory[browser_id]['mailbox']['url']
+
+    _open_url(selenium, browser_id, url)
+
+
+@wt(parsers.re(r'user of (?P<browser_id>.*?) changes webapp path to '
+               r'"?(?P<path>.+?)"? concatenated with copied item'))
 def change_app_path_with_copied_item(selenium, browser_id, path,
                                      displays, clipboard):
     driver = selenium[browser_id]
     base_url = parse_url(driver.current_url).group('base_url')
     item = clipboard.paste(display=displays[browser_id])
     url = '{base_url}{path}/{item}'.format(base_url=base_url,
-                                                path=path, item=item)
+                                           path=path, item=item)
     # We use javascript instead of driver.get because of chromedriver being
     # unable to determine whether page has been loaded
     driver.execute_script('window.location = \'{}\''.format(url))
 
 
-@when(parsers.re(r'user of (?P<browser_id>.*?) changes webapp path to '
-                 r'"?(?P<path>.+?)"? concatenated with received (?P<item>.*)'))
-@then(parsers.re(r'user of (?P<browser_id>.*?) changes webapp path to '
-                 r'"?(?P<path>.+?)"? concatenated with received (?P<item>.*)'))
+@wt(parsers.re(r'user of (?P<browser_id>.*?) changes webapp path to '
+               r'"?(?P<path>.+?)"? concatenated with received (?P<item>.*)'))
 def change_app_path_with_recv_item(selenium, browser_id, path,
                                    tmp_memory, item):
     driver = selenium[browser_id]
     base_url = parse_url(driver.current_url).group('base_url')
     item = tmp_memory[browser_id]['mailbox'][item.lower()]
     url = '{base_url}{path}/{item}'.format(base_url=base_url,
-                                                path=path, item=item)
+                                           path=path, item=item)
     # We use javascript instead of driver.get because of chromedriver being
     # unable to determine whether page has been loaded
     driver.execute_script('window.location = \'{}\''.format(url))
 
 
-@when(parsers.parse('user of {browser_id} copies url '
-                    'from browser\'s location bar'))
-@then(parsers.parse('user of {browser_id} copies url '
-                    'from browser\'s location bar'))
+@wt(parsers.parse('user of {browser_id} copies url '
+                  'from browser\'s location bar'))
 def copy_site_url(selenium, browser_id, displays, clipboard):
     driver = selenium[browser_id]
     clipboard.copy(driver.current_url, display=displays[browser_id])
 
 
-@when(parsers.parse('user of {browser_id} opens copied URL '
-                    'in browser\'s location bar'))
-@then(parsers.parse('user of {browser_id} opens copied URL '
-                    'in browser\'s location bar'))
+@wt(parsers.parse('user of {browser_id} opens copied URL '
+                  'in browser\'s location bar'))
 def open_site_url(selenium, browser_id, displays, clipboard):
     driver = selenium[browser_id]
     url = clipboard.paste(display=displays[browser_id])
@@ -196,10 +178,8 @@ def open_site_url(selenium, browser_id, displays, clipboard):
     driver.execute_script('window.location = \'{}\''.format(url))
 
 
-@when(parsers.parse('user of {browser_id} copies a first '
-                    'resource {item} from URL'))
-@then(parsers.parse('user of {browser_id} copies a first '
-                    'resource {item} from URL'))
+@wt(parsers.parse('user of {browser_id} copies a first '
+                  'resource {item} from URL'))
 def cp_part_of_url(selenium, browser_id, item, displays, clipboard):
     driver = selenium[browser_id]
     clipboard.copy(parse_url(driver.current_url).group(item.lower()),
@@ -213,8 +193,7 @@ def refresh_site(selenium, browser_id_list):
         selenium[browser_id].refresh()
 
 
-@when(parsers.parse('user of {browser_id} refreshes webapp'))
-@then(parsers.parse('user of {browser_id} refreshes webapp'))
+@wt(parsers.parse('user of {browser_id} refreshes webapp'))
 @repeat_failed(timeout=WAIT_FRONTEND, exceptions=AttributeError)
 def refresh_webapp(selenium, browser_id):
     driver = selenium[browser_id]
