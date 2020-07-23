@@ -55,7 +55,7 @@ Feature: uploading files to multiple providers
 
 
   Scenario: User uploads a large file to provider and cancels uploading, sees that file is not uploaded
-    When user of browser opens file browser for "space1" spacer page
+    When user of browser opens file browser for "space1" space
 
     # upload file and cancel
     And user of browser uses upload button from file browser menu bar to upload files from local directory "dir2" to remote current dir
