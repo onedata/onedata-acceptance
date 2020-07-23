@@ -93,7 +93,7 @@ def assert_create_button_inactive(selenium, browser_id, oz_page):
                                                      'is enabled')
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) goes to group "(?P<group>.*)" '
+@wt(parsers.re('user of (?P<browser_id>.*) opens group "(?P<group>.*)" '
                '(?P<subpage>members|hierarchy|main) subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def go_to_group_subpage(selenium, browser_id, group, subpage, oz_page):
@@ -160,6 +160,23 @@ def click_on_option_in_group_hierarchy_menu(selenium, browser_id, option):
     modals(driver).group_hierarchy_menu.options[option].click()
 
 
+@wt(parsers.parse('user of {browser_id} expands group hierarchy tab '
+                  'popup menu'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def expand_group_hierarchy_popup_menu(selenium, browser_id, oz_page):
+    driver = selenium[browser_id]
+    oz_page(driver)['groups'].main_page.hierarchy.hierarchy_view_menu.click()
+
+
+@wt(parsers.parse('user of {browser_id} clicks on "{option}" '
+                  'in group hierarchy tab popup menu'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_option_in_group_hierarchy_tab_popup_menu(selenium, browser_id,
+                                                      option, popups):
+    driver = selenium[browser_id]
+    popups(driver).popover_menu.menu[option].click()
+
+
 @wt(parsers.parse('user of {browser_id} clicks on "{option}" '
                   'in relation menu'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -211,15 +228,6 @@ def assert_error_detail_text(selenium, browser_id, oz_page, text):
                                                   'not found'.format(text))
 
 
-@wt(parsers.parse('user of {browser_id} clicks on "{button_name}" button '
-                  'in popup group menu on hierarchy subpage'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_group_menu_popup_button(selenium, browser_id, button_name,
-                                     popups):
-    driver = selenium[browser_id]
-    popups(driver).group_menu.menu[button_name]()
-
-
 @wt(parsers.parse('user of {browser_id} sees "{group_name}" group '
                   'members page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -232,38 +240,29 @@ def assert_user_sees_group_page(selenium, oz_page, browser_id, group_name):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def default_hierarchy_view(selenium, browser_id, oz_page, tmp_memory):
     driver = selenium[browser_id]
-    default_groups_view = []
-    for group in oz_page(driver)['groups'].main_page.hierarchy.groups:
-        default_groups_view.append(group.name)
+    # size of the browser window determines default view of the groups hierarchy
+    groups = oz_page(driver)['groups'].main_page.hierarchy.groups
+    default_groups_view = [group.name for group in groups]
+    # save default group hierarchy view for future reference
     tmp_memory['default_groups_view'] = default_groups_view
 
 
-@wt(parsers.parse('user of {browser_id} toggles show "{group_name}" '
-                  'group {relation_type} button'))
+@wt(parsers.parse('user of {browser_id} toggles {relation_type} '
+                  'of "{group_name}" view button'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def expand_all_relations(selenium, browser_id, oz_page, relation_type):
+def toggle_relation_view(selenium, browser_id, oz_page, relation_type):
     driver = selenium[browser_id]
     getattr(oz_page(driver)['groups'].main_page.hierarchy,
-             transform('show '+relation_type+' groups')).click()
-
-
-@wt(parsers.parse('user of {browser_id} clicks "{btn_name}" button in group '
-                  'hierarchy view menu'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def expand_all_relations(selenium, browser_id, btn_name, oz_page, popups):
-    driver = selenium[browser_id]
-    oz_page(driver)['groups'].main_page.hierarchy.hierarchy_view_menu.click()
-    popups(selenium[browser_id]).toolbar.options[btn_name].click()
+            f'show_{relation_type}_groups').click()
 
 
 @wt(parsers.parse('user of {browser_id} sees the same group hierarchy view '
                   'as default one'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def expand_all_relations(selenium, browser_id, oz_page, tmp_memory):
+def assert_proper_view_after_reset(selenium, browser_id, oz_page, tmp_memory):
     driver = selenium[browser_id]
-    reset_groups_view = []
-    for group in oz_page(driver)['groups'].main_page.hierarchy.groups:
-        reset_groups_view.append(group.name)
+    groups = oz_page(driver)['groups'].main_page.hierarchy.groups
+    reset_groups_view = [group.name for group in groups]
     default_groups_view = tmp_memory['default_groups_view']
-
-    assert default_groups_view == reset_groups_view
+    err_msg = f'wrong displayed groups on hierarchy view'
+    assert default_groups_view == reset_groups_view, err_msg

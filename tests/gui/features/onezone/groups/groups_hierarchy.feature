@@ -24,7 +24,7 @@ Feature: Basic management of groups hierarchy with one user in Onezone GUI
 
 
   Scenario: User adds newly created children group
-    When user of browser goes to group "group1" hierarchy subpage
+    When user of browser opens group "group1" hierarchy subpage
     And user of browser clicks on group "group1" menu button in hierarchy subpage
     And user of browser clicks on "Add child group" in group hierarchy menu
     And user of browser clicks on "Create new group" in group hierarchy menu
@@ -34,7 +34,7 @@ Feature: Basic management of groups hierarchy with one user in Onezone GUI
 
 
   Scenario: User adds newly created parent group
-    When user of browser goes to group "group1" hierarchy subpage
+    When user of browser opens group "group1" hierarchy subpage
     And user of browser clicks on group "group1" menu button in hierarchy subpage
     And user of browser clicks on "Add parent group" in group hierarchy menu
     And user of browser clicks on "Create new group" in group hierarchy menu
@@ -45,7 +45,7 @@ Feature: Basic management of groups hierarchy with one user in Onezone GUI
 
 
   Scenario: User removes child group
-    When user of browser goes to group "group2" hierarchy subpage
+    When user of browser opens group "group2" hierarchy subpage
     And user of browser clicks on group "group3" menu button in hierarchy subpage
     And user of browser clicks on "Remove" in group hierarchy menu
     And user of browser clicks on "Remove" button in modal "REMOVE GROUP"
@@ -54,7 +54,7 @@ Feature: Basic management of groups hierarchy with one user in Onezone GUI
 
 
   Scenario: User removes parent group
-    When user of browser goes to group "group2" hierarchy subpage
+    When user of browser opens group "group2" hierarchy subpage
     And user of browser clicks show parent groups in hierarchy subpage
     And user of browser clicks on group "group1" menu button in hierarchy subpage
     And user of browser clicks on "Remove" in group hierarchy menu
@@ -64,7 +64,7 @@ Feature: Basic management of groups hierarchy with one user in Onezone GUI
 
 
   Scenario: User removes relation with child group
-    When user of browser goes to group "group1" hierarchy subpage
+    When user of browser opens group "group1" hierarchy subpage
     And user of browser clicks on group "group2" menu button to parent relation in hierarchy subpage
     And user of browser clicks on "Remove relation" in relation menu
     And user of browser clicks on "Remove" button in modal "REMOVE MEMBER"
@@ -72,7 +72,7 @@ Feature: Basic management of groups hierarchy with one user in Onezone GUI
 
 
   Scenario: User removes relation with parent group
-    When user of browser goes to group "group2" hierarchy subpage
+    When user of browser opens group "group2" hierarchy subpage
     And user of browser clicks show parent groups in hierarchy subpage
     And user of browser clicks on group "group1" menu button to child relation in hierarchy subpage
     And user of browser clicks on "Remove relation" in relation menu
@@ -80,33 +80,27 @@ Feature: Basic management of groups hierarchy with one user in Onezone GUI
     Then user of browser does not see "group1" as a parent of "group2" in hierarchy subpage
 
 
-  Scenario Outline: User goes to <group_B> page from <group_A> hierarchy subpage using popup group menu
-    When user of browser goes to group "<group_A>" hierarchy subpage
-    And user of browser clicks on group "<group_B>" menu button in hierarchy subpage
-    And user of browser clicks on "View group" button in popup group menu on hierarchy subpage
-    Then user of browser sees "<group_B>" group members page
+  Scenario Outline: User opens <parent/child_of_group_A> page from <group_A> hierarchy subpage using group menu popup
+    When user of browser opens group "<group_A>" hierarchy subpage
+    And user of browser clicks on group "<parent/child_of_group_A>" menu button in hierarchy subpage
+    And user of browser clicks on "View group" in group hierarchy menu
+    Then user of browser sees "<parent/child_of_group_A>" group members page
 
     Examples:
-    | group_A  | group_B  |
-    | group2   | group2   |
-    | group2   | group3   |
-    | group1   | group1   |
-    | group1   | group2   |
+    | group_A  | parent/child_of_group_A  |
+    | group2   | group2                   |
+    | group1   | group2                   |
 
 
-  Scenario Outline: User resets <group_A> hierarchy view after expanding parents and childrens
-    When user of browser goes to group "<group_A>" hierarchy subpage
+  Scenario Outline: User resets <group_A> hierarchy view after expanding <relation>
+    When user of browser opens group "<group_A>" hierarchy subpage
     And user of browser sees default group hierarchy view
-    And user of browser toggles show "<group_A>" group <relation> button
-    And user of browser clicks "Reset view" button in group hierarchy view menu
+    And user of browser toggles <relation> of "<relation>" view button
+    And user of browser expands group hierarchy tab popup menu
+    And user of browser clicks on "Reset view" in group hierarchy tab popup menu
     Then user of browser sees the same group hierarchy view as default one
 
     Examples:
     |  group_A  |  relation  |
     |  group1   |  parent    |
-    |  group1   |  children  |
-    |  group2   |  parent    |
-    |  group2   |  children  |
-    |  group3   |  parent    |
     |  group3   |  children  |
-
