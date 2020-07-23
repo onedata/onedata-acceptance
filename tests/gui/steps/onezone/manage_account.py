@@ -67,7 +67,7 @@ def click_delete_account_button_in_oz(selenium, browser_id, modals, users):
     modals(driver).delete_user_account.delete_account.click()
 
 
-@wt(parsers.parse('user of {browser_id} sees that the user name displayed '
+@wt(parsers.parse('user of {browser_id} sees that the user\'s name displayed '
                   'in Profile page is "{expected_user_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_correct_user_name_in_oz(selenium, browser_id, expected_user_name,
