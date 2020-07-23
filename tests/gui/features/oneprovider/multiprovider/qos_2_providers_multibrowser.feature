@@ -25,7 +25,7 @@ Feature: Quality of Service tests for 2 providers using multiple browsers in One
     And user of [browser_unified, browser_emergency] logged as [user1, admin] to [Onezone, emergency interface of Onepanel] service
 
 
-    Scenario: Adding storage id as qos requirement
+    Scenario: User successfully adds storage id as qos requirement
       When user of browser_unified clicks "space1" on the spaces list in the sidebar
       And user of browser_unified clicks Data of "space1" in the sidebar
       And user of browser_unified sees file browser in data tab in Oneprovider page
@@ -45,7 +45,7 @@ Feature: Quality of Service tests for 2 providers using multiple browsers in One
             oneprovider-2: entirely filled
 
 
-    Scenario: Auto-cleaning with qos requirement set
+    Scenario: User successfully enable auto-cleaning with qos requirement set
       When user of browser_emergency clicks on Spaces item in submenu of "oneprovider-2" item in CLUSTERS sidebar in Onepanel
       And user of browser_emergency opens "space1" record on spaces list in Spaces page in Onepanel
       And user of browser_emergency clicks on File popularity navigation tab in space "space1"

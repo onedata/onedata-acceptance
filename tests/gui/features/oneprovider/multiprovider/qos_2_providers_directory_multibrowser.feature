@@ -23,7 +23,7 @@ Feature: Quality of Service in directory tests for 2 providers using multiple br
     And users of [browser_unified, browser_emergency] opened [Onezone, oneprovider-2 provider panel] page
     And user of [browser_unified, browser_emergency] logged as [user1, admin] to [Onezone, emergency interface of Onepanel] service
 
-    Scenario: Uploading file to directory with qos requirement
+    Scenario: User successfully uploads file to directory with qos requirement
       When user of browser_unified clicks "space1" on the spaces list in the sidebar
       And user of browser_unified clicks Data of "space1" in the sidebar
       And user of browser_unified sees file browser in data tab in Oneprovider page

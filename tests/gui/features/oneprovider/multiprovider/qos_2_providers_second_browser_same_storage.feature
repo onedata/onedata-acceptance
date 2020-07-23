@@ -27,7 +27,7 @@ Feature: Quality of Service tests for 2 providers using multiple browsers where 
     And user of browser_emergency deletes all additional params in storage edit page
 
 
-    Scenario: Adding storage id as qos requirement
+    Scenario: User successfully adds storage id as qos requirement
       When user of browser_unified clicks "space1" on the spaces list in the sidebar
       And user of browser_unified clicks Data of "space1" in the sidebar
       And user of browser_unified sees file browser in data tab in Oneprovider page
@@ -44,7 +44,7 @@ Feature: Quality of Service tests for 2 providers using multiple browsers where 
             oneprovider-2: entirely filled
 
 
-    Scenario: Adding anyStorage - storageId qos requirement
+    Scenario: User successfully adds anyStorage - storageId qos requirement
       When user of browser_unified clicks "space1" on the spaces list in the sidebar
       And user of browser_unified clicks Data of "space1" in the sidebar
       And user of browser_unified sees file browser in data tab in Oneprovider page
@@ -59,7 +59,7 @@ Feature: Quality of Service tests for 2 providers using multiple browsers where 
             oneprovider-2: entirely filled
 
 
-    Scenario: Adding key-value based qos
+    Scenario: User successfully adds key-value based qos requirement
       When user of browser_unified creates "type=posix" quality of service for "file1"
       And user of browser_unified clicks on qos status tag for "file1" in file browser
       And user of browser_unified sees that all qos requirements are impossible
@@ -69,7 +69,7 @@ Feature: Quality of Service tests for 2 providers using multiple browsers where 
       Then user of browser_unified sees that all qualities of service are fulfilled
 
 
-    Scenario: Adding qos with and
+    Scenario: User successfully adds qos requirement with and operator
       When user of browser_unified creates "type=posix & geo=PL" qos requirement for "file1"
       And user of browser_unified clicks on qos status tag for "file1" in file browser
       And user of browser_unified sees that all qos requirements are impossible
@@ -84,7 +84,7 @@ Feature: Quality of Service tests for 2 providers using multiple browsers where 
       Then user of browser_unified sees that all qos requirements are fulfilled
 
 
-    Scenario: Adding qos with or
+    Scenario: User successfully adds qos requirement with or operator
       When user of browser_unified creates "type=posix | geo=PL" qos requirement for "file1"
       And user of browser_unified clicks on qos status tag for "file1" in file browser
       And user of browser_unified sees that all qualities of service are impossible

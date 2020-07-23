@@ -146,12 +146,13 @@ def _add_storage_in_op_panel_using_gui(selenium, browser_id, config, onepanel,
                   'storage edit page'))
 def add_key_value_in_storage_page(selenium, browser_id, key,
                                   val, onepanel, modals):
+    button = 'Proceed'
+    modal = 'Modify Storage'
+
     types_key_in_posix_storage_edit_page(selenium, browser_id, key, onepanel)
     click_value_in_posix_storage_edit_page(selenium, browser_id, onepanel)
     type_string_into_active_element(selenium, browser_id, val)
     saves_changes_in_posix_storage_edit_page(selenium, browser_id, onepanel)
-    button = 'Proceed'
-    modal = 'Modify Storage'
     click_modal_button(selenium, browser_id, button, modal, modals)
 
 
@@ -159,11 +160,12 @@ def add_key_value_in_storage_page(selenium, browser_id, key,
                   'edit page'))
 def delete_additional_param_in_storage_page(selenium, browser_id,
                                             onepanel, modals):
+    button = 'Proceed'
+    modal = 'Modify Storage'
+
     delete_additional_param_in_posix_storage_edit_page(selenium, browser_id,
                                                        onepanel)
     saves_changes_in_posix_storage_edit_page(selenium, browser_id, onepanel)
-    button = 'Proceed'
-    modal = 'Modify Storage'
     click_modal_button(selenium, browser_id, button, modal, modals)
 
 
@@ -174,6 +176,7 @@ def _delete_all_additional_params_in_storage_page(selenium, browser_id,
     option = 'Modify storage details'
     button = 'Proceed'
     modal = 'Modify Storage'
+
     while not deleted:
         wt_expands_toolbar_for_storage_in_onepanel(selenium, browser_id, name,
                                                    onepanel)

@@ -27,6 +27,7 @@ class DataRow(PageObject):
     shared_tag = WebElement('.file-status-shared')
     metadata_tag = WebElement('.file-status-metadata')
     qos_tag = WebElement('.file-status-qos')
+    qos_inherited_tag = WebElement('.file-status-qos .oneicon-arrow-long-up')
     clickable_field = WebElement('.file-name')
 
     def __str__(self):
