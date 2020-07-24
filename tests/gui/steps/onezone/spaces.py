@@ -140,7 +140,7 @@ def click_on_option_in_menu(selenium, browser_id, button, oz_page, popups):
     driver = selenium[browser_id]
     page = oz_page(driver)['data']
     page.menu_button()
-    popups(driver).member_menu.menu[button]()
+    popups(driver).popover_menu.menu[button]()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on '

@@ -14,6 +14,7 @@ from pytest_bdd import scenario, scenarios
 from tests.gui.steps.rest.env_up.users import *
 from tests.gui.steps.rest.env_up.groups import *
 from tests.gui.steps.rest.env_up.spaces import *
+from tests.gui.steps.rest.env_up.harvesters import *
 
 from tests.gui.steps.common.url import *
 from tests.gui.steps.common.browser_creation import *
@@ -62,6 +63,7 @@ from tests.gui.meta_steps.onezone.harvesters import *
 from tests.gui.meta_steps.onezone.tokens import *
 
 from tests.gui.meta_steps.onepanel.spaces import *
+from tests.gui.meta_steps.onezone.spaces import *
 from tests.gui.meta_steps.oneprovider.data import *
 
 from tests.utils.acceptance_utils import *

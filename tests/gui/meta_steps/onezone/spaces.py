@@ -263,23 +263,7 @@ def leave_space_in_onezone(selenium, browser_id, space_name, oz_page, popups):
         pass
 
 
-@wt(parsers.parse('user of {browser_id} leaves {spaces_list} spaces in '
-                  'Onezone'))
-def go_to_oz_and_leave_spaces_wt(selenium, browser_id, spaces_list,
-                                 oz_page, popups):
-    option = 'Data'
-
-    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
-    time.sleep(4)
-    try:
-        leave_spaces_in_oz_using_gui(selenium, browser_id, spaces_list, oz_page,
-                                     popups)
-    except RuntimeError:
-        pass
-
-
-@given(parsers.parse('{user} user does not have access to any space'))
-def leave_users_space_in_onezone_using_rest(hosts, users, user):
+def _leave_users_space_in_onezone_using_rest(hosts, users, user):
     zone_hostname = hosts['onezone']['hostname']
 
     list_users_spaces = http_get(ip=zone_hostname, port=OZ_REST_PORT,
@@ -291,3 +275,12 @@ def leave_users_space_in_onezone_using_rest(hosts, users, user):
                     path=get_zone_rest_path('user', 'spaces', space),
                     auth=(user, users[user].password))
 
+
+@given(parsers.parse('{user} user does not have access to any space'))
+def g_leave_users_space_in_onezone_using_rest(hosts, users, user):
+    _leave_users_space_in_onezone_using_rest(hosts, users, user)
+
+
+@wt(parsers.parse('{user} user leaves all spaces using REST'))
+def wt_leave_users_space_in_onezone_using_rest(hosts, users, user):
+    _leave_users_space_in_onezone_using_rest(hosts, users, user)

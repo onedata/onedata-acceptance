@@ -65,7 +65,7 @@ def click_on_group_menu_button(selenium, browser_id, option, group,
     page = oz_page(driver)['groups']
     page.elements_list[group]()
     page.elements_list[group].menu()
-    popups(driver).member_menu.menu[option]()
+    popups(driver).popover_menu.menu[option]()
 
 
 @wt(parsers.parse('user of {browser_id} writes '

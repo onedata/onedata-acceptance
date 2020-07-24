@@ -54,7 +54,7 @@ Feature: Data tab operations with empty file browser
     Then user of browser sees that modification date of item named "20B-0.txt" is not earlier than 120 seconds ago in file browser
 
 
-  Scenario: User sees file size after upload and after site refresh
+  Scenario: User sees file size after upload
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
@@ -64,9 +64,6 @@ Feature: Data tab operations with empty file browser
     And user of browser sees that item named "20B-0.txt" has appeared in file browser
 
     Then user of browser sees that item named "20B-0.txt" is of 20 B size in file browser
-    And user of browser refreshes site
-    And user of browser sees nonempty file browser in data tab in Oneprovider page
-    And user of browser sees that item named "20B-0.txt" is of 20 B size in file browser
 
 
   Scenario: User uploads file and checks if provider name is displayed in the data distribution panel
