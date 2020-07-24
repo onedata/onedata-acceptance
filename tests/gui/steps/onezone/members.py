@@ -410,8 +410,8 @@ def set_privileges_in_members_subpage(selenium, browser_id, member_name,
 
 @wt(parsers.re('user of (?P<browser_id>.*) sets following privileges on modal:'
                '\n(?P<config>(.|\s)*)'))
-def set_privileges_in_members_subpage_on_popup(selenium, browser_id, config,
-                                                  modals):
+def set_privileges_in_members_subpage_on_modal(selenium, browser_id, config,
+                                               modals):
     driver = selenium[browser_id]
     privileges = yaml.load(config)
     tree = modals(driver).change_privileges.privilege_tree
@@ -436,7 +436,7 @@ def assert_privileges_in_members_subpage(selenium, browser_id, member_name,
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees following privileges on modal:'
                '\n(?P<config>(.|\s)*)'))
-def assert_privileges_in_members_subpage_on_popup(selenium, browser_id, config,
+def assert_privileges_in_members_subpage_on_modal(selenium, browser_id, config,
                                                   modals):
     driver = selenium[browser_id]
     privileges = yaml.load(config)
@@ -595,8 +595,8 @@ def click_member_checkbox(selenium, browser_id, member_name, oz_page, member_typ
 
     getattr(page, member_type).items[member_name].header.checkbox.click()
 
-@wt(parsers.parse('user of {browser_id} clicks on bulk edit button'))
 
+@wt(parsers.parse('user of {browser_id} clicks on bulk edit button'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_bulk_edit(browser_id, selenium, oz_page):
     driver = selenium[browser_id]

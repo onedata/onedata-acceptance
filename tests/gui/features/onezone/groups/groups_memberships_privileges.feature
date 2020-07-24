@@ -227,36 +227,6 @@ Feature: Basic management of groups privileges in Onezone GUI
     Then user of browser sees Insufficient permissions alert for "user2" user in group members subpage
 
 
-  Scenario: User fails to bulk remove relation without privileges
-    When user of browser goes to group "group1" members subpage
-    And user of browser clicks on "user1" users checkbox
-    And user of browser clicks on bulk edit button
-    And user of browser sets following privileges on modal:
-          Group hierarchy management:
-            granted: Partially
-            privilege subtypes:
-              Remove child group: False
-
-    And user of browser goes to group "group4" members subpage
-    And user of browser clicks on "user1" users checkbox
-    And user of browser clicks on bulk edit button
-    And user of browser sets following privileges on modal:
-          Group hierarchy management:
-            granted: Partially
-            privilege subtypes:
-              Leave parent group: False
-
-    And user of browser goes to group "group1" members subpage
-    And user of browser clicks show view expand button in group members subpage header
-    And user of browser clicks effective view mode in group members subpage
-    And user of browser clicks memberships view mode in group members subpage
-    And user of browser clicks "user1" user in "group1" group members users list
-    And user of browser clicks on "group4" member relation menu button to "group1" group
-    And user of browser clicks on "Remove relation" in group membership relation menu
-    And user of browser clicks on "Remove" button in modal "REMOVE MEMBER"
-    Then user of browser sees that error modal with text "insufficient privileges" appeared
-
-
  Scenario: User fails to remove relation without privileges changed with bulk edit
     When user of browser goes to group "group1" members subpage
     And user of browser clicks on "user1" users checkbox
