@@ -344,7 +344,7 @@ def assert_name_label_of_space_on_overview_page(selenium, browser_id,
                                                 space_name, oz_page):
     driver = selenium[browser_id]
     assert oz_page(driver)[
-               'data'].overview_page.info_tile.space_name == space_name, \
+               'data'].overview_page.space_name == space_name, \
         'space "{}" not found on overview page'.format(space_name)
 
 
