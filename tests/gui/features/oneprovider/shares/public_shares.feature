@@ -142,8 +142,8 @@ Feature: Basic data tab operations on public shares in file browser
 
     And user of browser2 opens received URL
     And user of browser2 sees that public share is named "share_dir1"
+    And user of browser2 copies URL
 
-    And user of browser2 clicks on copy icon on share's public interface
     Then user of browser2 sends copied URL to user of browser1
-    And user of browser1 opens received URL
+    And user of browser1 opens URL received from user of browser2
     And user of browser1 sees that public share is named "share_dir1"
