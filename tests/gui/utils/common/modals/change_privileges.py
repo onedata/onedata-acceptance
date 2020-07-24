@@ -1,12 +1,11 @@
-"""Utils and fixtures to facilitate operations on group membership
-relation menu modal.
+"""Utils and fixtures to facilitate operations on change privileges with bulk
+edit modal.
 """
 
 __author__ = "Emilia Kwolek"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
-
 
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.common.privilege_tree import PrivilegeTree

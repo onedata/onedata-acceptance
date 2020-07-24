@@ -145,14 +145,14 @@ Feature: Basic management of groups privileges in Onezone GUI
     And user of browser does not see that "group4" group is member of "group1" group in group memberships mode
 
 
-  Scenario: User sees and bulk modifies privileges of all groups nested in his parent group
+  Scenario: User successfully bulk modifies privileges of all groups nested in his parent group
     When user of browser goes to group "group1" members subpage
     And user of browser clicks on groups checkbox
     And user of browser clicks on bulk edit button
-    And user of browser sees following privileges on popup:
+    And user of browser sees following privileges on modal:
           User management:
             granted: False
-    And user of browser sets following privileges on popup:
+    And user of browser sets following privileges on modal:
           User management:
             granted: True
     And user of browser clicks "group2" group in "group1" group members groups list
@@ -166,17 +166,17 @@ Feature: Basic management of groups privileges in Onezone GUI
             granted: True
 
 
-  Scenario: User sees and bulk modifies privileges to his group
+  Scenario: User successfully bulk modifies privileges to his group
     When user of browser goes to group "group1" members subpage
     And user of browser clicks on users checkbox
     And user of browser clicks on bulk edit button
-    And user of browser sees following privileges on popup:
+    And user of browser sees following privileges on modal:
           User management:
             granted: Partially
             privilege subtypes:
               Add user: Partially
               Remove user: Partially
-    And user of browser sets following privileges on popup:
+    And user of browser sets following privileges on modal:
           User management:
             granted: False
     And user of browser clicks "user1" user in "group1" group members users list
@@ -189,15 +189,15 @@ Feature: Basic management of groups privileges in Onezone GUI
           User management:
             granted: False
 
-  Scenario: User sees and bulk modifies privileges to a group and user
+  Scenario: User successfully bulk modifies privileges of a group and user
     When user of browser goes to group "group1" members subpage
     And user of browser clicks on "user2" users checkbox
     And user of browser clicks on "group2" groups checkbox
     And user of browser clicks on bulk edit button
-    And user of browser sees following privileges on popup:
+    And user of browser sees following privileges on modal:
           User management:
             granted: False
-    And user of browser sets following privileges on popup:
+    And user of browser sets following privileges on modal:
           User management:
             granted: True
     And user of browser clicks "group2" group in "group1" group members groups list
@@ -211,13 +211,13 @@ Feature: Basic management of groups privileges in Onezone GUI
             granted: True
 
 
-  Scenario: User fails to see privileges without view privileges changed in bulk
+  Scenario: User fails to see privileges without view privileges changed with bulk edit
     When user of browser goes to group "group1" members subpage
     And user of browser clicks "user2" user in "group1" group members users list
     And user of browser sees privileges for "user2" user in group members subpage
     And user of browser clicks on users checkbox
     And user of browser clicks on bulk edit button
-    And user of browser sets following privileges on popup:
+    And user of browser sets following privileges on modal:
           Group management:
             granted: Partially
             privilege subtypes:
@@ -231,7 +231,7 @@ Feature: Basic management of groups privileges in Onezone GUI
     When user of browser goes to group "group1" members subpage
     And user of browser clicks on "user1" users checkbox
     And user of browser clicks on bulk edit button
-    And user of browser sets following privileges on popup:
+    And user of browser sets following privileges on modal:
           Group hierarchy management:
             granted: Partially
             privilege subtypes:
@@ -240,7 +240,7 @@ Feature: Basic management of groups privileges in Onezone GUI
     And user of browser goes to group "group4" members subpage
     And user of browser clicks on "user1" users checkbox
     And user of browser clicks on bulk edit button
-    And user of browser sets following privileges on popup:
+    And user of browser sets following privileges on modal:
           Group hierarchy management:
             granted: Partially
             privilege subtypes:
@@ -256,18 +256,21 @@ Feature: Basic management of groups privileges in Onezone GUI
     And user of browser clicks on "Remove" button in modal "REMOVE MEMBER"
     Then user of browser sees that error modal with text "insufficient privileges" appeared
 
- Scenario: User fails to remove relation without privileges
+
+ Scenario: User fails to remove relation without privileges changed with bulk edit
     When user of browser goes to group "group1" members subpage
-    And user of browser clicks "user1" user in "group1" group members users list
-    And user of browser sets following privileges for "user1" user in group members subpage:
+    And user of browser clicks on "user1" users checkbox
+    And user of browser clicks on bulk edit button
+    And user of browser sets following privileges on modal:
           Group hierarchy management:
             granted: Partially
             privilege subtypes:
               Remove child group: False
 
     And user of browser goes to group "group4" members subpage
-    And user of browser clicks "user1" user in "group1" group members users list
-    And user of browser sets following privileges for "user1" user in group members subpage:
+    And user of browser clicks on "user1" users checkbox
+    And user of browser clicks on bulk edit button
+    And user of browser sets following privileges on modal:
           Group hierarchy management:
             granted: Partially
             privilege subtypes:

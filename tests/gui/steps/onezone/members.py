@@ -408,7 +408,7 @@ def set_privileges_in_members_subpage(selenium, browser_id, member_name,
                                               member_type, onepanel)
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) sets following privileges on popup:'
+@wt(parsers.re('user of (?P<browser_id>.*) sets following privileges on modal:'
                '\n(?P<config>(.|\s)*)'))
 def set_privileges_in_members_subpage_on_popup(selenium, browser_id, config,
                                                   modals):
@@ -434,7 +434,7 @@ def assert_privileges_in_members_subpage(selenium, browser_id, member_name,
     tree.assert_privileges(privileges)
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) sees following privileges on popup:'
+@wt(parsers.re('user of (?P<browser_id>.*) sees following privileges on modal:'
                '\n(?P<config>(.|\s)*)'))
 def assert_privileges_in_members_subpage_on_popup(selenium, browser_id, config,
                                                   modals):
