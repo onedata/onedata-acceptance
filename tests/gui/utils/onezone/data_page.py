@@ -46,6 +46,14 @@ class Provider(Element):
     support = Label('.outer-text')
 
 
+class ProviderPoint(Element):
+    pass
+
+
+class ProvidersMap(Element):
+    providers = WebItemsSequence('.circle', cls=ProviderPoint)
+
+
 class MembersTile(PageObject):
     direct_groups = Label('.direct-groups-counter')
     direct_users = Label('.direct-users-counter')
@@ -58,6 +66,7 @@ class SpaceOverviewPage(PageObject):
     rename = Button('.edit-icon')
     edit_name_box = WebItem('.editor', cls=EditBox)
     members_tile = WebItem('.resource-members-tile .tile-main', cls=MembersTile)
+    map = WebItem('.map-container', cls=ProvidersMap)
 
 
 class WelcomePage(PageObject):
@@ -85,6 +94,7 @@ class SpaceProvidersPage(PageObject):
                                       cls=Provider)
     add_support = NamedButton('button', text='Add support')
     get_support_page = WebItem('.ember-view', cls=GetSupportPage)
+    map = WebItem('.space-providers-atlas', cls=ProvidersMap)
 
 
 class _Provider(PageObject):
