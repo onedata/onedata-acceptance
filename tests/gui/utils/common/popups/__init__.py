@@ -23,8 +23,6 @@ class Popups(object):
                                   cls=DeregisterProvider)
     user_account_menu = WebItem('.webui-popover-content .user-account-menu',
                                 cls=UserAccountPopup)
-    member_menu = WebItem('.webui-popover.in', cls=PopoverMenu)
-    data_distribution_menu = WebItem('.webui-popover.in', cls=PopoverMenu)
     upload_presenter = WebItemsSequence('.hidden-xs .up-single-upload',
                                         cls=UploadPresenter)
     menu_popup = WebItem('#webuiPopover1', cls=MenuPopup)
@@ -32,9 +30,6 @@ class Popups(object):
     selector_popup = WebItem('.webui-popover.in', cls=SelectorPopup)
     consumer_caveat_popup = WebItem('.webui-popover-tags-selector',
                                     cls=ConsumerCaveat)
-    cease_support_from_providers_list_menu = Button(
-        '.cease-oneprovider-support-btn')
-    confirm_cancel_button = Button('.btn-danger')
 
     def __init__(self, driver):
         self.driver = self.web_elem = driver

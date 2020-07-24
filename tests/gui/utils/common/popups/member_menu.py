@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 from tests.gui.utils.core.base import PageObject
-from tests.gui.utils.core.web_elements import WebItemsSequence, Label
+from tests.gui.utils.core.web_elements import WebItemsSequence, Label, Button
 
 
 class MenuItem(PageObject):
@@ -21,6 +21,9 @@ class PopoverMenu(PageObject):
     menu = WebItemsSequence('.webui-popover-content '
                             '.one-collapsible-toolbar-popover .dropdown-menu '
                             '.one-collapsible-toolbar-item', cls=MenuItem)
+    cease_support_from_providers_list_menu = Button(
+        '.cease-oneprovider-support-btn')
+    confirm_cancel_button = Button('.btn-danger')
 
     def __str__(self):
         return 'Member menu popup'

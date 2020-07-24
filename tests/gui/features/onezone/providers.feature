@@ -50,7 +50,7 @@ Feature: Basic management of providers in Onezone GUI
     Then user of browser sees "oneprovider-1" is on the providers list
 
 
-  Scenario: User sees that if space is unsupported by provider, the provider is not displayed in providers list
+  Scenario: User sees that if space is unsupported by provider, the provider is not displayed in that space providers list
     When user of browser clicks on Data in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Providers of "space1" in the sidebar
