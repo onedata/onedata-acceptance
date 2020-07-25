@@ -48,10 +48,15 @@ class Provider(Element):
     menu_button = Button('.provider-menu-toggle')
 
 
-class SpaceOverviewPage(PageObject):
-    space_name = Label('.with-menu .one-label')
+class SpaceInfoTile(PageObject):
     rename = Button('.edit-icon')
     edit_name_box = WebItem('.editor', cls=EditBox)
+    shares_count = Label('.shares-count')
+
+
+class SpaceOverviewPage(PageObject):
+    space_name = Label('.with-menu .one-label')
+    info_tile = WebItem('.resource-info-tile', cls=SpaceInfoTile)
 
 
 class WelcomePage(PageObject):
