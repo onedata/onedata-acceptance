@@ -125,11 +125,11 @@ def click_copy_icon_on_shares_view(selenium, browser_id, op_container):
     op_container(selenium[browser_id]).shares_page.copy_icon()
 
 
-@wt(parsers.parse('user of {browser_id} clicks on '
-                  'copy icon on share\'s public interface'))
+@wt(parsers.parse('user of {browser_id} copies URL'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_copy_icon_on_public_shares_view(selenium, browser_id, public_share):
-    public_share(selenium[browser_id]).copy_icon()
+def copy_current_URL(selenium, browser_id, clipboard, displays, tmp_memory):
+    driver = selenium[browser_id]
+    clipboard.copy(driver.current_url, display=displays[browser_id])
 
 
 @wt(parsers.parse('user of {browser_id} sees "{error_msg}" error'))

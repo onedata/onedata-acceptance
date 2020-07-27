@@ -11,6 +11,10 @@ from itertools import zip_longest
 
 from pytest_bdd import parsers, given
 
+from tests.gui.steps.common.notifies import notify_visible_with_text
+from tests.gui.steps.onepanel.spaces import (
+    wt_clicks_on_understand_risk_in_cease_support_modal,
+    wt_clicks_on_btn_in_cease_support_modal)
 from tests.utils.acceptance_utils import *
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq, transform
@@ -24,7 +28,8 @@ from tests.utils.utils import repeat_failed
                     'provider named "{provider_name}" has appeared on '
                     'world map'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_popup_for_provider_with_name_has_appeared_on_map(selenium, browser_id,
+def assert_popup_for_provider_with_name_has_appeared_on_map(selenium,
+                                                            browser_id,
                                                             provider_name,
                                                             modals):
     driver = selenium[browser_id]
@@ -123,13 +128,15 @@ def g_click_on_btn_in_provider_popup(selenium, browser_id_list, btn,
 @repeat_failed(timeout=WAIT_BACKEND)
 def wt_click_on_btn_in_provider_popup(selenium, browser_id, btn,
                                       provider, oz_page, hosts):
-    _click_on_btn_in_provider_popup(selenium[browser_id], btn, provider, oz_page,
+    _click_on_btn_in_provider_popup(selenium[browser_id], btn, provider,
+                                    oz_page,
                                     hosts)
 
 
 @given(parsers.re('users? of (?P<browser_id_list>.*) clicked on the '
                   '"(?P<btn_name>.+?)" button in provider popup'))
-def g_click_on_go_to_files_provider(selenium, browser_id_list, btn_name, oz_page):
+def g_click_on_go_to_files_provider(selenium, browser_id_list, btn_name,
+                                    oz_page):
     for browser_id in parse_seq(browser_id_list):
         driver = selenium[browser_id]
         popup = oz_page(driver)['world map'].get_provider_with_displayed_popup()
@@ -140,7 +147,8 @@ def g_click_on_go_to_files_provider(selenium, browser_id_list, btn_name, oz_page
                  '"(?P<btn_name>.+?)" button in provider popup'))
 @then(parsers.re('users? of (?P<browser_id_list>.*) clicks on the '
                  '"(?P<btn_name>.+?)" button in provider popup'))
-def wt_click_on_go_to_files_provider(selenium, browser_id_list, btn_name, oz_page):
+def wt_click_on_go_to_files_provider(selenium, browser_id_list, btn_name,
+                                     oz_page):
     for browser_id in parse_seq(browser_id_list):
         driver = selenium[browser_id]
         popup = oz_page(driver)['world map'].get_provider_with_displayed_popup()
@@ -157,14 +165,16 @@ def wt_click_on_go_to_files_provider(selenium, browser_id_list, btn_name, oz_pag
                  r'(?P<ordinal>1st|2nd|3rd|\d*?[4567890]th|\d*?11th|'
                  r'\d*?12th|\d*?13th|\d*?[^1]1st|\d*?[^1]2nd|\d*?[^1]3rd) '
                  r'provider circle on Onezone world map'))
-@when(parsers.re(r'user of (?P<browser_id>.+?) sees that provider popup next to '
-                 r'(?P<ordinal>1st|2nd|3rd|\d*?[4567890]th|\d*?11th|'
-                 r'\d*?12th|\d*?13th|\d*?[^1]1st|\d*?[^1]2nd|\d*?[^1]3rd) '
-                 r'provider circle on Onezone world map has disappeared'))
-@then(parsers.re(r'user of (?P<browser_id>.+?) sees that provider popup next to '
-                 r'(?P<ordinal>1st|2nd|3rd|\d*?[4567890]th|\d*?11th|'
-                 r'\d*?12th|\d*?13th|\d*?[^1]1st|\d*?[^1]2nd|\d*?[^1]3rd) '
-                 r'provider circle on Onezone world map has disappeared'))
+@when(
+    parsers.re(r'user of (?P<browser_id>.+?) sees that provider popup next to '
+               r'(?P<ordinal>1st|2nd|3rd|\d*?[4567890]th|\d*?11th|'
+               r'\d*?12th|\d*?13th|\d*?[^1]1st|\d*?[^1]2nd|\d*?[^1]3rd) '
+               r'provider circle on Onezone world map has disappeared'))
+@then(
+    parsers.re(r'user of (?P<browser_id>.+?) sees that provider popup next to '
+               r'(?P<ordinal>1st|2nd|3rd|\d*?[4567890]th|\d*?11th|'
+               r'\d*?12th|\d*?13th|\d*?[^1]1st|\d*?[^1]2nd|\d*?[^1]3rd) '
+               r'provider circle on Onezone world map has disappeared'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_no_provider_popup_next_to_provider_circle(selenium, browser_id,
                                                      ordinal, oz_page):
@@ -309,7 +319,8 @@ def wt_click_on_provider_with_name_in_go_to_your_files_oz_panel(selenium,
 def assert_list_of_providers_is_empty(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
     count = oz_page(driver)['go to your files'].providers.count()
-    assert count == 0, 'Providers count is {} instead of expected 0'.format(count)
+    assert count == 0, 'Providers count is {} instead of expected 0'.format(
+        count)
 
 
 @when(parsers.parse('user of {browser_id} sees that provider "{provider}" '
@@ -326,30 +337,36 @@ def assert_provider_working_in_oz_panel(selenium, browser_id,
         provider_record = page.elements_list[provider]
         provider_record.click()
     except RuntimeError:
-        assert False, 'no provider "{}" found on providers list'.format(provider)
+        assert False, 'no provider "{}" found on providers list'.format(
+            provider)
     else:
         pass
         assert page.is_working(), ('provider icon in Onezone for "{}" '
                                    'is not green'.format(provider))
 
 
-@when(parsers.parse('user of {browser_id} sees that provider named "{provider}" '
-                    'in expanded "GO TO YOUR FILES" Onezone panel is not working'))
-@then(parsers.parse('user of {browser_id} sees that provider named "{provider}" '
-                    'in expanded "GO TO YOUR FILES" Onezone panel is not working'))
+@when(
+    parsers.parse('user of {browser_id} sees that provider named "{provider}" '
+                  'in expanded "GO TO YOUR FILES" Onezone panel is not working'))
+@then(
+    parsers.parse('user of {browser_id} sees that provider named "{provider}" '
+                  'in expanded "GO TO YOUR FILES" Onezone panel is not working'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_provider_not_working_in_oz_panel(selenium, browser_id,
                                             provider, oz_page, hosts):
     driver = selenium[browser_id]
     provider = hosts[provider]['name']
     provider_record = oz_page(driver)['go to your files'].providers[provider]
-    assert provider_record.is_not_working(), ('provider icon in GO TO YOUR FILES '
-                                              'oz panel for "{}" is not gray'
-                                              ''.format(provider))
+    assert provider_record.is_not_working(), (
+        'provider icon in GO TO YOUR FILES '
+        'oz panel for "{}" is not gray'
+        ''.format(provider))
 
 
-def click_on_provider_in_providers_sidebar_with_provider_name(selenium, browser_id,
-                                                              oz_page, provider_name):
+def click_on_provider_in_providers_sidebar_with_provider_name(selenium,
+                                                              browser_id,
+                                                              oz_page,
+                                                              provider_name):
     driver = selenium[browser_id]
     oz_page(driver)['providers'].elements_list[provider_name]()
 
@@ -360,14 +377,16 @@ def click_on_provider_in_providers_sidebar_with_provider_name(selenium, browser_
 def click_on_provider_in_data_sidebar(selenium, browser_id, oz_page,
                                       provider, hosts):
     provider = hosts[provider]['name']
-    click_on_provider_in_providers_sidebar_with_provider_name(selenium, browser_id,
+    click_on_provider_in_providers_sidebar_with_provider_name(selenium,
+                                                              browser_id,
                                                               oz_page, provider)
 
 
 @wt(parsers.parse('user of {browser_id} sees that "{provider}" provider is not '
                   'in providers list in data sidebar'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_provider_is_not_in_providers_list_in_data_sidebar(selenium, browser_id,
+def assert_provider_is_not_in_providers_list_in_data_sidebar(selenium,
+                                                             browser_id,
                                                              oz_page, provider,
                                                              hosts):
     driver = selenium[browser_id]
@@ -428,9 +447,19 @@ def assert_number_of_supported_spaces_in_data_sidebar(selenium, browser_id,
 @wt(parsers.parse('user of {browser_id} sees that length of spaces list on '
                   'provider popover is {number}'))
 def assert_len_of_spaces_list_in_provider_popover(selenium, browser_id,
-                                           number, modals):
+                                                  number, modals):
     driver = selenium[browser_id]
     spaces_list = modals(driver).provider_popover.spaces_list
     assert int(number) == len(spaces_list), ('number of supported spaces '
                                              'is not equal {}'.format(number))
 
+
+def click_on_menu_button_of_provider_on_providers_list(driver, provider_name,
+                                                       oz_page):
+    oz_page(driver)['data'].providers_page.providers_list[
+        provider_name].menu_button()
+
+
+def click_on_cease_support_in_menu_of_provider_on_providers_list(driver,
+                                                                 popups):
+    popups(driver).popover_menu.cease_support_from_providers_list_menu()
