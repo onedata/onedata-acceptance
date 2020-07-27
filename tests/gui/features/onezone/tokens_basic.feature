@@ -193,3 +193,84 @@ Feature: Management of tokens basic features in Onezone GUI
                 path: /
             object ID:
               - 0000000000522CB067756964233739396665383433613330383664376465393632636539643462666561313362636835363837233166373864336661623561326166633135373739363737653532656166636231636837653434
+
+
+  Scenario Outline: User successfully deletes selected obsolete token
+
+    # create obsolete tokens
+    When user of browser creates token with following configuration:
+        name: identity_token_1
+        type: identity
+        caveats:
+          expiration:
+            after: -10
+
+    And user of browser creates token with following configuration:
+        name: identity_token_2
+        type: identity
+        caveats:
+          expiration:
+            after: -10
+
+    And user of browser creates token with following configuration:
+        name: invite_token_1
+        type: invite
+        invite type: Invite user to space
+        invite target: space1
+        caveats:
+          expiration:
+            after: -10
+
+    And user of browser creates token with following configuration:
+        name: invite_token_2
+        type: invite
+        invite type: Invite user to space
+        invite target: space1
+        caveats:
+          expiration:
+            after: -10
+
+    And user of browser clicks on "Clean up obsolete tokens" button in tokens sidebar
+    And user of browser sees that "Clean up obsolete tokens" modal has appeared
+
+    And user of browser selects "<token_to_save>" token to save on modal
+    And user of browser clicks on "Remove" button in modal "Clean up obsolete tokens"
+
+    Then user of browser sees "<token_to_save>" in token list on tokens page sidebar
+    And user of browser does not see "<token_to_delete>" in token list on tokens page sidebar
+
+    Examples:
+    | token_to_save     | token_to_delete   |
+    | invite_token_1    | invite_token_2    |
+    # todo: uncomment, when identity tokens will be visible, on clean obsolete tokens modal
+    # | identity_token_1  | identity_token_2  |
+
+
+  Scenario: User successfully deletes selected obsolete token types
+
+    # create obsolete tokens
+    When user of browser creates token with following configuration:
+        name: access_token_1
+        type: access
+        caveats:
+          expiration:
+            after: -10
+
+
+    And user of browser creates token with following configuration:
+        name: invite_token_1
+        type: invite
+        invite type: Invite user to space
+        invite target: space1
+        caveats:
+          expiration:
+            after: -10
+
+    And user of browser clicks on "Clean up obsolete tokens" button in tokens sidebar
+    And user of browser sees that "Clean up obsolete tokens" modal has appeared
+
+    And user of browser selects "Invitation tokens" token type to save on modal
+    And user of browser clicks on "Remove" button in modal "Clean up obsolete tokens"
+
+    Then user of browser sees "invite_token_1" in token list on tokens page sidebar
+    And user of browser does not see "access_token_1" in token list on tokens page sidebar

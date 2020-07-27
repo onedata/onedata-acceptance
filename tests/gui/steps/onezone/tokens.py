@@ -346,3 +346,43 @@ def get_caveat_by_name(selenium, browser_id, oz_page, caveat_name):
 def get_privileges_tree(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
     return oz_page(driver)['tokens'].privilege_tree
+
+
+@wt(parsers.parse('user of {browser_id} selects "{token_name}" token '
+                  'to save on modal'))
+def select_tokens_to_save_on_modal(browser_id, token_name, selenium, modals):
+    driver = selenium[browser_id]
+    clean_modal = modals(driver).clean_up_obsolete_tokens
+
+    # expand token types to make tokens visible
+    for token_type in clean_modal.token_types:
+        token_type.click()
+
+    clean_modal.tokens[token_name].checkbox.click()
+
+
+@wt(parsers.parse('user of {browser_id} selects "{token_type}" token type '
+                  'to save on modal'))
+def select_token_type_to_save_on_modal(browser_id, token_type,
+                                       selenium, modals):
+    driver = selenium[browser_id]
+    clean_modal = modals(driver).clean_up_obsolete_tokens
+
+    clean_modal.token_types[token_type].checkbox.click()
+
+
+@wt(parsers.parse('user of {browser_id} {ability_to_see} "{token_name}" '
+                  'in token list on tokens page sidebar'))
+def assert_token_on_token_page_sidebar(browser_id, ability_to_see, token_name,
+                                       selenium, oz_page):
+    driver = selenium[browser_id]
+    tokens_page = oz_page(driver)['tokens'].sidebar
+
+    if ability_to_see == 'sees':
+        err_msg = f'token list on sidebar should contain {token_name}'
+        assert token_name in {token.name for token in
+                              tokens_page.tokens}, err_msg
+    if ability_to_see == 'does not see':
+        err_msg = f'token list on sidebar should not contain {token_name}'
+        assert token_name not in {token.name for token in
+                                  tokens_page.tokens}, err_msg
