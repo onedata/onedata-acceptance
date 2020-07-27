@@ -6,6 +6,7 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+from .change_privileges import ChangePrivilegesModal
 from .clean_up_obsolete_tokens import CleanUpObsoleteTokensModal
 from .create_dir import CreateDir
 from .add_storage import AddStorage
@@ -106,6 +107,7 @@ class Modals(object):
     remove_token = WebItem('.modal-dialog', cls=RemoveModal)
     clean_up_obsolete_tokens = WebItem('.modal-dialog',
                                        cls=CleanUpObsoleteTokensModal)
+    change_privileges = WebItem('.modal-dialog', cls=ChangePrivilegesModal)
 
     def __init__(self, driver):
         self.driver = driver

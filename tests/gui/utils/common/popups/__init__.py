@@ -6,8 +6,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-
-from tests.gui.utils.core.web_elements import WebItem
+from tests.gui.utils.core.web_elements import WebItem, Button, WebItemsSequence
 from .consumer_caveat import ConsumerCaveat
 from .menu_popup import MenuPopup
 from .selector_popup import SelectorPopup
@@ -24,8 +23,8 @@ class Popups(object):
                                   cls=DeregisterProvider)
     user_account_menu = WebItem('.webui-popover-content .user-account-menu',
                                 cls=UserAccountPopup)
-    upload_presenter = WebItem('.hidden-xs .up-single-upload',
-                               cls=UploadPresenter)
+    upload_presenter = WebItemsSequence('.hidden-xs .up-single-upload',
+                                        cls=UploadPresenter)
     menu_popup = WebItem('#webuiPopover1', cls=MenuPopup)
     popover_menu = WebItem('.webui-popover.in', cls=PopoverMenu)
     selector_popup = WebItem('.webui-popover.in', cls=SelectorPopup)
@@ -39,9 +38,4 @@ class Popups(object):
         return 'popups'
 
     def is_upload_presenter(self):
-        try:
-            self.upload_presenter
-        except RuntimeError:
-            return False
-        else:
-            return True
+        return len(self.upload_presenter) > 0

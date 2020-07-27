@@ -43,13 +43,20 @@ class Space(Element):
 
 
 class Provider(Element):
+    id = name = Label('.one-label')
     support = Label('.outer-text')
+    menu_button = Button('.provider-menu-toggle')
+
+
+class SpaceInfoTile(PageObject):
+    rename = Button('.edit-icon')
+    edit_name_box = WebItem('.editor', cls=EditBox)
+    shares_count = Label('.shares-count')
 
 
 class SpaceOverviewPage(PageObject):
     space_name = Label('.with-menu .one-label')
-    rename = Button('.edit-icon')
-    edit_name_box = WebItem('.editor', cls=EditBox)
+    info_tile = WebItem('.resource-info-tile', cls=SpaceInfoTile)
 
 
 class WelcomePage(PageObject):
@@ -110,4 +117,3 @@ class DataPage(GenericPage):
     current_provider = Label('.current-oneprovider-name')
     providers = WebItemsSequence('.provider-online', cls=_Provider)
     choose_other_provider = Button('.choose-oneprovider-link')
-
