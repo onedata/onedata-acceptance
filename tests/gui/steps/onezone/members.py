@@ -344,6 +344,40 @@ def remove_member_from_parent(selenium, browser_id, member_name, member_type,
     modals(driver).remove_member.remove()
 
 
+@wt(parsers.re('user of (?P<browser_id>.*) sees "(?P<member_name>.*)" '
+               'user in cluster members'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_user_in_cluster_members_page(selenium, browser_id, member_name,
+                                        oz_page, onepanel):
+    driver = selenium[browser_id]
+    where = 'cluster'
+    members_page = _find_members_page(onepanel, oz_page, driver, where)
+    list_name = 'users'
+    found = False
+    for item in getattr(members_page, list_name).items:
+        if item.name == member_name:
+            found = True
+            break
+    assert found
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) does not see "(?P<member_name>.*)" '
+               'user in cluster members'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_user_not_in_cluster_members_page(selenium, browser_id, member_name,
+                                            oz_page, onepanel):
+    driver = selenium[browser_id]
+    where = 'cluster'
+    members_page = _find_members_page(onepanel, oz_page, driver, where)
+    list_name = 'users'
+    found = False
+    for item in getattr(members_page, list_name).items:
+        if item.name == member_name:
+            found = True
+            break
+    assert not found
+
+
 @wt(parsers.re('user of (?P<browser_id>.*) copies "(?P<group>.*)" '
                '(?P<who>user|group) invitation token'))
 @repeat_failed(timeout=WAIT_FRONTEND)

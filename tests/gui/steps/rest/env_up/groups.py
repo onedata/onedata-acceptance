@@ -12,6 +12,8 @@ import json
 from pytest_bdd import given, parsers
 
 from tests import OZ_REST_PORT
+from tests.mixed.steps.rest.onezone.group_management import \
+    remove_groups_using_rest
 from tests.utils.rest_utils import (http_post, http_put, get_zone_rest_path)
 
 
@@ -139,3 +141,10 @@ def _add_child_group(zone_hostname, admin_credentials, parent_id, child_id,
              path=get_zone_rest_path('groups', parent_id, 'children', child_id),
              auth=(admin_credentials.username, admin_credentials.password),
              data=data)
+
+
+@given(parsers.re('there (?P<fold>are|is) no (?P<group_list>.*) groups? in '
+                  'Onezone page used by (?P<user>\w+)'))
+def g_remove_groups(user, users, hosts, group_list,
+                    host='onezone'):
+    remove_groups_using_rest(user, users, hosts, group_list, host)
