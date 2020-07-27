@@ -44,7 +44,8 @@ def click_on_user_menu_button_in_oz(selenium, browser_id, oz_page):
     oz_page(driver)['profile'].show_user_account_menu_toolbar.click()
 
 
-@wt(parsers.parse('user of {browser_id} clicks on remove user button in menu'))
+@wt(parsers.parse('user of {browser_id} clicks on remove user button in menu '
+                  'on Profile page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_remove_user_button_in_oz(selenium, browser_id, popups):
     driver = selenium[browser_id]
@@ -52,7 +53,7 @@ def click_remove_user_button_in_oz(selenium, browser_id, popups):
 
 
 @wt(parsers.parse('user of {browser_id} checks understand consequences '
-                  'checkbox in modal'))
+                  'of removing user account checkbox in modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_understand_consequences_checkbox_in_oz(selenium, browser_id, modals):
     driver = selenium[browser_id]
