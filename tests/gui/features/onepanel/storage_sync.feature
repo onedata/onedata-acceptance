@@ -3,6 +3,11 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
   Background:
     Given initial users configuration in "onezone" Onezone service:
             - user1
+    And there are no spaces supported by oneprovider-1 in Onepanel
+    And there is "new_storage" storage in "oneprovider-1" Oneprovider panel service used by admin with following configuration:
+          storage type: POSIX
+          mount point: /volumes/persistence/storage
+          imported storage: true
 
     And users opened [browser1, browser2] browsers' windows
     And users of [browser1, browser2] opened [Onezone, Onezone] page
@@ -21,16 +26,12 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
 
   Scenario: User sees imported files after supporting space with import-enabled storage and sees difference after update configuration
-    Given there are no spaces supported by oneprovider-1 in Onepanel
-    And there is "new_storage" storage in "oneprovider-1" Oneprovider panel service used by user of browser1 with following configuration:
-          storage type: POSIX
-          mount point: /volumes/persistence/storage
-          imported storage: true
     When user of browser2 creates "space1" space in Onezone
     And user of browser2 sends support token for "space1" to user of browser1
     And user of browser2 copies dir2 to provider's storage mount point
 
     # configure import parameters
+    And user of browser1 opens "oneprovider-1" clusters submenu
     And user of browser1 supports "space1" space in "oneprovider-1" Oneprovider panel service with following configuration:
           storage: new_storage (import-enabled)
           size: 1
@@ -86,17 +87,12 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
 
   Scenario: User sees that files are imported to depth defined by update configuration if it is larger than depth of import configuration
-    Given there are no spaces supported by oneprovider-1 in Onepanel
-    And there is "new_storage" storage in "oneprovider-1" Oneprovider panel service used by user of browser1 with following configuration:
-          storage type: POSIX
-          mount point: /volumes/persistence/storage
-          imported storage: true
-
     When user of browser2 creates "space1" space in Onezone
     And user of browser2 sends support token for "space1" to user of browser1
     And user of browser2 copies dir2 to provider's storage mount point
 
     # support space
+    And user of browser1 opens "oneprovider-1" clusters submenu
     And user of browser1 supports "space1" space in "oneprovider-1" Oneprovider panel service with following configuration:
           storage: new_storage (import-enabled)
           size: 1
@@ -134,20 +130,14 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
                   - dir22: 10
                   - file1.txt: 22222
 
-    And user of browser1 revokes "space1" space support in "oneprovider-1" provider in Onepanel
-
 
   Scenario: User does not see files and directories that have been removed in storage mount point when delete option was enabled
-    Given there are no spaces supported by oneprovider-1 in Onepanel
-    And there is "new_storage" storage in "oneprovider-1" Oneprovider panel service used by user of browser1 with following configuration:
-          storage type: POSIX
-          mount point: /volumes/persistence/storage
-          imported storage: true
     When user of browser2 creates "space1" space in Onezone
     And user of browser2 sends support token for "space1" to user of browser1
     And user of browser2 copies dir2 to provider's storage mount point
 
     # support space
+    And user of browser1 opens "oneprovider-1" clusters submenu
     And user of browser1 supports "space1" space in "oneprovider-1" Oneprovider panel service with following configuration:
           storage: new_storage (import-enabled)
           size: 1
@@ -197,16 +187,12 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
 
   Scenario: User sees file's update when update configuration is set
-    Given there are no spaces supported by oneprovider-1 in Onepanel
-    And there is "new_storage" storage in "oneprovider-1" Oneprovider panel service used by user of browser1 with following configuration:
-          storage type: POSIX
-          mount point: /volumes/persistence/storage
-          imported storage: true
     When user of browser2 creates "space1" space in Onezone
     And user of browser2 sends support token for "space1" to user of browser1
     And user of browser2 copies dir2 to provider's storage mount point
 
     # support space
+    And user of browser1 opens "oneprovider-1" clusters submenu
     And user of browser1 supports "space1" space in "oneprovider-1" Oneprovider panel service with following configuration:
           storage: new_storage (import-enabled)
           size: 1
@@ -272,16 +258,12 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
 
   Scenario: User does not see file's update when write once option is enabled
-    Given there are no spaces supported by oneprovider-1 in Onepanel
-    And there is "new_storage" storage in "oneprovider-1" Oneprovider panel service used by user of browser1 with following configuration:
-          storage type: POSIX
-          mount point: /volumes/persistence/storage
-          imported storage: true
     When user of browser2 creates "space1" space in Onezone
     And user of browser2 sends support token for "space1" to user of browser1
     And user of browser2 copies dir2 to provider's storage mount point
 
     # support space
+    And user of browser1 opens "oneprovider-1" clusters submenu
     And user of browser1 supports "space1" space in "oneprovider-1" Oneprovider panel service with following configuration:
           storage: new_storage (import-enabled)
           size: 1
@@ -347,16 +329,12 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
 
   Scenario: User sees that files are deleted after synchronization when delete and write once options are enabled
-    Given there are no spaces supported by oneprovider-1 in Onepanel
-    And there is "new_storage" storage in "oneprovider-1" Oneprovider panel service used by user of browser1 with following configuration:
-          storage type: POSIX
-          mount point: /volumes/persistence/storage
-          imported storage: true
     When user of browser2 creates "space1" space in Onezone
     And user of browser2 sends support token for "space1" to user of browser1
     And user of browser2 copies dir2 to provider's storage mount point
 
     # support space
+    And user of browser1 opens "oneprovider-1" clusters submenu
     And user of browser1 supports "space1" space in "oneprovider-1" Oneprovider panel service with following configuration:
           storage: new_storage (import-enabled)
           size: 1
@@ -381,6 +359,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
               write once: true
 
     # confirm correct update configuration
+    And user of browser1 opens "oneprovider-1" clusters submenu
     And user of browser1 sees that Update strategy configuration for "space1" is as follow:
           Update strategy: Simple scan
           Max depth: 3
@@ -416,16 +395,12 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
 
   Scenario: User sees that directory is not synchronized after files update disable
-    Given there are no spaces supported by oneprovider-1 in Onepanel
-    And there is "new_storage" storage in "oneprovider-1" Oneprovider panel service used by user of browser1 with following configuration:
-          storage type: POSIX
-          mount point: /volumes/persistence/storage
-          imported storage: true
     When user of browser2 creates "space1" space in Onezone
     And user of browser2 sends support token for "space1" to user of browser1
     And user of browser2 copies dir2 to provider's storage mount point
 
     #support space
+    And user of browser1 opens "oneprovider-1" clusters submenu
     And user of browser1 supports "space1" space in "oneprovider-1" Oneprovider panel service with following configuration:
           storage: new_storage (import-enabled)
           size: 1

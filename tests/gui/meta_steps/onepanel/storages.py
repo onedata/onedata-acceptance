@@ -7,11 +7,14 @@ __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import json
 import re
 
 import yaml
 from pytest_bdd import parsers
 
+from bamboos.docker.environment.panel import panel_hostname
+from tests import PANEL_REST_PORT
 from tests.gui.meta_steps.onezone.common import wt_visit_op
 from tests.gui.steps.oneprovider.data_tab import \
     assert_file_browser_in_data_tab_in_op
@@ -36,6 +39,8 @@ from tests.gui.steps.onepanel.common import (
     wt_click_on_subitem_for_item, wt_click_on_btn_in_content)
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.utils.bdd_utils import given
+from tests.utils.http_exceptions import HTTPConflict
+from tests.utils.rest_utils import http_post, get_panel_rest_path
 
 
 @wt(parsers.parse('user of {browser_id} removes "{name}" storage '
@@ -74,17 +79,39 @@ def add_storage_in_op_panel_using_gui(selenium, browser_id, name, provider_name,
                                        name)
 
 
-@given(parsers.parse('there is "{storage_name}" storage in '
-                     '"{provider_name}" Oneprovider panel service used by user '
-                     'of {browser_id} with following configuration:\n{config}'))
-def create_storage_if_necessary(storage_name, provider_name, browser_id, config,
-                                oz_page, hosts, selenium, onepanel):
-    _go_to_storage_view_in_clusters(selenium, browser_id, provider_name,
-                                    oz_page, hosts, onepanel)
-    if not is_storage_on_storage_list(selenium, browser_id, storage_name,
-                                      onepanel):
-        _add_storage_in_op_panel_using_gui(selenium, browser_id, config,
-                                           onepanel, storage_name)
+def _add_storage_in_op_panel_using_rest(config, storage_name, provider,
+                                        hosts, onepanel_credentials):
+    storage_config = {}
+    options = yaml.load(config)
+
+    storage_config['type'] = options['storage type'].lower()
+    if options.get('imported storage', False):
+        storage_config['importedStorage'] = True
+    storage_config['mountPoint'] = options['mount point']
+
+    provider_hostname = hosts[provider]['hostname']
+    onepanel_username = onepanel_credentials.username
+    onepanel_password = onepanel_credentials.password
+
+    storage_data = {storage_name: storage_config}
+    print(storage_data)
+
+    http_post(ip=provider_hostname, port=PANEL_REST_PORT,
+              path=get_panel_rest_path('provider', 'storages'),
+              auth=(onepanel_username, onepanel_password),
+              data=json.dumps(storage_data))
+
+
+@given(parsers.parse('there is "{storage_name}" storage in "{provider}" '
+                     'Oneprovider panel service used by '
+                     '{user} with following configuration:\n{config}'))
+def create_storage_if_necessary_rest(storage_name, provider, config,
+                                     hosts, onepanel_credentials):
+    try:
+        _add_storage_in_op_panel_using_rest(config, storage_name, provider,
+                                            hosts, onepanel_credentials)
+    except HTTPConflict:
+        pass
 
 
 def _go_to_storage_view_in_clusters(selenium, browser_id, provider_name,
@@ -135,4 +162,3 @@ def _add_storage_in_op_panel_using_gui(selenium, browser_id, config, onepanel,
                                                             browser_id,
                                                             onepanel)
     notify_visible_with_text(selenium, browser_id, notify_type, text_regexp)
-

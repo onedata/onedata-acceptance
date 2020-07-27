@@ -23,5 +23,5 @@ class PopoverMenu(PageObject):
                             '.one-collapsible-toolbar-item', cls=MenuItem)
 
     def __str__(self):
-        return 'Member menu popup'
+        return 'Menu popup'
 

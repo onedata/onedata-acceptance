@@ -65,6 +65,7 @@ from tests.gui.meta_steps.onezone.tokens import *
 from tests.gui.meta_steps.onepanel.spaces import *
 from tests.gui.meta_steps.onezone.spaces import *
 from tests.gui.meta_steps.oneprovider.data import *
+from tests.gui.meta_steps.oneprovider.common import *
 
 from tests.utils.acceptance_utils import *
 from tests.mixed.steps.space_basic import *

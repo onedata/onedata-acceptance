@@ -61,8 +61,8 @@ Feature: Basic data tab operations on public shares in file browser
 
     And user of browser1 opens "share_dir1" single share view of space "space1" using sidebar
     And user of browser1 renames current share to "renamed_share_dir1" in single share view
-
     And user of browser2 refreshes site
+
     Then user of browser2 sees that public share is named "renamed_share_dir1"
 
 
@@ -77,6 +77,7 @@ Feature: Basic data tab operations on public shares in file browser
     And user of browser1 removes current share
 
     And user of browser2 refreshes site
+
     Then user of browser2 sees "The resource could not be found" error
 
 
@@ -93,11 +94,8 @@ Feature: Basic data tab operations on public shares in file browser
     # upload dir1/20B-0.txt
     And user of browser1 double clicks on item named "dir1" in file browser
     And user of browser1 uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
-
-    And user of browser2 refreshes site
-    And user of browser2 sees that public share is named "share_dir1"
+    And user of browser2 clicks file browser refresh button
     And user of browser2 sees file browser on share's public interface
-    And user of browser2 double clicks on item named "dir1" in file browser
     Then user of browser2 sees item(s) named "20B-0.txt" in file browser
 
 
@@ -113,10 +111,8 @@ Feature: Basic data tab operations on public shares in file browser
 
     And user of browser1 succeeds to remove "dir1/file1" in "space1"
 
-    And user of browser2 refreshes site
-    And user of browser2 sees that public share is named "share_dir1"
+    And user of browser2 clicks file browser refresh button
     And user of browser2 sees file browser on share's public interface
-    And user of browser2 double clicks on item named "dir1" in file browser
     Then user of browser2 does not see any item(s) named "file1" in file browser
 
 
