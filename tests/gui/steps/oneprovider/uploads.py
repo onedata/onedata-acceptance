@@ -25,7 +25,7 @@ def click_on_cancel_upload_button_on_popup(selenium, browser_id, popups,
 def click_on_confirm_cancel_upload(selenium, browser_id, popups):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    popups(driver).confirm_cancel_button.click()
+    popups(driver).popover_menu.confirm_cancel_button.click()
 
 
 @wt(parsers.parse('user of {browser_id} sees that number of uploads is'
@@ -39,7 +39,7 @@ def assert_number_of_files_in_uploaded_files_list(selenium, browser_id, oz_page,
         'uploads'].uploaded_content_page.uploaded_items_list
     assert number == len(uploaded_files_list), (
         f'number of files uploaded {len(uploaded_files_list)}'
-        ' is not equal {number}')
+        f' is not equal {number}')
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees that file "(?P<file_name>.*)"'

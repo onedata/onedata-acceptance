@@ -7,7 +7,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-from pytest_bdd import parsers, given
+from tests.utils.bdd_utils import parsers, given
 from tests.utils.acceptance_utils import *
 
 from tests.gui.steps.common.notifies import notify_visible_with_text
