@@ -268,14 +268,15 @@ def click_add_description_button(selenium, browser_id, op_container):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def append_description(selenium, browser_id, description, op_container):
     driver = selenium[browser_id]
+
     # check if editor is in preview or edit mode
     if op_container(driver).shares_page.editor_mode == 'Edit Markdown':
         op_container(driver).shares_page.switch_editor_markdown()
     op_container(driver).shares_page.description_input += description
 
 
-@wt(parsers.parse('user of {browser_id} clicks on save changes '
-                  'in description button'))
+@wt(parsers.parse('user of {browser_id} clicks on save changes button '
+                  'in description share'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def save_description_changes(selenium, browser_id, op_container):
     driver = selenium[browser_id]
@@ -298,5 +299,7 @@ def assert_proper_description(selenium, browser_id,
                               description, public_share):
     driver = selenium[browser_id]
     _change_iframe_for_public_share_page(selenium, browser_id)
-    err_msg = f'wrong description'
-    assert public_share(driver).description == description, err_msg
+
+    description_on_page = public_share(driver).description
+    err_msg = f'found {description_on_page} instead of {description}'
+    assert description_on_page == description, err_msg
