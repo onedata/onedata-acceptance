@@ -53,6 +53,7 @@ Feature: Onezone account manage page
 
     # change password
     And user of browser changes user1 password to new_password
+
     And user of browser logs out from Onezone page
 
     # successfully log in with new login and new password

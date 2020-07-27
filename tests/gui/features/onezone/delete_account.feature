@@ -15,8 +15,8 @@ Feature: Delete Onezone user account
 
     # delete account
     And user of browser clicks on menu button on Profile page
-    And user of browser clicks on remove user button in menu
-    And user of browser checks understand consequences checkbox in modal
+    And user of browser clicks on remove user button in menu on Profile page
+    And user of browser checks understand consequences of removing user account checkbox in modal
     And user of browser clicks on delete account button in modal
 
     # log in again
