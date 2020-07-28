@@ -72,6 +72,8 @@ def consume_token_from_copied_token(selenium, browser_id, oz_page, clipboard,
                   'using copied token'))
 @wt(parsers.parse('user of {browser_id} adds space "{elem_name}" to harvester '
                   'using copied token'))
+@wt(parsers.parse('user of {browser_id} adds harvester "{elem_name}" to space '
+                  'using copied token'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_element_with_copied_token(selenium, browser_id, elem_name, oz_page,
                                   clipboard, displays, modals):

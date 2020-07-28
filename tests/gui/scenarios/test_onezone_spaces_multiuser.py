@@ -55,7 +55,8 @@ from tests.gui.steps.oneprovider.permissions import *
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.onezone.tokens import *
 from tests.gui.meta_steps.onezone.groups import *
-
+from tests.gui.meta_steps.onezone.harvesters import *
+from tests.gui.meta_steps.onezone.spaces import *
 from tests.utils.acceptance_utils import *
 
 
@@ -64,6 +65,6 @@ def screens():
     return [0, 1]
 
 
+scenarios('../features/onezone/space/spaces_harvesters.feature')
 scenarios('../features/onezone/space/spaces_multibrowser.feature')
 scenarios('../features/onezone/space/invite_group_to_space.feature')
-
