@@ -111,6 +111,10 @@ class SyncChart(PageObject):
                                    '.update-configuration-section',
                                    cls=UpdateConfigurationForm)
 
+    last_minute_view = Button('.btn-sync-interval-min')
+    last_hour_view = Button('.btn-sync-interval-hour')
+    last_day_view = Button('.btn-sync-interval-day')
+
     start_synchronization = NamedButton('button', text='Start synchronization')
     save_configuration = Button('.btn-primary')
 
