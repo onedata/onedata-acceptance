@@ -128,7 +128,7 @@ Feature: Oneprovider POSIX privileges GUI tests
     And user of browser clicks on menu for "file11" file in file browser
     And user of browser clicks "Rename" option in data row menu in file browser
     And user of browser sees that "Rename" modal has appeared
-    And user of browser writes "new_file11" into input name text field in modal "Rename modal"
+    And user of browser writes "new_file11" into default text field in modal "Rename modal"
     And user of browser confirms rename directory using button
     Then user of browser sees that error modal with text "Renaming the file failed" appeared
 

@@ -27,10 +27,10 @@ from tests.gui.steps.onepanel.storages import (
     enable_import_in_add_storage_form,
     wt_assert_storage_attr_in_storages_page_op_panel,
     assert_storage_on_storage_list, is_storage_on_storage_list,
-    types_key_in_posix_storage_edit_page,
-    saves_changes_in_posix_storage_edit_page,
+    save_changes_in_posix_storage_edit_page,
     click_value_in_posix_storage_edit_page,
-    delete_additional_param_in_posix_storage_edit_page)
+    delete_additional_param_in_posix_storage_edit_page,
+    type_key_in_posix_storage_edit_page)
 from tests.gui.steps.modal import click_modal_button
 from tests.gui.steps.onezone.spaces import (
     click_on_option_in_the_sidebar, click_element_on_lists_on_left_sidebar_menu,
@@ -149,10 +149,10 @@ def add_key_value_in_storage_page(selenium, browser_id, key,
     button = 'Proceed'
     modal = 'Modify Storage'
 
-    types_key_in_posix_storage_edit_page(selenium, browser_id, key, onepanel)
+    type_key_in_posix_storage_edit_page(selenium, browser_id, key, onepanel)
     click_value_in_posix_storage_edit_page(selenium, browser_id, onepanel)
     type_string_into_active_element(selenium, browser_id, val)
-    saves_changes_in_posix_storage_edit_page(selenium, browser_id, onepanel)
+    save_changes_in_posix_storage_edit_page(selenium, browser_id, onepanel)
     click_modal_button(selenium, browser_id, button, modal, modals)
 
 
@@ -165,7 +165,7 @@ def delete_additional_param_in_storage_page(selenium, browser_id,
 
     delete_additional_param_in_posix_storage_edit_page(selenium, browser_id,
                                                        onepanel)
-    saves_changes_in_posix_storage_edit_page(selenium, browser_id, onepanel)
+    save_changes_in_posix_storage_edit_page(selenium, browser_id, onepanel)
     click_modal_button(selenium, browser_id, button, modal, modals)
 
 
@@ -182,19 +182,20 @@ def _delete_all_additional_params_in_storage_page(selenium, browser_id,
                                                    onepanel)
         wt_clicks_on_btn_in_storage_toolbar_in_panel(selenium, browser_id,
                                                      option, popups)
-        if onepanel(selenium[browser_id]).content.storages.storages['posix'].\
-                edit_form.posix_editor.params.get_key_values_count() == 2:
+        driver = selenium[browser_id]
+        storage = onepanel(driver).content.storages.storages['posix']
+        if storage.edit_form.posix_editor.params.get_key_values_count() == 2:
             deleted = True
         if not deleted:
             delete_additional_param_in_posix_storage_edit_page(selenium,
                                                                browser_id,
                                                                onepanel)
-        saves_changes_in_posix_storage_edit_page(selenium, browser_id, onepanel)
+        save_changes_in_posix_storage_edit_page(selenium, browser_id, onepanel)
         click_modal_button(selenium, browser_id, button, modal, modals)
 
 
-@given(parsers.parse('user of {browser_id} deletes all additional params in '
-                     'storage edit page'))
+@given(parsers.parse('there are no additional params in'
+                     'storage edit page used by {browser_id}'))
 def g_delete_all_additional_params_in_storage_page(selenium, browser_id,
                                                    onepanel, modals, popups):
     _delete_all_additional_params_in_storage_page(selenium, browser_id,

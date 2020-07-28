@@ -45,7 +45,7 @@ class DataRow(PageObject):
 
     def is_tag_visible(self, name):
         try:
-            getattr(self, '{tag}_tag'.format(tag=name))
+            getattr(self, '{tag}_tag'.format(tag=name.lower()))
         except RuntimeError:
             return False
         else:
@@ -60,7 +60,7 @@ class DataRow(PageObject):
             return True
 
     def click_on_status_tag(self, name):
-        tag = getattr(self, '{tag}_tag'.format(tag=name))
+        tag = getattr(self, '{tag}_tag'.format(tag=name.lower()))
         click_on_web_elem(self.driver, tag,
                           f'cannot click on "{name}" in {self}')
 

@@ -22,19 +22,20 @@ Feature: Basic data tab operations on single directory in file browser
     And user of browser opened onezone page
     And user of browser logged as user1 to Onezone service
 
+
   Scenario: User copies and pastes file
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
 
     And user of browser double clicks on item named "dir1" in file browser
-    And user of browser selects ["file1"] items from file browser with pressed ctrl
+    And user of browser selects "file1" items from file browser with pressed ctrl
     And user of browser chooses Copy option from selection menu on file browser page
     And user of browser changes current working directory to home using breadcrumbs
     And user of browser clicks "Paste" button from file browser menu bar
     Then user of browser sees items named ["dir1", "file1"] in file browser in given order
     And user of browser double clicks on item named "dir1" in file browser
-    And user of browser sees items named ["file1"] in file browser in given order
+    And user of browser sees items named "file1" in file browser in given order
 
   Scenario: User cuts and pastes file
     When user of browser clicks "space1" on the spaces list in the sidebar
@@ -42,7 +43,7 @@ Feature: Basic data tab operations on single directory in file browser
     And user of browser sees file browser in data tab in Oneprovider page
 
     And user of browser double clicks on item named "dir1" in file browser
-    And user of browser selects ["file1"] items from file browser with pressed ctrl
+    And user of browser selects "file1" items from file browser with pressed ctrl
     And user of browser chooses Cut option from selection menu on file browser page
     And user of browser changes current working directory to home using breadcrumbs
     And user of browser clicks "Paste" button from file browser menu bar
@@ -57,7 +58,7 @@ Feature: Basic data tab operations on single directory in file browser
     And user of browser sees that current working directory displayed in breadcrumbs is space1
 
     And user of browser clicks "New directory" button from file browser menu bar
-    And user of browser writes "dir1" into input name text field in modal "Create dir"
+    And user of browser writes "dir1" into default text field in modal "Create dir"
     And user of browser confirms create new directory using button
     Then user of browser sees that error modal with text "File exists" appeared
 
@@ -84,7 +85,7 @@ Feature: Basic data tab operations on single directory in file browser
     And user of browser clicks on menu for "dir1" directory in file browser
     And user of browser clicks "Rename" option in data row menu in file browser
     And user of browser sees that "Rename" modal has appeared
-    And user of browser writes "new_dir1" into input name text field in modal "Rename modal"
+    And user of browser writes "new_dir1" into default text field in modal "Rename modal"
     And user of browser confirms rename directory using enter
 
     Then user of browser sees that item named "dir1" has disappeared from files browser

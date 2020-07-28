@@ -1,5 +1,6 @@
 Feature: Quality of Service in directory tests for 2 providers using multiple browsers in Oneprovider GUI
 
+
   Background:
     Given initial users configuration in "onezone" Onezone service:
             - user1
@@ -23,20 +24,21 @@ Feature: Quality of Service in directory tests for 2 providers using multiple br
     And users of [browser_unified, browser_emergency] opened [Onezone, oneprovider-2 provider panel] page
     And user of [browser_unified, browser_emergency] logged as [user1, admin] to [Onezone, emergency interface of Onepanel] service
 
-    Scenario: User successfully uploads file to directory with qos requirement
-      When user of browser_unified clicks "space1" on the spaces list in the sidebar
-      And user of browser_unified clicks Data of "space1" in the sidebar
-      And user of browser_unified sees file browser in data tab in Oneprovider page
 
-      And user of browser_emergency clicks on Storages item in submenu of "oneprovider-2" item in CLUSTERS sidebar in Onepanel
-      And user of browser_emergency expands "posix" record on storages list in storages page in Onepanel
-      And user of browser_emergency copies id of "posix" storage to clipboard via copy button
-      And user of browser_unified copies storageId quality of service from clipboard for "dir1" from file browser
-      And user of browser_unified double clicks on item named "dir1" in file browser
-      And user of browser_unified uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
-      Then user of browser_unified clicks on qos status tag for "20B-0.txt" in file browser
-      And user of browser_unified sees that all qos requirements are fulfilled
-      And user of browser_unified clicks on "Close" button in modal "Quality of Service"
-      And user of browser_unified sees file chunks for file "20B-0.txt" as follows:
-          oneprovider-1: entirely filled
-          oneprovider-2: entirely filled
+  Scenario: User successfully uploads file to directory with QoS requirement
+    When user of browser_unified clicks "space1" on the spaces list in the sidebar
+    And user of browser_unified clicks Data of "space1" in the sidebar
+    And user of browser_unified sees file browser in data tab in Oneprovider page
+
+    And user of browser_emergency clicks on Storages item in submenu of "oneprovider-2" item in CLUSTERS sidebar in Onepanel
+    And user of browser_emergency expands "posix" record on storages list in storages page in Onepanel
+    And user of browser_emergency copies id of "posix" storage to clipboard via copy button
+    And user of browser_unified creates QoS requirement with copied storageId for "dir1" from file browser
+    And user of browser_unified double clicks on item named "dir1" in file browser
+    And user of browser_unified uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
+    Then user of browser_unified clicks on QoS status tag for "20B-0.txt" in file browser
+    And user of browser_unified sees that all QoS requirements are fulfilled
+    And user of browser_unified clicks on "Close" button in modal "Quality of Service"
+    And user of browser_unified sees file chunks for file "20B-0.txt" as follows:
+        oneprovider-1: entirely filled
+        oneprovider-2: entirely filled

@@ -173,3 +173,9 @@ def wait_for_transfers_page_to_load(selenium, browser_id, op_container):
     switch_to_iframe(selenium, browser_id)
     op_container(selenium[browser_id]).transfers.ongoing_map_header
 
+
+@wt(parsers.re('user of {browser_id} waits until eviction is done'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def wait_for_eviction(selenium, browser_id):
+    button = 'see history'
+    modal = 'Data distribution'

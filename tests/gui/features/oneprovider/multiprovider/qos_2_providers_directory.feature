@@ -1,4 +1,4 @@
-Feature: Quality of Service in directory tests for 2 providers using sigle browser in Oneprovider GUI
+Feature: Quality of Service in directory tests for 2 providers using single browser in Oneprovider GUI
 
 
   Background:
@@ -25,13 +25,14 @@ Feature: Quality of Service in directory tests for 2 providers using sigle brows
     And user of browser opened onezone page
     And user of browser logged as user1 to Onezone service
 
-  Scenario: User successfully makes file inherit qos requirement after directory
-    When user of browser creates 2 replicas of "anyStorage" qos requirement for "dir1"
+
+  Scenario: User successfully makes file inherit QoS requirement after directory
+    When user of browser creates 2 replicas of "anyStorage" QoS requirement for "dir1" in space "space1"
     Then user of browser double clicks on item named "dir1" in file browser
-    And user of browser sees qos status tag for "file1" in file browser
-    And user of browser sees qos inherited status tag for "file1" in file browser
-    And user of browser clicks on qos status tag for "file1" in file browser
-    And user of browser sees that all qos requirements are fulfilled
+    And user of browser sees QoS status tag for "file1" in file browser
+    And user of browser sees QoS inherited status tag for "file1" in file browser
+    And user of browser clicks on QoS status tag for "file1" in file browser
+    And user of browser sees that all QoS requirements are fulfilled
     And user of browser clicks on "Close" button in modal "Quality of Service"
     And user of browser sees file chunks for file "file1" as follows:
           oneprovider-1: entirely filled

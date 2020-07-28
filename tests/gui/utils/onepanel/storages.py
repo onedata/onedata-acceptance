@@ -45,10 +45,10 @@ class QOSParams(PageObject):
                                   cls=POSIXEditorKeyValue)
 
     def set_last_key(self, key):
-        size = len(self.key_values)
-        self.key_values[size - 1].key.value = key
+        size = self.get_key_values_count()
+        self.key_values[size].key.value = key
 
-    def click_last_but_one_value(self):
+    def click_value_in_modified_record(self):
         size = len(self.key_values)
         self.key_values[size - 2].key.click()
         self.key_values[size - 2].val.click()
@@ -58,8 +58,8 @@ class QOSParams(PageObject):
 
     def delete_first_additional_param(self):
         for key_val in self.key_values:
-            if key_val.key_name != 'storageId' and\
-                    key_val.key_name != 'providerId':
+            if (key_val.key_name != 'storageId' and
+                    key_val.key_name != 'providerId'):
                 key_val.delete.click()
                 break
 
@@ -67,7 +67,7 @@ class QOSParams(PageObject):
         for key_val in self.key_values:
             if key_val.key_name == key:
                 key_val.delete.click()
-                break
+                return
 
 
 class POSIXEditor(PageObject):

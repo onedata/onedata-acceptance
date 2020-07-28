@@ -39,8 +39,8 @@ Feature: Basic spaces management utilities using onepanel
     And user of browser_unified sees "oneprovider-1" is on the providers list
 
     Examples:
-    | client   |
-    | browser_unified |
+    | client            |
+    | browser_unified   |
     | browser_emergency |
 
 
@@ -77,6 +77,6 @@ Feature: Basic spaces management utilities using onepanel
     And user of browser_unified sees that length of providers list of "space1" equals "0"
 
     Examples:
-    | client   |
-    | browser_unified |
+    | client            |
+    | browser_unified   |
     | browser_emergency |

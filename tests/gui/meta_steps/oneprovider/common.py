@@ -53,8 +53,8 @@ def navigate_to_tab_in_op_using_gui(selenium, user, oz_page, provider,
 
 @wt(parsers.re('user of (?P<browser_id>.*) replicates "(?P<name>.*)" to '
                'provider "(?P<provider>.*)"'))
-def meta_replicate_item(selenium, browser_id, name, tmp_memory,
-                        provider, op_container, hosts, modals, popups):
+def replicate_file_to_provider(selenium, browser_id, name, tmp_memory,
+                               provider, op_container, hosts, modals, popups):
     option = 'Data distribution'
     modal_name = 'Data distribution'
 
@@ -71,8 +71,8 @@ def meta_replicate_item(selenium, browser_id, name, tmp_memory,
 
 @wt(parsers.re('user of (?P<browser_id>.*) evicts "(?P<name>.*)" from '
                'provider "(?P<provider>.*)"'))
-def meta_evict_item(selenium, browser_id, name, tmp_memory,
-                    provider, op_container, hosts, modals, popups):
+def evict_file_from_provider(selenium, browser_id, name, tmp_memory,
+                             provider, op_container, hosts, modals, popups):
     option = 'Data distribution'
     modal_name = 'Data distribution'
 
@@ -87,10 +87,9 @@ def meta_evict_item(selenium, browser_id, name, tmp_memory,
                                           tmp_memory)
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) waits for "see history" button to '
-               'appear on "Data distribution" modal'))
-def meta_assert_see_history_btn_shown(selenium, browser_id, name, tmp_memory,
-                                      op_container, modals):
+@wt(parsers.re('user of {browser_id} waits until eviction is done'))
+def assert_see_history_btn_shown(selenium, browser_id, name, tmp_memory,
+                                 op_container, modals):
     option = 'Data distribution'
     modal_name = 'Data distribution'
 
@@ -159,8 +158,8 @@ def create_directory(selenium, browser_id, name, tmp_memory,
 
 @wt(parsers.re('user of (?P<browser_id>.*) migrates "(?P<name>.*)" from '
                'provider "(?P<source>.*)" to provider "(?P<target>.*)"'))
-def meta_migrate_item(selenium, browser_id, name, tmp_memory, source,
-                      target, op_container, hosts, modals, popups):
+def migrate_file_to_provider(selenium, browser_id, name, tmp_memory, source,
+                             target, op_container, hosts, modals, popups):
     option = 'Data distribution'
     modal_name = 'Data distribution'
 

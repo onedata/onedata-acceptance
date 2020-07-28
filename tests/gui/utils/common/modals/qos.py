@@ -1,5 +1,4 @@
-"""Utils and fixtures to facilitate operations on Quality of Service popover
-modal.
+"""Utils and fixtures to facilitate operations on Quality of Service modal.
 """
 
 __author__ = "Michal Dronka"
@@ -19,7 +18,7 @@ class Requirement(PageObject):
     impossible = Label('.qos-status-impossible')
 
 
-class QualityOfServicePopover(Modal):
+class QualityOfServiceModal(Modal):
     add_requirement = NamedButton('.btn-primary', text='Add Requirement')
     input_name = Input('.code-textarea')
     replicas_number = Input('.replicas-number-input')
