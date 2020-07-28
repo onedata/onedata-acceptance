@@ -359,7 +359,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
               write once: true
 
     # confirm correct update configuration
-    And user of browser1 opens "oneprovider-1" clusters submenu
     And user of browser1 sees that Update strategy configuration for "space1" is as follow:
           Update strategy: Simple scan
           Max depth: 3
