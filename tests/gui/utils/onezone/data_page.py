@@ -54,7 +54,7 @@ class ProvidersMap(Element):
     providers = WebItemsSequence('.circle', cls=ProviderPoint)
 
 
-class MembersTile(PageObject):
+class SpaceMembersTile(PageObject):
     direct_groups = Label('.direct-groups-counter')
     direct_users = Label('.direct-users-counter')
     effective_groups = Label('.effective-groups-counter')
@@ -65,7 +65,8 @@ class SpaceOverviewPage(PageObject):
     space_name = Label('.with-menu .one-label')
     rename = Button('.edit-icon')
     edit_name_box = WebItem('.editor', cls=EditBox)
-    members_tile = WebItem('.resource-members-tile .tile-main', cls=MembersTile)
+    members_tile = WebItem('.resource-members-tile .tile-main',
+                           cls=SpaceMembersTile)
     map = WebItem('.map-container', cls=ProvidersMap)
 
 

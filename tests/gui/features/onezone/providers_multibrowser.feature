@@ -53,9 +53,9 @@ Feature: Basic management of providers in Onezone GUI
     And user of browser1 sees that length of spaces list on provider popover is 1
 
 
-  Scenario: User adds provider to a space, sees that it has appeared on the map and clicks it
+  Scenario: User adds provider to a space, sees that it has appeared on the map
     When user of browser1 clicks Overview of "space3" in the sidebar
-    And user of browser1 sees no providers on map on "space3" space overview page
+    And user of browser1 sees no providers on the map on "space3" space overview data page
     And user of browser1 sends support token for "space3" to user of browser2
 
     And user of browser2 supports "space3" space in "oneprovider-1" Oneprovider panel service with following configuration:
@@ -63,11 +63,11 @@ Feature: Basic management of providers in Onezone GUI
           size: 10000
 
     Then user of browser1 clicks Overview of "space3" in the sidebar
-    And user of browser1 sees 1 provider on map on "space3" space overview page
-    And user of browser1 clicks the map on "space3" space overview page
+    And user of browser1 sees 1 provider on the map on "space3" space overview data page
+    And user of browser1 clicks the map on "space3" space overview data page
 
-    And user of browser1 sees 1 provider on map on "space3" space providers page
+    And user of browser1 sees 1 provider on the map on "space3" space providers data page
     And user of browser1 sees "oneprovider-1" is on the providers list
-    And user of browser1 clicks "oneprovider-1" provider icon on the map on providers page
+    And user of browser1 clicks "oneprovider-1" provider icon on the map on providers data page
 
     And user of browser1 sees that provider popup for provider "oneprovider-1" has appeared on world map

@@ -163,6 +163,7 @@ def assert_all_members_number_in_space_overview(selenium, oz_page, browser_id,
     effective = 'effective'
     groups = 'groups'
     users = 'users'
+
     assert_members_number_in_space_overview(selenium, oz_page, browser_id,
                                             number_direct_groups, direct,
                                             groups, where)

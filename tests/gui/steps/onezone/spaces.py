@@ -188,32 +188,35 @@ def assert_size_of_space_on_left_sidebar_menu(selenium, browser_id, number,
                              .format(space_name, number))
 
 
-def get_page_name(page):
-    return transform(page) + '_page'
+def _get_subpage_name(subpage):
+    return transform(subpage) + '_page'
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks "(?P<provider>.*)" '
-               'provider icon on the map on (?P<page>overview|providers) page'))
-def click_on_provider_on_the_map(selenium, browser_id, provider,
-                                 oz_page, page, hosts):
+               'provider icon on the map on (?P<page>overview|providers) data '
+               'page'))
+def click_provider_on_the_map_on_data_page(selenium, browser_id, provider,
+                                           oz_page, page, hosts):
     driver = selenium[browser_id]
-    current_page = getattr(oz_page(driver)['data'], get_page_name(page))
-    correct_name = hosts[provider]['name']
+    current_page = getattr(oz_page(driver)['data'], _get_subpage_name(page))
+    provider_name = hosts[provider]['name']
     for prov in current_page.map.providers.items:
         ActionChains(driver).move_to_element(prov).perform()
         name = driver.find_element_by_css_selector(".tooltip-inner").text
-        if name == correct_name:
+        if name == provider_name:
             prov.click()
             return
 
-    raise RuntimeError(f'provider {correct_name} was not found on the map')
+    raise RuntimeError(f'provider {provider_name} was not found on the map')
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks the map on '
-               '(?P<space_name>.*) space (?P<page>overview|providers) page'))
-def click_on_space_map(selenium, browser_id, oz_page, page, space_name):
+               '(?P<space_name>.*) space (?P<page>overview|providers) data '
+               'page'))
+def click_the_map_on_data_page(selenium, browser_id, oz_page, page,
+                                    space_name):
     driver = selenium[browser_id]
-    getattr(oz_page(driver)['data'], get_page_name(page)).map()
+    getattr(oz_page(driver)['data'], _get_subpage_name(page)).map()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks '
@@ -230,14 +233,16 @@ def click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees (?P<correct_number>.*) '
-               'providers? on map on (?P<space_name>.*) '
-               'space (?P<page>.*) page'))
-def check_number_of_providers_on_the_map(selenium, browser_id, correct_number
-                                         , space_name, page, oz_page):
+               'providers? on the map on (?P<space_name>.*) '
+               'space (?P<page>.*) data page'))
+def check_number_of_providers_on_the_map_on_data_page(selenium, browser_id,
+                                                      correct_number,
+                                                      space_name, page,
+                                                      oz_page):
     if correct_number == 'no':
         correct_number = 0
     driver = selenium[browser_id]
-    current_page = getattr(oz_page(driver)['data'], get_page_name(page))
+    current_page = getattr(oz_page(driver)['data'], _get_subpage_name(page))
     number_providers = len(current_page.map.providers.items)
     error_msg = f'found {number_providers} instead of {correct_number}'
     assert number_providers == int(correct_number), error_msg
