@@ -79,41 +79,6 @@ def add_storage_in_op_panel_using_gui(selenium, browser_id, name, provider_name,
                                        name)
 
 
-def _add_storage_in_op_panel_using_rest(config, storage_name, provider,
-                                        hosts, onepanel_credentials):
-    storage_config = {}
-    options = yaml.load(config)
-
-    storage_config['type'] = options['storage type'].lower()
-    if options.get('imported storage', False):
-        storage_config['importedStorage'] = True
-    storage_config['mountPoint'] = options['mount point']
-
-    provider_hostname = hosts[provider]['hostname']
-    onepanel_username = onepanel_credentials.username
-    onepanel_password = onepanel_credentials.password
-
-    storage_data = {storage_name: storage_config}
-    print(storage_data)
-
-    http_post(ip=provider_hostname, port=PANEL_REST_PORT,
-              path=get_panel_rest_path('provider', 'storages'),
-              auth=(onepanel_username, onepanel_password),
-              data=json.dumps(storage_data))
-
-
-@given(parsers.parse('there is "{storage_name}" storage in "{provider}" '
-                     'Oneprovider panel service used by '
-                     '{user} with following configuration:\n{config}'))
-def create_storage_if_necessary_rest(storage_name, provider, config,
-                                     hosts, onepanel_credentials):
-    try:
-        _add_storage_in_op_panel_using_rest(config, storage_name, provider,
-                                            hosts, onepanel_credentials)
-    except HTTPConflict:
-        pass
-
-
 def _go_to_storage_view_in_clusters(selenium, browser_id, provider_name,
                                     oz_page, hosts, onepanel):
     driver = selenium[browser_id]
@@ -162,3 +127,46 @@ def _add_storage_in_op_panel_using_gui(selenium, browser_id, config, onepanel,
                                                             browser_id,
                                                             onepanel)
     notify_visible_with_text(selenium, browser_id, notify_type, text_regexp)
+
+
+@given(parsers.parse('there is "{storage_name}" storage in "{provider}" '
+                     'Oneprovider panel service used by '
+                     '{user} with following configuration:\n{config}'))
+def create_storage_if_necessary_rest(storage_name, provider, config,
+                                     hosts, onepanel_credentials):
+    """ Create storage according to given config.
+
+            Config format given in yaml is as follow:
+
+                storage type: storage_type             --> required
+                mount point: mount_point               --> required
+                imported storage: true                 --> optional
+        """
+    try:
+        _add_storage_in_op_panel_using_rest(config, storage_name, provider,
+                                            hosts, onepanel_credentials)
+    except HTTPConflict:
+        pass
+
+
+def _add_storage_in_op_panel_using_rest(config, storage_name, provider,
+                                        hosts, onepanel_credentials):
+    storage_config = {}
+    options = yaml.load(config)
+
+    storage_config['type'] = options['storage type'].lower()
+    if options.get('imported storage', False):
+        storage_config['importedStorage'] = True
+    storage_config['mountPoint'] = options['mount point']
+
+    provider_hostname = hosts[provider]['hostname']
+    onepanel_username = onepanel_credentials.username
+    onepanel_password = onepanel_credentials.password
+
+    storage_data = {storage_name: storage_config}
+
+    http_post(ip=provider_hostname, port=PANEL_REST_PORT,
+              path=get_panel_rest_path('provider', 'storages'),
+              auth=(onepanel_username, onepanel_password),
+              data=json.dumps(storage_data))
+
