@@ -194,8 +194,8 @@ def _delete_all_additional_params_in_storage_page(selenium, browser_id,
         click_modal_button(selenium, browser_id, button, modal, modals)
 
 
-@given(parsers.parse('there are no additional params in'
-                     'storage edit page used by {browser_id}'))
+@given(parsers.parse('there are no additional params in storage edit page used '
+                     'by {browser_id}'))
 def g_delete_all_additional_params_in_storage_page(selenium, browser_id,
                                                    onepanel, modals, popups):
     _delete_all_additional_params_in_storage_page(selenium, browser_id,

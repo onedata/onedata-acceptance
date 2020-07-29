@@ -13,6 +13,7 @@ Feature: Storage management using onepanel
               - dir1: 70
               - dir2: 5
 
+
   Scenario Outline: User uploads files on freshly supported space on newly created storage
     Given there are no spaces supported by oneprovider-1 in Onepanel
     And there is no "space1" space in Onezone used by user of browser_unified
