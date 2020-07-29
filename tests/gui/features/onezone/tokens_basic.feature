@@ -213,6 +213,20 @@ Feature: Management of tokens basic features in Onezone GUI
             after: -10
 
     And user of browser creates token with following configuration:
+        name: access_token_1
+        type: access
+        caveats:
+          expiration:
+            after: -10
+
+    And user of browser creates token with following configuration:
+        name: access_token_2
+        type: access
+        caveats:
+          expiration:
+            after: -10
+
+    And user of browser creates token with following configuration:
         name: invite_token_1
         type: invite
         invite type: Invite user to space
@@ -242,6 +256,7 @@ Feature: Management of tokens basic features in Onezone GUI
     Examples:
     | token_to_save     | token_to_delete   |
     | invite_token_1    | invite_token_2    |
+    | access_token_1    | access_token_2    |
     # todo: uncomment, when identity tokens will be visible, on clean obsolete tokens modal
     # | identity_token_1  | identity_token_2  |
 
