@@ -60,9 +60,16 @@ Feature: Basic management of providers in Onezone GUI
     And user of browser sees that length of providers list of "space1" equals "0"
 
 
-# TODO VFS-5244 fix kill_providers() and change alert text
-#  Scenario: User sees that when no provider is working appropriate msg is shown
-#    Given there are no working provider(s) named oneprovider-1
-#    When user of browser expands the "GO TO YOUR FILES" Onezone sidebar panel
-#    Then user of browser sees that provider "oneprovider-1" in expanded "GO TO YOUR FILES" Onezone panel is not working
-#    And user of browser sees alert with title "All your providers are offline" on world map in Onezone gui
+  Scenario: User sees that when no provider is working appropriate msg is shown
+    Given there are all provider(s) named oneprovider-1 paused
+    When user of browser clicks on Data in the main menu
+    And user of browser clicks Data of "space1" in the sidebar
+
+    # wait, trying to connect with oneprovider
+    And user of browser is idle for 90 seconds
+
+    # reload space data page to get info about all providers, not just one
+    And user of browser clicks on Data in the main menu
+    And user of browser clicks Data of "space1" in the sidebar
+    Then user of browser sees alert with title "ALL SUPPORTING ONEPROVIDERS ARE OFFLINE" on Onezone page
+    And all paused providers named oneprovider-1 are unpaused
