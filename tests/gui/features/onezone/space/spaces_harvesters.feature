@@ -51,3 +51,7 @@ Feature: Basic management of harvester in Space
     And user of browser1 sees "harvester3" in harvesters list on space harvesters subpage
     And user of browser1 removes "harvester2" harvester from "space1" space
     And user of browser1 removes "harvester3" harvester from "space1" space
+
+    # clean environment
+    And user of browser2 removes "harvester2" harvester in Onezone page
+    And user of browser2 removes "harvester3" harvester in Onezone page
