@@ -8,7 +8,7 @@ Feature: Scenarios featuring login page to Onepanel GUI
 
   Scenario: User successfully login to emergency interface of Onezone panel
     Given user of browser logged as admin to emergency interface of Onepanel service
-    Then user of browser sees that he successfully signed in Onezone panel
+    Then user of browser successfully signed in Onezone panel
 
 
   Scenario: User fails to login because of invalid credentials
