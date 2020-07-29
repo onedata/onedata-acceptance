@@ -10,7 +10,7 @@ from time import sleep
 
 from selenium.webdriver.common.action_chains import ActionChains
 
-from tests.gui.utils.core.web_elements import WebElement, WebElementsSequence
+from tests.gui.utils.core.web_elements import WebElement, WebElementsSequence, Label
 from .common import OZPanel
 from .data_page import DataPage
 from .providers_page import ProvidersPage
@@ -27,6 +27,8 @@ class OZLoggedIn(object):
     _panels = WebElementsSequence('.main-menu-content li.main-menu-item')
     _profile = WebElement('.app-layout')
     uploads = WebElement('.main-menu-column .main-menu-upload-item')
+
+    provider_alert_message = Label('.content-info-content-container .text-center')
 
     panels = {
         'data': DataPage,
