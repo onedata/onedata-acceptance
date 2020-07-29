@@ -19,12 +19,14 @@ from .tokens_page import TokensPage
 from .discovery_page import DiscoveryPage
 from .clusters_page import ClustersPage
 from .manage_account_page import ManageAccountPage
+from .uploads_page import UploadsPage
 
 
 class OZLoggedIn(object):
     _atlas = WebElement('.onezone-atlas')
     _panels = WebElementsSequence('.main-menu-content li.main-menu-item')
     _profile = WebElement('.app-layout')
+    uploads = WebElement('.main-menu-column .main-menu-upload-item')
 
     panels = {
         'data': DataPage,
@@ -63,5 +65,7 @@ class OZLoggedIn(object):
                     return cls(self.web_elem, self.web_elem, parent=self)
         elif item == 'profile':
             return ManageAccountPage(self.web_elem, self._profile, self)
+        elif item == 'uploads':
+            return UploadsPage(self.web_elem, self.web_elem, self)
         else:
             raise RuntimeError('no "{}" on {} found'.format(item, str(self)))

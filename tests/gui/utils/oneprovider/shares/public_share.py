@@ -18,6 +18,9 @@ class PublicShareView(object):
     breadcrumbs = Breadcrumbs('.file-browser-head-container')
     file_browser = FileBrowser('.content-file-browser')
     error_msg = Label('.error-details.active')
+    description_tab = Button('.nav-link-description')
+    description = Label('.markdown-view')
+
 
     def __init__(self, driver):
         self.web_elem = self.driver = driver

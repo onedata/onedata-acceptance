@@ -24,8 +24,23 @@ from tests.utils.user_utils import User
 
 @given(parsers.parse('initial users configuration in "{host}" '
                      'Onezone service:\n{config}'))
-def users_creation(host, config, admin_credentials, onepanel_credentials,
+def users_creation_with_cleanup(host, config, admin_credentials, onepanel_credentials,
                    hosts, users, rm_users):
+
+    users_db, zone_hostname = users_creation(host, config, admin_credentials,
+                                             onepanel_credentials, hosts,
+                                             users, rm_users)
+
+    yield
+
+    _rm_users(zone_hostname, admin_credentials, users_db)
+
+
+@given(parsers.parse('initial user for future delete configuration in "{host}" '
+                     'Onezone service:\n{config}'))
+def users_creation(host, config, admin_credentials,
+                                     onepanel_credentials,
+                                     hosts, users, rm_users):
     zone_hostname = hosts[host]['hostname']
     users_db = {}
     for user_config in yaml.load(config):
@@ -42,9 +57,7 @@ def users_creation(host, config, admin_credentials, onepanel_credentials,
         else:
             users[username] = users_db[username] = user_cred
 
-    yield
-
-    _rm_users(zone_hostname, admin_credentials, users_db)
+    return users_db, zone_hostname
 
 
 def _parse_user_info(user_config):
@@ -102,8 +115,9 @@ def _create_user(zone_hostname, onepanel_credentials, admin_credentials,
             _rm_user(zone_hostname, admin_credentials,
                      User(username, password, None, resp['userId']),
                      True)
-            return _create_new_user(zone_hostname, onepanel_credentials, username,
-                                    password, user_conf_details, generate_token)
+            return _create_new_user(zone_hostname, onepanel_credentials,
+                                    username, password, user_conf_details,
+                                    generate_token)
         else:
             skip('"{}" user already exist'.format(username))
 
@@ -140,7 +154,8 @@ def _add_user_to_zone_cluster(zone_hostname, admin_credentials,
     # add privileges
     if cluster_privileges is not None:
         http_patch(ip=zone_hostname, port=OZ_REST_PORT,
-                   path=get_zone_rest_path('users/{}/privileges'.format(user_id)),
+                   path=get_zone_rest_path('users/{}/privileges'
+                                           .format(user_id)),
                    auth=(admin_username, admin_password),
                    data=json.dumps({'grant': cluster_privileges}))
     token = _create_token(zone_hostname, username, password)
