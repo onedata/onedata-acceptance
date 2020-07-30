@@ -12,9 +12,8 @@ import json
 from pytest_bdd import given, parsers
 
 from tests import OZ_REST_PORT
-from tests.mixed.steps.rest.onezone.group_management import \
-    remove_groups_using_rest
-from tests.utils.rest_utils import (http_post, http_put, get_zone_rest_path)
+from tests.utils.rest_utils import (http_post, http_put, get_zone_rest_path,
+                                    http_get, http_delete)
 
 
 @given(parsers.parse('initial groups configuration in "{service}" '
@@ -143,8 +142,27 @@ def _add_child_group(zone_hostname, admin_credentials, parent_id, child_id,
              data=data)
 
 
-@given(parsers.re('there (?P<fold>are|is) no (?P<group_list>.*) groups? in '
-                  'Onezone page used by (?P<user>\w+)'))
-def g_remove_groups(user, users, hosts, group_list,
-                    host='onezone'):
-    remove_groups_using_rest(user, users, hosts, group_list, host)
+def _get_group_id(hosts, users, user, group_name):
+    service = 'onezone'
+    zone_hostname = hosts[service]['hostname']
+    groups_list = http_get(ip=zone_hostname, port=OZ_REST_PORT,
+                           path=get_zone_rest_path('groups'),
+                           auth=(user, users[user].password))
+    groups_id_list = groups_list.json()['groups']
+    for group_id in groups_id_list:
+        group_details = http_get(ip=zone_hostname, port=OZ_REST_PORT,path=get_zone_rest_path('groups', group_id),auth=(user, users[user].password))
+        if group_details.json()['name'] == group_name:
+            return group_id
+    return None
+
+
+@given(parsers.parse('there is no {group_name} group in '
+                     'Onezone page used by {user}'))
+def remove_group_in_onezone(hosts, users, user, group_name):
+    service = 'onezone'
+    zone_hostname = hosts[service]['hostname']
+    group_id = _get_group_id(hosts, users, user, group_name)
+    if group_id:
+        http_delete(ip=zone_hostname, port=OZ_REST_PORT,
+                    path=get_zone_rest_path('groups', group_id),
+                    auth=(user, users[user].password))
