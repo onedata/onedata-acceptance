@@ -34,13 +34,14 @@ class Client:
         self.mount_path = mount_path
         self.provider = provider
         self.rpyc_connection = None
+        self.rpyc_server_pid = None
         self.docker_id = docker_id
         self.ip = ip
         self.timeout = timeout
         self.opened_files = {}
         self.file_stats = {}
 
-    def mount(self, username, hosts, access_token, mode, gdb=False, retries=5):
+    def mount(self, username, hosts, access_token, mode, gdb=False):
         clean_mount_path(username, self)
         if 'proxy' in mode:
             mode_flag = '--force-proxy-io'
@@ -63,13 +64,12 @@ class Client:
                 mount_path=self.mount_path,
                 mode=mode_flag)
         else:
-            cmd = ['oneclient', '--log-dir', '/tmp/oc_logs', mode_flag,
-                   '--insecure', self.mount_path]
-        print(" ".join(cmd))
+            cmd = " ".join(['oneclient', '--log-dir', '/tmp/oc_logs', mode_flag,
+                            '--insecure', self.mount_path])
 
-        returncode = rpyc_run_cmd(self.rpyc_connection, cmd,
-                                  on_error=lambda: clean_mount_path(username, self),
-                                  verbose=True)
+        returncode = client_run_cmd(self, cmd,
+                                    on_retry=lambda: clean_mount_path(username, self),
+                                    verbose=True, retries=3)
 
         rm(self, path=os.path.join(os.path.dirname(self.mount_path), '.local'),
            recursive=True, force=True)
@@ -87,6 +87,14 @@ class Client:
             try:
                 self.rpyc_connection = rpyc.classic.connect(self.ip, port)
 
+                get_pid_cmd = ' | '.join(
+                    ['ps u -u root', 'grep "rpyc_classic.py"',
+                     'grep -v "grep"', 'awk \'{print $2}\'']
+                )
+
+                pid = client_run_cmd(self, get_pid_cmd, output=True, verbose=True)
+                self.rpyc_server_pid = pid
+
                 # change timeout for rpyc to avoid AsyncResultTimeout
                 # in performance tests on bamboo
                 self.rpyc_connection._config['sync_request_timeout'] = 300
@@ -103,18 +111,8 @@ class Client:
         cmd = ('python3 `which rpyc_classic.py` --host 0.0.0.0 --port {}'
                .format(port))
         print("starting rpyc server on client {}".format(self.ip))
-        run_cmd(user_name, self.docker_id, cmd, output=True, detach=True)
+        run_cmd(user_name, self.docker_id, cmd, detach=True)
         print("rpyc server on client {} successfully started".format(self.ip))
-        get_pid_cmd = ' | '.join(
-            ['ps -u {}'.format(user_name), 'grep "rpyc_classic.py"',
-             'grep -v "grep"', 'awk \'{print $1}\'']
-        )
-
-        def condition():
-            pid = run_cmd(user_name, self.docker_id, get_pid_cmd, output=True)
-            self.rpyc_server_pid = pid
-
-        self._repeat_until(condition, 30)
 
     def stop_rpyc_server(self):
         if self.rpyc_server_pid:
@@ -233,7 +231,7 @@ def clean_mount_path(user, client, lazy=False):
             ['ps aux', 'grep "oneclient .* {}"'.format(client.mount_path),
              'grep -v "grep"', 'awk {\'print $2\'}']
         )
-        pid = rpyc_run_cmd(client.rpyc_connection, get_pid_cmd, retries=0, output=True)
+        pid = client_run_cmd(client, get_pid_cmd, output=True)
 
         if pid:
             # kill oneclient process
@@ -363,9 +361,9 @@ def seek(client, file, offset):
     client.opened_files[file].seek(offset)
 
 
-def kill(client, pid, signal='KILL', user='root', output=False):
+def kill(client, pid, signal='KILL', user='root'):
     cmd = 'kill -{signal} {pid}'.format(signal=signal, pid=pid)
-    return run_cmd(user, client.docker_id, cmd, output=output)
+    return run_cmd(user, client.docker_id, cmd, detach=True)
 
 
 def setxattr(client, file, name, value):
@@ -429,7 +427,7 @@ def replace_pattern(client, file_path, pattern, new_text, user='root',
         .format(pattern=pattern,
                 new_text=new_text,
                 file_path=escape_path(file_path))
-    return run_cmd(user, client.docker_id, cmd, output=output)
+    return client_run_cmd(client, cmd, output=output)
 
 
 def dd(client, block_size, count, output_file, unit='M',
@@ -439,7 +437,7 @@ def dd(client, block_size, count, output_file, unit='M',
                 output='of={}'.format(escape_path(output_file)),
                 bs='bs={0}{1}'.format(block_size, unit),
                 count='count={}'.format(count))
-    return run_cmd(user, client.docker_id, cmd, output=output, error=error)
+    return client_run_cmd(client, cmd, output=output, error=error)
 
 
 def fusermount(client, path, unmount=False, lazy=False, quiet=False):
@@ -448,15 +446,28 @@ def fusermount(client, path, unmount=False, lazy=False, quiet=False):
     quiet = '-q' if quiet else ''
     path = escape_path(path)
     cmd = ['fusermount', unmount, lazy, quiet, path]
-    rpyc_run_cmd(client.rpyc_connection, cmd, retries=0)
+    client_run_cmd(client, cmd)
 
 
 def user_home_dir(user='root'):
     return os.path.join('/home', user)
 
 
-def rpyc_run_cmd(rpyc_connection, cmd, retries=5, retry_sleep=8,
-                 on_error=None, output=False, verbose=False):
+def client_run_cmd(client, cmd, output=False, error=False,
+                   retries=0, retry_sleep=8, on_retry=None, verbose=False):
+    """Run command on oneclient docker using rpyc
+    :param client: instance of utils.client_utils.Client class
+    :param cmd: command to be run, can be string or list of strings
+    :param output: if false function will return exit code of run command, otherwise its output
+    :param error: if true stderr will be redirected to stdout
+    :param retries: maximum number of retries if command failed
+    :param retry_sleep: only applicable if retries>0; time of idleness between retries
+    :param on_retry: only applicable if retries>0; function to be executed
+    after command failed, before next retry
+    :param verbose: if True additional info will be printed to stdout
+    """
+    rpyc_connection = client.rpyc_connection
+
     if isinstance(cmd, list):
         cmd = [x for x in cmd if x]  # remove empty command tokens
         shell = False
@@ -464,7 +475,8 @@ def rpyc_run_cmd(rpyc_connection, cmd, retries=5, retry_sleep=8,
         shell = True
     if verbose: print("rpyc running command: {}".format(cmd))
     proc = rpyc_connection.modules.subprocess.Popen(
-        cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=shell)
+        cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT if error else subprocess.PIPE,
+        shell=shell)
 
     if proc.wait() == 0:
         stdout = proc.stdout.read().decode()
@@ -472,13 +484,13 @@ def rpyc_run_cmd(rpyc_connection, cmd, retries=5, retry_sleep=8,
         return stdout if output else 0
     else:
         if verbose: print(proc.stdout.read().decode())
-        if verbose: print(proc.stderr.read().decode())
+        if verbose and not error: print(proc.stderr.read().decode())
         if retries > 0:
             if verbose: print("Command {} failed. Retries left: {}".format(" ".join(cmd), retries))
-            if on_error: on_error()
+            if on_retry: on_retry()
             time.sleep(retry_sleep)
-            return rpyc_run_cmd(rpyc_connection, cmd, retries-1, retry_sleep,
-                                on_error=on_error, output=output, verbose=verbose)
+            return client_run_cmd(client, cmd, output=output, error=error,
+                                  retries=retries - 1, retry_sleep=retry_sleep, on_retry=on_retry,
+                                  verbose=verbose)
 
     return None if output else proc.returncode
-
