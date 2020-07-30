@@ -6,8 +6,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-
-from tests.gui.utils.core.web_elements import WebItem
+from tests.gui.utils.core.web_elements import WebItem, Button, WebItemsSequence
 from .consumer_caveat import ConsumerCaveat
 from .menu_popup import MenuPopup
 from .selector_popup import SelectorPopup
@@ -16,6 +15,7 @@ from .user_account_menu import UserAccountPopup
 from .toolbar import ToolbarPopup
 from .deregister_provider import DeregisterProvider
 from .member_menu import PopoverMenu
+from .delete_account_menu import UserDeleteAccountPopoverMenu
 
 
 class Popups(object):
@@ -24,13 +24,15 @@ class Popups(object):
                                   cls=DeregisterProvider)
     user_account_menu = WebItem('.webui-popover-content .user-account-menu',
                                 cls=UserAccountPopup)
-    upload_presenter = WebItem('.hidden-xs .up-single-upload',
-                               cls=UploadPresenter)
+    upload_presenter = WebItemsSequence('.hidden-xs .up-single-upload',
+                                        cls=UploadPresenter)
     menu_popup = WebItem('#webuiPopover1', cls=MenuPopup)
     popover_menu = WebItem('.webui-popover.in', cls=PopoverMenu)
     selector_popup = WebItem('.webui-popover.in', cls=SelectorPopup)
     consumer_caveat_popup = WebItem('.webui-popover-tags-selector',
                                     cls=ConsumerCaveat)
+    user_delete_account_popover_menu = WebItem('.in .webui-popover-inner',
+                                               cls=UserDeleteAccountPopoverMenu)
 
     def __init__(self, driver):
         self.driver = self.web_elem = driver
@@ -39,9 +41,4 @@ class Popups(object):
         return 'popups'
 
     def is_upload_presenter(self):
-        try:
-            self.upload_presenter
-        except RuntimeError:
-            return False
-        else:
-            return True
+        return len(self.upload_presenter) > 0
