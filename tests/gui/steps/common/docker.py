@@ -123,7 +123,7 @@ def wt_mv_file(src_path, new_src_path, hosts):
 
 
 @given(parsers.parse('working provider named {provider_list} is paused'))
-@given(parsers.parse('there are all provider(s) named {provider_list} paused'))
+@given(parsers.parse('there are provider(s) named {provider_list} paused'))
 def pause_providers(hosts, provider_list):
     pause_cmd = ['docker', 'pause']
     for provider in parse_seq(provider_list):

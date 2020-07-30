@@ -36,10 +36,8 @@ def wt_expand_oz_panel(selenium, browser_id_list, panel_name, oz_page):
         _expand_oz_panel(oz_page, selenium[browser_id], panel_name)
 
 
-@when(parsers.parse('user of {browser_id} sees alert with title "{title}" '
-                    'on Onezone page'))
-@then(parsers.parse('user of {browser_id} sees alert with title "{title}" '
-                    'on Onezone page'))
+@wt(parsers.parse('user of {browser_id} sees alert with title "{title}" '
+                  'on Onezone page'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_alert_with_title_in_oz(selenium, browser_id, title, oz_page):
     driver = selenium[browser_id]
