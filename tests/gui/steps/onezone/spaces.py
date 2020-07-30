@@ -240,8 +240,9 @@ def assert_error_popup_has_appeared(selenium, browser_id, modals):
                '"(?P<harvester_name>.*)" in harvesters list '
                'on space harvesters subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_user_sees_harvester_on_list(selenium, browser_id, harvester_name,
-                                       oz_page, see):
+def assert_harvester_on_list_on_space_harvesters_subpage(selenium, browser_id,
+                                                         harvester_name,
+                                                         oz_page, see):
     driver = selenium[browser_id]
     harvesters_list = oz_page(driver)['data'].harvesters_page.harvesters_list
     if see == 'sees':
@@ -341,6 +342,7 @@ def remove_harvester_from_harvesters_list(selenium, browser_id, oz_page,
                                           space_name, tmp_memory):
     modal_name = 'remove harvester from space'
     popup_name = 'Remove this harvester'
+
     driver = selenium[browser_id]
     harvesters_list = oz_page(driver)['data'].harvesters_page.harvesters_list
     harvesters_list[harvester_name].click_harvester_menu_button(driver)

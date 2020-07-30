@@ -1,4 +1,5 @@
-"""Utils and fixtures to facilitate operations on remove group/user modal.
+"""Utils and fixtures to facilitate operations on remove
+group/user/storage/harvester modal.
 """
 
 __author__ = "Lukasz Niemiec"
