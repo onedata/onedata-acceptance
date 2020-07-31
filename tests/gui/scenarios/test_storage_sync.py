@@ -57,6 +57,7 @@ from tests.gui.steps.oneprovider_common import *
 from tests.gui.meta_steps.onepanel.spaces import *
 from tests.gui.meta_steps.onepanel.storages import *
 from tests.gui.meta_steps.oneprovider.data import *
+from tests.gui.meta_steps.oneprovider.common import *
 
 from tests.utils.acceptance_utils import *
 
