@@ -8,12 +8,15 @@ Feature: ACL directories privileges tests using sigle browser in Oneprovider GUI
   Background:
     Given initial users configuration in "onezone" Onezone service:
             - user1
+            - user2
     And initial groups configuration in "onezone" Onezone service:
             group1:
                 owner: user1
     And initial spaces configuration in "onezone" Onezone service:
         space1:
-            owner: user1
+            owner: user2
+            users:
+                - user1
             providers:
                 - oneprovider-1:
                     storage: posix
@@ -26,12 +29,12 @@ Feature: ACL directories privileges tests using sigle browser in Oneprovider GUI
             groups:
                 - group1 
 
-    And opened browser with user1 signed in to "onezone" service
+    And opened [browser_user1, browser_owner] with [user1, user2] signed in to [Onezone, Onezone] service
 
         
   Scenario Outline: Create subdirectory
-    When user of browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
-    Then user of browser <result> to create directory "subdir" in "dir1" in "space1"
+    When user of browser_owner sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
+    Then user of browser_user1 <result> to create directory "subdir" in "dir1" in "space1"
 
     Examples:
     | result   |  privileges                                                        |
@@ -41,8 +44,8 @@ Feature: ACL directories privileges tests using sigle browser in Oneprovider GUI
 
 
   Scenario Outline: Upload file to directory
-    When user of browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
-    Then user of browser <result> to upload "20B-0.txt" to "dir1" in "space1"
+    When user of browser_owner sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
+    Then user of browser_user1 <result> to upload "20B-0.txt" to "dir1" in "space1"
 
     Examples:
     | result   |  privileges                                                 |
@@ -52,8 +55,8 @@ Feature: ACL directories privileges tests using sigle browser in Oneprovider GUI
 
 
   Scenario Outline: Rename directory
-    When user of browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
-    Then user of browser <result> to rename "dir1" to "new_name" in "space1"
+    When user of browser_owner sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
+    Then user of browser_user1 <result> to rename "dir1" to "new_name" in "space1"
 
     Examples:
     | result   |  privileges                   |
@@ -62,8 +65,8 @@ Feature: ACL directories privileges tests using sigle browser in Oneprovider GUI
 
 
   Scenario Outline: Remove empty directory
-    When user of browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
-    Then user of browser <result> to remove "dir1" in "space1"
+    When user of browser_owner sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
+    Then user of browser_user1 <result> to remove "dir1" in "space1"
 
     Examples:
     | result   |  privileges                              |
@@ -73,8 +76,8 @@ Feature: ACL directories privileges tests using sigle browser in Oneprovider GUI
 
 
   Scenario Outline: Read directory ACL
-    When user of browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
-    Then user of browser <result> to read "dir1" ACL in "space1"
+    When user of browser_owner sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
+    Then user of browser_user1 <result> to read "dir1" ACL in "space1"
 
     Examples:
     | result   |  privileges                   |
@@ -83,8 +86,8 @@ Feature: ACL directories privileges tests using sigle browser in Oneprovider GUI
 
 
   Scenario Outline: Change directory ACL
-    When user of browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
-    Then user of browser <result> to change "dir1" ACL for <subject_name> in "space1"
+    When user of browser_owner sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
+    Then user of browser_user1 <result> to change "dir1" ACL for <subject_name> in "space1"
 
     Examples:
     | result   |  privileges                   |
@@ -93,8 +96,8 @@ Feature: ACL directories privileges tests using sigle browser in Oneprovider GUI
 
 
   Scenario Outline: Write metadata to directory
-    When user of browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
-    Then user of browser <result> to write "dir1" directory basic metadata: "attr=val" in "space1"
+    When user of browser_owner sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
+    Then user of browser_user1 <result> to write "dir1" directory basic metadata: "attr=val" in "space1"
 
     Examples:
     | result   |  privileges                                         |
@@ -104,9 +107,9 @@ Feature: ACL directories privileges tests using sigle browser in Oneprovider GUI
 
 
   Scenario Outline: Read directory metadata
-    When user of browser succeeds to write "dir1" directory basic metadata: "attr=val" in "space1"
-    And user of browser sets selected items ACL <privileges> privileges for <subject_type> <subject_name>
-    Then user of browser <result> to read "dir1" directory basic metadata: "attr=val" in "space1"
+    When user of browser_owner succeeds to write "dir1" directory basic metadata: "attr=val" in "space1"
+    And user of browser_owner sets selected items ACL <privileges> privileges for <subject_type> <subject_name>
+    Then user of browser_user1 <result> to read "dir1" directory basic metadata: "attr=val" in "space1"
 
     Examples:
     | result   |  privileges                            |

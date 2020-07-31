@@ -16,7 +16,8 @@ from tests import OZ_REST_PORT, PANEL_REST_PORT, OP_REST_PORT
 from tests.utils.rest_utils import (http_get, http_post, http_put,
                                     get_panel_rest_path, get_zone_rest_path,
                                     get_provider_rest_path, http_delete)
-from tests.utils.http_exceptions import HTTPNotFound, HTTPError, HTTPBadRequest
+from tests.utils.http_exceptions import (HTTPNotFound, HTTPError,
+                                         HTTPBadRequest, HTTPForbidden)
 from tests.utils.utils import repeat_failed
 
 
@@ -356,9 +357,12 @@ def _rm_all_spaces_for_user(zone_hostname, owner_username, owner_password):
                                               owner_password)
 
     for space_id in spaces_id_list:
-        http_delete(ip=zone_hostname, port=OZ_REST_PORT,
-                    path=get_zone_rest_path('spaces', space_id),
-                    auth=(owner_username, owner_password))
+        try:
+            http_delete(ip=zone_hostname, port=OZ_REST_PORT,
+                        path=get_zone_rest_path('spaces', space_id),
+                        auth=(owner_username, owner_password))
+        except HTTPForbidden:
+            pass
 
 
 def _rm_all_spaces_for_users_list(zone_hostname, users_db):

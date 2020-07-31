@@ -54,7 +54,9 @@ Feature: ACL basic subjects tests in Oneprovider GUI
   Scenario Outline: User sets ACL for parent group of a group (child group belongs to space)
     Given initial spaces configuration in "onezone" Onezone service:
         space1:
-            owner: user1
+            owner: user3
+            users:
+                - user1
             providers:
                 - oneprovider-1:
                     storage: posix
@@ -68,9 +70,9 @@ Feature: ACL basic subjects tests in Oneprovider GUI
                 - group1
                 - group2
 
-    And opened browser with user1 signed in to "onezone" service
-    When user of browser sets "file1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
-    Then user of browser <result> to remove "file1" in "space1"
+    And opened [browser_user1, browser_owner] with [user1, user3] signed in to [Onezone, Onezone] service
+    When user of browser_owner sets "file1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
+    Then user of browser_user1 <result> to remove "file1" in "space1"
 
     Examples:
     | privileges                    | subject_type  | subject_name  | result    |
@@ -81,7 +83,9 @@ Feature: ACL basic subjects tests in Oneprovider GUI
   Scenario Outline: User sets ACL for parent group of a group (child group does not belong to space)
     Given initial spaces configuration in "onezone" Onezone service:
         space1:
-            owner: user1
+            owner: user3
+            users:
+                - user1
             providers:
                 - oneprovider-1:
                     storage: posix
@@ -94,9 +98,9 @@ Feature: ACL basic subjects tests in Oneprovider GUI
             groups:
                 - group2
 
-    And opened browser with user1 signed in to "onezone" service
-    When user of browser sets "file1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
-    Then user of browser <result> to remove "file1" in "space1"
+    And opened [browser_user1, browser_owner] with [user1, user3] signed in to [Onezone, Onezone] service
+    When user of browser_owner sets "file1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
+    Then user of browser_user1 <result> to remove "file1" in "space1"
 
     Examples:
     | privileges                    | subject_type  | subject_name  | result    |
@@ -107,7 +111,9 @@ Feature: ACL basic subjects tests in Oneprovider GUI
   Scenario Outline: User sets excluding ACL records for group and parent group in specified order
     Given initial spaces configuration in "onezone" Onezone service:
         space1:
-            owner: user3
+            owner: user1
+            users:
+                - user3
             providers:
                 - oneprovider-1:
                     storage: posix
@@ -121,20 +127,20 @@ Feature: ACL basic subjects tests in Oneprovider GUI
                 - group1
                 - group3
 
-    And opened browser with user3 signed in to "onezone" service
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
-    And user of browser clicks once on item named "file1" in file browser
+    And opened [browser_owner, browser_user3] with [user1, user3] signed in to [Onezone, Onezone] service
+    When user of browser_owner clicks "space1" on the spaces list in the sidebar
+    And user of browser_owner clicks Data of "space1" in the sidebar
+    And user of browser_owner sees file browser in data tab in Oneprovider page
+    And user of browser_owner clicks once on item named "file1" in file browser
 
-    And user of browser clicks on menu for "file1" directory in file browser
-    And user of browser clicks "Permissions" option in data row menu in file browser
-    And user of browser sees that "Edit permissions" modal has appeared
-    And user of browser selects "ACL" permission type in edit permissions modal
-    And user of browser adds ACE with <child_privileges> privileges set for group group3
-    And user of browser adds ACE with <parent_privileges> privileges set for group group1
-    And user of browser clicks "Save" confirmation button in displayed modal
-    Then user of browser <result> to remove "file1" in "space1"
+    And user of browser_owner clicks on menu for "file1" directory in file browser
+    And user of browser_owner clicks "Permissions" option in data row menu in file browser
+    And user of browser_owner sees that "Edit permissions" modal has appeared
+    And user of browser_owner selects "ACL" permission type in edit permissions modal
+    And user of browser_owner adds ACE with <child_privileges> privileges set for group group3
+    And user of browser_owner adds ACE with <parent_privileges> privileges set for group group1
+    And user of browser_owner clicks "Save" confirmation button in displayed modal
+    Then user of browser_user3 <result> to remove "file1" in "space1"
 
     Examples:
     | child_privileges          | parent_privileges         | result    |
