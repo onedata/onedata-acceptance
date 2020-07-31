@@ -92,7 +92,7 @@ class Client:
                      'grep -v "grep"', 'awk \'{print $2}\'']
                 )
 
-                pid = client_run_cmd(self, get_pid_cmd, output=True, verbose=True)
+                pid = client_run_cmd(self, get_pid_cmd, output=True, verbose=False)
                 self.rpyc_server_pid = pid
 
                 # change timeout for rpyc to avoid AsyncResultTimeout
@@ -476,7 +476,8 @@ def client_run_cmd(client, cmd, output=False, error=False,
     if verbose: print("rpyc running command: {}".format(cmd))
     proc = rpyc_connection.modules.subprocess.Popen(
         cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT if error else subprocess.PIPE,
-        shell=shell)
+        shell=shell
+    )
 
     if proc.wait() == 0:
         stdout = proc.stdout.read().decode()
