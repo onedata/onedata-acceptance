@@ -31,11 +31,11 @@ Feature: ACL subdirectories privileges tests using sigle browser in Oneprovider 
             groups:
                 - group1 
 
-    And opened [browser_user1, browser_owner] with [user1, user2] signed in to [Onezone, Onezone] service
+    And opened [browser_user1, space_owner_browser] with [user1, user2] signed in to [Onezone, Onezone] service
 
         
   Scenario Outline: List directory items
-    When user of browser_owner sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
+    When user of space_owner_browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
     Then user of browser_user1 <result> to see [file1, dir2] in "dir1" in "space1"
 
     Examples:
@@ -46,7 +46,7 @@ Feature: ACL subdirectories privileges tests using sigle browser in Oneprovider 
 
 
   Scenario Outline: Rename subdirectory
-    When user of browser_owner sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
+    When user of space_owner_browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
     Then user of browser_user1 <result> to rename "dir1/dir2" to "new_name" in "space1"
 
     Examples:
@@ -57,7 +57,7 @@ Feature: ACL subdirectories privileges tests using sigle browser in Oneprovider 
 
 
   Scenario Outline: Rename subfile
-    When user of browser_owner sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
+    When user of space_owner_browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
     Then user of browser_user1 <result> to rename "dir1/file1" to "new_name" in "space1"
 
     Examples:
@@ -68,7 +68,7 @@ Feature: ACL subdirectories privileges tests using sigle browser in Oneprovider 
 
 
   Scenario Outline: Remove non-empty directory
-    When user of browser_owner sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
+    When user of space_owner_browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
     Then user of browser_user1 <result> to remove "dir1" in "space1"
 
     Examples:
@@ -81,7 +81,7 @@ Feature: ACL subdirectories privileges tests using sigle browser in Oneprovider 
 
 
   Scenario Outline: Remove subdirectory
-    When user of browser_owner sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
+    When user of space_owner_browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
     Then user of browser_user1 <result> to remove "dir1/dir2" in "space1"
 
     Examples:
@@ -91,7 +91,7 @@ Feature: ACL subdirectories privileges tests using sigle browser in Oneprovider 
 
 
   Scenario Outline: Remove subfile
-    When user of browser_owner sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
+    When user of space_owner_browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
     Then user of browser_user1 <result> to remove "dir1/file1" in "space1"
 
     Examples:

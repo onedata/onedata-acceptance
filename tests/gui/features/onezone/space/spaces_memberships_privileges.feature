@@ -28,14 +28,14 @@ Feature: Basic management of spaces privileges in Onezone GUI
             users:
                 - user1
 
-    And opened [browser_user1, browser_owner] with [user1, user2] signed in to [Onezone, Onezone] service
+    And opened [browser_user1, space_owner_browser] with [user1, user2] signed in to [Onezone, Onezone] service
 
 
   Scenario: User fails to invite provider without privileges
-    When user of browser_owner clicks "space1" on the spaces list in the sidebar
-    And user of browser_owner clicks Members of "space1" in the sidebar
-    And user of browser_owner clicks "user1" user in "space1" space members users list
-    And user of browser_owner sees following privileges of "user1" user in space members subpage:
+    When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
+    And user of space_owner_browser clicks Members of "space1" in the sidebar
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sees following privileges of "user1" user in space members subpage:
           Support management:
             granted: False
     And user of browser_user1 clicks Providers of "space1" in the sidebar
@@ -50,9 +50,9 @@ Feature: Basic management of spaces privileges in Onezone GUI
     And user of browser_user1 sees following privileges of "user1" user in space members subpage:
           User management:
             granted: False
-    And user of browser_owner clicks Members of "space1" in the sidebar
-    And user of browser_owner clicks "user1" user in "space1" space members users list
-    And user of browser_owner sets following privileges for "user1" user in space members subpage:
+    And user of space_owner_browser clicks Members of "space1" in the sidebar
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
           User management:
             granted: True
     And user of browser_user1 refreshes site
@@ -63,9 +63,9 @@ Feature: Basic management of spaces privileges in Onezone GUI
 
 
   Scenario: User fails to see privileges without view privileges
-    When user of browser_owner clicks Members of "space1" in the sidebar
-    And user of browser_owner clicks "user1" user in "space1" space members users list
-    And user of browser_owner sees following privileges of "user1" user in space members subpage:
+    When user of space_owner_browser clicks Members of "space1" in the sidebar
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sees following privileges of "user1" user in space members subpage:
           Space management:
             granted: Partially
             privilege subtypes:
@@ -78,10 +78,10 @@ Feature: Basic management of spaces privileges in Onezone GUI
 
 
   Scenario: User fails to see space without view space privilege
-    When user of browser_owner clicks "space1" on the spaces list in the sidebar
-    And user of browser_owner clicks Members of "space1" in the sidebar
-    And user of browser_owner clicks "user1" user in "space1" space members users list
-    And user of browser_owner sets following privileges for "user1" user in space members subpage:
+    When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
+    And user of space_owner_browser clicks Members of "space1" in the sidebar
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
           Space management:
             granted: Partially
             privilege subtypes:
@@ -92,10 +92,10 @@ Feature: Basic management of spaces privileges in Onezone GUI
 
 
   Scenario: User fails to remove group from space without remove group privileges
-    When user of browser_owner clicks "space2" on the spaces list in the sidebar
-    And user of browser_owner clicks Members of "space2" in the sidebar
-    And user of browser_owner clicks "user1" user in "space2" space members users list
-    And user of browser_owner sees following privileges of "user1" user in space members subpage:
+    When user of space_owner_browser clicks "space2" on the spaces list in the sidebar
+    And user of space_owner_browser clicks Members of "space2" in the sidebar
+    And user of space_owner_browser clicks "user1" user in "space2" space members users list
+    And user of space_owner_browser sees following privileges of "user1" user in space members subpage:
           Group management:
             granted: False
 
@@ -110,10 +110,10 @@ Feature: Basic management of spaces privileges in Onezone GUI
 
 
   Scenario: User fails to remove user from space without remove user privileges
-    When user of browser_owner clicks "space3" on the spaces list in the sidebar
-    And user of browser_owner clicks Members of "space3" in the sidebar
-    And user of browser_owner clicks "user1" user in "space3" space members users list
-    And user of browser_owner sees following privileges of "user1" user in space members subpage:
+    When user of space_owner_browser clicks "space3" on the spaces list in the sidebar
+    And user of space_owner_browser clicks Members of "space3" in the sidebar
+    And user of space_owner_browser clicks "user1" user in "space3" space members users list
+    And user of space_owner_browser sees following privileges of "user1" user in space members subpage:
           User management:
             granted: False
 
