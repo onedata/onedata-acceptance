@@ -10,7 +10,8 @@ from time import sleep
 
 from selenium.webdriver.common.action_chains import ActionChains
 
-from tests.gui.utils.core.web_elements import WebElement, WebElementsSequence
+from tests.gui.utils.core.web_elements import (
+    WebElement, WebElementsSequence, WebItem)
 from .common import OZPanel
 from .data_page import DataPage
 from .providers_page import ProvidersPage
@@ -25,6 +26,7 @@ class OZLoggedIn(object):
     _atlas = WebElement('.onezone-atlas')
     _panels = WebElementsSequence('.main-menu-content li.main-menu-item')
     _profile = WebElement('.app-layout')
+    _data_discovery_page = WebElement('.ember-application')
 
     panels = {
         'data': DataPage,
@@ -43,6 +45,8 @@ class OZLoggedIn(object):
 
     def __getitem__(self, item):
         item = item.lower()
+        if item == 'data discovery':
+            return DataDiscoveryPage(self.web_elem, self._data_discovery_page, self)
         # expand side panel
         ActionChains(self.web_elem).move_to_element(self._panels[0]).perform()
         # wait for side panel to expand so we can read panel name

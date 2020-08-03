@@ -36,6 +36,23 @@ class IndicesPage(PageObject):
                                     'li.one-collapsible-list-item', cls=Index)
 
 
+class QueryBuilder(PageObject):
+    root_block = Button('root-block')
+
+
+class ResultSample(PageObject):
+    text = Label('.result-sample')
+
+
+class DataDiscoveryPage(object):
+    query_builder = WebItem('.query-builder', cls=QueryBuilder)
+    results_list = WebItemsSequence('.results-list', cls=ResultSample)
+    root_button = Button('.query-builder .root-block')
+
+    def __init__(self, driver):
+        self.web_elem = self.driver = driver
+
+
 class Harvester(Element):
     menu_button = Button('.collapsible-toolbar-toggle')
 
@@ -45,6 +62,8 @@ class Harvester(Element):
                           text='Indices')
     members = NamedButton('.one-list-level-2 .item-header',
                           text='Members')
+    data_discovery = NamedButton('.one-list-level-2 .item-header',
+                                 text='Data discovery')
 
 
 class MenuItem(PageObject):

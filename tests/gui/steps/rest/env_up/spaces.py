@@ -13,6 +13,7 @@ import json
 from pytest_bdd import given, parsers
 
 from tests import OZ_REST_PORT, PANEL_REST_PORT, OP_REST_PORT
+from tests.gui.steps.rest.shares import get_file_id_by_rest
 from tests.utils.rest_utils import (http_get, http_post, http_put,
                                     get_panel_rest_path, get_zone_rest_path,
                                     get_provider_rest_path)
@@ -63,6 +64,9 @@ def create_and_configure_spaces(config, zone_host, admin_credentials,
                         - file1:
                             provider: p2    ---> mandatory if dict form is used
                             content: text
+                            metadata:
+                                type: json/basic(xattrs)
+                                key: value
                         - file2
 
         space_name_2:
@@ -94,6 +98,10 @@ def create_and_configure_spaces(config, zone_host, admin_credentials,
                         - file2:
                             provider: 2
                             content: 22222
+                            metadata:
+                              type: basic
+                              author: John Doe
+                              year: 2020
     """
     _create_and_configure_spaces(config, zone_host, admin_credentials,
                                  onepanel_credentials, hosts,
@@ -114,6 +122,7 @@ def _create_and_configure_spaces(config, zone_name, admin_credentials,
                                  onepanel_credentials, hosts,
                                  users_db, groups_db, storages_db, spaces_db):
     zone_hostname = hosts[zone_name]['hostname']
+    admin_credentials.token = admin_credentials.create_token(hosts['onezone']['ip'])
 
     for space_name, description in yaml.load(config).items():
         owner = users_db[description['owner']]
@@ -129,7 +138,7 @@ def _create_and_configure_spaces(config, zone_name, admin_credentials,
         _get_support(zone_hostname, onepanel_credentials, owner, space_id,
                      storages_db, hosts, description.get('providers', {}),
                      users_to_add, users_db)
-        _init_storage_from_config(owner, space_name, hosts,
+        _init_storage_from_config(owner, space_name, hosts, users_db,
                                   description.get('storage', {}))
 
 
@@ -268,7 +277,7 @@ def _get_storage_id(provider_hostname, onepanel_username,
             return storage_id
 
 
-def _init_storage_from_config(owner_credentials, space_name, hosts,
+def _init_storage_from_config(owner_credentials, space_name, hosts, users,
                               storage_conf):
     if not storage_conf:
         return
@@ -278,11 +287,11 @@ def _init_storage_from_config(owner_credentials, space_name, hosts,
     directory_tree = storage_conf['directory tree']
 
     init_storage(owner_credentials, space_name, hosts,
-                 provider_hostname, directory_tree)
+                 provider_hostname, users, directory_tree)
 
 
 def init_storage(owner_credentials, space_name, hosts,
-                 provider_hostname, directory_tree):
+                 provider_hostname, users, directory_tree):
     # if we make call to fast after deleting users from previous test
     # provider cache was not refreshed and call will create dir for
     # now nonexistent user, to avoid this wait some time
@@ -303,13 +312,14 @@ def init_storage(owner_credentials, space_name, hosts,
                 time.sleep(1)
             else:
                 break
-
         return response
 
-    _mkdirs(create_cdmi_object, space_name, hosts, directory_tree)
+    _mkdirs(create_cdmi_object, space_name, hosts,
+            owner_credentials, provider_hostname, users, directory_tree)
 
 
-def _mkdirs(create_cdmi_obj, cwd, hosts, dir_content=None):
+def _mkdirs(create_cdmi_obj, cwd, hosts, owner_credentials,
+            provider_hostname, users, dir_content=None):
     if not dir_content:
         return
 
@@ -323,20 +333,46 @@ def _mkdirs(create_cdmi_obj, cwd, hosts, dir_content=None):
         path = cwd + '/' + name
         if name.startswith('dir'):
             create_cdmi_obj(path + '/')
-            _mkdirs(create_cdmi_obj, path, hosts, content)
+            _mkdirs(create_cdmi_obj, path, hosts, owner_credentials,
+                    provider_hostname, users, content)
         else:
-            _mkfile(create_cdmi_obj, path, hosts, content)
+            _mkfile(create_cdmi_obj, path, hosts, owner_credentials,
+                    provider_hostname, users, content)
 
 
-def _mkfile(create_cdmi_obj, file_path, hosts, file_content=None):
+def set_file_metadata(file_path, owner_credentials, provider_hostname, users,
+                      metadata=None):
+    metadata_type = metadata.pop('type', 'json')
+    metadata_type = 'xattrs' if metadata_type == 'basic' else metadata_type
+    user = owner_credentials.username
+    file_id = get_file_id_by_rest(file_path, provider_hostname, user, users)
+    http_put(ip=provider_hostname, port=OP_REST_PORT,
+             path=get_provider_rest_path('data', file_id, 'metadata',
+                                         metadata_type),
+             headers={'X-Auth-Token': owner_credentials.token},
+             data=json.dumps(metadata))
+
+
+def _mkfile(create_cdmi_obj, file_path, hosts, owner_credentials,
+            provider_hostname, users, file_content=None):
     if file_content:
         try:
-            provider = file_content['provider']
-        except TypeError:
+            provider = file_content.get('provider', None)
+        except (TypeError, AttributeError):
             create_cdmi_obj(file_path, str(file_content))
         else:
-            create_cdmi_obj(file_path, data=file_content.get('content', None),
-                            url='https://{}:{}/cdmi/'.format(hosts[provider]['hostname'],
-                                                             OP_REST_PORT))
+            if provider:
+                create_cdmi_obj(file_path, data=str(file_content.get(
+                    'content', None)), url='https://{}:{}/cdmi/'.format(
+                    hosts[provider]['hostname'], OP_REST_PORT))
+                set_file_metadata(file_path, owner_credentials,
+                                  provider_hostname, users,
+                                  file_content.get('metadata', None))
+            else:
+                create_cdmi_obj(file_path, str(file_content.get(
+                    'content', None)))
+                set_file_metadata(file_path, owner_credentials,
+                                  provider_hostname, users,
+                                  file_content.get('metadata', None))
     else:
         create_cdmi_obj(file_path)

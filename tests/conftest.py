@@ -148,6 +148,12 @@ def storages():
 
 
 @pytest.fixture
+def harvesters():
+    """Mapping harvester name to harvester id, e.g. {st1: UEIHSdft743d}"""
+    return {}
+
+
+@pytest.fixture
 def context():
     """Dict to use when one wants to store sth between steps."""
     return {}
@@ -223,7 +229,6 @@ def parse_client_cfg(pod_name, pod_cfg, hosts):
 def parse_elasticsearch_cfg(pod_cfg, hosts):
     ip, container_id = (pod_cfg.get('ip'),
                         pod_cfg.get('container-id'))
-
     hosts['elasticsearch'] = {'ip': ip,
                               'container-id': container_id}
 

@@ -229,3 +229,15 @@ def assert_space_on_harvester_list(selenium, browser_id, space, harvester,
                                                       oz_page)
     assert_space_has_appeared_in_discovery_page(selenium, browser_id, space,
                                                 oz_page)
+
+
+@wt(parsers.parse('user of {browser_id} sees following files in Data '
+                  'discovery page:\n{config}'))
+def assert_data_discovery_files(selenium, browser_id, oz_page,
+                                data_discovery, config):
+    driver = selenium[browser_id]
+    # data_discovery.query_builder.root_block
+    import pdb
+    pdb.set_trace()
+    # lists = oz_page(driver)['data discovery']
+

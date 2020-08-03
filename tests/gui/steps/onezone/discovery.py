@@ -13,7 +13,7 @@ from tests import ELASTICSEARCH_PORT
 from tests.utils.acceptance_utils import wt
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.utils.utils import repeat_failed
-from tests.gui.steps.common.miscellaneous import _enter_text
+from tests.gui.steps.common.miscellaneous import _enter_text, switch_to_iframe
 from tests.gui.utils.generic import transform
 
 
@@ -220,3 +220,21 @@ def see_insufficient_permissions_alert_on_discovery_page(selenium, browser_id,
     assert alert_text in forbidden_alert, ('alert with text "{}" not found'
                                            .format(alert_text))
 
+
+@wt(parsers.parse('user of {browser_id} clicks on start query icon in data '
+                  'discovery page'))
+def start_query(selenium, browser_id, oz_page):
+    driver = selenium(browser_id)
+    oz_page(driver)['discovery'].data_discovery_page.query_builder.root_block()
+
+
+@wt(parsers.parse('user of {browser_id} chooses "{property_name}" property to '
+                  'query for'))
+def choose_property_to_query(selenium, browser_id, property_name, popups):
+    driver = selenium[browser_id]
+    popups(driver).query_builder_popup.choose_property(property_name)
+
+
+@wt(parsers.parse('user of {browser_id} sees Data Discovery page'))
+def assert_data_discovery_page(selenium, browser_id):
+    switch_to_iframe(selenium, browser_id, '.plugin-frame')

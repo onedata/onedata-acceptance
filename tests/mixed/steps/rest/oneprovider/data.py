@@ -35,6 +35,7 @@ def _lookup_file_id(path, user_client_op):
     file_id = resolve_file_path_api.lookup_file_id(path).file_id
     return file_id
 
+
 def _read_file(path, user, users, provider, hosts):
     cli = login_to_cdmi(user, users, hosts[provider]['hostname'])
     dao = DataObjectApi(cli)
