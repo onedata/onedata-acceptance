@@ -32,8 +32,12 @@ Feature: Basic management of harvester in Space
 
     Then user of browser1 sees "harvester2" in harvesters list on space harvesters subpage
     And user of browser1 sees "harvester3" in harvesters list on space harvesters subpage
+
     And user of browser1 removes "harvester2" harvester from "space1" space
+    And user of browser1 does not see "harvester2" in harvesters list on space harvesters subpage
+
     And user of browser1 removes "harvester3" harvester from "space1" space
+    And user of browser1 does not see "harvester3" in harvesters list on space harvesters subpage
 
 
   Scenario: User adds one of his harvesters to space and another user deletes this harvester
