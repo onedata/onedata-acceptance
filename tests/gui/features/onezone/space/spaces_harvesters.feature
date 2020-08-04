@@ -18,18 +18,21 @@ Feature: Basic management of harvester in Space
     And user of browser2 creates "harvester3" harvester in Onezone page
     And user of browser1 clicks Harvesters of "space1" in the sidebar
 
+    # Invite "harvester2" harvester to "space1" space
     And user of browser1 clicks invite harvester using token button in space harvesters page
     And user of browser1 copies invitation token from modal
     And user of browser1 sends copied token to user of browser2
     And user of browser1 clicks on "Close" button in modal "Invite using token"
     And user of browser2 adds harvester "harvester2" to space using copied token
 
+    # Invite "harvester3" harvester to "space1" space
     And user of browser1 clicks on "Invite harvester using token" button in space menu
     And user of browser1 copies invitation token from modal
     And user of browser1 sends copied token to user of browser2
     And user of browser1 clicks on "Close" button in modal "Invite using token"
     And user of browser2 adds harvester "harvester3" to space using copied token
 
+    # See that both harvesters are in "space1" space
     Then user of browser1 sees "harvester2" in harvesters list on space harvesters subpage
     And user of browser1 sees "harvester3" in harvesters list on space harvesters subpage
 
@@ -43,6 +46,8 @@ Feature: Basic management of harvester in Space
   Scenario: User adds one of his harvesters to space and another user deletes this harvester
     Given user admin has no harvesters
     When user of browser1 clicks "space1" on the spaces list in the sidebar
+
+    # Create "harvester1" harvester and give user appropriate privileges
     And user of browser2 creates "harvester1" harvester in Onezone page
     And user of browser2 sends invitation token from "harvester1" harvester to user of browser1
     And user of browser1 joins to harvester in Onezone page
@@ -55,5 +60,6 @@ Feature: Basic management of harvester in Space
 
     And user of browser1 adds "harvester1" harvester to "space1" space using available harvesters dropdown
     Then user of browser1 sees "harvester1" in harvesters list on space harvesters subpage
+
     And user of browser2 removes "harvester1" harvester in Onezone page
     And user of browser1 does not see "harvester1" in harvesters list on space harvesters subpage
