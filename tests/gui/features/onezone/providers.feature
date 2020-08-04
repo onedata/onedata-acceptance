@@ -61,7 +61,7 @@ Feature: Basic management of providers in Onezone GUI
 
 
   Scenario: User sees that when no provider is working appropriate msg is shown
-    Given provider(s) named "oneprovider-1" are paused
+    Given provider named "oneprovider-1" is paused
     When user of browser clicks on Data in the main menu
     And user of browser clicks Data of "space1" in the sidebar
 
@@ -72,4 +72,4 @@ Feature: Basic management of providers in Onezone GUI
     And user of browser clicks on Data in the main menu
     And user of browser clicks Data of "space1" in the sidebar
     Then user of browser sees alert with title "ALL SUPPORTING ONEPROVIDERS ARE OFFLINE" on Onezone page
-    And provider(s) named "oneprovider-1" are unpaused
+    And provider named "oneprovider-1" is unpaused
