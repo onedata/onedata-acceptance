@@ -201,21 +201,13 @@ def click_provider_on_the_map_on_data_page(selenium, browser_id, provider,
     driver = selenium[browser_id]
     current_page = getattr(oz_page(driver)['data'], _get_subpage_name(page))
     provider_name = hosts[provider]['name']
-    for prov in current_page.map.providers.items:
-        ActionChains(driver).move_to_element(prov).perform()
-        name = driver.find_element_by_css_selector(".tooltip-inner").text
-        if name == provider_name:
-            prov.click()
-            return
-
-    raise RuntimeError(f'provider {provider_name} was not found on the map')
+    current_page.map.click_provider(provider_name, driver)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks the map on '
                '(?P<space_name>.*) space (?P<page>overview|providers) data '
                'page'))
-def click_the_map_on_data_page(selenium, browser_id, oz_page, page,
-                                    space_name):
+def click_the_map_on_data_page(selenium, browser_id, oz_page, page, space_name):
     driver = selenium[browser_id]
     getattr(oz_page(driver)['data'], _get_subpage_name(page)).map()
 
@@ -244,7 +236,7 @@ def check_number_of_providers_on_the_map_on_data_page(selenium, browser_id,
         correct_number = 0
     driver = selenium[browser_id]
     current_page = getattr(oz_page(driver)['data'], _get_subpage_name(page))
-    number_providers = len(current_page.map.providers.items)
+    number_providers = len(current_page.map.providers)
     error_msg = f'found {number_providers} instead of {correct_number}'
     assert number_providers == int(correct_number), error_msg
 
