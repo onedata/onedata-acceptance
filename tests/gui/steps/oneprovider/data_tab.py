@@ -318,6 +318,7 @@ def wait_for_file_upload_to_finish(selenium, browser_id, popups):
 
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
                   'menu bar to upload file "{file_name}" to current dir'))
+@repeat_failed(timeout=2 * WAIT_BACKEND)
 def upload_file_to_cwd_in_file_browser(selenium, browser_id, file_name,
                                        op_container):
     driver = selenium[browser_id]
@@ -462,7 +463,7 @@ def check_error_in_upload_presenter(selenium, browser_id, popups):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
 
-    assert popups(driver).upload_presenter.is_failed(), 'upload not failed'
+    assert popups(driver).upload_presenter[0].is_failed(), 'upload not failed'
 
 
 @wt(parsers.parse('user of {browser_id} clicks on "{provider}" provider '
@@ -534,3 +535,10 @@ def assert_current_provider_name_in_space(selenium, browser_id, provider, hosts,
 def assert_provider_in_space(selenium, browser_id, provider, hosts, oz_page):
     provider = hosts[provider]['name']
     _assert_provider_in_space(selenium, browser_id, provider, oz_page)
+
+
+@wt(parsers.parse('user of {browser_id} clicks file browser refresh button'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def click_refresh_file_browser_button(browser_id, tmp_memory):
+    file_browser = tmp_memory[browser_id]['file_browser']
+    file_browser.refresh_button()

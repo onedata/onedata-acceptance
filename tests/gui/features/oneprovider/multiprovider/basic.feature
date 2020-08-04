@@ -2,13 +2,22 @@ Feature: Oneprovider functionality using multiple providers
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
-            - user1
+          - user1
     And initial groups configuration in "onezone" Onezone service:
           group1:
             owner: user1
+
+    # unused_space is used only to introduce "oneprovider-1" for use of user1
+    # thanks to this "oneprovider-1" is listed in consumer caveats popup
     And initial spaces configuration in "onezone" Onezone service:
           space1:
-              owner: user1
+            owner: user1
+          unused_space:
+            owner: user1
+            providers:
+            - oneprovider-1:
+                storage: posix
+                size: 1000000
 
     And users opened [browser1, browser2] browsers' windows
     And users of [browser1, browser2] opened [Onezone, Onezone] page
@@ -36,3 +45,23 @@ Feature: Oneprovider functionality using multiple providers
     Then user of browser1 sees provider named "oneprovider-1" on file browser page
     And user of browser1 sees provider named "oneprovider-2" on file browser page
     And user of browser1 clicks on "oneprovider-2" provider on file browser page
+
+
+  Scenario: Provider fails to support space using invite token with consumer caveat set not for them
+    When user of browser1 creates and checks token with following configuration:
+          type: invite
+          invite type: Support space
+          invite target: space1
+          caveats:
+            consumer:
+              - type: oneprovider
+                by: name
+                consumer name: oneprovider-1
+    And user of browser1 clicks on copy button in token view
+    And user of browser1 sends copied token to user of browser2
+    And user of browser2 clicks on Clusters in the main menu
+    And user of browser2 clicks on "oneprovider-2" in clusters menu
+    Then user of browser2 fails to support "space1" space in "oneprovider-2" Oneprovider panel service with following configuration:
+          storage: posix
+          size: 1
+          unit: GiB

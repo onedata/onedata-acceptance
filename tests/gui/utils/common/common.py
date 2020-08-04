@@ -60,12 +60,21 @@ class _Toggle(PageObject):
     def is_checked(self):
         return 'checked' in self.web_elem.get_attribute('class')
 
+    def is_partial_checked(self):
+        return 'maybe' in self.web_elem.get_attribute('class')
+
+    def is_unchecked(self):
+        return not self.is_checked() and not self.is_partial_checked()
+
     def check(self):
         if not self.is_checked():
             self.click()
 
     def uncheck(self):
         if self.is_checked():
+            self.click()
+        elif self.is_partial_checked():
+            self.click()
             self.click()
 
     def is_enabled(self):

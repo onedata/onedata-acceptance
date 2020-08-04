@@ -20,10 +20,11 @@ from tests.gui.steps.onezone.discovery import (
     click_create_button_in_indices_page, click_button_in_harvester_spaces_page,
     choose_element_from_dropdown_in_add_element_modal,
     type_text_to_rename_input_field_in_discovery_page,
-    confirm_harvester_rename_using_button)
+    confirm_harvester_rename_using_button,
+    assert_space_has_appeared_in_discovery_page,
+    click_on_member_menu_option_in_harvester_indices_page)
 from tests.gui.steps.onezone.spaces import (
-    click_on_option_in_the_sidebar,
-    click_element_on_lists_on_left_sidebar_menu)
+    click_on_option_in_the_sidebar, click_element_on_lists_on_left_sidebar_menu)
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.modal import click_modal_button, close_modal
 
@@ -35,8 +36,10 @@ def remove_space_from_harvester(selenium, browser_id, oz_page, space_name):
     button = 'Remove'
     modal = 'Remove space from harvester'
 
-    click_remove_space_option_in_menu_in_discover_spaces_page(selenium, browser_id,
-                                                              space_name, oz_page)
+    click_remove_space_option_in_menu_in_discover_spaces_page(selenium,
+                                                              browser_id,
+                                                              space_name,
+                                                              oz_page)
     click_modal_button(selenium, browser_id, button, modal, modals)
 
 
@@ -78,7 +81,8 @@ def create_harvester(selenium, browser_id, oz_page, harvester_name, hosts):
 
 
 @wt(parsers.parse('user of {browser_id} adds "{space_name}" space to '
-                  '"{harvester_name}" harvester using available spaces dropdown'))
+                  '"{harvester_name}" harvester using available spaces '
+                  'dropdown'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def join_space_to_harvester(selenium, browser_id, oz_page, space_name,
                             harvester_name, tmp_memory):
@@ -118,13 +122,11 @@ def add_group_to_harvester(selenium, browser_id, oz_page, group_name,
     click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id,
                                                       harvester_name, option,
                                                       oz_page)
-    click_on_option_in_members_list_menu(selenium, browser_id, button,
-                                         member, where + 's', oz_page,
-                                         onepanel, popups)
+    click_on_option_in_members_list_menu(selenium, browser_id, button, member,
+                                         where + 's', oz_page, onepanel, popups)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id,
-                                                      group_name, modals,
-                                                      where)
+                                                      group_name, modals, where)
     click_modal_button(selenium, browser_id, button_in_modal, modal, modals)
 
 
@@ -132,12 +134,16 @@ def add_group_to_harvester(selenium, browser_id, oz_page, group_name,
                   'in "{harvester_name}" harvester in Discovery page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_index_in_harvester(selenium, browser_id, oz_page, index_name,
-                              harvester_name):
+                              harvester_name, popups):
     option = 'Indices'
+    member_menu_option = 'Create new index'
 
     click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id,
                                                       harvester_name, option,
                                                       oz_page)
+    click_on_member_menu_option_in_harvester_indices_page(selenium, browser_id,
+                                                          member_menu_option,
+                                                          oz_page, popups)
     type_index_name_to_input_field_in_indices_page(selenium, browser_id,
                                                    oz_page, index_name)
     click_create_button_in_indices_page(selenium, browser_id, oz_page)
@@ -159,73 +165,39 @@ def send_invitation_token(selenium, browser_id1, oz_page, harvester_name,
 
     click_on_option_in_the_sidebar(selenium, browser_id1, where, oz_page)
     click_element_on_lists_on_left_sidebar_menu(selenium, browser_id1,
-                                                list_type + 's',
-                                                harvester_name, oz_page)
+                                                list_type + 's', harvester_name,
+                                                oz_page)
     click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id1,
                                                       harvester_name, option,
                                                       oz_page)
     click_on_option_in_members_list_menu(selenium, browser_id1, button,
-                                         list_type, member, oz_page,
-                                         onepanel, popups)
+                                         list_type, member, oz_page, onepanel,
+                                         popups)
     copy_token_from_modal(selenium, browser_id1)
     close_modal(selenium, browser_id1, modal, modals)
     send_copied_item_to_other_users(browser_id1, item_type, browser_id2,
                                     tmp_memory, displays, clipboard)
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>checks|unchecks) '
-               '"(?P<privilege>.*)" privilege in '
-               '"(?P<privilege_group>.*)" privileges group for '
-               '(?P<user_name>.*) user in "(?P<harvester_name>.*)" harvester'))
+@wt(parsers.parse('user of {browser_id} sets following privileges for '
+                  '"{user_name}" user in "{harvester_name}" harvester:'
+                  '\n{config}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def change_nested_privilege_in_harvester(selenium, browser_id, oz_page,
-                                         onepanel, privilege, option,
-                                         privilege_group, user_name,
+def change_privilege_config_in_harvester(selenium, browser_id, oz_page,
+                                         onepanel, config, user_name,
                                          harvester_name):
     where = 'harvester'
     list_type = 'user'
-    button_name = 'Save'
     menu_option = 'Members'
 
     click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id,
                                                       harvester_name,
                                                       menu_option, oz_page)
-    click_element_in_members_list(selenium, browser_id, user_name,
-                                  oz_page, where, list_type + 's', onepanel)
-    expand_privilege_for_member(selenium, browser_id, privilege_group, oz_page,
-                                where, user_name, list_type, onepanel)
-    click_nested_privilege_toggle_for_member(selenium, browser_id, option,
-                                             where, privilege, user_name,
-                                             oz_page, list_type,
-                                             privilege_group, onepanel)
-    click_button_on_element_header_in_members(selenium, browser_id, button_name,
-                                              oz_page, where, user_name,
-                                              list_type, onepanel)
-
-
-@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>checks|unchecks) '
-               '"(?P<privilege_name>.*?)" privileges group for '
-               '(?P<user_name>.*) user in "(?P<harvester_name>.*)" harvester'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def change_privilege_in_harvester(selenium, browser_id, oz_page, onepanel,
-                                  privilege_name, option, user_name,
-                                  harvester_name):
-    where = 'harvester'
-    list_type = 'user'
-    button_name = 'Save'
-    menu_option = 'Members'
-
-    click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id,
-                                                      harvester_name,
-                                                      menu_option, oz_page)
-    click_element_in_members_list(selenium, browser_id, user_name,
-                                  oz_page, where, list_type + 's', onepanel)
-    click_privilege_toggle_for_member(selenium, browser_id, option, where,
-                                      privilege_name, user_name, oz_page,
-                                      list_type)
-    click_button_on_element_header_in_members(selenium, browser_id, button_name,
-                                              oz_page, where, user_name,
-                                              list_type, onepanel)
+    click_element_in_members_list(selenium, browser_id, user_name, oz_page,
+                                  where, list_type + 's', onepanel)
+    set_privileges_in_members_subpage(selenium, browser_id, user_name,
+                                      list_type, where, config, onepanel,
+                                      oz_page)
 
 
 @wt(parsers.parse('user of {browser_id} renames "{harvester_name}" harvester '
@@ -241,6 +213,24 @@ def rename_harvester(selenium, browser_id, oz_page, harvester_name,
     click_on_option_in_harvester_menu(selenium, browser_id, menu_option,
                                       harvester_name, oz_page)
     type_text_to_rename_input_field_in_discovery_page(selenium, browser_id,
-                                                      oz_page, harvester_renamed)
+                                                      oz_page,
+                                                      harvester_renamed)
     confirm_harvester_rename_using_button(selenium, browser_id, oz_page)
 
+
+@wt(parsers.parse('user of {browser_id} sees that "{space}" has appeared on '
+                  'the spaces list of "{harvester}" harvester'))
+def assert_space_on_harvester_list(selenium, browser_id, space, harvester,
+                                   oz_page):
+    option = 'Discovery'
+    option2 = 'harvesters'
+    option3 = 'Spaces'
+
+    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
+    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option2,
+                                                harvester, oz_page)
+    click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id,
+                                                      harvester, option3,
+                                                      oz_page)
+    assert_space_has_appeared_in_discovery_page(selenium, browser_id, space,
+                                                oz_page)

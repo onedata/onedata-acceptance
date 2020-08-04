@@ -1,14 +1,14 @@
 Feature: Basic spaces management utilities using onepanel
 
   Background:
-    Given users opened [browser1, browser2] browsers' windows
+    Given admin user does not have access to any space
+    And there are no spaces supported by oneprovider-1 in Onepanel
+    And users opened [browser1, browser2] browsers' windows
     And users of [browser1, browser2] opened [Onezone, oneprovider-1 provider panel] page
     And user of [browser1, browser2] logged as [admin, admin] to [Onezone, emergency interface of Onepanel] service
 
 
   Scenario Outline: Support space
-    Given there are no spaces supported by oneprovider-1 in Onepanel
-    And there is no "space1" space in Onezone used by user of browser1
     When user of browser1 creates "space1" space in Onezone
 
     # receive support token
@@ -45,8 +45,6 @@ Feature: Basic spaces management utilities using onepanel
 
 
   Scenario Outline: Revoke space support
-    Given there are no spaces supported by oneprovider-1 in Onepanel
-    And there is no "space1" space in Onezone used by user of browser1
     When user of browser1 creates "space1" space in Onezone
     And user of browser1 sends support token for "space1" to user of browser2
     And user of browser2 supports "space1" space in "oneprovider-1" Oneprovider panel service with following configuration:

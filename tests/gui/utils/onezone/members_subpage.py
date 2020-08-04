@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 from selenium.webdriver import ActionChains
 
+from tests.gui.utils.common.privilege_tree import PrivilegeTree
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.core.web_elements import (Button, NamedButton,
@@ -34,31 +35,17 @@ class MembersItemHeader(PageObject):
         self.menu_button.click()
 
 
-class Privilege(PageObject):
-    name = id = Label('label')
-    toggle = Toggle('.one-way-toggle')
-
-
-class PrivilegeGroup(PageObject):
-    name = id = Label('div.tree-item-content-container > '
-                      'div.one-tree-item-content > label')
-    toggle = Toggle('div.tree-item-content-container > '
-                    'div.one-tree-item-content > div > '
-                    'div.one-way-toggle')
-    privileges = WebItemsSequence('div > div.one-tree > ul > li', cls=Privilege)
-    show_hide_button = Button('.tree-circle')
-
-    def __call__(self):
-        self.show_hide_button.click()
-
-
 class MembersItemRow(PageObject):
     header = WebItem('.list-header-row', cls=MembersItemHeader)
     name = id = Label('.one-label')
-    privileges = WebItemsSequence('.one-collapsible-list-item-content '
-                                  '.form.ember-view > div > ul > li', 
-                                  cls=PrivilegeGroup)
+    privilege_tree = WebItem('.one-tree', cls=PrivilegeTree)
     forbidden_alert = WebElement('.alert.forbidden')
+
+    def are_privileges_visible(self):
+        try:
+            return self.privilege_tree
+        except RuntimeError:
+            return False
 
 
 class MembersList(PageObject):
@@ -97,8 +84,8 @@ class InvitationTokenArea(PageObject):
 
 
 class MembersPage(PageObject):
-    groups = WebItem('.row:nth-of-type(2) > ul', cls=MembersList)
-    users = WebItem('.row:nth-of-type(3) > ul', cls=MembersList)
+    groups = WebItem('.group-list', cls=MembersList)
+    users = WebItem('.user-list', cls=MembersList)
     token = WebItem('.invitation-token-presenter', cls=InvitationTokenArea)
     show_view_option = Button('.view-tools-toggle')
     effective_button = NamedButton('.direct-selector button', text='Effective')
@@ -107,5 +94,6 @@ class MembersPage(PageObject):
                                    cls=MembershipRow)
 
     forbidden_alert = WebElement('.alert.forbidden')
+    bulk_edit_button = NamedButton('.btn', text='Bulk edit')
 
 

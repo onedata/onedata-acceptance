@@ -71,14 +71,16 @@ Feature: Deployment process using panel of zone and provider
     # step5 in provider panel
     And user of browser2 selects Null Device from storage selector in step 5 of deployment process in Onepanel
     And user of browser2 types "storage" to Storage name field in POSIX form in step 5 of deployment process in Onepanel
+    And user of browser2 checks "Skip storage detection" toggle in storage form in step 5 of deployment process in Onepanel
 
     And user of browser2 clicks on Add button in add storage form in step 5 of deployment process in Onepanel
     And user of browser2 sees an info notify with text matching to: .*[Ss]torage.*added.*
-    # TODO: uncomment when it will work
-    # And user of browser2 expands "storage" record on storages list in step 5 of deployment process in Onepanel
-    # And user of browser2 sees that "storage" Storage type is null device in step 5 of deployment process in Onepanel
 
-    # And user of browser2 clicks on Finish button in step 5 of deployment process in Onepanel
+    And user of browser2 expands "storage" record on storages list in step 5 of deployment process in Onepanel
+    And user of browser2 sees that "storage" Storage type is null device in step 5 of deployment process in Onepanel
+
+    And user of browser2 clicks on Finish button in step 5 of deployment process in Onepanel
+    And user of browser2 clicks on link to go to Emergency Onepanel interface in last step of deployment process in Onepanel
 
     # check config in zone and provider panels
     Then user of browser1 clicks on Clusters in the main menu
@@ -87,9 +89,6 @@ Feature: Deployment process using panel of zone and provider
     And user of browser1 sees that [Database, Cluster Worker, Cluster Manager, Primary Cluster Manager] options are enabled for .*onezone.* host in Nodes page in Onepanel
     And user of browser1 sees that [Database, Cluster Worker, Cluster Manager, Primary Cluster Manager] options cannot be changed for .*onezone.* host in Nodes page in Onepanel
 
-    # TODO: uncomment when it will work
-    # And user of browser2 clicks on link to go to Emergency Onepanel interface in last step of deployment process in Onepanel
-    And user of browser2 refreshes site
     And user of browser2 clicks on Nodes item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser2 sees that [Database, Cluster Worker] options are enabled for .*0.*oneprovider.* host in Nodes page in Onepanel
     And user of browser2 sees that [Cluster Manager, Primary Cluster Manager] options are enabled for .*1.*oneprovider.* host in Nodes page in Onepanel
