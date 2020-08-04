@@ -539,8 +539,7 @@ Feature: Management of invite tokens in Onezone GUI
                 consumer name: oneprovider-1
     And user of browser2 clicks on copy button in token view
     And user of browser2 sends copied token to user of browser1
-    And user of browser1 clicks on Clusters in the main menu
-    And user of browser1 clicks on "oneprovider-1" in clusters menu
+    And user of browser1 opens "oneprovider-1" clusters submenu
     Then user of browser1 succeeds to support "space2" space in "oneprovider-1" Oneprovider panel service with following configuration:
           storage: posix
           size: 1
@@ -708,9 +707,8 @@ Feature: Management of invite tokens in Onezone GUI
                 consumer name: Any Oneprovider
     And user of browser2 clicks on copy button in token view
     And user of browser2 sends copied token to user of browser1
-    And user of browser1 clicks on Clusters in the main menu
-    And user of browser1 clicks on "oneprovider-1" in clusters menu
-    Then user of browser1 succeeds to support "space1" space in "oneprovider-1" Oneprovider panel service with following configuration:
+    And user of browser1 opens "oneprovider-1" clusters submenu
+    Then user of browser1 succeeds to support "space2" space in "oneprovider-1" Oneprovider panel service with following configuration:
           storage: posix
           size: 1
           unit: GiB
