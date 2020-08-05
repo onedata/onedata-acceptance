@@ -34,6 +34,8 @@ class Space(Element):
                             text='Providers')
     members = NamedButton('.one-list-level-2 .item-header',
                           text='Members')
+    harvesters = NamedButton('.one-list-level-2 .item-header',
+                             text='Harvesters')
     menu_button = Button('.collapsible-toolbar-toggle')
 
     def click_menu(self):
@@ -92,6 +94,27 @@ class WelcomePage(PageObject):
     join_group = NamedButton('.info .ember-view', text='join a group')
 
 
+class HarvesterRow(Element):
+    name = id = Label('.item-name')
+    harvester = WebElement('.item-name')
+    harvester_menu_button = WebElement('.collapsible-toolbar-toggle')
+
+    def click_harvester_menu_button(self, driver):
+        ActionChains(driver).move_to_element(self.harvester).perform()
+        self.harvester_menu_button.click()
+
+
+class HarvestersPage(PageObject):
+    harvesters_list = WebItemsSequence(
+        '.main-content .one-collapsible-list-item', cls=HarvesterRow)
+    add_one_of_harvesters = NamedButton(
+        '.add-harvester-to-space-trigger.btn',
+        text='Add one of your harvesters')
+    invite_harvester_using_token = NamedButton(
+        '.generate-invite-token-action.btn',
+        text='Invite harvester using token')
+
+
 class GetSupportPage(PageObject):
     request_support_modal = NamedButton('.nav-link', text='Request support')
     deploy_provider_modal = NamedButton('.nav-link',
@@ -134,7 +157,9 @@ class DataPage(GenericPage):
     providers_page = WebItem('.main-content', cls=SpaceProvidersPage)
     members_page = WebItem('.main-content', cls=MembersPage)
     welcome_page = WebItem('.main-content', cls=WelcomePage)
+    harvesters_page = WebItem('.main-content', cls=HarvestersPage)
 
+    # button in top right corner on all subpages
     menu_button = Button('.with-menu .collapsible-toolbar-toggle')
 
     get_started = Button('.btn.btn-default.hide-sm-active.ember-view')

@@ -12,7 +12,7 @@ from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import wt, parsers
 from tests.gui.utils.generic import transform
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
-from selenium.webdriver import ActionChains
+from tests.gui.steps.modal import wt_wait_for_modal_to_appear
 
 
 @wt(parsers.parse('user of {browser_id} clicks on Create space button '
@@ -22,6 +22,16 @@ def click_create_new_space_on_spaces_on_left_sidebar_menu(selenium, browser_id,
                                                           oz_page):
     driver = selenium[browser_id]
     oz_page(driver)['data'].create_space_button()
+
+
+@wt(parsers.parse('user of {browser_id} clicks {button_name} button '
+                  'in space harvesters page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_button_in_space_harvesters_page(selenium, browser_id, oz_page,
+                                          button_name):
+    driver = selenium[browser_id]
+    button_name = transform(button_name)
+    getattr(oz_page(driver)['data'].harvesters_page, button_name).click()
 
 
 @wt(parsers.parse('user of {browser_id} writes "{space_name}" '
@@ -134,7 +144,7 @@ def click_cancel_rename_button_on_overview_page(selenium, browser_id, oz_page):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on '
-               '"(?P<button>Leave space)" button '
+               '"(?P<button>.*)" button '
                'in space menu'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_option_in_menu(selenium, browser_id, button, oz_page, popups):
@@ -213,8 +223,8 @@ def click_the_map_on_data_page(selenium, browser_id, oz_page, page, space_name):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks '
-               '(?P<option>Overview|Data|Shares|Transfers|Providers|Members) '
-               'of "(?P<space_name>.*?)" in the sidebar'))
+               '(?P<option>Overview|Data|Shares|Transfers|Providers|Members|'
+               'Harvesters) of "(?P<space_name>.*?)" in the sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
                                                   space_name, option, oz_page):
@@ -263,6 +273,23 @@ def click_option_on_welcome_page(selenium, browser_id, option, oz_page):
 def assert_error_popup_has_appeared(selenium, browser_id, modals):
     assert "failed" in modals(selenium[browser_id]).error.content, \
         'error popup not found'
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) (?P<see>does not see|sees) '
+               '"(?P<harvester_name>.*)" in harvesters list '
+               'on space harvesters subpage'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_harvester_on_list_on_space_harvesters_subpage(selenium, browser_id,
+                                                         harvester_name,
+                                                         oz_page, see):
+    driver = selenium[browser_id]
+    harvesters_list = oz_page(driver)['data'].harvesters_page.harvesters_list
+    if see == 'sees':
+        error_msg = f' Harvester {harvester_name} not found on harvesters list'
+        assert harvester_name in harvesters_list, error_msg
+    elif see == 'does not see':
+        error_msg = f' Harvester {harvester_name} found on harvesters list'
+        assert harvester_name not in harvesters_list, error_msg
 
 
 @wt(parsers.parse('user of {browser_id} sees "{provider}" is on '
@@ -346,8 +373,25 @@ def click_expose_existing_data_collection_tab_on_get_support_page(selenium,
         .expose_existing_data_modal()
 
 
-@wt(parsers.parse(
-    'user of {browser_id} clicks Copy button on Add support page'))
+@wt(parsers.parse('user of {browser_id} removes "{harvester_name}" harvester '
+                  'from "{space_name}" space'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def remove_harvester_from_harvesters_list(selenium, browser_id, oz_page,
+                                          harvester_name, popups, modals,
+                                          space_name, tmp_memory):
+    modal_name = 'remove harvester from space'
+    popup_name = 'Remove this harvester'
+
+    driver = selenium[browser_id]
+    harvesters_list = oz_page(driver)['data'].harvesters_page.harvesters_list
+    harvesters_list[harvester_name].click_harvester_menu_button(driver)
+    popups(driver).popover_menu.menu[popup_name]()
+    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
+    modals(driver).remove_harvester.remove()
+
+
+@wt(parsers.parse('user of {browser_id} clicks '
+                  'Copy button on Add support page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_copy_button_on_request_support_page(selenium, browser_id, oz_page,
                                               displays, clipboard, tmp_memory):
