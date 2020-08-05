@@ -29,6 +29,8 @@ from tests.gui.steps.modal import (wt_wait_for_modal_to_appear,
                                    wt_click_on_confirmation_btn_in_modal,
                                    wt_wait_for_modal_to_disappear,
                                    write_name_into_text_field_in_modal)
+from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
+from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.utils.bdd_utils import wt, given, parsers
 from tests.utils.utils import repeat_failed
 from tests.gui.conftest import WAIT_BACKEND
@@ -135,4 +137,14 @@ def meta_migrate_item(selenium, browser_id, name, tmp_memory, source,
     migrate_item(selenium, browser_id, source, target, hosts, popups)
     wt_click_on_confirmation_btn_in_modal(selenium, browser_id, 'Close',
                                           tmp_memory)
+
+
+@wt(parsers.parse('user of {browser_id} opens "{provider_name}" clusters '
+                  'submenu'))
+def open_record_of_clusters_submenu(selenium, browser_id, provider_name,
+                                    oz_page, hosts):
+    sidebar = 'Clusters'
+    click_on_option_in_the_sidebar(selenium, browser_id, sidebar, oz_page)
+    click_on_record_in_clusters_menu(selenium, browser_id, oz_page,
+                                     provider_name, hosts)
 

@@ -26,5 +26,5 @@ class PopoverMenu(PageObject):
     confirm_cancel_button = Button('.btn-danger')
 
     def __str__(self):
-        return 'Member menu popup'
+        return 'Menu popup'
 
