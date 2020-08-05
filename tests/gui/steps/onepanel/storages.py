@@ -106,8 +106,8 @@ def type_key_in_posix_storage_edit_page(selenium, browser_id,
     storage_posix.edit_form.posix_editor.params.set_last_key(key)
 
 
-@wt(parsers.parse('user of {browser_id} clicks last but one value in posix '
-                  'storage edit page'))
+@wt(parsers.parse('user of {browser_id} clicks value of modified record in '
+                  'posix storage edit page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_value_in_posix_storage_edit_page(selenium, browser_id, onepanel):
     driver = selenium[browser_id]

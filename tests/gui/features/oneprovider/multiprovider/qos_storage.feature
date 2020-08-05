@@ -29,10 +29,7 @@ Feature: Quality of Service tests for 2 providers using multiple browsers where 
 
 
   Scenario: User successfully force file to stay in provider using QoS requirement
-    When user of browser_unified clicks "space1" on the spaces list in the sidebar
-    And user of browser_unified clicks Data of "space1" in the sidebar
-    And user of browser_unified sees file browser in data tab in Oneprovider page
-
+    When user of browser_unified opens "oneprovider-1" Oneprovider file browser for "space1" space
     And user of browser_emergency expands "posix" record on storages list in storages page in Onepanel
     And user of browser_emergency copies id of "posix" storage to clipboard via copy button
     And user of browser_unified creates QoS requirement with copied storageId for "file1" from file browser
@@ -46,10 +43,7 @@ Feature: Quality of Service tests for 2 providers using multiple browsers where 
 
 
   Scenario: User successfully adds "anyStorage - storageId" QoS requirement
-    When user of browser_unified clicks "space1" on the spaces list in the sidebar
-    And user of browser_unified clicks Data of "space1" in the sidebar
-    And user of browser_unified sees file browser in data tab in Oneprovider page
-
+    When user of browser_unified opens "oneprovider-1" Oneprovider file browser for "space1" space
     And user of browser_emergency expands "posix" record on storages list in storages page in Onepanel
     And user of browser_emergency copies id of "posix" storage to clipboard via copy button
     And user of browser_unified creates "anyStorage - storageId=" QoS requirement and pastes storage id from clipboard for "file1" from file browser

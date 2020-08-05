@@ -19,6 +19,8 @@ Feature: Quality of Service tests for 2 providers using single browser in Onepro
                     provider: oneprovider-1
                 directory tree:
                     - file1: 11111111
+                    - dir1:
+                        - file2: 11111
 
     And opened browser with user1 signed in to "onezone" service
 
@@ -50,4 +52,18 @@ Feature: Quality of Service tests for 2 providers using single browser in Onepro
     And user of browser clicks on Choose other Oneprovider on file browser page
     And user of browser clicks on "oneprovider-2" provider on file browser page
     And user of browser sees file browser in data tab in Oneprovider page
-    And user of browser sees only items named "file1" in file browser
+    And user of browser sees only items named ["file1", "dir1"] in file browser
+
+
+  Scenario: User successfully makes file inherit QoS requirement after directory
+    When user of browser creates 2 replicas of "anyStorage" QoS requirement for "dir1" in space "space1"
+    Then user of browser double clicks on item named "dir1" in file browser
+    And user of browser sees QoS status tag for "file2" in file browser
+    And user of browser sees QoS inherited status tag for "file2" in file browser
+    And user of browser clicks on QoS status tag for "file2" in file browser
+    And user of browser sees that all QoS requirements are fulfilled
+    And user of browser clicks on "Close" button in modal "Quality of Service"
+    And user of browser sees file chunks for file "file2" as follows:
+          oneprovider-1: entirely filled
+          oneprovider-2: entirely filled
+

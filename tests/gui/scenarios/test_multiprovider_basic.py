@@ -83,14 +83,8 @@ def screens():
 scenarios('../features/oneprovider/multiprovider/basic.feature')
 scenarios('../features/oneprovider/multiprovider/cdmi.feature')
 scenarios('../features/oneprovider/multiprovider/auto_cleaning.feature')
-scenarios('../features/oneprovider/multiprovider/qos_2_providers.feature')
-scenarios('../features/oneprovider/multiprovider/qos_2_providers_1_supporting'
-          '.feature')
-scenarios('../features/oneprovider/multiprovider/qos_2_providers_multibrowser'
-          '.feature')
-scenarios('../features/oneprovider/multiprovider/qos_2_providers_directory'
-          '.feature')
-scenarios('../features/oneprovider/multiprovider/'
-          'qos_2_providers_directory_multibrowser.feature')
-scenarios('../features/oneprovider/multiprovider/'
-          'qos_2_providers_second_browser_same_storage.feature')
+scenarios('../features/oneprovider/multiprovider/qos_single_browser.feature')
+scenarios('../features/oneprovider/multiprovider/qos_provider_support.feature')
+scenarios('../features/oneprovider/multiprovider/qos_auto_cleaning.feature')
+scenarios('../features/oneprovider/multiprovider/qos_multibrowser.feature')
+scenarios('../features/oneprovider/multiprovider/qos_storage.feature')

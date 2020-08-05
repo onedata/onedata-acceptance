@@ -36,7 +36,7 @@ Feature: Quality of Service tests using single browser in Oneprovider GUI
       And user of browser sees QoS status tag for "file1" in file browser
       And user of browser clicks on QoS status tag for "file1" in file browser
       And user of browser deletes all QoS requirements
-      And user of browser clicks on "CLose" button in modal "Quality of Service"
+      And user of browser clicks on "Close" button in modal "Quality of Service"
       Then user of browser does not see QoS status tag for "file1" in file browser
 
 

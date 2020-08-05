@@ -87,9 +87,9 @@ def evict_file_from_provider(selenium, browser_id, name, tmp_memory,
                                           tmp_memory)
 
 
-@wt(parsers.re('user of {browser_id} waits until eviction is done'))
-def assert_see_history_btn_shown(selenium, browser_id, name, tmp_memory,
-                                 op_container, modals):
+@wt(parsers.parse('user of {browser_id} waits until eviction is done'))
+def assert_eviction_done(selenium, browser_id, name, tmp_memory,
+                         op_container, modals):
     option = 'Data distribution'
     modal_name = 'Data distribution'
 

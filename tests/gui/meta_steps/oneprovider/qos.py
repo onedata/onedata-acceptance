@@ -14,9 +14,9 @@ from tests.gui.steps.oneprovider.file_browser import (
 from tests.gui.steps.oneprovider.metadata import *
 
 
-def _create_qos_modal(selenium, browser_id, modals, item_name, tmp_memory,
-                      expression, oz_page, op_container, popups,
-                      replicas_number):
+def _add_qos_requirement_in_modal(selenium, browser_id, modals, item_name,
+                                  tmp_memory, expression, oz_page, op_container,
+                                  popups, replicas_number):
     qos_option = modal = 'Quality of Service'
     add_button = 'Add Requirement'
     save_button = 'Save'
@@ -47,9 +47,9 @@ def add_qos_requirement_in_modal(selenium, browser_id, modals, item_name,
 
     go_to_filebrowser(selenium, browser_id, oz_page, op_container,
                       tmp_memory, space_name)
-    _create_qos_modal(selenium, browser_id, modals, item_name, tmp_memory,
-                      expression, oz_page, op_container, popups,
-                      replicas_number)
+    _add_qos_requirement_in_modal(selenium, browser_id, modals, item_name,
+                                  tmp_memory, expression, oz_page, op_container,
+                                  popups, replicas_number)
 
 
 @wt(parsers.parse('user of {browser_id} creates {replicas_number} replicas of '
@@ -63,9 +63,9 @@ def add_qos_requirement_in_modal_with_replicas(selenium, browser_id, modals,
                                                replicas_number):
     go_to_filebrowser(selenium, browser_id, oz_page, op_container,
                       tmp_memory, space_name)
-    _create_qos_modal(selenium, browser_id, modals, item_name, tmp_memory,
-                      expression, oz_page, op_container, popups,
-                      replicas_number)
+    _add_qos_requirement_in_modal(selenium, browser_id, modals, item_name, tmp_memory,
+                                  expression, oz_page, op_container, popups,
+                                  replicas_number)
 
 
 @wt(parsers.parse('user of {browser_id} creates QoS requirement with copied '
@@ -77,9 +77,9 @@ def add_id_qos_requirement_in_modal(selenium, browser_id, modals, item_name,
     expression = 'storageId=' + clipboard.paste(display=displays[browser_id])
     replicas_number = 1
 
-    _create_qos_modal(selenium, browser_id, modals, item_name, tmp_memory,
-                      expression, oz_page, op_container, popups,
-                      replicas_number)
+    _add_qos_requirement_in_modal(selenium, browser_id, modals, item_name,
+                                  tmp_memory, expression, oz_page, op_container,
+                                  popups, replicas_number)
 
 
 @wt(parsers.parse('user of {browser_id} creates "anyStorage - storageId=" QoS '
@@ -89,10 +89,10 @@ def add_id_qos_requirement_in_modal(selenium, browser_id, modals, item_name,
 def add_no_id_qos_requirement_in_modal(selenium, browser_id, modals, item_name,
                                        tmp_memory, oz_page, op_container,
                                        popups, clipboard, displays):
-    expression = 'anyStorage - storageId=' +\
-                 clipboard.paste(display=displays[browser_id])
+    expression = ('anyStorage - storageId=' +
+                  clipboard.paste(display=displays[browser_id]))
     replicas_number = 1
 
-    _create_qos_modal(selenium, browser_id, modals, item_name, tmp_memory,
-                      expression, oz_page, op_container, popups,
-                      replicas_number)
+    _add_qos_requirement_in_modal(selenium, browser_id, modals, item_name,
+                                  tmp_memory, expression, oz_page, op_container,
+                                  popups, replicas_number)

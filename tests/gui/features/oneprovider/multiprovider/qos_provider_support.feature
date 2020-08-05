@@ -23,7 +23,7 @@ Feature: Quality of Service in directory tests for 2 providers with 1 supporting
     And user of [browser_unified, browser_emergency] logged as [user1, admin] to [Onezone, emergency interface of Onepanel] service
 
 
-  Scenario: User successfully adds provider support to meet QoS requirement requirement
+  Scenario: User successfully adds provider support to meet QoS requirement
     When user of browser_unified creates 2 replicas of "anyStorage" QoS requirement for "file1" in space "space1"
     And user of browser_unified clicks on QoS status tag for "file1" in file browser
     And user of browser_unified sees that all QoS requirements are impossible
