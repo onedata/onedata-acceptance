@@ -58,6 +58,13 @@ class SpaceInfoTile(PageObject):
     shares_count = Label('.shares-count')
 
 
+class SpaceMembersTile(PageObject):
+    direct_groups = Label('.direct-groups-counter')
+    direct_users = Label('.direct-users-counter')
+    effective_groups = Label('.effective-groups-counter')
+    effective_users = Label('.effective-users-counter')
+
+
 class ProvidersMap(Element):
     providers = WebElementsSequence('.circle')
 
@@ -70,13 +77,6 @@ class ProvidersMap(Element):
                 return
 
         raise RuntimeError(f'Provider {provider_name} was not found on the map')
-
-
-class SpaceMembersTile(PageObject):
-    direct_groups = Label('.direct-groups-counter')
-    direct_users = Label('.direct-users-counter')
-    effective_groups = Label('.effective-groups-counter')
-    effective_users = Label('.effective-users-counter')
 
 
 class SpaceOverviewPage(PageObject):

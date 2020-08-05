@@ -43,7 +43,7 @@ def _find_members_page(onepanel, oz_page, driver, where):
         return oz_page(driver)[tab_name].members_page
 
 
-def change_membership_to_name(membership_type, subject_type):
+def _change_membership_to_name(membership_type, subject_type):
     if not subject_type.endswith('s'):
         subject_type += 's'
     return membership_type + '_' + subject_type
@@ -190,7 +190,7 @@ def assert_members_number_in_space_overview(selenium, oz_page, browser_id,
     driver = selenium[browser_id]
     where = _change_to_tab_name(where)
     members_tile = oz_page(driver)[where].overview_page.members_tile
-    name = change_membership_to_name(membership_type, subject_type)
+    name = _change_membership_to_name(membership_type, subject_type)
     members_count = getattr(members_tile, name)
 
     error_msg = (f'found {number} {membership_type} {subject_type} instead of '
