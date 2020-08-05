@@ -24,8 +24,7 @@ from tests.utils.utils import assert_, assert_generic, repeat_failed
 from tests.utils.client_utils import (stat, ls, mv, osrename, create_file, rm,
                                       chmod, touch, setxattr, getxattr,
                                       removexattr, listxattr, get_all_xattr,
-                                      clear_xattr)
-from tests.utils.docker_utils import run_cmd
+                                      clear_xattr, client_run_cmd)
 from tests.utils.onenv_utils import cmd_exec
 
 
@@ -203,7 +202,7 @@ def shell_move_base(user, file1, file2, client_node, users, should_fail=False):
     def condition():
         mv(client, src, dest)
         cmd = 'mv (?P<0>.*) (?P<1>.*)'.format(src, dest)
-        run_cmd(user.username, client.docker_id, cmd, output=True, error=True)
+        client_run_cmd(client, cmd, output=True, error=True)
 
     assert_generic(client.perform, should_fail, condition)
 
@@ -282,8 +281,7 @@ def shell_check_type(user, file, file_type, client_node, users):
 
     def condition():
         cmd = 'stat --format=%F {}'.format(file_path)
-        stat_file_type = run_cmd(user.username, client.docker_id, cmd,
-                                 output=True)
+        stat_file_type = client_run_cmd(client, cmd, output=True)
         assert stat_file_type == file_type
 
     assert_(client.perform, condition)

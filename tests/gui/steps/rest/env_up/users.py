@@ -14,6 +14,7 @@ from pytest_bdd import given, parsers
 from pytest import skip
 
 from tests import OZ_REST_PORT, PANEL_REST_PORT
+from tests.gui.steps.rest.env_up.spaces import _rm_all_spaces_for_users_list
 from tests.utils.rest_utils import (http_get, http_post, http_delete,
                                     http_patch, get_panel_rest_path,
                                     get_zone_rest_path, http_put)
@@ -33,6 +34,7 @@ def users_creation_with_cleanup(host, config, admin_credentials, onepanel_creden
 
     yield
 
+    _rm_all_spaces_for_users_list(zone_hostname, users_db)
     _rm_users(zone_hostname, admin_credentials, users_db)
 
 

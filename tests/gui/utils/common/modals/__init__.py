@@ -92,6 +92,7 @@ class Modals(object):
     emergency_interface = WebItem('.modal-dialog', cls=EmergencyInterface)
     add_one_of_groups = WebItem('.modal-dialog', cls=AddOneOfElementsModal)
     add_one_of_spaces = WebItem('.modal-dialog', cls=AddOneOfElementsModal)
+    add_one_of_harvesters = WebItem('.modal-dialog', cls=AddOneOfElementsModal)
     remove_space_from_harvester = WebItem('.modal-dialog', cls=RemoveModal)
     dropdown = DropdownSelector('.ember-basic-dropdown-content')
     data_row_menu = WebItem('.file-actions.dropdown-menu', cls=DataRowMenu)
@@ -106,6 +107,7 @@ class Modals(object):
     rename_share = WebItem('.modal-dialog', cls=RenameShareModal)
     remove_share = WebItem('.modal-dialog', cls=RemoveModal)
     remove_token = WebItem('.modal-dialog', cls=RemoveModal)
+    remove_harvester = WebItem('.modal-dialog', cls=RemoveModal)
     clean_up_obsolete_tokens = WebItem('.modal-dialog',
                                        cls=CleanUpObsoleteTokensModal)
     change_privileges = WebItem('.modal-dialog', cls=ChangePrivilegesModal)
