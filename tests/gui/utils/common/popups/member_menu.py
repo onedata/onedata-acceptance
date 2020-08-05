@@ -16,6 +16,10 @@ class MenuItem(PageObject):
     def __call__(self):
         self.click()
 
+    def is_enabled(self):
+        return (self.web_elem.is_enabled() and
+                'disabled' not in self.web_elem.get_attribute('class'))
+
 
 class PopoverMenu(PageObject):
     menu = WebItemsSequence('.webui-popover-content '

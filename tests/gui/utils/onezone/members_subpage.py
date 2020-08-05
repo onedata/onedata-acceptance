@@ -41,6 +41,13 @@ class MembersItemRow(PageObject):
     privilege_tree = WebItem('.one-tree', cls=PrivilegeTree)
     forbidden_alert = WebElement('.alert.forbidden')
 
+    member = WebElement('.list-header-row')
+    member_menu_button = WebElement('.collapsible-toolbar-toggle')
+
+    def click_member_menu_button(self, driver):
+        ActionChains(driver).move_to_element(self.member).perform()
+        self.member_menu_button.click()
+
     def are_privileges_visible(self):
         try:
             return self.privilege_tree

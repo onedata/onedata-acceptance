@@ -22,6 +22,7 @@ from tests.gui.steps.onezone.spaces import (
     click_on_option_of_space_on_left_sidebar_menu,
     assert_new_created_space_has_appeared_on_spaces,
     click_element_on_lists_on_left_sidebar_menu)
+from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed
 from tests.utils.acceptance_utils import wt
 from tests.gui.conftest import WAIT_FRONTEND
@@ -342,6 +343,33 @@ def remove_member_from_parent(selenium, browser_id, member_name, member_type,
 
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     modals(driver).remove_member.remove()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) clicks "(?P<popup_name>( |.)*)" for "(?P<username>.*)" user in users list'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_member_option_on_members_page(selenium, browser_id,popup_name,oz_page,popups,tmp_memory,username):
+    driver = selenium[browser_id]
+
+    page = oz_page(driver)['data'].members_page
+    page.users.items[username].click_member_menu_button(driver)
+    popups(driver).popover_menu.menu[popup_name]()
+    if popup_name =='Remove this member':
+        modal_name = 'remove user from space'
+        wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
+        modals(driver).remove_member.remove()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) sees (?P<options>( |.)*) (is|are) disabled for "(?P<username>.*)" user in users list'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_popup_for_user_is_disabled(selenium, browser_id,options,oz_page,popups,tmp_memory,username):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['data'].members_page
+    page.users.items[username].click_member_menu_button(driver)
+
+    for popup_name in parse_seq(options):
+        enabled = popups(driver).popover_menu.menu[popup_name].is_enabled()
+        error_msg = f'Popup {popup_name} is enabled'
+        assert not enabled, error_msg
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) copies "(?P<group>.*)" '
