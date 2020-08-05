@@ -52,6 +52,7 @@ from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
 from tests.gui.steps.oneprovider.transfers import *
+from tests.gui.steps.oneprovider.uploads import *
 from tests.gui.steps.oneprovider.qos import *
 
 from tests.gui.steps.modal import *
@@ -69,6 +70,7 @@ from tests.gui.meta_steps.onepanel.storages import *
 from tests.gui.meta_steps.oneprovider.common import *
 from tests.gui.meta_steps.oneprovider.transfers import *
 from tests.gui.meta_steps.oneprovider.qos import *
+from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.mixed.steps.space_basic import *
 
@@ -88,3 +90,4 @@ scenarios('../features/oneprovider/multiprovider/qos_provider_support.feature')
 scenarios('../features/oneprovider/multiprovider/qos_auto_cleaning.feature')
 scenarios('../features/oneprovider/multiprovider/qos_multibrowser.feature')
 scenarios('../features/oneprovider/multiprovider/qos_storage.feature')
+scenarios('../features/oneprovider/multiprovider/upload_files.feature')

@@ -4,6 +4,7 @@ Feature: Storage management using onepanel
   Background:
     Given initial users configuration in "onezone" Onezone service:
             - user1
+    And there are no spaces supported by oneprovider-1 in Onepanel
 
     And users opened [browser_unified, browser_emergency] browsers' windows
     And users of [browser_unified, browser_emergency] opened [Onezone, oneprovider-1 provider panel] page
@@ -15,8 +16,7 @@ Feature: Storage management using onepanel
 
 
   Scenario Outline: User uploads files on freshly supported space on newly created storage
-    Given there are no spaces supported by oneprovider-1 in Onepanel
-    And there is no "space1" space in Onezone used by user of browser_unified
+    Given admin user does not have access to any space
 
     # create new_storage POSIX storage
     When user of browser_unified clicks on Clusters in the main menu

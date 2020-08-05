@@ -94,5 +94,6 @@ class MembersPage(PageObject):
                                    cls=MembershipRow)
 
     forbidden_alert = WebElement('.alert.forbidden')
+    bulk_edit_button = NamedButton('.btn', text='Bulk edit')
 
 

@@ -40,6 +40,8 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser clicks on "Close" button in modal "Share directory"
 
     Then user of browser sees shared status tag for "dir1" in file browser
+    And user of browser clicks Overview of "space1" in the sidebar
+    And user of browser sees in the INFO section of Overview page that number of shares is 1
 
 
   Scenario: User shares a directory and opens its view in full Onezone interface from modal
@@ -67,6 +69,8 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser sees shares browser in data tab in Oneprovider page
     Then user of browser sees that there is "share_dir1" share on shares view
     And user of browser sees that there is "share2_dir1" share on shares view
+    And user of browser clicks Overview of "space1" in the sidebar
+    And user of browser sees in the INFO section of Overview page that number of shares is 2
 
 
   Scenario: User opens share modal using shared status tag
@@ -105,6 +109,8 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser sees that "Remove share" modal has appeared
     And user of browser clicks on "Remove" button in modal "Remove share"
     Then user of browser sees there are no shares on shares view
+    And user of browser clicks Overview of "space1" in the sidebar
+    And user of browser sees in the INFO section of Overview page that number of shares is 0
 
 
   Scenario: User removes one of two shares of directory from single share view
@@ -122,6 +128,8 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser removes current share
     Then user of browser sees that there is no "share2_dir1" share on shares view
     And user of browser sees that there is "share_dir1" share on shares view
+    And user of browser clicks Overview of "space1" in the sidebar
+    And user of browser sees in the INFO section of Overview page that number of shares is 1
 
 
   Scenario: User removes share using shares browser
@@ -143,6 +151,8 @@ Feature: Basic share management in Oneprovider GUI
 
     Then user of browser sees that there is no "share_dir1" share on shares view
     And user of browser sees that there is "share2_dir1" share on shares view
+    And user of browser clicks Overview of "space1" in the sidebar
+    And user of browser sees in the INFO section of Overview page that number of shares is 1
 
 
   Scenario: User renames share using shares browser
@@ -262,6 +272,8 @@ Feature: Basic share management in Oneprovider GUI
 
     And user of browser opens shares view of "space1"
     Then user of browser sees there are no shares on shares view
+    And user of browser clicks Overview of "space1" in the sidebar
+    And user of browser sees in the INFO section of Overview page that number of shares is 0
 
 
   Scenario: User can remove share by removing directory which contains shared directory
@@ -279,3 +291,5 @@ Feature: Basic share management in Oneprovider GUI
 
     And user of browser opens shares view of "space1"
     Then user of browser sees there are no shares on shares view
+    And user of browser clicks Overview of "space1" in the sidebar
+    And user of browser sees in the INFO section of Overview page that number of shares is 0

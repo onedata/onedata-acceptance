@@ -95,6 +95,7 @@ def assert_items_presence_in_file_browser(browser_id, item_list, tmp_memory):
                 file_browser.data[item_name].size), (f'not found "{item_name}" '
                                                      f'in file browser')
 
+
 @wt(parsers.parse('user of {browser_id} sees only items named {item_list}'
                   ' in file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)

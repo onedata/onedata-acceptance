@@ -44,8 +44,7 @@ def result_to_support_space_in_op_panel_using_gui(selenium, user, config,
     notify_text_regexp = '.*[Aa]dded.*support.*space.*'
 
     _support_space_in_op_panel_using_gui(selenium, user, config, onepanel,
-                                         tmp_memory, space_name, provider_name,
-                                         hosts)
+                                         tmp_memory, provider_name, hosts)
     if result == 'succeeds':
         notify_visible_with_text(selenium, user, notify_type, notify_text_regexp)
         wt_assert_existence_of_space_support_record(selenium, user, space_name,
@@ -56,8 +55,8 @@ def result_to_support_space_in_op_panel_using_gui(selenium, user, config,
 
 
 def _support_space_in_op_panel_using_gui(selenium, user, config, onepanel,
-                                        tmp_memory, space_name, provider_name,
-                                        hosts):
+                                         tmp_memory, provider_name,
+                                         hosts):
     sidebar = 'Clusters'
     sub_item = 'Spaces'
     input_box = 'Size'
