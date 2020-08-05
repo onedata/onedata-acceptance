@@ -408,6 +408,17 @@ def set_privileges_in_members_subpage(selenium, browser_id, member_name,
                                               member_type, onepanel)
 
 
+@wt(parsers.re('user of (?P<browser_id>.*) sets following privileges on modal:'
+               '\n(?P<config>(.|\s)*)'))
+def set_privileges_in_members_subpage_on_modal(selenium, browser_id, config,
+                                               modals):
+    driver = selenium[browser_id]
+    privileges = yaml.load(config)
+    tree = modals(driver).change_privileges.privilege_tree
+    tree.set_privileges(privileges)
+    modals(driver).change_privileges.save_button.click()
+
+
 @wt(parsers.re('user of (?P<browser_id>.*) sees following privileges of '
                '"(?P<member_name>.*)" (?P<member_type>user|group) '
                'in (?P<where>space|group|harvester) members subpage:'
@@ -420,6 +431,16 @@ def assert_privileges_in_members_subpage(selenium, browser_id, member_name,
     privileges = yaml.load(config)
     tree = get_privilege_tree(selenium, browser_id, onepanel, oz_page, where,
                               member_type, member_name)
+    tree.assert_privileges(privileges)
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) sees following privileges on modal:'
+               '\n(?P<config>(.|\s)*)'))
+def assert_privileges_in_members_subpage_on_modal(selenium, browser_id, config,
+                                                  modals):
+    driver = selenium[browser_id]
+    privileges = yaml.load(config)
+    tree = modals(driver).change_privileges.privilege_tree
     tree.assert_privileges(privileges)
 
 
@@ -554,3 +575,29 @@ def assert_privilege_config_for_user(selenium, browser_id, item_name, where,
     privilege_tree = get_privilege_tree(selenium, browser_id, onepanel, oz_page,
                                         where, list_type, name)
     privilege_tree.assert_privileges(privileges)
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) clicks on '
+               '(?P<member_type>users|groups) checkbox'))
+def click_on_bulk_checkbox(browser_id, member_type, selenium, oz_page):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['groups'].members_page
+    members_list = getattr(page, member_type)
+    members_list.header.checkbox.click()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) clicks on "(?P<member_name>.*)" '
+               '(?P<member_type>users|groups) checkbox'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_member_checkbox(selenium, browser_id, member_name, oz_page, member_type):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['groups'].members_page
+
+    getattr(page, member_type).items[member_name].header.checkbox.click()
+
+
+@wt(parsers.parse('user of {browser_id} clicks on bulk edit button'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_bulk_edit(browser_id, selenium, oz_page):
+    driver = selenium[browser_id]
+    oz_page(driver)['groups'].members_page.bulk_edit_button.click()
