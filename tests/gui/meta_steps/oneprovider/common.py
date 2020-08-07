@@ -77,6 +77,7 @@ def evict_file_from_provider(selenium, browser_id, name, tmp_memory,
                              provider, op_container, hosts, modals, popups):
     option = 'Data distribution'
     modal_name = 'Data distribution'
+    close_option = 'Close'
 
     click_menu_for_elem_in_file_browser(browser_id, name, tmp_memory)
     click_option_in_data_row_menu_in_file_browser(selenium, browser_id,
@@ -85,7 +86,7 @@ def evict_file_from_provider(selenium, browser_id, name, tmp_memory,
 
     evict_item(selenium, browser_id, provider, hosts, popups)
 
-    wt_click_on_confirmation_btn_in_modal(selenium, browser_id, 'Close',
+    wt_click_on_confirmation_btn_in_modal(selenium, browser_id, close_option,
                                           tmp_memory)
 
 
@@ -94,6 +95,7 @@ def assert_eviction_done(selenium, browser_id, name, tmp_memory,
                          op_container, modals):
     option = 'Data distribution'
     modal_name = 'Data distribution'
+    close_option = 'Close'
 
     click_menu_for_elem_in_file_browser(browser_id, name, tmp_memory)
     click_option_in_data_row_menu_in_file_browser(selenium, browser_id,
@@ -102,7 +104,7 @@ def assert_eviction_done(selenium, browser_id, name, tmp_memory,
 
     assert_see_history_btn_shown(selenium, browser_id)
 
-    wt_click_on_confirmation_btn_in_modal(selenium, browser_id, 'Close',
+    wt_click_on_confirmation_btn_in_modal(selenium, browser_id, close_option,
                                           tmp_memory)
 
 

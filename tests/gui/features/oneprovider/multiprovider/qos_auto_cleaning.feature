@@ -26,7 +26,7 @@ Feature: Quality of Service tests for 2 providers using multiple browsers in One
     And user of [browser_unified, browser_emergency] logged as [user1, admin] to [Onezone, emergency interface of Onepanel] service
 
 
-  Scenario: User successfully enable auto-cleaning with QoS requirement set
+  Scenario: User successfully enables auto-cleaning with QoS requirement set
     # enable auto cleaning
     When user of browser_emergency clicks on Spaces item in submenu of "oneprovider-2" item in CLUSTERS sidebar in Onepanel
     And user of browser_emergency opens "space1" record on spaces list in Spaces page in Onepanel

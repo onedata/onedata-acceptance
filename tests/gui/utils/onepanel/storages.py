@@ -35,7 +35,7 @@ class StorageAddForm(PageObject):
 
 class POSIXEditorKeyValue(PageObject):
     key = WebItem('.form-group .text-left', cls=InputBox)
-    key_name = Label('.show-edit-icon .one-label')
+    key_name = id = Label('.show-edit-icon .one-label')
     val = WebItem('.form-group .form-control-column', cls=InputBox)
     delete = Button('.remove-param')
 
@@ -60,12 +60,6 @@ class QOSParams(PageObject):
         for key_val in self.key_values:
             if (key_val.key_name != 'storageId' and
                     key_val.key_name != 'providerId'):
-                key_val.delete.click()
-                break
-
-    def delete_param(self, key):
-        for key_val in self.key_values:
-            if key_val.key_name == key:
                 key_val.delete.click()
                 return
 
