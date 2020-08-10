@@ -45,7 +45,7 @@ Feature: Basic management of groups memberships in Onezone GUI
 
     # go to space overview and check if membership has changed
     And user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser sees 1 direct, 3 effective groups and 1 direct, 2 effective users on space overview page
+    And user of browser sees 1 direct, 3 effective groups and 1 direct, 2 effective users in space members tile
 
 
   Scenario: User removes relation between user and group in members subpage
@@ -80,4 +80,4 @@ Feature: Basic management of groups memberships in Onezone GUI
 
     # go to space overview and check if membership has changed
     And user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser sees 1 direct, 2 effective groups and 1 direct, 2 effective users on space overview page
+    And user of browser sees 1 direct, 2 effective groups and 1 direct, 2 effective users in space members tile

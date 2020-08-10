@@ -150,46 +150,45 @@ def assert_count_membership_rows(selenium, browser_id, number, oz_page, where):
                '(?P<number_direct_groups>.*) direct, '
                '(?P<number_effective_groups>.*) effective groups and '
                '(?P<number_direct_users>.*) direct, '
-               '(?P<number_effective_users>.*) effective users on '
-               '(?P<where>space) overview page'))
+               '(?P<number_effective_users>.*) effective users in space '
+               'members tile'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_all_members_number_in_space_overview(selenium, oz_page, browser_id,
-                                                number_direct_groups: int,
-                                                number_effective_groups: int,
-                                                number_direct_users: int,
-                                                number_effective_users: int,
-                                                where):
+def assert_all_members_number_in_space_members_tile(selenium, oz_page,
+                                                    browser_id,
+                                                    number_direct_groups: int,
+                                                    number_effective_groups: int,
+                                                    number_direct_users: int,
+                                                    number_effective_users: int):
     direct = 'direct'
     effective = 'effective'
     groups = 'groups'
     users = 'users'
 
-    assert_members_number_in_space_overview(selenium, oz_page, browser_id,
-                                            number_direct_groups, direct,
-                                            groups, where)
-    assert_members_number_in_space_overview(selenium, oz_page, browser_id,
-                                            number_effective_groups,
-                                            effective,
-                                            groups, where)
-    assert_members_number_in_space_overview(selenium, oz_page, browser_id,
-                                            number_direct_users, direct,
-                                            users, where)
-    assert_members_number_in_space_overview(selenium, oz_page, browser_id,
-                                            number_effective_users, effective,
-                                            users, where)
+    assert_members_number_in_space_members_tile(selenium, oz_page, browser_id,
+                                                number_direct_groups, direct,
+                                                groups)
+    assert_members_number_in_space_members_tile(selenium, oz_page, browser_id,
+                                                number_effective_groups,
+                                                effective,
+                                                groups)
+    assert_members_number_in_space_members_tile(selenium, oz_page, browser_id,
+                                                number_direct_users, direct,
+                                                users)
+    assert_members_number_in_space_members_tile(selenium, oz_page, browser_id,
+                                                number_effective_users,
+                                                effective,
+                                                users)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees (?P<number>\d+) '
                '(?P<membership_type>direct|effective) '
-               '(?P<subject_type>groups?|users?) on '
-               '(?P<where>space) overview page'))
+               '(?P<subject_type>groups?|users?) in space members tile'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_members_number_in_space_overview(selenium, oz_page, browser_id,
-                                            number: int, membership_type,
-                                            subject_type, where):
+def assert_members_number_in_space_members_tile(selenium, oz_page, browser_id,
+                                                number: int, membership_type,
+                                                subject_type):
     driver = selenium[browser_id]
-    where = _change_to_tab_name(where)
-    members_tile = oz_page(driver)[where].overview_page.members_tile
+    members_tile = oz_page(driver)['data'].overview_page.members_tile
     name = _change_membership_to_name(membership_type, subject_type)
     members_count = getattr(members_tile, name)
 
