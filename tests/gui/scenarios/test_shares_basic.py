@@ -14,6 +14,7 @@ from pytest_bdd import scenario, scenarios
 from tests.gui.steps.rest.env_up.users import *
 from tests.gui.steps.rest.env_up.groups import *
 from tests.gui.steps.rest.env_up.spaces import *
+from tests.gui.steps.rest.shares import *
 
 from tests.gui.steps.common.url import *
 from tests.gui.steps.common.browser_creation import *
@@ -45,6 +46,7 @@ from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
 from tests.gui.meta_steps.oneprovider.shares import *
+from tests.gui.meta_steps.oneprovider.data import *
 
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
