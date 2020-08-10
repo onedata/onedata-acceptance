@@ -10,8 +10,6 @@ Feature: Basic management of groups with one user in Onezone GUI
     And initial spaces configuration in "onezone" Onezone service:
           space1:
               owner: user1
-              home space for:
-                  - user1
               providers:
                   - oneprovider-1:
                       storage: posix

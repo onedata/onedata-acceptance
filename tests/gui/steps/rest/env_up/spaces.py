@@ -39,9 +39,6 @@ def create_and_configure_spaces(config, zone_host, admin_credentials,
                     [privileges]:           ---> optional
                         - privilege_1
                         - privilege_2
-            [home space for]:               ---> optional
-                - user_name_1
-                - user_name_2
             [groups]:                       ---> optional
                 - group_name_1:
                     [privileges]:           ---> optional
@@ -76,8 +73,6 @@ def create_and_configure_spaces(config, zone_host, admin_credentials,
             users:
                 - user2
                 - user3
-            home space for:
-                - user1
             groups:
                 - group1
             providers:
