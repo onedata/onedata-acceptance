@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+from selenium.webdriver import ActionChains
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (Button, NamedButton,
                                                WebItemsSequence, Label,
@@ -32,6 +33,8 @@ class Space(Element):
                             text='Providers')
     members = NamedButton('.one-list-level-2 .item-header',
                           text='Members')
+    harvesters = NamedButton('.one-list-level-2 .item-header',
+                             text='Harvesters')
     menu_button = Button('.collapsible-toolbar-toggle')
 
     def click_menu(self):
@@ -43,7 +46,9 @@ class Space(Element):
 
 
 class Provider(Element):
+    id = name = Label('.one-label')
     support = Label('.outer-text')
+    menu_button = Button('.provider-menu-toggle')
 
 
 class SpaceInfoTile(PageObject):
@@ -62,6 +67,27 @@ class WelcomePage(PageObject):
     join_an_existing_space = NamedButton('.info .ember-view',
                                          text='join an existing space')
     join_group = NamedButton('.info .ember-view', text='join a group')
+
+
+class HarvesterRow(Element):
+    name = id = Label('.item-name')
+    harvester = WebElement('.item-name')
+    harvester_menu_button = WebElement('.collapsible-toolbar-toggle')
+
+    def click_harvester_menu_button(self, driver):
+        ActionChains(driver).move_to_element(self.harvester).perform()
+        self.harvester_menu_button.click()
+
+
+class HarvestersPage(PageObject):
+    harvesters_list = WebItemsSequence(
+        '.main-content .one-collapsible-list-item', cls=HarvesterRow)
+    add_one_of_harvesters = NamedButton(
+        '.add-harvester-to-space-trigger.btn',
+        text='Add one of your harvesters')
+    invite_harvester_using_token = NamedButton(
+        '.generate-invite-token-action.btn',
+        text='Invite harvester using token')
 
 
 class GetSupportPage(PageObject):
@@ -105,7 +131,9 @@ class DataPage(GenericPage):
     providers_page = WebItem('.main-content', cls=SpaceProvidersPage)
     members_page = WebItem('.main-content', cls=MembersPage)
     welcome_page = WebItem('.main-content', cls=WelcomePage)
+    harvesters_page = WebItem('.main-content', cls=HarvestersPage)
 
+    # button in top right corner on all subpages
     menu_button = Button('.with-menu .collapsible-toolbar-toggle')
 
     get_started = Button('.btn.btn-default.hide-sm-active.ember-view')
@@ -115,4 +143,3 @@ class DataPage(GenericPage):
     current_provider = Label('.current-oneprovider-name')
     providers = WebItemsSequence('.provider-online', cls=_Provider)
     choose_other_provider = Button('.choose-oneprovider-link')
-
