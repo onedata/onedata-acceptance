@@ -84,23 +84,9 @@ Feature: Basic management of groups hierarchy with one user in Onezone GUI
     When user of browser opens group "<group_A>" hierarchy subpage
     And user of browser clicks on group "<group_B>" menu button in hierarchy subpage
     And user of browser clicks on "View group" in group hierarchy menu
-    Then user of browser sees "<group_B>" group members page
+    Then user of browser sees "<group_B>" group members subpage
 
     Examples:
     | group_A      | group_B     |
     | base_group   | base_group  |
     | parent_group | base_group  |
-
-
-  Scenario Outline: User resets <group_A> hierarchy view after expanding <relation>
-    When user of browser opens group "<group_A>" hierarchy subpage
-    And user of browser sees default group hierarchy view
-    And user of browser toggles <relation> of "<relation>" view button
-    And user of browser expands group hierarchy tab popup menu
-    And user of browser clicks on "Reset view" in group hierarchy tab popup menu
-    Then user of browser sees the same group hierarchy view as default one
-
-    Examples:
-    |  group_A       |  relation  |
-    |  parent_group  |  parent    |
-    |  child_group   |  children  |
