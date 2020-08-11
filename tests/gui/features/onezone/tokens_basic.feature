@@ -8,6 +8,13 @@ Feature: Management of tokens basic features in Onezone GUI
     And initial spaces configuration in "onezone" Onezone service:
             space1:
                 owner: user1
+            space2:
+                owner: user1
+    And initial groups configuration in "onezone" Onezone service:
+          group1:
+            owner: user1
+#          group2:
+#            owner: user1
     And user opened browser window
     And user of browser opened onezone page
     And user of browser logged as user1 to Onezone service
@@ -102,6 +109,82 @@ Feature: Management of tokens basic features in Onezone GUI
 
     And user of browser chooses "All" filter in tokens sidebar
     Then user of browser sees exactly 6 item(s) on tokens list in tokens sidebar
+
+
+    # Ale jest jeszcze do protestowania filtrowanie zaawansowane invite tokenów.
+    # Metastepy do tworzenia tokenów są w invite_tokens.feature
+  # cluster - tylko admin, harvester - nie da się stworzyć, prześć na invite tokens.feature?
+  Scenario: User sees right Invite tokens after filtering them
+#    Given user user1 has no harvesters
+#    And using REST, user user1 creates "harvester1" harvester in "onezone" Onezone service
+#    And using REST, user user1 creates "harvester2" harvester in "onezone" Onezone service
+
+    When user of browser creates token with following configuration:
+          name: space_token_1
+          type: invite
+          invite type: Invite user to space
+          invite target: space1
+    And user of browser creates token with following configuration:
+          name: space_token_2
+          type: invite
+          invite type: Invite user to space
+          invite target: space2
+
+#    And user of browser creates token with following configuration:
+#          name: harvester_token_1
+#          type: invite
+#          invite type: Invite user to harvester
+#          invite target: harvester1
+#    And user of browser creates token with following configuration:
+#          name: harvester_token_2
+#          type: invite
+#          invite type: Invite user to harvester
+#          invite target: harvester2
+
+    And user of browser creates token with following configuration:
+          name: group_token_1
+          type: invite
+          invite type: Invite user to group
+          invite target: group1
+
+#    And user of browser creates token with following configuration:
+#          name: group_token_2
+#          type: invite
+#          invite type: Invite user to group
+#          invite target: group2
+
+
+#    User must be an admin to be able to create cluster invite tokens
+
+#    And user of browser creates token with following configuration:
+#          name: cluster_token_1
+#          type: invite
+#          invite type: Invite user to cluster
+#          invite target: oneprovider-1
+
+    And user of browser creates token with following configuration:
+          name: register_token_1
+          type: invite
+          invite type: Register Oneprovider
+    And user of browser chooses "Invite" filter in tokens sidebar
+    Then user of browser sees exactly 4 item(s) on tokens list in tokens sidebar
+    And user of browser chooses "Space" Invite filter in tokens sidebar
+    And user of browser sees exactly 2 item(s) on tokens list in tokens sidebar
+    And user of browser sees that there is token named "space_token_1" on tokens list
+    And user of browser sees that there is token named "space_token_2" on tokens list
+    And user of browser chooses "space1" name Invite filter in tokens sidebar
+    And user of browser sees exactly 1 item(s) on tokens list in tokens sidebar
+    And user of browser sees that there is token named "space_token_1" on tokens list
+    And user of browser chooses "User" Invite filter in tokens sidebar
+    And user of browser sees exactly 1 item(s) on tokens list in tokens sidebar
+    And user of browser sees that there is token named "register_token_1" on tokens list
+    And user of browser chooses "user1" name Invite filter in tokens sidebar
+    And user of browser sees exactly 1 item(s) on tokens list in tokens sidebar
+    And user of browser chooses "Group" Invite filter in tokens sidebar
+    And user of browser sees exactly 1 item(s) on tokens list in tokens sidebar
+    And user of browser sees that there is token named "group_token_1" on tokens list
+    And user of browser chooses "group1" name Invite filter in tokens sidebar
+    And user of browser sees exactly 1 item(s) on tokens list in tokens sidebar
 
 
   Scenario Outline: User successfully revokes and then activates created token

@@ -168,6 +168,19 @@ def choose_token_filter(selenium, browser_id, token_filter, oz_page):
     getattr(filters, token_filter.lower())()
 
 
+@wt(parsers.re(r'user of (?P<browser_id>.*) chooses "(?P<token_filter>.*)" '
+               r'(?P<type>name Invite|Invite) filter in tokens sidebar'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def choose_token_filter(selenium, browser_id, token_filter, type, oz_page):
+    invite_filter = oz_page(selenium[browser_id])['tokens'].sidebar.invite_filter
+    if type == "name Invite":
+        invite_filter.dropdown_menus[1].click()
+        invite_filter.name_options[token_filter].click()
+    else:
+        invite_filter.dropdown_menus[0].click()
+        invite_filter.options[token_filter].click()
+
+
 @wt(parsers.parse('user of {browser_id} sees that all tokens in tokens sidebar '
                   'are type of {token_type}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
