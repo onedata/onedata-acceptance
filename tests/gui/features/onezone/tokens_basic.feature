@@ -284,7 +284,7 @@ Feature: Management of tokens basic features in Onezone GUI
     And user of browser clicks on "Clean up obsolete tokens" button in tokens sidebar
     And user of browser sees that "Clean up obsolete tokens" modal has appeared
 
-    And user of browser deselects "Invitation tokens" in modal "Clean up obsolete tokens
+    And user of browser deselects "Invitation tokens" in modal "Clean up obsolete tokens"
     And user of browser clicks on "Remove" button in modal "Clean up obsolete tokens"
 
     Then user of browser sees "invite_token_1" in token list on tokens page sidebar

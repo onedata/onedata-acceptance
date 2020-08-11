@@ -362,7 +362,7 @@ def select_tokens_to_save_on_modal(browser_id, token_name, selenium, modals):
 
 
 @wt(parsers.parse('user of {browser_id} deselects "{token_type}" '
-                  'in modal "Clean up obsolete tokens'))
+                  'in modal "Clean up obsolete tokens"'))
 def select_token_type_to_save_on_modal(browser_id, token_type,
                                        selenium, modals):
     driver = selenium[browser_id]
