@@ -24,7 +24,7 @@ from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu)
 from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed
-from tests.utils.acceptance_utils import wt
+from tests.utils.bdd_utils import wt
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.common.modals import Modals as modals
 from tests.gui.meta_steps.onezone.common import search_for_members
@@ -316,7 +316,7 @@ def check_user_in_space_members_list(selenium, browser_id, option, username,
 
 @wt(parsers.re('user of (?P<browser_id>.*) removes "(?P<member_name>.*)" '
                '(?P<member_type>user|group) from "(?P<name>.*)" '
-               '(?P<where>cluster|group|harvester) members'))
+               '(?P<where>cluster|group|harvester|space) members'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def remove_member_from_parent(selenium, browser_id, member_name, member_type,
                               name, oz_page, tmp_memory, onepanel, where,
@@ -345,31 +345,37 @@ def remove_member_from_parent(selenium, browser_id, member_name, member_type,
     modals(driver).remove_member.remove()
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) clicks "(?P<popup_name>( |.)*)" for "(?P<username>.*)" user in users list'))
+@wt(parsers.re('user of (?P<browser_id>.*) clicks "(?P<option>( |.)*)" for '
+               '"(?P<username>.*)" user in users list'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_member_option_on_members_page(selenium, browser_id,popup_name,oz_page,popups,tmp_memory,username):
+def click_member_option_on_members_page(selenium, browser_id, option,
+                                        oz_page, popups, tmp_memory, username):
     driver = selenium[browser_id]
 
     page = oz_page(driver)['data'].members_page
     page.users.items[username].click_member_menu_button(driver)
-    popups(driver).popover_menu.menu[popup_name]()
-    if popup_name =='Remove this member':
-        modal_name = 'remove user from space'
-        wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-        modals(driver).remove_member.remove()
+    popups(driver).popover_menu.menu[option]()
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) sees (?P<options>( |.)*) (is|are) disabled for "(?P<username>.*)" user in users list'))
+@wt(parsers.re('user of (?P<browser_id>.*) sees (?P<options>( |.)*) (is|are) '
+               '(?P<state>enabled|disabled) for "(?P<username>.*)" user in '
+               'users list'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_popup_for_user_is_disabled(selenium, browser_id,options,oz_page,popups,tmp_memory,username):
+def assert_options_for_user_are_enabled_or_disabled(selenium, browser_id,
+                                                   options,
+                                                   oz_page, popups,
+                                                   username, state):
     driver = selenium[browser_id]
     page = oz_page(driver)['data'].members_page
     page.users.items[username].click_member_menu_button(driver)
 
-    for popup_name in parse_seq(options):
-        enabled = popups(driver).popover_menu.menu[popup_name].is_enabled()
-        error_msg = f'Popup {popup_name} is enabled'
-        assert not enabled, error_msg
+    for option in parse_seq(options):
+        enabled = popups(driver).popover_menu.menu[option].is_enabled()
+        error_msg = f'Popup {option} is in invalid state'
+        if state == 'enabled':
+            assert enabled, error_msg
+        else:
+            assert not enabled, error_msg
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) copies "(?P<group>.*)" '
@@ -403,18 +409,6 @@ def get_invitation_token(selenium, browser_id, group, who, oz_page, tmp_memory,
     popups(driver).popover_menu.menu['Invite ' + who]()
     token = page.members_page.token.token
     tmp_memory[browser_id]['token'] = token
-
-
-@wt(parsers.re('user of (?P<browser_id>.*) clicks Invite (?P<who>user|group) '
-               'on Menu of Members of (?P<where>Spaces|Groups)'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_invite_on_menu_of_members(selenium, browser_id, who, where, oz_page,
-                                    popups):
-    driver = selenium[browser_id]
-    where = _change_to_tab_name(where)
-    elem = oz_page(driver)[where]
-    elem.menu_button()
-    popups(driver).popover_menu.menu['Invite ' + who]()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sets following privileges for '
@@ -489,6 +483,28 @@ def click_button_on_element_header_in_members(selenium, browser_id, option,
     getattr(header, option).click()
 
 
+@wt(parsers.re('user of (?P<browser_id>.*) sees (?P<labels>( |.)*) status '
+               'labels? for "(?P<member_name>.*)" (?P<member_type>user|group) '
+               'in (?P<where>space|group|cluster|harvester) members subpage'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def ckeck_status_labels_for_member_of_space(selenium, browser_id, oz_page,
+                                            labels,
+                                            member_name, onepanel, member_type,
+                                            where):
+    driver = selenium[browser_id]
+
+    member_type = member_type + 's'
+    page = _find_members_page(onepanel, oz_page, driver, where)
+    member = getattr(page, member_type).items[member_name]
+    status_labels = [x.text for x in member.status_labels]
+    labels = parse_seq(labels)
+
+    assert len(status_labels) == len(labels), (f'Invalid status labels for '
+                                               f'{member_name}')
+    for x in labels:
+        assert x in status_labels, f'"{x}" label not found for {member_name}'
+
+
 @wt(parsers.re('user of (?P<browser_id>.*) sees '
                '(?P<alert_text>Insufficient permissions) alert '
                'for "(?P<member_name>.*)" (?P<member_type>user|group) '
@@ -553,6 +569,21 @@ def check_element_in_members_subpage(selenium, browser_id, option, oz_page,
     else:
         assert member_name not in member_list, '{} {} found'.format(member_name,
                                                                     member_type)
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) sees (?P<number>\d+) '
+               '(?P<member_type>user|group)s? in '
+               '(?P<where>space|group|cluster|harvester) members subpage'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def check_list_length_on_members_subpage(selenium, browser_id, oz_page,
+                                         onepanel, member_type, where,
+                                         number: int):
+    driver = selenium[browser_id]
+    member_type = member_type + 's'
+    page = _find_members_page(onepanel, oz_page, driver, where)
+    members_list = getattr(page, member_type)
+    error_msg = f'Wrong number of {member_type} in {where} members subpage'
+    assert len(members_list.items) == number, error_msg
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees (?P<alert_text>.*) alert '
@@ -629,3 +660,19 @@ def click_member_checkbox(selenium, browser_id, member_name, oz_page, member_typ
 def click_on_bulk_edit(browser_id, selenium, oz_page):
     driver = selenium[browser_id]
     oz_page(driver)['groups'].members_page.bulk_edit_button.click()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) sees "(?P<alert_text>This user is a '
+               'space owner and is authorized to perform all operations, '
+               'regardless of the assigned privileges.)" warning '
+               'for "(?P<username>.*)" user in space members subpage'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_ownership_privileges_warning_appeared_for_user(selenium, browser_id,
+                                                          oz_page,
+                                                          username,
+                                                          alert_text):
+    driver = selenium[browser_id]
+    members_list = oz_page(driver)['data'].members_page.users
+    error_msg = f'alert with text "{alert_text}" not found'
+    ownership_warning = members_list.items[username].ownership_warning.text
+    assert alert_text in ownership_warning, error_msg

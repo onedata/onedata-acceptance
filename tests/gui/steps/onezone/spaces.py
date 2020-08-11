@@ -375,7 +375,7 @@ def assert_copy_token_and_input_token_are_the_same(selenium, browser_id,
     assert first_token == second_token, 'two tokens are not the same'
 
 
-@wt(parsers.parse('user of {browser_id} sees non-empty copy token'))
+@wt(parsers.parse('user of {browser_id} sees that copied token is non-empty'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_copy_token_is_not_empty(selenium, browser_id, tmp_memory):
     token = tmp_memory[browser_id]['mailbox']['token']

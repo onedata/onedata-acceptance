@@ -13,7 +13,8 @@ from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.core.web_elements import (Button, NamedButton,
                                                Label, WebItem, Input,
-                                               WebItemsSequence, WebElement)
+                                               WebItemsSequence, WebElement,
+                                               WebElementsSequence)
 
 
 class MembersHeaderRow(PageObject):
@@ -40,6 +41,8 @@ class MembersItemRow(PageObject):
     name = id = Label('.one-label')
     privilege_tree = WebItem('.one-tree', cls=PrivilegeTree)
     forbidden_alert = WebElement('.alert.forbidden')
+    status_labels = WebElementsSequence('.label')
+    ownership_warning = WebElement('.privileges-of-owner-warning')
 
     member = WebElement('.list-header-row')
     member_menu_button = WebElement('.collapsible-toolbar-toggle')
@@ -53,6 +56,9 @@ class MembersItemRow(PageObject):
             return self.privilege_tree
         except RuntimeError:
             return False
+
+    def has_status_label(self, name):
+        return any(x.text == name for x in self.status_labels)
 
 
 class MembersList(PageObject):
@@ -102,5 +108,3 @@ class MembersPage(PageObject):
 
     forbidden_alert = WebElement('.alert.forbidden')
     bulk_edit_button = NamedButton('.btn', text='Bulk edit')
-
-

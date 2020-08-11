@@ -17,8 +17,7 @@ class MenuItem(PageObject):
         self.click()
 
     def is_enabled(self):
-        return (self.web_elem.is_enabled() and
-                'disabled' not in self.web_elem.get_attribute('class'))
+        return 'disabled' not in self.web_elem.get_attribute('class')
 
 
 class PopoverMenu(PageObject):
