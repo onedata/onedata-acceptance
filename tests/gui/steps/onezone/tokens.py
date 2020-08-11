@@ -348,8 +348,8 @@ def get_privileges_tree(selenium, browser_id, oz_page):
     return oz_page(driver)['tokens'].privilege_tree
 
 
-@wt(parsers.parse('user of {browser_id} selects "{token_name}" token '
-                  'to save on modal'))
+@wt(parsers.parse('user of {browser_id} deselects "{token_name}" '
+                  'in modal "Clean up obsolete tokens"'))
 def select_tokens_to_save_on_modal(browser_id, token_name, selenium, modals):
     driver = selenium[browser_id]
     clean_modal = modals(driver).clean_up_obsolete_tokens
@@ -361,8 +361,8 @@ def select_tokens_to_save_on_modal(browser_id, token_name, selenium, modals):
     clean_modal.tokens[token_name].checkbox.click()
 
 
-@wt(parsers.parse('user of {browser_id} selects "{token_type}" token type '
-                  'to save on modal'))
+@wt(parsers.parse('user of {browser_id} deselects "{token_type}" '
+                  'in modal "Clean up obsolete tokens'))
 def select_token_type_to_save_on_modal(browser_id, token_type,
                                        selenium, modals):
     driver = selenium[browser_id]
