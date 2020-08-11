@@ -200,7 +200,7 @@ Feature: Storage management using onepanel
     # user adds second storage with the same name
     And user of browser_unified selects POSIX from storage selector in storages page in Onepanel
     And user of browser_unified types "storage" to Storage name field in POSIX form in storages page in Onepanel
-    And user of browser_unified types "/" to Mount point field in POSIX form in storages page in Onepanel
+    And user of browser_unified types "/tmp" to Mount point field in POSIX form in storages page in Onepanel
     And user of browser_unified clicks on Add button in add storage form in storages page in Onepanel
     And user of browser_unified sees that error popup has appeared
-    And user of browser_unified sees that error modal with text "ERROR" appeared
+    And user of browser_unified sees that error modal with text "The resource already exists." appeared
