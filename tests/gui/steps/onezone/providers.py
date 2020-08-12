@@ -463,3 +463,16 @@ def click_on_menu_button_of_provider_on_providers_list(driver, provider_name,
 def click_on_cease_support_in_menu_of_provider_on_providers_list(driver,
                                                                  popups):
     popups(driver).popover_menu.cease_support_from_providers_list_menu()
+
+
+@wt(parsers.parse('user of {browser_id} waits until provider "{provider_name}" '
+                  'goes offline on provider map'))
+def wait_until_provider_goes_offline(selenium, browser_id, oz_page,
+                                     hosts, provider_name):
+    driver = selenium[browser_id]
+    provider = hosts[provider_name]['name']
+    page = oz_page(driver)['providers']
+    provider_record = page.elements_list[provider]
+    provider_record.click()
+    while page.is_working():
+        pass
