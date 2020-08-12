@@ -169,11 +169,15 @@ def choose_token_filter(selenium, browser_id, token_filter, oz_page):
 
 
 @wt(parsers.re(r'user of (?P<browser_id>.*) chooses "(?P<token_filter>.*)" '
-               r'(?P<type>name Invite|Invite) filter in tokens sidebar'))
+               r'(?P<filter_type>name Invite|Invite) filter in tokens sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def choose_token_filter(selenium, browser_id, token_filter, type, oz_page):
-    invite_filter = oz_page(selenium[browser_id])['tokens'].sidebar.invite_filter
-    if type == "name Invite":
+def choose_token_filter(selenium, browser_id, token_filter, filter_type,
+                        oz_page, hosts):
+    invite_filter = oz_page(selenium[browser_id])[
+        'tokens'].sidebar.invite_filter
+    if filter_type == "name Invite":
+        if 'oneprovider' in token_filter:
+            token_filter = hosts[token_filter]['name']
         invite_filter.dropdown_menus[1].click()
         invite_filter.name_options[token_filter].click()
     else:
@@ -336,7 +340,7 @@ def assert_token_usage_count_value(selenium, browser_id, count, oz_page):
 def parse_and_compare_usage_count(text_given, text_expected):
     no1, no2 = text_given.split('/')
     exp1, exp2 = text_expected.split('/')
-    assert str(no1).strip() == str(exp1).strip(), (f'First number should be' 
+    assert str(no1).strip() == str(exp1).strip(), (f'First number should be'
                                                    f' {exp1}')
     assert str(no2).strip() == str(exp2).strip(), (f'Second number should be '
                                                    f'{exp2}')
