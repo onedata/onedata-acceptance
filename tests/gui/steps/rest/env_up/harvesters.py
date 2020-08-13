@@ -81,15 +81,23 @@ def _remove_harvester(harvester_id, zone_hostname, user, users):
                 auth=(user, users[user].password))
 
 
-@given(parsers.parse('space "{space_name}" belongs to "{harvester_name}" '
-                     'harvester of user {username}'))
-def add_space_to_harvester(space_name, harvester_name, spaces, harvesters,
+@given(parsers.re('spaces? (?P<space_list>.*) belongs? to '
+                  '"(?P<harvester_name>.*)" harvester of user '
+                  '(?P<username>.*)'))
+def add_space_to_harvester(space_list, harvester_name, spaces, harvesters,
                            hosts, username, users):
+    for space in parse_seq(space_list):
+        _add_space_to_harvester(space, harvester_name, spaces, harvesters,
+                                hosts, username, users)
+
+
+def _add_space_to_harvester(space_name, harvester_name, spaces, harvesters,
+                            hosts, username, users):
     space_id = spaces[space_name]
     harvester_id = harvesters[harvester_name]
     zone_hostname = hosts['onezone']['hostname']
 
-    response = http_put(ip=zone_hostname, port=OZ_REST_PORT,
-                        path=get_zone_rest_path('harvesters', harvester_id,
-                                                'spaces', space_id),
-                        auth=(username, users[username].password))
+    http_put(ip=zone_hostname, port=OZ_REST_PORT,
+             path=get_zone_rest_path('harvesters', harvester_id, 'spaces',
+                                     space_id),
+             auth=(username, users[username].password))

@@ -62,8 +62,16 @@ def upload_file_path(file_name):
     return os.path.join(
         os.path.dirname(os.path.abspath(gui.__file__)),
         'upload_files',
-        file_name
-    )
+        file_name)
+
+
+@contextmanager
+def rm_css_cls(driver, web_elem, css_cls):
+    driver.execute_script("$(arguments[0]).removeClass('{}')".format(css_cls),
+                          web_elem)
+    yield web_elem
+    driver.execute_script("$(arguments[0]).addClass('{}')".format(css_cls),
+                          web_elem)
 
 
 @contextmanager
@@ -128,8 +136,10 @@ def click_on_web_elem(driver, web_elem, err_msg, delay=True):
 
 def _scroll_to_css_sel(web_elem_root, css_sel):
     driver = getattr(web_elem_root, 'parent', web_elem_root)
-    driver.execute_script(
-        'var el = $(\'{}\')[0]; el && el.scrollIntoView(true);'.format(css_sel))
+    driver.execute_script(f"var el = (typeof $ === 'function' ? "
+                          f"$('{css_sel}')[0] : "
+                          f"document.querySelector('{css_sel}')); "
+                          f"el && el.scrollIntoView(true);")
 
 
 @contextmanager
@@ -142,10 +152,10 @@ def suppress(*exceptions):
 
 @contextmanager
 def rm_css_cls(driver, web_elem, css_cls):
-    driver.execute_script("$(arguments[0]).removeClass('{}')".format(css_cls),
+    driver.execute_script(f"arguments[0].classList.remove('{css_cls}')",
                           web_elem)
     yield web_elem
-    driver.execute_script("$(arguments[0]).addClass('{}')".format(css_cls),
+    driver.execute_script(f"arguments[0].classList.add('{css_cls}')",
                           web_elem)
 
 

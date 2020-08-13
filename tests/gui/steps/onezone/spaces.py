@@ -397,3 +397,11 @@ def confirm_rename_the_space(selenium, browser_id, option, oz_page):
 def check_on_right_page(selenium, browser_id, tab_name, oz_page):
     label = oz_page(selenium[browser_id])['data'].tab_name
     assert label.lower() == tab_name, f'User not on {tab_name} page'
+
+
+@wt(parsers.parse('user of {browser_id} sees that opened space name is '
+                  '"{space}"'))
+def assert_opened_space_name(selenium, browser_id, space, oz_page):
+    driver = selenium[browser_id]
+    driver.switch_to.default_content()
+    assert oz_page(driver)['data'].elements_list[space].is_active()

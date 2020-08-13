@@ -88,9 +88,6 @@ def pass_test():
 def switch_to_iframe(selenium, browser_id, selector=None):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    if selector:
-        iframe = driver.find_element_by_css_selector(selector)
-    else:
-        iframe = driver.find_element_by_tag_name('iframe')
+    iframe = driver.find_element_by_tag_name('iframe')
     driver.switch_to.frame(iframe)
 

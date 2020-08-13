@@ -45,8 +45,6 @@ class OZLoggedIn(object):
 
     def __getitem__(self, item):
         item = item.lower()
-        if item == 'data discovery':
-            return DataDiscoveryPage(self.web_elem, self._data_discovery_page, self)
         # expand side panel
         ActionChains(self.web_elem).move_to_element(self._panels[0]).perform()
         # wait for side panel to expand so we can read panel name

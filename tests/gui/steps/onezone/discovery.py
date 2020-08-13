@@ -7,11 +7,13 @@ __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import time
+
 from pytest_bdd import parsers
 
 from tests import ELASTICSEARCH_PORT
 from tests.utils.acceptance_utils import wt
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.utils.utils import repeat_failed
 from tests.gui.steps.common.miscellaneous import _enter_text, switch_to_iframe
 from tests.gui.utils.generic import transform
@@ -236,5 +238,50 @@ def choose_property_to_query(selenium, browser_id, property_name, popups):
 
 
 @wt(parsers.parse('user of {browser_id} sees Data Discovery page'))
-def assert_data_discovery_page(selenium, browser_id):
+def assert_data_discovery_page(selenium, browser_id, data_discovery):
+    # this function can only be used when we are sure that
+    # there will be some files harvested as to use active waiting
+    # instead of just sleep
+    # to activate this view with no harvested files use
+    # assert_empty_data_discovery_page(...) function
     switch_to_iframe(selenium, browser_id, '.plugin-frame')
+    _wait_for_files_list(selenium, browser_id, data_discovery)
+
+
+@repeat_failed(timeout=WAIT_BACKEND, interval=1.5)
+def _wait_for_files_list(selenium, browser_id, data_discovery):
+    click_query_button_on_data_disc_page(selenium, browser_id, data_discovery)
+    assert_files_list_on_data_disc(selenium, browser_id, data_discovery)
+
+
+@repeat_failed(timeout=WAIT_FRONTEND/2)
+def assert_files_list_on_data_disc(selenium, browser_id, data_discovery):
+    assert len(data_discovery(selenium[browser_id]).results_list)
+
+
+def assert_empty_data_discovery_page(selenium, browser_id):
+    switch_to_iframe(selenium, browser_id, '.plugin-frame')
+    time.sleep(15)
+
+
+@wt(parsers.parse('user of {browser_id} finishes checking on Data discovery '
+                  'page'))
+def change_content_from_iframe(selenium, browser_id):
+    driver = selenium[browser_id]
+    driver.switch_to.default_content()
+
+
+@wt(parsers.parse('user of {browser_id} clicks "Query" button on Data '
+                  'discovery page'))
+def click_query_button_on_data_disc_page(selenium, browser_id, data_discovery):
+    driver = selenium[browser_id]
+    data_discovery(driver).query_builder.query_button()
+
+
+@wt(parsers.parse('user of {browser_id} sees "{error_msg}" alert on Data '
+                  'discovery page'))
+@repeat_failed(timeout=WAIT_BACKEND*3, interval=3)
+def assert_alert_text_on_data_disc_page(selenium, browser_id, error_msg,
+                                        data_discovery):
+    assert error_msg == data_discovery(selenium[browser_id]).error_message
+

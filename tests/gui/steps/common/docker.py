@@ -141,3 +141,18 @@ def kill_providers(persistent_environment, provider_list):
                 else:
                     raise RuntimeError('container {} still alive, while it '
                                        'should not be'.format(container_name))
+
+
+@wt(parsers.parse('elasticsearch plugin stops working'))
+def pause_elasticsearch_container(hosts):
+    pause_cmd = ['docker', 'pause']
+    container_id = hosts['elasticsearch']['container-id']
+    subprocess.call(pause_cmd + [container_id])
+
+
+@wt(parsers.parse('elasticsearch plugin starts working'))
+def unpause_elasticsearch_container(hosts):
+    unpause_cmd = ['docker', 'start']
+    container_id = hosts['elasticsearch']['container-id']
+    time.sleep(5)
+    subprocess.call(unpause_cmd + [container_id])

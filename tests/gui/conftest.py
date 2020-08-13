@@ -205,7 +205,7 @@ def public_share():
 
 @fixture(scope='session')
 def data_discovery():
-    from tests.gui.utils.onezone.discovery_page import DataDiscoveryPage
+    from tests.gui.utils import DataDiscoveryPage
     return DataDiscoveryPage
 
 

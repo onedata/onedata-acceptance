@@ -41,6 +41,9 @@ class Space(Element):
     def is_home_icon(self):
         return 'oneicon-home' in self.home_icon.get_attribute("class")
 
+    def is_active(self):
+        return 'active' in self.web_elem.get_attribute('class')
+
 
 class Provider(Element):
     support = Label('.outer-text')

@@ -95,8 +95,12 @@ def join_space_to_harvester(selenium, browser_id, oz_page, space_name,
     click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id,
                                                       harvester_name, option,
                                                       oz_page)
-    click_button_in_harvester_spaces_page(selenium, browser_id, oz_page,
-                                          button_name)
+    try:
+        click_button_in_harvester_spaces_page(selenium, browser_id, oz_page,
+                                              button_name)
+    except RuntimeError:
+        # TODO: kliknąć w menu i potem w buttona z tym
+        pass
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id,
                                                       space_name, modals,
@@ -229,15 +233,3 @@ def assert_space_on_harvester_list(selenium, browser_id, space, harvester,
                                                       oz_page)
     assert_space_has_appeared_in_discovery_page(selenium, browser_id, space,
                                                 oz_page)
-
-
-@wt(parsers.parse('user of {browser_id} sees following files in Data '
-                  'discovery page:\n{config}'))
-def assert_data_discovery_files(selenium, browser_id, oz_page,
-                                data_discovery, config):
-    driver = selenium[browser_id]
-    # data_discovery.query_builder.root_block
-    import pdb
-    pdb.set_trace()
-    # lists = oz_page(driver)['data discovery']
-

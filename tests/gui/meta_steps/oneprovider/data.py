@@ -22,7 +22,7 @@ from tests.gui.steps.modal import (
     write_name_into_text_field_in_modal)
 from tests.gui.steps.onezone.spaces import (
     click_on_option_of_space_on_left_sidebar_menu,
-    click_element_on_lists_on_left_sidebar_menu)
+    click_element_on_lists_on_left_sidebar_menu, click_on_option_in_the_sidebar)
 from tests.gui.steps.rest.env_up.spaces import init_storage
 
 
@@ -375,6 +375,8 @@ def go_to_filebrowser(selenium, browser_id, oz_page, op_container,
     option_in_menu = 'spaces'
     option_in_submenu = 'Data'
 
+    click_on_option_in_the_sidebar(selenium, browser_id, option_in_submenu,
+                                   oz_page)
     click_element_on_lists_on_left_sidebar_menu(selenium, browser_id,
                                                 option_in_menu, space, oz_page)
     click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id, space,
