@@ -60,9 +60,9 @@ Feature: Basic management of providers in Onezone GUI
     And user of browser sees that length of providers list of "space1" equals "0"
 
 
-  Scenario: User sees ""All your providers are offline" message when no provider is online
+  Scenario: User sees "All your providers are offline" message when no provider is online
     Given provider named "oneprovider-1" is paused
-    When user of browser waits until provider "oneprovider-1" goes offline on provider map
+    When user of browser waits until provider "oneprovider-1" goes offline on providers map
 
     And user of browser clicks on Data in the main menu
     And user of browser clicks Data of "space1" in the sidebar
