@@ -164,3 +164,16 @@ Feature: Oneprovider POSIX privileges GUI tests
     And user of browser_user1 clicks on "Yes" button in modal "Delete modal"
     Then user of browser_user1 sees that error modal with text "Deleting file(s) failed" appeared
 
+
+  Scenario: User sees "no access" tag after changing privileges on file
+    When user of space_owner_browser sets file1 POSIX 364 privileges in "space1"
+
+    # see the tag
+    Then user of space_owner_browser sees "no access" tag on file1
+
+
+    Scenario: User sees "no access" tag after changing privileges on directory
+    When user of space_owner_browser sets dir1 POSIX 364 privileges in "space1"
+
+    # see the tag
+    Then user of space_owner_browser sees "no access" tag on dir1
