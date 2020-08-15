@@ -722,35 +722,38 @@ Feature: Management of invite tokens in Onezone GUI
     Given user admin has no harvesters
     And using REST, user admin creates "harvester8", "harvester9" harvester in "onezone" Onezone service
 
-    When user of browser1 creates token with following configuration:
+    # on bamboo, after test fails once, other tokens remain. They need to be deleted
+    When user of browser1 removes all tokens
+
+    And user of browser1 creates token with following configuration:
           name: space_token_1
           type: invite
           invite type: Invite user to space
           invite target: space1
     And user of browser1 creates token with following configuration:
-          name: space_token_2
+          name: space_token_3
           type: invite
           invite type: Invite user to space
           invite target: space3
 
     And user of browser1 creates token with following configuration:
-          name: harvester_token_1
+          name: harvester_token_8
           type: invite
           invite type: Invite user to harvester
           invite target: harvester8
     And user of browser1 creates token with following configuration:
-          name: harvester_token_2
+          name: harvester_token_9
           type: invite
           invite type: Invite user to harvester
           invite target: harvester9
 
     And user of browser1 creates token with following configuration:
-          name: group_token_1
+          name: group_token_3
           type: invite
           invite type: Invite user to group
           invite target: group3
     And user of browser1 creates token with following configuration:
-          name: group_token_2
+          name: group_token_4
           type: invite
           invite type: Invite user to group
           invite target: group4
@@ -770,10 +773,10 @@ Feature: Management of invite tokens in Onezone GUI
           name: register_token_1
           type: invite
           invite type: Register Oneprovider
-    And user of browser1 chooses "Invite" filter in tokens sidebar
 
-    # number of tokens is bigger than number of tokens created, because admin user has 2 additional admin tokens (filtr User)
-    Then user of browser1 sees exactly 11 item(s) on tokens list in tokens sidebar
+    And user of browser1 chooses "Invite" filter in tokens sidebar
+    Then user of browser1 sees exactly 9 item(s) on tokens list in tokens sidebar
+    
     And user of browser1 chooses "Space" Invite filter in tokens sidebar
     And user of browser1 sees exactly 2 item(s) on tokens list in tokens sidebar
     And user of browser1 sees that there is token named "space_token_1" on tokens list
@@ -783,7 +786,7 @@ Feature: Management of invite tokens in Onezone GUI
     And user of browser1 sees that there is token named "space_token_1" on tokens list
 
     And user of browser1 chooses "User" Invite filter in tokens sidebar
-    And user of browser1 sees exactly 3 item(s) on tokens list in tokens sidebar
+    And user of browser1 sees exactly 1 item(s) on tokens list in tokens sidebar
     And user of browser1 sees that there is token named "register_token_1" on tokens list
 
     And user of browser1 chooses "Group" Invite filter in tokens sidebar
