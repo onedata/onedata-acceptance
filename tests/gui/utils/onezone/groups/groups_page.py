@@ -57,3 +57,5 @@ class GroupsPage(GenericPage):
     main_page = WebItem('.col-content', cls=GroupDetailsPage)
     members_page = WebItem('.main-content', cls=MembersPage)
 
+    selected_group_name = Label('.sidebar-groups .active .one-label .item-name')
+

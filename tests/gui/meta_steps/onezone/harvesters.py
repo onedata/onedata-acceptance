@@ -22,6 +22,7 @@ from tests.gui.steps.onezone.discovery import (
     type_text_to_rename_input_field_in_discovery_page,
     confirm_harvester_rename_using_button,
     assert_space_has_appeared_in_discovery_page,
+    click_on_member_menu_option_in_harvester_indices_page
     click_option_in_discovery_page_menu)
 from tests.gui.steps.onezone.spaces import (
     click_on_option_in_the_sidebar, click_element_on_lists_on_left_sidebar_menu)
@@ -158,12 +159,16 @@ def add_group_to_harvester(selenium, browser_id, oz_page, group_name,
                   'in "{harvester_name}" harvester in Discovery page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_index_in_harvester(selenium, browser_id, oz_page, index_name,
-                              harvester_name):
+                              harvester_name, popups):
     option = 'Indices'
+    member_menu_option = 'Create new index'
 
     click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id,
                                                       harvester_name, option,
                                                       oz_page)
+    click_on_member_menu_option_in_harvester_indices_page(selenium, browser_id,
+                                                          member_menu_option,
+                                                          oz_page, popups)
     type_index_name_to_input_field_in_indices_page(selenium, browser_id,
                                                    oz_page, index_name)
     click_create_button_in_indices_page(selenium, browser_id, oz_page)

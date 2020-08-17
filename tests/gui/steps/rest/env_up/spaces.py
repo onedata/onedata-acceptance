@@ -16,8 +16,9 @@ from tests import OZ_REST_PORT, PANEL_REST_PORT, OP_REST_PORT
 from tests.gui.steps.rest.shares import get_file_id_by_rest
 from tests.utils.rest_utils import (http_get, http_post, http_put,
                                     get_panel_rest_path, get_zone_rest_path,
-                                    get_provider_rest_path)
-from tests.utils.http_exceptions import HTTPNotFound, HTTPError, HTTPBadRequest
+                                    get_provider_rest_path, http_delete)
+from tests.utils.http_exceptions import (HTTPNotFound, HTTPError,
+                                         HTTPBadRequest, HTTPForbidden)
 from tests.utils.utils import repeat_failed
 
 
@@ -376,3 +377,33 @@ def _mkfile(create_cdmi_obj, file_path, hosts, owner_credentials,
                                   file_content.get('metadata', None))
     else:
         create_cdmi_obj(file_path)
+
+
+def _get_users_space_id_list(zone_hostname, owner_username, owner_password):
+
+    resp = http_get(ip=zone_hostname, port=OZ_REST_PORT,
+                    path=get_zone_rest_path('user', 'spaces'),
+                    auth=(owner_username, owner_password)).json()
+    spaces_id_list = resp['spaces']
+    return spaces_id_list
+
+
+def _rm_all_spaces_for_user(zone_hostname, owner_username, owner_password):
+    spaces_id_list = _get_users_space_id_list(zone_hostname, owner_username,
+                                              owner_password)
+
+    for space_id in spaces_id_list:
+        try:
+            http_delete(ip=zone_hostname, port=OZ_REST_PORT,
+                        path=get_zone_rest_path('spaces', space_id),
+                        auth=(owner_username, owner_password))
+        except HTTPForbidden:
+            pass
+
+
+def _rm_all_spaces_for_users_list(zone_hostname, users_db):
+    for user_credentials in users_db.values():
+        _rm_all_spaces_for_user(zone_hostname, user_credentials.username,
+                                user_credentials.password)
+
+

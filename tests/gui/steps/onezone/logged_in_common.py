@@ -36,15 +36,14 @@ def wt_expand_oz_panel(selenium, browser_id_list, panel_name, oz_page):
         _expand_oz_panel(oz_page, selenium[browser_id], panel_name)
 
 
-@when(parsers.parse('user of {browser_id} sees alert with title "{title}" '
-                    'on world map in Onezone gui'))
-@then(parsers.parse('user of {browser_id} sees alert with title "{title}" '
-                    'on world map in Onezone gui'))
+@wt(parsers.parse('user of {browser_id} sees alert with title "{title}" '
+                  'on Onezone page'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_alert_with_title_in_oz(selenium, browser_id, title, oz_page):
-    alert = oz_page(selenium[browser_id])['world map'].message
-    assert alert.title.lower() == title.lower(), \
-        'alert title {} does not match expected {}'.format(alert.title, title)
+    driver = selenium[browser_id]
+    alert = oz_page(driver).provider_alert_message
+    err_msg = f'expected alert: {title}, found: {alert}'
+    assert alert == title, err_msg
 
 
 @when(parsers.re(r'user of (?P<browser_id>.+?) clicks on '
