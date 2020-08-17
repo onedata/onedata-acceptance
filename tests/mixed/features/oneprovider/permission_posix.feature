@@ -42,40 +42,7 @@ Feature: POSIX privileges tests
   | web GUI    | oneclient1 |
 
 
-  Scenario Outline: User changes file permission using <client1> and sees its permission using <client2>
-    When using <client1>, user1 succeeds to create file named "file1" in "space1" in oneprovider-1
-    And using <client2>, user1 succeeds to set "775" POSIX permission for item named "file1" in "space1" in oneprovider-1
-    And using web GUI, user1 is idle for 80 seconds
-    Then using <client3>, user1 sees that POSIX permission for item named "file1" in "space1" is "775" in oneprovider-1
-
-  Examples:
-  | client1    | client2    | client3    |
-  | REST       | REST       | web GUI    |
-  | REST       | web GUI    | REST       |
-  | oneclient1 | oneclient1 | REST       |
-  | REST       | REST       | oneclient1 |
-  | oneclient1 | oneclient1 | web GUI    |
-  | oneclient1 | web GUI    | oneclient1 |
-
-
-  Scenario Outline: User changes directory permission using <client1> and sees its permission using <client2>
-    When using <client1>, user1 succeeds to create directory named "dir1" in "space1" in oneprovider-1
-    And using <client1>, user1 succeeds to set "664" POSIX permission for item named "dir1" in "space1" in oneprovider-1
-    And using web GUI, user1 is idle for 80 seconds
-    Then using <client2>, user1 sees that POSIX permission for item named "dir1" in "space1" is "664" in oneprovider-1
-
-  Examples:
-  | client1    | client2    |
-  | REST       | web GUI    |
-  | web GUI    | REST       |
-  | oneclient1 | REST       |
-  | REST       | oneclient1 |
-  | oneclient1 | web GUI    |
-  | web GUI    | oneclient1 |
-
-
-
-  Scenario Outline: User changes file permission using <client1> and using <client2> sees that status-change time has changed
+  Scenario Outline: Using <client3> user sees change of POSIX permissions an status-change time after changing permissions using <client2> for file created with <client1>
     When using <client1>, user1 succeeds to create file named "file1" in "space1" in oneprovider-1
     And user1 waits 2 seconds
     And using <client2>, user1 succeeds to set "775" POSIX permission for item named "file1" in "space1" in oneprovider-1
@@ -91,7 +58,7 @@ Feature: POSIX privileges tests
   | oneclient1  | web GUI    | oneclient1 |
 
 
-  Scenario Outline: User changes directory permission using <client1> and using <client2> sees that status-change time has changed
+  Scenario Outline: Using <client2> user sees change of POSIX permissions an status-change time after changing permissions using <client1> for directory
     When using <client1>, user1 succeeds to create directory named "dir1" in "space1" in oneprovider-1
     And user1 waits 2 seconds
     And using <client1>, user1 succeeds to set "664" POSIX permission for item named "dir1" in "space1" in oneprovider-1
@@ -104,41 +71,4 @@ Feature: POSIX privileges tests
   | oneclient1 | REST       |
   | REST       | oneclient1 |
   | web GUI    | oneclient1 |
-
-
-  Scenario Outline: User creates file using <client1> and changes its permission using <client2>
-    When using <client1>, user1 succeeds to create file named "file1" in "space1" in oneprovider-1
-    And using <client2>, user1 succeeds to see item named "file1" in "space1" in oneprovider-1
-    Then using <client2>, user1 succeeds to set "775" POSIX permission for item named "file1" in "space1" in oneprovider-1
-    And using web GUI, user1 refreshes site
-    And using <client2>, user1 sees that POSIX permission for item named "file1" in "space1" is "775" in oneprovider-1
-    And using <client3>, user1 sees that POSIX permission for item named "file1" in "space1" is "775" in oneprovider-1
-
-  Examples:
-  | client1    | client2    | client3    |
-  | REST       | web GUI    | REST       |
-  | REST       | REST       | web GUI    |
-  | oneclient1 | REST       | oneclient1 |
-  | REST       | oneclient1 | REST       |
-  | oneclient1 | web GUI    | oneclient1 |
-  | oneclient1 | oneclient1 | web GUI    |
-
-  Scenario Outline: User creates directory using <client1> and changes its permission using <client2>
-    When using <client1>, user1 succeeds to create directory named "dir1" in "space1" in oneprovider-1
-    And using <client2>, user1 succeeds to see item named "dir1" in "space1" in oneprovider-1
-    Then using <client2>, user1 succeeds to set "664" POSIX permission for item named "dir1" in "space1" in oneprovider-1
-    And using web GUI, user1 refreshes site
-    And using <client2>, user1 sees that POSIX permission for item named "dir1" in "space1" is "664" in oneprovider-1
-    And using <client1>, user1 sees that POSIX permission for item named "dir1" in "space1" is "664" in oneprovider-1
-
-  Examples:
-  | client1    | client2    |
-  | REST       | web GUI    |
-  | web GUI    | REST       |
-  | oneclient1 | REST       |
-  | REST       | oneclient1 |
-  | oneclient1 | web GUI    |
-  | web GUI    | oneclient1 |
-
-
 

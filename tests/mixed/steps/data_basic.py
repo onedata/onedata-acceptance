@@ -76,7 +76,7 @@ def create_dir_in_op(client, user, users, space, name, hosts, tmp_memory, host,
 
 
 @wt(parsers.re('using web GUI, (?P<user>\w+) double clicks on item '
-               'named "(?P<item_name>.*)" in "(?P<space>.*)" in (?P<host>.*)'))
+               'named "(?P<item_name>.*)" in "(?P<space>.*)"'))
 def go_to_dir(selenium, user, item_name, tmp_memory, op_container, space, oz_page):
     go_to_filebrowser(selenium, user, oz_page, op_container,
                       tmp_memory, space)
@@ -389,10 +389,10 @@ def assert_time_relation(user, time1, file_name, space, comparator, time2,
 
 @then(parsers.re('using (?P<client>.*), (?P<user>.*) sees that '
                  '(?P<time_name>.*) time of item named "(?P<file_path>.*)" '
-                 'in "(?P<space>.*)" space is not earlier than '
+                 'in current space is not earlier than '
                  '(?P<time>[0-9]*) seconds ago in (?P<host>.*)'))
 def assert_mtime_not_earlier_than(client, file_path, selenium, user,
-                                  space, op_container, time, tmp_memory):
+                                  op_container, time, tmp_memory):
     client_lower = client.lower()
     if client_lower == 'web gui':
         assert_mtime_not_earlier_than_op_gui(file_path, time, user, tmp_memory,

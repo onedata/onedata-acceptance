@@ -79,7 +79,7 @@ def support_space_in_op_panel_using_rest(user, provider_host, hosts, users,
             provider_api.support_space(space_support_rq)
             break
     else:
-        raise RuntimeError('No storage named "{}"'.format(storage_name))
+        raise RuntimeError(f'No storage named "{storage_name}"')
 
 
 def configure_sync_parameters_for_space_in_op_panel_rest(user, users,
@@ -97,12 +97,11 @@ def configure_sync_parameters_for_space_in_op_panel_rest(user, users,
 
     provider_api = OneproviderApi(user_client_op)
     options = yaml.load(conf)
-    if options['{} strategy'.format(
-            sync_type.capitalize())].lower() == 'disabled':
-        strategy = 'no_{}'.format(sync_type.lower())
+    if options[f'{sync_type.capitalize()} strategy'].lower() == 'disabled':
+        strategy = f'no_{sync_type.lower()}'
     else:
-        strategy = '_'.join(options['{} strategy'.
-                            format(sync_type.capitalize())].lower().split())
+        strategy = '_'.join(options[f'{sync_type.capitalize()} strategy']
+                            .lower().split())
 
     if sync_type.lower() == 'import':
         storage_import = StorageImportDetails(strategy, options['Max depth'])
@@ -140,13 +139,12 @@ def assert_proper_space_configuration_in_op_panel_rest(space_name, user, users,
     space_details = provider_api.get_space_details(space.space_id)
 
     sync_type = sync_type.lower()
-    storage_sync = getattr(space_details,
-                           'storage_{}'.format(sync_type))
+    storage_sync = getattr(space_details, f'storage_{sync_type}')
 
     for attr, expected_val in yaml.load(conf).items():
         if 'strategy' in attr:
             if expected_val.lower() == 'disabled':
-                expected_val = 'no_{}'.format(sync_type)
+                expected_val = f'no_{sync_type}'
             else:
                 expected_val = '_'.join(expected_val.lower().split())
         try:
@@ -155,6 +153,6 @@ def assert_proper_space_configuration_in_op_panel_rest(space_name, user, users,
         except KeyError:
             actual_val = getattr(storage_sync,
                                  '_'.join(attr.lower().split()))
-        assert expected_val == actual_val, \
-            'Storage sync value for attribute "{}" does not match. ' \
-            'Expected: {}, got: {}'.format(attr, expected_val, actual_val)
+        assert expected_val == actual_val, (f'Storage sync value for attribute '
+                                            f'"{attr}" does not match. Expected: '
+                                            f'{expected_val}, got: {actual_val}')
