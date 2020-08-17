@@ -80,7 +80,7 @@ Feature: Basic management of groups with one user in Onezone GUI
 
 
   Scenario: User fails to view group after leaving it
-    When user of browser goes to group "group1" main subpage
+    When user of browser opens group "group1" main subpage
     And user of browser copies a first resource ID from URL
     And user of browser leaves group "group1"
 
