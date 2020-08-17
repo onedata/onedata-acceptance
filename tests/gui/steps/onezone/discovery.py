@@ -210,6 +210,14 @@ def click_remove_space_option_in_menu_in_discover_spaces_page(selenium,
     page.menu['Remove this space'].click()
 
 
+def click_option_in_discovery_page_menu(selenium, browser_id, oz_page,
+                                        button_name):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['discovery']
+    page.menu_button()
+    page.menu[button_name].click()
+
+
 @wt(parsers.re('user of (?P<browser_id>.*) sees '
                '(?P<alert_text>Insufficient permissions) alert '
                'on (?P<where>Spaces|Indices) subpage'))

@@ -81,6 +81,8 @@ class DiscoveryPage(GenericPage):
                             '.dropdown-menu .one-collapsible-toolbar-item',
                             cls=MenuItem)
 
+    menu_button = Button('.with-menu .collapsible-toolbar-toggle')
+
     get_started = Button('.btn.btn-default.hide-sm-active.ember-view')
     create_new_harvester_button = Button('.one-sidebar-toolbar-button'
                                          '.create-harvester-btn')
