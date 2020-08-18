@@ -134,48 +134,6 @@ Feature: Querying for data discovery in Discovery Page in Onezone GUI
             - space2
 
 
-#  Scenario: Space data is no longer harvested when space is removed from harvester
-#    Given spaces ["space1", "space2"] belong to "harvester1" harvester of user admin
-#    When user of browser opens Data Discovery page of "harvester1" harvester
-#    And user of browser sees following files in Data discovery page:
-#          - dir1_1:
-#              json_metadata_exists: false
-#              spaceId: space1
-#          - file_xattrs:
-#              spaceId: space1
-#              json_metadata_exists: false
-#              xattrs:
-#                author: "\"John Smith\""
-#                year: 2020
-#          - dir1_2:
-#              json_metadata_exists: false
-#              spaceId: space2
-#          - file_json:
-#              json_metadata_exists: true
-#              spaceId: space2
-#              author: "\"Samantha Anderson\""
-#              year: 1998
-#          - spaces:
-#            - space1
-#            - space2
-#
-#    And user of browser finishes checking on Data discovery page
-#    And user of browser removes "space1" space from harvester "harvester1"
-#    And user of browser is idle for 60 seconds
-#    And user of browser opens Data Discovery page of "harvester1" harvester
-#    Then user of browser sees following files in Data discovery page:
-#          - dir1_2:
-#              json_metadata_exists: false
-#              spaceId: space2
-#          - file_json:
-#              json_metadata_exists: true
-#              spaceId: space2
-#              author: "\"Samantha Anderson\""
-#              year: 1998
-#          - spaces:
-#            - space2
-
-
   Scenario: Files uploaded to harvested space are visible in Data discovery page
     Given space "space2" belongs to "harvester1" harvester of user admin
     When user of browser opens Data Discovery page of "harvester1" harvester

@@ -302,5 +302,6 @@ def click_query_button_on_data_disc_page(selenium, browser_id, data_discovery):
 @repeat_failed(timeout=WAIT_BACKEND*3, interval=3)
 def assert_alert_text_on_data_disc_page(selenium, browser_id, error_msg,
                                         data_discovery):
+    click_query_button_on_data_disc_page(selenium, browser_id, data_discovery)
     assert error_msg == data_discovery(selenium[browser_id]).error_message
 
