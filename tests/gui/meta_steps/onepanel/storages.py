@@ -40,7 +40,8 @@ from tests.gui.steps.onepanel.common import (
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.utils.bdd_utils import given
 from tests.utils.http_exceptions import HTTPConflict
-from tests.utils.rest_utils import http_post, get_panel_rest_path
+from tests.utils.rest_utils import (
+    http_post, get_panel_rest_path, http_get, http_delete)
 
 
 @wt(parsers.parse('user of {browser_id} removes "{name}" storage '
@@ -132,8 +133,8 @@ def _add_storage_in_op_panel_using_gui(selenium, browser_id, config, onepanel,
 @given(parsers.parse('there is "{storage_name}" storage in "{provider}" '
                      'Oneprovider panel service used by '
                      '{user} with following configuration:\n{config}'))
-def create_storage_if_necessary_rest(storage_name, provider, config,
-                                     hosts, onepanel_credentials):
+def safely_create_storage_rest(storage_name, provider, config,
+                               hosts, onepanel_credentials):
     """ Create storage according to given config.
 
             Config format given in yaml is as follow:
@@ -142,15 +143,46 @@ def create_storage_if_necessary_rest(storage_name, provider, config,
                 mount point: mount_point               --> required
                 imported storage: true                 --> optional
         """
-    try:
-        _add_storage_in_op_panel_using_rest(config, storage_name, provider,
-                                            hosts, onepanel_credentials)
-    except HTTPConflict:
-        pass
+    _remove_storage_in_op_panel_using_rest(storage_name, provider, hosts,
+                                           onepanel_credentials)
+    _add_storage_in_op_panel_using_rest(config, storage_name, provider, hosts,
+                                        onepanel_credentials)
 
 
-def _add_storage_in_op_panel_using_rest(config, storage_name, provider,
-                                        hosts, onepanel_credentials):
+def _remove_storage_in_op_panel_using_rest(storage_name, provider, hosts,
+                                           onepanel_credentials):
+    provider_hostname = hosts[provider]['hostname']
+    onepanel_username = onepanel_credentials.username
+    onepanel_password = onepanel_credentials.password
+
+    storage_id = _get_storage_id(storage_name, provider, hosts,
+                                 onepanel_credentials)
+    http_delete(ip=provider_hostname, port=PANEL_REST_PORT,
+                path=get_panel_rest_path('provider', 'storages', storage_id),
+                auth=(onepanel_username, onepanel_password))
+
+
+def _get_storage_id(storage_name, provider, hosts, onepanel_credentials):
+    provider_hostname = hosts[provider]['hostname']
+    onepanel_username = onepanel_credentials.username
+    onepanel_password = onepanel_credentials.password
+
+    ids = http_get(ip=provider_hostname, port=PANEL_REST_PORT,
+                   path=get_panel_rest_path('provider', 'storages'),
+                   auth=(onepanel_username, onepanel_password)).json()['ids']
+
+    for storage_id in ids:
+        response = http_get(ip=provider_hostname, port=PANEL_REST_PORT,
+                            path=get_panel_rest_path('provider', 'storages',
+                                                     storage_id),
+                            auth=(onepanel_username, onepanel_password)).json()
+        if storage_name == response['name']:
+            return storage_id
+    raise (Exception, f'Storage {storage_name} does not exist')
+
+
+def _add_storage_in_op_panel_using_rest(config, storage_name, provider, hosts,
+                                        onepanel_credentials):
     storage_config = {}
     options = yaml.load(config)
 
@@ -169,4 +201,3 @@ def _add_storage_in_op_panel_using_rest(config, storage_name, provider,
               path=get_panel_rest_path('provider', 'storages'),
               auth=(onepanel_username, onepanel_password),
               data=json.dumps(storage_data))
-

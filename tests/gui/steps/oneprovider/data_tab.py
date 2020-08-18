@@ -305,7 +305,8 @@ def resize_data_tab_sidebar(selenium, browser_id, direction, offset,
     sidebar.width += offset
 
 
-@wt(parsers.parse('user of {browser_id} waits for file upload to finish'))
+@wt(parsers.re('user of (?P<browser_id>.*) waits for file uploads? to '
+               'finish'))
 @repeat_failed(timeout=WAIT_BACKEND * 3)
 def wait_for_file_upload_to_finish(selenium, browser_id, popups):
     driver = selenium[browser_id]
