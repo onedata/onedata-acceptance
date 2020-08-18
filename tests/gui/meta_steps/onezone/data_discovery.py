@@ -8,6 +8,7 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 import re
+import time
 
 import yaml
 
@@ -27,6 +28,7 @@ from tests.utils.utils import repeat_failed
 def assert_data_discovery_files(selenium, browser_id, data_discovery, config,
                                 spaces):
     click_query_button_on_data_disc_page(selenium, browser_id, data_discovery)
+    time.sleep(1)
     expected_data = yaml.load(config)
     data_dict = _unpack_files_data(selenium, browser_id, data_discovery)
     _assert_elem_num_equals(expected_data, data_dict)
