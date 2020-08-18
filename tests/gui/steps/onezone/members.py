@@ -23,7 +23,7 @@ from tests.gui.steps.onezone.spaces import (
     assert_new_created_space_has_appeared_on_spaces,
     click_element_on_lists_on_left_sidebar_menu)
 from tests.utils.utils import repeat_failed
-from tests.utils.acceptance_utils import wt
+from tests.utils.bdd_utils import wt
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.common.modals import Modals as modals
 from tests.gui.meta_steps.onezone.common import search_for_members
@@ -41,6 +41,12 @@ def _find_members_page(onepanel, oz_page, driver, where):
         return onepanel(driver).content.members
     else:
         return oz_page(driver)[tab_name].members_page
+
+
+def _change_membership_to_name(membership_type, subject_type):
+    if not subject_type.endswith('s'):
+        subject_type += 's'
+    return membership_type + '_' + subject_type
 
 
 def get_privilege_tree(selenium, browser_id, onepanel, oz_page, where,
@@ -138,6 +144,57 @@ def assert_count_membership_rows(selenium, browser_id, number, oz_page, where):
     assert count_records == int(number), ('found {} membership rows '
                                           'instead of {}'.format(number,
                                                                  count_records))
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) sees '
+               '(?P<number_direct_groups>.*) direct, '
+               '(?P<number_effective_groups>.*) effective groups and '
+               '(?P<number_direct_users>.*) direct, '
+               '(?P<number_effective_users>.*) effective users in space '
+               'members tile'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_all_members_number_in_space_members_tile(selenium, oz_page,
+                                                    browser_id,
+                                                    number_direct_groups: int,
+                                                    number_effective_groups: int,
+                                                    number_direct_users: int,
+                                                    number_effective_users: int):
+    direct = 'direct'
+    effective = 'effective'
+    groups = 'groups'
+    users = 'users'
+
+    assert_members_number_in_space_members_tile(selenium, oz_page, browser_id,
+                                                number_direct_groups, direct,
+                                                groups)
+    assert_members_number_in_space_members_tile(selenium, oz_page, browser_id,
+                                                number_effective_groups,
+                                                effective,
+                                                groups)
+    assert_members_number_in_space_members_tile(selenium, oz_page, browser_id,
+                                                number_direct_users, direct,
+                                                users)
+    assert_members_number_in_space_members_tile(selenium, oz_page, browser_id,
+                                                number_effective_users,
+                                                effective,
+                                                users)
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) sees (?P<number>\d+) '
+               '(?P<membership_type>direct|effective) '
+               '(?P<subject_type>groups?|users?) in space members tile'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_members_number_in_space_members_tile(selenium, oz_page, browser_id,
+                                                number: int, membership_type,
+                                                subject_type):
+    driver = selenium[browser_id]
+    members_tile = oz_page(driver)['data'].overview_page.members_tile
+    name = _change_membership_to_name(membership_type, subject_type)
+    members_count = getattr(members_tile, name)
+
+    error_msg = (f'found {number} {membership_type} {subject_type} instead of '
+                 f'{members_count}')
+    assert int(members_count) == number, error_msg
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on "(?P<member_name>.*)" '
