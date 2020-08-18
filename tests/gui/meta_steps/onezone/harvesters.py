@@ -22,7 +22,7 @@ from tests.gui.steps.onezone.discovery import (
     type_text_to_rename_input_field_in_discovery_page,
     confirm_harvester_rename_using_button,
     assert_space_has_appeared_in_discovery_page,
-    click_on_member_menu_option_in_harvester_indices_page
+    click_on_member_menu_option_in_harvester_indices_page,
     click_option_in_discovery_page_menu)
 from tests.gui.steps.onezone.spaces import (
     click_on_option_in_the_sidebar, click_element_on_lists_on_left_sidebar_menu)
