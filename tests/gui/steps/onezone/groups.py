@@ -68,6 +68,19 @@ def click_on_group_menu_button(selenium, browser_id, option, group,
     popups(driver).popover_menu.menu[option]()
 
 
+@wt(parsers.re('user of (?P<browser_id>.*?) clicks (?P<option>Members|Hierarchy)'
+               ' of "(?P<group_name>.*?)" in the sidebar'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_option_of_group_on_left_sidebar_menu(selenium, browser_id,
+                                                  group_name, option, oz_page):
+    driver = selenium[browser_id]
+    driver.switch_to.default_content()
+    page = oz_page(driver)['groups']
+    page.elements_list[group_name]()
+    getattr(page.elements_list[group_name],
+            transform(option))()
+
+
 @wt(parsers.parse('user of {browser_id} writes '
                   '"{text}" into rename group text field'))
 @repeat_failed(timeout=WAIT_FRONTEND)

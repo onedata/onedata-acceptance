@@ -42,7 +42,7 @@ def paste_received_token_into_text_field(selenium, browser_id,
     _paste_token_into_text_field(selenium, browser_id, oz_page, token)
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) joins group using received token'))
+@wt(parsers.re('user of (?P<browser_id>.*) joins (?P<option>group|space) using received token'))
 def consume_received_token(selenium, browser_id, oz_page, tmp_memory):
     option = 'Tokens'
     button = 'Consume token'

@@ -14,9 +14,12 @@ from tests.gui.meta_steps.onezone.tokens import (
 from tests.gui.steps.common.notifies import *
 from tests.gui.steps.common.copy_paste import *
 from tests.gui.steps.common.url import refresh_site
-from tests.gui.steps.modal import close_modal, click_modal_button
+from tests.gui.steps.modal import (close_modal, click_modal_button,
+                                   click_on_button_in_active_modal)
 from tests.gui.steps.onezone.discovery import (
     choose_element_from_dropdown_in_add_element_modal)
+from tests.gui.steps.onezone.groups import (
+    click_on_option_of_group_on_left_sidebar_menu)
 from tests.gui.steps.onezone.spaces import *
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
 from tests.gui.steps.onepanel.spaces import *
@@ -42,7 +45,8 @@ def create_spaces_in_oz_using_gui(selenium, user, oz_page, space_list):
 @wt(parsers.parse('user of {user} sends support token for "{space_name}" '
                   'to user of {browser_id}'))
 def send_support_token_in_oz_using_gui(selenium, user, space_name, browser_id,
-                                       oz_page, tmp_memory, displays, clipboard):
+                                       oz_page, tmp_memory, displays,
+                                       clipboard):
     option = 'spaces'
     where = 'Providers'
     item_type = 'token'
@@ -314,3 +318,63 @@ def add_harvester_to_existing_space(selenium, browser_id, oz_page, space_name,
                                                       element_type)
     click_modal_button(selenium, browser_id, button_in_modal, modal, modals)
 
+
+@wt(parsers.re('user of (?P<browser_id>.*) adds "(?P<group_name>.*)" group to '
+               '"(?P<where_name>.*)" (?P<where>group|space) using available '
+               'groups dropdown'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def add_group_to_space_or_group(browser_id, group_name, where_name, selenium,
+                                oz_page, onepanel, popups, where):
+    option = where + 's'
+    option_in_function = 'Members'
+    button = 'Add one of your groups'
+    modal = 'Add one of groups'
+    member = 'groups'
+    element = 'group'
+    button_in_modal = 'Add'
+
+    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option,
+                                                where_name, oz_page)
+    if where == 'space':
+        click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
+                                                      where_name,
+                                                      option_in_function,
+                                                      oz_page)
+    elif where == 'group':
+        click_on_option_of_group_on_left_sidebar_menu(selenium, browser_id,
+                                                      where_name,
+                                                      option_in_function,
+                                                      oz_page)
+    else:
+        raise AttributeError('where variable must be space or group')
+
+    click_on_option_in_members_list_menu(selenium, browser_id, button, where,
+                                         member, oz_page, onepanel, popups)
+    choose_element_from_dropdown_in_add_element_modal(selenium, browser_id,
+                                                      group_name, modals,
+                                                      element)
+
+    click_modal_button(selenium, browser_id, button_in_modal, modal, modals)
+
+
+@wt(parsers.parse('user of {browser_id} copies invite token to "{space_name}" '
+                  'space'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def copy_user_space_invite_token(browser_id, space_name, selenium, oz_page,
+                                 onepanel, popups):
+    option = 'spaces'
+    option_in_space = 'Members'
+    where = 'space'
+    member = 'users'
+    button = 'Invite user using token'
+    modal = 'Invite using token'
+
+    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option,
+                                                space_name, oz_page)
+    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
+                                                  space_name, option_in_space,
+                                                  oz_page)
+    click_on_option_in_members_list_menu(selenium, browser_id, button, where,
+                                         member, oz_page, onepanel, popups)
+    copy_token_from_modal(selenium, browser_id)
+    close_modal(selenium, browser_id, modal, modals)

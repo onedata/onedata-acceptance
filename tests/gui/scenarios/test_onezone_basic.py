@@ -85,6 +85,7 @@ scenarios('../features/onezone/providers_multibrowser.feature')
 scenarios('../features/onezone/tokens_basic.feature')
 scenarios('../features/onezone/invite_tokens.feature')
 scenarios('../features/onezone/full_name.feature')
+scenarios('../features/onezone/privileges.feature')
 
 scenarios('../features/onezone/groups/groups_creation.feature')
 scenarios('../features/onezone/groups/groups_basic_operations.feature')
