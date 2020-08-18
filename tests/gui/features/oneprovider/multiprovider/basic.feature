@@ -6,20 +6,12 @@ Feature: Oneprovider functionality using multiple providers
     And initial groups configuration in "onezone" Onezone service:
           group1:
             owner: user1
-          group2:
-            owner: admin
-          group3:
-            owner: admin
 
     # unused_space is used only to introduce "oneprovider-1" for use of user1
     # thanks to this "oneprovider-1" is listed in consumer caveats popup
     And initial spaces configuration in "onezone" Onezone service:
           space1:
             owner: user1
-          space2:
-            owner: admin
-          space3:
-            owner: admin
           unused_space:
             owner: user1
             providers:
@@ -73,101 +65,3 @@ Feature: Oneprovider functionality using multiple providers
           storage: posix
           size: 1
           unit: GiB
-
-
-  Scenario: User sees right Invite tokens after filtering them
-    Given user admin has no harvesters
-    And using REST, user admin creates "harvester1", "harvester2" harvester in "onezone" Onezone service
-
-    # on bamboo, after test fails once, other tokens remain. They need to be deleted
-    When user of browser2 removes all tokens
-
-    And user of browser2 creates token with following configuration:
-          name: space_token_2
-          type: invite
-          invite type: Invite user to space
-          invite target: space2
-    And user of browser2 creates token with following configuration:
-          name: space_token_3
-          type: invite
-          invite type: Invite user to space
-          invite target: space3
-
-    And user of browser2 creates token with following configuration:
-          name: harvester_token_1
-          type: invite
-          invite type: Invite user to harvester
-          invite target: harvester1
-    And user of browser2 creates token with following configuration:
-          name: harvester_token_2
-          type: invite
-          invite type: Invite user to harvester
-          invite target: harvester2
-
-    And user of browser2 creates token with following configuration:
-          name: group_token_3
-          type: invite
-          invite type: Invite user to group
-          invite target: group3
-    And user of browser2 creates token with following configuration:
-          name: group_token_2
-          type: invite
-          invite type: Invite user to group
-          invite target: group2
-
-    And user of browser2 creates token with following configuration:
-          name: cluster_token_1
-          type: invite
-          invite type: Invite user to cluster
-          invite target: oneprovider-1
-    And user of browser2 creates token with following configuration:
-          name: cluster_token_2
-          type: invite
-          invite type: Invite user to cluster
-          invite target: oneprovider-2
-
-    And user of browser2 creates token with following configuration:
-          name: register_token_1
-          type: invite
-          invite type: Register Oneprovider
-
-    And user of browser2 chooses "Invite" filter in tokens sidebar
-    Then user of browser2 sees exactly 9 item(s) on tokens list in tokens sidebar
-
-    And user of browser2 chooses "Space" Invite filter in tokens sidebar
-    And user of browser2 sees exactly 2 item(s) on tokens list in tokens sidebar
-    And user of browser2 sees that there is token named "space_token_3" on tokens list
-    And user of browser2 sees that there is token named "space_token_2" on tokens list
-    And user of browser2 chooses "space2" name Invite filter in tokens sidebar
-    And user of browser2 sees exactly 1 item(s) on tokens list in tokens sidebar
-    And user of browser2 sees that there is token named "space_token_2" on tokens list
-
-    And user of browser2 chooses "User" Invite filter in tokens sidebar
-    And user of browser2 sees exactly 1 item(s) on tokens list in tokens sidebar
-    And user of browser2 sees that there is token named "register_token_1" on tokens list
-
-    And user of browser2 chooses "Group" Invite filter in tokens sidebar
-    And user of browser2 sees exactly 2 item(s) on tokens list in tokens sidebar
-    And user of browser2 sees that there is token named "group_token_3" on tokens list
-    And user of browser2 sees that there is token named "group_token_2" on tokens list
-    And user of browser2 chooses "group3" name Invite filter in tokens sidebar
-    And user of browser2 sees exactly 1 item(s) on tokens list in tokens sidebar
-    And user of browser2 sees that there is token named "group_token_3" on tokens list
-
-    And user of browser2 chooses "Harvester" Invite filter in tokens sidebar
-    And user of browser2 sees exactly 2 item(s) on tokens list in tokens sidebar
-    And user of browser2 sees that there is token named "harvester_token_1" on tokens list
-    And user of browser2 sees that there is token named "harvester_token_2" on tokens list
-    And user of browser2 chooses "harvester1" name Invite filter in tokens sidebar
-    And user of browser2 sees exactly 1 item(s) on tokens list in tokens sidebar
-    And user of browser2 sees that there is token named "harvester_token_1" on tokens list
-
-    And user of browser2 chooses "Cluster" Invite filter in tokens sidebar
-    And user of browser2 sees exactly 2 item(s) on tokens list in tokens sidebar
-    And user of browser2 sees that there is token named "cluster_token_1" on tokens list
-    And user of browser2 sees that there is token named "cluster_token_2" on tokens list
-    And user of browser2 chooses "oneprovider-1" name Invite filter in tokens sidebar
-    And user of browser2 sees exactly 1 item(s) on tokens list in tokens sidebar
-    And user of browser2 sees that there is token named "cluster_token_1" on tokens list
-
-    And user of browser2 removes all tokens

@@ -4,6 +4,11 @@ Feature: Basic management of harvester in Onezone GUI
   Background:
     Given initial users configuration in "onezone" Onezone service:
             - user1
+    And initial groups configuration in "onezone" Onezone service:
+          group1:
+            owner: admin
+          group2:
+            owner: admin
     And user opened browser window
     And user of browser opened Onezone page
     And user of browser logged as admin to Onezone service
@@ -140,3 +145,108 @@ Feature: Basic management of harvester in Onezone GUI
 
     And user of browser removes "harvester9" harvester in Onezone page
     And user of browser leaves "space1" space in Onezone page
+
+
+  Scenario: User sees right Invite tokens after filtering them
+    Given user admin has no harvesters
+    And admin user does not have access to any space
+    And using REST, user admin creates "harvester10", "harvester11" harvester in "onezone" Onezone service
+
+    # on bamboo, after test fails once, other tokens remain. They need to be deleted
+    When user of browser creates "space1" space in Onezone
+    And user of browser creates "space2" space in Onezone
+    And user of browser removes all tokens
+
+    And user of browser creates token with following configuration:
+          name: space_token_1
+          type: invite
+          invite type: Invite user to space
+          invite target: space1
+    And user of browser creates token with following configuration:
+          name: space_token_2
+          type: invite
+          invite type: Invite user to space
+          invite target: space2
+
+    And user of browser creates token with following configuration:
+          name: harvester_token_10
+          type: invite
+          invite type: Invite user to harvester
+          invite target: harvester10
+    And user of browser creates token with following configuration:
+          name: harvester_token_11
+          type: invite
+          invite type: Invite user to harvester
+          invite target: harvester11
+
+    And user of browser creates token with following configuration:
+          name: group_token_1
+          type: invite
+          invite type: Invite user to group
+          invite target: group1
+    And user of browser creates token with following configuration:
+          name: group_token_2
+          type: invite
+          invite type: Invite user to group
+          invite target: group2
+
+    And user of browser creates token with following configuration:
+          name: cluster_token_1
+          type: invite
+          invite type: Invite user to cluster
+          invite target: oneprovider-1
+    And user of browser creates token with following configuration:
+          name: cluster_token_2
+          type: invite
+          invite type: Invite user to cluster
+          invite target: oneprovider-2
+
+    And user of browser creates token with following configuration:
+          name: register_token_1
+          type: invite
+          invite type: Register Oneprovider
+
+    And user of browser chooses "Invite" filter in tokens sidebar
+    Then user of browser sees exactly 9 item(s) on tokens list in tokens sidebar
+
+    And user of browser chooses "Space" Invite filter in tokens sidebar
+    And user of browser sees exactly 2 item(s) on tokens list in tokens sidebar
+    And user of browser sees that there is token named "space_token_1" on tokens list
+    And user of browser sees that there is token named "space_token_2" on tokens list
+    And user of browser chooses "space2" name Invite filter in tokens sidebar
+    And user of browser sees exactly 1 item(s) on tokens list in tokens sidebar
+    And user of browser sees that there is token named "space_token_2" on tokens list
+
+    And user of browser chooses "User" Invite filter in tokens sidebar
+    And user of browser sees exactly 1 item(s) on tokens list in tokens sidebar
+    And user of browser sees that there is token named "register_token_1" on tokens list
+
+    And user of browser chooses "Group" Invite filter in tokens sidebar
+    And user of browser sees exactly 2 item(s) on tokens list in tokens sidebar
+    And user of browser sees that there is token named "group_token_1" on tokens list
+    And user of browser sees that there is token named "group_token_2" on tokens list
+    And user of browser chooses "group1" name Invite filter in tokens sidebar
+    And user of browser sees exactly 1 item(s) on tokens list in tokens sidebar
+    And user of browser sees that there is token named "group_token_1" on tokens list
+
+    And user of browser chooses "Harvester" Invite filter in tokens sidebar
+    And user of browser sees exactly 2 item(s) on tokens list in tokens sidebar
+    And user of browser sees that there is token named "harvester_token_10" on tokens list
+    And user of browser sees that there is token named "harvester_token_11" on tokens list
+    And user of browser chooses "harvester10" name Invite filter in tokens sidebar
+    And user of browser sees exactly 1 item(s) on tokens list in tokens sidebar
+    And user of browser sees that there is token named "harvester_token_10" on tokens list
+
+    And user of browser chooses "Cluster" Invite filter in tokens sidebar
+    And user of browser sees exactly 2 item(s) on tokens list in tokens sidebar
+    And user of browser sees that there is token named "cluster_token_1" on tokens list
+    And user of browser sees that there is token named "cluster_token_2" on tokens list
+    And user of browser chooses "oneprovider-1" name Invite filter in tokens sidebar
+    And user of browser sees exactly 1 item(s) on tokens list in tokens sidebar
+    And user of browser sees that there is token named "cluster_token_1" on tokens list
+
+    And user of browser removes all tokens
+    And user of browser removes "harvester10" harvester in Onezone page
+    And user of browser removes "harvester11" harvester in Onezone page
+    And user of browser leaves "space1" space in Onezone page
+    And user of browser leaves "space2" space in Onezone page

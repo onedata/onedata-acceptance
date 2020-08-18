@@ -1,5 +1,5 @@
 # Name of the scenario to run
-scenario: "scenario-1oz-1op"
+scenario: "scenario-1oz-2op"
 
 # Determines if onedata components should be started from pre-compiled sources
 # or pre-installed packages inside dockers. When enabled, sources are expected
@@ -30,3 +30,8 @@ onezone:
 oneprovider-1:
   batchConfig:
     createUsers: false
+
+oneprovider-2:
+  batchConfig:
+    createUsers: false
+
