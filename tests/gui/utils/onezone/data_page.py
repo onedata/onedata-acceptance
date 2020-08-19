@@ -5,10 +5,12 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+from selenium.webdriver import ActionChains
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (Button, NamedButton,
                                                WebItemsSequence, Label,
-                                               WebItem, WebElement)
+                                               WebItem, WebElement,
+                                               WebElementsSequence)
 from tests.gui.utils.onezone.generic_page import Element, GenericPage
 from .common import EditBox, InputBox
 from .members_subpage import MembersPage
@@ -32,6 +34,8 @@ class Space(Element):
                             text='Providers')
     members = NamedButton('.one-list-level-2 .item-header',
                           text='Members')
+    harvesters = NamedButton('.one-list-level-2 .item-header',
+                             text='Harvesters')
     menu_button = Button('.collapsible-toolbar-toggle')
 
     def click_menu(self):
@@ -54,9 +58,33 @@ class SpaceInfoTile(PageObject):
     shares_count = Label('.shares-count')
 
 
+class SpaceMembersTile(PageObject):
+    direct_groups = Label('.direct-groups-counter')
+    direct_users = Label('.direct-users-counter')
+    effective_groups = Label('.effective-groups-counter')
+    effective_users = Label('.effective-users-counter')
+
+
+class ProvidersMap(Element):
+    providers = WebElementsSequence('.circle')
+
+    def click_provider(self, provider_name, driver):
+        for prov in self.providers:
+            ActionChains(driver).move_to_element(prov).perform()
+            name = driver.find_element_by_css_selector('.tooltip-inner').text
+            if name == provider_name:
+                prov.click()
+                return
+
+        raise RuntimeError(f'Provider {provider_name} was not found on the map')
+
+
 class SpaceOverviewPage(PageObject):
     space_name = Label('.with-menu .one-label')
     info_tile = WebItem('.resource-info-tile', cls=SpaceInfoTile)
+    members_tile = WebItem('.resource-members-tile .tile-main',
+                           cls=SpaceMembersTile)
+    map = WebItem('.map-container', cls=ProvidersMap)
 
 
 class WelcomePage(PageObject):
@@ -64,6 +92,27 @@ class WelcomePage(PageObject):
     join_an_existing_space = NamedButton('.info .ember-view',
                                          text='join an existing space')
     join_group = NamedButton('.info .ember-view', text='join a group')
+
+
+class HarvesterRow(Element):
+    name = id = Label('.item-name')
+    harvester = WebElement('.item-name')
+    harvester_menu_button = WebElement('.collapsible-toolbar-toggle')
+
+    def click_harvester_menu_button(self, driver):
+        ActionChains(driver).move_to_element(self.harvester).perform()
+        self.harvester_menu_button.click()
+
+
+class HarvestersPage(PageObject):
+    harvesters_list = WebItemsSequence(
+        '.main-content .one-collapsible-list-item', cls=HarvesterRow)
+    add_one_of_harvesters = NamedButton(
+        '.add-harvester-to-space-trigger.btn',
+        text='Add one of your harvesters')
+    invite_harvester_using_token = NamedButton(
+        '.generate-invite-token-action.btn',
+        text='Invite harvester using token')
 
 
 class GetSupportPage(PageObject):
@@ -84,6 +133,7 @@ class SpaceProvidersPage(PageObject):
                                       cls=Provider)
     add_support = NamedButton('button', text='Add support')
     get_support_page = WebItem('.ember-view', cls=GetSupportPage)
+    map = WebItem('.space-providers-atlas', cls=ProvidersMap)
 
 
 class _Provider(PageObject):
@@ -107,7 +157,9 @@ class DataPage(GenericPage):
     providers_page = WebItem('.main-content', cls=SpaceProvidersPage)
     members_page = WebItem('.main-content', cls=MembersPage)
     welcome_page = WebItem('.main-content', cls=WelcomePage)
+    harvesters_page = WebItem('.main-content', cls=HarvestersPage)
 
+    # button in top right corner on all subpages
     menu_button = Button('.with-menu .collapsible-toolbar-toggle')
 
     get_started = Button('.btn.btn-default.hide-sm-active.ember-view')

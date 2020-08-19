@@ -16,7 +16,9 @@ from tests.gui.meta_steps.onezone.tokens import (
 from tests.gui.steps.common.notifies import *
 from tests.gui.steps.common.copy_paste import *
 from tests.gui.steps.common.url import refresh_site
-from tests.gui.steps.modal import close_modal
+from tests.gui.steps.modal import close_modal, click_modal_button
+from tests.gui.steps.onezone.discovery import (
+    choose_element_from_dropdown_in_add_element_modal)
 from tests.gui.steps.onezone.members import (
     click_on_option_in_members_list_menu, copy_token_from_modal,
     assert_member_is_in_parent_members_list)
@@ -24,6 +26,7 @@ from tests.gui.steps.onezone.spaces import *
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
 from tests.gui.steps.onepanel.spaces import *
 from tests.gui.steps.onezone.multibrowser_spaces import *
+from tests.gui.steps.onezone.members import *
 from tests import OZ_REST_PORT
 from tests.utils.rest_utils import http_get, get_zone_rest_path, http_delete
 
@@ -290,3 +293,31 @@ def g_leave_users_space_in_onezone_using_rest(hosts, users, user):
 @wt(parsers.parse('{user} user leaves all spaces using REST'))
 def wt_leave_users_space_in_onezone_using_rest(hosts, users, user):
     _leave_users_space_in_onezone_using_rest(hosts, users, user)
+
+
+@wt(parsers.parse('user of {browser_id} adds "{harvester_name}" harvester to '
+                  '"{space_name}" space using available harvesters '
+                  'dropdown'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def add_harvester_to_existing_space(selenium, browser_id, oz_page, space_name,
+                                    harvester_name, tmp_memory, modals):
+    option = 'Harvesters'
+    button_name = 'add one of harvesters'
+    button_in_modal = 'Add'
+    modal = 'Add one of spaces'
+    element_type = 'harvester'
+    modal_name = 'Add one of your harvesters'
+
+    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
+                                                  space_name, option, oz_page)
+
+    click_button_in_space_harvesters_page(selenium, browser_id, oz_page,
+                                          button_name)
+
+    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
+
+    choose_element_from_dropdown_in_add_element_modal(selenium, browser_id,
+                                                      harvester_name, modals,
+                                                      element_type)
+    click_modal_button(selenium, browser_id, button_in_modal, modal, modals)
+

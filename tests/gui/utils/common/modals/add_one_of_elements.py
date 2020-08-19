@@ -11,8 +11,7 @@ from .modal import Modal
 
 
 class AddOneOfElementsModal(Modal):
-    _toggle = WebElement('.dropdown-container '
-                         '.ember-basic-dropdown-trigger[role="button"]')
+    _toggle = WebElement('.ember-basic-dropdown-trigger[role="button"]')
 
     add = NamedButton('button', text='Add')
     cancel = NamedButton('button', text='Cancel')

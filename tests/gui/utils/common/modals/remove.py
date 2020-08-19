@@ -1,4 +1,5 @@
-"""Utils and fixtures to facilitate operations on remove group/user modal.
+"""Utils and fixtures to facilitate operations on remove
+group/user/storage/harvester modal.
 """
 
 __author__ = "Lukasz Niemiec"
@@ -15,4 +16,4 @@ class RemoveModal(Modal):
     remove = NamedButton('button', text='Remove')
 
     def __str__(self):
-        return 'Remove group/user/storage modal'
+        return 'Remove group/user/storage/harvester modal'
