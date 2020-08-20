@@ -66,6 +66,6 @@ def evict_file(selenium, browser_id, provider, popups, file_name, tmp_memory,
 
     data_distribution_modal = modals(driver).data_distribution
     data_distribution_modal.providers[provider_name].menu_button()
-    popups(driver).popover_menu.data_distribution_menu[menu_option]()
+    popups(driver).data_distribution_popup.menu[menu_option]()
     wt_click_on_confirmation_btn_in_modal(selenium, browser_id, confirm_button,
                                           tmp_memory)
