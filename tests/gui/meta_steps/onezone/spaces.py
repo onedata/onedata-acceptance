@@ -26,7 +26,6 @@ from tests.gui.steps.onezone.spaces import *
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
 from tests.gui.steps.onepanel.spaces import *
 from tests.gui.steps.onezone.multibrowser_spaces import *
-from tests.gui.steps.onezone.members import *
 from tests import OZ_REST_PORT
 from tests.utils.rest_utils import http_get, get_zone_rest_path, http_delete
 

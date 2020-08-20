@@ -9,10 +9,8 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-from pytest_bdd import when, then, parsers
-
 from tests.gui.conftest import WAIT_BACKEND
-from tests.utils.bdd_utils import wt
+from tests.utils.bdd_utils import wt, when, then, parsers
 from tests.utils.utils import repeat_failed
 from tests.mixed.utils.common import NoSuchClientException
 
@@ -373,14 +371,10 @@ def w_assert_space_is_supported_by_provider_in_oz(client, request, user,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>.+?) revokes '
-                 '"(?P<provider_name>.+?)" provider space support for space '
-                 'named "(?P<space_name>.+?)" in "(?P<host>.+?)" Oneprovider '
-                 'panel service'))
-@then(parsers.re('using (?P<client>.*), (?P<user>.+?) revokes '
-                 '"(?P<provider_name>.+?)" provider space support for space '
-                 'named "(?P<space_name>.+?)" in "(?P<host>.+?)" Oneprovider '
-                 'panel service'))
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) revokes '
+               '"(?P<provider_name>.+?)" provider space support for space '
+               'named "(?P<space_name>.+?)" in "(?P<host>.+?)" Oneprovider '
+               'panel service'))
 def revoke_space_support_in_op_panel(client, request, user, space_name,
                                      provider_name, host, selenium, onepanel,
                                      popups, modals, users, hosts,
@@ -537,13 +531,13 @@ def configure_sync_parameters_for_space_in_op_panel(client, request, user,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>.+?) sees that '
-                 'content for "(?P<space_name>.+?)" in "(?P<host>.+?)" '
-                 'Oneprovider service is as follow:\n(?P<config>(.|\s)*)'))
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) sees that '
+               'content for "(?P<space_name>.+?)" in "(?P<host>.+?)" '
+               'Oneprovider service is as follow:\n(?P<config>(.|\s)*)'))
 @repeat_failed(timeout=WAIT_BACKEND, interval=1.5)
 def assert_space_content_in_op(client, request, config, selenium, user,
                                op_container, tmp_memory, tmpdir, users, hosts,
-                               space_name, spaces, host, oz_page, modals):
+                               space_name, spaces, host, oz_page):
     """ Assert space has given content in provider.
 
      space content format given in yaml is as follow:
@@ -565,7 +559,7 @@ def assert_space_content_in_op(client, request, config, selenium, user,
                                                 assert_space_content_in_op_gui
         assert_space_content_in_op_gui(config, selenium, user, op_container,
                                        tmp_memory, tmpdir, space_name, oz_page,
-                                       host, hosts, modals)
+                                       host, hosts)
     elif client.lower() == 'rest':
         from tests.mixed.steps.rest.oneprovider.data import \
                                                 assert_space_content_in_op_rest
@@ -582,8 +576,8 @@ def rm_files_from_space_root_dir(src_path, space_name, tmp_memory, hosts):
     wt_rm_files_to_space_root_dir(src_path, space_name, tmp_memory, hosts)
 
 
-@when(parsers.re('using docker, user removes (?P<src_path>.+?) '
-                 'from provider\'s storage mount point'))
+@wt(parsers.re('using docker, user removes (?P<src_path>.+?) '
+               'from provider\'s storage mount point'))
 def rm_files_from_storage_mount_point(src_path, hosts):
     from tests.gui.steps.common.docker import wt_rm_files_to_storage_mount_point
     wt_rm_files_to_storage_mount_point(src_path, hosts)

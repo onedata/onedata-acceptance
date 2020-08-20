@@ -201,7 +201,7 @@ def _check_files_tree(subtree, user, tmp_memory, cwd, selenium, op_container,
 
 def assert_space_content_in_op_gui(config, selenium, user, op_container,
                                    tmp_memory, tmpdir, space_name, oz_page,
-                                   provider, hosts, modals):
+                                   provider, hosts):
     try:
         assert_file_browser_in_data_tab_in_op(selenium, user, op_container,
                                               tmp_memory)

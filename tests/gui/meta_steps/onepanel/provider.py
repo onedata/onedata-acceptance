@@ -10,18 +10,17 @@ __license__ = ("This software is released under the MIT license cited in "
 
 import yaml
 
-from tests.gui.steps.onepanel.common import *
+from tests.gui.steps.onepanel.common import (
+    wt_click_on_subitem_for_item_with_name, wt_click_on_btn_in_content,
+    wt_click_on_subitem_for_item)
 from tests.gui.steps.onepanel.provider import *
 from tests.gui.steps.common.notifies import *
 from tests.gui.steps.common.miscellaneous import *
 from tests.gui.steps.onepanel.deployment import *
 from tests.gui.steps.common.url import *
 from tests.gui.steps.onepanel.provider import (
-    wt_click_on_discard_btn_in_domain_change_modal
-)
-from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
-from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
-from tests.gui.steps.common.login import g_login_using_basic_auth
+    wt_click_on_discard_btn_in_domain_change_modal)
+from tests.utils.bdd_utils import given
 
 
 def modify_provider_with_given_name_in_op_panel_using_gui(selenium, user,
