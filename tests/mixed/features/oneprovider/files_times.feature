@@ -33,14 +33,15 @@ Feature: Files times tests
   | REST       | oneclient1 |
 
 
-   Scenario Outline: User changes file using <client2> and using <client1> sees that modification time has changed
+   Scenario Outline: User changes file using <client1> and using web GUI sees that modification time has changed
     When using <client1>, user1 succeeds to create file named "file1" in "space1" in oneprovider-1
-    And using <client2>, user1 succeeds to see item named "file1" in "space1" in oneprovider-1
+    And using <client1>, user1 succeeds to see item named "file1" in "space1" in oneprovider-1
     And user1 waits 80 second
-    And using <client2>, user1 writes "TEST TEXT ONEDATA" to file named "file1" in "space1" in oneprovider-1
-    Then using <client1>, user1 sees that modification time of item named "file1" in "space1" space is not earlier than 70 seconds ago in oneprovider-1
+    And using <client1>, user1 writes "TEST TEXT ONEDATA" to file named "file1" in "space1" in oneprovider-1
+    And using web GUI, user1 refreshes site
+    Then using web GUI, user1 sees that modification time of item named "file1" in current space is not earlier than 70 seconds ago in oneprovider-1
 
   Examples:
-  | client1   | client2    |
-  | web GUI   | REST       |
-  | web GUI   | oneclient1 |
+  | client1    |
+  | REST       |
+  | oneclient1 |

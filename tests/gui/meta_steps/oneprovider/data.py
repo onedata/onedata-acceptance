@@ -8,7 +8,8 @@ __license__ = ("This software is released under the MIT license cited in "
 
 import yaml
 
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import (NoSuchElementException,
+                                        StaleElementReferenceException)
 
 from tests.gui.steps.oneprovider.file_browser import *
 from tests.gui.steps.oneprovider.data_tab import *
@@ -34,7 +35,7 @@ def _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id, path,
     try:
         go_to_path_without_last_elem(browser_id, tmp_memory, path)
         click_menu_for_elem_in_file_browser(browser_id, item_name, tmp_memory)
-    except KeyError:
+    except (KeyError, StaleElementReferenceException):
         go_to_filebrowser(selenium, browser_id, oz_page, op_container,
                           tmp_memory, space)
         go_to_path_without_last_elem(browser_id, tmp_memory, path)
@@ -200,7 +201,7 @@ def _check_files_tree(subtree, user, tmp_memory, cwd, selenium, op_container,
 
 def assert_space_content_in_op_gui(config, selenium, user, op_container,
                                    tmp_memory, tmpdir, space_name, oz_page,
-                                   provider, hosts, modals):
+                                   provider, hosts):
     try:
         assert_file_browser_in_data_tab_in_op(selenium, user, op_container,
                                               tmp_memory)
@@ -330,7 +331,12 @@ def upload_file_to_op_gui(path, selenium, browser_id, space, res, filename,
         check_error_in_upload_presenter(selenium, browser_id, popups)
 
 
-def assert_mtime_not_earlier_than_op_gui(path, time, browser_id, tmp_memory):
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_mtime_not_earlier_than_op_gui(path, time, browser_id, tmp_memory,
+                                         selenium, op_container):
+    assert_nonempty_file_browser_in_data_tab_in_op(selenium, browser_id,
+                                                   op_container, tmp_memory,
+                                                   item_browser='file browser')
     item_name = _select_item(browser_id, tmp_memory, path)
     assert_item_in_file_browser_is_of_mdate(browser_id, item_name, time,
                                             tmp_memory)
