@@ -47,3 +47,6 @@ class ConsumerCaveat(PageObject):
     def __str__(self):
         return 'Consumer caveat popup'
 
+    def select_type(self, consumer_type):
+        self.consumer_types[consumer_type]()
+

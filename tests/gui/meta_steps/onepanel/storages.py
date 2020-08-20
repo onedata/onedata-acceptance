@@ -178,7 +178,7 @@ def _get_storage_id(storage_name, provider, hosts, onepanel_credentials):
                             auth=(onepanel_username, onepanel_password)).json()
         if storage_name == response['name']:
             return storage_id
-    raise (Exception, f'Storage {storage_name} does not exist')
+    raise Exception(f'Storage {storage_name} does not exist')
 
 
 def _add_storage_in_op_panel_using_rest(config, storage_name, provider, hosts,
