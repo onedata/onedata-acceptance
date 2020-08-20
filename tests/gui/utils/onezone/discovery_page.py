@@ -88,10 +88,10 @@ class DiscoveryPage(GenericPage):
     create_new_harvester_button = Button('.one-sidebar-toolbar-button'
                                          '.create-harvester-btn')
 
-    name = WebElement('.field-create-name')
-    plugin_selector = DropdownSelector('.ember-basic-dropdown')
-    endpoint = WebElement('.field-create-endpoint')
-    create_button = NamedButton('button', text='Create')
+    name = WebElement('.name-field .form-control')
+    plugin_selector = DropdownSelector('.type-field')
+    endpoint = WebElement('.endpoint-field .form-control')
+    create_button = NamedButton('.submit-btn', text='Create')
 
     rename_input = WebElement('.name-editor input')
     rename_button = Button('.save-icon')

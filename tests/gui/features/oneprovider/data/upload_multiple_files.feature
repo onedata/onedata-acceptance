@@ -44,7 +44,6 @@ Feature: Uploading multiple files at once
     And user of browser uses upload button from file browser menu bar to upload files from local directory "dir2" to remote current dir
     And user of browser is idle for 5 seconds
     And user of browser waits for file upload to finish
-    And user of browser sees that there are 9 items in file browser
 
     # check working of lazy loading
     And user of browser sees nonempty file browser in data tab in Oneprovider page
