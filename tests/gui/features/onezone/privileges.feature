@@ -83,10 +83,12 @@ Feature: Management of privileges in onezone GUI
           User management:
             granted: False
 
-
+# waiting for harvesters update
 #  Scenario: User successfully adds space to harvester
 #    Given user admin has no harvesters
 #    And using REST, user admin creates "harvester1", "harvester" harvester in "onezone" Onezone service
 #
 #    And user of browser1 removes "harvester1" harvester in Onezone page
 ##    And user of browser1 removes "harvester2" harvester in Onezone page
+
+#  Scenario: User successfully adds harvester to space
