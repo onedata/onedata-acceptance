@@ -150,9 +150,8 @@ Feature: Basic management of harvester in Onezone GUI
   Scenario: User sees right Invite tokens after filtering them
     Given user admin has no harvesters
     And admin user does not have access to any space
-    And using REST, user admin creates "harvester10", "harvester11" harvester in "onezone" Onezone service
+    And using REST, user admin creates ["harvester10", "harvester11"] harvester in "onezone" Onezone service
 
-    # on bamboo, after test fails once, other tokens remain. They need to be deleted
     When user of browser creates "space1" space in Onezone
     And user of browser creates "space2" space in Onezone
     And user of browser removes all tokens

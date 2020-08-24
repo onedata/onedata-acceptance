@@ -125,8 +125,8 @@ def select_acl_subject(selenium, browser_id, subject, modals):
 def assert_amount_of_acls(selenium, browser_id, modals, val: int):
     driver = selenium[browser_id]
     perm = modals(driver).edit_permissions.acl.member_permission_list
-    assert val == len(
-        perm), f'There are {len(perm)} instead of {val} ACL records'
+    assert val == len(perm), f'There are {len(perm)}' \
+                             f' instead of {val} ACL records'
 
 
 @wt(parsers.re('user of (?P<browser_id>\w+) sees that (?P<num>\w+) ACL record '
@@ -152,9 +152,8 @@ def assert_lack_of_subject(selenium, browser_id, modals, num, numerals):
     n = _get_index(selenium, browser_id, num, modals, numerals)
 
     perm = modals(selenium[browser_id]).edit_permissions.acl.permissions[n]
-    assert re.match('Select a (user|group)', perm.subject_name), ("There is "
-                                                                  "subject named {}".format(
-        perm.subject_name))
+    assert re.match('Select a (user|group)', perm.subject_name), \
+        f'There is subject named {perm.subject_name}'
 
 
 @when(parsers.re('user of (?P<browser_id>\w+) sees that subject (?P<name>name|'
@@ -221,8 +220,7 @@ def assert_set_acl_privileges(selenium, browser_id, modals, num, numerals,
         parent_permission = perm.acl_permission_group[parent_permission_name]
         if len(permissions) == 1:
             assert parent_permission.toggle.is_checked(), (
-                f'{parent_permission_name} '
-                f'should be checked')
+                f'{parent_permission_name} should be checked')
         else:
             parent_permission.expand()
             child_permission_name = permissions[1].capitalize().replace('acl',
@@ -315,5 +313,5 @@ def check_permissions_list_in_edit_permissions_modal(selenium, browser_id,
                '(?P<item_name>.*)'))
 def assert_no_access_tag_on_file(browser_id, item_name, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
-    err_msg = f'No access tag for {item_name} in file browser not visible'
+    err_msg = f'No access tag for {item_name} in file browser visible'
     assert browser.data[item_name].tag_label == "No access", err_msg
