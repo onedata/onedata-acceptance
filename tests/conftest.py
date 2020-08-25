@@ -507,8 +507,6 @@ def get_pods_config():
         pods[pod_title]['service-type'] = (
             pod_service_type if pod_service_type else pod_service_name)
 
-    import pdb
-    pdb.set_trace()
     return pods
 
 
