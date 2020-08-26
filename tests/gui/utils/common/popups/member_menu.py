@@ -17,10 +17,18 @@ class MenuItem(PageObject):
         self.click()
 
 
+class DataDistributionItem(PageObject):
+    name = id = Label('.text')
+
+    def __call__(self):
+        self.click()
+
+
 class PopoverMenu(PageObject):
     menu = WebItemsSequence('.webui-popover-content '
                             '.one-collapsible-toolbar-popover .dropdown-menu '
                             '.one-collapsible-toolbar-item', cls=MenuItem)
+    data_distribution_menu = WebItemsSequence('ul li', cls=DataDistributionItem)
     cease_support_from_providers_list_menu = Button(
         '.cease-oneprovider-support-btn')
     confirm_cancel_button = Button('.btn-danger')
