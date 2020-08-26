@@ -13,6 +13,9 @@ groups:
 
 
 users:
+  - &space_owner
+    name: space_owner
+    password: password
   - &user1
     name: user1
     password: password
@@ -22,7 +25,9 @@ users:
 
 spaces:
   - name: space1
-    user: *user1
+    user: *space_owner
+    users:
+      - user: *user1
     groups:
       - group: *group1
     supports:
@@ -30,7 +35,9 @@ spaces:
           storage_name: "nfs"
           size: '1000000000'
   - name: space2
-    user: *user1
+    user: *space_owner
+    users:
+      - user: *user1
     groups:
       - group: *group1
     supports:
