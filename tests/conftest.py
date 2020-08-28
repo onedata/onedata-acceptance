@@ -514,12 +514,8 @@ def get_pods_with_kubectl():
     cmd = ['kubectl', 'get', 'pods', '-o', 'json']
 
     master, slave = pty.openpty()
-    print('Running command: {}'.format(cmd))
     proc = sp.Popen(cmd, stdin=slave, stdout=sp.PIPE, stderr=sp.PIPE)
     output, err = proc.communicate()
-
-    sys.stdout.write(output.decode('utf-8'))
-    sys.stderr.write(err.decode('utf-8'))
 
     if proc.returncode != 0:
         raise OnenvError('Environment error.\n'
