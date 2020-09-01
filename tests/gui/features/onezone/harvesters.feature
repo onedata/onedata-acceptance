@@ -4,6 +4,8 @@ Feature: Basic management of harvester in Onezone GUI
   Background:
     Given initial users configuration in "onezone" Onezone service:
             - user1
+    And user admin has no harvesters
+    And admin user does not have access to any space
     And user opened browser window
     And user of browser opened Onezone page
     And user of browser logged as admin to Onezone service
@@ -16,8 +18,6 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser types the endpoint of deployed elasticsearch client to endpoint input field in discovery page
     And user of browser clicks on Create button in discovery page
     Then user of browser sees that "harvester1" has appeared on the harvesters list in the sidebar
-
-    And user of browser removes "harvester1" harvester in Onezone page
 
 
   Scenario: User fails to create new harvester with invalid endpoint
@@ -45,9 +45,6 @@ Feature: Basic management of harvester in Onezone GUI
 
     Then user of browser sees that "space1" has appeared on the spaces list in discovery page
 
-    And user of browser removes "harvester3" harvester in Onezone page
-    And user of browser leaves "space1" space in Onezone page
-
 
   Scenario: User successfully adds space to harvester (with invitation token)
     Given admin user does not have access to any space
@@ -71,9 +68,6 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser clicks Spaces of "harvester4" harvester in the sidebar
     And user of browser sees that "space1" has appeared on the spaces list in discovery page
 
-    And user of browser removes "harvester4" harvester in Onezone page
-    And user of browser leaves "space1" space in Onezone page
-
 
   Scenario: User successfully creates index in harvester
     When user of browser creates "harvester5" harvester in Onezone page
@@ -86,8 +80,6 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser clicks on Create button in indices page
     Then user of browser sees that "index1" has appeared on the indices list
 
-    And user of browser removes "harvester5" harvester in Onezone page
-
 
   Scenario: User successfully renames harvester
     When user of browser creates "harvester6" harvester in Onezone page
@@ -99,8 +91,6 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser confirms harvester rename using button
     Then user of browser sees that "harvester7" has appeared on the harvesters list in the sidebar
     And user of browser sees that "harvester6" has disappeared from the harvesters list in the sidebar
-
-    And user of browser removes "harvester7" harvester in Onezone page
 
 
   Scenario: User successfully leaves harvester
@@ -137,6 +127,3 @@ Feature: Basic management of harvester in Onezone GUI
     Then user of browser expands "index1" index record in indices page
     And user of browser is idle for 20 seconds
     And user of browser sees 100% progress in "index1" index harvesting
-
-    And user of browser removes "harvester9" harvester in Onezone page
-    And user of browser leaves "space1" space in Onezone page
