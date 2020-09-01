@@ -44,6 +44,7 @@ storages:
 os-config:
   cfg1: &cfg1
     users:
+      - space_owner
       - user1
       - user2
     groups:

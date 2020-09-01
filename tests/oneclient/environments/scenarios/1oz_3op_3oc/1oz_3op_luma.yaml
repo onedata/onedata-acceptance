@@ -51,6 +51,7 @@ spaces: true
 os-config:
   cfg1: &cfg1
     users:
+      - space_owner
       - joe
       - marie
       - karen

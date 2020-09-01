@@ -193,6 +193,12 @@ def refresh_site(selenium, browser_id_list):
         selenium[browser_id].refresh()
 
 
+@wt(parsers.parse('if {client} is web GUI, {user} refreshes site'))
+def if_gui_refresh_site(selenium, client, user):
+    if client == 'web GUI':
+        refresh_site(selenium, user)
+
+
 @wt(parsers.parse('user of {browser_id} refreshes webapp'))
 @repeat_failed(timeout=WAIT_FRONTEND, exceptions=AttributeError)
 def refresh_webapp(selenium, browser_id):
