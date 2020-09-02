@@ -5,7 +5,6 @@ Feature: Basic management of harvester in Onezone GUI
     Given initial users configuration in "onezone" Onezone service:
             - user1
     And user admin has no harvesters
-    And admin user does not have access to any space
     And user opened browser window
     And user of browser opened Onezone page
     And user of browser logged as admin to Onezone service
