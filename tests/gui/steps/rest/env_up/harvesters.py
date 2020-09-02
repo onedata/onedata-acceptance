@@ -52,7 +52,12 @@ def _create_harvester(zone_hostname, owner_username, owner_password,
 
 def _create_harvester_gui_index(zone_hostname, owner_username, owner_password,
                                 harvester_id):
-    index_details = {'name': 'generic-index', 'guiPluginName': 'generic-index'}
+    index_details = {'name': 'generic-index', 'guiPluginName': 'generic-index',
+                     'includeMetadata': ['json', 'xattrs', 'rdf'],
+                     'includeFileDetails': ['fileName', 'spaceId',
+                                            'metadataExistenceFlags'],
+                     'includeRejectionReason': False,
+                     'retryOnRejection': True}
     http_post(ip=zone_hostname, port=OZ_REST_PORT,
               path=get_zone_rest_path('harvesters', harvester_id, 'indices'),
               auth=(owner_username, owner_password),

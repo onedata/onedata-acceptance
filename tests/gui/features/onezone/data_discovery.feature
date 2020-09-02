@@ -71,19 +71,27 @@ Feature: Querying for data discovery in Discovery Page in Onezone GUI
 
     Then user of browser sees following files in Data discovery page:
           - dir1_1:
-              json_metadata_exists: false
+              jsonMetadataExists: false
+              rdfMetadataExists: false
+              xattrsMetadataExists: false
               spaceId: space1
           - file_xattrs:
               spaceId: space1
-              json_metadata_exists: false
+              jsonMetadataExists: false
+              rdfMetadataExists: false
+              xattrsMetadataExists: true
               xattrs:
                 author: "\"John Smith\""
                 year: 2020
           - dir1_2:
-              json_metadata_exists: false
+              jsonMetadataExists: false
+              rdfMetadataExists: false
+              xattrsMetadataExists: false
               spaceId: space2
           - file_json:
-              json_metadata_exists: true
+              jsonMetadataExists: true
+              rdfMetadataExists: false
+              xattrsMetadataExists: false
               spaceId: space2
               author: "\"Samantha Anderson\""
               year: 1998
@@ -97,10 +105,14 @@ Feature: Querying for data discovery in Discovery Page in Onezone GUI
     When user of browser opens Data Discovery page of "harvester1" harvester
     And user of browser sees following files in Data discovery page:
           - dir1_2:
-              json_metadata_exists: false
+              jsonMetadataExists: false
+              rdfMetadataExists: false
+              xattrsMetadataExists: false
               spaceId: space2
           - file_json:
-              json_metadata_exists: true
+              jsonMetadataExists: true
+              rdfMetadataExists: false
+              xattrsMetadataExists: false
               spaceId: space2
               author: "\"Samantha Anderson\""
               year: 1998
@@ -113,19 +125,27 @@ Feature: Querying for data discovery in Discovery Page in Onezone GUI
     And user of browser opens Data Discovery page of "harvester1" harvester
     Then user of browser sees following files in Data discovery page:
           - dir1_1:
-              json_metadata_exists: false
+              jsonMetadataExists: false
+              rdfMetadataExists: false
+              xattrsMetadataExists: false
               spaceId: space1
           - file_xattrs:
               spaceId: space1
-              json_metadata_exists: false
+              jsonMetadataExists: false
+              rdfMetadataExists: false
+              xattrsMetadataExists: true
               xattrs:
                 author: "\"John Smith\""
                 year: 2020
           - dir1_2:
-              json_metadata_exists: false
+              jsonMetadataExists: false
+              rdfMetadataExists: false
+              xattrsMetadataExists: false
               spaceId: space2
           - file_json:
-              json_metadata_exists: true
+              jsonMetadataExists: true
+              rdfMetadataExists: false
+              xattrsMetadataExists: false
               spaceId: space2
               author: "\"Samantha Anderson\""
               year: 1998
@@ -139,32 +159,43 @@ Feature: Querying for data discovery in Discovery Page in Onezone GUI
     When user of browser opens Data Discovery page of "harvester1" harvester
     And user of browser sees following files in Data discovery page:
           - dir1_2:
-              json_metadata_exists: false
+              jsonMetadataExists: false
+              rdfMetadataExists: false
+              xattrsMetadataExists: false
               spaceId: space2
           - file_json:
-              json_metadata_exists: true
+              jsonMetadataExists: true
+              rdfMetadataExists: false
+              xattrsMetadataExists: false
               spaceId: space2
               author: "\"Samantha Anderson\""
               year: 1998
           - spaces:
             - space2
 
-    # upload and add metadata to file in space3
-    And user of browser uploads "20B-0.txt" to the root directory of "space3"
+    # upload and add metadata to file in space2
+    And user of browser uploads "20B-0.txt" to the root directory of "space2"
     And user of browser succeeds to write "20B-0.txt" file basic metadata: "author=John Doe" in "space2"
     And user of browser is idle for 20 seconds
 
     And user of browser opens Data Discovery page of "harvester1" harvester
     Then user of browser sees following files in Data discovery page:
           - dir1_2:
-              json_metadata_exists: false
+              jsonMetadataExists: false
+              rdfMetadataExists: false
+              xattrsMetadataExists: false
               spaceId: space2
           - file_json:
-              json_metadata_exists: true
+              jsonMetadataExists: true
+              rdfMetadataExists: false
+              xattrsMetadataExists: false
               spaceId: space2
               author: "\"Samantha Anderson\""
               year: 1998
           - 20B-0.txt:
+              jsonMetadataExists: false
+              rdfMetadataExists: false
+              xattrsMetadataExists: true
               xattrs:
                 author: "\"John Doe\""
           - spaces:
@@ -176,10 +207,14 @@ Feature: Querying for data discovery in Discovery Page in Onezone GUI
     When user of browser opens Data Discovery page of "harvester1" harvester
     And user of browser sees following files in Data discovery page:
           - dir1_2:
-              json_metadata_exists: false
+              jsonMetadataExists: false
+              rdfMetadataExists: false
+              xattrsMetadataExists: false
               spaceId: space2
           - file_json:
-              json_metadata_exists: true
+              jsonMetadataExists: true
+              rdfMetadataExists: false
+              xattrsMetadataExists: false
               spaceId: space2
               author: "\"Samantha Anderson\""
               year: 1998
@@ -188,13 +223,15 @@ Feature: Querying for data discovery in Discovery Page in Onezone GUI
 
     # delete file from "space2"
     And user of browser opens file browser for "space2" space
-    And user of browser succeeds to remove "dir1_2/file_json" in "space1"
+    And user of browser succeeds to remove "dir1_2/file_json" in "space2"
     And user of browser is idle for 5 seconds
 
     And user of browser opens Data Discovery page of "harvester1" harvester
     Then user of browser sees following files in Data discovery page:
           - dir1_2:
-              json_metadata_exists: false
+              jsonMetadataExists: false
+              rdfMetadataExists: false
+              xattrsMetadataExists: false
               spaceId: space2
           - spaces:
             - space2
@@ -205,11 +242,15 @@ Feature: Querying for data discovery in Discovery Page in Onezone GUI
     When user of browser opens Data Discovery page of "harvester1" harvester
     And user of browser sees following files in Data discovery page:
           - dir1_1:
-              json_metadata_exists: false
+              jsonMetadataExists: false
+              rdfMetadataExists: false
+              xattrsMetadataExists: false
               spaceId: space1
           - file_xattrs:
               spaceId: space1
-              json_metadata_exists: false
+              jsonMetadataExists: false
+              rdfMetadataExists: false
+              xattrsMetadataExists: true
               xattrs:
                 author: "\"John Smith\""
                 year: 2020
@@ -222,11 +263,15 @@ Feature: Querying for data discovery in Discovery Page in Onezone GUI
     And user of browser opens Data Discovery page of "harvester1" harvester
     Then user of browser sees following files in Data discovery page:
           - dir1_1:
-              json_metadata_exists: false
+              jsonMetadataExists: false
+              rdfMetadataExists: false
+              xattrsMetadataExists: false
               spaceId: space1
           - file_xattrs:
               spaceId: space1
-              json_metadata_exists: false
+              jsonMetadataExists: false
+              rdfMetadataExists: false
+              xattrsMetadataExists: true
               xattrs:
                 year: 2020
                 unexpected:
@@ -240,10 +285,14 @@ Feature: Querying for data discovery in Discovery Page in Onezone GUI
     When user of browser opens Data Discovery page of "harvester1" harvester
     And user of browser sees following files in Data discovery page:
           - dir1_2:
-              json_metadata_exists: false
+              jsonMetadataExists: false
+              rdfMetadataExists: false
+              xattrsMetadataExists: false
               spaceId: space2
           - file_json:
-              json_metadata_exists: true
+              jsonMetadataExists: true
+              rdfMetadataExists: false
+              xattrsMetadataExists: false
               spaceId: space2
               author: "\"Samantha Anderson\""
               year: 1998
@@ -261,10 +310,14 @@ Feature: Querying for data discovery in Discovery Page in Onezone GUI
     And user of browser sees Data Discovery page
     And user of browser sees following files in Data discovery page:
           - dir1_2:
-              json_metadata_exists: false
+              jsonMetadataExists: false
+              rdfMetadataExists: false
+              xattrsMetadataExists: false
               spaceId: space2
           - file_json:
-              json_metadata_exists: true
+              jsonMetadataExists: true
+              rdfMetadataExists: false
+              xattrsMetadataExists: false
               spaceId: space2
               author: "\"Samantha Anderson\""
               year: 1998
@@ -277,13 +330,9 @@ Feature: Querying for data discovery in Discovery Page in Onezone GUI
     When user of browser opens Data Discovery page of "harvester1" harvester
     And user of browser sees following files in Data discovery page:
           - dir1_2:
-              json_metadata_exists: false
               spaceId: space2
           - file_json:
-              json_metadata_exists: true
               spaceId: space2
-              author: "\"Samantha Anderson\""
-              year: 1998
           - dir1_3:
               spaceId: space3
           - file1_3:
