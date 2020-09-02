@@ -9,12 +9,13 @@ __license__ = ("This software is released under the MIT license cited in "
 
 import time
 from tests.gui.steps.modal import assert_error_modal_with_text_appeared
-from tests.gui.steps.onepanel.common import *
 from tests.gui.steps.common.notifies import *
+from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
 from tests.gui.steps.onepanel.spaces import *
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests import OP_REST_PORT
+from tests.utils.bdd_utils import given
 from tests.utils.rest_utils import http_get, get_panel_rest_path, http_delete
 
 

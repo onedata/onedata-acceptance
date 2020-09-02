@@ -26,6 +26,7 @@ class _FileBrowser(PageObject):
     breadcrumbs = Breadcrumbs('.fb-breadcrumbs')
     new_directory_button = Button('.toolbar-buttons .file-action-newDirectory')
     upload_files_button = Button('.toolbar-buttons .browser-upload')
+    refresh_button = Button('.toolbar-buttons .file-action-refresh')
     selection_menu_button = Button('.fb-selection-toolkit .oneicon-arrow-down')
 
     data = WebItemsSequence('.data-row.fb-table-row', cls=DataRow)

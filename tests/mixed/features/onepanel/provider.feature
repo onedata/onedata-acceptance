@@ -27,7 +27,7 @@ Feature: Provider management in Onepanel
     When using web GUI, user1 refreshes site
     And using <client2>, user1 sees provider "oneprovider-1" with hostname matches that of "oneprovider-1" provider in "onezone" Onezone service
     And using <client1>, onepanel modifies provider "oneprovider-1" changing his name to "pro1" and domain to test domain in "oneprovider-1" Oneprovider panel service
-    And using <client2>, user1 is idle for 8 seconds
+    And user is idle for 8 seconds
     Then using <client2>, user1 sees provider named "pro1" with test hostname of provider "oneprovider-1" in "onezone" Onezone service
     And using <client1>, onepanel modifies provider named "pro1" changing his name and domain to match that of "oneprovider-1" provider in "oneprovider-1" Oneprovider panel service
 
@@ -37,7 +37,7 @@ Feature: Provider management in Onepanel
     When using web GUI, user1 refreshes site
     And using <client2>, user1 sees provider "oneprovider-1" with hostname matches that of "oneprovider-1" provider in "onezone" Onezone service
     And using <client1>, onepanel deregisters provider in "oneprovider-1" Oneprovider panel service
-    And using <client2>, user1 is idle for 8 seconds
+    And user is idle for 8 seconds
     Then using <client2>, user1 sees that provider "oneprovider-1" has been deregistered in "onezone" Onezone service
     And using <client1>, user1 sends copied invite token to onepanel user in "onezone" Onezone service
     And using <client1>, onepanel registers provider in "onezone" Onezone service with following configuration:

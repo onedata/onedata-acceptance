@@ -78,10 +78,8 @@ from tests.utils.acceptance_utils import *
 
 @pytest.fixture(scope='module')
 def screens():
-    return [0, 1]
+    return [0]
 
 
-scenarios('../features/oneprovider/multiprovider/basic.feature')
 scenarios('../features/oneprovider/multiprovider/cdmi.feature')
-scenarios('../features/oneprovider/multiprovider/auto_cleaning.feature')
 scenarios('../features/oneprovider/multiprovider/upload_files.feature')

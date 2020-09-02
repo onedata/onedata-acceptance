@@ -51,20 +51,25 @@ from tests.gui.conftest import *
 from tests.gui.meta_steps.onepanel.account_management import *
 from tests.gui.meta_steps.onepanel.provider import *
 from tests.gui.meta_steps.onepanel.spaces import *
+from tests.gui.meta_steps.onepanel.storages import *
+
 from tests.gui.meta_steps.onezone.common import *
+from tests.gui.meta_steps.onezone.spaces import *
 
 from tests.mixed.steps.onepanel_basic import *
 from tests.mixed.steps.space_basic import *
 from tests.mixed.utils.common import *
 
 
-scenarios('../features/onepanel/spaces.feature')
-# TODO: change test because of a new gui
-# scenarios('../features/onepanel/storage_sync.feature')
-scenarios('../features/onepanel/provider.feature')
-
-
 @fixture(scope='module')
 def screens():
     return [0, 1]
+
+
+scenarios('../features/onepanel/spaces.feature')
+scenarios('../features/onepanel/storage_sync.feature')
+scenarios('../features/onepanel/provider.feature')
+
+
+
 

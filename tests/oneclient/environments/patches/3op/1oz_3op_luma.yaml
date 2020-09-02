@@ -73,6 +73,9 @@ alpha_group: &group_alpha
 
 
 users: &all_users
+  - &space_owner
+    name: space_owner
+    password: password
   - &user_rob
     name: rob
     idps:
@@ -190,8 +193,9 @@ groups_graph:
 spaces:
   # Luma enabled spaces
   - name: "krk-pl-par-c"
-    user: *user_rob
+    user: *space_owner
     users:
+      - user: *user_rob
       - user: *user_karen
         privileges: *all_space_privileges
     groups:
@@ -214,8 +218,9 @@ spaces:
         storage_name: "ceph"
         size: '1073741824'
   - name: "krk-plirw-par-c"
-    user: *user_rob
+    user: *space_owner
     users:
+      - user: *user_rob
       - user: *user_karen
         privileges: *all_space_privileges
     groups:
