@@ -6,13 +6,15 @@ __copyright__ = "Copyright (C) 2016-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-
 import os
+import pty
 import re
 import subprocess as sp
+import sys
 
 import yaml
 import pytest
+import json
 
 from environment import docker
 from tests.utils.path_utils import (get_file_name, absolute_path_to_env_file,
@@ -96,8 +98,8 @@ def pytest_generate_tests(metafunc):
                 metafunc.parametrize('env_description_file', [env_file],
                                      scope='session')
             else:
-                metafunc.parametrize('env_description_file',
-                                     [default_env_file], scope='session')
+                metafunc.parametrize('env_description_file', [default_env_file],
+                                     scope='session')
 
         elif test_type in ['oneclient', 'performance']:
             env_file = metafunc.config.getoption('env_file')
@@ -200,6 +202,7 @@ def parse_oz_op_cfg(pod_name, pod_cfg, service_type, add_test_domain, hosts,
                                         pod_cfg.get('domain'),
                                         pod_cfg.get('ip'),
                                         pod_cfg.get('container-id'))
+
     hosts[alias] = {'pod-name': pod_name,
                     'service-type': service_type,
                     'name': name,
@@ -250,7 +253,7 @@ def parse_hosts_cfg(pods_cfg, hosts, request):
 
         elif service_type == 'oneclient':
             parse_client_cfg(pod_name, pod_cfg, hosts)
-        elif service_type == 'client':
+        elif service_type == 'elasticsearch':
             parse_elasticsearch_cfg(pod_cfg, hosts)
 
 
@@ -310,8 +313,7 @@ def _check_if_should_start_new_env(env_description_abs_path, previous_env):
 
 
 @pytest.fixture(scope='module', autouse=True)
-def env_desc(env_description_abs_path, hosts, request, users,
-             previous_env):
+def env_desc(env_description_abs_path, hosts, request, users, previous_env):
     """
     Sets up environment and returns environment description.
     """
@@ -324,8 +326,7 @@ def env_desc(env_description_abs_path, hosts, request, users,
         if start_env:
             previous_env['started'] = start_environment(
                 env_description_abs_path, request, hosts, '', users,
-                env_description_abs_path
-            )
+                env_description_abs_path)
         return ''
 
     elif test_type == 'mixed':
@@ -374,7 +375,8 @@ def parse_up_args(request, scenario_path):
     sources = request.config.getoption('--sources')
     timeout = request.config.getoption('--timeout')
     local_charts_path = request.config.getoption('--local-charts-path')
-    pull_only_missing_images = request.config.getoption('--pull-only-missing-images')
+    pull_only_missing_images = request.config.getoption(
+        '--pull-only-missing-images')
 
     gui_pkg_verification = request.config.getoption('--gui-pkg-verification')
 
@@ -441,8 +443,8 @@ def update_etc_hosts():
     sp.call(['sudo', 'cp', tmp_hosts_path, etc_hosts_path])
 
 
-def start_environment(scenario_path, request, hosts, patch_path,
-                      users, env_description_abs_path):
+def start_environment(scenario_path, request, hosts, patch_path, users,
+                      env_description_abs_path):
     attempts = 0
     clean = False if request.config.getoption('--no-clean') else True
     local = request.config.getoption('--local')
@@ -457,7 +459,8 @@ def start_environment(scenario_path, request, hosts, patch_path,
             if clean:
                 run_onenv_command('up', up_args)
                 run_onenv_command('wait', wait_args)
-            pods_cfg = check_deployment()
+            check_deployment()
+            pods_cfg = get_pods_config()
 
             if not local:
                 update_etc_hosts()
@@ -483,21 +486,59 @@ def start_environment(scenario_path, request, hosts, patch_path,
                 clean_env()
 
 
+def get_pods_config():
+    pods_json = get_pods_with_kubectl()['items']
+    pods = {}
+    for pod in pods_json:
+        pod_data = pod['metadata']
+        pod_title = pod_data['name']
+        pod_name = pod_data['labels']['app']
+        pod_service_type = pod_data['labels'].get('component', None)
+        pod_service_name = pod_data['labels'].get('chart', None)
+        pod_namespace = pod_data['namespace']
+        pod_ip = pod['status']['podIP']
+        pod_container_id = pod['status']['containerStatuses'][0]['containerID']
+        pod_container_id = pod_container_id.replace('docker://', '')
+
+        pods[pod_title] = {'name': pod_name, 'ip': pod_ip,
+                           'container-id': pod_container_id}
+
+        pod_domain = f'{pod_name}.{pod_namespace}.svc.cluster.local'
+        pod_hostname = f'{pod_title}.{pod_domain}'
+
+        pods[pod_title]['domain'] = pod_domain
+        pods[pod_title]['hostname'] = pod_hostname
+
+        pods[pod_title]['service-type'] = (
+            pod_service_type if pod_service_type else pod_service_name)
+
+    return pods
+
+
+def get_pods_with_kubectl():
+    cmd = ['kubectl', 'get', 'pods', '-o', 'json']
+
+    master, slave = pty.openpty()
+    proc = sp.Popen(cmd, stdin=slave, stdout=sp.PIPE, stderr=sp.PIPE)
+    output, err = proc.communicate()
+
+    if proc.returncode != 0:
+        raise OnenvError('Environment error.\n'
+                         'Command: {} failed.\n'
+                         'Captured output: {}'.format(cmd, output))
+
+    return json.loads(output)
+
+
 def check_deployment():
     status_output = run_onenv_command('status')
     status_output = yaml.load(status_output.decode('utf-8'))
 
     env_ready = status_output.get('ready')
-    pods_cfg = status_output['pods']
 
     if not env_ready:
         raise OnenvError('Environment error: timeout while waiting for '
                          'deployment to be ready.')
-    if not pods_cfg:
-        raise OnenvError('Environment error: could not get deployment '
-                         'configuration.')
-
-    return pods_cfg
 
 
 def handle_env_init_error(request, env_description_abs_path, error_msg):

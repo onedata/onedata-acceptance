@@ -82,22 +82,7 @@ scenarios('../features/onezone/login_page.feature')
 scenarios('../features/onezone/user_account_manage.feature')
 scenarios('../features/onezone/providers.feature')
 scenarios('../features/onezone/providers_multibrowser.feature')
-scenarios('../features/onezone/tokens_basic.feature')
-scenarios('../features/onezone/invite_tokens.feature')
 scenarios('../features/onezone/full_name.feature')
-
-scenarios('../features/onezone/groups/groups_creation.feature')
-scenarios('../features/onezone/groups/groups_basic_operations.feature')
-scenarios('../features/onezone/groups/groups_join.feature')
-scenarios('../features/onezone/groups/'
-          'groups_multiple_users_with_single_group.feature')
-scenarios('../features/onezone/groups/groups_subgroup.feature')
-scenarios('../features/onezone/groups/'
-          'groups_multiple_users_with_multiple_groups.feature')
-scenarios('../features/onezone/groups/groups_hierarchy.feature')
-scenarios('../features/onezone/groups/groups_memberships.feature')
-scenarios('../features/onezone/groups/groups_memberships_multibrowser.feature')
-scenarios('../features/onezone/groups/groups_memberships_privileges.feature')
 
 # THIS SCENARIO HAS TO BE EXECUTED IN THE END
 scenarios('../features/onezone/delete_account.feature')

@@ -24,14 +24,14 @@ from tests.mixed.utils.common import *
 from tests.gui.utils.generic import parse_seq
 from tests.mixed.cdmi_client import ContainerApi, DataObjectApi
 from tests.mixed.oneprovider_client import BasicFileOperationsApi
-from tests.mixed.oneprovider_client import ResolveFilePathApi
+from tests.mixed.oneprovider_client import FilePathResolutionApi
 from tests.mixed.cdmi_client.rest import ApiException as CdmiException
 from tests.mixed.oneprovider_client.rest import ApiException as OPException
 from tests.utils.acceptance_utils import time_attr, compare
 
 
 def _lookup_file_id(path, user_client_op):
-    resolve_file_path_api = ResolveFilePathApi(user_client_op)
+    resolve_file_path_api = FilePathResolutionApi(user_client_op)
     file_id = resolve_file_path_api.lookup_file_id(path).file_id
     return file_id
 
@@ -279,9 +279,8 @@ def assert_posix_permissions_in_op_rest(path, perms, user, users, host, hosts):
     file_api = BasicFileOperationsApi(user_client_op)
     file_id = _lookup_file_id(path, user_client_op)
     file_attrs = file_api.get_attrs(file_id, attribute='mode')
-
     try:
-        file_perms = int(file_attrs['mode']) % 1000
+        file_perms = int(file_attrs.mode) % 1000
     except KeyError:
         assert False, 'File {} has no mode metadata'.format(path)
 

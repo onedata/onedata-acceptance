@@ -17,6 +17,7 @@ from .toolbar import ToolbarPopup
 from .deregister_provider import DeregisterProvider
 from .member_menu import PopoverMenu
 from .delete_account_menu import UserDeleteAccountPopoverMenu
+from .data_distribution_popup import DataDistributionPopup
 
 
 class Popups(object):
@@ -36,6 +37,7 @@ class Popups(object):
                                                cls=UserDeleteAccountPopoverMenu)
     query_builder_popup = WebItem('.query-builder-block-selector',
                                   cls=QueryBuilderPopup)
+    data_distribution_popup = WebItem('.webui-popover.in', cls=DataDistributionPopup)
 
     def __init__(self, driver):
         self.driver = self.web_elem = driver

@@ -13,6 +13,9 @@ groups:
     
     
 users:
+  - &space_owner
+    name: space_owner
+    password: password
   - &user1
     name: user1
     password: password
@@ -27,9 +30,10 @@ users:
 
 spaces:
   - name: space1
-    user: *user1
+    user: *space_owner
     users:
-        - user: *user2
+      - user: *user1
+      - user: *user2
     groups: 
       - group: *group1
     supports:

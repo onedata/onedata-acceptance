@@ -28,7 +28,6 @@ Feature: Directories multiclient tests
       on client_hosts [oneclient-1, oneclient-2] respectively,
       using [token, token] by [user1, user2]
     And opened browser with [user1, user2] signed in to [onezone, onezone] service
-    And opened [oneprovider-1, oneprovider-1] Oneprovider view in web GUI by [user1, user2]
 
 
   Scenario Outline: User1 creates directory using <client1> and user2 removes it using <client2>
