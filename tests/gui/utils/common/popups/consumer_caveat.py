@@ -57,8 +57,3 @@ class ConsumerCaveat(PageObject):
         button = getattr(self, f'{consumer_type}_consumer')
         time.sleep(1)
         button()
-
-
-
-
-
