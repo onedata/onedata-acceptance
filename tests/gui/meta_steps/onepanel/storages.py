@@ -168,11 +168,12 @@ def _get_storage_id(storage_name, provider, hosts, onepanel_credentials):
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password
 
-    ids = http_get(ip=provider_hostname, port=PANEL_REST_PORT,
-                   path=get_panel_rest_path('provider', 'storages'),
-                   auth=(onepanel_username, onepanel_password)).json()['ids']
+    storage_ids = http_get(ip=provider_hostname, port=PANEL_REST_PORT,
+                           path=get_panel_rest_path('provider', 'storages'),
+                           auth=(onepanel_username, onepanel_password)
+                           ).json()['ids']
 
-    for storage_id in ids:
+    for storage_id in storage_ids:
         response = http_get(ip=provider_hostname, port=PANEL_REST_PORT,
                             path=get_panel_rest_path('provider', 'storages',
                                                      storage_id),

@@ -55,5 +55,5 @@ class ConsumerCaveat(PageObject):
 
     def select_type(self, consumer_type):
         button = getattr(self, f'{consumer_type}_consumer')
-        time.sleep(1)
+        time.sleep(0.3)
         button()
