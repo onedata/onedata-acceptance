@@ -7,6 +7,8 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import time
+
 from pytest_bdd import given
 
 from tests.gui.meta_steps.onezone.tokens import (
@@ -18,13 +20,15 @@ from tests.gui.steps.modal import (close_modal, click_modal_button,
                                    click_on_button_in_active_modal)
 from tests.gui.steps.onezone.discovery import (
     choose_element_from_dropdown_in_add_element_modal)
+from tests.gui.steps.onezone.members import (
+    click_on_option_in_members_list_menu, copy_token_from_modal,
+    assert_member_is_in_parent_members_list)
 from tests.gui.steps.onezone.groups import (
     click_on_option_of_group_on_left_sidebar_menu)
 from tests.gui.steps.onezone.spaces import *
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
 from tests.gui.steps.onepanel.spaces import *
 from tests.gui.steps.onezone.multibrowser_spaces import *
-from tests.gui.steps.onezone.members import *
 from tests import OZ_REST_PORT
 from tests.utils.rest_utils import http_get, get_zone_rest_path, http_delete
 
@@ -45,8 +49,7 @@ def create_spaces_in_oz_using_gui(selenium, user, oz_page, space_list):
 @wt(parsers.parse('user of {user} sends support token for "{space_name}" '
                   'to user of {browser_id}'))
 def send_support_token_in_oz_using_gui(selenium, user, space_name, browser_id,
-                                       oz_page, tmp_memory, displays,
-                                       clipboard):
+                                       oz_page, tmp_memory, displays, clipboard):
     option = 'spaces'
     where = 'Providers'
     item_type = 'token'
@@ -64,7 +67,8 @@ def send_support_token_in_oz_using_gui(selenium, user, space_name, browser_id,
 @wt(parsers.re('user of (?P<user>.*) leaves "(?P<space_list>.+?)" spaces? '
                'in Onezone page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def leave_spaces_in_oz_using_gui(selenium, user, space_list, oz_page, popups):
+def leave_spaces_in_oz_using_gui(selenium, user, space_list, oz_page,
+                                 popups, modals):
     where = 'spaces'
     option = 'Leave space'
     confirmation_button = 'yes'
@@ -103,7 +107,7 @@ def rename_spaces_in_oz_using_gui(selenium, user, oz_page, space_list,
 
 def remove_provider_support_for_space_in_oz_using_gui(selenium, user,
                                                       space_name, onepanel,
-                                                      popups, hosts):
+                                                      popups, hosts, modals):
     sidebar = 'CLUSTERS'
     record = 'Spaces'
     option = 'Revoke space support'
@@ -128,7 +132,7 @@ def remove_provider_support_for_space_in_oz_using_gui(selenium, user,
 def invite_other_users_to_space_using_gui(selenium, user,
                                           space_name, user_list,
                                           oz_page, tmp_memory, displays,
-                                          clipboard, onepanel, popups):
+                                          clipboard, onepanel, popups, modals):
     option = 'spaces'
     option_in_space = 'Members'
     button = 'Invite user using token'
@@ -257,14 +261,15 @@ def assert_space_is_supported_by_provider_in_oz_gui(selenium, user, oz_page,
 
 @given(parsers.parse('there is no "{space_name}" space in Onezone used '
                      'by user of {browser_id}'))
-def leave_space_in_onezone(selenium, browser_id, space_name, oz_page, popups):
+def leave_space_in_onezone(selenium, browser_id, space_name, oz_page, popups,
+                           modals):
     option = 'Data'
 
     click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
     time.sleep(2)
     try:
         leave_spaces_in_oz_using_gui(selenium, browser_id, space_name,
-                                     oz_page, popups)
+                                     oz_page, popups, modals)
     except RuntimeError:
         pass
 

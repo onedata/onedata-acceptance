@@ -88,7 +88,7 @@ class Client:
                 self.rpyc_connection = rpyc.classic.connect(self.ip, port)
 
                 get_pid_cmd = ' | '.join(
-                    ['ps u -u root', 'grep "rpyc_classic.py"',
+                    ['ps aux', 'grep "rpyc_classic.py"',
                      'grep -v "grep"', 'awk \'{print $2}\'']
                 )
 
@@ -116,8 +116,10 @@ class Client:
 
     def stop_rpyc_server(self):
         if self.rpyc_server_pid:
-            kill(self, self.rpyc_server_pid)
+            for pid in self.rpyc_server_pid.split():
+                kill(self, pid)
             self.rpyc_server_pid = None
+
 
     def perform(self, condition, timeout=None):
         if timeout is None:
@@ -166,6 +168,7 @@ def mount_users(clients, user_names, mount_paths, client_hosts,
                 client_instances, tokens, hosts, request, users, env_desc):
     params = zip(user_names, mount_paths, client_instances, client_hosts,
                  tokens)
+
     for i, (username, mount_path, client_instance, client_host,
             token) in enumerate(params):
         user = users.get(username)

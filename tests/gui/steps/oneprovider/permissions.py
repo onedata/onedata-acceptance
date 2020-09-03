@@ -37,7 +37,6 @@ def select_permission_type(selenium, browser_id, permission_type, modals):
 
 @wt(parsers.parse('user of {browser_id} sees that current permission is '
                   '"{perm}"'))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def check_permission(selenium, browser_id, perm, modals):
     perm_value = modals(selenium[browser_id]).edit_permissions.posix.value
     assert perm_value == perm, ('POSIX permission value {} instead of'

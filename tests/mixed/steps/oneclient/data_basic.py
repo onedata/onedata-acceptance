@@ -159,6 +159,8 @@ def assert_metadata_in_op_oneclient(attr_val, attr_type, path, user, users,
 
 
 def remove_all_metadata_in_op_oneclient(user, users, host, path):
+    multi_file_steps.remove_xattr(user, path, 'onedata_rdf', host, users)
+    multi_file_steps.remove_xattr(user, path, 'onedata_json', host, users)
     multi_file_steps.remove_all_xattr(user, path, host, users)
 
 

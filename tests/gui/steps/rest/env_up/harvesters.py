@@ -21,7 +21,7 @@ from tests.utils.rest_utils import (
 def create_harvesters_rest(user, harvesters_list, service, hosts, users):
     zone_hostname = hosts[service]['hostname']
     owner = users[user]
-    plugin = 'elasticsearch_plugin'
+    plugin = 'elasticsearch_harvesting_backend'
     endpoint = f'{hosts["elasticsearch"]["ip"]}:{ELASTICSEARCH_PORT}'
 
     for harvester in parse_seq(harvesters_list):
@@ -31,8 +31,9 @@ def create_harvesters_rest(user, harvesters_list, service, hosts, users):
 
 def _create_harvester(zone_hostname, owner_username, owner_password,
                       harvester_name, endpoint, plugin):
-    harvester_details = {'name': harvester_name, 'endpoint': endpoint,
-                         'plugin': plugin}
+    harvester_details = {'name': harvester_name,
+                         'harvestingBackendEndpoint': endpoint,
+                         'harvestingBackendType': plugin}
     http_post(ip=zone_hostname, port=OZ_REST_PORT,
               path=get_zone_rest_path('user', 'harvesters'),
               auth=(owner_username, owner_password),

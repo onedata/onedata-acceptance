@@ -23,6 +23,7 @@ from tests.gui.steps.common.local_file_system import *
 from tests.gui.steps.common.notifies import *
 from tests.gui.steps.common.miscellaneous import *
 from tests.gui.steps.common.login import *
+from tests.gui.steps.common.docker import *
 
 from tests.gui.steps.common import *
 from tests.gui.steps.modal import *
@@ -48,8 +49,8 @@ from tests.gui.meta_steps.oneprovider.common import *
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
 from tests.gui.meta_steps.onezone.common import *
-from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.oneprovider.transfers import *
+from tests.gui.meta_steps.oneprovider.data import *
 
 from tests.utils.acceptance_utils import *
 
