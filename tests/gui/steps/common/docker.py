@@ -147,7 +147,6 @@ def pause_elasticsearch_container(hosts):
 
 @wt(parsers.parse('elasticsearch plugin starts working'))
 def unpause_elasticsearch_container(hosts):
-    unpause_cmd = ['docker', 'start']
+    unpause_cmd = ['docker', 'unpause']
     container_id = hosts['elasticsearch']['container-id']
-    time.sleep(5)
     subprocess.call(unpause_cmd + [container_id])
