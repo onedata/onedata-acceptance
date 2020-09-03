@@ -71,6 +71,7 @@ from tests.gui.meta_steps.oneprovider.common import *
 
 from tests.utils.acceptance_utils import *
 from tests.mixed.steps.space_basic import *
+from tests.mixed.steps.group_basic import *
 
 
 @fixture(scope='module')
@@ -78,12 +79,12 @@ def screens():
     return [0, 1]
 
 
-scenarios('../features/onezone/login_page.feature')
-scenarios('../features/onezone/user_account_manage.feature')
-scenarios('../features/onezone/providers.feature')
-scenarios('../features/onezone/providers_multibrowser.feature')
-scenarios('../features/onezone/full_name.feature')
+# scenarios('../features/onezone/login_page.feature')
+# scenarios('../features/onezone/user_account_manage.feature')
+# scenarios('../features/onezone/providers.feature')
+# scenarios('../features/onezone/providers_multibrowser.feature')
+# scenarios('../features/onezone/full_name.feature')
 scenarios('../features/onezone/privileges.feature')
 
 # THIS SCENARIO HAS TO BE EXECUTED IN THE END
-scenarios('../features/onezone/delete_account.feature')
+# scenarios('../features/onezone/delete_account.feature')

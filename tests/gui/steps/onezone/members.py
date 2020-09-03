@@ -483,6 +483,8 @@ def set_privileges_in_members_subpage_on_modal(selenium, browser_id, config,
 def assert_privileges_in_members_subpage(selenium, browser_id, member_name,
                                          member_type, where, config, onepanel,
                                          oz_page):
+    # import pdb
+    # pdb.set_trace()
     member_type = member_type + 's'
 
     privileges = yaml.load(config)
