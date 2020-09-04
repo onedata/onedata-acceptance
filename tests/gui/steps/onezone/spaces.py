@@ -199,6 +199,29 @@ def assert_size_of_space_on_left_sidebar_menu(selenium, browser_id, number,
                              .format(space_name, number))
 
 
+def _get_subpage_name(subpage):
+    return transform(subpage) + '_page'
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) clicks "(?P<provider>.*)" '
+               'provider icon on the map on (?P<page>overview|providers) data '
+               'page'))
+def click_provider_on_the_map_on_data_page(selenium, browser_id, provider,
+                                           oz_page, page, hosts):
+    driver = selenium[browser_id]
+    current_page = getattr(oz_page(driver)['data'], _get_subpage_name(page))
+    provider_name = hosts[provider]['name']
+    current_page.map.click_provider(provider_name, driver)
+
+
+@wt(parsers.re('user of (?P<browser_id>.*?) clicks the map on '
+               '(?P<space_name>.*) space (?P<page>overview|providers) data '
+               'page'))
+def click_the_map_on_data_page(selenium, browser_id, oz_page, page, space_name):
+    driver = selenium[browser_id]
+    getattr(oz_page(driver)['data'], _get_subpage_name(page)).map()
+
+
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks '
                '(?P<option>Overview|Data|Shares|Transfers|Providers|Members|'
                'Harvesters) of "(?P<space_name>.*?)" in the sidebar'))
@@ -210,6 +233,22 @@ def click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
     oz_page(driver)['data'].spaces_header_list[space_name].click()
     getattr(oz_page(driver)['data'].elements_list[space_name],
             transform(option)).click()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) sees (?P<correct_number>.*) '
+               'providers? on the map on (?P<space_name>.*) '
+               'space (?P<page>.*) data page'))
+def check_number_of_providers_on_the_map_on_data_page(selenium, browser_id,
+                                                      correct_number,
+                                                      space_name, page,
+                                                      oz_page):
+    if correct_number == 'no':
+        correct_number = 0
+    driver = selenium[browser_id]
+    current_page = getattr(oz_page(driver)['data'], _get_subpage_name(page))
+    number_providers = len(current_page.map.providers)
+    error_msg = f'found {number_providers} instead of {correct_number}'
+    assert number_providers == int(correct_number), error_msg
 
 
 @wt(parsers.parse('user of {browser_id} clicks Get started in data sidebar'))

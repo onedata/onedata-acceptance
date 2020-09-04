@@ -20,7 +20,7 @@ def check_call_with_logging(cmd):
         sp.check_call(cmd)
     except sp.CalledProcessError as e:
         logging.error('{}\n'
-                      'Captured output: {}'.format(e.message, e.output))
+                      'Captured output: {}'.format(e, e.output))
         raise e
 
 
