@@ -31,7 +31,7 @@ Feature: Multi Browser invitation group to spaces
     And user of browser1 closes "Invite using token" modal
     And user of browser1 sends copied token to user of browser2
 
-    And user of browser2 adds group "group2" as subgroup using copied token
+    And user of browser2 adds group "group2" to space using copied token
 
     Then user of browser2 sees that "space1" has appeared on the spaces list in the sidebar
 
@@ -46,7 +46,7 @@ Feature: Multi Browser invitation group to spaces
     And user of browser1 closes "Invite using token" modal
     And user of browser1 sends copied token to user of browser2
 
-    And user of browser2 adds group "group2" as subgroup using received token
+    And user of browser2 adds group "group2" to space using copied token
 
     # user1 renames space
     And user of browser1 clicks "space1" on the spaces list in the sidebar

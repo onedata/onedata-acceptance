@@ -86,4 +86,18 @@ Feature: Basic management of spaces
     And user of browser clicks Add support button on providers page
     And user of browser clicks Copy button on Add support page
     Then user of browser sees copy token and token in support token text field are the same
-    And user of browser sees non-empty copy token
+    And user of browser sees that copied token is non-empty
+
+
+  Scenario: User can leave the space which was owned by them and was its only user
+    When user of browser clicks Members of "space1" in the sidebar
+    And user of browser clicks show view expand button in space members subpage header
+    And user of browser clicks effective view mode in space members subpage
+    And user of browser sees 1 user in space members subpage
+    And user of browser sees [you, owner, direct] status labels for "user1" user in space members subpage
+
+    And user of browser clicks on Data in the main menu
+    And user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks on "Leave space" button in space menu
+    And user of browser clicks on yes button
+    Then user of browser sees that "space1" has disappeared on the spaces list in the sidebar
