@@ -24,7 +24,6 @@ from tests.utils.path_utils import escape_path
 from tests.utils.user_utils import User
 
 
-TOKEN_PATH = '/tmp/token'
 BAD_TOKEN = 'bad token'
 RPYC_DEFAULT_PORT = 18812
 
@@ -45,7 +44,8 @@ class Client:
         clean_mount_path(username, self)
         if 'proxy' in mode:
             mode_flag = '--force-proxy-io'
-        # TODO: Change to --force-direct-io after resolving VFS-4914
+        elif 'force-direct' in mode:
+            mode_flag = '--force-direct-io'
         else:
             mode_flag = ''
 
