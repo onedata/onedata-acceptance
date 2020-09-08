@@ -77,6 +77,22 @@ Feature: Basic management of spaces privileges in Onezone GUI
     Then user of browser_user1 sees Insufficient permissions alert for "user2" user in space members subpage
 
 
+  Scenario: User fails to see privileges of another user until he is granted all privileges by becoming an owner
+    When user of browser_user1 clicks Members of "space1" in the sidebar
+    And user of browser_user1 clicks "user2" user in "space1" space members users list
+    And user of browser_user1 sees Insufficient permissions alert for "user2" user in space members subpage
+
+    And user of space_owner_browser clicks Members of "space1" in the sidebar
+    And user of space_owner_browser clicks "Make an owner" for "user1" user in users list
+
+    And user of browser_user1 refreshes site
+    And user of browser_user1 clicks "user1" user in "space1" space members users list
+    And user of browser_user1 sees "This user is a space owner and is authorized to perform all operations, regardless of the assigned privileges." warning for "user1" user in space members subpage
+
+    And user of browser_user1 clicks "user2" user in "space1" space members users list
+    Then user of browser_user1 sees privileges for "user2" user in space members subpage
+
+
   Scenario: User fails to see space without view space privilege
     When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
     And user of space_owner_browser clicks Members of "space1" in the sidebar
