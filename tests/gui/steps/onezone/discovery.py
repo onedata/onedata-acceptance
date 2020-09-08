@@ -166,8 +166,7 @@ def assert_space_has_appeared_in_discovery_page(selenium, browser_id,
 def type_index_name_to_input_field_in_indices_page(selenium, browser_id,
                                                    oz_page, index_name):
     driver = selenium[browser_id]
-    name_input = oz_page(driver)['discovery'].indices_page.name_input
-    _enter_text(name_input, index_name)
+    oz_page(driver)['discovery'].indices_page.name_input = index_name
 
 
 @wt(parsers.parse('user of {browser_id} clicks on Create button '
