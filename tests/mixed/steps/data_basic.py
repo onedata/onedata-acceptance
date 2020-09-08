@@ -60,6 +60,9 @@ def create_dir_in_op(client, user, users, space, name, hosts, tmp_memory, host,
                                   'directory', os.path.basename(name),
                                   tmp_memory, op_container, result, space,
                                   modals, oz_page)
+            change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, user,
+                                                           'home',
+                                                           op_container)
         else:
             create_item_in_op_gui(selenium, user, os.path.dirname(name),
                                   'directory', os.path.basename(name),
@@ -368,10 +371,10 @@ def create_directory_structure_in_op(selenium, user, op_container, config, space
     tmp_memory['config'] = config
 
 
-@then(parsers.re('using (?P<client>.*), (?P<user>\w+) sees that (?P<time1>.*) '
-                 'time of item named "(?P<file_name>.*)" in "(?P<space>.*)" '
-                 'space is (?P<comparator>.*) (to|than) '
-                 '(?P<time2>.*) time in (?P<host>.*)'))
+@wt(parsers.re('using (?P<client>.*), (?P<user>\w+) sees that (?P<time1>.*) '
+               'time of item named "(?P<file_name>.*)" in "(?P<space>.*)" '
+               'space is (?P<comparator>.*) (than|to) '
+               '(?P<time2>.*) time in (?P<host>.*)'))
 def assert_time_relation(user, time1, file_name, space, comparator, time2,
                          client, users, host, hosts, cdmi):
     client_lower = client.lower()
@@ -383,6 +386,28 @@ def assert_time_relation(user, time1, file_name, space, comparator, time2,
         oneclient_host = change_client_name_to_hostname(client_lower)
         multi_file_steps.check_time(user, time1, time2, comparator, full_path,
                                     oneclient_host, users)
+    else:
+        raise NoSuchClientException('Client: {} not found'.format(client))
+
+
+@wt(parsers.re('using (?P<client>.*), (?P<user>\w+) sees that (?P<time1>.*) '
+               'time of item named "(?P<file_name>.*)" is (?P<comparator>.*) '
+               '(than|to) (?P<time2>.*) time of item named '
+               '"(?P<file2_name>.*)" in "(?P<space>.*)" space in (?P<host>.*)'))
+def assert_files_time_relation(user, time1, file_name, space, comparator, time2,
+                               client, file2_name, users, host, hosts, cdmi):
+    client_lower = client.lower()
+    full_path = '{}/{}'.format(space, file_name)
+    full_path2 = '{}/{}'.format(space, file2_name)
+    if client_lower == 'rest':
+        assert_files_time_relation_in_op_rest(full_path, full_path2, time1,
+                                              time2, comparator, host, hosts,
+                                              user, users, cdmi)
+    elif 'oneclient' in client_lower:
+        oneclient_host = change_client_name_to_hostname(client_lower)
+        multi_file_steps.check_files_time(user, time1, time2, comparator,
+                                          full_path, full_path2,
+                                          oneclient_host, users)
     else:
         raise NoSuchClientException('Client: {} not found'.format(client))
 

@@ -51,6 +51,7 @@ def rename_item(selenium, browser_id, path, new_name, tmp_memory, res, space,
     modal_name = 'Rename modal'
     confirmation_option = 'button'
     text = 'Renaming the file failed'
+    new_name = new_name.split('/')[-1]
 
     open_modal_for_file_browser_item(selenium, browser_id, modals, modal_header,
                                      path, tmp_memory, option, space, oz_page,
