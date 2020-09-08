@@ -9,7 +9,8 @@ from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.common.privilege_tree import PrivilegeTree
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
-    Button, NamedButton, WebItemsSequence, Label, Input, WebElement, WebItem)
+    Button, NamedButton, WebItemsSequence, Label, Input, WebElement, WebItem,
+    WebElementsSequence)
 from tests.gui.utils.onezone.common import InputBox
 from tests.gui.utils.onezone.generic_page import Element, GenericPage
 from tests.gui.utils.onezone.token_caveats import CaveatField
@@ -37,12 +38,30 @@ class TokenFilter(PageObject):
     invite = Button('.btn-invite')
 
 
+class TokenInviteTargetOptions(PageObject):
+    name = id = Label('.text')
+
+
+class TokenInviteTargetNameOptions(PageObject):
+    name = id = Label('.truncated-string')
+
+
+class TokenInviteFilter(PageObject):
+    dropdown_menus = WebElementsSequence('.ember-basic-dropdown-trigger')
+    options = WebItemsSequence('.ember-power-select-option',
+                               cls=TokenInviteTargetOptions)
+    name_options = WebItemsSequence('.ember-power-select-option',
+                                    cls=TokenInviteTargetNameOptions)
+
+
 class TokensSidebar(PageObject):
     create_new_token = Button('.one-sidebar-toolbar-button .oneicon-add-filled')
     tokens = WebItemsSequence('.token-item', cls=TokenRow)
     consume_token = Button('.oneicon-consume-token')
     clean_up_obsolete_tokens = Button('.oneicon-clean-filled')
     filter = WebItem('.filter-control', cls=TokenFilter)
+    invite_filter = WebItem('.filter-control.target-filter',
+                            cls=TokenInviteFilter)
 
     name_input = Input('.one-list-wrapper .form-control')
     confirm = Button('.save-icon')
@@ -50,7 +69,8 @@ class TokensSidebar(PageObject):
 
     def click_create_new_token(self, driver):
         driver.execute_script("arguments[0].click();",
-                              self.web_elem.find_element_by_css_selector('.create-token-link-trigger'))
+                              self.web_elem.find_element_by_css_selector(
+                                  '.create-token-link-trigger'))
 
     def __str__(self):
         return 'Tokens sidebar'
