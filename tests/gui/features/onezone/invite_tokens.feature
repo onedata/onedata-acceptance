@@ -4,7 +4,7 @@ Feature: Management of invite tokens in Onezone GUI
     Given initial users configuration in "onezone" Onezone service:
           - user1
           - user2
-    And admin user does not have access to any space
+    And admin user does not have access to any space other than defined in next steps
     And initial spaces configuration in "onezone" Onezone service:
           space1:
             owner: admin

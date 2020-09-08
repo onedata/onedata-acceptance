@@ -22,9 +22,9 @@ from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 
 
-@wt(parsers.parse('user of {browser_id} sees following files in Data '
+@wt(parsers.parse('user of {browser_id} sees only following files in Data '
                   'discovery page:\n{config}'))
-@repeat_failed(timeout=WAIT_BACKEND*3, interval=2)
+@repeat_failed(timeout=WAIT_BACKEND*4, interval=2)
 def assert_data_discovery_files(selenium, browser_id, data_discovery, config,
                                 spaces):
     click_query_button_on_data_disc_page(selenium, browser_id, data_discovery)
@@ -33,17 +33,17 @@ def assert_data_discovery_files(selenium, browser_id, data_discovery, config,
     data_dict = _unpack_files_data(selenium, browser_id, data_discovery)
     _assert_elem_num_equals(expected_data, data_dict)
     for file in expected_data:
-        if list(file)[0] == 'spaces':
-            _check_spaces_of_data_disc(file['spaces'], data_dict, spaces)
+        if file == 'spaces':
+            _check_spaces_of_data_disc(expected_data['spaces'], data_dict,
+                                       spaces)
         else:
-            filename = list(file)[0]
-            _assert_data_discovery_files(file[filename],
-                                         data_dict[filename].text, spaces)
+            _assert_data_discovery_files(expected_data[file],
+                                         data_dict[file].text, spaces)
 
 
 def _assert_elem_num_equals(expected_data, data_dict):
     expected_num = len(expected_data)
-    spaces = [item['spaces'] for item in expected_data if 'spaces' in item][0]
+    spaces = expected_data.get('spaces', [])
     if spaces:
         expected_num = expected_num - 1 + len(spaces)
     assert expected_num == len(data_dict), (f'There should be {expected_num} '
@@ -83,13 +83,13 @@ def _assert_data_discovery_files(expected, actual, spaces):
 
 
 def _assert_unexpected_xattr(sub_item, actual):
-    assert (f'{sub_item[0]}: {{__value: {sub_item[1]}}}' not in actual), (
-        f'{sub_item[0]}: {{__value: {sub_item[1]}}} in  {actual}')
+    regex = f'{sub_item[0]}: {{__value: {sub_item[1]}}}'
+    assert regex not in actual, f'{regex} in {actual} but should not be'
 
 
 def _assert_expected_xattr(sub_item, actual):
-    assert (f'{sub_item[0]}: {{__value: {sub_item[1]}}}' in actual), (
-        f'{sub_item[0]}: {{__value: {sub_item[1]}}} not in  {actual}')
+    regex = f'{sub_item[0]}: {{__value: {sub_item[1]}}}'
+    assert regex in actual, f'{regex} not in {actual}'
 
 
 @wt(parsers.parse('user of {browser_id} opens Data Discovery page of '

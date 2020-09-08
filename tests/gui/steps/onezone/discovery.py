@@ -263,6 +263,7 @@ def assert_data_discovery_page(selenium, browser_id, data_discovery):
     # instead of just sleep
     # to activate this view with no harvested files use
     # assert_empty_data_discovery_page(...) function
+
     switch_to_iframe(selenium, browser_id, '.plugin-frame')
     _wait_for_files_list(selenium, browser_id, data_discovery)
 
@@ -275,19 +276,12 @@ def _wait_for_files_list(selenium, browser_id, data_discovery):
 
 @repeat_failed(timeout=WAIT_FRONTEND/2)
 def assert_files_list_on_data_disc(selenium, browser_id, data_discovery):
-    assert len(data_discovery(selenium[browser_id]).results_list)
+    msg = 'files list is not visible on data discovery page'
+    assert len(data_discovery(selenium[browser_id]).results_list), msg
 
 
 def assert_empty_data_discovery_page(selenium, browser_id):
     switch_to_iframe(selenium, browser_id, '.plugin-frame')
-    time.sleep(15)
-
-
-@wt(parsers.parse('user of {browser_id} finishes checking on Data discovery '
-                  'page'))
-def change_content_from_iframe(selenium, browser_id):
-    driver = selenium[browser_id]
-    driver.switch_to.default_content()
 
 
 @wt(parsers.parse('user of {browser_id} clicks "Query" button on Data '
@@ -302,5 +296,5 @@ def click_query_button_on_data_disc_page(selenium, browser_id, data_discovery):
 @repeat_failed(timeout=WAIT_BACKEND*9, interval=10)
 def assert_alert_text_on_data_disc_page(selenium, browser_id, error_msg,
                                         data_discovery):
-    assert error_msg == data_discovery(selenium[browser_id]).error_message
-
+    msg = f'alert with {error_msg} message is not visible'
+    assert error_msg == data_discovery(selenium[browser_id]).error_message, msg

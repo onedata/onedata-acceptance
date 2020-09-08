@@ -107,12 +107,14 @@ def create_harvester(selenium, browser_id, oz_page, harvester_name, hosts):
 def join_space_to_harvester(selenium, browser_id, oz_page, space_name,
                             harvester_name, tmp_memory):
     option = 'Spaces'
+    option2 = 'Discovery'
     button_name = 'add one of your spaces'
     button_in_modal = 'Add'
     modal = 'Add one of spaces'
     element_type = 'space'
     modal_name = 'Add one of your spaces'
 
+    click_on_option_in_the_sidebar(selenium, browser_id, option2, oz_page)
     click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id,
                                                       harvester_name, option,
                                                       oz_page)

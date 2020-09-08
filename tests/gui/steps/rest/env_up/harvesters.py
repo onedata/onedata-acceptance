@@ -65,6 +65,8 @@ def _create_harvester_gui_index(zone_hostname, owner_username, owner_password,
 
 
 @given(parsers.parse('user {user} has no harvesters'))
+@given(parsers.parse('user {user} has no harvesters other than defined in '
+                     'next steps'))
 def remove_all_harvesters_rest(user, hosts, users):
     zone_hostname = hosts['onezone']['hostname']
 

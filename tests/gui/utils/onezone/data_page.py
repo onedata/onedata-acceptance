@@ -1,4 +1,4 @@
-"""Utils to facilitate operations on spaces page in Onezone gui"""
+"""Utils to facilitate operations on discovery page in Onezone gui"""
 
 __author__ = "Michal Stanisz, Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"

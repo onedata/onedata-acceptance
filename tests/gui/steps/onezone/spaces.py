@@ -493,7 +493,8 @@ def check_tab_name_label(selenium, browser_id, tab_name, oz_page):
 def assert_opened_space_name(selenium, browser_id, space, oz_page):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    assert oz_page(driver)['data'].elements_list[space].is_active()
+    msg = f'{space} space view is not opened'
+    assert oz_page(driver)['data'].elements_list[space].is_active(), msg
 
 
 @wt(parsers.parse('user of {browser_id} sees in the INFO section of Overview '
