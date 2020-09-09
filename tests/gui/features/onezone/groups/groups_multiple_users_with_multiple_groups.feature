@@ -12,15 +12,6 @@ Feature: Basic management of groups with multiple users in Onezone GUI
                 - group2
           group2:
             owner: user2
-    And initial spaces configuration in "onezone" Onezone service:
-          space1:
-              owner: user1
-              home space for:
-                  - user1
-              providers:
-                  - oneprovider-1:
-                      storage: posix
-                      size: 1000000
 
     And users opened [browser1, browser2] browsers' windows
     And user of [browser1, browser2] opened [Onezone, Onezone] page

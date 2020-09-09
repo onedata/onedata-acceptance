@@ -3,10 +3,10 @@ Feature: Oneprovider POSIX privileges GUI tests
   Background:
     Given initial users configuration in "onezone" Onezone service:
             - user1
-            - user2
+            - space-owner-user
     And initial spaces configuration in "onezone" Onezone service:
           space1:
-              owner: user2
+              owner: space-owner-user
               users:
                   - user1
               providers:
@@ -22,7 +22,7 @@ Feature: Oneprovider POSIX privileges GUI tests
                       - dir12
                   - file1
 
-    And opened [browser_user1, space_owner_browser] with [user1, user2] signed in to [Onezone, Onezone] service
+    And opened [browser_user1, space_owner_browser] with [user1, space-owner-user] signed in to [Onezone, Onezone] service
 
 
   Scenario: User sees that default permission code for uploaded file is 644

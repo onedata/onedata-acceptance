@@ -2,13 +2,13 @@ Feature: ACL basic tests using sigle browser in Oneprovider GUI
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
-            - user1
+            - space-owner-user
     And initial groups configuration in "onezone" Onezone service:
             group1:
-                owner: user1
+                owner: space-owner-user
     And initial spaces configuration in "onezone" Onezone service:
         space1:
-            owner: user1
+            owner: space-owner-user
             providers:
                 - oneprovider-1:
                     storage: posix
@@ -24,7 +24,7 @@ Feature: ACL basic tests using sigle browser in Oneprovider GUI
             groups:     
                 - group1  
 
-    And opened browser with user1 signed in to "onezone" service
+    And opened browser with space-owner-user signed in to "onezone" service
 
 
   Scenario Outline: User sets one ACL record for directory in Edit permissions modal
@@ -73,7 +73,7 @@ Feature: ACL basic tests using sigle browser in Oneprovider GUI
     And user of browser clicks "Permissions" option in data row menu in file browser
     And user of browser sees that "Edit permissions" modal has appeared
     And user of browser selects "ACL" permission type in edit permissions modal
-    And user of browser adds ACE with general:delete privilege set for user user1
+    And user of browser adds ACE with general:delete privilege set for user space-owner-user
     And user of browser clicks "Cancel" button in displayed modal
 
     # Check ACL record
@@ -107,8 +107,8 @@ Feature: ACL basic tests using sigle browser in Oneprovider GUI
     And user of browser clicks "Cancel" button in displayed modal
 
     Examples:
-    | privileges            | subject_type  | subject_name  |
-    | [allow, acl:read acl] | user          | user1         |
+      | privileges            | subject_type | subject_name     |
+      | [allow, acl:read acl] | user         | space-owner-user |
 
 
   Scenario Outline: User sets ACL for multiple files
@@ -133,8 +133,8 @@ Feature: ACL basic tests using sigle browser in Oneprovider GUI
     And user of browser clicks "Cancel" confirmation button in displayed modal
 
     Examples:
-    | privileges            | subject_type  | subject_name  |
-    | [allow, acl:read acl] | user          | user1         |
+    | privileges            | subject_type | subject_name     |
+    | [allow, acl:read acl] | user         | space-owner-user |
 
 
   Scenario: User saves ACL entries for user and group
@@ -149,7 +149,7 @@ Feature: ACL basic tests using sigle browser in Oneprovider GUI
     And user of browser selects "ACL" permission type in edit permissions modal
 
     And user of browser adds ACE with "attributes:read attributes" privilege set for group group1
-    And user of browser adds ACE with [general:delete, acl:read acl] privileges set for user user1
+    And user of browser adds ACE with [general:delete, acl:read acl] privileges set for user space-owner-user
     And user of browser clicks "Save" confirmation button in displayed modal
 
     # Check ACL records
@@ -159,7 +159,7 @@ Feature: ACL basic tests using sigle browser in Oneprovider GUI
     And user of browser selects "ACL" permission type in edit permissions modal
     Then user of browser sees exactly 2 ACL records in edit permissions modal
     And user of browser sees that first ACL record in edit permissions modal is set for group group1
-    And user of browser sees that second ACL record in edit permissions modal is set for user "user1"
+    And user of browser sees that second ACL record in edit permissions modal is set for user "space-owner-user"
 
 
   Scenario Outline: User removes ACL record
@@ -171,8 +171,8 @@ Feature: ACL basic tests using sigle browser in Oneprovider GUI
     Then user of browser sees exactly 0 ACL records in edit permissions modal
 
     Examples:
-    | privileges       | subject_type  | subject_name  |
-    | [acl:read acl]   | user          | user1         |
+      | privileges     | subject_type | subject_name     |
+      | [acl:read acl] | user         | space-owner-user |
 
 
   Scenario Outline: User changes order of ACL entries
@@ -185,9 +185,9 @@ Feature: ACL basic tests using sigle browser in Oneprovider GUI
     And user of browser selects "ACL" permission type in edit permissions modal
 
     And user of browser adds ACE with "general:delete" privilege set for group group1
-    And user of browser adds ACE with "acl:read acl" privilege set for user user1
+    And user of browser adds ACE with "acl:read acl" privilege set for user space-owner-user
     And user of browser clicks on "<button>" button in <numeral> ACL record in edit permissions modal
-    Then user of browser sees that first ACL record in edit permissions modal is set for user user1
+    Then user of browser sees that first ACL record in edit permissions modal is set for user space-owner-user
     And user of browser sees that second ACL record in edit permissions modal is set for group group1
     And user of browser clicks "Save" confirmation button in displayed modal
 
@@ -196,7 +196,7 @@ Feature: ACL basic tests using sigle browser in Oneprovider GUI
     And user of browser clicks "Permissions" option in data row menu in file browser
     And user of browser sees that "Edit permissions" modal has appeared
     And user of browser selects "ACL" permission type in edit permissions modal
-    And user of browser sees that first ACL record in edit permissions modal is set for user user1
+    And user of browser sees that first ACL record in edit permissions modal is set for user space-owner-user
     And user of browser sees that second ACL record in edit permissions modal is set for group group1
 
 
