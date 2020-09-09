@@ -84,8 +84,8 @@ Feature: Management of privileges in onezone GUI
 
 
   Scenario: User successfully adds user to group
-    When using web gui, browser2 invites browser1 to group "group2" in "onezone" Onezone service
-    And using web gui, browser1 joins group he was invited to in "onezone" Onezone service
+    When browser2 invites browser1 to group "group2" using Oneprovider web GUI
+    And user of browser1 joins group he was invited to in Onezone service using web GUI
     And user of browser2 clicks "admin" user in "group2" group members users list
 
     Then user of browser2 sees following privileges of "admin" user in group members subpage:
