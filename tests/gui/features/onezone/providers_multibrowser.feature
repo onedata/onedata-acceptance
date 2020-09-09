@@ -8,16 +8,12 @@ Feature: Basic management of providers in Onezone GUI
     And initial spaces configuration in "onezone" Onezone service:
           space1:
               owner: space-owner-user
-              home space for:
-                  - space-owner-user
               providers:
                   - oneprovider-1:
                       storage: posix
                       size: 1000000
           space2:
               owner: space-owner-user
-              home space for:
-                  - space-owner-user
               providers:
                   - oneprovider-1:
                       storage: posix
