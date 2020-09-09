@@ -15,14 +15,16 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     And directory tree structure on local file system:
           browser2:
-              - dir1: 5
-              - dir2:
-                  - dir21:
-                      - dir211:
-                          - dir2111: 4
-                      - file2.txt: 11111
-                  - dir22: 10
-                  - file1.txt: 22222
+              dir1: 5
+              dir2:
+                  dir21:
+                      dir211:
+                          dir2111: 4
+                      file2.txt:
+                        content: 11111
+                  dir22: 10
+                  file1.txt:
+                    content: 22222
 
 
   Scenario: User sees imported files after supporting space with import-enabled storage and sees difference after update configuration

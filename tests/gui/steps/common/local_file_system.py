@@ -29,17 +29,19 @@ def create_dir_tree_structure_on_local_fs(structure, tmpdir):
     user_name:                ---> currently we identify user
                                    account with concrete
                                    browser so user_name == browser_id
-        - dir1: 5             ---> if item name startswith 'dir' it is
+        dir1: 5             ---> if item name startswith 'dir' it is
                                    considered directory otherwise a file;
                                    with given num, [num] files with random
                                    contest will be created
-        - dir2:
-            - dir21
-            - dir22:
-                - file1.txt: >
-                    guana_bana_kunkwa_persi_mona_sala  ---> when specifying file,
+        dir2:
+          dir21
+            dir22:
+              file1.txt:
+                content: guana_bana_kunkwa_persi_mona_sala  ---> when
+                                                            specifying file,
                                                             one can specify it's
                                                             content as well
+                size: 5                        ---> OR one can specify size in B
     """
     for user, home_dir_content in yaml.load(structure).items():
         home_dir = tmpdir.join(user)
@@ -56,19 +58,18 @@ def _mkdirs(cwd, dir_content=None):
         files_num = int(dir_content)
     except TypeError:
         for item in dir_content:
-            try:
-                [(name, content)] = item.items()
-            except AttributeError:
-                name = item
-                content = None
-
-            if name.startswith('dir'):
-                new_dir = cwd.join(name)
+            if item.startswith('dir'):
+                new_dir = cwd.join(item)
                 new_dir.mkdir()
                 new_dir.chmod(PERMS_777)
-                _mkdirs(new_dir, content)
+                _mkdirs(new_dir, dir_content[item])
             else:
-                _mkfile(cwd.join(name), content)
+                content = dir_content[item].get('content', None)
+                size = dir_content[item].get('size', None)
+                if size:
+                    content = size * '1'
+
+                _mkfile(cwd.join(item), content)
     else:
         for i in range(files_num):
             _mkfile(cwd.join('file{}.txt'.format(i)))

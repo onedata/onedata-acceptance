@@ -339,6 +339,19 @@ def upload_files_to_cwd_in_data_tab(selenium, browser_id, dir_path, tmpdir,
         raise RuntimeError('directory {} does not exist'.format(str(directory)))
 
 
+@wt(parsers.parse('user of {browser_id} uses upload button from file browser '
+                  'menu bar to upload file "{file_path}" from local directory '
+                  'to remote current dir'))
+def upload_file_to_cwd_in_data_tab(selenium, browser_id, file_path, tmpdir,
+                                   op_container):
+    driver = selenium[browser_id]
+    file = tmpdir.join(browser_id, *file_path.split('/'))
+    if file.isfile():
+        op_container(driver).file_browser.upload_files(upload_file_path(file))
+    else:
+        raise RuntimeError('file {} does not exist'.format(str(file)))
+
+
 @when(parsers.parse('user of {browser_id} sees that chunk bar for provider '
                     '"{provider}" is of {size} size'))
 @then(parsers.parse('user of {browser_id} sees that chunk bar for provider '

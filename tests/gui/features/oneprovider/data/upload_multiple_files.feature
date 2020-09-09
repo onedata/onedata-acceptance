@@ -17,12 +17,14 @@ Feature: Uploading multiple files at once
     And user of browser logged as user1 to Onezone service
     And directory tree structure on local file system:
           browser:
-              - dir1: 5
-              - dir2: 70
-              - dir3: 4
-              - dir4:
-                  - file10.txt: 10
-                  - file23.txt: 23
+              dir1: 5
+              dir2: 70
+              dir3: 4
+              dir4:
+                file10.txt:
+                  content: 10
+                file23.txt:
+                  content: 23
 
 
   Scenario: User uploads 5 files at once
