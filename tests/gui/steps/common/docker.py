@@ -101,6 +101,12 @@ def wt_rm_files_to_storage_mount_point(src_path, hosts):
     _docker_rm(os.path.join(MOUNT_POINT, src_path), hosts)
 
 
+@given(parsers.parse('there is no {elems} in provider\'s storage mount point'))
+def g_rm_many_files_from_storage_mount_point(elems, hosts):
+    for elem in parse_seq(elems):
+        _docker_rm(os.path.join(MOUNT_POINT, elem), hosts)
+
+
 @wt(parsers.parse('user of {browser_id} appends "{text}" to {path} file '
                   'in provider\'s storage mount point'))
 def wt_append_text_to_files_in_storage_mount_point(path, text, hosts):
