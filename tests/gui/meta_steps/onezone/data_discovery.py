@@ -34,8 +34,7 @@ def assert_data_discovery_files(selenium, browser_id, data_discovery, config,
     _assert_elem_num_equals(expected_data, data_dict)
     for file in expected_data:
         if file == 'spaces':
-            _check_spaces_of_data_disc(expected_data['spaces'], data_dict,
-                                       spaces)
+            _check_spaces_of_data_disc(expected_data['spaces'], data_dict)
         else:
             _assert_data_discovery_files(expected_data[file],
                                          data_dict[file].text, spaces)
@@ -51,9 +50,9 @@ def _assert_elem_num_equals(expected_data, data_dict):
                                             f'{len(data_dict)}')
 
 
-def _check_spaces_of_data_disc(expected, actual, spaces):
+def _check_spaces_of_data_disc(expected, actual):
     for space in expected:
-        assert spaces[space] in actual, f'space {space} not harvested'
+        assert space in actual, f'space {space} not harvested'
 
 
 def _unpack_files_data(selenium, browser_id, data_discovery):
