@@ -24,7 +24,7 @@ from tests.gui.steps.onezone.members import (
     click_on_option_in_members_list_menu, copy_token_from_modal,
     assert_member_is_in_parent_members_list)
 from tests.gui.steps.onezone.groups import (
-    click_on_option_of_group_on_left_sidebar_menu)
+    click_on_option_of_group_menu_on_left_sidebar_menu)
 from tests.gui.steps.onezone.spaces import *
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
 from tests.gui.steps.onepanel.spaces import *
@@ -49,7 +49,8 @@ def create_spaces_in_oz_using_gui(selenium, user, oz_page, space_list):
 @wt(parsers.parse('user of {user} sends support token for "{space_name}" '
                   'to user of {browser_id}'))
 def send_support_token_in_oz_using_gui(selenium, user, space_name, browser_id,
-                                       oz_page, tmp_memory, displays, clipboard):
+                                       oz_page, tmp_memory, displays,
+                                       clipboard):
     option = 'spaces'
     where = 'Providers'
     item_type = 'token'
@@ -329,7 +330,7 @@ def add_harvester_to_existing_space(selenium, browser_id, oz_page, space_name,
                'groups dropdown'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_group_to_space_or_group(browser_id, group_name, where_name, selenium,
-                                oz_page, onepanel, popups, where):
+                                oz_page, onepanel, popups, where, modals):
     option = where + 's'
     option_in_function = 'Members'
     button = 'Add one of your groups'
@@ -346,10 +347,10 @@ def add_group_to_space_or_group(browser_id, group_name, where_name, selenium,
                                                       option_in_function,
                                                       oz_page)
     elif where == 'group':
-        click_on_option_of_group_on_left_sidebar_menu(selenium, browser_id,
-                                                      where_name,
-                                                      option_in_function,
-                                                      oz_page)
+        click_on_option_of_group_menu_on_left_sidebar_menu(selenium, browser_id,
+                                                           where_name,
+                                                           option_in_function,
+                                                           oz_page)
     else:
         raise AttributeError('where variable must be space or group')
 
@@ -366,7 +367,7 @@ def add_group_to_space_or_group(browser_id, group_name, where_name, selenium,
                   'space'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def copy_user_space_invite_token(browser_id, space_name, selenium, oz_page,
-                                 onepanel, popups):
+                                 onepanel, popups, modals):
     option = 'spaces'
     option_in_space = 'Members'
     where = 'space'
