@@ -70,7 +70,7 @@ Feature: Basic management of groups privileges in Onezone GUI
               View privileges: False
     And user of browser refreshes site
     And user of browser clicks "user2" user in "group1" group members users list
-    Then user of browser sees Insufficient permissions alert for "user2" user in group members subpage
+    Then user of browser sees Insufficient privileges alert for "user2" user in group members subpage
 
 
   Scenario: User fails to remove relation without privileges
@@ -224,7 +224,7 @@ Feature: Basic management of groups privileges in Onezone GUI
               View privileges: False
     And user of browser refreshes site
     And user of browser clicks "user2" user in "group1" group members users list
-    Then user of browser sees Insufficient permissions alert for "user2" user in group members subpage
+    Then user of browser sees Insufficient privileges alert for "user2" user in group members subpage
 
 
  Scenario: User fails to remove relation without privileges changed with bulk edit

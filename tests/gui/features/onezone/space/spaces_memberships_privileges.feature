@@ -74,13 +74,13 @@ Feature: Basic management of spaces privileges in Onezone GUI
     And user of browser_user1 clicks "space1" on the spaces list in the sidebar
     And user of browser_user1 clicks Members of "space1" in the sidebar
     And user of browser_user1 clicks "user2" user in "space1" space members users list
-    Then user of browser_user1 sees Insufficient permissions alert for "user2" user in space members subpage
+    Then user of browser_user1 sees Insufficient privileges alert for "user2" user in space members subpage
 
 
   Scenario: User fails to see privileges of another user until he is granted all privileges by becoming an owner
     When user of browser_user1 clicks Members of "space1" in the sidebar
     And user of browser_user1 clicks "user2" user in "space1" space members users list
-    And user of browser_user1 sees Insufficient permissions alert for "user2" user in space members subpage
+    And user of browser_user1 sees Insufficient privileges alert for "user2" user in space members subpage
 
     And user of space_owner_browser clicks Members of "space1" in the sidebar
     And user of space_owner_browser clicks "Make an owner" for "user1" user in users list
@@ -103,8 +103,7 @@ Feature: Basic management of spaces privileges in Onezone GUI
             privilege subtypes:
               View space: False
 
-    And user of browser_user1 clicks Members of "space1" in the sidebar
-    Then user of browser_user1 sees Insufficient permissions alert in space members subpage
+    Then user of browser_user1 sees that [Members, Shares, Harvesters] of "space1" in the sidebar are disabled
 
 
   Scenario: User fails to remove group from space without remove group privileges

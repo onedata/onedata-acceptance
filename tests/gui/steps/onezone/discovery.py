@@ -219,7 +219,7 @@ def click_remove_space_option_in_menu_in_discover_spaces_page(selenium,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees '
-               '(?P<alert_text>Insufficient permissions) alert '
+               '(?P<alert_text>Insufficient privileges) alert '
                'on (?P<where>Spaces|Indices) subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def see_insufficient_permissions_alert_on_discovery_page(selenium, browser_id,

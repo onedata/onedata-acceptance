@@ -10,7 +10,7 @@ __license__ = ("This software is released under the MIT license cited in "
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import wt, parsers
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import transform, parse_seq
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.modal import wt_wait_for_modal_to_appear
 
@@ -233,6 +233,31 @@ def click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
     oz_page(driver)['data'].spaces_header_list[space_name].click()
     getattr(oz_page(driver)['data'].elements_list[space_name],
             transform(option)).click()
+
+
+def _get_number_of_disabled_elements_on_left_sidebar_menu(space):
+    page_names = ['overview', 'data', 'shares', 'transfers', 'providers',
+                  'members', 'harvesters']
+    return len([x for x in page_names if space.is_element_disabled(x)])
+
+
+@wt(parsers.re('user of (?P<browser_id>.*?) sees that (?P<element_list>.*) '
+               'of "(?P<space_name>.*?)" in the sidebar are disabled'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_option_of_space_on_left_sidebar_menu_disabled(selenium, browser_id,
+                                                         space_name,
+                                                         element_list, oz_page):
+    driver = selenium[browser_id]
+    element_list = parse_seq(element_list)
+    element_list = [transform(e) for e in element_list]
+    space = oz_page(driver)['data'].elements_list[space_name]
+    error_msg = f'Number of disabled elements is incorrect'
+    assert _get_number_of_disabled_elements_on_left_sidebar_menu(space) == len(
+        element_list), error_msg
+
+    for element_name in element_list:
+        error_msg = f' "{element_name}" button is not in disabled state'
+        assert space.is_element_disabled(element_name), error_msg
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees (?P<correct_number>.*) '

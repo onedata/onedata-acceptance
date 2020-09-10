@@ -563,7 +563,7 @@ def ckeck_status_labels_for_member_of_space(selenium, browser_id, oz_page,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees '
-               '(?P<alert_text>Insufficient permissions) alert '
+               '(?P<alert_text>Insufficient privileges) alert '
                'for "(?P<member_name>.*)" (?P<member_type>user|group) '
                'in (?P<where>space|group|cluster) members subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -581,7 +581,7 @@ def see_insufficient_permissions_alert_for_member(selenium, browser_id, oz_page,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees '
-               '(?P<alert_text>Insufficient permissions) alert '
+               '(?P<alert_text>Insufficient privileges) alert '
                'in (?P<where>space|group|cluster|harvester) members subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def see_insufficient_permissions_alert(selenium, browser_id, oz_page, where,

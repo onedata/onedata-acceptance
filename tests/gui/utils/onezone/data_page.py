@@ -42,6 +42,10 @@ class Space(Element):
         self.click()
         self.menu_button.click()
 
+    def is_element_disabled(self, element_name):
+        element = getattr(self, element_name)
+        return 'disabled' in element.web_elem.get_attribute("class")
+
     def is_home_icon(self):
         return 'oneicon-home' in self.home_icon.get_attribute("class")
 
