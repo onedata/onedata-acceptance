@@ -187,7 +187,7 @@ def create_group_token_to_invite_group_using_op_gui(selenium, user, user2,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) joins group he was invited to in '
-               'Onezone service using web GUI'))
+               'Onezone service'))
 def join_group_using_op_gui(selenium, browser_id, oz_page, tmp_memory):
     consume_received_token(selenium, browser_id, oz_page, tmp_memory)
 

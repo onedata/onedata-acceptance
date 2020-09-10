@@ -23,7 +23,7 @@ Feature: Management of privileges in onezone GUI
     And user of [browser1, browser2] logged as [admin, user1] to [Onezone, Onezone] service
 
 
-  Scenario: User successfully adds group to space
+  Scenario: User sees that group added to space has default privileges
     When user of browser2 adds "group1" group to "space1" space using available groups dropdown
     And user of browser2 clicks "group1" group in "space1" space members groups list
     Then user of browser2 sees following privileges of "group1" group in space members subpage:
@@ -45,7 +45,7 @@ Feature: Management of privileges in onezone GUI
               Schedule replication: False
 
 
-  Scenario: User successfully adds user to space
+  Scenario: User sees that user added to space has default privileges
     When user of browser2 copies invite token to "space1" space
     And user of browser2 sends copied token to user of browser1
     And user of browser1 joins space using received token
@@ -70,7 +70,7 @@ Feature: Management of privileges in onezone GUI
   And user of browser1 leaves "space1" space in Onezone page
 
 
-  Scenario: User successfully adds group to group
+  Scenario: User sees that group added to group has default privileges
     When user of browser2 adds "group1" group to "group2" group using available groups dropdown
     And user of browser2 clicks "group1" group in "group2" group members groups list
     Then user of browser2 sees following privileges of "group1" group in group members subpage:
@@ -83,9 +83,9 @@ Feature: Management of privileges in onezone GUI
             granted: False
 
 
-  Scenario: User successfully adds user to group
+  Scenario: User sees that user added to group has default privileges
     When browser2 invites browser1 to group "group2" using Oneprovider web GUI
-    And user of browser1 joins group he was invited to in Onezone service using web GUI
+    And user of browser1 joins group he was invited to in Onezone service
     And user of browser2 clicks "admin" user in "group2" group members users list
 
     Then user of browser2 sees following privileges of "admin" user in group members subpage:
@@ -100,7 +100,7 @@ Feature: Management of privileges in onezone GUI
     And user of browser1 leaves group "group2"
 
 
-  Scenario: User successfully adds group to harveser
+  Scenario: User sees that group added to harvester has default privileges
     Given user admin has no harvesters
     And using REST, user admin creates "harvester3" harvester in "onezone" Onezone service
 
@@ -121,7 +121,7 @@ Feature: Management of privileges in onezone GUI
     And user of browser1 removes "harvester3" harvester in Onezone page
 
 
-  Scenario: User successfully adds user to harvester
+  Scenario: User sees that user added to harvester has default privileges
     Given user admin has no harvesters
     And using REST, user admin creates "harvester2" harvester in "onezone" Onezone service
 
@@ -141,7 +141,7 @@ Feature: Management of privileges in onezone GUI
     And user of browser1 removes "harvester2" harvester in Onezone page
 
 
-  Scenario: User successfully adds group to cluster
+  Scenario: User sees that group added to cluster has default privileges
     Given user of browser1 sees no "group3" group in "oneprovider-1" cluster members
 
     When user of browser1 adds "group3" group to "oneprovider-1" cluster
@@ -159,7 +159,7 @@ Feature: Management of privileges in onezone GUI
     And user of browser1 removes "group3" group from "oneprovider-1" cluster members
 
 
-  Scenario: User successfully adds user to cluster
+  Scenario: User sees that user added to cluster has default privileges
     When user of browser1 invites user of browser2 to "oneprovider-1" cluster
     And user of browser2 joins to cluster
     And user of browser1 clicks "user1" user in "oneprovider-1" cluster members users list
