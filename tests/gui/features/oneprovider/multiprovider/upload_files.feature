@@ -61,7 +61,6 @@ Feature: Uploading files to multiple providers
     # upload file and cancel
     And user of browser uses upload button from file browser menu bar to upload files from local directory "dir2" to remote current dir
     And user of browser uses upload button from file browser menu bar to upload file "large_file.txt" from local directory to remote current dir
-    And user of browser waits for file upload to finish
     And user of browser clicks cancel button on upload popup number 2
     And user of browser confirms canceling the upload
     And user of browser is idle for 15 seconds

@@ -29,7 +29,7 @@ Feature: Oneprovider transfers functionality using multiple browser instances
 
   Scenario: User replicates file from remote provider to current provider
     When user of browser1 uses upload button from file browser menu bar to upload file "large_file.txt" from local directory to remote current dir
-    And user of browser waits for file upload to finish
+    And user of browser1 waits for file upload to finish
 
     # Wait to ensure synchronization between providers
     And user of browser1 is idle for 10 seconds

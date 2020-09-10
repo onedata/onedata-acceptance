@@ -336,7 +336,7 @@ Feature: Oneprovider transfers functionality
 
   Scenario: User sees that there are no file blocks on provider from which file was downloaded and then evicted
     When user of browser opens oneprovider-1 Oneprovider file browser for "smallSpace" space
-    And user of browser uses upload button from file browser menu bar to upload file "large_file.txt" from local directory to remote current dir
+    And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
     And user of browser waits for file upload to finish
     And user of browser is idle for 4 seconds
     And user of browser sees file chunks for file "20B-0.txt" as follows:
