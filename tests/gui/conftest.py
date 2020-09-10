@@ -204,6 +204,12 @@ def public_share():
 
 
 @fixture(scope='session')
+def data_discovery():
+    from tests.gui.utils import DataDiscoveryPage
+    return DataDiscoveryPage
+
+
+@fixture(scope='session')
 def modals():
     from tests.gui.utils import Modals
     return Modals

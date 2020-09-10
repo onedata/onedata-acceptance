@@ -488,6 +488,15 @@ def check_tab_name_label(selenium, browser_id, tab_name, oz_page):
     assert label.lower() == tab_name, f'User not on {tab_name} page'
 
 
+@wt(parsers.parse('user of {browser_id} sees that opened space name is '
+                  '"{space}"'))
+def assert_opened_space_name(selenium, browser_id, space, oz_page):
+    driver = selenium[browser_id]
+    driver.switch_to.default_content()
+    msg = f'{space} space view is not opened'
+    assert oz_page(driver)['data'].elements_list[space].is_active(), msg
+
+
 @wt(parsers.parse('user of {browser_id} sees in the INFO section of Overview '
                   'page that number of shares is {number}'))
 def assert_number_of_shares_on_overview_page(browser_id, selenium, oz_page,

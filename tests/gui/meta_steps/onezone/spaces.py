@@ -285,6 +285,8 @@ def _leave_users_space_in_onezone_using_rest(hosts, users, user):
 
 
 @given(parsers.parse('{user} user does not have access to any space'))
+@given(parsers.parse('{user} user does not have access to any space other '
+                     'than defined in next steps'))
 def g_leave_users_space_in_onezone_using_rest(hosts, users, user):
     _leave_users_space_in_onezone_using_rest(hosts, users, user)
 
