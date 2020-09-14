@@ -24,7 +24,7 @@ from tests.gui.steps.onezone.members import (
     click_on_option_in_members_list_menu, copy_token_from_modal,
     assert_member_is_in_parent_members_list)
 from tests.gui.steps.onezone.groups import (
-    click_on_option_of_group_menu_on_left_sidebar_menu)
+    click_on_option_of_group_menu_on_left_sidebar_menu, go_to_group_subpage)
 from tests.gui.steps.onezone.spaces import *
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
 from tests.gui.steps.onepanel.spaces import *
@@ -347,12 +347,8 @@ def add_group_to_space_or_group(browser_id, group_name, where_name, selenium,
                                                       option_in_function,
                                                       oz_page)
     elif where == 'group':
-        click_on_option_of_group_menu_on_left_sidebar_menu(selenium, browser_id,
-                                                           where_name,
-                                                           option_in_function,
-                                                           oz_page)
-    else:
-        raise AttributeError('where variable must be space or group')
+        go_to_group_subpage(selenium, browser_id, where_name,
+                            option_in_function.lower(), oz_page)
 
     click_on_option_in_members_list_menu(selenium, browser_id, button, where,
                                          member, oz_page, onepanel, popups)

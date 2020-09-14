@@ -32,17 +32,41 @@ Feature: Management of privileges in onezone GUI
             privilege subtypes:
               View space: True
               Modify space: False
+              Remove space: False
+              View privileges: False
+              Set privileges: False
           Data management:
             granted: Partially
             privilege subtypes:
               Read files: True
               Write files: True
               Register files: False
+              Manage shares: False
+              View database views: False
+              Manage database views: False
+              Query database views: False
+              View statistics: False
+              View changes stream: False
           Transfer management:
             granted: Partially
             privilege subtypes:
               View transfers: True
               Schedule replication: False
+              Cancel replication: False
+              Schedule eviction: False
+              Cancel eviction: False
+    And user of browser2 clicks to minimalize ["Data management", "Transfer management"] privileges of "group1" group in space members subpage
+    And user of browser2 sees following privileges of "group1" group in space members subpage:
+          QoS management:
+            granted: False
+          User management:
+            granted: False
+          Group management:
+            granted: False
+          Support management:
+            granted: False
+          Harvester management:
+            granted: False
 
 
   Scenario: User sees that user added to space has default privileges
@@ -56,30 +80,64 @@ Feature: Management of privileges in onezone GUI
             privilege subtypes:
               View space: True
               Modify space: False
+              Remove space: False
+              View privileges: False
+              Set privileges: False
           Data management:
             granted: Partially
             privilege subtypes:
               Read files: True
               Write files: True
               Register files: False
+              Manage shares: False
+              View database views: False
+              Manage database views: False
+              Query database views: False
+              View statistics: False
+              View changes stream: False
           Transfer management:
             granted: Partially
             privilege subtypes:
               View transfers: True
               Schedule replication: False
+              Cancel replication: False
+              Schedule eviction: False
+              Cancel eviction: False
+    And user of browser2 clicks to minimalize ["Data management", "Transfer management"] privileges of "admin" user in space members subpage
+    And user of browser2 sees following privileges of "admin" user in space members subpage:
+          QoS management:
+            granted: False
+          User management:
+            granted: False
+          Group management:
+            granted: False
+          Support management:
+            granted: False
+          Harvester management:
+            granted: False
   And user of browser1 leaves "space1" space in Onezone page
 
 
   Scenario: User sees that group added to group has default privileges
     When user of browser2 adds "group1" group to "group2" group using available groups dropdown
     And user of browser2 clicks "group1" group in "group2" group members groups list
+
     Then user of browser2 sees following privileges of "group1" group in group members subpage:
           Group management:
             granted: Partially
             privilege subtypes:
               View group: True
               Modify group: False
+              Remove group: False
+              View privileges: False
+              Set privileges: False
+          Group hierarchy management:
+            granted: False
           User management:
+            granted: False
+          Space management:
+            granted: False
+          Handle management:
             granted: False
 
 
@@ -94,7 +152,16 @@ Feature: Management of privileges in onezone GUI
             privilege subtypes:
               View group: True
               Modify group: False
+              Remove group: False
+              View privileges: False
+              Set privileges: False
+          Group hierarchy management:
+            granted: False
           User management:
+            granted: False
+          Space management:
+            granted: False
+          Handle management:
             granted: False
 
     And user of browser1 leaves group "group2"
@@ -115,7 +182,14 @@ Feature: Management of privileges in onezone GUI
             privilege subtypes:
               View harvester: True
               Modify harvester: False
+              Remove harvester: False
+              View privileges: False
+              Set privileges: False
           User management:
+            granted: False
+          Group management:
+            granted: False
+          Space management:
             granted: False
 
     And user of browser1 removes "harvester3" harvester in Onezone page
@@ -135,7 +209,14 @@ Feature: Management of privileges in onezone GUI
             privilege subtypes:
               View harvester: True
               Modify harvester: False
+              Remove harvester: False
+              View privileges: False
+              Set privileges: False
           User management:
+            granted: False
+          Group management:
+            granted: False
+          Space management:
             granted: False
 
     And user of browser1 removes "harvester2" harvester in Onezone page
@@ -153,7 +234,12 @@ Feature: Management of privileges in onezone GUI
             privilege subtypes:
               View cluster: True
               Modify cluster: False
+              Remove cluster: False
+              View privileges: False
+              Set privileges: False
           User management:
+            granted: False
+          Group management:
             granted: False
 
     And user of browser1 removes "group3" group from "oneprovider-1" cluster members

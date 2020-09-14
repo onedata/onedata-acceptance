@@ -84,7 +84,7 @@ scenarios('../features/onezone/user_account_manage.feature')
 scenarios('../features/onezone/providers.feature')
 scenarios('../features/onezone/providers_multibrowser.feature')
 scenarios('../features/onezone/full_name.feature')
-scenarios('../features/onezone/privileges.feature')
+scenarios('../features/onezone/default_privileges.feature')
 
 # THIS SCENARIO HAS TO BE EXECUTED IN THE END
 scenarios('../features/onezone/delete_account.feature')
