@@ -68,8 +68,8 @@ Feature: Directory_stat
     And user1 waits 2 second
     # call sleep, to be sure that time of above and below operations is different
     And user1 renames space1/dir1 to space1/dir2
-    Then status-change time of user1's space1/dir2 is equal to modification time
-    And status-change time of user1's space1/dir2 is equal to access time
+    Then status-change time of user1's space1/dir2 is greater to modification time
+    And status-change time of user1's space1/dir2 is greater to access time
 
 
   Scenario: Status-change time when changing mode

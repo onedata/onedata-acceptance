@@ -100,5 +100,5 @@ Feature: Regular_file_stat
     Then user1 sees file2 in space1
     And user1 doesn't see file1 in space1
     And user1 waits 2 second
-    And status-change time of user1's space1/file2 is equal to modification time
-    And status-change time of user1's space1/file2 is equal to access time
+    And status-change time of user1's space1/file2 is greater to modification time
+    And status-change time of user1's space1/file2 is greater to access time
