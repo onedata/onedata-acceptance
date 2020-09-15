@@ -117,14 +117,14 @@ def do_dd(client, user, input, output, block_size, block_size_unit, size,
     size_unit = SI_prefix_to_default(size_unit)
     size = convert_size(size, size_unit, 'k')
     block_size = convert_size(block_size, block_size_unit, 'k')
-    count = size / block_size
+    count = size // block_size
 
     return dd(client, int(block_size), int(count), output, unit='k',
               output=True, error=True, input_file=input, user=user)
 
 
 def parse_dd_output(dd_output):
-    dd_output = dd_output.split('\n')[-1].strip()
+    dd_output = dd_output.split('\n')[-2].strip()
     m = re.match(DD_OUTPUT_PATTERN, dd_output)
     value = float(m.group(1))
     unit = m.group(2)
