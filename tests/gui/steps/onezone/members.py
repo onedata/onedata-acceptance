@@ -102,7 +102,9 @@ def assert_element_is_member_of_parent_in_memberships(selenium, browser_id,
     if not search_for_members(records, member_name, parent_name, fun):
         raise RuntimeError(
             'not found "{}" {} as a member of "{}" {}'.format(member_name,
-                member_type, parent_name, parent_type))
+                                                              member_type,
+                                                              parent_name,
+                                                              parent_type))
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) does not see that '
@@ -123,11 +125,15 @@ def assert_element_is_not_member_of_parent_in_memberships(selenium, browser_id,
         if member_type != 'user':
             raise RuntimeError(
                 'found "{}" {} as a member of "{}" {}'.format(member_name,
-                    member_type, parent_name, parent_type))
+                                                              member_type,
+                                                              parent_name,
+                                                              parent_type))
         elif member_index == 0:
             raise RuntimeError(
                 'found "{}" {} as a member of "{}" {}'.format(member_name,
-                    member_type, parent_name, parent_type))
+                                                              member_type,
+                                                              parent_name,
+                                                              parent_type))
         return False
 
     search_for_members(records, member_name, parent_name, fun)
@@ -500,7 +506,7 @@ def set_privileges_in_members_subpage_on_modal(selenium, browser_id, config,
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees following privileges of '
                '"(?P<member_name>.*)" (?P<member_type>user|group) '
-               'in (?P<where>space|group|harvester) members subpage:'
+               'in (?P<where>space|group|harvester|cluster) members subpage:'
                '\n(?P<config>(.|\s)*)'))
 def assert_privileges_in_members_subpage(selenium, browser_id, member_name,
                                          member_type, where, config, onepanel,
@@ -705,7 +711,8 @@ def click_on_bulk_checkbox(browser_id, member_type, selenium, oz_page):
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on "(?P<member_name>.*)" '
                '(?P<member_type>users|groups) checkbox'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_member_checkbox(selenium, browser_id, member_name, oz_page, member_type):
+def click_member_checkbox(selenium, browser_id, member_name, oz_page,
+                          member_type):
     driver = selenium[browser_id]
     page = oz_page(driver)['groups'].members_page
 
@@ -733,3 +740,18 @@ def assert_ownership_privileges_warning_appeared_for_user(selenium, browser_id,
     error_msg = f'alert with text "{alert_text}" not found'
     ownership_warning = members_list.items[username].ownership_warning.text
     assert alert_text in ownership_warning, error_msg
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) clicks to minimalize '
+               '(?P<privileges_list>.*) privileges of "(?P<member_name>.*)" '
+               '(?P<member_type>user|group) in '
+               '(?P<where>space|group|harvester|cluster) members subpage'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def minimalize_privileges(selenium, browser_id, privileges_list, oz_page,
+                          onepanel, where, member_name, member_type):
+    member_type = member_type + 's'
+
+    tree = get_privilege_tree(selenium, browser_id, onepanel, oz_page, where,
+                              member_type, member_name)
+    for name in parse_seq(privileges_list):
+        tree.privilege_groups[name].minimalize()
