@@ -37,7 +37,7 @@ Feature: Basic file management operations
     Then user of browser sees that error modal with text "Copying some of files failed!" appeared
 
 
-  Scenario: User fails to paste file to directory with identical file
+  Scenario: User fails to paste copied file to directory with identical file
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
@@ -50,7 +50,7 @@ Feature: Basic file management operations
     Then user of browser sees that error modal with text "Copying some of files failed!" appeared
 
 
-  Scenario: User fails to paste file to directory without permissions
+  Scenario: User fails to paste copied file to directory without permissions
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
