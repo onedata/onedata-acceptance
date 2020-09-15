@@ -41,7 +41,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
   Scenario: Space-owner-user changes file permission and user1 sees that it has changed
     When user of space_owner_browser sets file1 POSIX 775 privileges in "space1"
 
-	# user1 checks permission code
+	# User1 checks permission code
     Then user of browser1 clicks "space1" on the spaces list in the sidebar
     And user of browser1 clicks Data of "space1" in the sidebar
     And user of browser1 sees file browser in data tab in Oneprovider page
@@ -56,7 +56,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
   Scenario: Space-owner-user changes directory permission and user1 sees that it has changed
     When user of space_owner_browser sets dir1 POSIX 664 privileges in "space1"
 
-	# user1 checks permission code
+	# User1 checks permission code
     Then user of browser1 clicks "space1" on the spaces list in the sidebar
     And user of browser1 clicks Data of "space1" in the sidebar
     And user of browser1 sees file browser in data tab in Oneprovider page
@@ -143,7 +143,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     And user of space_owner_browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
     And user of space_owner_browser changes current working directory to home using breadcrumbs
 
-   # Space-owner-user changes permission code
+    # Space-owner-user changes permission code
     And user of space_owner_browser sets dir1 POSIX 753 privileges in "space2"
 
 	# User1 fails to remove file

@@ -107,8 +107,8 @@ Feature: ACL basic tests using sigle browser in Oneprovider GUI
     And user of browser clicks "Cancel" button in displayed modal
 
     Examples:
-      | privileges            | subject_type | subject_name     |
-      | [allow, acl:read acl] | user         | space-owner-user |
+    | privileges            | subject_type | subject_name     |
+    | [allow, acl:read acl] | user         | space-owner-user |
 
 
   Scenario Outline: User sets ACL for multiple files
@@ -171,8 +171,8 @@ Feature: ACL basic tests using sigle browser in Oneprovider GUI
     Then user of browser sees exactly 0 ACL records in edit permissions modal
 
     Examples:
-      | privileges     | subject_type | subject_name     |
-      | [acl:read acl] | user         | space-owner-user |
+    | privileges     | subject_type | subject_name     |
+    | [acl:read acl] | user         | space-owner-user |
 
 
   Scenario Outline: User changes order of ACL entries
