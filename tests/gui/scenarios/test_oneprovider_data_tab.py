@@ -47,11 +47,13 @@ from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
+from tests.gui.steps.oneprovider.permissions import *
 
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.oneprovider.common import *
+from tests.gui.meta_steps.oneprovider.data import *
 
 from . import BROWSER
 
@@ -99,4 +101,5 @@ scenarios('../features/oneprovider/data/empty_file_browser.feature')
 scenarios('../features/oneprovider/data/single_file.feature')
 scenarios('../features/oneprovider/data/several_files.feature')
 scenarios('../features/oneprovider/data/single_directory.feature')
+scenarios('../features/oneprovider/data/file_management_fail.feature')
 scenarios('../features/oneprovider/data/nested_directories.feature')

@@ -69,7 +69,7 @@ def click_tooltip_from_toolbar_in_data_tab_in_op(selenium, browser_id, tooltip,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks '
-               '"(?P<button>New directory|Upload files|Refresh)" button '
+               '"(?P<button>New directory|Upload files|Refresh|Paste)" button '
                'from file browser menu bar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_from_file_browser_menu_bar(selenium, browser_id, button,
