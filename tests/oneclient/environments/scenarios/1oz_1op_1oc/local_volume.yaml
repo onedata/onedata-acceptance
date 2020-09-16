@@ -60,7 +60,7 @@ os-config:
     oneclient-1: *cfg1
 
 storages:
-  - nfs
+  - local-volume-1
 
 onezone:
   batchConfig:
@@ -74,6 +74,3 @@ oneprovider-1:
     users: []
     wait_for_oneprovider:
       enabled: false
-    directIO:
-      nfs:
-        enabled: true

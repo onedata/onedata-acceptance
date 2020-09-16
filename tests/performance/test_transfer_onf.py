@@ -61,7 +61,7 @@ class TestTransferOnf(AbstractPerformanceTest):
            'Files number: {files_number} '
            'Files size: {files_size} '
            'Threads number: {threads_num}'))
-    def test_transfer_onf(self, request, hosts, users, clients, env_desc, 
+    def test_transfer_onf(self, request, hosts, users, clients, env_desc,
                           params):
         client1 = get_client(CLIENT_CONF_1, clients, hosts,
                              request, users, env_desc)
@@ -77,7 +77,7 @@ class TestTransferOnf(AbstractPerformanceTest):
 
         _create_files(client1, files_number, file_size, dir_path_1)
         # TODO wait for synchronization between providers before copying
-        time.sleep(10)
+        time.sleep(60)
 
         test_result = _execute_test(client2, files_number, file_size / 1024,
                                     threads_num, dir_path_2)
@@ -94,14 +94,14 @@ class TestTransferOnf(AbstractPerformanceTest):
 
 def _create_files(client, files_num, file_size, dir_path):
     flushed_print('\t\tStarted creation of {} files'.format(files_num))
-    for i in xrange(files_num):
+    for i in range(files_num):
         if i % 100 == 0:
             flushed_print('\t\t\tCreated {}nth file'.format(i))
         truncate(client, os.path.join(dir_path, 'file{}'.format(i)), file_size)
 
 
 def _execute_test(client, files_number, file_size, threads_num, dir_path):
-    avg_work = files_number / threads_num
+    avg_work = files_number // threads_num
     intervals = chain(repeat(avg_work, threads_num-1),
                       [avg_work + files_number % threads_num])
     i = 0
@@ -150,7 +150,7 @@ def _execute_test(client, files_number, file_size, threads_num, dir_path):
 
 def _copy_files(client, start, end, dir_path, queue):
     try:
-        for i in xrange(start, end):
+        for i in range(start, end):
             src_file = os.path.join(dir_path, 'file{}'.format(i))
             dst_file = os.path.join(dir_path, 'file{}.bak'.format(i))
             cp(client, src_file, dst_file)
@@ -160,7 +160,7 @@ def _copy_files(client, start, end, dir_path, queue):
 
 def _teardown_after_test(client, files_number, dir_path):
     logging_time = time.time() + LOGGING_INTERVAL
-    for i in xrange(files_number):
+    for i in range(files_number):
         rm(client, os.path.join(dir_path, 'file{}'.format(i)))
         rm(client, os.path.join(dir_path, 'file{}.bak'.format(i)))
         if time.time() >= logging_time:

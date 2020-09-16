@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in " \
 from tests.gui.utils.core.web_elements import WebItem, Button, WebItemsSequence
 from .consumer_caveat import ConsumerCaveat
 from .menu_popup import MenuPopup
+from .query_builder import QueryBuilderPopup
 from .selector_popup import SelectorPopup
 from .upload_presenter import UploadPresenter
 from .user_account_menu import UserAccountPopup
@@ -34,6 +35,8 @@ class Popups(object):
                                     cls=ConsumerCaveat)
     user_delete_account_popover_menu = WebItem('.in .webui-popover-inner',
                                                cls=UserDeleteAccountPopoverMenu)
+    query_builder_popup = WebItem('.query-builder-block-selector',
+                                  cls=QueryBuilderPopup)
     data_distribution_popup = WebItem('.webui-popover.in', cls=DataDistributionPopup)
 
     def __init__(self, driver):

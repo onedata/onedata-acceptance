@@ -112,7 +112,7 @@ class TestConcurrentFilesCreation(AbstractPerformanceTest):
 
 def _execute_test(client, files_number, empty_files, threads_num,
                   dir_path, description):
-    avg_work = files_number / threads_num
+    avg_work = files_number // threads_num
     intervals = chain(repeat(avg_work, threads_num-1),
                       [avg_work + files_number % threads_num])
     i = 0
@@ -166,7 +166,7 @@ def _create_files(client, start, end, empty_files, dir_path, queue):
     fun = partial(truncate, size=0) if empty_files else partial(write,
                                                                 text=TEXT)
     try:
-        for i in xrange(start, end):
+        for i in range(start, end):
             fun(client, file_path=os.path.join(dir_path, 'file{}'.format(i)))
     except Exception as ex:
         queue.put(ex)
@@ -174,7 +174,7 @@ def _create_files(client, start, end, empty_files, dir_path, queue):
 
 def _teardown_after_test(client, files_number, dir_path):
     logging_time = time.time() + LOGGING_INTERVAL
-    for i in xrange(files_number):
+    for i in range(files_number):
         rm(client, os.path.join(dir_path, 'file{}'.format(i)))
         if time.time() >= logging_time:
             flushed_print('\t\t\tDeleted {}nth file'.format(i))

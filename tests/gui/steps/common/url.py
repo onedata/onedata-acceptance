@@ -204,3 +204,10 @@ def if_gui_refresh_site(selenium, client, user):
 def refresh_webapp(selenium, browser_id):
     driver = selenium[browser_id]
     driver.get(parse_url(driver.current_url).group('base_url'))
+
+
+@wt(parsers.parse('user of {browser_id} sees that another window tab has been '
+                  'opened'))
+def switch_to_last_tab(selenium, browser_id):
+    driver = selenium[browser_id]
+    driver.switch_to.window(driver.window_handles[-1])

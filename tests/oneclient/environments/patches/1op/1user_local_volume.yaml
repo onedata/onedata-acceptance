@@ -32,7 +32,7 @@ spaces:
       - group: *group1
     supports:
         - provider: "oneprovider-1"
-          storage_name: "nfs"
+          storage_name: "local-volume-1"
           size: '1000000000'
   - name: space2
     user: *space_owner
@@ -42,5 +42,5 @@ spaces:
       - group: *group1
     supports:
         - provider: "oneprovider-1"
-          storage_name: "nfs"
+          storage_name: "local-volume-1"
           size: '1000000000'
