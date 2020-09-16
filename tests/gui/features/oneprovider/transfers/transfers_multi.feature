@@ -20,15 +20,15 @@ Feature: Oneprovider transfers functionality using multiple browser instances
 
     And directory tree structure on local file system:
           browser1:
-              large_file.txt:
-                size: 52428800
+            large_file.txt:
+              size: 50 MiB
           browser2:
-              large_file.txt:
-                size: 52428800
+            large_file.txt:
+              size: 50 MiB
 
 
   Scenario: User replicates file from remote provider to current provider
-    When user of browser1 uses upload button from file browser menu bar to upload file "large_file.txt" from local directory to remote current dir
+    When user of browser1 uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
     And user of browser1 waits for file upload to finish
 
     # Wait to ensure synchronization between providers
@@ -64,7 +64,7 @@ Feature: Oneprovider transfers functionality using multiple browser instances
   Scenario: User replicates directory with 2 files on different providers to current provider
     When user of browser1 creates directory "dir1"
     And user of browser1 double clicks on item named "dir1" in file browser
-    And user of browser1 uses upload button from file browser menu bar to upload file "large_file.txt" from local directory to remote current dir
+    And user of browser1 uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
     And user of browser1 waits for file upload to finish
     And user of browser1 sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
@@ -73,7 +73,7 @@ Feature: Oneprovider transfers functionality using multiple browser instances
     # Wait to ensure synchronization between providers
     And user of browser2 opens oneprovider-2 Oneprovider file browser for "space1" space
     And user of browser2 double clicks on item named "dir1" in file browser
-    And user of browser2 uses upload button from file browser menu bar to upload file "large_file.txt" from local directory to remote current dir
+    And user of browser2 uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
     And user of browser2 waits for file upload to finish
     And user of browser2 is idle for 2 seconds
     And user of browser2 sees file chunks for file "large_file(1).txt" as follows:
@@ -115,8 +115,7 @@ Feature: Oneprovider transfers functionality using multiple browser instances
 
 
   Scenario: User migrates file from remote provider to current provider
-    When user of browser1 uses upload button from file browser menu bar to upload file "large_file.txt" from local directory to remote current dir
-    And user of browser1 waits for file upload to finish
+    When user of browser1 uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
 
     # Wait to ensure synchronization between providers
     And user of browser1 is idle for 10 seconds
@@ -151,7 +150,7 @@ Feature: Oneprovider transfers functionality using multiple browser instances
   Scenario: User migrates directory with 2 files on different providers to current provider
     When user of browser1 creates directory "dir1"
     And user of browser1 double clicks on item named "dir1" in file browser
-    And user of browser1 uses upload button from file browser menu bar to upload file "large_file.txt" from local directory to remote current dir
+    And user of browser1 uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
     And user of browser1 waits for file upload to finish
     And user of browser1 sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
@@ -161,7 +160,7 @@ Feature: Oneprovider transfers functionality using multiple browser instances
     And user of browser2 opens oneprovider-2 Oneprovider file browser for "space1" space
     And user of browser2 is idle for 10 seconds
     And user of browser2 double clicks on item named "dir1" in file browser
-    And user of browser2 uses upload button from file browser menu bar to upload file "large_file.txt" from local directory to remote current dir
+    And user of browser2 uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
     And user of browser2 waits for file upload to finish
     And user of browser2 is idle for 2 seconds
     And user of browser2 sees file chunks for file "large_file(1).txt" as follows:

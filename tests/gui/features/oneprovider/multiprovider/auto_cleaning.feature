@@ -18,7 +18,7 @@ Feature: Onepanel features auto-cleaning
     And directory tree structure on local file system:
           browser2:
               large_file.txt:
-                size: 52428800
+                size: 50 MiB
 
 
   Scenario: User uses auto-cleaning
@@ -38,8 +38,8 @@ Feature: Onepanel features auto-cleaning
     And user of browser2 opens oneprovider-1 Oneprovider file browser for "space2" space
     And user of browser2 creates directory "dir1"
     And user of browser2 double clicks on item named "dir1" in file browser
-    And user of browser2 uses upload button from file browser menu bar to upload file "large_file.txt" from local directory to remote current dir
-    And user of browser2 uses upload button from file browser menu bar to upload file "large_file.txt" from local directory to remote current dir
+    And user of browser2 uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
+    And user of browser2 uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
     And user of browser2 waits for file upload to finish
     And user of browser2 uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
     And user of browser2 changes current working directory to home using breadcrumbs
@@ -117,8 +117,8 @@ Feature: Onepanel features auto-cleaning
     And user of browser2 opens oneprovider-1 Oneprovider file browser for "space2" space
     And user of browser2 creates directory "dir1"
     And user of browser2 double clicks on item named "dir1" in file browser
-    And user of browser2 uses upload button from file browser menu bar to upload file "large_file.txt" from local directory to remote current dir
-    And user of browser2 uses upload button from file browser menu bar to upload file "large_file.txt" from local directory to remote current dir
+    And user of browser2 uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
+    And user of browser2 uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
     And user of browser2 waits for file upload to finish
     And user of browser2 changes current working directory to home using breadcrumbs
     And user of browser2 is idle for 10 seconds
@@ -192,8 +192,8 @@ Feature: Onepanel features auto-cleaning
     And user of browser2 opens oneprovider-1 Oneprovider file browser for "space2" space
     And user of browser2 creates directory "dir1"
     And user of browser2 double clicks on item named "dir1" in file browser
-    And user of browser2 uses upload button from file browser menu bar to upload file "large_file.txt" from local directory to remote current dir
-    And user of browser2 uses upload button from file browser menu bar to upload file "large_file.txt" from local directory to remote current dir
+    And user of browser2 uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
+    And user of browser2 uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
     And user of browser2 waits for file upload to finish
     And user of browser2 uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
     And user of browser2 is idle for 10 seconds

@@ -27,13 +27,13 @@ Feature: Oneprovider transfers functionality
     And user of browser logged as user1 to Onezone service
     And directory tree structure on local file system:
           browser:
-              large_file.txt:
-                size: 52428800
+            large_file.txt:
+              size: 50 MiB
 
 
   Scenario: User replicates file to remote provider
     When user of browser opens oneprovider-1 Oneprovider file browser for "space1" space
-    And user of browser uses upload button from file browser menu bar to upload file "large_file.txt" from local directory to remote current dir
+    And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
 
     # Wait to ensure synchronization between providers
     And user of browser is idle for 2 seconds
@@ -70,7 +70,7 @@ Feature: Oneprovider transfers functionality
     When user of browser opens oneprovider-1 Oneprovider file browser for "space1" space
     And user of browser creates directory "dir1"
     And user of browser double clicks on item named "dir1" in file browser
-    And user of browser uses upload button from file browser menu bar to upload file "large_file.txt" from local directory to remote current dir
+    And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
     And user of browser waits for file upload to finish
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
@@ -108,7 +108,7 @@ Feature: Oneprovider transfers functionality
 
   Scenario: User tries to migrate file to too small space on remote provider
     When user of browser opens oneprovider-1 Oneprovider file browser for "smallSpace" space
-    And user of browser uses upload button from file browser menu bar to upload file "large_file.txt" from local directory to remote current dir
+    And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
     And user of browser waits for file upload to finish
 
     # Wait to ensure synchronization between providers
@@ -139,7 +139,7 @@ Feature: Oneprovider transfers functionality
     When user of browser opens oneprovider-1 Oneprovider file browser for "smallSpace" space
     And user of browser creates directory "dir1"
     And user of browser double clicks on item named "dir1" in file browser
-    And user of browser uses upload button from file browser menu bar to upload file "large_file.txt" from local directory to remote current dir
+    And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
     And user of browser waits for file upload to finish
     And user of browser changes current working directory to home using breadcrumbs
 
@@ -170,7 +170,7 @@ Feature: Oneprovider transfers functionality
 
   Scenario: User tries to replicate file to too small space on remote provider
     When user of browser opens oneprovider-1 Oneprovider file browser for "smallSpace" space
-    And user of browser uses upload button from file browser menu bar to upload file "large_file.txt" from local directory to remote current dir
+    And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
     And user of browser waits for file upload to finish
 
     # Wait to ensure synchronization between providers
@@ -201,7 +201,7 @@ Feature: Oneprovider transfers functionality
     When user of browser opens oneprovider-1 Oneprovider file browser for "smallSpace" space
     And user of browser creates directory "dir1"
     And user of browser double clicks on item named "dir1" in file browser
-    And user of browser uses upload button from file browser menu bar to upload file "large_file.txt" from local directory to remote current dir
+    And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
     And user of browser waits for file upload to finish
     And user of browser changes current working directory to home using breadcrumbs
 
@@ -234,7 +234,7 @@ Feature: Oneprovider transfers functionality
     When user of browser opens oneprovider-1 Oneprovider file browser for "space1" space
     And user of browser creates directory "dir1"
     And user of browser double clicks on item named "dir1" in file browser
-    And user of browser uses upload button from file browser menu bar to upload file "large_file.txt" from local directory to remote current dir
+    And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
     And user of browser changes current working directory to home using breadcrumbs
 
     # Wait to ensure synchronization between providers
@@ -264,7 +264,7 @@ Feature: Oneprovider transfers functionality
 
   Scenario: User migrates file to remote provider
     When user of browser opens oneprovider-1 Oneprovider file browser for "space1" space
-    And user of browser uses upload button from file browser menu bar to upload file "large_file.txt" from local directory to remote current dir
+    And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
     And user of browser waits for file upload to finish
 
     # Wait to ensure synchronization between providers
@@ -302,7 +302,7 @@ Feature: Oneprovider transfers functionality
     When user of browser opens oneprovider-1 Oneprovider file browser for "space1" space
     And user of browser creates directory "dir1"
     And user of browser double clicks on item named "dir1" in file browser
-    And user of browser uses upload button from file browser menu bar to upload file "large_file.txt" from local directory to remote current dir
+    And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
     And user of browser waits for file upload to finish
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled

@@ -20,9 +20,9 @@ Feature: Uploading files to multiple providers
     And user of browser logged as user1 to Onezone service
     And directory tree structure on local file system:
           browser:
-              dir2: 200
-              large_file.txt:
-                  size: 52428800
+            dir2: 200
+            large_file.txt:
+              size: 50 MiB
 
   Scenario: User successfully uploads different files to two oneproviders and sees that they are accessible
     When user of browser opens file browser for "space1" space
@@ -60,7 +60,7 @@ Feature: Uploading files to multiple providers
 
     # upload file and cancel
     And user of browser uses upload button from file browser menu bar to upload files from local directory "dir2" to remote current dir
-    And user of browser uses upload button from file browser menu bar to upload file "large_file.txt" from local directory to remote current dir
+    And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
     And user of browser clicks cancel button on upload popup number 2
     And user of browser confirms canceling the upload
     And user of browser waits for file uploads to finish

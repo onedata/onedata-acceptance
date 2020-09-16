@@ -341,7 +341,7 @@ def upload_files_to_cwd_in_data_tab(selenium, browser_id, dir_path, tmpdir,
 
 
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
-                  'menu bar to upload file "{file_path}" from local directory '
+                  'menu bar to upload local file "{file_path}" '
                   'to remote current dir'))
 def upload_file_to_cwd_in_data_tab(selenium, browser_id, file_path, tmpdir,
                                    op_container):

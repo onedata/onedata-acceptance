@@ -41,8 +41,12 @@ def create_dir_tree_structure_on_local_fs(structure, tmpdir):
                                                             specifying file,
                                                             one can specify it's
                                                             content as well
-                size: 5                        ---> OR one can specify size in B
+                size: 5 MiB                ---> OR one can specify size
+                                                (default in bytes unless
+                                                specified otherwise)
+                                               ---> SIZE OVERRIDES CONTENT
     """
+
     for user, home_dir_content in yaml.load(structure).items():
         home_dir = tmpdir.join(user)
         with suppress(OSError):
@@ -65,7 +69,7 @@ def _mkdirs(cwd, dir_content=None):
                 _mkdirs(new_dir, dir_content[item])
             else:
                 content = dir_content[item].get('content', None)
-                size = dir_content[item].get('size', None)
+                size = specify_size(dir_content[item].get('size', None))
                 if size:
                     content = size * '1'
 
@@ -73,6 +77,15 @@ def _mkdirs(cwd, dir_content=None):
     else:
         for i in range(files_num):
             _mkfile(cwd.join('file{}.txt'.format(i)))
+
+
+def specify_size(size_string):
+    try:
+        return int(size_string)
+    except ValueError:
+        unit_dict = {'B': 1, 'KiB': 1024, 'MiB': 1024*1024}
+        [size, unit] = size_string.split()
+        return int(size) * unit_dict[unit]
 
 
 def _mkfile(file_, file_content=None):
