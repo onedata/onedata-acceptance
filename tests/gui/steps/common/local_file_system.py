@@ -69,8 +69,9 @@ def _mkdirs(cwd, dir_content=None):
                 _mkdirs(new_dir, dir_content[item])
             else:
                 content = dir_content[item].get('content', None)
-                size = specify_size(dir_content[item].get('size', None))
+                size = dir_content[item].get('size', None)
                 if size:
+                    size = specify_size(size)
                     content = size * '1'
 
                 _mkfile(cwd.join(item), content)
