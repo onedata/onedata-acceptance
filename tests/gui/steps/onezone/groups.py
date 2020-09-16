@@ -68,6 +68,18 @@ def click_on_group_menu_button(selenium, browser_id, option, group,
     popups(driver).popover_menu.menu[option]()
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_option_of_group_menu_on_left_sidebar_menu(selenium, browser_id,
+                                                       group_name, option,
+                                                       oz_page):
+    driver = selenium[browser_id]
+    driver.switch_to.default_content()
+    page = oz_page(driver)['groups']
+    page.elements_list[group_name]()
+    getattr(page.elements_list[group_name],
+            transform(option))()
+
+
 @wt(parsers.parse('user of {browser_id} writes '
                   '"{text}" into rename group text field'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -195,8 +207,9 @@ def assert_list_of_children_contains_group(selenium, browser_id, oz_page,
                                            option):
     relation = 'children' if relation == 'child' else 'parents'
 
-    groups = getattr(oz_page(selenium[browser_id])['groups'].main_page.hierarchy,
-                     relation)
+    groups = getattr(
+        oz_page(selenium[browser_id])['groups'].main_page.hierarchy,
+        relation)
     if option == 'sees':
         assert group_name in groups
     else:
@@ -228,4 +241,3 @@ def assert_user_sees_group_page(selenium, oz_page, browser_id, group_name):
     group_name_on_page = oz_page(driver)['groups'].selected_group_name
     err_msg = f'expected group name {group_name}, found {group_name_on_page}'
     assert group_name_on_page == group_name, err_msg
-

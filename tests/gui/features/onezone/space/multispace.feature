@@ -3,17 +3,17 @@ Feature: Basic management of spaces
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
-            - user1
+            - space-owner-user
     And initial spaces configuration in "onezone" Onezone service:
           space1:
-            owner: user1
+            owner: space-owner-user
           space2:
-            owner: user1
+            owner: space-owner-user
 
 
     And user opened browser window
     And user of browser opened Onezone page
-    And user of browser logged as user1 to Onezone service
+    And user of browser logged as space-owner-user to Onezone service
 
 
   Scenario: User switches between spaces

@@ -116,7 +116,7 @@ def execute_file_creation_test(client, files_number, empty_files,
 
     fun = partial(truncate, size=0) if empty_files else partial(write,
                                                                 text=TEXT)
-    for i in xrange(files_number):
+    for i in range(files_number):
         fun(client, file_path=os.path.join(dir_path, 'file{}'.format(i)))
         if time.time() >= logging_time:
             flushed_print('\t\t\tCreated {}nth file'.format(i))
@@ -135,7 +135,7 @@ def execute_file_creation_test(client, files_number, empty_files,
 
 def teardown_after_file_creation_test(client, files_number, dir_path):
     logging_time = time.time() + LOGGING_INTERVAL
-    for i in xrange(files_number):
+    for i in range(files_number):
         rm(client, os.path.join(dir_path, 'file{}'.format(i)))
         if time.time() >= logging_time:
             flushed_print('\t\t\tDeleted {}nth file'.format(i))

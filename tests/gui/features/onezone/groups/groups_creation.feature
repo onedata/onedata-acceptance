@@ -4,13 +4,6 @@ Feature: Basic creation/joining of groups with one user in Onezone GUI
   Background:
     Given initial users configuration in "onezone" Onezone service:
             - user1
-    And initial spaces configuration in "onezone" Onezone service:
-          space1:
-              owner: user1
-              providers:
-                  - oneprovider-1:
-                      storage: posix
-                      size: 1000000
 
     And user opened browser window
     And user of browser opened Onezone page

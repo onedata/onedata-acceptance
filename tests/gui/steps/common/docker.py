@@ -142,3 +142,17 @@ def unpause_providers(hosts, provider_list):
     for provider in parse_seq(provider_list):
         container_id = hosts[provider]['container-id']
         subprocess.call(unpause_cmd + [container_id])
+
+
+@wt(parsers.parse('elasticsearch plugin stops working'))
+def pause_elasticsearch_container(hosts):
+    pause_cmd = ['docker', 'pause']
+    container_id = hosts['elasticsearch']['container-id']
+    subprocess.call(pause_cmd + [container_id])
+
+
+@wt(parsers.parse('elasticsearch plugin starts working'))
+def unpause_elasticsearch_container(hosts):
+    unpause_cmd = ['docker', 'unpause']
+    container_id = hosts['elasticsearch']['container-id']
+    subprocess.call(unpause_cmd + [container_id])

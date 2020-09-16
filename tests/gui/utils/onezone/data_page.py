@@ -1,4 +1,4 @@
-"""Utils to facilitate operations on spaces page in Onezone gui"""
+"""Utils to facilitate operations on discovery page in Onezone gui"""
 
 __author__ = "Michal Stanisz, Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
@@ -48,6 +48,9 @@ class Space(Element):
 
     def is_home_icon(self):
         return 'oneicon-home' in self.home_icon.get_attribute("class")
+
+    def is_active(self):
+        return 'active' in self.web_elem.get_attribute('class')
 
 
 class Provider(Element):
