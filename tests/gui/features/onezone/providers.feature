@@ -3,10 +3,10 @@ Feature: Basic management of providers in Onezone GUI
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
-            - user1
+            - space-owner-user
     And initial spaces configuration in "onezone" Onezone service:
           space1:
-              owner: user1
+              owner: space-owner-user
               providers:
                   - oneprovider-1:
                       storage: posix
@@ -14,7 +14,7 @@ Feature: Basic management of providers in Onezone GUI
 
     And user opened browser window
     And user of browser opened Onezone page
-    And user of browser logged as user1 to Onezone service
+    And user of browser logged as space-owner-user to Onezone service
 
 
   Scenario: User opens provider popup by clicking on supporting provider in data page

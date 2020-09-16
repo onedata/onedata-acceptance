@@ -3,14 +3,14 @@ Feature: Management of tokens basic features in Onezone GUI
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
-            - user1:
+            - space-owner-user:
                 generate_token: false
     And initial spaces configuration in "onezone" Onezone service:
             space1:
-                owner: user1
+                owner: space-owner-user
     And user opened browser window
     And user of browser opened onezone page
-    And user of browser logged as user1 to Onezone service
+    And user of browser logged as space-owner-user to Onezone service
 
 
   Scenario Outline: User successfully creates token with default settings
@@ -149,7 +149,7 @@ Feature: Management of tokens basic features in Onezone GUI
           consumer:
             - type: user
               by: id
-              consumer name: user1
+              consumer name: space-owner-user
           service:
             Service:
               - Any Oneprovider
@@ -182,7 +182,7 @@ Feature: Management of tokens basic features in Onezone GUI
             consumer:
               - type: user
                 by: name
-                consumer name: user1
+                consumer name: space-owner-user
             service:
               - Any Oneprovider
               - Any Oneprovider Onepanel
