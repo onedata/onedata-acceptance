@@ -3,10 +3,10 @@ Feature: Basic share management in Oneprovider GUI
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
-            - user1
+            - space-owner-user
     And initial spaces configuration in "onezone" Onezone service:
         space1:
-            owner: user1
+            owner: space-owner-user
             providers:
                 - oneprovider-1:
                     storage: posix
@@ -25,7 +25,7 @@ Feature: Basic share management in Oneprovider GUI
 
     And user opened browser window
     And user of browser opened onezone page
-    And user of browser logged as user1 to Onezone service
+    And user of browser logged as space-owner-user to Onezone service
 
 
   Scenario: User sees shared status tag for directory after sharing it
@@ -74,7 +74,7 @@ Feature: Basic share management in Oneprovider GUI
 
 
   Scenario: User opens share modal using shared status tag
-    Given using REST, user user1 creates "share_dir1" share of "space1/dir1" supported by "oneprovider-1" provider
+    Given using REST, user space-owner-user creates "share_dir1" share of "space1/dir1" supported by "oneprovider-1" provider
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
@@ -85,7 +85,7 @@ Feature: Basic share management in Oneprovider GUI
 
 
   Scenario: User renames share from single share view
-    Given using REST, user user1 creates "share_dir1" share of "space1/dir1" supported by "oneprovider-1" provider
+    Given using REST, user space-owner-user creates "share_dir1" share of "space1/dir1" supported by "oneprovider-1" provider
     When user of browser opens file browser for "space1" space
     And user of browser opens "share_dir1" single share view of "dir1" using modal icon
 
@@ -99,7 +99,7 @@ Feature: Basic share management in Oneprovider GUI
 
 
   Scenario: User removes share from single share view
-    Given using REST, user user1 creates "share_dir1" share of "space1/dir1" supported by "oneprovider-1" provider
+    Given using REST, user space-owner-user creates "share_dir1" share of "space1/dir1" supported by "oneprovider-1" provider
     When user of browser opens file browser for "space1" space
     And user of browser opens "share_dir1" single share view of "dir1" using modal icon
 
@@ -114,7 +114,7 @@ Feature: Basic share management in Oneprovider GUI
 
 
   Scenario: User removes one of two shares of directory from single share view
-    Given using REST, user user1 creates following shares:
+    Given using REST, user space-owner-user creates following shares:
           - name: share_dir1
             path: space1/dir1
             provider: oneprovider-1
@@ -133,7 +133,7 @@ Feature: Basic share management in Oneprovider GUI
 
 
   Scenario: User removes share using shares browser
-    Given using REST, user user1 creates following shares:
+    Given using REST, user space-owner-user creates following shares:
           - name: share_dir1
             path: space1/dir1
             provider: oneprovider-1
@@ -156,7 +156,7 @@ Feature: Basic share management in Oneprovider GUI
 
 
   Scenario: User renames share using shares browser
-    Given using REST, user user1 creates "share_dir1" share of "space1/dir1" supported by "oneprovider-1" provider
+    Given using REST, user space-owner-user creates "share_dir1" share of "space1/dir1" supported by "oneprovider-1" provider
     When user of browser opens file browser for "space1" space
 
     And user of browser opens shares view of "space1"
@@ -173,7 +173,7 @@ Feature: Basic share management in Oneprovider GUI
 
 
   Scenario: User sees new files in single share view in full Onezone interface after adding them to shared directory
-    Given using REST, user user1 creates "share_dir1" share of "space1/dir1" supported by "oneprovider-1" provider
+    Given using REST, user space-owner-user creates "share_dir1" share of "space1/dir1" supported by "oneprovider-1" provider
     When user of browser opens file browser for "space1" space
 
     # upload file to shared directory
@@ -189,7 +189,7 @@ Feature: Basic share management in Oneprovider GUI
 
 
   Scenario: User does not see files in single share view in full Onezone interface after removing them from shared directory
-    Given using REST, user user1 creates "share_dir2" share of "space1/dir2" supported by "oneprovider-1" provider
+    Given using REST, user space-owner-user creates "share_dir2" share of "space1/dir2" supported by "oneprovider-1" provider
     When user of browser opens file browser for "space1" space
     And user of browser opens "share_dir2" single share view of "dir2" using modal icon
     And user of browser double clicks on item named "dir2" in file browser
@@ -209,7 +209,7 @@ Feature: Basic share management in Oneprovider GUI
 
 
   Scenario: User can change working directory using breadcrumbs
-    Given using REST, user user1 creates "share_dir2" share of "space1/dir2" supported by "oneprovider-1" provider
+    Given using REST, user space-owner-user creates "share_dir2" share of "space1/dir2" supported by "oneprovider-1" provider
     When user of browser opens file browser for "space1" space
     And user of browser opens "share_dir2" single share view of "dir2" using modal icon
 
@@ -228,7 +228,7 @@ Feature: Basic share management in Oneprovider GUI
 
 
   Scenario: User can jump to data tab using breadcrumbs in single share view in full Onezone interface
-    Given using REST, user user1 creates "share_dir2_dir3" share of "space1/dir2/dir3" supported by "oneprovider-1" provider
+    Given using REST, user space-owner-user creates "share_dir2_dir3" share of "space1/dir2/dir3" supported by "oneprovider-1" provider
     When user of browser opens file browser for "space1" space
     And user of browser double clicks on item named "dir2" in file browser
     And user of browser opens "share_dir2_dir3" single share view of "dir3" using modal icon
@@ -245,7 +245,7 @@ Feature: Basic share management in Oneprovider GUI
 
 
   Scenario: User downloads files from shared directory on single share view in full Onezone interface
-    Given using REST, user user1 creates "share_dir2" share of "space1/dir2" supported by "oneprovider-1" provider
+    Given using REST, user space-owner-user creates "share_dir2" share of "space1/dir2" supported by "oneprovider-1" provider
     When user of browser opens file browser for "space1" space
     And user of browser opens "share_dir2" single share view of "dir2" using modal icon
 
@@ -256,7 +256,7 @@ Feature: Basic share management in Oneprovider GUI
 
 
   Scenario: User can remove share by removing shared directory
-    Given using REST, user user1 creates "share_dir2" share of "space1/dir2" supported by "oneprovider-1" provider
+    Given using REST, user space-owner-user creates "share_dir2" share of "space1/dir2" supported by "oneprovider-1" provider
     When user of browser opens file browser for "space1" space
     And user of browser opens "share_dir2" single share view of "dir2" using modal icon
 
@@ -277,7 +277,7 @@ Feature: Basic share management in Oneprovider GUI
 
 
   Scenario: User can remove share by removing directory which contains shared directory
-    Given using REST, user user1 creates "share_dir3" share of "space1/dir2/dir3" supported by "oneprovider-1" provider
+    Given using REST, user space-owner-user creates "share_dir3" share of "space1/dir2/dir3" supported by "oneprovider-1" provider
     When user of browser opens file browser for "space1" space
     And user of browser opens shares view of "space1"
     And user of browser sees that there is "share_dir3" share on shares view

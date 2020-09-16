@@ -2,10 +2,10 @@ Feature: Oneprovider transfers functionality
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
-            - user1
+            - space-owner-user
     And initial spaces configuration in "onezone" Onezone service:
         space1:
-            owner: user1
+            owner: space-owner-user
             providers:
                 - oneprovider-1:
                     storage: posix
@@ -14,7 +14,7 @@ Feature: Oneprovider transfers functionality
                     storage: posix
                     size: 100000000
         smallSpace:
-            owner: user1
+            owner: space-owner-user
             providers:
                 - oneprovider-1:
                     storage: posix
@@ -24,12 +24,11 @@ Feature: Oneprovider transfers functionality
                     size: 1000000
     And user opened browser window
     And user of browser opened onezone page
-    And user of browser logged as user1 to Onezone service
+    And user of browser logged as space-owner-user to Onezone service
     And directory tree structure on local file system:
           browser:
             large_file.txt:
               size: 50 MiB
-
 
   Scenario: User replicates file to remote provider
     When user of browser opens oneprovider-1 Oneprovider file browser for "space1" space
@@ -50,7 +49,7 @@ Feature: Oneprovider transfers functionality
     And user of browser sees file in ended transfers:
             name: large_file.txt
             destination: oneprovider-2
-            username: user1
+            username: space-owner-user
             transferred: 50 MiB
             type: replication
             status: completed
@@ -89,7 +88,7 @@ Feature: Oneprovider transfers functionality
     And user of browser sees directory in ended transfers:
             name: dir1
             destination: oneprovider-2
-            username: user1
+            username: space-owner-user
             transferred: 50 MiB
             type: replication
             status: completed
@@ -123,7 +122,7 @@ Feature: Oneprovider transfers functionality
     And user of browser sees file in ended transfers:
             name: large_file.txt
             destination: oneprovider-2
-            username: user1
+            username: space-owner-user
             transferred: 0 B
             type: migration
             status: failed
@@ -155,7 +154,7 @@ Feature: Oneprovider transfers functionality
     And user of browser sees directory in ended transfers:
             name: dir1
             destination: oneprovider-2
-            username: user1
+            username: space-owner-user
             transferred: 0 B
             type: migration
             status: failed
@@ -185,7 +184,7 @@ Feature: Oneprovider transfers functionality
     And user of browser sees file in ended transfers:
             name: large_file.txt
             destination: oneprovider-2
-            username: user1
+            username: space-owner-user
             transferred: 0 B
             type: replication
             status: failed
@@ -217,7 +216,7 @@ Feature: Oneprovider transfers functionality
     And user of browser sees directory in ended transfers:
             name: dir1
             destination: oneprovider-2
-            username: user1
+            username: space-owner-user
             transferred: 0 B
             type: replication
             status: failed
@@ -249,7 +248,7 @@ Feature: Oneprovider transfers functionality
     And user of browser sees directory in ended transfers:
             name: dir1
             destination: oneprovider-1
-            username: user1
+            username: space-owner-user
             transferred: 0 B
             type: replication
             status: completed
@@ -282,7 +281,7 @@ Feature: Oneprovider transfers functionality
     And user of browser sees file in ended transfers:
             name: large_file.txt
             destination: oneprovider-2
-            username: user1
+            username: space-owner-user
             transferred: 50 MiB
             type: migration
             status: completed
@@ -321,7 +320,7 @@ Feature: Oneprovider transfers functionality
     And user of browser sees directory in ended transfers:
             name: dir1
             destination: oneprovider-2
-            username: user1
+            username: space-owner-user
             transferred: 50 MiB
             type: migration
             status: completed

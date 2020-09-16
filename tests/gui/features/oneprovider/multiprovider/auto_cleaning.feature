@@ -2,28 +2,28 @@ Feature: Onepanel features auto-cleaning
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
-            - user1
+            - space-owner-user
     And initial spaces configuration in "onezone" Onezone service:
         space2:
-            owner: user1
+            owner: space-owner-user
             providers:
                 - oneprovider-2:
                     storage: posix
                     size: 10000000000
 
-    And users opened [browser1, browser2] browsers' windows
-    And users of [browser1, browser2] opened [Onezone, Onezone] page
-    And user of [browser1, browser2] logged as [admin, user1] to [Onezone, Onezone] service
+    And users opened [browser1, space_owner_browser] browsers' windows
+    And users of [browser1, space_owner_browser] opened [Onezone, Onezone] page
+    And user of [browser1, space_owner_browser] logged as [admin, space-owner-user] to [Onezone, Onezone] service
 
     And directory tree structure on local file system:
-          browser2:
+          space_owner_browser:
               large_file.txt:
                 size: 50 MiB
 
 
   Scenario: User uses auto-cleaning
     Given there are no spaces supported in Onepanel used by user of browser1
-    When user of browser2 sends support token for "space2" to user of browser1
+    When user of space_owner_browser sends support token for "space2" to user of browser1
     And user of browser1 supports "space2" space in "oneprovider-1" Oneprovider panel service with following configuration:
            storage: posix
            size: 1
@@ -35,37 +35,37 @@ Feature: Onepanel features auto-cleaning
     And user of browser1 enables file-popularity in "space2" space in Onepanel
 
     # upload files to created directory
-    And user of browser2 opens oneprovider-1 Oneprovider file browser for "space2" space
-    And user of browser2 creates directory "dir1"
-    And user of browser2 double clicks on item named "dir1" in file browser
-    And user of browser2 uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
-    And user of browser2 uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
-    And user of browser2 waits for file upload to finish
-    And user of browser2 uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
-    And user of browser2 changes current working directory to home using breadcrumbs
-    And user of browser2 is idle for 10 seconds
+    And user of space_owner_browser opens oneprovider-1 Oneprovider file browser for "space2" space
+    And user of space_owner_browser creates directory "dir1"
+    And user of space_owner_browser double clicks on item named "dir1" in file browser
+    And user of space_owner_browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
+    And user of space_owner_browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
+    And user of space_owner_browser waits for file upload to finish
+    And user of space_owner_browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
+    And user of space_owner_browser changes current working directory to home using breadcrumbs
+    And user of space_owner_browser is idle for 10 seconds
 
     # replicate data
-    And user of browser2 replicates "dir1" to provider "oneprovider-2"
-    And user of browser2 opens oneprovider-1 Oneprovider transfers for "space2" space
-    And user of browser2 waits for all transfers to start
-    And user of browser2 waits for all transfers to finish
-    And user of browser2 sees directory in ended transfers:
+    And user of space_owner_browser replicates "dir1" to provider "oneprovider-2"
+    And user of space_owner_browser opens oneprovider-1 Oneprovider transfers for "space2" space
+    And user of space_owner_browser waits for all transfers to start
+    And user of space_owner_browser waits for all transfers to finish
+    And user of space_owner_browser sees directory in ended transfers:
             name: dir1
             destination: oneprovider-2
-            username: user1
+            username: space-owner-user
             transferred: 100 MiB
             type: replication
             status: completed
 
     # check data distribution
-    And user of browser2 clicks Data of "space2" in the sidebar
-    And user of browser2 sees file browser in data tab in Oneprovider page
-    And user of browser2 double clicks on item named "dir1" in file browser
-    And user of browser2 sees file chunks for file "large_file.txt" as follows:
+    And user of space_owner_browser clicks Data of "space2" in the sidebar
+    And user of space_owner_browser sees file browser in data tab in Oneprovider page
+    And user of space_owner_browser double clicks on item named "dir1" in file browser
+    And user of space_owner_browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
             oneprovider-2: entirely filled
-    And user of browser2 sees file chunks for file "large_file(1).txt" as follows:
+    And user of space_owner_browser sees file chunks for file "large_file(1).txt" as follows:
             oneprovider-1: entirely filled
             oneprovider-2: entirely filled
 
@@ -89,10 +89,10 @@ Feature: Onepanel features auto-cleaning
     Then user of browser1 sees 100 MiB released size in cleaning report in Onepanel
 
     # check data distribution
-    And user of browser2 sees file chunks for file "large_file.txt" as follows:
+    And user of space_owner_browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely empty
             oneprovider-2: entirely filled
-    And user of browser2 sees file chunks for file "large_file(1).txt" as follows:
+    And user of space_owner_browser sees file chunks for file "large_file(1).txt" as follows:
             oneprovider-1: entirely empty
             oneprovider-2: entirely filled
 
@@ -102,7 +102,7 @@ Feature: Onepanel features auto-cleaning
 
   Scenario: User uses auto-cleaning with lower size limit which skips too small files
     Given there are no spaces supported in Onepanel used by user of browser1
-    When user of browser2 sends support token for "space2" to user of browser1
+    When user of space_owner_browser sends support token for "space2" to user of browser1
     And user of browser1 supports "space2" space in "oneprovider-1" Oneprovider panel service with following configuration:
             storage: posix
             size: 1
@@ -114,36 +114,36 @@ Feature: Onepanel features auto-cleaning
     And user of browser1 enables file-popularity in "space2" space in Onepanel
 
     # upload files to created directory
-    And user of browser2 opens oneprovider-1 Oneprovider file browser for "space2" space
-    And user of browser2 creates directory "dir1"
-    And user of browser2 double clicks on item named "dir1" in file browser
-    And user of browser2 uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
-    And user of browser2 uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
-    And user of browser2 waits for file upload to finish
-    And user of browser2 changes current working directory to home using breadcrumbs
-    And user of browser2 is idle for 10 seconds
+    And user of space_owner_browser opens oneprovider-1 Oneprovider file browser for "space2" space
+    And user of space_owner_browser creates directory "dir1"
+    And user of space_owner_browser double clicks on item named "dir1" in file browser
+    And user of space_owner_browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
+    And user of space_owner_browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
+    And user of space_owner_browser waits for file upload to finish
+    And user of space_owner_browser changes current working directory to home using breadcrumbs
+    And user of space_owner_browser is idle for 10 seconds
 
     # replicate data
-    And user of browser2 replicates "dir1" to provider "oneprovider-2"
-    And user of browser2 opens oneprovider-1 Oneprovider transfers for "space2" space
-    And user of browser2 waits for all transfers to start
-    And user of browser2 waits for all transfers to finish
-    And user of browser2 sees directory in ended transfers:
+    And user of space_owner_browser replicates "dir1" to provider "oneprovider-2"
+    And user of space_owner_browser opens oneprovider-1 Oneprovider transfers for "space2" space
+    And user of space_owner_browser waits for all transfers to start
+    And user of space_owner_browser waits for all transfers to finish
+    And user of space_owner_browser sees directory in ended transfers:
             name: dir1
             destination: oneprovider-2
-            username: user1
+            username: space-owner-user
             transferred: 100 MiB
             type: replication
             status: completed
 
     # check data distribution
-    And user of browser2 clicks Data of "space2" in the sidebar
-    And user of browser2 sees file browser in data tab in Oneprovider page
-    And user of browser2 double clicks on item named "dir1" in file browser
-    And user of browser2 sees file chunks for file "large_file.txt" as follows:
+    And user of space_owner_browser clicks Data of "space2" in the sidebar
+    And user of space_owner_browser sees file browser in data tab in Oneprovider page
+    And user of space_owner_browser double clicks on item named "dir1" in file browser
+    And user of space_owner_browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
             oneprovider-2: entirely filled
-    And user of browser2 sees file chunks for file "large_file(1).txt" as follows:
+    And user of space_owner_browser sees file chunks for file "large_file(1).txt" as follows:
             oneprovider-1: entirely filled
             oneprovider-2: entirely filled
 
@@ -164,10 +164,10 @@ Feature: Onepanel features auto-cleaning
     Then user of browser1 sees 0 B released size in cleaning report in Onepanel
 
     # check data distribution
-    And user of browser2 sees file chunks for file "large_file.txt" as follows:
+    And user of space_owner_browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
             oneprovider-2: entirely filled
-    And user of browser2 sees file chunks for file "large_file(1).txt" as follows:
+    And user of space_owner_browser sees file chunks for file "large_file(1).txt" as follows:
             oneprovider-1: entirely filled
             oneprovider-2: entirely filled
 
@@ -177,7 +177,7 @@ Feature: Onepanel features auto-cleaning
 
   Scenario: User uses auto-cleaning with upper size limit which skips too big files
     Given there are no spaces supported in Onepanel used by user of browser1
-    When user of browser2 sends support token for "space2" to user of browser1
+    When user of space_owner_browser sends support token for "space2" to user of browser1
     And user of browser1 supports "space2" space in "oneprovider-1" Oneprovider panel service with following configuration:
             storage: posix
             size: 1
@@ -189,40 +189,40 @@ Feature: Onepanel features auto-cleaning
     And user of browser1 enables file-popularity in "space2" space in Onepanel
 
     # upload files to created directory
-    And user of browser2 opens oneprovider-1 Oneprovider file browser for "space2" space
-    And user of browser2 creates directory "dir1"
-    And user of browser2 double clicks on item named "dir1" in file browser
-    And user of browser2 uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
-    And user of browser2 uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
-    And user of browser2 waits for file upload to finish
-    And user of browser2 uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
-    And user of browser2 is idle for 10 seconds
-    And user of browser2 changes current working directory to home using breadcrumbs
+    And user of space_owner_browser opens oneprovider-1 Oneprovider file browser for "space2" space
+    And user of space_owner_browser creates directory "dir1"
+    And user of space_owner_browser double clicks on item named "dir1" in file browser
+    And user of space_owner_browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
+    And user of space_owner_browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
+    And user of space_owner_browser waits for file upload to finish
+    And user of space_owner_browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
+    And user of space_owner_browser is idle for 10 seconds
+    And user of space_owner_browser changes current working directory to home using breadcrumbs
 
     # replicate data
-    And user of browser2 replicates "dir1" to provider "oneprovider-2"
-    And user of browser2 opens oneprovider-1 Oneprovider transfers for "space2" space
-    And user of browser2 waits for all transfers to start
-    And user of browser2 waits for all transfers to finish
-    And user of browser2 sees directory in ended transfers:
+    And user of space_owner_browser replicates "dir1" to provider "oneprovider-2"
+    And user of space_owner_browser opens oneprovider-1 Oneprovider transfers for "space2" space
+    And user of space_owner_browser waits for all transfers to start
+    And user of space_owner_browser waits for all transfers to finish
+    And user of space_owner_browser sees directory in ended transfers:
             name: dir1
             destination: oneprovider-2
-            username: user1
+            username: space-owner-user
             transferred: 100 MiB
             type: replication
             status: completed
 
     # check data distribution
-    And user of browser2 clicks Data of "space2" in the sidebar
-    And user of browser2 sees file browser in data tab in Oneprovider page
-    And user of browser2 double clicks on item named "dir1" in file browser
-    And user of browser2 sees file chunks for file "large_file.txt" as follows:
+    And user of space_owner_browser clicks Data of "space2" in the sidebar
+    And user of space_owner_browser sees file browser in data tab in Oneprovider page
+    And user of space_owner_browser double clicks on item named "dir1" in file browser
+    And user of space_owner_browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
             oneprovider-2: entirely filled
-    And user of browser2 sees file chunks for file "large_file(1).txt" as follows:
+    And user of space_owner_browser sees file chunks for file "large_file(1).txt" as follows:
             oneprovider-1: entirely filled
             oneprovider-2: entirely filled
-    And user of browser2 sees file chunks for file "20B-0.txt" as follows:
+    And user of space_owner_browser sees file chunks for file "20B-0.txt" as follows:
             oneprovider-1: entirely filled
             oneprovider-2: entirely filled
 
@@ -243,13 +243,13 @@ Feature: Onepanel features auto-cleaning
     Then user of browser1 sees 20 B released size in cleaning report in Onepanel
 
     # check data distribution
-    And user of browser2 sees file chunks for file "large_file.txt" as follows:
+    And user of space_owner_browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
             oneprovider-2: entirely filled
-    And user of browser2 sees file chunks for file "large_file(1).txt" as follows:
+    And user of space_owner_browser sees file chunks for file "large_file(1).txt" as follows:
             oneprovider-1: entirely filled
             oneprovider-2: entirely filled
-    And user of browser2 sees file chunks for file "20B-0.txt" as follows:
+    And user of space_owner_browser sees file chunks for file "20B-0.txt" as follows:
             oneprovider-1: entirely empty
             oneprovider-2: entirely filled
 

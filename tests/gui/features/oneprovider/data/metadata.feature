@@ -3,10 +3,10 @@ Feature: Basic data tab operations on directory metadata in file browser
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
-            - user1
+            - space-owner-user
     And initial spaces configuration in "onezone" Onezone service:
         space1:
-            owner: user1
+            owner: space-owner-user
             providers:
                 - oneprovider-1:
                     storage: posix
@@ -21,7 +21,7 @@ Feature: Basic data tab operations on directory metadata in file browser
 
     And user opened browser window
     And user of browser opened onezone page
-    And user of browser logged as user1 to Onezone service
+    And user of browser logged as space-owner-user to Onezone service
 
   Scenario Outline: Open metadata modal and check absence of any metadata
     When user of browser clicks "space1" on the spaces list in the sidebar

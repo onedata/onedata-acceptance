@@ -2,10 +2,10 @@ Feature: Oneprovider transfers functionality using multiple browser instances
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
-        - user1
+        - space-owner-user
     And initial spaces configuration in "onezone" Onezone service:
         space1:
-            owner: user1
+            owner: space-owner-user
             providers:
                 - oneprovider-1:
                     storage: posix
@@ -15,7 +15,7 @@ Feature: Oneprovider transfers functionality using multiple browser instances
                     size: 100000000
     And users opened [browser1, browser2] browsers' windows
     And users of [browser1, browser2] opened [onezone, onezone] page
-    And users of [browser1, browser2] logged as [user1, user1] to [Onezone, Onezone] service
+    And users of [browser1, browser2] logged as [space-owner-user, space-owner-user] to [Onezone, Onezone] service
     And opened oneprovider-1 Oneprovider file browser for "space1" space in web GUI by users of browser1
 
     And directory tree structure on local file system:
@@ -47,7 +47,7 @@ Feature: Oneprovider transfers functionality using multiple browser instances
     Then user of browser1 sees file in ended transfers:
             name: large_file.txt
             destination: oneprovider-2
-            username: user1
+            username: space-owner-user
             transferred: 50 MiB
             type: replication
             status: completed
@@ -93,7 +93,7 @@ Feature: Oneprovider transfers functionality using multiple browser instances
     Then user of browser1 sees directory in ended transfers:
             name: dir1
             destination: oneprovider-2
-            username: user1
+            username: space-owner-user
             transferred: 50 MiB
             type: replication
             status: completed
@@ -133,7 +133,7 @@ Feature: Oneprovider transfers functionality using multiple browser instances
     Then user of browser1 sees file in ended transfers:
             name: large_file.txt
             destination: oneprovider-2
-            username: user1
+            username: space-owner-user
             transferred: 50 MiB
             type: migration
             status: completed
@@ -180,7 +180,7 @@ Feature: Oneprovider transfers functionality using multiple browser instances
     Then user of browser1 sees directory in ended transfers:
             name: dir1
             destination: oneprovider-2
-            username: user1
+            username: space-owner-user
             transferred: 50 MiB
             type: migration
             status: completed
