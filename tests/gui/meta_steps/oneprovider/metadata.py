@@ -120,7 +120,7 @@ def set_metadata_in_op_gui(selenium, browser_id, path, tmp_memory, op_container,
 
 def _assert_metadata_loading_alert(selenium, browser_id, modals):
     modal = modals(selenium[browser_id]).metadata
-    assert 'Insufficient permissions' in modal.loading_alert, (
+    assert 'Insufficient privileges' in modal.loading_alert, (
         "resource loaded")
 
 
