@@ -82,7 +82,6 @@ class Input(WebElement):
         item = super(Input, self).__get__(instance, owner)
         return item.get_attribute('value') if instance else item
 
-    @repeat_failed(attempts=10)
     def __set__(self, instance, val):
         input_box = super(Input, self).__get__(instance, type(instance))
         input_box.clear()

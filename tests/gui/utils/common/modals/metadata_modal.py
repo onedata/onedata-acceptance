@@ -6,8 +6,13 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+from decorator import contextmanager
+from selenium.webdriver import ActionChains
+from selenium.webdriver.common.keys import Keys
+
 from tests.gui.utils.core.web_elements import (
-    NamedButton, Input, Button, Label, WebItemsSequence, WebItem, WebElement)
+    NamedButton, Input, Button, Label, WebItemsSequence, WebItem, WebElement,
+    WebElementsSequence)
 from .modal import Modal
 from ...core.base import PageObject
 
@@ -34,13 +39,19 @@ class BasicMetadataPanel(PageObject):
                                cls=BasicMetadataEntry)
 
 
-class JSONMetadataPanel(PageObject):
-    text_area = Input('.json-textarea')
+class TextareaMetadataPanel(PageObject):
+    text_area = Input('.ace_text-input')
+    read_text_area = Label('.ace_content')
     status = WebElement('.tab-pane.active .form-group')
+    lines = WebElementsSequence('.ace_line_group')
+    area = WebElement('.ace_content')
 
-
-class RDFMetadataPanel(PageObject):
-    text_area = Input('.rdf-textarea')
+    @contextmanager
+    def select_lines(self):
+        action = ActionChains(self.driver)
+        action.backspace_down = lambda: action.key_down(Keys.BACKSPACE)
+        yield action
+        action.perform()
 
 
 class NavigationTab(PageObject):
@@ -55,8 +66,8 @@ class MetadataModal(Modal):
     modal_name = Label('.modal-header')
     navigation = WebItemsSequence('.nav-link', cls=NavigationTab)
     basic = WebItem('.relative', cls=BasicMetadataPanel)
-    json = WebItem('.relative', cls=JSONMetadataPanel)
-    rdf = WebItem('.relative', cls=RDFMetadataPanel)
+    json = WebItem('.relative', cls=TextareaMetadataPanel)
+    rdf = WebItem('.relative', cls=TextareaMetadataPanel)
 
     close = NamedButton('.btn-default', text='Close')
     save_all = NamedButton('.btn-primary', text='Save all')

@@ -120,12 +120,22 @@ def click_on_navigation_tab_in_metadata_modal(selenium, browser_id, tab_name,
 
 
 @wt(parsers.re('user of (?P<browser_id>.+?) types \'(?P<text>.+?)\' '
-               'to (?P<tab>JSON|RDF) textarea in metadata modal'))
+               'to (?P<tab_name>JSON|RDF) textarea in metadata modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def type_text_to_metadata_textarea(selenium, browser_id, text, tab, modals):
+def type_text_to_metadata_textarea(selenium, browser_id, text, tab_name,
+                                   modals):
     modal = modals(selenium[browser_id]).metadata
-    tab = getattr(modal, tab.lower())
-    tab.text_area = text
+    tab = getattr(modal, tab_name.lower())
+    if tab_name.lower() == 'rdf':
+        text = text.replace('</rdf:xml>', '')
+        import pdb
+        pdb.set_trace()
+        try:
+            tab.text_area = text
+        except AssertionError:
+            pass
+    else:
+        tab.text_area = text
 
 
 @wt(parsers.re('user of (?P<browser_id>.+?) sees that (?P<tab_name>JSON|RDF) '
@@ -138,14 +148,14 @@ def assert_textarea_contains_record(selenium, browser_id, expected_metadata,
     tab = getattr(modal, tab_name.lower())
     if tab_name.lower() == 'json':
         expected_metadata = json.loads(expected_metadata)
-        metadata = json.loads(tab.text_area)
+        metadata = json.loads(tab.read_text_area)
         err_msg = f'got {metadata} instead of expected {expected_metadata}'
         assert all(metadata.get(key, None) == value for key, value in
                    expected_metadata.items()), err_msg
     else:
         err_msg = (f'text in textarea: {tab.text_area} does not contain '
                    f'{expected_metadata}')
-        assert expected_metadata in tab.text_area, err_msg
+        assert expected_metadata in tab.read_text_area, err_msg
 
 
 def assert_textarea_not_contain_record(selenium, browser_id, expected_metadata,
@@ -173,8 +183,11 @@ def clean_tab_textarea_in_metadata_modal(selenium, browser_id, tab_name,
                                          modals):
     modal = modals(selenium[browser_id]).metadata
     tab = getattr(modal, tab_name.lower())
-    tab.text_area = ' '
-    press_backspace_on_active_element(selenium, browser_id)
+    while tab.read_text_area:
+        tab.area.click()
+        with tab.select_lines() as selector:
+            selector.backspace_down()
+            selector.backspace_down()
 
 
 @wt(parsers.parse('user of {browser_id} clicks on "{button}" button in '
