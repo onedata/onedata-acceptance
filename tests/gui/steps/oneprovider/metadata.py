@@ -8,6 +8,7 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 import json
+import time
 
 from tests.gui.steps.common.miscellaneous import (
     press_tab_on_active_element, press_backspace_on_active_element)
@@ -128,8 +129,6 @@ def type_text_to_metadata_textarea(selenium, browser_id, text, tab_name,
     tab = getattr(modal, tab_name.lower())
     if tab_name.lower() == 'rdf':
         text = text.replace('</rdf:xml>', '')
-        import pdb
-        pdb.set_trace()
         try:
             tab.text_area = text
         except AssertionError:
@@ -183,11 +182,15 @@ def clean_tab_textarea_in_metadata_modal(selenium, browser_id, tab_name,
                                          modals):
     modal = modals(selenium[browser_id]).metadata
     tab = getattr(modal, tab_name.lower())
-    while tab.read_text_area:
+    while tab.read_text_area or len(tab.lines) > 1:
         tab.area.click()
         with tab.select_lines() as selector:
             selector.backspace_down()
             selector.backspace_down()
+
+    tab.text_area = ' '
+    time.sleep(0.5)
+    press_backspace_on_active_element(selenium, browser_id)
 
 
 @wt(parsers.parse('user of {browser_id} clicks on "{button}" button in '
