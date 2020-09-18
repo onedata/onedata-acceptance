@@ -257,7 +257,7 @@ def g_create_directory_structure(user, config, space, host, users, hosts):
     items = yaml.load(config)
     provider_hostname = hosts[host]['hostname']
 
-    init_storage(owner, space, hosts, provider_hostname, items)
+    init_storage(owner, space, hosts, provider_hostname, users, items)
 
 
 def create_directory_structure_in_op_gui(selenium, user, op_container, config,
