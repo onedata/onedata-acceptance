@@ -28,8 +28,8 @@ class MembersItemHeader(PageObject):
     checkbox = Button('div.item-checkbox')
     user = WebElement('.header-content-container')
     menu_button = Button('.collapsible-toolbar-toggle')
-    save_button = NamedButton('.btn-toolbar .btn-sm', text='Save')
-    reset_button = NamedButton('.btn-toolbar .btn-danger', text='Reset')
+    save_button = NamedButton('.save-btn', text='Save')
+    discard_button = NamedButton('.discard-btn', text='Discard changes')
 
     def click_menu(self, driver):
         ActionChains(driver).move_to_element(self.user).perform()
@@ -38,7 +38,7 @@ class MembersItemHeader(PageObject):
 
 class MembersItemRow(PageObject):
     header = WebItem('.list-header-row', cls=MembersItemHeader)
-    name = id = Label('.one-label')
+    name = id = Label('.record-name-general')
     privilege_tree = WebItem('.one-tree', cls=PrivilegeTree)
     forbidden_alert = WebElement('.alert.forbidden')
     status_labels = WebElementsSequence('.label')
