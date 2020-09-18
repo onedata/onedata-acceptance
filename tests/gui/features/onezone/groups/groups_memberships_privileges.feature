@@ -39,6 +39,7 @@ Feature: Basic management of groups privileges in Onezone GUI
           User management:
             granted: True
     And user of browser clicks Save button for "group2" group in group members subpage
+    And user of browser clicks "group2" group in "group1" group members groups list
     Then user of browser sees following privileges of "group2" group in space members subpage:
           User management:
             granted: True
@@ -62,6 +63,7 @@ Feature: Basic management of groups privileges in Onezone GUI
     When user of browser opens group "group1" members subpage
     And user of browser clicks "user2" user in "group1" group members users list
     And user of browser sees privileges for "user2" user in group members subpage
+    And user of browser refreshes site
     And user of browser clicks "user1" user in "group1" group members users list
     And user of browser sets following privileges for "user1" user in group members subpage:
           Group management:

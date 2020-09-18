@@ -5,6 +5,7 @@ Feature: Basic management of harvester in Onezone GUI
     Given initial users configuration in "onezone" Onezone service:
             - user1
 
+    And user admin has no harvesters
     And users opened [browser1, browser2] browsers' windows
     And users of [browser1, browser2] opened [onezone, onezone] page
     And users of [browser1, browser2] logged as [admin, user1] to [Onezone, Onezone] service

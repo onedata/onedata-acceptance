@@ -141,7 +141,7 @@ Feature: Oneprovider transfers functionality using multiple browser instances
     When user of browser1 creates directory "dir1"
     And user of browser1 double clicks on item named "dir1" in file browser
     And user of browser1 uses upload button from file browser menu bar to upload file "large_file.txt" to current dir
-    And user of browser2 waits for file upload to finish
+    And user of browser1 waits for file upload to finish
     And user of browser1 sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
             oneprovider-2: never synchronized
