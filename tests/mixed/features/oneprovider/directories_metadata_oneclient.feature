@@ -1,12 +1,10 @@
+# TODO: merge with directories_metadata.feature without escaped quotes after fix in https://jira.onedata.org/browse/VFS-6829
+
 Feature: Directory metadata tests
 
   Examples:
   | client1    | client2    |
-  | REST       | web GUI    |
-  | web GUI    | REST       |
-  | oneclient1 | REST       |
-  | REST       | oneclient1 |
-  | web GUI    | oneclient1 |
+  | oneclient1 | web GUI    |
 
 
   Background:
@@ -33,7 +31,7 @@ Feature: Directory metadata tests
     | fmt   | metadata  |
     | basic | attr=val  |
     | JSON  | {"id": 1} |
-    | RDF   | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML> |
+    | RDF   | <rdf:XML xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"></rdf:XML> |
 
 
   Scenario: User removes metadata
@@ -46,4 +44,4 @@ Feature: Directory metadata tests
     | fmt   | metadata  |
     | basic | attr=val  |
     | JSON  | {"id": 1} |
-    | RDF   | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML>|
+    | RDF   | <rdf:XML xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"></rdf:XML>|

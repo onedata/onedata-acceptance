@@ -12,7 +12,7 @@ from selenium.webdriver.common.keys import Keys
 
 from tests.gui.utils.core.web_elements import (
     NamedButton, Input, Button, Label, WebItemsSequence, WebItem, WebElement,
-    WebElementsSequence)
+    WebElementsSequence, AceEditor)
 from .modal import Modal
 from ...core.base import PageObject
 
@@ -39,9 +39,7 @@ class BasicMetadataPanel(PageObject):
                                cls=BasicMetadataEntry)
 
 
-class TextareaMetadataPanel(PageObject):
-    text_area = Input('.ace_text-input')
-    read_text_area = Label('.ace_content')
+class AceEditorMetadataPanel(PageObject):
     status = WebElement('.tab-pane.active .form-group')
     lines = WebElementsSequence('.ace_line_group')
     area = WebElement('.ace_content')
@@ -52,6 +50,14 @@ class TextareaMetadataPanel(PageObject):
         action.backspace_down = lambda: action.key_down(Keys.BACKSPACE)
         yield action
         action.perform()
+
+
+class JSONMetadataPanel(AceEditorMetadataPanel):
+    text_area = AceEditor('.fb-metadata-json')
+
+
+class RDFMetadataPanel(AceEditorMetadataPanel):
+    text_area = AceEditor('.fb-metadata-rdf')
 
 
 class NavigationTab(PageObject):
@@ -66,8 +72,8 @@ class MetadataModal(Modal):
     modal_name = Label('.modal-header')
     navigation = WebItemsSequence('.nav-link', cls=NavigationTab)
     basic = WebItem('.relative', cls=BasicMetadataPanel)
-    json = WebItem('.relative', cls=TextareaMetadataPanel)
-    rdf = WebItem('.relative', cls=TextareaMetadataPanel)
+    json = WebItem('#json.tab-pane', cls=JSONMetadataPanel)
+    rdf = WebItem('#rdf.tab-pane', cls=RDFMetadataPanel)
 
     close = NamedButton('.btn-default', text='Close')
     save_all = NamedButton('.btn-primary', text='Save all')

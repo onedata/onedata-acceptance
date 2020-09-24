@@ -127,14 +127,7 @@ def type_text_to_metadata_textarea(selenium, browser_id, text, tab_name,
                                    modals):
     modal = modals(selenium[browser_id]).metadata
     tab = getattr(modal, tab_name.lower())
-    if tab_name.lower() == 'rdf':
-        text = text.replace('</rdf:xml>', '')
-        try:
-            tab.text_area = text
-        except AssertionError:
-            pass
-    else:
-        tab.text_area = text
+    tab.text_area = text
 
 
 @wt(parsers.re('user of (?P<browser_id>.+?) sees that (?P<tab_name>JSON|RDF) '
@@ -147,14 +140,14 @@ def assert_textarea_contains_record(selenium, browser_id, expected_metadata,
     tab = getattr(modal, tab_name.lower())
     if tab_name.lower() == 'json':
         expected_metadata = json.loads(expected_metadata)
-        metadata = json.loads(tab.read_text_area)
+        metadata = json.loads(tab.text_area)
         err_msg = f'got {metadata} instead of expected {expected_metadata}'
         assert all(metadata.get(key, None) == value for key, value in
                    expected_metadata.items()), err_msg
     else:
         err_msg = (f'text in textarea: {tab.text_area} does not contain '
-                   f'{expected_metadata}')
-        assert expected_metadata in tab.read_text_area, err_msg
+                   f'{expected_metadata} but {tab.text_area}')
+        assert expected_metadata in tab.text_area, err_msg
 
 
 def assert_textarea_not_contain_record(selenium, browser_id, expected_metadata,
@@ -182,14 +175,17 @@ def clean_tab_textarea_in_metadata_modal(selenium, browser_id, tab_name,
                                          modals):
     modal = modals(selenium[browser_id]).metadata
     tab = getattr(modal, tab_name.lower())
-    while tab.read_text_area or len(tab.lines) > 1:
+    while tab.text_area or len(tab.lines) > 1:
         tab.area.click()
         with tab.select_lines() as selector:
             selector.backspace_down()
             selector.backspace_down()
 
+    # when deleting all text with backspace button does not activate
+    # so the trick is that last sign is deleted after a moment
     tab.text_area = ' '
     time.sleep(0.5)
+    tab.area.click()
     press_backspace_on_active_element(selenium, browser_id)
 
 
