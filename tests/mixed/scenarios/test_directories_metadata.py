@@ -30,3 +30,5 @@ from tests.gui.steps.common.miscellaneous import *
 
 
 scenarios('../features/oneprovider/directories_metadata.feature')
+scenarios('../features/oneprovider/directories_metadata_oneclient.feature')
+

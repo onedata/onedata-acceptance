@@ -625,13 +625,17 @@ def check_element_in_members_subpage(selenium, browser_id, option, oz_page,
     driver = selenium[browser_id]
     member_list = getattr(oz_page(driver)['discovery'].members_page,
                           list_type).items
-
     if option == 'sees':
-        assert member_name in member_list, '{} {} not found'.format(member_name,
-                                                                    member_type)
+        try:
+            err_msg = f'{member_name} {member_type} not found'
+            assert member_name in member_list, err_msg
+        except RuntimeError:
+            raise AssertionError(err_msg)
     else:
-        assert member_name not in member_list, '{} {} found'.format(member_name,
-                                                                    member_type)
+        try:
+            assert member_name not in member_list, f'{member_name} {member_type}'
+        except RuntimeError:
+            return True
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees (?P<number>\d+) '
