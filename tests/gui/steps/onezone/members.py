@@ -569,7 +569,7 @@ def ckeck_status_labels_for_member_of_space(selenium, browser_id, oz_page,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees '
-               '(?P<alert_text>Insufficient permissions) alert '
+               '(?P<alert_text>Insufficient privileges) alert '
                'for "(?P<member_name>.*)" (?P<member_type>user|group) '
                'in (?P<where>space|group|cluster) members subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -587,7 +587,7 @@ def see_insufficient_permissions_alert_for_member(selenium, browser_id, oz_page,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees '
-               '(?P<alert_text>Insufficient permissions) alert '
+               '(?P<alert_text>Insufficient privileges) alert '
                'in (?P<where>space|group|cluster|harvester) members subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def see_insufficient_permissions_alert(selenium, browser_id, oz_page, where,
@@ -625,13 +625,17 @@ def check_element_in_members_subpage(selenium, browser_id, option, oz_page,
     driver = selenium[browser_id]
     member_list = getattr(oz_page(driver)['discovery'].members_page,
                           list_type).items
-
     if option == 'sees':
-        assert member_name in member_list, '{} {} not found'.format(member_name,
-                                                                    member_type)
+        try:
+            err_msg = f'{member_name} {member_type} not found'
+            assert member_name in member_list, err_msg
+        except RuntimeError:
+            raise AssertionError(err_msg)
     else:
-        assert member_name not in member_list, '{} {} found'.format(member_name,
-                                                                    member_type)
+        try:
+            assert member_name not in member_list, f'{member_name} {member_type}'
+        except RuntimeError:
+            return True
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees (?P<number>\d+) '

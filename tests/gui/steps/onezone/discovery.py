@@ -229,7 +229,7 @@ def click_option_in_discovery_page_menu(selenium, browser_id, oz_page,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees '
-               '(?P<alert_text>Insufficient permissions) alert '
+               '(?P<alert_text>Insufficient privileges) alert '
                'on (?P<where>Spaces|Indices) subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def see_insufficient_permissions_alert_on_discovery_page(selenium, browser_id,

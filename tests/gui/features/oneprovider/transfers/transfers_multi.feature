@@ -75,7 +75,6 @@ Feature: Oneprovider transfers functionality using multiple browser instances
     And user of browser2 double clicks on item named "dir1" in file browser
     And user of browser2 uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
     And user of browser2 waits for file upload to finish
-    And user of browser2 is idle for 2 seconds
     And user of browser2 sees file chunks for file "large_file(1).txt" as follows:
             oneprovider-1: never synchronized
             oneprovider-2: entirely filled

@@ -56,7 +56,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
               delete enabled: true
 
     And user of browser2 copies dir2 to provider's storage mount point
-    And user of browser1 is idle for 30 seconds
+    And user of browser1 is idle for 50 seconds
 
     # check charts after storage update - inserted 300 files and 1 directory to 1 space
     And user of browser1 refreshes site
@@ -66,7 +66,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     And user of browser2 removes dir1 from provider's storage mount point
     And user of browser2 removes dir2 from provider's storage mount point
-    And user of browser1 is idle for 30 seconds
+    And user of browser1 is idle for 50 seconds
 
     # check charts after storage cleanup of 800 files and 2 directories
     And user of browser1 refreshes site
