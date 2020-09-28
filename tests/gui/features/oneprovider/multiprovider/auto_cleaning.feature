@@ -38,9 +38,8 @@ Feature: Onepanel features auto-cleaning
     And user of space_owner_browser opens oneprovider-1 Oneprovider file browser for "space2" space
     And user of space_owner_browser creates directory "dir1"
     And user of space_owner_browser double clicks on item named "dir1" in file browser
-    And user of space_owner_browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
-    And user of space_owner_browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
-    And user of space_owner_browser waits for file upload to finish
+    And user of space_owner_browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir without waiting for upload to finish
+    And user of space_owner_browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir without waiting for upload to finish
     And user of space_owner_browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
     And user of space_owner_browser changes current working directory to home using breadcrumbs
     And user of space_owner_browser is idle for 10 seconds
@@ -117,9 +116,8 @@ Feature: Onepanel features auto-cleaning
     And user of space_owner_browser opens oneprovider-1 Oneprovider file browser for "space2" space
     And user of space_owner_browser creates directory "dir1"
     And user of space_owner_browser double clicks on item named "dir1" in file browser
+    And user of space_owner_browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir without waiting for upload to finish
     And user of space_owner_browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
-    And user of space_owner_browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
-    And user of space_owner_browser waits for file upload to finish
     And user of space_owner_browser changes current working directory to home using breadcrumbs
     And user of space_owner_browser is idle for 10 seconds
 
@@ -192,9 +190,8 @@ Feature: Onepanel features auto-cleaning
     And user of space_owner_browser opens oneprovider-1 Oneprovider file browser for "space2" space
     And user of space_owner_browser creates directory "dir1"
     And user of space_owner_browser double clicks on item named "dir1" in file browser
-    And user of space_owner_browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
-    And user of space_owner_browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
-    And user of space_owner_browser waits for file upload to finish
+    And user of space_owner_browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir without waiting for upload to finish
+    And user of space_owner_browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir without waiting for upload to finish
     And user of space_owner_browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
     And user of space_owner_browser is idle for 10 seconds
     And user of space_owner_browser changes current working directory to home using breadcrumbs

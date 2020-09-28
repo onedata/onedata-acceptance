@@ -35,7 +35,8 @@ Feature: Oneprovider transfers functionality
     And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
 
     # Wait to ensure synchronization between providers
-    And user of browser waits for file upload to finish
+    And user of browser is idle for 2 seconds
+
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
             oneprovider-2: never synchronized
@@ -70,7 +71,6 @@ Feature: Oneprovider transfers functionality
     And user of browser creates directory "dir1"
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
-    And user of browser waits for file upload to finish
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
             oneprovider-2: never synchronized
@@ -108,7 +108,6 @@ Feature: Oneprovider transfers functionality
   Scenario: User tries to migrate file to too small space on remote provider
     When user of browser opens oneprovider-1 Oneprovider file browser for "smallSpace" space
     And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
-    And user of browser waits for file upload to finish
 
     # Wait to ensure synchronization between providers
     And user of browser is idle for 2 seconds
@@ -139,7 +138,6 @@ Feature: Oneprovider transfers functionality
     And user of browser creates directory "dir1"
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
-    And user of browser waits for file upload to finish
     And user of browser changes current working directory to home using breadcrumbs
 
     # Wait to ensure synchronization between providers
@@ -170,7 +168,6 @@ Feature: Oneprovider transfers functionality
   Scenario: User tries to replicate file to too small space on remote provider
     When user of browser opens oneprovider-1 Oneprovider file browser for "smallSpace" space
     And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
-    And user of browser waits for file upload to finish
     And user of browser replicates "large_file.txt" to provider "oneprovider-2"
 
     # Check that transfer appeared in transfer tab
@@ -197,7 +194,6 @@ Feature: Oneprovider transfers functionality
     And user of browser creates directory "dir1"
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
-    And user of browser waits for file upload to finish
     And user of browser changes current working directory to home using breadcrumbs
 
     # Wait to ensure synchronization between providers
@@ -260,7 +256,6 @@ Feature: Oneprovider transfers functionality
   Scenario: User migrates file to remote provider
     When user of browser opens oneprovider-1 Oneprovider file browser for "space1" space
     And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
-    And user of browser waits for file upload to finish
 
     # Wait to ensure synchronization between providers
     And user of browser is idle for 2 seconds
@@ -298,7 +293,6 @@ Feature: Oneprovider transfers functionality
     And user of browser creates directory "dir1"
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
-    And user of browser waits for file upload to finish
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
             oneprovider-2: never synchronized
@@ -332,7 +326,6 @@ Feature: Oneprovider transfers functionality
   Scenario: User sees that there are no file blocks on provider from which file was downloaded and then evicted
     When user of browser opens oneprovider-1 Oneprovider file browser for "smallSpace" space
     And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
-    And user of browser waits for file upload to finish
     And user of browser sees file chunks for file "20B-0.txt" as follows:
             oneprovider-1: entirely filled
             oneprovider-2: never synchronized

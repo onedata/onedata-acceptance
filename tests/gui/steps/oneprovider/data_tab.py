@@ -318,19 +318,40 @@ def wait_for_file_upload_to_finish(selenium, browser_id, popups):
 
 
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
+                  'menu bar to upload file "{file_name}" to current dir '
+                  'without waiting for upload to finish'))
+@repeat_failed(timeout=2 * WAIT_BACKEND)
+def upload_file_to_cwd_in_file_browser_no_waiting(selenium, browser_id,
+                                                  file_name, op_container):
+    driver = selenium[browser_id]
+    op_container(driver).file_browser.upload_files(upload_file_path(file_name))
+
+
+@wt(parsers.parse('user of {browser_id} uses upload button from file browser '
                   'menu bar to upload file "{file_name}" to current dir'))
 @repeat_failed(timeout=2 * WAIT_BACKEND)
 def upload_file_to_cwd_in_file_browser(selenium, browser_id, file_name,
-                                       op_container):
-    driver = selenium[browser_id]
-    op_container(driver).file_browser.upload_files(upload_file_path(file_name))
+                                       op_container, popups):
+    upload_file_to_cwd_in_file_browser_no_waiting(selenium, browser_id,
+                                                  file_name, op_container)
+    wait_for_file_upload_to_finish(selenium, browser_id, popups)
 
 
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
                   'menu bar to upload files from local directory "{dir_path}" '
                   'to remote current dir'))
 def upload_files_to_cwd_in_data_tab(selenium, browser_id, dir_path, tmpdir,
-                                    op_container):
+                                    op_container, popups):
+    upload_files_to_cwd_in_data_tab_no_waiting(selenium, browser_id, dir_path,
+                                               tmpdir, op_container)
+    wait_for_file_upload_to_finish(selenium, browser_id, popups)
+
+
+@wt(parsers.parse('user of {browser_id} uses upload button from file browser '
+                  'menu bar to upload files from local directory "{dir_path}" '
+                  'to remote current dir without waiting for upload to finish'))
+def upload_files_to_cwd_in_data_tab_no_waiting(selenium, browser_id, dir_path,
+                                               tmpdir, op_container):
     driver = selenium[browser_id]
     directory = tmpdir.join(browser_id, *dir_path.split('/'))
     if directory.isdir():
@@ -344,7 +365,17 @@ def upload_files_to_cwd_in_data_tab(selenium, browser_id, dir_path, tmpdir,
                   'menu bar to upload local file "{file_path}" '
                   'to remote current dir'))
 def upload_file_to_cwd_in_data_tab(selenium, browser_id, file_path, tmpdir,
-                                   op_container):
+                                   op_container, popups):
+    upload_file_to_cwd_in_data_tab_no_waiting(selenium, browser_id, file_path,
+                                              tmpdir, op_container)
+    wait_for_file_upload_to_finish(selenium, browser_id, popups)
+
+
+@wt(parsers.parse('user of {browser_id} uses upload button from file browser '
+                  'menu bar to upload local file "{file_path}" '
+                  'to remote current dir without waiting for upload to finish'))
+def upload_file_to_cwd_in_data_tab_no_waiting(selenium, browser_id, file_path,
+                                              tmpdir, op_container):
     driver = selenium[browser_id]
     file = tmpdir.join(browser_id, *file_path.split('/'))
     if file.isfile():

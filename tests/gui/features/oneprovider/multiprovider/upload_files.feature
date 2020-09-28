@@ -59,8 +59,8 @@ Feature: Uploading files to multiple providers
     When user of browser opens file browser for "space1" space
 
     # upload file and cancel
-    And user of browser uses upload button from file browser menu bar to upload files from local directory "dir2" to remote current dir
-    And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
+    And user of browser uses upload button from file browser menu bar to upload files from local directory "dir2" to remote current dir without waiting for upload to finish
+    And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir without waiting for upload to finish
     And user of browser clicks cancel button on upload popup number 2
     And user of browser confirms canceling the upload
     And user of browser waits for file uploads to finish

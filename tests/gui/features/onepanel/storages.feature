@@ -58,7 +58,6 @@ Feature: Storage management using onepanel
     And user of browser_unified double clicks on item named "new_dir" in file browser
     And user of browser_unified sees that current working directory displayed in breadcrumbs is /new_dir
     And user of browser_unified uses upload button from file browser menu bar to upload files from local directory "dir2" to remote current dir
-    And user of browser_unified waits for file upload to finish
     Then user of browser_unified sees that there are 5 items in file browser
 
 
