@@ -7,11 +7,14 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import time
+
 import yaml
 import re
 
 from selenium.common.exceptions import StaleElementReferenceException
 
+from tests.gui.steps.common.login import wt_login_using_basic_auth
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 from tests.gui.conftest import (WAIT_FRONTEND, WAIT_BACKEND,
@@ -283,6 +286,31 @@ def wt_clicks_on_btn_in_cease_support_modal(selenium, browser_id,
         modal.cease_support()
     else:
         modal.cancel()
+
+
+# TODO: delete after space support revoke fixes in 21.02 (VFS-6383)
+@wt(parsers.parse('user of {browser_id} removes space as space '
+                  'support revoking is blocked'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def remove_space_instead_of_revoke(selenium, browser_id, modals):
+    modals(selenium[browser_id]).cease_support_for_space.space_delete_link()
+    time.sleep(2)
+    modals(selenium[browser_id]).remove_space.understand_notice()
+    modals(selenium[browser_id]).remove_space.remove()
+
+
+# TODO: delete after space support revoke fixes in 21.02 (VFS-6383)
+@wt(parsers.parse('user of {browser_id} ({user}) logs in to Onezone service '
+                  'and removes space as space support revoking is blocked'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def login_and_remove_space_instead_of_revoke(selenium, browser_id, modals, user,
+                                             login_page, users):
+    modals(selenium[browser_id]).cease_support_for_space.space_delete_link()
+    time.sleep(3)
+    wt_login_using_basic_auth(selenium, browser_id, user,
+                              login_page, users, 'Onezone')
+    modals(selenium[browser_id]).remove_space.understand_notice()
+    modals(selenium[browser_id]).remove_space.remove()
 
 
 @wt(parsers.parse('user of {browser_id} checks the understand notice '

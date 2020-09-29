@@ -43,8 +43,45 @@ Feature: Basic spaces management utilities using onepanel
     | browser1 |
     | browser2 |
 
+  # TODO: uncomment after space unsupport fixes in 21.02 (VFS-6383)
+#  Scenario Outline: Revoke space support
+#    When user of browser1 creates "space1" space in Onezone
+#    And user of browser1 sends support token for "space1" to user of browser2
+#    And user of browser2 supports "space1" space in "oneprovider-1" Oneprovider panel service with following configuration:
+#          storage: posix
+#          size: 1
+#          unit: GiB
+#    # assert space existence and support
+#    And user of browser1 sees that "space1" has appeared on the spaces list in the sidebar
+#    And user of browser1 clicks "space1" on the spaces list in the sidebar
+#    And user of browser1 clicks Providers of "space1" in the sidebar
+#    And user of browser1 sees "oneprovider-1" is on the providers list
+#    And user of browser1 sees that length of providers list of "space1" equals "1"
+#
+#    # unsupport space
+#    And user of browser1 clicks on Clusters in the main menu
+#    And user of browser1 clicks on "oneprovider-1" in clusters menu
+#    And user of browser is idle for 1 second
+#    And user of <client> clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+#    And user of <client> expands toolbar for "space1" space record in Spaces page in Onepanel
+#    And user of <client> clicks on Revoke space support option in space's toolbar in Onepanel
+#    And user of <client> checks the understand notice in cease oneprovider support for space modal in Onepanel
+#    And user of <client> clicks on Cease support button in cease oneprovider support for space modal in Onepanel
+#    And user of <client> sees an info notify with text matching to: Ceased.*[Ss]upport.*
+#
+#    # confirm lack of support for space
+#    Then user of browser1 clicks "space1" on the spaces list in the sidebar
+#    And user of browser1 clicks Providers of "space1" in the sidebar
+#    And user of browser1 sees that length of providers list of "space1" equals "0"
+#
+#    Examples:
+#    | client   |
+#    | browser1 |
+#    | browser2 |
 
-  Scenario Outline: Revoke space support
+
+  # TODO: delete after space support revoke fixes in 21.02 (VFS-6383)
+  Scenario: User successfully deletes space instead of revoking it
     When user of browser1 creates "space1" space in Onezone
     And user of browser1 sends support token for "space1" to user of browser2
     And user of browser2 supports "space1" space in "oneprovider-1" Oneprovider panel service with following configuration:
@@ -62,19 +99,9 @@ Feature: Basic spaces management utilities using onepanel
     And user of browser1 clicks on Clusters in the main menu
     And user of browser1 clicks on "oneprovider-1" in clusters menu
     And user of browser is idle for 1 second
-    And user of <client> clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of <client> expands toolbar for "space1" space record in Spaces page in Onepanel
-    And user of <client> clicks on Revoke space support option in space's toolbar in Onepanel
-    And user of <client> checks the understand notice in cease oneprovider support for space modal in Onepanel
-    And user of <client> clicks on Cease support button in cease oneprovider support for space modal in Onepanel
-    And user of <client> sees an info notify with text matching to: Ceased.*[Ss]upport.*
+    And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+    And user of browser1 expands toolbar for "space1" space record in Spaces page in Onepanel
+    And user of browser1 clicks on Revoke space support option in space's toolbar in Onepanel
+    And user of browser1 removes space as space support revoking is blocked
+    Then user of browser1 sees that "space1" has disappeared on the spaces list in the sidebar
 
-    # confirm lack of support for space
-    Then user of browser1 clicks "space1" on the spaces list in the sidebar
-    And user of browser1 clicks Providers of "space1" in the sidebar
-    And user of browser1 sees that length of providers list of "space1" equals "0"
-
-    Examples:
-    | client   |
-    | browser1 |
-    | browser2 |

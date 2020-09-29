@@ -87,7 +87,7 @@ class ProvidersMap(Element):
 
 
 class SpaceOverviewPage(PageObject):
-    space_name = Label('.with-menu .one-label')
+    space_name = Label('.header-row .one-label')
     info_tile = WebItem('.resource-info-tile', cls=SpaceInfoTile)
     members_tile = WebItem('.resource-members-tile .tile-main',
                            cls=SpaceMembersTile)

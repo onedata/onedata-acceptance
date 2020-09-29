@@ -4,7 +4,6 @@ Feature: Basic management of providers in Onezone GUI
   Background:
     Given initial users configuration in "onezone" Onezone service:
             - space-owner-user
-            - user2
     And initial spaces configuration in "onezone" Onezone service:
           space1:
               owner: space-owner-user
@@ -20,8 +19,6 @@ Feature: Basic management of providers in Onezone GUI
                       size: 1000000
           space3:
               owner: space-owner-user
-              home space for:
-                  - space-owner-user
 
 
     And users opened [space_owner_browser, browser1] browsers' windows
@@ -39,9 +36,12 @@ Feature: Basic management of providers in Onezone GUI
     And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser1 expands toolbar for "space2" space record in Spaces page in Onepanel
     And user of browser1 clicks on Revoke space support option in space's toolbar in Onepanel
-    And user of browser1 checks the understand notice in cease oneprovider support for space modal in Onepanel
-    And user of browser1 clicks on Cease support button in cease oneprovider support for space modal in Onepanel
-    And user of browser1 sees an info notify with text matching to: Ceased.*[Ss]upport.*
+
+    # TODO: change after space unsupport fixes in 21.02 (VFS-6383)
+    And user of browser1 (admin) logs in to Onezone service and removes space as space support revoking is blocked
+#    And user of browser1 checks the understand notice in cease oneprovider support for space modal in Onepanel
+#    And user of browser1 clicks on Cease support button in cease oneprovider support for space modal in Onepanel
+#    And user of browser1 sees an info notify with text matching to: Ceased.*[Ss]upport.*
 
     # confirm results
     And user of space_owner_browser is idle for 8 seconds
