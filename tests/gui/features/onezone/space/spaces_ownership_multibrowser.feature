@@ -42,9 +42,8 @@ Feature: Multi Browser basic management of spaces ownership
 
 
   Scenario: User can leave space after passing ownership to another user
-    When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks on "Leave space" button in space menu
-    And user of space_owner_browser clicks on yes button
+    When user of space_owner_browser clicks on "Leave" button in "space1" space menu
+    And user of space_owner_browser clicks on "Leave" button in modal "LEAVE SPACE"
     And user of space_owner_browser sees that error modal with text "Leaving space failed!" appeared
     And user of space_owner_browser clicks on "Close" button in modal "Error"
 
@@ -54,9 +53,8 @@ Feature: Multi Browser basic management of spaces ownership
     And user of browser1 sees [Remove this member, Remove ownership] are disabled for "space-owner-user" user in users list
 
     And user of space_owner_browser clicks "Make an owner" for "user1" user in users list
-    And user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks on "Leave space" button in space menu
-    And user of space_owner_browser clicks on yes button
+    And user of space_owner_browser clicks on "Leave" button in "space1" space menu
+    And user of space_owner_browser clicks on "Leave" button in modal "LEAVE SPACE"
 
     Then user of space_owner_browser sees that "space1" has disappeared on the spaces list in the sidebar
     And user of browser1 does not see "space-owner-user" user on "space1" space members list

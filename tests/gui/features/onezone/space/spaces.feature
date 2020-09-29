@@ -45,9 +45,8 @@ Feature: Basic management of spaces
     When user of space_owner_browser creates "space2" space in Onezone
 
     # leave space
-    And user of space_owner_browser clicks "space2" on the spaces list in the sidebar
-    And user of space_owner_browser clicks on "Leave space" button in space menu
-    And user of space_owner_browser clicks on yes button
+    And user of space_owner_browser clicks on "Leave" button in "space1" space menu
+    And user of space_owner_browser clicks on "Leave" button in modal "LEAVE SPACE"
     Then user of space_owner_browser sees that "space2" has disappeared on the spaces list in the sidebar
 
 
@@ -56,8 +55,8 @@ Feature: Basic management of spaces
 
     # leave space
     And user of space_owner_browser clicks "space2" on the spaces list in the sidebar
-    And user of space_owner_browser clicks on "Leave space" button in space menu
-    And user of space_owner_browser clicks on no button
+    And user of space_owner_browser clicks on "Leave" button in "space2" space menu
+    And user of space_owner_browser clicks on "Cancel" button in modal "LEAVE SPACE"
     Then user of space_owner_browser sees that "space2" has appeared on the spaces list in the sidebar
 
 
@@ -97,7 +96,6 @@ Feature: Basic management of spaces
     And user of space_owner_browser sees [you, owner, direct] status labels for "space-owner-user" user in space members subpage
 
     And user of space_owner_browser clicks on Data in the main menu
-    And user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks on "Leave space" button in space menu
-    And user of space_owner_browser clicks on yes button
+    And user of space_owner_browser clicks on "Leave" button in "space1" space menu
+    And user of space_owner_browser clicks on "Leave" button in modal "LEAVE SPACE"
     Then user of space_owner_browser sees that "space1" has disappeared on the spaces list in the sidebar

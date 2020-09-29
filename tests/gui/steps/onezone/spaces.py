@@ -144,13 +144,12 @@ def click_cancel_rename_button_on_overview_page(selenium, browser_id, oz_page):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on '
-               '"(?P<button>.*)" button '
-               'in space menu'))
+               '"(?P<button>.*)" button in "(?P<space>.*)" space menu'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_option_in_menu(selenium, browser_id, button, oz_page, popups):
+def click_on_option_in_menu(selenium, browser_id, button, space, oz_page,
+                            popups):
     driver = selenium[browser_id]
-    page = oz_page(driver)['data']
-    page.menu_button()
+    oz_page(driver)['data'].elements_list[space].menu_button()
     popups(driver).popover_menu.menu[button]()
 
 
