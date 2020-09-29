@@ -289,8 +289,8 @@ def wt_clicks_on_btn_in_cease_support_modal(selenium, browser_id,
 
 
 # TODO: delete after space support revoke fixes in 21.02 (VFS-6383)
-@wt(parsers.parse('user of {browser_id} removes space as space '
-                  'support revoking is blocked'))
+@wt(parsers.parse('user of {browser_id} removes space using '
+                  'delete space modal invoked from provided link'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def remove_space_instead_of_revoke(selenium, browser_id, modals):
     modals(selenium[browser_id]).cease_support_for_space.space_delete_link()
@@ -300,8 +300,9 @@ def remove_space_instead_of_revoke(selenium, browser_id, modals):
 
 
 # TODO: delete after space support revoke fixes in 21.02 (VFS-6383)
-@wt(parsers.parse('user of {browser_id} ({user}) logs in to Onezone service '
-                  'and removes space as space support revoking is blocked'))
+@wt(parsers.parse('user of {browser_id} logs in as "{user}" to Onezone service '
+                  'and removes space using delete space modal invoked from '
+                  'provided link'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def login_and_remove_space_instead_of_revoke(selenium, browser_id, modals, user,
                                              login_page, users):

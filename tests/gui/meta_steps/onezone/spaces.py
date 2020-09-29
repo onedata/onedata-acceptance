@@ -84,8 +84,8 @@ def leave_spaces_in_oz_using_gui(selenium, user, space_list, oz_page,
     for space_name in space_list:
         click_element_on_lists_on_left_sidebar_menu(selenium, user, where,
                                                     space_name, oz_page)
-        click_on_option_in_menu(selenium, user, space_name, option, oz_page,
-                                popups)
+        click_on_option_in_space_menu(selenium, user, space_name, option,
+                                      oz_page, popups)
         click_confirm_or_cancel_button_on_leave_space_page(selenium, user,
                                                            confirmation_button,
                                                            modals)

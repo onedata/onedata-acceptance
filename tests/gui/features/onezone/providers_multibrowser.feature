@@ -38,7 +38,7 @@ Feature: Basic management of providers in Onezone GUI
     And user of browser1 clicks on Revoke space support option in space's toolbar in Onepanel
 
     # TODO: change after space unsupport fixes in 21.02 (VFS-6383)
-    And user of browser1 (admin) logs in to Onezone service and removes space as space support revoking is blocked
+    And user of browser1 logs in as "admin" to Onezone service and removes space using delete space modal invoked from provided link
 #    And user of browser1 checks the understand notice in cease oneprovider support for space modal in Onepanel
 #    And user of browser1 clicks on Cease support button in cease oneprovider support for space modal in Onepanel
 #    And user of browser1 sees an info notify with text matching to: Ceased.*[Ss]upport.*

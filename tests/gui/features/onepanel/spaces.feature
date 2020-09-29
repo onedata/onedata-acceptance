@@ -102,6 +102,6 @@ Feature: Basic spaces management utilities using onepanel
     And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser1 expands toolbar for "space1" space record in Spaces page in Onepanel
     And user of browser1 clicks on Revoke space support option in space's toolbar in Onepanel
-    And user of browser1 removes space as space support revoking is blocked
+    And user of browser1 removes space using delete space modal invoked from provided link
     Then user of browser1 sees that "space1" has disappeared on the spaces list in the sidebar
 
