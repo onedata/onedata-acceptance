@@ -206,7 +206,7 @@ class AutoCleaning(PageObject):
 class NavigationHeader(PageObject):
     overview = NamedButton('li', text='Overview')
     storage_synchronization = NamedButton('li', text='Storage synchronization')
-    file_popularity = NamedButton('li', text='File-popularity')
+    file_popularity = NamedButton('li', text='File popularity')
     auto_cleaning = NamedButton('li', text='Auto-cleaning')
 
 

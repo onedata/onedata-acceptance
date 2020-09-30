@@ -50,14 +50,15 @@ Feature: Basic management of providers in Onezone GUI
     Then user of browser sees "oneprovider-1" is on the providers list
 
 
-  Scenario: User sees that if space is unsupported by provider, the provider is not displayed in that space providers list
-    When user of browser clicks on Data in the main menu
-    And user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Providers of "space1" in the sidebar
-    And user of browser revokes space support of "oneprovider-1" provider in oneproviders list in data sidebar
-    Then user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Providers of "space1" in the sidebar
-    And user of browser sees that length of providers list of "space1" equals "0"
+    # TODO: uncomment after space unsupport fixes in 21.02 (VFS-6383)
+#  Scenario: User sees that if space is unsupported by provider, the provider is not displayed in that space providers list
+#    When user of browser clicks on Data in the main menu
+#    And user of browser clicks "space1" on the spaces list in the sidebar
+#    And user of browser clicks Providers of "space1" in the sidebar
+#    And user of browser revokes space support of "oneprovider-1" provider in oneproviders list in data sidebar
+#    Then user of browser clicks "space1" on the spaces list in the sidebar
+#    And user of browser clicks Providers of "space1" in the sidebar
+#    And user of browser sees that length of providers list of "space1" equals "0"
 
 
   Scenario: User sees "All your providers are offline" message when no provider is online
