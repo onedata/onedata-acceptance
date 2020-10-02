@@ -47,15 +47,24 @@ def wt_click_on_support_space_btn_on_condition(selenium, browser_id, onepanel):
 @wt(parsers.re('user of (?P<browser_id>.+?) selects (?P<btn>MiB|GiB|TiB) '
                'radio button in support space form in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_select_unit_in_space_support_add_form(selenium, browser_id, btn,
-                                             onepanel):
+def wt_select_unit_in_space_support_form(selenium, browser_id, btn,
+                                         onepanel):
     onepanel(selenium[browser_id]).content.spaces.form.units[btn].click()
+
+
+@wt(parsers.re('user of (?P<browser_id>.+?) selects (?P<btn>auto|manual) '
+               'radio button in support space form in Onepanel'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def wt_select_mode_in_space_support_form(selenium, browser_id, btn,
+                                         onepanel):
+    form = onepanel(selenium[browser_id]).content.spaces.form
+    form.storage_import_configuration.modes[btn].click()
 
 
 @wt(parsers.re('user of (?P<browser_id>.+?) clicks on Support space '
                'button in support space form in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_click_on_btn_in_space_support_add_form(selenium, browser_id, onepanel):
+def wt_click_on_btn_in_space_support_form(selenium, browser_id, onepanel):
     onepanel(selenium[browser_id]).content.spaces.form.support_space()
 
 
@@ -78,13 +87,21 @@ def wt_type_text_to_input_box_in_space_support_form(selenium, browser_id, text,
 
 
 @wt(parsers.re(r'user of (?P<browser_id>.*?) enables '
-               r'(?P<toggle>Import storage data) option '
+               r'(?P<toggle>.*) option '
                r'in support space form in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_enable_option_box_in_space_support_form(selenium, browser_id, toggle,
                                                onepanel):
-    form = onepanel(selenium[browser_id]).content.spaces.form
-    getattr(form, transform(toggle)).check()
+    storage_import_configuration = onepanel(
+        selenium[browser_id]).content.spaces.form.storage_import_configuration
+    getattr(storage_import_configuration, transform(toggle)).check()
+
+
+def wt_disable_option_box_in_space_support_form(selenium, browser_id, toggle,
+                                                onepanel):
+    storage_import_configuration = onepanel(
+        selenium[browser_id]).content.spaces.form.storage_import_configuration
+    getattr(storage_import_configuration, transform(toggle)).uncheck()
 
 
 @wt(parsers.parse('user of {browser_id} sees that space support record for '
@@ -121,26 +138,15 @@ def wt_select_strategy_in_conf_in_support_space_form(selenium, browser_id,
 
 
 @wt(parsers.re(r'user of (?P<browser_id>.*?) types "(?P<text>.*?)" '
-               r'to (?P<input_box>.*) input field in (?P<conf>IMPORT|UPDATE) '
-               r'CONFIGURATION in support space form in Onepanel'))
+               r'to (?P<input_box>.*) input field in support space form in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_type_text_to_input_box_in_conf_in_space_support_form(selenium,
                                                             browser_id, text,
-                                                            input_box, conf,
+                                                            input_box,
                                                             onepanel):
     config = getattr(onepanel(selenium[browser_id]).content.spaces.form,
-                     conf.lower() + '_configuration')
+                     'storage_import_configuration')
     setattr(config, transform(input_box), text)
-
-
-@wt(parsers.re(r'user of (?P<browser_id>.*?) enables '
-               r'(?P<toggle>Write once|Delete enabled) option '
-               r'UPDATE CONFIGURATION in support space form in Onepanel'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def wt_enable_option_box_in_conf_in_space_support_form(selenium, browser_id,
-                                                       toggle, onepanel):
-    conf = onepanel(selenium[browser_id]).content.spaces.form.update_configuration
-    getattr(conf, transform(toggle)).check()
 
 
 @wt(parsers.parse('user of {browser_id} cannot enable storage data import '
@@ -177,18 +183,6 @@ def wt_type_text_to_input_box_in_conf_in_space_record(selenium, browser_id,
     config = getattr(onepanel(selenium[browser_id]).content.spaces.space.
                      sync_chart, conf.lower() + '_configuration')
     setattr(config, transform(input_box), text)
-
-
-@wt(parsers.re(r'user of (?P<browser_id>.*?) enables '
-               r'(?P<toggle>Write once|Delete enabled) option UPDATE '
-               r'CONFIGURATION in "(?P<space>.*?)" record in Spaces page '
-               r'in Onepanel'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def wt_enable_option_box_in_conf_in_space_record(selenium, browser_id,
-                                                 toggle, onepanel):
-    config = (onepanel(selenium[browser_id]).content.spaces.space.
-              sync_chart.update_configuration)
-    getattr(config, transform(toggle)).check()
 
 
 @wt(parsers.parse('user of {browser_id} clicks on {button} '
@@ -303,7 +297,7 @@ def wt_clicks_on_configure(selenium, browser_id, onepanel):
 
 
 @wt(parsers.parse('user of {browser_id} clicks '
-                  'settings in Storage synchronization in Spaces page'))
+                  'settings in Storage import in Spaces page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_clicks_on_option_in_spaces_page(selenium, browser_id, onepanel):
     space = onepanel(selenium[browser_id]).content.spaces.space

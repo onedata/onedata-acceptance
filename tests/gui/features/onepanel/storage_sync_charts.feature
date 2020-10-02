@@ -31,29 +31,33 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
           size: 1
           unit: GiB
           storage import:
-            strategy: Simple scan
+            mode: auto
             max depth: 3
+            synchronize acl: true
+            detect deletions: true
+            detect modifications: true
+            continuous scan: true
+            scan interval [s]: 1
 
     And user of browser2 copies dir1 to provider's storage mount point
     And user of browser1 is idle for 30 seconds
 
     # open chart tab
     And user of browser1 opens "space1" record on spaces list in Spaces page in Onepanel
-    And user of browser1 clicks on storage synchronization navigation tab in space "space1"
+    And user of browser1 clicks on storage import navigation tab in space "space1"
 
     # check charts after storage import of 500 files and 1 directory to 1 space
     Then user of browser1 clicks on last hour update view
     And user of browser1 sees that number of inserted files for "space1" shown on Synchronization files processing charts equals 501 in Spaces page in Onepanel
     And user of browser1 sees that number of updated files for "space1" shown on Synchronization files processing charts equals 1 in Spaces page in Onepanel
 
-    And user of browser1 clicks settings in Storage synchronization in Spaces page
-    And user of browser1 sets update configuration in Storage synchronization tab as following:
+    And user of browser1 clicks settings in Storage import in Spaces page
+    And user of browser1 sets update configuration in Storage import tab as following:
         storage update:
-              strategy: Simple scan
-              max depth: 3
-              scan interval [s]: 1
-              write once: false
-              delete enabled: true
+              max depth: 5
+              detect deletions: true
+              continuous scan: true
+              scan interval [s]: 2
 
     And user of browser2 copies dir2 to provider's storage mount point
     And user of browser1 is idle for 50 seconds

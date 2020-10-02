@@ -59,8 +59,8 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # configure update parameters
     And user of browser1 clicks on "Storage synchronization" navigation tab in space "space1"
-    And user of browser1 clicks settings in Storage synchronization in Spaces page
-    And user of browser1 sets update configuration in Storage synchronization tab as following:
+    And user of browser1 clicks settings in Storage import in Spaces page
+    And user of browser1 sets update configuration in Storage import tab as following:
         storage update:
               strategy: Simple scan
               max depth: 3
@@ -152,9 +152,9 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # configure update parameters
     And user of browser1 clicks on "Storage synchronization" navigation tab in space "space1"
-    And user of browser1 clicks settings in Storage synchronization in Spaces page
+    And user of browser1 clicks settings in Storage import in Spaces page
 
-    And user of browser1 sets update configuration in Storage synchronization tab as following:
+    And user of browser1 sets update configuration in Storage import tab as following:
         storage update:
               strategy: Simple scan
               max depth: 3
@@ -220,8 +220,8 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # configure update parameters
     And user of browser1 clicks on "Storage synchronization" navigation tab in space "space1"
-    And user of browser1 clicks settings in Storage synchronization in Spaces page
-    And user of browser1 sets update configuration in Storage synchronization tab as following:
+    And user of browser1 clicks settings in Storage import in Spaces page
+    And user of browser1 sets update configuration in Storage import tab as following:
         storage update:
               strategy: Simple scan
               max depth: 3
@@ -290,8 +290,8 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # configure update parameters
     And user of browser1 clicks on "Storage synchronization" navigation tab in space "space1"
-    And user of browser1 clicks settings in Storage synchronization in Spaces page
-    And user of browser1 sets update configuration in Storage synchronization tab as following:
+    And user of browser1 clicks settings in Storage import in Spaces page
+    And user of browser1 sets update configuration in Storage import tab as following:
         storage update:
               strategy: Simple scan
               max depth: 3
@@ -349,8 +349,8 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # configure update parameters
     And user of browser1 clicks on "Storage synchronization" navigation tab in space "space1"
-    And user of browser1 clicks settings in Storage synchronization in Spaces page
-    And user of browser1 sets update configuration in Storage synchronization tab as following:
+    And user of browser1 clicks settings in Storage import in Spaces page
+    And user of browser1 sets update configuration in Storage import tab as following:
         storage update:
               strategy: Simple scan
               max depth: 3
@@ -414,8 +414,8 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # configure update parameters
     And user of browser1 clicks on "Storage synchronization" navigation tab in space "space1"
-    And user of browser1 clicks settings in Storage synchronization in Spaces page
-    And user of browser1 sets update configuration in Storage synchronization tab as following:
+    And user of browser1 clicks settings in Storage import in Spaces page
+    And user of browser1 sets update configuration in Storage import tab as following:
         storage update:
               strategy: Simple scan
               max depth: 3
@@ -445,7 +445,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # disable files update
     And user of browser1 clicks on "Storage synchronization" navigation tab in space "space1"
-    And user of browser1 clicks settings in Storage synchronization in Spaces page
+    And user of browser1 clicks settings in Storage import in Spaces page
     And user of browser1 selects Disabled strategy from strategy selector in UPDATE CONFIGURATION in "space1" record in Spaces page in Onepanel
     And user of browser1 clicks on Save configuration button in "space1" record in Spaces page in Onepanel
     And user of browser1 sees an info notify with text matching to: .*[Cc]onfiguration.*space.*support.*changed.*
