@@ -143,9 +143,18 @@ def click_cancel_rename_button_on_overview_page(selenium, browser_id, oz_page):
     oz_page(driver)['data'].overview_page.info_tile.edit_name_box.cancel()
 
 
+@wt(parsers.parse('user of {browser_id} clicks on "{button}" button '
+                  'in space "{space_name}" menu'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_option_in_space_menu(selenium, browser_id, space_name, button,
+                                  oz_page, popups):
+    driver = selenium[browser_id]
+    oz_page(driver)['data'].spaces_header_list[space_name].click_menu()
+    popups(driver).popover_menu.menu[button]()
+
+
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on '
-               '"(?P<button>.*)" button '
-               'in space menu'))
+               '"(?P<button>.*)" button in space menu'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_option_in_menu(selenium, browser_id, button, oz_page, popups):
     driver = selenium[browser_id]
@@ -155,11 +164,25 @@ def click_on_option_in_menu(selenium, browser_id, button, oz_page, popups):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
-               '(?P<button_name>yes|no) button'))
+               '(?P<button_name>Leave|Cancel) button'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_confirm_or_cancel_button_on_leave_space_page(selenium, browser_id,
                                                        button_name, modals):
-    getattr(modals(selenium[browser_id]).leave_space, button_name).click()
+    getattr(modals(selenium[browser_id]).leave_space, button_name.lower())()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
+               'understand notice checkbox in "Remove space" modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def check_remove_space_understand_notice(selenium, browser_id, modals):
+    modals(selenium[browser_id]).remove_space.understand_notice()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
+               '"Remove" button in "Remove space" modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def check_remove_space_understand_notice(selenium, browser_id, modals):
+    modals(selenium[browser_id]).remove_space.remove()
 
 
 @wt(parsers.parse('user of {browser_id} sees that "{space_name}" '

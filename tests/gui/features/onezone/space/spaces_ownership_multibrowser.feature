@@ -43,8 +43,8 @@ Feature: Multi Browser basic management of spaces ownership
 
   Scenario: User can leave space after passing ownership to another user
     When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks on "Leave space" button in space menu
-    And user of space_owner_browser clicks on yes button
+    And user of space_owner_browser clicks on "Leave" button in space "space1" menu
+    And user of space_owner_browser clicks on Leave button
     And user of space_owner_browser sees that error modal with text "Leaving space failed!" appeared
     And user of space_owner_browser clicks on "Close" button in modal "Error"
 
@@ -55,8 +55,8 @@ Feature: Multi Browser basic management of spaces ownership
 
     And user of space_owner_browser clicks "Make an owner" for "user1" user in users list
     And user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks on "Leave space" button in space menu
-    And user of space_owner_browser clicks on yes button
+    And user of space_owner_browser clicks on "Leave" button in space "space1" menu
+    And user of space_owner_browser clicks on Leave button
 
     Then user of space_owner_browser sees that "space1" has disappeared on the spaces list in the sidebar
     And user of browser1 does not see "space-owner-user" user on "space1" space members list
@@ -89,3 +89,12 @@ Feature: Multi Browser basic management of spaces ownership
     Then user of browser1 sees that "space1" has disappeared on the spaces list in the sidebar
     And user of space_owner_browser does not see "user1" user on "space1" space members list
 
+
+  Scenario: Space deleted by space owner disappears from other space user list
+    When user of browser1 sees that "space1" has appeared on the spaces list in the sidebar
+    And user of space_owner_browser clicks "space1" on the spaces list in the sidebar
+    And user of space_owner_browser clicks on "Remove" button in space "space1" menu
+    And user of space_owner_browser clicks on understand notice checkbox in "Remove space" modal
+    And user of space_owner_browser clicks on "Remove" button in "Remove space" modal
+    And user of space_owner_browser sees that "space1" has disappeared on the spaces list in the sidebar
+    Then user of browser1 sees that "space1" has disappeared on the spaces list in the sidebar

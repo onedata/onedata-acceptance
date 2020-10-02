@@ -165,9 +165,12 @@ def revoke_space_support_in_op_panel_using_gui(selenium, user, provider_name,
     wt_expands_toolbar_icon_for_space_in_onepanel(selenium, user, space_name,
                                                   onepanel)
     wt_clicks_on_btn_in_space_toolbar_in_panel(selenium, user, option, popups)
-    wt_clicks_on_understand_risk_in_cease_support_modal(selenium, user, modals)
-    wt_clicks_on_btn_in_cease_support_modal(selenium, user, button, modals)
-    notify_visible_with_text(selenium, user, notify_type, notify_text_regexp)
+
+    # TODO: change after space support revoke fixes in 21.02 (VFS-6383)
+    # wt_clicks_on_understand_risk_in_cease_support_modal(selenium, user, modals)
+    # wt_clicks_on_btn_in_cease_support_modal(selenium, user, button, modals)
+    # notify_visible_with_text(selenium, user, notify_type, notify_text_regexp)
+    remove_space_instead_of_revoke(selenium, user, modals)
 
 
 def configure_sync_parameters_for_space_in_op_panel_gui(selenium, user, space,
