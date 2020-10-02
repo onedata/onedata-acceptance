@@ -39,8 +39,10 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
             continuous scan: true
             scan interval [s]: 1
 
+    # wait more than 1 second for the mounting point's timestamp to change
+    And user of browser2 is idle for 3 seconds
+
     And user of browser2 copies dir1 to provider's storage mount point
-    And user of browser1 is idle for 30 seconds
 
     # open chart tab
     And user of browser1 opens "space1" record on spaces list in Spaces page in Onepanel
@@ -51,30 +53,16 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser1 sees that number of inserted files for "space1" shown on Synchronization files processing charts equals 501 in Spaces page in Onepanel
     And user of browser1 sees that number of updated files for "space1" shown on Synchronization files processing charts equals 1 in Spaces page in Onepanel
 
-    And user of browser1 clicks settings in Storage import in Spaces page
-    And user of browser1 sets update configuration in Storage import tab as following:
-        storage update:
-              max depth: 5
-              detect deletions: true
-              continuous scan: true
-              scan interval [s]: 2
-
     And user of browser2 copies dir2 to provider's storage mount point
-    And user of browser1 is idle for 50 seconds
 
     # check charts after storage update - inserted 300 files and 1 directory to 1 space
-    And user of browser1 refreshes site
-    And user of browser1 clicks on last hour update view
     And user of browser1 sees that number of inserted files for "space1" shown on Synchronization files processing charts equals 802 in Spaces page in Onepanel
     And user of browser1 sees that number of updated files for "space1" shown on Synchronization files processing charts equals 2 in Spaces page in Onepanel
 
     And user of browser2 removes dir1 from provider's storage mount point
     And user of browser2 removes dir2 from provider's storage mount point
-    And user of browser1 is idle for 50 seconds
 
     # check charts after storage cleanup of 800 files and 2 directories
-    And user of browser1 refreshes site
-    And user of browser1 clicks on last hour update view
     And user of browser1 sees that number of deleted files for "space1" shown on Synchronization files processing charts equals 802 in Spaces page in Onepanel
     And user of browser1 sees that number of updated files for "space1" shown on Synchronization files processing charts equals 3 in Spaces page in Onepanel
 

@@ -57,14 +57,12 @@ def result_to_support_space_in_op_panel_using_gui(selenium, user, config,
 
 def _set_toggle_state(selenium, toggle_name, storage_import_configuration,
                       onepanel, user):
-    if toggle_name.lower() in storage_import_configuration:
-        enable = storage_import_configuration[toggle_name.lower()]
-        if enable:
-            wt_enable_option_box_in_space_support_form(selenium, user,
-                                                       toggle_name, onepanel)
-        elif not enable:
-            wt_disable_option_box_in_space_support_form(selenium, user,
-                                                        toggle_name, onepanel)
+    if storage_import_configuration.get(toggle_name.lower(), False):
+        wt_enable_option_box_in_space_support_form(selenium, user,
+                                                   toggle_name, onepanel)
+    else:
+        wt_disable_option_box_in_space_support_form(selenium, user,
+                                                    toggle_name, onepanel)
 
 
 def _handle_configure_auto_storage_import(selenium, onepanel, user, options,
@@ -84,11 +82,11 @@ def _handle_configure_auto_storage_import(selenium, onepanel, user, options,
                       storage_import_configuration, onepanel,
                       user)
 
-    if 'continuous scan' in storage_import_configuration and \
-            storage_import_configuration['continuous scan']:
-        _set_toggle_state(selenium, 'Continuous scan',
-                          storage_import_configuration, onepanel,
-                          user)
+    _set_toggle_state(selenium, 'Continuous scan',
+                      storage_import_configuration, onepanel,
+                      user)
+
+    if storage_import_configuration.get('continuous scan', False):
         wt_type_text_to_input_box_in_conf_in_space_support_form(selenium,
                                                                 user, str(
                 storage_import_configuration['scan interval [s]']),
@@ -118,9 +116,8 @@ def _support_space_in_op_panel_using_gui(selenium, user, config, onepanel,
                                                     input_box, onepanel)
     wt_select_unit_in_space_support_form(selenium, user, unit, onepanel)
 
-    if 'storage import' in options:
-        storage_import_configuration = options.get('storage import', None)
-
+    storage_import_configuration = options.get('storage import', False)
+    if storage_import_configuration:
         if storage_import_configuration.get('mode') == 'manual':
             wt_select_mode_in_space_support_form(selenium, user, 'manual',
                                                  onepanel)
@@ -134,7 +131,7 @@ def _support_space_in_op_panel_using_gui(selenium, user, config, onepanel,
 
 @wt(parsers.parse('user of {user} sets update configuration in '
                   'Storage import tab as following:\n{config}'))
-def set_update_configuration_in_storage_sync(selenium, user, config,
+def configure_auto_storage_import_in_storage_import_tab(selenium, user, config,
                                              onepanel):
     options = yaml.load(config)
     storage_import_configuration = options.get('storage update')

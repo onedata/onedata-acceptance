@@ -338,7 +338,7 @@ def wt_clicks_on_option_in_spaces_page(selenium, browser_id, onepanel):
                r'"(?P<space_name>.*?)" shown on Synchronization files '
                r'processing charts equals (?P<num>\d+) '
                r'in Spaces page in Onepanel'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND*10, interval=2)
 def assert_correct_number_displayed_on_sync_charts(selenium, browser_id,
                                                    bar_type, onepanel, num):
     num = int(num)
