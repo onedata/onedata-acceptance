@@ -46,6 +46,16 @@ def assert_false(expression, *args, **kwargs):
     assert not assert_result
 
 
+def assert_expected_failure(fun, should_fail, *args, **kwargs):
+    try:
+        fun(*args, **kwargs)
+    except OSError:
+        if should_fail:
+            pass
+        else:
+            raise
+
+
 def repeat_failed(attempts=10, timeout=None, interval=0.1,
                   exceptions=(Exception,)):
     """Returns wrapper on function, which keeps calling it until timeout or

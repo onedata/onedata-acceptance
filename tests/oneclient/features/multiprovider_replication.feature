@@ -21,7 +21,8 @@ Feature: Multiprovider_replication
   Scenario: Write to file on one provider and check size on the other provider
     When user1 creates regular files [space1/file] on client11
     And user1 writes "TEST TEXT ONEDATA" to space1/file1 on client11
-    Then size of user2's space1/file1 is 17 bytes on client21
+    Then size of user1's space1/file1 is 17 bytes on client11
+    And size of user2's space1/file1 is 17 bytes on client21
 
 
   Scenario: Write to file on one provider and read on the other provider
@@ -44,7 +45,7 @@ Feature: Multiprovider_replication
     And user1 changes space1/file1 mode to 666 on client11
     And mode of user2's space1/file1 is 666 on client21
     And user1 writes "123456789" to space1/file1 on client11
-    And user waits 10 seconds
+    And user2 reads "123456789" from file space1/file1 on client21
     And user2 writes "abcd" to space1/file1 on client21
     And user1 reads "abcd" from file space1/file1 on client11
 
@@ -66,12 +67,11 @@ Feature: Multiprovider_replication
     And user1 changes space1/file1 mode to 666 on client11
     And user2 can stat [file1] in space1 on client21
     And mode of user2's space1/file1 is 666 on client21
-    And user1 waits 10 seconds
+    And user2 reads "a" from file space1/file1 on client21
     And user2 appends "b" to space1/file1 on client21
-    And user1 waits 10 seconds
+    And user1 reads "ab" from file space1/file1 on client11
     And user1 appends "c" to space1/file1 on client11
     Then user1 reads "abc" from file space1/file1 on client11
-    And user2 waits 10 seconds
     And user2 reads "abc" from file space1/file1 on client21
 
 
@@ -82,6 +82,5 @@ Feature: Multiprovider_replication
     And mode of user2's space1/file1 is 666 on client21
     And user2 writes "defg" at offset 3 to space1/file1 on client21
     And user1 writes "abc" at offset 0 to space1/file1 on client11
-    And user1 waits 10 seconds
     Then user1 reads "abcdefg" from file space1/file1 on client11
     And user2 reads "abcdefg" from file space1/file1 on client21
