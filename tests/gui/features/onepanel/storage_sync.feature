@@ -131,7 +131,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
                   - file1.txt: 22222
 
 
-  Scenario: User does not see files and directories that have been removed in storage mount point when delete option was enabled
+  Scenario: User does not see files and directories that have been removed in storage mount point when detect deletions option was enabled
     When user of browser2 creates "space1" space in Onezone
     And user of browser2 sends support token for "space1" to user of browser1
     And user of browser2 copies dir2 to provider's storage mount point
@@ -143,23 +143,24 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
           size: 1
           unit: GiB
           storage import:
-                strategy: Simple scan
                 max depth: 2
+                continuous scan: true
 
     And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
     And user of browser1 sees that space support record for "space1" has appeared in Spaces page in Onepanel
     And user of browser1 opens "space1" record on spaces list in Spaces page in Onepanel
 
     # configure update parameters
-    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space1"
+    And user of browser1 clicks on "Storage import" navigation tab in space "space1"
     And user of browser1 clicks settings in Storage import in Spaces page
 
     And user of browser1 sets update configuration in Storage import tab as following:
         storage update:
-              strategy: Simple scan
               max depth: 3
+              detect modifications: true
+              detect deletions: true
+              continuous scan: true
               scan interval [s]: 1
-              delete enabled: true
 
     # confirm update of files
     And user of browser2 opens file browser for "space1" space

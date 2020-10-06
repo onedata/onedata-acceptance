@@ -68,7 +68,7 @@ def _set_toggle_state(selenium, toggle_name, storage_import_configuration,
 def _handle_configure_auto_storage_import(selenium, onepanel, user, options,
                                           storage_import_configuration):
     if 'max depth' in storage_import_configuration:
-        wt_type_text_to_input_box_in_conf_in_space_support_form(
+        wt_type_text_to_input_box_in_storage_import_configuration(
             selenium, user, str(storage_import_configuration['max depth']),
             'Max depth', onepanel)
 
@@ -86,12 +86,13 @@ def _handle_configure_auto_storage_import(selenium, onepanel, user, options,
                       storage_import_configuration, onepanel,
                       user)
 
-    if storage_import_configuration.get('continuous scan', False):
-        wt_type_text_to_input_box_in_conf_in_space_support_form(selenium,
-                                                                user, str(
+    if storage_import_configuration.get('continuous scan', False) \
+            and 'scan interval [s]' in storage_import_configuration:
+        wt_type_text_to_input_box_in_storage_import_configuration(selenium,
+                                                                  user, str(
                 storage_import_configuration['scan interval [s]']),
-                                                                'Scan interval',
-                                                                onepanel)
+                                                                  'Scan interval',
+                                                                  onepanel)
 
 
 def _support_space_in_op_panel_using_gui(selenium, user, config, onepanel,

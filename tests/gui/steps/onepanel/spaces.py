@@ -141,14 +141,16 @@ def wt_select_strategy_in_conf_in_support_space_form(selenium, browser_id,
 
 
 @wt(parsers.re(r'user of (?P<browser_id>.*?) types "(?P<text>.*?)" '
-               r'to (?P<input_box>.*) input field in support space form in Onepanel'))
+               r'to (?P<input_box>.*) input field in support space form '
+               r'in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def wt_type_text_to_input_box_in_conf_in_space_support_form(selenium,
-                                                            browser_id, text,
-                                                            input_box,
-                                                            onepanel):
-    form = onepanel(selenium[browser_id]).content.spaces.form
-    setattr(form, transform(input_box), text)
+def wt_type_text_to_input_box_in_storage_import_configuration(selenium,
+                                                              browser_id, text,
+                                                              input_box,
+                                                              onepanel):
+    storage_import_configuration = onepanel(
+        selenium[browser_id]).content.spaces.form.storage_import_configuration
+    setattr(storage_import_configuration, transform(input_box), text)
 
 
 @wt(parsers.parse('user of {browser_id} cannot enable storage data import '
