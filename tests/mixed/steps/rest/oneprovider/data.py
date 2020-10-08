@@ -99,8 +99,11 @@ def remove_dir_in_op_rest(user, users, host, hosts, path):
     c_api.delete_container(path)
 
 
-def create_file_in_op_rest(user, users, host, hosts, path, result):
-    client = login_to_cdmi(user, users, hosts[host]['hostname'])
+def create_file_in_op_rest(user, users, host, hosts, path, result,
+                           access_token=None, identity_token=None):
+    client = login_to_cdmi(user, users, hosts[host]['hostname'],
+                           access_token=access_token,
+                           identity_token=identity_token)
 
     do_api = DataObjectApi(client)
     if result == 'fails':

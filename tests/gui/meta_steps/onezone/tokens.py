@@ -361,6 +361,15 @@ def assert_token_configuration(selenium, browser_id, config, oz_page, users,
                                 groups, hosts, tmp_memory)
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_token_configuration_gui(selenium, browser_id, config, oz_page, users,
+                                   groups, hosts, tmp_memory):
+    token_name = yaml.load(config)['name']
+    click_on_token_on_tokens_list(selenium, browser_id, token_name, oz_page)
+    assert_token_configuration(selenium, browser_id, config, oz_page, users,
+                               groups, hosts, tmp_memory)
+
+
 def _assert_token_configuration(selenium, browser_id, config, oz_page, users,
                                 groups, hosts, tmp_memory, creation=False):
     data = yaml.load(config)
@@ -500,3 +509,10 @@ def create_and_check_token(browser_id, config, selenium, oz_page, popups,
                               users, groups, hosts, tmp_memory)
     _assert_token_configuration(selenium, browser_id, config, oz_page, users,
                                 groups, hosts, tmp_memory, creation=True)
+
+
+def revoke_token_in_oz_gui(selenium, browser_id, token_name, oz_page, popups):
+    option = 'Tokens'
+
+    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
+    revoke_token(selenium, browser_id, token_name, oz_page, popups)
