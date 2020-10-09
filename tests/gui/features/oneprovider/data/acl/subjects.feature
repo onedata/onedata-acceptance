@@ -5,6 +5,7 @@ Feature: ACL basic subjects tests in Oneprovider GUI
             - user1
             - user2
             - user3
+            - space-owner-user
     And initial groups configuration in "onezone" Onezone service:
             group1:
                 owner: user1
@@ -22,7 +23,7 @@ Feature: ACL basic subjects tests in Oneprovider GUI
   Scenario: User sees eligible subjects for ACL record
     Given initial spaces configuration in "onezone" Onezone service:
         space1:
-            owner: user1
+            owner: space-owner-user
             users:
                 - user2
             providers:
@@ -38,7 +39,7 @@ Feature: ACL basic subjects tests in Oneprovider GUI
                 - group2
                 - group3
 
-    And opened browser with user1 signed in to "onezone" service
+    And opened browser with space-owner-user signed in to "onezone" service
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
@@ -54,7 +55,7 @@ Feature: ACL basic subjects tests in Oneprovider GUI
   Scenario Outline: User sets ACL for parent group of a group (child group belongs to space)
     Given initial spaces configuration in "onezone" Onezone service:
         space1:
-            owner: user3
+            owner: space-owner-user
             users:
                 - user1
             providers:
@@ -70,7 +71,7 @@ Feature: ACL basic subjects tests in Oneprovider GUI
                 - group1
                 - group2
 
-    And opened [browser_user1, space_owner_browser] with [user1, user3] signed in to [Onezone, Onezone] service
+    And opened [browser_user1, space_owner_browser] with [user1, space-owner-user] signed in to [Onezone, Onezone] service
     When user of space_owner_browser sets "file1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
     Then user of browser_user1 <result> to remove "file1" in "space1"
 
@@ -83,7 +84,7 @@ Feature: ACL basic subjects tests in Oneprovider GUI
   Scenario Outline: User sets ACL for parent group of a group (child group does not belong to space)
     Given initial spaces configuration in "onezone" Onezone service:
         space1:
-            owner: user3
+            owner: space-owner-user
             users:
                 - user1
             providers:
@@ -98,7 +99,7 @@ Feature: ACL basic subjects tests in Oneprovider GUI
             groups:
                 - group2
 
-    And opened [browser_user1, space_owner_browser] with [user1, user3] signed in to [Onezone, Onezone] service
+    And opened [browser_user1, space_owner_browser] with [user1, space-owner-user] signed in to [Onezone, Onezone] service
     When user of space_owner_browser sets "file1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
     Then user of browser_user1 <result> to remove "file1" in "space1"
 
@@ -111,7 +112,7 @@ Feature: ACL basic subjects tests in Oneprovider GUI
   Scenario Outline: User sets excluding ACL records for group and parent group in specified order
     Given initial spaces configuration in "onezone" Onezone service:
         space1:
-            owner: user1
+            owner: space-owner-user
             users:
                 - user3
             providers:
@@ -127,7 +128,7 @@ Feature: ACL basic subjects tests in Oneprovider GUI
                 - group1
                 - group3
 
-    And opened [space_owner_browser, browser_user3] with [user1, user3] signed in to [Onezone, Onezone] service
+    And opened [space_owner_browser, browser_user3] with [space-owner-user, user3] signed in to [Onezone, Onezone] service
     When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
     And user of space_owner_browser clicks Data of "space1" in the sidebar
     And user of space_owner_browser sees file browser in data tab in Oneprovider page

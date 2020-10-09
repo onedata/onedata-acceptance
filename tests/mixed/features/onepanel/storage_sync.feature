@@ -37,10 +37,10 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     When using <client1>, user1 creates space "space1" in "onezone" Onezone service
     And using docker, user1 copies dir2 to provider's storage mount point
     And using <client1>, user1 generates space support token for space named "space1" in "onezone" Onezone service and sends it to onepanel
+    And using web GUI, onepanel refreshes site
     And using <client2>, onepanel supports "space1" space in "oneprovider-1" Oneprovider panel service with following configuration:
           storage: "new_storage (import-enabled)"
           size: 1000000
-          mount in root: True
           storage import:
                 strategy: Simple scan
                 max depth: 2
@@ -81,6 +81,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     When using <client1>, user1 creates space "space3" in "onezone" Onezone service
     And using <client1>, user1 generates space support token for space named "space3" in "onezone" Onezone service and sends it to onepanel
     And using docker, user1 copies dir2 to provider's storage mount point
+    And using web GUI, onepanel refreshes site
     And using <client2>, onepanel supports "space3" space in "oneprovider-1" Oneprovider panel service with following configuration:
           storage: "new_storage (import-enabled)"
           size: 1000000
@@ -131,6 +132,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     When using <client1>, user1 creates space "space4" in "onezone" Onezone service
     And using <client1>, user1 generates space support token for space named "space4" in "onezone" Onezone service and sends it to onepanel
     And using docker, user1 copies dir2 to provider's storage mount point
+    And using web GUI, onepanel refreshes site
     And using <client2>, onepanel supports "space4" space in "oneprovider-1" Oneprovider panel service with following configuration:
           storage: "new_storage (import-enabled)"
           size: 1000000
@@ -174,6 +176,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     When using <client1>, user1 creates space "space5" in "onezone" Onezone service
     And using <client1>, user1 generates space support token for space named "space5" in "onezone" Onezone service and sends it to onepanel
     And using docker, user1 copies dir2 to provider's storage mount point
+    And using web GUI, onepanel refreshes site
     And using <client2>, onepanel supports "space5" space in "oneprovider-1" Oneprovider panel service with following configuration:
           storage: "new_storage (import-enabled)"
           size: 1000000
@@ -224,6 +227,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     When using <client1>, user1 creates space "space7" in "onezone" Onezone service
     And using <client1>, user1 generates space support token for space named "space7" in "onezone" Onezone service and sends it to onepanel
     And using docker, user1 copies dir2 to provider's storage mount point
+    And using web GUI, onepanel refreshes site
     And using <client2>, onepanel supports "space7" space in "oneprovider-1" Oneprovider panel service with following configuration:
           storage: "new_storage (import-enabled)"
           size: 1000000

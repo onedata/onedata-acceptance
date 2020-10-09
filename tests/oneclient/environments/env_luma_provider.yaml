@@ -1,4 +1,4 @@
-scenario: "1oz_1op_1oc/ceph_s3_nfs_swift.yaml"
+scenario: "1oz_1op_1oc/ceph_s3_local_swift.yaml"
 patch: "1op/1user_multistorage.yaml"
 
 

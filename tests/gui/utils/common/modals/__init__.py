@@ -71,7 +71,6 @@ class Modals(object):
                                cls=ProviderPopover)
     remove_member = WebItem('.remove-relation-modal.modal.in .modal-dialog',
                             cls=RemoveModal)
-    remove_harvester = WebItem('.modal-dialog', cls=RemoveModal)
     modify_storage = WebItem('.modify-storage-modal.modal.in .modal-dialog',
                              cls=ModifyStorage)
     remove_storage = WebItem('.remove-storage-modal.modal.in .modal-dialog',
@@ -108,6 +107,7 @@ class Modals(object):
     remove_share = WebItem('.modal-dialog', cls=RemoveModal)
     remove_token = WebItem('.modal-dialog', cls=RemoveModal)
     remove_harvester = WebItem('.modal-dialog', cls=RemoveModal)
+    remove_space = WebItem('.modal-dialog', cls=RemoveModal)
     clean_up_obsolete_tokens = WebItem('.modal-dialog',
                                        cls=CleanUpObsoleteTokensModal)
     change_privileges = WebItem('.modal-dialog', cls=ChangePrivilegesModal)

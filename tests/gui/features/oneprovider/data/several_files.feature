@@ -3,10 +3,10 @@ Feature: Basic data tab operations on several files in file browser
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
-            - user1
+            - space-owner-user
     And initial spaces configuration in "onezone" Onezone service:
         space1:
-            owner: user1
+            owner: space-owner-user
             providers:
                 - oneprovider-1:
                     storage: posix
@@ -25,7 +25,7 @@ Feature: Basic data tab operations on several files in file browser
 
     And user opened browser window
     And user of browser opened onezone page
-    And user of browser logged as user1 to Onezone service
+    And user of browser logged as space-owner-user to Onezone service
 
 
   Scenario: User selects a bunch of files using ctrl

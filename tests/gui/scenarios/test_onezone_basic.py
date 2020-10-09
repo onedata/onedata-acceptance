@@ -63,6 +63,7 @@ from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.onezone.harvesters import *
 from tests.gui.meta_steps.onezone.tokens import *
 from tests.gui.meta_steps.onezone.provider import *
+from tests.gui.meta_steps.onezone.clusters import *
 
 from tests.gui.meta_steps.onepanel.spaces import *
 from tests.gui.meta_steps.onezone.spaces import *
@@ -83,6 +84,7 @@ scenarios('../features/onezone/user_account_manage.feature')
 scenarios('../features/onezone/providers.feature')
 scenarios('../features/onezone/providers_multibrowser.feature')
 scenarios('../features/onezone/full_name.feature')
+scenarios('../features/onezone/default_privileges.feature')
 
 # THIS SCENARIO HAS TO BE EXECUTED IN THE END
 scenarios('../features/onezone/delete_account.feature')

@@ -3,10 +3,10 @@ Feature: Basic management of providers in Onezone GUI
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
-            - user1
+            - space-owner-user
     And initial spaces configuration in "onezone" Onezone service:
           space1:
-              owner: user1
+              owner: space-owner-user
               providers:
                   - oneprovider-1:
                       storage: posix
@@ -14,7 +14,7 @@ Feature: Basic management of providers in Onezone GUI
 
     And user opened browser window
     And user of browser opened Onezone page
-    And user of browser logged as user1 to Onezone service
+    And user of browser logged as space-owner-user to Onezone service
 
 
   Scenario: User opens provider popup by clicking on supporting provider in data page
@@ -50,14 +50,15 @@ Feature: Basic management of providers in Onezone GUI
     Then user of browser sees "oneprovider-1" is on the providers list
 
 
-  Scenario: User sees that if space is unsupported by provider, the provider is not displayed in that space providers list
-    When user of browser clicks on Data in the main menu
-    And user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Providers of "space1" in the sidebar
-    And user of browser revokes space support of "oneprovider-1" provider in oneproviders list in data sidebar
-    Then user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Providers of "space1" in the sidebar
-    And user of browser sees that length of providers list of "space1" equals "0"
+    # TODO: uncomment after space unsupport fixes in 21.02 (VFS-6383)
+#  Scenario: User sees that if space is unsupported by provider, the provider is not displayed in that space providers list
+#    When user of browser clicks on Data in the main menu
+#    And user of browser clicks "space1" on the spaces list in the sidebar
+#    And user of browser clicks Providers of "space1" in the sidebar
+#    And user of browser revokes space support of "oneprovider-1" provider in oneproviders list in data sidebar
+#    Then user of browser clicks "space1" on the spaces list in the sidebar
+#    And user of browser clicks Providers of "space1" in the sidebar
+#    And user of browser sees that length of providers list of "space1" equals "0"
 
 
   Scenario: User sees "All your providers are offline" message when no provider is online

@@ -39,44 +39,39 @@ forceImagePull: true
 spaces: false
 
 storages:
-  - s3
-  - nfs
-  - ceph
-  - swift
+  - local-volume-1
 
 os-config:
   cfg1: &cfg1
     users:
       - space_owner
       - user1
+      - user2
     groups:
-      ceph:
+      space1:
         - user1
-      posix:
+        - user2
+      space2:
         - user1
-      s3:
-        - user1
+        - user2
       fuse:
         - user1
+        - user2
   services:
     oneprovider-1: *cfg1
     oneclient-1: *cfg1
+    oneclient-2: *cfg1
 
 onezone:
   batchConfig:
     createUsers: false
 
 oneprovider-1:
-  wait-for-onezone:
-    enabled: false
-
   batchConfig:
     createUsers: false
 
   oneclient:
+    replicas: 2
     users: []
-    directIO:
-      nfs:
-        enabled: true
     wait_for_oneprovider:
       enabled: false

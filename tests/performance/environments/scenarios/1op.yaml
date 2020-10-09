@@ -39,7 +39,7 @@ forceImagePull: true
 spaces: false
 
 storages:
-  - nfs
+  - local-volume-1
 
 os-config:
   cfg1: &cfg1

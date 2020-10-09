@@ -6,12 +6,12 @@ oneclient:
     clients:
       client11:
         provider: "oneprovider-1"
-        mode: directio
+        mode: force-directio
         default timeout: 40
   oneclient-2:
     clients:
       client21:
         provider: "oneprovider-2"
-        mode: directio
+        mode: force-directio
         default timeout: 40
 

@@ -6,7 +6,6 @@ Feature: Files metadata tests
   | web GUI    | REST       |
   | oneclient1 | REST       |
   | REST       | oneclient1 |
-  | oneclient1 | web GUI    |
   | web GUI    | oneclient1 |
 
   
@@ -34,7 +33,7 @@ Feature: Files metadata tests
     | fmt   | metadata  |
     | basic | attr=val  |
     | JSON  | {"id": 1} |
-    | RDF   | <rdf:XML xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"></rdf:XML>|
+    | RDF   | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML>|
 
 
   Scenario: User removes metadata
@@ -48,4 +47,4 @@ Feature: Files metadata tests
     | fmt   | metadata  |
     | basic | attr=val  |
     | JSON  | {"id": 1} |
-    | RDF   | <rdf:XML xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"></rdf:XML>|
+    | RDF   | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML>|

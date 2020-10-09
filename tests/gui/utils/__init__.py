@@ -11,6 +11,7 @@ from .oneservices.cdmi import CDMIClient
 from .common.common import OnePage
 from .onepanel import Onepanel
 from .onezone import OZLoggedIn
+from .onezone.data_discovery_page import DataDiscoveryPage
 from .oneprovider import OPLoggedIn
 from .oneprovider.shares.public_share import PublicShareView
 from .common.modals import Modals

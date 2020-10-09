@@ -88,8 +88,8 @@ Feature: Multi_directory_stat
     When user1 waits 2 second
     # call sleep, to be sure that time of above and below operations is different
     When user1 renames space1/dir1 to space1/dir2 on client11
-    Then status-change time of user2's space1/dir2 is equal to modification time on client21
-    Then status-change time of user2's space1/dir2 is equal to access time on client21
+    Then status-change time of user2's space1/dir2 is greater to modification time on client21
+    Then status-change time of user2's space1/dir2 is greater to access time on client21
 
 
   Scenario: Status-change time when changing mode
