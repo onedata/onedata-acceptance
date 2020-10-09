@@ -29,12 +29,6 @@ def create_token_with_config_rest(user, config, users, tokens, hosts,
                 invite target: target of invite        ---> optional
                 usage limit: number > 0 or infinity    ---> optional, default:
                                                                       infinity
-                privileges:                            ---> optional
-                    privilege_type:
-                        granted: True/False/Partially
-                        privilege subtypes:            ---> always and only when
-                                                            granted is Partially
-                            privilege_subtype: True/False
                 caveats:                               ---> optional
                     caveat_type_1:
                         caveat config:
@@ -69,15 +63,36 @@ def create_token_with_config_rest(user, config, users, tokens, hosts,
                               tokens, groups, spaces, zone_name='onezone')
 
 
+translation_dict = {
+    'Invite user to space': {'type': 'userJoinSpace', 'target': 'spaceId'}
+}
+
+
 def _create_token_with_config(user, config, users, hosts, tmp_memory, tokens,
                               groups, spaces, zone_name):
     data = yaml.load(config)
     name = data['name']
     token_type = data['type']
+    usage_limit = data.get('usage limit', False)
     caveats = data.get('caveats', False)
 
     token_config = {"name": name, "type": {f"{token_type}Token": {}}}
 
+    if token_type == 'invite':
+        invite_type = data.get('invite type')
+        invite_target = data.get('invite target', None)
+
+        invite_type_rest = translation_dict[invite_type]['type']
+
+        token_config['type']['inviteToken']['inviteType'] = invite_type_rest
+        if invite_target:
+            target = translation_dict[invite_type]['target']
+            if 'space' in invite_target:
+                invite_target = spaces[invite_target]
+            token_config['type']['inviteToken'][target] = invite_target
+
+    if usage_limit:
+        token_config['usageLimit'] = usage_limit
     if caveats:
         parse_token_caveats(caveats, token_config, groups, users, spaces,
                             tmp_memory)
@@ -135,7 +150,7 @@ def parse_token_caveats(caveats, token_config, groups, users, spaces,
 def set_expiration_caveat(token_config, expiration, tmp_memory):
     time_to = int(time.time()) + expiration['after'] * 60
     token_config['caveats'].append({"type": "time", "validUntil": time_to})
-    tmp_memory['expire_time'] = time.strftime('%Y/%m/%d %H:%M', time.localtime(
+    tmp_memory['expire_time'] = time.strftime('%Y/%m/%d %-H:%M', time.localtime(
         time_to))
 
 
@@ -249,8 +264,10 @@ def assert_token_with_config_rest(user, config, users, hosts,
                                   tmp_memory, groups, spaces,
                                   zone_name='onezone'):
     data = yaml.load(config)
+
     name = data['name']
     token_type = data['type']
+    privileges = data.get('privileges', False)
     caveats = data.get('caveats', False)
 
     user_client = login_to_oz(user, users[user].password,
@@ -262,6 +279,8 @@ def assert_token_with_config_rest(user, config, users, hosts,
     if caveats:
         assert_token_caveats(caveats, response, groups, users, spaces,
                              tmp_memory)
+    if privileges:
+        assert_token_privileges(privileges, response)
 
 
 def assert_token_type(token_type, token):
@@ -322,7 +341,7 @@ def assert_expiration_caveat(token_caveat, expiration, tmp_memory):
     if expiration['set']:
         exp_time = tmp_memory['expire_time']
         if '/' in exp_time:
-            str_time = time.strptime(exp_time, '%Y/%m/%d %H:%M')
+            str_time = time.strptime(exp_time, '%Y/%m/%d %-H:%M')
             exp_time = time.mktime(str_time)
         assert token_caveat['validUntil'] == exp_time, (
             f'Wrong expiration time caveat: exp: {exp_time}, '
@@ -448,3 +467,31 @@ def assert_object_id_caveat(token_caveat, expected_caveat):
         assert object_id in token_list
 
 
+privileges_translation = {
+    'Space management': {
+        'View space': 'space_view',
+        },
+    'Data management': {
+        'Read files': 'space_read_data',
+        'Write files': 'space_write_data',
+    },
+    'Transfer management': {
+        'View transfers': 'space_view_transfers'
+    }
+}
+
+
+def assert_token_privileges(privileges, response):
+    actual_privs = response.metadata.privileges
+    expected_privs = []
+    for priv_group in privileges:
+        sub_privs = privileges[priv_group]['privilege subtypes']
+        for priv in sub_privs:
+            if sub_privs[priv]:
+                expected_privs.append(privileges_translation[priv_group][priv])
+
+    for priv in expected_privs:
+        assert priv in actual_privs, f'{priv} not in {actual_privs}'
+    assert len(expected_privs) == len(actual_privs), ('Expected and actual '
+                                                      'privileges lists are '
+                                                      'not equal')

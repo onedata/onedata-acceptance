@@ -35,3 +35,4 @@ from tests.gui.steps.common.miscellaneous import *
 
 scenarios('../features/onezone/access_tokens.feature')
 scenarios('../features/onezone/identity_tokens.feature')
+scenarios('../features/onezone/invite_tokens.feature')
