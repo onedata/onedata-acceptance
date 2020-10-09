@@ -267,6 +267,7 @@ def assert_token_with_config_rest(user, config, users, hosts,
 
     name = data['name']
     token_type = data['type']
+    invite_type = data.get('invite type', False)
     privileges = data.get('privileges', False)
     caveats = data.get('caveats', False)
 
@@ -276,6 +277,8 @@ def assert_token_with_config_rest(user, config, users, hosts,
     response = token_api.get_named_token_of_current_user_by_name(name)
 
     assert_token_type(token_type.lower(), response)
+    if invite_type:
+        assert_invite_type(invite_type, response)
     if caveats:
         assert_token_caveats(caveats, response, groups, users, spaces,
                              tmp_memory)
@@ -286,6 +289,13 @@ def assert_token_with_config_rest(user, config, users, hosts,
 def assert_token_type(token_type, token):
     assert getattr(token.type, f'{token_type}_token') is not None, (
         f'token is not {token_type}')
+
+
+def assert_invite_type(invite_type, token):
+    actual = token.type.invite_token.invite_type
+    expected = translation_dict[invite_type]['type']
+    assert actual == expected, (f'Invite token invite type {actual} is not as ' 
+                                f'expected {expected}')
 
 
 def get_caveat(caveat_name, caveats):
@@ -341,7 +351,7 @@ def assert_expiration_caveat(token_caveat, expiration, tmp_memory):
     if expiration['set']:
         exp_time = tmp_memory['expire_time']
         if '/' in exp_time:
-            str_time = time.strptime(exp_time, '%Y/%m/%d %-H:%M')
+            str_time = time.strptime(exp_time, '%Y/%m/%d %H:%M')
             exp_time = time.mktime(str_time)
         assert token_caveat['validUntil'] == exp_time, (
             f'Wrong expiration time caveat: exp: {exp_time}, '

@@ -34,6 +34,12 @@ def paste_copied_token_into_text_field(selenium, browser_id, oz_page, clipboard,
     _paste_token_into_text_field(selenium, browser_id, oz_page, token)
 
 
+def paste_received_token_into_text_field(selenium, browser_id, oz_page,
+                                         tmp_memory):
+    token = tmp_memory[browser_id]['mailbox']['token']
+    _paste_token_into_text_field(selenium, browser_id, oz_page, token)
+
+
 @wt(parsers.parse('user of {browser_id} pastes received token '
                   'into token text field'))
 def paste_received_token_into_text_field(selenium, browser_id,
@@ -66,6 +72,18 @@ def consume_token_from_copied_token(selenium, browser_id, oz_page, clipboard,
     click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button)
     paste_copied_token_into_text_field(selenium, browser_id, oz_page, clipboard,
                                        displays)
+    click_on_join_button_on_tokens_page(selenium, browser_id, oz_page)
+
+
+def consume_token_from_received_token(selenium, browser_id, oz_page,
+                                      tmp_memory):
+    option = 'Tokens'
+    button = 'Consume token'
+
+    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
+    click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button)
+    paste_received_token_into_text_field(selenium, browser_id, oz_page,
+                                         tmp_memory)
     click_on_join_button_on_tokens_page(selenium, browser_id, oz_page)
 
 

@@ -10,7 +10,12 @@ __license__ = ("This software is released under the MIT license cited in "
 from tests.gui.meta_steps.onezone.tokens import (
     create_token_with_config, click_copy_button_in_token_view,
     revoke_token_in_oz_gui, assert_token_configuration,
-    assert_token_configuration_gui)
+    assert_token_configuration_gui, result_to_consume_token,
+    consume_received_token)
+from tests.gui.steps.onezone.spaces import \
+    assert_new_created_space_has_appeared_on_spaces
+from tests.mixed.steps.rest.onezone.space_management import \
+    join_space_in_oz_using_rest
 from tests.mixed.steps.rest.onezone.tokens import (
     create_token_with_config_rest, revoke_token_rest,
     assert_token_with_config_rest)
@@ -84,3 +89,19 @@ def revoke_token_in_oz(client, user, token_name, users, hosts, tokens,
     else:
         raise NoSuchClientException(f'Client: {client} not found')
 
+
+@wt(parsers.parse('using {client}, {user} successfully joins space {'
+                  'space_name} with received token'))
+def join_space_with_token(selenium, user, oz_page, tmp_memory, client, users,
+                          hosts, space_name):
+    if client == 'web gui':
+        consume_received_token(selenium, user, oz_page, tmp_memory)
+        assert_new_created_space_has_appeared_on_spaces(selenium, user,
+                                                        space_name, oz_page)
+    elif client == 'rest':
+        join_space_in_oz_using_rest(user, users, 'onezone', hosts,
+                                    space_name, tmp_memory)
+        assert_new_created_space_has_appeared_on_spaces(selenium, user,
+                                                        space_name, oz_page)
+    else:
+        raise NoSuchClientException(f'Client: {client} not found')

@@ -138,7 +138,7 @@ Feature: Access tokens tests
     Then using oneclient1, user2 succeeds to create file named "file1" using received token in "space1" in oneprovider-1
 
 
-  Scenario: User creates file with Oneclient using token with caveat set for REST interface
+  Scenario: User creates file with REST using token with caveat set for REST interface
     When using web gui, user1 creates token with following configuration:
            name: access_token
            type: access

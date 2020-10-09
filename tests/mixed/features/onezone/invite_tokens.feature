@@ -20,10 +20,10 @@ Feature: Identity tokens tests
           type: invite
           invite type: Invite user to space
           invite target: space1
-          usage limit: 4
     Then using <client2>, user1 sees that created token configuration is as following:
           name: invite token
           type: Invite
+          invite type: Invite user to space
           privileges:
             Space management:
               granted: Partially
@@ -52,6 +52,23 @@ Feature: Identity tokens tests
                 Cancel replication: False
                 Schedule eviction: False
                 Cancel eviction: False
+
+    Examples:
+    | client1 | client2 |
+    | REST    | web gui |
+    | web gui | REST    |
+
+
+  Scenario Outline: User can join to space with <client2> using invite token created with <client1>
+    When using <client1>, user1 creates token with following configuration:
+          name: invite token
+          type: invite
+          invite type: Invite user to space
+          invite target: space1
+    And if <client1> is web gui, user1 copies created token
+    And user1 sends token to user2
+    Then using <client2>, user2 successfully joins space space1 with received token
+
 
     Examples:
     | client1 | client2 |
