@@ -40,7 +40,8 @@ Feature: Basic management
 
   Examples:
   | client1 | client2   |
-  | web GUI | REST      |
+  # TODO: uncomment after space unsupport fixes in 21.02 (VFS-6383)
+#  | web GUI | REST      |
   | REST    | web GUI   |
 
 

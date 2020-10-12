@@ -14,19 +14,10 @@ import yaml
 from tests.gui.conftest import WAIT_BACKEND
 from tests.mixed.utils.common import (login_to_panel, login_to_oz)
 from tests.mixed.steps.rest.onezone.common import get_space_with_name
-from tests.mixed.onepanel_client import (OneproviderApi,
-                                         StorageUpdateDetails,
-                                         SpaceModifyRequest,
-                                         StorageImportDetails,
-                                         SpaceSupportRequest)
+from tests.mixed.onepanel_client import (
+    OneproviderApi, SpaceModifyRequest, SpaceSupportRequest,
+    AutoStorageImportConfig, StorageImport)
 from tests.utils.utils import repeat_failed
-
-attrs_mapping = {
-        'Delete enabled': 'Delete enable',
-        'Scan interval [s]': 'Scan interval',
-        'Import strategy': 'strategy',
-        'Update strategy': 'strategy',
-    }
 
 
 def revoke_space_support_in_op_panel_using_rest(user, users, provider_host,
@@ -57,13 +48,24 @@ def support_space_in_op_panel_using_rest(user, provider_host, hosts, users,
 
     storage_import_options = options.get('storage import', None)
     if storage_import_options:
-        strategy = '_'.join(storage_import_options['strategy'].lower().
-                            split())
         max_depth = storage_import_options.get('max depth', None)
-        storage_import = StorageImportDetails(strategy, max_depth)
+        continuous_scan = storage_import_options.get('continuous scan', True)
+        modifications = storage_import_options.get('detect modifications', True)
+        deletions = storage_import_options.get('detect deletions', True)
+        interval = storage_import_options.get('scan interval [s]', 60)
+        sync_acl = storage_import_options.get('synchronize ACL', False)
+
+        storage_import = StorageImport(
+            mode='auto',
+            auto_storage_import_config=AutoStorageImportConfig(
+                max_depth=max_depth,
+                sync_acl=sync_acl,
+                continuous_scan=continuous_scan,
+                scan_interval=interval,
+                detect_modifications=modifications,
+                detect_deletions=deletions))
     else:
         storage_import = None
-    storage_update = StorageUpdateDetails(strategy='no_update')
 
     storages = provider_api.get_storages().ids
     storage_name = re.sub(r' \(.*\)', '', options['storage'])
@@ -72,14 +74,15 @@ def support_space_in_op_panel_using_rest(user, provider_host, hosts, users,
         if storage.name == storage_name:
             space_support_rq = SpaceSupportRequest(
                 token=tmp_memory[user]['mailbox']['token'],
-                size=options['size'],
-                storage_id=storage_id,
-                storage_import=storage_import,
-                storage_update=storage_update)
+                size=options['size'], storage_id=storage_id,
+                storage_import=storage_import)
             provider_api.support_space(space_support_rq)
             break
     else:
         raise RuntimeError(f'No storage named "{storage_name}"')
+
+    import pdb
+    pdb.set_trace()
 
 
 def configure_sync_parameters_for_space_in_op_panel_rest(user, users,
@@ -97,30 +100,30 @@ def configure_sync_parameters_for_space_in_op_panel_rest(user, users,
 
     provider_api = OneproviderApi(user_client_op)
     options = yaml.load(conf)
-    if options[f'{sync_type.capitalize()} strategy'].lower() == 'disabled':
-        strategy = f'no_{sync_type.lower()}'
-    else:
-        strategy = '_'.join(options[f'{sync_type.capitalize()} strategy']
-                            .lower().split())
 
-    if sync_type.lower() == 'import':
-        storage_import = StorageImportDetails(strategy, options['Max depth'])
-        space_modify_rq = SpaceModifyRequest(storage_import=storage_import)
-    else:
-        storage_update = StorageUpdateDetails(
-            strategy,
-            options.get('Max depth', None),
-            options.get('Scan interval [s]', None),
-            options.get('Write once', None),
-            options.get('Delete enabled', None)
-        )
-        space_modify_rq = SpaceModifyRequest(storage_update=storage_update)
+    max_depth = options.get('max depth', None)
+    continuous_scan = options.get('continuous scan', True)
+    modifications = options.get('detect modifications', True)
+    deletions = options.get('detect deletions', True)
+    interval = options.get('scan interval [s]', 60)
+    sync_acl = options.get('synchronize ACL', False)
+
+    auto_storage_import_config = AutoStorageImportConfig(
+        max_depth=max_depth,
+        sync_acl=sync_acl,
+        continuous_scan=continuous_scan,
+        scan_interval=interval,
+        detect_modifications=modifications,
+        detect_deletions=deletions)
+
+    space_modify_rq = SpaceModifyRequest(
+        auto_storage_import_config=auto_storage_import_config)
 
     space = get_space_with_name(user_client_oz, space_name)
     provider_api.modify_space(space.space_id, space_modify_rq)
 
 
-@repeat_failed(timeout=WAIT_BACKEND*4)
+@repeat_failed(timeout=WAIT_BACKEND * 4)
 def assert_proper_space_configuration_in_op_panel_rest(space_name, user, users,
                                                        provider_host, hosts,
                                                        conf, sync_type,
@@ -138,21 +141,14 @@ def assert_proper_space_configuration_in_op_panel_rest(space_name, user, users,
     space = get_space_with_name(user_client_oz, space_name)
     space_details = provider_api.get_space_details(space.space_id)
 
-    sync_type = sync_type.lower()
-    storage_sync = getattr(space_details, f'storage_{sync_type}')
+    storage_sync = space_details.storage_import.auto_storage_import_config
 
     for attr, expected_val in yaml.load(conf).items():
-        if 'strategy' in attr:
-            if expected_val.lower() == 'disabled':
-                expected_val = f'no_{sync_type}'
-            else:
-                expected_val = '_'.join(expected_val.lower().split())
-        try:
-            actual_val = getattr(
-                storage_sync, '_'.join(attrs_mapping[attr].lower().split()))
-        except KeyError:
-            actual_val = getattr(storage_sync,
-                                 '_'.join(attr.lower().split()))
+        import pdb
+        pdb.set_trace()
+        actual_val = getattr(storage_sync, '_'.join(attr.lower().split()))
         assert expected_val == actual_val, (f'Storage sync value for attribute '
-                                            f'"{attr}" does not match. Expected: '
-                                            f'{expected_val}, got: {actual_val}')
+                                            f'"{attr}" does not match. '
+                                            f'Expected: '
+                                            f'{expected_val}, '
+                                            f'got: {actual_val}')
