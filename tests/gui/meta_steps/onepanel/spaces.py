@@ -72,26 +72,22 @@ def _handle_configure_auto_storage_import(selenium, onepanel, user, options,
             selenium, user, str(storage_import_configuration['max depth']),
             'Max depth', onepanel)
 
-    _set_toggle_state(selenium, 'Synchronize ACL',
-                      storage_import_configuration, onepanel,
-                      user)
-    _set_toggle_state(selenium, 'Detect modifications',
-                      storage_import_configuration, onepanel,
-                      user)
-    _set_toggle_state(selenium, 'Detect deletions',
-                      storage_import_configuration, onepanel,
-                      user)
+    toggles = ['Synchronize ACL', 'Detect modifications', 'Detect deletions',
+               'Continuous scan']
+    for toggle in toggles:
+        _set_toggle_state(selenium, toggle,
+                          storage_import_configuration, onepanel,
+                          user)
 
-    _set_toggle_state(selenium, 'Continuous scan',
-                      storage_import_configuration, onepanel,
-                      user)
-
-    if storage_import_configuration.get('continuous scan', False) \
-            and 'scan interval [s]' in storage_import_configuration:
+    if (storage_import_configuration.get('continuous scan', False)
+            and 'scan interval [s]' in storage_import_configuration):
+        interval = str(
+            storage_import_configuration['scan interval [s]'])
+        interval_name = 'Scan interval'
         wt_type_text_to_input_box_in_storage_import_configuration(selenium,
-                                                                  user, str(
-                storage_import_configuration['scan interval [s]']),
-                                                                  'Scan interval',
+                                                                  user,
+                                                                  interval,
+                                                                  interval_name,
                                                                   onepanel)
 
 
@@ -122,7 +118,7 @@ def _support_space_in_op_panel_using_gui(selenium, user, config, onepanel,
         if storage_import_configuration.get('mode') == 'manual':
             wt_select_mode_in_space_support_form(selenium, user, 'manual',
                                                  onepanel)
-        else:  # mode == 'auto'
+        else:
             _handle_configure_auto_storage_import(selenium, onepanel, user,
                                                   options,
                                                   storage_import_configuration)
@@ -133,7 +129,7 @@ def _support_space_in_op_panel_using_gui(selenium, user, config, onepanel,
 @wt(parsers.parse('user of {user} sets update configuration in '
                   'Storage import tab as following:\n{config}'))
 def configure_auto_storage_import_in_storage_import_tab(selenium, user, config,
-                                             onepanel):
+                                                        onepanel):
     options = yaml.load(config)
     storage_import_configuration = options.get('storage update')
     _handle_configure_auto_storage_import(selenium, onepanel, user,
