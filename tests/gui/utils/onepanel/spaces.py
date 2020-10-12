@@ -54,33 +54,23 @@ class SpaceSupportForm(PageObject):
     support_space = Button('.btn.ready')
 
 
-
 class SpaceInfo(PageObject):
     space_name = Label('.space-name')
     space_id = Input('.space-info .content-row:nth-child(2) input[type=text]')
     storage_name = Label('.space-provider-storage')
-    _import_strategy = WebElement('.space-import')
-    _update_strategy = WebElement('.space-update')
-    _mount_in_root = WebElement('.space-mountInRoot')
-
-    def is_mount_in_root_enabled(self):
-        return 'disabled' not in self._mount_in_root.get_attribute('class')
+    _storage_import = WebElement('.storage-import')
+    size = Input('.size-number-input')
 
     @property
     def import_strategy(self):
         values = DEFAULT_IMPORT_STRATEGY_CONFIG.copy()
-        values.update(self._get_labels(self._import_strategy))
-        return values
-
-    @property
-    def update_strategy(self):
-        values = DEFAULT_UPDATE_STRATEGY_CONFIG.copy()
-        values.update(self._get_labels(self._update_strategy))
+        values.update(self._get_labels(self._storage_import))
         return values
 
     @staticmethod
     def _get_labels(elem):
         items = elem.find_elements_by_css_selector('strong, .one-label')
+        items.pop(0)  # pop redundant "Storage import:" label
         return {attr.text.strip(':'): val.text for attr, val
                 in zip(items[::2], items[1::2])}
 

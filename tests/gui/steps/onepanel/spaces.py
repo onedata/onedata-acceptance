@@ -215,12 +215,13 @@ def wt_assert_proper_space_configuration_in_panel(selenium, browser_id,
     """Assert configuration displayed in space record in panel.
 
     conf should be in yaml format exactly as seen in panel, e.g.
-
-        Update strategy: Simple scan
-        Max depth: 20
+        Mode: auto
+        Max depth: 2
+        Synchronize ACL: false
+        Detect modifications: false
+        Detect deletions: false
+        Continuous scan: true
         Scan interval [s]: 10
-        Write once: true
-        Delete enabled: false
 
     """
 
