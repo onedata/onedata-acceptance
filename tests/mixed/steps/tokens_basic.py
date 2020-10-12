@@ -6,7 +6,7 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-
+from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.meta_steps.onezone.tokens import (
     create_token_with_config, click_copy_button_in_token_view,
     revoke_token_in_oz_gui, assert_token_configuration,
@@ -21,6 +21,7 @@ from tests.mixed.steps.rest.onezone.tokens import (
     assert_token_with_config_rest)
 from tests.mixed.utils.common import NoSuchClientException
 from tests.utils.bdd_utils import wt, parsers
+from tests.utils.utils import repeat_failed
 
 
 @wt(parsers.parse('using {client}, {user} creates token with '
@@ -79,6 +80,7 @@ def copy_token_gui(selenium, oz_page, user, displays, clipboard, tmp_memory):
 
 
 @wt(parsers.parse('using {client}, {user} revokes token named "{token_name}"'))
+@repeat_failed(timeout=WAIT_BACKEND)
 def revoke_token_in_oz(client, user, token_name, users, hosts, tokens,
                        selenium, oz_page, popups):
     if client == 'rest':
