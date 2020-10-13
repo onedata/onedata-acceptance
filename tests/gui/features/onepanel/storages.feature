@@ -167,7 +167,7 @@ Feature: Storage management using onepanel
     And user of browser_unified sees item(s) named "dir2" in file browser
 
 
-  Scenario: User fails to configure import in storage that is not import-enabled
+  Scenario: User fails to update import in storage that is not import-enabled
     When user of browser_unified creates "space5" space in Onezone
     And user of browser_unified copies dir1 to /volumes/persistence/storage/dir directory on docker
     And user of browser_unified adds "new_storage8" storage in "oneprovider-1" Oneprovider panel service with following configuration:
@@ -181,7 +181,11 @@ Feature: Storage management using onepanel
     And user of browser_unified clicks on Support space button in spaces page in Onepanel if there are some spaces already supported
     And user of browser_unified selects "new_storage8" from storage selector in support space form in Onepanel
     And user of browser_unified types received token to Support token field in support space form in Onepanel
-    Then user of browser_unified cannot enable storage data import option
+    And user of browser_unified types "1" to Size input field in support space form in Onepanel
+    And user of browser_unified selects GiB radio button in support space form in Onepanel
+    And user of browser_unified clicks on Support space button in support space form in Onepanel
+    And user of browser_unified opens "space5" record on spaces list in Spaces page in Onepanel
+    Then user of browser_unified cannot click on Storage import navigation tab in space "space5"
 
 
   Scenario: User fails to create 2 storages with the same name

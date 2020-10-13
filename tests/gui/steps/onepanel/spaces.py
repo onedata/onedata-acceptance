@@ -161,15 +161,6 @@ def wt_type_text_to_input_box_in_storage_import_configuration(selenium,
              f'support space form '))
 
 
-@wt(parsers.parse('user of {browser_id} cannot enable storage data import '
-                  'option'))
-def wt_assert_storage_import_toggle_uncheckable(browser_id, selenium, onepanel):
-    conf = onepanel(
-        selenium[browser_id]).content.spaces.form
-    assert conf.is_import_uncheckable(), ('Data import of storage is possible '
-                                          'but should not be')
-
-
 @wt(parsers.re(r'user of (?P<browser_id>.*?) selects (?P<strategy>.*?) '
                r'strategy from strategy selector in (?P<conf>IMPORT|UPDATE) '
                r'CONFIGURATION in "(?P<space>.*?)" record '
