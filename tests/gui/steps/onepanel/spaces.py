@@ -148,9 +148,17 @@ def wt_type_text_to_input_box_in_storage_import_configuration(selenium,
                                                               browser_id, text,
                                                               input_box,
                                                               onepanel):
-    storage_import_configuration = onepanel(
-        selenium[browser_id]).content.spaces.form.storage_import_configuration
-    setattr(storage_import_configuration, transform(input_box), text)
+    input_name = transform(input_box)
+    form = onepanel(
+        selenium[browser_id]).content.spaces.form
+    if hasattr(form, input_name):
+        setattr(form, input_name, text)
+    elif hasattr(form.storage_import_configuration, input_name):
+        setattr(form.storage_import_configuration, input_name, text)
+    else:
+        raise RuntimeError(
+            (f'failed typing text into {input_box} input field in '
+             f'support space form '))
 
 
 @wt(parsers.parse('user of {browser_id} cannot enable storage data import '

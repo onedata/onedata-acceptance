@@ -125,10 +125,9 @@ Feature: Storage management using onepanel
           size: 1
           unit: GiB
           storage import:
-                strategy: Simple scan
                 max depth: 2
-          storage update:
-                strategy: Simple scan
+                continuous scan: true
+                scan interval [s]: 1
 
     And user of browser_unified sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
     And user of browser_unified sees that space support record for "space3" has appeared in Spaces page in Onepanel
