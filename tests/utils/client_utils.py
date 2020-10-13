@@ -189,11 +189,8 @@ def mount_users(clients, user_names, mount_paths, client_hosts,
 
         client_mode = client_conf.get('mode')
         retries = 1 if should_fail else 3
-        try:
-            ret = client.mount(username, hosts, access_token, client_mode,
-                               retries=retries)
-        except TimeoutError:
-            ret = 1
+        ret = client.mount(username, hosts, access_token, client_mode,
+                           retries=retries)
 
         if ret != 0 and (access_token != BAD_TOKEN and not should_fail):
             clean_mount_path(username, client)

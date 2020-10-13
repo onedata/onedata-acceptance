@@ -246,7 +246,6 @@ def set_object_id_caveat(token_config, object_ids):
 
 
 def revoke_token_rest(user, users, hosts, zone_name, tokens, token_name):
-    time.sleep(10)
     user_client = login_to_oz(user, users[user].password,
                               hosts[zone_name]['hostname'])
     token_api = TokenApi(user_client)

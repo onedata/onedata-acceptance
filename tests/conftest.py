@@ -167,7 +167,7 @@ def hosts():
     return {}
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture
 def tokens():
     """Dict to use to store information about tokens, e.g. {'token1': {
     'token_id': HGS2783GYIS, 'token': HDSGUFGJY875381FGJFSU}}"""

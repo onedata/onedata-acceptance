@@ -43,8 +43,11 @@ def mount_new_oneclient_with_token_fail(user, path, request, hosts, users,
                                         client='oneclient'):
     if 'oneclient' in client:
         token = tmp_memory[user]['mailbox']['token']
-        mount_users(clients, [user], [path], ['oneclient-1'], ['client1'],
-                    [token], hosts, request, users, env_desc, should_fail=True)
+        try:
+            mount_users(clients, [user], [path], ['oneclient-1'], ['client1'],
+                        [token], hosts, request, users, env_desc, should_fail=True)
+        except TimeoutError:
+            return
         failure(user, users)
 
 
