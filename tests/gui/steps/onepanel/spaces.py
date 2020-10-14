@@ -485,3 +485,9 @@ def see_released_size_in_cleaning_report(selenium, browser_id, onepanel, size):
             return
     assert False, f'released size is not {size}'
 
+
+def toggle_in_storage_import_configuration_is_enabled(selenium, browser_id,
+                                                      onepanel, toggle_name):
+    storage_import_conf = onepanel(
+        selenium[browser_id]).content.spaces.form.storage_import_configuration
+    return storage_import_conf.is_toggle_checked(transform(toggle_name))

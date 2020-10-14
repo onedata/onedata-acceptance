@@ -39,6 +39,10 @@ class StorageImportConfiguration(PageObject):
     continuous_scan = Toggle('.toggle-field-generic-continuousScan')
     scan_interval = Input('.field-continuous-scanInterval')
 
+    def is_toggle_checked(self, toggle):
+        toggle = getattr(self, toggle)
+        return 'checked' in toggle.web_elem.get_attribute('class')
+
 
 class SpaceSupportForm(PageObject):
     storage_selector = DropdownSelector('.ember-basic-dropdown')

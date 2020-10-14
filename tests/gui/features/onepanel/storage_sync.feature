@@ -37,14 +37,18 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
           size: 1
           unit: GiB
           storage import:
-                max depth: 2
-                continuous scan: true
+            max depth: 2
+            detect modifications: false
+            detect deletions: false
+            continuous scan: true
 
     # confirm correct import configuration
     When user of browser1 opens "space1" record on spaces list in Spaces page in Onepanel
     And user of browser1 sees that Import strategy configuration for "space1" is as follow:
-          Continuous scan: true
           Max depth: 2
+          Detect modifications: false
+          Detect deletions: false
+          Continuous scan: true
 
     And user of browser2 opens file browser for "space1" space
 
@@ -60,16 +64,14 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     # configure update parameters
     And user of browser1 clicks on "Storage import" navigation tab in space "space1"
     And user of browser1 clicks settings in Storage import in Spaces page
-    And user of browser1 sets update configuration in Storage import tab as following:
+    And user of browser1 sets import configuration in Storage import tab as following:
         storage update:
-              max depth: 3
-              continuous scan: true
-              scan interval [s]: 1
+          max depth: 3
+          scan interval [s]: 1
 
     # confirm correct update configuration
     And user of browser1 sees that Import strategy configuration for "space1" is as follow:
           Max depth: 3
-          Continuous scan: true
           Scan interval [s]: 1
 
     # confirm update of files
@@ -96,8 +98,9 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
           size: 1
           unit: GiB
           storage import:
-                max depth: 2
-                continuous scan: true
+            detect modifications: false
+            detect deletions: true
+            max depth: 2
 
     And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
     And user of browser1 sees that space support record for "space1" has appeared in Spaces page in Onepanel
@@ -107,13 +110,10 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser1 clicks on "Storage import" navigation tab in space "space1"
     And user of browser1 clicks settings in Storage import in Spaces page
 
-    And user of browser1 sets update configuration in Storage import tab as following:
+    And user of browser1 sets import configuration in Storage import tab as following:
         storage update:
-              max depth: 3
-              detect modifications: true
-              detect deletions: true
-              continuous scan: true
-              scan interval [s]: 1
+          max depth: 3
+          scan interval [s]: 1
 
     # confirm update of files
     And user of browser2 opens file browser for "space1" space
@@ -152,9 +152,9 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
           size: 1
           unit: GiB
           storage import:
-                max depth: 2
-                continuous scan: true
-                scan interval [s]: 60
+            detect deletions: false
+            detect modifications: false
+            max depth: 2
 
     And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
     And user of browser1 sees that space support record for "space1" has appeared in Spaces page in Onepanel
@@ -176,13 +176,11 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     # configure update parameters
     And user of browser1 clicks on "Storage import" navigation tab in space "space1"
     And user of browser1 clicks settings in Storage import in Spaces page
-    And user of browser1 sets update configuration in Storage import tab as following:
+    And user of browser1 sets import configuration in Storage import tab as following:
         storage update:
-              strategy: Simple scan
-              max depth: 3
-              detect modifications: true
-              continuous scan: true
-              scan interval [s]: 1
+          max depth: 3
+          detect modifications: true
+          scan interval [s]: 1
 
     # confirm correct update configuration
     And user of browser1 sees that Import strategy configuration for "space1" is as follow:
@@ -225,10 +223,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
           size: 1
           unit: GiB
           storage import:
-                max depth: 2
-                detect modifications: true
-                continuous scan: true
-                scan interval [s]: 60
+            max depth: 2
 
     And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
     And user of browser1 sees that space support record for "space1" has appeared in Spaces page in Onepanel
@@ -249,17 +244,17 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     # configure update parameters
     And user of browser1 clicks on "Storage import" navigation tab in space "space1"
     And user of browser1 clicks settings in Storage import in Spaces page
-    And user of browser1 sets update configuration in Storage import tab as following:
+    And user of browser1 sets import configuration in Storage import tab as following:
         storage update:
-              max depth: 3
-              detect modifications: false
-              continuous scan: true
-              scan interval [s]: 1
+          max depth: 3
+          detect modifications: false
+          scan interval [s]: 1
 
     # confirm correct update
     And user of browser1 sees that Import strategy configuration for "space1" is as follow:
           Max depth: 3
           Detect modifications: false
+          Detect deletions: true
           Continuous scan: true
           Scan interval [s]: 1
 
@@ -297,8 +292,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
           size: 1
           unit: GiB
           storage import:
-                max depth: 2
-                continuous scan: true
+            max depth: 2
 
     And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
     And user of browser1 sees that space support record for "space1" has appeared in Spaces page in Onepanel
@@ -307,13 +301,12 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     # configure update parameters
     And user of browser1 clicks on "Storage import" navigation tab in space "space1"
     And user of browser1 clicks settings in Storage import in Spaces page
-    And user of browser1 sets update configuration in Storage import tab as following:
+    And user of browser1 sets import configuration in Storage import tab as following:
         storage update:
-              max depth: 3
-              detect deletions: true
-              detect modifications: false
-              continuous scan: true
-              scan interval [s]: 1
+          max depth: 3
+          detect deletions: true
+          detect modifications: false
+          scan interval [s]: 1
 
     # confirm correct update configuration
     And user of browser1 sees that Import strategy configuration for "space1" is as follow:
@@ -362,24 +355,15 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
           size: 1
           unit: GiB
           storage import:
-              detect modifications: true
-              max depth: 3
-              continuous scan: true
-              scan interval [s]: 1
+            max depth: 3
+            detect modifications: true
+            detect deletions: true
+            continuous scan: true
+            scan interval [s]: 1
 
     And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
     And user of browser1 sees that space support record for "space1" has appeared in Spaces page in Onepanel
     And user of browser1 opens "space1" record on spaces list in Spaces page in Onepanel
-
-    # confirm correct synchronization configuration
-    And user of browser1 sees that Import strategy configuration for "space1" is as follow:
-          Mode: auto
-          Max depth: 3
-          Synchronize ACL: false
-          Detect modifications: true
-          Detect deletions: false
-          Continuous scan: true
-          Scan interval [s]: 1
 
     And user of browser2 opens file browser for "space1" space
 
@@ -398,15 +382,14 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     # disable continuous scan
     And user of browser1 clicks on "Storage import" navigation tab in space "space1"
     And user of browser1 clicks settings in Storage import in Spaces page
-    And user of browser1 sets update configuration in Storage import tab as following:
+    And user of browser1 sets import configuration in Storage import tab as following:
         storage update:
-              detect modifications: true
-              max depth: 3
-              continuous scan: false
+          continuous scan: false
 
     # confirm that continuous scan was disabled
     And user of browser1 sees that Import strategy configuration for "space1" is as follow:
           Detect modifications: true
+          Detect deletions: true
           Continuous scan: False
 
     # copy files to provider storage

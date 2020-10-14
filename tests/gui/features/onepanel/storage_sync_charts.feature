@@ -31,12 +31,9 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
           size: 1
           unit: GiB
           storage import:
-            mode: auto
             max depth: 3
-            synchronize acl: true
-            detect deletions: true
             detect modifications: true
-            continuous scan: true
+            detect deletions: true
             scan interval [s]: 1
 
     # wait more than 1 second for the mounting point's timestamp to change

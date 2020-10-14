@@ -74,13 +74,17 @@ def _handle_configure_auto_storage_import(selenium, onepanel, user, options,
 
     toggles = ['Synchronize ACL', 'Detect modifications', 'Detect deletions',
                'Continuous scan']
-    for toggle in toggles:
-        _set_toggle_state(selenium, toggle,
-                          storage_import_configuration, onepanel,
-                          user)
+    for toggle_name in toggles:
+        if toggle_name.lower() in storage_import_configuration:
+            _set_toggle_state(selenium, toggle_name,
+                              storage_import_configuration, onepanel,
+                              user)
 
-    if (storage_import_configuration.get('continuous scan', False)
-            and 'scan interval [s]' in storage_import_configuration):
+    continuous_scan = 'Continuous scan'
+    if (toggle_in_storage_import_configuration_is_enabled(selenium, user,
+                                                          onepanel,
+                                                          continuous_scan) and
+            'scan interval [s]' in storage_import_configuration):
         interval = str(
             storage_import_configuration['scan interval [s]'])
         interval_name = 'Scan interval'
@@ -126,7 +130,7 @@ def _support_space_in_op_panel_using_gui(selenium, user, config, onepanel,
     wt_click_on_btn_in_space_support_form(selenium, user, onepanel)
 
 
-@wt(parsers.parse('user of {user} sets update configuration in '
+@wt(parsers.parse('user of {user} sets import configuration in '
                   'Storage import tab as following:\n{config}'))
 def configure_auto_storage_import_in_storage_import_tab(selenium, user, config,
                                                         onepanel):
