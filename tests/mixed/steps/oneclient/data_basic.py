@@ -27,13 +27,20 @@ from tests.utils.utils import repeat_failed
 
 @wt(parsers.parse('if {client} is oneclient, {user} mounts oneclient in '
                   '{path} using received token'))
-def mount_new_oneclient_with_token(user, path, request, hosts, users,
-                                   clients, env_desc, tmp_memory,
-                                   client='oneclient'):
+def mount_new_oneclient_with_token_if_oneclient(user, path, request, hosts,
+                                                users, clients, env_desc,
+                                                tmp_memory, client):
     if 'oneclient' in client:
-        token = tmp_memory[user]['mailbox']['token']
-        mount_users(clients, [user], [path], ['oneclient-1'], ['client1'],
-                    [token], hosts, request, users, env_desc)
+        mount_new_oneclient_with_token(user, path, request, hosts, users,
+                                       clients, env_desc, tmp_memory)
+
+
+@wt(parsers.parse('{user} mounts oneclient in {path} using received token'))
+def mount_new_oneclient_with_token(user, path, request, hosts, users,
+                                   clients, env_desc, tmp_memory):
+    token = tmp_memory[user]['mailbox']['token']
+    mount_users(clients, [user], [path], ['oneclient-1'], ['client1'],
+                [token], hosts, request, users, env_desc)
 
 
 @wt(parsers.parse('if {client} is oneclient, {user} fails to mount '
@@ -56,8 +63,7 @@ def mount_new_oneclient_result(user, path, request, hosts, users, clients,
                                client='oneclient'):
     if result == 'succeeds':
         mount_new_oneclient_with_token(user, path, request, hosts, users,
-                                       clients, env_desc, tmp_memory,
-                                       client=client)
+                                       clients, env_desc, tmp_memory)
     else:
         mount_new_oneclient_with_token_fail(user, path, request, hosts,
                                             users, clients, env_desc,

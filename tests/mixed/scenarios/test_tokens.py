@@ -1,4 +1,5 @@
-"""Test suite for tests using swaggers and browser
+"""Test suite for GUI, REST and Onepanel cooperation
+ for tokens management tests
 """
 
 __author__ = "Natalia Organek"
@@ -32,6 +33,7 @@ from tests.gui.conftest import *
 from tests.oneclient.steps.auth_steps import *
 
 from tests.gui.steps.common.miscellaneous import *
+
 
 scenarios('../features/onezone/access_tokens.feature')
 scenarios('../features/onezone/identity_tokens.feature')

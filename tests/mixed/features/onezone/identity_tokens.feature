@@ -24,13 +24,13 @@ Feature: Identity tokens tests
                - type: user
                  by: id
                  consumer name: user2
-    And if web gui is web gui, user1 copies created token named "access_token_for_user2"
+    And using web gui, user1 copies created token named "access_token_for_user2"
     And user1 sends token to user2
     And using REST, user2 fails to create file named "file1" using received token in "space1" in oneprovider-1
     And using web gui, user2 creates token with following configuration:
            name: identity_token_of_user2
            type: identity
-    And if web gui is web gui, user2 copies created token named "identity_token_of_user2"
+    And using web gui, user2 copies created token named "identity_token_of_user2"
     Then using REST with identity token, user2 succeeds to create file named "file1" using received token in "space1" in oneprovider-1
 
 
@@ -44,11 +44,11 @@ Feature: Identity tokens tests
                - type: user
                  by: id
                  consumer name: user1
-    And if web gui is web gui, user1 copies created token named "access_token_for_user2"
+    And using web gui, user1 copies created token named "access_token_for_user2"
     And user1 sends token to user2
     And using REST, user2 fails to create file named "file1" using received token in "space1" in oneprovider-1
     And using web gui, user2 creates token with following configuration:
            name: identity_token_of_user2
            type: identity
-    And if web gui is web gui, user2 copies created token named "identity_token_of_user2"
+    And using web gui, user2 copies created token named "identity_token_of_user2"
     Then using REST with identity token, user2 fails to create file named "file1" using received token in "space1" in oneprovider-1

@@ -9,7 +9,7 @@ __license__ = ("This software is released under the MIT license cited in "
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.meta_steps.onezone.tokens import (
     create_token_with_config, click_copy_button_in_token_view,
-    revoke_token_in_oz_gui, assert_token_configuration,
+    choose_and_revoke_token_in_oz_gui, assert_token_configuration,
     assert_token_configuration_gui, result_to_consume_token,
     consume_received_token)
 from tests.gui.steps.onezone.spaces import \
@@ -62,6 +62,8 @@ def copy_token_if_gui(selenium, oz_page, client, user, displays, clipboard,
         tmp_memory[user]['token'] = clipboard.paste(display=displays[user])
 
 
+@wt(parsers.parse('using {client}, {user} copies created token named '
+                  '"{token_name}"'))
 @wt(parsers.parse('if {client} is web gui, {user} copies created token '
                   'named "{token_name}"'))
 def copy_named_token_if_gui(selenium, oz_page, client, user, displays,
@@ -87,7 +89,8 @@ def revoke_token_in_oz(client, user, token_name, users, hosts, tokens,
         zone_name = 'onezone'
         revoke_token_rest(user, users, hosts, zone_name, tokens, token_name)
     elif client == 'web gui':
-        revoke_token_in_oz_gui(selenium, user, token_name, oz_page, popups)
+        choose_and_revoke_token_in_oz_gui(selenium, user, token_name, oz_page,
+                                          popups)
     else:
         raise NoSuchClientException(f'Client: {client} not found')
 

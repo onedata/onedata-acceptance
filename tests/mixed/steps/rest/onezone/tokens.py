@@ -193,12 +193,12 @@ def set_consumer_in_consumer_caveat(consumer, groups, users):
     return value
 
 
-def set_service_caveat(token_config, service):
+def set_service_caveat(token_config, given_service):
     services_list = []
-    ser_service = service.get('Service', False)
-    op_service = service.get('Service Onepanel', False)
-    if ser_service:
-        for curr_service in ser_service:
+    service = given_service.get('Service', False)
+    op_service = given_service.get('Service Onepanel', False)
+    if service:
+        for curr_service in service:
             if curr_service == 'Any Oneprovider':
                 services_list.append('opw-*')
             else:

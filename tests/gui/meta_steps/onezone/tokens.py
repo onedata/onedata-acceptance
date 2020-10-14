@@ -34,12 +34,6 @@ def paste_copied_token_into_text_field(selenium, browser_id, oz_page, clipboard,
     _paste_token_into_text_field(selenium, browser_id, oz_page, token)
 
 
-def paste_received_token_into_text_field(selenium, browser_id, oz_page,
-                                         tmp_memory):
-    token = tmp_memory[browser_id]['mailbox']['token']
-    _paste_token_into_text_field(selenium, browser_id, oz_page, token)
-
-
 @wt(parsers.parse('user of {browser_id} pastes received token '
                   'into token text field'))
 def paste_received_token_into_text_field(selenium, browser_id,
@@ -72,18 +66,6 @@ def consume_token_from_copied_token(selenium, browser_id, oz_page, clipboard,
     click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button)
     paste_copied_token_into_text_field(selenium, browser_id, oz_page, clipboard,
                                        displays)
-    click_on_join_button_on_tokens_page(selenium, browser_id, oz_page)
-
-
-def consume_token_from_received_token(selenium, browser_id, oz_page,
-                                      tmp_memory):
-    option = 'Tokens'
-    button = 'Consume token'
-
-    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
-    click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button)
-    paste_received_token_into_text_field(selenium, browser_id, oz_page,
-                                         tmp_memory)
     click_on_join_button_on_tokens_page(selenium, browser_id, oz_page)
 
 
@@ -368,8 +350,8 @@ def assert_token_configuration_gui(selenium, browser_id, config, oz_page, users,
                                    groups, hosts, tmp_memory):
     token_name = yaml.load(config)['name']
     click_on_token_on_tokens_list(selenium, browser_id, token_name, oz_page)
-    assert_token_configuration(selenium, browser_id, config, oz_page, users,
-                               groups, hosts, tmp_memory)
+    _assert_token_configuration(selenium, browser_id, config, oz_page, users,
+                                groups, hosts, tmp_memory)
 
 
 def _assert_token_configuration(selenium, browser_id, config, oz_page, users,
@@ -513,7 +495,8 @@ def create_and_check_token(browser_id, config, selenium, oz_page, popups,
                                 groups, hosts, tmp_memory, creation=True)
 
 
-def revoke_token_in_oz_gui(selenium, browser_id, token_name, oz_page, popups):
+def choose_and_revoke_token_in_oz_gui(selenium, browser_id, token_name,
+                                      oz_page, popups):
     option = 'Tokens'
 
     click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)

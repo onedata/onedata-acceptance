@@ -14,7 +14,7 @@ Feature: Access tokens tests
     And opened [browser1, browser2] with [user1, user2] signed in to ["onezone", "onezone"] service
 
 
-  Scenario Outline: User can create file in space using <client1> authenticating themselves with access token created by <client2>
+  Scenario Outline: User can create a file in a space using <client1> authenticating themselves with an access token created by <client2>
     When using <client2>, user1 creates token with following configuration:
            name: access_token
            type: access
@@ -27,11 +27,11 @@ Feature: Access tokens tests
     Examples:
     | client1     | client2 |
     | REST        | web gui |
-    | oneclient1  | REST    |
+    | oneclient2  | REST    |
     | oneclient1  | web gui |
 
 
-  Scenario Outline: User cannot use access token created with <client1> and revoked with <client2> when using <client3>
+  Scenario Outline: User cannot use an access token created with <client1> and revoked with <client2> when using <client3>
     When using <client1>, user1 creates token with following configuration:
            name: access_token
            type: access
@@ -124,7 +124,7 @@ Feature: Access tokens tests
     | web gui    | REST    |
 
 
-  Scenario: User creates file with Oneclient using token with caveat set for Oneclient interface
+  Scenario: User creates a file with Oneclient but not with REST using token with caveat set for Oneclient interface
     When using web gui, user1 creates token with following configuration:
            name: access_token
            type: access
@@ -133,12 +133,12 @@ Feature: Access tokens tests
              interface: Oneclient
     And using web gui, user1 copies created token
     And user1 sends token to user2
-    And if oneclient1 is oneclient, user2 mounts oneclient in /home/user2/onedata using received token
-    And using REST, user2 fails to create file named "file1" using received token in "space1" in oneprovider-1
-    Then using oneclient1, user2 succeeds to create file named "file1" using received token in "space1" in oneprovider-1
+    And user2 mounts oneclient in /home/user2/onedata using received token
+    Then using REST, user2 fails to create file named "file1" using received token in "space1" in oneprovider-1
+    And using oneclient1, user2 succeeds to create file named "file1" using received token in "space1" in oneprovider-1
 
 
-  Scenario: User creates file with REST using token with caveat set for REST interface
+  Scenario: User creates a file with REST but not with Oneclient using token with caveat set for REST interface
     When using web gui, user1 creates token with following configuration:
            name: access_token
            type: access
@@ -147,5 +147,5 @@ Feature: Access tokens tests
              interface: REST
     And using web gui, user1 copies created token
     And user1 sends token to user2
-    And using oneclient1, user2 fails to create file named "file1" using received token in "space1" in oneprovider-1
-    Then using REST, user2 succeeds to create file named "file1" using received token in "space1" in oneprovider-1
+    Then using oneclient1, user2 fails to create file named "file1" using received token in "space1" in oneprovider-1
+    And using REST, user2 succeeds to create file named "file1" using received token in "space1" in oneprovider-1
