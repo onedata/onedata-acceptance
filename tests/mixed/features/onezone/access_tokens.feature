@@ -27,7 +27,7 @@ Feature: Access tokens tests
     Examples:
     | client1     | client2 |
     | REST        | web gui |
-    | oneclient2  | REST    |
+    | oneclient1  | REST    |
     | oneclient1  | web gui |
 
 

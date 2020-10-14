@@ -58,8 +58,8 @@ def assert_token(client, user, config, selenium, oz_page, users,
 def copy_token_if_gui(selenium, oz_page, client, user, displays, clipboard,
                       tmp_memory):
     if client == 'web gui':
-        click_copy_button_in_token_view(selenium, user, oz_page)
-        tmp_memory[user]['token'] = clipboard.paste(display=displays[user])
+        copy_token_gui(selenium, oz_page, user, displays, clipboard,
+                       tmp_memory)
 
 
 @wt(parsers.parse('using {client}, {user} copies created token named '

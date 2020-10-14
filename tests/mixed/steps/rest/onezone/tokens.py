@@ -19,7 +19,7 @@ from tests.utils.bdd_utils import wt, parsers
 
 def create_token_with_config_rest(user, config, users, tokens, hosts,
                                   tmp_memory, groups, spaces):
-    """Create invite token according to given config.
+    """Create token according to given config.
 
         Config format given in yaml is as follow:
 
@@ -183,11 +183,10 @@ def set_consumer_in_consumer_caveat(consumer, groups, users):
     cons_type = consumer.get('type', 'user')
     cons_name = consumer.get('consumer name')
     if cons_type == 'user':
-        value = (f'usr-{users[cons_name].id}' if 'any' not in cons_name else
-                 'usr-*')
+        value = (
+            'usr-*' if 'any' in cons_name else f'usr-{users[cons_name].id}')
     elif cons_type == 'group':
-        value = (f'grp-{groups[cons_name]}' if 'any' not in cons_name else
-                 'grp-*')
+        value = ('grp-*' if 'any' in cons_name else f'grp-{groups[cons_name]}')
     else:
         value = 'prv-*'
     return value
@@ -207,7 +206,7 @@ def set_service_caveat(token_config, given_service):
         for curr_service in op_service:
             if 'onezone' in curr_service.lower():
                 services_list.append('ozp-onezone')
-            if 'oneprovider onepanel'in curr_service.lower():
+            if 'oneprovider onepanel' in curr_service.lower():
                 services_list.append('opp-*')
             elif 'oneprovider' in curr_service.lower():
                 services_list.append(f'opw-{curr_service}')
@@ -228,15 +227,18 @@ def set_readonly_caveat(token_config):
 def set_path_caveat(token_config, paths, spaces):
     whitelist = []
     for path in paths:
-        space = spaces[path['space']]
-        path = path['path']
-        path = '' if path == '/' else path
-        can_path = f'/{space}{path}'
-        encoded = base64.b64encode(can_path.encode('ascii'))
-
-        whitelist.append(encoded.decode('ascii'))
+        whitelist.append(decode_path(path, spaces))
     token_config['caveats'].append({"type": "data.path",
-                                   "whitelist": whitelist})
+                                    "whitelist": whitelist})
+
+
+def decode_path(path, spaces):
+    space = spaces[path['space']]
+    path = path['path']
+    path = '' if path == '/' else path
+    can_path = f'/{space}{path}'
+    encoded = base64.b64encode(can_path.encode('ascii'))
+    return encoded.decode('ascii')
 
 
 def set_object_id_caveat(token_config, object_ids):
@@ -400,28 +402,19 @@ def assert_consumer_caveat(token_caveat, expected_caveat, groups, users):
 
 
 def assert_consumer_in_consumer_caveat(consumer, token_list, groups, users):
-    cons_type = consumer.get('type', 'user')
-    cons_name = consumer.get('consumer name')
-    if cons_type == 'user':
-        value = (
-            f'usr-{users[cons_name].id}' if 'any' not in cons_name else 'usr-*')
-    elif cons_type == 'group':
-        value = (
-            f'grp-{groups[cons_name]}' if 'any' not in cons_name else 'grp-*')
-    else:
-        value = 'prv-*'
+    value = set_consumer_in_consumer_caveat(consumer, groups, users)
     assert value in token_list, f'{consumer} not in consumer token caveat'
 
 
 def assert_service_caveat(token_caveat, expected_caveat):
     services_list = []
     token_list = token_caveat['whitelist']
-    ser_service = [service for service in expected_caveat if 'Onepanel' not in
-                   service]
+    services = [service for service in expected_caveat if 'Onepanel' not in
+                service]
     op_service = [service for service in expected_caveat if 'Onepanel' in
                   service]
 
-    for curr_service in ser_service:
+    for curr_service in services:
         if curr_service == 'Any Oneprovider':
             services_list.append('opw-*')
         else:
@@ -444,22 +437,18 @@ def assert_service_caveat(token_caveat, expected_caveat):
 
 
 def assert_interface_caveat(token_caveat, expected_caveat):
-    assert token_caveat['interface'] == expected_caveat.lower()
+    assert token_caveat['interface'] == expected_caveat.lower(), (
+        f'Interface {expected_caveat} not set in token caveat')
 
 
 def assert_path_caveat(token_caveat, expected_caveat, spaces):
     token_list = token_caveat['whitelist']
     whitelist = []
     for path in expected_caveat:
-        space = spaces[path['space']]
-        path = path['path']
-        path = '' if path == '/' else path
-        can_path = f'/{space}{path}'
-        encoded = base64.b64encode(can_path.encode('ascii'))
-        decoded_path = encoded.decode('ascii')
+        decoded_path = decode_path(path, spaces)
         whitelist.append(decoded_path)
 
-        assert decoded_path in token_list, (f'Path {can_path} not in '
+        assert decoded_path in token_list, (f'Path {path} not in '
                                             f'{token_list}')
 
     assert len(token_list) == len(whitelist), (
@@ -474,7 +463,7 @@ def assert_object_id_caveat(token_caveat, expected_caveat):
         f'not as long as actual token caveat whitelist {token_list}')
 
     for object_id in expected_caveat:
-        assert object_id in token_list
+        assert object_id in token_list, f'Object id {object_id} not in token'
 
 
 privileges_translation = {
@@ -494,8 +483,8 @@ privileges_translation = {
 def assert_token_privileges(privileges, response):
     actual_privs = response.metadata.privileges
     expected_privs = []
-    for priv_group in privileges:
-        sub_privs = privileges[priv_group]['privilege subtypes']
+    for (priv_group, priv_group_items) in privileges.items():
+        sub_privs = priv_group_items['privilege subtypes']
         for priv in sub_privs:
             if sub_privs[priv]:
                 expected_privs.append(privileges_translation[priv_group][priv])

@@ -25,16 +25,6 @@ from tests.utils.client_utils import mount_users
 from tests.utils.utils import repeat_failed
 
 
-@wt(parsers.parse('if {client} is oneclient, {user} mounts oneclient in '
-                  '{path} using received token'))
-def mount_new_oneclient_with_token_if_oneclient(user, path, request, hosts,
-                                                users, clients, env_desc,
-                                                tmp_memory, client):
-    if 'oneclient' in client:
-        mount_new_oneclient_with_token(user, path, request, hosts, users,
-                                       clients, env_desc, tmp_memory)
-
-
 @wt(parsers.parse('{user} mounts oneclient in {path} using received token'))
 def mount_new_oneclient_with_token(user, path, request, hosts, users,
                                    clients, env_desc, tmp_memory):
@@ -43,8 +33,6 @@ def mount_new_oneclient_with_token(user, path, request, hosts, users,
                 [token], hosts, request, users, env_desc)
 
 
-@wt(parsers.parse('if {client} is oneclient, {user} fails to mount '
-                  'oneclient in {path} using received token'))
 def mount_new_oneclient_with_token_fail(user, path, request, hosts, users,
                                         clients, env_desc, tmp_memory,
                                         client='oneclient'):
