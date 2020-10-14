@@ -468,7 +468,7 @@ def assert_proper_space_configuration_in_op_panel(client, request, user,
                             assert_proper_space_configuration_in_op_panel_rest
         assert_proper_space_configuration_in_op_panel_rest(space, user, users,
                                                            host, hosts,
-                                                           config, sync_type,
+                                                           config,
                                                            onepanel_credentials,
                                                            admin_credentials)
     else:
@@ -512,7 +512,6 @@ def configure_sync_parameters_for_space_in_op_panel(client, request, user,
         configure_sync_parameters_for_space_in_op_panel_rest(user, users, host,
                                                              hosts, config,
                                                              space_name,
-                                                             sync_type,
                                                              onepanel_credentials,
                                                              admin_credentials)
     else:

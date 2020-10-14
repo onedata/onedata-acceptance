@@ -81,14 +81,10 @@ def support_space_in_op_panel_using_rest(user, provider_host, hosts, users,
     else:
         raise RuntimeError(f'No storage named "{storage_name}"')
 
-    import pdb
-    pdb.set_trace()
-
 
 def configure_sync_parameters_for_space_in_op_panel_rest(user, users,
                                                          provider_host, hosts,
                                                          conf, space_name,
-                                                         sync_type,
                                                          onepanel_credentials,
                                                          admin_credentials):
     user_client_op = login_to_panel(user, users[user].password,
@@ -101,12 +97,19 @@ def configure_sync_parameters_for_space_in_op_panel_rest(user, users,
     provider_api = OneproviderApi(user_client_op)
     options = yaml.load(conf)
 
-    max_depth = options.get('max depth', None)
-    continuous_scan = options.get('continuous scan', True)
-    modifications = options.get('detect modifications', True)
-    deletions = options.get('detect deletions', True)
-    interval = options.get('scan interval [s]', 60)
-    sync_acl = options.get('synchronize ACL', False)
+    space = get_space_with_name(user_client_oz, space_name)
+    space_details = provider_api.get_space_details(
+        space.space_id).storage_import.auto_storage_import_config
+
+    max_depth = options.get('max depth', space_details.max_depth)
+    continuous_scan = options.get('continuous scan',
+                                  space_details.continuous_scan)
+    modifications = options.get('detect modifications',
+                                space_details.detect_modifications)
+    deletions = options.get('detect deletions',
+                            space_details.detect_deletions)
+    interval = options.get('scan interval [s]', space_details.scan_interval)
+    sync_acl = options.get('synchronize ACL', space_details.sync_acl)
 
     auto_storage_import_config = AutoStorageImportConfig(
         max_depth=max_depth,
@@ -126,7 +129,7 @@ def configure_sync_parameters_for_space_in_op_panel_rest(user, users,
 @repeat_failed(timeout=WAIT_BACKEND * 4)
 def assert_proper_space_configuration_in_op_panel_rest(space_name, user, users,
                                                        provider_host, hosts,
-                                                       conf, sync_type,
+                                                       conf,
                                                        onepanel_credentials,
                                                        admin_credentials,
                                                        zone_host='onezone'):
@@ -144,8 +147,8 @@ def assert_proper_space_configuration_in_op_panel_rest(space_name, user, users,
     storage_sync = space_details.storage_import.auto_storage_import_config
 
     for attr, expected_val in yaml.load(conf).items():
-        import pdb
-        pdb.set_trace()
+        if attr == 'Scan interval [s]':
+            attr = 'Scan interval'
         actual_val = getattr(storage_sync, '_'.join(attr.lower().split()))
         assert expected_val == actual_val, (f'Storage sync value for attribute '
                                             f'"{attr}" does not match. '
