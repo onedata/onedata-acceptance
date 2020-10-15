@@ -19,33 +19,32 @@ from tests.gui.utils.core.web_elements import (Label, NamedButton, Button,
                                                WebElementsSequence)
 from tests.gui.utils.core.web_objects import ButtonWithTextPageObject
 
-
-DEFAULT_IMPORT_STRATEGY_CONFIG = {'Import strategy': 'Simple scan',
-                                  'Max depth': '65535'}
-
-DEFAULT_UPDATE_STRATEGY_CONFIG = {'Update strategy': 'Simple scan',
+DEFAULT_IMPORT_STRATEGY_CONFIG = {'Mode': 'auto',
                                   'Max depth': '65535',
-                                  'Scan interval [s]': '10',
-                                  'Write once': 'false',
-                                  'Delete enabled': 'false'}
+                                  'Synchronize ACL': 'false',
+                                  'Detect modifications': 'true',
+                                  'Detect deletions': 'true',
+                                  'Continuous scan': 'true',
+                                  'Scan interval [s]': '60'
+                                  }
 
 
-class ImportConfigurationForm(PageObject):
-    strategy_selector = DropdownSelector('.ember-basic-dropdown')
-    max_depth = Input('.field-import_generic-maxDepth')
-    synchronize_acl = Toggle('.toggle-field-import_generic-syncAcl')
+class StorageImportConfiguration(PageObject):
+    modes = WebItemsSequence('.field-mode-mode label.clickable',
+                             cls=ButtonWithTextPageObject)
+    max_depth = Input('.field-generic-maxDepth')
+    synchronize_acl = Toggle('.toggle-field-generic-syncAcl')
+    detect_modifications = Toggle('.toggle-field-generic-detectModifications')
+    detect_deletions = Toggle('.toggle-field-generic-detectDeletions')
+    continuous_scan = Toggle('.toggle-field-generic-continuousScan')
+    scan_interval = Input('.field-continuous-scanInterval')
+
+    def is_toggle_checked(self, toggle):
+        toggle = getattr(self, toggle)
+        return 'checked' in toggle.web_elem.get_attribute('class')
 
 
-class UpdateConfigurationForm(PageObject):
-    strategy_selector = DropdownSelector('.ember-basic-dropdown')
-    max_depth = Input('.field-update_generic-maxDepth')
-    scan_interval = Input('.field-update_generic-scanInterval')
-    write_once = Toggle('.toggle-field-update_generic-writeOnce')
-    delete_enabled = Toggle('.toggle-field-update_generic-deleteEnable')
-    synchronize_acl = Toggle('toggle-field-update_generic-syncAcl')
-
-
-class SpaceSupportAddForm(PageObject):
+class SpaceSupportForm(PageObject):
     storage_selector = DropdownSelector('.ember-basic-dropdown')
     token = Input('input.field-main-token')
     size = Input('input.field-main-size')
@@ -53,49 +52,29 @@ class SpaceSupportAddForm(PageObject):
                              cls=ButtonWithTextPageObject)
     import_storage_data = Toggle('.toggle-field-main-importEnabled')
 
-    import_configuration = WebItem('.import-configuration-section',
-                                   cls=ImportConfigurationForm)
-    update_configuration = WebItem('.update-configuration-section',
-                                   cls=UpdateConfigurationForm)
+    storage_import_configuration = WebItem('.import-configuration-section',
+                                           cls=StorageImportConfiguration)
 
-    support_space = Button('button.ready')
-
-    def is_import_uncheckable(self):
-        if 'checked' in self.import_storage_data.web_elem.get_attribute('class'):
-            return False
-        try:
-            self.import_storage_data.check()
-            return False
-        except RuntimeError:
-            return True
+    support_space = Button('.btn.ready')
 
 
 class SpaceInfo(PageObject):
     space_name = Label('.space-name')
     space_id = Input('.space-info .content-row:nth-child(2) input[type=text]')
     storage_name = Label('.space-provider-storage')
-    _import_strategy = WebElement('.space-import')
-    _update_strategy = WebElement('.space-update')
-    _mount_in_root = WebElement('.space-mountInRoot')
-
-    def is_mount_in_root_enabled(self):
-        return 'disabled' not in self._mount_in_root.get_attribute('class')
+    _storage_import = WebElement('.storage-import')
+    size = Input('.size-number-input')
 
     @property
     def import_strategy(self):
         values = DEFAULT_IMPORT_STRATEGY_CONFIG.copy()
-        values.update(self._get_labels(self._import_strategy))
-        return values
-
-    @property
-    def update_strategy(self):
-        values = DEFAULT_UPDATE_STRATEGY_CONFIG.copy()
-        values.update(self._get_labels(self._update_strategy))
+        values.update(self._get_labels(self._storage_import))
         return values
 
     @staticmethod
     def _get_labels(elem):
         items = elem.find_elements_by_css_selector('strong, .one-label')
+        items.pop(0)  # pop redundant "Storage import:" label
         return {attr.text.strip(':'): val.text for attr, val
                 in zip(items[::2], items[1::2])}
 
@@ -104,25 +83,22 @@ class SyncChart(PageObject):
     configure = NamedButton('button', text='Configure')
     settings = Button('.oneicon-settings')
 
-    import_configuration = WebItem('.storage-import-update-form '
-                                   '.import-configuration-section',
-                                   cls=ImportConfigurationForm)
-    update_configuration = WebItem('.storage-import-update-form '
-                                   '.update-configuration-section',
-                                   cls=UpdateConfigurationForm)
+    storage_import_configuration = WebItem('.storage-import-update-form '
+                                           '.import-configuration-section',
+                                           cls=StorageImportConfiguration)
 
-    last_minute_view = Button('.btn-sync-interval-min')
-    last_hour_view = Button('.btn-sync-interval-hour')
-    last_day_view = Button('.btn-sync-interval-day')
+    last_minute_view = Button('.btn-import-interval-minute')
+    last_hour_view = Button('.btn-import-interval-hour')
+    last_day_view = Button('.btn-import-interval-day')
 
     start_synchronization = NamedButton('button', text='Start synchronization')
     save_configuration = Button('.btn-primary')
 
-    _inserted = WebElementsSequence('.space-sync-chart-operations '
+    _inserted = WebElementsSequence('.storage-import-chart-operations '
                                     'g.ct-series-0 line')
-    _updated = WebElementsSequence('.space-sync-chart-operations '
+    _updated = WebElementsSequence('.storage-import-chart-operations '
                                    'g.ct-series-1 line')
-    _deleted = WebElementsSequence('.space-sync-chart-operations '
+    _deleted = WebElementsSequence('.storage-import-chart-operations '
                                    'g.ct-series-2 line')
 
     @property
@@ -205,7 +181,7 @@ class AutoCleaning(PageObject):
 
 class NavigationHeader(PageObject):
     overview = NamedButton('li', text='Overview')
-    storage_synchronization = NamedButton('li', text='Storage synchronization')
+    storage_import = NamedButton('li', text='Storage import')
     file_popularity = NamedButton('li', text='File popularity')
     auto_cleaning = NamedButton('li', text='Auto-cleaning')
 
@@ -240,7 +216,8 @@ class SpacesContentPage(PageObject):
     spaces = WebItemsSequence('ul.one-collapsible-list '
                               '.cluster-spaces-table-item', cls=SpaceRecord)
     support_space = NamedButton('.btn-support-space', text='Support space')
-    form = WebItem('.support-space-form', cls=SpaceSupportAddForm)
+    form = WebItem('.form-title~.ember-view>[role="form"]',
+                   cls=SpaceSupportForm)
     cancel_supporting_space = NamedButton('.btn-support-space',
                                           text='Cancel supporting space')
     space = WebItem('.content-clusters-spaces', cls=Space)

@@ -55,14 +55,52 @@ def result_to_support_space_in_op_panel_using_gui(selenium, user, config,
         assert_error_modal_with_text_appeared(selenium, user, text)
 
 
+def _set_toggle_state(selenium, toggle_name, storage_import_configuration,
+                      onepanel, user):
+    if storage_import_configuration.get(toggle_name.lower(), False):
+        wt_enable_option_box_in_space_support_form(selenium, user,
+                                                   toggle_name, onepanel)
+    else:
+        wt_disable_option_box_in_space_support_form(selenium, user,
+                                                    toggle_name, onepanel)
+
+
+def _handle_configure_auto_storage_import(selenium, onepanel, user, options,
+                                          storage_import_configuration):
+    if 'max depth' in storage_import_configuration:
+        wt_type_text_to_input_box_in_storage_import_configuration(
+            selenium, user, str(storage_import_configuration['max depth']),
+            'Max depth', onepanel)
+
+    toggles = ['Synchronize ACL', 'Detect modifications', 'Detect deletions',
+               'Continuous scan']
+    for toggle_name in toggles:
+        if toggle_name.lower() in storage_import_configuration:
+            _set_toggle_state(selenium, toggle_name,
+                              storage_import_configuration, onepanel,
+                              user)
+
+    continuous_scan = 'Continuous scan'
+    if (toggle_in_storage_import_configuration_is_enabled(selenium, user,
+                                                          onepanel,
+                                                          continuous_scan) and
+            'scan interval [s]' in storage_import_configuration):
+        interval = str(
+            storage_import_configuration['scan interval [s]'])
+        interval_name = 'Scan interval'
+        wt_type_text_to_input_box_in_storage_import_configuration(selenium,
+                                                                  user,
+                                                                  interval,
+                                                                  interval_name,
+                                                                  onepanel)
+
+
 def _support_space_in_op_panel_using_gui(selenium, user, config, onepanel,
                                          tmp_memory, provider_name,
                                          hosts):
     sidebar = 'Clusters'
     sub_item = 'Spaces'
     input_box = 'Size'
-    sync_type_import = 'IMPORT'
-    sync_type_update = 'UPDATE'
 
     options = yaml.load(config)
     unit = options.get('unit', 'MiB')
@@ -75,68 +113,37 @@ def _support_space_in_op_panel_using_gui(selenium, user, config, onepanel,
     wt_type_received_token_to_support_token_field(selenium, user, onepanel,
                                                   tmp_memory)
     wt_type_text_to_input_box_in_space_support_form(selenium, user,
-        str(options['size']), input_box, onepanel)
-    wt_select_unit_in_space_support_add_form(selenium, user, unit, onepanel)
+                                                    str(options['size']),
+                                                    input_box, onepanel)
+    wt_select_unit_in_space_support_form(selenium, user, unit, onepanel)
 
-    if options.get('storage import', False):
-        storage_import_options = options.get('storage import', None)
-        wt_enable_option_box_in_space_support_form(selenium, user,
-            'Import storage data', onepanel)
-        wt_select_strategy_in_conf_in_support_space_form(selenium, user,
-            storage_import_options['strategy'], sync_type_import, onepanel)
-        if 'max depth' in storage_import_options:
-            wt_type_text_to_input_box_in_conf_in_space_support_form(selenium,
-                user, str(storage_import_options['max depth']), 'Max depth',
-                sync_type_import, onepanel)
+    storage_import_configuration = options.get('storage import', False)
+    if storage_import_configuration:
+        if storage_import_configuration.get('mode') == 'manual':
+            wt_select_mode_in_space_support_form(selenium, user, 'manual',
+                                                 onepanel)
+        else:
+            _handle_configure_auto_storage_import(selenium, onepanel, user,
+                                                  options,
+                                                  storage_import_configuration)
 
-        if options.get('storage update', False):
-            storage_update_options = options.get('storage update', None)
-            wt_select_strategy_in_conf_in_support_space_form(selenium, user,
-                storage_update_options['strategy'], sync_type_update, onepanel)
-            if 'max depth' in storage_update_options:
-                wt_type_text_to_input_box_in_conf_in_space_support_form(
-                    selenium, user, str(storage_update_options['max depth']),
-                    'Max depth', sync_type_update, onepanel)
-            if 'scan interval [s]' in storage_update_options:
-                wt_type_text_to_input_box_in_conf_in_space_support_form(
-                    selenium, user,
-                    str(storage_update_options['scan interval [s]']),
-                    'Scan interval', sync_type_update, onepanel)
-
-    wt_click_on_btn_in_space_support_add_form(selenium, user, onepanel)
+    wt_click_on_btn_in_space_support_form(selenium, user, onepanel)
 
 
-@wt(parsers.parse('user of {browser_id} sets update configuration in '
-                  'Storage synchronization tab as following:\n{config}'))
-def set_update_configuration_in_storage_sync(selenium, browser_id, config,
-                                             onepanel):
-    sync_type_update = 'UPDATE'
+@wt(parsers.parse('user of {user} sets import configuration in '
+                  'Storage import tab as following:\n{config}'))
+def configure_auto_storage_import_in_storage_import_tab(selenium, user, config,
+                                                        onepanel):
     options = yaml.load(config)
-
-    if options.get('storage update', False):
-        storage_update_options = options.get('storage update', None)
-        wt_select_strategy_in_conf_in_space_record(selenium, browser_id,
-            storage_update_options['strategy'], sync_type_update, onepanel)
-        if 'max depth' in storage_update_options:
-            wt_type_text_to_input_box_in_conf_in_space_record(selenium,
-                browser_id, str(storage_update_options['max depth']),
-                'Max depth', sync_type_update, onepanel)
-        if 'scan interval [s]' in storage_update_options:
-            wt_type_text_to_input_box_in_conf_in_space_record(selenium,
-                browser_id, str(storage_update_options['scan interval [s]']),
-                'Scan interval', sync_type_update, onepanel)
-        if storage_update_options.get('delete enabled', False):
-            wt_enable_option_box_in_conf_in_space_record(selenium, browser_id,
-                'delete enabled', onepanel)
-        if storage_update_options.get('write once', False):
-            wt_enable_option_box_in_conf_in_space_record(selenium, browser_id,
-                'write once', onepanel)
-
+    storage_import_configuration = options.get('storage update')
+    _handle_configure_auto_storage_import(selenium, onepanel, user,
+                                          options,
+                                          storage_import_configuration)
     button = 'Save configuration'
     notify_type = 'info'
     text_regexp = '.*[Cc]onfiguration.*space.*support.*changed.*'
-    wt_clicks_on_button_in_space_record(selenium, browser_id, onepanel, button)
-    notify_visible_with_text(selenium, browser_id, notify_type, text_regexp)
+    wt_clicks_on_button_in_space_record(selenium, user, onepanel, button)
+    notify_visible_with_text(selenium, user, notify_type, text_regexp)
 
 
 @wt(parsers.parse('user of {user} revokes "{space_name}" space support '
