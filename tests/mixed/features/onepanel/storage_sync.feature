@@ -160,16 +160,16 @@ Feature: Onepanel features regarding storage sync (e.g. import)
     And using <client2>, onepanel sees that import strategy configuration for "space4" in "oneprovider-1" is as follow:
           Continuous scan: true
           Max depth: 3
-          Scan interval: 1
+          Scan interval [s]: 1
           Detect modifications: false
     And user is idle for 5 seconds
     Then using <client1>, user1 sees that content for "space4" in "oneprovider-1" Oneprovider service is as follow:
-          - dir2:
-              - dir21:
-                  - dir211
-                  - file2.txt: 11111
-              - dir22: 10
-              - file1.txt: 22222
+           - dir2:
+               - dir21:
+                   - dir211
+                   - file2.txt: 11111
+               - dir22: 10
+               - file1.txt: 22222
     And using docker, user removes dir2 from provider's storage mount point
     And using REST, user1 removes space named "space4" in "onezone" Onezone service
 
@@ -208,12 +208,12 @@ Feature: Onepanel features regarding storage sync (e.g. import)
           Detect deletions: true
     And user is idle for 10 seconds
     Then using <client1>, user1 sees that content for "space5" in "oneprovider-1" Oneprovider service is as follow:
-          - dir2:
-              - dir21:
-                  - dir211
-                  - file2.txt: 11111
-              - dir22: 10
-              - file1.txt: 22222
+           - dir2:
+               - dir21:
+                   - dir211
+                   - file2.txt: 11111
+               - dir22: 10
+               - file1.txt: 22222
     And using docker, user removes dir2/dir21 from provider's storage mount point
     And using docker, user removes dir2/file1.txt from provider's storage mount point
     And user is idle for 10 seconds
@@ -251,9 +251,9 @@ Feature: Onepanel features regarding storage sync (e.g. import)
     And using docker, user1 copies dir1 to dir2 provider's storage mount point
     And user is idle for 3 seconds
     Then using <client1>, user1 sees that content for "space7" in "oneprovider-1" Oneprovider service is as follow:
-          - dir2:
-              - dir21
-              - dir22
-              - file1.txt: 22222
+           - dir2:
+               - dir21
+               - dir22
+               - file1.txt: 22222
     And using docker, user removes dir2 from provider's storage mount point
     And using REST, user1 removes space named "space7" in "onezone" Onezone service

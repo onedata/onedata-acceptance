@@ -56,16 +56,15 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 is idle for 8 seconds
     And user of browser2 sees file browser in data tab in Oneprovider page
     Then user of browser2 sees that the file structure in file browser is as follow:
-              - dir2:
-                  - dir21
-                  - dir22
-                  - file1.txt: 22222
+           - dir2:
+               - dir21
+               - dir22
+               - file1.txt: 22222
 
     # configure update parameters
     And user of browser1 clicks on "Storage import" navigation tab in space "space1"
     And user of browser1 clicks settings in Storage import in Spaces page
     And user of browser1 sets import configuration in Storage import tab as following:
-        storage update:
           max depth: 3
           scan interval [s]: 1
 
@@ -78,12 +77,12 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 is idle for 8 seconds
     And user of browser2 sees file browser in data tab in Oneprovider page
     And user of browser2 sees that the file structure in file browser is as follow:
-              - dir2:
-                  - dir21:
-                      - dir211
-                      - file2.txt: 11111
-                  - dir22: 10
-                  - file1.txt
+          - dir2:
+              - dir21:
+                  - dir211
+                  - file2.txt: 11111
+              - dir22: 10
+              - file1.txt
 
 
   Scenario: User does not see files and directories that have been removed in storage mount point when detect deletions option was enabled
@@ -111,7 +110,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser1 clicks settings in Storage import in Spaces page
 
     And user of browser1 sets import configuration in Storage import tab as following:
-        storage update:
           max depth: 3
           scan interval [s]: 1
 
@@ -121,12 +119,12 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 is idle for 8 seconds
     And user of browser2 sees file browser in data tab in Oneprovider page
     And user of browser2 sees that the file structure in file browser is as follow:
-              - dir2:
-                  - dir21:
-                      - dir211
-                      - file2.txt: 11111
-                  - dir22: 10
-                  - file1.txt
+          - dir2:
+              - dir21:
+                  - dir211
+                  - file2.txt: 11111
+              - dir22: 10
+              - file1.txt
 
     # confirm detection of deleted files
     And user of browser2 removes dir2/dir21 from provider's storage mount point
@@ -136,8 +134,8 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 refreshes site
     And user of browser2 sees file browser in data tab in Oneprovider page
     And user of browser2 sees that the file structure in file browser is as follow:
-              - dir2:
-                  - dir22: 10
+          - dir2:
+              - dir22: 10
 
 
   Scenario: User sees file's update when detect modifications is set
@@ -168,16 +166,15 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sees file browser in data tab in Oneprovider page
 
     And user of browser2 sees that the file structure in file browser is as follow:
-              - dir2:
-                  - dir21
-                  - dir22
-                  - file1.txt: 22222
+          - dir2:
+              - dir21
+              - dir22
+              - file1.txt: 22222
 
     # configure update parameters
     And user of browser1 clicks on "Storage import" navigation tab in space "space1"
     And user of browser1 clicks settings in Storage import in Spaces page
     And user of browser1 sets import configuration in Storage import tab as following:
-        storage update:
           max depth: 3
           detect modifications: true
           scan interval [s]: 1
@@ -194,12 +191,12 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sees file browser in data tab in Oneprovider page
 
     And user of browser2 sees that the file structure in file browser is as follow:
-              - dir2:
-                  - dir21:
-                      - dir211
-                      - file2.txt: 11111
-                  - dir22: 10
-                  - file1.txt
+          - dir2:
+              - dir21:
+                  - dir211
+                  - file2.txt: 11111
+              - dir22: 10
+              - file1.txt
 
     # confirm change of file content
     And user of browser2 appends "34" to dir2/file1.txt file in provider's storage mount point
@@ -236,16 +233,15 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sees file browser in data tab in Oneprovider page
 
     And user of browser2 sees that the file structure in file browser is as follow:
-              - dir2:
-                  - dir21
-                  - dir22
-                  - file1.txt: 22222
+          - dir2:
+              - dir21
+              - dir22
+              - file1.txt: 22222
 
     # configure update parameters
     And user of browser1 clicks on "Storage import" navigation tab in space "space1"
     And user of browser1 clicks settings in Storage import in Spaces page
     And user of browser1 sets import configuration in Storage import tab as following:
-        storage update:
           max depth: 3
           detect modifications: false
           scan interval [s]: 1
@@ -263,12 +259,12 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sees file browser in data tab in Oneprovider page
 
     Then user of browser2 sees that the file structure in file browser is as follow:
-              - dir2:
-                  - dir21:
-                      - dir211
-                      - file2.txt: 11111
-                  - dir22: 10
-                  - file1.txt
+           - dir2:
+               - dir21:
+                   - dir211
+                   - file2.txt: 11111
+               - dir22: 10
+               - file1.txt
 
     # files in gui are not updated after local changes
     And user of browser2 appends "34" to dir2/file1.txt file in provider's storage mount point
@@ -302,7 +298,6 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser1 clicks on "Storage import" navigation tab in space "space1"
     And user of browser1 clicks settings in Storage import in Spaces page
     And user of browser1 sets import configuration in Storage import tab as following:
-        storage update:
           max depth: 3
           detect deletions: true
           detect modifications: false
@@ -323,12 +318,12 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sees file browser in data tab in Oneprovider page
 
     And user of browser2 sees that the file structure in file browser is as follow:
-              - dir2:
-                  - dir21:
-                      - dir211
-                      - file2.txt: 11111
-                  - dir22: 10
-                  - file1.txt
+          - dir2:
+              - dir21:
+                  - dir211
+                  - file2.txt: 11111
+              - dir22: 10
+              - file1.txt
 
     # confirm detection of deleted files
     And user of browser2 removes dir2/dir21 from provider's storage mount point
@@ -339,8 +334,8 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sees file browser in data tab in Oneprovider page
 
     Then user of browser2 sees that the file structure in file browser is as follow:
-              - dir2:
-                  - dir22: 10
+           - dir2:
+               - dir22: 10
 
 
   Scenario: User sees that directory is not synchronized automatically when continuous scan is disabled
@@ -372,18 +367,17 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sees file browser in data tab in Oneprovider page
 
     And user of browser2 sees that the file structure in file browser is as follow:
-              - dir2:
-                  - dir21:
-                      - dir211
-                      - file2.txt: 11111
-                  - dir22: 10
-                  - file1.txt
+          - dir2:
+              - dir21:
+                  - dir211
+                  - file2.txt: 11111
+              - dir22: 10
+              - file1.txt
 
     # disable continuous scan
     And user of browser1 clicks on "Storage import" navigation tab in space "space1"
     And user of browser1 clicks settings in Storage import in Spaces page
     And user of browser1 sets import configuration in Storage import tab as following:
-        storage update:
           continuous scan: false
 
     # confirm that continuous scan was disabled
@@ -400,9 +394,9 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sees file browser in data tab in Oneprovider page
 
     Then user of browser2 sees that the file structure in file browser is as follow:
-              - dir2:
-                  - dir21:
-                      - dir211
-                      - file2.txt
-                  - dir22: 10
-                  - file1.txt
+           - dir2:
+               - dir21:
+                   - dir211
+                   - file2.txt
+               - dir22: 10
+               - file1.txt

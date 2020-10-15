@@ -476,11 +476,11 @@ def assert_proper_space_configuration_in_op_panel(client, request, user,
 
 
 @when(parsers.re('using (?P<client>.*), (?P<user>.+?) configures '
-                 '(?P<sync_type>import) parameters for '
+                 'import parameters for '
                  '"(?P<space_name>.+?)" in "(?P<host>.+?)" Oneprovider panel '
                  'service as follow:\n(?P<config>(.|\s)*)'))
 def configure_sync_parameters_for_space_in_op_panel(client, request, user,
-                                                    sync_type, space_name, host,
+                                                    space_name, host,
                                                     config, selenium, onepanel,
                                                     popups, users, hosts,
                                                     onepanel_credentials,
@@ -503,9 +503,7 @@ def configure_sync_parameters_for_space_in_op_panel(client, request, user,
         from tests.gui.meta_steps.onepanel.spaces import \
                             configure_sync_parameters_for_space_in_op_panel_gui
         configure_sync_parameters_for_space_in_op_panel_gui(selenium, user,
-                                                            space_name,
-                                                            onepanel, popups,
-                                                            config, sync_type)
+                                                            onepanel, config)
     elif client.lower() == 'rest':
         from tests.mixed.steps.rest.onepanel.spaces import \
                             configure_sync_parameters_for_space_in_op_panel_rest
