@@ -65,7 +65,7 @@ def _set_toggle_state(selenium, toggle_name, storage_import_configuration,
                                                     toggle_name, onepanel)
 
 
-def _handle_configure_auto_storage_import(selenium, onepanel, user, options,
+def _handle_configure_auto_storage_import(selenium, onepanel, user,
                                           storage_import_configuration):
     if 'max depth' in storage_import_configuration:
         wt_type_text_to_input_box_in_storage_import_configuration(
@@ -124,7 +124,6 @@ def _support_space_in_op_panel_using_gui(selenium, user, config, onepanel,
                                                  onepanel)
         else:
             _handle_configure_auto_storage_import(selenium, onepanel, user,
-                                                  options,
                                                   storage_import_configuration)
 
     wt_click_on_btn_in_space_support_form(selenium, user, onepanel)
@@ -134,10 +133,8 @@ def _support_space_in_op_panel_using_gui(selenium, user, config, onepanel,
                   'Storage import tab as following:\n{config}'))
 def configure_auto_storage_import_in_storage_import_tab(selenium, user, config,
                                                         onepanel):
-    options = yaml.load(config)
-    storage_import_configuration = options.get('storage update')
+    storage_import_configuration = yaml.load(config)
     _handle_configure_auto_storage_import(selenium, onepanel, user,
-                                          options,
                                           storage_import_configuration)
     button = 'Save configuration'
     notify_type = 'info'
@@ -171,48 +168,14 @@ def revoke_space_support_in_op_panel_using_gui(selenium, user, provider_name,
     remove_space_instead_of_revoke(selenium, user, modals)
 
 
-def configure_sync_parameters_for_space_in_op_panel_gui(selenium, user, space,
-                                                        onepanel, popups,
-                                                        config, sync_type):
-    tab_name = 'Storage synchronization'
-    notify_type = 'info'
-    notify_text_regexp = '.*[Cc]onfiguration.*space.*support.*changed.*'
-    configure_button = 'Configure'
-    button = ('Start synchronization' if sync_type == 'IMPORT'
-              else 'Save configuration')
+def configure_sync_parameters_for_space_in_op_panel_gui(selenium, user,
+                                                        onepanel, config):
+    tab_name = 'Storage import'
 
     click_on_navigation_tab_in_space(user, tab_name, onepanel, selenium)
-
-    if sync_type == 'IMPORT':
-        wt_clicks_on_button_in_space_record(selenium, user, onepanel,
-                                            configure_button)
-    else:
-        wt_clicks_on_option_in_spaces_page(selenium, user, onepanel)
-
-    options = yaml.load(config)
-    storage_import = options['{} strategy'.format(sync_type.capitalize())]
-    wt_select_strategy_in_conf_in_space_record(selenium, user, storage_import,
-                                               sync_type, onepanel)
-
-    if storage_import.lower() == 'disabled':
-        wt_clicks_on_button_in_space_record(selenium, user, onepanel, button)
-        return
-
-    for field, input_box in zip(('Max depth', 'Scan interval [s]'),
-                                ('Max depth', 'Scan interval')):
-        val = str(options.get(field, None))
-        if val:
-            wt_type_text_to_input_box_in_conf_in_space_record(
-                selenium, user, val, input_box, sync_type, onepanel)
-
-    for field in ('Write once', 'Delete enabled'):
-        val = options.get(field, None)
-        if val:
-            wt_enable_option_box_in_conf_in_space_record(
-                selenium, user, field, onepanel)
-
-    wt_clicks_on_button_in_space_record(selenium, user, onepanel, button)
-    notify_visible_with_text(selenium, user, notify_type, notify_text_regexp)
+    wt_clicks_on_option_in_spaces_page(selenium, user, onepanel)
+    configure_auto_storage_import_in_storage_import_tab(selenium, user, config,
+                                                        onepanel)
 
 
 def copy_id_of_space_gui(selenium, user, space_name, onepanel, tmp_memory):
