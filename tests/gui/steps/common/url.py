@@ -193,8 +193,21 @@ def refresh_site(selenium, browser_id_list):
         selenium[browser_id].refresh()
 
 
+@wt(parsers.parse('if {client} is web GUI, {user} refreshes site'))
+def if_gui_refresh_site(selenium, client, user):
+    if client == 'web GUI':
+        refresh_site(selenium, user)
+
+
 @wt(parsers.parse('user of {browser_id} refreshes webapp'))
 @repeat_failed(timeout=WAIT_FRONTEND, exceptions=AttributeError)
 def refresh_webapp(selenium, browser_id):
     driver = selenium[browser_id]
     driver.get(parse_url(driver.current_url).group('base_url'))
+
+
+@wt(parsers.parse('user of {browser_id} sees that another window tab has been '
+                  'opened'))
+def switch_to_last_tab(selenium, browser_id):
+    driver = selenium[browser_id]
+    driver.switch_to.window(driver.window_handles[-1])

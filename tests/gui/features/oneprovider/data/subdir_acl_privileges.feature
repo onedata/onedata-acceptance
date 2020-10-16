@@ -8,13 +8,13 @@ Feature: ACL subdirectories privileges tests using single browser in Oneprovider
   Background:
     Given initial users configuration in "onezone" Onezone service:
             - user1
-            - user2
+            - space-owner-user
     And initial groups configuration in "onezone" Onezone service:
             group1:
                 owner: user1
     And initial spaces configuration in "onezone" Onezone service:
         space1:
-            owner: user2
+            owner: space-owner-user
             users:
                 - user1
             providers:
@@ -31,7 +31,7 @@ Feature: ACL subdirectories privileges tests using single browser in Oneprovider
             groups:
                 - group1 
 
-    And opened [browser_user1, space_owner_browser] with [user1, user2] signed in to [Onezone, Onezone] service
+    And opened [browser_user1, space_owner_browser] with [user1, space-owner-user] signed in to [Onezone, Onezone] service
 
         
   Scenario Outline: List directory items

@@ -24,16 +24,17 @@ from tests.mixed.utils.common import *
 from tests.gui.utils.generic import parse_seq
 from tests.mixed.cdmi_client import ContainerApi, DataObjectApi
 from tests.mixed.oneprovider_client import BasicFileOperationsApi
-from tests.mixed.oneprovider_client import ResolveFilePathApi
+from tests.mixed.oneprovider_client import FilePathResolutionApi
 from tests.mixed.cdmi_client.rest import ApiException as CdmiException
 from tests.mixed.oneprovider_client.rest import ApiException as OPException
 from tests.utils.acceptance_utils import time_attr, compare
 
 
 def _lookup_file_id(path, user_client_op):
-    resolve_file_path_api = ResolveFilePathApi(user_client_op)
+    resolve_file_path_api = FilePathResolutionApi(user_client_op)
     file_id = resolve_file_path_api.lookup_file_id(path).file_id
     return file_id
+
 
 def _read_file(path, user, users, provider, hosts):
     cli = login_to_cdmi(user, users, hosts[provider]['hostname'])
@@ -98,8 +99,11 @@ def remove_dir_in_op_rest(user, users, host, hosts, path):
     c_api.delete_container(path)
 
 
-def create_file_in_op_rest(user, users, host, hosts, path, result):
-    client = login_to_cdmi(user, users, hosts[host]['hostname'])
+def create_file_in_op_rest(user, users, host, hosts, path, result,
+                           access_token=None, identity_token=None):
+    client = login_to_cdmi(user, users, hosts[host]['hostname'],
+                           access_token=access_token,
+                           identity_token=identity_token)
 
     do_api = DataObjectApi(client)
     if result == 'fails':
@@ -183,18 +187,23 @@ def assert_metadata_in_op_rest(user, users, host, hosts, cdmi, path, tab_name,
     metadata = client.read_metadata(path)['metadata']
     if tab_name.lower() == 'basic':
         (attr, val) = val.split('=')
-        assert attr in metadata, '{} has no {} {} metadata'.format(path, attr, 
-                                                                   tab_name)
-        assert val == metadata[attr], '{} has no {} = {} {}'.format(path, attr,
-                                                                val, tab_name)
+        assert attr in metadata, f'{path} has no {attr} {tab_name} metadata'
+        assert val == metadata[attr], (f'{path} has no {attr} = {val} '
+                                       f'{tab_name}')
     else:        
-        metadata = metadata['onedata_{}'.format(tab_name.lower())]
+        metadata = metadata[f'onedata_{tab_name.lower()}']
+        if 'onedata_base64' in metadata:
+            import base64
+            metadata = metadata['onedata_base64']
+            metadata = base64.b64decode(metadata.encode('ascii')).decode(
+                'ascii')
+
         if tab_name.lower() == 'json':
-            assert val == json.dumps(metadata), ('{} has no {} {} metadata'
-                                                 .format(path, val, tab_name))
+            assert val == json.dumps(metadata), (f'{path} has no {val} {tab_name} '
+                                                 f'metadata but "{metadata}"')
         else:
-            assert val == metadata, ('{} has no {} {} metadata'
-                                     .format(path, val, tab_name))
+            assert val == metadata, (f'{path} has no {val} {tab_name} '
+                                     f'metadata but "{metadata}"')
 
 
 def set_metadata_in_op_rest(user, users, host, hosts, cdmi, path, tab_name, 
@@ -278,9 +287,8 @@ def assert_posix_permissions_in_op_rest(path, perms, user, users, host, hosts):
     file_api = BasicFileOperationsApi(user_client_op)
     file_id = _lookup_file_id(path, user_client_op)
     file_attrs = file_api.get_attrs(file_id, attribute='mode')
-
     try:
-        file_perms = int(file_attrs['mode']) % 1000
+        file_perms = int(file_attrs.mode) % 1000
     except KeyError:
         assert False, 'File {} has no mode metadata'.format(path)
 

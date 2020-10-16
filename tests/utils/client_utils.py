@@ -24,8 +24,8 @@ from tests.utils.path_utils import escape_path
 from tests.utils.user_utils import User
 
 
-TOKEN_PATH = '/tmp/token'
 BAD_TOKEN = 'bad token'
+CORRECT_TOKEN = 'token'
 RPYC_DEFAULT_PORT = 18812
 
 
@@ -41,11 +41,12 @@ class Client:
         self.opened_files = {}
         self.file_stats = {}
 
-    def mount(self, username, hosts, access_token, mode, gdb=False):
+    def mount(self, username, hosts, access_token, mode, gdb=False, retries=3):
         clean_mount_path(username, self)
         if 'proxy' in mode:
             mode_flag = '--force-proxy-io'
-        # TODO: Change to --force-direct-io after resolving VFS-4914
+        elif 'force-direct' in mode:
+            mode_flag = '--force-direct-io'
         else:
             mode_flag = ''
 
@@ -69,7 +70,7 @@ class Client:
 
         returncode = client_run_cmd(self, cmd,
                                     on_retry=lambda: clean_mount_path(username, self),
-                                    verbose=True, retries=3)
+                                    verbose=True, retries=retries)
 
         rm(self, path=os.path.join(os.path.dirname(self.mount_path), '.local'),
            recursive=True, force=True)
@@ -88,7 +89,7 @@ class Client:
                 self.rpyc_connection = rpyc.classic.connect(self.ip, port)
 
                 get_pid_cmd = ' | '.join(
-                    ['ps u -u root', 'grep "rpyc_classic.py"',
+                    ['ps aux', 'grep "rpyc_classic.py"',
                      'grep -v "grep"', 'awk \'{print $2}\'']
                 )
 
@@ -116,7 +117,8 @@ class Client:
 
     def stop_rpyc_server(self):
         if self.rpyc_server_pid:
-            kill(self, self.rpyc_server_pid)
+            for pid in self.rpyc_server_pid.split():
+                kill(self, pid)
             self.rpyc_server_pid = None
 
     def perform(self, condition, timeout=None):
@@ -163,9 +165,11 @@ def create_client(clients, username, mount_path, client_instance,
 
 
 def mount_users(clients, user_names, mount_paths, client_hosts,
-                client_instances, tokens, hosts, request, users, env_desc):
+                client_instances, tokens, hosts, request, users, env_desc,
+                should_fail=False):
     params = zip(user_names, mount_paths, client_instances, client_hosts,
                  tokens)
+
     for i, (username, mount_path, client_instance, client_host,
             token) in enumerate(params):
         user = users.get(username)
@@ -181,16 +185,18 @@ def mount_users(clients, user_names, mount_paths, client_hosts,
 
         client.start_rpyc(username, i + RPYC_DEFAULT_PORT)
 
-        access_token = token if token == BAD_TOKEN else user.token
+        access_token = user.token if token == CORRECT_TOKEN else token
 
         client_mode = client_conf.get('mode')
-        ret = client.mount(username, hosts, access_token, client_mode)
+        retries = 1 if should_fail else 3
+        ret = client.mount(username, hosts, access_token, client_mode,
+                           retries=retries)
 
-        if ret != 0 and access_token != BAD_TOKEN:
+        if ret != 0 and (access_token != BAD_TOKEN and not should_fail):
             clean_mount_path(username, client)
             pytest.skip('Environment error: error mounting client')
 
-        if access_token != BAD_TOKEN:
+        if access_token != BAD_TOKEN and not should_fail:
             try:
                 clean_spaces(client)
             except AssertionError:

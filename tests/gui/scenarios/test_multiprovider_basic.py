@@ -15,6 +15,7 @@ from tests.gui.steps.rest.cdmi import *
 from tests.gui.steps.rest.env_up.users import *
 from tests.gui.steps.rest.env_up.groups import *
 from tests.gui.steps.rest.env_up.spaces import *
+from tests.gui.steps.rest.env_up.harvesters import *
 
 from tests.gui.steps.common.url import *
 from tests.gui.steps.common.browser_creation import *
@@ -53,7 +54,6 @@ from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
 from tests.gui.steps.oneprovider.transfers import *
 from tests.gui.steps.oneprovider.uploads import *
-from tests.gui.steps.oneprovider.qos import *
 
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
@@ -69,8 +69,6 @@ from tests.gui.meta_steps.onepanel.storages import *
 
 from tests.gui.meta_steps.oneprovider.common import *
 from tests.gui.meta_steps.oneprovider.transfers import *
-from tests.gui.meta_steps.oneprovider.qos import *
-from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.mixed.steps.space_basic import *
 
@@ -79,15 +77,8 @@ from tests.utils.acceptance_utils import *
 
 @pytest.fixture(scope='module')
 def screens():
-    return [0, 1]
+    return [0]
 
 
-scenarios('../features/oneprovider/multiprovider/basic.feature')
 scenarios('../features/oneprovider/multiprovider/cdmi.feature')
-scenarios('../features/oneprovider/multiprovider/auto_cleaning.feature')
-scenarios('../features/oneprovider/multiprovider/qos_single_browser.feature')
-scenarios('../features/oneprovider/multiprovider/qos_provider_support.feature')
-scenarios('../features/oneprovider/multiprovider/qos_auto_cleaning.feature')
-scenarios('../features/oneprovider/multiprovider/qos_multibrowser.feature')
-scenarios('../features/oneprovider/multiprovider/qos_storage.feature')
 scenarios('../features/oneprovider/multiprovider/upload_files.feature')

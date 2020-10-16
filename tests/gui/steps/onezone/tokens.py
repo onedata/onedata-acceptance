@@ -168,6 +168,23 @@ def choose_token_filter(selenium, browser_id, token_filter, oz_page):
     getattr(filters, token_filter.lower())()
 
 
+@wt(parsers.re(r'user of (?P<browser_id>.*) chooses "(?P<token_filter>.*)" '
+               r'(?P<filter_type>name Invite|Invite) filter in tokens sidebar'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def choose_token_filter(selenium, browser_id, token_filter, filter_type,
+                        oz_page, hosts):
+    invite_filter = oz_page(selenium[browser_id])[
+        'tokens'].sidebar.invite_filter
+    if filter_type == "name Invite":
+        if 'oneprovider' in token_filter:
+            token_filter = hosts[token_filter]['name']
+        invite_filter.dropdown_menus[1].click()
+        invite_filter.name_options[token_filter].click()
+    else:
+        invite_filter.dropdown_menus[0].click()
+        invite_filter.options[token_filter].click()
+
+
 @wt(parsers.parse('user of {browser_id} sees that all tokens in tokens sidebar '
                   'are type of {token_type}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -323,7 +340,7 @@ def assert_token_usage_count_value(selenium, browser_id, count, oz_page):
 def parse_and_compare_usage_count(text_given, text_expected):
     no1, no2 = text_given.split('/')
     exp1, exp2 = text_expected.split('/')
-    assert str(no1).strip() == str(exp1).strip(), (f'First number should be' 
+    assert str(no1).strip() == str(exp1).strip(), (f'First number should be'
                                                    f' {exp1}')
     assert str(no2).strip() == str(exp2).strip(), (f'Second number should be '
                                                    f'{exp2}')
@@ -346,3 +363,43 @@ def get_caveat_by_name(selenium, browser_id, oz_page, caveat_name):
 def get_privileges_tree(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
     return oz_page(driver)['tokens'].privilege_tree
+
+
+@wt(parsers.parse('user of {browser_id} deselects "{token_name}" '
+                  'in modal "Clean up obsolete tokens"'))
+def deselect_tokens_on_modal(browser_id, token_name, selenium, modals):
+    driver = selenium[browser_id]
+    clean_modal = modals(driver).clean_up_obsolete_tokens
+
+    # expand token types to make tokens visible
+    for token_type in clean_modal.token_types:
+        token_type.click()
+
+    clean_modal.tokens[token_name].checkbox.click()
+
+
+@wt(parsers.parse('user of {browser_id} deselects "{token_type}" type '
+                  'in modal "Clean up obsolete tokens"'))
+def deselect_token_type_on_modal(browser_id, token_type,
+                                       selenium, modals):
+    driver = selenium[browser_id]
+    clean_modal = modals(driver).clean_up_obsolete_tokens
+
+    clean_modal.token_types[token_type].checkbox.click()
+
+
+@wt(parsers.parse('user of {browser_id} {ability_to_see} "{token_name}" '
+                  'in token list on tokens page sidebar'))
+def assert_token_on_token_page_sidebar(browser_id, ability_to_see, token_name,
+                                       selenium, oz_page):
+    driver = selenium[browser_id]
+    tokens_page = oz_page(driver)['tokens'].sidebar
+
+    if ability_to_see == 'sees':
+        err_msg = f'token list on sidebar should contain {token_name}'
+        assert token_name in {token.name for token in
+                              tokens_page.tokens}, err_msg
+    if ability_to_see == 'does not see':
+        err_msg = f'token list on sidebar should not contain {token_name}'
+        assert token_name not in {token.name for token in
+                                  tokens_page.tokens}, err_msg

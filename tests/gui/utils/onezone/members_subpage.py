@@ -13,7 +13,8 @@ from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.core.web_elements import (Button, NamedButton,
                                                Label, WebItem, Input,
-                                               WebItemsSequence, WebElement)
+                                               WebItemsSequence, WebElement,
+                                               WebElementsSequence)
 
 
 class MembersHeaderRow(PageObject):
@@ -27,8 +28,8 @@ class MembersItemHeader(PageObject):
     checkbox = Button('div.item-checkbox')
     user = WebElement('.header-content-container')
     menu_button = Button('.collapsible-toolbar-toggle')
-    save_button = NamedButton('.btn-toolbar .btn-sm', text='Save')
-    reset_button = NamedButton('.btn-toolbar .btn-danger', text='Reset')
+    save_button = NamedButton('.save-btn', text='Save')
+    discard_button = NamedButton('.discard-btn', text='Discard changes')
 
     def click_menu(self, driver):
         ActionChains(driver).move_to_element(self.user).perform()
@@ -37,15 +38,27 @@ class MembersItemHeader(PageObject):
 
 class MembersItemRow(PageObject):
     header = WebItem('.list-header-row', cls=MembersItemHeader)
-    name = id = Label('.one-label')
+    name = id = Label('.record-name-general')
     privilege_tree = WebItem('.one-tree', cls=PrivilegeTree)
     forbidden_alert = WebElement('.alert.forbidden')
+    status_labels = WebElementsSequence('.label')
+    ownership_warning = WebElement('.privileges-of-owner-warning')
+
+    member = WebElement('.list-header-row')
+    member_menu_button = WebElement('.collapsible-toolbar-toggle')
+
+    def click_member_menu_button(self, driver):
+        ActionChains(driver).move_to_element(self.member).perform()
+        self.member_menu_button.click()
 
     def are_privileges_visible(self):
         try:
             return self.privilege_tree
         except RuntimeError:
             return False
+
+    def has_status_label(self, name):
+        return any(x.text == name for x in self.status_labels)
 
 
 class MembersList(PageObject):
@@ -95,5 +108,3 @@ class MembersPage(PageObject):
 
     forbidden_alert = WebElement('.alert.forbidden')
     bulk_edit_button = NamedButton('.btn', text='Bulk edit')
-
-

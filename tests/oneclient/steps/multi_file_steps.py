@@ -201,8 +201,8 @@ def shell_move_base(user, file1, file2, client_node, users, should_fail=False):
 
     def condition():
         mv(client, src, dest)
-        cmd = 'mv (?P<0>.*) (?P<1>.*)'.format(src, dest)
-        client_run_cmd(client, cmd, output=True, error=True)
+        cmd = 'mv {0} {1}'.format(src, dest)
+        assert 0 == client_run_cmd(client, cmd, error=True)
 
     assert_generic(client.perform, should_fail, condition)
 
@@ -282,7 +282,7 @@ def shell_check_type(user, file, file_type, client_node, users):
     def condition():
         cmd = 'stat --format=%F {}'.format(file_path)
         stat_file_type = client_run_cmd(client, cmd, output=True)
-        assert stat_file_type == file_type
+        assert stat_file_type.strip() == file_type
 
     assert_(client.perform, condition)
 

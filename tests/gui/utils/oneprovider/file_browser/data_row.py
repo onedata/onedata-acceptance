@@ -29,6 +29,7 @@ class DataRow(PageObject):
     qos_tag = WebElement('.file-status-qos')
     qos_inherited_tag = WebElement('.file-status-qos .oneicon-arrow-long-up')
     clickable_field = WebElement('.file-name')
+    tag_label = Label('.file-status-tag')
 
     def __str__(self):
         return '{item} in {parent}'.format(item=self.name,

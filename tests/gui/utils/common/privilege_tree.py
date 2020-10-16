@@ -53,6 +53,9 @@ class PrivilegeGroup(PageObject):
     def expand(self):
         self.expander.click()
 
+    def minimalize(self):
+        self.expander.click()
+
     def activate(self):
         self.toggle.check()
 

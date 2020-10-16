@@ -1,4 +1,4 @@
-"""Utils to facilitate operations on spaces page in Onezone gui"""
+"""Utils to facilitate operations on discovery page in Onezone gui"""
 
 __author__ = "Michal Stanisz, Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
@@ -9,7 +9,8 @@ from selenium.webdriver import ActionChains
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (Button, NamedButton,
                                                WebItemsSequence, Label,
-                                               WebItem, WebElement)
+                                               WebItem, WebElement,
+                                               WebElementsSequence)
 from tests.gui.utils.onezone.generic_page import Element, GenericPage
 from .common import EditBox, InputBox
 from .members_subpage import MembersPage
@@ -41,8 +42,15 @@ class Space(Element):
         self.click()
         self.menu_button.click()
 
+    def is_element_disabled(self, element_name):
+        element = getattr(self, element_name)
+        return 'disabled' in element.web_elem.get_attribute("class")
+
     def is_home_icon(self):
         return 'oneicon-home' in self.home_icon.get_attribute("class")
+
+    def is_active(self):
+        return 'active' in self.web_elem.get_attribute('class')
 
 
 class Provider(Element):
@@ -57,9 +65,33 @@ class SpaceInfoTile(PageObject):
     shares_count = Label('.shares-count')
 
 
+class SpaceMembersTile(PageObject):
+    direct_groups = Label('.direct-groups-counter')
+    direct_users = Label('.direct-users-counter')
+    effective_groups = Label('.effective-groups-counter')
+    effective_users = Label('.effective-users-counter')
+
+
+class ProvidersMap(Element):
+    providers = WebElementsSequence('.circle')
+
+    def click_provider(self, provider_name, driver):
+        for prov in self.providers:
+            ActionChains(driver).move_to_element(prov).perform()
+            name = driver.find_element_by_css_selector('.tooltip-inner').text
+            if name == provider_name:
+                prov.click()
+                return
+
+        raise RuntimeError(f'Provider {provider_name} was not found on the map')
+
+
 class SpaceOverviewPage(PageObject):
-    space_name = Label('.with-menu .one-label')
+    space_name = Label('.header-row .one-label')
     info_tile = WebItem('.resource-info-tile', cls=SpaceInfoTile)
+    members_tile = WebItem('.resource-members-tile .tile-main',
+                           cls=SpaceMembersTile)
+    map = WebItem('.map-container', cls=ProvidersMap)
 
 
 class WelcomePage(PageObject):
@@ -108,6 +140,7 @@ class SpaceProvidersPage(PageObject):
                                       cls=Provider)
     add_support = NamedButton('button', text='Add support')
     get_support_page = WebItem('.ember-view', cls=GetSupportPage)
+    map = WebItem('.space-providers-atlas', cls=ProvidersMap)
 
 
 class _Provider(PageObject):

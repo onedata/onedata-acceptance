@@ -10,7 +10,7 @@ __license__ = ("This software is released under the MIT license cited in "
 from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import wt, parsers
 from tests.gui.utils.common.modals import Modals as modals
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import parse_seq, transform
 from tests.gui.conftest import WAIT_FRONTEND
 from selenium.webdriver.common.keys import Keys
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
@@ -68,6 +68,18 @@ def click_on_group_menu_button(selenium, browser_id, option, group,
     popups(driver).popover_menu.menu[option]()
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_option_of_group_menu_on_left_sidebar_menu(selenium, browser_id,
+                                                       group_name, option,
+                                                       oz_page):
+    driver = selenium[browser_id]
+    driver.switch_to.default_content()
+    page = oz_page(driver)['groups']
+    page.elements_list[group_name]()
+    getattr(page.elements_list[group_name],
+            transform(option))()
+
+
 @wt(parsers.parse('user of {browser_id} writes '
                   '"{text}" into rename group text field'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -93,7 +105,7 @@ def assert_create_button_inactive(selenium, browser_id, oz_page):
                                                      'is enabled')
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) goes to group "(?P<group>.*)" '
+@wt(parsers.re('user of (?P<browser_id>.*) opens group "(?P<group>.*)" '
                '(?P<subpage>members|hierarchy|main) subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def go_to_group_subpage(selenium, browser_id, group, subpage, oz_page):
@@ -161,6 +173,15 @@ def click_on_option_in_group_hierarchy_menu(selenium, browser_id, option):
 
 
 @wt(parsers.parse('user of {browser_id} clicks on "{option}" '
+                  'in group hierarchy tab popup menu'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_option_in_group_hierarchy_tab_popup_menu(selenium, browser_id,
+                                                      option, popups):
+    driver = selenium[browser_id]
+    popups(driver).popover_menu.menu[option].click()
+
+
+@wt(parsers.parse('user of {browser_id} clicks on "{option}" '
                   'in relation menu'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_option_in_group_hierarchy_menu(selenium, browser_id, option):
@@ -186,8 +207,9 @@ def assert_list_of_children_contains_group(selenium, browser_id, oz_page,
                                            option):
     relation = 'children' if relation == 'child' else 'parents'
 
-    groups = getattr(oz_page(selenium[browser_id])['groups'].main_page.hierarchy,
-                     relation)
+    groups = getattr(
+        oz_page(selenium[browser_id])['groups'].main_page.hierarchy,
+        relation)
     if option == 'sees':
         assert group_name in groups
     else:
@@ -210,3 +232,12 @@ def assert_error_detail_text(selenium, browser_id, oz_page, text):
     assert text in page.main_page.error_details, ('page with text "{}" '
                                                   'not found'.format(text))
 
+
+@wt(parsers.parse('user of {browser_id} sees "{group_name}" group '
+                  'members subpage'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_user_sees_group_page(selenium, oz_page, browser_id, group_name):
+    driver = selenium[browser_id]
+    group_name_on_page = oz_page(driver)['groups'].selected_group_name
+    err_msg = f'expected group name {group_name}, found {group_name_on_page}'
+    assert group_name_on_page == group_name, err_msg

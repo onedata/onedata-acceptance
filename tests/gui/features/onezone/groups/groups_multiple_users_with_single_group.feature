@@ -10,15 +10,6 @@ Feature: Basic management of groups with multiple users in Onezone GUI
             owner: user1
             users:
                 - user2
-    And initial spaces configuration in "onezone" Onezone service:
-          space1:
-              owner: user1
-              home space for:
-                  - user1
-              providers:
-                  - oneprovider-1:
-                      storage: posix
-                      size: 1000000
 
     And users opened [browser1, browser2] browsers' windows
     And user of [browser1, browser2] opened [Onezone, Onezone] page
@@ -54,7 +45,7 @@ Feature: Basic management of groups with multiple users in Onezone GUI
 
 
   Scenario: User is removed from group
-    When user of browser1 goes to group "group1" members subpage
+    When user of browser1 opens group "group1" members subpage
     And user of browser1 removes "user2" user from "group1" group members
     Then user of browser1 does not see "user2" user on "group1" group members list
     And user of browser2 does not see group "group1" on groups list

@@ -45,6 +45,58 @@ def create_file_in_op(client, user, users, space, name, hosts, tmp_memory, host,
 
 
 @wt(parsers.re('using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to create '
+               'file named "(?P<name>.*)" using received token in '
+               '"(?P<space>.*)" in (?P<host>.*)'))
+def create_file_in_op_with_token(client, user, users, space, name, hosts,
+                                 tmp_memory, host, result, request, clients,
+                                 env_desc):
+    full_path = '{}/{}'.format(space, name)
+    client_lower = client.lower()
+    if client_lower == 'rest':
+        token = tmp_memory[user]['mailbox'].get('token', None)
+        create_file_in_op_rest(user, users, host, hosts, full_path, result,
+                               token)
+    elif 'oneclient' in client_lower:
+        path = f'/home/{user}/onedata'
+        mount_new_oneclient_result(user, path, request, hosts, users, clients,
+                                   env_desc, tmp_memory, result,
+                                   client='oneclient')
+        if result == 'succeeds':
+            oneclient_host = change_client_name_to_hostname(client_lower)
+            create_file_in_op_oneclient(user, full_path, users, result,
+                                        oneclient_host)
+    else:
+        raise NoSuchClientException('Client: {} not found'.format(client))
+
+
+@wt(parsers.re('using (?P<client>.*) with identity token, (?P<user>\w+) ('
+               '?P<result>\w+) to create file named "(?P<name>.*)" using '
+               'received token in "(?P<space>.*)" in (?P<host>.*)'))
+def create_file_in_op_with_tokens(client, user, users, space, name, hosts,
+                                  tmp_memory, host, result, request, clients,
+                                  env_desc, tokens):
+    full_path = '{}/{}'.format(space, name)
+    client_lower = client.lower()
+    if client_lower == 'rest':
+        access_token = tmp_memory[user]['mailbox'].get('token', None)
+        identity_token = tokens[f'identity_token_of_{user}'].get('token', None)
+        create_file_in_op_rest(user, users, host, hosts, full_path, result,
+                               access_token=access_token,
+                               identity_token=identity_token)
+    elif 'oneclient' in client_lower:
+        path = f'/home/{user}/onedata'
+        mount_new_oneclient_result(user, path, request, hosts, users, clients,
+                                   env_desc, tmp_memory, result,
+                                   client='oneclient')
+        if result == 'succeeds':
+            oneclient_host = change_client_name_to_hostname(client_lower)
+            create_file_in_op_oneclient(user, full_path, users, result,
+                                        oneclient_host)
+    else:
+        raise NoSuchClientException('Client: {} not found'.format(client))
+
+
+@wt(parsers.re('using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to create '
                'directory named "(?P<name>.*)" in "(?P<space>.*)" in '
                '(?P<host>.*)'))
 def create_dir_in_op(client, user, users, space, name, hosts, tmp_memory, host,
@@ -73,6 +125,14 @@ def create_dir_in_op(client, user, users, space, name, hosts, tmp_memory, host,
                                    oneclient_host)
     else:
         raise NoSuchClientException('Client: {} not found'.format(client))
+
+
+@wt(parsers.re('using web GUI, (?P<user>\w+) double clicks on item '
+               'named "(?P<item_name>.*)" in "(?P<space>.*)"'))
+def go_to_dir(selenium, user, item_name, tmp_memory, op_container, space, oz_page):
+    go_to_filebrowser(selenium, user, oz_page, op_container,
+                      tmp_memory, space)
+    double_click_on_item_in_file_browser(user, item_name, tmp_memory)
 
 
 @wt(parsers.re('using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to see '
@@ -381,14 +441,14 @@ def assert_time_relation(user, time1, file_name, space, comparator, time2,
 
 @then(parsers.re('using (?P<client>.*), (?P<user>.*) sees that '
                  '(?P<time_name>.*) time of item named "(?P<file_path>.*)" '
-                 'in "(?P<space>.*)" space is not earlier than '
+                 'in current space is not earlier than '
                  '(?P<time>[0-9]*) seconds ago in (?P<host>.*)'))
 def assert_mtime_not_earlier_than(client, file_path, selenium, user,
-                                  space, op_container, time, tmp_memory):
+                                  op_container, time, tmp_memory):
     client_lower = client.lower()
     if client_lower == 'web gui':
-        assert_mtime_not_earlier_than_op_gui(file_path, selenium, time, user,
-                                             space, op_container, tmp_memory)
+        assert_mtime_not_earlier_than_op_gui(file_path, time, user, tmp_memory,
+                                             selenium, op_container)
     else:
         raise NoSuchClientException('Client: {} not found'.format(client))
 
@@ -406,7 +466,7 @@ def assert_directory_structure_in_op(client, selenium, user, op_container, oz_pa
     if client_lower == 'web gui':
         assert_space_content_in_op_gui(config, selenium, user, op_container, 
                                        tmp_memory, tmpdir, space, oz_page, host,
-                                       hosts, modals)
+                                       hosts)
     elif client_lower == 'rest':
         assert_space_content_in_op_rest(user, users, hosts, config, space, 
                                         spaces, host)
@@ -428,7 +488,7 @@ def assert_directory_structure_in_op(client, selenium, user, op_container, oz_pa
     if client_lower == 'web gui':
         assert_space_content_in_op_gui(config, selenium, user, op_container,
                                        tmp_memory, tmpdir, space, oz_page,
-                                       host, hosts, modals)
+                                       host, hosts)
     elif client_lower == 'rest':
         assert_space_content_in_op_rest(user, users, hosts, config, space,
                                         spaces, host)
@@ -546,53 +606,6 @@ def upload_file_to_op(client, selenium, user, path, space, host, hosts,
     if client_lower == 'web gui':
         successfully_upload_file_to_op_gui(path, selenium, user, space,
                                            op_container, tmp_memory, oz_page)
-    else:
-        raise NoSuchClientException('Client: {} not found'.format(client))
-
-
-@wt(parsers.re('using (?P<client>.*), (?P<user>\w+) sees '
-               'that POSIX permission for item named "(?P<item_path>.*)" in '
-               '"(?P<space>.*)" is "(?P<mode>.*)" in (?P<host>.*)'))
-@repeat_failed(timeout=WAIT_BACKEND)
-def assert_posix_permissions_in_op(client, user, item_path, space, mode,
-                                   host, selenium, op_container, tmp_memory,
-                                   modals, users, hosts, oz_page):
-    full_path = '{}/{}'.format(space, item_path)
-    client_lower = client.lower()
-    if client_lower == 'web gui':
-        assert_posix_permissions_in_op_gui(selenium, user, space, item_path,
-                                           mode, oz_page, op_container,
-                                           tmp_memory, modals)
-    elif client_lower == 'rest':
-        assert_posix_permissions_in_op_rest(full_path, mode, user, users,
-                                            host, hosts)
-    elif 'oneclient' in client_lower:
-        oneclient_host = change_client_name_to_hostname(client_lower)
-        assert_posix_permissions_in_op_oneclient(user, full_path, mode,
-                                                 oneclient_host, users)
-    else:
-        raise NoSuchClientException('Client: {} not found'.format(client))
-
-
-@wt(parsers.re('using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to set '
-               '"(?P<mode>.*)" POSIX permission for item named '
-               '"(?P<item_path>.*)" in "(?P<space>.*)" in (?P<host>.*)'))
-def set_posix_permissions_in_op(client, user, item_path, space, mode, result,
-                                host, selenium, op_container, tmp_memory, modals,
-                                users, hosts, oz_page):
-    full_path = '{}/{}'.format(space, item_path)
-    client_lower = client.lower()
-    if client_lower == 'web gui':
-        set_posix_permissions_in_op_gui(selenium, user, space, item_path,
-                                        mode, op_container, tmp_memory,
-                                        modals, oz_page)
-    elif client_lower == 'rest':
-        set_posix_permissions_in_op_rest(full_path, mode, user, users, host,
-                                         hosts, result)
-    elif 'oneclient' in client_lower:
-        oneclient_host = change_client_name_to_hostname(client_lower)
-        set_posix_permissions_in_op_oneclient(user, full_path, mode,
-                                              oneclient_host, users, result)
     else:
         raise NoSuchClientException('Client: {} not found'.format(client))
 

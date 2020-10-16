@@ -38,6 +38,8 @@ class Group(PageObject):
 
 class GroupHierarchyPage(PageObject):
     show_parent_groups = Button('.group-box.active .group-box-relation.parents')
+    show_children_groups = Button('.group-box.active '
+                                  '.group-box-relation.children')
 
     groups = WebItemsSequence('.content-groups-hierarchy '
                               '.group-boxes-container .group-box', cls=Group)
@@ -48,4 +50,7 @@ class GroupHierarchyPage(PageObject):
     parents = WebItemsSequence('.content-groups-hierarchy .parents '
                                '.group-boxes-container .group-box',
                                cls=Group)
+    hierarchy_view_menu = Button('.content-groups-hierarchy '
+                                 '.collapsible-toolbar-toggle')
+
 

@@ -82,7 +82,6 @@ class Input(WebElement):
         item = super(Input, self).__get__(instance, owner)
         return item.get_attribute('value') if instance else item
 
-    @repeat_failed(attempts=10)
     def __set__(self, instance, val):
         input_box = super(Input, self).__get__(instance, type(instance))
         input_box.clear()
@@ -91,6 +90,26 @@ class Input(WebElement):
             assert input_box.get_attribute('value') == val, \
                 'entering "{}" to {} in {} failed'.format(val, self.name,
                                                           instance)
+
+
+class AceEditor(WebElement):
+    def __get__(self, instance, owner):
+        selector = self.css_sel + ' .ace_content'
+        script = (f"var textarea = document.querySelector('{selector}');"
+                  f"return textarea")
+        driver = instance.web_elem.parent
+        return driver.execute_script(script).text
+
+    def __set__(self, instance, val):
+        driver = instance.web_elem.parent
+        selector = self.css_sel + ' .ace_text-input'
+        script = (f"var textarea = document.querySelector('{selector}');"
+                  f"textarea.value = '{val}';"
+                  "textarea.dispatchEvent(new Event('input', { bubbles: true}));"
+                  "return textarea.value")
+        inserted_val = driver.execute_script(script)
+        msg = f'Inserted val is {inserted_val} instead of {val}'
+        assert val == inserted_val, msg
 
 
 class WebElementsSequence(AbstractWebElement):

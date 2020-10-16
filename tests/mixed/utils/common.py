@@ -12,6 +12,8 @@ from tests import (OZ_REST_PATH_PREFIX, OZ_REST_PORT, PANEL_REST_PORT,
                    CDMI_REST_PATH_PREFIX)
 from pytest_bdd import given, parsers
 
+from tests.utils.bdd_utils import wt
+
 
 class NoSuchClientException(Exception):
     def __init__(self, value):
@@ -52,17 +54,23 @@ def login_to_panel(username, password, host):
     return client
 
 
-def login_to_cdmi(username, users, host):
+def login_to_cdmi(username, users, host, access_token=None,
+                  identity_token=None):
     from tests.mixed.cdmi_client.configuration import (Configuration
                                                                 as Conf_CDMI)
     from tests.mixed.cdmi_client import (ApiClient as ApiClient_CDMI)
     Conf_CDMI().verify_ssl = False
 
+    header_value = access_token if access_token else users[username].token
+
     client = ApiClient_CDMI(
         host='https://{}:{}{}'.format(host,
                                       OZ_REST_PORT,
                                       CDMI_REST_PATH_PREFIX),
-        header_name = 'X-Auth-Token', header_value = users[username].token)
+        header_name='X-Auth-Token', header_value=header_value)
+
+    if identity_token:
+        client.set_default_header('x-onedata-consumer-token', identity_token)
     return client
 
 
@@ -81,6 +89,7 @@ def login_to_provider(username, users, host):
     return client
 
 
+@wt(parsers.parse('{sender} sends {item_type} to {receiver}'))
 def send_copied_item_to_other_users_rest(sender, receiver, item_type,
                                          tmp_memory):
     tmp_memory[receiver]['mailbox'][item_type.lower()] = \

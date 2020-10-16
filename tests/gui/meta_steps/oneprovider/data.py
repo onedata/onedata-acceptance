@@ -8,7 +8,8 @@ __license__ = ("This software is released under the MIT license cited in "
 
 import yaml
 
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import (NoSuchElementException,
+                                        StaleElementReferenceException)
 
 from tests.gui.steps.oneprovider.file_browser import *
 from tests.gui.steps.oneprovider.data_tab import *
@@ -22,7 +23,7 @@ from tests.gui.steps.modal import (
     write_name_into_text_field_in_modal)
 from tests.gui.steps.onezone.spaces import (
     click_on_option_of_space_on_left_sidebar_menu,
-    click_element_on_lists_on_left_sidebar_menu)
+    click_element_on_lists_on_left_sidebar_menu, click_on_option_in_the_sidebar)
 from tests.gui.steps.rest.env_up.spaces import init_storage
 
 
@@ -34,7 +35,7 @@ def _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id, path,
     try:
         go_to_path_without_last_elem(browser_id, tmp_memory, path)
         click_menu_for_elem_in_file_browser(browser_id, item_name, tmp_memory)
-    except KeyError:
+    except (KeyError, StaleElementReferenceException):
         go_to_filebrowser(selenium, browser_id, oz_page, op_container,
                           tmp_memory, space)
         go_to_path_without_last_elem(browser_id, tmp_memory, path)
@@ -200,7 +201,7 @@ def _check_files_tree(subtree, user, tmp_memory, cwd, selenium, op_container,
 
 def assert_space_content_in_op_gui(config, selenium, user, op_container,
                                    tmp_memory, tmpdir, space_name, oz_page,
-                                   provider, hosts, modals):
+                                   provider, hosts):
     try:
         assert_file_browser_in_data_tab_in_op(selenium, user, op_container,
                                               tmp_memory)
@@ -256,7 +257,7 @@ def g_create_directory_structure(user, config, space, host, users, hosts):
     items = yaml.load(config)
     provider_hostname = hosts[host]['hostname']
 
-    init_storage(owner, space, hosts, provider_hostname, items)
+    init_storage(owner, space, hosts, provider_hostname, users, items)
 
 
 def create_directory_structure_in_op_gui(selenium, user, op_container, config,
@@ -330,7 +331,12 @@ def upload_file_to_op_gui(path, selenium, browser_id, space, res, filename,
         check_error_in_upload_presenter(selenium, browser_id, popups)
 
 
-def assert_mtime_not_earlier_than_op_gui(path, time, browser_id, tmp_memory):
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_mtime_not_earlier_than_op_gui(path, time, browser_id, tmp_memory,
+                                         selenium, op_container):
+    assert_nonempty_file_browser_in_data_tab_in_op(selenium, browser_id,
+                                                   op_container, tmp_memory,
+                                                   item_browser='file browser')
     item_name = _select_item(browser_id, tmp_memory, path)
     assert_item_in_file_browser_is_of_mdate(browser_id, item_name, time,
                                             tmp_memory)
@@ -375,6 +381,8 @@ def go_to_filebrowser(selenium, browser_id, oz_page, op_container,
     option_in_menu = 'spaces'
     option_in_submenu = 'Data'
 
+    click_on_option_in_the_sidebar(selenium, browser_id, option_in_submenu,
+                                   oz_page)
     click_element_on_lists_on_left_sidebar_menu(selenium, browser_id,
                                                 option_in_menu, space, oz_page)
     click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id, space,

@@ -3,10 +3,10 @@ Feature: Oneprovider POSIX privileges GUI tests
   Background:
     Given initial users configuration in "onezone" Onezone service:
             - user1
-            - user2
+            - space-owner-user
     And initial spaces configuration in "onezone" Onezone service:
           space1:
-              owner: user2
+              owner: space-owner-user
               users:
                   - user1
               providers:
@@ -22,7 +22,7 @@ Feature: Oneprovider POSIX privileges GUI tests
                       - dir12
                   - file1
 
-    And opened [browser_user1, space_owner_browser] with [user1, user2] signed in to [Onezone, Onezone] service
+    And opened [browser_user1, space_owner_browser] with [user1, space-owner-user] signed in to [Onezone, Onezone] service
 
 
   Scenario: User sees that default permission code for uploaded file is 644
@@ -164,3 +164,12 @@ Feature: Oneprovider POSIX privileges GUI tests
     And user of browser_user1 clicks on "Yes" button in modal "Delete modal"
     Then user of browser_user1 sees that error modal with text "Deleting file(s) failed" appeared
 
+
+  Scenario Outline: User sees "no access" tag after changing privileges
+    When user of space_owner_browser sets <file_name> POSIX 364 privileges in "space1"
+    Then user of space_owner_browser sees "no access" tag on <file_name>
+
+    Examples:
+      | file_name |
+      | file1     |
+      | dir1      |
