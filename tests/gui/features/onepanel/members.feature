@@ -3,7 +3,7 @@ Feature: Basic cluster members management utilities using onepanel
   Background:
     Given initial users configuration in "onezone" Onezone service:
             - user1
-    And there is no group2 group in Onezone page used by admin
+    And there is no group2 group in Onezone page used by admin before definition in next steps
     And initial groups configuration in "onezone" Onezone service:
           group2:
             owner: admin
@@ -175,8 +175,8 @@ Feature: Basic cluster members management utilities using onepanel
   Scenario: User successfully invites other user to cluster
     When user of browser_admin invites user of browser_standard to "oneprovider-1" cluster
     And user of browser_standard joins to cluster
-    Then user of browser_admin is idle for 4 seconds
-    And user of browser_admin sees "user1" user in cluster members
+    And user of browser_admin is idle for 4 seconds
+    Then user of browser_admin sees "user1" user in cluster members
     And user of browser_standard sees "oneprovider-1" in clusters menu
 
 
@@ -184,6 +184,8 @@ Feature: Basic cluster members management utilities using onepanel
     When user of browser_admin invites user of browser_standard to "oneprovider-1" cluster
     And user of browser_standard joins to cluster
     And user of browser_admin is idle for 4 seconds
+    And user of browser_admin sees "user1" user in cluster members
+
     And user of browser_admin removes "user1" user from "oneprovider-1" cluster members
     Then user of browser_admin does not see "user1" user in cluster members
     And user of browser_standard refreshes site

@@ -25,7 +25,7 @@ from tests.gui.steps.onezone.spaces import (
 from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import wt
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.utils.common.modals import Modals as modals
 from tests.gui.meta_steps.onezone.common import search_for_members
 
@@ -441,21 +441,24 @@ def assert_options_for_user_are_enabled_or_disabled(selenium, browser_id,
             assert not enabled, error_msg
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) sees "(?P<member_name>.*)" '
-               'user in cluster members'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_user_in_cluster_members_page(selenium, browser_id, member_name,
-                                        oz_page, onepanel):
+def _get_cluster_members(selenium, browser_id, oz_page, onepanel):
     driver = selenium[browser_id]
     where = 'cluster'
     members_page = _find_members_page(onepanel, oz_page, driver, where)
     list_name = 'users'
-    found = False
-    for item in getattr(members_page, list_name).items:
-        if item.name == member_name:
-            found = True
-            break
-    assert found
+    return getattr(members_page, list_name).items
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) sees "(?P<member_name>.*)" '
+               'user in cluster members'))
+@repeat_failed(timeout=WAIT_BACKEND*4)
+def assert_user_in_cluster_members_page(selenium, browser_id, member_name,
+                                        oz_page, onepanel):
+    cluster_members = _get_cluster_members(selenium, browser_id, oz_page,
+                                           onepanel)
+
+    assert member_name in cluster_members, (f'{member_name} user is not found '
+                                            f'in cluster members list')
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) does not see "(?P<member_name>.*)" '
@@ -463,16 +466,11 @@ def assert_user_in_cluster_members_page(selenium, browser_id, member_name,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_user_not_in_cluster_members_page(selenium, browser_id, member_name,
                                             oz_page, onepanel):
-    driver = selenium[browser_id]
-    where = 'cluster'
-    members_page = _find_members_page(onepanel, oz_page, driver, where)
-    list_name = 'users'
-    found = False
-    for item in getattr(members_page, list_name).items:
-        if item.name == member_name:
-            found = True
-            break
-    assert not found
+    cluster_members = _get_cluster_members(selenium, browser_id, oz_page,
+                                           onepanel)
+
+    assert member_name not in cluster_members, (f'{member_name} user is found '
+                                                f'in cluster members list')
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) copies "(?P<group>.*)" '

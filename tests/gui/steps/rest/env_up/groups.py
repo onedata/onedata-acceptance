@@ -150,14 +150,16 @@ def _get_group_id(hosts, users, user, group_name):
                            auth=(user, users[user].password))
     groups_id_list = groups_list.json()['groups']
     for group_id in groups_id_list:
-        group_details = http_get(ip=zone_hostname, port=OZ_REST_PORT,path=get_zone_rest_path('groups', group_id),auth=(user, users[user].password))
+        group_details = http_get(ip=zone_hostname, port=OZ_REST_PORT,
+                                 path=get_zone_rest_path('groups', group_id),
+                                 auth=(user, users[user].password))
         if group_details.json()['name'] == group_name:
             return group_id
     return None
 
 
-@given(parsers.parse('there is no {group_name} group in '
-                     'Onezone page used by {user}'))
+@given(parsers.parse('there is no {group_name} group in Onezone page used by '
+                     '{user} before definition in next steps'))
 def remove_group_in_onezone(hosts, users, user, group_name):
     service = 'onezone'
     zone_hostname = hosts[service]['hostname']
