@@ -18,6 +18,7 @@ from tests.gui.meta_steps.onezone import *
 from tests.gui.meta_steps.oneprovider.data import *
 
 from tests.mixed.steps.data_basic import *
+from tests.mixed.steps.onepanel_basic import *
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.onezone.common import *
 
@@ -26,8 +27,8 @@ from tests.gui.conftest import *
 from tests.oneclient.steps.auth_steps import *
 
 from tests.gui.steps.common.miscellaneous import *
+from tests.gui.steps.common.url import *
 
 
-# TODO: change test because of a new gui
-# scenarios('../features/oneprovider/files_metadata.feature')
-scenarios('../features/pass.feature')
+scenarios('../features/oneprovider/files_metadata.feature')
+scenarios('../features/oneprovider/files_metadata_oneclient.feature')

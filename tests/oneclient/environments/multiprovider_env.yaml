@@ -1,4 +1,4 @@
-scenario: "1oz_2op_2oc/nfs.yaml"
+scenario: "1oz_2op_2oc/local_volume.yaml"
 patch: "2op/2user_posix_1space.yaml"
 
 

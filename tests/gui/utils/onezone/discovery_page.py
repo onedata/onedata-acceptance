@@ -5,8 +5,8 @@ __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-from tests.gui.utils.core.web_elements import (Button, NamedButton, WebElement,
-                                               WebItemsSequence, Label, WebItem)
+from tests.gui.utils.core.web_elements import (
+    Button, NamedButton, WebElement, WebItemsSequence, Label, WebItem, Input)
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.onezone.generic_page import GenericPage, Element
 from tests.gui.utils.common.common import DropdownSelector
@@ -28,12 +28,12 @@ class Index(PageObject):
 
 
 class IndicesPage(PageObject):
-    name_input = WebElement('form .row input')
-    schema_input = WebElement('form .row textarea')
-    create_button = NamedButton('.form-group button .spin-button-label',
-                                text='Create')
+    name_input = Input('.name-field .form-control')
+    schema_input = Input('.schema-field .form-control')
+    create_button = Button('.create-btn')
     indices_list = WebItemsSequence('.content-harvesters-indices .row '
                                     'li.one-collapsible-list-item', cls=Index)
+    menu_button = Button('.with-menu .collapsible-toolbar-toggle')
 
 
 class Harvester(Element):
@@ -45,6 +45,8 @@ class Harvester(Element):
                           text='Indices')
     members = NamedButton('.one-list-level-2 .item-header',
                           text='Members')
+    data_discovery = NamedButton('.one-list-level-2 .item-header',
+                                 text='Data discovery')
 
 
 class MenuItem(PageObject):
@@ -79,14 +81,16 @@ class DiscoveryPage(GenericPage):
                             '.dropdown-menu .one-collapsible-toolbar-item',
                             cls=MenuItem)
 
+    menu_button = Button('.with-menu .collapsible-toolbar-toggle')
+
     get_started = Button('.btn.btn-default.hide-sm-active.ember-view')
     create_new_harvester_button = Button('.one-sidebar-toolbar-button'
                                          '.create-harvester-btn')
 
-    name = WebElement('.field-create-name')
-    plugin_selector = DropdownSelector('.ember-basic-dropdown')
-    endpoint = WebElement('.field-create-endpoint')
-    create_button = NamedButton('button', text='Create')
+    name = WebElement('.name-field .form-control')
+    plugin_selector = DropdownSelector('.type-field')
+    endpoint = WebElement('.endpoint-field .form-control')
+    create_button = NamedButton('.submit-btn', text='Create')
 
     rename_input = WebElement('.name-editor input')
     rename_button = Button('.save-icon')

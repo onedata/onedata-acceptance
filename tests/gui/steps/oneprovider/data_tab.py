@@ -69,7 +69,7 @@ def click_tooltip_from_toolbar_in_data_tab_in_op(selenium, browser_id, tooltip,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks '
-               '"(?P<button>New directory|Upload files)" button '
+               '"(?P<button>New directory|Upload files|Refresh|Paste)" button '
                'from file browser menu bar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_from_file_browser_menu_bar(selenium, browser_id, button,
@@ -305,7 +305,8 @@ def resize_data_tab_sidebar(selenium, browser_id, direction, offset,
     sidebar.width += offset
 
 
-@wt(parsers.parse('user of {browser_id} waits for file upload to finish'))
+@wt(parsers.re('user of (?P<browser_id>.*) waits for file uploads? to '
+               'finish'))
 @repeat_failed(timeout=WAIT_BACKEND * 3)
 def wait_for_file_upload_to_finish(selenium, browser_id, popups):
     driver = selenium[browser_id]
@@ -318,6 +319,7 @@ def wait_for_file_upload_to_finish(selenium, browser_id, popups):
 
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
                   'menu bar to upload file "{file_name}" to current dir'))
+@repeat_failed(timeout=2 * WAIT_BACKEND)
 def upload_file_to_cwd_in_file_browser(selenium, browser_id, file_name,
                                        op_container):
     driver = selenium[browser_id]
@@ -462,7 +464,7 @@ def check_error_in_upload_presenter(selenium, browser_id, popups):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
 
-    assert popups(driver).upload_presenter.is_failed(), 'upload not failed'
+    assert popups(driver).upload_presenter[0].is_failed(), 'upload not failed'
 
 
 @wt(parsers.parse('user of {browser_id} clicks on "{provider}" provider '

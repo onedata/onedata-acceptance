@@ -10,6 +10,7 @@ __license__ = ("This software is released under the MIT license cited in "
 from tests.gui.meta_steps.onezone.tokens import (
     consume_token_from_copied_token)
 from tests.gui.steps.onezone.members import *
+from tests.utils.bdd_utils import given
 from tests.utils.utils import repeat_failed
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
@@ -100,3 +101,15 @@ def add_group_to_cluster(selenium, browser_id, oz_page, onepanel, hosts,
                                                       element_type)
     click_modal_button(selenium, browser_id, button_name, modal, modals)
 
+
+@given(parsers.re('user of (?P<browser_id>.*) sees no "(?P<member_name>.*)" '
+                  '(?P<member_type>user|group) in "(?P<name>.*)" '
+                  '(?P<where>cluster|group|harvester) members'))
+def no_member_in_parent(selenium, browser_id, member_name, member_type, name,
+                        oz_page, tmp_memory, onepanel, where, popups):
+    try:
+        remove_member_from_parent(selenium, browser_id, member_name,
+                                  member_type, name, oz_page, tmp_memory,
+                                  onepanel, where, popups)
+    except RuntimeError:
+        pass

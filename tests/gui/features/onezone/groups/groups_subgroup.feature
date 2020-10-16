@@ -12,15 +12,6 @@ Feature: Basic management of groups with multiple users in Onezone GUI
             owner: user2
           group3:
             owner: user1
-    And initial spaces configuration in "onezone" Onezone service:
-          space1:
-              owner: user1
-              home space for:
-                  - user1
-              providers:
-                  - oneprovider-1:
-                      storage: posix
-                      size: 1000000
 
     And users opened [browser1, browser2] browsers' windows
     And user of [browser1, browser2] opened [Onezone, Onezone] page
@@ -42,7 +33,7 @@ Feature: Basic management of groups with multiple users in Onezone GUI
   Scenario: User adds subgroup
     When user of browser1 copies "group1" group invitation token
     And user of browser1 sends copied token to user of browser2
-    And user of browser2 adds group "group2" as subgroup using received token
+    And user of browser2 adds group "group2" as subgroup using copied token
 
     Then users of [browser1, browser2] sees group "group1" on groups list
     And user of browser2 sees group "group2" on groups list

@@ -21,7 +21,9 @@ from tests.gui.steps.onezone.discovery import (
     choose_element_from_dropdown_in_add_element_modal,
     type_text_to_rename_input_field_in_discovery_page,
     confirm_harvester_rename_using_button,
-    assert_space_has_appeared_in_discovery_page)
+    assert_space_has_appeared_in_discovery_page,
+    click_on_member_menu_option_in_harvester_indices_page,
+    click_option_in_discovery_page_menu)
 from tests.gui.steps.onezone.spaces import (
     click_on_option_in_the_sidebar, click_element_on_lists_on_left_sidebar_menu)
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
@@ -35,6 +37,25 @@ def remove_space_from_harvester(selenium, browser_id, oz_page, space_name):
     button = 'Remove'
     modal = 'Remove space from harvester'
 
+    click_remove_space_option_in_menu_in_discover_spaces_page(selenium,
+                                                              browser_id,
+                                                              space_name,
+                                                              oz_page)
+    click_modal_button(selenium, browser_id, button, modal, modals)
+
+
+@wt(parsers.parse('user of {browser_id} removes "{space_name}" space '
+                  'from harvester "{harvester_name}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def remove_space_from_given_harvester(selenium, browser_id, oz_page,
+                                      space_name, harvester_name):
+    button = 'Remove'
+    modal = 'Remove space from harvester'
+    option = 'Spaces'
+
+    click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id,
+                                                      harvester_name, option,
+                                                      oz_page)
     click_remove_space_option_in_menu_in_discover_spaces_page(selenium,
                                                               browser_id,
                                                               space_name,
@@ -86,17 +107,24 @@ def create_harvester(selenium, browser_id, oz_page, harvester_name, hosts):
 def join_space_to_harvester(selenium, browser_id, oz_page, space_name,
                             harvester_name, tmp_memory):
     option = 'Spaces'
+    option2 = 'Discovery'
     button_name = 'add one of your spaces'
     button_in_modal = 'Add'
     modal = 'Add one of spaces'
     element_type = 'space'
     modal_name = 'Add one of your spaces'
 
+    click_on_option_in_the_sidebar(selenium, browser_id, option2, oz_page)
     click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id,
                                                       harvester_name, option,
                                                       oz_page)
-    click_button_in_harvester_spaces_page(selenium, browser_id, oz_page,
-                                          button_name)
+    try:
+        click_button_in_harvester_spaces_page(selenium, browser_id, oz_page,
+                                              button_name)
+    except RuntimeError:
+        click_option_in_discovery_page_menu(selenium, browser_id, oz_page,
+                                            button_name.capitalize())
+
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id,
                                                       space_name, modals,
@@ -133,12 +161,16 @@ def add_group_to_harvester(selenium, browser_id, oz_page, group_name,
                   'in "{harvester_name}" harvester in Discovery page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_index_in_harvester(selenium, browser_id, oz_page, index_name,
-                              harvester_name):
+                              harvester_name, popups):
     option = 'Indices'
+    member_menu_option = 'Create new index'
 
     click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id,
                                                       harvester_name, option,
                                                       oz_page)
+    click_on_member_menu_option_in_harvester_indices_page(selenium, browser_id,
+                                                          member_menu_option,
+                                                          oz_page, popups)
     type_index_name_to_input_field_in_indices_page(selenium, browser_id,
                                                    oz_page, index_name)
     click_create_button_in_indices_page(selenium, browser_id, oz_page)

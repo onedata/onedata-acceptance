@@ -16,5 +16,8 @@ class CeaseSupportForSpaceModal(Modal):
     understand_risk_checkbox = Button('.one-checkbox-danger')
     cancel = NamedButton('button', text='Cancel')
 
+    # TODO: delete after space support revoke fixes in 21.02 (VFS-6383)
+    space_delete_link = Button('.info-condensed .clickable')
+
     def __str__(self):
         return 'Cease support for space modal'

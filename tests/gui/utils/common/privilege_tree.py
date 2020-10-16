@@ -25,7 +25,10 @@ class PrivilegeRow(PageObject):
         self.toggle.uncheck()
 
     def assert_privilege_granted(self, granted):
-        if granted:
+        if granted == "Partially":
+            msg = f'{self.name} should be partially granted but is not'
+            assert self.toggle.is_partial_checked(), msg
+        elif granted:
             msg = f'{self.name} should be granted but is not'
             assert self.toggle.is_checked(), msg
         else:
@@ -48,6 +51,9 @@ class PrivilegeGroup(PageObject):
                                       cls=PrivilegeRow)
 
     def expand(self):
+        self.expander.click()
+
+    def minimalize(self):
         self.expander.click()
 
     def activate(self):

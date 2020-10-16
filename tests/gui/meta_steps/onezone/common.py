@@ -140,3 +140,43 @@ def search_for_members(records, member_name, parent_name, fun):
                     return True
     return False
 
+
+@wt(parsers.parse('user of {browser_id} logs out from Onezone page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def logout_from_onezone_page(selenium, browser_id, oz_page, popups):
+    driver = selenium[browser_id]
+    oz_page(driver)['profile'].profile()
+    popups(driver).user_account_menu.options["Logout"].click()
+
+
+@wt(parsers.parse('user of {browser_id} changes {username} username '
+                  'to {new_username}'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def change_username(selenium, browser_id, username, new_username, oz_page,
+                    popups, users):
+    driver = selenium[browser_id]
+    profile = oz_page(driver)['profile']
+    profile.profile()
+    popups(driver).user_account_menu.options["Manage account"].click()
+    profile.rename_username()
+    profile.edit_user_name_box.value = new_username
+    getattr(profile.edit_user_name_box, "confirm").click()
+    users[username].username = new_username
+
+
+@wt(parsers.parse('user of {browser_id} changes {username} password'
+                  ' to {new_password}'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def change_password(selenium, browser_id, new_password, username, oz_page,
+                    users, popups):
+    driver = selenium[browser_id]
+    cur_passwd = users[username].password
+    profile = oz_page(driver)['profile']
+    profile.profile()
+    popups(driver).user_account_menu.options["Manage account"].click()
+    profile.rename_password()
+    profile.current_password_box = cur_passwd
+    profile.type_new_password_box = new_password
+    profile.retype_new_password_box = new_password
+    profile.change_password.click()
+    users[username].password = new_password

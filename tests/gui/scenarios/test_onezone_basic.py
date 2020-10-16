@@ -33,6 +33,7 @@ from tests.gui.steps.onepanel.spaces import *
 
 from tests.gui.steps.onezone.logged_in_common import *
 from tests.gui.steps.onezone.user_full_name import *
+
 from tests.gui.steps.onezone.tokens import *
 from tests.gui.steps.onezone.data_space_management import *
 from tests.gui.steps.onezone.providers import *
@@ -61,10 +62,13 @@ from tests.gui.meta_steps.onezone.spaces import *
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.onezone.harvesters import *
 from tests.gui.meta_steps.onezone.tokens import *
+from tests.gui.meta_steps.onezone.provider import *
+from tests.gui.meta_steps.onezone.clusters import *
 
 from tests.gui.meta_steps.onepanel.spaces import *
 from tests.gui.meta_steps.onezone.spaces import *
 from tests.gui.meta_steps.oneprovider.data import *
+from tests.gui.meta_steps.oneprovider.common import *
 
 from tests.utils.acceptance_utils import *
 from tests.mixed.steps.space_basic import *
@@ -76,22 +80,11 @@ def screens():
 
 
 scenarios('../features/onezone/login_page.feature')
+scenarios('../features/onezone/user_account_manage.feature')
 scenarios('../features/onezone/providers.feature')
 scenarios('../features/onezone/providers_multibrowser.feature')
-scenarios('../features/onezone/tokens_basic.feature')
-scenarios('../features/onezone/invite_tokens.feature')
 scenarios('../features/onezone/full_name.feature')
+scenarios('../features/onezone/default_privileges.feature')
 
-scenarios('../features/onezone/groups/groups_creation.feature')
-scenarios('../features/onezone/groups/groups_basic_operations.feature')
-scenarios('../features/onezone/groups/groups_join.feature')
-scenarios('../features/onezone/groups/'
-          'groups_multiple_users_with_single_group.feature')
-scenarios('../features/onezone/groups/groups_subgroup.feature')
-scenarios('../features/onezone/groups/'
-          'groups_multiple_users_with_multiple_groups.feature')
-scenarios('../features/onezone/groups/groups_hierarchy.feature')
-scenarios('../features/onezone/groups/groups_memberships.feature')
-scenarios('../features/onezone/groups/groups_memberships_multibrowser.feature')
-scenarios('../features/onezone/groups/groups_memberships_privileges.feature')
-
+# THIS SCENARIO HAS TO BE EXECUTED IN THE END
+scenarios('../features/onezone/delete_account.feature')

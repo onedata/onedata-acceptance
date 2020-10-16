@@ -28,7 +28,7 @@ Feature: Basic cluster members management utilities using onepanel
     And user of browser_standard clicks on "oneprovider-1" in clusters menu
     And user of browser_standard clicks on Members item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser_standard clicks "admin" user in "oneprovider-1" cluster members users list
-    Then user of browser_standard sees Insufficient permissions alert for "admin" user in cluster members subpage
+    Then user of browser_standard sees Insufficient privileges alert for "admin" user in cluster members subpage
 
 
   Scenario: User fails to set privileges without set privileges
@@ -149,7 +149,7 @@ Feature: Basic cluster members management utilities using onepanel
               View cluster: False
 
     And user of browser_standard clicks on Members item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    Then user of browser_standard sees Insufficient permissions alert in cluster members subpage
+    Then user of browser_standard sees Insufficient privileges alert in cluster members subpage
 
 
   Scenario: User fails to modify cluster without modify cluster privileges

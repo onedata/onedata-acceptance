@@ -13,6 +13,9 @@ groups:
 
 
 users:
+  - &space_owner
+    name: space_owner
+    password: password
   - &user1
     name: user1
     password: password
@@ -22,7 +25,9 @@ users:
 
 spaces:
   - name: ceph
-    user: *user1
+    user: *space_owner
+    users:
+      - user: *user1
     groups:
       - group: *group1
     supports:
@@ -31,7 +36,9 @@ spaces:
       size: '1000000000'
 
   - name: s3
-    user: *user1
+    user: *space_owner
+    users:
+      - user: *user1
     groups:
       - group: *group1
     supports:
@@ -40,16 +47,20 @@ spaces:
       size: '1000000000'
 
   - name: posix
-    user: *user1
+    user: *space_owner
+    users:
+      - user: *user1
     groups:
       - group: *group1
     supports:
     - provider: "oneprovider-1"
-      storage_name: "nfs"
+      storage_name: "local-volume-1"
       size: '1000000000'
 
   - name: swift
-    user: *user1
+    user: *space_owner
+    users:
+      - user: *user1
     groups:
      - group: *group1
     supports:

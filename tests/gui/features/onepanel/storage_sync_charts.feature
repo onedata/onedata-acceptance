@@ -5,10 +5,9 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
             - user1
 
     And users opened [browser1, browser2] browsers' windows
-    And users of [browser1, browser2] opened [oneprovider-1 provider panel, onezone] page
-    And user of browser1 logged as admin to Onepanel service
-    And user of browser2 seen "onezone" zone name in oz login page
-    And user of browser2 logged as user1 to Onezone service
+    And users of [browser1, browser2] opened [Onezone, Onezone] page
+    And user of [browser1, browser2] logged as [admin, user1] to [Onezone, Onezone] service
+
     And directory tree structure on local file system:
           browser2:
               - dir1: 500
@@ -16,94 +15,52 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
 
   Scenario: User configures storage sync and sees storage synchronization statistics
-    # create space
-    When user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
-    And user of browser2 sees that there is no space named "space7" in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 clicks on "Create new space" button in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 types "space7" to space creation edit box in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 presses enter on keyboard
-    And user of browser2 sees that space named "space7" has appeared in expanded "DATA SPACE MANAGEMENT" Onezone panel
+    Given there are no spaces supported by oneprovider-1 in Onepanel
+    And there is no "dir1", "dir2" in provider's storage mount point
+    And there is "new_storage" storage in "oneprovider-1" Oneprovider panel service used by user of browser1 with following configuration:
+          storage type: POSIX
+          mount point: /volumes/persistence/storage
+          imported storage: true
 
-    # receive support token
-    And user of browser2 expands the "DATA SPACE MANAGEMENT" Onezone sidebar panel
-    And user of browser2 expands settings dropdown for space named "space7" in expanded "DATA SPACE MANAGEMENT" Onezone panel by clicking on settings icon
-    And user of browser2 clicks on the "ADD STORAGE" item in settings dropdown for space named "space7" in expanded "DATA SPACE MANAGEMENT" Onezone panel
-    And user of browser2 sees that modal "Add storage" has appeared
-    And user of browser2 sees non-empty token in "Add storage" modal
-    And user of browser2 copies token from "Add storage" modal
-    And user of browser2 sees an info notify with text matching to: .*copied.*
-    And user of browser2 sends copied token to user of browser1
+    When user of browser2 creates "space1" space in Onezone
 
-    # support space
-    And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of browser1 clicks on Support space button in spaces page in Onepanel if there are some spaces already supported
-    And user of browser1 selects "posix" from storage selector in support space form in onepanel
-    And user of browser1 types received token to Support token field in support space form in Onepanel
-    And user of browser1 types "1" to Size input field in support space form in Onepanel
-    And user of browser1 selects GiB radio button in support space form in Onepanel
-    And user of browser1 clicks on Support space button in support space form in Onepanel
-    And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
-    And user of browser1 sees that space support record for "space7" has appeared in Spaces page in Onepanel
+    And user of browser2 sends support token for "space1" to user of browser1
+    And user of browser1 opens "oneprovider-1" clusters submenu
+    And user of browser1 supports "space1" space in "oneprovider-1" Oneprovider panel service with following configuration:
+          storage: new_storage (import-enabled)
+          size: 1
+          unit: GiB
+          storage import:
+            max depth: 3
+            detect modifications: true
+            detect deletions: true
+            scan interval [s]: 1
 
-    # copy files to provider storage
-    And user of browser1 expands "space7" record on spaces list in Spaces page in Onepanel
-    And user of browser1 copies Id of "space7" space in Spaces page in Onepanel
-    And user of browser2 copies dir1 to dir0 directory of "space7" space
+    # wait more than 1 second for the mounting point's timestamp to change
+    And user of browser2 is idle for 3 seconds
 
-    # configure import parameters
-    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space7"
-    And user of browser1 clicks on Configure button in "space7" record in Spaces page in Onepanel
-    And user of browser1 selects Simple scan strategy from strategy selector in IMPORT CONFIGURATION in "space7" record in Spaces page in Onepanel
-    And user of browser1 types "3" to Max depth input field in IMPORT CONFIGURATION in "space7" record in Spaces page in Onepanel
-    And user of browser1 clicks on Start synchronization button in "space7" record in Spaces page in Onepanel
-    And user of browser1 sees an info notify with text matching to: .*[Cc]onfiguration.*space.*support.*changed.*
+    And user of browser2 copies dir1 to provider's storage mount point
 
-    # confirm correct import configuration
-    And user of browser1 sees that Import strategy configuration for "space7" is as follow:
-          Import strategy: Simple scan
-          Max depth: 3
+    # open chart tab
+    And user of browser1 opens "space1" record on spaces list in Spaces page in Onepanel
+    And user of browser1 clicks on storage import navigation tab in space "space1"
 
-    # check inserted number display on chart
-    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space7"
-    And user of browser1 is idle for 20 seconds
-    Then user of browser1 sees that number of inserted files for "space7" shown on Synchronization files processing charts equals 502 in Spaces page in Onepanel
+    # check charts after storage import of 500 files and 1 directory to 1 space
+    Then user of browser1 clicks on last hour update view
+    And user of browser1 sees that number of inserted files for "space1" shown on Synchronization files processing charts equals 501 in Spaces page in Onepanel
+    And user of browser1 sees that number of updated files for "space1" shown on Synchronization files processing charts equals 1 in Spaces page in Onepanel
 
-    # configure update parameters
-    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space7"
-    And user of browser1 clicks settings in Storage synchronization in Spaces page
-    And user of browser1 selects Simple scan strategy from strategy selector in UPDATE CONFIGURATION in "space7" record in Spaces page in Onepanel
-    And user of browser1 types "3" to Max depth input field in UPDATE CONFIGURATION in "space7" record in Spaces page in Onepanel
-    And user of browser1 types "1" to Scan interval input field in UPDATE CONFIGURATION in "space7" record in Spaces page in Onepanel
-    And user of browser1 enables Delete enabled option UPDATE CONFIGURATION in "space7" record in Spaces page in Onepanel
-    And user of browser1 clicks on Save configuration button in "space7" record in Spaces page in Onepanel
-    And user of browser1 sees an info notify with text matching to: .*[Cc]onfiguration.*space.*support.*changed.*
+    And user of browser2 copies dir2 to provider's storage mount point
 
-    # confirm correct update configuration
-    And user of browser1 sees that Update strategy configuration for "space7" is as follow:
-          Update strategy: Simple scan
-          Max depth: 3
-          Scan interval [s]: 1
-          Write once: false
-          Delete enabled: true
+    # check charts after storage update - inserted 300 files and 1 directory to 1 space
+    And user of browser1 sees that number of inserted files for "space1" shown on Synchronization files processing charts equals 802 in Spaces page in Onepanel
+    And user of browser1 sees that number of updated files for "space1" shown on Synchronization files processing charts equals 2 in Spaces page in Onepanel
 
-    # copy files to provider storage
-    And user of browser2 copies dir2 to dir0 directory of "space7" space
+    And user of browser2 removes dir1 from provider's storage mount point
+    And user of browser2 removes dir2 from provider's storage mount point
 
-    # check inserted and updated number display on chart
-    And user of browser1 clicks on "Storage synchronization" navigation tab in space "space7"
-    Then user of browser1 sees that number of inserted files for "space7" shown on Synchronization files processing charts equals 201 in Spaces page in Onepanel
-    And user of browser1 sees that number of updated files for "space7" shown on Synchronization files processing charts equals 1 in Spaces page in Onepanel
+    # check charts after storage cleanup of 800 files and 2 directories
+    And user of browser1 sees that number of deleted files for "space1" shown on Synchronization files processing charts equals 802 in Spaces page in Onepanel
+    And user of browser1 sees that number of updated files for "space1" shown on Synchronization files processing charts equals 3 in Spaces page in Onepanel
 
-    # confirm detection of deleted files
-    And user of browser2 removes dir0 from the root directory of "space7" space
-    And user of browser1 is idle for 30 seconds
-    Then user of browser1 sees that number of deleted files for "space7" shown on Synchronization files processing charts equals 703 in Spaces page in Onepanel
-    And user of browser1 sees that number of updated files for "space7" shown on Synchronization files processing charts equals 1 in Spaces page in Onepanel
-
-    # revoke space support
-    And user of browser1 clicks on Spaces item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of browser1 expands toolbar for "space7" space record in Spaces page in Onepanel
-    And user of browser1 clicks on Revoke space support option in space's toolbar in Onepanel
-    And user of browser1 checks the understand notice in cease oneprovider support for space modal in Onepanel
-    And user of browser1 clicks on Cease support button in cease oneprovider support for space modal in Onepanel
-    And user of browser1 sees an info notify with text matching to: .*[Ss]upport.*revoked.*
+    And user of browser1 revokes "space1" space support in "oneprovider-1" provider in Onepanel

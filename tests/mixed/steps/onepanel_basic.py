@@ -9,9 +9,8 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-from pytest_bdd import when, then, parsers
-
 from tests.gui.conftest import WAIT_BACKEND
+from tests.utils.bdd_utils import wt, when, then, parsers
 from tests.utils.utils import repeat_failed
 from tests.mixed.utils.common import NoSuchClientException
 
@@ -285,7 +284,7 @@ def register_provider_in_op(client, request, user, hosts, users, selenium,
                  '(?P<supporting_user>.+)'))
 def request_space_support(client, request, user, space_name,
                           host, hosts, users, selenium,
-                          tmp_memory, oz_page, modals, displays, clipboard,
+                          tmp_memory, oz_page, displays, clipboard,
                           supporting_user):
 
     if client.lower() == 'rest':
@@ -303,14 +302,10 @@ def request_space_support(client, request, user, space_name,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>.+?) supports '
-                 '"(?P<space_name>.*)" space in "(?P<host>.+?)" Oneprovider '
-                 'panel service with following configuration:\n'
-                 '(?P<config>(.|\s)*)'))
-@then(parsers.re('using (?P<client>.*), (?P<user>.+?) supports '
-                 '"(?P<space_name>.*)" space in "(?P<host>.+?)" Oneprovider '
-                 'panel service with following configuration:\n'
-                 '(?P<config>(.|\s)*)'))
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) supports '
+               '"(?P<space_name>.*)" space in "(?P<host>.+?)" Oneprovider '
+               'panel service with following configuration:\n'
+               '(?P<config>(.|\s)*)'))
 def support_space_in_op_panel(client, request, user, selenium, tmp_memory,
                               onepanel, users, hosts, host, config, space_name):
     """ Support space according to given config.
@@ -323,9 +318,12 @@ def support_space_in_op_panel(client, request, user, selenium, tmp_memory,
             size: 1000                          --> required
             mount in root: True/False           --> optional
             storage import:                     --> optional
-                strategy: Simple Scan           --> required if storage import
-                                                option is used
+                continuous scan: True/False     --> required if storage
+                                                    import is used
                 max depth: 2                    --> optional
+                detect modifications: True/False
+                detect deletions: True/False
+                scan interval [s]: int
 
     """
 
@@ -372,14 +370,10 @@ def w_assert_space_is_supported_by_provider_in_oz(client, request, user,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>.+?) revokes '
-                 '"(?P<provider_name>.+?)" provider space support for space '
-                 'named "(?P<space_name>.+?)" in "(?P<host>.+?)" Oneprovider '
-                 'panel service'))
-@then(parsers.re('using (?P<client>.*), (?P<user>.+?) revokes '
-                 '"(?P<provider_name>.+?)" provider space support for space '
-                 'named "(?P<space_name>.+?)" in "(?P<host>.+?)" Oneprovider '
-                 'panel service'))
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) revokes '
+               '"(?P<provider_name>.+?)" provider space support for space '
+               'named "(?P<space_name>.+?)" in "(?P<host>.+?)" Oneprovider '
+               'panel service'))
 def revoke_space_support_in_op_panel(client, request, user, space_name,
                                      provider_name, host, selenium, onepanel,
                                      popups, modals, users, hosts,
@@ -411,6 +405,16 @@ def cp_files_to_storage_mount_point(user, src_path, tmpdir, hosts):
 
 
 @when(parsers.re('using docker, (?P<user>.+?) copies (?P<src_path>.+?) '
+                 'to (?P<dst_path>.+?) provider\'s storage mount point'))
+def cp_files_to_path_in_storage_mount_point(user, src_path, tmpdir, hosts,
+                                            dst_path):
+    from tests.gui.steps.common.docker import (
+        wt_cp_files_to_dir_in_storage_mount_point)
+    wt_cp_files_to_dir_in_storage_mount_point(user, src_path, tmpdir, hosts,
+                                              dst_path)
+
+
+@when(parsers.re('using docker, (?P<user>.+?) copies (?P<src_path>.+?) '
                  'to the root directory of "(?P<space_name>.+?)" space'))
 def cp_files_to_space_root_dir(user, src_path, space_name, tmpdir, tmp_memory,
                                hosts):
@@ -422,15 +426,15 @@ def cp_files_to_space_root_dir(user, src_path, space_name, tmpdir, tmp_memory,
 @when(parsers.re('using docker, (?P<user>.+?) copies (?P<src_path>.+?) '
                  'to (?P<dst_path>.+?) regular directory of '
                  '"(?P<space_name>.+?)" space'))
-def cp_files_to_space_root_dir(user, src_path, dst_path, space_name, tmpdir,
-                               tmp_memory, hosts):
+def cp_files_to_path_in_space_root_dir(user, src_path, dst_path, space_name,
+                                       tmpdir, tmp_memory, hosts):
     from tests.gui.steps.common.docker import wt_cp_files_to_dst_path_in_space
     wt_cp_files_to_dst_path_in_space(user, src_path, dst_path, space_name,
                                      tmpdir, tmp_memory, hosts)
 
 
 @when(parsers.re('using (?P<client>.*), (?P<user>.+?) sees that '
-                 '(?P<sync_type>IMPORT|UPDATE) strategy configuration for '
+                 '(?P<sync_type>import) strategy configuration for '
                  '"(?P<space>.+?)" in "(?P<host>.+?)" is as follow:\n'
                  '(?P<config>(.|\s)*)'))
 def assert_proper_space_configuration_in_op_panel(client, request, user,
@@ -443,18 +447,13 @@ def assert_proper_space_configuration_in_op_panel(client, request, user,
 
     config should be in yaml format exactly as seen in panel, e.g.
 
-    For update strategy:
-
-        Update strategy: Simple scan
-        Max depth: 20
-        Scan interval [s]: 10
-        Write once: true
-        Delete enabled: false
-
     For import strategy:
 
-        Import strategy: Simple scan
-        Max depth: 2
+        Continuous scan: true
+        Max depth: 20
+        Scan interval [s]: 10
+        Detect modifications: true
+        Detect deletions: false
 
     """
 
@@ -469,7 +468,7 @@ def assert_proper_space_configuration_in_op_panel(client, request, user,
                             assert_proper_space_configuration_in_op_panel_rest
         assert_proper_space_configuration_in_op_panel_rest(space, user, users,
                                                            host, hosts,
-                                                           config, sync_type,
+                                                           config,
                                                            onepanel_credentials,
                                                            admin_credentials)
     else:
@@ -477,11 +476,11 @@ def assert_proper_space_configuration_in_op_panel(client, request, user,
 
 
 @when(parsers.re('using (?P<client>.*), (?P<user>.+?) configures '
-                 '(?P<sync_type>IMPORT|UPDATE) parameters for '
+                 'import parameters for '
                  '"(?P<space_name>.+?)" in "(?P<host>.+?)" Oneprovider panel '
                  'service as follow:\n(?P<config>(.|\s)*)'))
 def configure_sync_parameters_for_space_in_op_panel(client, request, user,
-                                                    sync_type, space_name, host,
+                                                    space_name, host,
                                                     config, selenium, onepanel,
                                                     popups, users, hosts,
                                                     onepanel_credentials,
@@ -490,18 +489,13 @@ def configure_sync_parameters_for_space_in_op_panel(client, request, user,
 
     config should be in yaml format exactly as seen in panel, e.g.
 
-    For update strategy:
-
-        Update strategy: Simple scan
-        Max depth: 20
-        Scan interval [s]: 10
-        Write once: true
-        Delete enabled: false
-
-    For import strategy:
-
-        Import strategy: Simple scan
+     For import strategy:
         Max depth: 2
+        Scan interval [s]: 10
+        Detect modifications: true
+        Detect deletions: true
+        Synchronize ACL: false
+        Continuous scan: true
 
     """
 
@@ -509,29 +503,26 @@ def configure_sync_parameters_for_space_in_op_panel(client, request, user,
         from tests.gui.meta_steps.onepanel.spaces import \
                             configure_sync_parameters_for_space_in_op_panel_gui
         configure_sync_parameters_for_space_in_op_panel_gui(selenium, user,
-                                                            space_name,
-                                                            onepanel, popups,
-                                                            config, sync_type)
+                                                            onepanel, config)
     elif client.lower() == 'rest':
         from tests.mixed.steps.rest.onepanel.spaces import \
                             configure_sync_parameters_for_space_in_op_panel_rest
         configure_sync_parameters_for_space_in_op_panel_rest(user, users, host,
                                                              hosts, config,
                                                              space_name,
-                                                             sync_type,
                                                              onepanel_credentials,
                                                              admin_credentials)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>.+?) sees that '
-                 'content for "(?P<space_name>.+?)" in "(?P<host>.+?)" '
-                 'Oneprovider service is as follow:\n(?P<config>(.|\s)*)'))
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) sees that '
+               'content for "(?P<space_name>.+?)" in "(?P<host>.+?)" '
+               'Oneprovider service is as follow:\n(?P<config>(.|\s)*)'))
 @repeat_failed(timeout=WAIT_BACKEND, interval=1.5)
 def assert_space_content_in_op(client, request, config, selenium, user,
                                op_container, tmp_memory, tmpdir, users, hosts,
-                               space_name, spaces, host, oz_page, modals):
+                               space_name, spaces, host, oz_page):
     """ Assert space has given content in provider.
 
      space content format given in yaml is as follow:
@@ -553,7 +544,7 @@ def assert_space_content_in_op(client, request, config, selenium, user,
                                                 assert_space_content_in_op_gui
         assert_space_content_in_op_gui(config, selenium, user, op_container,
                                        tmp_memory, tmpdir, space_name, oz_page,
-                                       host, hosts, modals)
+                                       host, hosts)
     elif client.lower() == 'rest':
         from tests.mixed.steps.rest.oneprovider.data import \
                                                 assert_space_content_in_op_rest
@@ -563,11 +554,18 @@ def assert_space_content_in_op(client, request, config, selenium, user,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@when(parsers.re('using docker, (?P<user>.+?) removes (?P<src_path>.+?) '
+@when(parsers.re('using docker, user removes (?P<src_path>.+?) '
                  'from the root directory of "(?P<space_name>.+?)" space'))
-def rm_files_from_space_root_dir(user, src_path, space_name, tmp_memory, hosts):
+def rm_files_from_space_root_dir(src_path, space_name, tmp_memory, hosts):
     from tests.gui.steps.common.docker import wt_rm_files_to_space_root_dir
     wt_rm_files_to_space_root_dir(src_path, space_name, tmp_memory, hosts)
+
+
+@wt(parsers.re('using docker, user removes (?P<src_path>.+?) '
+               'from provider\'s storage mount point'))
+def rm_files_from_storage_mount_point(src_path, hosts):
+    from tests.gui.steps.common.docker import wt_rm_files_to_storage_mount_point
+    wt_rm_files_to_storage_mount_point(src_path, hosts)
 
 
 @when(parsers.re('using (?P<client>.*), (?P<user>.+?) copies Id of '
@@ -589,9 +587,9 @@ def copy_id_of_space(client, request, user, space_name, selenium, onepanel,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>.+?) is idle for '
-                 '(?P<seconds>\d*\.?\d+([eE][-+]?\d+)?) seconds?'))
-def client_wait_given_time(client, request, user, seconds):
+@wt(parsers.re(r'user is idle for (?P<seconds>\d*\.?\d+([eE][-+]?\d+)?) '
+               'seconds?'))
+def client_wait_given_time(seconds):
     from tests.utils.acceptance_utils import wait_given_time
     wait_given_time(seconds)
 

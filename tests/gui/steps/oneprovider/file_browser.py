@@ -18,10 +18,8 @@ from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import wt, parsers, when, then
 
 
-@when(parsers.parse('user of {browser_id} sees "{msg}" '
-                    'instead of file browser'))
-@then(parsers.parse('user of {browser_id} sees "{msg}" '
-                    'instead of file browser'))
+@wt(parsers.parse('user of {browser_id} sees "{msg}" '
+                  'instead of file browser'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_msg_instead_of_browser(browser_id, msg, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
@@ -95,6 +93,7 @@ def assert_items_presence_in_file_browser(browser_id, item_list, tmp_memory):
                 file_browser.data[item_name].size), (f'not found "{item_name}" '
                                                      f'in file browser')
 
+
 @wt(parsers.parse('user of {browser_id} sees only items named {item_list}'
                   ' in file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -131,8 +130,8 @@ def assert_presence_in_file_browser_with_order(browser_id, item_list,
                   'named "{item_name}" is not earlier than {err_time:d} '
                   'seconds ago in file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_item_in_file_browser_is_of_mdate(browser_id, item_name, err_time,
-                                            tmp_memory):
+def assert_item_in_file_browser_is_of_mdate(browser_id, item_name,
+                                            err_time: float, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
     date_fmt = '%d %b %Y %H:%M'
     # %b - abbreviated month name

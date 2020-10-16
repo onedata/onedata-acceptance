@@ -3,10 +3,10 @@ Feature: Uploading multiple files at once
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
-            - user1
+            - space-owner-user
     And initial spaces configuration in "onezone" Onezone service:
         space1:
-            owner: user1
+            owner: space-owner-user
             providers:
                 - oneprovider-1:
                     storage: posix
@@ -14,7 +14,7 @@ Feature: Uploading multiple files at once
 
     And user opened browser window
     And user of browser opened onezone page
-    And user of browser logged as user1 to Onezone service
+    And user of browser logged as space-owner-user to Onezone service
     And directory tree structure on local file system:
           browser:
               - dir1: 5
@@ -44,7 +44,6 @@ Feature: Uploading multiple files at once
     And user of browser uses upload button from file browser menu bar to upload files from local directory "dir2" to remote current dir
     And user of browser is idle for 5 seconds
     And user of browser waits for file upload to finish
-    And user of browser sees that there are 9 items in file browser
 
     # check working of lazy loading
     And user of browser sees nonempty file browser in data tab in Oneprovider page

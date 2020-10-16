@@ -5,8 +5,10 @@ __copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import time
+
 from tests.gui.meta_steps.oneprovider.data import (
-    open_modal_for_file_browser_item)
+    open_modal_for_file_browser_item, go_to_filebrowser)
 from tests.gui.steps.modal import (
     wt_wait_for_modal_to_appear, assert_error_modal_with_text_appeared)
 from tests.gui.steps.oneprovider.file_browser import (
@@ -118,7 +120,7 @@ def set_metadata_in_op_gui(selenium, browser_id, path, tmp_memory, op_container,
 
 def _assert_metadata_loading_alert(selenium, browser_id, modals):
     modal = modals(selenium[browser_id]).metadata
-    assert 'Insufficient permissions' in modal.loading_alert, (
+    assert 'Insufficient privileges' in modal.loading_alert, (
         "resource loaded")
 
 
@@ -187,6 +189,7 @@ def remove_all_basic_metadata(selenium, browser_id, modals):
     modal = modals(selenium[browser_id]).metadata
     while len(modal.basic.entries) > 0:
         modal.basic.entries[0].remove()
+        time.sleep(0.5)
 
 
 def remove_all_metadata_in_op_gui(selenium, browser_id, space, op_container,
@@ -224,3 +227,21 @@ def assert_no_metadata_in_modal(selenium, browser_id, modals):
     click_on_navigation_tab_in_metadata_modal(selenium, browser_id, 'RDF',
                                               modals)
     assert_textarea_is_empty_for_metadata(selenium, browser_id, 'RDF', modals)
+
+
+@wt(parsers.parse('user of {browser_id} removes basic metadata entry with key '
+                  '"{key}" for "{path}" file in "{space}" space'))
+def open_filebrowser_and_remove_meta(selenium, browser_id, key, path,
+                                     space, modals, oz_page, op_container,
+                                     tmp_memory):
+    modal_name = 'File metadata'
+    button = 'Save all'
+    option = 'Metadata'
+
+    go_to_filebrowser(selenium, browser_id, oz_page, op_container, tmp_memory,
+                      space)
+    open_modal_for_file_browser_item(selenium, browser_id, modals, modal_name,
+                                     path, tmp_memory, option, space, oz_page,
+                                     op_container)
+    click_on_del_metadata_record_button(selenium, browser_id, key, modals)
+    click_metadata_modal_button(selenium, browser_id, button, modals)

@@ -101,6 +101,12 @@ def wt_rm_files_to_storage_mount_point(src_path, hosts):
     _docker_rm(os.path.join(MOUNT_POINT, src_path), hosts)
 
 
+@given(parsers.parse('there is no {elems} in provider\'s storage mount point'))
+def g_rm_many_files_from_storage_mount_point(elems, hosts):
+    for elem in parse_seq(elems):
+        _docker_rm(os.path.join(MOUNT_POINT, elem), hosts)
+
+
 @wt(parsers.parse('user of {browser_id} appends "{text}" to {path} file '
                   'in provider\'s storage mount point'))
 def wt_append_text_to_files_in_storage_mount_point(path, text, hosts):
@@ -115,29 +121,38 @@ def wt_rm_files_to_space_root_dir(src_path, space, tmp_memory, hosts):
     _docker_rm(os.path.join(MOUNT_POINT, tmp_memory['spaces'][space],
                             src_path), hosts)
 
+
 @wt(parsers.parse('using docker, {user} renames {src_path} path '
                   'to {new_src_path}'))
 def wt_mv_file(src_path, new_src_path, hosts):
     _docker_mv(src_path, new_src_path, hosts)
 
 
-@given(parsers.parse('there is no working provider named {provider_list}'))
-@given(parsers.parse('there are no working provider(s) named {provider_list}'))
-def kill_providers(persistent_environment, provider_list):
-    kill_cmd = ['docker', 'kill']
-    inspect_cmd = ['docker', 'inspect', '-f', '{{.State.Running}}']
+@given(parsers.re('providers? named (?P<provider_list>.*?) (is|are) paused'))
+def pause_providers(hosts, provider_list):
+    pause_cmd = ['docker', 'pause']
     for provider in parse_seq(provider_list):
-        for node in persistent_environment["op_worker_nodes"]:
-            if provider in node:
-                container_name = node.split('@')[1]
-                subprocess.call(kill_cmd + [container_name])
-                for _ in range(10):
-                    is_alive = subprocess.Popen(inspect_cmd + [container_name],
-                                                stdout=subprocess.PIPE)
-                    with suppress(Exception):
-                        if is_alive.communicate()[0] == 'false\n':
-                            break
-                    time.sleep(1)
-                else:
-                    raise RuntimeError('container {} still alive, while it '
-                                       'should not be'.format(container_name))
+        container_id = hosts[provider]['container-id']
+        subprocess.call(pause_cmd + [container_id])
+
+
+@wt(parsers.re('providers? named (?P<provider_list>.*?) (is|are) unpaused'))
+def unpause_providers(hosts, provider_list):
+    unpause_cmd = ['docker', 'unpause']
+    for provider in parse_seq(provider_list):
+        container_id = hosts[provider]['container-id']
+        subprocess.call(unpause_cmd + [container_id])
+
+
+@wt(parsers.parse('elasticsearch plugin stops working'))
+def pause_elasticsearch_container(hosts):
+    pause_cmd = ['docker', 'pause']
+    container_id = hosts['elasticsearch']['container-id']
+    subprocess.call(pause_cmd + [container_id])
+
+
+@wt(parsers.parse('elasticsearch plugin starts working'))
+def unpause_elasticsearch_container(hosts):
+    unpause_cmd = ['docker', 'unpause']
+    container_id = hosts['elasticsearch']['container-id']
+    subprocess.call(unpause_cmd + [container_id])
