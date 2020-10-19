@@ -601,11 +601,12 @@ def assert_no_such_metadata_in_op(client, selenium, user, users, space, op_conta
 @when(parsers.re('using (?P<client>.*), (?P<user>\w+) uploads "(?P<path>.*)" '
                  'to "(?P<space>.*)" in (?P<host>.*)'))
 def upload_file_to_op(client, selenium, user, path, space, host, hosts,
-                      tmp_memory, op_container, oz_page):
+                      tmp_memory, op_container, oz_page, popups):
     client_lower = client.lower()
     if client_lower == 'web gui':
         successfully_upload_file_to_op_gui(path, selenium, user, space,
-                                           op_container, tmp_memory, oz_page)
+                                           op_container, tmp_memory, oz_page,
+                                           popups)
     else:
         raise NoSuchClientException('Client: {} not found'.format(client))
 
