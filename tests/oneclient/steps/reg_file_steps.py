@@ -9,7 +9,6 @@ __license__ = "This software is released under the MIT license cited in " \
 from . import multi_reg_file_steps
 from tests.utils.bdd_utils import when, then, wt, parsers
 
-
 @wt(parsers.re('(?P<user>\w+) writes "(?P<text>.*)" to (?P<file>.*)'))
 def write_text(user, text, file, users):
     multi_reg_file_steps.write_text(user, text, file, 'client1', users)

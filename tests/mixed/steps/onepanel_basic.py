@@ -302,14 +302,10 @@ def request_space_support(client, request, user, space_name,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>.+?) supports '
-                 '"(?P<space_name>.*)" space in "(?P<host>.+?)" Oneprovider '
-                 'panel service with following configuration:\n'
-                 '(?P<config>(.|\s)*)'))
-@then(parsers.re('using (?P<client>.*), (?P<user>.+?) supports '
-                 '"(?P<space_name>.*)" space in "(?P<host>.+?)" Oneprovider '
-                 'panel service with following configuration:\n'
-                 '(?P<config>(.|\s)*)'))
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) supports '
+               '"(?P<space_name>.*)" space in "(?P<host>.+?)" Oneprovider '
+               'panel service with following configuration:\n'
+               '(?P<config>(.|\s)*)'))
 def support_space_in_op_panel(client, request, user, selenium, tmp_memory,
                               onepanel, users, hosts, host, config, space_name):
     """ Support space according to given config.
@@ -322,9 +318,12 @@ def support_space_in_op_panel(client, request, user, selenium, tmp_memory,
             size: 1000                          --> required
             mount in root: True/False           --> optional
             storage import:                     --> optional
-                strategy: Simple Scan           --> required if storage import
-                                                option is used
+                continuous scan: True/False     --> required if storage
+                                                    import is used
                 max depth: 2                    --> optional
+                detect modifications: True/False
+                detect deletions: True/False
+                scan interval [s]: int
 
     """
 
@@ -435,7 +434,7 @@ def cp_files_to_path_in_space_root_dir(user, src_path, dst_path, space_name,
 
 
 @when(parsers.re('using (?P<client>.*), (?P<user>.+?) sees that '
-                 '(?P<sync_type>import|update) strategy configuration for '
+                 '(?P<sync_type>import) strategy configuration for '
                  '"(?P<space>.+?)" in "(?P<host>.+?)" is as follow:\n'
                  '(?P<config>(.|\s)*)'))
 def assert_proper_space_configuration_in_op_panel(client, request, user,
@@ -448,18 +447,13 @@ def assert_proper_space_configuration_in_op_panel(client, request, user,
 
     config should be in yaml format exactly as seen in panel, e.g.
 
-    For update strategy:
-
-        Update strategy: Simple scan
-        Max depth: 20
-        Scan interval [s]: 10
-        Write once: true
-        Delete enabled: false
-
     For import strategy:
 
-        Import strategy: Simple scan
-        Max depth: 2
+        Continuous scan: true
+        Max depth: 20
+        Scan interval [s]: 10
+        Detect modifications: true
+        Detect deletions: false
 
     """
 
@@ -474,7 +468,7 @@ def assert_proper_space_configuration_in_op_panel(client, request, user,
                             assert_proper_space_configuration_in_op_panel_rest
         assert_proper_space_configuration_in_op_panel_rest(space, user, users,
                                                            host, hosts,
-                                                           config, sync_type,
+                                                           config,
                                                            onepanel_credentials,
                                                            admin_credentials)
     else:
@@ -482,11 +476,11 @@ def assert_proper_space_configuration_in_op_panel(client, request, user,
 
 
 @when(parsers.re('using (?P<client>.*), (?P<user>.+?) configures '
-                 '(?P<sync_type>import|update) parameters for '
+                 'import parameters for '
                  '"(?P<space_name>.+?)" in "(?P<host>.+?)" Oneprovider panel '
                  'service as follow:\n(?P<config>(.|\s)*)'))
 def configure_sync_parameters_for_space_in_op_panel(client, request, user,
-                                                    sync_type, space_name, host,
+                                                    space_name, host,
                                                     config, selenium, onepanel,
                                                     popups, users, hosts,
                                                     onepanel_credentials,
@@ -495,19 +489,13 @@ def configure_sync_parameters_for_space_in_op_panel(client, request, user,
 
     config should be in yaml format exactly as seen in panel, e.g.
 
-    For update strategy:
-
-        Update strategy: Simple scan
-        Max depth: 20
-        Scan interval [s]: 10
-        Write once: true
-        Delete enabled: false
-        Synchronize ACL: false
-
-    For import strategy:
-
-        Import strategy: Simple scan
+     For import strategy:
         Max depth: 2
+        Scan interval [s]: 10
+        Detect modifications: true
+        Detect deletions: true
+        Synchronize ACL: false
+        Continuous scan: true
 
     """
 
@@ -515,16 +503,13 @@ def configure_sync_parameters_for_space_in_op_panel(client, request, user,
         from tests.gui.meta_steps.onepanel.spaces import \
                             configure_sync_parameters_for_space_in_op_panel_gui
         configure_sync_parameters_for_space_in_op_panel_gui(selenium, user,
-                                                            space_name,
-                                                            onepanel, popups,
-                                                            config, sync_type)
+                                                            onepanel, config)
     elif client.lower() == 'rest':
         from tests.mixed.steps.rest.onepanel.spaces import \
                             configure_sync_parameters_for_space_in_op_panel_rest
         configure_sync_parameters_for_space_in_op_panel_rest(user, users, host,
                                                              hosts, config,
                                                              space_name,
-                                                             sync_type,
                                                              onepanel_credentials,
                                                              admin_credentials)
     else:

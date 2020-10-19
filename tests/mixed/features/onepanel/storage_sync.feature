@@ -1,4 +1,4 @@
-Feature: Onepanel features regarding storage sync (e.g. import/update)
+Feature: Onepanel features regarding storage sync (e.g. import)
 
 
   Examples:
@@ -36,7 +36,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
           imported storage: true
 
 
-  Scenario Outline: Files tree with specified depth is imported to space after changing update depth option
+  Scenario Outline: Files tree with specified depth is imported to space after changing max depth option
     When using <client1>, user1 creates space "space1" in "onezone" Onezone service
     And using docker, user1 copies dir2 to provider's storage mount point
     And using <client1>, user1 generates space support token for space named "space1" in "onezone" Onezone service and sends it to onepanel
@@ -45,29 +45,32 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
           storage: "new_storage (import-enabled)"
           size: 1000000
           storage import:
-                strategy: Simple scan
-                max depth: 2
+            continuous scan: true
+            max depth: 2
+            scan interval [s]: 1
+            detect modifications: true
+            detect deletions: false
     And using <client2>, onepanel sees that import strategy configuration for "space1" in "oneprovider-1" is as follow:
-          Import strategy: Simple scan
+          Continuous scan: true
           Max depth: 2
+          Scan interval [s]: 1
+          Detect modifications: true
+          Detect deletions: false
     And using <client1>, user1 sees that list of supporting providers for space named "space1" contains "oneprovider-1" in "onezone" Onezone service
     And using <client1>, user1 sees that content for "space1" in "oneprovider-1" Oneprovider service is as follow:
           - dir2:
               - dir21
               - dir22
               - file1.txt: 22222
-    And using <client2>, onepanel configures update parameters for "space1" in "oneprovider-1" Oneprovider panel service as follow:
-          Update strategy: Simple scan
+    And using <client2>, onepanel configures import parameters for "space1" in "oneprovider-1" Oneprovider panel service as follow:
+          continuous scan: true
+          max depth: 3
+    And using <client2>, onepanel sees that import strategy configuration for "space1" in "oneprovider-1" is as follow:
+          Continuous scan: true
           Max depth: 3
           Scan interval [s]: 1
-          Write once: false
-          Delete enabled: false
-    And using <client2>, onepanel sees that update strategy configuration for "space1" in "oneprovider-1" is as follow:
-          Update strategy: Simple scan
-          Max depth: 3
-          Scan interval [s]: 1
-          Write once: false
-          Delete enabled: false
+          Detect modifications: true
+          Detect deletions: false
     And user is idle for 5 seconds
     Then using <client1>, user1 sees that content for "space1" in "oneprovider-1" Oneprovider service is as follow:
           - dir2:
@@ -80,7 +83,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And using REST, user1 removes space named "space1" in "onezone" Onezone service
 
 
-  Scenario: Files tree with specified depth is imported to space after changing update depth and enable delete option
+  Scenario: Files tree with specified depth is imported to space after changing import depth and enable delete detection option
     When using <client1>, user1 creates space "space3" in "onezone" Onezone service
     And using <client1>, user1 generates space support token for space named "space3" in "onezone" Onezone service and sends it to onepanel
     And using docker, user1 copies dir2 to provider's storage mount point
@@ -89,29 +92,30 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
           storage: "new_storage (import-enabled)"
           size: 1000000
           storage import:
-                strategy: Simple scan
-                max depth: 2
+            continuous scan: true
+            max depth: 2
+            detect deletions: false
     And using <client2>, onepanel sees that import strategy configuration for "space3" in "oneprovider-1" is as follow:
-          Import strategy: Simple scan
+          Continuous scan: true
           Max depth: 2
+          Detect deletions: false
     And using <client1>, user1 sees that list of supporting providers for space named "space3" contains "oneprovider-1" in "onezone" Onezone service
     And using <client1>, user1 sees that content for "space3" in "oneprovider-1" Oneprovider service is as follow:
           - dir2:
               - dir21
               - dir22
               - file1.txt: 22222
-    And using <client2>, onepanel configures update parameters for "space3" in "oneprovider-1" Oneprovider panel service as follow:
-          Update strategy: Simple scan
+    And using <client2>, onepanel configures import parameters for "space3" in "oneprovider-1" Oneprovider panel service as follow:
+          continuous scan: true
+          max depth: 3
+          scan interval [s]: 1
+          detect deletions: true
+    And using <client2>, onepanel sees that import strategy configuration for "space3" in "oneprovider-1" is as follow:
+          Continuous scan: true
           Max depth: 3
           Scan interval [s]: 1
-          Write once: false
-          Delete enabled: true
-    And using <client2>, onepanel sees that update strategy configuration for "space3" in "oneprovider-1" is as follow:
-          Update strategy: Simple scan
-          Max depth: 3
-          Scan interval [s]: 1
-          Write once: false
-          Delete enabled: true
+          Detect modifications: true
+          Detect deletions: true
     And user is idle for 5 seconds
     Then using <client1>, user1 sees that content for "space3" in "oneprovider-1" Oneprovider service is as follow:
           - dir2:
@@ -131,7 +135,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And using REST, user1 removes space named "space3" in "onezone" Onezone service
 
 
-  Scenario: Files tree with specified depth is imported to space after changing update depth and enable write once option
+  Scenario: Files tree with specified depth is imported to space after changing import depth and disable modification detection option
     When using <client1>, user1 creates space "space4" in "onezone" Onezone service
     And using <client1>, user1 generates space support token for space named "space4" in "onezone" Onezone service and sends it to onepanel
     And using docker, user1 copies dir2 to provider's storage mount point
@@ -140,10 +144,10 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
           storage: "new_storage (import-enabled)"
           size: 1000000
           storage import:
-                strategy: Simple scan
-                max depth: 2
+            continuous scan: true
+            max depth: 2
     And using <client2>, onepanel sees that import strategy configuration for "space4" in "oneprovider-1" is as follow:
-          Import strategy: Simple scan
+          Continuous scan: true
           Max depth: 2
     And using <client1>, user1 sees that list of supporting providers for space named "space4" contains "oneprovider-1" in "onezone" Onezone service
     And using <client1>, user1 sees that content for "space4" in "oneprovider-1" Oneprovider service is as follow:
@@ -151,31 +155,29 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
               - dir21
               - dir22
               - file1.txt: 22222
-    And using <client2>, onepanel configures update parameters for "space4" in "oneprovider-1" Oneprovider panel service as follow:
-          Update strategy: Simple scan
+    And using <client2>, onepanel configures import parameters for "space4" in "oneprovider-1" Oneprovider panel service as follow:
+          continuous scan: true
+          max depth: 3
+          scan interval [s]: 1
+          detect modifications: false
+    And using <client2>, onepanel sees that import strategy configuration for "space4" in "oneprovider-1" is as follow:
+          Continuous scan: true
           Max depth: 3
           Scan interval [s]: 1
-          Write once: true
-          Delete enabled: false
-    And using <client2>, onepanel sees that update strategy configuration for "space4" in "oneprovider-1" is as follow:
-          Update strategy: Simple scan
-          Max depth: 3
-          Scan interval [s]: 1
-          Write once: true
-          Delete enabled: false
+          Detect modifications: false
     And user is idle for 5 seconds
     Then using <client1>, user1 sees that content for "space4" in "oneprovider-1" Oneprovider service is as follow:
-          - dir2:
-              - dir21:
-                  - dir211
-                  - file2.txt: 11111
-              - dir22: 10
-              - file1.txt: 22222
+           - dir2:
+               - dir21:
+                   - dir211
+                   - file2.txt: 11111
+               - dir22: 10
+               - file1.txt: 22222
     And using docker, user removes dir2 from provider's storage mount point
     And using REST, user1 removes space named "space4" in "onezone" Onezone service
 
 
-  Scenario: Files tree with specified depth is imported to space after changing update depth, enable delete and enable write once option
+  Scenario: Files tree with specified depth is imported to space after changing max depth, enabling delete and disabling modification detection
     When using <client1>, user1 creates space "space5" in "onezone" Onezone service
     And using <client1>, user1 generates space support token for space named "space5" in "onezone" Onezone service and sends it to onepanel
     And using docker, user1 copies dir2 to provider's storage mount point
@@ -184,10 +186,10 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
           storage: "new_storage (import-enabled)"
           size: 1000000
           storage import:
-                strategy: Simple scan
-                max depth: 2
+            continuous scan: true
+            max depth: 2
     And using <client2>, onepanel sees that import strategy configuration for "space5" in "oneprovider-1" is as follow:
-          Import strategy: Simple scan
+          Continuous scan: true
           Max depth: 2
     And using <client1>, user1 sees that list of supporting providers for space named "space5" contains "oneprovider-1" in "onezone" Onezone service
     And using <client1>, user1 sees that content for "space5" in "oneprovider-1" Oneprovider service is as follow:
@@ -195,38 +197,37 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
               - dir21
               - dir22
               - file1.txt: 22222
-    And using <client2>, onepanel configures update parameters for "space5" in "oneprovider-1" Oneprovider panel service as follow:
-          Update strategy: Simple scan
+    And using <client2>, onepanel configures import parameters for "space5" in "oneprovider-1" Oneprovider panel service as follow:
+          continuous scan: true
+          max depth: 3
+          scan interval [s]: 1
+          detect modifications: false
+          detect deletions: true
+    And using <client2>, onepanel sees that import strategy configuration for "space5" in "oneprovider-1" is as follow:
+          Continuous scan: true
           Max depth: 3
           Scan interval [s]: 1
-          Write once: true
-          Delete enabled: true
-    And using <client2>, onepanel sees that update strategy configuration for "space5" in "oneprovider-1" is as follow:
-          Update strategy: Simple scan
-          Max depth: 3
-          Scan interval [s]: 1
-          Write once: true
-          Delete enabled: true
+          Detect modifications: false
+          Detect deletions: true
     And user is idle for 10 seconds
     Then using <client1>, user1 sees that content for "space5" in "oneprovider-1" Oneprovider service is as follow:
-          - dir2:
-              - dir21:
-                  - dir211
-                  - file2.txt: 11111
-              - dir22: 10
-              - file1.txt: 22222
+           - dir2:
+               - dir21:
+                   - dir211
+                   - file2.txt: 11111
+               - dir22: 10
+               - file1.txt: 22222
     And using docker, user removes dir2/dir21 from provider's storage mount point
     And using docker, user removes dir2/file1.txt from provider's storage mount point
     And user is idle for 10 seconds
     And using <client1>, user1 sees that content for "space5" in "oneprovider-1" Oneprovider service is as follow:
-          - dir2: 1
           - dir2:
               - dir22: 10
     And using docker, user removes dir2 from provider's storage mount point
     And using REST, user1 removes space named "space5" in "onezone" Onezone service
 
 
-  Scenario: Files tree with specified depth is imported to space after disabling update
+  Scenario: User does not see files tree changes after disabling continuous scan option
     When using <client1>, user1 creates space "space7" in "onezone" Onezone service
     And using <client1>, user1 generates space support token for space named "space7" in "onezone" Onezone service and sends it to onepanel
     And using docker, user1 copies dir2 to provider's storage mount point
@@ -235,10 +236,10 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
           storage: "new_storage (import-enabled)"
           size: 1000000
           storage import:
-                strategy: Simple scan
-                max depth: 2
+            continuous scan: true
+            max depth: 2
     And using <client2>, onepanel sees that import strategy configuration for "space7" in "oneprovider-1" is as follow:
-          Import strategy: Simple scan
+          Continuous scan: true
           Max depth: 2
     And using <client1>, user1 sees that list of supporting providers for space named "space7" contains "oneprovider-1" in "onezone" Onezone service
     And using <client1>, user1 sees that content for "space7" in "oneprovider-1" Oneprovider service is as follow:
@@ -246,39 +247,16 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
               - dir21
               - dir22
               - file1.txt: 22222
-    And using <client2>, onepanel configures update parameters for "space7" in "oneprovider-1" Oneprovider panel service as follow:
-          Update strategy: Simple scan
-          Max depth: 3
-          Scan interval [s]: 1
-          Write once: false
-          Delete enabled: false
-    And using <client2>, onepanel sees that update strategy configuration for "space7" in "oneprovider-1" is as follow:
-          Update strategy: Simple scan
-          Max depth: 3
-          Scan interval [s]: 1
-          Write once: false
-          Delete enabled: false
-    And user is idle for 5 seconds
-    And using <client1>, user1 sees that content for "space7" in "oneprovider-1" Oneprovider service is as follow:
-          - dir2:
-              - dir21:
-                  - dir211
-                  - file2.txt: 11111
-              - dir22: 10
-              - file1.txt: 22222
-    And using <client2>, onepanel configures update parameters for "space7" in "oneprovider-1" Oneprovider panel service as follow:
-          Update strategy: Disabled
-    And using <client2>, onepanel sees that update strategy configuration for "space7" in "oneprovider-1" is as follow:
-          Update strategy: Disabled
+    And using <client2>, onepanel configures import parameters for "space7" in "oneprovider-1" Oneprovider panel service as follow:
+          continuous scan: false
+    And using <client2>, onepanel sees that import strategy configuration for "space7" in "oneprovider-1" is as follow:
+          Continuous scan: false
     And using docker, user1 copies dir1 to dir2 provider's storage mount point
     And user is idle for 3 seconds
     Then using <client1>, user1 sees that content for "space7" in "oneprovider-1" Oneprovider service is as follow:
-          - dir2: 3
-          - dir2:
-              - dir21:
-                  - dir211
-                  - file2.txt: 11111
-              - dir22: 10
-              - file1.txt: 22222
+           - dir2:
+               - dir21
+               - dir22
+               - file1.txt: 22222
     And using docker, user removes dir2 from provider's storage mount point
     And using REST, user1 removes space named "space7" in "onezone" Onezone service
