@@ -1,5 +1,5 @@
 # Name of the scenario to run
-scenario: "scenario-1oz-2op"
+scenario: "scenario-1oz-2op-local-volume"
 
 # Determines if onedata components should be started from pre-compiled sources
 # or pre-installed packages inside dockers. When enabled, sources are expected
