@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 
 from . import multi_file_steps
-from tests.utils.utils import assert_generic, assert_, assert_false
+from tests.utils.utils import assert_generic, assert_, assert_expected_failure
 from tests.utils.client_utils import (write, read, replace_pattern, dd, md5sum,
                                       cp, truncate, execute, open_file,
                                       close_file, read_from_opened_file,
@@ -103,17 +103,12 @@ def read_text(user, text, file, client_node, users):
     user = users[user]
     client = user.clients[client_node]
     file_path = client.absolute_path(file)
-    t = []
 
     def condition():
         read_text = read(client, file_path)
-        if text != read_text:
-            print("Read " + read_text + " instead of expected " + text + " on " + client_node)
-        assert read_text == text
-        t.append(read_text)
+        assert read_text == text, "Read {} instead of expected {} on {}".format(read_text, text, client_node)
 
     assert_(client.perform, condition)
-    return t[0]
 
 
 @wt(parsers.re('(?P<user>\w+) reads "(?P<text>.*)" from previously '
@@ -142,9 +137,9 @@ def cannot_read(user, file, client_node, users):
     file_path = client.absolute_path(file)
 
     def condition():
-        read(client, file_path)
+        assert_expected_failure(read, True, client, file_path)
 
-    assert_false(client.perform, condition)
+    assert_(client.perform, condition)
 
 
 @when(parsers.re('(?P<user>\w+) appends "(?P<text>.*)" to (?P<file>.*) on '
@@ -196,7 +191,7 @@ def check_md5(user, file, client_node, users, context):
 
     def condition():
         md5 = md5sum(client, client.absolute_path(file))
-        assert md5 == context['md5']
+        assert md5 == context['md5'], "Wrong MD5 of file {}".format(file)
 
     assert_(client.perform, condition)
 

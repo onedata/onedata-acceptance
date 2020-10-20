@@ -112,8 +112,8 @@ Feature: Regular_file_CRUD
     And user1 copies regular file space1/dir1/dir2/file1 to space1/dir3/file1
     Then user1 sees [file1] in space1/dir1/dir2
     And user1 sees [file1] in space1/dir3
-    And user1 checks MD5 of space1/dir3/file1
     And user1 checks MD5 of space1/dir1/dir2/file1
+    And user1 checks MD5 of space1/dir3/file1
 
     
   Scenario: Delete file copied right after read

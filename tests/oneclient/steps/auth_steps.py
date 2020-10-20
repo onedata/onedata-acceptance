@@ -15,7 +15,8 @@ from ...utils.utils import repeat_failed
 
 
 @given(parsers.re('oneclient mounted in (?P<mount_path>.*) '
-                  'using (?P<token>(token|bad token)) by (?P<user>\w+)'))
+                  'using (?P<token>(token|bad token)) by '
+                  '(?P<user>\w+)'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def default_mount(user, mount_path, token, request, hosts, users,
                   clients, env_desc):
