@@ -86,12 +86,13 @@ class SyncChart(PageObject):
     storage_import_configuration = WebItem('.storage-import-update-form '
                                            '.import-configuration-section',
                                            cls=StorageImportConfiguration)
+    auto_import_scan = WebElement('.import-info-header')
+    start_scan = NamedButton('button', text='Start scan')
 
     last_minute_view = Button('.btn-import-interval-minute')
     last_hour_view = Button('.btn-import-interval-hour')
     last_day_view = Button('.btn-import-interval-day')
 
-    start_synchronization = NamedButton('button', text='Start synchronization')
     save_configuration = Button('.btn-primary')
 
     _inserted = WebElementsSequence('.storage-import-chart-operations '
