@@ -61,7 +61,7 @@ Feature: Basic file management operations
     And user of browser clicks "Permissions" option in data row menu in file browser
     And user of browser sees that "Edit permissions" modal has appeared
     And user of browser selects "POSIX" permission type in edit permissions modal
-    And user of browser sets "675" permission code in edit permissions modal
+    And user of browser sets "677" permission code in edit permissions modal
     And user of browser clicks "Save" confirmation button in displayed modal
 
     And user of browser clicks on menu for "file2" directory in file browser
@@ -71,6 +71,11 @@ Feature: Basic file management operations
     And user of browser clicks "Paste" button from file browser menu bar
 
     Then user of browser sees that error modal with text "Copying some of files failed!" appeared
+    And user of browser clicks on "Close" button in modal "Error"
+    And user of browser clicks file browser refresh button
+    And user of browser does not see any item(s) named file2 in file browser
+    And user of browser changes current working directory to home using breadcrumbs
+    And user of browser sees item(s) named file2 in file browser
 
 
   Scenario: User fails to paste cut file to directory without permissions
@@ -83,7 +88,7 @@ Feature: Basic file management operations
     And user of browser clicks "Permissions" option in data row menu in file browser
     And user of browser sees that "Edit permissions" modal has appeared
     And user of browser selects "POSIX" permission type in edit permissions modal
-    And user of browser sets "475" permission code in edit permissions modal
+    And user of browser sets "677" permission code in edit permissions modal
     And user of browser clicks "Save" confirmation button in displayed modal
 
     And user of browser clicks on menu for "file3" directory in file browser
@@ -94,6 +99,7 @@ Feature: Basic file management operations
 
     Then user of browser sees that error modal with text "moving some of files failed!" appeared
     And user of browser clicks on "Close" button in modal "Error"
-    And user of browser sees item(s) named file3 in file browser
-    And user of browser changes current working directory to home using breadcrumbs
+    And user of browser clicks file browser refresh button
     And user of browser does not see any item(s) named file3 in file browser
+    And user of browser changes current working directory to home using breadcrumbs
+    And user of browser sees item(s) named file3 in file browser
