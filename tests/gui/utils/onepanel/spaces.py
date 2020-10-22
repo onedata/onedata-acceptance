@@ -41,7 +41,7 @@ class StorageImportConfiguration(PageObject):
 
     def is_toggle_checked(self, toggle):
         toggle = getattr(self, toggle)
-        return 'checked' in toggle.web_elem.get_attribute('class')
+        return toggle.is_checked()
 
 
 class SpaceSupportForm(PageObject):

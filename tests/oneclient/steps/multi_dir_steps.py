@@ -15,7 +15,7 @@ from tests.utils.onenv_utils import cmd_exec
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import given, when, wt, parsers
 from tests.utils.client_utils import mkdir, rmdir, ls, rm, cp
-from tests.utils.utils import assert_generic, assert_
+from tests.utils.utils import assert_generic, assert_, assert_expected_failure
 
 
 def create_base(user, dirs, client_node, users, should_fail=False):
@@ -27,8 +27,8 @@ def create_base(user, dirs, client_node, users, should_fail=False):
         path = client.absolute_path(dir)
 
         def condition():
-            mkdir(client, path)
-        assert_generic(client.perform, should_fail, condition)
+            assert_expected_failure(mkdir, should_fail, client, path)
+        assert_(client.perform, condition)
 
 
 @when(parsers.re('(?P<user>\w+) creates directories (?P<dirs>.*)\son '
@@ -68,9 +68,9 @@ def delete_empty_base(user, dirs, client_node, users, should_fail=False):
         path = client.absolute_path(dir)
 
         def condition():
-            rmdir(client, path)
+            assert_expected_failure(rmdir, should_fail, client, path)
 
-        assert_generic(client.perform, should_fail, condition)
+        assert_(client.perform, condition)
 
 
 @wt(parsers.re('(?P<user>\w+) deletes directories \(rmdir\) (?P<dirs>.*) on '
