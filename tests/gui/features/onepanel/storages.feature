@@ -74,8 +74,7 @@ Feature: Storage management using onepanel
           mount point: /volumes/persistence/storage
     And using docker, admin renames /volumes/persistence/storage path to /volumes/persistence/storage2
     And user of <browser> is idle for 5 seconds
-    And user of <browser> expands toolbar for "<storage_name>" storage record in Storages page in Onepanel
-    And user of <browser> clicks on Modify storage details option in storage's toolbar in Onepanel
+    And user of <browser> clicks on "Modify" button for "<storage_name>" storage record in Storages page in Onepanel
     And user of <browser> types "/volumes/persistence/storage2" to Mount point field in POSIX edit form for "<storage_name>" storage in Onepanel
     And user of <browser> clicks on Save button in edit form for "<storage_name>" storage in Onepanel
     And user of <browser> clicks on "Proceed" button in modal "Modify Storage"
@@ -153,8 +152,7 @@ Feature: Storage management using onepanel
     And user of browser_unified clicks on "oneprovider-1" in clusters menu
     And user of browser_unified clicks on Storages item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
 
-    And user of browser_unified expands toolbar for "new_storage7" storage record in Storages page in Onepanel
-    And user of browser_unified clicks on Modify storage details option in storage's toolbar in Onepanel
+    And user of browser_unified clicks on "Modify" button for "new_storage7" storage record in Storages page in Onepanel
     And user of browser_unified types "/volumes/persistence/storage/renamed_dir05" to Mount point field in POSIX edit form for "new_storage7" storage in Onepanel
     And user of browser_unified clicks on Save button in edit form for "new_storage7" storage in Onepanel
     And user of browser_unified clicks on "Proceed" button in modal "Modify storage"
