@@ -10,11 +10,12 @@ import os
 import pty
 import re
 import subprocess as sp
-import sys
 
 import yaml
 import pytest
 import json
+import hashlib
+from typing import Dict, List
 
 from environment import docker
 
@@ -55,11 +56,14 @@ def pytest_addoption(parser):
                      help='description of environment that will be tested')
 
     parser.addoption('--oz-image', action='store', help='onezone image'
-                                                        'to use in tests')
+                                                        'to use in tests'
+                                                        '(ignored in upgrade tests)')
     parser.addoption('--op-image', action='store', help='oneprovider image'
-                                                        'to use in tests')
+                                                        'to use in tests'
+                                                        '(ignored in upgrade tests)')
     parser.addoption('--oc-image', action='store', help='oneclient image'
-                                                        'to use in tests')
+                                                        'to use in tests'
+                                                        '(ignored in upgrade tests)')
     parser.addoption('--luma-image', action='store', help='luma image'
                                                           'to use in tests')
     parser.addoption('--rest-cli-image', action='store',
@@ -120,6 +124,34 @@ def pytest_generate_tests(metafunc):
                         [env_file for env_file in test_config[test_file]],
                         scope='module'
                     )
+        elif test_type in ['upgrade']:
+            env_file = metafunc.config.getoption('env_file')
+            if env_file:
+                with open(env_file, 'r') as f:
+                    test_config = yaml.load(f)
+                scenarios = test_config['scenarios']
+                metafunc.parametrize(
+                    'env_description_file',
+                    [env_file for env_file in scenarios],
+                    scope='module'
+                )
+            else:
+                raise RuntimeError("In upgrade tests --env-file option must be provided")
+
+
+@pytest.fixture(scope='module')
+def test_config(request):
+    """Loaded yaml with test config"""
+    test_type = request.config.option.test_type
+    if test_type == 'upgrade':
+        with open(request.config.option.env_file, 'r') as f:
+            config = yaml.load(f)
+        return config
+    else:
+        with open(CONFIG_FILES.get(test_type), 'r') as f:
+            config = yaml.load(f)
+        test_file = request.module.__name__.split('.')[-1]
+        return config[test_file]
 
 
 @pytest.fixture(scope='module')
@@ -211,6 +243,7 @@ def parse_client_cfg(pod_name, pod_cfg, hosts):
     client_alias = client_alias_to_pod_mapping().get(pod_name)
     hosts[client_alias] = {'ip': ip,
                            'container-id': container_id,
+                           'pod-name': pod_name,
                            'provider-host': provider_host}
 
 
@@ -221,7 +254,8 @@ def parse_elasticsearch_cfg(pod_cfg, hosts):
                               'container-id': container_id}
 
 
-def parse_hosts_cfg(pods_cfg, hosts, request):
+def setup_hosts_cfg(hosts, request):
+    pods_cfg = get_pods_config()
     for pod_name, pod_cfg in pods_cfg.items():
         service_type = pod_cfg['service-type']
         if service_type in ['onezone', 'oneprovider']:
@@ -240,6 +274,17 @@ def env_description_abs_path(request, env_description_file):
     env_dir = ENV_DIRS.get(get_test_type(request))
     absolute_path = absolute_path_to_env_file(env_dir, env_description_file)
     return absolute_path
+
+
+@pytest.fixture(scope='module', autouse=True)
+def scenario_abs_path(request, env_description_abs_path):
+    with open(env_description_abs_path, 'r') as env_desc_file:
+        env_desc = yaml.load(env_desc_file)
+
+    scenario = env_desc.get('scenario')
+    scenarios_dir_path = SCENARIO_DIRS.get(get_test_type(request))
+    return os.path.abspath(os.path.join(scenarios_dir_path,
+                                        scenario))
 
 
 @pytest.fixture(scope='session')
@@ -268,8 +313,10 @@ def _check_if_should_start_new_env(env_description_abs_path, previous_env):
     return start_env
 
 
+# fixme refactor
 @pytest.fixture(scope='module', autouse=True)
-def env_desc(env_description_abs_path, hosts, request, users, previous_env):
+def env_desc(env_description_abs_path, scenario_abs_path, hosts, request, users, previous_env,
+             test_config):
     """
     Sets up environment and returns environment description.
     """
@@ -279,10 +326,11 @@ def env_desc(env_description_abs_path, hosts, request, users, previous_env):
 
     if test_type in ['gui']:
         # For now gui tests do not use onenv patch
+        # fixme test_config not existing
         if start_env:
             previous_env['started'] = start_environment(
                 env_description_abs_path, request, hosts, '', users,
-                env_description_abs_path)
+                env_description_abs_path, test_config)
         return ''
 
     elif test_type == 'mixed':
@@ -296,31 +344,29 @@ def env_desc(env_description_abs_path, hosts, request, users, previous_env):
         if start_env:
             previous_env['started'] = start_environment(
                 scenario_path, request, hosts, '', users,
-                env_description_abs_path
+                env_description_abs_path, test_config
             )
-        return env_desc
 
-    elif test_type in ['oneclient', 'onedata_fs', 'performance']:
+    elif test_type in ['oneclient', 'onedata_fs', 'performance', 'upgrade']:
+        # fixme duplicate with scenario_abs_path
         with open(env_description_abs_path, 'r') as env_desc_file:
             env_desc = yaml.load(env_desc_file)
-
-        scenario = env_desc.get('scenario')
-        scenarios_dir_path = SCENARIO_DIRS.get(get_test_type(request))
-        scenario_path = os.path.abspath(os.path.join(scenarios_dir_path,
-                                                     scenario))
 
         patch = env_desc.get('patch')
         patch_dir_path = PATCHES_DIR.get(get_test_type(request))
         patch_path = os.path.join(patch_dir_path, patch)
         if start_env:
             previous_env['started'] = start_environment(
-                scenario_path, request, hosts, patch_path, users,
-                env_description_abs_path
+                scenario_abs_path, request, hosts, patch_path, users,
+                env_description_abs_path, test_config
             )
-        return env_desc
+    yield env_desc
+    clean = False if request.config.getoption('--no-clean') else True
+    if clean:
+        clean_env()
 
 
-def parse_up_args(request, scenario_path):
+def parse_up_args(request):
     up_args = []
 
     oz_image = request.config.getoption('--oz-image')
@@ -357,7 +403,6 @@ def parse_up_args(request, scenario_path):
     if pull_only_missing_images:
         up_args.append('--no-pull')
 
-    up_args.extend(['{}'.format(scenario_path)])
     return up_args
 
 
@@ -390,6 +435,7 @@ def update_etc_hosts():
     firstly updates /etc/hosts entries using the 'onenv hosts' command and then
     copies modified /etc/hosts from one-env container to test-runner container.
     """
+
     run_onenv_command('hosts', sudo=True)
     etc_hosts_path = '/etc/hosts'
     tmp_hosts_path = '/tmp/hosts'
@@ -400,15 +446,24 @@ def update_etc_hosts():
 
 
 def start_environment(scenario_path, request, hosts, patch_path, users,
-                      env_description_abs_path):
+                      env_description_abs_path, test_config):
     attempts = 0
     clean = False if request.config.getoption('--no-clean') else True
     local = request.config.getoption('--local')
-    up_args = parse_up_args(request, scenario_path)
+    up_args = parse_up_args(request)
+    up_args.extend(['{}'.format(scenario_path)])
     wait_args = parse_wait_args(request)
     patch_args = parse_patch_args(request, patch_path) if patch_path else []
+    test_type = request.config.option.test_type
+    if test_type == 'upgrade':
+        oz_version = test_config['initialVersions']['onezone']
+        op_version = test_config['initialVersions']['oneprovider']
+        up_args.extend(['-zi', 'docker.onedata.org/onezone-dev:{}'.format(oz_version)])
+        up_args.extend(['-pi', 'docker.onedata.org/oneprovider-dev:{}'.format(op_version)])
+        up_args.extend(['-ci', 'docker.onedata.org/oneclient-dev:{}'.format(op_version)])
 
-    while attempts < START_ENV_MAX_RETRIES:
+    started = False
+    while not started and attempts < START_ENV_MAX_RETRIES:
         try:
             init_helm()
             run_onenv_command('init', cwd=None, onenv_path='one_env/onenv')
@@ -416,11 +471,10 @@ def start_environment(scenario_path, request, hosts, patch_path, users,
                 run_onenv_command('up', up_args)
                 run_onenv_command('wait', wait_args)
             check_deployment()
-            pods_cfg = get_pods_config()
 
             if not local:
                 update_etc_hosts()
-            parse_hosts_cfg(pods_cfg, hosts, request)
+            setup_hosts_cfg(hosts, request)
 
             if patch_path and clean:
                 run_onenv_command('patch', patch_args)
@@ -434,7 +488,7 @@ def start_environment(scenario_path, request, hosts, patch_path, users,
                 setup_users(patch_cfg, users, hosts)
                 add_luma_mappings(patch_cfg, users, hosts)
 
-            return True
+            started = True
 
         except OnenvError as e:
             attempts += 1
@@ -443,6 +497,88 @@ def start_environment(scenario_path, request, hosts, patch_path, users,
                 return False
             else:
                 clean_env()
+
+    configure_os(scenario_path)
+    return True
+
+
+def configure_os(scenario_path: str) -> bool:
+    """
+    Function responsible for creating system users and groups in containers for
+    Onezone / Oneprovider / Oneclient.
+
+    os_configs parameter corresponds to 'os-config' section in environment
+    configuration file that was generated by merging command-line arguments
+    and config file passed by user to onenv_up script.
+    """
+    with open(scenario_path, 'r') as env_file:
+        env_cfg = yaml.load(env_file)
+    os_configs = env_cfg.get('os-config')
+
+# fixme make a fixture
+    dep_status = yaml.load(run_onenv_command('status'))
+    pods_cfg = dep_status.get('pods')
+    ready = dep_status.get('ready')
+
+    if not ready:
+        print('Os configuration failed - deployment is not ready')
+        return False
+
+    for pod_name, pod_cfg in pods_cfg.items():
+        service_type = pod_cfg['service-type']
+        if service_type in ['onezone', 'oneprovider']:
+            alias = service_name_to_alias_mapping(pod_name)
+            os_config = os_configs.get('services').get(alias)
+            if os_config:
+                create_users(pod_name, os_config.get('users'))
+                create_groups(pod_name, os_config.get('groups'))
+        if service_type == 'oneclient':
+            os_config = os_configs.get('services').get("oneclient")
+            if os_config:
+                create_users(pod_name, os_config.get('users'))
+                create_groups(pod_name, os_config.get('groups'))
+
+
+def create_users(pod_name: str, users: List[str]) -> None:
+    """Creates system users on pod specified by 'pod'."""
+
+    def _user_exists(user: str, pod_name: str) -> bool:
+        command = ['id', '-u', user]
+        ret = run_onenv_command('exec', [pod_name, " ".join(command)],
+                                fail_with_error=False, return_output=False)
+        return ret == 0
+
+    for user in users:
+        if _user_exists(user, pod_name):
+            print('Skipping creation of user {} - user already exists in {}.'
+                  .format(user, pod_name))
+        else:
+            uid = str(int(hashlib.sha1(user.encode('utf-8')).hexdigest(), 16) % 50000 + 10000)
+            command = ['adduser', '--disabled-password', '--gecos', '""',
+                       '--uid', uid, user]
+            run_onenv_command('exec', [pod_name, " ".join(command)])
+
+
+def create_groups(pod_name: str, groups: Dict[str, List[str]]) -> None:
+    """Creates system groups on docker specified by 'container'."""
+
+    def _group_exists(group: str, pod_name: str) -> bool:
+        command = ['grep', '-q', group, '/etc/group']
+        ret = run_onenv_command('exec', [pod_name, " ".join(command)],
+                                fail_with_error=False, return_output=False)
+        return ret == 0
+
+    for group, users in groups.items():
+        if _group_exists(group, pod_name):
+            print('Skipping creation of group {} - group already exists in {}.'
+                  .format(group, pod_name))
+        else:
+            gid = str(int(hashlib.sha1(group.encode('utf-8')).hexdigest(), 16) % 50000 + 10000)
+            command = ['groupadd', '-g', gid, group]
+            run_onenv_command('exec', [pod_name, " ".join(command)])
+            for user in users:
+                command = ['usermod', '-a', '-G', group, user]
+                run_onenv_command('exec', [pod_name, " ".join(command)])
 
 
 def get_pods_config():
@@ -552,7 +688,7 @@ def export_logs(request, env_description_abs_path=None):
     test_type = get_test_type(request)
     logdir_path = LOGDIRS.get(test_type)
 
-    if test_type == 'oneclient':
+    if test_type in ['oneclient', 'upgrade']:
         feature_name = request.module.__name__.split('.')[-1]
         test_path = os.path.join(get_file_name(env_description_abs_path),
                                  feature_name)

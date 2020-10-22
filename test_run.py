@@ -16,20 +16,15 @@ import platform
 import argparse
 from subprocess import *
 import xml.etree.ElementTree as ElementTree
+from tests import (ARTIFACTS_DIR, ZONE_IMAGES_CFG_PATH, PROVIDER_IMAGES_CFG_PATH,
+                   CLIENT_IMAGES_CFG_PATH, LUMA_IMAGES_CFG_PATH, REST_CLI_IMAGES_CFG_PATH)
 
 from bamboos.docker.environment import docker
 
 
 PULL_DOCKER_IMAGE_RETRIES = 5
 
-ARTIFACTS_DIR = 'artifacts_dir'
 TEST_RUNNER_CONTAINER_NAME = 'test-runner'
-
-ZONE_IMAGES_CFG_PATH = 'onezone_images/docker-dev-build-list.json'
-PROVIDER_IMAGES_CFG_PATH = 'oneprovider_images/docker-dev-build-list.json'
-CLIENT_IMAGES_CFG_PATH = 'oneclient_images/oc-docker-dev-build-list.json'
-LUMA_IMAGES_CFG_PATH = 'luma_images/luma-docker-build-report.json'
-REST_CLI_IMAGES_CFG_PATH = 'rest_cli_images/rest-cli-docker-build-report.json'
 
 
 def get_images_option(test_type='oneclient', oz_image=None, op_image=None,
@@ -82,19 +77,13 @@ def load_test_report(junit_report_path):
         return testsuite
 
 
-def skipped_test_exists(testsuite):
-    if testsuite.attrib['skips'] != '0':
-        return True
-    return False
-
-
 def env_errors_exists(testsuite):
     testcases = testsuite.findall('testcase')
 
     for testcase in testcases:
         skipped = testcase.find('skipped')
         if skipped is not None:
-            if re.match('.*environment error.*', skipped.attrib['message'],
+            if re.match('.*environment error.*', skipped.attrib['message'].lower(),
                         re.I):
                 return True
     return False
@@ -287,7 +276,7 @@ if {shed_privileges}:
     os.setgroups([docker_gid])
     os.setregid({gid}, {gid})
     os.setreuid({uid}, {uid})
-        
+
 command = ['python3'] + ['-m'] + ['pytest'] + ['-rs'] + ['-s'] + ['--test-type={test_type}'] + ['{test_dir}'] + {args} + {env_file} + {local_charts_path} + {no_clean} + {pull_only_missing_images} + {timeout} + {images_opt} + ['--junitxml={report_path}'] + ['--add-test-domain']
 
 ret = subprocess.call(command)
@@ -383,10 +372,6 @@ ALL       ALL = (ALL) NOPASSWD: ALL
         remove_one_env_container()
 
     report = load_test_report(args.report_path)
-
-    if ret != 0 and not skipped_test_exists(report):
-        ret = 0
-
     if env_errors_exists(report):
         ret = 1
 

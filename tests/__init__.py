@@ -49,6 +49,13 @@ PERFORMANCE_SCENARIO_DIR = os.path.join(PERFORMANCE_ENV_DIR, 'scenarios')
 PERFORMANCE_PATCHES_DIR = os.path.join(PERFORMANCE_ENV_DIR, 'patches')
 PERFORMANCE_TEST_CONFIG = os.path.join(PERFORMANCE_DIR, 'test_config.yaml')
 
+UPGRADE_TESTS_DIR = os.path.join(TEST_DIR, 'upgrade')
+UPGRADE_TESTS_LOGDIR = os.path.join(UPGRADE_TESTS_DIR, 'logs')
+UPGRADE_TESTS_ENV_DIR = os.path.join(UPGRADE_TESTS_DIR, 'environments')
+UPGRADE_TESTS_SCENARIO_DIR = os.path.join(UPGRADE_TESTS_ENV_DIR, 'scenarios')
+UPGRADE_TESTS_PATCHES_DIR = os.path.join(UPGRADE_TESTS_ENV_DIR, 'patches')
+UPGRADE_TESTS_CONFIG = os.path.join(UPGRADE_TESTS_DIR, 'test_config.yaml')
+
 UPLOAD_FILES_DIR = os.path.join(GUI_DIR, 'upload_files')
 
 
@@ -79,7 +86,8 @@ ENV_DIRS = {
     'gui': GUI_ENV_DIR,
     'mixed': MIXED_ENV_DIR,
     'onedata_fs': ONEDATA_FS_ENV_DIR,
-    'performance': PERFORMANCE_ENV_DIR
+    'performance': PERFORMANCE_ENV_DIR,
+    'upgrade': UPGRADE_TESTS_ENV_DIR
 }
 
 LOGDIRS = {
@@ -87,7 +95,8 @@ LOGDIRS = {
     'mixed': MIXED_LOGDIR,
     'gui': GUI_LOGDIR,
     'onedata_fs': ONEDATA_FS_LOGDIR,
-    'performance': PERFORMANCE_LOGDIR
+    'performance': PERFORMANCE_LOGDIR,
+    'upgrade': UPGRADE_TESTS_LOGDIR
 }
 
 CONFIG_FILES = {
@@ -99,11 +108,21 @@ SCENARIO_DIRS = {
     'oneclient': ONECLIENT_SCENARIO_DIR,
     'mixed': MIXED_SCENARIO_DIR,
     'onedata_fs': ONEDATA_FS_SCENARIO_DIR,
-    'performance': PERFORMANCE_SCENARIO_DIR
+    'performance': PERFORMANCE_SCENARIO_DIR,
+    'upgrade': UPGRADE_TESTS_SCENARIO_DIR
 }
 
 PATCHES_DIR = {
     'oneclient': ONECLIENT_PATCHES_DIR,
     'onedata_fs': ONEDATA_FS_PATCHES_DIR,
-    'performance': PERFORMANCE_PATCHES_DIR
+    'performance': PERFORMANCE_PATCHES_DIR,
+    'upgrade': UPGRADE_TESTS_PATCHES_DIR
 }
+
+ARTIFACTS_DIR = 'artifacts_dir'
+ZONE_IMAGES_CFG_PATH = 'onezone_images/docker-dev-build-list.json'
+PROVIDER_IMAGES_CFG_PATH = 'oneprovider_images/docker-dev-build-list.json'
+CLIENT_IMAGES_CFG_PATH = 'oneclient_images/oc-docker-dev-build-list.json'
+LUMA_IMAGES_CFG_PATH = 'luma_images/luma-docker-build-report.json'
+REST_CLI_IMAGES_CFG_PATH = 'rest_cli_images/rest-cli-docker-build-report.json'
+

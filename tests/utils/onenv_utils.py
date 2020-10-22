@@ -23,10 +23,8 @@ class OnenvError(BaseException):
     pass
 
 
-def run_onenv_command(command, args=None, fail_with_error=True, sudo=False,
+def run_onenv_command(command, args=None, fail_with_error=True, sudo=False, return_output=True,
                       cwd='one_env', onenv_path='./onenv'):
-    master, slave = pty.openpty()
-
     if sudo:
         cmd = ['sudo', onenv_path, command]
     else:
@@ -35,7 +33,7 @@ def run_onenv_command(command, args=None, fail_with_error=True, sudo=False,
     if args:
         cmd.extend(args)
     print('Running command: {}'.format(cmd))
-    proc = sp.Popen(cmd, stdin=slave, stdout=sp.PIPE, stderr=sp.PIPE, cwd=cwd)
+    proc = sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.PIPE, cwd=cwd)
     output, err = proc.communicate()
 
     sys.stdout.write(output.decode('utf-8'))
@@ -46,7 +44,7 @@ def run_onenv_command(command, args=None, fail_with_error=True, sudo=False,
                          'Command: {} failed.\n'
                          'Captured output: {}'.format(cmd, output))
 
-    return output
+    return output if return_output else proc.returncode
 
 
 def clean_env():

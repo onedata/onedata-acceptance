@@ -285,9 +285,10 @@ def flushed_print(msg):
     sys.stdout.flush()
 
 
-def get_client(client_conf, clients, hosts, request, users, env_desc):
+def mount_client(client_conf, clients, hosts, request, users, env_desc, clean_mountpoint=True):
     mount_users(clients, [client_conf.user], [client_conf.mount_path],
                 [client_conf.client_host], [client_conf.client_instance],
-                [client_conf.token], hosts, request, users, env_desc)
+                [client_conf.token], hosts, request, users, env_desc,
+                clean_mountpoint=clean_mountpoint)
 
     return users[client_conf.user].clients[client_conf.client_instance]

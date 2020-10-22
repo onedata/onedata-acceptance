@@ -18,7 +18,7 @@ from tests.performance import CLIENT_CONF
 from tests.performance.conftest import AbstractPerformanceTest
 from tests.utils.performance_utils import (Result, generate_configs,
                                            performance, flushed_print,
-                                           get_client)
+                                           mount_client)
 from tests.utils.client_utils import (user_home_dir, rm, mkdtemp, truncate,
                                       write)
 
@@ -68,10 +68,10 @@ class TestConcurrentFilesCreation(AbstractPerformanceTest):
     def test_concurrent_files_creation(self, request, hosts, users, clients,
                                        env_desc, params):
         user_proxy = PROXY_IO_CLIENT_CONF.user
-        client_directio = get_client(DIRECT_IO_CLIENT_CONF, clients, hosts,
-                                     request, users, env_desc)
-        client_proxy = get_client(PROXY_IO_CLIENT_CONF, clients, hosts,
-                                  request, users, env_desc)
+        client_directio = mount_client(DIRECT_IO_CLIENT_CONF, clients, hosts,
+                                       request, users, env_desc)
+        client_proxy = mount_client(PROXY_IO_CLIENT_CONF, clients, hosts,
+                                    request, users, env_desc)
 
         files_number = params['files_number']['value']
         empty_files = params['empty_files']['value']
