@@ -56,7 +56,6 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
-    And user of browser waits for file upload to finish
     And user of browser sees that item named "20B-0.txt" has appeared in file browser
 
     And user of browser sees that item named "20B-0.txt" is of 20 B size in file browser
@@ -116,7 +115,6 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
-    And user of browser waits for file upload to finish
     And user of browser sees that item named "20B-0.txt" has appeared in file browser
 
     And user of browser clicks on menu for "20B-0.txt" file in file browser

@@ -304,10 +304,12 @@ def _create_content(selenium, browser_id, content, cwd, space, tmp_memory,
 @wt(parsers.re('user of (?P<browser_id>.*) uploads "(?P<path>.*)" to the '
                'root directory of "(?P<space>.*)"'))
 def successfully_upload_file_to_op_gui(path, selenium, browser_id, space,
-                                       op_container, tmp_memory, oz_page):
+                                       op_container, tmp_memory, oz_page,
+                                       popups):
     go_to_filebrowser(selenium, browser_id, oz_page, op_container, tmp_memory,
                       space)
-    upload_file_to_cwd_in_file_browser(selenium, browser_id, path, op_container)
+    upload_file_to_cwd_in_file_browser(selenium, browser_id, path, op_container,
+                                       popups)
     assert_items_presence_in_file_browser(browser_id, path, tmp_memory)
 
 
@@ -323,11 +325,13 @@ def upload_file_to_op_gui(path, selenium, browser_id, space, res, filename,
         go_to_filebrowser(selenium, browser_id, oz_page, op_container,
                           tmp_memory, space)
         go_to_path(browser_id, tmp_memory, path)
-    upload_file_to_cwd_in_file_browser(selenium, browser_id, filename,
-                                       op_container)
     if res == 'succeeds':
+        upload_file_to_cwd_in_file_browser(selenium, browser_id, filename,
+                                           op_container, popups)
         assert_items_presence_in_file_browser(browser_id, filename, tmp_memory)
     else:
+        upload_file_to_cwd_in_file_browser_no_waiting(selenium, browser_id,
+                                                      filename, op_container)
         check_error_in_upload_presenter(selenium, browser_id, popups)
 
 

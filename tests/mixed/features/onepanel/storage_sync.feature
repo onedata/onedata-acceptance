@@ -18,14 +18,17 @@ Feature: Onepanel features regarding storage sync (e.g. import)
     And opened browsers with [onepanel, user1] signed in to [emergency interface of Onepanel, onezone] service
     And directory tree structure on local file system:
           user1:
-              - dir1: 5
-              - dir2:
-                  - dir21:
-                      - dir211:
-                          - dir2111: 4
-                      - file2.txt: 11111
-                  - dir22: 10
-                  - file1.txt: 22222
+            dir1: 5
+            dir2:
+              dir21:
+                dir211:
+                  dir2111: 4
+                file2.txt:
+                  content: 11111
+              dir22: 10
+              file1.txt:
+                content: 22222
+
     And there are no spaces supported by oneprovider-1 in Onepanel
     And there is "new_storage" storage in "oneprovider-1" Oneprovider panel service used by user of onepanel with following configuration:
           storage type: POSIX
