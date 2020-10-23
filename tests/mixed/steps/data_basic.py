@@ -431,7 +431,7 @@ def assert_time_relation(user, time1, file_name, space, comparator, time2,
                          client, users, host, hosts, cdmi):
     client_lower = client.lower()
     full_path = '{}/{}'.format(space, file_name)
-    comparator = re.sub(r'(than|to)', '', comparator)
+    comparator = re.sub(r'( than| to)', '', comparator)
     if client_lower == 'rest':
         assert_time_relation_in_op_rest(full_path, time1, time2, comparator,
                                         host, hosts, user, users, cdmi)
