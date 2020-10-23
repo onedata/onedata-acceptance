@@ -11,8 +11,8 @@ Feature: Storage management using onepanel
     And user of [browser_unified, browser_emergency] logged as [admin, admin] to [Onezone, emergency interface of Onepanel] service
     And directory tree structure on local file system:
           browser_unified:
-              - dir1: 70
-              - dir2: 5
+            dir1: 70
+            dir2: 5
 
   Scenario Outline: User uploads files on freshly supported space on newly created storage
     Given admin user does not have access to any space
@@ -58,7 +58,6 @@ Feature: Storage management using onepanel
     And user of browser_unified double clicks on item named "new_dir" in file browser
     And user of browser_unified sees that current working directory displayed in breadcrumbs is /new_dir
     And user of browser_unified uses upload button from file browser menu bar to upload files from local directory "dir2" to remote current dir
-    And user of browser_unified waits for file upload to finish
     Then user of browser_unified sees that there are 5 items in file browser
 
 
@@ -125,10 +124,9 @@ Feature: Storage management using onepanel
           size: 1
           unit: GiB
           storage import:
-                strategy: Simple scan
-                max depth: 2
-          storage update:
-                strategy: Simple scan
+            max depth: 2
+            continuous scan: true
+            scan interval [s]: 1
 
     And user of browser_unified sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
     And user of browser_unified sees that space support record for "space3" has appeared in Spaces page in Onepanel
@@ -168,7 +166,7 @@ Feature: Storage management using onepanel
     And user of browser_unified sees item(s) named "dir2" in file browser
 
 
-  Scenario: User fails to configure import in storage that is not import-enabled
+  Scenario: User fails to update import in storage that is not import-enabled
     When user of browser_unified creates "space5" space in Onezone
     And user of browser_unified copies dir1 to /volumes/persistence/storage/dir directory on docker
     And user of browser_unified adds "new_storage8" storage in "oneprovider-1" Oneprovider panel service with following configuration:
@@ -182,7 +180,11 @@ Feature: Storage management using onepanel
     And user of browser_unified clicks on Support space button in spaces page in Onepanel if there are some spaces already supported
     And user of browser_unified selects "new_storage8" from storage selector in support space form in Onepanel
     And user of browser_unified types received token to Support token field in support space form in Onepanel
-    Then user of browser_unified cannot enable storage data import option
+    And user of browser_unified types "1" to Size input field in support space form in Onepanel
+    And user of browser_unified selects GiB radio button in support space form in Onepanel
+    And user of browser_unified clicks on Support space button in support space form in Onepanel
+    And user of browser_unified opens "space5" record on spaces list in Spaces page in Onepanel
+    Then user of browser_unified cannot click on Storage import navigation tab in space "space5"
 
 
   Scenario: User fails to create 2 storages with the same name

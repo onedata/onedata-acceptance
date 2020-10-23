@@ -45,6 +45,58 @@ def create_file_in_op(client, user, users, space, name, hosts, tmp_memory, host,
 
 
 @wt(parsers.re('using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to create '
+               'file named "(?P<name>.*)" using received token in '
+               '"(?P<space>.*)" in (?P<host>.*)'))
+def create_file_in_op_with_token(client, user, users, space, name, hosts,
+                                 tmp_memory, host, result, request, clients,
+                                 env_desc):
+    full_path = '{}/{}'.format(space, name)
+    client_lower = client.lower()
+    if client_lower == 'rest':
+        token = tmp_memory[user]['mailbox'].get('token', None)
+        create_file_in_op_rest(user, users, host, hosts, full_path, result,
+                               token)
+    elif 'oneclient' in client_lower:
+        path = f'/home/{user}/onedata'
+        mount_new_oneclient_result(user, path, request, hosts, users, clients,
+                                   env_desc, tmp_memory, result,
+                                   client='oneclient')
+        if result == 'succeeds':
+            oneclient_host = change_client_name_to_hostname(client_lower)
+            create_file_in_op_oneclient(user, full_path, users, result,
+                                        oneclient_host)
+    else:
+        raise NoSuchClientException('Client: {} not found'.format(client))
+
+
+@wt(parsers.re('using (?P<client>.*) with identity token, (?P<user>\w+) ('
+               '?P<result>\w+) to create file named "(?P<name>.*)" using '
+               'received token in "(?P<space>.*)" in (?P<host>.*)'))
+def create_file_in_op_with_tokens(client, user, users, space, name, hosts,
+                                  tmp_memory, host, result, request, clients,
+                                  env_desc, tokens):
+    full_path = '{}/{}'.format(space, name)
+    client_lower = client.lower()
+    if client_lower == 'rest':
+        access_token = tmp_memory[user]['mailbox'].get('token', None)
+        identity_token = tokens[f'identity_token_of_{user}'].get('token', None)
+        create_file_in_op_rest(user, users, host, hosts, full_path, result,
+                               access_token=access_token,
+                               identity_token=identity_token)
+    elif 'oneclient' in client_lower:
+        path = f'/home/{user}/onedata'
+        mount_new_oneclient_result(user, path, request, hosts, users, clients,
+                                   env_desc, tmp_memory, result,
+                                   client='oneclient')
+        if result == 'succeeds':
+            oneclient_host = change_client_name_to_hostname(client_lower)
+            create_file_in_op_oneclient(user, full_path, users, result,
+                                        oneclient_host)
+    else:
+        raise NoSuchClientException('Client: {} not found'.format(client))
+
+
+@wt(parsers.re('using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to create '
                'directory named "(?P<name>.*)" in "(?P<space>.*)" in '
                '(?P<host>.*)'))
 def create_dir_in_op(client, user, users, space, name, hosts, tmp_memory, host,
@@ -574,11 +626,12 @@ def assert_no_such_metadata_in_op(client, selenium, user, users, space, op_conta
 @when(parsers.re('using (?P<client>.*), (?P<user>\w+) uploads "(?P<path>.*)" '
                  'to "(?P<space>.*)" in (?P<host>.*)'))
 def upload_file_to_op(client, selenium, user, path, space, host, hosts,
-                      tmp_memory, op_container, oz_page):
+                      tmp_memory, op_container, oz_page, popups):
     client_lower = client.lower()
     if client_lower == 'web gui':
         successfully_upload_file_to_op_gui(path, selenium, user, space,
-                                           op_container, tmp_memory, oz_page)
+                                           op_container, tmp_memory, oz_page,
+                                           popups)
     else:
         raise NoSuchClientException('Client: {} not found'.format(client))
 

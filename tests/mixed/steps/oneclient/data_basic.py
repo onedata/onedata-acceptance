@@ -19,7 +19,43 @@ from tests.mixed.utils.data import (check_files_tree, create_content,
                                     assert_ace, get_acl_metadata)
 from tests.oneclient.steps import (multi_dir_steps, multi_reg_file_steps,
                                    multi_file_steps)
+from tests.utils.acceptance_utils import failure
+from tests.utils.bdd_utils import wt, parsers
+from tests.utils.client_utils import mount_users
 from tests.utils.utils import repeat_failed
+
+
+@wt(parsers.parse('{user} mounts oneclient in {path} using received token'))
+def mount_new_oneclient_with_token(user, path, request, hosts, users,
+                                   clients, env_desc, tmp_memory):
+    token = tmp_memory[user]['mailbox']['token']
+    mount_users(clients, [user], [path], ['oneclient-1'], ['client1'],
+                [token], hosts, request, users, env_desc)
+
+
+def mount_new_oneclient_with_token_fail(user, path, request, hosts, users,
+                                        clients, env_desc, tmp_memory,
+                                        client='oneclient'):
+    if 'oneclient' in client:
+        token = tmp_memory[user]['mailbox']['token']
+        try:
+            mount_users(clients, [user], [path], ['oneclient-1'], ['client1'],
+                        [token], hosts, request, users, env_desc, should_fail=True)
+        except TimeoutError:
+            return
+        failure(user, users)
+
+
+def mount_new_oneclient_result(user, path, request, hosts, users, clients,
+                               env_desc, tmp_memory, result,
+                               client='oneclient'):
+    if result == 'succeeds':
+        mount_new_oneclient_with_token(user, path, request, hosts, users,
+                                       clients, env_desc, tmp_memory)
+    else:
+        mount_new_oneclient_with_token_fail(user, path, request, hosts,
+                                            users, clients, env_desc,
+                                            tmp_memory, client=client)
 
 
 def create_dir_in_op_oneclient(user, full_path, users, result, host):

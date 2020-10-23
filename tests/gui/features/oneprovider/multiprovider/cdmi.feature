@@ -2,13 +2,10 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
-            - user1
-    And initial groups configuration in "onezone" Onezone service:
-          group1:
-            owner: user1
+            - space-owner-user
     And initial spaces configuration in "onezone" Onezone service:
           space1:
-              owner: user1
+              owner: space-owner-user
               providers:
                   - oneprovider-1:
                       storage: posix
@@ -18,7 +15,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
                       size: 1000000
     And user opened browser window
     And user of browser opened onezone page
-    And user of browser logged as user1 to Onezone service
+    And user of browser logged as space-owner-user to Onezone service
 
   Scenario: User uploads file on one provider, sees it's distribution, writes to it using cdmi on other provider and sees it's distribution
     When user of browser clicks "space1" on the spaces list in the sidebar
@@ -40,7 +37,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And user of browser sees that item is never synchronized in provider "oneprovider-2"
     And user of browser clicks "Close" confirmation button in displayed modal
 
-    And using CDMI API user1 writes "ABCD" to "/space1/20B-0.txt" starting at offset 20 in "oneprovider-2" provider
+    And using CDMI API space-owner-user writes "ABCD" to "/space1/20B-0.txt" starting at offset 20 in "oneprovider-2" provider
     And user of browser is idle for 90 seconds
     And user of browser clicks file browser refresh button
     And user of browser sees file browser in data tab in Oneprovider page
@@ -69,7 +66,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And user of browser sees that chunk bar for provider "oneprovider-1" is entirely filled
     And user of browser clicks "Close" confirmation button in displayed modal
 
-    And using CDMI API user1 writes "ABCD" to "/space1/20B-0.txt" starting at offset 20 in "oneprovider-1" provider
+    And using CDMI API space-owner-user writes "ABCD" to "/space1/20B-0.txt" starting at offset 20 in "oneprovider-1" provider
     And user of browser is idle for 90 seconds
     And user of browser clicks file browser refresh button
     And user of browser sees file browser in data tab in Oneprovider page
@@ -99,7 +96,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And user of browser sees that item is never synchronized in provider "oneprovider-2"
     And user of browser clicks "Close" confirmation button in displayed modal
 
-    And using CDMI API user1 reads from "/space1/20B-0.txt" in range 10 to 20 in "oneprovider-2" provider
+    And using CDMI API space-owner-user reads from "/space1/20B-0.txt" in range 10 to 20 in "oneprovider-2" provider
     And user of browser is idle for 90 seconds
     And user of browser clicks file browser refresh button
     And user of browser sees file browser in data tab in Oneprovider page
@@ -126,7 +123,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And user of browser sees that chunk bar for provider "oneprovider-1" is entirely filled
     And user of browser clicks "Close" confirmation button in displayed modal
 
-    And using CDMI API user1 writes "ABCD" to "/space1/20B-0.txt" starting at offset 40 in "oneprovider-1" provider
+    And using CDMI API space-owner-user writes "ABCD" to "/space1/20B-0.txt" starting at offset 40 in "oneprovider-1" provider
     And user of browser is idle for 90 seconds
     And user of browser clicks file browser refresh button
     And user of browser sees file browser in data tab in Oneprovider page
@@ -146,7 +143,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
     And user of browser sees that item named "20B-0.txt" has appeared in file browser
 
-    And using CDMI API user1 writes "ABCD" to "/space1/20B-0.txt" starting at offset 20 in "oneprovider-1" provider
+    And using CDMI API space-owner-user writes "ABCD" to "/space1/20B-0.txt" starting at offset 20 in "oneprovider-1" provider
     And user of browser is idle for 90 seconds
     And user of browser clicks file browser refresh button
     And user of browser sees file browser in data tab in Oneprovider page

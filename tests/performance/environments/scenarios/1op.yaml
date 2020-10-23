@@ -1,5 +1,5 @@
 # Name of the scenario to run
-scenario: "scenario-1oz-1op"
+scenario: "scenario-1oz-1op-local-volume"
 
 # Determines if onedata components should be started from pre-compiled sources
 # or pre-installed packages inside dockers. When enabled, sources are expected
@@ -39,7 +39,7 @@ forceImagePull: true
 spaces: false
 
 storages:
-  - nfs
+  - local-volume-1
 
 os-config:
   cfg1: &cfg1

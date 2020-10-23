@@ -204,6 +204,12 @@ def public_share():
 
 
 @fixture(scope='session')
+def data_discovery():
+    from tests.gui.utils import DataDiscoveryPage
+    return DataDiscoveryPage
+
+
+@fixture(scope='session')
 def modals():
     from tests.gui.utils import Modals
     return Modals
@@ -213,17 +219,6 @@ def modals():
 def popups():
     from tests.gui.utils import Popups
     return Popups
-
-
-@fixture(scope='session', autouse=True)
-def large_file():
-    large_file_path = os.path.join(UPLOAD_FILES_DIR, 'large_file.txt')
-    if not os.path.exists(large_file_path):
-        size = MEGABYTE * 50
-        content = ''.join(random.choice(string.ascii_uppercase + string.digits)
-                          for _ in range(size))
-        with open(large_file_path, 'wb') as f:
-            f.write(content.encode('utf-8'))
 
 
 # ============================================================================

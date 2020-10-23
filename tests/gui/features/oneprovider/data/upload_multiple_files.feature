@@ -3,10 +3,10 @@ Feature: Uploading multiple files at once
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
-            - user1
+            - space-owner-user
     And initial spaces configuration in "onezone" Onezone service:
         space1:
-            owner: user1
+            owner: space-owner-user
             providers:
                 - oneprovider-1:
                     storage: posix
@@ -14,15 +14,17 @@ Feature: Uploading multiple files at once
 
     And user opened browser window
     And user of browser opened onezone page
-    And user of browser logged as user1 to Onezone service
+    And user of browser logged as space-owner-user to Onezone service
     And directory tree structure on local file system:
           browser:
-              - dir1: 5
-              - dir2: 70
-              - dir3: 4
-              - dir4:
-                  - file10.txt: 10
-                  - file23.txt: 23
+            dir1: 5
+            dir2: 70
+            dir3: 4
+            dir4:
+              file10.txt:
+                content: 10
+              file23.txt:
+                content: 23
 
 
   Scenario: User uploads 5 files at once
@@ -30,8 +32,6 @@ Feature: Uploading multiple files at once
     And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload files from local directory "dir1" to remote current dir
-    And user of browser is idle for 1 second
-    And user of browser waits for file upload to finish
     Then user of browser sees that there are 5 items in file browser
 
 
@@ -42,8 +42,6 @@ Feature: Uploading multiple files at once
     # upload 70 files
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload files from local directory "dir2" to remote current dir
-    And user of browser is idle for 5 seconds
-    And user of browser waits for file upload to finish
 
     # check working of lazy loading
     And user of browser sees nonempty file browser in data tab in Oneprovider page
@@ -62,7 +60,7 @@ Feature: Uploading multiple files at once
     And user of browser sees that current working directory displayed in breadcrumbs is /dir1
 
     # start uploading files in dir1 and go back to root directory
-    And user of browser uses upload button from file browser menu bar to upload files from local directory "dir2" to remote current dir
+    And user of browser uses upload button from file browser menu bar to upload files from local directory "dir2" to remote current dir without waiting for upload to finish
     And user of browser changes current working directory to home using breadcrumbs
     And user of browser sees that current working directory displayed in breadcrumbs is space1
     And user of browser waits for file upload to finish
@@ -80,9 +78,5 @@ Feature: Uploading multiple files at once
     And user of browser sees file browser in data tab in Oneprovider page
 
     And user of browser uses upload button from file browser menu bar to upload files from local directory "dir3" to remote current dir
-    And user of browser is idle for 5 seconds
-    And user of browser waits for file upload to finish
     And user of browser uses upload button from file browser menu bar to upload files from local directory "dir4" to remote current dir
-    And user of browser is idle for 5 seconds
-    And user of browser waits for file upload to finish
     Then user of browser sees items named ["file0.txt", "file1.txt", "file10.txt", "file2.txt", "file23.txt", "file3.txt"] in file browser in given order

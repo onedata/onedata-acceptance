@@ -73,9 +73,6 @@ oneprovider-1:
     createUsers: false
 
   oneclient:
-    directIO:
-      nfs:
-        enabled: false
     users: []
     wait_for_oneprovider:
       enabled: false
@@ -85,9 +82,6 @@ oneprovider-2:
     createUsers: false
 
   oneclient:
-    directIO:
-      nfs:
-        enabled: false
     users: []
     wait_for_oneprovider:
       enabled: false

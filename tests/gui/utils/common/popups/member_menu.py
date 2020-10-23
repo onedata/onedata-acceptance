@@ -16,6 +16,9 @@ class MenuItem(PageObject):
     def __call__(self):
         self.click()
 
+    def is_enabled(self):
+        return 'disabled' not in self.web_elem.get_attribute('class')
+
 
 class DataDistributionItem(PageObject):
     name = id = Label('.text')

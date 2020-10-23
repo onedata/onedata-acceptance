@@ -101,6 +101,12 @@ def wt_rm_files_to_storage_mount_point(src_path, hosts):
     _docker_rm(os.path.join(MOUNT_POINT, src_path), hosts)
 
 
+@given(parsers.parse('there is no {elems} in provider\'s storage mount point'))
+def g_rm_many_files_from_storage_mount_point(elems, hosts):
+    for elem in parse_seq(elems):
+        _docker_rm(os.path.join(MOUNT_POINT, elem), hosts)
+
+
 @wt(parsers.parse('user of {browser_id} appends "{text}" to {path} file '
                   'in provider\'s storage mount point'))
 def wt_append_text_to_files_in_storage_mount_point(path, text, hosts):
@@ -136,3 +142,17 @@ def unpause_providers(hosts, provider_list):
     for provider in parse_seq(provider_list):
         container_id = hosts[provider]['container-id']
         subprocess.call(unpause_cmd + [container_id])
+
+
+@wt(parsers.parse('elasticsearch plugin stops working'))
+def pause_elasticsearch_container(hosts):
+    pause_cmd = ['docker', 'pause']
+    container_id = hosts['elasticsearch']['container-id']
+    subprocess.call(pause_cmd + [container_id])
+
+
+@wt(parsers.parse('elasticsearch plugin starts working'))
+def unpause_elasticsearch_container(hosts):
+    unpause_cmd = ['docker', 'unpause']
+    container_id = hosts['elasticsearch']['container-id']
+    subprocess.call(unpause_cmd + [container_id])

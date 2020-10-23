@@ -1,4 +1,4 @@
-"""Utils to facilitate operations on spaces page in Onezone gui"""
+"""Utils to facilitate operations on discovery page in Onezone gui"""
 
 __author__ = "Michal Stanisz, Agnieszka Warchol"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
@@ -42,8 +42,15 @@ class Space(Element):
         self.click()
         self.menu_button.click()
 
+    def is_element_disabled(self, element_name):
+        element = getattr(self, element_name)
+        return 'disabled' in element.web_elem.get_attribute("class")
+
     def is_home_icon(self):
         return 'oneicon-home' in self.home_icon.get_attribute("class")
+
+    def is_active(self):
+        return 'active' in self.web_elem.get_attribute('class')
 
 
 class Provider(Element):
@@ -80,7 +87,7 @@ class ProvidersMap(Element):
 
 
 class SpaceOverviewPage(PageObject):
-    space_name = Label('.with-menu .one-label')
+    space_name = Label('.header-row .one-label')
     info_tile = WebItem('.resource-info-tile', cls=SpaceInfoTile)
     members_tile = WebItem('.resource-members-tile .tile-main',
                            cls=SpaceMembersTile)

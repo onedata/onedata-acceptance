@@ -42,7 +42,8 @@ def paste_received_token_into_text_field(selenium, browser_id,
     _paste_token_into_text_field(selenium, browser_id, oz_page, token)
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) joins group using received token'))
+@wt(parsers.re('user of (?P<browser_id>.*) joins (?P<option>group|space) using '
+               'received token'))
 def consume_received_token(selenium, browser_id, oz_page, tmp_memory):
     option = 'Tokens'
     button = 'Consume token'
@@ -70,10 +71,9 @@ def consume_token_from_copied_token(selenium, browser_id, oz_page, clipboard,
 
 @wt(parsers.parse('user of {browser_id} adds group "{elem_name}" as subgroup '
                   'using copied token'))
-@wt(parsers.parse('user of {browser_id} adds space "{elem_name}" to harvester '
-                  'using copied token'))
-@wt(parsers.parse('user of {browser_id} adds harvester "{elem_name}" to space '
-                  'using copied token'))
+@wt(parsers.re('user of (?P<browser_id>.*) adds '
+               '(space|harvester|group) "(?P<elem_name>.*)" '
+               'to (harvester|space) using copied token'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_element_with_copied_token(selenium, browser_id, elem_name, oz_page,
                                   clipboard, displays, modals):
@@ -121,22 +121,6 @@ def _result_to_consume_token(selenium, browser_id, result, modals):
 
         assert_error_modal_with_text_appeared(selenium, browser_id, text)
         click_modal_button(selenium, browser_id, button, modal, modals)
-
-
-@wt(parsers.parse('user of {browser_id} adds group "{group}" as subgroup '
-                  'using received token'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def add_element_with_received_token(selenium, browser_id, group, oz_page,
-                                    tmp_memory, modals):
-    option = 'Tokens'
-    button = 'Consume token'
-
-    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
-    click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button)
-    paste_received_token_into_text_field(selenium, browser_id, oz_page,
-                                         tmp_memory)
-    select_member_from_dropdown(selenium, browser_id, group, modals, oz_page)
-    click_on_join_button_on_tokens_page(selenium, browser_id, oz_page)
 
 
 def _create_token_of_type(selenium, browser_id, token_type, oz_page,
@@ -361,6 +345,15 @@ def assert_token_configuration(selenium, browser_id, config, oz_page, users,
                                 groups, hosts, tmp_memory)
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_token_configuration_gui(selenium, browser_id, config, oz_page, users,
+                                   groups, hosts, tmp_memory):
+    token_name = yaml.load(config)['name']
+    click_on_token_on_tokens_list(selenium, browser_id, token_name, oz_page)
+    _assert_token_configuration(selenium, browser_id, config, oz_page, users,
+                                groups, hosts, tmp_memory)
+
+
 def _assert_token_configuration(selenium, browser_id, config, oz_page, users,
                                 groups, hosts, tmp_memory, creation=False):
     data = yaml.load(config)
@@ -500,3 +493,11 @@ def create_and_check_token(browser_id, config, selenium, oz_page, popups,
                               users, groups, hosts, tmp_memory)
     _assert_token_configuration(selenium, browser_id, config, oz_page, users,
                                 groups, hosts, tmp_memory, creation=True)
+
+
+def choose_and_revoke_token_in_oz_gui(selenium, browser_id, token_name,
+                                      oz_page, popups):
+    option = 'Tokens'
+
+    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
+    revoke_token(selenium, browser_id, token_name, oz_page, popups)

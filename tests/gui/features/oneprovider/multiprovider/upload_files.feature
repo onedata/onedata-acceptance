@@ -3,10 +3,10 @@ Feature: Uploading files to multiple providers
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
-            - user1
+            - space-owner-user
     And initial spaces configuration in "onezone" Onezone service:
           space1:
-              owner: user1
+              owner: space-owner-user
               providers:
                   - oneprovider-1:
                       storage: posix
@@ -17,11 +17,12 @@ Feature: Uploading files to multiple providers
 
     And user opened browser window
     And user of browser opened Onezone page
-    And user of browser logged as user1 to Onezone service
+    And user of browser logged as space-owner-user to Onezone service
     And directory tree structure on local file system:
           browser:
-              - dir2: 200
-
+            dir2: 200
+            large_file.txt:
+              size: 50 MiB
 
   Scenario: User successfully uploads different files to two oneproviders and sees that they are accessible
     When user of browser opens file browser for "space1" space
@@ -54,15 +55,15 @@ Feature: Uploading files to multiple providers
     And user of browser sees that file "20B-1.txt" is uploaded
 
 
-  Scenario: User uploads a large file to provider and cancels uploading, sees that file is not uploaded
+  Scenario: User sees file is not visible after its upload has been canceled
     When user of browser opens file browser for "space1" space
 
     # upload file and cancel
-    And user of browser uses upload button from file browser menu bar to upload files from local directory "dir2" to remote current dir
-    And user of browser uses upload button from file browser menu bar to upload file "large_file.txt" to current dir
+    And user of browser uses upload button from file browser menu bar to upload files from local directory "dir2" to remote current dir without waiting for upload to finish
+    And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir without waiting for upload to finish
     And user of browser clicks cancel button on upload popup number 2
     And user of browser confirms canceling the upload
-    And user of browser is idle for 15 seconds
+    And user of browser waits for file uploads to finish
 
     # Go to uploads and see that there is only 200 files
     Then user of browser clicks on Uploads in the main menu

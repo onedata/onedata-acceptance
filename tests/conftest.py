@@ -150,6 +150,12 @@ def storages():
 
 
 @pytest.fixture
+def harvesters():
+    """Mapping harvester name to harvester id, e.g. {st1: UEIHSdft743d}"""
+    return {}
+
+
+@pytest.fixture
 def context():
     """Dict to use when one wants to store sth between steps."""
     return {}
@@ -161,36 +167,19 @@ def hosts():
     return {}
 
 
+@pytest.fixture
+def tokens():
+    """Dict to use to store information about tokens, e.g. {'token1': {
+    'token_id': HGS2783GYIS, 'token': HDSGUFGJY875381FGJFSU}}"""
+    return {}
+
+
 def add_etc_hosts_entries(service_ip, service_host):
     sp.call('sudo bash -c "echo {} {} >> /etc/hosts"'.format(
         service_ip, service_host), shell=True)
 
 
-def set_debug(container_id, service_name, service_type, sources_data=None):
-    if sources_data:
-        set_debug_fmt = (r'echo {{\"debug\": true}} > '
-                         r'{}')
-        app_cfg_fmt = '_build/default/rel/{}/data/gui_static/app-config.json'
-        worker_name = ('op-worker' if 'provider' in service_type else
-                       'oz-worker')
-        app_cfg_path = app_cfg_fmt.format(worker_name.replace('-', '_'))
-        for pod_name, pod_cfg in sources_data.items():
-            if service_name in pod_name:
-                worker_path = pod_cfg.get(worker_name)
-                set_debug_cmd = set_debug_fmt.format(os.path.join(worker_path,
-                                                                  app_cfg_path))
-                docker.exec_(container_id, set_debug_cmd)
-
-    else:
-        set_debug_fmt = (r'echo {{\"debug\": true}} > '
-                         r'/var/lib/{}_worker/gui_static/app-config.json')
-        set_debug_cmd = set_debug_fmt.format('op' if 'provider' in
-                                                     service_type else 'oz')
-        docker.exec_(container_id, set_debug_cmd)
-
-
-def parse_oz_op_cfg(pod_name, pod_cfg, service_type, add_test_domain, hosts,
-                    sources_data):
+def parse_oz_op_cfg(pod_name, pod_cfg, service_type, add_test_domain, hosts):
     alias = service_name_to_alias_mapping(pod_name)
     name, hostname, ip, container_id = (pod_cfg.get('name'),
                                         pod_cfg.get('domain'),
@@ -207,7 +196,6 @@ def parse_oz_op_cfg(pod_name, pod_cfg, service_type, add_test_domain, hosts,
                         {'hostname': '{}:{}'.format(hostname,
                                                     PANEL_REST_PORT)}
                     }
-    set_debug(container_id, name, service_type, sources_data)
     if add_test_domain and service_type == 'oneprovider':
         add_etc_hosts_entries(ip, '{}.test'.format(hostname))
 
@@ -226,25 +214,17 @@ def parse_client_cfg(pod_name, pod_cfg, hosts):
 def parse_elasticsearch_cfg(pod_cfg, hosts):
     ip, container_id = (pod_cfg.get('ip'),
                         pod_cfg.get('container-id'))
-
     hosts['elasticsearch'] = {'ip': ip,
                               'container-id': container_id}
 
 
 def parse_hosts_cfg(pods_cfg, hosts, request):
-    sources_data = {}
-    data_path = deployment_data_path()
-    if os.path.isfile(data_path):
-        with open(data_path, 'r') as deployment_data_file:
-            deployment_data = yaml.load(deployment_data_file)
-            sources_data = deployment_data.get('sources')
-
     for pod_name, pod_cfg in pods_cfg.items():
         service_type = pod_cfg['service-type']
         if service_type in ['onezone', 'oneprovider']:
             parse_oz_op_cfg(pod_name, pod_cfg, service_type,
                             request.config.getoption('--add-test-domain'),
-                            hosts, sources_data)
+                            hosts)
 
         elif service_type == 'oneclient':
             parse_client_cfg(pod_name, pod_cfg, hosts)

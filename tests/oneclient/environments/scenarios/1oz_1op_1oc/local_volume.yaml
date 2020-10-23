@@ -1,5 +1,5 @@
 # Name of the scenario to run
-scenario: "scenario-1oz-1op"
+scenario: "scenario-1oz-1op-local-volume"
 
 # Determines if onedata components should be started from pre-compiled sources
 # or pre-installed packages inside dockers. When enabled, sources are expected
@@ -38,9 +38,6 @@ forceImagePull: true
 
 spaces: false
 
-storages:
-  - nfs
-
 os-config:
   cfg1: &cfg1
     users:
@@ -57,10 +54,13 @@ os-config:
       fuse:
         - user1
         - user2
+
   services:
     oneprovider-1: *cfg1
     oneclient-1: *cfg1
-    oneclient-2: *cfg1
+
+storages:
+  - local-volume-1
 
 onezone:
   batchConfig:
@@ -71,10 +71,6 @@ oneprovider-1:
     createUsers: false
 
   oneclient:
-    replicas: 2
     users: []
     wait_for_oneprovider:
       enabled: false
-    directIO:
-      nfs:
-        enabled: true

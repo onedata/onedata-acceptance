@@ -20,7 +20,7 @@ import jsondiff
 from tests.utils.acceptance_utils import (list_parser, make_arg_list,
                                           compare, time_attr)
 from tests.utils.bdd_utils import when, then, wt, parsers
-from tests.utils.utils import assert_, assert_generic, repeat_failed
+from tests.utils.utils import assert_, assert_generic, assert_expected_failure, repeat_failed
 from tests.utils.client_utils import (stat, ls, mv, osrename, create_file, rm,
                                       chmod, touch, setxattr, getxattr,
                                       removexattr, listxattr, get_all_xattr,
@@ -88,7 +88,7 @@ def ls_present(user, files, path, client_node, users):
     def condition():
         listed_files = ls(client, path)
         for file in files:
-            assert file in listed_files
+            assert file in listed_files, "File {} not in listed files".format(file)
 
     assert_(client.perform, condition)
 
@@ -116,9 +116,9 @@ def ls_children(user, parent_dir, lower: int, upper: int, client_node, users):
 
     def condition():
         listed_files = ls(client, path)
-        assert len(listed_files) == files_num
+        assert len(listed_files) == files_num, "Listed {} files instead of expected {}".format(len(listed_files), files_num)
         for i in range(lower, upper):
-            assert str(i) in listed_files
+            assert str(i) in listed_files, "File {} not in listed files".format(str(i))
 
     assert_(client.perform, condition)
 
@@ -130,9 +130,9 @@ def mv_base(user, file1, file2, client_node, users, should_fail=False):
     dest = client.absolute_path(file2)
 
     def condition():
-        mv(client, src, dest)
+        assert_expected_failure(mv, should_fail, client, src, dest)
 
-    assert_generic(client.perform, should_fail, condition)
+    assert_(client.perform, condition)
 
 
 @wt(parsers.re('(?P<user>\w+) renames (?P<file1>.*) to (?P<file2>.*)'
@@ -148,9 +148,9 @@ def rename_base(user, file1, file2, client_node, users, should_fail=False):
     dest = client.absolute_path(file2)
 
     def condition():
-        osrename(client, src, dest)
+        assert_expected_failure(osrename, should_fail, client, src, dest)
 
-    assert_generic(client.perform, should_fail, condition)
+    assert_(client.perform, condition)
 
 
 @wt(parsers.re('(?P<user>\w+) fails to rename (?P<file1>.*) to '
@@ -169,10 +169,11 @@ def stat_absent(user, path, files, client_node, users):
 
     def condition():
         for f in files:
-            with pytest.raises(OSError,
-                               message='File {} exists in {}'.format(f,
-                                                                     path)):
-                stat(client, os.path.join(path, f))
+            p = os.path.join(path, f)
+            try:
+                stat(client, p)
+            except FileNotFoundError as exc_info:
+                assert p in exc_info.filename
 
     assert_(client.perform, condition)
 
@@ -188,7 +189,7 @@ def ls_absent(user, files, path, client_node, users):
     def condition():
         listed_files = ls(client, path)
         for file in files:
-            assert file not in listed_files
+            assert file not in listed_files, "File {} is in files list".format(file)
 
     assert_(client.perform, condition)
 
@@ -198,13 +199,17 @@ def shell_move_base(user, file1, file2, client_node, users, should_fail=False):
     client = user.clients[client_node]
     src = client.absolute_path(file1)
     dest = client.absolute_path(file2)
+    cmd = 'mv {0} {1}'.format(src, dest)
 
     def condition():
-        mv(client, src, dest)
-        cmd = 'mv {0} {1}'.format(src, dest)
-        assert 0 == client_run_cmd(client, cmd, error=True)
+        def fun():
+            ret = client_run_cmd(client, cmd, error=True)
+            if ret != 0:
+                raise OSError("Command ended with exit code {}".format(ret))
 
-    assert_generic(client.perform, should_fail, condition)
+        assert_expected_failure(fun, should_fail)
+
+    assert_(client.perform, condition)
 
 
 @wt(parsers.re('(?P<user>\w+) fails to move (?P<file1>.*) to (?P<file2>.*) '
@@ -221,9 +226,9 @@ def delete_file_base(user, files, client_node, users, should_fail=False):
         path = client.absolute_path(file)
 
         def condition():
-            rm(client, path)
+            assert_expected_failure(rm, should_fail, client, path)
 
-        assert_generic(client.perform, should_fail, condition)
+        assert_(client.perform, condition)
 
 
 @wt(parsers.re('(?P<user>\w+) deletes files (?P<files>.*) on '
@@ -623,4 +628,3 @@ def assert_file_stats_on_storage(path, container, provider, hosts, uid, gid):
                              'but found {}'.format(path, uid, stat_uid))
     assert gid == stat_gid, ('Expected owner\'s GID of file {} to be {}, '
                              'but found {}'.format(path, gid, stat_gid))
-

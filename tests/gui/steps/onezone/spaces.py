@@ -10,7 +10,7 @@ __license__ = ("This software is released under the MIT license cited in "
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import wt, parsers
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import transform, parse_seq
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.modal import wt_wait_for_modal_to_appear
 
@@ -143,9 +143,18 @@ def click_cancel_rename_button_on_overview_page(selenium, browser_id, oz_page):
     oz_page(driver)['data'].overview_page.info_tile.edit_name_box.cancel()
 
 
+@wt(parsers.parse('user of {browser_id} clicks on "{button}" button '
+                  'in space "{space_name}" menu'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_option_in_space_menu(selenium, browser_id, space_name, button,
+                                  oz_page, popups):
+    driver = selenium[browser_id]
+    oz_page(driver)['data'].spaces_header_list[space_name].click_menu()
+    popups(driver).popover_menu.menu[button]()
+
+
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on '
-               '"(?P<button>.*)" button '
-               'in space menu'))
+               '"(?P<button>.*)" button in space menu'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_option_in_menu(selenium, browser_id, button, oz_page, popups):
     driver = selenium[browser_id]
@@ -155,11 +164,25 @@ def click_on_option_in_menu(selenium, browser_id, button, oz_page, popups):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
-               '(?P<button_name>yes|no) button'))
+               '(?P<button_name>Leave|Cancel) button'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_confirm_or_cancel_button_on_leave_space_page(selenium, browser_id,
                                                        button_name, modals):
-    getattr(modals(selenium[browser_id]).leave_space, button_name).click()
+    getattr(modals(selenium[browser_id]).leave_space, button_name.lower())()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
+               'understand notice checkbox in "Remove space" modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def check_remove_space_understand_notice(selenium, browser_id, modals):
+    modals(selenium[browser_id]).remove_space.understand_notice()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
+               '"Remove" button in "Remove space" modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def check_remove_space_understand_notice(selenium, browser_id, modals):
+    modals(selenium[browser_id]).remove_space.remove()
 
 
 @wt(parsers.parse('user of {browser_id} sees that "{space_name}" '
@@ -233,6 +256,31 @@ def click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
     oz_page(driver)['data'].spaces_header_list[space_name].click()
     getattr(oz_page(driver)['data'].elements_list[space_name],
             transform(option)).click()
+
+
+def _get_number_of_disabled_elements_on_left_sidebar_menu(space):
+    page_names = ['overview', 'data', 'shares', 'transfers', 'providers',
+                  'members', 'harvesters']
+    return len([x for x in page_names if space.is_element_disabled(x)])
+
+
+@wt(parsers.re('user of (?P<browser_id>.*?) sees that (?P<element_list>.*) '
+               'of "(?P<space_name>.*?)" in the sidebar are disabled'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_option_of_space_on_left_sidebar_menu_disabled(selenium, browser_id,
+                                                         space_name,
+                                                         element_list, oz_page):
+    driver = selenium[browser_id]
+    element_list = parse_seq(element_list)
+    element_list = [transform(e) for e in element_list]
+    space = oz_page(driver)['data'].elements_list[space_name]
+    error_msg = f'Number of disabled elements is incorrect'
+    assert _get_number_of_disabled_elements_on_left_sidebar_menu(space) == len(
+        element_list), error_msg
+
+    for element_name in element_list:
+        error_msg = f' "{element_name}" button is not in disabled state'
+        assert space.is_element_disabled(element_name), error_msg
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees (?P<correct_number>.*) '
@@ -414,7 +462,7 @@ def assert_copy_token_and_input_token_are_the_same(selenium, browser_id,
     assert first_token == second_token, 'two tokens are not the same'
 
 
-@wt(parsers.parse('user of {browser_id} sees non-empty copy token'))
+@wt(parsers.parse('user of {browser_id} sees that copied token is non-empty'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_copy_token_is_not_empty(selenium, browser_id, tmp_memory):
     token = tmp_memory[browser_id]['mailbox']['token']
@@ -486,6 +534,15 @@ def check_tab_name_label(selenium, browser_id, tab_name, oz_page):
     driver.switch_to.window(window_name=driver.window_handles[1])
     label = oz_page(selenium[browser_id])['data'].tab_name
     assert label.lower() == tab_name, f'User not on {tab_name} page'
+
+
+@wt(parsers.parse('user of {browser_id} sees that opened space name is '
+                  '"{space}"'))
+def assert_opened_space_name(selenium, browser_id, space, oz_page):
+    driver = selenium[browser_id]
+    driver.switch_to.default_content()
+    msg = f'{space} space view is not opened'
+    assert oz_page(driver)['data'].elements_list[space].is_active(), msg
 
 
 @wt(parsers.parse('user of {browser_id} sees in the INFO section of Overview '
