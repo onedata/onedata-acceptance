@@ -19,10 +19,10 @@ Feature: Directories times tests
     And using <client2>, user1 succeeds to see item named "dir1" in "space1" in oneprovider-1
 
      # call sleep, to be sure that time of above and below operations is different
-    And user1 waits 2 second
+    And user1 waits 2 seconds
     And using <client2>, user1 renames item named "dir1" to "dir2" in "space1" in oneprovider-1
     Then using <client1>, user1 sees that status-change time of item named "dir2" in "space1" space is greater than modification time in oneprovider-1
-    And using <client1>, user1 sees that status-change time of item named "dir2" in "space1" space is greater than access time in oneprovider-1
+    And using <client1>, user1 sees that status-change time of item named "dir2" in "space1" space is not less than access time in oneprovider-1
 
   Examples:
   | client1    | client2    |

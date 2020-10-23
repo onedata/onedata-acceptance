@@ -53,5 +53,14 @@ from tests.gui.meta_steps.onezone.common import *
 from tests.oneclient.steps.auth_steps import *
 
 
+@pytest.mark.xfail(reason='Timestamps do not change during renaming '
+                          'directory using GUI, VFS-3520')
+@scenario('../features/oneprovider/files_times.feature',
+          'User renames file using <client2> and using <client1> he sees that '
+          'status-change time has changed')
+def test_rename_directory_and_check_status_change_time():
+    pass
+
+
 scenarios('../features/oneprovider/files_times.feature')
 
