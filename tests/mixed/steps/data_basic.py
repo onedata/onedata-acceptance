@@ -97,27 +97,27 @@ def create_file_in_op_with_tokens(client, user, users, space, name, hosts,
 
 
 @wt(parsers.re('using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to create '
-               'directory named "(?P<name>.*)" in "(?P<space>.*)" in '
+               'directory named "/(?P<abs_path>.*)" in "(?P<space>.*)" in '
                '(?P<host>.*)'))
-def create_dir_in_op(client, user, users, space, name, hosts, tmp_memory, host,
-                     selenium, op_container, result, modals, oz_page):
-    full_path = '{}/{}'.format(space, name)
+def create_dir_in_op(client, user, users, space, abs_path, hosts, tmp_memory,
+                     host, selenium, op_container, result, modals, oz_page):
+    full_path = '{}/{}'.format(space, abs_path)
     client_lower = client.lower()
     if client_lower == 'web gui':
-        if '/' in name:
+        if '/' in abs_path:
             go_to_filebrowser(selenium, user, oz_page, op_container,
                               tmp_memory, space)
-            go_to_path_without_last_elem(user, tmp_memory, name)
+            go_to_path_without_last_elem(user, tmp_memory, abs_path)
             create_item_in_op_gui(selenium, user, '',
-                                  'directory', os.path.basename(name),
+                                  'directory', os.path.basename(abs_path),
                                   tmp_memory, op_container, result, space,
                                   modals, oz_page)
             change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, user,
                                                            'home',
                                                            op_container)
         else:
-            create_item_in_op_gui(selenium, user, os.path.dirname(name),
-                                  'directory', os.path.basename(name),
+            create_item_in_op_gui(selenium, user, os.path.dirname(abs_path),
+                                  'directory', os.path.basename(abs_path),
                                   tmp_memory, op_container, result, space,
                                   modals, oz_page)
     elif client_lower == 'rest':
@@ -425,12 +425,13 @@ def create_directory_structure_in_op(selenium, user, op_container, config, space
 
 @wt(parsers.re('using (?P<client>.*), (?P<user>\w+) sees that (?P<time1>.*) '
                'time of item named "(?P<file_name>.*)" in "(?P<space>.*)" '
-               'space is (?P<comparator>.*) (than|to) '
+               'space is (?P<comparator>.*) '
                '(?P<time2>.*) time in (?P<host>.*)'))
 def assert_time_relation(user, time1, file_name, space, comparator, time2,
                          client, users, host, hosts, cdmi):
     client_lower = client.lower()
     full_path = '{}/{}'.format(space, file_name)
+    comparator = re.sub(r'(than|to)', '', comparator)
     if client_lower == 'rest':
         assert_time_relation_in_op_rest(full_path, time1, time2, comparator,
                                         host, hosts, user, users, cdmi)
@@ -461,7 +462,8 @@ def assert_files_time_relation(user, time1, file_name, space, comparator, time2,
                                           full_path, full_path2,
                                           oneclient_host, users)
     else:
-        raise NoSuchClientException('Client: {} not found'.format(client))
+        raise NoSuchClientException(f'Client: {client} is not supported '
+                                    f'for this assertion')
 
 
 @then(parsers.re('using (?P<client>.*), (?P<user>.*) sees that '

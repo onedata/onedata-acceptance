@@ -43,15 +43,15 @@ def _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id, path,
 
 
 @then(parsers.re('user of (?P<browser_id>\w+) (?P<res>.*) to rename '
-                 '"(?P<path>.*)" to "(?P<new_name>.*)" in "(?P<space>.*)"'))
-def rename_item(selenium, browser_id, path, new_name, tmp_memory, res, space,
+                 '"(?P<path>.*)" to "(?P<new_path>.*)" in "(?P<space>.*)"'))
+def rename_item(selenium, browser_id, path, new_path, tmp_memory, res, space,
                 modals, oz_page, op_container):
     option = 'Rename'
     modal_header = 'Rename'
     modal_name = 'Rename modal'
     confirmation_option = 'button'
     text = 'Renaming the file failed'
-    new_name = new_name.split('/')[-1]
+    new_name = new_path.split('/')[-1]
 
     open_modal_for_file_browser_item(selenium, browser_id, modals, modal_header,
                                      path, tmp_memory, option, space, oz_page,
