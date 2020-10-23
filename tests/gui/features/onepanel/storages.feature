@@ -151,6 +151,7 @@ Feature: Storage management using onepanel
     And user of browser_unified is idle for 8 seconds
     And user of browser_unified clicks on "oneprovider-1" in clusters menu
     And user of browser_unified clicks on Storages item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+    And user of browser_unified is idle for 2 seconds
 
     And user of browser_unified clicks on "Modify" button for "new_storage7" storage record in Storages page in Onepanel
     And user of browser_unified types "/volumes/persistence/storage/renamed_dir05" to Mount point field in POSIX edit form for "new_storage7" storage in Onepanel
