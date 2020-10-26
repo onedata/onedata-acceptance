@@ -31,7 +31,7 @@ Feature: Directories multiclient tests
 
 
   Scenario Outline: User1 creates directory using <client1> and user2 removes it using <client2>
-    When using <client1>, user1 succeeds to create directory named "dir1" in "space1" in oneprovider-1
+    When using <client1>, user1 succeeds to create directory named "/dir1" in "space1" in oneprovider-1
     And using <client2>, user2 succeeds to see item named "dir1" in "space1" in oneprovider-1
     And using <client2>, user2 succeeds to remove directory (rmdir) named "dir1" in "space1" in oneprovider-1
     Then using <client2>, user2 fails to see item named "dir1" in "space1" in oneprovider-1
@@ -39,7 +39,7 @@ Feature: Directories multiclient tests
 
 
   Scenario Outline: User1 creates directory using <client1> and user2 renames it using <client2>
-    When using <client1>, user1 succeeds to create directory named "dir1" in "space1" in oneprovider-1
+    When using <client1>, user1 succeeds to create directory named "/dir1" in "space1" in oneprovider-1
     And using <client2>, user2 succeeds to see item named "dir1" in "space1" in oneprovider-1
     And using <client2>, user2 renames item named "dir1" to "dir2" in "space1" in oneprovider-1
     Then using <client2>, user2 fails to see item named "dir1" in "space1" in oneprovider-1
