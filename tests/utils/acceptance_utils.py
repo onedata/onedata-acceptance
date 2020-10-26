@@ -113,7 +113,7 @@ def compare(val1, val2, comparator):
         return val1 < val2
     elif comparator == 'not greater':
         return val1 <= val2
-    elif comparator == 'not less':
+    elif comparator == 'not less' or comparator == 'greater or equal':
         return val1 >= val2
     else:
-        raise ValueError('Wrong argument comparator to function compare')
+        raise ValueError(f'Wrong argument comparator to function compare')
