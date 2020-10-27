@@ -340,6 +340,7 @@ def upload_file_to_cwd_in_file_browser(selenium, browser_id, file_name,
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
                   'menu bar to upload files from local directory "{dir_path}" '
                   'to remote current dir'))
+@repeat_failed(timeout=2 * WAIT_BACKEND)
 def upload_files_to_cwd_in_data_tab(selenium, browser_id, dir_path, tmpdir,
                                     op_container, popups):
     upload_files_to_cwd_in_data_tab_no_waiting(selenium, browser_id, dir_path,
@@ -350,6 +351,7 @@ def upload_files_to_cwd_in_data_tab(selenium, browser_id, dir_path, tmpdir,
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
                   'menu bar to upload files from local directory "{dir_path}" '
                   'to remote current dir without waiting for upload to finish'))
+@repeat_failed(timeout=2 * WAIT_BACKEND)
 def upload_files_to_cwd_in_data_tab_no_waiting(selenium, browser_id, dir_path,
                                                tmpdir, op_container):
     driver = selenium[browser_id]
@@ -364,6 +366,7 @@ def upload_files_to_cwd_in_data_tab_no_waiting(selenium, browser_id, dir_path,
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
                   'menu bar to upload local file "{file_path}" '
                   'to remote current dir'))
+@repeat_failed(timeout=2 * WAIT_BACKEND)
 def upload_file_to_cwd_in_data_tab(selenium, browser_id, file_path, tmpdir,
                                    op_container, popups):
     upload_file_to_cwd_in_data_tab_no_waiting(selenium, browser_id, file_path,
@@ -374,6 +377,7 @@ def upload_file_to_cwd_in_data_tab(selenium, browser_id, file_path, tmpdir,
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
                   'menu bar to upload local file "{file_path}" '
                   'to remote current dir without waiting for upload to finish'))
+@repeat_failed(timeout=2 * WAIT_BACKEND)
 def upload_file_to_cwd_in_data_tab_no_waiting(selenium, browser_id, file_path,
                                               tmpdir, op_container):
     driver = selenium[browser_id]
