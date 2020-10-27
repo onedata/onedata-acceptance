@@ -7,7 +7,7 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 
@@ -80,7 +80,7 @@ def assert_osd_number(selenium, browser_id, number: int, onepanel):
 
 @wt(parsers.parse('user of {browser_id} clicks on "{ceph_name}" on pools list '
                   'on Ceph page'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND * 2)
 def click_pool_on_pools_list(selenium, browser_id, ceph_name, onepanel):
     onepanel(selenium[browser_id]).content.ceph.pools_page.pools[
         ceph_name].click()
