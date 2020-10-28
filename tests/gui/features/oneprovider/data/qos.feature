@@ -1,4 +1,4 @@
-Feature: Quality of Service tests using single browser in Oneprovider GUI
+Feature: Quality of Service tests using single storage and single browser in Oneprovider GUI
 
 
   Background:
@@ -40,13 +40,13 @@ Feature: Quality of Service tests using single browser in Oneprovider GUI
       Then user of browser does not see QoS status tag for "file1" in file browser
 
 
-    Scenario: User successfully adds fulfilled QoS requirement
+    Scenario: User sees that QoS becomes fulfilled shortly after adding already fulfilled requirement
       When user of browser creates "anyStorage" QoS requirement for "file1" in space "space1"
       And user of browser clicks on QoS status tag for "file1" in file browser
       Then user of browser sees that all QoS requirements are fulfilled
 
 
-    Scenario: User successfully adds impossible QoS requirement
+    Scenario: User sees that QoS becomes impossible shortly after adding impossible to fulfill requirement
       When user of browser creates "hello=WORLD" QoS requirement for "file1" in space "space1"
       Then user of browser clicks on QoS status tag for "file1" in file browser
       And user of browser sees that all QoS requirements are impossible

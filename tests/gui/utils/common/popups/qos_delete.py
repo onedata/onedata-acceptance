@@ -12,7 +12,7 @@ from tests.gui.utils.core.web_elements import Button
 
 
 class DeleteQosPopup(PageObject):
-    confirm = Button('.spin-button-label')
+    confirm = Button('.btn-danger')
     cancel = Button('.btn-info')
 
     def __str__(self):

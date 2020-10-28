@@ -23,7 +23,7 @@ Feature: Basic file management operations
     And user of browser logged as user1 to Onezone service
 
 
-  Scenario: User copies and pastes file
+  Scenario: User successfully pastes file copied from other directory
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
@@ -37,7 +37,7 @@ Feature: Basic file management operations
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser sees items named "file1" in file browser in given order
 
-  Scenario: User cuts and pastes file
+  Scenario: User successfully pastes file cut from other directory
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page

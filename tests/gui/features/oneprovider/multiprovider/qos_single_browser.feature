@@ -27,15 +27,15 @@ Feature: Quality of Service tests for 2 providers using single browser in Onepro
 
   Scenario: User successfully adds "anyStorage" QoS requirement with 2 replicas
     When user of browser creates 2 replicas of "anyStorage" QoS requirement for "file1" in space "space1"
-    Then user of browser clicks on QoS status tag for "file1" in file browser
+    And user of browser clicks on QoS status tag for "file1" in file browser
     And user of browser sees that all QoS requirements are fulfilled
     And user of browser clicks on "Close" button in modal "Quality of Service"
-    And user of browser sees file chunks for file "file1" as follows:
+    Then user of browser sees file chunks for file "file1" as follows:
           oneprovider-1: entirely filled
           oneprovider-2: entirely filled
 
 
-  Scenario: User successfully evicts from storage with QoS requirement with 2 replicas
+  Scenario: File is replicated after eviction from one storage with QoS requirement with 2 replicas to another
     When user of browser creates 2 replicas of "anyStorage" QoS requirement for "file1" in space "space1"
     And user of browser clicks on QoS status tag for "file1" in file browser
     And user of browser sees that all QoS requirements are fulfilled
@@ -55,11 +55,11 @@ Feature: Quality of Service tests for 2 providers using single browser in Onepro
     And user of browser sees only items named ["file1", "dir1"] in file browser
 
 
-  Scenario: User successfully makes file inherit QoS requirement after directory
+  Scenario: User successfully makes file inherit QoS requirement from directory
     When user of browser creates 2 replicas of "anyStorage" QoS requirement for "dir1" in space "space1"
-    Then user of browser double clicks on item named "dir1" in file browser
+    And user of browser double clicks on item named "dir1" in file browser
     And user of browser sees QoS status tag for "file2" in file browser
-    And user of browser sees QoS inherited status tag for "file2" in file browser
+    Then user of browser sees QoS inherited status tag for "file2" in file browser
     And user of browser clicks on QoS status tag for "file2" in file browser
     And user of browser sees that all QoS requirements are fulfilled
     And user of browser clicks on "Close" button in modal "Quality of Service"

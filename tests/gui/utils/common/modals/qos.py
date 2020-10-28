@@ -25,7 +25,7 @@ class QualityOfServiceModal(Modal):
     save = NamedButton('.ready', text='Save')
     close = NamedButton('.btn-default', text='Close')
     requirements = WebItemsSequence('.qos-entry', cls=Requirement)
-    delete_confirm = NamedButton('.spin-button-label', text='Yes, remove')
+    delete_confirm = NamedButton('.btn-danger', text='Yes, remove')
 
     def __str__(self):
         return 'Quality of Service modal'
