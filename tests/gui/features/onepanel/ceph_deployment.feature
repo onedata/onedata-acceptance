@@ -20,7 +20,7 @@ Feature: Local Ceph deployment process using panel of zone and provider
     # ceph configuration
     And user of browser_provider enables "Manager & Monitor" toggle in ceph configuration step of deployment process in Onepanel
     And user of browser_provider clicks on Add OSD button in ceph configuration step of deployment process in Onepanel
-    And user of browser_provider types "3" to first OSD size input box in ceph configuration step of deployment process in Onepanel
+    And user of browser_provider types "1.5" to first OSD size input box in ceph configuration step of deployment process in Onepanel
     And user of browser_provider sets "GiB" as size unit of first OSD in ceph configuration step of deployment process in Onepanel
 
     And user of browser_provider clicks on Deploy button in ceph configuration step of deployment process in Onepanel
@@ -99,7 +99,7 @@ Feature: Local Ceph deployment process using panel of zone and provider
     # check ceph configuration
     And user of browser_provider clicks on Ceph item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser_provider sees that Ceph cluster works correctly
-    And user of browser_provider sees that OSDS limit is 3 GiB
+    And user of browser_provider sees that OSDS limit is 1.5 GiB
 
     And user of browser_provider clicks on Configuration tab on Ceph page
     And user of browser_provider sees that cluster name is "ceph" on Ceph page
