@@ -387,20 +387,18 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
           Detect deletions: true
           Continuous scan: False
 
-    # copy files to provider storage
     And user of browser2 copies dir1 to dir2 in provider's storage mount point
 
     # confirm that new files were not detected
     And user of browser2 is idle for 8 seconds
     And user of browser2 sees file browser in data tab in Oneprovider page
-
     Then user of browser2 sees that the file structure in file browser is as follow:
-              - dir2:
-                  - dir21:
-                      - dir211
-                      - file2.txt
-                  - dir22: 10
-                  - file1.txt
+          - dir2:
+              - dir21:
+                  - dir211
+                  - file2.txt
+              - dir22: 10
+              - file1.txt
 
 
   Scenario: User synchronizes directory manually when continuous scan is disabled
@@ -409,7 +407,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 sends support token for "space1" to user of browser1
     And user of browser2 copies dir2 to provider's storage mount point
 
-    #support space
+    # support space
     And user of browser1 opens "oneprovider-1" clusters submenu
     And user of browser1 supports "space1" space in "oneprovider-1" Oneprovider panel service with following configuration:
           storage: new_storage (import-enabled)
@@ -427,20 +425,18 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     And user of browser2 opens file browser for "space1" space
 
-    # copy files to provider storage
-     And user of browser2 copies dir1 to dir2 in provider's storage mount point
+    And user of browser2 copies dir1 to dir2 in provider's storage mount point
 
     # confirm that new files were not detected
     And user of browser2 is idle for 8 seconds
     And user of browser2 sees file browser in data tab in Oneprovider page
-
     And user of browser2 sees that the file structure in file browser is as follow:
-              - dir2:
-                  - dir21:
-                      - dir211
-                      - file2.txt
-                  - dir22: 10
-                  - file1.txt
+          - dir2:
+              - dir21:
+                  - dir211
+                  - file2.txt
+              - dir22: 10
+              - file1.txt
 
     And user of browser1 clicks on "Storage import" navigation tab in space "space1"
     And user of browser1 clicks on "Start scan" button in storage import tab in Onepanel
