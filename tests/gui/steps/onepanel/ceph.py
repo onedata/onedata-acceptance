@@ -49,10 +49,10 @@ def click_on_ceph_tab(selenium, browser_id, onepanel, tab_name):
 def check_ceph_cluster_name_on_ceph_page(selenium, browser_id, name, onepanel):
     driver = selenium[browser_id]
     given = onepanel(driver).content.ceph.configuration_page.cluster_name
-    assert given == name, f'Expected {name} as ceph cluster name, got {given}'
+    assert given == name, f'Expected {name} as Ceph cluster name, got {given}'
 
 
-@wt(parsers.parse('user of {browser_id} opens ceph nodes list on Ceph page'))
+@wt(parsers.parse('user of {browser_id} opens Ceph nodes list on Ceph page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_ceph_nodes_on_ceph_page(selenium, browser_id, onepanel):
     driver = selenium[browser_id]
@@ -60,17 +60,17 @@ def open_ceph_nodes_on_ceph_page(selenium, browser_id, onepanel):
 
 
 @wt(parsers.parse('user of {browser_id} sees that Manager & Monitor '
-                  'is enabled for ceph node on Ceph page'))
+                  'is enabled for Ceph node on Ceph page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_manager_monitor_enabled(selenium, browser_id, onepanel):
     driver = selenium[browser_id]
     assert (onepanel(driver).content.ceph.configuration_page.node
-            .manager_and_monitor.is_checked()), ('Manager & Monitor for ceph '
+            .manager_and_monitor.is_checked()), ('Manager & Monitor for Ceph '
                                                  'node is disabled')
 
 
-@wt(parsers.parse('user of {browser_id} sees that ceph node has {number} OSD '
-                  'on ceph Page'))
+@wt(parsers.parse('user of {browser_id} sees that Ceph node has {number} OSD '
+                  'on Ceph page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_osd_number(selenium, browser_id, number: float, onepanel):
     driver = selenium[browser_id]
@@ -87,7 +87,7 @@ def click_pool_on_pools_list(selenium, browser_id, ceph_name, onepanel):
 
 
 @wt(parsers.parse('user of {browser_id} sees that pool usage of "{ceph_name}" '
-                  'is {usage} on Ceph Page'))
+                  'is {usage} on Ceph page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_pool_usage_on_ceph_page(selenium, browser_id, ceph_name, usage,
                                    onepanel):
@@ -100,7 +100,7 @@ def assert_pool_usage_on_ceph_page(selenium, browser_id, ceph_name, usage,
 # different values on bamboo and local deployment and I wanted tests to work
 # both ways
 @wt(parsers.parse('user of {browser_id} sees that pool usage of "{ceph_name}" '
-                  'is about {usage} on Ceph Page'))
+                  'is about {usage} on Ceph page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_approx_pool_usage_on_ceph_page(selenium, browser_id, ceph_name,
                                           usage, onepanel):

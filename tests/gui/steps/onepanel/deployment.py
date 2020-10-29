@@ -73,15 +73,8 @@ def wt_type_second_host_to_in_box_in_deployment_step(selenium, browser_id,
     setattr(step, transform(input_box), text)
 
 
-@wt(parsers.re('user of (?P<browser_id>.+?)robi rzeczy cephowe'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def do_ceph_staff(selenium, browser_id, input_box, step, onepanel):
-    import pdb
-    pdb.set_trace()
-
-
 @wt(parsers.parse('user of {browser_id} enables "Manager & Monitor" toggle in '
-                  'Ceph Configuration step of deployment process in Onepanel'))
+                  'Ceph configuration step of deployment process in Onepanel'))
 def enable_manager_and_monitor_toggle_in_ceph_config_step(selenium,
                                                           browser_id, onepanel):
     step = onepanel(selenium[browser_id]).content.deployment.cephconfiguration
@@ -89,18 +82,18 @@ def enable_manager_and_monitor_toggle_in_ceph_config_step(selenium,
 
 
 @wt(parsers.parse('user of {browser_id} types "{size}" to {number} OSD size '
-                  'input box in ceph configuration step of deployment process '
+                  'input box in Ceph configuration step of deployment process '
                   'in Onepanel'))
-def enable_manager_and_monitor_toggle_in_ceph_config_step(selenium, number,
-                                                          size, browser_id,
-                                                          onepanel):
+def type_osd_size_to_input(selenium, number, size: str, browser_id, onepanel):
     step = onepanel(selenium[browser_id]).content.deployment.cephconfiguration
     osd_index = 0 if number == 'first' else 1
-    step.osds[osd_index].size = str(size)
+    step.osds[osd_index].size = size
 
 
+# this function only works with "first" and "second" number as these are the
+# only planned possibilities in tests
 @wt(parsers.parse('user of {browser_id} sets "{unit}" as size unit of {number} '
-                  'OSD in ceph configuration step of deployment process in '
+                  'OSD in Ceph configuration step of deployment process in '
                   'Onepanel'))
 def enable_manager_and_monitor_toggle_in_ceph_config_step(selenium, number,
                                                           unit, browser_id,
@@ -127,14 +120,14 @@ def wt_type_property_to_in_box_in_deployment_step(selenium, browser_id, alias,
 
 @wt(parsers.re('user of (?P<browser_id>.+?) clicks on (?P<btn>.+?) button '
                'in (?P<step>step 1|step 2|step 3|web cert step|'
-               'ceph configuration step|step 5|last step) of '
+               'Ceph configuration step|step 5|last step) of '
                'deployment process in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_btn_in_deployment_step(selenium, browser_id, btn, step,
                                        onepanel):
-    step = step.rstrip('step') if 'ceph configuration' in step else step
+    step = step.rstrip('step') if 'Ceph configuration' in step else step
     step = getattr(onepanel(selenium[browser_id]).content.deployment,
-                   step.replace(' ', ''))
+                   step.lower().replace(' ', ''))
     getattr(step, transform(btn)).click()
 
 
