@@ -1,5 +1,6 @@
 Feature: Local Ceph deployment process using panel of zone and provider
 
+
   Scenario: User deploys cluster with ceph and checks its configuration
     Given users opened [browser_onezone, browser_provider] browsers' windows
     And users of [browser_onezone, browser_provider] opened [onezone zone panel, oneprovider-1 provider panel] page
@@ -98,7 +99,6 @@ Feature: Local Ceph deployment process using panel of zone and provider
 
     # check ceph configuration
     And user of browser_provider clicks on Ceph item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And user of browser_provider sees that Ceph cluster works correctly
     And user of browser_provider sees that OSDS limit is 1.5 GiB
 
     And user of browser_provider clicks on Configuration tab on Ceph page

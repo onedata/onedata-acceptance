@@ -148,7 +148,7 @@ Feature: Operations on newly created Local Ceph
     # check storage occupation
     And user of browser_provider clicks on Pools tab on Ceph page
     And user of browser_provider clicks on "test_ceph" on pools list on Ceph page
-    And user of browser_provider sees that pool usage of "test_ceph" is 50 MiB on Ceph Page
+    And user of browser_provider sees that pool usage of "test_ceph" is about 50 MiB on Ceph Page
     And user of browser_provider clicks on "test_ceph2" on pools list on Ceph page
-    And user of browser_provider sees that pool usage of "test_ceph2" is 50 MiB on Ceph Page
+    And user of browser_provider sees that pool usage of "test_ceph2" is about 50 MiB on Ceph Page
 

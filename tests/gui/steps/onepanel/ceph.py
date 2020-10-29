@@ -72,7 +72,7 @@ def assert_manager_monitor_enabled(selenium, browser_id, onepanel):
 @wt(parsers.parse('user of {browser_id} sees that ceph node has {number} OSD '
                   'on ceph Page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_osd_number(selenium, browser_id, number: int, onepanel):
+def assert_osd_number(selenium, browser_id, number: float, onepanel):
     driver = selenium[browser_id]
     given = len(onepanel(driver).content.ceph.configuration_page.node.osds)
     assert given == number, f'Expected {number} OSDs but got {given} instead'
@@ -94,6 +94,24 @@ def assert_pool_usage_on_ceph_page(selenium, browser_id, ceph_name, usage,
     given = onepanel(selenium[browser_id]).content.ceph.pools_page.pools[
         ceph_name].pool_usage
     assert usage == given, f'Expected pool usage: {usage}, but got {given}.'
+
+
+# I needed to make this step "about usage" because there are slightly
+# different values on bamboo and local deployment and I wanted tests to work
+# both ways
+@wt(parsers.parse('user of {browser_id} sees that pool usage of "{ceph_name}" '
+                  'is about {usage} on Ceph Page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_approx_pool_usage_on_ceph_page(selenium, browser_id, ceph_name,
+                                          usage, onepanel):
+    given = onepanel(selenium[browser_id]).content.ceph.pools_page.pools[
+        ceph_name].pool_usage
+    [number_given, unit_given] = given.split()
+    [number_usage, unit_usage] = usage.split()
+    assert abs(float(number_given) - float(number_usage)) < 1, (
+        f'Expected pool usage: {number_usage}, but got {number_given}.')
+    assert unit_usage == unit_given, (f'Expected pool usage in: {unit_usage}, '
+                                      f'but got in {unit_given}.')
 
 
 @wt(parsers.parse('user of {browser_id} clicks on "Create pool" button '
