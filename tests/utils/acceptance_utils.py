@@ -80,10 +80,6 @@ def execute_command(cmd, error=None, should_fail=False):
 
 @wt(parsers.re('user of (?P<browser_id>.+?) is idle for '
                '(?P<seconds>\d*\.?\d+([eE][-+]?\d+)?) seconds?'))
-@wt(parsers.re('user .* waits for (?P<seconds>\d*\.?\d+([eE][-+]?\d+)?) '
-               'seconds?'))
-@wt(parsers.re('(?P<user>.+?) waits (?P<seconds>\d*\.?\d+([eE][-+]?\d+)?) '
-               'seconds?'))
 def wait_given_time(seconds):
     time.sleep(float(seconds))
 
