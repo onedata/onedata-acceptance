@@ -4,7 +4,7 @@ Feature: Operations on newly created Local Ceph
   Background:
     Given directory tree structure on local file system:
             browser_oz_panel:
-              file50.txt:
+              file50mb.txt:
                 size: 50 MiB
               file1.txt:
                 content: 11111
@@ -124,13 +124,13 @@ Feature: Operations on newly created Local Ceph
     # upload file and check if download works
     And user of browser_oz_panel opens file browser for "space1" space
     And user of browser_oz_panel uses upload button from file browser menu bar to upload local file "file1.txt" to remote current dir
-    And user of browser_oz_panel uses upload button from file browser menu bar to upload local file "file50.txt" to remote current dir
+    And user of browser_oz_panel uses upload button from file browser menu bar to upload local file "file50mb.txt" to remote current dir
     And user of browser_oz_panel double clicks on item named "file1.txt" in file browser
     And user of browser_oz_panel sees that content of downloaded file "file1.txt" is equal to: "11111"
 
     And user of browser_oz_panel opens file browser for "space2" space
     And user of browser_oz_panel uses upload button from file browser menu bar to upload local file "file2.txt" to remote current dir
-    And user of browser_oz_panel uses upload button from file browser menu bar to upload local file "file50.txt" to remote current dir
+    And user of browser_oz_panel uses upload button from file browser menu bar to upload local file "file50mb.txt" to remote current dir
     And user of browser_oz_panel double clicks on item named "file2.txt" in file browser
     And user of browser_oz_panel sees that content of downloaded file "file2.txt" is equal to: "22222"
 
