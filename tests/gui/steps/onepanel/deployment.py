@@ -81,6 +81,8 @@ def enable_manager_and_monitor_toggle_in_ceph_config_step(selenium,
     step.manager_and_monitor.check()
 
 
+# this function only works with "first" and "second" number as these are the
+# only planned possibilities in tests
 @wt(parsers.parse('user of {browser_id} types "{size}" to {number} OSD size '
                   'input box in Ceph configuration step of deployment process '
                   'in Onepanel'))
@@ -95,9 +97,7 @@ def type_osd_size_to_input(selenium, number, size: str, browser_id, onepanel):
 @wt(parsers.parse('user of {browser_id} sets "{unit}" as size unit of {number} '
                   'OSD in Ceph configuration step of deployment process in '
                   'Onepanel'))
-def enable_manager_and_monitor_toggle_in_ceph_config_step(selenium, number,
-                                                          unit, browser_id,
-                                                          onepanel):
+def choose_osd_unit(selenium, number, unit, browser_id, onepanel):
     step = onepanel(selenium[browser_id]).content.deployment.cephconfiguration
     osd_index = 0 if number == 'first' else 1
     step.osds[osd_index].choose_unit(unit)
