@@ -58,6 +58,7 @@ from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
 
 from tests.gui.meta_steps.onezone.common import *
+from tests.gui.meta_steps.onepanel.deployment import *
 from tests.gui.meta_steps.onepanel.provider import *
 from tests.gui.meta_steps.onepanel.spaces import *
 from tests.gui.meta_steps.onezone.clusters import *
