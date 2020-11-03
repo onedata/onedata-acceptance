@@ -35,3 +35,45 @@ def assert_all_qualities_of_service_are_fulfilled(selenium, browser_id,
     modal = modals(driver).quality_of_service
     for requirement in modal.requirements:
         assert hasattr(requirement, state), f'no such attribute'
+
+
+@wt(parsers.parse('user of {browser_id} sees that replicas number is equal '
+                  '{number} in modal "Quality of Service"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_replicas_number_in_qualities_of_service_modal(selenium, browser_id,
+                                                         modals, number):
+    driver = selenium[browser_id]
+    replicas_number = modals(driver).quality_of_service.replicas_number
+    assert number == replicas_number, (f'Found {replicas_number} instead '
+                                       f'of {number} replicas number')
+
+
+@wt(parsers.parse('user of {browser_id} sees "{expression}" QoS requirement '
+                  'in modal "Quality of Service"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_expression_in_qualities_of_service_modal(selenium, browser_id,
+                                                    modals, expression):
+    driver = selenium[browser_id]
+    requirements = modals(driver).quality_of_service.requirements
+    for requirement in requirements:
+        expression_in_modal = requirement.expression.text.replace('\n', '')
+        if expression_in_modal == expression:
+            assert True
+            return
+    assert False, (f'Not found that "{expression}" QoS requirement '
+                   f'in modal "Quality of Service"')
+
+
+@wt(parsers.parse('user of {browser_id} doesn\'t see any QoS requirement '
+                  'in modal "Quality of Service"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_no_expression_in_qualities_of_service_modal(selenium, browser_id,
+                                                       modals, expression):
+    driver = selenium[browser_id]
+    try:
+        modals(driver).quality_of_service.requirements
+    except RuntimeError:
+        assert True
+    else:
+        assert False, 'Found QoS requirement in modal "Quality of Service"'
+

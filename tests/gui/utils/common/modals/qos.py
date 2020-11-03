@@ -9,18 +9,21 @@ __license__ = ("This software is released under the MIT license cited in "
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (Button, Input, NamedButton,
-                                               WebItemsSequence, Label)
+                                               WebItemsSequence, Label,
+                                               WebElement)
 
 
 class Requirement(PageObject):
     delete = Button('.oneicon-checkbox-filled-x')
     fulfilled = Label('.qos-status-fulfilled')
     impossible = Label('.qos-status-impossible')
+    expression = WebElement('.tags-input .qos-pair')
+    replicas_number = Label('.replicas-number')
 
 
 class QualityOfServiceModal(Modal):
     add_requirement = NamedButton('.btn-primary', text='Add Requirement')
-    input_name = Input('.code-textarea')
+    expression = Input('.code-textarea')
     replicas_number = Input('.replicas-number-input')
     save = NamedButton('.ready', text='Save')
     close = NamedButton('.btn-default', text='Close')

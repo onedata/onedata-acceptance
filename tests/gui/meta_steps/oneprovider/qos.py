@@ -22,13 +22,14 @@ def _add_qos_requirement_in_modal(selenium, browser_id, modals, item_name,
     save_button = 'Save'
     close_button = 'Close'
     replicas_field = 'Replicas number'
+    expression_field = 'expression'
 
     click_on_item_in_file_browser(browser_id, item_name, tmp_memory)
     choose_option_from_selection_menu(browser_id, selenium, qos_option, popups,
                                       tmp_memory)
     click_modal_button(selenium, browser_id, add_button, modal, modals)
     write_name_into_text_field_in_modal(selenium, browser_id, expression,
-                                        modal, modals)
+                                        modal, modals, expression_field)
     if replicas_number != 1:
         write_name_into_text_field_in_modal(selenium, browser_id,
                                             replicas_number,
@@ -82,14 +83,14 @@ def add_id_qos_requirement_in_modal(selenium, browser_id, modals, item_name,
                                   popups, replicas_number)
 
 
-@wt(parsers.parse('user of {browser_id} creates "anyStorage - storageId=" QoS '
+@wt(parsers.parse('user of {browser_id} creates "anyStorage \ storageId=" QoS '
                   'requirement and pastes storage id from clipboard for '
                   '"{item_name}" from file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_no_id_qos_requirement_in_modal(selenium, browser_id, modals, item_name,
                                        tmp_memory, oz_page, op_container,
                                        popups, clipboard, displays):
-    expression = ('anyStorage - storageId=' +
+    expression = ('anyStorage \ storageId=' +
                   clipboard.paste(display=displays[browser_id]))
     replicas_number = 1
 

@@ -7,19 +7,19 @@ Feature: Quality of Service tests for 2 providers using multiple browsers in One
     And there are no spaces supported by oneprovider-2 in Onepanel
     And initial spaces configuration in "onezone" Onezone service:
         space1:
-            owner: user1
-            providers:
-                - oneprovider-1:
-                    storage: posix
-                    size: 1000000000
-                - oneprovider-2:
-                    storage: posix
-                    size: 1000000000
-            storage:
-                defaults:
-                    provider: oneprovider-1
-                directory tree:
-                    - file1: 11111111
+          owner: user1
+          providers:
+            - oneprovider-1:
+              storage: posix
+              size: 1000000000
+            - oneprovider-2:
+              storage: posix
+              size: 1000000000
+          storage:
+            defaults:
+              provider: oneprovider-1
+            directory tree:
+              - file1: 11111111
 
     And users opened [browser_unified, browser_emergency] browsers' windows
     And users of [browser_unified, browser_emergency] opened [Onezone, oneprovider-2 provider panel] page
@@ -39,6 +39,8 @@ Feature: Quality of Service tests for 2 providers using multiple browsers in One
     # upload files
     And user of browser_unified uploads "20B-0.txt" to the root directory of "space1"
     And user of browser_unified uses upload button from file browser menu bar to upload file "large_file.txt" to current dir
+
+    # set qos requirement
     And user of browser_unified clicks on Data in the main menu
     And user of browser_unified creates 2 replicas of "anyStorage" QoS requirement for "large_file.txt" in space "space1"
     And user of browser_unified replicates "20B-0.txt" to provider "oneprovider-2"

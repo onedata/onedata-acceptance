@@ -7,19 +7,19 @@ Feature: Quality of Service tests for 2 providers using multiple browsers where 
     And there are no spaces supported by oneprovider-2 in Onepanel
     And initial spaces configuration in "onezone" Onezone service:
         space1:
-            owner: user1
-            providers:
-                - oneprovider-1:
-                    storage: posix
-                    size: 1000000000
-                - oneprovider-2:
-                    storage: posix
-                    size: 1000000000
-            storage:
-                defaults:
-                    provider: oneprovider-1
-                directory tree:
-                    - file1: 11111111
+          owner: user1
+          providers:
+            - oneprovider-1:
+              storage: posix
+              size: 1000000000
+            - oneprovider-2:
+              storage: posix
+              size: 1000000000
+          storage:
+            defaults:
+              provider: oneprovider-1
+            directory tree:
+              - file1: 11111111
 
     And users opened [browser_unified, browser_emergency] browsers' windows
     And users of [browser_unified, browser_emergency] opened [Onezone, oneprovider-1 provider panel] page
@@ -28,7 +28,7 @@ Feature: Quality of Service tests for 2 providers using multiple browsers where 
     And there are no additional params in storage edit page used by browser_emergency
 
 
-  Scenario: User successfully force file to stay in provider using QoS requirement
+  Scenario: File is replicated after migration from one storage with QoS requirement
     When user of browser_unified opens "oneprovider-1" Oneprovider file browser for "space1" space
     And user of browser_emergency expands "posix" record on storages list in storages page in Onepanel
     And user of browser_emergency copies id of "posix" storage to clipboard via copy button
@@ -46,7 +46,7 @@ Feature: Quality of Service tests for 2 providers using multiple browsers where 
     When user of browser_unified opens "oneprovider-1" Oneprovider file browser for "space1" space
     And user of browser_emergency expands "posix" record on storages list in storages page in Onepanel
     And user of browser_emergency copies id of "posix" storage to clipboard via copy button
-    And user of browser_unified creates "anyStorage - storageId=" QoS requirement and pastes storage id from clipboard for "file1" from file browser
+    And user of browser_unified creates "anyStorage \ storageId=" QoS requirement and pastes storage id from clipboard for "file1" from file browser
     And user of browser_unified clicks on QoS status tag for "file1" in file browser
     And user of browser_unified sees that all QoS requirements are fulfilled
     And user of browser_unified clicks on "Close" button in modal "Quality of Service"

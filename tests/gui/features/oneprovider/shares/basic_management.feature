@@ -33,7 +33,7 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser clicks on menu for "dir1" directory in file browser
     And user of browser clicks "Share" option in data row menu in file browser
     And user of browser sees that "Share directory" modal has appeared
-    And user of browser writes "share_dir1" into default text field in modal "Share directory"
+    And user of browser writes "share_dir1" into text field in modal "Share directory"
     And user of browser clicks on "Create" button in modal "Share directory"
 
     And user of browser sees that item named "dir1" is shared 1 time in modal
@@ -59,7 +59,7 @@ Feature: Basic share management in Oneprovider GUI
 
     # create another share
     And user of browser clicks on "Create another share" button in modal "Share directory"
-    And user of browser writes "share2_dir1" into default text field in modal "Share directory"
+    And user of browser writes "share2_dir1" into text field in modal "Share directory"
     And user of browser clicks on "Create" button in modal "Share directory"
     Then user of browser sees that item named "dir1" is shared 2 times in modal
 
@@ -93,7 +93,7 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser clicks on menu on share view
     And user of browser clicks "Rename" option in shares actions row menu
     And user of browser sees that "Rename share" modal has appeared
-    And user of browser writes "renamed_share_dir1" into default text field in modal "Rename share"
+    And user of browser writes "renamed_share_dir1" into text field in modal "Rename share"
     And user of browser clicks on "Rename" button in modal "Rename share"
     Then user of browser sees that selected share is named "renamed_share_dir1"
 
@@ -165,7 +165,7 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser clicks on menu for "share_dir1" share in shares browser
     And user of browser clicks "Rename" option in shares actions row menu in shares browser
     And user of browser sees that "Rename share" modal has appeared
-    And user of browser writes "renamed_share_dir1" into default text field in modal "Rename share"
+    And user of browser writes "renamed_share_dir1" into text field in modal "Rename share"
     And user of browser clicks on "Rename" button in modal "Rename share"
 
     Then user of browser sees that there is no "share_dir1" share on shares view

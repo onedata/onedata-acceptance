@@ -6,26 +6,26 @@ Feature: Quality of Service tests for 2 providers using single browser in Onepro
             - user1
     And initial spaces configuration in "onezone" Onezone service:
         space1:
-            owner: user1
-            providers:
-                - oneprovider-1:
-                    storage: posix
-                    size: 1000000
-                - oneprovider-2:
-                    storage: posix
-                    size: 1000000
-            storage:
-                defaults:
-                    provider: oneprovider-1
-                directory tree:
-                    - file1: 11111111
-                    - dir1:
-                        - file2: 11111
+          owner: user1
+          providers:
+            - oneprovider-1:
+              storage: posix
+              size: 1000000
+            - oneprovider-2:
+              storage: posix
+              size: 1000000
+          storage:
+            defaults:
+              provider: oneprovider-1
+            directory tree:
+              - file1: 11111111
+              - dir1:
+                - file2: 11111
 
     And opened browser with user1 signed in to "onezone" service
 
 
-  Scenario: User successfully adds "anyStorage" QoS requirement with 2 replicas
+  Scenario: File is replicated after setting QoS requirement with 2 replicas
     When user of browser creates 2 replicas of "anyStorage" QoS requirement for "file1" in space "space1"
     And user of browser clicks on QoS status tag for "file1" in file browser
     And user of browser sees that all QoS requirements are fulfilled

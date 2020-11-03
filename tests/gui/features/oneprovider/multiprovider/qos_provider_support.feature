@@ -1,22 +1,22 @@
 Feature: Quality of Service in directory tests for 2 providers with 1 supporting in Oneprovider GUI
 
 
-    Background:
+  Background:
     Given initial users configuration in "onezone" Onezone service:
             - user1
     And there are no spaces supported by oneprovider-2 in Onepanel
     And initial spaces configuration in "onezone" Onezone service:
         space1:
-            owner: user1
-            providers:
-                - oneprovider-1:
-                    storage: posix
-                    size: 1000000000
-            storage:
-                defaults:
-                    provider: oneprovider-1
-                directory tree:
-                    - file1: 11111111
+          owner: user1
+          providers:
+            - oneprovider-1:
+              storage: posix
+              size: 1000000000
+          storage:
+            defaults:
+              provider: oneprovider-1
+            directory tree:
+              - file1: 11111111
 
     And users opened [browser_unified, browser_emergency] browsers' windows
     And users of [browser_unified, browser_emergency] opened [Onezone, oneprovider-2 provider panel] page

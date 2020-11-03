@@ -6,27 +6,27 @@ Feature: Quality of Service in directory tests for 2 providers using multiple br
             - user1
     And initial spaces configuration in "onezone" Onezone service:
         space1:
-            owner: user1
-            providers:
-                - oneprovider-1:
-                    storage: posix
-                    size: 1000000
-                - oneprovider-2:
-                    storage: posix
-                    size: 1000000
-            storage:
-                defaults:
-                    provider: oneprovider-1
-                directory tree:
-                    - dir1
-                    - file1: 11111111
+          owner: user1
+          providers:
+            - oneprovider-1:
+              storage: posix
+              size: 1000000
+            - oneprovider-2:
+              storage: posix
+              size: 1000000
+          storage:
+            defaults:
+              provider: oneprovider-1
+            directory tree:
+              - dir1
+              - file1: 11111111
 
     And users opened [browser_unified, browser_emergency] browsers' windows
     And users of [browser_unified, browser_emergency] opened [Onezone, oneprovider-2 provider panel] page
     And user of [browser_unified, browser_emergency] logged as [user1, admin] to [Onezone, emergency interface of Onepanel] service
 
 
-  Scenario: User successfully uploads file to directory with QoS requirement
+  Scenario: Nested file is replicated from one storage to storage which id was set as QoS requirement in parent dir
     When user of browser_unified clicks "space1" on the spaces list in the sidebar
     And user of browser_unified clicks Data of "space1" in the sidebar
     And user of browser_unified sees file browser in data tab in Oneprovider page

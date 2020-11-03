@@ -330,16 +330,15 @@ def click_modal_button(selenium, browser_id, button, modal, modals):
     getattr(getattr(modals(selenium[browser_id]), modal), button)()
 
 
-@wt(parsers.parse('user of {browser_id} writes "{item_name}" '
-                  'into {text_field} text field in modal "{modal_name}"'))
+@wt(parsers.re('user of (?P<browser_id>.*?) writes "(?P<item_name>.*?)" '
+               'into(?P<name_textfield>.*?) text field '
+               'in modal "(?P<modal_name>.*?)"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def write_name_into_text_field_in_modal(selenium, browser_id, item_name,
                                         modal_name, modals,
-                                        text_field='input name'):
-    if text_field == 'default':
-        text_field = 'input name'
+                                        name_textfield='input name'):
     modal = getattr(modals(selenium[browser_id]), transform(modal_name))
-    setattr(modal, transform(text_field), item_name)
+    setattr(modal, transform(name_textfield), item_name)
 
 
 @wt(parsers.re(r'user of (?P<browser_id>.*?) sees that item named'
