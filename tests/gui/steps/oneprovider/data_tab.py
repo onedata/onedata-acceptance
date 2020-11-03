@@ -218,7 +218,7 @@ def wt_is_space_tree_root(selenium, browser_id, is_home, space_name,
 
 @wt(parsers.parse('user of {browser_id} sees nonempty {item_browser} '
                   'in data tab in Oneprovider page'))
-@repeat_failed(timeout=WAIT_BACKEND * 2)
+@repeat_failed(timeout=WAIT_BACKEND*2)
 def assert_nonempty_file_browser_in_data_tab_in_op(selenium, browser_id,
                                                    op_container, tmp_memory,
                                                    item_browser='file browser'):
@@ -307,7 +307,7 @@ def resize_data_tab_sidebar(selenium, browser_id, direction, offset,
 
 @wt(parsers.re('user of (?P<browser_id>.*) waits for file uploads? to '
                'finish'))
-@repeat_failed(timeout=WAIT_BACKEND * 3)
+@repeat_failed(timeout=WAIT_BACKEND*3)
 def wait_for_file_upload_to_finish(selenium, browser_id, popups):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
@@ -320,7 +320,7 @@ def wait_for_file_upload_to_finish(selenium, browser_id, popups):
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
                   'menu bar to upload file "{file_name}" to current dir '
                   'without waiting for upload to finish'))
-@repeat_failed(timeout=2 * WAIT_BACKEND)
+@repeat_failed(timeout=2*WAIT_BACKEND)
 def upload_file_to_cwd_in_file_browser_no_waiting(selenium, browser_id,
                                                   file_name, op_container):
     driver = selenium[browser_id]
@@ -329,7 +329,7 @@ def upload_file_to_cwd_in_file_browser_no_waiting(selenium, browser_id,
 
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
                   'menu bar to upload file "{file_name}" to current dir'))
-@repeat_failed(timeout=2 * WAIT_BACKEND)
+@repeat_failed(timeout=2*WAIT_BACKEND)
 def upload_file_to_cwd_in_file_browser(selenium, browser_id, file_name,
                                        op_container, popups):
     upload_file_to_cwd_in_file_browser_no_waiting(selenium, browser_id,
@@ -340,6 +340,7 @@ def upload_file_to_cwd_in_file_browser(selenium, browser_id, file_name,
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
                   'menu bar to upload files from local directory "{dir_path}" '
                   'to remote current dir'))
+@repeat_failed(timeout=2*WAIT_BACKEND)
 def upload_files_to_cwd_in_data_tab(selenium, browser_id, dir_path, tmpdir,
                                     op_container, popups):
     upload_files_to_cwd_in_data_tab_no_waiting(selenium, browser_id, dir_path,
@@ -350,6 +351,7 @@ def upload_files_to_cwd_in_data_tab(selenium, browser_id, dir_path, tmpdir,
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
                   'menu bar to upload files from local directory "{dir_path}" '
                   'to remote current dir without waiting for upload to finish'))
+@repeat_failed(timeout=2*WAIT_BACKEND)
 def upload_files_to_cwd_in_data_tab_no_waiting(selenium, browser_id, dir_path,
                                                tmpdir, op_container):
     driver = selenium[browser_id]
@@ -364,6 +366,7 @@ def upload_files_to_cwd_in_data_tab_no_waiting(selenium, browser_id, dir_path,
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
                   'menu bar to upload local file "{file_path}" '
                   'to remote current dir'))
+@repeat_failed(timeout=2*WAIT_BACKEND)
 def upload_file_to_cwd_in_data_tab(selenium, browser_id, file_path, tmpdir,
                                    op_container, popups):
     upload_file_to_cwd_in_data_tab_no_waiting(selenium, browser_id, file_path,
@@ -374,6 +377,7 @@ def upload_file_to_cwd_in_data_tab(selenium, browser_id, file_path, tmpdir,
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
                   'menu bar to upload local file "{file_path}" '
                   'to remote current dir without waiting for upload to finish'))
+@repeat_failed(timeout=2*WAIT_BACKEND)
 def upload_file_to_cwd_in_data_tab_no_waiting(selenium, browser_id, file_path,
                                               tmpdir, op_container):
     driver = selenium[browser_id]
