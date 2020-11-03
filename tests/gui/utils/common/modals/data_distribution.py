@@ -45,7 +45,7 @@ class _Chunk(PageObject):
 class _DataDistributionRecord(PageObject):
     name = id = Label('.oneprovider-name', parent_name='given provider')
     distribution = WebItem('.chunks-container', cls=_Chunk)
-    menu_button = Button('.collapsible-toolbar-toggle')
+    menu_button = Button('.one-pill-button-actions-trigger')
     never_synchronized_text = WebElement('.never-synchronized-text')
 
     def __str__(self):
