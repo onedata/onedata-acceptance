@@ -98,7 +98,7 @@ def fail_to_remove_groups_using_rest(user, users, hosts, group_list,
                  ' REST'))
 @then(parsers.re('(?P<user>\w+) removes groups? (?P<group_list>.*) using'
                  ' REST'))
-def remove_groups_using_rest(user, users, hosts, group_list, user_clients, 
+def remove_groups_using_rest(user, users, hosts, group_list, user_clients,
                              host='onezone'):
     user_client = login_to_oz(user, users[user].password, hosts[host]['hostname'])
     group_api = GroupApi(user_client)

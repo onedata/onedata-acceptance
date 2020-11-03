@@ -80,10 +80,6 @@ def execute_command(cmd, error=None, should_fail=False):
 
 @wt(parsers.re('user of (?P<browser_id>.+?) is idle for '
                '(?P<seconds>\d*\.?\d+([eE][-+]?\d+)?) seconds?'))
-@wt(parsers.re('user .* waits for (?P<seconds>\d*\.?\d+([eE][-+]?\d+)?) '
-               'seconds?'))
-@wt(parsers.re('(?P<user>.+?) waits (?P<seconds>\d*\.?\d+([eE][-+]?\d+)?) '
-               'seconds?'))
 def wait_given_time(seconds):
     time.sleep(float(seconds))
 
@@ -113,7 +109,7 @@ def compare(val1, val2, comparator):
         return val1 < val2
     elif comparator == 'not greater':
         return val1 <= val2
-    elif comparator == 'not less':
+    elif comparator == 'not less' or comparator == 'greater or equal':
         return val1 >= val2
     else:
-        raise ValueError('Wrong argument comparator to function compare')
+        raise ValueError(f'Wrong argument comparator to function compare')

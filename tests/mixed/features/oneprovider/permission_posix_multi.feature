@@ -45,7 +45,7 @@ Feature: POSIX privileges multiclient tests
     | oneclient1 |
 
   Scenario Outline: User1 creates directory using <client1> and user2 fails to change its permission using <client2>
-    When using <client1>, user1 succeeds to create directory named "dir1" in "space1" in oneprovider-1
+    When using <client1>, user1 succeeds to create directory named "/dir1" in "space1" in oneprovider-1
     And  using <client2>, user2 succeeds to see item named "dir1" in "space1" in oneprovider-1
     And using <client2>, user2 sees that POSIX permission for item named "dir1" in "space1" is "775" in oneprovider-1
     And using <client2>, user2 fails to set "664" POSIX permission for item named "dir1" in "space1" in oneprovider-1

@@ -30,7 +30,7 @@ RPYC_DEFAULT_PORT = 18812
 
 
 class Client:
-    def __init__(self, mount_path, provider, docker_id, ip, timeout=0):
+    def __init__(self, mount_path, provider, docker_id, ip, timeout=40):
         self.mount_path = mount_path
         self.provider = provider
         self.rpyc_connection = None
@@ -81,11 +81,11 @@ class Client:
         return os.path.join(self.mount_path, str(path))
 
     def start_rpyc(self, user, port):
-        self._start_rpyc_server(user, port)
         started = False
         timeout = 30
         while not started and timeout >= 0:
             try:
+                self._start_rpyc_server(user, port)
                 self.rpyc_connection = rpyc.classic.connect(self.ip, port)
 
                 get_pid_cmd = ' | '.join(
@@ -100,18 +100,18 @@ class Client:
                 # in performance tests on bamboo
                 self.rpyc_connection._config['sync_request_timeout'] = 300
                 started = True
-            except Exception as e:
-                print(e)
+            except:
                 time.sleep(1)
                 timeout -= 1
         if not started:
+            log_exception()
             pytest.skip('rpc connection couldn\'t be established')
 
     def _start_rpyc_server(self, user_name, port):
         """start rpc server on client docker"""
         cmd = ('python3 `which rpyc_classic.py` --host 0.0.0.0 --port {}'
                .format(port))
-        print("starting rpyc server on client {}".format(self.ip))
+        print("\n\nstarting rpyc server on client {}".format(self.ip))
         run_cmd(user_name, self.docker_id, cmd, detach=True)
         print("rpyc server on client {} successfully started".format(self.ip))
 
@@ -126,8 +126,7 @@ class Client:
             timeout = self.timeout
         return self._repeat_until(condition, timeout)
 
-    @staticmethod
-    def _repeat_until(condition, timeout):
+    def _repeat_until(self, condition, timeout):
         condition_satisfied = False
         while not condition_satisfied and timeout >= 0:
             try:
@@ -135,13 +134,15 @@ class Client:
                 if condition_satisfied is None:
                     condition_satisfied = True
             except:
-                log_exception()
                 condition_satisfied = False
+                if timeout == 0:
+                    log_exception()
             finally:
-                time.sleep(1)
-                timeout -= 1
+                if not condition_satisfied:
+                    time.sleep(1)
+                    timeout -= 1
 
-        return timeout >= 0 or condition_satisfied
+        return condition_satisfied
 
 
 def create_client(clients, username, mount_path, client_instance,
@@ -229,8 +230,10 @@ def clean_clients(user_names, users, lazy=False):
 def clean_mount_path(user, client, lazy=False):
     try:
         clean_spaces(client)
-    except Exception as e:
+    except FileNotFoundError:
         pass
+    except Exception as e:
+        print("Error during cleaning up spaces {}".format(e))
     finally:
         # get pid of running oneclient node
         get_pid_cmd = ' | '.join(
@@ -256,12 +259,12 @@ def clean_spaces(client):
         def condition():
             try:
                 rm(client, path=space_path, recursive=True)
-            except Exception as e:
-                if isinstance(e, OSError):
-                    # ignore EACCES errors during cleaning
-                    if e.errno == errno.EACCES:
-                        return
-                raise
+            except FileNotFoundError:
+                return
+            except OSError as e:
+                # ignore EACCES errors during cleaning
+                if e.errno == errno.EACCES:
+                    return
         assert_(client.perform, condition)
 
 
