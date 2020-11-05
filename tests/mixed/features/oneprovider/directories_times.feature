@@ -19,7 +19,7 @@ Feature: Directories times tests
     And using <client2>, user1 succeeds to see item named "dir1" in "space1" in oneprovider-1
 
      # call sleep, to be sure that time of above and below operations is different
-    And user1 waits 2 seconds
+    And user1 is idle for 2 seconds
     And using <client2>, user1 renames item named "dir1" to "dir2" in "space1" in oneprovider-1
     Then using <client1>, user1 sees that status-change time of item named "dir2" in "space1" space is greater than modification time in oneprovider-1
     Then using <client1>, user1 sees that status-change time of item named "dir2" in "space1" space is <comparator_times> access time in oneprovider-1
@@ -37,7 +37,7 @@ Feature: Directories times tests
     And using <client2>, user1 succeeds to create directory named "/dir1/dir2" in "space1" in oneprovider-1
 
     # call sleep, to be sure that time of above and below operations is different
-    And user1 waits 2 second
+    And user1 is idle for 2 seconds
     And using <client2>, user1 renames item named "dir1/dir2" to "dir1/dir3" in "space1" in oneprovider-1
     Then using <client1>, user1 sees that modification time of item named "dir1" in "space1" space is <comparator_times> access time in oneprovider-1
     And using <client1>, user1 sees that modification time of item named "dir1" in "space1" space is equal to status-change time in oneprovider-1
@@ -56,7 +56,7 @@ Feature: Directories times tests
     When using web GUI, user1 succeeds to create directory named "/dir1" in "space1" in oneprovider-1
 
     # call sleep, to be sure that time of above and below operations is different
-    And user1 waits 80 second
+    And user1 is idle for 80 seconds
     And using <client1>, user1 succeeds to create directory named "/dir1/dir2" in "space1" in oneprovider-1
     And using web GUI, user1 refreshes site
     Then using web GUI, user1 sees that modification time of item named "dir1" in current space is not earlier than 70 seconds ago in oneprovider-1
