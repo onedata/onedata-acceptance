@@ -1,11 +1,10 @@
 """Steps for cdmi usage.
 """
 
-from pytest_bdd import parsers, then, when
 
 from tests.gui.conftest import WAIT_BACKEND
+from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
-from tests.utils.acceptance_utils import wt
 
 __author__ = "Bartek Walkowicz"
 __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"

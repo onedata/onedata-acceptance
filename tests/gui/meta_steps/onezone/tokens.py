@@ -7,16 +7,15 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-from pytest_bdd import parsers
 import yaml
 
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.modal import (
     assert_error_modal_with_text_appeared, click_modal_button)
-from tests.gui.steps.onezone.tokens import *
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
+from tests.gui.steps.onezone.tokens import *
 from tests.gui.steps.onezone.tokens import click_option_for_token_row_menu
-from tests.utils.bdd_utils import wt
+from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 
 

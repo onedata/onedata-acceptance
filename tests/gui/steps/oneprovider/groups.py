@@ -8,7 +8,7 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 
-from pytest_bdd import when, then, parsers
+from tests.utils.bdd_utils import wt, parsers
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.utils.utils import repeat_failed
@@ -20,10 +20,8 @@ def _is_group_present_in_sidebar(driver, op_container, group_name):
     return group_name in groups
 
 
-@when(parsers.parse('user of {browser_id} sees that group named '
-                    '"{name}" has appeared in the groups list'))
-@then(parsers.parse('user of {browser_id} sees that group named '
-                    '"{name}" has appeared in the groups list'))
+@wt(parsers.parse('user of {browser_id} sees that group named '
+                  '"{name}" has appeared in the groups list'))
 @repeat_failed(timeout=2*WAIT_BACKEND, interval=1.5)
 def is_present_on_groups_list(selenium, browser_id, name, op_container):
     driver = selenium[browser_id]
@@ -33,10 +31,8 @@ def is_present_on_groups_list(selenium, browser_id, name, op_container):
                            'sidebar'.format(name))
 
 
-@when(parsers.parse('user of {browser_id} clicks on settings icon displayed '
-                    'for "{group_name}" item on the groups sidebar list'))
-@then(parsers.parse('user of {browser_id} clicks on settings icon displayed '
-                    'for "{group_name}" item on the groups sidebar list'))
+@wt(parsers.parse('user of {browser_id} clicks on settings icon displayed '
+                  'for "{group_name}" item on the groups sidebar list'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_settings_icon_for_group(selenium, browser_id, group_name,
                                   op_container):
@@ -48,10 +44,8 @@ def click_settings_icon_for_group(selenium, browser_id, group_name,
      .expand())
 
 
-@when(parsers.parse('user of {browser_id} clicks on the "{option_name}" item '
-                    'in settings dropdown for group named "{group_name}"'))
-@then(parsers.parse('user of {browser_id} clicks on the "{option_name}" item '
-                    'in settings dropdown for group named "{group_name}"'))
+@wt(parsers.parse('user of {browser_id} clicks on the "{option_name}" item '
+                  'in settings dropdown for group named "{group_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_item_in_group_settings_dropdown(selenium, browser_id, option_name,
                                              group_name, op_container):
@@ -64,12 +58,9 @@ def click_on_item_in_group_settings_dropdown(selenium, browser_id, option_name,
      .click())
 
 
-@when(parsers.re(r'user of (?P<browser_id>.*) sees that "(?P<name>.*)" item '
-                 r'has appeared on current (?P<caption>USERS|GROUPS) '
-                 r'permissions table in Groups tab'))
-@then(parsers.re(r'user of (?P<browser_id>.*) sees that "(?P<name>.*)" item '
-                 r'has appeared on current (?P<caption>USERS|GROUPS) '
-                 r'permissions table in Groups tab'))
+@wt(parsers.re(r'user of (?P<browser_id>.*) sees that "(?P<name>.*)" item '
+               r'has appeared on current (?P<caption>USERS|GROUPS) '
+               r'permissions table in Groups tab'))
 @repeat_failed(timeout=WAIT_BACKEND, interval=1.5)
 def assert_item_appeared_in_groups_perm_table(selenium, browser_id, name,
                                               caption, op_container):

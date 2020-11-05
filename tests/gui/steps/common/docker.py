@@ -7,16 +7,11 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-
-import time
-import subprocess
 import os.path
+import subprocess
 
-from pytest_bdd import given, when, then, parsers
-
-from tests.gui.utils.generic import parse_seq, suppress
-from tests.utils.acceptance_utils import wt
-
+from tests.gui.utils.generic import parse_seq
+from tests.utils.bdd_utils import given, parsers, wt
 
 PROVIDER_CONTAINER_NAME = 'oneprovider-1'
 MOUNT_POINT = '/volumes/persistence/storage'
@@ -66,20 +61,16 @@ def wt_cp_files_to_dir_in_storage_mount_point(browser_id, src_path, tmpdir,
                os.path.join(MOUNT_POINT, dst_path))
 
 
-@when(parsers.parse('user of {browser_id} copies {src_path} '
-                    'to the root directory of "{space}" space'))
-@then(parsers.parse('user of {browser_id} copies {src_path} '
-                    'to the root directory of "{space}" space'))
+@wt(parsers.parse('user of {browser_id} copies {src_path} '
+                  'to the root directory of "{space}" space'))
 def wt_cp_files_to_space_root_dir(browser_id, src_path, space,
                                   tmpdir, tmp_memory, hosts):
     _docker_cp(tmpdir, browser_id, src_path, hosts,
                os.path.join(MOUNT_POINT, tmp_memory['spaces'][space]))
 
 
-@when(parsers.parse('user of {browser_id} copies {src_path} '
-                    'to {dst_path} directory of "{space}" space'))
-@then(parsers.parse('user of {browser_id} copies {src_path} '
-                    'to {dst_path} directory of "{space}" space'))
+@wt(parsers.parse('user of {browser_id} copies {src_path} '
+                  'to {dst_path} directory of "{space}" space'))
 def wt_cp_files_to_dst_path_in_space(browser_id, src_path, dst_path,
                                      space, tmpdir, tmp_memory, hosts):
     _docker_cp(tmpdir, browser_id, src_path, hosts,
@@ -93,10 +84,8 @@ def wt_cp_files_to_dst_path(browser_id, src_path, dst_path, tmpdir, hosts):
     _docker_cp(tmpdir, browser_id, src_path, hosts, dst_path)
 
 
-@when(parsers.parse('user of {browser_id} removes {src_path} '
-                    'from provider\'s storage mount point'))
-@then(parsers.parse('user of {browser_id} removes {src_path} '
-                    'from provider\'s storage mount point'))
+@wt(parsers.parse('user of {browser_id} removes {src_path} '
+                  'from provider\'s storage mount point'))
 def wt_rm_files_to_storage_mount_point(src_path, hosts):
     _docker_rm(os.path.join(MOUNT_POINT, src_path), hosts)
 
@@ -113,10 +102,8 @@ def wt_append_text_to_files_in_storage_mount_point(path, text, hosts):
     _docker_append_text_to_file(text, os.path.join(MOUNT_POINT, path), hosts)
 
 
-@when(parsers.parse('user of {browser_id} removes {src_path} '
-                    'from the root directory of "{space}" space'))
-@then(parsers.parse('user of {browser_id} removes {src_path} '
-                    'from the root directory of "{space}" space'))
+@wt(parsers.parse('user of {browser_id} removes {src_path} '
+                  'from the root directory of "{space}" space'))
 def wt_rm_files_to_space_root_dir(src_path, space, tmp_memory, hosts):
     _docker_rm(os.path.join(MOUNT_POINT, tmp_memory['spaces'][space],
                             src_path), hosts)

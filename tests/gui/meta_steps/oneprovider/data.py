@@ -42,8 +42,8 @@ def _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id, path,
         click_menu_for_elem_in_file_browser(browser_id, item_name, tmp_memory)
 
 
-@then(parsers.re('user of (?P<browser_id>\w+) (?P<res>.*) to rename '
-                 '"(?P<path>.*)" to "(?P<new_path>.*)" in "(?P<space>.*)"'))
+@wt(parsers.re(r'user of (?P<browser_id>\w+) (?P<res>.*) to rename '
+               '"(?P<path>.*)" to "(?P<new_path>.*)" in "(?P<space>.*)"'))
 def rename_item(selenium, browser_id, path, new_path, tmp_memory, res, space,
                 modals, oz_page, op_container):
     option = 'Rename'
@@ -65,7 +65,7 @@ def rename_item(selenium, browser_id, path, new_path, tmp_memory, res, space,
         assert_items_presence_in_file_browser(browser_id, new_name, tmp_memory)
 
 
-@wt(parsers.re('user of (?P<browser_id>\w+) (?P<res>.*) to remove '
+@wt(parsers.re(r'user of (?P<browser_id>\w+) (?P<res>.*) to remove '
                '"(?P<path>.*)" in "(?P<space>.*)"'))
 def remove_item_in_op_gui(selenium, browser_id, path, tmp_memory, op_container,
                           res, space, modals, oz_page):
@@ -93,8 +93,8 @@ def remove_dir_and_parents_in_op_gui(selenium, browser_id, path, tmp_memory,
                           op_container, res, space, modals, oz_page)
 
 
-@then(parsers.re('user of (?P<browser_id>\w+) (?P<res>.*) to see '
-                 '(?P<subfiles>.*) in "(?P<path>.*)" in "(?P<space>.*)"'))
+@wt(parsers.re(r'user of (?P<browser_id>\w+) (?P<res>.*) to see '
+               '(?P<subfiles>.*) in "(?P<path>.*)" in "(?P<space>.*)"'))
 def see_items_in_op_gui(selenium, browser_id, path, subfiles, tmp_memory, 
                         op_container, res, space, oz_page):
     selenium[browser_id].refresh()
@@ -114,8 +114,8 @@ def see_items_in_op_gui(selenium, browser_id, path, subfiles, tmp_memory,
         assert_items_presence_in_file_browser(browser_id, subfiles, tmp_memory)
 
 
-@wt(parsers.re('user of (?P<browser_id>\w+) (?P<res>.*) to create '
-               '(?P<item_type>directory) "(?P<name>[\w._-]+)" '
+@wt(parsers.re(r'user of (?P<browser_id>\w+) (?P<res>.*) to create '
+               r'(?P<item_type>directory) "(?P<name>[\w._-]+)" '
                '(in "(?P<path>.*)" )?in "(?P<space>.*)"'))
 def create_item_in_op_gui(selenium, browser_id, path, item_type, name,
                           tmp_memory, op_container, res, space, modals, oz_page):
@@ -150,9 +150,9 @@ def create_item_in_op_gui(selenium, browser_id, path, item_type, name,
         assert_items_presence_in_file_browser(browser_id, name, tmp_memory)
 
 
-@wt(parsers.re('user of (?P<browser_id>\w+) sees that the file structure in '
+@wt(parsers.re(r'user of (?P<browser_id>\w+) sees that the file structure in '
                'file browser is as follow:\n'
-               '(?P<config>(.|\s)*)'))
+               r'(?P<config>(.|\s)*)'))
 def check_file_structure_in_file_browser(browser_id, config, selenium,
                                          tmp_memory, op_container, tmpdir):
     subtree = yaml.load(config)

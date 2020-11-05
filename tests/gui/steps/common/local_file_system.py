@@ -8,13 +8,12 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 
-import yaml
 import stat
 
-from pytest_bdd import given, parsers
+import yaml
 
 from tests.gui.utils.generic import suppress
-
+from tests.utils.bdd_utils import given, parsers
 
 PERMS_777 = stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH
 

@@ -13,7 +13,7 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.utils.generic import (parse_seq, upload_file_path, transform)
 from tests.utils.utils import repeat_failed
-from tests.utils.bdd_utils import given, wt, parsers, when, then
+from tests.utils.bdd_utils import given, wt, parsers
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -49,18 +49,12 @@ def assert_if_list_contains_space_in_data_tab_in_op(selenium, browser_id,
                                                          f'while it should be')
 
 
-@when(parsers.re(r'user of (?P<browser_id>.*?) clicks the button '
-                 r'from top menu bar with tooltip '
-                 r'"(?P<tooltip>Create directory|Create file|Share element|'
-                 r'Edit metadata|Rename element|Change element permissions|'
-                 r'Copy element|Cut element|Remove element|'
-                 r'Show data distribution)"'))
-@then(parsers.re(r'user of (?P<browser_id>.*?) clicks the button '
-                 r'from top menu bar with tooltip '
-                 r'"(?P<tooltip>Create directory|Create file|Share element|'
-                 r'Edit metadata|Rename element|Change element permissions|'
-                 r'Copy element|Cut element|Remove element|'
-                 r'Show data distribution)"'))
+@wt(parsers.re('user of (?P<browser_id>.*?) clicks the button '
+               'from top menu bar with tooltip '
+               '"(?P<tooltip>Create directory|Create file|Share element|'
+               'Edit metadata|Rename element|Change element permissions|'
+               'Copy element|Cut element|Remove element|'
+               'Show data distribution)"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_tooltip_from_toolbar_in_data_tab_in_op(selenium, browser_id, tooltip,
                                                  op_container):
@@ -135,10 +129,8 @@ def change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, browser_id, path,
         op_container(selenium[browser_id]).file_browser.breadcrumbs.chdir(path)
 
 
-@when(parsers.parse('user of {browser_id} sees that current working directory '
-                    'displayed in directory tree is {path}'))
-@then(parsers.parse('user of {browser_id} sees that current working directory '
-                    'displayed in directory tree is {path}'))
+@wt(parsers.parse('user of {browser_id} sees that current working directory '
+                  'displayed in directory tree is {path}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def is_displayed_dir_tree_in_data_tab_in_op_correct(selenium, browser_id, path,
                                                     op_container):
@@ -147,10 +139,8 @@ def is_displayed_dir_tree_in_data_tab_in_op_correct(selenium, browser_id, path,
     assert path == cwd, 'expected path {}\n got: {}'.format(path, cwd)
 
 
-@when(parsers.parse('user of {browser_id} changes current working directory '
-                    'to {path} using directory tree'))
-@then(parsers.parse('user of {browser_id} changes current working directory '
-                    'to {path} using directory tree'))
+@wt(parsers.parse('user of {browser_id} changes current working directory '
+                  'to {path} using directory tree'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_cwd_using_dir_tree_in_data_tab_in_op(selenium, browser_id, path,
                                                 op_container):
@@ -164,10 +154,7 @@ def change_cwd_using_dir_tree_in_data_tab_in_op(selenium, browser_id, path,
         cwd.click()
 
 
-@when(
-    parsers.parse('user of {browser_id} does not see {path} in directory tree'))
-@then(
-    parsers.parse('user of {browser_id} does not see {path} in directory tree'))
+@wt(parsers.parse('user of {browser_id} does not see {path} in directory tree'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_absence_of_path_in_dir_tree(selenium, browser_id, path,
                                        op_container):
@@ -203,12 +190,9 @@ def g_is_space_tree_root(selenium, browser_id, is_home, space_name,
                                              space_name, op_container)
 
 
-@when(parsers.re('user of (?P<browser_id>.+?) sees that displayed directory '
-                 'tree in sidebar panel belongs to (?P<is_home>(home )?)space '
-                 'named "(?P<space_name>.+?)"'))
-@then(parsers.re('user of (?P<browser_id>.+?) sees that displayed directory '
-                 'tree in sidebar panel belongs to (?P<is_home>(home )?)space '
-                 'named "(?P<space_name>.+?)"'))
+@wt(parsers.re('user of (?P<browser_id>.+?) sees that displayed directory '
+               'tree in sidebar panel belongs to (?P<is_home>(home )?)space '
+               'named "(?P<space_name>.+?)"'))
 def wt_is_space_tree_root(selenium, browser_id, is_home, space_name,
                           op_container):
     driver = selenium[browser_id]
@@ -255,10 +239,8 @@ def assert_file_browser_in_data_tab_in_op(selenium, browser_id, op_container,
                                item_browser)
 
 
-@when(parsers.parse('user of {browser_id} records displayed name length for '
-                    '{path} in directory tree sidebar'))
-@when(parsers.parse('user of {browser_id} records displayed name length for '
-                    '{path} in directory tree sidebar'))
+@wt(parsers.parse('user of {browser_id} records displayed name length for '
+                  '{path} in directory tree sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_displayed_dir_name_len_in_dir_tree(selenium, browser_id, path,
                                              op_container, tmp_memory):
@@ -271,9 +253,7 @@ def check_displayed_dir_name_len_in_dir_tree(selenium, browser_id, path,
     tmp_memory[browser_id][path] = cwd.displayed_name_width
 
 
-@when(parsers.parse('user of {browser_id} sees that displayed name length for '
-                    '{path} in directory tree sidebar is larger than before'))
-@then(parsers.parse('user of {browser_id} sees that displayed name length for '
+@wt(parsers.parse('user of {browser_id} sees that displayed name length for '
                     '{path} in directory tree sidebar is larger than before'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_diff_in_len_of_dir_name_before_and_now(selenium, browser_id, path,
@@ -290,12 +270,9 @@ def assert_diff_in_len_of_dir_name_before_and_now(selenium, browser_id, path,
                                  '}'.format(path, curr_len)
 
 
-@when(parsers.re(r'user of (?P<browser_id>.+?) expands data tab sidebar to the '
-                 r'(?P<direction>right|left) of approximately ('
-                 r'?P<offset>\d+)px'))
-@then(parsers.re(r'user of (?P<browser_id>.+?) expands data tab sidebar to the '
-                 r'(?P<direction>right|left) of approximately ('
-                 r'?P<offset>\d+)px'))
+@wt(parsers.re('user of (?P<browser_id>.+?) expands data tab sidebar to the '
+               '(?P<direction>right|left) of approximately '
+               '(?P<offset>\d+)px'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def resize_data_tab_sidebar(selenium, browser_id, direction, offset,
                             op_container):
@@ -388,10 +365,8 @@ def upload_file_to_cwd_in_data_tab_no_waiting(selenium, browser_id, file_path,
         raise RuntimeError('file {} does not exist'.format(str(file)))
 
 
-@when(parsers.parse('user of {browser_id} sees that chunk bar for provider '
-                    '"{provider}" is of {size} size'))
-@then(parsers.parse('user of {browser_id} sees that chunk bar for provider '
-                    '"{provider}" is of {size} size'))
+@wt(parsers.parse('user of {browser_id} sees that chunk bar for provider '
+                  '"{provider}" is of {size} size'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_provider_chunk_in_data_distribution_size(selenium, browser_id, size,
                                                     provider, modals, hosts):
@@ -425,10 +400,8 @@ def assert_provider_chunk_in_data_distribution_filled(selenium, browser_id,
                                          f'from {chunk[0]} to {chunk[1]}')
 
 
-@when(parsers.parse('user of {browser_id} sees that chunk bar for provider '
-                    '"{provider}" is entirely empty'))
-@then(parsers.parse('user of {browser_id} sees that chunk bar for provider '
-                    '"{provider}" is entirely empty'))
+@wt(parsers.parse('user of {browser_id} sees that chunk bar for provider '
+                  '"{provider}" is entirely empty'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_provider_chunk_in_data_distribution_empty(selenium, browser_id,
                                                      provider, modals, hosts):
@@ -477,10 +450,8 @@ def assert_provider_chunks_in_data_distribution(selenium, browser_id, chunks,
             chunk1, chunk2)
 
 
-@when(parsers.parse('user of {browser_id} sees that content of downloaded '
-                    'file "{file_name}" is equal to: "{content}"'))
-@then(parsers.parse('user of {browser_id} sees that content of downloaded '
-                    'file "{file_name}" is equal to: "{content}"'))
+@wt(parsers.parse('user of {browser_id} sees that content of downloaded '
+                  'file "{file_name}" is equal to: "{content}"'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def has_downloaded_file_content(browser_id, file_name, content, tmpdir):
     downloaded_file = tmpdir.join(browser_id, 'download', file_name)

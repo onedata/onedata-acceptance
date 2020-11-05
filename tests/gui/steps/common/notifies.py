@@ -10,14 +10,14 @@ __license__ = ("This software is released under the MIT license cited in "
 
 import re
 
-from pytest_bdd import parsers
-from selenium.common.exceptions import (NoSuchElementException,
-                                        StaleElementReferenceException)
+from selenium.common.exceptions import (
+    NoSuchElementException, StaleElementReferenceException)
 from selenium.webdriver.support.expected_conditions import staleness_of
-from tests.utils.utils import repeat_failed
-from tests.utils.acceptance_utils import wt
-from tests.gui.utils.generic import suppress
+
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
+from tests.gui.utils.generic import suppress
+from tests.utils.bdd_utils import wt, parsers
+from tests.utils.utils import repeat_failed
 
 
 @wt(parsers.parse('user of {browser_id} sees an {notify_type} notify '
