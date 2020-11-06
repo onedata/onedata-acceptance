@@ -311,17 +311,19 @@ def set_posix_permissions_in_op_rest(path, perm, user, users, host, hosts,
         file_api.set_attr(file_id, attribute={'mode': perm})
 
 
-def assert_time_relation_in_op_rest(path, time1_name, time2_name, comparator,
-                                    host, hosts, user, users, cdmi):
+def assert_files_time_relation_in_op_rest(path, path2, time1_name, time2_name,
+                                          comparator, host, hosts, user,
+                                          users, cdmi):
     client = cdmi(hosts[host]['hostname'], users[user].token)
-    metadata = client.read_metadata(path)['metadata']
+    metadata1 = client.read_metadata(path)['metadata']
+    metadata2 = client.read_metadata(path2)['metadata']
     attr1 = time_attr(time1_name, 'cdmi')
     attr2 = time_attr(time2_name, 'cdmi')
     date_fmt = '%Y-%m-%dT%H:%M:%SZ'
 
     try:
-        time1 = datetime.strptime(metadata[attr1], date_fmt)
-        time2 = datetime.strptime(metadata[attr2], date_fmt)
+        time1 = datetime.strptime(metadata1[attr1], date_fmt)
+        time2 = datetime.strptime(metadata2[attr2], date_fmt)
     except KeyError as ex:
         assert False, 'File {} has no {} metadata'.format(path, ex.args[0])
 
@@ -332,3 +334,11 @@ def assert_time_relation_in_op_rest(path, time1_name, time2_name, comparator,
                                                .format(time1_name, time1,
                                                        time2_name, time2,
                                                        comparator))
+
+
+def assert_time_relation_in_op_rest(path, time1_name, time2_name,
+                                    comparator, host, hosts, user, users, cdmi):
+    assert_files_time_relation_in_op_rest(path, path, time1_name, time2_name,
+                                          comparator, host, hosts, user,
+                                          users, cdmi)
+

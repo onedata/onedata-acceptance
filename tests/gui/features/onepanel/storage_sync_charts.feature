@@ -10,8 +10,8 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     And directory tree structure on local file system:
           browser2:
-              - dir1: 500
-              - dir2: 300
+            dir1: 500
+            dir2: 300
 
 
   Scenario: User configures storage sync and sees storage synchronization statistics

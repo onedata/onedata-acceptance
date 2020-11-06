@@ -354,6 +354,25 @@ def check_time(user, time1, time2, comparator, file, client_node, users):
     assert_(client.perform, condition)
 
 
+def check_files_time(user, time1, time2, comparator, file, file2,
+                     client_node, users):
+    user = users[user]
+    client = user.clients[client_node]
+    attr1 = time_attr(time1)
+    attr2 = time_attr(time2)
+    file_path = client.absolute_path(file)
+    file2_path = client.absolute_path(file2)
+
+    def condition():
+        stat_result = stat(client, file_path)
+        t1 = getattr(stat_result, attr1)
+        stat_result2 = stat(client, file2_path)
+        t2 = getattr(stat_result2, attr2)
+        assert compare(t1, t2, comparator)
+
+    assert_(client.perform, condition)
+
+
 @then(parsers.re('(?P<time1>.*) time of (?P<user>\w+)\'s (?P<file1>.*) is '
                  '(?P<comparator>.*) to recorded one of (?P<file2>.*) on '
                  '(?P<client_node>.*)'))

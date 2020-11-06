@@ -11,8 +11,8 @@ Feature: Storage management using onepanel
     And user of [browser_unified, browser_emergency] logged as [admin, admin] to [Onezone, emergency interface of Onepanel] service
     And directory tree structure on local file system:
           browser_unified:
-              - dir1: 70
-              - dir2: 5
+            dir1: 70
+            dir2: 5
 
   Scenario Outline: User uploads files on freshly supported space on newly created storage
     Given admin user does not have access to any space
@@ -58,7 +58,6 @@ Feature: Storage management using onepanel
     And user of browser_unified double clicks on item named "new_dir" in file browser
     And user of browser_unified sees that current working directory displayed in breadcrumbs is /new_dir
     And user of browser_unified uses upload button from file browser menu bar to upload files from local directory "dir2" to remote current dir
-    And user of browser_unified waits for file upload to finish
     Then user of browser_unified sees that there are 5 items in file browser
 
 
@@ -74,8 +73,7 @@ Feature: Storage management using onepanel
           mount point: /volumes/persistence/storage
     And using docker, admin renames /volumes/persistence/storage path to /volumes/persistence/storage2
     And user of <browser> is idle for 5 seconds
-    And user of <browser> expands toolbar for "<storage_name>" storage record in Storages page in Onepanel
-    And user of <browser> clicks on Modify storage details option in storage's toolbar in Onepanel
+    And user of <browser> clicks on "Modify" button for "<storage_name>" storage record in Storages page in Onepanel
     And user of <browser> types "/volumes/persistence/storage2" to Mount point field in POSIX edit form for "<storage_name>" storage in Onepanel
     And user of <browser> clicks on Save button in edit form for "<storage_name>" storage in Onepanel
     And user of <browser> clicks on "Proceed" button in modal "Modify Storage"
@@ -152,9 +150,9 @@ Feature: Storage management using onepanel
     And user of browser_unified is idle for 8 seconds
     And user of browser_unified clicks on "oneprovider-1" in clusters menu
     And user of browser_unified clicks on Storages item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
+    And user of browser_unified is idle for 2 seconds
 
-    And user of browser_unified expands toolbar for "new_storage7" storage record in Storages page in Onepanel
-    And user of browser_unified clicks on Modify storage details option in storage's toolbar in Onepanel
+    And user of browser_unified clicks on "Modify" button for "new_storage7" storage record in Storages page in Onepanel
     And user of browser_unified types "/volumes/persistence/storage/renamed_dir05" to Mount point field in POSIX edit form for "new_storage7" storage in Onepanel
     And user of browser_unified clicks on Save button in edit form for "new_storage7" storage in Onepanel
     And user of browser_unified clicks on "Proceed" button in modal "Modify storage"

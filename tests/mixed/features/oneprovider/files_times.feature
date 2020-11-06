@@ -18,12 +18,10 @@ Feature: Files times tests
    Scenario Outline: User renames file using <client2> and using <client1> he sees that status-change time has changed
     When using <client1>, user1 succeeds to create file named "file1" in "space1" in oneprovider-1
     And using <client2>, user1 succeeds to see item named "file1" in "space1" in oneprovider-1
-    And user1 waits 2 second
+    And user1 is idle for 2 seconds
     And using <client2>, user1 renames item named "file1" to "file2" in "space1" in oneprovider-1
-    Then using <client1>, user1 succeeds to see item named "file2" in "space1" in oneprovider-1
-    And using <client1>, user1 fails to see item named "file1" in "space1" in oneprovider-1
-    And using <client1>, user1 sees that status-change time of item named "file2" in "space1" space is equal to modification time in oneprovider-1
-    And using <client1>, user1 sees that status-change time of item named "file2" in "space1" space is equal to access time in oneprovider-1
+    And using <client1>, user1 sees that status-change time of item named "file2" in "space1" space is greater than modification time in oneprovider-1
+    And using <client1>, user1 sees that status-change time of item named "file2" in "space1" space is greater than access time in oneprovider-1
 
   Examples:
   | client1    | client2    |
@@ -36,7 +34,7 @@ Feature: Files times tests
    Scenario Outline: User changes file using <client1> and using web GUI sees that modification time has changed
     When using <client1>, user1 succeeds to create file named "file1" in "space1" in oneprovider-1
     And using <client1>, user1 succeeds to see item named "file1" in "space1" in oneprovider-1
-    And user1 waits 80 second
+    And user1 is idle for 80 seconds
     And using <client1>, user1 writes "TEST TEXT ONEDATA" to file named "file1" in "space1" in oneprovider-1
     And using web GUI, user1 refreshes site
     Then using web GUI, user1 sees that modification time of item named "file1" in current space is not earlier than 70 seconds ago in oneprovider-1

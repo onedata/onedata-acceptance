@@ -112,7 +112,7 @@ Feature: Oneprovider POSIX privileges GUI tests
 	# Fail to upload file
     And user of browser_user1 opens file browser for "space1" space
     And user of browser_user1 double clicks on item named "dir1" in file browser
-    And user of browser_user1 uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
+    And user of browser_user1 uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir without waiting for upload to finish
     Then user of browser_user1 sees that upload file failed
 
 

@@ -193,5 +193,5 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     And user of browser1 clicks Data of "space2" in the sidebar
     And user of browser1 sees file browser in data tab in Oneprovider page
     And user of browser1 double clicks on item named "dir1" in file browser
-    Then user of browser1 uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
+    Then user of browser1 uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir without waiting for upload to finish
     And user of browser1 sees that upload file failed
