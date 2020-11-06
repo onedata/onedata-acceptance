@@ -74,7 +74,7 @@ Feature: Regular_file_stat
     When user1 creates regular files [space1/file1]
     And user1 sees file1 in space1
     # call sleep, to be sure that time of above and below operations is different
-    And user1is idle for 2 seconds
+    And user1 is idle for 2 seconds
     And user1 writes "TEST TEXT ONEDATA" to space1/file1
     Then modification time of user1's space1/file1 is greater than access time
     And modification time of user1's space1/file1 is equal to status-change time
