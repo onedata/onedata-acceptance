@@ -10,7 +10,7 @@ Feature: LUMA acceptance tests using multiple providers
     And rob sees [file1] in krk-pl-par-c/dir1 on client21
     And rob changes krk-pl-par-c/dir1 mode to 755 on client21
     # wait to ensure synchronization between providers
-    And rob waits 10 seconds
+    And rob is idle for 10 seconds
 
     Then marie fails to delete files [krk-pl-par-c/dir1/file1] on client12
     And marie fails to delete files [krk-pl-par-c/dir1/file1] on client22
@@ -26,7 +26,7 @@ Feature: LUMA acceptance tests using multiple providers
     Then karen fails to create regular files [krk-pl-par-c/file2] on client12
     And rob can't stat [file2] in krk-pl-par-c on client11
     # wait to ensure synchronization between providers
-    And rob waits 10 seconds
+    And rob is idle for 10 seconds
     And rob can't stat [file2] in krk-pl-par-c on client21
 
 
@@ -37,7 +37,7 @@ Feature: LUMA acceptance tests using multiple providers
       using [token, token, token] by [rob, marie, rob]
     And there is directory "volume-data-sync-rw-luma-test/Landsat-1" owned by 40001:42001 in container "volume-data-sync-rw-luma-test" on provider "oneprovider-1"
     # wait to ensure synchronization between providers
-    Then rob waits 20 seconds
+    Then rob is idle for 20 seconds
     And rob sees [Landsat-1] in krk-plirw-par-c on client11
     And rob sees that owner's UID and GID for krk-plirw-par-c/Landsat-1 are equal to 40001 and 42001 respectively on client11
 
@@ -59,7 +59,7 @@ Feature: LUMA acceptance tests using multiple providers
     When rob creates directories [krk-plirw-par-c/Landsat-2] on client21
     And rob creates regular files [krk-plirw-par-c/Landsat-2/file1] on client21
     # wait to ensure synchronization between providers
-    And rob waits 10 seconds
+    And rob is idle for 10 seconds
 
     Then rob sees [file1] in krk-plirw-par-c/Landsat-2 on client11
     And rob sees that owner's UID and GID for krk-plirw-par-c/Landsat-2/file1 are equal to 40001 and 42001 respectively on client11

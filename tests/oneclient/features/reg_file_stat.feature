@@ -64,7 +64,7 @@ Feature: Regular_file_stat
     When user1 writes "TEST TEXT ONEDATA" to space1/file1
     And user1 sees file1 in space1
     # call sleep, to be sure that time of write and read is different
-    And user1 waits 2 second
+    And user1 is idle for 2 seconds
     Then user1 reads "TEST TEXT ONEDATA" from file space1/file1
     And access time of user1's space1/file1 is greater than modification time
     And access time of user1's space1/file1 is greater than status-change time
@@ -74,7 +74,7 @@ Feature: Regular_file_stat
     When user1 creates regular files [space1/file1]
     And user1 sees file1 in space1
     # call sleep, to be sure that time of above and below operations is different
-    And user1 waits 2 second
+    And user1 is idle for 2 seconds
     And user1 writes "TEST TEXT ONEDATA" to space1/file1
     Then modification time of user1's space1/file1 is greater than access time
     And modification time of user1's space1/file1 is equal to status-change time
@@ -84,7 +84,7 @@ Feature: Regular_file_stat
     When user1 creates regular files [space1/file1]
     And user1 sees file1 in space1
     # call sleep, to be sure that time of above and below operations is different
-    And user1 waits 2 second
+    And user1 is idle for 2 seconds
     And user1 changes space1/file1 mode to 711
     Then mode of user1's space1/file1 is 711
     And status-change time of user1's space1/file1 is greater than modification time
@@ -95,10 +95,10 @@ Feature: Regular_file_stat
     When user1 creates regular files [space1/file1]
     And user1 sees file1 in space1
     # call sleep, to be sure that time of above and below operations is different
-    And user1 waits 2 second
+    And user1 is idle for 2 seconds
     And user1 renames space1/file1 to space1/file2
     Then user1 sees file2 in space1
     And user1 doesn't see file1 in space1
-    And user1 waits 2 second
+    And user1 is idle for 2 seconds
     And status-change time of user1's space1/file2 is greater to modification time
     And status-change time of user1's space1/file2 is greater to access time
