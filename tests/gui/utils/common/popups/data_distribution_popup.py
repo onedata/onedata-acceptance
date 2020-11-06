@@ -11,7 +11,7 @@ from tests.gui.utils.core.web_elements import Label, WebItemsSequence
 
 
 class DataDistributionItem(PageObject):
-    name = id = Label('.text')
+    name = id = Label('.one-label')
 
     def __call__(self):
         self.click()

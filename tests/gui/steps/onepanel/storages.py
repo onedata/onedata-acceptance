@@ -83,7 +83,7 @@ def wt_expands_toolbar_for_storage_in_onepanel(selenium, browser_id, name,
 
 
 @wt(parsers.re(r"user of (?P<browser_id>.*?) clicks on "
-               r"(?P<option>Modify storage details|Remove storage) "
+               r"(?P<option>Remove storage) "
                r"option in storage's toolbar in Onepanel"))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_clicks_on_btn_in_storage_toolbar_in_panel(selenium, browser_id, option,
@@ -94,6 +94,14 @@ def wt_clicks_on_btn_in_storage_toolbar_in_panel(selenium, browser_id, option,
     else:
         raise RuntimeError('no storage toolbar found in Onepanel')
 
+
+@wt(parsers.parse('user of {browser_id} clicks on "Modify" button for '
+                  '"{name}" storage record in Storages page in Onepanel'))
+def click_modify_storage_in_onepanel(selenium, browser_id, name,
+                                     onepanel):
+    driver = selenium[browser_id]
+    onepanel(driver).content.storages.click_modify_button_of_storage(driver,
+                                                                     name)
 
 @wt(parsers.parse('user of {browser_id} types "{in_value}" into last key in '
                   'posix storage edit page'))
