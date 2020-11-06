@@ -25,11 +25,19 @@ class POSIX(PageObject):
     read_only = Toggle('.toggle-field-posix-readonly')
 
 
+class LocalCeph(PageObject):
+    storage_name = Input('input.field-generic-name')
+    imported_storage = Toggle('.toggle-field-generic-importedStorage')
+    number_of_copies = Input('input.field-localceph-copiesNumber')
+    timeout = Input('input.field-localceph-timeout')
+
+
 class StorageAddForm(PageObject):
     storage_selector = DropdownSelector('.ember-basic-dropdown')
     skip_storage_detection = Toggle('.toggle-field-generic-skipStorageDetection')
     add = Button('.submit-group button')
     posix = WebItem('form', cls=POSIX)
+    local_ceph = WebItem('form', cls=LocalCeph)
 
 
 class POSIXEditor(PageObject):
@@ -72,3 +80,9 @@ class StorageContentPage(PageObject):
     storages = WebItemsSequence('ul li .storage-item', cls=StorageRecord)
     add_storage = NamedButton('button', text='Add storage')
     cancel = NamedButton('button', text='Cancel')
+
+    def click_modify_button_of_storage(self, driver, storage_name):
+        for index, record in enumerate(self.storages):
+            if record.name == storage_name:
+                driver.execute_script(f'$(".btn-default")[{index}].click();')
+

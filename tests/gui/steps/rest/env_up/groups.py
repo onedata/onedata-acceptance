@@ -12,7 +12,8 @@ import json
 from pytest_bdd import given, parsers
 
 from tests import OZ_REST_PORT
-from tests.utils.rest_utils import (http_post, http_put, get_zone_rest_path)
+from tests.utils.rest_utils import (http_post, http_put, get_zone_rest_path,
+                                    http_get, http_delete)
 
 
 @given(parsers.parse('initial groups configuration in "{service}" '
@@ -139,3 +140,31 @@ def _add_child_group(zone_hostname, admin_credentials, parent_id, child_id,
              path=get_zone_rest_path('groups', parent_id, 'children', child_id),
              auth=(admin_credentials.username, admin_credentials.password),
              data=data)
+
+
+def _get_group_id(hosts, users, user, group_name):
+    service = 'onezone'
+    zone_hostname = hosts[service]['hostname']
+    groups_list = http_get(ip=zone_hostname, port=OZ_REST_PORT,
+                           path=get_zone_rest_path('groups'),
+                           auth=(user, users[user].password))
+    groups_id_list = groups_list.json()['groups']
+    for group_id in groups_id_list:
+        group_details = http_get(ip=zone_hostname, port=OZ_REST_PORT,
+                                 path=get_zone_rest_path('groups', group_id),
+                                 auth=(user, users[user].password))
+        if group_details.json()['name'] == group_name:
+            return group_id
+    return None
+
+
+@given(parsers.parse('there is no {group_name} group in Onezone page used by '
+                     '{user} before definition in next steps'))
+def remove_group_in_onezone(hosts, users, user, group_name):
+    service = 'onezone'
+    zone_hostname = hosts[service]['hostname']
+    group_id = _get_group_id(hosts, users, user, group_name)
+    if group_id:
+        http_delete(ip=zone_hostname, port=OZ_REST_PORT,
+                    path=get_zone_rest_path('groups', group_id),
+                    auth=(user, users[user].password))
