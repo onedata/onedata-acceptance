@@ -27,6 +27,8 @@ class DataDiscoveryPage(object):
                                     cls=ResultSample)
     error_message = Label('.error-container .main-message')
 
+    ecrin_gui_app_logo = Label('.app-logo')
+
     def __init__(self, driver):
         self.web_elem = self.driver = driver
 
