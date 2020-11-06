@@ -9,18 +9,23 @@ __license__ = "This software is released under the MIT license cited in " \
 import hashlib
 import json
 from collections import namedtuple
-from typing import Union, Dict, Any
+from typing import Union, Dict, List, Any
 
 from tests.utils.rest_utils import get_panel_rest_path, http_post, http_put, http_get
 from tests.utils.http_exceptions import HTTPConflict
 from tests import PANEL_REST_PORT
 from tests.utils.user_utils import AdminUser, User
 
-SPACE_DETAILS = namedtuple("SpaceDetails", ['space_id', 'provider_ip', 'space_name', 'storage_id'])
-STORAGE_DETAILS = namedtuple("StorageDetails", ['storage_id', 'provider_ip'])
+SpaceDetails = namedtuple("SpaceDetails", ['space_id', 'provider_ip', 'space_name', 'storage_id'])
+StorageDetails = namedtuple("StorageDetails", ['storage_id', 'provider_ip'])
 
 
-def add_user_luma_mapping(admin_user: AdminUser, user: User, storages: [STORAGE_DETAILS]) -> None:
+def add_user_luma_mapping(
+        admin_user: AdminUser,
+        user: User,
+        storages: List[StorageDetails]
+) -> None:
+
     # generate uid the same way as it was generated when user was created on storage
     # (see scripts.utils.k8s.pods.create_users in one-env-engine)
     uid = int(hashlib.sha1(user.username.encode('utf-8')).hexdigest(), 16) % 50000 + 10000
@@ -41,8 +46,12 @@ def add_user_luma_mapping(admin_user: AdminUser, user: User, storages: [STORAGE_
                     mapping, http_post, '/'.join(['all', 'onedata_user_to_credentials']))
 
 
-def add_spaces_luma_mapping(admin_user: AdminUser, storages: [STORAGE_DETAILS],
-                            spaces_details: [SPACE_DETAILS]) -> None:
+def add_spaces_luma_mapping(
+        admin_user: AdminUser,
+        storages: List[StorageDetails],
+        spaces_details: List[SpaceDetails]
+) -> None:
+
     storages_ids = [x for _, x in storages]
     for space_details in spaces_details:
         if space_details.storage_id not in storages_ids:
@@ -60,9 +69,12 @@ def add_spaces_luma_mapping(admin_user: AdminUser, storages: [STORAGE_DETAILS],
                               space_details. space_id]))
 
 
-def get_local_feed_luma_storages(admin_user: AdminUser, hosts: Dict[str, Any]) -> [STORAGE_DETAILS]:
-    providers_ips = get_providers_ips(hosts)
+def get_local_feed_luma_storages(
+        admin_user: AdminUser,
+        hosts: Dict[str, Any]
+) -> List[StorageDetails]:
 
+    providers_ips = get_providers_ips(hosts)
     storages = []
     for provider_ip in providers_ips:
         response = http_get(ip=provider_ip, port=PANEL_REST_PORT,
@@ -74,14 +86,13 @@ def get_local_feed_luma_storages(admin_user: AdminUser, hosts: Dict[str, Any]) -
                                 path=get_panel_rest_path('provider', 'storages', storage_id),
                                 headers={'X-Auth-Token': admin_user.token})
             if 'local' == json.loads(response.content)['lumaFeed']:
-                storages.append(STORAGE_DETAILS(storage_id, provider_ip))
+                storages.append(StorageDetails(storage_id, provider_ip))
 
     return storages
 
 
-def get_all_spaces_details(admin_user: AdminUser, hosts: Dict[str, Any]) -> [SPACE_DETAILS]:
+def get_all_spaces_details(admin_user: AdminUser, hosts: Dict[str, Any]) -> List[SpaceDetails]:
     providers_ips = get_providers_ips(hosts)
-
     spaces_details = []
     for provider_ip in providers_ips:
         response = http_get(ip=provider_ip, port=PANEL_REST_PORT,
@@ -93,13 +104,13 @@ def get_all_spaces_details(admin_user: AdminUser, hosts: Dict[str, Any]) -> [SPA
                                 path=get_panel_rest_path('provider', 'spaces', space_id),
                                 headers={'X-Auth-Token': admin_user.token})
             decoded_response = json.loads(response.content)
-            spaces_details.append(SPACE_DETAILS(space_id, provider_ip, decoded_response['name'],
-                                                decoded_response['storageId']))
+            spaces_details.append(SpaceDetails(space_id, provider_ip, decoded_response['name'],
+                                               decoded_response['storageId']))
 
     return spaces_details
 
 
-def get_providers_ips(hosts: Dict[str, Any]) -> [str]:
+def get_providers_ips(hosts: Dict[str, Any]) -> List[str]:
     providers_ips = []
     for service in hosts.values():
         if 'service-type' in service.keys() and service['service-type'] == "oneprovider":
@@ -107,9 +118,15 @@ def get_providers_ips(hosts: Dict[str, Any]) -> [str]:
     return providers_ips
 
 
-def add_mapping(admin_user: AdminUser, provider_ip: str, storage_id: str,
-                mapping: Dict[str, Union[Dict[str, str], int]], method: Union[http_post, http_put],
-                path_suffix: str) -> None:
+def add_mapping(
+        admin_user: AdminUser,
+        provider_ip: str,
+        storage_id: str,
+        mapping: Dict[str, Union[Dict[str, str], int]],
+        method: Union[http_post, http_put],
+        path_suffix: str
+) -> None:
+
     try:
         response = method(ip=provider_ip, port=PANEL_REST_PORT,
                           path=get_panel_rest_path('provider', 'storages', storage_id, 'luma',
