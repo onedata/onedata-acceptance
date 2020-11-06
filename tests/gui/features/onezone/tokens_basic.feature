@@ -257,8 +257,7 @@ Feature: Management of tokens basic features in Onezone GUI
     | token_to_save     | token_to_delete   |
     | invite_token_1    | invite_token_2    |
     | access_token_1    | access_token_2    |
-    # todo: uncomment, when identity tokens will be visible, on clean obsolete tokens modal
-    # | identity_token_1  | identity_token_2  |
+    | identity_token_1  | identity_token_2  |
 
 
   Scenario: User successfully deletes obsolete tokens of selected type
