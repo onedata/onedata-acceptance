@@ -51,7 +51,15 @@ class PrivilegeGroup(PageObject):
                                       cls=PrivilegeRow)
 
     def expand(self):
-        self.expander.click()
+        if not self.is_expanded():
+            self.expander.click()
+
+    def is_expanded(self):
+        return 'expanded' in self.web_elem.get_attribute('class')
+
+    def collapse(self):
+        if self.is_expanded():
+            self.expander.click()
 
     def minimalize(self):
         self.expander.click()
@@ -78,7 +86,7 @@ class PrivilegeGroup(PageObject):
 
 
 class PrivilegeTree(PageObject):
-    privilege_groups = WebItemsSequence('.tree-item-content-container',
+    privilege_groups = WebItemsSequence('.has-checkbox-group',
                                         cls=PrivilegeGroup)
     privileges = WebItemsSequence('.one-tree-item-content', cls=PrivilegeRow)
 
@@ -159,5 +167,6 @@ class PrivilegeTree(PageObject):
             for sub_name, sub_granted in sub_privileges.items():
                 sub_row = privilege_row.get_sub_privilege_row(sub_name)
                 sub_row.set_privilege(sub_granted)
+            privilege_row.collapse()
         else:
             privilege_row.get_sub_privilege_row(name).set_privilege(granted)

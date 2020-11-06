@@ -7,7 +7,10 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import time
+
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
+from tests.gui.steps.common.url import refresh_site
 from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import wt, parsers
 from tests.gui.utils.generic import transform, parse_seq
@@ -554,3 +557,35 @@ def assert_number_of_shares_on_overview_page(browser_id, selenium, oz_page,
         oz_page(driver)['data'].overview_page.info_tile.shares_count)
     assert number == shares_count, (f'number of shares equals {shares_count},'
                                     ' not {number} as expected')
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) sees that (?P<tabs_list>.*) tabs? '
+               'of "(?P<space_name>.*)" are enabled'))
+@repeat_failed(WAIT_BACKEND)
+def assert_tabs_of_space_enabled(selenium, browser_id, tabs_list, space_name,
+                                 oz_page):
+    refresh_site(selenium, browser_id)
+    time.sleep(0.5)
+    page = oz_page(selenium[browser_id])['data']
+    page.spaces_header_list[space_name]()
+    space = page.elements_list[space_name]
+
+    for tab in parse_seq(tabs_list):
+        assert space.is_element_enabled(transform(tab)), (
+            f'Tab {tab} is not enabled for {space}'
+        )
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) sees that (?P<tabs_list>.*) tabs? '
+               'of "(?P<space_name>.*)" (are|is) disabled'))
+@repeat_failed(WAIT_BACKEND)
+def assert_tabs_of_space_disabled(selenium, browser_id, tabs_list, space_name,
+                                  oz_page):
+    page = oz_page(selenium[browser_id])['data']
+    page.spaces_header_list[space_name]()
+    space = page.elements_list[space_name]
+
+    for tab in parse_seq(tabs_list):
+        assert space.is_element_disabled(transform(tab)), (
+            f'Tab {tab} is not disabled for {space}'
+        )
