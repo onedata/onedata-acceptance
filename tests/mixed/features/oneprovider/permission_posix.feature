@@ -44,7 +44,7 @@ Feature: POSIX privileges tests
 
   Scenario Outline: Using <client3> user sees change of POSIX permissions an status-change time after changing permissions using <client2> for file created with <client1>
     When using <client1>, user1 succeeds to create file named "file1" in "space1" in oneprovider-1
-    And user1 waits 2 seconds
+    And user1 is idle for 2 seconds
     And using <client2>, user1 succeeds to set "775" POSIX permission for item named "file1" in "space1" in oneprovider-1
     Then using <client3>, user1 succeeds to see item named "file1" in "space1" in oneprovider-1
     And using <client3>, user1 sees that POSIX permission for item named "file1" in "space1" is "775" in oneprovider-1
@@ -60,7 +60,7 @@ Feature: POSIX privileges tests
 
   Scenario Outline: Using <client2> user sees change of POSIX permissions an status-change time after changing permissions using <client1> for directory
     When using <client1>, user1 succeeds to create directory named "/dir1" in "space1" in oneprovider-1
-    And user1 waits 2 seconds
+    And user1 is idle for 2 seconds
     And using <client1>, user1 succeeds to set "664" POSIX permission for item named "dir1" in "space1" in oneprovider-1
     Then using <client2>, user1 sees that POSIX permission for item named "dir1" in "space1" is "664" in oneprovider-1
     And using <client2>, user1 sees that status-change time of item named "dir1" in "space1" space is greater than modification time in oneprovider-1

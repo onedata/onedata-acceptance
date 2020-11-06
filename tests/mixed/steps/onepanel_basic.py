@@ -576,13 +576,6 @@ def copy_id_of_space(client, request, user, space_name, selenium, onepanel,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@wt(parsers.re(r'user is idle for (?P<seconds>\d*\.?\d+([eE][-+]?\d+)?) '
-               'seconds?'))
-def client_wait_given_time(seconds):
-    from tests.utils.acceptance_utils import wait_given_time
-    wait_given_time(seconds)
-
-
 @wt(parsers.re('using (?P<client>.*), (?P<user>.+?) sends copied invite token '
                'to (?P<send_to>.+?) user '
                'in "(?P<host>.+?)" Onezone service'))
