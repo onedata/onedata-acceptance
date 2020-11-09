@@ -374,7 +374,7 @@ def assert_plugin_injected_config(selenium, browser_id, oz_page,
 @wt(parsers.parse('user of {browser_id} sees Data Discovery page with Ecrin '
                   'GUI'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_data_discovery_page(selenium, browser_id, data_discovery):
+def assert_data_discovery_page_ecrin(selenium, browser_id, data_discovery):
     switch_to_iframe(selenium, browser_id, '.plugin-frame')
     driver = selenium[browser_id]
     assert data_discovery(driver).ecrin_gui_app_logo == 'MDR', ('Ecrin GUI '
