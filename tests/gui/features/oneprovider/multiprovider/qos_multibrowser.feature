@@ -9,11 +9,11 @@ Feature: Quality of Service in directory tests for 2 providers using multiple br
           owner: user1
           providers:
             - oneprovider-1:
-              storage: posix
-              size: 1000000
+                storage: posix
+                size: 1000000
             - oneprovider-2:
-              storage: posix
-              size: 1000000
+                storage: posix
+                size: 1000000
           storage:
             defaults:
               provider: oneprovider-1

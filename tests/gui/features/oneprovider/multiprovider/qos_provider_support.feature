@@ -10,8 +10,8 @@ Feature: Quality of Service in directory tests for 2 providers with 1 supporting
           owner: user1
           providers:
             - oneprovider-1:
-              storage: posix
-              size: 1000000000
+                storage: posix
+                size: 1000000000
           storage:
             defaults:
               provider: oneprovider-1
