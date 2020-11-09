@@ -25,7 +25,7 @@ from tests.gui.steps.onezone.members import (
     assert_member_is_in_parent_members_list)
 from tests.gui.steps.onezone.multibrowser_spaces import *
 from tests.gui.steps.onezone.spaces import *
-from tests.utils.bdd_utils import wt, parsers
+from tests.utils.bdd_utils import wt, parsers, given
 from tests.utils.rest_utils import http_get, get_zone_rest_path, http_delete
 
 
