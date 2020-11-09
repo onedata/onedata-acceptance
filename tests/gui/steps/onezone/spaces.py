@@ -561,11 +561,9 @@ def assert_number_of_shares_on_overview_page(browser_id, selenium, oz_page,
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees that (?P<tabs_list>.*) tabs? '
                'of "(?P<space_name>.*)" are enabled'))
-@repeat_failed(WAIT_BACKEND)
+@repeat_failed(WAIT_BACKEND*3)
 def assert_tabs_of_space_enabled(selenium, browser_id, tabs_list, space_name,
                                  oz_page):
-    refresh_site(selenium, browser_id)
-    time.sleep(0.5)
     page = oz_page(selenium[browser_id])['data']
     page.spaces_header_list[space_name]()
     space = page.elements_list[space_name]
@@ -578,7 +576,7 @@ def assert_tabs_of_space_enabled(selenium, browser_id, tabs_list, space_name,
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees that (?P<tabs_list>.*) tabs? '
                'of "(?P<space_name>.*)" (are|is) disabled'))
-@repeat_failed(WAIT_BACKEND)
+@repeat_failed(WAIT_BACKEND*2)
 def assert_tabs_of_space_disabled(selenium, browser_id, tabs_list, space_name,
                                   oz_page):
     page = oz_page(selenium[browser_id])['data']
