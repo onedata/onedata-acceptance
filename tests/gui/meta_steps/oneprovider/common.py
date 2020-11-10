@@ -71,25 +71,6 @@ def replicate_file_to_provider(selenium, browser_id, name, tmp_memory,
                                           tmp_memory)
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) evicts "(?P<name>.*)" from '
-               'provider "(?P<provider>.*)"'))
-def evict_file_from_provider(selenium, browser_id, name, tmp_memory,
-                             provider, op_container, hosts, modals, popups):
-    option = 'Data distribution'
-    modal_name = 'Data distribution'
-    close_option = 'Close'
-
-    click_menu_for_elem_in_file_browser(browser_id, name, tmp_memory)
-    click_option_in_data_row_menu_in_file_browser(selenium, browser_id,
-                                                  option, modals)
-    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-
-    evict_item(selenium, browser_id, provider, hosts, popups)
-
-    wt_click_on_confirmation_btn_in_modal(selenium, browser_id, close_option,
-                                          tmp_memory)
-
-
 @wt(parsers.parse('user of {browser_id} waits until eviction is done'))
 def assert_eviction_done(selenium, browser_id, name, tmp_memory,
                          op_container, modals):

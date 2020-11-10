@@ -25,6 +25,11 @@ Feature: Quality of Service tests for 2 providers using multiple browsers in One
     And users of [browser_unified, browser_emergency] opened [Onezone, oneprovider-2 provider panel] page
     And user of [browser_unified, browser_emergency] logged as [user1, admin] to [Onezone, emergency interface of Onepanel] service
 
+    And directory tree structure on local file system:
+          space_owner_browser:
+            large_file.txt:
+              size: 50 MiB
+
 
   Scenario: Auto-cleaning respects QoS replicas count requirement beside auto-cleaning quota
     # enable auto cleaning
@@ -38,7 +43,7 @@ Feature: Quality of Service tests for 2 providers using multiple browsers in One
 
     # upload files
     And user of browser_unified uploads "20B-0.txt" to the root directory of "space1"
-    And user of browser_unified uses upload button from file browser menu bar to upload file "large_file.txt" to current dir
+    And user of browser_unified uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
 
     # set qos requirement
     And user of browser_unified clicks on Data in the main menu

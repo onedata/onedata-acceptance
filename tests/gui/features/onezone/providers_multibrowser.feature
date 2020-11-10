@@ -52,9 +52,9 @@ Feature: Basic management of providers in Onezone GUI
   Scenario: User sees provider on the space providers map after supporting
     When user of space_owner_browser clicks Overview of "space3" in the sidebar
     And user of space_owner_browser sees no providers on the map on "space3" space overview data page
-    And user of space_owner_browser sends support token for "space3" to user of browser1
+    And user of space_owner_browser sends support token for "space3" to user of browser_emergency
 
-    And user of browser1 supports "space3" space in "oneprovider-1" Oneprovider panel service with following configuration:
+    And user of browser_emergency supports "space3" space in "oneprovider-1" Oneprovider panel service with following configuration:
           storage: posix
           size: 10000
 

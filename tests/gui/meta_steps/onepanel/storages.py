@@ -33,7 +33,7 @@ from tests.gui.steps.onepanel.storages import (
     save_changes_in_posix_storage_edit_page,
     click_value_in_posix_storage_edit_page,
     delete_additional_param_in_posix_storage_edit_page,
-    type_key_in_posix_storage_edit_page)
+    type_key_in_posix_storage_edit_page, click_modify_storage_in_onepanel)
 from tests.gui.steps.modal import click_modal_button
 from tests.gui.steps.onezone.spaces import (
     click_on_option_in_the_sidebar, click_element_on_lists_on_left_sidebar_menu,
@@ -238,18 +238,15 @@ def delete_additional_param_in_storage_page(selenium, browser_id,
 
 
 def _delete_all_additional_params_in_storage_page(selenium, browser_id,
-                                                  onepanel, modals, popups):
+                                                  onepanel, modals):
     deleted = False
     name = 'posix'
-    option = 'Modify storage details'
     button = 'Proceed'
     modal = 'Modify Storage'
 
     while not deleted:
-        wt_expands_toolbar_for_storage_in_onepanel(selenium, browser_id, name,
-                                                   onepanel)
-        wt_clicks_on_btn_in_storage_toolbar_in_panel(selenium, browser_id,
-                                                     option, popups)
+        click_modify_storage_in_onepanel(selenium, browser_id, name,
+                                         onepanel)
         driver = selenium[browser_id]
         storage = onepanel(driver).content.storages.storages['posix']
         if storage.edit_form.posix_editor.params.get_key_values_count() == 2:
@@ -265,14 +262,14 @@ def _delete_all_additional_params_in_storage_page(selenium, browser_id,
 @given(parsers.parse('there are no additional params in storage edit page used '
                      'by {browser_id}'))
 def g_delete_all_additional_params_in_storage_page(selenium, browser_id,
-                                                   onepanel, modals, popups):
+                                                   onepanel, modals):
     _delete_all_additional_params_in_storage_page(selenium, browser_id,
-                                                  onepanel, modals, popups)
+                                                  onepanel, modals)
 
 
 @wt(parsers.parse('user of {browser_id} deletes all additional params in '
                   'storage edit page'))
 def wt_delete_all_additional_params_in_storage_page(selenium, browser_id,
-                                                    onepanel, modals, popups):
+                                                    onepanel, modals):
     _delete_all_additional_params_in_storage_page(selenium, browser_id,
-                                                  onepanel, modals, popups)
+                                                  onepanel, modals)
