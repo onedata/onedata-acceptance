@@ -7,15 +7,15 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-import time
-
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
-from tests.gui.steps.common.url import refresh_site
-from tests.utils.utils import repeat_failed
-from tests.utils.bdd_utils import wt, parsers
-from tests.gui.utils.generic import transform, parse_seq
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.modal import wt_wait_for_modal_to_appear
+from tests.gui.utils.generic import transform, parse_seq
+from tests.utils.bdd_utils import wt, parsers
+from tests.utils.utils import repeat_failed
+
+SPACE_TABS = ["Overview", "Data", "Shares", "Transfers", "Providers",
+              "Members", "Harvesters"]
 
 
 @wt(parsers.parse('user of {browser_id} clicks on Create space button '
@@ -568,7 +568,9 @@ def assert_tabs_of_space_enabled(selenium, browser_id, tabs_list, space_name,
     page.spaces_header_list[space_name]()
     space = page.elements_list[space_name]
 
-    for tab in parse_seq(tabs_list):
+    tabs = SPACE_TABS if tabs_list == "all" else parse_seq(tabs_list)
+
+    for tab in tabs:
         assert space.is_element_enabled(transform(tab)), (
             f'Tab {tab} is not enabled for {space}'
         )

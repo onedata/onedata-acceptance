@@ -170,3 +170,7 @@ class PrivilegeTree(PageObject):
             privilege_row.collapse()
         else:
             privilege_row.get_sub_privilege_row(name).set_privilege(granted)
+
+    def set_all_true(self):
+        for priv_group in self.privilege_groups:
+            priv_group.activate()

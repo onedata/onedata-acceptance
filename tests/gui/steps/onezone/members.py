@@ -509,7 +509,7 @@ def get_invitation_token(selenium, browser_id, group, who, oz_page, tmp_memory,
 @wt(parsers.re('user of (?P<browser_id>.*) sets following privileges for '
                '"(?P<member_name>.*)" (?P<member_type>user|group) '
                'in (?P<where>space|group|harvester|cluster) members subpage:'
-               '\n(?P<config>(.|\s)*)'))
+               r'\n(?P<config>(.|\s)*)'))
 def set_privileges_in_members_subpage(selenium, browser_id, member_name,
                                       member_type, where, config, onepanel,
                                       oz_page):
@@ -525,8 +525,23 @@ def set_privileges_in_members_subpage(selenium, browser_id, member_name,
                                               member_type, onepanel)
 
 
+@wt(parsers.re('user of (?P<browser_id>.*) sets following privileges for '
+               '"(?P<member_name>.*)" (?P<member_type>user|group) '
+               'in (?P<where>space|group|harvester|cluster) members subpage '
+               'when rest is granted:'
+               r'\n(?P<config>(.|\s)*)'))
+def set_some_privileges_in_members_subpage_rest_granted(selenium, browser_id,
+        member_name, member_type, where, config, onepanel, oz_page):
+    tree = get_privilege_tree(selenium, browser_id, onepanel, oz_page, where,
+                              member_type + 's', member_name)
+    tree.set_all_true()
+    set_privileges_in_members_subpage(selenium, browser_id, member_name,
+                                      member_type, where, config, onepanel,
+                                      oz_page)
+
+
 @wt(parsers.re('user of (?P<browser_id>.*) sets following privileges on modal:'
-               '\n(?P<config>(.|\s)*)'))
+               r'\n(?P<config>(.|\s)*)'))
 def set_privileges_in_members_subpage_on_modal(selenium, browser_id, config,
                                                modals):
     driver = selenium[browser_id]
