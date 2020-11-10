@@ -499,3 +499,14 @@ def click_start_scan_button_in_storage_import_tab(selenium, browser_id,
                                                   onepanel):
     driver = selenium[browser_id]
     onepanel(driver).content.spaces.space.sync_chart.start_scan()
+
+
+@wt(parsers.parse('user of {browser_id} waits until scanning is finished '
+                  'in storage import tab in Onepanel'))
+@repeat_failed(timeout=WAIT_BACKEND, interval=4)
+def click_start_scan_button_in_storage_import_tab(selenium, browser_id,
+                                                  onepanel):
+    driver = selenium[browser_id]
+    assert onepanel(
+        driver).content.spaces.space.sync_chart.start_scan_is_green(), (
+        f'Scanning did not finish correctly, "Start scan" button is not green')

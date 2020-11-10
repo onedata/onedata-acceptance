@@ -442,8 +442,8 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     And user of browser1 clicks on "Storage import" navigation tab in space "space1"
     And user of browser1 clicks on "Start scan" button in storage import tab in Onepanel
+    And user of browser1 waits until scanning is finished in storage import tab in Onepanel
 
-    And user of browser2 is idle for 8 seconds
     And user of browser2 sees file browser in data tab in Oneprovider page
     Then user of browser2 sees that the file structure in file browser is as follow:
           - dir2:

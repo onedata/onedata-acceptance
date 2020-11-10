@@ -51,7 +51,7 @@ Feature: Basic file management operations
     Then user of browser sees that error modal with text "Copying some of files failed!" appeared
 
 
-  Scenario: Space owner can copy file to a directory which has 677 permissions
+  Scenario: Space owner can copy file to a directory which has 677 permission code
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
@@ -70,15 +70,13 @@ Feature: Basic file management operations
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser clicks "Paste" button from file browser menu bar
 
-    Then user of browser sees that error modal with text "Copying some of files failed!" appeared
-    And user of browser clicks on "Close" button in modal "Error"
-    And user of browser clicks file browser refresh button
+    Then user of browser clicks file browser refresh button
     And user of browser sees item(s) named file2 in file browser
     And user of browser changes current working directory to home using breadcrumbs
     And user of browser sees item(s) named file2 in file browser
 
 
-  Scenario: Space owner can move file to a directory which has 677 permissions
+  Scenario: Space owner can move file to a directory which has 677 permission code
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
@@ -97,9 +95,7 @@ Feature: Basic file management operations
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser clicks "Paste" button from file browser menu bar
 
-    Then user of browser sees that error modal with text "moving some of files failed!" appeared
-    And user of browser clicks on "Close" button in modal "Error"
-    And user of browser clicks file browser refresh button
+    Then user of browser clicks file browser refresh button
     And user of browser sees item(s) named file3 in file browser
     And user of browser changes current working directory to home using breadcrumbs
     And user of browser does not see any item(s) named file3 in file browser

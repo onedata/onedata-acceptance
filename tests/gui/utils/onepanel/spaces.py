@@ -102,6 +102,9 @@ class SyncChart(PageObject):
     _deleted = WebElementsSequence('.storage-import-chart-operations '
                                    'g.ct-series-2 line')
 
+    def start_scan_is_green(self):
+        return 'btn-success' in self.start_scan.web_elem.get_attribute('class')
+
     @property
     def inserted(self):
         return self._get_chart_bar_values(self._inserted)
