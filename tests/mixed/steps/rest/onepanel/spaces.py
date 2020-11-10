@@ -15,8 +15,8 @@ from tests.gui.conftest import WAIT_BACKEND
 from tests.mixed.utils.common import (login_to_panel, login_to_oz)
 from tests.mixed.steps.rest.onezone.common import get_space_with_name
 from tests.mixed.onepanel_client import (
-    OneproviderApi, SpaceModifyRequest, SpaceSupportRequest,
-    AutoStorageImportConfig, StorageImport)
+    SpaceModifyRequest, SpaceSupportRequest,
+    AutoStorageImportConfig, StorageImport, SpaceSupportApi, StoragesApi)
 from tests.utils.utils import repeat_failed
 
 
@@ -32,9 +32,9 @@ def revoke_space_support_in_op_panel_using_rest(user, users, provider_host,
     user_client_oz = login_to_oz(user, users[user].password,
                                  hosts[zone_host]['hostname'])
 
-    provider_api = OneproviderApi(user_client_op)
+    space_api = SpaceSupportApi(user_client_op)
     space = get_space_with_name(user_client_oz, space_name)
-    provider_api.revoke_space_support(space.space_id)
+    space_api.revoke_space_support(space.space_id)
 
 
 def support_space_in_op_panel_using_rest(user, provider_host, hosts, users,
@@ -42,7 +42,8 @@ def support_space_in_op_panel_using_rest(user, provider_host, hosts, users,
     user_client = login_to_panel(user, users[user].password,
                                  hosts[provider_host]['hostname'])
 
-    provider_api = OneproviderApi(user_client)
+    spaces_api = SpaceSupportApi(user_client)
+    storages_api = StoragesApi(user_client)
 
     options = yaml.load(config)
 
@@ -67,16 +68,16 @@ def support_space_in_op_panel_using_rest(user, provider_host, hosts, users,
     else:
         storage_import = None
 
-    storages = provider_api.get_storages().ids
+    storages = storages_api.get_storages().ids
     storage_name = re.sub(r' \(.*\)', '', options['storage'])
     for storage_id in storages:
-        storage = provider_api.get_storage_details(storage_id)
+        storage = storages_api.get_storage_details(storage_id)
         if storage.name == storage_name:
             space_support_rq = SpaceSupportRequest(
                 token=tmp_memory[user]['mailbox']['token'],
                 size=options['size'], storage_id=storage_id,
                 storage_import=storage_import)
-            provider_api.support_space(space_support_rq)
+            spaces_api.support_space(space_support_rq)
             break
     else:
         raise RuntimeError(f'No storage named "{storage_name}"')
@@ -94,11 +95,11 @@ def configure_sync_parameters_for_space_in_op_panel_rest(user, users,
     user_client_oz = login_to_oz(user, users[user].password,
                                  hosts['onezone']['hostname'])
 
-    provider_api = OneproviderApi(user_client_op)
+    space_api = SpaceSupportApi(user_client_op)
     options = yaml.load(conf)
 
     space = get_space_with_name(user_client_oz, space_name)
-    space_details = provider_api.get_space_details(
+    space_details = space_api.get_space_details(
         space.space_id).storage_import.auto_storage_import_config
 
     max_depth = options.get('max depth', space_details.max_depth)
@@ -123,7 +124,7 @@ def configure_sync_parameters_for_space_in_op_panel_rest(user, users,
         auto_storage_import_config=auto_storage_import_config)
 
     space = get_space_with_name(user_client_oz, space_name)
-    provider_api.modify_space(space.space_id, space_modify_rq)
+    space_api.modify_space(space.space_id, space_modify_rq)
 
 
 @repeat_failed(timeout=WAIT_BACKEND * 4)
@@ -140,9 +141,9 @@ def assert_proper_space_configuration_in_op_panel_rest(space_name, user, users,
     user_client_oz = login_to_oz(user, users[user].password,
                                  hosts[zone_host]['hostname'])
 
-    provider_api = OneproviderApi(user_client_op)
+    space_api = SpaceSupportApi(user_client_op)
     space = get_space_with_name(user_client_oz, space_name)
-    space_details = provider_api.get_space_details(space.space_id)
+    space_details = space_api.get_space_details(space.space_id)
 
     storage_sync = space_details.storage_import.auto_storage_import_config
 
