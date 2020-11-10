@@ -7,6 +7,8 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import os
+
 import requests
 import yaml
 import stat
@@ -97,17 +99,12 @@ def _mkfile(file_, file_content=None):
     file_.chmod(PERMS_777)
 
 
-ONEDATA_GET_ECRIN_PLUGIN_URL = 'http://get.onedata.org/onezone-gui-plugin-ecrin'
-
-
-@given(parsers.parse('user of {browser_id} downloads {plugin_name} as '
+@given(parsers.parse('user of {browser_id} downloads {file_url} as '
                      '{file_name} to local file system'))
-def download_plugin_to_local_file_system(browser_id, plugin_name, file_name,
-                                         tmpdir):
+def download_file_to_local_file_system(browser_id, file_url, file_name,
+                                       tmpdir):
     home_dir = tmpdir.join(browser_id)
-    with suppress(OSError):
-        home_dir.mkdir()
+    os.makedirs(home_dir, exist_ok=True)
 
-    url = ONEDATA_GET_ECRIN_PLUGIN_URL + '/' + plugin_name
-    r = requests.get(url, allow_redirects=True)
+    r = requests.get(file_url, allow_redirects=True)
     open(home_dir.join(file_name), 'wb').write(r.content)

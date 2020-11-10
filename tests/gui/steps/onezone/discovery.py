@@ -332,8 +332,8 @@ def click_button_on_harvester_config_page(selenium, browser_id, oz_page,
 def wait_until_plugin_upload_finish(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
     page = oz_page(driver)['discovery'].configuration_page.gui_plugin_tab
-    assert page.gui_status == 'uploaded', ('GUI plugin not finished until '
-                                           'given time')
+    assert page.gui_status == 'uploaded', ('GUI plugin upload not finished '
+                                           'until given time')
 
 
 @wt(parsers.parse('user of {browser_id} sees that GUI plugin version is '
