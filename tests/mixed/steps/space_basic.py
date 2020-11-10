@@ -7,9 +7,8 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-
 from tests.mixed.utils.common import NoSuchClientException
-from tests.utils.bdd_utils import parsers, wt
+from tests.utils.bdd_utils import wt, parsers
 
 
 @wt(parsers.re('using (?P<client>.*), (?P<user>.+?) creates '
@@ -30,7 +29,7 @@ def create_spaces_in_oz(client, user, space_list, host, hosts, users, selenium,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@wt(parsers.re('using (?P<client>.*), user of (?P<user>.+?) leaves spaces? '
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) leaves spaces? '
                'named (?P<space_list>.+?) in "(?P<host>.+?)" Onezone '
                'service'))
 def leave_spaces_in_oz(client, request, user, space_list, host,
