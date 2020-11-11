@@ -104,7 +104,7 @@ class Client:
 
     def _start_rpyc_server(self, user_name, port):
         """start rpc server on client docker"""
-        cmd = ('/usr/local/bin/rpyc_classic.py --host 0.0.0.0 --port {}'
+        cmd = ('python `which rpyc_classic.py` --host 0.0.0.0 --port {}'
                .format(port))
         run_cmd(user_name, self.docker_id, cmd, detach=True)
         pid = run_cmd(user_name,
