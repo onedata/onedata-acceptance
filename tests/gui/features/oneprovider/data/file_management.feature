@@ -69,9 +69,9 @@ Feature: Basic file management operations
 
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser clicks "Paste" button from file browser menu bar
+    And user of browser clicks file browser refresh button
 
-    Then user of browser clicks file browser refresh button
-    And user of browser sees item(s) named file2 in file browser
+    Then user of browser sees item(s) named file2 in file browser
     And user of browser changes current working directory to home using breadcrumbs
     And user of browser sees item(s) named file2 in file browser
 
@@ -94,8 +94,8 @@ Feature: Basic file management operations
 
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser clicks "Paste" button from file browser menu bar
+    And user of browser clicks file browser refresh button
 
-    Then user of browser clicks file browser refresh button
-    And user of browser sees item(s) named file3 in file browser
+    Then user of browser sees item(s) named file3 in file browser
     And user of browser changes current working directory to home using breadcrumbs
     And user of browser does not see any item(s) named file3 in file browser
