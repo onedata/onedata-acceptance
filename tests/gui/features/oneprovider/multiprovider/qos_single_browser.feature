@@ -44,7 +44,7 @@ Feature: Quality of Service tests for 2 providers using single browser in Onepro
           oneprovider-1: entirely filled
           oneprovider-2: entirely filled
     And user of browser evicts file "file1" from provider oneprovider-2
-    And user of browser waits until eviction is done
+    And user of browser waits for "file1" file eviction to finished
 
     Then user of browser sees file chunks for file "file1" as follows:
           oneprovider-1: entirely filled

@@ -6,16 +6,16 @@ Feature: Quality of Service tests using single storage and single browser in One
             - user1
     And initial spaces configuration in "onezone" Onezone service:
         space1:
-            owner: user1
-            providers:
-                - oneprovider-1:
-                    storage: posix
-                    size: 1000000
-            storage:
-                defaults:
-                    provider: oneprovider-1
-                directory tree:
-                    - file1
+          owner: user1
+          providers:
+            - oneprovider-1:
+                storage: posix
+                size: 1000000
+          storage:
+            defaults:
+              provider: oneprovider-1
+            directory tree:
+              - file1
 
     And opened browser with user1 signed in to "onezone" service
 

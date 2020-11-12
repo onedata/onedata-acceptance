@@ -71,9 +71,9 @@ def replicate_file_to_provider(selenium, browser_id, name, tmp_memory,
                                           tmp_memory)
 
 
-@wt(parsers.parse('user of {browser_id} waits until eviction is done'))
-def assert_eviction_done(selenium, browser_id, name, tmp_memory,
-                         op_container, modals):
+@wt(parsers.parse('user of {browser_id} waits for "{name}" file eviction '
+                  'to finished'))
+def assert_eviction_done(selenium, browser_id, name, tmp_memory, modals):
     option = 'Data distribution'
     modal_name = 'Data distribution'
     close_option = 'Close'

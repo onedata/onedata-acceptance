@@ -26,7 +26,7 @@ Feature: Quality of Service tests for 2 providers using multiple browsers in One
     And user of [browser_unified, browser_emergency] logged as [user1, admin] to [Onezone, emergency interface of Onepanel] service
 
     And directory tree structure on local file system:
-          space_owner_browser:
+          browser_unified:
             large_file.txt:
               size: 50 MiB
 
