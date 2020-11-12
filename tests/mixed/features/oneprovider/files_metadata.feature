@@ -7,6 +7,7 @@ Feature: Files metadata tests
   | oneclient1 | REST       |
   | REST       | oneclient1 |
   | web GUI    | oneclient1 |
+  | oneclient1 | web GUI    |
 
   
   Background:
