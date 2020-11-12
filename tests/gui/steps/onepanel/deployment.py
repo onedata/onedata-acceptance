@@ -225,7 +225,7 @@ def wt_assert_ip_address_in_deployment_setup_ip(selenium, browser_id, onepanel,
 @wt(parsers.re('user of (?P<browser_id>.*) sees that IP address of '
                '"(?P<host>.*)" host is that of "(?P<ip_host>.*)" in'
                ' deployment setup IP step'))
-@repeat_failed(timeout=WAIT_BACKEND*2)
+@repeat_failed(timeout=WAIT_BACKEND*4)
 def wt_assert_ip_address_of_known_host_in_deployment_setup_ip(selenium, host,
                                                               browser_id, hosts,
                                                               onepanel,
