@@ -45,10 +45,8 @@ class Client:
         clean_mount_path(username, self)
         if 'proxy' in mode:
             mode_flag = '--force-proxy-io'
-        elif 'force-direct' in mode:
-            mode_flag = '--force-direct-io'
         else:
-            mode_flag = ''
+            mode_flag = '--force-direct-io'
 
         print('Mounting client with {} flag'.format(mode_flag))
 
