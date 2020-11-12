@@ -528,9 +528,9 @@ def set_privileges_in_members_subpage(selenium, browser_id, member_name,
 @wt(parsers.re('user of (?P<browser_id>.*) sets following privileges for '
                '"(?P<member_name>.*)" (?P<member_type>user|group) '
                'in (?P<where>space|group|harvester|cluster) members subpage '
-               'when rest is granted:'
+               'when all other are granted:'
                r'\n(?P<config>(.|\s)*)'))
-def set_some_privileges_in_members_subpage_rest_granted(selenium, browser_id,
+def set_some_privileges_in_members_subpage_other_granted(selenium, browser_id,
         member_name, member_type, where, config, onepanel, oz_page):
     tree = get_privilege_tree(selenium, browser_id, onepanel, oz_page, where,
                               member_type + 's', member_name)
