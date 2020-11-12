@@ -62,6 +62,28 @@ Feature: Querying for data discovery in Discovery Page in Onezone GUI
     And user of browser logged as admin to Onezone service
 
 
+  Scenario: Data discovery has another GUI after setting it in harvester GUI configuration
+    Given user of browser downloads http://get.onedata.org/onezone-gui-plugin-ecrin/onezone-gui-plugin-ecrin-1.1.0.tar.gz as ecrin-plugin.tar.gz to local file system
+    When user of browser clicks on Discovery in the main menu
+    And user of browser clicks "harvester1" on the harvesters list in the sidebar
+    And user of browser clicks Configuration of "harvester1" harvester in the sidebar
+    And user of browser clicks on GUI plugin tab on harvester configuration page
+
+    # upload GUI plugin
+    And user of browser chooses ecrin-plugin.tar.gz GUI plugin from local directory to be uploaded
+    And user of browser clicks on "Upload" button on harvester configuration page
+    And user of browser waits until plugin upload finish
+
+    # check GUI plugin configuration
+    And user of browser sees that GUI plugin version is 1.1.0
+    And user of browser sees that harvester index for study GUI plugin index is "Not assigned"
+    And user of browser sees that harvester index for data_object GUI plugin index is "Not assigned"
+    And user of browser sees that injected configuration is: {}
+
+    And user of browser clicks Data discovery of "harvester1" harvester in the sidebar
+    Then user of browser sees Data Discovery page with Ecrin GUI
+
+
   Scenario: Files of supported spaces are visible in Data discovery page
     Given spaces ["space1", "space2"] belong to "harvester1" harvester of user admin
     When user of browser clicks on Discovery in the main menu

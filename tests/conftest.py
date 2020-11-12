@@ -17,9 +17,12 @@ import pytest
 import json
 
 from environment import docker
+
+from tests.utils.luma_utils import (get_local_feed_luma_storages, get_all_spaces_details,
+                                    add_user_luma_mapping, add_spaces_luma_mapping)
 from tests.utils.path_utils import (get_file_name, absolute_path_to_env_file,
                                     make_logdir)
-from tests.utils.user_utils import User
+from tests.utils.user_utils import User, AdminUser
 from tests.utils.onenv_utils import (init_helm,
                                      client_alias_to_pod_mapping,
                                      service_name_to_alias_mapping,
@@ -232,28 +235,6 @@ def parse_hosts_cfg(pods_cfg, hosts, request):
             parse_elasticsearch_cfg(pod_cfg, hosts)
 
 
-def parse_users_cfg(patch_path, users, hosts):
-    with open(patch_path, 'r') as patch_file:
-        patch_cfg = yaml.load(patch_file)
-        users_cfg = patch_cfg.get('users')
-
-        for user_cfg in users_cfg:
-            user_name = user_cfg.get('name')
-            password = user_cfg.get('password')
-            new_user = users[user_name] = User(user_name, password)
-            idps = user_cfg.get('idps', {})
-            for idp_type in idps:
-                new_user.idps.append(idp_type)
-                if idp_type == 'keycloak':
-                    global_cfg = patch_cfg.get('global')
-                    keycloak_suffix = (global_cfg
-                                       .get('keycloakInstance', {})
-                                       .get('idpName'))
-                    new_user.keycloak_name = ('keycloak-{}'
-                                              .format(keycloak_suffix))
-            new_user.token = new_user.create_token(hosts['onezone']['ip'])
-
-
 @pytest.fixture(scope='module', autouse=True)
 def env_description_abs_path(request, env_description_file):
     env_dir = ENV_DIRS.get(get_test_type(request))
@@ -448,7 +429,10 @@ def start_environment(scenario_path, request, hosts, patch_path, users,
                 check_deployment()
 
             if patch_path:
-                parse_users_cfg(patch_path, users, hosts)
+                with open(patch_path, 'r') as patch_file:
+                    patch_cfg = yaml.load(patch_file)
+                setup_users(patch_cfg, users, hosts)
+                add_luma_mappings(patch_cfg, users, hosts)
 
             return True
 
@@ -503,6 +487,39 @@ def get_pods_with_kubectl():
                          'Captured output: {}'.format(cmd, output))
 
     return json.loads(output)
+
+
+def setup_users(patch_cfg, users, hosts):
+    for user_cfg in patch_cfg.get('users'):
+        user_name = user_cfg.get('name')
+        password = user_cfg.get('password')
+        new_user = users[user_name] = User(user_name, password)
+        idps = user_cfg.get('idps', {})
+        for idp_type in idps:
+            new_user.idps.append(idp_type)
+            if idp_type == 'keycloak':
+                global_cfg = patch_cfg.get('global')
+                keycloak_suffix = (global_cfg
+                                   .get('keycloakInstance', {})
+                                   .get('idpName'))
+                new_user.keycloak_name = ('keycloak-{}'.format(keycloak_suffix))
+        new_user.create_token(hosts['onezone']['ip'])
+        new_user.retrieve_onedata_id(hosts['onezone']['ip'])
+
+
+def add_luma_mappings(patch_cfg, users, hosts):
+    admin_user = AdminUser('admin', 'password')
+    admin_user.create_token(hosts['onezone']['ip'])
+
+    spaces = get_all_spaces_details(admin_user, hosts)
+    local_feed_luma_storages = get_local_feed_luma_storages(admin_user, hosts)
+
+    for user_cfg in patch_cfg.get('users'):
+        user_name = user_cfg.get('name')
+        new_user = users[user_name]
+        add_user_luma_mapping(admin_user, new_user, local_feed_luma_storages)
+
+    add_spaces_luma_mapping(admin_user, local_feed_luma_storages, spaces)
 
 
 def check_deployment():

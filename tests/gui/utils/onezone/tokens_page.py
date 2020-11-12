@@ -63,7 +63,7 @@ class TokensSidebar(PageObject):
     invite_filter = WebItem('.filter-control.target-filter',
                             cls=TokenInviteFilter)
 
-    name_input = Input('.one-list-wrapper .form-control')
+    name_input = Input('.name-editor .form-control')
     confirm = Button('.save-icon')
     discard = Button('.cancel-icon')
 

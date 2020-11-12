@@ -36,6 +36,34 @@ class IndicesPage(PageObject):
     menu_button = Button('.with-menu .collapsible-toolbar-toggle')
 
 
+class GeneralTab(PageObject):
+    edit_button = Button('.edit-btn')
+
+
+class GUIPluginIndex(PageObject):
+    plugin_index = id = Label('.row-header')
+    harvester_index = Label('.index-info')
+
+
+class GUIPluginTab(PageObject):
+    gui_status = Label('.gui-status')
+
+    upload_file_input = WebElement('.upload-gui-input')
+    upload_button = Button('.upload-button')
+
+    injected_config = Label('.json-editor-textarea')
+    version = Label('.gui-version')
+    indices = WebItemsSequence('.indices-table tbody tr', cls=GUIPluginIndex)
+
+
+class ConfigurationPage(PageObject):
+    general_tab = WebItem('.content-harvesters-config', cls=GeneralTab)
+    gui_plugin_tab = WebItem('.content-harvesters-config', cls=GUIPluginTab)
+
+    general_button = NamedButton('.nav-link', text='General')
+    gui_plugin_button = NamedButton('.nav-link', text='GUI plugin')
+
+
 class Harvester(Element):
     menu_button = Button('.collapsible-toolbar-toggle')
 
@@ -47,6 +75,8 @@ class Harvester(Element):
                           text='Members')
     data_discovery = NamedButton('.one-list-level-2 .item-header',
                                  text='Data discovery')
+    configuration = NamedButton('.one-list-level-2 .item-header',
+                                text='Configuration')
 
 
 class MenuItem(PageObject):
@@ -103,6 +133,7 @@ class DiscoveryPage(GenericPage):
 
     indices_page = WebItem('.main-content', cls=IndicesPage)
     members_page = WebItem('.main-content', cls=MembersPage)
+    configuration_page = WebItem('.main-content', cls=ConfigurationPage)
 
     forbidden_alert = WebElement('.alert.forbidden')
 

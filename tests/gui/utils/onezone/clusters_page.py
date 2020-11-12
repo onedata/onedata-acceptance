@@ -36,8 +36,7 @@ class ClustersPage(GenericPage):
     token_page = WebItem('.main-content', cls=TokenPage)
 
     menu_button = Button('.with-menu .collapsible-toolbar-toggle')
-    menu = WebItemsSequence('.sidebar-clusters .two-level-sidebar '
-                            '.one-list-wrapper .one-label',
+    menu = WebItemsSequence('.sidebar-clusters .two-level-sidebar .one-label',
                             cls=MenuItem)
     submenu = WebItemsSequence('.second-level-items .item-header',
                                cls=SubmenuItem)
