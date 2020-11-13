@@ -86,12 +86,13 @@ class SyncChart(PageObject):
     storage_import_configuration = WebItem('.storage-import-update-form '
                                            '.import-configuration-section',
                                            cls=StorageImportConfiguration)
+    auto_import_scan = WebElement('.import-info-header')
+    start_scan = NamedButton('button', text='Start scan')
 
     last_minute_view = Button('.btn-import-interval-minute')
     last_hour_view = Button('.btn-import-interval-hour')
     last_day_view = Button('.btn-import-interval-day')
 
-    start_synchronization = NamedButton('button', text='Start synchronization')
     save_configuration = Button('.btn-primary')
 
     _inserted = WebElementsSequence('.storage-import-chart-operations '
@@ -100,6 +101,9 @@ class SyncChart(PageObject):
                                    'g.ct-series-1 line')
     _deleted = WebElementsSequence('.storage-import-chart-operations '
                                    'g.ct-series-2 line')
+
+    def start_scan_is_green(self):
+        return 'btn-success' in self.start_scan.web_elem.get_attribute('class')
 
     @property
     def inserted(self):

@@ -341,6 +341,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
 
   Scenario: User sees that directory is not synchronized automatically when continuous scan is disabled
+    Given there is no "dir2/dir1" in provider's storage mount point
     When user of browser2 creates "space1" space in Onezone
     And user of browser2 sends support token for "space1" to user of browser1
     And user of browser2 copies dir2 to provider's storage mount point
@@ -372,7 +373,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
           - dir2:
               - dir21:
                   - dir211
-                  - file2.txt: 11111
+                  - file2.txt
               - dir22: 10
               - file1.txt
 
@@ -388,17 +389,67 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
           Detect deletions: true
           Continuous scan: False
 
-    # copy files to provider storage
-     And user of browser2 copies dir1 to dir2 in provider's storage mount point
+    And user of browser2 copies dir1 to dir2 in provider's storage mount point
 
     # confirm that new files were not detected
     And user of browser2 is idle for 8 seconds
     And user of browser2 sees file browser in data tab in Oneprovider page
-
     Then user of browser2 sees that the file structure in file browser is as follow:
-           - dir2:
-               - dir21:
-                   - dir211
-                   - file2.txt
-               - dir22: 10
-               - file1.txt
+          - dir2:
+              - dir21:
+                  - dir211
+                  - file2.txt
+              - dir22: 10
+              - file1.txt
+
+
+  Scenario: User synchronizes directory manually when continuous scan is disabled
+    Given there is no "dir2/dir1" in provider's storage mount point
+    When user of browser2 creates "space1" space in Onezone
+    And user of browser2 sends support token for "space1" to user of browser1
+    And user of browser2 copies dir2 to provider's storage mount point
+
+    # support space
+    And user of browser1 opens "oneprovider-1" clusters submenu
+    And user of browser1 supports "space1" space in "oneprovider-1" Oneprovider panel service with following configuration:
+          storage: new_storage (import-enabled)
+          size: 1
+          unit: GiB
+          storage import:
+            max depth: 3
+            detect modifications: true
+            detect deletions: true
+            continuous scan: false
+
+    And user of browser1 sees an info notify with text matching to: .*[Aa]dded.*support.*space.*
+    And user of browser1 sees that space support record for "space1" has appeared in Spaces page in Onepanel
+    And user of browser1 opens "space1" record on spaces list in Spaces page in Onepanel
+
+    And user of browser2 opens file browser for "space1" space
+
+    And user of browser2 copies dir1 to dir2 in provider's storage mount point
+
+    # confirm that new files were not detected
+    And user of browser2 is idle for 8 seconds
+    And user of browser2 sees file browser in data tab in Oneprovider page
+    And user of browser2 sees that the file structure in file browser is as follow:
+          - dir2:
+              - dir21:
+                  - dir211
+                  - file2.txt
+              - dir22: 10
+              - file1.txt
+
+    And user of browser1 clicks on "Storage import" navigation tab in space "space1"
+    And user of browser1 clicks on "Start scan" button in storage import tab in Onepanel
+    And user of browser1 waits until scanning is finished in storage import tab in Onepanel
+
+    And user of browser2 sees file browser in data tab in Oneprovider page
+    Then user of browser2 sees that the file structure in file browser is as follow:
+          - dir2:
+              - dir1: 5
+              - dir21:
+                  - dir211
+                  - file2.txt
+              - dir22: 10
+              - file1.txt
