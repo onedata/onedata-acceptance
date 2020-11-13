@@ -34,7 +34,8 @@ def assert_all_qualities_of_service_are_fulfilled(selenium, browser_id,
     driver = selenium[browser_id]
     modal = modals(driver).quality_of_service
     for requirement in modal.requirements:
-        assert hasattr(requirement, state), f'no such attribute'
+        assert hasattr(requirement, state), (f'No all QoS requirements are '
+                                             f'{state}')
 
 
 @wt(parsers.parse('user of {browser_id} sees that replicas number is equal '
@@ -60,7 +61,7 @@ def assert_expression_in_qualities_of_service_modal(selenium, browser_id,
         if expression_in_modal == expression:
             assert True
             return
-    assert False, (f'Not found that "{expression}" QoS requirement '
+    assert False, (f'Not found "{expression}" QoS requirement '
                    f'in modal "Quality of Service"')
 
 

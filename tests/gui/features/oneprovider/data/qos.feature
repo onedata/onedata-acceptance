@@ -20,7 +20,7 @@ Feature: Quality of Service tests using single storage and single browser in One
     And opened browser with user1 signed in to "onezone" service
 
 
-  Scenario: User successfully adds QoS requirement
+  Scenario: User sees QoS file status and entries after adding QoS requirements to file
     When user of browser opens file browser for "space1" space
     And user of browser clicks once on item named "file1" in file browser
     And user of browser chooses Quality of Service option from selection menu on file browser page
@@ -34,7 +34,7 @@ Feature: Quality of Service tests using single storage and single browser in One
     And user of browser sees "geo=PL" QoS requirement in modal "Quality of Service"
 
 
-  Scenario: User successfully deletes QoS requirement
+  Scenario: User sees QoS file status and entries after deleting QoS requirements from file
     When user of browser creates "geo=PL" QoS requirement for "file1" in space "space1"
     And user of browser sees QoS status tag for "file1" in file browser
     And user of browser clicks on QoS status tag for "file1" in file browser

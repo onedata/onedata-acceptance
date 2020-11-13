@@ -129,7 +129,7 @@ def replicate_item(selenium, browser_id, provider, hosts, popups):
 
 @wt(parsers.re('user of (?P<browser_id>.*) evicts selected item'
                ' from provider "(?P<provider>.*)"'))
-def evict_item(selenium, browser_id, provider, hosts, popups):
+def evict_selected_item(selenium, browser_id, provider, hosts, popups):
     menu_option = 'Evict'
     driver = selenium[browser_id]
 
@@ -146,7 +146,8 @@ def evict_item(selenium, browser_id, provider, hosts, popups):
 @repeat_failed(interval=1, timeout=90, exceptions=RuntimeError)
 def assert_see_history_btn_shown(selenium, browser_id):
     driver = selenium[browser_id]
-    assert hasattr(modals(driver).data_distribution, 'see_history_btn')
+    assert hasattr(modals(driver).data_distribution, 'see_history_btn'), (
+        'Button "see history" not found in data distribution modal')
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees that item is never '

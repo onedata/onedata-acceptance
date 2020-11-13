@@ -7,7 +7,7 @@ Feature: Inviting member to cluster
     And users of [browser1, browser2] opened [Onezone, oneprovider-1 provider panel] page
     And user of [browser1, browser2] logged as [user1, admin] to [Onezone, emergency interface of Onepanel] service
 
-  Scenario: Invite member to cluster
+  Scenario: User increases number of members in cluster
     When user of browser2 clicks on Members item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser2 clicks on "Invite user using token" button on cluster members page
     And user of browser2 clicks on "Copy" button on cluster members page

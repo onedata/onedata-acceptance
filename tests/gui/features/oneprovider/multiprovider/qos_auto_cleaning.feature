@@ -1,4 +1,4 @@
-Feature: Quality of Service tests for 2 providers using multiple browsers in Oneprovider GUI
+Feature: Quality of Service tests for 2 providers with auto-cleaning using multiple browsers in Oneprovider GUI
 
 
   Background:

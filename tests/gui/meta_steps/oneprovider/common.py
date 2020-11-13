@@ -8,7 +8,7 @@ from tests.gui.meta_steps.onezone.common import g_wt_visit_op
 from tests.gui.steps.oneprovider.transfers import (
     replicate_item,
     assert_item_never_synchronized,
-    migrate_item, evict_item, assert_see_history_btn_shown)
+    migrate_item, assert_see_history_btn_shown)
 from tests.gui.steps.oneprovider_common import (
     g_click_on_the_given_main_menu_tab,
     wt_click_on_the_given_main_menu_tab)
@@ -72,7 +72,7 @@ def replicate_file_to_provider(selenium, browser_id, name, tmp_memory,
 
 
 @wt(parsers.parse('user of {browser_id} waits for "{name}" file eviction '
-                  'to finished'))
+                  'to finish'))
 def assert_eviction_done(selenium, browser_id, name, tmp_memory, modals):
     option = 'Data distribution'
     modal_name = 'Data distribution'
