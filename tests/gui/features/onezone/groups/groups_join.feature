@@ -54,14 +54,14 @@ Feature: Joining a group in Onezone GUI
     Then user of space_owner_browser sees that error modal with text "Consuming token failed" appeared
 
 
-  Scenario: User fails to view group he does not belong to
+  Scenario: User fails to view group they do not belong to
     When user of space_owner_browser clicks on Groups in the main menu
     And user of space_owner_browser opens group "group1" main subpage
     And user of space_owner_browser copies a first resource ID from URL
     And user of space_owner_browser sends copied ID to user of browser1
     And user of browser1 changes webapp path to "/i#/onedata/groups" concatenated with received ID
     And user of browser1 refreshes site
-    Then user of browser1 sees "DON’T HAVE ACCESS" in error details on groups page
+    Then user of browser1 sees "YOU DON’T HAVE ACCESS TO THIS RESOURCE" in error details on groups page
 
 
   Scenario: User sees incrementatation of effective users and groups on space overview after a subgroup is added
