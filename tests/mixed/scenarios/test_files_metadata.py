@@ -31,4 +31,3 @@ from tests.gui.steps.common.url import *
 
 
 scenarios('../features/oneprovider/files_metadata.feature')
-scenarios('../features/oneprovider/files_metadata_oneclient.feature')
