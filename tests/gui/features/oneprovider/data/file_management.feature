@@ -15,7 +15,7 @@ Feature: Basic file management operations
                     provider: oneprovider-1
                 directory tree:
                     - dir1:
-                        - file_d1_1: 11111
+                        - file1: 11111
                         - file_d1_2: 11111
                     - file1: 11111
                     - file2
@@ -62,7 +62,7 @@ Feature: Basic file management operations
     And user of browser sees file browser in data tab in Oneprovider page
 
     And user of browser double clicks on item named "dir1" in file browser
-    And user of browser selects "file_d1_1" items from file browser with pressed ctrl
+    And user of browser selects "file1" items from file browser with pressed ctrl
     And user of browser chooses Copy option from selection menu on file browser page
     And user of browser clicks "Paste" button from file browser menu bar
 
