@@ -34,7 +34,7 @@ Feature: Quality of Service tests using single storage and single browser in One
     And user of browser sees "geo=PL" QoS requirement in modal "Quality of Service"
 
 
-  Scenario: User sees QoS file status and entries after deleting QoS requirements from file
+  Scenario: User sees that there is no QoS file status and entries after deleting QoS requirements from file
     When user of browser creates "geo=PL" QoS requirement for "file1" in space "space1"
     And user of browser sees QoS status tag for "file1" in file browser
     And user of browser clicks on QoS status tag for "file1" in file browser
