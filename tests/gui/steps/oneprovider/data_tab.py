@@ -254,7 +254,7 @@ def check_displayed_dir_name_len_in_dir_tree(selenium, browser_id, path,
 
 
 @wt(parsers.parse('user of {browser_id} sees that displayed name length for '
-                    '{path} in directory tree sidebar is larger than before'))
+                  '{path} in directory tree sidebar is larger than before'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_diff_in_len_of_dir_name_before_and_now(selenium, browser_id, path,
                                                   op_container, tmp_memory):

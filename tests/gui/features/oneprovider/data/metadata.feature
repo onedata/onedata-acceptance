@@ -16,7 +16,7 @@ Feature: Basic data tab operations on directory metadata in file browser
                 provider: oneprovider-1
               directory tree:
                 - dir1:
-                  - file2: 11111
+                    - file2: 11111
                 - file1: 11111
 
     And user opened browser window

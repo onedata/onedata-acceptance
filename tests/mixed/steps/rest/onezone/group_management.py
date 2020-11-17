@@ -176,7 +176,7 @@ def assert_subgroups_using_rest(user, users, hosts, group_list, parent,
 
 
 @wt(parsers.re(r'(?P<user>\w+) removes groups? (?P<group_list>.*) as '
-               'subgroup of group "(?P<parent_name>.*)" using REST'))
+               r'subgroup of group "(?P<parent_name>.*)" using REST'))
 def remove_subgroups_using_rest(user, users, hosts, group_list,
                                         parent_name, host='onezone'):
     user_client = login_to_oz(user, users[user].password, hosts[host]['hostname'])
