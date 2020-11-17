@@ -224,7 +224,7 @@ def assert_empty_file_browser_in_data_tab_in_op(selenium, browser_id,
     check_file_browser_to_load(selenium, browser_id, tmp_memory, op_container,
                                item_browser)
     items_browser = tmp_memory[browser_id][transform(item_browser)]
-    assert items_browser.is_empty(), (f'{item_browser} in data tab in op'
+    assert items_browser.is_empty(), (f'{item_browser} in data tab in op '
                                       'should be empty but is not')
     tmp_memory[browser_id][transform(item_browser)] = items_browser
 

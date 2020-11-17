@@ -491,3 +491,22 @@ def toggle_in_storage_import_configuration_is_enabled(selenium, browser_id,
     storage_import_conf = onepanel(
         selenium[browser_id]).content.spaces.form.storage_import_configuration
     return storage_import_conf.is_toggle_checked(transform(toggle_name))
+
+
+@wt(parsers.parse('user of {browser_id} clicks on "Start scan" button '
+                  'in storage import tab in Onepanel'))
+def click_start_scan_button_in_storage_import_tab(selenium, browser_id,
+                                                  onepanel):
+    driver = selenium[browser_id]
+    onepanel(driver).content.spaces.space.sync_chart.start_scan()
+
+
+@wt(parsers.parse('user of {browser_id} waits until scanning is finished '
+                  'in storage import tab in Onepanel'))
+@repeat_failed(timeout=WAIT_BACKEND, interval=4)
+def wait_until_scanning_is_finished_in_storage_import_tab(selenium, browser_id,
+                                                          onepanel):
+    driver = selenium[browser_id]
+    assert onepanel(
+        driver).content.spaces.space.sync_chart.start_scan_is_green(), (
+        f'Scanning did not finish correctly, "Start scan" button is not green')

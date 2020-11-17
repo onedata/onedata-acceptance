@@ -293,3 +293,86 @@ def assert_alert_text_on_data_disc_page(selenium, browser_id, error_msg,
                                         data_discovery):
     msg = f'alert with {error_msg} message is not visible'
     assert error_msg == data_discovery(selenium[browser_id]).error_message, msg
+
+
+@wt(parsers.parse('user of {browser_id} clicks on {tab_name} tab on '
+                  'harvester configuration page'))
+def click_on_tab_of_harvester_config_page(selenium, browser_id, tab_name,
+                                          oz_page):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['discovery'].configuration_page
+    getattr(page, transform(tab_name) + '_button')()
+
+
+@wt(parsers.parse('user of browser chooses {plugin} GUI plugin '
+                  'from local directory to be uploaded'))
+def upload_discovery_gui_plugin(selenium, browser_id, plugin, tmpdir, oz_page):
+    driver = selenium[browser_id]
+    path = tmpdir.join(browser_id).join(plugin)
+    page = oz_page(driver)['discovery'].configuration_page.gui_plugin_tab
+    uploader = page.upload_file_input
+    uploader.send_keys(str(path))
+
+
+@wt(parsers.parse('user of {browser_id} clicks on "{button}" button on '
+                  'harvester configuration page'))
+def click_button_on_harvester_config_page(selenium, browser_id, oz_page,
+                                          button):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['discovery'].configuration_page.gui_plugin_tab
+    getattr(page, transform(button) + '_button')()
+
+
+@wt(parsers.parse('user of {browser_id} waits until plugin upload finish'))
+@repeat_failed(timeout=WAIT_BACKEND*2)
+def wait_until_plugin_upload_finish(selenium, browser_id, oz_page):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['discovery'].configuration_page.gui_plugin_tab
+    assert page.gui_status == 'uploaded', ('GUI plugin upload not finished '
+                                           'until given time')
+
+
+@wt(parsers.parse('user of {browser_id} sees that GUI plugin version is '
+                  '{version}'))
+def assert_plugin_version(selenium, browser_id, version, oz_page):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['discovery'].configuration_page.gui_plugin_tab
+    assert page.version == version, (f'Actual plugin version is '
+                                     f'{page.version} when expected {version}')
+
+
+@wt(parsers.parse('user of {browser_id} sees that harvester index for '
+                  '{plugin_index} GUI plugin index is "{harvester_index}"'))
+def assert_plugin_index_value(selenium, browser_id, plugin_index,
+                              harvester_index, oz_page):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['discovery'].configuration_page.gui_plugin_tab
+    actual_index_value = page.indices[plugin_index].harvester_index
+    assert actual_index_value == harvester_index, (f'Actual {plugin_index} '
+                                                   f'index value is '
+                                                   f'{actual_index_value} '
+                                                   f'when expected '
+                                                   f'{harvester_index}')
+
+
+@wt(parsers.parse('user of {browser_id} sees that injected configuration '
+                  'is: {configuration}'))
+def assert_plugin_injected_config(selenium, browser_id, oz_page,
+                                  configuration):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['discovery'].configuration_page.gui_plugin_tab
+    actual_conf = f'{{{page.injected_config}}}'
+    assert actual_conf == configuration, (f'Actual injected plugin config is '
+                                          f'{actual_conf} when expected '
+                                          f'{configuration}')
+
+
+@wt(parsers.parse('user of {browser_id} sees Data Discovery page with Ecrin '
+                  'GUI'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_data_discovery_page_ecrin(selenium, browser_id, data_discovery):
+    switch_to_iframe(selenium, browser_id, '.plugin-frame')
+    driver = selenium[browser_id]
+    assert data_discovery(driver).ecrin_gui_app_logo == 'MDR', ('Ecrin GUI '
+                                                                'not loaded '
+                                                                'in given time')

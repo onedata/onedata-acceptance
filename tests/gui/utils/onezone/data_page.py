@@ -46,6 +46,10 @@ class Space(Element):
         element = getattr(self, element_name)
         return 'disabled' in element.web_elem.get_attribute("class")
 
+    def is_element_enabled(self, element_name):
+        element = getattr(self, element_name)
+        return 'disabled' not in element.web_elem.get_attribute("class")
+
     def is_home_icon(self):
         return 'oneicon-home' in self.home_icon.get_attribute("class")
 

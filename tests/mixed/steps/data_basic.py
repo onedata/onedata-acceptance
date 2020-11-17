@@ -543,6 +543,9 @@ def set_metadata_in_op(client, selenium, user, tab_name, val, cdmi, op_container
         set_metadata_in_op_rest(user, users, host, hosts, cdmi, full_path,
                                 tab_name, val)
     elif 'oneclient' in client_lower:
+        if tab_name.lower() == 'rdf':
+            val = val.replace('"', '\\"')
+            val = '"' + val + '"'
         oneclient_host = change_client_name_to_hostname(client_lower)
         set_metadata_in_op_oneclient(val, tab_name, full_path, user, users,
                                      oneclient_host)
