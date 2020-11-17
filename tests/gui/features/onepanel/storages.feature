@@ -14,6 +14,7 @@ Feature: Storage management using onepanel
             dir1: 70
             dir2: 5
 
+
   Scenario Outline: User uploads files on freshly supported space on newly created storage
     Given admin user does not have access to any space
 

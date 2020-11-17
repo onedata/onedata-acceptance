@@ -1,4 +1,4 @@
-Feature: ACL basic tests using sigle browser in Oneprovider GUI
+Feature: ACL basic tests using single browser in Oneprovider GUI
 
   Background:
     Given initial users configuration in "onezone" Onezone service:

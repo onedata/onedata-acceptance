@@ -103,6 +103,45 @@ def click_modify_storage_in_onepanel(selenium, browser_id, name,
     onepanel(driver).content.storages.click_modify_button_of_storage(driver,
                                                                      name)
 
+@wt(parsers.parse('user of {browser_id} types "{in_value}" into last key in '
+                  'posix storage edit page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def type_key_in_posix_storage_edit_page(selenium, browser_id,
+                                        key, onepanel):
+    driver = selenium[browser_id]
+    onepanel(driver).content.storages.storages['posix'].edit_form
+    storage_posix = onepanel(driver).content.storages.storages['posix']
+    storage_posix.edit_form.posix_editor.params.set_last_key(key)
+
+
+@wt(parsers.parse('user of {browser_id} clicks value of modified record in '
+                  'posix storage edit page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_value_in_posix_storage_edit_page(selenium, browser_id, onepanel):
+    driver = selenium[browser_id]
+    onepanel(driver).content.storages.storages['posix'].edit_form
+    storage_posix = onepanel(driver).content.storages.storages['posix']
+    storage_posix.edit_form.posix_editor.params.click_value_in_modified_record()
+
+
+@wt(parsers.parse('user of {browser_id} deletes first additional param in posix'
+                  ' storage edit page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def delete_additional_param_in_posix_storage_edit_page(selenium, browser_id,
+                                                       onepanel):
+    driver = selenium[browser_id]
+    storage_posix = onepanel(driver).content.storages.storages['posix']
+    storage_posix.edit_form.posix_editor.params.delete_first_additional_param()
+
+
+@wt(parsers.parse('user of {browser_id} saves changes in posix storage edit '
+                  'page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def save_changes_in_posix_storage_edit_page(selenium, browser_id, onepanel):
+    driver = selenium[browser_id]
+    storage = onepanel(driver).content.storages.storages['posix']
+    storage.edit_form.posix_editor.save_button.click()
+
 
 @wt(parsers.parse('user of {browser_id} sees that "{name}" has disappeared '
                   'from the storages list'))
@@ -146,3 +185,11 @@ def click_on_button_in_edit_form(selenium, browser_id, name, onepanel, storage):
     button = name.lower() + '_button'
     getattr(onepanel(driver).content.storages.storages[
                 storage].edit_form.posix_editor, button)()
+
+
+@wt(parsers.parse('user of {browser_id} copies id of "{storage_name}" storage '
+                  'to clipboard via copy button'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def copy_storage_id_to_clipboard(selenium, browser_id, storage_name, onepanel):
+    driver = selenium[browser_id]
+    onepanel(driver).content.storages.storages[storage_name].copy_id_button()
