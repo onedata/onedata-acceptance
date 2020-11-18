@@ -23,7 +23,10 @@ from tests.gui.steps.onezone.discovery import (
     confirm_harvester_rename_using_button,
     assert_space_has_appeared_in_discovery_page,
     click_on_member_menu_option_in_harvester_indices_page,
-    click_option_in_discovery_page_menu)
+    click_option_in_discovery_page_menu,
+    check_public_toggle_on_harvester_config_page,
+    assert_public_toggle_on_harvester_config_page,
+    click_button_in_tab_of_harvester_config_page)
 from tests.gui.steps.onezone.spaces import (
     click_on_option_in_the_sidebar, click_element_on_lists_on_left_sidebar_menu)
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
@@ -261,3 +264,30 @@ def assert_space_on_harvester_list(selenium, browser_id, space, harvester,
                                                       oz_page)
     assert_space_has_appeared_in_discovery_page(selenium, browser_id, space,
                                                 oz_page)
+
+
+@wt(parsers.parse('user of {browser_id} configures "{harvester}" '
+                  'harvester as public'))
+def configure_harvester_as_public(selenium, browser_id, harvester, oz_page):
+    discovery_tab = 'Discovery'
+    config_tab = 'Configuration'
+    scope = 'harvesters'
+    edit_button = 'Edit'
+    save_button = 'Save'
+    is_checked = 'checked'
+    general_tab = 'General tab'
+
+    click_on_option_in_the_sidebar(selenium, browser_id, discovery_tab, oz_page)
+    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, scope,
+                                                harvester, oz_page)
+    click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id,
+                                                      harvester, config_tab,
+                                                      oz_page)
+
+    click_button_in_tab_of_harvester_config_page(selenium, browser_id, oz_page,
+                                                 edit_button, general_tab)
+    check_public_toggle_on_harvester_config_page(selenium, browser_id, oz_page)
+    click_button_in_tab_of_harvester_config_page(selenium, browser_id, oz_page,
+                                                 save_button, general_tab)
+    assert_public_toggle_on_harvester_config_page(selenium, browser_id,
+                                                  oz_page, is_checked)

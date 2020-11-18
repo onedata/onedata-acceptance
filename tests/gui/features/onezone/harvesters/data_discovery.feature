@@ -71,7 +71,7 @@ Feature: Querying for data discovery in Discovery Page in Onezone GUI
 
     # upload GUI plugin
     And user of browser chooses ecrin-plugin.tar.gz GUI plugin from local directory to be uploaded
-    And user of browser clicks on "Upload" button on harvester configuration page
+    And user of browser clicks on "Upload" button in GUI Plugin tab of harvester configuration page
     And user of browser waits until plugin upload finish
 
     # check GUI plugin configuration

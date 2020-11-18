@@ -12,7 +12,9 @@ import time
 
 import yaml
 
-from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
+from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.steps.common.miscellaneous import switch_to_iframe
+from tests.gui.steps.common.url import refresh_site
 from tests.gui.steps.onezone.discovery import (
     click_on_option_of_harvester_on_left_sidebar_menu,
     assert_data_discovery_page, click_query_button_on_data_disc_page)
@@ -29,6 +31,21 @@ def assert_data_discovery_files(selenium, browser_id, data_discovery, config,
                                 spaces):
     click_query_button_on_data_disc_page(selenium, browser_id, data_discovery)
     time.sleep(1)
+    assert_files(selenium, browser_id, data_discovery, config, spaces)
+
+
+@wt(parsers.parse('user of {browser_id} sees only following files on public '
+                  'harvester site:\n{config}'))
+@repeat_failed(timeout=WAIT_BACKEND*4, interval=2)
+def assert_data_discovery_files(selenium, browser_id, data_discovery, config,
+                                spaces):
+    refresh_site(selenium, browser_id)
+    time.sleep(1)
+    switch_to_iframe(selenium, browser_id, '.plugin-frame')
+    assert_files(selenium, browser_id, data_discovery, config, spaces)
+
+
+def assert_files(selenium, browser_id, data_discovery, config, spaces):
     expected_data = yaml.load(config)
     data_dict = _unpack_files_data(selenium, browser_id, data_discovery)
     _assert_elem_num_equals(expected_data, data_dict)

@@ -12,6 +12,7 @@ import time
 from pytest_bdd import parsers
 
 from tests import ELASTICSEARCH_PORT
+from tests.gui.steps.common.url import refresh_site
 from tests.utils.acceptance_utils import wt
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.utils.utils import repeat_failed
@@ -267,9 +268,28 @@ def assert_data_discovery_page(selenium, browser_id, data_discovery):
     _wait_for_files_list(selenium, browser_id, data_discovery)
 
 
+@wt(parsers.parse('user of {browser_id} sees public harvester site'))
+def assert_public_harvester_site(selenium, browser_id, data_discovery):
+    # this function can only be used when we are sure that
+    # there will be some files harvested as to use active waiting
+    # instead of just sleep
+    # to activate this view with no harvested files use
+    # assert_empty_data_discovery_page(...) function
+
+    _wait_for_files_list_public(selenium, browser_id, data_discovery)
+
+
 @repeat_failed(timeout=WAIT_BACKEND, interval=1.5)
 def _wait_for_files_list(selenium, browser_id, data_discovery):
     click_query_button_on_data_disc_page(selenium, browser_id, data_discovery)
+    assert_files_list_on_data_disc(selenium, browser_id, data_discovery)
+
+
+@repeat_failed(timeout=WAIT_BACKEND, interval=1.5)
+def _wait_for_files_list_public(selenium, browser_id, data_discovery):
+    refresh_site(selenium, browser_id)
+    time.sleep(1)
+    switch_to_iframe(selenium, browser_id, '.plugin-frame')
     assert_files_list_on_data_disc(selenium, browser_id, data_discovery)
 
 
@@ -299,6 +319,33 @@ def assert_alert_text_on_data_disc_page(selenium, browser_id, error_msg,
     assert error_msg == data_discovery(selenium[browser_id]).error_message, msg
 
 
+@wt(parsers.parse('user of {browser_id} checks Public toggle on '
+                  'harvester configuration page'))
+def check_public_toggle_on_harvester_config_page(selenium, browser_id, oz_page):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['discovery'].configuration_page
+    page.public.check()
+
+
+@wt(parsers.parse('user of {browser_id} sees that Public toggle is {checked} '
+                  'on harvester configuration page'))
+def assert_public_toggle_on_harvester_config_page(selenium, browser_id,
+                                                  oz_page, checked):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['discovery'].configuration_page
+    if 'not' in checked:
+        assert page.public.is_unchecked(), 'Harvester is checked as public'
+    else:
+        assert page.public.is_checked(), 'Harvester is not checked as public'
+
+
+@wt(parsers.parse('user of {browser_id} clicks on copy icon of public '
+                  'harvester URL'))
+def copy_public_harvester_url(selenium, browser_id, oz_page):
+    driver = selenium[browser_id]
+    oz_page(driver)['discovery'].configuration_page.general_tab.copy()
+
+
 @wt(parsers.parse('user of {browser_id} clicks on {tab_name} tab on '
                   'harvester configuration page'))
 def click_on_tab_of_harvester_config_page(selenium, browser_id, tab_name,
@@ -308,7 +355,7 @@ def click_on_tab_of_harvester_config_page(selenium, browser_id, tab_name,
     getattr(page, transform(tab_name) + '_button')()
 
 
-@wt(parsers.parse('user of browser chooses {plugin} GUI plugin '
+@wt(parsers.parse('user of {browser_id} chooses {plugin} GUI plugin '
                   'from local directory to be uploaded'))
 def upload_discovery_gui_plugin(selenium, browser_id, plugin, tmpdir, oz_page):
     driver = selenium[browser_id]
@@ -318,12 +365,13 @@ def upload_discovery_gui_plugin(selenium, browser_id, plugin, tmpdir, oz_page):
     uploader.send_keys(str(path))
 
 
-@wt(parsers.parse('user of {browser_id} clicks on "{button}" button on '
-                  'harvester configuration page'))
-def click_button_on_harvester_config_page(selenium, browser_id, oz_page,
-                                          button):
+@wt(parsers.parse('user of {browser_id} clicks on "{button}" button in '
+                  '{tab_name} of harvester configuration page'))
+def click_button_in_tab_of_harvester_config_page(selenium, browser_id,
+                                                 oz_page, button, tab_name):
     driver = selenium[browser_id]
-    page = oz_page(driver)['discovery'].configuration_page.gui_plugin_tab
+    page = getattr(oz_page(driver)['discovery'].configuration_page,
+                   transform(tab_name))
     getattr(page, transform(button) + '_button')()
 
 
@@ -372,6 +420,8 @@ def assert_plugin_injected_config(selenium, browser_id, oz_page,
 
 
 @wt(parsers.parse('user of {browser_id} sees Data Discovery page with Ecrin '
+                  'GUI'))
+@wt(parsers.parse('user of {browser_id} sees public harvester site with Ecrin '
                   'GUI'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_data_discovery_page_ecrin(selenium, browser_id, data_discovery):

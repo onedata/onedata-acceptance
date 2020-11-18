@@ -9,7 +9,7 @@ from tests.gui.utils.core.web_elements import (
     Button, NamedButton, WebElement, WebItemsSequence, Label, WebItem, Input)
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.onezone.generic_page import GenericPage, Element
-from tests.gui.utils.common.common import DropdownSelector
+from tests.gui.utils.common.common import DropdownSelector, Toggle
 from tests.gui.utils.onezone.members_subpage import MembersPage
 from tests.gui.utils.onezone.common import InputBox
 
@@ -37,7 +37,9 @@ class IndicesPage(PageObject):
 
 
 class GeneralTab(PageObject):
-    edit_button = Button('.edit-btn')
+    edit_button = NamedButton('.edit-btn', text='Edit')
+    save_button = NamedButton('.submit-btn', text='Save')
+    copy = Button('.clipboard-btn')
 
 
 class GUIPluginIndex(PageObject):
@@ -57,6 +59,8 @@ class GUIPluginTab(PageObject):
 
 
 class ConfigurationPage(PageObject):
+    public = Toggle('.one-way-toggle')
+
     general_tab = WebItem('.content-harvesters-config', cls=GeneralTab)
     gui_plugin_tab = WebItem('.content-harvesters-config', cls=GUIPluginTab)
 
