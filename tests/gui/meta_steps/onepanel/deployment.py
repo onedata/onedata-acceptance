@@ -118,6 +118,7 @@ def setup_step2(selenium, browser_id, onepanel, hosts, config):
         email: email@email.email
     """
     _setup_step2(selenium, browser_id, onepanel, hosts, config)
+    time.sleep(5)
 
 
 def _setup_step2(selenium, browser_id, onepanel, hosts, configuration):
