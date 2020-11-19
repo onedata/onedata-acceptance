@@ -1,4 +1,4 @@
-Feature: ACL files privileges tests using sigle browser in Oneprovider GUI
+Feature: ACL files privileges tests using single browser in Oneprovider GUI
 
   Examples:
   | subject_type  | subject_name  |

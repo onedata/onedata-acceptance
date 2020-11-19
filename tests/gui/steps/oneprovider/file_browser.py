@@ -13,7 +13,7 @@ from datetime import datetime
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.modal import click_modal_button
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import wt, parsers
 
@@ -46,7 +46,7 @@ def assert_status_tag_for_file_in_file_browser(browser_id, status_type,
                                                item_name, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
     err_msg = f'{status_type} tag for {item_name} in file browser not visible'
-    assert browser.data[item_name].is_tag_visible(status_type), err_msg
+    assert browser.data[item_name].is_tag_visible(transform(status_type)), err_msg
 
 
 @wt(parsers.parse('user of {browser_id} clicks on {status_type} status tag '

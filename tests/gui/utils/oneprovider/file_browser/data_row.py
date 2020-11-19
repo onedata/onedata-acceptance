@@ -26,6 +26,8 @@ class DataRow(PageObject):
     _status_tag = WebElement('.file-status-tag')
     shared_tag = WebElement('.file-status-shared')
     metadata_tag = WebElement('.file-status-metadata')
+    qos_tag = WebElement('.file-status-qos')
+    qos_inherited_tag = WebElement('.file-status-qos .oneicon-arrow-long-up')
     clickable_field = WebElement('.file-name')
     tag_label = Label('.file-status-tag')
 
@@ -44,7 +46,7 @@ class DataRow(PageObject):
 
     def is_tag_visible(self, name):
         try:
-            getattr(self, '{tag}_tag'.format(tag=name))
+            getattr(self, '{tag}_tag'.format(tag=name.lower()))
         except RuntimeError:
             return False
         else:
@@ -59,7 +61,7 @@ class DataRow(PageObject):
             return True
 
     def click_on_status_tag(self, name):
-        tag = getattr(self, '{tag}_tag'.format(tag=name))
+        tag = getattr(self, '{tag}_tag'.format(tag=name.lower()))
         click_on_web_elem(self.driver, tag,
                           f'cannot click on "{name}" in {self}')
 

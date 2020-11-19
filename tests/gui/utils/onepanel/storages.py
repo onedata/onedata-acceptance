@@ -15,6 +15,7 @@ from tests.gui.utils.core.base import PageObject, ExpandableMixin
 from tests.gui.utils.core.web_elements import (WebItemsSequence, Label,
                                                NamedButton, Input,
                                                WebItem, WebElement, Button)
+from tests.gui.utils.onezone.common import InputBox
 
 
 class POSIX(PageObject):
@@ -40,11 +41,44 @@ class StorageAddForm(PageObject):
     local_ceph = WebItem('form', cls=LocalCeph)
 
 
+class POSIXEditorKeyValue(PageObject):
+    key = WebItem('.form-group .text-left', cls=InputBox)
+    key_name = id = Label('.show-edit-icon .one-label')
+    val = WebItem('.form-group .form-control-column', cls=InputBox)
+    delete = Button('.remove-param')
+
+
+class QOSParams(PageObject):
+    key_values = WebItemsSequence('.text-input.group-with-tip',
+                                  cls=POSIXEditorKeyValue)
+
+    def set_last_key(self, key):
+        size = self.get_key_values_count()
+        self.key_values[size].key.value = key
+
+    def click_value_in_modified_record(self):
+        size = len(self.key_values)
+        self.key_values[size - 2].key.click()
+        self.key_values[size - 2].val.click()
+
+    def get_key_values_count(self):
+        return len(self.key_values) - 1
+
+    def delete_first_additional_param(self):
+        for key_val in self.key_values:
+            if (key_val.key_name != 'storageId' and
+                    key_val.key_name != 'providerId'):
+                key_val.delete.click()
+                return
+
+
 class POSIXEditor(PageObject):
     storage_name = Input('input.field-generic_editor-name')
     mount_point = Input('input.field-posix_editor-mountPoint')
     timeout = Input('input.field-posix_editor-timeout')
     read_only = Toggle('.toggle-field-posix_editor-readonly')
+
+    params = WebItem('.qos-params-editor', cls=QOSParams)
 
     save_button = Button('button.btn-primary')
     cancel_button = NamedButton('button', text='Cancel')
@@ -62,6 +96,8 @@ class StorageRecord(PageObject, ExpandableMixin):
     storage_type = Label('.item-table .field-type_static-type')
     mount_point = Label('.item-table .field-posix_static-mountPoint')
     _toggle = WebElement('.one-collapsible-list-item-header')
+
+    copy_id_button = Button('.copy-btn-icon')
 
     menu_button = Button('.collapsible-toolbar-toggle')
     _toolbar = WebElement('.one-collapsible-toolbar')

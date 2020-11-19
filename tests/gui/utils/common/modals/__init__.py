@@ -21,6 +21,7 @@ from .login import LoginFormModal
 from .deploying_cluster import ClusterDeploymentModal
 from .metadata_modal import MetadataModal
 from .menu_in_edit_permissions_modal import EditPermissionsRecordMenu
+from .qos import QualityOfServiceModal
 from .rename_modal import RenameModal
 from .rename_share_modal import RenameShareModal
 from .cease_support_for_space import CeaseSupportForSpaceModal
@@ -110,6 +111,7 @@ class Modals(object):
     remove_space = WebItem('.modal-dialog', cls=RemoveModal)
     clean_up_obsolete_tokens = WebItem('.modal-dialog',
                                        cls=CleanUpObsoleteTokensModal)
+    quality_of_service = WebItem('.modal-dialog', cls=QualityOfServiceModal)
     change_privileges = WebItem('.modal-dialog', cls=ChangePrivilegesModal)
 
     delete_user_account = WebItem('.modal-dialog', cls=DeleteUserAccountModal)
