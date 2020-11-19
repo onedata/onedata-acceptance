@@ -30,7 +30,9 @@ TEST_RUNNER_CONTAINER_NAME = 'test-runner'
 def get_images_option(test_type='oneclient', oz_image=None, op_image=None,
                       rest_cli_image=None, oc_image=None, luma_image=None):
     images_cfg = []
-
+    if test_type == 'upgrade':
+        # in upgrade tests images are provided in test config and manually set are ignored
+        return ''
     add_image_to_images_cfg(oz_image, 'onezone', '--oz-image', images_cfg)
     add_image_to_images_cfg(op_image, 'oneprovider', '--op-image', images_cfg)
     add_image_to_images_cfg(rest_cli_image, 'rest cli', '--rest-cli-image',

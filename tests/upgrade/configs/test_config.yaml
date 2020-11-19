@@ -1,8 +1,9 @@
 scenarios:  # name of file in `environments/scenarios` directory without .yaml suffix
+ - 1op
  - 2op
 initialVersions:
-  onezone: 19.02.4
-  oneprovider: 19.02.4
+  onezone: 20.02.1
+  oneprovider: 20.02.1
 targetVersions: 
   onezone: develop
   oneprovider: develop

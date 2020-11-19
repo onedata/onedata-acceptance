@@ -252,7 +252,7 @@ def ensure_list(elem):
 
 def generate_configs(params, description_skeleton):
     """This function generates all combinations of given parameters. Format of
-    returnev value is appropriate for @performance decorator
+    returned value is appropriate for @performance decorator
     :param description_skeleton: skeleton of config description, it will be
     filled with parameter values
     :param params: dictionary of parameters in form

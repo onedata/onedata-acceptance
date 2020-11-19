@@ -1,4 +1,4 @@
-""" fixme
+""" This module contains utility functions used in tests of upgrade procedure.
 """
 __author__ = "Michal Stanisz"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
@@ -16,7 +16,7 @@ from tests.utils.user_utils import AdminUser
 from tests.utils.rest_utils import get_zone_rest_path, http_get
 from tests.utils.http_exceptions import HTTPError
 from requests.exceptions import ConnectTimeout
-from tests.conftest import update_etc_hosts, setup_hosts_cfg, configure_os
+from tests.utils.environment_utils import update_etc_hosts, setup_hosts_cfg, configure_os
 
 
 from tests.utils.performance_utils import mount_client

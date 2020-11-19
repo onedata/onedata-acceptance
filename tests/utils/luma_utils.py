@@ -85,7 +85,8 @@ def get_local_feed_luma_storages(
             response = http_get(ip=provider_ip, port=PANEL_REST_PORT,
                                 path=get_panel_rest_path('provider', 'storages', storage_id),
                                 headers={'X-Auth-Token': admin_user.token})
-            if 'local' == json.loads(response.content)['lumaFeed']:
+            loaded_response = json.loads(response.content)
+            if 'lumaFeed' in loaded_response and 'local' == loaded_response['lumaFeed']:
                 storages.append(StorageDetails(storage_id, provider_ip))
 
     return storages
