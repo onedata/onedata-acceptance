@@ -141,3 +141,163 @@ Feature: Basic management of spaces privileges in Onezone GUI
     And user of browser_user1 clicks on "Remove" button in modal "REMOVE MEMBER"
     Then user of browser_user1 sees that error modal with text "insufficient privileges" appeared
 
+
+  Scenario: Appropriate tabs are disabled after removing some of user privileges
+    When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
+    And user of space_owner_browser clicks Members of "space1" in the sidebar
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+
+    # All tabs are enabled when all privileges are granted
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
+          Space management:
+            granted: True
+          Data management:
+            granted: True
+          Transfer management:
+            granted: True
+          QoS management:
+            granted: True
+          User management:
+            granted: True
+          Group management:
+            granted: True
+          Support management:
+            granted: True
+          Harvester management:
+            granted: True
+    Then user of browser_user1 sees that all tabs of "space1" are enabled
+
+    # Some tabs are disabled when view space is not granted
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage when all other are granted:
+          Space management:
+            granted: Partially
+            privilege subtypes:
+              View space: False
+    And user of browser_user1 sees that [Overview, Data, Transfers, Providers] tabs of "space1" are enabled
+    And user of browser_user1 sees that [Shares, Members, Harvesters] tabs of "space1" are disabled
+
+    # All tabs are enabled when only view space from space management category is granted
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage when all other are granted:
+          Space management:
+            granted: Partially
+            privilege subtypes:
+              View space: True
+              Modify space: False
+              Remove space: False
+              View privileges: False
+              Set privileges: False
+    And user of browser_user1 sees that all tabs of "space1" are enabled
+
+    # Some tabs are disabled when none from space management category are granted
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage when all other are granted:
+          Space management:
+            granted: False
+    And user of browser_user1 sees that [Overview, Data, Transfers, Providers] tabs of "space1" are enabled
+    And user of browser_user1 sees that [Shares, Members, Harvesters] tabs of "space1" are disabled
+
+    # Only data tab is disabled when only read files is not granted
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage when all other are granted:
+          Data management:
+            granted: Partially
+            privilege subtypes:
+              Read files: False
+    And user of browser_user1 sees that [Overview, Shares, Transfers, Providers, Members, Harvesters] tabs of "space1" are enabled
+    And user of browser_user1 sees that Data tab of "space1" is disabled
+
+    # All tabs are enabled when only read files from data management category is granted
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage when all other are granted:
+          Data management:
+            granted: Partially
+            privilege subtypes:
+              Read files: True
+              Write files: False
+              Register files: False
+              Manage shares: False
+              View database views: False
+              Manage database views: False
+              Query database views: False
+              View statistics: False
+              View changes stream: False
+    And user of browser_user1 sees that all tabs of "space1" are enabled
+
+    # Only data tab is disabled when none from data management category are granted
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage when all other are granted:
+          Data management:
+            granted: False
+    And user of browser_user1 sees that [Overview, Shares, Transfers, Providers, Members, Harvesters] tabs of "space1" are enabled
+    And user of browser_user1 sees that Data tab of "space1" is disabled
+
+    # Only transfers tab is disabled when only view transfers is not granted
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage when all other are granted:
+          Transfer management:
+            granted: Partially
+            privilege subtypes:
+              View transfers: False
+    And user of browser_user1 sees that [Overview, Data, Shares, Providers, Members, Harvesters] tabs of "space1" are enabled
+    And user of browser_user1 sees that Transfers tab of "space1" is disabled
+
+    # All tabs are enabled when only view transfers from transfer management category is granted
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage when all other are granted:
+          Transfer management:
+            granted: Partially
+            privilege subtypes:
+              View transfers: True
+              Schedule replication: False
+              Cancel replication: False
+              Schedule eviction: False
+              Cancel eviction: False
+    And user of browser_user1 sees that all tabs of "space1" are enabled
+
+    # Only transfers tab is disabled when none from transfer management category are granted
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage when all other are granted:
+          Transfer management:
+            granted: False
+    And user of browser_user1 sees that [Overview, Data, Shares, Providers, Members, Harvesters] tabs of "space1" are enabled
+    And user of browser_user1 sees that Transfers tab of "space1" is disabled
+
+    # All tabs are enabled when none from QoS management category are granted
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage when all other are granted:
+          QoS management:
+            granted: False
+    And user of browser_user1 sees that all tabs of "space1" are enabled
+
+    # All tabs are enabled when none from user management category are granted
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage when all other are granted:
+          User management:
+            granted: False
+    And user of browser_user1 sees that all tabs of "space1" are enabled
+
+    # All tabs are enabled when none from group management category are granted
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage when all other are granted:
+          Group management:
+            granted: False
+    And user of browser_user1 sees that all tabs of "space1" are enabled
+
+    # All tabs are enabled when none from support management category are granted
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage when all other are granted:
+          Support management:
+            granted: False
+    And user of browser_user1 sees that all tabs of "space1" are enabled
+
+    # All tabs are enabled when none from harvester management category are granted
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage when all other are granted:
+          Harvester management:
+            granted: False
+    And user of browser_user1 sees that all tabs of "space1" are enabled
+
+
+

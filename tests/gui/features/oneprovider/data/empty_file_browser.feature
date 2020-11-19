@@ -23,7 +23,7 @@ Feature: Data tab operations with empty file browser
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser sees that current working directory displayed in breadcrumbs is space1
     And user of browser clicks "New directory" button from file browser menu bar
-    And user of browser writes "dir1" into name directory text field in modal "Create dir"
+    And user of browser writes "dir1" into text field in modal "Create dir"
     And user of browser confirms create new directory using button
     Then user of browser sees that item named "dir1" has appeared in file browser
     And user of browser sees that item named "dir1" is directory in file browser
