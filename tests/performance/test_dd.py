@@ -8,11 +8,9 @@ __license__ = "This software is released under the MIT license cited in " \
 import os
 import re
 
-from tests.performance import CLIENT_CONF
 from tests.performance.conftest import AbstractPerformanceTest
-from tests.utils.performance_utils import (Result, generate_configs,
-                                           performance, mount_client)
-from tests.utils.client_utils import mkstemp, rm, user_home_dir, dd
+from tests.utils.performance_utils import Result, generate_configs, performance
+from tests.utils.client_utils import mkstemp, rm, user_home_dir, dd, mount_client, CLIENT_CONF
 
 
 REPEATS = 3

@@ -11,13 +11,11 @@ import time
 import os.path
 from functools import partial
 
-from tests.performance import CLIENT_CONF
 from tests.performance.conftest import AbstractPerformanceTest
 from tests.utils.performance_utils import (Result, generate_configs,
-                                           performance, flushed_print,
-                                           mount_client)
-from tests.utils.client_utils import (user_home_dir, rm, mkdtemp, truncate, 
-                                      write)
+                                           performance, flushed_print)
+from tests.utils.client_utils import (user_home_dir, rm, mkdtemp, truncate,
+                                      write, mount_client, CLIENT_CONF)
 
 REPEATS = 1
 SUCCESS_RATE = 100

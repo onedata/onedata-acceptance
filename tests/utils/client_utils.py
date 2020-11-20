@@ -14,6 +14,7 @@ import errno
 import stat as stat_lib
 import hashlib
 import subprocess
+from collections import namedtuple
 
 import rpyc
 import pytest
@@ -27,6 +28,9 @@ from tests.utils.user_utils import User
 BAD_TOKEN = 'bad token'
 CORRECT_TOKEN = 'token'
 RPYC_DEFAULT_PORT = 18812
+
+CLIENT_CONF = namedtuple('ClientConf', ['user', 'mount_path', 'client_host',
+                                        'client_instance', 'token'])
 
 
 class Client:
@@ -509,3 +513,12 @@ def client_run_cmd(client, cmd, output=False, error=False,
                                   verbose=verbose)
 
     return None if output else proc.returncode
+
+
+def mount_client(client_conf, clients, hosts, request, users, env_desc, clean_mountpoint=True):
+    mount_users(clients, [client_conf.user], [client_conf.mount_path],
+                [client_conf.client_host], [client_conf.client_instance],
+                [client_conf.token], hosts, request, users, env_desc,
+                clean_mountpoint=clean_mountpoint)
+
+    return users[client_conf.user].clients[client_conf.client_instance]

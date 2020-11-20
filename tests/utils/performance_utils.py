@@ -283,12 +283,3 @@ def is_success_rate_satisfied(successful_repeats, failed_repeats, rate):
 def flushed_print(msg):
     print(msg)
     sys.stdout.flush()
-
-
-def mount_client(client_conf, clients, hosts, request, users, env_desc, clean_mountpoint=True):
-    mount_users(clients, [client_conf.user], [client_conf.mount_path],
-                [client_conf.client_host], [client_conf.client_instance],
-                [client_conf.token], hosts, request, users, env_desc,
-                clean_mountpoint=clean_mountpoint)
-
-    return users[client_conf.user].clients[client_conf.client_instance]

@@ -6,6 +6,3 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 from collections import namedtuple
-
-CLIENT_CONF = namedtuple('ClientConf', ['user', 'mount_path', 'client_host',
-                                        'client_instance', 'token'])

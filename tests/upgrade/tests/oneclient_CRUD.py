@@ -7,8 +7,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 import os
 
-from tests.utils.client_utils import rm, create_file, mkdir, write, read, stat
-from tests.performance import CLIENT_CONF
+from tests.utils.client_utils import rm, create_file, mkdir, write, read, stat, CLIENT_CONF
 
 CLIENT_CONF_1 = CLIENT_CONF('user1', '/home/user1/onedata',
                             'oneclient-1', 'client11', 'token')

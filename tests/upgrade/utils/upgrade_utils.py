@@ -20,9 +20,6 @@ from tests.utils.environment_utils import (update_etc_hosts, setup_hosts_cfg, co
                                            get_deployment_status)
 from tests.utils.client_utils import fusermount
 
-
-from tests.utils.performance_utils import mount_client
-
 ENV_READY_TIMEOUT_SECONDS = 300
 
 

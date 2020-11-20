@@ -6,12 +6,10 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 
-from tests.performance import CLIENT_CONF
 from tests.utils.docker_utils import run_cmd
 from tests.performance.conftest import AbstractPerformanceTest
-from tests.utils.performance_utils import (generate_configs, performance,
-                                           mount_client)
-from tests.utils.client_utils import rm, mkdtemp
+from tests.utils.performance_utils import generate_configs, performance
+from tests.utils.client_utils import rm, mkdtemp, mount_client, CLIENT_CONF
 
 REPEATS = 1
 SUCCESS_RATE = 100
