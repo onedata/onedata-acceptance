@@ -591,9 +591,8 @@ def assert_tabs_of_space_disabled(selenium, browser_id, tabs_list, space_name,
         )
 
 
-@wt(parsers.parse('user of {browser_id} sees "{text}" in error details'
-                  ' on spaces page'))
+@wt(parsers.parse('user of {browser_id} sees "{text}" error on spaces page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_error_detail_text_spaces(selenium, browser_id, oz_page, text):
     page = oz_page(selenium[browser_id])['data']
-    assert text in page.error_details, f'page with text "{text}" not found'
+    assert text in page.error_header, f'page with text "{text}" not found'

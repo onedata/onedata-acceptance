@@ -33,6 +33,7 @@ class EmergencyInterfaceWarningBar(PageObject):
 
 
 class OnePage(object):
+    loading_error = Label('.application-error-message')
     service = Label('.brand-info')
     logout = WebElement('.user-account-button-main')
     content = WebItem('.col-content', cls=BaseContent)

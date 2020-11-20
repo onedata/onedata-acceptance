@@ -46,3 +46,12 @@ def close_visible_notifies(selenium, browser_id):
 
     assert all(staleness_of(notify) for notify in notifies), \
         'not all notifies were closed'
+
+
+@wt(parsers.parse('user of {browser_id} sees "{error_msg}" error '
+                  'on Onedata page'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_loading_error(selenium, browser_id, onepage, error_msg):
+    given_msg = onepage(selenium[browser_id]).loading_error.lower()
+    assert error_msg.lower() in given_msg, (f'{error_msg} not in {given_msg} '
+                                            f'error message')

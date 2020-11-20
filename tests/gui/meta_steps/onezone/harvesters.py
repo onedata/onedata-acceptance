@@ -269,6 +269,7 @@ def assert_space_on_harvester_list(selenium, browser_id, space, harvester,
 @wt(parsers.parse('user of {browser_id} configures "{harvester}" '
                   'harvester as public'))
 def configure_harvester_as_public(selenium, browser_id, harvester, oz_page):
+    action = 'checks'
     discovery_tab = 'Discovery'
     config_tab = 'Configuration'
     scope = 'harvesters'
@@ -286,7 +287,8 @@ def configure_harvester_as_public(selenium, browser_id, harvester, oz_page):
 
     click_button_in_tab_of_harvester_config_page(selenium, browser_id, oz_page,
                                                  edit_button, general_tab)
-    check_public_toggle_on_harvester_config_page(selenium, browser_id, oz_page)
+    check_public_toggle_on_harvester_config_page(selenium, browser_id,
+                                                 oz_page, action)
     click_button_in_tab_of_harvester_config_page(selenium, browser_id, oz_page,
                                                  save_button, general_tab)
     assert_public_toggle_on_harvester_config_page(selenium, browser_id,

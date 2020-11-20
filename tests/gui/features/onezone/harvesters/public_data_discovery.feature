@@ -13,10 +13,10 @@ Feature: Public harvester site
                   size: 1000000
             storage:
               defaults:
-                  provider: oneprovider-1
+                provider: oneprovider-1
               directory tree:
                 - dir1_1:
-                  - file_xattrs:
+                  - file_with_xattrs:
                       content: 11111
                       metadata:
                         type: basic
@@ -33,7 +33,7 @@ Feature: Public harvester site
                 provider: oneprovider-1
               directory tree:
                 - dir1_2:
-                    - file_json:
+                    - file_with_json_metadata:
                         content: 11111
                         metadata:
                           type: json
@@ -47,7 +47,7 @@ Feature: Public harvester site
     And user of browser_onedata logged as admin to Onezone service
 
 
-  Scenario: User configures public harvester
+  Scenario: Not signed in user sees public data discovery page when harvester is configured as public
     When user of browser_onedata clicks on Discovery in the main menu
     And user of browser_onedata clicks "harvester1" on the harvesters list in the sidebar
     And user of browser_onedata clicks Configuration of "harvester1" harvester in the sidebar
@@ -57,7 +57,27 @@ Feature: Public harvester site
     And user of browser_onedata checks Public toggle on harvester configuration page
     And user of browser_onedata clicks on "Save" button in General tab of harvester configuration page
 
-    Then user of browser_onedata sees that Public toggle is checked on harvester configuration page
+    And user of browser_onedata sees that Public toggle is checked on harvester configuration page
+    And user of browser_onedata clicks on copy icon of public harvester URL
+    And user of browser_onedata sends copied URL to user of browser_not_signed_in
+    And user of browser_not_signed_in opens URL received from user of browser_onedata
+    Then user of browser_not_signed_in sees public data discovery page with no harvested data
+
+
+  Scenario: Not signed in user cannot open public data discovery page if harvester is no longer public
+    When user of browser_onedata configures "harvester1" harvester as public
+    And user of browser_onedata clicks on copy icon of public harvester URL
+    And user of browser_onedata sends copied URL to user of browser_not_signed_in
+    And user of browser_not_signed_in opens URL received from user of browser_onedata
+    And user of browser_not_signed_in sees public data discovery page with no harvested data
+
+    And user of browser_onedata clicks on "Edit" button in General tab of harvester configuration page
+    And user of browser_onedata unchecks Public toggle on harvester configuration page
+    And user of browser_onedata clicks on "Save" button in General tab of harvester configuration page
+    And user of browser_onedata sees that Public toggle is not checked on harvester configuration page
+
+    And user of browser_not_signed_in refreshes site
+    And user of browser_not_signed_in sees "web GUI cannot be loaded" error on Onedata page
 
 
   Scenario: Not signed in user sees data of public harvester in public harvester GUI from given URL
@@ -67,14 +87,14 @@ Feature: Public harvester site
     And user of browser_onedata sends copied URL to user of browser_not_signed_in
 
     And user of browser_not_signed_in opens URL received from user of browser_onedata
-    Then user of browser_not_signed_in sees public harvester site
-    And user of browser_not_signed_in sees only following files on public harvester site:
+    Then user of browser_not_signed_in sees public data discovery page
+    And user of browser_not_signed_in sees only following files on public data discovery page:
           dir1_1:
             jsonMetadataExists: false
             rdfMetadataExists: false
             xattrsMetadataExists: false
             spaceId: space1
-          file_xattrs:
+          file_with_xattrs:
             spaceId: space1
             jsonMetadataExists: false
             rdfMetadataExists: false
@@ -87,7 +107,7 @@ Feature: Public harvester site
             rdfMetadataExists: false
             xattrsMetadataExists: false
             spaceId: space2
-          file_json:
+          file_with_json_metadata:
             jsonMetadataExists: true
             rdfMetadataExists: false
             xattrsMetadataExists: false
@@ -106,14 +126,14 @@ Feature: Public harvester site
     And user of browser_onedata sends copied URL to user of browser_not_signed_in
 
     And user of browser_not_signed_in opens URL received from user of browser_onedata
-    And user of browser_not_signed_in sees public harvester site
-    And user of browser_not_signed_in sees only following files on public harvester site:
+    And user of browser_not_signed_in sees public data discovery page
+    And user of browser_not_signed_in sees only following files on public data discovery page:
           dir1_2:
             jsonMetadataExists: false
             rdfMetadataExists: false
             xattrsMetadataExists: false
             spaceId: space2
-          file_json:
+          file_with_json_metadata:
             jsonMetadataExists: true
             rdfMetadataExists: false
             xattrsMetadataExists: false
@@ -127,13 +147,13 @@ Feature: Public harvester site
     And user of browser_onedata uploads "20B-0.txt" to the root directory of "space2"
     And user of browser_onedata succeeds to write "20B-0.txt" file basic metadata: "author=John Doe" in "space2"
 
-    Then user of browser_not_signed_in sees only following files on public harvester site:
+    Then user of browser_not_signed_in sees only following files on public data discovery page:
           dir1_2:
             jsonMetadataExists: false
             rdfMetadataExists: false
             xattrsMetadataExists: false
             spaceId: space2
-          file_json:
+          file_with_json_metadata:
             jsonMetadataExists: true
             rdfMetadataExists: false
             xattrsMetadataExists: false
@@ -167,7 +187,7 @@ Feature: Public harvester site
     And user of browser_onedata sends copied URL to user of browser_not_signed_in
 
     And user of browser_not_signed_in opens URL received from user of browser_onedata
-    Then user of browser_not_signed_in sees public harvester site with Ecrin GUI
+    Then user of browser_not_signed_in sees public data discovery page with Ecrin GUI
 
 
   Scenario: Public harvester site is updated when space is added to original harvester
@@ -177,14 +197,14 @@ Feature: Public harvester site
     And user of browser_onedata sends copied URL to user of browser_not_signed_in
 
     And user of browser_not_signed_in opens URL received from user of browser_onedata
-    And user of browser_not_signed_in sees public harvester site
-    And user of browser_not_signed_in sees only following files on public harvester site:
+    And user of browser_not_signed_in sees public data discovery page
+    And user of browser_not_signed_in sees only following files on public data discovery page:
           dir1_2:
             jsonMetadataExists: false
             rdfMetadataExists: false
             xattrsMetadataExists: false
             spaceId: space2
-          file_json:
+          file_with_json_metadata:
             jsonMetadataExists: true
             rdfMetadataExists: false
             xattrsMetadataExists: false
@@ -195,13 +215,13 @@ Feature: Public harvester site
             - space2
 
     And user of browser_onedata adds "space1" space to "harvester1" harvester using available spaces dropdown
-    Then user of browser_not_signed_in sees only following files on public harvester site:
+    Then user of browser_not_signed_in sees only following files on public data discovery page:
           dir1_1:
             jsonMetadataExists: false
             rdfMetadataExists: false
             xattrsMetadataExists: false
             spaceId: space1
-          file_xattrs:
+          file_with_xattrs:
             spaceId: space1
             jsonMetadataExists: false
             rdfMetadataExists: false
@@ -214,7 +234,7 @@ Feature: Public harvester site
             rdfMetadataExists: false
             xattrsMetadataExists: false
             spaceId: space2
-          file_json:
+          file_with_json_metadata:
             jsonMetadataExists: true
             rdfMetadataExists: false
             xattrsMetadataExists: false
@@ -233,14 +253,14 @@ Feature: Public harvester site
     And user of browser_onedata sends copied URL to user of browser_not_signed_in
 
     And user of browser_not_signed_in opens URL received from user of browser_onedata
-    And user of browser_not_signed_in sees public harvester site
-    And user of browser_not_signed_in sees only following files on public harvester site:
+    And user of browser_not_signed_in sees public data discovery page
+    And user of browser_not_signed_in sees only following files on public data discovery page:
           dir1_2:
             jsonMetadataExists: false
             rdfMetadataExists: false
             xattrsMetadataExists: false
             spaceId: space2
-          file_json:
+          file_with_json_metadata:
             jsonMetadataExists: true
             rdfMetadataExists: false
             xattrsMetadataExists: false
@@ -252,9 +272,9 @@ Feature: Public harvester site
 
     # delete file from "space2"
     And user of browser_onedata opens file browser for "space2" space
-    And user of browser_onedata succeeds to remove "dir1_2/file_json" in "space2"
+    And user of browser_onedata succeeds to remove "dir1_2/file_with_json_metadata" in "space2"
 
-    Then user of browser_not_signed_in sees only following files on public harvester site:
+    Then user of browser_not_signed_in sees only following files on public data discovery page:
            dir1_2:
              jsonMetadataExists: false
              rdfMetadataExists: false
@@ -271,14 +291,14 @@ Feature: Public harvester site
     And user of browser_onedata sends copied URL to user of browser_not_signed_in
 
     And user of browser_not_signed_in opens URL received from user of browser_onedata
-    And user of browser_not_signed_in sees public harvester site
-    And user of browser_not_signed_in sees only following files on public harvester site:
+    And user of browser_not_signed_in sees public data discovery page
+    And user of browser_not_signed_in sees only following files on public data discovery page:
           dir1_1:
             jsonMetadataExists: false
             rdfMetadataExists: false
             xattrsMetadataExists: false
             spaceId: space1
-          file_xattrs:
+          file_with_xattrs:
             spaceId: space1
             jsonMetadataExists: false
             rdfMetadataExists: false
@@ -289,14 +309,14 @@ Feature: Public harvester site
           spaces:
             - space1
 
-  And user of browser_onedata removes basic metadata entry with key "author" for "dir1_1/file_xattrs" file in "space1" space
-  Then user of browser_not_signed_in sees only following files on public harvester site:
+  And user of browser_onedata removes basic metadata entry with key "author" for "dir1_1/file_with_xattrs" file in "space1" space
+  Then user of browser_not_signed_in sees only following files on public data discovery page:
          dir1_1:
             jsonMetadataExists: false
             rdfMetadataExists: false
             xattrsMetadataExists: false
             spaceId: space1
-         file_xattrs:
+         file_with_xattrs:
            spaceId: space1
            jsonMetadataExists: false
            rdfMetadataExists: false
@@ -316,18 +336,18 @@ Feature: Public harvester site
     And user of browser_onedata sends copied URL to user of browser_not_signed_in
 
     And user of browser_not_signed_in opens URL received from user of browser_onedata
-    And user of browser_not_signed_in sees public harvester site
-    And user of browser_not_signed_in sees only following files on public harvester site:
+    And user of browser_not_signed_in sees public data discovery page
+    And user of browser_not_signed_in sees only following files on public data discovery page:
           dir1_2:
             spaceId: space2
-          file_json:
+          file_with_json_metadata:
             spaceId: space2
           spaces:
             - space2
 
-    And user of browser_not_signed_in clicks on "Go to source file..." for "file_json"
-    Then user of browser_not_signed_in sees that another window tab has been opened
-    And user of browser_not_signed_in is idle for 4 seconds
+    And user of browser_not_signed_in clicks on "Go to source file..." for "file_with_json_metadata"
+    And user of browser_not_signed_in is redirected to newly opened tab
+    And user of browser_not_signed_in sees Onezone login page
 
     And user of browser_not_signed_in logs as user1 to Onezone service
-    Then user of browser_not_signed_in sees "YOU DON’T HAVE ACCESS TO THIS RESOURCE" in error details on spaces page
+    Then user of browser_not_signed_in sees "YOU DON’T HAVE ACCESS TO THIS RESOURCE" error on spaces page

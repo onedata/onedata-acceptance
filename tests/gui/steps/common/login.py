@@ -12,7 +12,7 @@ import time
 
 from pytest_bdd import given, parsers
 from tests.utils.utils import repeat_failed
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.acceptance_utils import wt
 from tests.gui.steps.common.notifies import notify_visible_with_text
@@ -111,7 +111,8 @@ def wt_assert_successful_login(selenium, browser_id, onepage, service):
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees that he was logged out '
                'from (Onepanel|Onezone)'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@wt(parsers.re('user of (?P<browser_id>.*) sees (Onepanel|Onezone) login page'))
+@repeat_failed(timeout=WAIT_BACKEND*2)
 def wt_assert_login_page(selenium, browser_id, login_page):
     _ = login_page(selenium[browser_id]).header
 

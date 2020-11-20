@@ -39,7 +39,7 @@ class IndicesPage(PageObject):
 class GeneralTab(PageObject):
     edit_button = NamedButton('.edit-btn', text='Edit')
     save_button = NamedButton('.submit-btn', text='Save')
-    copy = Button('.clipboard-btn')
+    copy_public_url = Button('.publicUrl-field .copy-btn')
 
 
 class GUIPluginIndex(PageObject):

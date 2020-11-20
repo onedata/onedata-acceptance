@@ -77,5 +77,5 @@ def screens():
 scenarios('../features/onezone/harvesters/harvesters.feature')
 scenarios('../features/onezone/harvesters/harvesters_memberships_privileges.feature')
 scenarios('../features/onezone/harvesters/data_discovery.feature')
-scenarios('../features/onezone/harvesters/public_harvester.feature')
+scenarios('../features/onezone/harvesters/public_data_discovery.feature')
 

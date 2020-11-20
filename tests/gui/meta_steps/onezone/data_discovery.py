@@ -26,22 +26,13 @@ from tests.utils.utils import repeat_failed
 
 @wt(parsers.parse('user of {browser_id} sees only following files in Data '
                   'discovery page:\n{config}'))
+@wt(parsers.parse('user of {browser_id} sees only following files on public '
+                  'data discovery page:\n{config}'))
 @repeat_failed(timeout=WAIT_BACKEND*4, interval=2)
 def assert_data_discovery_files(selenium, browser_id, data_discovery, config,
                                 spaces):
     click_query_button_on_data_disc_page(selenium, browser_id, data_discovery)
     time.sleep(1)
-    assert_files(selenium, browser_id, data_discovery, config, spaces)
-
-
-@wt(parsers.parse('user of {browser_id} sees only following files on public '
-                  'harvester site:\n{config}'))
-@repeat_failed(timeout=WAIT_BACKEND*4, interval=2)
-def assert_data_discovery_files(selenium, browser_id, data_discovery, config,
-                                spaces):
-    refresh_site(selenium, browser_id)
-    time.sleep(1)
-    switch_to_iframe(selenium, browser_id, '.plugin-frame')
     assert_files(selenium, browser_id, data_discovery, config, spaces)
 
 

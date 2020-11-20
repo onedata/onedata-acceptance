@@ -318,7 +318,7 @@ Feature: Querying for data discovery in Discovery Page in Onezone GUI
             - space3
 
     And user of browser clicks on "Go to source file..." for "file2_3"
-    Then user of browser sees that another window tab has been opened
+    Then user of browser is redirected to newly opened tab
     And user of browser is idle for 4 seconds
     And user of browser sees that opened space name is "space3"
     And user of browser sees file browser in data tab in Oneprovider page

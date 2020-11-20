@@ -224,13 +224,12 @@ def assert_list_of_children_contains_group(selenium, browser_id, oz_page):
      .show_parent_groups())
 
 
-@wt(parsers.parse('user of {browser_id} sees "{text}" in error details'
-                  ' on groups page'))
+@wt(parsers.parse('user of {browser_id} sees "{text}" error on groups page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_error_detail_text(selenium, browser_id, oz_page, text):
     page = oz_page(selenium[browser_id])['groups']
-    assert text in page.main_page.error_details, ('page with text "{}" '
-                                                  'not found'.format(text))
+    assert text in page.main_page.error_header, (f'page with text "{text}" '
+                                                 f'not found')
 
 
 @wt(parsers.parse('user of {browser_id} sees "{group_name}" group '
