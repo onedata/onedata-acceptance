@@ -17,6 +17,7 @@ from tests.utils.environment_utils import start_environment
 from tests.utils.path_utils import (get_file_name, absolute_path_to_env_file,
                                     make_logdir)
 from tests.utils.onenv_utils import run_onenv_command, clean_env
+from tests.utils.user_utils import AdminUser
 
 
 def pytest_addoption(parser):
@@ -37,16 +38,12 @@ def pytest_addoption(parser):
     parser.addoption('--env-file', action='store', default=None,
                      help='description of environment that will be tested')
 
-# fixme do not ignore in upgrade tests
     parser.addoption('--oz-image', action='store', help='onezone image'
-                                                        'to use in tests'
-                                                        '(ignored in upgrade tests)')
+                                                        'to use in tests')
     parser.addoption('--op-image', action='store', help='oneprovider image'
-                                                        'to use in tests'
-                                                        '(ignored in upgrade tests)')
+                                                        'to use in tests')
     parser.addoption('--oc-image', action='store', help='oneclient image'
-                                                        'to use in tests'
-                                                        '(ignored in upgrade tests)')
+                                                        'to use in tests')
     parser.addoption('--luma-image', action='store', help='luma image'
                                                           'to use in tests')
     parser.addoption('--rest-cli-image', action='store',
@@ -126,6 +123,8 @@ def pytest_generate_tests(metafunc):
 def test_config(request):
     """Loaded yaml with test config"""
     test_type = request.config.option.test_type
+    if test_type in ['gui', 'mixed']:
+        return {}
     if test_type == 'upgrade':
         with open(request.config.option.env_file, 'r') as f:
             config = yaml.load(f)
@@ -140,7 +139,7 @@ def test_config(request):
 @pytest.fixture(scope='module')
 def users():
     """Dictionary with users credentials"""
-    return {}
+    return {'admin': AdminUser('admin', 'password')}
 
 
 @pytest.fixture()
@@ -256,7 +255,6 @@ def start_test_env(request, test_type, env_desc, hosts, users, env_description_a
     patch_path = ''
     scenario_path = ''
     if test_type in ['gui']:
-        # fixme test_config not existing
         scenario_path = env_description_abs_path
     elif test_type == 'mixed':
         scenario_path = scenario_abs_path(request, env_desc)

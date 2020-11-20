@@ -32,11 +32,17 @@ def run_onenv_command(command, args=None, fail_with_error=True, sudo=False, retu
 
     if args:
         cmd.extend(args)
-    print('Running command: {}'.format(cmd))
+    return run_command(cmd, fail_with_error=fail_with_error, return_output=return_output, cwd=cwd)
+
+
+def run_command(cmd, fail_with_error=True, return_output=True, cwd=None, verbose=True):
+    if verbose:
+        print('Running command: {}'.format(cmd))
     proc = sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.PIPE, cwd=cwd)
     output, err = proc.communicate()
 
-    sys.stdout.write(output.decode('utf-8'))
+    if verbose:
+        sys.stdout.write(output.decode('utf-8'))
     sys.stderr.write(err.decode('utf-8'))
 
     if proc.returncode != 0 and fail_with_error:

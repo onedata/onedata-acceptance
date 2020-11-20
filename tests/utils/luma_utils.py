@@ -11,10 +11,11 @@ import json
 from collections import namedtuple
 from typing import Union, Dict, List, Any
 
+from tests import PANEL_REST_PORT
 from tests.utils.rest_utils import get_panel_rest_path, http_post, http_put, http_get
 from tests.utils.http_exceptions import HTTPConflict
-from tests import PANEL_REST_PORT
 from tests.utils.user_utils import AdminUser, User
+from tests.utils.environment_utils import gen_uid, gen_gid
 
 SpaceDetails = namedtuple("SpaceDetails", ['space_id', 'provider_ip', 'space_name', 'storage_id'])
 StorageDetails = namedtuple("StorageDetails", ['storage_id', 'provider_ip'])
@@ -26,9 +27,6 @@ def add_user_luma_mapping(
         storages: List[StorageDetails]
 ) -> None:
 
-    # generate uid the same way as it was generated when user was created on storage
-    # (see scripts.utils.k8s.pods.create_users in one-env-engine)
-    uid = int(hashlib.sha1(user.username.encode('utf-8')).hexdigest(), 16) % 50000 + 10000
     for storage_details in storages:
         mapping = {
             'onedataUser': {
@@ -37,7 +35,7 @@ def add_user_luma_mapping(
             },
             'storageUser': {
                 'storageCredentials': {
-                    'uid': uid,
+                    'uid': gen_uid(user.username),
                     'type': 'posix'
                 }
             }
@@ -56,12 +54,8 @@ def add_spaces_luma_mapping(
     for space_details in spaces_details:
         if space_details.storage_id not in storages_ids:
             continue
-        # generate gid the same way as it was generated when group was created on storage
-        # (see scripts.utils.k8s.pods.create_groups in one-env-engine)
-        gid = int(hashlib.sha1(space_details.space_name.encode('utf-8')).
-                  hexdigest(), 16) % 50000 + 10000
         mapping = {
-            'gid': gid
+            'gid': gen_gid(space_details.space_name)
         }
         add_mapping(admin_user, space_details.provider_ip,
                     space_details.storage_id, mapping, http_put,

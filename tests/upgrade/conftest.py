@@ -6,16 +6,16 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-import inspect
 
-import yaml
+import pytest
 
-from tests import *
-from tests.conftest import export_logs, make_logdir, get_test_type
-from tests.utils.path_utils import get_file_name
-from tests.utils.git_utils import get_branch_name, get_commit, get_repository
-from tests.utils.performance_utils import *
-from tests.utils.utils import get_copyright, get_authors, get_suite_description
+from tests.conftest import export_logs
+from tests.upgrade.utils.upgrade_utils import UpgradeTestsController
+
+
+@pytest.fixture()
+def tests_controller(test_config, hosts, clients, request, users, env_desc, scenario_abs_path):
+    return UpgradeTestsController(**locals())
 
 
 @pytest.fixture(autouse=True, scope='module')

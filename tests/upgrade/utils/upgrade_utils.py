@@ -16,7 +16,9 @@ from tests.utils.user_utils import AdminUser
 from tests.utils.rest_utils import get_zone_rest_path, http_get
 from tests.utils.http_exceptions import HTTPError
 from requests.exceptions import ConnectTimeout
-from tests.utils.environment_utils import update_etc_hosts, setup_hosts_cfg, configure_os
+from tests.utils.environment_utils import (update_etc_hosts, setup_hosts_cfg, configure_os,
+                                           get_deployment_status)
+from tests.utils.client_utils import fusermount
 
 
 from tests.utils.performance_utils import mount_client
@@ -25,36 +27,60 @@ ENV_READY_TIMEOUT_SECONDS = 300
 
 
 class UpgradeTest:
-    def __init__(self, setup, check):
-        self.setup = setup
-        self.check = check
+    def __init__(self, name, setup, verify):
+        self.__name = name
+        self.__setup = setup  # function executed before any upgrade is performed
+        self.__verify = verify  # function executed after all upgrades are performed
+
+    def run_setup(self, *args, **kwargs):
+        print("\nRunning setup for test \"{}\"\n".format(self.__name))
+        self.__setup(*args, **kwargs)
+        print("\nSetup for test \"{}\" finished\n".format(self.__name))
+
+    def run_verify(self, *args, **kwargs):
+        print("\nRunning verify for test \"{}\"\n".format(self.__name))
+        self.__verify(*args, **kwargs)
+        print("\nVerify for test \"{}\" finished\n".format(self.__name))
 
 
 class UpgradeTestsController:
-    tests_list = []
-
     def __init__(self, **kwargs):
+        self.__tests_list = []
         self.__dict__.update(kwargs)
 
-    def add_test(self, setup, check):
-        self.tests_list.append(UpgradeTest(setup, check))
+    def add_test(self, name, setup, verify):
+        self.__tests_list.append(UpgradeTest(name, setup, verify))
 
     def mount_client(self, client_conf):
         return mount_client(client_conf, self.clients, self.hosts,
                             self.request, self.users, self.env_desc, clean_mountpoint=False)
 
     def run_tests(self):
-        admin_user = AdminUser('admin', 'password')
-        admin_user.create_token(self.hosts['onezone']['ip'])
-        [test.setup(self) for test in self.tests_list]
+        admin_user = self.users['admin']
+        [self.__run_setup(test) for test in self.__tests_list]
         for service_name in ['onezone', 'oneprovider', 'oneclient']:
             if service_name in self.test_config['targetVersions'].keys():
                 upgrade_service(service_name, admin_user, self.hosts,
                                 self.test_config['targetVersions'][service_name])
 
         setup_hosts_cfg(self.hosts, self.request)
-        configure_os(self.scenario_abs_path)
-        [test.check(self) for test in self.tests_list]
+        configure_os(self.scenario_abs_path, get_deployment_status())
+        [self.__run_verify(test) for test in self.__tests_list]
+        self.__unmount_clients()
+
+    def __run_setup(self, test):
+        test.run_setup(self)
+        self.__unmount_clients()
+
+    def __run_verify(self, test):
+        test.run_verify(self)
+        self.__unmount_clients()
+
+    def __unmount_clients(self):
+        for client in self.clients.keys():
+            fusermount(self.clients[client], self.clients[client].mount_path,
+                       unmount=True, lazy=True)
+        self.clients.clear()
 
 
 def upgrade_service(service_name, admin_user, hosts, version):
@@ -65,19 +91,24 @@ def upgrade_service(service_name, admin_user, hosts, version):
 
     if service_name == 'onezone':
         update_etc_hosts()
-    check_env_ready(admin_user, hosts)
+    verify_env_ready(admin_user, hosts)
 
 
 def run_upgrade_command(pod_name, service, version):
-    if version == 'sources':
-        image = "docker.onedata.org/{}-dev:{}".format(service, 'develop')
-        run_onenv_command('upgrade', [pod_name, '-i', image, '-wp', '--sources-path', '.'])
-    else:
+    if isinstance(version, str):
         image = "docker.onedata.org/{}-dev:{}".format(service, version)
         run_onenv_command('upgrade', [pod_name, '-i', image])
+    else:
+        image = "docker.onedata.org/{}-dev:{}".format(service, version['sources']['baseImage'])
+        components = []
+        for component in version['sources']['components']:
+            components.append('--{}'.format(component))
+        cmd = [pod_name, '-i', image, '--sources-path', '.']
+        cmd.extend(components)
+        run_onenv_command('upgrade', cmd)
 
 
-def check_env_ready(admin_user, hosts):
+def verify_env_ready(admin_user, hosts):
     zone_hostname = hosts['onezone']['hostname']
     ready = False
     start = time.time()

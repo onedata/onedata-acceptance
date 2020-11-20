@@ -59,8 +59,7 @@ os-config:
         - user2
   services:
     oneprovider-1: *cfg1
-    oneclient-1: *cfg1
-    oneclient-2: *cfg1
+    oneclient: *cfg1
 
 onezone:
   batchConfig:

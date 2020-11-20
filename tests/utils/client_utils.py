@@ -65,7 +65,7 @@ class Client:
                 mount_path=self.mount_path,
                 mode=mode_flag)
         else:
-            cmd = " ".join(['oneclient', '--log-dir', '/tmp/oc_logs', mode_flag, '-o', 'nonempty',
+            cmd = " ".join(['oneclient', '--log-dir', '/tmp/oc_logs', mode_flag,
                             '--insecure', self.mount_path])
 
         def retry_fun():

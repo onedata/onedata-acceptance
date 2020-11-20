@@ -1,9 +1,10 @@
-scenarios:  # name of file in `environments/scenarios` directory without .yaml suffix
- - 1op
- - 2op
+scenarios:  # names of files in `environments/scenarios` directory without .yaml suffix
+  - 1op
+  - 2op
 initialVersions:
   onezone: 20.02.1
   oneprovider: 20.02.1
+  oneclient: 20.02.1
 targetVersions: 
   onezone: develop
   oneprovider: develop

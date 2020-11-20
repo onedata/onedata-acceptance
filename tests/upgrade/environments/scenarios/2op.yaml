@@ -38,9 +38,6 @@ forceImagePull: true
 
 spaces: false
 
-global:
-  v20: false
-
 storages:
   - posix
 

@@ -1,0 +1,11 @@
+scenarios:  # names of files in `environments/scenarios` directory without .yaml suffix
+  - 1op
+  - 2op
+initialVersions:
+  onezone: 19.02.5
+  oneprovider: 19.02.5
+  oneclient: 19.02.5
+targetVersions: 
+  onezone: develop
+  oneprovider: develop
+  oneclient: 20.02.3 
