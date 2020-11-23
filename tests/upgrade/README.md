@@ -42,6 +42,9 @@ targetVersions:
         - cluster-manager
   oneclient: 20.02.3
 ```
+
+Also `default` can be provided as a target version. In that case version is read from file in 
+`./artifacts_dir/` which is created there by running `onenv pull_artifacts` before tests.
   
 #### Scenarios
 This is a list of names of files in `environments/scenarios` directory without `.yaml` suffix. \

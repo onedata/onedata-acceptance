@@ -9,6 +9,9 @@ import inspect
 import os
 import sys
 import time
+import json
+
+from tests import IMAGES_CFG_PATHS, ARTIFACTS_DIR
 
 
 def config_file(relative_file_path):
@@ -108,3 +111,15 @@ def escape_path(path):
 def get_first_path_element(path):
     """Returns first element in path"""
     return next(elem for elem in path.split(os.path.sep) if elem)
+
+
+def get_image_for_service(service):
+    """Returns service image from file in ARTIFACTS_DIR"""
+    file_path = IMAGES_CFG_PATHS[service]
+    abs_file_path = os.path.join(ARTIFACTS_DIR, file_path)
+    try:
+        with open(abs_file_path, 'r') as images_cfg_file:
+            image = json.load(images_cfg_file).get('git-commit')
+            return image
+    except FileNotFoundError:
+        return None

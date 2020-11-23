@@ -119,10 +119,12 @@ PATCHES_DIR = {
     'upgrade': UPGRADE_TESTS_PATCHES_DIR
 }
 
-ARTIFACTS_DIR = 'artifacts_dir'
-ZONE_IMAGES_CFG_PATH = 'onezone_images/docker-dev-build-list.json'
-PROVIDER_IMAGES_CFG_PATH = 'oneprovider_images/docker-dev-build-list.json'
-CLIENT_IMAGES_CFG_PATH = 'oneclient_images/oc-docker-dev-build-list.json'
-LUMA_IMAGES_CFG_PATH = 'luma_images/luma-docker-build-report.json'
-REST_CLI_IMAGES_CFG_PATH = 'rest_cli_images/rest-cli-docker-build-report.json'
+IMAGES_CFG_PATHS = {
+    'onezone': 'onezone_images/docker-dev-build-list.json',
+    'oneprovider': 'oneprovider_images/docker-dev-build-list.json',
+    'oneclient': 'oneclient_images/oc-docker-dev-build-list.json',
+    'luma': 'luma_images/luma-docker-build-report.json',
+    'rest_cli': 'rest_cli_images/rest-cli-docker-build-report.json'
+}
 
+ARTIFACTS_DIR = 'artifacts_dir'

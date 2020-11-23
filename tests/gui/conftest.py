@@ -353,7 +353,7 @@ def displays():
 
 
 @fixture(scope='session')
-def clipboard():    
+def clipboard():
     """utility simulating os clipboard"""
     from platform import system as get_system
     from collections import namedtuple
@@ -387,10 +387,11 @@ def env_description_abs_path(request, env_description_file):
 
 
 @fixture(scope='session')
-def env_desc(env_description_abs_path, hosts, request, users, previous_env):
-    from tests.conftest import env_desc
-    return env_desc(env_description_abs_path, hosts, request, users,
-                    previous_env)
+def maybe_start_env(env_description_abs_path, hosts, request, env_desc, users, previous_env,
+                    test_config):
+    from tests.conftest import maybe_start_env
+    return maybe_start_env(env_description_abs_path, hosts, request, env_desc, users, previous_env,
+                           test_config)
 
 
 @fixture(scope='session')
@@ -406,7 +407,7 @@ def users():
 
 
 @fixture(scope='session')
-def base_url(hosts, env_desc):
+def base_url(hosts):
     return 'https://{}'.format(hosts['onezone']['hostname'])
 
 

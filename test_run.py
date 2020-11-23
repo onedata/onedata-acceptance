@@ -16,10 +16,9 @@ import platform
 import argparse
 from subprocess import *
 import xml.etree.ElementTree as ElementTree
-from tests import (ARTIFACTS_DIR, ZONE_IMAGES_CFG_PATH, PROVIDER_IMAGES_CFG_PATH,
-                   CLIENT_IMAGES_CFG_PATH, LUMA_IMAGES_CFG_PATH, REST_CLI_IMAGES_CFG_PATH)
 
 from bamboos.docker.environment import docker
+from tests.utils.path_utils import get_image_for_service
 
 
 PULL_DOCKER_IMAGE_RETRIES = 5
@@ -89,17 +88,6 @@ def env_errors_exists(testsuite):
                         re.I):
                 return True
     return False
-
-
-def parse_image_for_service(file_path):
-    abs_file_path = os.path.join(ARTIFACTS_DIR, file_path)
-    try:
-        with open(abs_file_path, 'r') as images_cfg_file:
-            images = json.load(images_cfg_file)
-            image = images.get('git-commit')
-            return image
-    except FileNotFoundError:
-        return None
 
 
 def clean_env(image, script_dir, kube_config_path, minikube_config_path,
@@ -192,35 +180,35 @@ def main():
         '--oz-image', '-zi',
         action='store',
         help='Onezone image to use in tests',
-        default=parse_image_for_service(ZONE_IMAGES_CFG_PATH),
+        default=get_image_for_service('onezone'),
         dest='oz_image')
 
     parser.add_argument(
         '--op-image', '-pi',
         action='store',
         help='Oneprovider image to use in tests',
-        default=parse_image_for_service(PROVIDER_IMAGES_CFG_PATH),
+        default=get_image_for_service('oneprovider'),
         dest='op_image')
 
     parser.add_argument(
         '--oc-image', '-ci',
         action='store',
         help='Oneclient image to use in tests',
-        default=parse_image_for_service(CLIENT_IMAGES_CFG_PATH),
+        default=get_image_for_service('oneclient'),
         dest='oc_image')
 
     parser.add_argument(
         '--rest-cli-image', '-ri',
         action='store',
         help='Rest cli image to use in tests',
-        default=parse_image_for_service(REST_CLI_IMAGES_CFG_PATH),
+        default=get_image_for_service('rest_cli'),
         dest='rest_cli_image')
 
     parser.add_argument(
         '--luma-image', '-li',
         action='store',
         help='Luma image to use in tests',
-        default=parse_image_for_service(LUMA_IMAGES_CFG_PATH),
+        default=get_image_for_service('luma'),
         dest='luma_image')
 
     parser.add_argument(

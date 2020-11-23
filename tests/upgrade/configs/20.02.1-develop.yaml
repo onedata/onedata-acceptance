@@ -5,7 +5,7 @@ initialVersions:
   onezone: 20.02.1
   oneprovider: 20.02.1
   oneclient: 20.02.1
-targetVersions: 
-  onezone: develop
-  oneprovider: develop
-  oneclient: 20.02.3
+targetVersions:
+  onezone: default
+  oneprovider: default
+  oneclient: default
