@@ -18,7 +18,7 @@ from tests.utils.onenv_utils import (init_helm, client_alias_to_pod_mapping,
                                      service_name_to_alias_mapping,
                                      OnenvError, run_onenv_command, run_command, clean_env)
 from tests.utils.luma_utils import (get_local_feed_luma_storages, get_all_spaces_details,
-                                    add_user_luma_mapping, add_spaces_luma_mapping)
+                                    add_user_luma_mapping, add_spaces_luma_mapping, gen_uid, gen_gid)
 from tests.utils.user_utils import User
 
 START_ENV_MAX_RETRIES = 3
@@ -27,7 +27,7 @@ ONE_ENV_CONTAINER_NAME = 'one-env'
 
 def start_environment(scenario_path, request, hosts, patch_path, users, test_config):
     attempts = 0
-    clean = False if request.config.getoption('--no-clean') else True
+    clean = not request.config.getoption('--no-clean')
     local = request.config.getoption('--local')
     up_args = parse_up_args(request, test_config)
     up_args.extend(['{}'.format(scenario_path)])
@@ -384,11 +384,3 @@ def run_kubectl_command(command, args=None, fail_with_error=True, return_output=
         cmd.extend(args)
     return run_command(cmd, fail_with_error=fail_with_error, return_output=return_output, 
                        verbose=verbose)
-
-
-def gen_uid(username):
-    return int(hashlib.sha1(username.encode('utf-8')).hexdigest(), 16) % 50000 + 10000
-
-
-def gen_gid(group_name):
-    return int(hashlib.sha1(group_name.encode('utf-8')).hexdigest(), 16) % 50000 + 10000

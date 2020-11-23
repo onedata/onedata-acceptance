@@ -218,7 +218,7 @@ def maybe_start_env(env_description_abs_path, hosts, request, env_desc, users, p
         start_test_env(request, test_type, env_desc, hosts, users, env_description_abs_path, test_config, previous_env)
 
     yield
-    clean = False if request.config.getoption('--no-clean') else True
+    clean = not request.config.getoption('--no-clean')
     if clean:
         clean_env()
 

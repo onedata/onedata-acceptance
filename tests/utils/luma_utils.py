@@ -15,7 +15,6 @@ from tests import PANEL_REST_PORT
 from tests.utils.rest_utils import get_panel_rest_path, http_post, http_put, http_get
 from tests.utils.http_exceptions import HTTPConflict
 from tests.utils.user_utils import AdminUser, User
-from tests.utils.environment_utils import gen_uid, gen_gid
 
 SpaceDetails = namedtuple("SpaceDetails", ['space_id', 'provider_ip', 'space_name', 'storage_id'])
 StorageDetails = namedtuple("StorageDetails", ['storage_id', 'provider_ip'])
@@ -135,3 +134,11 @@ def add_mapping(
     except HTTPConflict:
         # luma mapping for this entity was already added
         pass
+
+
+def gen_uid(username):
+    return int(hashlib.sha1(username.encode('utf-8')).hexdigest(), 16) % 50000 + 10000
+
+
+def gen_gid(group_name):
+    return int(hashlib.sha1(group_name.encode('utf-8')).hexdigest(), 16) % 50000 + 10000
