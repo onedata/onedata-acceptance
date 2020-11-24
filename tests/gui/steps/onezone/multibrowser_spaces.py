@@ -7,13 +7,10 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-from pytest_bdd import parsers
-
-from tests.utils.acceptance_utils import wt
-from tests.utils.utils import repeat_failed
-from tests.gui.utils.generic import parse_seq
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
+from tests.gui.utils.generic import parse_seq
+from tests.utils.bdd_utils import wt, parsers
+from tests.utils.utils import repeat_failed
 
 
 @wt(parsers.parse('user of {browser_id} sends invitation {item_type} '

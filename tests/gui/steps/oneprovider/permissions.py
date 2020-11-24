@@ -15,7 +15,7 @@ import pytest
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed
-from tests.utils.bdd_utils import wt, parsers, when, then
+from tests.utils.bdd_utils import wt, parsers
 
 
 def _get_index(selenium, browser_id, num, modals, numerals):
@@ -98,10 +98,8 @@ def select_acl_options(selenium, browser_id, option_list, modals, subject):
     _change_acl_options(option_list, subject, change)
 
 
-@when(parsers.parse('user of {browser_id} expands select list for {num} ACL '
-                    'record in edit permissions modal'))
-@then(parsers.parse('user of {browser_id} expands select list for {num} ACL '
-                    'record in edit permissions modal'))
+@wt(parsers.parse('user of {browser_id} expands select list for {num} ACL '
+                  'record in edit permissions modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def expand_acl_modal(selenium, browser_id, num, numerals, modals):
     n = _get_index(selenium, browser_id, num, modals, numerals)
@@ -142,10 +140,8 @@ def assert_subject_type(selenium, browser_id, modals, subject_type, num,
                                               f'type in {num} ACL record')
 
 
-@when(parsers.re('user of (?P<browser_id>\w+) sees that there is no subject in '
-                 '(?P<num>\w+) ACL record in edit permissions modal'))
-@then(parsers.re('user of (?P<browser_id>\w+) sees that there is no subject in '
-                 '(?P<num>\w+) ACL record in edit permissions modal'))
+@wt(parsers.re('user of (?P<browser_id>\w+) sees that there is no subject in '
+               '(?P<num>\w+) ACL record in edit permissions modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_lack_of_subject(selenium, browser_id, modals, num, numerals):
     n = _get_index(selenium, browser_id, num, modals, numerals)
@@ -155,12 +151,9 @@ def assert_lack_of_subject(selenium, browser_id, modals, num, numerals):
         f'There is subject named {perm.subject_name}')
 
 
-@when(parsers.re('user of (?P<browser_id>\w+) sees that subject (?P<name>name|'
-                 'type) is editable in (?P<num>\w+) ACL record in edit '
-                 'permissions modal'))
-@then(parsers.re('user of (?P<browser_id>\w+) sees that subject (?P<name>name|'
-                 'type) is editable in (?P<num>\w+) ACL record in edit '
-                 'permissions modal'))
+@wt(parsers.re('user of (?P<browser_id>\w+) sees that subject (?P<name>name|'
+               'type) is editable in (?P<num>\w+) ACL record in edit '
+               'permissions modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_acl_record_editable(selenium, browser_id, modals, num, numerals,
                                name):
@@ -174,12 +167,9 @@ def assert_acl_record_editable(selenium, browser_id, modals, num, numerals,
                            format(name, num))
 
 
-@when(parsers.re('user of (?P<browser_id>\w+) sees that subject (?P<name>name|'
-                 'type) is not editable in (?P<num>\w+) ACL record in edit '
-                 'permissions modal'))
-@then(parsers.re('user of (?P<browser_id>\w+) sees that subject (?P<name>name|'
-                 'type) is not editable in (?P<num>\w+) ACL record in edit '
-                 'permissions modal'))
+@wt(parsers.re('user of (?P<browser_id>\w+) sees that subject (?P<name>name|'
+               'type) is not editable in (?P<num>\w+) ACL record in edit '
+               'permissions modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_acl_record_not_editable(selenium, browser_id, modals, num, numerals,
                                    name):
@@ -271,10 +261,8 @@ def assert_subject_in_list_in_acl_record(selenium, browser_id, subjects, modals,
         assert subject in subject_list, f'{subject} not found in subjects list'
 
 
-@when(parsers.re('user of (?P<browser_id>\w+) does not see (?P<subjects>.*) '
-                 'in subject list in (?P<num>.*) ACL record'))
-@then(parsers.re('user of (?P<browser_id>\w+) does not see (?P<subjects>.*) '
-                 'in subject list in (?P<num>.*) ACL record'))
+@wt(parsers.re('user of (?P<browser_id>\w+) does not see (?P<subjects>.*) '
+               'in subject list in (?P<num>.*) ACL record'))
 def assert_subject_not_in_list_in_acl_record(selenium, browser_id, subjects,
                                              modals, num, numerals):
     n = _get_index(selenium, browser_id, num, modals, numerals)

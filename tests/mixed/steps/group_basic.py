@@ -12,10 +12,8 @@ from tests.mixed.utils.common import NoSuchClientException
 from tests.gui.meta_steps.onezone.groups import *
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>\w+) creates groups? '
-                 '(?P<group_list>.*) in "(?P<host>.*)" Onezone service'))
-@then(parsers.re('using (?P<client>.*), (?P<user>\w+) creates groups? '
-                 '(?P<group_list>.*) in "(?P<host>.*)" Onezone service'))
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) creates groups? '
+               '(?P<group_list>.*) in "(?P<host>.*)" Onezone service'))
 def create_groups(client, user, group_list, host, hosts, request,
                   users, selenium, oz_page):
     
@@ -27,12 +25,9 @@ def create_groups(client, user, group_list, host, hosts, request,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>\w+) sees( that)?'
-                 ' groups? named (?P<group_list>.*?)( ha(s|ve) appeared)? in'
-                 ' "(?P<host>.*)" Onezone service'))
-@then(parsers.re('using (?P<client>.*), (?P<user>\w+) sees( that)?'
-                 ' groups? named (?P<group_list>.*?)( ha(s|ve) appeared)? in'
-                 ' "(?P<host>.*)" Onezone service'))
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) sees( that)?'
+               ' groups? named (?P<group_list>.*?)( ha(s|ve) appeared)? in'
+               ' "(?P<host>.*)" Onezone service'))
 def assert_groups(client, user, group_list, host, hosts, users, selenium, 
                   oz_page):
 
@@ -44,12 +39,9 @@ def assert_groups(client, user, group_list, host, hosts, users, selenium,
         raise NoSuchClientException('Client: {} not found.'.format(client))
     
 
-@when(parsers.re('using (?P<client>.*), (?P<user>\w+) renames groups? '
-                 '(?P<group_list>.*)to (?P<new_names>.*) in '
-                 '"(?P<host>.*)" Onezone service'))
-@then(parsers.re('using (?P<client>.*), (?P<user>\w+) renames groups? '
-                 '(?P<group_list>.*) to (?P<new_names>.*) in '
-                 '"(?P<host>.*)" Onezone service'))
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) renames groups? '
+               '(?P<group_list>.*)to (?P<new_names>.*) in '
+               '"(?P<host>.*)" Onezone service'))
 def rename_groups(client, user, group_list, new_names, host, hosts, users, 
                   selenium, oz_page, popups):
     
@@ -62,12 +54,9 @@ def rename_groups(client, user, group_list, new_names, host, hosts, users,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>\w+) does not see '
-                 'groups? named (?P<group_list>.*) in "(?P<host>.*)" '
-                 'Onezone service'))
-@then(parsers.re('using (?P<client>.*), (?P<user>\w+) does not see '
-                 'groups? named (?P<group_list>.*) in "(?P<host>.*)" '
-                 'Onezone service'))
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) does not see '
+               'groups? named (?P<group_list>.*) in "(?P<host>.*)" '
+               'Onezone service'))
 def fail_to_see_groups(client, user, group_list, host, hosts, users, 
                        selenium, oz_page):
 
@@ -79,10 +68,8 @@ def fail_to_see_groups(client, user, group_list, host, hosts, users,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>\w+) removes groups? '
-                 '(?P<group_list>.*) in "(?P<host>.*)" Onezone service'))
-@then(parsers.re('using (?P<client>.*), (?P<user>\w+) removes groups? '
-                 '(?P<group_list>.*) in "(?P<host>.*)" Onezone service'))
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) removes groups? '
+               '(?P<group_list>.*) in "(?P<host>.*)" Onezone service'))
 def remove_groups(client, user, group_list, host, hosts, users, selenium, 
                   oz_page):
     
@@ -94,10 +81,8 @@ def remove_groups(client, user, group_list, host, hosts, users, selenium,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>\w+) leaves groups? '
-                 '(?P<group_list>.*) in "(?P<host>.*)" Onezone service'))
-@then(parsers.re('using (?P<client>.*), (?P<user>\w+) leaves groups? '
-                 '(?P<group_list>.*) in "(?P<host>.*)" Onezone service'))
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) leaves groups? '
+               '(?P<group_list>.*) in "(?P<host>.*)" Onezone service'))
 def leave_groups(client, user, group_list, host, hosts, users, selenium, 
                  oz_page, popups):
     
@@ -109,12 +94,9 @@ def leave_groups(client, user, group_list, host, hosts, users, selenium,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>\w+) adds groups? '
-                 '(?P<group_list>.*) as subgroup to group "(?P<parent>.*)" in'
-                 ' "(?P<host>.*)" Onezone service'))
-@then(parsers.re('using (?P<client>.*), (?P<user>\w+) adds groups? '
-                 '(?P<group_list>.*) as subgroup to group "(?P<parent>.*)" in'
-                 ' "(?P<host>.*)" Onezone service'))
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) adds groups? '
+               '(?P<group_list>.*) as subgroup to group "(?P<parent>.*)" in'
+               ' "(?P<host>.*)" Onezone service'))
 def add_subgroups(client, user, group_list, host, hosts, users, 
                   selenium, oz_page, tmp_memory, parent, displays,
                   clipboard, onepanel, popups):
@@ -129,12 +111,9 @@ def add_subgroups(client, user, group_list, host, hosts, users,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>\w+) removes subgroups? '
-                 '(?P<group_list>.*) from group "(?P<parent>.*)" in'
-                 ' "(?P<host>.*)" Onezone service'))
-@then(parsers.re('using (?P<client>.*), (?P<user>\w+) removes subgroups? '
-                 '(?P<group_list>.*) from group "(?P<parent>.*)" in'
-                 ' "(?P<host>.*)" Onezone service'))
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) removes subgroups? '
+               '(?P<group_list>.*) from group "(?P<parent>.*)" in'
+               ' "(?P<host>.*)" Onezone service'))
 def remove_subgroups(client, user, group_list, host, hosts, 
                      users, selenium, oz_page, tmp_memory, parent,
                      onepanel, popups):
@@ -148,12 +127,9 @@ def remove_subgroups(client, user, group_list, host, hosts,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>\w+) sees groups? '
-                 '(?P<group_list>.*) as subgroup to group "(?P<parent>.*)" '
-                 'in "(?P<host>.*)" Onezone service'))
-@then(parsers.re('using (?P<client>.*), (?P<user>\w+) sees groups? '
-                 '(?P<group_list>.*) as subgroup to group "(?P<parent>.*)" '
-                 'in "(?P<host>.*)" Onezone service'))
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) sees groups? '
+               '(?P<group_list>.*) as subgroup to group "(?P<parent>.*)" '
+               'in "(?P<host>.*)" Onezone service'))
 def assert_subgroups(client, user, group_list, host, hosts, 
                      users, selenium, parent, oz_page, onepanel):
     
@@ -166,12 +142,9 @@ def assert_subgroups(client, user, group_list, host, hosts,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>\w+) does not see groups? '
-                 '(?P<group_list>.*) as subgroup to group "(?P<parent>.*)"'
-                 ' in "(?P<host>.*)" Onezone service'))
-@then(parsers.re('using (?P<client>.*), (?P<user>\w+) does not see groups? '
-                 '(?P<group_list>.*) as subgroup to group "(?P<parent>.*)"'
-                 ' in "(?P<host>.*)" Onezone service'))
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) does not see groups? '
+               '(?P<group_list>.*) as subgroup to group "(?P<parent>.*)"'
+               ' in "(?P<host>.*)" Onezone service'))
 def fail_to_see_subgroups(client, user, group_list, host, hosts, 
                           users, selenium, oz_page, parent, onepanel):
     
@@ -185,12 +158,9 @@ def fail_to_see_subgroups(client, user, group_list, host, hosts,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user1>\w+) invites '
-                 '(?P<user2>\w+) to group "(?P<group>.*)" in "(?P<host>.*)" '
-                 'Onezone service'))
-@then(parsers.re('using (?P<client>.*), (?P<user1>\w+) invites '
-                 '(?P<user2>\w+) to group "(?P<group>.*)" in "(?P<host>.*)" '
-                 'Onezone service'))
+@wt(parsers.re(r'using (?P<client>.*), (?P<user1>\w+) invites '
+               r'(?P<user2>\w+) to group "(?P<group>.*)" in "(?P<host>.*)" '
+               r'Onezone service'))
 def invite_to_group(client, user1, user2, group, host, hosts,
                     users, selenium, oz_page, tmp_memory, displays,
                     clipboard, onepanel, popups):
@@ -207,10 +177,8 @@ def invite_to_group(client, user1, user2, group, host, hosts,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>\w+) joins group he '
-                 'was invited to in "(?P<host>.*)" Onezone service'))
-@then(parsers.re('using (?P<client>.*), (?P<user>\w+) joins group he '
-                 'was invited to in "(?P<host>.*)" Onezone service'))
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) joins group he '
+               'was invited to in "(?P<host>.*)" Onezone service'))
 def join_group(client, user, host, hosts, users, selenium, 
                oz_page, tmp_memory):
     
@@ -222,12 +190,9 @@ def join_group(client, user, host, hosts, users, selenium,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>\w+) fails to rename'
-                 ' groups? (?P<group_list>.*) to (?P<new_names>.*) in'
-                 ' "(?P<host>.*)" Onezone service'))
-@then(parsers.re('using (?P<client>.*), (?P<user>\w+) fails to rename'
-                 ' groups? (?P<group_list>.*) to (?P<new_names>.*) in'
-                 ' "(?P<host>.*)" Onezone service'))
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) fails to rename'
+               ' groups? (?P<group_list>.*) to (?P<new_names>.*) in'
+               ' "(?P<host>.*)" Onezone service'))
 def fail_to_rename_groups(client, user, group_list, host, hosts, users, 
                           selenium, oz_page, request, new_names, popups):
 
@@ -241,10 +206,8 @@ def fail_to_rename_groups(client, user, group_list, host, hosts, users,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>\w+) fails to remove'
-                 ' groups? (?P<group_list>.*?) in "(?P<host>.*)" Onezone service'))
-@then(parsers.re('using (?P<client>.*), (?P<user>\w+) fails to remove'
-                 ' groups? (?P<group_list>.*?) in "(?P<host>.*)" Onezone service'))
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) fails to remove'
+               ' groups? (?P<group_list>.*?) in "(?P<host>.*)" Onezone service'))
 def fail_to_remove_groups(client, user, group_list, request, host, hosts, users,
                           selenium, op_container, tmp_memory):
 
@@ -257,7 +220,7 @@ def fail_to_remove_groups(client, user, group_list, request, host, hosts, users,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@wt(parsers.re('using (?P<client>.*), (?P<user>\w+) fails to join'
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) fails to join'
                ' groups? (?P<group_list>.*?) as subgroup to group '
                '"(?P<parent>.*?)" in "(?P<host>.*)" Onezone service'))
 def fail_to_add_subgroups(client, user, group_list, host, hosts, users, 

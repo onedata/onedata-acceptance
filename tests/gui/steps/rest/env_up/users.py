@@ -6,28 +6,28 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-import yaml
 import json
 from functools import partial
 
-from pytest_bdd import given, parsers
+import yaml
 from pytest import skip
+from pytest_bdd import given
 
 from tests import OZ_REST_PORT, PANEL_REST_PORT
 from tests.gui.steps.rest.env_up.spaces import _rm_all_spaces_for_users_list
-from tests.utils.rest_utils import (http_get, http_post, http_delete,
-                                    http_patch, get_panel_rest_path,
-                                    get_zone_rest_path, http_put)
+from tests.utils.bdd_utils import parsers
 from tests.utils.http_exceptions import HTTPError, HTTPNotFound
-from tests.utils.utils import repeat_failed
+from tests.utils.rest_utils import (
+    http_get, http_post, http_delete, http_patch, get_panel_rest_path,
+    get_zone_rest_path, http_put)
 from tests.utils.user_utils import User
+from tests.utils.utils import repeat_failed
 
 
 @given(parsers.parse('initial users configuration in "{host}" '
                      'Onezone service:\n{config}'))
-def users_creation_with_cleanup(host, config, admin_credentials, onepanel_credentials,
-                   hosts, users, rm_users):
-
+def users_creation_with_cleanup(host, config, admin_credentials,
+                                onepanel_credentials, hosts, users, rm_users):
     users_db, zone_hostname = users_creation(host, config, admin_credentials,
                                              onepanel_credentials, hosts,
                                              users, rm_users)
@@ -40,9 +40,8 @@ def users_creation_with_cleanup(host, config, admin_credentials, onepanel_creden
 
 @given(parsers.parse('initial user for future delete configuration in "{host}" '
                      'Onezone service:\n{config}'))
-def users_creation(host, config, admin_credentials,
-                                     onepanel_credentials,
-                                     hosts, users, rm_users):
+def users_creation(host, config, admin_credentials, onepanel_credentials, hosts,
+                   users, rm_users):
     zone_hostname = hosts[host]['hostname']
     users_db = {}
     for user_config in yaml.load(config):

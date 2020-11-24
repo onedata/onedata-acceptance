@@ -8,7 +8,7 @@ __license__ = ("This software is released under the MIT license cited in "
 
 import time
 
-from pytest_bdd import given, parsers, when, then
+from tests.utils.bdd_utils import given, parsers, wt
 
 from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed
@@ -42,18 +42,14 @@ def g_wait_for_op_session_to_start(selenium, browser_id_list):
     _wait_for_op_session_to_start(selenium, browser_id_list)
 
 
-@when(parsers.re('users? of (?P<browser_id_list>.*?) sees that '
-                 'Oneprovider session has started'))
-@then(parsers.re('users? of (?P<browser_id_list>.*?) sees that '
-                 'Oneprovider session has started'))
+@wt(parsers.re('users? of (?P<browser_id_list>.*?) sees that '
+               'Oneprovider session has started'))
 def wt_wait_for_op_session_to_start(selenium, browser_id_list):
     _wait_for_op_session_to_start(selenium, browser_id_list)
 
 
-@when(parsers.parse('user of {browser_id} sees that provider name displayed in '
-                    'Oneprovider page is equal to the name of "{val}" provider'))
-@then(parsers.parse('user of {browser_id} sees that provider name displayed in '
-                    'Oneprovider page is equal to the name of "{val}" provider'))
+@wt(parsers.parse('user of {browser_id} sees that provider name displayed in '
+                  'Oneprovider page is equal to the name of "{val}" provider'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_provider_name_in_op(selenium, browser_id, val, op_container, hosts):
     val = hosts[val]['name']
@@ -63,10 +59,8 @@ def wt_assert_provider_name_in_op(selenium, browser_id, val, op_container, hosts
          'expected {}'.format(displayed_name, val))
 
 
-@when(parsers.parse('user of {browser_id} sees that provider name displayed in '
-                    'Oneprovider page is equal to "{val}"'))
-@then(parsers.parse('user of {browser_id} sees that provider name displayed in '
-                    'Oneprovider page is equal to "{val}"'))
+@wt(parsers.parse('user of {browser_id} sees that provider name displayed in '
+                  'Oneprovider page is equal to "{val}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_provider_name_in_op(selenium, browser_id, val, op_container, hosts):
     displayed_name = op_container(selenium[browser_id]).provider_name

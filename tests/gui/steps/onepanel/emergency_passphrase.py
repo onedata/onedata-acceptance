@@ -7,13 +7,12 @@ __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-from pytest_bdd import parsers
 
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.utils.acceptance_utils import wt
-from tests.utils.utils import repeat_failed
-from tests.gui.utils.generic import transform
 from tests.gui.steps.common.miscellaneous import _enter_text
+from tests.gui.utils.generic import transform
+from tests.utils.bdd_utils import wt, parsers
+from tests.utils.utils import repeat_failed
 
 
 @wt(parsers.parse('user of {browser_id} clicks on {button} button on '

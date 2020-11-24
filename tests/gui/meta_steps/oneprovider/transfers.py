@@ -7,8 +7,6 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-from pytest_bdd import parsers
-
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.modal import (wt_wait_for_modal_to_appear,
                                    wt_click_on_confirmation_btn_in_modal)
@@ -22,7 +20,7 @@ from tests.gui.steps.oneprovider.transfers import (
     wait_for_transfers_page_to_load)
 from tests.gui.steps.onezone.spaces import (
     click_on_option_of_space_on_left_sidebar_menu)
-from tests.utils.bdd_utils import wt
+from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 
 

@@ -7,15 +7,14 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-import tests.oneclient.steps.multi_file_steps
+from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.oneprovider.metadata import (
-    assert_metadata_in_op_gui,
-    set_metadata_in_op_gui, remove_all_metadata_in_op_gui,
-    assert_such_metadata_not_exist_in_op_gui)
+    assert_metadata_in_op_gui, set_metadata_in_op_gui,
+    remove_all_metadata_in_op_gui, assert_such_metadata_not_exist_in_op_gui)
+from tests.gui.meta_steps.oneprovider.permissions import *
 from tests.mixed.steps.oneclient.data_basic import *
 from tests.mixed.steps.rest.oneprovider.data import *
-from tests.gui.meta_steps.oneprovider.data import *
-from tests.gui.meta_steps.oneprovider.permissions import *
+from tests.utils.bdd_utils import wt, parsers
 from tests.utils.path_utils import get_first_path_element
 
 
@@ -23,7 +22,7 @@ def change_client_name_to_hostname(client_name):
     return client_name.replace('oneclient', 'client')
 
 
-@wt(parsers.re('using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to create '
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to create '
                'file named "(?P<name>.*)" in "(?P<space>.*)" in (?P<host>.*)'))
 def create_file_in_op(client, user, users, space, name, hosts, tmp_memory, host,
                       selenium, op_container, result, modals, oz_page):
@@ -44,7 +43,7 @@ def create_file_in_op(client, user, users, space, name, hosts, tmp_memory, host,
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
-@wt(parsers.re('using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to create '
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to create '
                'file named "(?P<name>.*)" using received token in '
                '"(?P<space>.*)" in (?P<host>.*)'))
 def create_file_in_op_with_token(client, user, users, space, name, hosts,
@@ -69,8 +68,8 @@ def create_file_in_op_with_token(client, user, users, space, name, hosts,
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
-@wt(parsers.re('using (?P<client>.*) with identity token, (?P<user>\w+) ('
-               '?P<result>\w+) to create file named "(?P<name>.*)" using '
+@wt(parsers.re(r'using (?P<client>.*) with identity token, (?P<user>\w+) ('
+               r'?P<result>\w+) to create file named "(?P<name>.*)" using '
                'received token in "(?P<space>.*)" in (?P<host>.*)'))
 def create_file_in_op_with_tokens(client, user, users, space, name, hosts,
                                   tmp_memory, host, result, request, clients,
@@ -96,7 +95,7 @@ def create_file_in_op_with_tokens(client, user, users, space, name, hosts,
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
-@wt(parsers.re('using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to create '
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to create '
                'directory named "/(?P<abs_path>.*)" in "(?P<space>.*)" in '
                '(?P<host>.*)'))
 def create_dir_in_op(client, user, users, space, abs_path, hosts, tmp_memory,
@@ -130,7 +129,7 @@ def create_dir_in_op(client, user, users, space, abs_path, hosts, tmp_memory,
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
-@wt(parsers.re('using web GUI, (?P<user>\w+) double clicks on item '
+@wt(parsers.re(r'using web GUI, (?P<user>\w+) double clicks on item '
                'named "(?P<item_name>.*)" in "(?P<space>.*)"'))
 def go_to_dir(selenium, user, item_name, tmp_memory, op_container, space, oz_page):
     go_to_filebrowser(selenium, user, oz_page, op_container,
@@ -138,7 +137,7 @@ def go_to_dir(selenium, user, item_name, tmp_memory, op_container, space, oz_pag
     double_click_on_item_in_file_browser(user, item_name, tmp_memory)
 
 
-@wt(parsers.re('using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to see '
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to see '
                'items? named (?P<name_list>.*) in "(?P<space>.*)" in '
                '(?P<host>.*)'))
 def see_item_in_op(client, user, users, result, name_list, space, host, hosts, 
@@ -158,9 +157,9 @@ def see_item_in_op(client, user, users, result, name_list, space, host, hosts,
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to '
-                 'remove directory \(rmdir\) named "(?P<name>.*)" in '
-                 '"(?P<space>.*)" in (?P<host>.*)'))
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to '
+               r'remove directory \(rmdir\) named "(?P<name>.*)" in '
+               '"(?P<space>.*)" in (?P<host>.*)'))
 def remove_empty_dir_in_op(client, user, users, result, space, name, hosts,
                            selenium, op_container, tmp_memory, host,
                            modals, oz_page):
@@ -179,9 +178,9 @@ def remove_empty_dir_in_op(client, user, users, result, space, name, hosts,
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>\w+) removes directory '
-                 '\(rmdir -p\) named "(?P<name>.*)" in "(?P<space>.*)" in '
-                 '(?P<host>.*)'))
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) removes directory '
+               r'\(rmdir -p\) named "(?P<name>.*)" in "(?P<space>.*)" in '
+               '(?P<host>.*)'))
 def remove_empty_dir_and_parents_in_op(client, user, users, space, name, hosts,
                                        selenium, op_container, tmp_memory,
                                        host, modals, oz_page):
@@ -202,9 +201,9 @@ def remove_empty_dir_and_parents_in_op(client, user, users, space, name, hosts,
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>\w+) removes directory '
-                 '\(rm -rf\) named "(?P<name>.*)" in "(?P<space>.*)" in '
-                 '(?P<host>.*)'))
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) removes directory '
+               r'\(rm -rf\) named "(?P<name>.*)" in "(?P<space>.*)" in '
+               '(?P<host>.*)'))
 def remove_dir_in_op(client, user, users, space, name, hosts, selenium,
                      op_container, tmp_memory, host, modals, oz_page):
     full_path = '{}/{}'.format(space, name)
@@ -222,7 +221,7 @@ def remove_dir_in_op(client, user, users, space, name, hosts, selenium,
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
-@wt(parsers.re('using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) '
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) '
                'to remove file named "(?P<name>.*)" in "(?P<space>.*)" in '
                '(?P<host>.*)'))
 def remove_file_in_op(client, user, name, space, host, users, hosts,
@@ -243,9 +242,9 @@ def remove_file_in_op(client, user, name, space, host, users, hosts,
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>\w+) '
-                 'renames item named "(?P<old_name>.*)" to "(?P<new_name>.*)" '
-                 'in "(?P<space>.*)" in (?P<host>.*)'))
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) '
+               r'renames item named "(?P<old_name>.*)" to "(?P<new_name>.*)" '
+               r'in "(?P<space>.*)" in (?P<host>.*)'))
 def rename_item_in_op(client, user, users, result, space, old_name, new_name,
                       hosts, tmp_memory, host, selenium, op_container, cdmi,
                       modals, oz_page):
@@ -266,8 +265,8 @@ def rename_item_in_op(client, user, users, result, space, old_name, new_name,
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
-@wt(parsers.re('using (?P<client>.*), (?P<user>\w+) sees that there '
-               '(is 1|are (?P<num>\d+)) items? in "(?P<space>.*)" in '
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) sees that there '
+               r'(is 1|are (?P<num>\d+)) items? in "(?P<space>.*)" in '
                '(?P<host>.*)'))
 def see_num_of_items_in_op(client, user, num, space, host, users,
                            hosts, tmp_memory, selenium, op_container,
@@ -289,9 +288,9 @@ def see_num_of_items_in_op(client, user, num, space, host, users,
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>\w+) writes "(?P<text>.*)" '
-                 'to file named "(?P<file_name>.*)" in '
-                 '"(?P<space>.*)" in (?P<host>.*)'))
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) writes "(?P<text>.*)" '
+               r'to file named "(?P<file_name>.*)" in '
+               r'"(?P<space>.*)" in (?P<host>.*)'))
 def write_to_file_in_op(client, user, text, file_name, space, host, users,
                         hosts, cdmi):
     full_path = '{}/{}'.format(space, file_name)
@@ -307,7 +306,7 @@ def write_to_file_in_op(client, user, text, file_name, space, host, users,
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
-@wt(parsers.re('using (?P<client>.*), (?P<user>\w+) reads "(?P<text>.*)" '
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) reads "(?P<text>.*)" '
                'from file named "(?P<file_name>.*)" in '
                '"(?P<space>.*)" in (?P<host>.*)'))
 def read_from_file_in_op(client, user, text, file_name, space, host, users,
@@ -330,9 +329,9 @@ def read_from_file_in_op(client, user, text, file_name, space, host, users,
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>\w+) appends "(?P<text>.*)" '
-                 'to file named "(?P<file_name>.*)" in '
-                 '"(?P<space>.*)" in (?P<host>.*)'))
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) appends "(?P<text>.*)" '
+               'to file named "(?P<file_name>.*)" in '
+               '"(?P<space>.*)" in (?P<host>.*)'))
 def append_to_file_in_op(client, user, text, file_name, space, host, users,
                          hosts, cdmi):
     full_path = '{}/{}'.format(space, file_name)
@@ -348,10 +347,10 @@ def append_to_file_in_op(client, user, text, file_name, space, host, users,
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>\w+) replaces '
-                 '"(?P<old_text>.*)" with "(?P<new_text>.*)" '
-                 'in file named "(?P<file_name>.*)" in '
-                 '"(?P<space>.*)" in (?P<host>.*)'))
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) replaces '
+               '"(?P<old_text>.*)" with "(?P<new_text>.*)" '
+               'in file named "(?P<file_name>.*)" in '
+               '"(?P<space>.*)" in (?P<host>.*)'))
 def replace_in_file_in_op(client, user, old_text, new_text, file_name, space,
                           host, users):
     full_path = '{}/{}'.format(space, file_name)
@@ -364,9 +363,9 @@ def replace_in_file_in_op(client, user, old_text, new_text, file_name, space,
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to move '
-                 '"(?P<src_path>.*)" to "(?P<dst_path>.*)" '
-                 'in (?P<host>.*)'))
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to move '
+               '"(?P<src_path>.*)" to "(?P<dst_path>.*)" '
+               'in (?P<host>.*)'))
 def move_file_in_op(client, user, result, src_path, dst_path, host, users,
                     cdmi, hosts):
     client_lower = client.lower()
@@ -381,10 +380,10 @@ def move_file_in_op(client, user, result, src_path, dst_path, host, users,
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>\w+) copies '
-                 '(?P<item_type>(directory|file)) named '
-                 '"(?P<src_path>.*)" to "(?P<dst_path>.*)" '
-                 'in (?P<host>.*)'))
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) copies '
+               '(?P<item_type>(directory|file)) named '
+               '"(?P<src_path>.*)" to "(?P<dst_path>.*)" '
+               'in (?P<host>.*)'))
 def copy_item_in_op(client, user, item_type, src_path, dst_path, host, users,
                     cdmi, hosts):
     client_lower = client.lower()
@@ -399,9 +398,9 @@ def copy_item_in_op(client, user, item_type, src_path, dst_path, host, users,
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>\w+) creates directory '
-                 'structure in "(?P<space>.*)" space on (?P<host>.*) '
-                 'as follow:\n(?P<config>(.|\s)*)'))
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) creates directory '
+               'structure in "(?P<space>.*)" space on (?P<host>.*) '
+               r'as follow:\n(?P<config>(.|\s)*)'))
 def create_directory_structure_in_op(selenium, user, op_container, config, space, 
                                      tmp_memory, users, hosts, host, client,
                                      modals, oz_page, popups):
@@ -423,7 +422,7 @@ def create_directory_structure_in_op(selenium, user, op_container, config, space
     tmp_memory['config'] = config
 
 
-@wt(parsers.re('using (?P<client>.*), (?P<user>\w+) sees that (?P<time1>.*) '
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) sees that (?P<time1>.*) '
                'time of item named "(?P<file_name>.*)" in "(?P<space>.*)" '
                'space is (?P<comparator>.*) '
                '(?P<time2>.*) time in (?P<host>.*)'))
@@ -443,7 +442,7 @@ def assert_time_relation(user, time1, file_name, space, comparator, time2,
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
-@wt(parsers.re('using (?P<client>.*), (?P<user>\w+) sees that (?P<time1>.*) '
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) sees that (?P<time1>.*) '
                'time of item named "(?P<file_name>.*)" is (?P<comparator>.*) '
                '(than|to) (?P<time2>.*) time of item named '
                '"(?P<file2_name>.*)" in "(?P<space>.*)" space in (?P<host>.*)'))
@@ -466,10 +465,10 @@ def assert_files_time_relation(user, time1, file_name, space, comparator, time2,
                                     f'for this assertion')
 
 
-@then(parsers.re('using (?P<client>.*), (?P<user>.*) sees that '
-                 '(?P<time_name>.*) time of item named "(?P<file_path>.*)" '
-                 'in current space is not earlier than '
-                 '(?P<time>[0-9]*) seconds ago in (?P<host>.*)'))
+@wt(parsers.re('using (?P<client>.*), (?P<user>.*) sees that '
+               '(?P<time_name>.*) time of item named "(?P<file_path>.*)" '
+               'in current space is not earlier than '
+               '(?P<time>[0-9]*) seconds ago in (?P<host>.*)'))
 def assert_mtime_not_earlier_than(client, file_path, selenium, user,
                                   op_container, time, tmp_memory):
     client_lower = client.lower()
@@ -480,7 +479,7 @@ def assert_mtime_not_earlier_than(client, file_path, selenium, user,
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
-@wt(parsers.re('using (?P<client>.*), (?P<user>\w+) sees that directory '
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) sees that directory '
                'structure in "(?P<space>.*)" space in (?P<host>.*) is as '
                'previously created'))
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -505,9 +504,9 @@ def assert_directory_structure_in_op(client, selenium, user, op_container, oz_pa
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
-@then(parsers.re('using (?P<client>.*), (?P<user>\w+) sees that directory '
-                 'structure in "(?P<space>.*)" space in (?P<host>.*) is as '
-                 'follow:\n(?P<config>(.|\s)*)'))
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) sees that directory '
+               r'structure in "(?P<space>.*)" space in (?P<host>.*) is as '
+               r'follow:\n(?P<config>(.|\s)*)'))
 def assert_directory_structure_in_op(client, selenium, user, op_container, oz_page,
                                      tmp_memory, tmpdir, space, host, spaces,
                                      hosts, users, config, modals):
@@ -527,9 +526,10 @@ def assert_directory_structure_in_op(client, selenium, user, op_container, oz_pa
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>\w+) sets new '
-                 '(?P<tab_name>.*) metadata: (?P<val>.*) for "(?P<path>.*?)"'
-                 ' (?P<item>file|directory) in space "(?P<space>.*)" in (?P<host>.*)'))
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) sets new '
+               '(?P<tab_name>.*) metadata: (?P<val>.*) for "(?P<path>.*?)"'
+               ' (?P<item>file|directory) in space "(?P<space>.*)" '
+               'in (?P<host>.*)'))
 def set_metadata_in_op(client, selenium, user, tab_name, val, cdmi, op_container, 
                        space, path, host, hosts, users, tmp_memory, modals,
                        oz_page, item):
@@ -553,7 +553,7 @@ def set_metadata_in_op(client, selenium, user, tab_name, val, cdmi, op_container
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
-@wt(parsers.re('using (?P<client>.*), (?P<user>\w+) sees that '
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) sees that '
                '(?P<tab_name>.*) metadata for "(?P<path>.*?)" '
                '(?P<item>file|directory) is '
                '(?P<val>.*) in space "(?P<space>.*)" in (?P<host>.*)'))
@@ -578,10 +578,10 @@ def assert_metadata_in_op(client, selenium, user, tab_name, val, cdmi, op_contai
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>\w+) removes all '
-                 '"(?P<path>.*)" (?P<item>file|directory) '
-                 'metadata in space "(?P<space>\w+)" '
-                 'in (?P<host>.*)'))
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) removes all '
+               r'"(?P<path>.*)" (?P<item>file|directory) '
+               r'metadata in space "(?P<space>\w+)" '
+               'in (?P<host>.*)'))
 def remove_all_metadata_in_op(client, selenium, user, users, space, op_container, 
                               tmp_memory, path, host, hosts, cdmi, oz_page,
                               modals, item):
@@ -601,11 +601,11 @@ def remove_all_metadata_in_op(client, selenium, user, users, space, op_container
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
-@then(parsers.re('using (?P<client>.*), (?P<user>\w+) sees that '
-                 '(?P<tab_name>.*) metadata for "(?P<path>.*)" '
-                 '(?P<item>file|directory) in space '
-                 '"(?P<space>.*)" does not contain (?P<val>.*) in '
-                 '(?P<host>.*)'))
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) sees that '
+               '(?P<tab_name>.*) metadata for "(?P<path>.*)" '
+               '(?P<item>file|directory) in space '
+               '"(?P<space>.*)" does not contain (?P<val>.*) in '
+               '(?P<host>.*)'))
 def assert_no_such_metadata_in_op(client, selenium, user, users, space, op_container,
                                   tmp_memory, path, host, hosts, cdmi, val, 
                                   tab_name, item, modals, oz_page):
@@ -628,8 +628,8 @@ def assert_no_such_metadata_in_op(client, selenium, user, users, space, op_conta
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>\w+) uploads "(?P<path>.*)" '
-                 'to "(?P<space>.*)" in (?P<host>.*)'))
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) uploads "(?P<path>.*)" '
+               'to "(?P<space>.*)" in (?P<host>.*)'))
 def upload_file_to_op(client, selenium, user, path, space, host, hosts,
                       tmp_memory, op_container, oz_page, popups):
     client_lower = client.lower()
@@ -641,10 +641,10 @@ def upload_file_to_op(client, selenium, user, path, space, host, hosts,
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
-@wt(parsers.re('using (?P<client>.*), (?P<user>\w+) sees that owner\'s UID '
-               'and GID for "(?P<path>.*)" in space "(?P<space>[\w-]+)" '
-               'are (?P<res>equal|not equal) to (?P<uid>[\d]+) and '
-               '(?P<gid>[\d]+) respectively'))
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) sees that owner\'s UID '
+               r'and GID for "(?P<path>.*)" in space "(?P<space>[\w-]+)" '
+               r'are (?P<res>equal|not equal) to (?P<uid>[\d]+) and '
+               r'(?P<gid>[\d]+) respectively'))
 def assert_file_stats(client, user, path, space, uid, gid, res, users):
     full_path = '{}/{}'.format(space, path)
     client_lower = client.lower()
@@ -656,8 +656,8 @@ def assert_file_stats(client, user, path, space, uid, gid, res, users):
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
-@wt(parsers.re('using (?P<client>.*), (?P<user>\w+) opens "(?P<path>.*)" '
-               'in space "(?P<space>[\w-]+)" in (?P<host>.*)'))
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) opens "(?P<path>.*)" '
+               r'in space "(?P<space>[\w-]+)" in (?P<host>.*)'))
 def assert_file_stats(client, user, path, space, users):
     full_path = '{}/{}'.format(space, path)
     client_lower = client.lower()

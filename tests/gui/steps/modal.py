@@ -15,7 +15,7 @@ from selenium.webdriver.common.keys import Keys
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.utils import Modals as modals
 from tests.gui.utils.generic import click_on_web_elem, transform
-from tests.utils.bdd_utils import given, wt, parsers, when, then
+from tests.utils.bdd_utils import given, wt, parsers
 from tests.utils.utils import repeat_failed
 
 
@@ -23,10 +23,8 @@ in_type_to_id = {'username': 'login-form-username-input',
                  'password': 'login-form-password-input'}
 
 
-@when(parsers.parse('user of {browser_id} sees that '
-                    'modal "Add storage" has appeared'))
-@then(parsers.parse('user of {browser_id} sees that '
-                    'modal "Add storage" has appeared'))
+@wt(parsers.parse('user of {browser_id} sees that '
+                  'modal "Add storage" has appeared'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wait_for_add_storage_modal_to_appear(selenium, browser_id, tmp_memory,
                                          modals):
@@ -35,30 +33,24 @@ def wait_for_add_storage_modal_to_appear(selenium, browser_id, tmp_memory,
     tmp_memory[browser_id]['window']['modal'] = modal
 
 
-@when(parsers.parse('user of {browser_id} copies token from '
-                    '"Add storage" modal'))
-@then(parsers.parse('user of {browser_id} copies token from '
-                    '"Add storage" modal'))
+@wt(parsers.parse('user of {browser_id} copies token from '
+                  '"Add storage" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def cp_token_from_add_storage_modal(browser_id, tmp_memory):
     modal = tmp_memory[browser_id]['window']['modal']
     modal.copy()
 
 
-@when(parsers.parse('user of {browser_id} generate another token '
-                    'in "Add storage" modal'))
-@then(parsers.parse('user of {browser_id} generate another token '
-                    'in "Add storage" modal'))
+@wt(parsers.parse('user of {browser_id} generate another token '
+                  'in "Add storage" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def gen_another_token_in_add_storage_modal(browser_id, tmp_memory):
     modal = tmp_memory[browser_id]['window']['modal']
     modal.generate_token()
 
 
-@when(parsers.parse('user of {browser_id} sees non-empty token '
-                    'in "Add storage" modal'))
-@then(parsers.parse('user of {browser_id} sees non-empty token '
-                    'in "Add storage" modal'))
+@wt(parsers.parse('user of {browser_id} sees non-empty token '
+                  'in "Add storage" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_non_empty_token_in_add_storage_modal(browser_id, tmp_memory):
     token = tmp_memory[browser_id]['window']['modal'].token
@@ -123,10 +115,8 @@ def _wait_for_modal_to_disappear(driver, browser_id, tmp_memory):
     tmp_memory[browser_id]['window']['modal'] = None
 
 
-@when(parsers.parse('user of {browser_id} sees that '
-                    'the modal has disappeared'))
-@then(parsers.parse('user of {browser_id} sees that '
-                    'the modal has disappeared'))
+@wt(parsers.parse('user of {browser_id} sees that '
+                  'the modal has disappeared'))
 def wt_wait_for_modal_to_disappear(selenium, browser_id, tmp_memory):
     driver = selenium[browser_id]
     _wait_for_modal_to_disappear(driver, browser_id, tmp_memory)
@@ -157,10 +147,8 @@ def _click_on_confirmation_btn_in_modal(driver, browser_id, button_name,
         raise RuntimeError('no button named {} found'.format(button_name))
 
 
-@when(parsers.re('user of (?P<browser_id>\w+) clicks "(?P<button_name>.*)" '
-                 '(confirmation )?button in displayed modal'))
-@then(parsers.re('user of (?P<browser_id>\w+) clicks "(?P<button_name>.*)" '
-                 '(confirmation )?button in displayed modal'))
+@wt(parsers.re(r'user of (?P<browser_id>\w+) clicks "(?P<button_name>.*)" '
+               '(confirmation )?button in displayed modal'))
 def wt_click_on_confirmation_btn_in_modal(selenium, browser_id, button_name,
                                           tmp_memory):
     driver = selenium[browser_id]
@@ -177,10 +165,8 @@ def g_click_on_confirmation_btn_in_modal(selenium, browser_id, button_name,
                                         tmp_memory)
 
 
-@when(parsers.parse('user of {browser_id} sees that message '
-                    'displayed in modal matches: {regexp}'))
-@then(parsers.parse('user of {browser_id} sees that message '
-                    'displayed in modal matches: {regexp}'))
+@wt(parsers.parse('user of {browser_id} sees that message '
+                  'displayed in modal matches: {regexp}'))
 def is_modal_msg_matching(browser_id, regexp, tmp_memory):
     modal = tmp_memory[browser_id]['window']['modal']
     msg = modal.find_element_by_css_selector('.modal-body .message-text').text
@@ -189,10 +175,8 @@ def is_modal_msg_matching(browser_id, regexp, tmp_memory):
         regexp=regexp, msg=msg)
 
 
-@when(parsers.parse('user of {browser_id} sees '
-                    'non-empty token in active modal'))
-@then(parsers.parse('user of {browser_id} sees '
-                    'non-empty token in active modal'))
+@wt(parsers.parse('user of {browser_id} sees '
+                  'non-empty token in active modal'))
 def get_token_from_modal(selenium, browser_id, tmp_memory):
     driver = selenium[browser_id]
     modal = tmp_memory[browser_id]['window']['modal']
@@ -203,10 +187,8 @@ def get_token_from_modal(selenium, browser_id, tmp_memory):
     tmp_memory[browser_id]['token'] = token
 
 
-@when(parsers.re(r'user of (?P<browser_id>.*?) clicks on '
-                 r'((?P<in_type>.*?) )?input box in active modal'))
-@then(parsers.re(r'user of (?P<browser_id>.*?) clicks on '
-                 r'((?P<in_type>.*?) )?input box in active modal'))
+@wt(parsers.re(r'user of (?P<browser_id>.*?) clicks on '
+               r'((?P<in_type>.*?) )?input box in active modal'))
 def activate_input_box_in_modal(browser_id, in_type, tmp_memory):
     modal = tmp_memory[browser_id]['window']['modal']
     css_path = 'input#{}'.format(in_type_to_id[in_type]) if in_type else 'input'
@@ -234,10 +216,8 @@ def click_on_button_in_active_modal(selenium, browser_id, tmp_memory, option):
                  '{} btn for displayed modal disabled'.format(option))
 
 
-@when(parsers.parse('user of {browser_id} sees that "{text}" option '
-                    'in modal is not selected'))
-@then(parsers.parse('user of {browser_id} sees that "{text}" option '
-                    'in modal is not selected'))
+@wt(parsers.parse('user of {browser_id} sees that "{text}" option '
+                  'in modal is not selected'))
 def assert_modal_option_is_not_selected(browser_id, text, tmp_memory):
     modal = tmp_memory[browser_id]['window']['modal']
     options = modal.find_elements_by_css_selector('.one-option-button',
@@ -249,10 +229,8 @@ def assert_modal_option_is_not_selected(browser_id, text, tmp_memory):
             assert '.oneicon-checkbox-empty' in checkbox_css, err_msg
 
 
-@when(parsers.parse('user of {browser_id} sees that "{text}" option '
-                    'in modal is not selected'))
-@then(parsers.parse('user of {browser_id} sees that "{text}" option '
-                    'in modal is not selected'))
+@wt(parsers.parse('user of {browser_id} sees that "{text}" option '
+                  'in modal is not selected'))
 def assert_modal_option_is_not_selected(browser_id, text, tmp_memory):
     modal = tmp_memory[browser_id]['window']['modal']
     options = modal.find_elements_by_css_selector('.one-option-button, '
@@ -264,10 +242,8 @@ def assert_modal_option_is_not_selected(browser_id, text, tmp_memory):
             assert 'oneicon-checkbox-empty' in checkbox_css, err_msg
 
 
-@when(parsers.parse('user of {browser_id} sees that "{btn_name}" item displayed '
-                    'in modal is disabled'))
-@then(parsers.parse('user of {browser_id} sees that "{btn_name}" item displayed '
-                    'in modal is disabled'))
+@wt(parsers.parse('user of {browser_id} sees that "{btn_name}" item displayed '
+                  'in modal is disabled'))
 def assert_btn_in_modal_is_disabled(browser_id, btn_name, tmp_memory):
     button_name = btn_name.lower()
     modal = tmp_memory[browser_id]['window']['modal']
@@ -280,10 +256,8 @@ def assert_btn_in_modal_is_disabled(browser_id, btn_name, tmp_memory):
         raise RuntimeError('no button named {} found'.format(button_name))
 
 
-@when(parsers.parse('user of {browser_id} selects "{text}" option '
-                    'in displayed modal'))
-@then(parsers.parse('user of {browser_id} selects "{text}" option '
-                    'in displayed modal'))
+@wt(parsers.parse('user of {browser_id} selects "{text}" option '
+                  'in displayed modal'))
 def select_option_with_text_in_modal(browser_id, text, tmp_memory):
     modal = tmp_memory[browser_id]['window']['modal']
     options = modal.find_elements_by_css_selector('.one-option-button, '
@@ -295,10 +269,8 @@ def select_option_with_text_in_modal(browser_id, text, tmp_memory):
                 checkbox.click()
 
 
-@when(parsers.parse('user of browser sees that "{btn_name}" item displayed '
-                    'in modal is enabled'))
-@then(parsers.parse('user of browser sees that "{btn_name}" item displayed '
-                    'in modal is enabled'))
+@wt(parsers.parse('user of browser sees that "{btn_name}" item displayed '
+                  'in modal is enabled'))
 def assert_btn_in_modal_is_enabled(browser_id, btn_name, tmp_memory):
     button_name = btn_name.lower()
     modal = tmp_memory[browser_id]['window']['modal']

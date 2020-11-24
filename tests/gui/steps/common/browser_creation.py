@@ -13,17 +13,15 @@ import re
 import time
 from itertools import cycle
 
-from pytest_bdd import given, parsers
 from selenium.webdriver import Firefox, FirefoxProfile
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 from tests import gui
-from tests.gui.utils.generic import parse_seq
 from tests.gui.conftest import SELENIUM_IMPLICIT_WAIT
+from tests.gui.utils.generic import parse_seq
 from tests.gui.utils.generic import redirect_display
-
+from tests.utils.bdd_utils import parsers, given
 
 Firefox.log_types = ['browser']
 

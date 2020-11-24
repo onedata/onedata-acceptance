@@ -75,7 +75,7 @@ def set_posix_permissions_in_op_gui(selenium, browser_id, space, path, perm,
                                           tmp_memory)
 
 
-@when(parsers.re('user of (?P<browser_id>\w+) adds ACE with (?P<priv>.*) '
+@wt(parsers.re('user of (?P<browser_id>\w+) adds ACE with (?P<priv>.*) '
                  'privileges? set for (?P<type>.*?) (?P<name>.*)'))
 def set_acl_entry_in_op_gui(selenium, browser_id, priv, name, modals):
     permission_type = 'acl'
@@ -101,8 +101,8 @@ def _set_acl_privilages_for_selected(browser_id, selenium, popups, tmp_memory,
                                           tmp_memory)
 
 
-@when(parsers.re('user of (?P<browser_id>\w+) sets selected items ACL '
-                 '(?P<priv>.*) privileges for (?P<type>.*) (?P<name>.*)'))
+@wt(parsers.re('user of (?P<browser_id>\w+) sets selected items ACL '
+               '(?P<priv>.*) privileges for (?P<type>.*) (?P<name>.*)'))
 def grant_acl_privileges_to_selected_in_filebrowser(selenium, browser_id, priv,
                                                     name, op_container,
                                                     tmp_memory, popups, oz_page,
@@ -113,9 +113,9 @@ def grant_acl_privileges_to_selected_in_filebrowser(selenium, browser_id, priv,
                                      priv, name, modals)
 
 
-@when(parsers.re('user of (?P<browser_id>\w+) sets (?P<item_list>.*) ACL '
-                 '(?P<priv>.*) privileges for (?P<type>.*) (?P<name>.*) '
-                 'in "(?P<space>.*)"'))
+@wt(parsers.re('user of (?P<browser_id>\w+) sets (?P<item_list>.*) ACL '
+               '(?P<priv>.*) privileges for (?P<type>.*) (?P<name>.*) '
+               'in "(?P<space>.*)"'))
 def grant_acl_privileges_in_op_gui(selenium, browser_id, item_list, priv, name,
                                    op_container, tmp_memory, popups, space,
                                    oz_page, modals):
@@ -137,8 +137,7 @@ def grant_acl_privileges_in_op_gui(selenium, browser_id, item_list, priv, name,
                                      priv, name, modals)
 
 
-@then(
-    parsers.re('user of (?P<browser_id>\w+) (?P<res>.*) to read "(?P<path>.*)"'
+@wt(parsers.re(r'user of (?P<browser_id>\w+) (?P<res>.*) to read "(?P<path>.*)"'
                ' ACL in "(?P<space>.*)"'))
 def read_items_acl(selenium, browser_id, path, tmp_memory, res, space, modals,
                    oz_page, op_container):
@@ -156,9 +155,9 @@ def read_items_acl(selenium, browser_id, path, tmp_memory, res, space, modals,
                                           tmp_memory)
 
 
-@then(parsers.re('user of (?P<browser_id>\w+) sees that (?P<path>.*?) in space '
-                 '"(?P<space>\w+)" (has|have) (?P<priv>.*) privileges? set for '
-                 '(?P<type>.*?) (?P<name>.*) in (?P<num>.*) ACL record'))
+@wt(parsers.re(r'user of (?P<browser_id>\w+) sees that (?P<path>.*?) in space '
+               r'"(?P<space>\w+)" (has|have) (?P<priv>.*) privileges? set for '
+               '(?P<type>.*?) (?P<name>.*) in (?P<num>.*) ACL record'))
 def assert_ace_in_op_gui(selenium, browser_id, priv, type, name, num, space,
                          path, tmp_memory, modals, numerals, oz_page,
                          op_container):
@@ -170,9 +169,8 @@ def assert_ace_in_op_gui(selenium, browser_id, priv, type, name, num, space,
                                           tmp_memory)
 
 
-@then(parsers.re(
-    'user of (?P<browser_id>\w+) (?P<res>.*) to change "(?P<path>.*)"'
-    ' ACL for (?P<name>.*) in "(?P<space>.*)"'))
+@wt(parsers.re(r'user of (?P<browser_id>\w+) (?P<res>.*) to change '
+               '"(?P<path>.*)" ACL for (?P<name>.*) in "(?P<space>.*)"'))
 def change_acl_privileges(selenium, browser_id, path, tmp_memory, res, space,
                           modals, op_container, oz_page, name):
     privileges_option_list = (

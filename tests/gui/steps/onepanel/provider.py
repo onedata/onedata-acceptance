@@ -8,22 +8,16 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 
-from pytest_bdd import when, then, parsers
-
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.generic import transform
+from tests.utils.bdd_utils import parsers, wt
 from tests.utils.utils import repeat_failed
-from tests.utils.acceptance_utils import wt
 
 
-@when(parsers.re('user of (?P<browser_id>.*?) sees that (?P<attr>ID|'
-                 'Provider name|Subdomain|Domain|URLs|Latitude|Longitude) '
-                 'attribute is equal to "(?P<val>.*?)" '
-                 'in Provider panel'))
-@then(parsers.re('user of (?P<browser_id>.*?) sees that (?P<attr>ID|'
-                 'Provider name|Subdomain|Domain|URLs|Latitude|Longitude) '
-                 'attribute is equal to "(?P<val>.*?)" '
-                 'in Provider panel'))
+@wt(parsers.re('user of (?P<browser_id>.*?) sees that (?P<attr>ID|'
+               'Provider name|Subdomain|Domain|URLs|Latitude|Longitude) '
+               'attribute is equal to "(?P<val>.*?)" '
+               'in Provider panel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_value_of_provider_attribute(selenium, browser_id,
                                           attr, val, onepanel):
@@ -34,14 +28,10 @@ def wt_assert_value_of_provider_attribute(selenium, browser_id,
          'provider\'s {}'.format(displayed_val, val, attr))
 
 
-@when(parsers.re('user of (?P<browser_id>.*?) sees that '
-                 '(?P<attr>Provider name|Domain) attribute is equal to the '
-                 '(?P<prop>name|hostname) of "(?P<host>.*?)" provider in '
-                 'Provider panel'))
-@then(parsers.re('user of (?P<browser_id>.*?) sees that '
-                 '(?P<attr>Provider name|Domain) attribute is '
-                 'equal to the (?P<prop>name|hostname) of "(?P<host>.*?)" '
-                 'provider in Provider panel'))
+@wt(parsers.re('user of (?P<browser_id>.*?) sees that '
+               '(?P<attr>Provider name|Domain) attribute is '
+               'equal to the (?P<prop>name|hostname) of "(?P<host>.*?)" '
+               'provider in Provider panel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_value_of_provider_attribute_is_known(selenium, browser_id, attr,
                                                    prop, host, hosts, onepanel):
@@ -53,12 +43,9 @@ def wt_assert_value_of_provider_attribute_is_known(selenium, browser_id, attr,
          'as provider\'s {}'.format(displayed_val, expected_val, attr))
 
 
-@when(parsers.re('user of (?P<browser_id>.*?) types "(?P<val>.*?)" to '
-                 '(?P<attr>Provider name|Subdomain|Domain|Latitude|Longitude) '
-                 'input box in modify provider details form in Provider panel'))
-@then(parsers.re('user of (?P<browser_id>.*?) types "(?P<val>.*?)" to '
-                 '(?P<attr>Provider name|Subdomain|Domain|Latitude|Longitude) '
-                 'input box in modify provider details form in Provider panel'))
+@wt(parsers.re('user of (?P<browser_id>.*?) types "(?P<val>.*?)" to '
+               '(?P<attr>Provider name|Subdomain|Domain|Latitude|Longitude) '
+               'input box in modify provider details form in Provider panel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_type_val_to_in_box_in_provider_details_form(selenium, browser_id,
                                                    val, attr, onepanel):
@@ -66,14 +53,10 @@ def wt_type_val_to_in_box_in_provider_details_form(selenium, browser_id,
     setattr(form, transform(attr), val)
 
 
-@when(parsers.re('user of (?P<browser_id>.*?) types (?P<property>name|'
-                 'hostname) of "(?P<host>.*?)" provider to '
-                 '(?P<attr>Provider name|Domain) input box in modify provider '
-                 'details form in Provider panel'))
-@then(parsers.re('user of (?P<browser_id>.*?) types (?P<property>name|'
-                 'hostname) of "(?P<host>.*?)" provider to '
-                 '(?P<attr>Provider name|Domain) input box in modify provider'
-                 ' details form in Provider panel'))
+@wt(parsers.re('user of (?P<browser_id>.*?) types (?P<property>name|'
+               'hostname) of "(?P<host>.*?)" provider to '
+               '(?P<attr>Provider name|Domain) input box in modify provider'
+               ' details form in Provider panel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_type_host_domain_to_in_box_in_provider_details_form(selenium, browser_id,
                                                            property, host, attr,
@@ -82,10 +65,8 @@ def wt_type_host_domain_to_in_box_in_provider_details_form(selenium, browser_id,
     setattr(form, transform(attr), hosts[host][property])
 
 
-@when(parsers.parse('user of {browser_id} clicks on Modify provider details '
-                    'button in provider details form in Provider panel'))
-@then(parsers.parse('user of {browser_id} clicks on Modify provider details '
-                    'button in provider details form in Provider panel'))
+@wt(parsers.parse('user of {browser_id} clicks on Modify provider details '
+                  'button in provider details form in Provider panel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_click_on_btn_in_modify_provider_detail_form(selenium, browser_id, onepanel):
     driver = selenium[browser_id]
@@ -113,8 +94,7 @@ def wt_click_on_discard_btn_in_domain_change_modal(selenium, browser_id, modals)
             raise
 
 
-@when(parsers.parse('user of {browser_id} activates Request a subdomain toggle'))
-@then(parsers.parse('user of {browser_id} activates Request a subdomain toggle'))
+@wt(parsers.parse('user of {browser_id} activates Request a subdomain toggle'))
 def activate_request_subdomain_toggle(selenium, browser_id, onepanel):
     (onepanel(selenium[browser_id]).content
                                    .deployment
@@ -123,8 +103,7 @@ def activate_request_subdomain_toggle(selenium, browser_id, onepanel):
                                    .check())
 
 
-@when(parsers.parse('user of {browser_id} deactivates Request a subdomain toggle'))
-@then(parsers.parse('user of {browser_id} deactivates Request a subdomain toggle'))
+@wt(parsers.parse('user of {browser_id} deactivates Request a subdomain toggle'))
 def deactivate_request_subdomain_toggle(selenium, browser_id, onepanel):
     (onepanel(selenium[browser_id]).content
                                    .deployment
@@ -139,8 +118,7 @@ matcher_wt_enter_test_domain_in_deployment_step2 = \
                'details form in Provider panel')
 
 
-@when(matcher_wt_enter_test_domain_in_deployment_step2)
-@then(matcher_wt_enter_test_domain_in_deployment_step2)
+@wt(matcher_wt_enter_test_domain_in_deployment_step2)
 def wt_enter_test_domain_in_deployment_step2(selenium, browser_id, provider,
                                              hosts, onepanel):
     onepanel(selenium[browser_id]).content.provider.form.domain = \
@@ -153,8 +131,7 @@ matcher_wt_assert_value_of_provider_domain = \
                'Provider panel')
 
 
-@when(matcher_wt_assert_value_of_provider_domain)
-@then(matcher_wt_assert_value_of_provider_domain)
+@wt(matcher_wt_assert_value_of_provider_domain)
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_value_of_provider_domain(selenium, browser_id, provider, hosts,
                                        onepanel):

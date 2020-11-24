@@ -7,14 +7,14 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-from tests.utils.bdd_utils import parsers, given
-from tests.utils.acceptance_utils import *
-
+from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.common.url import refresh_site
 from tests.gui.steps.onepanel.spaces import (
     wt_clicks_on_understand_risk_in_cease_support_modal,
     wt_clicks_on_btn_in_cease_support_modal)
+from tests.gui.steps.onezone.clusters import (
+    copy_registration_cluster_token, click_button_in_cluster_page)
 from tests.gui.steps.onezone.providers import (
     assert_provider_hostname_matches_test_hostname,
     assert_provider_hostname_matches_known_domain,
@@ -23,9 +23,7 @@ from tests.gui.steps.onezone.providers import (
     click_on_menu_button_of_provider_on_providers_list,
     click_on_cease_support_in_menu_of_provider_on_providers_list)
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
-from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
-from tests.gui.steps.onezone.clusters import (copy_registration_cluster_token,
-                                              click_button_in_cluster_page)
+from tests.utils.bdd_utils import parsers, wt
 
 
 def assert_provider_has_name_and_hostname_in_oz_gui(selenium, user, oz_page,

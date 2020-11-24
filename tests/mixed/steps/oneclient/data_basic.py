@@ -7,18 +7,18 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-import os
 import json
+import os
 from functools import partial
 
 import yaml
 
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.utils.generic import parse_seq
-from tests.mixed.utils.data import (check_files_tree, create_content,
-                                    assert_ace, get_acl_metadata)
-from tests.oneclient.steps import (multi_dir_steps, multi_reg_file_steps,
-                                   multi_file_steps)
+from tests.mixed.utils.data import (
+    check_files_tree, create_content, assert_ace, get_acl_metadata)
+from tests.oneclient.steps import (
+    multi_dir_steps, multi_reg_file_steps, multi_file_steps)
 from tests.utils.acceptance_utils import failure
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.client_utils import mount_users

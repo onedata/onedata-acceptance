@@ -8,10 +8,9 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 import yaml
-from pytest_bdd import parsers
 
-import time
-
+from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
+from tests.gui.meta_steps.onezone.common import search_for_members
 from tests.gui.steps.modal import wt_wait_for_modal_to_appear
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
@@ -20,14 +19,11 @@ from tests.gui.steps.onezone.discovery import \
 from tests.gui.steps.onezone.groups import go_to_group_subpage
 from tests.gui.steps.onezone.spaces import (
     click_on_option_of_space_on_left_sidebar_menu,
-    assert_new_created_space_has_appeared_on_spaces,
     click_element_on_lists_on_left_sidebar_menu)
-from tests.gui.utils.generic import parse_seq
-from tests.utils.utils import repeat_failed
-from tests.utils.bdd_utils import wt
-from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.utils.common.modals import Modals as modals
-from tests.gui.meta_steps.onezone.common import search_for_members
+from tests.gui.utils.generic import parse_seq
+from tests.utils.bdd_utils import wt, parsers
+from tests.utils.utils import repeat_failed
 
 MENU_ELEM_TO_TAB_NAME = {'space': 'data', 'harvester': 'discovery'}
 
