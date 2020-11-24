@@ -113,7 +113,7 @@ def get_first_path_element(path):
     return next(elem for elem in path.split(os.path.sep) if elem)
 
 
-def get_image_for_service(service):
+def get_default_image_for_service(service):
     """Returns service image from file in ARTIFACTS_DIR"""
     file_path = IMAGES_CFG_PATHS[service]
     abs_file_path = os.path.join(ARTIFACTS_DIR, file_path)

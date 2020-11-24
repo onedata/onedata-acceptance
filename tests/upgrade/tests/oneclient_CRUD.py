@@ -1,4 +1,4 @@
-""" This module contains CRUD upgrade tests
+""" This module contains tests of CRUD operations after environment upgrade
 """
 __author__ = "Michal Stanisz"
 __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"

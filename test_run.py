@@ -18,7 +18,7 @@ from subprocess import *
 import xml.etree.ElementTree as ElementTree
 
 from bamboos.docker.environment import docker
-from tests.utils.path_utils import get_image_for_service
+from tests.utils.path_utils import get_default_image_for_service
 
 
 PULL_DOCKER_IMAGE_RETRIES = 5
@@ -180,35 +180,35 @@ def main():
         '--oz-image', '-zi',
         action='store',
         help='Onezone image to use in tests',
-        default=get_image_for_service('onezone'),
+        default=get_default_image_for_service('onezone'),
         dest='oz_image')
 
     parser.add_argument(
         '--op-image', '-pi',
         action='store',
         help='Oneprovider image to use in tests',
-        default=get_image_for_service('oneprovider'),
+        default=get_default_image_for_service('oneprovider'),
         dest='op_image')
 
     parser.add_argument(
         '--oc-image', '-ci',
         action='store',
         help='Oneclient image to use in tests',
-        default=get_image_for_service('oneclient'),
+        default=get_default_image_for_service('oneclient'),
         dest='oc_image')
 
     parser.add_argument(
         '--rest-cli-image', '-ri',
         action='store',
         help='Rest cli image to use in tests',
-        default=get_image_for_service('rest_cli'),
+        default=get_default_image_for_service('rest_cli'),
         dest='rest_cli_image')
 
     parser.add_argument(
         '--luma-image', '-li',
         action='store',
         help='Luma image to use in tests',
-        default=get_image_for_service('luma'),
+        default=get_default_image_for_service('luma'),
         dest='luma_image')
 
     parser.add_argument(

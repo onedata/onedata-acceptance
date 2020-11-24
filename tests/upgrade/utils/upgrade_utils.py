@@ -13,7 +13,7 @@ import requests
 from tests import OZ_REST_PORT
 from tests.utils.http_exceptions import HTTPError
 from tests.utils.onenv_utils import run_onenv_command
-from tests.utils.path_utils import get_image_for_service
+from tests.utils.path_utils import get_default_image_for_service
 from tests.utils.rest_utils import get_zone_rest_path, http_get
 from tests.utils.user_utils import AdminUser
 from requests.exceptions import ConnectTimeout
@@ -88,25 +88,38 @@ def upgrade_service(service_name, admin_user, hosts, version):
             run_upgrade_command(pod_name, service_name, version)
 
     if service_name == 'onezone':
+        # etc hosts update needed so it is possible to connect
+        # to Onezone during env ready verification
         update_etc_hosts()
     verify_env_ready(admin_user, hosts)
 
 
 def run_upgrade_command(pod_name, service, version):
+    cmd = [pod_name]
     if isinstance(version, str):
-        if version == 'default':
-            image = get_image_for_service(service)
-        else:
-            image = "docker.onedata.org/{}-dev:{}".format(service, version)
-        run_onenv_command('upgrade', [pod_name, '-i', image])
-        return
+        cmd.extend(prepare_image_upgrade_command(service, version))
+        run_onenv_command('upgrade', cmd)
+    else:
+        cmd.extend(prepare_sources_upgrade_command(service, version))
+        run_onenv_command('upgrade', cmd)
+
+
+def prepare_image_upgrade_command(service, version):
+    if version == 'default':
+        image = get_default_image_for_service(service)
+    else:
+        image = "docker.onedata.org/{}-dev:{}".format(service, version)
+    return ['i-', image]
+
+
+def prepare_sources_upgrade_command(service, version):
     image = "docker.onedata.org/{}-dev:{}".format(service, version['sources']['baseImage'])
     components = []
     for component in version['sources']['components']:
         components.append('--{}'.format(component))
-    cmd = [pod_name, '-i', image, '--sources-path', '.']
+    cmd = ['-i', image, '--sources-path', '.']
     cmd.extend(components)
-    run_onenv_command('upgrade', cmd)
+    return cmd
 
 
 def verify_env_ready(admin_user, hosts):

@@ -1,6 +1,7 @@
 #Acceptance tests of upgrade procedure
 
-Upgrade acceptance tests can be run using `test_run.py` with option `--test-type` set to `upgrade`.\
+Upgrade acceptance tests can be run using `test_run.py` with option `--test-type` set to `upgrade`.
+
 Example invocation:
 ```bash
 ./test_run.py --test-type upgrade -vvv --test-dir tests/upgrade/upgrade_meta_test.py -i onedata/acceptance_mixed:v8 --timeout 420 --env-file=tests/upgrade/configs/test_config.yaml
@@ -47,7 +48,13 @@ Also `default` can be provided as a target version. In that case version is read
 `./artifacts_dir/` which is created there by running `onenv pull_artifacts` before tests.
   
 #### Scenarios
-This is a list of names of files in `environments/scenarios` directory without `.yaml` suffix. \
+This is a list of names of files in `environments/scenarios` directory without `.yaml` suffix.
+
+```yaml
+scenarios: 
+  - 1op
+  - 2op
+```
 Tests are run in a following sequence: 
 ```
   - start environment specified in **first** scenario in version provided in initialVersions
