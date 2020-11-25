@@ -21,7 +21,6 @@ TEST_DIR = os.path.join(PROJECT_DIR, 'tests')
 UTILS_DIR = os.path.join(TEST_DIR, 'utils')
 
 ONECLIENT_DIR = os.path.join(TEST_DIR, 'oneclient')
-ONECLIENT_TEST_CONFIG = os.path.join(ONECLIENT_DIR, 'test_config.yaml')
 ONECLIENT_ENV_DIR = os.path.join(ONECLIENT_DIR, 'environments')
 ONECLIENT_SCENARIO_DIR = os.path.join(ONECLIENT_ENV_DIR, 'scenarios')
 ONECLIENT_PATCHES_DIR = os.path.join(ONECLIENT_ENV_DIR, 'patches')
@@ -47,14 +46,12 @@ PERFORMANCE_LOGDIR = os.path.join(PERFORMANCE_DIR, 'logs')
 PERFORMANCE_ENV_DIR = os.path.join(PERFORMANCE_DIR, 'environments')
 PERFORMANCE_SCENARIO_DIR = os.path.join(PERFORMANCE_ENV_DIR, 'scenarios')
 PERFORMANCE_PATCHES_DIR = os.path.join(PERFORMANCE_ENV_DIR, 'patches')
-PERFORMANCE_TEST_CONFIG = os.path.join(PERFORMANCE_DIR, 'test_config.yaml')
 
 UPGRADE_TESTS_DIR = os.path.join(TEST_DIR, 'upgrade')
 UPGRADE_TESTS_LOGDIR = os.path.join(UPGRADE_TESTS_DIR, 'logs')
 UPGRADE_TESTS_ENV_DIR = os.path.join(UPGRADE_TESTS_DIR, 'environments')
 UPGRADE_TESTS_SCENARIO_DIR = os.path.join(UPGRADE_TESTS_ENV_DIR, 'scenarios')
 UPGRADE_TESTS_PATCHES_DIR = os.path.join(UPGRADE_TESTS_ENV_DIR, 'patches')
-UPGRADE_TESTS_CONFIG = os.path.join(UPGRADE_TESTS_DIR, 'test_config.yaml')
 
 UPLOAD_FILES_DIR = os.path.join(GUI_DIR, 'upload_files')
 
@@ -97,11 +94,6 @@ LOGDIRS = {
     'onedata_fs': ONEDATA_FS_LOGDIR,
     'performance': PERFORMANCE_LOGDIR,
     'upgrade': UPGRADE_TESTS_LOGDIR
-}
-
-CONFIG_FILES = {
-    'oneclient': ONECLIENT_TEST_CONFIG,
-    'performance': PERFORMANCE_TEST_CONFIG
 }
 
 SCENARIO_DIRS = {

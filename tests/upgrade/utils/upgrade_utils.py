@@ -109,7 +109,7 @@ def prepare_image_upgrade_command(service, version):
         image = get_default_image_for_service(service)
     else:
         image = "docker.onedata.org/{}-dev:{}".format(service, version)
-    return ['i-', image]
+    return ['-i', image]
 
 
 def prepare_sources_upgrade_command(service, version):

@@ -16,7 +16,7 @@ from typing import Dict, List
 from tests import PANEL_REST_PORT
 from tests.utils.onenv_utils import (init_helm, client_alias_to_pod_mapping,
                                      service_name_to_alias_mapping,
-                                     OnenvError, run_onenv_command, run_command, clean_env)
+                                     OnenvError, run_onenv_command, run_command)
 from tests.utils.luma_utils import (get_local_feed_luma_storages, get_all_spaces_details,
                                     add_user_luma_mapping, add_spaces_luma_mapping, gen_uid, gen_gid)
 from tests.utils.user_utils import User
@@ -111,6 +111,8 @@ def configure_os(scenario_path: str, dep_status) -> None:
     with open(scenario_path, 'r') as env_file:
         env_cfg = yaml.load(env_file)
     os_configs = env_cfg.get('os-config')
+    if not os_configs:
+        return
 
     for pod_name, pod_cfg in pods_cfg.items():
         service_type = pod_cfg['service-type']
@@ -244,8 +246,7 @@ def parse_up_args(request, test_config):
     if pull_only_missing_images:
         up_args.append('--no-pull')
 
-    test_type = request.config.option.test_type
-    if test_type == 'upgrade':
+    if test_config:
         if not oz_image:
             oz_version = test_config['initialVersions']['onezone']
             up_args.extend(['-zi', 'docker.onedata.org/onezone-dev:{}'.format(oz_version)])
@@ -384,3 +385,7 @@ def run_kubectl_command(command, args=None, fail_with_error=True, return_output=
         cmd.extend(args)
     return run_command(cmd, fail_with_error=fail_with_error, return_output=return_output, 
                        verbose=verbose)
+
+
+def clean_env():
+    run_onenv_command('clean', ['-a', '-s', '-d', '-v'])

@@ -53,10 +53,6 @@ def run_command(cmd, fail_with_error=True, return_output=True, cwd=None, verbose
     return output if return_output else proc.returncode
 
 
-def clean_env():
-    run_onenv_command('clean', ['-a', '-s', '-d', '-v'])
-
-
 # TODO: After resolving VFS-4820 all this function can be imported from
 # one-env submodule
 def client_alias_to_pod_mapping():

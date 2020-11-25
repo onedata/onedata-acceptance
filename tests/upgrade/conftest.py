@@ -10,6 +10,7 @@ __license__ = "This software is released under the MIT license cited in " \
 import pytest
 
 from tests.conftest import export_logs
+from tests.utils.environment_utils import clean_env
 from tests.upgrade.utils.upgrade_utils import UpgradeTestsController
 
 
@@ -22,3 +23,4 @@ def tests_controller(test_config, hosts, clients, request, users, env_desc, scen
 def finalize(request, env_description_abs_path):
     yield
     export_logs(request, env_description_abs_path)
+    clean_env()

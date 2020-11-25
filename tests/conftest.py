@@ -11,12 +11,11 @@ import re
 import yaml
 import pytest
 
-from tests import (CONFIG_FILES, ENV_DIRS, SCENARIO_DIRS,
-                   PATCHES_DIR, LOGDIRS)
-from tests.utils.environment_utils import start_environment
+from tests import (ENV_DIRS, SCENARIO_DIRS, PATCHES_DIR, LOGDIRS)
+from tests.utils.environment_utils import start_environment, clean_env
 from tests.utils.path_utils import (get_file_name, absolute_path_to_env_file,
                                     make_logdir)
-from tests.utils.onenv_utils import run_onenv_command, clean_env
+from tests.utils.onenv_utils import run_onenv_command
 from tests.utils.user_utils import AdminUser
 
 
@@ -74,7 +73,7 @@ def pytest_generate_tests(metafunc):
     if metafunc.config.option.test_type:
         test_type = metafunc.config.option.test_type
 
-        if test_type in ['gui', 'mixed', 'onedata_fs']:
+        if test_type in ['gui', 'mixed', 'onedata_fs', 'oneclient', 'performance']:
             if test_type == 'gui':
                 default_env_file = '1oz_1op_deployed'
             else:
@@ -87,23 +86,6 @@ def pytest_generate_tests(metafunc):
             else:
                 metafunc.parametrize('env_description_file', [default_env_file],
                                      scope='session')
-
-        elif test_type in ['oneclient', 'performance']:
-            env_file = metafunc.config.getoption('env_file')
-            if env_file:
-                metafunc.parametrize('env_description_file', [env_file],
-                                     scope='module')
-            else:
-                with open(CONFIG_FILES.get(test_type), 'r') as f:
-                    test_config = yaml.load(f)
-
-                test_file = metafunc.module.__name__.split('.')[-1]
-                if test_file in test_config:
-                    metafunc.parametrize(
-                        'env_description_file',
-                        [env_file for env_file in test_config[test_file]],
-                        scope='module'
-                    )
         elif test_type in ['upgrade']:
             env_file = metafunc.config.getoption('env_file')
             if env_file:
@@ -113,30 +95,23 @@ def pytest_generate_tests(metafunc):
                 metafunc.parametrize(
                     'env_description_file',
                     [env_file for env_file in scenarios],
-                    scope='module'
+                    scope='session'
                 )
             else:
                 raise RuntimeError("In upgrade tests --env-file option must be provided")
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope='session')
 def test_config(request):
     """Loaded yaml with test config"""
-    test_type = request.config.option.test_type
-    if test_type in ['gui', 'mixed']:
-        return {}
+    test_type = get_test_type(request)
     if test_type == 'upgrade':
         with open(request.config.option.env_file, 'r') as f:
-            config = yaml.load(f)
-        return config
-    else:
-        with open(CONFIG_FILES.get(test_type), 'r') as f:
-            config = yaml.load(f)
-        test_file = request.module.__name__.split('.')[-1]
-        return config[test_file]
+            return yaml.load(f)
+    return {}
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope='session')
 def users():
     """Dictionary with users credentials"""
     return {'admin': AdminUser('admin', 'password')}
@@ -178,7 +153,7 @@ def context():
     return {}
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope='session')
 def hosts():
     """Dict to use to store information about services."""
     return {}
@@ -191,14 +166,14 @@ def tokens():
     return {}
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope='session')
 def env_description_abs_path(request, env_description_file):
     env_dir = ENV_DIRS.get(get_test_type(request))
     absolute_path = absolute_path_to_env_file(env_dir, env_description_file)
     return absolute_path
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope='session')
 def env_desc(env_description_abs_path):
     with open(env_description_abs_path, 'r') as env_desc_file:
         return yaml.load(env_desc_file)
@@ -209,18 +184,16 @@ def previous_env():
     return {}
 
 
-@pytest.fixture(scope='module', autouse=True)
-def maybe_start_env(env_description_abs_path, hosts, request, env_desc, users, previous_env,
+@pytest.fixture(scope='session', autouse=True)
+def maybe_start_env(env_description_abs_path, hosts, request, env_desc, users, previous_env, 
                     test_config):
     test_type = get_test_type(request)
 
     if _should_start_new_env(env_description_abs_path, previous_env):
-        start_test_env(request, test_type, env_desc, hosts, users, env_description_abs_path, test_config, previous_env)
+        start_test_env(request, test_type, env_desc, hosts, users, env_description_abs_path,
+                       test_config, previous_env)
 
-    yield
-    clean = not request.config.getoption('--no-clean')
-    if clean:
-        clean_env()
+    return
 
 
 def _should_start_new_env(env_description_abs_path, previous_env):
@@ -274,7 +247,7 @@ def start_test_env(request, test_type, env_desc, hosts, users, env_description_a
         previous_env['started'] = True
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope='session')
 def scenario_abs_path(request, env_desc):
     scenario = env_desc.get('scenario')
     scenarios_dir_path = SCENARIO_DIRS.get(get_test_type(request))
@@ -290,7 +263,7 @@ def export_logs(request, env_description_abs_path=None):
     test_type = get_test_type(request)
     logdir_path = LOGDIRS.get(test_type)
 
-    if test_type in ['oneclient', 'upgrade']:
+    if test_type in ['upgrade']:
         feature_name = request.module.__name__.split('.')[-1]
         test_path = os.path.join(get_file_name(env_description_abs_path),
                                  feature_name)

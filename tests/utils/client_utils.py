@@ -75,6 +75,7 @@ class Client:
         def retry_fun():
             if clean_mountpoint:
                 clean_mount_path(username, self)
+                mkdir(self, self.mount_path, recursive=True, exist_ok=True)
 
         returncode = client_run_cmd(self, cmd,
                                     on_retry=retry_fun,

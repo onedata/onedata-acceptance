@@ -379,55 +379,9 @@ def clipboard():
     return cls(copy, paste)
 
 
-# Override original fixtures from tests.conftest to change their scope
-@fixture(scope='session')
-def env_description_abs_path(request, env_description_file):
-    from tests.conftest import env_description_abs_path
-    return env_description_abs_path(request, env_description_file)
-
-
-@fixture(scope='session')
-def env_desc(env_description_abs_path):
-    from tests.conftest import env_desc
-    return env_desc(env_description_abs_path)
-
-
-@fixture(scope='session')
-def test_config(request):
-    from tests.conftest import test_config
-    return test_config(request)
-
-
-@fixture(scope='session')
-def hosts():
-    from tests.conftest import hosts
-    return hosts()
-
-
-@fixture(scope='session')
-def users():
-    from tests.conftest import users
-    return users()
-
-
 @fixture(scope='session')
 def base_url(hosts, maybe_start_env):
     return 'https://{}'.format(hosts['onezone']['hostname'])
-
-
-@fixture(scope='session')
-def maybe_start_env(env_description_abs_path, hosts, request, env_desc, users, previous_env,
-                    test_config):
-    from tests.conftest import get_test_type, _should_start_new_env, start_test_env
-    test_type = get_test_type(request)
-    if _should_start_new_env(env_description_abs_path, previous_env):
-        start_test_env(request, test_type, env_desc, hosts, users, env_description_abs_path, 
-                       test_config, previous_env)
-
-    yield
-    clean = not request.config.getoption('--no-clean')
-    if clean:
-        clean_env()
 
 
 @fixture(scope='module', autouse=True)
