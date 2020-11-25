@@ -9,13 +9,13 @@ __license__ = ("This software is released under the MIT license cited in "
 
 import yaml
 
-from tests.gui.meta_steps.onezone.provider import \
-    send_copied_invite_token_in_oz_gui
+from tests.gui.meta_steps.onezone.provider import (
+    send_copied_invite_token_in_oz_gui)
 from tests.gui.steps.common.login import wt_login_using_basic_auth
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.onepanel.deployment import *
-from tests.gui.steps.onepanel.provider import \
-    deactivate_request_subdomain_toggle
+from tests.gui.steps.onepanel.provider import (
+    deactivate_request_subdomain_toggle)
 from tests.utils.bdd_utils import wt, parsers
 
 
@@ -27,7 +27,8 @@ def setup_step1(selenium, browser_id, onepanel, host_regexp, config, hosts,
     """
     config:
 
-    zone: zone_name
+    zone name: <name of onezone> where only "onezone" property is taken
+    zone domain: <domain of onezone> where only "onezone" property is taken
     options:
      - Database
      - Cluster Worker
@@ -50,8 +51,10 @@ def _setup_step1(selenium, browser_id, onepanel, host_regexp, configuration,
                                                    options, host_regexp,
                                                    onepanel)
     if 'onezone' in host_regexp:
-        zone_name = config['zone']
-        _setup_onezone_in_step1(selenium, browser_id, zone_name, onepanel,
+        zone_for_name, zone_for_domain = _parse_zone_data(
+            config['zone name'], config['zone domain'])
+        _setup_onezone_in_step1(selenium, browser_id, zone_for_name,
+                                zone_for_domain, onepanel,
                                 hosts)
         wt_click_on_btn_in_deployment_step(selenium, browser_id, btn, step,
                                            onepanel)
@@ -61,19 +64,27 @@ def _setup_step1(selenium, browser_id, onepanel, host_regexp, configuration,
                                            onepanel)
 
 
-def _setup_onezone_in_step1(selenium, browser_id, zone_name, onepanel, hosts):
+def _parse_zone_data(zone_name, zone_domain):
+    zone_from_name = re.match(r'<name of (.+)>', zone_name).group(1)
+    zone_from_domain = re.match(r'<domain of (.+)>', zone_domain).group(1)
+    return zone_from_name, zone_from_domain
+
+
+def _setup_onezone_in_step1(selenium, browser_id, zone_for_name,
+                            zone_for_domain, onepanel, hosts):
     step = 'step 1'
 
     name_property = 'name'
     name_input_box = 'Zone name'
     wt_type_property_to_in_box_in_deployment_step(selenium, browser_id,
-                                                  zone_name, name_property,
+                                                  zone_for_name, name_property,
                                                   name_input_box, step,
                                                   onepanel, hosts)
     hostname_property = 'hostname'
     hostname_input_box = 'Zone domain name'
     wt_type_property_to_in_box_in_deployment_step(selenium, browser_id,
-                                                  zone_name, hostname_property,
+                                                  zone_for_domain,
+                                                  hostname_property,
                                                   hostname_input_box, step,
                                                   onepanel, hosts)
 
@@ -123,7 +134,8 @@ def setup_step2(selenium, browser_id, onepanel, hosts, config):
 
 def _setup_step2(selenium, browser_id, onepanel, hosts, configuration):
     config = yaml.load(configuration)
-    provider = config['provider']
+    provider_for_name, provider_for_domain = _parse_provider(config['name'],
+                                                             config['domain'])
     request_a_subdomain = config.get('request a subdomain', False)
     email = config['email']
     step = 'step 2'
@@ -131,7 +143,8 @@ def _setup_step2(selenium, browser_id, onepanel, hosts, configuration):
     name_property = 'name'
     name_input_box = 'Provider name'
     wt_type_property_to_in_box_in_deployment_step(selenium, browser_id,
-                                                  provider, name_property,
+                                                  provider_for_name,
+                                                  name_property,
                                                   name_input_box, step,
                                                   onepanel, hosts)
 
@@ -141,7 +154,8 @@ def _setup_step2(selenium, browser_id, onepanel, hosts, configuration):
     hostname_property = 'hostname'
     hostname_input_box = 'domain'
     wt_type_property_to_in_box_in_deployment_step(selenium, browser_id,
-                                                  provider, hostname_property,
+                                                  provider_for_domain,
+                                                  hostname_property,
                                                   hostname_input_box, step,
                                                   onepanel, hosts)
 
@@ -152,6 +166,13 @@ def _setup_step2(selenium, browser_id, onepanel, hosts, configuration):
     register_button = 'Register'
     wt_click_on_btn_in_deployment_step(selenium, browser_id, register_button,
                                        step, onepanel)
+
+
+def _parse_provider(provider_name, provider_domain):
+    provider_for_name = re.match(r'<name of (.+)>', provider_name).group(1)
+    provider_for_domain = re.match(r'<domain of (.+)>',
+                                   provider_domain).group(1)
+    return provider_for_name, provider_for_domain
 
 
 @wt(parsers.parse('user of {brwoser_id} deploys Ceph with following '
