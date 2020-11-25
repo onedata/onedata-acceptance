@@ -77,7 +77,7 @@ Feature: Public harvester site
     And user of browser_onedata sees that Public toggle is not checked on harvester configuration page
 
     And user of browser_not_signed_in refreshes site
-    And user of browser_not_signed_in sees "web GUI cannot be loaded" error on Onedata page
+    Then user of browser_not_signed_in sees "web GUI cannot be loaded" error on Onedata page
 
 
   Scenario: Not signed in user sees data of public harvester in public harvester GUI from given URL
@@ -309,24 +309,24 @@ Feature: Public harvester site
           spaces:
             - space1
 
-  And user of browser_onedata removes basic metadata entry with key "author" for "dir1_1/file_with_xattrs" file in "space1" space
-  Then user of browser_not_signed_in sees only following files on public data discovery page:
-         dir1_1:
-            jsonMetadataExists: false
-            rdfMetadataExists: false
-            xattrsMetadataExists: false
-            spaceId: space1
-         file_with_xattrs:
-           spaceId: space1
-           jsonMetadataExists: false
-           rdfMetadataExists: false
-           xattrsMetadataExists: true
-           xattrs:
-             year: 2020
-             unexpected:
-               author: "\"John Smith\""
-         spaces:
-           - space1
+    And user of browser_onedata removes basic metadata entry with key "author" for "dir1_1/file_with_xattrs" file in "space1" space
+    Then user of browser_not_signed_in sees only following files on public data discovery page:
+           dir1_1:
+              jsonMetadataExists: false
+              rdfMetadataExists: false
+              xattrsMetadataExists: false
+              spaceId: space1
+           file_with_xattrs:
+             spaceId: space1
+             jsonMetadataExists: false
+             rdfMetadataExists: false
+             xattrsMetadataExists: true
+             xattrs:
+               year: 2020
+               unexpected:
+                 author: "\"John Smith\""
+           spaces:
+             - space1
 
 
   Scenario: User cannot open harvested file source from public harvester if they does not belong to space
