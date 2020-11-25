@@ -31,6 +31,7 @@ from tests.gui.steps.onepanel.nodes import *
 from tests.gui.steps.onepanel.common import *
 from tests.gui.steps.onepanel.deployment import *
 from tests.gui.steps.onepanel.spaces import *
+from tests.gui.steps.onepanel.storages import *
 
 from tests.gui.steps.onezone.logged_in_common import *
 from tests.gui.steps.onezone.user_full_name import *
@@ -61,13 +62,11 @@ from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.onezone.groups import *
 from tests.gui.meta_steps.onezone.spaces import *
 from tests.gui.meta_steps.onezone.tokens import *
-from tests.gui.meta_steps.onezone.common import *
 
-from tests.gui.meta_steps.onepanel.spaces import *
 from tests.gui.meta_steps.onepanel.spaces import *
 from tests.gui.meta_steps.onepanel.provider import *
+from tests.gui.meta_steps.onepanel.storages import *
 
-from tests.gui.meta_steps.oneprovider.common import *
 from tests.gui.meta_steps.oneprovider.common import *
 from tests.gui.meta_steps.oneprovider.transfers import *
 from tests.gui.meta_steps.oneprovider.data import *

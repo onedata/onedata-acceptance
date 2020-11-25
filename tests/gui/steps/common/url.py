@@ -9,14 +9,13 @@ __license__ = ("This software is released under the MIT license cited in "
 
 import re
 
-from pytest_bdd import given, when, then, parsers
-from tests.utils.acceptance_utils import wt
-from selenium.webdriver.support.ui import WebDriverWait as Wait
 from selenium.webdriver.support.expected_conditions import staleness_of
+from selenium.webdriver.support.ui import WebDriverWait as Wait
 
-from tests.gui.utils.generic import parse_seq, parse_url
-from tests.utils.utils import repeat_failed
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.utils.generic import parse_seq, parse_url
+from tests.utils.bdd_utils import given, parsers, wt
+from tests.utils.utils import repeat_failed
 
 
 def open_onedata_service_page(selenium, browser_id_list, hosts_list, hosts):

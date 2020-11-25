@@ -8,13 +8,13 @@ __license__ = ("This software is released under the MIT license cited in "
 
 
 import json
+
 import yaml
 
-from pytest_bdd import parsers, given
-
-from tests.utils.rest_utils import http_put, http_post, get_luma_rest_path
 from tests import LUMA_REST_PORT
+from tests.utils.bdd_utils import parsers, given
 from tests.utils.onenv_utils import match_pods, get_ip
+from tests.utils.rest_utils import http_put, http_post, get_luma_rest_path
 
 
 @given(parsers.re('created LUMA mappings:\n(?P<config>(.|\s)+)'))

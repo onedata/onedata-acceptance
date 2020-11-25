@@ -20,7 +20,8 @@ from pytest_bdd import (scenario,
 __all__ = ['scenario', 'scenarios', 'parsers', 'given', 'when', 'then', 'wt']
 
 
-def given(name, fixture=None, converters=None, scope='function', target_fixture=None):
+def given(name, fixture=None, converters=None, scope='function',
+          target_fixture=None):
     wrappers = [
         sanitize_arguments,
         pytest_bdd_given(name, fixture, converters, scope, target_fixture)

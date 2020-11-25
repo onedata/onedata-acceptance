@@ -10,17 +10,15 @@ __license__ = ("This software is released under the MIT license cited in "
 
 import re
 
-from pytest_bdd import when, then, parsers
+from tests.utils.bdd_utils import wt, parsers
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.utils import repeat_failed
 
 
-@when(parsers.parse('user of {browser_id} sees that {options} options are '
-                    'enabled for {host_regexp} host in Nodes page in Onepanel'))
-@then(parsers.parse('user of {browser_id} sees that {options} options are '
-                    'enabled for {host_regexp} host in Nodes page in Onepanel'))
+@wt(parsers.parse('user of {browser_id} sees that {options} options are '
+                  'enabled for {host_regexp} host in Nodes page in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_options_enabled_for_host_in_nodes(selenium, browser_id, options,
                                                 host_regexp, onepanel):
@@ -34,12 +32,9 @@ def wt_assert_options_enabled_for_host_in_nodes(selenium, browser_id, options,
                 assert toggle.is_checked(), err_msg.format(option)
 
 
-@when(parsers.parse('user of {browser_id} sees that {options} options cannot '
-                    'be changed for {host_regexp} host in Nodes page '
-                    'in Onepanel'))
-@then(parsers.parse('user of {browser_id} sees that {options} options cannot '
-                    'be changed for {host_regexp} host in Nodes page '
-                    'in Onepanel'))
+@wt(parsers.parse('user of {browser_id} sees that {options} options cannot '
+                  'be changed for {host_regexp} host in Nodes page '
+                  'in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_options_enabled_for_host_in_nodes(selenium, browser_id, options,
                                                 host_regexp, onepanel):

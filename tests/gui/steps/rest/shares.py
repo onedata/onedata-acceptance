@@ -11,8 +11,8 @@ import json
 import yaml
 
 from tests import OP_REST_PORT
-from tests.utils.bdd_utils import wt, given, parsers
-from tests.utils.rest_utils import http_get, get_provider_rest_path, http_post
+from tests.utils.bdd_utils import given, parsers
+from tests.utils.rest_utils import get_provider_rest_path, http_post
 
 
 @given(parsers.parse('using REST, user {user} creates "{share_name}" share of '

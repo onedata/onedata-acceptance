@@ -13,9 +13,9 @@ from datetime import datetime
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.modal import click_modal_button
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.utils import repeat_failed
-from tests.utils.bdd_utils import wt, parsers, when, then
+from tests.utils.bdd_utils import wt, parsers
 
 
 @wt(parsers.parse('user of {browser_id} sees "{msg}" '
@@ -46,7 +46,7 @@ def assert_status_tag_for_file_in_file_browser(browser_id, status_type,
                                                item_name, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
     err_msg = f'{status_type} tag for {item_name} in file browser not visible'
-    assert browser.data[item_name].is_tag_visible(status_type), err_msg
+    assert browser.data[item_name].is_tag_visible(transform(status_type)), err_msg
 
 
 @wt(parsers.parse('user of {browser_id} clicks on {status_type} status tag '
@@ -154,10 +154,8 @@ def assert_item_in_file_browser_is_of_size(browser_id, item_name, size,
     assert size == item_size, err_msg.format(item_size, item_name, size)
 
 
-@when(parsers.parse('user of {browser_id} scrolls to the bottom '
-                    'of file browser'))
-@then(parsers.parse('user of {browser_id} scrolls to the bottom '
-                    'of file browser'))
+@wt(parsers.parse('user of {browser_id} scrolls to the bottom '
+                  'of file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def scroll_to_bottom_of_file_browser(browser_id, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
@@ -227,10 +225,8 @@ def select_files_from_file_list_using_ctrl(browser_id, item_list, tmp_memory):
         selector.ctrl_or_cmd_up()
 
 
-@when(parsers.parse('user of {browser_id} deselects {item_list} '
-                    'item(s) from file browser'))
-@then(parsers.parse('user of {browser_id} deselects {item_list} '
-                    'item(s) from file browser'))
+@wt(parsers.parse('user of {browser_id} deselects {item_list} '
+                  'item(s) from file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def deselect_items_from_file_browser(browser_id, item_list, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
@@ -255,10 +251,8 @@ def _deselect_files(browser, selector, item_list):
             selector.select(item)
 
 
-@when(parsers.parse('user of {browser_id} deselects all '
-                    'selected items from file browser'))
-@then(parsers.parse('user of {browser_id} deselects all '
-                    'selected items from file browser'))
+@wt(parsers.parse('user of {browser_id} deselects all '
+                  'selected items from file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def deselect_all_items_from_file_browser(browser_id, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
@@ -296,10 +290,8 @@ def assert_items_are_not_selected_in_file_browser(browser_id, item_list,
         assert not item.is_selected(), err_msg.format(name=item_name)
 
 
-@when(parsers.parse('user of {browser_id} sees that none '
-                    'item is selected in file browser'))
-@then(parsers.parse('user of {browser_id} sees that none '
-                    'item is selected in file browser'))
+@wt(parsers.parse('user of {browser_id} sees that none '
+                  'item is selected in file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_none_item_is_selected_in_file_browser(browser_id, item_list,
                                                  tmp_memory):

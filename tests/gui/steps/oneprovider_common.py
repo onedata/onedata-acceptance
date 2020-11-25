@@ -7,13 +7,12 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 
-from tests.gui.utils.generic import parse_seq
-from tests.utils.bdd_utils import wt
-from tests.utils.utils import repeat_failed
-from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-
 from selenium.webdriver.support.ui import WebDriverWait as Wait
-from pytest_bdd import given, parsers, when, then
+
+from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.utils.generic import parse_seq
+from tests.utils.bdd_utils import given, parsers, wt
+from tests.utils.utils import repeat_failed
 
 
 def main_menu_tab_to_url(tab):

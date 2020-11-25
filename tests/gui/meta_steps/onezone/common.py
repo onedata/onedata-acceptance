@@ -4,24 +4,22 @@ using web GUI
 
 from itertools import zip_longest
 
-from pytest_bdd import given, parsers
-
+from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.steps.common.browser_creation import \
+    create_instances_of_webdriver
+from tests.gui.steps.common.login import g_login_using_basic_auth
+from tests.gui.steps.common.url import g_open_onedata_service_page
 from tests.gui.steps.oneprovider.data_tab import (
     assert_file_browser_in_data_tab_in_op,
-     click_choose_other_oneprovider_on_file_browser,
-     choose_provider_in_file_browser)
+    click_choose_other_oneprovider_on_file_browser,
+    choose_provider_in_file_browser)
+from tests.gui.steps.onezone.providers import parse_seq
 from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
-     click_on_option_of_space_on_left_sidebar_menu)
-from tests.utils.utils import repeat_failed
-from tests.gui.steps.common.browser_creation import create_instances_of_webdriver
-from tests.utils.acceptance_utils import wt
-from tests.gui.steps.oneprovider.common import g_wait_for_op_session_to_start
-from tests.gui.steps.onezone.providers import parse_seq
-from tests.gui.steps.common.url import g_open_onedata_service_page
-from tests.gui.steps.common.login import g_login_using_basic_auth
+    click_on_option_of_space_on_left_sidebar_menu)
 from tests.utils.acceptance_utils import list_parser
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.utils.bdd_utils import wt, given, parsers
+from tests.utils.utils import repeat_failed
 
 
 @given(parsers.re('opened (?P<browser_id_list>.*) with (?P<user_list>.*) '

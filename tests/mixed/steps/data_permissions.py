@@ -9,8 +9,6 @@ __license__ = ("This software is released under the MIT license cited in "
 
 import re
 
-from pytest_bdd import parsers
-
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.meta_steps.oneprovider.permissions import (
     grant_acl_privileges_in_op_gui, assert_ace_in_op_gui,
@@ -24,7 +22,7 @@ from tests.mixed.steps.rest.oneprovider.data import (
     grant_acl_privileges_in_op_rest, assert_ace_in_op_rest,
     assert_posix_permissions_in_op_rest, set_posix_permissions_in_op_rest)
 from tests.mixed.utils.common import NoSuchClientException
-from tests.utils.bdd_utils import when, then, wt
+from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 
 
@@ -32,10 +30,10 @@ def _remove_parent_acl_from_string(priv):
     return re.sub('[a-zA-Z]+:', '', priv)
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>\w+) sets new ACE for '
-                 '(?P<path>.*?) in space "(?P<space>.*)" with (?P<priv>.*) '
-                 'privileges? set for (?P<type>.*?) (?P<name>.*) '
-                 'in (?P<host>.*)'))
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) sets new ACE for '
+               '(?P<path>.*?) in space "(?P<space>.*)" with (?P<priv>.*) '
+               'privileges? set for (?P<type>.*?) (?P<name>.*) '
+               'in (?P<host>.*)'))
 def grant_acl_privileges_in_op(client, selenium, user, cdmi, op_container, space,
                                path, host, hosts, users, priv, type, name,
                                groups, tmp_memory, popups, modals,
@@ -62,10 +60,10 @@ def grant_acl_privileges_in_op(client, selenium, user, cdmi, op_container, space
         raise NoSuchClientException(f'Client: {client} not found')
 
 
-@then(parsers.re('using (?P<client>.*), (?P<user>\w+) sees that (?P<path>.*?)'
-                 ' in space "(?P<space>.*)" (has|have) (?P<priv>.*) '
-                 'privileges? set for (?P<type>.*?) (?P<name>.*) in '
-                 '(?P<num>.*) ACL record in (?P<host>.*)'))
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) sees that (?P<path>.*?)'
+               ' in space "(?P<space>.*)" (has|have) (?P<priv>.*) '
+               'privileges? set for (?P<type>.*?) (?P<name>.*) in '
+               '(?P<num>.*) ACL record in (?P<host>.*)'))
 def assert_ace_in_op(client, selenium, user, cdmi, op_container, space, path, host,
                      hosts, users, num, priv, type, name, numerals, tmp_memory,
                      modals, oz_page):
@@ -90,7 +88,7 @@ def assert_ace_in_op(client, selenium, user, cdmi, op_container, space, path, ho
         raise NoSuchClientException(f'Client: {client} not found')
 
 
-@wt(parsers.re('using (?P<client>.*), (?P<user>\w+) sees '
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) sees '
                'that POSIX permission for item named "(?P<item_path>.*)" in '
                '"(?P<space>.*)" is "(?P<mode>.*)" in (?P<host>.*)'))
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -114,7 +112,7 @@ def assert_posix_permissions_in_op(client, user, item_path, space, mode,
         raise NoSuchClientException(f'Client: {client} not found')
 
 
-@wt(parsers.re('using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to set '
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to set '
                '"(?P<mode>.*)" POSIX permission for item named '
                '"(?P<item_path>.*)" in "(?P<space>.*)" in (?P<host>.*)'))
 def set_posix_permissions_in_op(client, user, item_path, space, mode, result,

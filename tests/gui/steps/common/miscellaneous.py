@@ -12,7 +12,7 @@ from selenium.webdriver.common.keys import Keys
 from tests.gui.utils.generic import transform
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.utils.utils import repeat_failed
-from tests.utils.bdd_utils import given, when, then, wt, parsers
+from tests.utils.bdd_utils import given, wt, parsers
 
 
 @repeat_failed(attempts=WAIT_FRONTEND)
@@ -29,7 +29,7 @@ def type_string_into_active_element(selenium, browser_id, text):
 
 
 @wt(parsers.parse('user of {browser_id} types received '
-                    '{item_type} on keyboard'))
+                  '{item_type} on keyboard'))
 def type_item_into_active_element(selenium, browser_id, item_type,
                                   tmp_memory):
     item = tmp_memory[browser_id]['mailbox'][item_type]

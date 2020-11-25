@@ -7,14 +7,10 @@ __copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-import time
-
-from pytest_bdd import given, when, then, parsers
-
 from tests.gui.conftest import (
-    WAIT_BACKEND, SELENIUM_IMPLICIT_WAIT, WAIT_FRONTEND)
-from tests.gui.utils.generic import implicit_wait, transform
-from tests.utils.bdd_utils import wt
+    WAIT_BACKEND, WAIT_FRONTEND)
+from tests.gui.utils.generic import transform
+from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 
 
