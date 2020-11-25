@@ -55,7 +55,7 @@ def press_backspace_on_active_element(selenium, browser_id):
 
 
 @wt(parsers.parse('user of {browser_id} should see that the page title '
-                    'contains "{text}"'))
+                  'contains "{text}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def title_contains(selenium, browser_id, text):
     page_title = selenium[browser_id].title

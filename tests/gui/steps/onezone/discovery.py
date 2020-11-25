@@ -252,6 +252,7 @@ def choose_property_to_query(selenium, browser_id, property_name, popups):
 
 
 @wt(parsers.parse('user of {browser_id} sees Data Discovery page'))
+@wt(parsers.parse('user of {browser_id} sees public data discovery page'))
 def assert_data_discovery_page(selenium, browser_id, data_discovery):
     # this function can only be used when we are sure that
     # there will be some files harvested as to use active waiting
@@ -275,8 +276,11 @@ def assert_files_list_on_data_disc(selenium, browser_id, data_discovery):
     assert len(data_discovery(selenium[browser_id]).results_list), msg
 
 
-def assert_empty_data_discovery_page(selenium, browser_id):
+@wt(parsers.parse('user of {browser_id} sees public data discovery page with '
+                  'no harvested data'))
+def assert_empty_data_discovery_page(selenium, browser_id, data_discovery):
     switch_to_iframe(selenium, browser_id, '.plugin-frame')
+    data_discovery(selenium[browser_id]).query_builder.query_button()
 
 
 @wt(parsers.parse('user of {browser_id} clicks "Query" button on Data '
@@ -295,6 +299,37 @@ def assert_alert_text_on_data_disc_page(selenium, browser_id, error_msg,
     assert error_msg == data_discovery(selenium[browser_id]).error_message, msg
 
 
+@wt(parsers.parse('user of {browser_id} {action} Public toggle on '
+                  'harvester configuration page'))
+def check_public_toggle_on_harvester_config_page(selenium, browser_id,
+                                                 oz_page, action):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['discovery'].configuration_page
+    if action == 'checks':
+        page.public.check()
+    else:
+        page.public.uncheck()
+
+
+@wt(parsers.parse('user of {browser_id} sees that Public toggle is {checked} '
+                  'on harvester configuration page'))
+def assert_public_toggle_on_harvester_config_page(selenium, browser_id,
+                                                  oz_page, checked):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['discovery'].configuration_page
+    if 'not' in checked:
+        assert page.public.is_unchecked(), 'Harvester is checked as public'
+    else:
+        assert page.public.is_checked(), 'Harvester is not checked as public'
+
+
+@wt(parsers.parse('user of {browser_id} clicks on copy icon of public '
+                  'harvester URL'))
+def copy_public_harvester_url(selenium, browser_id, oz_page):
+    driver = selenium[browser_id]
+    oz_page(driver)['discovery'].configuration_page.general_tab.copy_public_url()
+
+
 @wt(parsers.parse('user of {browser_id} clicks on {tab_name} tab on '
                   'harvester configuration page'))
 def click_on_tab_of_harvester_config_page(selenium, browser_id, tab_name,
@@ -304,7 +339,7 @@ def click_on_tab_of_harvester_config_page(selenium, browser_id, tab_name,
     getattr(page, transform(tab_name) + '_button')()
 
 
-@wt(parsers.parse('user of browser chooses {plugin} GUI plugin '
+@wt(parsers.parse('user of {browser_id} chooses {plugin} GUI plugin '
                   'from local directory to be uploaded'))
 def upload_discovery_gui_plugin(selenium, browser_id, plugin, tmpdir, oz_page):
     driver = selenium[browser_id]
@@ -314,12 +349,13 @@ def upload_discovery_gui_plugin(selenium, browser_id, plugin, tmpdir, oz_page):
     uploader.send_keys(str(path))
 
 
-@wt(parsers.parse('user of {browser_id} clicks on "{button}" button on '
-                  'harvester configuration page'))
-def click_button_on_harvester_config_page(selenium, browser_id, oz_page,
-                                          button):
+@wt(parsers.parse('user of {browser_id} clicks on "{button}" button in '
+                  '{tab_name} of harvester configuration page'))
+def click_button_in_tab_of_harvester_config_page(selenium, browser_id,
+                                                 oz_page, button, tab_name):
     driver = selenium[browser_id]
-    page = oz_page(driver)['discovery'].configuration_page.gui_plugin_tab
+    page = getattr(oz_page(driver)['discovery'].configuration_page,
+                   transform(tab_name))
     getattr(page, transform(button) + '_button')()
 
 
@@ -369,6 +405,8 @@ def assert_plugin_injected_config(selenium, browser_id, oz_page,
 
 @wt(parsers.parse('user of {browser_id} sees Data Discovery page with Ecrin '
                   'GUI'))
+@wt(parsers.parse('user of {browser_id} sees public data discovery page with '
+                  'Ecrin GUI'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_data_discovery_page_ecrin(selenium, browser_id, data_discovery):
     switch_to_iframe(selenium, browser_id, '.plugin-frame')

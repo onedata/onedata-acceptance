@@ -80,7 +80,7 @@ Feature: Basic management of groups with one user in Onezone GUI
     And user of browser changes webapp path to "/i#/onedata/groups" concatenated with copied item
     And user of browser refreshes site
 
-    Then user of browser sees "YOU DON’T HAVE ACCESS TO THIS RESOURCE" in error details on groups page
+    Then user of browser sees "YOU DON’T HAVE ACCESS TO THIS RESOURCE" error on groups page
 
 
 
