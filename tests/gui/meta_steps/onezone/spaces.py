@@ -7,29 +7,25 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-import time
-
-from pytest_bdd import given
-
+from tests import OZ_REST_PORT
 from tests.gui.meta_steps.onezone.tokens import (
     consume_received_token)
-from tests.gui.steps.common.notifies import *
 from tests.gui.steps.common.copy_paste import *
+from tests.gui.steps.common.notifies import *
 from tests.gui.steps.common.url import refresh_site
-from tests.gui.steps.modal import (close_modal, click_modal_button,
-                                   click_on_button_in_active_modal)
+from tests.gui.steps.modal import (close_modal, click_modal_button)
+from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
+from tests.gui.steps.onepanel.spaces import *
 from tests.gui.steps.onezone.discovery import (
     choose_element_from_dropdown_in_add_element_modal)
+from tests.gui.steps.onezone.groups import (
+    go_to_group_subpage)
 from tests.gui.steps.onezone.members import (
     click_on_option_in_members_list_menu, copy_token_from_modal,
     assert_member_is_in_parent_members_list)
-from tests.gui.steps.onezone.groups import (
-    click_on_option_of_group_menu_on_left_sidebar_menu, go_to_group_subpage)
-from tests.gui.steps.onezone.spaces import *
-from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
-from tests.gui.steps.onepanel.spaces import *
 from tests.gui.steps.onezone.multibrowser_spaces import *
-from tests import OZ_REST_PORT
+from tests.gui.steps.onezone.spaces import *
+from tests.utils.bdd_utils import wt, parsers, given
 from tests.utils.rest_utils import http_get, get_zone_rest_path, http_delete
 
 

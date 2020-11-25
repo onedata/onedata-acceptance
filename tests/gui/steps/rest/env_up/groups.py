@@ -6,14 +6,14 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-import yaml
 import json
 
-from pytest_bdd import given, parsers
+import yaml
 
 from tests import OZ_REST_PORT
-from tests.utils.rest_utils import (http_post, http_put, get_zone_rest_path,
-                                    http_get, http_delete)
+from tests.utils.bdd_utils import given, parsers
+from tests.utils.rest_utils import (
+    http_post, http_put, get_zone_rest_path, http_get, http_delete)
 
 
 @given(parsers.parse('initial groups configuration in "{service}" '

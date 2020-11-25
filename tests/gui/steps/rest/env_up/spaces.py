@@ -6,19 +6,18 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-import time
-import yaml
 import json
 
-from pytest_bdd import given, parsers
+import yaml
 
 from tests import OZ_REST_PORT, PANEL_REST_PORT, OP_REST_PORT
 from tests.gui.steps.rest.shares import get_file_id_by_rest
-from tests.utils.rest_utils import (http_get, http_post, http_put,
-                                    get_panel_rest_path, get_zone_rest_path,
-                                    get_provider_rest_path, http_delete)
-from tests.utils.http_exceptions import (HTTPNotFound, HTTPError,
-                                         HTTPBadRequest, HTTPForbidden)
+from tests.utils.bdd_utils import given, parsers
+from tests.utils.http_exceptions import (
+    HTTPNotFound, HTTPError, HTTPBadRequest, HTTPForbidden)
+from tests.utils.rest_utils import (
+    http_get, http_post, http_put, get_panel_rest_path, get_zone_rest_path,
+    get_provider_rest_path, http_delete)
 from tests.utils.utils import repeat_failed
 
 

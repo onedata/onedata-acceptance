@@ -42,19 +42,20 @@ class StorageAddForm(PageObject):
 
 
 class POSIXEditorKeyValue(PageObject):
-    key = WebItem('.form-group .text-left', cls=InputBox)
+    key = WebItem('.text-left', cls=InputBox)
     key_name = id = Label('.show-edit-icon .one-label')
-    val = WebItem('.form-group .form-control-column', cls=InputBox)
+    val = WebItem('.form-control-column', cls=InputBox)
     delete = Button('.remove-param')
 
 
 class QOSParams(PageObject):
     key_values = WebItemsSequence('.text-input.group-with-tip',
                                   cls=POSIXEditorKeyValue)
+    last_key = WebItem('.text-input.group-with-tip.last-record .text-left',
+                       cls=InputBox)
 
     def set_last_key(self, key):
-        size = self.get_key_values_count()
-        self.key_values[size].key.value = key
+        self.last_key.value = key
 
     def click_value_in_modified_record(self):
         size = len(self.key_values)

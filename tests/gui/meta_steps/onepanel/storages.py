@@ -11,15 +11,13 @@ import json
 import re
 
 import yaml
-from pytest_bdd import parsers
 
-from bamboos.docker.environment.panel import panel_hostname
 from tests import PANEL_REST_PORT
-from tests.gui.meta_steps.onezone.common import wt_visit_op
 from tests.gui.steps.common.miscellaneous import type_string_into_active_element
-from tests.gui.steps.oneprovider.data_tab import (
-    assert_file_browser_in_data_tab_in_op)
-from tests.utils.acceptance_utils import wt
+from tests.gui.steps.common.notifies import notify_visible_with_text
+from tests.gui.steps.modal import click_modal_button
+from tests.gui.steps.onepanel.common import (
+    wt_click_on_subitem_for_item, wt_click_on_btn_in_content)
 from tests.gui.steps.onepanel.storages import (
     wt_expands_toolbar_for_storage_in_onepanel,
     wt_clicks_on_btn_in_storage_toolbar_in_panel,
@@ -27,24 +25,14 @@ from tests.gui.steps.onepanel.storages import (
     wt_select_storage_type_in_storage_page_op_panel,
     wt_type_text_to_in_box_in_storages_page_op_panel,
     wt_click_on_add_btn_in_storage_add_form_in_storage_page,
-    enable_import_in_add_storage_form,
-    wt_assert_storage_attr_in_storages_page_op_panel,
-    assert_storage_on_storage_list, is_storage_on_storage_list,
-    save_changes_in_posix_storage_edit_page,
+    enable_import_in_add_storage_form, save_changes_in_posix_storage_edit_page,
     click_value_in_posix_storage_edit_page,
     delete_additional_param_in_posix_storage_edit_page,
     type_key_in_posix_storage_edit_page, click_modify_storage_in_onepanel)
-from tests.gui.steps.modal import click_modal_button
-from tests.gui.steps.onezone.spaces import (
-    click_on_option_in_the_sidebar, click_element_on_lists_on_left_sidebar_menu,
-    click_on_option_of_space_on_left_sidebar_menu,
-    assert_providers_list_contains_provider)
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
-from tests.gui.steps.onepanel.common import (
-    wt_click_on_subitem_for_item, wt_click_on_btn_in_content)
-from tests.gui.steps.common.notifies import notify_visible_with_text
-from tests.utils.bdd_utils import given
-from tests.utils.http_exceptions import HTTPConflict
+from tests.gui.steps.onezone.spaces import (
+    click_on_option_in_the_sidebar)
+from tests.utils.bdd_utils import given, wt, parsers
 from tests.utils.rest_utils import (
     http_post, get_panel_rest_path, http_get, http_delete)
 

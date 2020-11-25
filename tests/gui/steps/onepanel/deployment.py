@@ -10,12 +10,10 @@ __license__ = ("This software is released under the MIT license cited in "
 import re
 import time
 
-from pytest_bdd import parsers, given
-
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.utils.generic import parse_seq, transform
+from tests.utils.bdd_utils import parsers, given, wt
 from tests.utils.utils import repeat_failed
-from tests.utils.acceptance_utils import wt
 
 
 @given(parsers.re('users? of (?P<browser_id_list>.*) created admin accounts? '

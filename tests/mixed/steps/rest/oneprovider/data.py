@@ -6,28 +6,25 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-
-import os
 import json
-import re
-from functools import partial
 from datetime import datetime
+from functools import partial
 
-import yaml
 import pytest
+import yaml
 
-from tests.mixed.oneprovider_client.api_client import ApiException
-from tests.utils.http_exceptions import HTTPError
-from tests.mixed.utils.data import (check_files_tree, create_content,
-                                    assert_ace, get_acl_metadata)
-from tests.mixed.utils.common import *
 from tests.gui.utils.generic import parse_seq
 from tests.mixed.cdmi_client import ContainerApi, DataObjectApi
+from tests.mixed.cdmi_client.rest import ApiException as CdmiException
 from tests.mixed.oneprovider_client import BasicFileOperationsApi
 from tests.mixed.oneprovider_client import FilePathResolutionApi
-from tests.mixed.cdmi_client.rest import ApiException as CdmiException
+from tests.mixed.oneprovider_client.api_client import ApiException
 from tests.mixed.oneprovider_client.rest import ApiException as OPException
+from tests.mixed.utils.common import *
+from tests.mixed.utils.data import (
+    check_files_tree, create_content, assert_ace, get_acl_metadata)
 from tests.utils.acceptance_utils import time_attr, compare
+from tests.utils.http_exceptions import HTTPError
 
 
 def _lookup_file_id(path, user_client_op):

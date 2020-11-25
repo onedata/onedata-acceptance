@@ -7,19 +7,13 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-
-from pytest_bdd import when, then, parsers
-
 from tests.mixed.utils.common import NoSuchClientException
-from tests.utils.bdd_utils import wt
+from tests.utils.bdd_utils import wt, parsers
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>.+?) creates '
-                 'spaces? (?P<space_list>.+?) in "(?P<host>.+?)" '
-                 'Onezone service'))
-@then(parsers.re('using (?P<client>.*), (?P<user>.+?) creates '
-                 'spaces? (?P<space_list>.+?) in "(?P<host>.+?)" '
-                 'Onezone service'))
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) creates '
+               'spaces? (?P<space_list>.+?) in "(?P<host>.+?)" '
+               'Onezone service'))
 def create_spaces_in_oz(client, user, space_list, host, hosts, users, selenium,
                         oz_page, request):
 
@@ -35,12 +29,9 @@ def create_spaces_in_oz(client, user, space_list, host, hosts, users, selenium,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@then(parsers.re('using (?P<client>.*), user of (?P<user>.+?) leaves spaces? '
-                 'named (?P<space_list>.+?) in "(?P<host>.+?)" Onezone '
-                 'service'))
-@when(parsers.re('using (?P<client>.*), (?P<user>.+?) leaves spaces? '
-                 'named (?P<space_list>.+?) in "(?P<host>.+?)" Onezone '
-                 'service'))
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) leaves spaces? '
+               'named (?P<space_list>.+?) in "(?P<host>.+?)" Onezone '
+               'service'))
 def leave_spaces_in_oz(client, request, user, space_list, host,
                        selenium, oz_page, users, hosts, spaces, popups, modals):
 
@@ -58,9 +49,9 @@ def leave_spaces_in_oz(client, request, user, space_list, host,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>.+?) renames spaces? '
-                 'named (?P<space_list>.+?) to (?P<new_names_list>.+?) '
-                 'in "(?P<host>.+?)" Onezone service'))
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) renames spaces? '
+               'named (?P<space_list>.+?) to (?P<new_names_list>.+?) '
+               'in "(?P<host>.+?)" Onezone service'))
 def rename_spaces_in_oz(client, request, user, space_list, new_names_list,
                         host, selenium, oz_page, users, hosts, spaces):
 
@@ -78,15 +69,12 @@ def rename_spaces_in_oz(client, request, user, space_list, new_names_list,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>.+?) removes spaces? '
-                 'named (?P<space_list>.+?) in "(?P<host>.+?)" Onezone '
-                 'service'))
-@when(parsers.re('using (?P<client>.*), user of (?P<user>.+?) removes spaces? '
-                 'named (?P<space_list>.+?) in "(?P<host>.+?)" Onezone '
-                 'service'))
-@then(parsers.re('using (?P<client>.*), (?P<user>.+?) removes spaces? '
-                 'named (?P<space_list>.+?) in "(?P<host>.+?)" Onezone '
-                 'service'))
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) removes spaces? '
+               'named (?P<space_list>.+?) in "(?P<host>.+?)" Onezone '
+               'service'))
+@wt(parsers.re('using (?P<client>.*), user of (?P<user>.+?) removes spaces? '
+               'named (?P<space_list>.+?) in "(?P<host>.+?)" Onezone '
+               'service'))
 def remove_spaces_in_oz(client, request, user, space_list, host, users, hosts,
                         spaces):
 
@@ -103,9 +91,9 @@ def remove_spaces_in_oz(client, request, user, space_list, host, users, hosts,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>.+?) removes '
-                 '(?P<user_list>.+?) from space "(?P<space_name>.+?)" in '
-                 '"(?P<host>.+?)" Onezone service'))
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) removes '
+               '(?P<user_list>.+?) from space "(?P<space_name>.+?)" in '
+               '"(?P<host>.+?)" Onezone service'))
 def delete_users_from_space_in_oz(client, request, user_list, space_name, host,
                                   users, hosts, spaces, user):
 
@@ -123,9 +111,9 @@ def delete_users_from_space_in_oz(client, request, user_list, space_name, host,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>.+?) adds '
-                 '(?P<user_list>.+?) to "(?P<space_name>.+?)" in '
-                 '"(?P<host>.+?)" Onezone service'))
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) adds '
+               '(?P<user_list>.+?) to "(?P<space_name>.+?)" in '
+               '"(?P<host>.+?)" Onezone service'))
 def add_users_to_space_in_oz(client, request, user_list, space_name, host,
                              users, hosts, spaces, user):
 
@@ -142,9 +130,9 @@ def add_users_to_space_in_oz(client, request, user_list, space_name, host,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>.+?) removes support '
-                 'from provider "(?P<provider_name>.+?)" for space named '
-                 '"(?P<space_name>.+?)" in "(?P<host>.+?)" Onezone service'))
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) removes support '
+               'from provider "(?P<provider_name>.+?)" for space named '
+               '"(?P<space_name>.+?)" in "(?P<host>.+?)" Onezone service'))
 def remove_provider_support_for_space_in_oz(client, request, user,
                                             provider_name, space_name, host,
                                             selenium, users, hosts, spaces,
@@ -168,9 +156,9 @@ def remove_provider_support_for_space_in_oz(client, request, user,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>.+?) invites '
-                 '(?P<user_list>.+?) to space named "(?P<space_name>.+?)" in '
-                 '"(?P<host>.+?)" Onezone service'))
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) invites '
+               '(?P<user_list>.+?) to space named "(?P<space_name>.+?)" in '
+               '"(?P<host>.+?)" Onezone service'))
 def invite_other_users_to_space(client, request, user, user_list, space_name,
                                 host, selenium, tmp_memory, users,
                                 hosts, spaces, displays, clipboard, oz_page,
@@ -194,9 +182,9 @@ def invite_other_users_to_space(client, request, user, user_list, space_name,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user_list>.+?) joins to '
-                 'space using received (?P<item_name>.+?) in "(?P<host>.+?)" '
-                 'Onezone service'))
+@wt(parsers.re('using (?P<client>.*), (?P<user_list>.+?) joins to '
+               'space using received (?P<item_name>.+?) in "(?P<host>.+?)" '
+               'Onezone service'))
 def join_space_in_oz(client, request, user_list, item_name, host, selenium,
                      oz_page, tmp_memory, users, hosts):
 
@@ -213,12 +201,9 @@ def join_space_in_oz(client, request, user_list, item_name, host, selenium,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@when(parsers.re(r'using (?P<client>.*), (?P<user>.+?) sees that '
-                 'spaces? named (?P<space_list>.+?) (has|have) appeared in '
-                 '"(?P<host>.+?)" Onezone service'))
-@then(parsers.re(r'using (?P<client>.*), (?P<user>.+?) sees that '
-                 'spaces? named (?P<space_list>.+?) (has|have) appeared in '
-                 '"(?P<host>.+?)" Onezone service'))
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) sees that '
+               'spaces? named (?P<space_list>.+?) (has|have) appeared in '
+               '"(?P<host>.+?)" Onezone service'))
 def assert_there_are_spaces_in_oz(client, request, user, space_list, selenium,
                                   oz_page, users, hosts, host):
 
@@ -236,7 +221,7 @@ def assert_there_are_spaces_in_oz(client, request, user, space_list, selenium,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@then(parsers.re('using (?P<client>.*), (?P<user>.+?) sees that '
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) sees that '
                  'spaces? named (?P<space_list>.+?) (has|have) disappeared '
                  'from "(?P<host>.+?)" Onezone service'))
 def assert_there_are_no_spaces_in_oz(client, request, user, space_list, host,
@@ -256,9 +241,9 @@ def assert_there_are_no_spaces_in_oz(client, request, user, space_list, host,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@then(parsers.re('using (?P<client>.*), (?P<user>.+?) sees that '
-                 'spaces? named (?P<space_list>.+?) (has|have) been renamed to '
-                 '(?P<new_names_list>.+?) in "(?P<host>.+?)" Onezone service'))
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) sees that '
+               'spaces? named (?P<space_list>.+?) (has|have) been renamed to '
+               '(?P<new_names_list>.+?) in "(?P<host>.+?)" Onezone service'))
 def assert_spaces_have_been_renamed_in_oz(client, request, user, space_list,
                                           new_names_list, host, selenium,
                                           oz_page, users, hosts, spaces):
@@ -278,10 +263,10 @@ def assert_spaces_have_been_renamed_in_oz(client, request, user, space_list,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@then(parsers.re('using (?P<client>.*), (?P<user>.+?) sees that there '
-                 '(is|are) no supporting providers? '
-                 '(?P<providers_list>.+?) for space named '
-                 '"(?P<space_name>.+?)" in "(?P<host>.+?)" Onezone service'))
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) sees that there '
+               '(is|are) no supporting providers? '
+               '(?P<providers_list>.+?) for space named '
+               '"(?P<space_name>.+?)" in "(?P<host>.+?)" Onezone service'))
 def assert_there_is_no_provider_for_space_in_oz(client, request, user,
                                                 providers_list, space_name,
                                                 host, selenium, oz_page, users,
@@ -304,9 +289,9 @@ def assert_there_is_no_provider_for_space_in_oz(client, request, user,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@then(parsers.re('using (?P<client>.*), (?P<user>.+?) sees that '
-                 '(?P<user_list>.+?) (is|are) members? of '
-                 '"(?P<space_name>.+?)" in "(?P<host>.+?)" Onezone service'))
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) sees that '
+               '(?P<user_list>.+?) (is|are) members? of '
+               '"(?P<space_name>.+?)" in "(?P<host>.+?)" Onezone service'))
 def assert_user_is_member_of_space(client, request, user, user_list,
                                    space_name, host, spaces, users, hosts,
                                    selenium, oz_page, onepanel):
@@ -325,10 +310,10 @@ def assert_user_is_member_of_space(client, request, user, user_list,
         raise NoSuchClientException('Client: {} not found.'.format(client))
 
 
-@when(parsers.re('using (?P<client>.*), (?P<user>.+?) sees provider '
-                 '"(?P<provider_name>.+?)" with hostname matches that of '
-                 '"(?P<provider>.+?)" provider in "(?P<host>.+?)" Onezone '
-                 'service'))
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) sees provider '
+               '"(?P<provider_name>.+?)" with hostname matches that of '
+               '"(?P<provider>.+?)" provider in "(?P<host>.+?)" Onezone '
+               'service'))
 def assert_provider_has_given_name_and_known_hostname_in_oz(client, user,
                                                             provider_name,
                                                             provider, host,

@@ -10,9 +10,8 @@ __license__ = ("This software is released under the MIT license cited in "
 from tests import (OZ_REST_PATH_PREFIX, OZ_REST_PORT, PANEL_REST_PORT,
                    PANEL_REST_PATH_PREFIX, PROVIDER_REST_PATH_PREFIX,
                    CDMI_REST_PATH_PREFIX)
-from pytest_bdd import given, parsers
 
-from tests.utils.bdd_utils import wt
+from tests.utils.bdd_utils import wt, parsers
 
 
 class NoSuchClientException(Exception):

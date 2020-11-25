@@ -7,23 +7,20 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 
-import re
 import os
-from time import sleep
-from itertools import islice
+import re
 from contextlib import contextmanager
+from itertools import islice
+from time import sleep
 
 try:
     from itertools import izip
 except ImportError:
     izip = zip
 
-from pytest_bdd import when, then
 from tests import gui
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
-from functools import partial
-
 
 # RE_URL regexp is matched as shown below:
 #
