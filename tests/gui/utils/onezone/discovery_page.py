@@ -23,15 +23,14 @@ class WelcomePage(PageObject):
 
 
 class ProgressRow(PageObject):
-    label = Label('.truncated-string')
-    id = label.split()[0]
+    space = id = Label('.truncated-string')
     progress_value = Label('.progress-table-cell text')
 
 
 class Index(PageObject):
     name = id = Label('.one-label')
     progress_values = WebItemsSequence('.progress-row', cls=ProgressRow)
-    used_by_gui_tag = WebItem('.index-labels-container')
+    used_by_gui_tag = WebElement('.index-labels-container')
 
     def is_used_by_gui_tag_visible(self):
         try:

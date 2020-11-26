@@ -13,11 +13,10 @@ import time
 import yaml
 
 from tests.gui.conftest import WAIT_BACKEND
-from tests.gui.steps.common.miscellaneous import switch_to_iframe
-from tests.gui.steps.common.url import refresh_site
+from tests.gui.steps.onezone.data_discovery import (
+    click_query_button_on_data_disc_page, assert_data_discovery_page)
 from tests.gui.steps.onezone.discovery import (
-    click_on_option_of_harvester_on_left_sidebar_menu,
-    assert_data_discovery_page, click_query_button_on_data_disc_page)
+    click_on_option_of_harvester_on_left_sidebar_menu)
 from tests.gui.steps.onezone.spaces import (
     click_on_option_in_the_sidebar, click_element_on_lists_on_left_sidebar_menu)
 from tests.utils.bdd_utils import wt, parsers
@@ -121,3 +120,4 @@ def open_data_discovery_of_harvester(selenium, browser_id, harvester_name,
 def go_to_source_of_file(selenium, browser_id, filename, data_discovery):
     data_dict = _unpack_files_data(selenium, browser_id, data_discovery)
     data_dict[filename].source_button()
+

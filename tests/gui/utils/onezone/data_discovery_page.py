@@ -13,7 +13,9 @@ from tests.gui.utils.core.web_elements import (
 
 class QueryBuilder(PageObject):
     root_block = Button('.root-block')
+    another_query_button = Button('.query-builder-block-adder.clickable')
     query_button = Button('.submit-query')
+    properties_list = WebItem
 
 
 class ResultSample(PageObject):

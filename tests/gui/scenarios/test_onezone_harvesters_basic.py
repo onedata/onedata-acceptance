@@ -41,6 +41,7 @@ from tests.gui.steps.onezone.members import *
 from tests.gui.steps.onezone.spaces import *
 from tests.gui.steps.onezone.multibrowser_spaces import *
 from tests.gui.steps.onezone.discovery import *
+from tests.gui.steps.onezone.data_discovery import *
 from tests.gui.steps.onezone.clusters import *
 
 from tests.gui.steps.oneprovider.common import *

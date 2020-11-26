@@ -26,7 +26,9 @@ from tests.gui.steps.onezone.discovery import (
     click_option_in_discovery_page_menu,
     check_public_toggle_on_harvester_config_page,
     assert_public_toggle_on_harvester_config_page,
-    click_button_in_tab_of_harvester_config_page)
+    click_button_in_tab_of_harvester_config_page,
+    assert_used_by_gui_tag_on_indices_page, expand_index_record_in_indices_page,
+    assert_progress_in_harvesting)
 from tests.gui.steps.onezone.spaces import (
     click_on_option_in_the_sidebar, click_element_on_lists_on_left_sidebar_menu)
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
@@ -293,3 +295,23 @@ def configure_harvester_as_public(selenium, browser_id, harvester, oz_page):
                                                  save_button, general_tab)
     assert_public_toggle_on_harvester_config_page(selenium, browser_id,
                                                   oz_page, is_checked)
+
+
+@wt(parsers.parse('user of {browser_id} checks if harvesting process in "{'
+                  'harvester}" is finished for all spaces in "{index}"'))
+def check_harvesting_process_in_harvester(selenium, browser_id, harvester,
+                                          index, oz_page):
+    discovery_tab = 'Discovery'
+    scope = 'harvesters'
+    indices_tab = 'Indices'
+
+    click_on_option_in_the_sidebar(selenium, browser_id, discovery_tab, oz_page)
+    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, scope,
+                                                harvester, oz_page)
+    click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id,
+                                                      harvester, indices_tab,
+                                                      oz_page)
+    assert_used_by_gui_tag_on_indices_page(selenium, browser_id, oz_page, index)
+    expand_index_record_in_indices_page(selenium, browser_id, oz_page,
+                                        index)
+    assert_progress_in_harvesting(selenium, browser_id, oz_page, index)
