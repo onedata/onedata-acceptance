@@ -74,6 +74,6 @@ def screens():
     return [0, 1]
 
 
-scenarios('../features/onezone/harvesters/harvesters.feature')
-scenarios('../features/onezone/harvesters/harvesters_memberships_privileges.feature')
-
+# scenarios('../features/onezone/harvesters/data_discovery.feature')
+scenarios('../features/onezone/harvesters/data_discovery_querying.feature')
+# scenarios('../features/onezone/harvesters/public_data_discovery.feature')

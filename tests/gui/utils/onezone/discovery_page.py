@@ -22,9 +22,24 @@ class WelcomePage(PageObject):
     join_group = NamedButton('.info .ember-view', text='join a group')
 
 
+class ProgressRow(PageObject):
+    label = Label('.truncated-string')
+    id = label.split()[0]
+    progress_value = Label('.progress-table-cell text')
+
+
 class Index(PageObject):
     name = id = Label('.one-label')
-    progress_value = Label('.progress-table-cell text')
+    progress_values = WebItemsSequence('.progress-row', cls=ProgressRow)
+    used_by_gui_tag = WebItem('.index-labels-container')
+
+    def is_used_by_gui_tag_visible(self):
+        try:
+            self.used_by_gui_tag
+        except RuntimeError:
+            return False
+        else:
+            return True
 
 
 class IndicesPage(PageObject):

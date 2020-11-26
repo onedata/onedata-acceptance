@@ -10,7 +10,7 @@ __license__ = ("This software is released under the MIT license cited in "
 from tests import ELASTICSEARCH_PORT
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.steps.common.miscellaneous import _enter_text, switch_to_iframe
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import transform, parse_seq
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 
@@ -193,17 +193,34 @@ def expand_index_record_in_indices_page(selenium, browser_id, oz_page,
     indices_list[index_name].click()
 
 
-@wt(parsers.parse('user of {browser_id} sees {value} progress in '
-                  '"{index_name}" index harvesting'))
-@repeat_failed(timeout=WAIT_FRONTEND * 2)
-def assert_progress_in_harvesting(selenium, browser_id, oz_page,
-                                  index_name, value):
+@wt(parsers.parse('user of {browser_id} sees "Used by GUI" tag on '
+                  '"{index}" index record in indices page'))
+def assert_used_by_gui_tag_on_indices_page(selenium, browser_id, oz_page,
+                                           index):
     driver = selenium[browser_id]
     indices_list = oz_page(driver)['discovery'].indices_page.indices_list
-    progress_value = indices_list[index_name].progress_value
+    assert indices_list[index].is_used_by_gui_tag_visible(), ('Used by GUI '
+                                                              'tag is not '
+                                                              'visible for '
+                                                              f'{index}')
 
-    assert value == progress_value, 'found {} instead of {}'.format(progress_value,
-                                                                    value)
+
+@wt(parsers.parse('user of {browser_id} sees 100% progress for '
+                  '"{spaces_list}" in "{index_name}" index harvesting'))
+@repeat_failed(timeout=WAIT_BACKEND * 4)
+def assert_progress_in_harvesting(selenium, browser_id, oz_page,
+                                  index_name, value, spaces_list):
+    driver = selenium[browser_id]
+    spaces = parse_seq(spaces_list)
+    indices_list = oz_page(driver)['discovery'].indices_page.indices_list
+    progress_values = indices_list[index_name].progress_values
+
+    for space in spaces:
+        assert progress_values[space].progress_value == value, ('Harvesting '
+                                                                'process did '
+                                                                'not finished '
+                                                                'for '
+                                                                f'"{space}"')
 
 
 def click_remove_space_option_in_menu_in_discover_spaces_page(selenium,
