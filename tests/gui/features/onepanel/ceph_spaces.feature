@@ -19,8 +19,8 @@ Feature: Operations on newly created Local Ceph
 
     When user of browser_oz_panel clicks on Create Onezone cluster button in welcome page in Onepanel
     And user of browser_oz_panel sets options for .*onezone.* host in step 1 of deployment process with following configuration:
-          zone name: <name of onezone>
-          zone domain: <domain of onezone>
+          zone name: /name of onezone/
+          zone domain: /domain of onezone/
           options:
             - Database
             - Cluster Worker
@@ -63,8 +63,8 @@ Feature: Operations on newly created Local Ceph
     And user of browser_op_panel clicks proceed button in step 2 of deployment process in Onepanel
 
     And user of browser_op_panel registers provider in step 2 of deployment process in Onepanel with following config:
-          name: <name of oneprovider-1>
-          domain: <domain of oneprovider-1>
+          name: /name of oneprovider-1/
+          domain: /domain of oneprovider-1/
           request a subdomain: False
           email: admin@admin.email
 

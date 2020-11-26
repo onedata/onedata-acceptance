@@ -65,8 +65,8 @@ def _setup_step1(selenium, browser_id, onepanel, host_regexp, configuration,
 
 
 def _parse_zone_data(zone_name, zone_domain):
-    zone_from_name = re.match(r'<name of (.+)>', zone_name).group(1)
-    zone_from_domain = re.match(r'<domain of (.+)>', zone_domain).group(1)
+    zone_from_name = re.match(r'/name of (.+)/', zone_name).group(1)
+    zone_from_domain = re.match(r'/domain of (.+)/', zone_domain).group(1)
     return zone_from_name, zone_from_domain
 
 
@@ -169,8 +169,8 @@ def _setup_step2(selenium, browser_id, onepanel, hosts, configuration):
 
 
 def _parse_provider(provider_name, provider_domain):
-    provider_for_name = re.match(r'<name of (.+)>', provider_name).group(1)
-    provider_for_domain = re.match(r'<domain of (.+)>',
+    provider_for_name = re.match(r'/name of (.+)/', provider_name).group(1)
+    provider_for_domain = re.match(r'/domain of (.+)/',
                                    provider_domain).group(1)
     return provider_for_name, provider_for_domain
 
