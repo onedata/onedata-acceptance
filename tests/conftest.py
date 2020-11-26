@@ -263,7 +263,7 @@ def export_logs(request, env_description_abs_path=None):
     test_type = get_test_type(request)
     logdir_path = LOGDIRS.get(test_type)
 
-    if test_type in ['upgrade']:
+    if test_type in ['oneclient', 'upgrade']:
         feature_name = request.module.__name__.split('.')[-1]
         test_path = os.path.join(get_file_name(env_description_abs_path),
                                  feature_name)

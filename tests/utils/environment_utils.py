@@ -20,6 +20,7 @@ from tests.utils.onenv_utils import (init_helm, client_alias_to_pod_mapping,
 from tests.utils.luma_utils import (get_local_feed_luma_storages, get_all_spaces_details,
                                     add_user_luma_mapping, add_spaces_luma_mapping, gen_uid, gen_gid)
 from tests.utils.user_utils import User
+from requests.exceptions import ConnectionError
 
 START_ENV_MAX_RETRIES = 3
 ONE_ENV_CONTAINER_NAME = 'one-env'
@@ -49,7 +50,11 @@ def start_environment(scenario_path, request, hosts, patch_path, users, test_con
             if not local:
                 update_etc_hosts()
             setup_hosts_cfg(hosts, request)
-            users['admin'].create_token(hosts['onezone']['hostname'])
+            try:
+                users['admin'].create_token(hosts['onezone']['hostname'])
+            except ConnectionError:
+                # token creation fails when environment is not deployed
+                pass
 
             if patch_path and clean:
                 run_onenv_command('patch', patch_args)
