@@ -340,7 +340,7 @@ ALL       ALL = (ALL) NOPASSWD: ALL
             ('/etc/passwd', 'ro')
         ]
 
-        ret = docker.run(
+        docker.run(
             tty=True,
             rm=True,
             interactive=True,
@@ -362,6 +362,9 @@ ALL       ALL = (ALL) NOPASSWD: ALL
         remove_one_env_container()
 
     report = load_test_report(args.report_path)
+    # If exit code != 0 then bamboo always fails build.
+    # If it is 0 then result is based on test report.
+    ret = 0
     if env_errors_exists(report):
         ret = 1
 
