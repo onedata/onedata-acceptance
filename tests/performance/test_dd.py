@@ -8,11 +8,9 @@ __license__ = "This software is released under the MIT license cited in " \
 import os
 import re
 
-from tests.performance import CLIENT_CONF
 from tests.performance.conftest import AbstractPerformanceTest
-from tests.utils.performance_utils import (Result, generate_configs,
-                                           performance, get_client)
-from tests.utils.client_utils import mkstemp, rm, user_home_dir, dd
+from tests.utils.performance_utils import Result, generate_configs, performance
+from tests.utils.client_utils import mkstemp, rm, user_home_dir, dd, mount_client, CLIENT_CONF
 
 
 REPEATS = 3
@@ -47,10 +45,10 @@ class Testdd(AbstractPerformanceTest):
     def test_dd(self, request, hosts, users, clients, env_desc, params):
         user_proxy = PROXY_IO_CLIENT_CONF.user
         user_directio = DIRECT_IO_CLIENT_CONF.user
-        client_directio = get_client(DIRECT_IO_CLIENT_CONF, clients, hosts, 
-                                     request, users, env_desc)
-        client_proxy = get_client(PROXY_IO_CLIENT_CONF, clients, hosts, 
-                                  request, users, env_desc)
+        client_directio = mount_client(DIRECT_IO_CLIENT_CONF, clients, hosts,
+                                       request, users, env_desc)
+        client_proxy = mount_client(PROXY_IO_CLIENT_CONF, clients, hosts,
+                                    request, users, env_desc)
 
         size = params['size']['value']
         size_unit = params['size']['unit']

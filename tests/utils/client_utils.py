@@ -14,6 +14,7 @@ import errno
 import stat as stat_lib
 import hashlib
 import subprocess
+from collections import namedtuple
 
 import rpyc
 import pytest
@@ -28,6 +29,9 @@ BAD_TOKEN = 'bad token'
 CORRECT_TOKEN = 'token'
 RPYC_DEFAULT_PORT = 18812
 
+CLIENT_CONF = namedtuple('ClientConf', ['user', 'mount_path', 'client_host',
+                                        'client_instance', 'token'])
+
 
 class Client:
     def __init__(self, mount_path, provider, docker_id, ip, timeout=40):
@@ -41,8 +45,10 @@ class Client:
         self.opened_files = {}
         self.file_stats = {}
 
-    def mount(self, username, hosts, access_token, mode, gdb=False, retries=3):
-        clean_mount_path(username, self)
+    def mount(self, username, hosts, access_token, mode, gdb=False, retries=3,
+              clean_mountpoint=True):
+        if clean_mountpoint:
+            clean_mount_path(username, self)
         if 'proxy' in mode:
             mode_flag = '--force-proxy-io'
         else:
@@ -66,8 +72,13 @@ class Client:
             cmd = " ".join(['oneclient', '--log-dir', '/tmp/oc_logs', mode_flag,
                             '--insecure', self.mount_path])
 
+        def retry_fun():
+            if clean_mountpoint:
+                clean_mount_path(username, self)
+                mkdir(self, self.mount_path, recursive=True, exist_ok=True)
+
         returncode = client_run_cmd(self, cmd,
-                                    on_retry=lambda: clean_mount_path(username, self),
+                                    on_retry=retry_fun,
                                     verbose=True, retries=retries)
 
         rm(self, path=os.path.join(os.path.dirname(self.mount_path), '.local'),
@@ -103,7 +114,7 @@ class Client:
                 timeout -= 1
         if not started:
             log_exception()
-            pytest.skip('rpc connection couldn\'t be established')
+            pytest.skip('Environment error: rpc connection couldn\'t be established')
 
     def _start_rpyc_server(self, user_name, port):
         """start rpc server on client docker"""
@@ -165,7 +176,7 @@ def create_client(clients, username, mount_path, client_instance,
 
 def mount_users(clients, user_names, mount_paths, client_hosts,
                 client_instances, tokens, hosts, request, users, env_desc,
-                should_fail=False):
+                should_fail=False, clean_mountpoint=True):
     params = zip(user_names, mount_paths, client_instances, client_hosts,
                  tokens)
 
@@ -189,13 +200,13 @@ def mount_users(clients, user_names, mount_paths, client_hosts,
         client_mode = client_conf.get('mode')
         retries = 1 if should_fail else 3
         ret = client.mount(username, hosts, access_token, client_mode,
-                           retries=retries)
+                           retries=retries, clean_mountpoint=clean_mountpoint)
 
         if ret != 0 and (access_token != BAD_TOKEN and not should_fail):
             clean_mount_path(username, client)
             pytest.skip('Environment error: error mounting client')
 
-        if access_token != BAD_TOKEN and not should_fail:
+        if access_token != BAD_TOKEN and not should_fail and clean_mountpoint:
             try:
                 clean_spaces(client)
             except AssertionError:
@@ -207,7 +218,8 @@ def mount_users(clients, user_names, mount_paths, client_hosts,
             user.mark_last_operation_failed()
 
     def fin():
-        clean_clients(user_names, users)
+        if clean_mountpoint:
+            clean_clients(user_names, users)
 
     request.addfinalizer(fin)
 
@@ -231,7 +243,7 @@ def clean_mount_path(user, client, lazy=False):
     except FileNotFoundError:
         pass
     except Exception as e:
-        print("Error during cleaning up spaces {}".format(e))
+        print("Error during cleaning up spaces: {}".format(e))
     finally:
         # get pid of running oneclient node
         get_pid_cmd = ' | '.join(
@@ -502,3 +514,12 @@ def client_run_cmd(client, cmd, output=False, error=False,
                                   verbose=verbose)
 
     return None if output else proc.returncode
+
+
+def mount_client(client_conf, clients, hosts, request, users, env_desc, clean_mountpoint=True):
+    mount_users(clients, [client_conf.user], [client_conf.mount_path],
+                [client_conf.client_host], [client_conf.client_instance],
+                [client_conf.token], hosts, request, users, env_desc,
+                clean_mountpoint=clean_mountpoint)
+
+    return users[client_conf.user].clients[client_conf.client_instance]

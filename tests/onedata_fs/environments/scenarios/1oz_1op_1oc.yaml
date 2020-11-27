@@ -50,7 +50,7 @@ os-config:
 
   services:
     oneprovider-1: *cfg1
-    oneclient-1: *cfg1
+    oneclient: *cfg1
 
 onezone:
   batchConfig:

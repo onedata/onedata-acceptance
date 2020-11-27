@@ -91,8 +91,6 @@ Feature: Regular_file_CRUD
     And user1 sees [file1] in space1/dir1/dir2
     And user1 writes "TEST TEXT ONEDATA" to space1/dir1/dir2/file1
     And user1 reads "TEST TEXT ONEDATA" from file space1/dir1/dir2/file1
-    # TODO delete below sleep after resolving VFS-2779
-    And user1 is idle for 2 seconds
     And user1 copies regular file space1/dir1/dir2/file1 to space1/dir3
     Then user1 can stat [dir1, dir3] in space1
     And user1 can stat [file1] in space1/dir1/dir2

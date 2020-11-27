@@ -23,10 +23,8 @@ class OnenvError(BaseException):
     pass
 
 
-def run_onenv_command(command, args=None, fail_with_error=True, sudo=False,
+def run_onenv_command(command, args=None, fail_with_error=True, sudo=False, return_output=True,
                       cwd='one_env', onenv_path='./onenv'):
-    master, slave = pty.openpty()
-
     if sudo:
         cmd = ['sudo', onenv_path, command]
     else:
@@ -34,11 +32,17 @@ def run_onenv_command(command, args=None, fail_with_error=True, sudo=False,
 
     if args:
         cmd.extend(args)
-    print('Running command: {}'.format(cmd))
-    proc = sp.Popen(cmd, stdin=slave, stdout=sp.PIPE, stderr=sp.PIPE, cwd=cwd)
+    return run_command(cmd, fail_with_error=fail_with_error, return_output=return_output, cwd=cwd)
+
+
+def run_command(cmd, fail_with_error=True, return_output=True, cwd=None, verbose=True):
+    if verbose:
+        print('Running command: {}'.format(cmd))
+    proc = sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.PIPE, cwd=cwd)
     output, err = proc.communicate()
 
-    sys.stdout.write(output.decode('utf-8'))
+    if verbose:
+        sys.stdout.write(output.decode('utf-8'))
     sys.stderr.write(err.decode('utf-8'))
 
     if proc.returncode != 0 and fail_with_error:
@@ -46,11 +50,7 @@ def run_onenv_command(command, args=None, fail_with_error=True, sudo=False,
                          'Command: {} failed.\n'
                          'Captured output: {}'.format(cmd, output))
 
-    return output
-
-
-def clean_env():
-    run_onenv_command('clean', ['-a', '-s', '-d', '-v'])
+    return output if return_output else proc.returncode
 
 
 # TODO: After resolving VFS-4820 all this function can be imported from
