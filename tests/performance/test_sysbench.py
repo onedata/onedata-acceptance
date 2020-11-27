@@ -75,7 +75,7 @@ class TestSysbench(AbstractPerformanceTest):
             'total_size': [2048],
             'mode': ['rndrd', 'rndrw', 'rndwr', 'seqrd', 'seqwr'],
             'validate': ['on'],
-            'events': [1000000],
+            'events': [100000],
             'report_interval': [15],
             'time': [0],
             'file_block_size': [4]
