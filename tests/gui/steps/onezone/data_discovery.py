@@ -14,13 +14,6 @@ from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 
 
-@wt(parsers.parse('user of {browser_id} chooses "{property_name}" property to '
-                  'query for'))
-def choose_property_to_query(selenium, browser_id, property_name, popups):
-    driver = selenium[browser_id]
-    popups(driver).query_builder_popup.choose_property(property_name)
-
-
 @wt(parsers.parse('user of {browser_id} sees Data Discovery page'))
 @wt(parsers.parse('user of {browser_id} sees public data discovery page'))
 def assert_data_discovery_page(selenium, browser_id, data_discovery):
@@ -75,9 +68,10 @@ def assert_data_discovery_page_ecrin(selenium, browser_id, data_discovery):
                                                                 'in given time')
 
 
-# queries
+# querying
 @wt(parsers.parse('user of {browser_id} clicks on start query icon in data '
                   'discovery page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def start_query(selenium, browser_id, data_discovery):
     driver = selenium[browser_id]
     data_discovery(driver).query_builder.root_block()
@@ -85,69 +79,93 @@ def start_query(selenium, browser_id, data_discovery):
 
 @wt(parsers.parse('user of {browser_id} clicks on start another query icon in '
                   'data discovery page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def start_another_query(selenium, browser_id, data_discovery):
     driver = selenium[browser_id]
-    data_discovery(driver).query_builder.another_query_button()
+    data_discovery(driver).query_builder.another_block_buttons[0].click()
+
+
+@wt(parsers.parse('user of {browser_id} clicks on {number} from the left start '
+                  'query icon in data discovery page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def start_another_query(selenium, browser_id, data_discovery, number: str):
+    driver = selenium[browser_id]
+    no = int(number.split()[0])
+    data_discovery(driver).query_builder.another_block_buttons[no-1].click()
 
 
 @wt(parsers.parse('user of {browser_id} clicks on condition properties '
                   'expander in query builder'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def open_condition_properties_list(selenium, browser_id, popups):
     driver = selenium[browser_id]
-    popups(driver).query_builder_popup.expand_properties()
+    query_builder_popup = popups(driver).get_query_builder_not_hidden_popup()
+    query_builder_popup.expand_properties()
 
 
 @wt(parsers.parse('user of {browser_id} sees {properties_list} on condition '
                   'properties list'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_properties_on_condition_properties_list(selenium, browser_id,
                                                    properties_list, popups):
     driver = selenium[browser_id]
     properties = parse_seq(properties_list)
+    query_builder_popup = popups(driver).get_query_builder_not_hidden_popup()
     for prop in properties:
-        popups(driver).query_builder_popup.assert_property(prop), (
+        query_builder_popup.assert_property(prop), (
             f'{prop} property not found in condition properties list'
         )
 
 
 @wt(parsers.parse('user of {browser_id} chooses "{property_name}" property '
                   'for a query in query builder popup'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def choose_property_for_query(selenium, browser_id, property_name, popups):
     driver = selenium[browser_id]
-    popups(driver).query_builder_popup.choose_property(property_name)
+    query_builder_popup = popups(driver).get_query_builder_not_hidden_popup()
+    query_builder_popup.choose_property(property_name)
 
 
 @wt(parsers.parse('user of {browser_id} chooses "{comparator}" from '
                   'comparators list in query builder popup'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def choose_comparator_in_query_builder(selenium, browser_id, comparator,
                                        popups):
     driver = selenium[browser_id]
-    popups(driver).query_builder_popup.choose_comparator(comparator)
+    query_builder_popup = popups(driver).get_query_builder_not_hidden_popup()
+    query_builder_popup.choose_comparator(comparator)
 
 
 @wt(parsers.parse('user of {browser_id} writes "{value}" to value input in '
                   'query builder popup'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def write_value_in_query_builder(selenium, browser_id, value: str, popups):
     driver = selenium[browser_id]
-    popups(driver).query_builder_popup.value = value
+    query_builder_popup = popups(driver).get_query_builder_not_hidden_popup()
+    query_builder_popup.value = value
 
 
 @wt(parsers.parse('user of {browser_id} clicks "Add" button in query builder '
                   'popup'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def click_add_button_in_query_builder(selenium, browser_id, popups):
     driver = selenium[browser_id]
-    popups(driver).query_builder_popup.add_button()
+    query_builder_popup = popups(driver).get_query_builder_not_hidden_popup()
+    query_builder_popup.add_button()
 
 
 @wt(parsers.parse('user of {browser_id} clicks {operator} operator in query '
                   'builder popup'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def click_operator_in_query_builder(selenium, browser_id, operator, popups):
     driver = selenium[browser_id]
-    getattr(popups(driver).query_builder_popup,
-            f'{operator.lower()}_operator')()
+    query_builder = popups(driver).get_query_builder_not_hidden_popup()
+    getattr(query_builder, f'{operator.lower()}_operator')()
 
 
 @wt(parsers.parse('user of {browser_id} clicks "Query" button on Data '
                   'discovery page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def click_query_button_on_data_disc_page(selenium, browser_id, data_discovery):
     driver = selenium[browser_id]
     data_discovery(driver).query_builder.query_button()

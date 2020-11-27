@@ -6,7 +6,8 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-from tests.gui.utils.core.web_elements import WebItem, Button, WebItemsSequence
+from tests.gui.utils.core.web_elements import WebItem, WebItemsSequence
+from tests.utils.utils import repeat_failed
 from .consumer_caveat import ConsumerCaveat
 from .menu_popup import MenuPopup
 from .query_builder import QueryBuilderPopup
@@ -36,8 +37,8 @@ class Popups(object):
                                     cls=ConsumerCaveat)
     user_delete_account_popover_menu = WebItem('.in .webui-popover-inner',
                                                cls=UserDeleteAccountPopoverMenu)
-    query_builder_popup = WebItem('.query-builder-block-selector',
-                                  cls=QueryBuilderPopup)
+    query_builder_popups = WebItemsSequence('.query-builder-block-selector',
+                                            cls=QueryBuilderPopup)
     data_distribution_popup = WebItem('.webui-popover.in', cls=DataDistributionPopup)
     delete_qos_popup = WebItem('.webui-popover.in', cls=DeleteQosPopup)
 
@@ -49,3 +50,10 @@ class Popups(object):
 
     def is_upload_presenter(self):
         return len(self.upload_presenter) > 0
+
+    @repeat_failed(timeout=10)
+    def get_query_builder_not_hidden_popup(self):
+        for popup in self.query_builder_popups:
+            if popup.web_elem.is_displayed():
+                return popup
+        raise RuntimeError('No query builder popups visible')
