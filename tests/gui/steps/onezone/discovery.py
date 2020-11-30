@@ -294,8 +294,6 @@ def click_on_tab_of_harvester_config_page(selenium, browser_id, tab_name,
     driver = selenium[browser_id]
     page = oz_page(driver)['discovery'].configuration_page
     getattr(page, transform(tab_name) + '_button')()
-    import pdb
-    pdb.set_trace()
 
 
 @wt(parsers.parse('user of {browser_id} chooses {plugin} GUI plugin '
