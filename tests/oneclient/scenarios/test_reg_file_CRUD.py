@@ -18,6 +18,7 @@ from tests.oneclient.steps.file_steps import *
 from tests.oneclient.steps.file_steps import *
 from tests.oneclient.steps.reg_file_steps import *
 from tests.utils.acceptance_utils import *
+from tests.oneclient.steps.environment_steps import *
 
 
 scenario = partial(scenario, '../features/reg_file_CRUD.feature')
@@ -80,4 +81,9 @@ def test_copy_big(env_description_file):
 
 @scenario('Delete file copied right after read')
 def test_delete_copied_after_read(env_description_file):
+    pass
+
+
+@scenario('Restart provider with active oneclient connection')
+def test_provider_restart(env_description_file):
     pass
