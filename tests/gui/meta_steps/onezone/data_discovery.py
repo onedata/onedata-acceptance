@@ -17,6 +17,7 @@ from tests.gui.steps.onezone.harvesters.data_discovery import (
     click_query_button_on_data_disc_page, assert_data_discovery_page)
 from tests.gui.steps.onezone.harvesters.discovery import (
     click_on_option_of_harvester_on_left_sidebar_menu)
+
 from tests.gui.steps.onezone.spaces import (
     click_on_option_in_the_sidebar, click_element_on_lists_on_left_sidebar_menu)
 from tests.utils.bdd_utils import wt, parsers

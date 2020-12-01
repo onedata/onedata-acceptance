@@ -7,6 +7,15 @@ __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+from tests.gui.steps.onezone.harvesters.configuration import (
+    click_button_in_tab_of_harvester_config_page,
+    check_public_toggle_on_harvester_config_page,
+    assert_public_toggle_on_harvester_config_page)
+from tests.gui.steps.onezone.harvesters.indices import (
+    click_on_member_menu_option_in_harvester_indices_page,
+    type_index_name_to_input_field_in_indices_page,
+    click_create_button_in_indices_page, assert_used_by_gui_tag_on_indices_page,
+    expand_index_record_in_indices_page, assert_progress_in_harvesting)
 from tests.gui.steps.onezone.members import *
 from tests.gui.steps.onezone.harvesters.discovery import (
     click_on_option_in_harvester_menu,
@@ -16,19 +25,11 @@ from tests.gui.steps.onezone.harvesters.discovery import (
     click_remove_space_option_in_menu_in_discover_spaces_page,
     click_create_button_in_discovery_page,
     click_on_option_of_harvester_on_left_sidebar_menu,
-    type_index_name_to_input_field_in_indices_page,
-    click_create_button_in_indices_page, click_button_in_harvester_spaces_page,
     choose_element_from_dropdown_in_add_element_modal,
     type_text_to_rename_input_field_in_discovery_page,
     confirm_harvester_rename_using_button,
     assert_space_has_appeared_in_discovery_page,
-    click_on_member_menu_option_in_harvester_indices_page,
-    click_option_in_discovery_page_menu,
-    check_public_toggle_on_harvester_config_page,
-    assert_public_toggle_on_harvester_config_page,
-    click_button_in_tab_of_harvester_config_page,
-    assert_used_by_gui_tag_on_indices_page, expand_index_record_in_indices_page,
-    assert_progress_in_harvesting)
+    click_option_in_discovery_page_menu, click_button_in_harvester_spaces_page)
 from tests.gui.steps.onezone.spaces import (
     click_on_option_in_the_sidebar, click_element_on_lists_on_left_sidebar_menu)
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
