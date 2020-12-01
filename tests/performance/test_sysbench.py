@@ -6,12 +6,10 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 
-from tests.performance import CLIENT_CONF
 from tests.utils.docker_utils import run_cmd
 from tests.performance.conftest import AbstractPerformanceTest
-from tests.utils.performance_utils import (generate_configs, performance,
-                                           get_client)
-from tests.utils.client_utils import rm, mkdtemp
+from tests.utils.performance_utils import generate_configs, performance
+from tests.utils.client_utils import rm, mkdtemp, mount_client, CLIENT_CONF
 
 REPEATS = 1
 SUCCESS_RATE = 100
@@ -77,7 +75,7 @@ class TestSysbench(AbstractPerformanceTest):
             'total_size': [2048],
             'mode': ['rndrd', 'rndrw', 'rndwr', 'seqrd', 'seqwr'],
             'validate': ['on'],
-            'events': [1000000],
+            'events': [100000],
             'report_interval': [15],
             'time': [0],
             'file_block_size': [4]
@@ -89,10 +87,10 @@ class TestSysbench(AbstractPerformanceTest):
     def test_sysbench(self, request, hosts, users, clients, env_desc, params):
         user_proxy = PROXY_IO_CLIENT_CONF.user
         user_directio = DIRECT_IO_CLIENT_CONF.user
-        client_directio = get_client(DIRECT_IO_CLIENT_CONF, clients, hosts, 
-                                     request, users, env_desc)
-        client_proxy = get_client(PROXY_IO_CLIENT_CONF, clients, hosts, 
-                                  request, users, env_desc)
+        client_directio = mount_client(DIRECT_IO_CLIENT_CONF, clients, hosts,
+                                       request, users, env_desc)
+        client_proxy = mount_client(PROXY_IO_CLIENT_CONF, clients, hosts,
+                                    request, users, env_desc)
 
         threads = params['threads']['value']
         files_number = params['files_number']['value']

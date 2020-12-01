@@ -1,5 +1,5 @@
 # Name of the scenario to run
-scenario: "scenario-1oz-2op-local-volume"
+scenario: "scenario-1oz-2op"
 
 # Determines if onedata components should be started from pre-compiled sources
 # or pre-installed packages inside dockers. When enabled, sources are expected
@@ -24,10 +24,10 @@ onedataCli: false
 # Determines if oneclients should start.
 oneclients: true
 
-oneclientImage: "docker.onedata.org/oneclient-dev:ID-a6af7ae291"
+oneclientImage: "docker.onedata.org/oneclient-dev:ID-b08da46791"
 
 # Onedata rest client image to use.
-onedataCliImage: "docker.onedata.org/rest-cli:ID-ce4dc2f486"
+onedataCliImage: "docker.onedata.org/rest-cli:ID-e5fb6602e4"
 
 # Luma image to use.
 lumaImage: "docker.onedata.org/luma:ID-8e2da56615"
@@ -38,48 +38,47 @@ forceImagePull: true
 
 spaces: false
 
-onezone:
-  batchConfig:
-    createUsers: false
-
 storages:
-  - local-volume-1
+  - posix
 
 os-config:
   cfg1: &cfg1
     users:
-      - space_owner
       - user1
       - user2
     groups:
       space1:
         - user1
         - user2
-      space2:
-        - user1
-        - user2
       fuse:
         - user1
         - user2
+
   services:
-    oneprovider-1: *cfg1
-    oneprovider-2: *cfg1
     oneclient: *cfg1
 
-oneprovider-1:
-  oneclient:
-    users: []
-    wait_for_oneprovider:
-      enabled: false
-
-    batchConfig:
-      createUsers: false
-
-oneprovider-2:
+onezone:
   batchConfig:
     createUsers: false
 
+oneprovider-1:
   oneclient:
+    replicas: 1
     users: []
     wait_for_oneprovider:
       enabled: false
+    batchConfig:
+      createUsers: false
+  external-storages: []
+
+oneprovider-2:
+  oneclient:
+    replicas: 1
+    users: []
+    wait_for_oneprovider:
+      enabled: false
+    batchConfig:
+      createUsers: false
+  external-storages: []
+
+persistence: true

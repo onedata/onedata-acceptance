@@ -10,7 +10,7 @@ __license__ = ("This software is released under the MIT license cited in "
 import re
 import time
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, given, wt
 from tests.utils.utils import repeat_failed
@@ -34,7 +34,17 @@ def g_create_admin_in_panel(selenium, browser_id_list, onepanel, name,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_check_host_options_in_deployment_step1(selenium, browser_id, options,
                                               host_regexp, onepanel):
-    options = [transform(option) for option in parse_seq(options)]
+    parsed_options = parse_seq(options)
+    wt_check_host_options_list_in_deployment_step1(selenium, browser_id,
+                                                   parsed_options, host_regexp,
+                                                   onepanel)
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def wt_check_host_options_list_in_deployment_step1(selenium, browser_id,
+                                                   options, host_regexp,
+                                                   onepanel):
+    options = [transform(option) for option in options]
     # without this, deployment failed randomly when launched locally
     time.sleep(5)
     for host in onepanel(selenium[browser_id]).content.deployment.step1.hosts:
@@ -132,7 +142,6 @@ def wt_click_on_btn_in_deployment_step(selenium, browser_id, btn, step,
                   'deployment has started'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_assert_begin_of_cluster_deployment(selenium, browser_id, modals):
-
     _ = modals(selenium[browser_id]).cluster_deployment
 
 
@@ -214,7 +223,7 @@ def wt_assert_ip_address_in_deployment_setup_ip(selenium, browser_id, onepanel,
 @wt(parsers.re('user of (?P<browser_id>.*) sees that IP address of '
                '"(?P<host>.*)" host is that of "(?P<ip_host>.*)" in'
                ' deployment setup IP step'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND*2, interval=1)
 def wt_assert_ip_address_of_known_host_in_deployment_setup_ip(selenium, host,
                                                               browser_id, hosts,
                                                               onepanel,

@@ -36,21 +36,20 @@ class User:
 
     @repeat_failed(attempts=5)
     def create_token(self, oz_ip):
-        if not self.token:
-            if 'keycloak' in self.idps:
-                token_dispenser_pod = match_pods('token-dispenser')[0]
-                token_dispenser_ip = get_ip(token_dispenser_pod)
-                response = http_get(ip=token_dispenser_ip, port=HTTP_PORT,
-                                    path=get_token_dispenser_rest_path('token',
-                                                                       self.keycloak_name),
-                                    auth=(self.username, self.password),
-                                    default_headers=False, use_ssl=False)
-                self.token = response.content
-            else:
-                response = http_post(ip=oz_ip, port=OZ_REST_PORT,
-                                     path=get_zone_rest_path('user', 'client_tokens'),
-                                     auth=(self.username, self.password))
-                self.token = json.loads(response.content)['token']
+        if 'keycloak' in self.idps:
+            token_dispenser_pod = match_pods('token-dispenser')[0]
+            token_dispenser_ip = get_ip(token_dispenser_pod)
+            response = http_get(ip=token_dispenser_ip, port=HTTP_PORT,
+                                path=get_token_dispenser_rest_path('token',
+                                                                   self.keycloak_name),
+                                auth=(self.username, self.password),
+                                default_headers=False, use_ssl=False)
+            self.token = response.content
+        else:
+            response = http_post(ip=oz_ip, port=OZ_REST_PORT,
+                                 path=get_zone_rest_path('user', 'client_tokens'),
+                                 auth=(self.username, self.password))
+            self.token = json.loads(response.content)['token']
         return self.token
 
     @repeat_failed(attempts=5)

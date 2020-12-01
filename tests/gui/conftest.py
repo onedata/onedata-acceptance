@@ -353,7 +353,7 @@ def displays():
 
 
 @fixture(scope='session')
-def clipboard():    
+def clipboard():
     """utility simulating os clipboard"""
     from platform import system as get_system
     from collections import namedtuple
@@ -379,34 +379,8 @@ def clipboard():
     return cls(copy, paste)
 
 
-# Override original fixtures from tests.conftest to change their scope
 @fixture(scope='session')
-def env_description_abs_path(request, env_description_file):
-    from tests.conftest import env_description_abs_path
-    return env_description_abs_path(request, env_description_file)
-
-
-@fixture(scope='session')
-def env_desc(env_description_abs_path, hosts, request, users, previous_env):
-    from tests.conftest import env_desc
-    return env_desc(env_description_abs_path, hosts, request, users,
-                    previous_env)
-
-
-@fixture(scope='session')
-def hosts():
-    from tests.conftest import hosts
-    return hosts()
-
-
-@fixture(scope='session')
-def users():
-    from tests.conftest import users
-    return users()
-
-
-@fixture(scope='session')
-def base_url(hosts, env_desc):
+def base_url(hosts, maybe_start_env):
     return 'https://{}'.format(hosts['onezone']['hostname'])
 
 

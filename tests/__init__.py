@@ -21,7 +21,6 @@ TEST_DIR = os.path.join(PROJECT_DIR, 'tests')
 UTILS_DIR = os.path.join(TEST_DIR, 'utils')
 
 ONECLIENT_DIR = os.path.join(TEST_DIR, 'oneclient')
-ONECLIENT_TEST_CONFIG = os.path.join(ONECLIENT_DIR, 'test_config.yaml')
 ONECLIENT_ENV_DIR = os.path.join(ONECLIENT_DIR, 'environments')
 ONECLIENT_SCENARIO_DIR = os.path.join(ONECLIENT_ENV_DIR, 'scenarios')
 ONECLIENT_PATCHES_DIR = os.path.join(ONECLIENT_ENV_DIR, 'patches')
@@ -47,7 +46,12 @@ PERFORMANCE_LOGDIR = os.path.join(PERFORMANCE_DIR, 'logs')
 PERFORMANCE_ENV_DIR = os.path.join(PERFORMANCE_DIR, 'environments')
 PERFORMANCE_SCENARIO_DIR = os.path.join(PERFORMANCE_ENV_DIR, 'scenarios')
 PERFORMANCE_PATCHES_DIR = os.path.join(PERFORMANCE_ENV_DIR, 'patches')
-PERFORMANCE_TEST_CONFIG = os.path.join(PERFORMANCE_DIR, 'test_config.yaml')
+
+UPGRADE_TESTS_DIR = os.path.join(TEST_DIR, 'upgrade')
+UPGRADE_TESTS_LOGDIR = os.path.join(UPGRADE_TESTS_DIR, 'logs')
+UPGRADE_TESTS_ENV_DIR = os.path.join(UPGRADE_TESTS_DIR, 'environments')
+UPGRADE_TESTS_SCENARIO_DIR = os.path.join(UPGRADE_TESTS_ENV_DIR, 'scenarios')
+UPGRADE_TESTS_PATCHES_DIR = os.path.join(UPGRADE_TESTS_ENV_DIR, 'patches')
 
 UPLOAD_FILES_DIR = os.path.join(GUI_DIR, 'upload_files')
 
@@ -79,7 +83,8 @@ ENV_DIRS = {
     'gui': GUI_ENV_DIR,
     'mixed': MIXED_ENV_DIR,
     'onedata_fs': ONEDATA_FS_ENV_DIR,
-    'performance': PERFORMANCE_ENV_DIR
+    'performance': PERFORMANCE_ENV_DIR,
+    'upgrade': UPGRADE_TESTS_ENV_DIR
 }
 
 LOGDIRS = {
@@ -87,23 +92,31 @@ LOGDIRS = {
     'mixed': MIXED_LOGDIR,
     'gui': GUI_LOGDIR,
     'onedata_fs': ONEDATA_FS_LOGDIR,
-    'performance': PERFORMANCE_LOGDIR
-}
-
-CONFIG_FILES = {
-    'oneclient': ONECLIENT_TEST_CONFIG,
-    'performance': PERFORMANCE_TEST_CONFIG
+    'performance': PERFORMANCE_LOGDIR,
+    'upgrade': UPGRADE_TESTS_LOGDIR
 }
 
 SCENARIO_DIRS = {
     'oneclient': ONECLIENT_SCENARIO_DIR,
     'mixed': MIXED_SCENARIO_DIR,
     'onedata_fs': ONEDATA_FS_SCENARIO_DIR,
-    'performance': PERFORMANCE_SCENARIO_DIR
+    'performance': PERFORMANCE_SCENARIO_DIR,
+    'upgrade': UPGRADE_TESTS_SCENARIO_DIR
 }
 
 PATCHES_DIR = {
     'oneclient': ONECLIENT_PATCHES_DIR,
     'onedata_fs': ONEDATA_FS_PATCHES_DIR,
-    'performance': PERFORMANCE_PATCHES_DIR
+    'performance': PERFORMANCE_PATCHES_DIR,
+    'upgrade': UPGRADE_TESTS_PATCHES_DIR
 }
+
+IMAGES_CFG_PATHS = {
+    'onezone': 'onezone_images/docker-dev-build-list.json',
+    'oneprovider': 'oneprovider_images/docker-dev-build-list.json',
+    'oneclient': 'oneclient_images/oc-docker-dev-build-list.json',
+    'luma': 'luma_images/luma-docker-build-report.json',
+    'rest_cli': 'rest_cli_images/rest-cli-docker-build-report.json'
+}
+
+ARTIFACTS_DIR = 'artifacts_dir'

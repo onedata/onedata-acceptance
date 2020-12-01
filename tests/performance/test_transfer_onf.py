@@ -13,12 +13,10 @@ from itertools import repeat, chain
 from threading import Thread
 from queue import Queue, Empty
 
-from tests.performance import CLIENT_CONF
 from tests.performance.conftest import AbstractPerformanceTest
 from tests.utils.performance_utils import (Result, generate_configs,
-                                           performance, flushed_print,
-                                           get_client)
-from tests.utils.client_utils import rm, truncate, cp
+                                           performance, flushed_print)
+from tests.utils.client_utils import rm, truncate, cp, mount_client, CLIENT_CONF
 
 REPEATS = 1
 SUCCESS_RATE = 100
@@ -63,10 +61,10 @@ class TestTransferOnf(AbstractPerformanceTest):
            'Threads number: {threads_num}'))
     def test_transfer_onf(self, request, hosts, users, clients, env_desc,
                           params):
-        client1 = get_client(CLIENT_CONF_1, clients, hosts,
-                             request, users, env_desc)
-        client2 = get_client(CLIENT_CONF_2, clients, hosts,
-                             request, users, env_desc)
+        client1 = mount_client(CLIENT_CONF_1, clients, hosts,
+                               request, users, env_desc)
+        client2 = mount_client(CLIENT_CONF_2, clients, hosts,
+                               request, users, env_desc)
 
         files_number = params['files_number']['value']
         file_size = params['files_size']['value']
