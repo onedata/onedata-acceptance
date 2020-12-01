@@ -18,7 +18,7 @@ class Property(PageObject):
     name = id = Label('span')
 
 
-class Comparator(PageObject):
+class Item(PageObject):
     def get_name(self):
         return self.web_elem.text
 
@@ -32,9 +32,14 @@ class QueryBuilderPopup(PageObject):
     properties = WebItemsSequence('.ember-power-select-option', cls=Property)
 
     comparators = WebItemsSequence('.comparator-selector '
-                                   '.ember-power-select-option', cls=Comparator)
+                                   '.ember-power-select-option', cls=Item)
     comparator_choice = Button(
         '.comparator-selector .ember-basic-dropdown-trigger')
+
+    values = WebItemsSequence('.comparator-value '
+                              '.ember-power-select-option', cls=Item)
+    values_choice = Button(
+        '.comparator-value .ember-basic-dropdown-trigger')
 
     value = Input('.comparator-value')
     add_button = Button('.accept-condition')
@@ -63,3 +68,14 @@ class QueryBuilderPopup(PageObject):
                 comparator.click()
                 return
         raise RuntimeError(f'There is no comparator {comparator_name}')
+
+    def expand_values(self):
+        self.values_choice()
+
+    def choose_value(self, value_name):
+        self.expand_values()
+        for value in self.values:
+            if value.get_name() == value_name:
+                value.click()
+                return
+        raise RuntimeError(f'There is no value {value_name} available')

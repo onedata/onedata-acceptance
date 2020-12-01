@@ -16,7 +16,7 @@ from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
-from tests.gui.steps.onezone.discovery import (
+from tests.gui.steps.onezone.harvesters.discovery import (
     choose_element_from_dropdown_in_add_element_modal)
 from tests.gui.steps.modal import click_modal_button, close_modal
 

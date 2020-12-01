@@ -68,27 +68,26 @@ def assert_data_discovery_page_ecrin(selenium, browser_id, data_discovery):
                                                                 'in given time')
 
 
-# querying
-@wt(parsers.parse('user of {browser_id} clicks on start query icon in data '
+@wt(parsers.parse('user of {browser_id} clicks on add query block icon in data '
                   'discovery page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def start_query(selenium, browser_id, data_discovery):
+def start_query_block(selenium, browser_id, data_discovery):
     driver = selenium[browser_id]
     data_discovery(driver).query_builder.root_block()
 
 
-@wt(parsers.parse('user of {browser_id} clicks on start another query icon in '
-                  'data discovery page'))
+@wt(parsers.parse('user of {browser_id} clicks on add another query block icon '
+                  'in data discovery page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def start_another_query(selenium, browser_id, data_discovery):
+def start_another_query_block(selenium, browser_id, data_discovery):
     driver = selenium[browser_id]
     data_discovery(driver).query_builder.another_block_buttons[0].click()
 
 
-@wt(parsers.parse('user of {browser_id} clicks on {number} from the left start '
-                  'query icon in data discovery page'))
+@wt(parsers.parse('user of {browser_id} clicks on {number} from the left add '
+                  'query block icon in data discovery page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def start_another_query(selenium, browser_id, data_discovery, number: str):
+def start_query_block_no(selenium, browser_id, data_discovery, number: str):
     driver = selenium[browser_id]
     no = int(number.split()[0])
     data_discovery(driver).query_builder.another_block_buttons[no-1].click()
@@ -143,6 +142,15 @@ def write_value_in_query_builder(selenium, browser_id, value: str, popups):
     driver = selenium[browser_id]
     query_builder_popup = popups(driver).get_query_builder_not_hidden_popup()
     query_builder_popup.value = value
+
+
+@wt(parsers.parse('user of {browser_id} chooses "{value}" from property values '
+                  'list in query builder popup'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def choose_value_in_query_builder(selenium, browser_id, value: str, popups):
+    driver = selenium[browser_id]
+    query_builder_popup = popups(driver).get_query_builder_not_hidden_popup()
+    query_builder_popup.choose_value(value)
 
 
 @wt(parsers.parse('user of {browser_id} clicks "Add" button in query builder '

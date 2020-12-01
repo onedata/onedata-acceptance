@@ -8,7 +8,7 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 from tests.gui.steps.onezone.members import *
-from tests.gui.steps.onezone.discovery import (
+from tests.gui.steps.onezone.harvesters.discovery import (
     click_on_option_in_harvester_menu,
     click_button_on_discovery_on_left_sidebar_menu,
     type_text_to_input_field_in_discovery_page,
@@ -297,8 +297,8 @@ def configure_harvester_as_public(selenium, browser_id, harvester, oz_page):
                                                   oz_page, is_checked)
 
 
-@wt(parsers.parse('user of {browser_id} checks if harvesting process in "{'
-                  'harvester}" is finished for all spaces in "{index}"'))
+@wt(parsers.parse('user of {browser_id} waits until harvesting process in '
+                  '"{harvester}" is finished for all spaces in "{index}"'))
 def check_harvesting_process_in_harvester(selenium, browser_id, harvester,
                                           index, oz_page):
     discovery_tab = 'Discovery'
