@@ -14,8 +14,8 @@ from tests.gui.meta_steps.onezone.common import search_for_members
 from tests.gui.steps.modal import wt_wait_for_modal_to_appear
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
-from tests.gui.steps.onezone.discovery import \
-    click_on_option_of_harvester_on_left_sidebar_menu
+from tests.gui.steps.onezone.harvesters.discovery import (
+    click_on_option_of_harvester_on_left_sidebar_menu)
 from tests.gui.steps.onezone.groups import go_to_group_subpage
 from tests.gui.steps.onezone.spaces import (
     click_on_option_of_space_on_left_sidebar_menu,

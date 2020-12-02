@@ -8,11 +8,13 @@ __license__ = "This software is released under the MIT license cited in " \
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
-    WebItem, WebItemsSequence, Button, Label)
+    WebItem, WebItemsSequence, Button, Label, WebElementsSequence)
 
 
 class QueryBuilder(PageObject):
     root_block = Button('.root-block')
+    another_block_buttons = WebElementsSequence(
+        '.query-builder-block-adder.clickable')
     query_button = Button('.submit-query')
 
 
