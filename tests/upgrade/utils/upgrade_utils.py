@@ -15,7 +15,6 @@ from tests.utils.http_exceptions import HTTPError
 from tests.utils.onenv_utils import run_onenv_command
 from tests.utils.path_utils import get_default_image_for_service
 from tests.utils.rest_utils import get_zone_rest_path, http_get
-from tests.utils.user_utils import AdminUser
 from requests.exceptions import ConnectTimeout
 from tests.utils.environment_utils import (update_etc_hosts, setup_hosts_cfg, configure_os,
                                            get_deployment_status)

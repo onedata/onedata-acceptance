@@ -10,7 +10,6 @@ Run the script with -h flag to learn about script's running options.
 import re
 import os
 import sys
-import json
 import glob
 import platform
 import argparse
@@ -19,9 +18,7 @@ import xml.etree.ElementTree as ElementTree
 
 from bamboos.docker.environment import docker
 from tests.utils.path_utils import get_default_image_for_service
-
-
-PULL_DOCKER_IMAGE_RETRIES = 5
+from tests.utils.docker_utils import pull_docker_image_with_retries
 
 TEST_RUNNER_CONTAINER_NAME = 'test-runner'
 
@@ -29,19 +26,19 @@ TEST_RUNNER_CONTAINER_NAME = 'test-runner'
 def get_images_option(test_type='oneclient', oz_image=None, op_image=None,
                       rest_cli_image=None, oc_image=None, luma_image=None):
     images_cfg = []
-    if test_type == 'upgrade':
-        # in upgrade tests images are provided in test config and manually set are ignored
-        return ''
     add_image_to_images_cfg(oz_image, 'onezone', '--oz-image', images_cfg)
     add_image_to_images_cfg(op_image, 'oneprovider', '--op-image', images_cfg)
     add_image_to_images_cfg(rest_cli_image, 'rest cli', '--rest-cli-image',
                             images_cfg)
 
-    if test_type in ['oneclient', 'mixed', 'onedata_fs', 'performance']:
+    if test_type in ['oneclient', 'mixed', 'onedata_fs', 'performance', 'upgrade']:
         add_image_to_images_cfg(oc_image, 'oneclient', '--oc-image',
                                 images_cfg)
         add_image_to_images_cfg(luma_image, 'LUMA', '--luma-image', images_cfg)
 
+    if test_type == 'upgrade':
+        # in upgrade tests only pull images before tests
+        return ''
     return ' + '.join(images_cfg)
 
 
@@ -50,22 +47,6 @@ def add_image_to_images_cfg(image, service_name, option, images_cfg):
         print('Using image: {} for {} service'.format(image, service_name))
         pull_docker_image_with_retries(image)
         images_cfg.append("['{}={}']".format(option, image))
-
-
-def pull_docker_image_with_retries(image, retries=PULL_DOCKER_IMAGE_RETRIES):
-    attempts = 0
-
-    while attempts < retries:
-        try:
-            docker.pull_image(image)
-        except CalledProcessError as e:
-            attempts += 1
-            if attempts >= retries:
-                print('Could not download image {}. Tried {} times. \n'
-                      'Captured output from last call: {} \n'
-                      .format(image, retries, e.output))
-        else:
-            return
 
 
 def load_test_report(junit_report_path):
