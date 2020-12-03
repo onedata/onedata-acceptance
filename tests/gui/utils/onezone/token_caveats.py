@@ -203,12 +203,9 @@ class CaveatField(PageObject):
         self.activate()
         service_cav = service_caveats.get('Service', [])
         service_onepanel_cav = service_caveats.get('Service Onepanel', [])
-
         for service in service_cav:
-            if service != 'Any Oneprovider':
-                self.set_service_in_service_caveat(selenium, browser_id,
-                                                   popups, 'Service',
-                                                   service)
+            self.set_service_in_service_caveat(selenium, browser_id,
+                                               popups, 'Service', service)
         for service in service_onepanel_cav:
             self.set_service_in_service_caveat(selenium, browser_id, popups,
                                                'Service Onepanel', service)

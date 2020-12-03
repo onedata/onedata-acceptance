@@ -12,7 +12,7 @@ from tests.gui.utils.core.web_elements import (
     Button, NamedButton, WebItemsSequence, Label, Input, WebElement, WebItem,
     WebElementsSequence)
 from tests.gui.utils.onezone.common import InputBox
-from tests.gui.utils.onezone.generic_page import Element, GenericPage
+from tests.gui.utils.onezone.generic_page import GenericPage
 from tests.gui.utils.onezone.token_caveats import CaveatField
 
 
@@ -82,11 +82,9 @@ class UsageLimitBar(PageObject):
     number_input = Input('.text-like-field .form-control')
 
 
-class TypeItem(PageObject):
-    name = id = Label('.text')
-
-
 class CreateNewTokenPage(PageObject):
+    create_custom_token = Button('.template-custom')
+
     create_token = NamedButton('.submit-token', text='Create token')
     access_option = WebElement('.option-access .one-way-radio-control')
     identity_option = WebElement('.option-identity .one-way-radio-control')
@@ -94,14 +92,11 @@ class CreateNewTokenPage(PageObject):
 
     token_name_input = WebItem('.name-field .field-component', cls=InputBox)
 
-    invite_types = WebItemsSequence('.ember-power-select-option', cls=TypeItem)
     invite_type = WebElement('.inviteType-field .dropdown-field-trigger')
-    invite_targets = WebItemsSequence('.ember-power-select-options.ember-view',
-                                      cls=TypeItem)
     invite_target = WebElement('.target-field .dropdown-field-trigger')
     usage_limit = WebItem('.usageLimit-collapse', cls=UsageLimitBar)
 
-    caveats_expand = WebElement('.caveats-expand')
+    show_inactive_caveats = Button('.caveats-expand')
     expiration_caveat = WebItem('.expireCaveat-field', cls=CaveatField)
     region_caveat = WebItem('.regionCaveat-field', cls=CaveatField)
     country_caveat = WebItem('.countryCaveat-field', cls=CaveatField)
@@ -126,7 +121,8 @@ class CreateNewTokenPage(PageObject):
         self.invite_target.click()
 
     def expand_caveats(self):
-        self.caveats_expand.click()
+        if 'show' in self.show_inactive_caveats.web_elem.text.lower():
+            self.show_inactive_caveats()
 
     def scroll_to_bottom(self):
         self.driver.execute_script('arguments[0].scrollTo(arguments[1]);',
