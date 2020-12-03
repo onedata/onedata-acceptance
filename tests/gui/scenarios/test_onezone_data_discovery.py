@@ -40,8 +40,10 @@ from tests.gui.steps.onezone.groups import *
 from tests.gui.steps.onezone.members import *
 from tests.gui.steps.onezone.spaces import *
 from tests.gui.steps.onezone.multibrowser_spaces import *
-from tests.gui.steps.onezone.discovery import *
-from tests.gui.steps.onezone.data_discovery import *
+from tests.gui.steps.onezone.harvesters.discovery import *
+from tests.gui.steps.onezone.harvesters.data_discovery import *
+from tests.gui.steps.onezone.harvesters.configuration import *
+from tests.gui.steps.onezone.harvesters.indices import *
 from tests.gui.steps.onezone.clusters import *
 
 from tests.gui.steps.oneprovider.common import *

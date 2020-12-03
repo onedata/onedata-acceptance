@@ -16,7 +16,6 @@ class QueryBuilder(PageObject):
     another_block_buttons = WebElementsSequence(
         '.query-builder-block-adder.clickable')
     query_button = Button('.submit-query')
-    properties_list = WebItem
 
 
 class ResultSample(PageObject):
