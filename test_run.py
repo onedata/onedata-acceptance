@@ -25,6 +25,9 @@ TEST_RUNNER_CONTAINER_NAME = 'test-runner'
 
 def get_images_option(test_type='oneclient', oz_image=None, op_image=None,
                       rest_cli_image=None, oc_image=None, luma_image=None):
+    if test_type == 'upgrade':
+        # in upgrade tests images are provided in test config and manually set are ignored
+        return ''
     images_cfg = []
     add_image_to_images_cfg(oz_image, 'onezone', '--oz-image', images_cfg)
     add_image_to_images_cfg(op_image, 'oneprovider', '--op-image', images_cfg)
@@ -35,10 +38,6 @@ def get_images_option(test_type='oneclient', oz_image=None, op_image=None,
         add_image_to_images_cfg(oc_image, 'oneclient', '--oc-image',
                                 images_cfg)
         add_image_to_images_cfg(luma_image, 'LUMA', '--luma-image', images_cfg)
-
-    if test_type == 'upgrade':
-        # in upgrade tests only pull images before tests
-        return ''
     return ' + '.join(images_cfg)
 
 
@@ -305,6 +304,7 @@ ALL       ALL = (ALL) NOPASSWD: ALL
         kube_config_path = os.path.expanduser(args.kube_config_path)
         minikube_config_path = os.path.expanduser(args.minikube_config_path)
         one_env_data_dir = os.path.expanduser(os.path.join('~', '.one-env'))
+        docker_config_dir = os.path.expanduser(os.path.join('~', '.docker'))
 
         if args.clean:
             clean_env(args.image, script_dir, kube_config_path,
@@ -314,6 +314,7 @@ ALL       ALL = (ALL) NOPASSWD: ALL
         run_params = ['--shm-size=128m']
         reflect = [
             (script_dir, 'rw'),
+            (docker_config_dir, 'ro'),
             ('/var/run/docker.sock', 'rw'),
             (one_env_data_dir, 'rw'),
             (kube_config_path, 'ro'),
