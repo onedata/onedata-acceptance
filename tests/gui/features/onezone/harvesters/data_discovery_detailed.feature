@@ -63,5 +63,72 @@ Feature: Testing features in Discovery Page in Onezone GUI
 
 
   Scenario: Files records are paged for as many is given
+    When user of browser checks if harvesting process in "harvester1" is finished for all spaces in "generic-index"
+    And user of browser opens Data Discovery page of "harvester1" harvester
+
+    And user of browser sees that paging is set for 10 pages
+    Then user of browser sees 10 files on data discovery page
+    And user opens next page of data discovery page
+    And user of browser sees 2 files on data discovery page
+
+
   Scenario: User can filter visible properties of files records
+    When user of browser checks if harvesting process in "harvester1" is finished for all spaces in "generic-index"
+    And user of browser opens Data Discovery page of "harvester1" harvester
+
+    # author contains "John"
+    And user of browser clicks on start query icon in data discovery page
+    And user of browser chooses "any property" property for a query in query builder popup
+    And user of browser chooses "has phrase" from comparators list in query builder popup
+    And user of browser writes "John Smith" to value input in query builder popup
+    And user of browser clicks "Add" button in query builder popup
+    And user of browser clicks "Query" button on data discovery page
+
+    And user of browser clicks on "Filter properties" button on data discovery page
+    And user of browser chooses following properties to filter on data discovery page:
+          __onedata:
+            fileName
+            xattrs:
+              author
+          author
+
+    And user of browser clicks on "Filter properties" button on data discovery page
+    Then user of browser sees only following files in data discovery page:
+            file_with_json4:
+              spaceId: space_of_files_with_json_meta
+              author: "\"John Smith\""
+              unexpected:
+                year: 1998
+            file_with_xattrs4:
+              spaceId: space_of_files_with_xattrs
+              xattrs:
+                author: "\"John Smith\""
+                unexpected:
+                  year: 1998
+
+
   Scenario: User can sort files records
+    When user of browser checks if harvesting process in "harvester1" is finished for all spaces in "generic-index"
+    And user of browser opens Data Discovery page of "harvester1" harvester
+    #TODO: todo.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
