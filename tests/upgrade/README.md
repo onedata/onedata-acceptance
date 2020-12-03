@@ -23,8 +23,6 @@ initialVersions:
   oneprovider: 20.02.1
   oneclient: 20.02.1
 ```
-Versions provided in this file can be overridden by specifying any of the `--oz-image`, `--op-image`,
-`--oc-image` to the `test_run.py` command.
 
 NOTE: each provided version must be a valid tag to the `docker.onedata.org/{component}-dev` image.
 

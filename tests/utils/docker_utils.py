@@ -10,6 +10,8 @@ import subprocess
 
 from environment import docker
 
+PULL_DOCKER_IMAGE_RETRIES = 5
+
 
 def run_cmd(username, client, cmd, detach=False, output=False, error=False):
     """Run command in docker
@@ -42,4 +44,19 @@ def run_cmd(username, client, cmd, detach=False, output=False, error=False):
 def docker_ip(container):
     return docker.inspect(container)['NetworkSettings']['IPAddress']
 
+
+def pull_docker_image_with_retries(image, retries=PULL_DOCKER_IMAGE_RETRIES):
+    attempts = 0
+
+    while attempts < retries:
+        try:
+            docker.pull_image(image)
+        except subprocess.CalledProcessError as e:
+            attempts += 1
+            if attempts >= retries:
+                print('Could not download image {}. Tried {} times. \n'
+                      'Captured output from last call: {} \n'
+                      .format(image, retries, e.output))
+        else:
+            return
 
