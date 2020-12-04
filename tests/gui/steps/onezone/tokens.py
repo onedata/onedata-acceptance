@@ -386,8 +386,7 @@ def deselect_tokens_on_modal(browser_id, token_name, selenium, modals):
 
 @wt(parsers.parse('user of {browser_id} deselects "{token_type}" type '
                   'in modal "Clean up obsolete tokens"'))
-def deselect_token_type_on_modal(browser_id, token_type,
-                                       selenium, modals):
+def deselect_token_type_on_modal(browser_id, token_type, selenium, modals):
     driver = selenium[browser_id]
     clean_modal = modals(driver).clean_up_obsolete_tokens
 

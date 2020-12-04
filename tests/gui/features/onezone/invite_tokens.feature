@@ -616,7 +616,7 @@ Feature: Management of invite tokens in Onezone GUI
     And user of browser1 removes all tokens
 
 
-  Scenario: User sees ASN and region deny caveats in token configuration after setting them in new invite token
+  Scenario: User sees ASN and country allow caveats in token configuration after setting them in new invite token
     When user of browser1 creates token with following configuration:
           type: invite
           invite type: Register Oneprovider

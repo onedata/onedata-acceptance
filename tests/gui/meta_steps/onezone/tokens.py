@@ -265,7 +265,8 @@ def _set_tokens_caveats(selenium, browser_id, oz_page, caveats, popups, users,
         caveat.set_region_caveats(selenium, browser_id, region_caveats, popups)
     if country_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'country')
-        caveat.set_country_caveats(selenium, browser_id, country_caveats)
+        caveat.set_country_caveats(selenium, browser_id, country_caveats,
+                                   popups)
     if asn_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'asn')
         caveat.set_asn_caveats(selenium, browser_id, asn_caveats)
