@@ -40,7 +40,10 @@ from tests.gui.steps.onezone.groups import *
 from tests.gui.steps.onezone.members import *
 from tests.gui.steps.onezone.spaces import *
 from tests.gui.steps.onezone.multibrowser_spaces import *
-from tests.gui.steps.onezone.discovery import *
+from tests.gui.steps.onezone.harvesters.discovery import *
+from tests.gui.steps.onezone.harvesters.data_discovery import *
+from tests.gui.steps.onezone.harvesters.configuration import *
+from tests.gui.steps.onezone.harvesters.indices import *
 from tests.gui.steps.onezone.clusters import *
 
 from tests.gui.steps.oneprovider.common import *
@@ -76,6 +79,3 @@ def screens():
 
 scenarios('../features/onezone/harvesters/harvesters.feature')
 scenarios('../features/onezone/harvesters/harvesters_memberships_privileges.feature')
-scenarios('../features/onezone/harvesters/data_discovery.feature')
-scenarios('../features/onezone/harvesters/public_data_discovery.feature')
-

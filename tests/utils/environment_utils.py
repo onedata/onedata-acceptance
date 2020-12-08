@@ -6,24 +6,28 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 import yaml
-import hashlib
-import subprocess as sp
-import pty
 import json
-import sys
+import time
+import urllib3
+import requests
+import subprocess as sp
 from typing import Dict, List
+from requests.exceptions import ConnectTimeout, ConnectionError
 
-from tests import PANEL_REST_PORT
+from tests import PANEL_REST_PORT, OZ_REST_PORT
+from tests.utils.http_exceptions import HTTPError
 from tests.utils.onenv_utils import (init_helm, client_alias_to_pod_mapping,
                                      service_name_to_alias_mapping,
                                      OnenvError, run_onenv_command, run_command)
 from tests.utils.luma_utils import (get_local_feed_luma_storages, get_all_spaces_details,
-                                    add_user_luma_mapping, add_spaces_luma_mapping, gen_uid, gen_gid)
+                                    add_user_luma_mapping, add_spaces_luma_mapping, gen_uid,
+                                    gen_gid)
 from tests.utils.user_utils import User
-from requests.exceptions import ConnectionError
+from tests.utils.rest_utils import get_zone_rest_path, http_get
 
 START_ENV_MAX_RETRIES = 3
 ONE_ENV_CONTAINER_NAME = 'one-env'
+ENV_READY_TIMEOUT_SECONDS = 300
 
 
 def start_environment(scenario_path, request, hosts, patch_path, users, test_config):
@@ -394,3 +398,40 @@ def run_kubectl_command(command, args=None, fail_with_error=True, return_output=
 
 def clean_env():
     run_onenv_command('clean', ['-a', '-s', '-d', '-v'])
+
+
+def verify_env_ready(admin_user, hosts):
+    zone_hostname = hosts['onezone']['hostname']
+    ready = False
+    start = time.time()
+    while not ready:
+        if time.time() - start > ENV_READY_TIMEOUT_SECONDS:
+            raise RuntimeError("Environment not ready after upgrade")
+        time.sleep(1)
+        try:
+            providers = get_providers_list(admin_user, zone_hostname)
+            ready = all([is_provider_online(admin_user, zone_hostname, p) for p in providers])
+        except (HTTPError, ConnectTimeout, ConnectionRefusedError,
+                urllib3.exceptions.NewConnectionError, requests.exceptions.ConnectionError):
+            # ignore those errors as they are normal when Onezone is starting
+            pass
+
+
+def get_providers_list(admin_user, zone_hostname):
+    response = http_get(ip=zone_hostname, port=OZ_REST_PORT,
+                        path=get_zone_rest_path('providers'),
+                        headers={
+                            'X-Auth-Token': admin_user.token,
+                            'Content-Type': 'application/json'
+                        })
+    return json.loads(response.content)['providers']
+
+
+def is_provider_online(admin_user, zone_hostname, provider):
+    response = http_get(ip=zone_hostname, port=OZ_REST_PORT,
+                        path=get_zone_rest_path('providers', provider),
+                        headers={
+                            'X-Auth-Token': admin_user.token,
+                            'Content-Type': 'application/json'
+                        })
+    return json.loads(response.content)['online']

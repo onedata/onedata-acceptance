@@ -1,12 +1,11 @@
-"""This module contains tests suite for tokens management using
-Onezone GUI and single browser instance.
+"""This module contains tests suite for basic operations using
+Onezone Harvesters GUI and single browser instance.
 """
 
 __author__ = "Agnieszka Warchol"
-__copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
+__copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
-
 
 from pytest import fixture
 from pytest_bdd import scenario, scenarios
@@ -33,7 +32,6 @@ from tests.gui.steps.onepanel.spaces import *
 
 from tests.gui.steps.onezone.logged_in_common import *
 from tests.gui.steps.onezone.user_full_name import *
-
 from tests.gui.steps.onezone.tokens import *
 from tests.gui.steps.onezone.data_space_management import *
 from tests.gui.steps.onezone.providers import *
@@ -43,6 +41,9 @@ from tests.gui.steps.onezone.members import *
 from tests.gui.steps.onezone.spaces import *
 from tests.gui.steps.onezone.multibrowser_spaces import *
 from tests.gui.steps.onezone.harvesters.discovery import *
+from tests.gui.steps.onezone.harvesters.data_discovery import *
+from tests.gui.steps.onezone.harvesters.configuration import *
+from tests.gui.steps.onezone.harvesters.indices import *
 from tests.gui.steps.onezone.clusters import *
 
 from tests.gui.steps.oneprovider.common import *
@@ -60,17 +61,15 @@ from tests.gui.meta_steps.onezone import *
 from tests.gui.meta_steps.onezone.groups import *
 from tests.gui.meta_steps.onezone.spaces import *
 from tests.gui.meta_steps.onezone.common import *
-from tests.gui.meta_steps.onezone.harvesters import *
 from tests.gui.meta_steps.onezone.tokens import *
-from tests.gui.meta_steps.onezone.provider import *
 
+from tests.gui.meta_steps.onezone.harvesters import *
+from tests.gui.meta_steps.onezone.data_discovery import *
 from tests.gui.meta_steps.onepanel.spaces import *
-from tests.gui.meta_steps.onezone.spaces import *
 from tests.gui.meta_steps.oneprovider.data import *
-from tests.gui.meta_steps.oneprovider.common import *
+from tests.gui.meta_steps.oneprovider.metadata import *
 
 from tests.utils.acceptance_utils import *
-from tests.mixed.steps.space_basic import *
 
 
 @fixture(scope='module')
@@ -78,6 +77,6 @@ def screens():
     return [0, 1]
 
 
-scenarios('../features/onezone/tokens_basic.feature')
-scenarios('../features/onezone/invite_tokens.feature')
-
+scenarios('../features/onezone/harvesters/data_discovery.feature')
+scenarios('../features/onezone/harvesters/data_discovery_querying.feature')
+scenarios('../features/onezone/harvesters/public_data_discovery.feature')

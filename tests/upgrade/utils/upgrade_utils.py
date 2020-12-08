@@ -5,23 +5,13 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-import json
-import time
-import urllib3
-import requests
 
-from tests import OZ_REST_PORT
 from tests.utils.docker_utils import pull_docker_image_with_retries
-from tests.utils.http_exceptions import HTTPError
 from tests.utils.onenv_utils import run_onenv_command
 from tests.utils.path_utils import get_default_image_for_service
-from tests.utils.rest_utils import get_zone_rest_path, http_get
-from requests.exceptions import ConnectTimeout
 from tests.utils.environment_utils import (update_etc_hosts, setup_hosts_cfg, configure_os,
-                                           get_deployment_status)
+                                           get_deployment_status, verify_env_ready)
 from tests.utils.client_utils import fusermount, mount_client
-
-ENV_READY_TIMEOUT_SECONDS = 300
 
 
 class UpgradeTest:
@@ -122,40 +112,3 @@ def prepare_sources_upgrade_command(service, version):
     cmd = ['-i', image, '--sources-path', '.']
     cmd.extend(components)
     return cmd
-
-
-def verify_env_ready(admin_user, hosts):
-    zone_hostname = hosts['onezone']['hostname']
-    ready = False
-    start = time.time()
-    while not ready:
-        if time.time() - start > ENV_READY_TIMEOUT_SECONDS:
-            raise RuntimeError("Environment not ready after upgrade")
-        time.sleep(1)
-        try:
-            providers = get_providers_list(admin_user, zone_hostname)
-            ready = all([is_provider_online(admin_user, zone_hostname, p) for p in providers])
-        except (HTTPError, ConnectTimeout, ConnectionRefusedError,
-                urllib3.exceptions.NewConnectionError, requests.exceptions.ConnectionError):
-            # ignore those errors as they are normal when Onezone is starting
-            pass
-
-
-def get_providers_list(admin_user, zone_hostname):
-    response = http_get(ip=zone_hostname, port=OZ_REST_PORT,
-                        path=get_zone_rest_path('providers'),
-                        headers={
-                            'X-Auth-Token': admin_user.token,
-                            'Content-Type': 'application/json'
-                        })
-    return json.loads(response.content)['providers']
-
-
-def is_provider_online(admin_user, zone_hostname, provider):
-    response = http_get(ip=zone_hostname, port=OZ_REST_PORT,
-                        path=get_zone_rest_path('providers', provider),
-                        headers={
-                            'X-Auth-Token': admin_user.token,
-                            'Content-Type': 'application/json'
-                        })
-    return json.loads(response.content)['online']

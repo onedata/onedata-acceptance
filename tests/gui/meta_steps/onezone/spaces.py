@@ -16,7 +16,7 @@ from tests.gui.steps.common.url import refresh_site
 from tests.gui.steps.modal import (close_modal, click_modal_button)
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
 from tests.gui.steps.onepanel.spaces import *
-from tests.gui.steps.onezone.discovery import (
+from tests.gui.steps.onezone.harvesters.discovery import (
     choose_element_from_dropdown_in_add_element_modal)
 from tests.gui.steps.onezone.groups import (
     go_to_group_subpage)
