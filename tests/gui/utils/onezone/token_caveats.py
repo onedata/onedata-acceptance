@@ -72,12 +72,12 @@ class CaveatField(PageObject):
     def set_allow(self, popups, selenium, browser_id):
         if not self.is_allow():
             self.expander()
-            popups(selenium[browser_id]).dropdown_menu.items['Allow']()
+            popups(selenium[browser_id]).power_select.choose_item('Allow')
 
     def set_deny(self, popups, selenium, browser_id):
         if self.is_allow():
             self.expander()
-            popups(selenium[browser_id]).dropdown_menu.items['Deny']()
+            popups(selenium[browser_id]).power_select.choose_item('Deny')
 
     def set_allowance(self, allow, popups, selenium, browser_id):
         if allow:
