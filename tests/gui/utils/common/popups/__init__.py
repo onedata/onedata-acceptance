@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in " \
 from tests.gui.utils.core.web_elements import WebItem, WebItemsSequence
 from tests.utils.utils import repeat_failed
 from .consumer_caveat import ConsumerCaveat
+from .power_select import PowerSelect
 from .menu_popup import MenuPopup
 from .query_builder import QueryBuilderPopup
 from .qos_delete import DeleteQosPopup
@@ -41,6 +42,7 @@ class Popups(object):
                                             cls=QueryBuilderPopup)
     data_distribution_popup = WebItem('.webui-popover.in', cls=DataDistributionPopup)
     delete_qos_popup = WebItem('.webui-popover.in', cls=DeleteQosPopup)
+    power_select = WebItem('.ember-power-select-dropdown', cls=PowerSelect)
 
     def __init__(self, driver):
         self.driver = self.web_elem = driver

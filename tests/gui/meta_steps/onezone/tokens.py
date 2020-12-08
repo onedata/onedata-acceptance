@@ -122,7 +122,7 @@ def _result_to_consume_token(selenium, browser_id, result, modals):
         click_modal_button(selenium, browser_id, button, modal, modals)
 
 
-def _create_token_of_type(selenium, browser_id, token_type, oz_page,
+def _create_token_of_type(selenium, browser_id, token_type, oz_page, popups,
                           iteration=None):
     button = 'Create new token'
     token_name = f'{token_type}_token'
@@ -130,22 +130,24 @@ def _create_token_of_type(selenium, browser_id, token_type, oz_page,
         token_name = token_name + str(iteration)
 
     click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button)
+    click_create_custom_token(selenium, browser_id, oz_page)
     type_new_token_name(selenium, browser_id, oz_page, token_name)
     choose_token_type_to_create(selenium, browser_id, oz_page, token_type)
     if token_type == 'invite':
         invite_type = 'Register Oneprovider'
         choose_invite_type_in_oz_token_page(selenium, browser_id, oz_page,
-                                            invite_type)
+                                            invite_type, popups)
     click_create_token_button_in_create_token_page(selenium, browser_id,
                                                    oz_page)
 
 
-@wt(parsers.re('user of (?P<browser_id>.*?) creates (?P<number>\d*?) '
-               '(?P<token_type>.*?) tokens?'))
+@wt(parsers.re(r'user of (?P<browser_id>.*?) creates (?P<number>\d*?) '
+               r'(?P<token_type>.*?) tokens?'))
 def create_number_of_typed_token(selenium, browser_id, number: int, token_type,
-                                 oz_page):
+                                 oz_page, popups):
     for i in range(number):
-        _create_token_of_type(selenium, browser_id, token_type, oz_page, i)
+        _create_token_of_type(selenium, browser_id, token_type, oz_page,
+                              popups, i)
 
 
 @wt(parsers.parse('user of {browser_id} creates token with following '
@@ -207,6 +209,7 @@ def _create_token_with_config(selenium, browser_id, config, oz_page,
                               popups, users, groups, hosts, tmp_memory):
     button = 'Create new token'
     click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button)
+    click_create_custom_token(selenium, browser_id, oz_page)
 
     data = yaml.load(config)
     name = data.get('name', False)
@@ -222,10 +225,10 @@ def _create_token_with_config(selenium, browser_id, config, oz_page,
     choose_token_type_to_create(selenium, browser_id, oz_page, token_type)
     if invite_type:
         choose_invite_type_in_oz_token_page(selenium, browser_id, oz_page,
-                                            invite_type)
+                                            invite_type, popups)
     if invite_target:
         choose_invite_select(selenium, browser_id, oz_page, invite_target,
-                             hosts)
+                             hosts, popups)
     if usage_limit:
         select_token_usage_limit(selenium, browser_id, str(usage_limit),
                                  oz_page)
@@ -233,6 +236,7 @@ def _create_token_with_config(selenium, browser_id, config, oz_page,
         tree = get_privileges_tree(selenium, browser_id, oz_page)
         tree.set_privileges(privileges)
     if caveats:
+        show_inactive_caveats(selenium, browser_id, oz_page)
         _set_tokens_caveats(selenium, browser_id, oz_page, caveats, popups,
                             users, groups, hosts, tmp_memory)
     click_create_token_button_in_create_token_page(selenium, browser_id,
@@ -261,7 +265,8 @@ def _set_tokens_caveats(selenium, browser_id, oz_page, caveats, popups, users,
         caveat.set_region_caveats(selenium, browser_id, region_caveats, popups)
     if country_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'country')
-        caveat.set_country_caveats(selenium, browser_id, country_caveats)
+        caveat.set_country_caveats(selenium, browser_id, country_caveats,
+                                   popups)
     if asn_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'asn')
         caveat.set_asn_caveats(selenium, browser_id, asn_caveats)

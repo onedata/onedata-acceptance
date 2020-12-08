@@ -27,13 +27,6 @@ class CaveatTag(PageObject):
         return i_type in self.icon.get_attribute('class')
 
 
-class Option(PageObject):
-    name = id = Label('.text')
-
-    def __call__(self):
-        self.click()
-
-
 class PathEntry(PageObject):
     space_name = id = Label('.pathSpace-field')
     path = Label('.pathString-field')
@@ -52,7 +45,6 @@ class CaveatField(PageObject):
 
     item_label = Label('.dropdown-field')
     expander = Button('.ember-power-select-trigger')
-    options = WebItemsSequence('.ember-power-select-option', cls=Option)
     time_input = Input('.form-control.date-time-picker')
     time_label = Label('.datetime-field')
     inner_input = Input('.tag-creator .text-editor-input')
@@ -77,21 +69,21 @@ class CaveatField(PageObject):
     def is_allow(self):
         return self.item_label == 'Allow'
 
-    def set_allow(self):
+    def set_allow(self, popups, selenium, browser_id):
         if not self.is_allow():
             self.expander()
-            self.options['Allow']()
+            popups(selenium[browser_id]).power_select.choose_item('Allow')
 
-    def set_deny(self):
+    def set_deny(self, popups, selenium, browser_id):
         if self.is_allow():
             self.expander()
-            self.options['Deny']()
+            popups(selenium[browser_id]).power_select.choose_item('Deny')
 
-    def set_allowance(self, allow):
+    def set_allowance(self, allow, popups, selenium, browser_id):
         if allow:
-            self.set_allow()
+            self.set_allow(popups, selenium, browser_id)
         else:
-            self.set_deny()
+            self.set_deny(popups, selenium, browser_id)
 
     def assert_allowance(self, allow):
         if allow:
@@ -132,7 +124,7 @@ class CaveatField(PageObject):
         self.activate()
         caveat_allow = region_caveat.get('allow', True)
         regions = region_caveat.get('region codes')
-        self.set_allowance(caveat_allow)
+        self.set_allowance(caveat_allow, popups, selenium, browser_id)
         for region in regions:
             self.set_region_in_region_caveat(selenium, browser_id, region,
                                              popups)
@@ -143,11 +135,11 @@ class CaveatField(PageObject):
         popups(driver).selector_popup.selectors[region]()
 
     # country caveat
-    def set_country_caveats(self, selenium, browser_id, country_caveat):
+    def set_country_caveats(self, selenium, browser_id, country_caveat, popups):
         self.activate()
         caveat_allow = country_caveat.get('allow', True)
         countries = country_caveat.get('country codes')
-        self.set_allowance(caveat_allow)
+        self.set_allowance(caveat_allow, popups, selenium, browser_id)
         for country in countries:
             self.set_item_in_inner_input(selenium, browser_id, country)
 
@@ -203,12 +195,9 @@ class CaveatField(PageObject):
         self.activate()
         service_cav = service_caveats.get('Service', [])
         service_onepanel_cav = service_caveats.get('Service Onepanel', [])
-
         for service in service_cav:
-            if service != 'Any Oneprovider':
-                self.set_service_in_service_caveat(selenium, browser_id,
-                                                   popups, 'Service',
-                                                   service)
+            self.set_service_in_service_caveat(selenium, browser_id,
+                                               popups, 'Service', service)
         for service in service_onepanel_cav:
             self.set_service_in_service_caveat(selenium, browser_id, popups,
                                                'Service Onepanel', service)
@@ -221,6 +210,10 @@ class CaveatField(PageObject):
         popup.expand_consumer_types()
         popup.consumer_types[consumer_type]()
         popup.list_option()
+
+        # this line is to load elements, test fails without it
+        [consumer.name for consumer in popup.consumers]
+        time.sleep(0.5)
         popup.consumers[value]()
 
     # interface caveat

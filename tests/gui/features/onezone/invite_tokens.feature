@@ -616,7 +616,7 @@ Feature: Management of invite tokens in Onezone GUI
     And user of browser1 removes all tokens
 
 
-  Scenario: User sees ASN and region deny caveats in token configuration after setting them in new invite token
+  Scenario: User sees ASN and country allow caveats in token configuration after setting them in new invite token
     When user of browser1 creates token with following configuration:
           type: invite
           invite type: Register Oneprovider
@@ -715,6 +715,35 @@ Feature: Management of invite tokens in Onezone GUI
     And user of browser2 sends copied token to user of browser1
     And user of browser1 opens "oneprovider-1" clusters submenu
     Then user of browser1 succeeds to support "space2" space in "oneprovider-1" Oneprovider panel service with following configuration:
+          storage: posix
+          size: 1
+          unit: GiB
+
+
+  Scenario: Provider fails to support space using invite token with consumer caveat set not for them
+    # unused_space is used only to introduce "oneprovider-1" for use of user1
+    # thanks to this "oneprovider-1" is listed in consumer caveats popup
+    Given additional spaces configuration in "onezone" Onezone service:
+            unused_space:
+              owner: user1
+              providers:
+                - oneprovider-1:
+                    storage: posix
+                    size: 1000000
+    When user of browser2 creates and checks token with following configuration:
+          type: invite
+          invite type: Support space
+          invite target: space2
+          caveats:
+            consumer:
+              - type: oneprovider
+                by: name
+                consumer name: oneprovider-1
+    And user of browser2 clicks on copy button in token view
+    And user of browser2 sends copied token to user of browser1
+    And user of browser1 clicks on Clusters in the main menu
+    And user of browser1 clicks on "oneprovider-2" in clusters menu
+    Then user of browser1 fails to support "space1" space in "oneprovider-2" Oneprovider panel service with following configuration:
           storage: posix
           size: 1
           unit: GiB

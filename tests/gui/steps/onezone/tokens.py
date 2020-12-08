@@ -71,6 +71,22 @@ def click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button):
         getattr(sidebar, transform(button))()
 
 
+@wt(parsers.parse('user of {browser_id} clicks on "Create custom token" '
+                  'option in "Create new token" view'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_create_custom_token(selenium, browser_id, oz_page):
+    driver = selenium[browser_id]
+    oz_page(driver)['tokens'].create_token_page.create_custom_token()
+
+
+@wt(parsers.parse('user of {browser_id} clicks on "Show inactive caveats" '
+                  'label in "Create new token" view'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def show_inactive_caveats(selenium, browser_id, oz_page):
+    driver = selenium[browser_id]
+    oz_page(driver)['tokens'].create_token_page.expand_caveats()
+
+
 @wt(parsers.parse('user of {browser_id} clicks on Join button '
                   'on consume token page'))
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -117,22 +133,22 @@ def click_copy_button_in_token_view(selenium, browser_id, oz_page):
 @wt(parsers.parse('user of {browser_id} chooses "{invite_type}" invite type'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_invite_type_in_oz_token_page(selenium, browser_id, oz_page,
-                                        invite_type):
+                                        invite_type, popups):
     driver = selenium[browser_id]
     new_token_page = oz_page(driver)['tokens'].create_token_page
     new_token_page.expand_invite_type_dropdown()
-    new_token_page.invite_types[invite_type].click()
+    popups(driver).power_select.choose_item(invite_type)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def choose_invite_select(selenium, browser_id, oz_page, target, hosts):
+def choose_invite_select(selenium, browser_id, oz_page, target, hosts, popups):
     if 'oneprovider' in target:
         target = hosts[target]['name']
 
     driver = selenium[browser_id]
     new_token_page = oz_page(driver)['tokens'].create_token_page
     new_token_page.expand_invite_target_dropdown()
-    new_token_page.invite_types[target].click()
+    popups(driver).power_select.choose_item(target)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -343,12 +359,6 @@ def parse_and_compare_usage_count(text_given, text_expected):
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def expand_caveats(selenium, browser_id, oz_page):
-    driver = selenium[browser_id]
-    oz_page(driver)['tokens'].create_token_page.expand_caveats()
-
-
-@repeat_failed(timeout=WAIT_FRONTEND)
 def get_caveat_by_name(selenium, browser_id, oz_page, caveat_name):
     driver = selenium[browser_id]
     new_token_page = oz_page(driver)['tokens'].create_token_page
@@ -376,8 +386,7 @@ def deselect_tokens_on_modal(browser_id, token_name, selenium, modals):
 
 @wt(parsers.parse('user of {browser_id} deselects "{token_type}" type '
                   'in modal "Clean up obsolete tokens"'))
-def deselect_token_type_on_modal(browser_id, token_type,
-                                       selenium, modals):
+def deselect_token_type_on_modal(browser_id, token_type, selenium, modals):
     driver = selenium[browser_id]
     clean_modal = modals(driver).clean_up_obsolete_tokens
 

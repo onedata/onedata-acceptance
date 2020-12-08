@@ -116,7 +116,6 @@ class Modals(object):
 
     delete_user_account = WebItem('.modal-dialog', cls=DeleteUserAccountModal)
 
-
     def __init__(self, driver):
         self.driver = driver
         self.web_elem = driver
