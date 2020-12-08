@@ -210,6 +210,8 @@ class CaveatField(PageObject):
         popup.expand_consumer_types()
         popup.consumer_types[consumer_type]()
         popup.list_option()
+
+        # this line is to load elements, test fails without it
         [consumer.name for consumer in popup.consumers]
         time.sleep(0.5)
         popup.consumers[value]()

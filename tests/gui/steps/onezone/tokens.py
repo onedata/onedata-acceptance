@@ -80,7 +80,7 @@ def click_create_custom_token(selenium, browser_id, oz_page):
 
 
 @wt(parsers.parse('user of {browser_id} clicks on "Show inactive caveats" '
-                  'label in "Create new token view"'))
+                  'label in "Create new token" view'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def show_inactive_caveats(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
@@ -137,7 +137,7 @@ def choose_invite_type_in_oz_token_page(selenium, browser_id, oz_page,
     driver = selenium[browser_id]
     new_token_page = oz_page(driver)['tokens'].create_token_page
     new_token_page.expand_invite_type_dropdown()
-    popups(driver).dropdown_menu.items[invite_type]()
+    popups(driver).power_select.choose_item(invite_type)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -148,7 +148,7 @@ def choose_invite_select(selenium, browser_id, oz_page, target, hosts, popups):
     driver = selenium[browser_id]
     new_token_page = oz_page(driver)['tokens'].create_token_page
     new_token_page.expand_invite_target_dropdown()
-    popups(driver).dropdown_menu.items[target]()
+    popups(driver).power_select.choose_item(target)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
