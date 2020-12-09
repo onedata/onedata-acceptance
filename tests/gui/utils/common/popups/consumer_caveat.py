@@ -39,7 +39,7 @@ class ConsumerCaveat(PageObject):
     consumer_type = WebElement('.ember-power-select-trigger')
     consumer_types = WebItemsSequence(
         '.ember-power-select-option', cls=TypeItem)
-    consumers = WebItemsSequence('.selector-item', cls=Consumer)
+    consumers = WebItemsSequence('.selector-list .selector-item', cls=Consumer)
     input = Input('.record-id')
     add_button = Button('.add-id')
 

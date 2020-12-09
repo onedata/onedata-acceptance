@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 
+from tests.utils.docker_utils import pull_docker_image_with_retries
 from tests.utils.onenv_utils import run_onenv_command
 from tests.utils.path_utils import get_default_image_for_service
 from tests.utils.environment_utils import (update_etc_hosts, setup_hosts_cfg, configure_os,
@@ -98,11 +99,13 @@ def prepare_image_upgrade_command(service, version):
         image = get_default_image_for_service(service)
     else:
         image = "docker.onedata.org/{}-dev:{}".format(service, version)
+    pull_docker_image_with_retries(image)
     return ['-i', image]
 
 
 def prepare_sources_upgrade_command(service, version):
     image = "docker.onedata.org/{}-dev:{}".format(service, version['sources']['baseImage'])
+    pull_docker_image_with_retries(image)
     components = []
     for component in version['sources']['components']:
         components.append('--{}'.format(component))
