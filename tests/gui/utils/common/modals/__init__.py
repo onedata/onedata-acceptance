@@ -40,6 +40,7 @@ from .emergency_interface import EmergencyInterface
 from .add_one_of_elements import AddOneOfElementsModal
 from .leave_element import LeaveElementModal
 from .modify_storage import ModifyStorage
+from .rest_api_modal import RESTApiModal
 from .share_directory import ShareDirectory
 from .shares_row_menu import SharesRowMenu
 from .delete_user_account import DeleteUserAccountModal
@@ -109,13 +110,13 @@ class Modals(object):
     remove_token = WebItem('.modal-dialog', cls=RemoveModal)
     remove_harvester = WebItem('.modal-dialog', cls=RemoveModal)
     remove_space = WebItem('.modal-dialog', cls=RemoveModal)
+    rest_api_modal = WebItem('.modal-dialog', cls=RESTApiModal)
     clean_up_obsolete_tokens = WebItem('.modal-dialog',
                                        cls=CleanUpObsoleteTokensModal)
     quality_of_service = WebItem('.modal-dialog', cls=QualityOfServiceModal)
     change_privileges = WebItem('.modal-dialog', cls=ChangePrivilegesModal)
 
     delete_user_account = WebItem('.modal-dialog', cls=DeleteUserAccountModal)
-
 
     def __init__(self, driver):
         self.driver = driver

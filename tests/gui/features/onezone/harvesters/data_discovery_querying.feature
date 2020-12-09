@@ -100,7 +100,7 @@ Feature: Querying for data discovery in Discovery Page in Onezone GUI
 
 
   Scenario: User sees appropriate files after searching by "any property" property
-     When user of browser waits until harvesting process in "harvester1" is finished for all spaces in "generic-index"
+    When user of browser waits until harvesting process in "harvester1" is finished for all spaces in "generic-index"
     And user of browser opens Data Discovery page of "harvester1" harvester
 
     # author contains "John"

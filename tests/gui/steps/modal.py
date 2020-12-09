@@ -376,3 +376,10 @@ def close_modal(selenium, browser_id, modal, modals):
     except AttributeError:
         getattr(modals(selenium[browser_id]), modal).cancel()
 
+
+@wt(parsers.parse('user of {browser_id} clicks copy command icon in REST API '
+                  'modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_copy_icon_in_rest_api_modal(selenium, browser_id, modals):
+    modals(selenium[browser_id]).rest_api_modal.copy_command_button()
+

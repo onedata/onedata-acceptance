@@ -500,3 +500,16 @@ def choose_and_revoke_token_in_oz_gui(selenium, browser_id, token_name,
 
     click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
     revoke_token(selenium, browser_id, token_name, oz_page, popups)
+
+
+@wt(parsers.parse('user of {browser_id} creates new token named "{name}" with '
+                  'basic {template} template'))
+def create_token_with_basic_template(selenium, browser_id, name, template,
+                                     oz_page):
+    button = 'Create new token'
+
+    click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button)
+    choose_token_template(selenium, browser_id, template, oz_page)
+    type_new_token_name(selenium, browser_id, oz_page, name)
+    click_create_token_button_in_create_token_page(selenium, browser_id,
+                                                   oz_page)
