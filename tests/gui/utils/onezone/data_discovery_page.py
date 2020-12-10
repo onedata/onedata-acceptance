@@ -54,8 +54,8 @@ class DataDiscoveryPage(object):
     filter_properties_button = Button('.filtered-properties-selector')
     rest_api_button = Button('.generate-query-request')
 
-    sorting_selector = Button('.property-selector')
-    order_selector = Button('.direction-selector')
+    sorting_parameter_selector = Button('.property-selector')
+    sorting_order_selector = Button('.direction-selector')
     items = WebElementsSequence('.ember-power-select-option')
 
     query_builder = WebItem('.query-builder', cls=QueryBuilder)

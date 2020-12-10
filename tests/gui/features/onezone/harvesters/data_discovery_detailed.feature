@@ -8,73 +8,73 @@ Feature: Testing features in Discovery Page in Onezone GUI
           space_of_files_with_xattrs:
             owner: admin
             providers:
-                - oneprovider-1:
-                    storage: posix
-                    size: 1000000
+              - oneprovider-1:
+                  storage: posix
+                  size: 1000000
             storage:
               defaults:
                 provider: oneprovider-1
               directory tree:
                 - dir1_1:
-                  - file_with_xattrs1:
-                      content: 11111
-                      metadata:
-                        type: basic
-                        author: John Doe
-                        year: 1998
-                  - file_with_xattrs2:
-                      content: 11111
-                      metadata:
-                        type: basic
-                        author: John Doe
-                        year: 1970
-                  - file_with_xattrs3:
-                      content: 11111
-                      metadata:
-                        type: basic
-                        author: Samantha Anderson
-                        year: 2000
-                  - file_with_xattrs4:
-                      content: 11111
-                      metadata:
-                        type: basic
-                        author: John Smith
-                        year: 1998
+                    - file_with_xattrs1:
+                        content: 11111
+                        metadata:
+                          type: basic
+                          author: John Doe
+                          year: 1998
+                    - file_with_xattrs2:
+                        content: 11111
+                        metadata:
+                          type: basic
+                          author: John Doe
+                          year: 1970
+                    - file_with_xattrs3:
+                        content: 11111
+                        metadata:
+                          type: basic
+                          author: Samantha Anderson
+                          year: 2000
+                    - file_with_xattrs4:
+                        content: 11111
+                        metadata:
+                          type: basic
+                          author: John Smith
+                          year: 1998
           space_of_files_with_json_meta:
             owner: admin
             providers:
-                - oneprovider-1:
-                    storage: posix
-                    size: 1000000
+              - oneprovider-1:
+                  storage: posix
+                  size: 1000000
             storage:
               defaults:
                 provider: oneprovider-1
               directory tree:
                 - dir2_1:
-                  - file_with_json1:
-                      content: 11111
-                      metadata:
-                        type: json
-                        author: John Doe
-                        year: 1998
-                  - file_with_json2:
-                      content: 11111
-                      metadata:
-                        type: json
-                        author: John Doe
-                        year: 1970
-                  - file_with_json3:
-                      content: 11111
-                      metadata:
-                        type: json
-                        author: Samantha Anderson
-                        year: 2000
-                  - file_with_json4:
-                      content: 11111
-                      metadata:
-                        type: json
-                        author: John Smith
-                        year: 1998
+                    - file_with_json1:
+                        content: 11111
+                        metadata:
+                          type: json
+                          author: John Doe
+                          year: 1998
+                    - file_with_json2:
+                        content: 11111
+                        metadata:
+                          type: json
+                          author: John Doe
+                          year: 1970
+                    - file_with_json3:
+                        content: 11111
+                        metadata:
+                          type: json
+                          author: Samantha Anderson
+                          year: 2000
+                    - file_with_json4:
+                        content: 11111
+                        metadata:
+                          type: json
+                          author: John Smith
+                          year: 1998
 
     And user admin has no harvesters other than defined in next steps
     And user admin has "harvester1" harvester in "onezone" Onezone service
@@ -133,10 +133,9 @@ Feature: Testing features in Discovery Page in Onezone GUI
   Scenario: User can sort files records
     When user of browser waits until harvesting process in "harvester1" is finished for all spaces in "generic-index"
     And user of browser opens Data Discovery page of "harvester1" harvester
-    And user of browser expands sorting parameters list on data discovery page
     And user of browser chooses "__onedata.fileName.keyword" sorting parameter on data discovery page
     And user of browser chooses "asc" sorting order on data discovery page
-    And user of browser sees files with following order on data discovery page:
+    Then user of browser sees files with following order on data discovery page:
           - dir1_1
           - dir2_1
           - file_with_json1
@@ -171,7 +170,7 @@ Feature: Testing features in Discovery Page in Onezone GUI
     And user of browser clicks "REST API" button on data discovery page
     And user of browser clicks copy command icon in REST API modal
     And user of browser runs copied curl command
-    And user of browser sees that querying curl result matches following files:
+    Then user of browser sees that querying curl result matches following files:
           file_with_json4:
             year: 1998
             author: John Smith
@@ -179,5 +178,3 @@ Feature: Testing features in Discovery Page in Onezone GUI
             xattrs:
               year: 1998
               author: John Smith
-
-

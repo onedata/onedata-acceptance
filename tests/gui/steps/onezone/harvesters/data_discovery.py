@@ -45,8 +45,11 @@ def assert_files_list_on_data_disc(selenium, browser_id, data_discovery):
 @wt(parsers.parse('user of {browser_id} sees public data discovery page with '
                   'no harvested data'))
 def assert_empty_data_discovery_page(selenium, browser_id, data_discovery):
+    button_name = 'Query'
+
     switch_to_iframe(selenium, browser_id, '.plugin-frame')
-    data_discovery(selenium[browser_id]).query_builder.query_button()
+    click_button_on_data_disc_page(selenium, browser_id, data_discovery,
+                                   button_name)
 
 
 @wt(parsers.parse('user of {browser_id} sees "{error_msg}" alert on Data '
@@ -200,24 +203,12 @@ def open_next_data_disc_page(selenium, browser_id, data_discovery):
     data_discovery(driver).next_page()
 
 
-@wt(parsers.parse('user of {browser_id} expands sorting parameters list on '
-                  'data discovery page'))
-def expand_sorting_list(selenium, browser_id, data_discovery):
-    driver = selenium[browser_id]
-    data_discovery(driver).sorting_selector()
-
-
 @wt(parsers.parse('user of {browser_id} chooses "{parameter}" sorting '
-                  'parameter on data discovery page'))
-def choose_sorting_parameter(selenium, browser_id, parameter, data_discovery):
+                  '{item} on data discovery page'))
+def choose_sorting_parameter_or_order(selenium, browser_id, parameter,
+                                      item, data_discovery):
     driver = selenium[browser_id]
+    getattr(data_discovery(driver), f'sorting_{item}_selector')()
     data_discovery(driver).choose_item(parameter)
 
-
-@wt(parsers.parse('user of {browser_id} chooses "{order}" sorting order on '
-                  'data discovery page'))
-def choose_sorting_order(selenium, browser_id, order, data_discovery):
-    driver = selenium[browser_id]
-    data_discovery(driver).order_selector()
-    data_discovery(driver).choose_item(order)
 
