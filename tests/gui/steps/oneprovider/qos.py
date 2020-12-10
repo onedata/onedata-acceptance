@@ -49,7 +49,7 @@ def assert_replicas_number_in_qualities_of_service_modal(selenium, browser_id,
                                        f'of {number} replicas number')
 
 
-@wt(parsers.parse('user of {browser_id} sees "{expression}" QoS requirement '
+@wt(parsers.parse('user of {browser_id} sees [{expression}] QoS requirement '
                   'in modal "Quality of Service"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_expression_in_qualities_of_service_modal(selenium, browser_id,
@@ -57,7 +57,7 @@ def assert_expression_in_qualities_of_service_modal(selenium, browser_id,
     driver = selenium[browser_id]
     requirements = modals(driver).quality_of_service.requirements
     for requirement in requirements:
-        expression_in_modal = requirement.expression.text.replace('\n', '')
+        expression_in_modal = requirement.expression.replace('\n', '')
         if expression_in_modal == expression:
             assert True
             return
@@ -69,7 +69,7 @@ def assert_expression_in_qualities_of_service_modal(selenium, browser_id,
                   'in modal "Quality of Service"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_no_expression_in_qualities_of_service_modal(selenium, browser_id,
-                                                       modals, expression):
+                                                       modals):
     driver = selenium[browser_id]
     try:
         modals(driver).quality_of_service.requirements
@@ -77,4 +77,18 @@ def assert_no_expression_in_qualities_of_service_modal(selenium, browser_id,
         assert True
     else:
         assert False, 'Found QoS requirement in modal "Quality of Service"'
+
+
+@wt(parsers.parse('user of {browser_id} clicks "enter as text" label in '
+                  '"Quality of Service" modal'))
+def click_enter_as_text_link(selenium, browser_id, modals):
+    driver = selenium[browser_id]
+    modals(driver).quality_of_service.enter_as_text()
+
+
+@wt(parsers.parse('user of {browser_id} confirms entering expression in '
+                  'expression text field in modal "Quality of Service"'))
+def confirm_entering_text(selenium, browser_id, modals):
+    driver = selenium[browser_id]
+    modals(driver).quality_of_service.confirm_text()
 
