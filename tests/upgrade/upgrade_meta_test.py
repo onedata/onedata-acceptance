@@ -10,8 +10,8 @@ import tests.upgrade.tests.oneclient_CRUD as oneclient_CRUD
 
 
 def test_upgrade(tests_controller):
-    tests_controller.add_test("oneclient CRUD test",
-                              oneclient_CRUD.setup("space1"), oneclient_CRUD.verify("space1"))
-    tests_controller.add_test("oneclient CRUD test",
-                              oneclient_CRUD.setup("space3"), oneclient_CRUD.verify("space3"))
+    tests_controller.add_test("oneclient CRUD test posix",
+                              oneclient_CRUD.setup("space_posix"), oneclient_CRUD.verify("space_posix"))
+    tests_controller.add_test("oneclient CRUD test s3",
+                              oneclient_CRUD.setup("space_s3"), oneclient_CRUD.verify("space_s3"))
     tests_controller.run_tests()

@@ -26,7 +26,7 @@ users:
 
 
 spaces:
-  - name: space1
+  - name: space_posix
     user: *user1
     users:
       - user: *user2
@@ -36,17 +36,7 @@ spaces:
         - provider: "oneprovider-1"
           storage_name: "posix"
           size: '10000000000'
-  - name: space2
-    user: *user1
-    users:
-      - user: *user2
-    groups:
-      - group: *group1
-    supports:
-        - provider: "oneprovider-1"
-          storage_name: "posix"
-          size: '10000000000'
-  - name: space3
+  - name: space_s3
     user: *user1
     users:
       - user: *user2
