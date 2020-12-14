@@ -11,5 +11,7 @@ import tests.upgrade.tests.oneclient_CRUD as oneclient_CRUD
 
 def test_upgrade(tests_controller):
     tests_controller.add_test("oneclient CRUD test",
-                              oneclient_CRUD.setup, oneclient_CRUD.verify)
+                              oneclient_CRUD.setup("space1"), oneclient_CRUD.verify("space1"))
+    tests_controller.add_test("oneclient CRUD test",
+                              oneclient_CRUD.setup("space3"), oneclient_CRUD.verify("space3"))
     tests_controller.run_tests()

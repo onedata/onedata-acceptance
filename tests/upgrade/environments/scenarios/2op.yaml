@@ -40,6 +40,7 @@ spaces: false
 
 storages:
   - posix
+  - s3
 
 os-config:
   cfg1: &cfg1
