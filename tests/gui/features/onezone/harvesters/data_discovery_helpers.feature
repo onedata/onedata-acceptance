@@ -101,7 +101,6 @@ Feature: Testing features other than browsing results for query in Discovery Pag
     # author contains "John Smith"
     And user of browser clicks on add query block icon in data discovery page
     And user of browser chooses "any property" property for a query in query builder popup
-    And user of browser chooses "has phrase" from comparators list in query builder popup
     And user of browser writes "John Smith" to value input in query builder popup
     And user of browser clicks "Add" button in query builder popup
     And user of browser clicks "Query" button on data discovery page
@@ -163,7 +162,6 @@ Feature: Testing features other than browsing results for query in Discovery Pag
     # author contains "John Smith"
     And user of browser clicks on add query block icon in data discovery page
     And user of browser chooses "any property" property for a query in query builder popup
-    And user of browser chooses "has phrase" from comparators list in query builder popup
     And user of browser writes "John Smith" to value input in query builder popup
     And user of browser clicks "Add" button in query builder popup
 
