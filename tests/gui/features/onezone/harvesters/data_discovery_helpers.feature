@@ -1,4 +1,4 @@
-Feature: Testing features in Discovery Page in Onezone GUI
+Feature: Testing features other than browsing results for query in Discovery Page in Onezone GUI (eg. sorting, paging)
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -130,7 +130,7 @@ Feature: Testing features in Discovery Page in Onezone GUI
                 year: 1998
 
 
-  Scenario: User can sort files records
+  Scenario: User sees files records sorted in order as was set
     When user of browser waits until harvesting process in "harvester1" is finished for all spaces in "generic-index"
     And user of browser opens Data Discovery page of "harvester1" harvester
     And user of browser chooses "__onedata.fileName.keyword" sorting parameter on data discovery page
@@ -153,7 +153,7 @@ Feature: Testing features in Discovery Page in Onezone GUI
           - space_of_files_with_xattrs
 
 
-  Scenario: User can query for data with curl command given in GUI
+  Scenario: User retrieves valid files matches using copied curl command
     When user of browser removes all tokens
     And user of browser creates new token named "Onezone REST" with basic Onezone REST Access template
     And user of browser clicks on copy button in token view
