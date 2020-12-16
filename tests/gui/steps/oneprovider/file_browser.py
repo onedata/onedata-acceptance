@@ -23,7 +23,7 @@ from tests.utils.bdd_utils import wt, parsers
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_msg_instead_of_browser(browser_id, msg, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
-    displayed_msg = browser.empty_dir_msg
+    displayed_msg = browser.browser_msg_header
     assert displayed_msg == msg, ('displayed {} does not match expected '
                                   '{}'.format(displayed_msg, msg))
 
