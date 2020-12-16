@@ -157,6 +157,8 @@ class TokensPage(GenericPage):
                          '.ember-basic-dropdown-trigger[role="button"]')
     join_button = NamedButton('button', text='Join')
 
+    onezone_rest_access_template = WebElement('.template-onezoneRest')
+
     def expand_dropdown(self):
         self._toggle.click()
 

@@ -1,4 +1,4 @@
-Feature: Querying for data discovery in Discovery Page in Onezone GUI
+Feature: Data harvesting in Discovery Page in Onezone GUI
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
