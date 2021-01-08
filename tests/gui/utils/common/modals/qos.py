@@ -17,13 +17,15 @@ class Requirement(PageObject):
     delete = Button('.oneicon-checkbox-filled-x')
     fulfilled = Label('.qos-status-fulfilled')
     impossible = Label('.qos-status-impossible')
-    expression = WebElement('.tags-input .qos-pair')
+    expression = Label('.query-builder-input')
     replicas_number = Label('.replicas-number')
 
 
 class QualityOfServiceModal(Modal):
     add_requirement = NamedButton('.btn-primary', text='Add Requirement')
-    expression = Input('.code-textarea')
+    enter_as_text = Button('.enter-text-link')
+    confirm_text = Button('.oneicon-checked')
+    expression = Input('.qos-info-row-expression .form-control')
     replicas_number = Input('.replicas-number-input')
     save = NamedButton('.ready', text='Save')
     close = NamedButton('.btn-default', text='Close')

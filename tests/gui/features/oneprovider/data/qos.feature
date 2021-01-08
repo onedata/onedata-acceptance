@@ -25,13 +25,15 @@ Feature: Quality of Service tests using single storage and single browser in One
     And user of browser clicks once on item named "file1" in file browser
     And user of browser chooses Quality of Service option from selection menu on file browser page
     And user of browser clicks on "Add Requirement" button in modal "Quality of Service"
+    And user of browser clicks "enter as text" label in "Quality of Service" modal
     And user of browser writes "geo=PL" into expression text field in modal "Quality of Service"
+    And user of browser confirms entering expression in expression text field in modal "Quality of Service"
     And user of browser sees that replicas number is equal 1 in modal "Quality of Service"
     And user of browser clicks on "Save" button in modal "Quality of Service"
     And user of browser clicks on "Close" button in modal "Quality of Service"
     Then user of browser sees QoS status tag for "file1" in file browser
     And user of browser chooses Quality of Service option from selection menu on file browser page
-    And user of browser sees "geo=PL" QoS requirement in modal "Quality of Service"
+    And user of browser sees [geo="PL"] QoS requirement in modal "Quality of Service"
 
 
   Scenario: User sees that there is no QoS file status and entries after deleting QoS requirements from file
