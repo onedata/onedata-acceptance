@@ -175,26 +175,41 @@ def no_shares_message(selenium, browser_id, op_container):
                                         'shouldn\'t be any')
 
 
-@wt(parsers.parse('user of browser sees that there is no "{share_name}" '
+@wt(parsers.parse('user of {browser_id} sees that there is no "{share_name}" '
                   'share on shares view'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_not_share_in_shares_browser_in_shares_page(selenium, browser_id,
                                                       op_container, share_name):
     shares_browser = op_container(
         selenium[browser_id]).shares_page.shares_browser
-    data = {f.name for f in shares_browser}
-    assert share_name not in data, f'Share {share_name} in shares browser'
+    assert share_name not in shares_browser, (f'Share {share_name} in '
+                                              f'shares browser')
 
 
-@wt(parsers.parse('user of browser sees that there is "{share_name}" '
+@wt(parsers.parse('user of {browser_id} sees that there is "{share_name}" '
                   'share on shares view'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_share_in_shares_browser_in_shares_page(selenium, browser_id,
                                                   op_container, share_name):
     shares_browser = op_container(
         selenium[browser_id]).shares_page.shares_browser
-    data = {f.name for f in shares_browser}
-    assert share_name in data, f'Share {share_name} not in shares browser'
+    assert share_name in shares_browser, (f'Share {share_name} not in '
+                                          f'shares browser')
+
+
+@wt(parsers.parse('user of {browser_id} sees that there is "{share_name}" '
+                  'share that points to deleted directory '
+                  'on shares view'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_share_point_to_del_dir_on_list(selenium, browser_id, op_container,
+                                          share_name):
+    shares_browser = op_container(
+        selenium[browser_id]).shares_page.shares_browser
+    assert share_name in shares_browser, (f'Share {share_name} not '
+                                          f'in shares browser')
+    share = shares_browser[share_name]
+    assert share.points_to_del_dir(), (f'Share {share_name} does not point to '
+                                       f'deleted directory')
 
 
 @wt(parsers.parse('user of {browser_id} clicks on menu '

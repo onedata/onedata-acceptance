@@ -408,3 +408,9 @@ def assert_token_on_token_page_sidebar(browser_id, ability_to_see, token_name,
         err_msg = f'token list on sidebar should not contain {token_name}'
         assert token_name not in {token.name for token in
                                   tokens_page.tokens}, err_msg
+
+
+def choose_token_template(selenium, browser_id, template, oz_page):
+    driver = selenium[browser_id]
+    tokens_page = oz_page(driver)['tokens']
+    getattr(tokens_page, f'{transform(template)}_template').click()

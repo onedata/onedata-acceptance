@@ -40,6 +40,7 @@ spaces: false
 
 storages:
   - posix
+  - s3
 
 os-config:
   cfg1: &cfg1
@@ -47,10 +48,13 @@ os-config:
       - user1
       - user2
     groups:
-      space1:
+      space_posix:
         - user1
         - user2
       fuse:
+        - user1
+        - user2
+      space_s3:
         - user1
         - user2
 

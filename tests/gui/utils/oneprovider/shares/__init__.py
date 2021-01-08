@@ -36,6 +36,10 @@ class SharesSidebar(PageObject):
 class SharesOptions(PageObject):
     name = id = Label('.item-name')
     menu_button = Button('.menu-toggle-frame')
+    icon = WebElement('.one-icon-tag-icon')
+
+    def points_to_del_dir(self):
+        return 'oneicon-x' in self.icon.get_attribute('class')
 
 
 class SharesContentPage(PageObject):

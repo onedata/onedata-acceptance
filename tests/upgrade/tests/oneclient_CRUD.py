@@ -15,22 +15,26 @@ TEXT = 'example_text'
 TEXT2 = 'some_other_text'
 
 
-def setup(tests_controller):
-    client = tests_controller.mount_client(CLIENT_CONF_1)
-    space_path = client.absolute_path('space1')
-    file_path = os.path.join(space_path, 'file_name')
-    mkdir(client, os.path.join(space_path, 'dir_name'))
-    create_file(client, file_path)
-    write(client, TEXT, file_path)
+def setup(space_name):
+    def fun(tests_controller):
+        client = tests_controller.mount_client(CLIENT_CONF_1)
+        space_path = client.absolute_path(space_name)
+        file_path = os.path.join(space_path, 'file_name')
+        mkdir(client, os.path.join(space_path, 'dir_name'))
+        create_file(client, file_path)
+        write(client, TEXT, file_path)
+    return fun
 
 
-def verify(tests_controller):
-    client = tests_controller.mount_client(CLIENT_CONF_1)
-    space_path = client.absolute_path('space1')
-    file_path = os.path.join(space_path, 'file_name')
-    dir_path = os.path.join(space_path, 'dir_name')
-    assert TEXT == read(client, file_path)
-    write(client, TEXT2, file_path)
-    assert TEXT2 == read(client, file_path)
-    stat(client, dir_path)
-    rm(client, file_path)
+def verify(space_name):
+    def fun(tests_controller):
+        client = tests_controller.mount_client(CLIENT_CONF_1)
+        space_path = client.absolute_path(space_name)
+        file_path = os.path.join(space_path, 'file_name')
+        dir_path = os.path.join(space_path, 'dir_name')
+        assert TEXT == read(client, file_path)
+        write(client, TEXT2, file_path)
+        assert TEXT2 == read(client, file_path)
+        stat(client, dir_path)
+        rm(client, file_path)
+    return fun

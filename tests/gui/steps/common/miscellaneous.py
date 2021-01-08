@@ -6,6 +6,10 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import json
+import os
+import subprocess
+
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
 
@@ -90,4 +94,38 @@ def switch_to_iframe(selenium, browser_id, selector=None):
     driver.switch_to.default_content()
     iframe = driver.find_element_by_tag_name('iframe')
     driver.switch_to.frame(iframe)
+
+
+@wt(parsers.parse('user of {browser_id} sets copied {elem} as {var_name} '
+                  'environment variable'))
+def set_env_variable_with_copied_val(clipboard, var_name, displays, browser_id):
+    var_value = clipboard.paste(display=displays[browser_id])
+    _set_env_variable(var_name, var_value)
+
+
+def _set_env_variable(var_name, var_value):
+    os.environ[var_name] = var_value
+
+
+@wt(parsers.parse('user of {browser_id} runs copied curl command'))
+def run_curl_command(clipboard, displays, browser_id, tmp_memory):
+    curl_cmd = clipboard.paste(display=displays[browser_id])
+
+    # -k option avoids certificate check
+    curl_cmd = curl_cmd + ' -k'
+    status, output = subprocess.getstatusoutput(curl_cmd)
+    assert status == 0, 'CURL command did not succeeded'
+    json_data = _process_curl_output(output)
+    tmp_memory[browser_id]['curl result'] = json_data
+
+
+def _process_curl_output(output):
+    output = output.replace('\\"', '"')
+    output = output.split('\n')
+    output_json = output[-1].split('"body"')[-1]
+    output_json = output_json.lstrip(':"')
+    output_json = output_json.rstrip('"}')
+    output_json = output_json + '}}'
+
+    return json.loads(output_json)
 
