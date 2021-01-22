@@ -17,7 +17,7 @@ from queue import Queue, Empty
 from tests.performance.conftest import AbstractPerformanceTest
 from tests.utils.performance_utils import (Result, generate_configs,
                                            performance, flushed_print)
-from tests.utils.client_utils import (user_home_dir, rm, mkdtemp, truncate,
+from tests.utils.client_utils import (user_home_dir, rm, mkdtemp, create_file,
                                       write, mount_client, CLIENT_CONF)
 
 REPEATS = 1
@@ -161,8 +161,7 @@ def _execute_test(client, files_number, empty_files, threads_num,
 
 
 def _create_files(client, start, end, empty_files, dir_path, queue):
-    fun = partial(truncate, size=0) if empty_files else partial(write,
-                                                                text=TEXT)
+    fun = create_file if empty_files else partial(write, text=TEXT)
     try:
         for i in range(start, end):
             fun(client, file_path=os.path.join(dir_path, 'file{}'.format(i)))
