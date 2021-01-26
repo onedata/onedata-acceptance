@@ -163,6 +163,19 @@ def is_storage_on_storage_list(selenium, browser_id, name, onepanel):
     return name in storages_list
 
 
+@wt(parsers.parse('user of {browser_id} sees {number} storages named "{name}" '
+                  'on the storages list'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_number_storages_with_same_name(selenium, browser_id, name,
+                                          onepanel, number: int):
+    driver = selenium[browser_id]
+    storages_list = onepanel(driver).content.storages.storages
+    filtered = [storage for storage in storages_list if
+                storage.name.split('#')[0] == name]
+    assert len(filtered) == number, (
+        f'{name} not visible {number} times on storages list')
+
+
 @wt(parsers.parse('user of {browser_id} types "{name}" to {input_box} field '
                   'in POSIX edit form for "{storage}" storage in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)

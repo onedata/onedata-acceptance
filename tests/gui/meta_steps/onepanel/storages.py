@@ -148,32 +148,51 @@ def _remove_storage_in_op_panel_using_rest(storage_name, provider, hosts,
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password
 
-    storage_id = _get_storage_id(storage_name, provider, hosts,
-                                 onepanel_credentials)
-    if storage_id:
-        http_delete(ip=provider_hostname, port=PANEL_REST_PORT,
-                    path=get_panel_rest_path('provider', 'storages', storage_id),
-                    auth=(onepanel_username, onepanel_password))
+    storage_ids = _get_storage_id_list_by_name(storage_name, provider, hosts,
+                                               onepanel_credentials)
+    for storage_id in storage_ids:
+        _remove_storage_by_id(provider_hostname, onepanel_username,
+                              onepanel_password, storage_id)
 
 
-def _get_storage_id(storage_name, provider, hosts, onepanel_credentials):
+def _remove_storage_by_id(provider_hostname, onepanel_username,
+                          onepanel_password, storage_id):
+    http_delete(ip=provider_hostname, port=PANEL_REST_PORT,
+                path=get_panel_rest_path('provider', 'storages', storage_id),
+                auth=(onepanel_username, onepanel_password))
+
+
+@given(parsers.parse('there is no "{name}" storage in "{provider}" '
+                     'Oneprovider panel'))
+def remove_storage_in_op_panel_rest(onepanel_credentials, hosts, provider,
+                                    name):
+    _remove_storage_in_op_panel_using_rest(name, provider, hosts,
+                                           onepanel_credentials)
+
+
+def _get_storages_ids(provider_hostname, onepanel_username, onepanel_password):
+    return http_get(ip=provider_hostname, port=PANEL_REST_PORT,
+                    path=get_panel_rest_path('provider', 'storages'),
+                    auth=(onepanel_username, onepanel_password)).json()['ids']
+
+
+def _get_storage_id_list_by_name(storage_name, provider, hosts,
+                                 onepanel_credentials):
     provider_hostname = hosts[provider]['hostname']
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password
 
-    storage_ids = http_get(ip=provider_hostname, port=PANEL_REST_PORT,
-                           path=get_panel_rest_path('provider', 'storages'),
-                           auth=(onepanel_username, onepanel_password)
-                           ).json()['ids']
-
+    storage_ids = _get_storages_ids(provider_hostname, onepanel_username,
+                                    onepanel_password)
+    selected_ids = []
     for storage_id in storage_ids:
         response = http_get(ip=provider_hostname, port=PANEL_REST_PORT,
                             path=get_panel_rest_path('provider', 'storages',
                                                      storage_id),
                             auth=(onepanel_username, onepanel_password)).json()
         if storage_name == response['name']:
-            return storage_id
-    return None
+            selected_ids.append(storage_id)
+    return selected_ids
 
 
 def _add_storage_in_op_panel_using_rest(config, storage_name, provider, hosts,
