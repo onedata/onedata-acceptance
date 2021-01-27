@@ -205,4 +205,4 @@ Feature: Storage management using onepanel
     And user of browser_unified types "storage" to Storage name field in POSIX form in storages page in Onepanel
     And user of browser_unified types "/tmp" to Mount point field in POSIX form in storages page in Onepanel
     And user of browser_unified clicks on Add button in add storage form in storages page in Onepanel
-    Then user of browser_unified sees 2 storages named "storage" on the storages list
+    Then user of browser_unified sees 2 storages named "storage" with different IDs on the storages list

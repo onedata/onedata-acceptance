@@ -164,7 +164,7 @@ def is_storage_on_storage_list(selenium, browser_id, name, onepanel):
 
 
 @wt(parsers.parse('user of {browser_id} sees {number} storages named "{name}" '
-                  'on the storages list'))
+                  'with different IDs on the storages list'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_storages_with_same_name(selenium, browser_id, name,
                                           onepanel, number: int):
@@ -172,8 +172,16 @@ def assert_number_storages_with_same_name(selenium, browser_id, name,
     storages_list = onepanel(driver).content.storages.storages
     filtered = [storage for storage in storages_list if
                 storage.name.split('#')[0] == name]
+    ids = [s.name.split('#')[1] for s in filtered]
     assert len(filtered) == number, (
         f'{name} not visible {number} times on storages list')
+    assert check_ids_different(ids), f'IDs are not different, {ids}'
+
+
+# if there are repeated ids, set will be shorter than list
+def check_ids_different(id_list):
+    ids_set = set(id_list)
+    return len(ids_set) == len(id_list)
 
 
 @wt(parsers.parse('user of {browser_id} types "{name}" to {input_box} field '
