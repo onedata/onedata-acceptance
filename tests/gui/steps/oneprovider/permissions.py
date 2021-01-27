@@ -302,3 +302,11 @@ def assert_no_access_tag_on_file(browser_id, item_name, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
     err_msg = f'"No access" tag for {item_name} in file browser not visible'
     assert browser.data[item_name].tag_label == "No access", err_msg
+
+
+@wt(parsers.re('user of (?P<browser_id>\w+) does not see "no access" tag on '
+               '(?P<item_name>.*)'))
+def assert_not_no_access_tag_on_file(browser_id, item_name, tmp_memory):
+    browser = tmp_memory[browser_id]['file_browser']
+    err_msg = f'"No access" tag for {item_name} in file browser visible'
+    assert not browser.data[item_name].is_tag_visible('no_access'), err_msg
