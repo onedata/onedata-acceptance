@@ -14,7 +14,7 @@ from functools import partial
 from tests.performance.conftest import AbstractPerformanceTest
 from tests.utils.performance_utils import (Result, generate_configs,
                                            performance, flushed_print)
-from tests.utils.client_utils import (user_home_dir, rm, mkdtemp, truncate,
+from tests.utils.client_utils import (user_home_dir, rm, mkdtemp, create_file,
                                       write, mount_client, CLIENT_CONF)
 
 REPEATS = 1
@@ -25,9 +25,9 @@ RPYC_TIMEOUT = 120
 # value written to files at their creation
 TEXT = 'asd'
 
-DIRECT_IO_CLIENT_CONF = CLIENT_CONF('user1', '/home/user1/onedata', 
+DIRECT_IO_CLIENT_CONF = CLIENT_CONF('user1', '/home/user1/onedata',
                                     'oneclient-1', 'client11', 'token')
-PROXY_IO_CLIENT_CONF = CLIENT_CONF('user2', '/home/user2/onedata', 
+PROXY_IO_CLIENT_CONF = CLIENT_CONF('user2', '/home/user2/onedata',
                                    'oneclient-2', 'client21', 'token')
 
 
@@ -112,8 +112,7 @@ def execute_file_creation_test(client, files_number, empty_files,
     start = time.time()
     logging_time = start + LOGGING_INTERVAL
 
-    fun = partial(truncate, size=0) if empty_files else partial(write,
-                                                                text=TEXT)
+    fun = create_file if empty_files else partial(write, text=TEXT)
     for i in range(files_number):
         fun(client, file_path=os.path.join(dir_path, 'file{}'.format(i)))
         if time.time() >= logging_time:

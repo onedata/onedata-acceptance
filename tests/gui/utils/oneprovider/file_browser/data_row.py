@@ -12,7 +12,7 @@ from selenium.webdriver import ActionChains
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Label, WebElement, Button
-from tests.gui.utils.generic import click_on_web_elem
+from tests.gui.utils.generic import click_on_web_elem, transform
 
 
 class DataRow(PageObject):
@@ -27,6 +27,7 @@ class DataRow(PageObject):
     shared_tag = WebElement('.file-status-shared')
     metadata_tag = WebElement('.file-status-metadata')
     qos_tag = WebElement('.file-status-qos')
+    no_access_tag = WebElement('.file-status-forbidden')
     qos_inherited_tag = WebElement('.file-status-qos .oneicon-arrow-long-up')
     clickable_field = WebElement('.file-name')
     tag_label = Label('.file-status-tag')
@@ -46,7 +47,7 @@ class DataRow(PageObject):
 
     def is_tag_visible(self, name):
         try:
-            getattr(self, '{tag}_tag'.format(tag=name.lower()))
+            getattr(self, f'{transform(name)}_tag')
         except RuntimeError:
             return False
         else:
