@@ -5,7 +5,7 @@ Feature: Basic data tab operations on public shares in file browser
     Given initial users configuration in "onezone" Onezone service:
             - space-owner-user
     And initial spaces configuration in "onezone" Onezone service:
-        space1:
+          space1:
             owner: space-owner-user
             providers:
                 - oneprovider-1:
@@ -173,3 +173,50 @@ Feature: Basic data tab operations on public shares in file browser
     And user of browser1 refreshes site
     And user of browser1 opens description tab on share's public interface
     And user of browser1 sees "use this share with responsibility and joy" description on share's public interface
+
+
+  Scenario: User sees appropriate message on share's public interface when directory containing shared file was deleted
+    When using REST, user space-owner-user creates "share_dir2" share of "space1/dir1/dir2" supported by "oneprovider-1" provider
+    And user of space_owner_browser opens file browser for "space1" space
+    And user of space_owner_browser double clicks on item named "dir1" in file browser
+    And user of space_owner_browser hands "share_dir2" share's URL of "dir2" to user of browser1
+
+    And user of browser1 opens received URL
+    And user of browser1 sees that public share is named "share_dir2"
+
+    # delete dir1
+    And user of space_owner_browser clicks Data of "space1" in the sidebar
+    And user of space_owner_browser sees file browser in data tab in Oneprovider page
+    And user of space_owner_browser clicks on menu for "dir1" directory in file browser
+    And user of space_owner_browser clicks "Delete" option in data row menu in file browser
+    And user of space_owner_browser clicks on "Yes" button in modal "Delete modal"
+
+    And user of browser1 refreshes site
+    And user of browser1 sees "SHARED FILES HAVE BEEN DELETED" instead of file browser on share's public interface
+
+
+  Scenario: User cannot see share's public interface when space containing shared file was deleted
+    When user of space_owner_browser opens file browser for "space1" space
+    And user of space_owner_browser hands "share_dir1" share's URL of "dir1" to user of browser1
+
+    And user of browser1 opens received URL
+    And user of browser1 sees that public share is named "share_dir1"
+    And user of space_owner_browser removes "space1" space in Onezone page
+
+    And user of browser1 refreshes site
+    Then user of browser1 sees "web GUI cannot be loaded" error on Onedata page
+
+
+  Scenario: Share's public interface still works after share owner left the space containing share
+    When user of space_owner_browser opens file browser for "space1" space
+    And user of space_owner_browser hands "share_dir1" share's URL of "dir1" to user of browser1
+
+    And user of browser1 opens received URL
+    And user of browser1 sees that public share is named "share_dir1"
+    And user of space_owner_browser leaves "space1" space in Onezone page
+
+    And user of browser1 refreshes site
+    Then user of browser1 sees that public share is named "share_dir1"
+    And user of browser1 sees file browser on share's public interface
+    And user of browser1 double clicks on item named "dir1" in file browser
+    And user of browser1 sees item(s) named "file1" in file browser

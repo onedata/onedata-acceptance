@@ -318,3 +318,13 @@ def assert_proper_description(selenium, browser_id,
     description_on_page = public_share(driver).description
     err_msg = f'found {description_on_page} instead of {description}'
     assert description_on_page == description, err_msg
+
+
+@wt(parsers.parse('user of {browser_id} sees "{message}" '
+                  'instead of file browser on share\'s public interface'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_message_no_file_browser(selenium, browser_id, message, public_share):
+    driver = selenium[browser_id]
+    _change_iframe_for_public_share_page(selenium, browser_id)
+    msg = public_share(driver).no_files_message_header
+    assert msg == message, f'{message} not on share\'s public interface'

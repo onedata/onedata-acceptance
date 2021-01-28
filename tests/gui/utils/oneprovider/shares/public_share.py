@@ -20,7 +20,7 @@ class PublicShareView(object):
     error_msg = Label('.error-details.active')
     description_tab = Button('.nav-link-description')
     description = Label('.markdown-view')
-
+    no_files_message_header = Label('.content-info-content-container h1')
 
     def __init__(self, driver):
         self.web_elem = self.driver = driver
