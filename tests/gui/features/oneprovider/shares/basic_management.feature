@@ -282,7 +282,7 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser opens shares view of "space1"
     And user of browser sees that there is "share_dir3" share on shares view
 
-    # delete dir3
+    # delete dir2
     And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser clicks on menu for "dir2" directory in file browser

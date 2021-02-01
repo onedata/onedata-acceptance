@@ -184,7 +184,7 @@ def check_remove_space_understand_notice(selenium, browser_id, modals):
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
                '"Remove" button in "Remove space" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_remove_space_understand_notice(selenium, browser_id, modals):
+def check_remove_space_button(selenium, browser_id, modals):
     modals(selenium[browser_id]).remove_space.remove()
 
 
