@@ -1,0 +1,10 @@
+scenario: "1op-compatibility-overlay.yaml"
+patch: "1op.yaml"
+
+oneclient:
+  oneclient-1:
+    clients:
+      client11:
+        provider: "oneprovider-1"
+        mode: proxyio
+        default timeout: 10
