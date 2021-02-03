@@ -1,10 +1,10 @@
 scenarios:  # names of files in `environments/scenarios` directory without .yaml suffix
-  - 1op-compatibility-overlay
-  - 2op-compatibility-overlay
+  - 1op
+  - 2op
 initialVersions:
-  onezone: 20.02.1
-  oneprovider: 20.02.1
-  oneclient: 20.02.1
+  onezone: 20.02.6
+  oneprovider: 20.02.6
+  oneclient: 20.02.6
 targetVersions:
   onezone: default
   oneprovider: default
