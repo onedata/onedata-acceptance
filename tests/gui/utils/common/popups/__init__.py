@@ -11,7 +11,7 @@ from tests.utils.utils import repeat_failed
 from .consumer_caveat import ConsumerCaveat
 from .power_select import PowerSelect
 from .menu_popup import MenuPopup
-from .query_builder import QueryBuilderPopup
+from .query_builder import ExpressionBuilderPopup
 from .qos_delete import DeleteQosPopup
 from .selector_popup import SelectorPopup
 from .upload_presenter import UploadPresenter
@@ -39,7 +39,7 @@ class Popups(object):
     user_delete_account_popover_menu = WebItem('.in .webui-popover-inner',
                                                cls=UserDeleteAccountPopoverMenu)
     query_builder_popups = WebItemsSequence('.query-builder-block-selector',
-                                            cls=QueryBuilderPopup)
+                                            cls=ExpressionBuilderPopup)
     data_distribution_popup = WebItem('.webui-popover.in', cls=DataDistributionPopup)
     delete_qos_popup = WebItem('.webui-popover.in', cls=DeleteQosPopup)
     power_select = WebItem('.ember-power-select-dropdown', cls=PowerSelect)

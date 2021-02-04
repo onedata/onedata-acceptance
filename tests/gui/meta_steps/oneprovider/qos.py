@@ -6,11 +6,13 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 from tests.gui.meta_steps.oneprovider.data import go_to_filebrowser
-from tests.gui.steps.modal import write_name_into_text_field_in_modal
+from tests.gui.steps.modal import (
+    write_name_into_text_field_in_modal, wt_wait_for_modal_to_appear)
 from tests.gui.steps.oneprovider.data_tab import (
     choose_option_from_selection_menu)
 from tests.gui.steps.oneprovider.file_browser import (
-    click_on_item_in_file_browser)
+    click_on_item_in_file_browser, click_menu_for_elem_in_file_browser,
+    click_option_in_data_row_menu_in_file_browser)
 from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.qos import (
     click_enter_as_text_link, confirm_entering_text)
@@ -99,3 +101,14 @@ def add_no_id_qos_requirement_in_modal(selenium, browser_id, modals, item_name,
     _add_qos_requirement_in_modal(selenium, browser_id, modals, item_name,
                                   tmp_memory, expression, popups,
                                   replicas_number)
+
+
+@wt(parsers.parse('user of {browser_id} opens "Quality of Service" modal for '
+                  '"{filename}" file'))
+def open_qos_modal_for_file(selenium, browser_id, filename, modals, tmp_memory):
+    qos = 'Quality of Service'
+
+    click_menu_for_elem_in_file_browser(browser_id, filename, tmp_memory)
+    click_option_in_data_row_menu_in_file_browser(selenium, browser_id, qos,
+                                                  modals)
+    wt_wait_for_modal_to_appear(selenium, browser_id, qos, tmp_memory)

@@ -142,6 +142,14 @@ def safely_create_storage_rest(storage_name, provider, config,
                                         onepanel_credentials)
 
 
+@given(parsers.parse('there is no "{storage_name}" storage in "{provider}" '
+                     'Oneprovider panel service'))
+def remove_all_storages_named(storage_name, provider, hosts,
+                              onepanel_credentials):
+    _remove_storage_in_op_panel_using_rest(storage_name, provider, hosts,
+                                           onepanel_credentials)
+
+
 def _remove_storage_in_op_panel_using_rest(storage_name, provider, hosts,
                                            onepanel_credentials):
     provider_hostname = hosts[provider]['hostname']

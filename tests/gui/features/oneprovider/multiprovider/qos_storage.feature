@@ -87,3 +87,81 @@ Feature: Quality of Service tests for 2 providers using multiple browsers where 
     And user of browser_emergency clicks on "Modify" button for "posix" storage record in Storages page in Onepanel
     And user of browser_emergency adds key="geo" value="PL" in storage edit page
     Then user of browser_unified sees that all QoS requirements are fulfilled
+
+
+  Scenario: Storage's id may be used in QoS graphical editor
+    When user of browser_unified opens file browser for "space1" space
+    And user of browser_unified opens "Quality of Service" modal for "file1" file
+    And user of browser_unified clicks on "Add Requirement" button in modal "Quality of Service"
+
+    And user of browser_unified clicks on add query block icon in modal "Quality of Service"
+    And user of browser_unified chooses "storage" property in "Add QoS condition" popup
+    And user of browser_unified chooses value of "posix" at "oneprovider-1" in "Add QoS condition" popup
+    And user of browser_unified clicks "Add" in "Add QoS condition" popup
+    And user of browser_unified sees that 1 storage matches condition in modal "Quality of Service"
+    And user of browser_unified clicks on "Save" button in modal "Quality of Service"
+    Then user of browser_unified sees [storage is posix @oneprovider-1] QoS requirement in modal "Quality of Service"
+    And user of browser_unified sees that all QoS requirements are fulfilled
+
+
+  Scenario: User can create nested expressions in QoS graphical editor
+    When user of browser_emergency adds "test_storage" storage in "oneprovider-1" Oneprovider panel service with following configuration:
+          storage type: POSIX
+          mount point: /volumes/persistence/storage
+    And user of browser_unified opens file browser for "space1" space
+    And user of browser_unified opens "Quality of Service" modal for "file1" file
+    And user of browser_unified clicks on "Add Requirement" button in modal "Quality of Service"
+
+    # (provider is oneprovider-1) AND (storage is posix @oneprovider-2 OR storage is posix @oneprovider-1) AND
+    # (any storage EXCEPT storage is posix @oneprovider-1)
+    And user of browser_unified clicks on add query block icon in modal "Quality of Service"
+    And user of browser_unified chooses "AND" operator in "Add QoS condition" popup
+
+    # provider is oneprovider-1
+    And user of browser_unified clicks on add query block icon in modal "Quality of Service"
+    And user of browser_unified chooses "provider" property in "Add QoS condition" popup
+    And user of browser_unified chooses value of "oneprovider-1" provider in "Add QoS condition" popup
+    And user of browser_unified clicks "Add" in "Add QoS condition" popup
+
+    And user of browser_unified sees that 1 storage matches condition in modal "Quality of Service"
+
+    # (storage is posix @oneprovider-1 OR storage is posix @oneprovider-2)
+    And user of browser_unified clicks on add query block icon in modal "Quality of Service"
+    And user of browser_unified chooses "OR" operator in "Add QoS condition" popup
+
+    # storage is posix @oneprovider-2
+    And user of browser_unified clicks on add query block icon in modal "Quality of Service"
+    And user of browser_unified chooses "storage" property in "Add QoS condition" popup
+    And user of browser_unified chooses value of "posix" at "oneprovider-2" in "Add QoS condition" popup
+    And user of browser_unified clicks "Add" in "Add QoS condition" popup
+
+    And user of browser_unified sees that no storage matches condition in modal "Quality of Service"
+
+    # storage is posix @oneprovider-1
+    And user of browser_unified clicks on add query block icon in modal "Quality of Service"
+    And user of browser_unified chooses "storage" property in "Add QoS condition" popup
+    And user of browser_unified chooses value of "posix" at "oneprovider-1" in "Add QoS condition" popup
+    And user of browser_unified clicks "Add" in "Add QoS condition" popup
+
+    And user of browser_unified sees that 1 storage matches condition in modal "Quality of Service"
+
+    # (any storage EXCEPT storage is posix @oneprovider-1)
+    And user of browser_unified clicks on 2 nd from the left add query block icon in modal "Quality of Service"
+    And user of browser_unified chooses "EXCEPT" operator in "Add QoS condition" popup
+
+    # any storage
+    And user of browser_unified clicks on 2 nd from the left add query block icon in modal "Quality of Service"
+    And user of browser_unified chooses "any storage" property in "Add QoS condition" popup
+    And user of browser_unified clicks "Add" in "Add QoS condition" popup
+
+    # storage is posix @oneprovider-1
+    And user of browser_unified clicks on 2 nd from the left add query block icon in modal "Quality of Service"
+    And user of browser_unified chooses "storage" property in "Add QoS condition" popup
+    And user of browser_unified chooses value of "posix" at "oneprovider-1" in "Add QoS condition" popup
+    And user of browser_unified clicks "Add" in "Add QoS condition" popup
+
+    And user of browser_unified sees that no storage matches condition in modal "Quality of Service"
+
+    And user of browser_unified clicks on "Save" button in modal "Quality of Service"
+    Then user of browser_unified sees nested QoS requirement in modal "Quality of Service":
+           [[provider is oneprovider-1] AND [storage is posix @oneprovider-2 OR storage is posix @oneprovider-1] AND [any storage EXCEPT storage is posix @oneprovider-1]]
