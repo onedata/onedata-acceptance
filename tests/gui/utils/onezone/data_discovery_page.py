@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in " \
 from tests.gui.utils.common.query_builder import QueryBuilder
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
-    WebItem, WebItemsSequence, Button, Label)
+    WebItem, WebItemsSequence, Button, Label, WebElementsSequence)
 
 
 class ResultSample(PageObject):
