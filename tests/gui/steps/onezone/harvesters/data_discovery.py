@@ -9,7 +9,7 @@ __license__ = ("This software is released under the MIT license cited in "
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 
@@ -29,7 +29,10 @@ def assert_data_discovery_page(selenium, browser_id, data_discovery):
 
 @repeat_failed(timeout=WAIT_BACKEND, interval=1.5)
 def _wait_for_files_list(selenium, browser_id, data_discovery):
-    click_query_button_on_data_disc_page(selenium, browser_id, data_discovery)
+    button_name = 'Query'
+
+    click_button_on_data_disc_page(selenium, browser_id, data_discovery,
+                                   button_name)
     assert_files_list_on_data_disc(selenium, browser_id, data_discovery)
 
 
@@ -42,8 +45,11 @@ def assert_files_list_on_data_disc(selenium, browser_id, data_discovery):
 @wt(parsers.parse('user of {browser_id} sees public data discovery page with '
                   'no harvested data'))
 def assert_empty_data_discovery_page(selenium, browser_id, data_discovery):
+    button_name = 'Query'
+
     switch_to_iframe(selenium, browser_id, '.plugin-frame')
-    data_discovery(selenium[browser_id]).query_builder.query_button()
+    click_button_on_data_disc_page(selenium, browser_id, data_discovery,
+                                   button_name)
 
 
 @wt(parsers.parse('user of {browser_id} sees "{error_msg}" alert on Data '
@@ -171,9 +177,38 @@ def click_operator_in_query_builder(selenium, browser_id, operator, popups):
     getattr(query_builder, f'{operator.lower()}_operator')()
 
 
-@wt(parsers.parse('user of {browser_id} clicks "Query" button on Data '
+@wt(parsers.parse('user of {browser_id} clicks "{button_name}" button on Data '
                   'discovery page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_query_button_on_data_disc_page(selenium, browser_id, data_discovery):
+def click_button_on_data_disc_page(selenium, browser_id, data_discovery,
+                                   button_name):
     driver = selenium[browser_id]
-    data_discovery(driver).query_builder.query_button()
+    page = data_discovery(driver)
+    getattr(page, f'{transform(button_name)}_button')()
+
+
+@wt(parsers.parse('user of {browser_id} sees that paging is set for {number} '
+                  'pages'))
+def assert_page_size(selenium, browser_id, data_discovery, number: str):
+    driver = selenium[browser_id]
+    given = data_discovery(driver).page_size
+    assert given == number, (f'Expected page size was {number}, but got '
+                             f'{given}')
+
+
+@wt(parsers.parse('user of {browser_id} opens next page of data discovery '
+                  'page'))
+def open_next_data_disc_page(selenium, browser_id, data_discovery):
+    driver = selenium[browser_id]
+    data_discovery(driver).next_page()
+
+
+@wt(parsers.parse('user of {browser_id} chooses "{parameter}" sorting '
+                  '{item} on data discovery page'))
+def choose_sorting_parameter_or_order(selenium, browser_id, parameter,
+                                      item, data_discovery):
+    driver = selenium[browser_id]
+    getattr(data_discovery(driver), f'sorting_{item}_selector')()
+    data_discovery(driver).choose_item(parameter)
+
+

@@ -5,7 +5,7 @@ Feature: Basic data tab operations on public shares in file browser
     Given initial users configuration in "onezone" Onezone service:
             - space-owner-user
     And initial spaces configuration in "onezone" Onezone service:
-        space1:
+          space1:
             owner: space-owner-user
             providers:
                 - oneprovider-1:
@@ -109,67 +109,17 @@ Feature: Basic data tab operations on public shares in file browser
     And user of browser1 double clicks on item named "dir1" in file browser
     And user of browser1 sees item(s) named "file1" in file browser
 
-    And user of space_owner_browser succeeds to remove "dir1/file1" in "space1"
 
-    And user of browser1 clicks file browser refresh button
-    And user of browser1 sees file browser on share's public interface
-    Then user of browser1 does not see any item(s) named "file1" in file browser
-
-
-  Scenario: User changes working directory using breadcrumbs from file browser in share's public interface
+  Scenario: Share's public interface still works after the only space member left the space containing share
     When user of space_owner_browser opens file browser for "space1" space
     And user of space_owner_browser hands "share_dir1" share's URL of "dir1" to user of browser1
 
     And user of browser1 opens received URL
     And user of browser1 sees that public share is named "share_dir1"
-    And user of browser1 sees that current working directory path visible in share's public interface file browser is as follows: share_dir1
+    And user of space_owner_browser leaves "space1" space in Onezone page
+
+    And user of browser1 refreshes site
+    Then user of browser1 sees that public share is named "share_dir1"
     And user of browser1 sees file browser on share's public interface
     And user of browser1 double clicks on item named "dir1" in file browser
-    And user of browser1 sees that current working directory path visible in share's public interface file browser is as follows: /dir1
-    And user of browser1 double clicks on item named "dir2" in file browser
-    And user of browser1 sees that current working directory path visible in share's public interface file browser is as follows: /dir1/dir2
-
-    # using breadcrumbs
-    And user of browser1 changes current working directory to /dir1 using breadcrumbs on share's public interface
-    Then user of browser1 sees that current working directory path visible in share's public interface file browser is as follows: /dir1
-    And user of browser1 changes current working directory to current share using breadcrumbs on share's public interface
-    Then user of browser1 sees that current working directory path visible in share's public interface file browser is as follows: share_dir1
-
-
-  Scenario: User can copy URL of received share on share's public interface and share it further
-    When user of space_owner_browser opens file browser for "space1" space
-    And user of space_owner_browser hands "share_dir1" share's URL of "dir1" to user of browser1
-
-    And user of browser1 opens received URL
-    And user of browser1 sees that public share is named "share_dir1"
-    And user of browser1 copies URL
-
-    Then user of browser1 sends copied URL to user of space_owner_browser
-    And user of space_owner_browser opens URL received from user of browser1
-    And user of space_owner_browser sees that public share is named "share_dir1"
-
-
-  Scenario: Share owner description changes are visible on share's public interface
-    When user of space_owner_browser opens file browser for "space1" space
-    And user of space_owner_browser hands "share_dir1" share's URL of "dir1" to user of browser1
-
-    And user of browser1 opens received URL
-    And user of browser1 sees that public share is named "share_dir1"
-    And user of space_owner_browser opens "share_dir1" single share view of space "space1" using sidebar
-
-    # create description
-    And user of space_owner_browser opens description tab on share view
-    And user of space_owner_browser clicks on add description button on share description tab
-    And user of space_owner_browser appends "##use this share with responsibility" to description on share description tab
-    And user of space_owner_browser clicks on save changes button in description share
-
-    And user of browser1 refreshes site
-    And user of browser1 opens description tab on share's public interface
-    And user of browser1 sees "use this share with responsibility" description on share's public interface
-
-    # update description
-    And user of space_owner_browser appends " and joy" to description on share description tab
-    And user of space_owner_browser clicks on save changes button in description share
-    And user of browser1 refreshes site
-    And user of browser1 opens description tab on share's public interface
-    And user of browser1 sees "use this share with responsibility and joy" description on share's public interface
+    And user of browser1 sees item(s) named "file1" in file browser

@@ -1,10 +1,12 @@
 # Name of the scenario to run
-scenario: "scenario-1oz-1op"
+scenario: "scenario-1oz-3op"
 
 # Determines if onedata components should be started from pre-compiled sources
 # or pre-installed packages inside dockers. When enabled, sources are expected
 # to be found in CWD (from where the 'up' script was run) or one dir above.
 sources: false
+
+spaces: false
 
 # Onezone image to use. Note that if 'sources' option is enabled, it must
 # be based off onedata/worker image (it contains all the machinery to run the
@@ -15,64 +17,30 @@ onezoneImage: "docker.onedata.org/onezone-dev:develop"
 # be based off onedata/worker image.
 oneproviderImage: "docker.onedata.org/oneprovider-dev:develop"
 
-# Determines if luma should start.
-luma: false
-
-# Determines if onedata rest client should start.
-onedataCli: false
-
-# Determines if oneclients should start.
-oneclients: true
-
-oneclientImage: "docker.onedata.org/oneclient-dev:ID-b08da46791"
-
-# Onedata rest client image to use.
-onedataCliImage: "docker.onedata.org/rest-cli:ID-e5fb6602e4"
-
-# Luma image to use.
-lumaImage: "docker.onedata.org/luma:ID-8e2da56615"
-
 # When enabled, onezoneImage and oneproviderImage will be pulled before every
 # deployment. If disabled, they will only be pulled if not existent.
 forceImagePull: true
 
-spaces: false
-
-storages:
-  - posix
-  - s3
-
-os-config:
-  cfg1: &cfg1
-    users:
-      - user1
-      - user2
-    groups:
-      space_posix:
-        - user1
-        - user2
-      fuse:
-        - user1
-        - user2
-      space_s3:
-        - user1
-        - user2
-
-  services:
-    oneclient: *cfg1
+elasticSearch: false
 
 onezone:
   batchConfig:
     createUsers: false
+  workerOverlayConfig: |-
+    [
+      {ctool, [
+        {provider_sync_progress_desync_threshold_seconds, 5}
+      ]}
+    ].
 
 oneprovider-1:
-  oneclient:
-    replicas: 1
-    users: []
-    wait_for_oneprovider:
-      enabled: false
-    batchConfig:
-      createUsers: false
-  external-storages: []
+  batchConfig:
+    createUsers: false
 
-persistence: true
+oneprovider-2:
+  batchConfig:
+    createUsers: false
+
+oneprovider-3:
+  batchConfig:
+    createUsers: false

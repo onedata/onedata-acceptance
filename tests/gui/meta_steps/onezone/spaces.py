@@ -69,6 +69,8 @@ def leave_spaces_in_oz_using_gui(selenium, user, space_list, oz_page,
     where = 'spaces'
     option = 'Leave'
     confirmation_button = 'Leave'
+    driver = selenium[user]
+    driver.switch_to.default_content()
 
     if space_list == 'all':
         oz_page(selenium[user])['data'].spaces_header_list
@@ -85,6 +87,26 @@ def leave_spaces_in_oz_using_gui(selenium, user, space_list, oz_page,
         click_confirm_or_cancel_button_on_leave_space_page(selenium, user,
                                                            confirmation_button,
                                                            modals)
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) removes "(?P<space_list>.+?)" '
+               'spaces? in Onezone page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def remove_spaces_in_oz_using_gui(selenium, browser_id, space_list, oz_page,
+                                  popups, modals):
+    where = 'spaces'
+    option = 'Remove'
+    modal = 'Remove space'
+
+    space_list = parse_seq(space_list)
+    driver = selenium[browser_id]
+    driver.switch_to.default_content()
+
+    for space_name in space_list:
+        click_on_option_in_space_menu(selenium, browser_id, space_name, option,
+                                      oz_page, popups)
+        check_remove_space_understand_notice(selenium, browser_id, modals)
+        click_modal_button(selenium, browser_id, option, modal, modals)
 
 
 def rename_spaces_in_oz_using_gui(selenium, user, oz_page, space_list,

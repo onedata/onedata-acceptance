@@ -11,7 +11,7 @@ import json
 import yaml
 
 from tests import OP_REST_PORT
-from tests.utils.bdd_utils import given, parsers
+from tests.utils.bdd_utils import given, parsers, wt
 from tests.utils.rest_utils import get_provider_rest_path, http_post
 
 
@@ -28,6 +28,13 @@ def create_share_using_rest(item_path, provider, user, share_name, hosts,
               path=get_provider_rest_path('shares'),
               headers={'X-Auth-Token': users[user].token},
               data=json.dumps(share_details))
+
+
+@wt(parsers.parse('using REST, user {user} creates "{share_name}" share of '
+                  '"{item_path}" supported by "{provider}" provider'))
+def wt_create_share_using_rest(item_path, provider, user, share_name, hosts,
+                               users):
+    create_share_using_rest(item_path, provider, user, share_name, hosts, users)
 
 
 @given(parsers.parse('using REST, user {user} creates following shares:\n'

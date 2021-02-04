@@ -33,6 +33,7 @@ class _FileBrowser(PageObject):
     data = WebItemsSequence('.data-row.fb-table-row', cls=DataRow)
     _data = WebElementsSequence('.data-row.fb-table-row')
 
+    browser_msg_header = Label('.content-info-content-container h1')
     empty_dir_msg = Label('.empty-dir-text')
     _empty_dir_icon = WebElement('.empty-dir-image')
     _bottom = WebElement('.table-bottom-spacing')

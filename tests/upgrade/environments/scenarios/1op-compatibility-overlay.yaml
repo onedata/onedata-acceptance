@@ -74,5 +74,15 @@ oneprovider-1:
     batchConfig:
       createUsers: false
   external-storages: []
+  
+  # Because providers in version less than 20.02.6 can not fetch compatibility registry 
+  # from Onezone, set proper mirror using overlay config.
+  workerOverlayConfig: |-
+    [{ctool, [
+        {compatibility_registry_mirrors, [
+            "https://dev-onezone.default.svc.cluster.local/compatibility.json"
+        ]},
+        {force_insecure_connections, true}
+    ]}].
 
 persistence: true

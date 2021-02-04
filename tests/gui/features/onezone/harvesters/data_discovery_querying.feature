@@ -100,13 +100,12 @@ Feature: Querying for data discovery in Discovery Page in Onezone GUI
 
 
   Scenario: User sees appropriate files after searching by "any property" property
-     When user of browser waits until harvesting process in "harvester1" is finished for all spaces in "generic-index"
+    When user of browser waits until harvesting process in "harvester1" is finished for all spaces in "generic-index"
     And user of browser opens Data Discovery page of "harvester1" harvester
 
     # author contains "John"
     And user of browser clicks on add query block icon in data discovery page
     And user of browser chooses "any property" property for a query in query builder popup
-    And user of browser chooses "has phrase" from comparators list in query builder popup
     And user of browser writes "John Smith" to value input in query builder popup
     And user of browser clicks "Add" button in query builder popup
 
@@ -129,7 +128,6 @@ Feature: Querying for data discovery in Discovery Page in Onezone GUI
     # author contains "John"
     And user of browser clicks on add query block icon in data discovery page
     And user of browser chooses "author" property for a query in query builder popup
-    And user of browser chooses "contains" from comparators list in query builder popup
     And user of browser writes "John" to value input in query builder popup
     And user of browser clicks "Add" button in query builder popup
 
@@ -156,7 +154,6 @@ Feature: Querying for data discovery in Discovery Page in Onezone GUI
     # author.keyword is "John Doe"
     And user of browser clicks on add query block icon in data discovery page
     And user of browser chooses "author.keyword" property for a query in query builder popup
-    And user of browser chooses "is" from comparators list in query builder popup
     And user of browser writes "John Doe" to value input in query builder popup
     And user of browser clicks "Add" button in query builder popup
 
@@ -179,7 +176,6 @@ Feature: Querying for data discovery in Discovery Page in Onezone GUI
     # __onedata.xattrs.author.__value contains "John"
     And user of browser clicks on add query block icon in data discovery page
     And user of browser chooses "__onedata.xattrs.author.__value" property for a query in query builder popup
-    And user of browser chooses "contains" from comparators list in query builder popup
     And user of browser writes "John" to value input in query builder popup
     And user of browser clicks "Add" button in query builder popup
 
@@ -209,7 +205,6 @@ Feature: Querying for data discovery in Discovery Page in Onezone GUI
     # __onedata.xattrs.author.__value.keyword is "John Doe"
     And user of browser clicks on add query block icon in data discovery page
     And user of browser chooses "__onedata.xattrs.author.__value.keyword" property for a query in query builder popup
-    And user of browser chooses "is" from comparators list in query builder popup
     And user of browser writes "John Doe" to value input in query builder popup
     And user of browser clicks "Add" button in query builder popup
 
@@ -231,19 +226,17 @@ Feature: Querying for data discovery in Discovery Page in Onezone GUI
     When user of browser waits until harvesting process in "harvester1" is finished for all spaces in "generic-index"
     And user of browser opens Data Discovery page of "harvester1" harvester
 
-    # author.keyword is "John Doe" OR author contains Samantha
+    # author.keyword is "John Doe" OR author contains "Samantha"
     And user of browser clicks on add query block icon in data discovery page
     And user of browser clicks OR operator in query builder popup
 
     And user of browser clicks on add another query block icon in data discovery page
     And user of browser chooses "author.keyword" property for a query in query builder popup
-    And user of browser chooses "is" from comparators list in query builder popup
     And user of browser writes "John Doe" to value input in query builder popup
     And user of browser clicks "Add" button in query builder popup
 
     And user of browser clicks on add another query block icon in data discovery page
     And user of browser chooses "author" property for a query in query builder popup
-    And user of browser chooses "contains" from comparators list in query builder popup
     And user of browser writes "Samantha" to value input in query builder popup
     And user of browser clicks "Add" button in query builder popup
 
@@ -273,7 +266,6 @@ Feature: Querying for data discovery in Discovery Page in Onezone GUI
 
     And user of browser clicks on add another query block icon in data discovery page
     And user of browser chooses "author" property for a query in query builder popup
-    And user of browser chooses "contains" from comparators list in query builder popup
     And user of browser writes "John" to value input in query builder popup
     And user of browser clicks "Add" button in query builder popup
 
@@ -305,7 +297,6 @@ Feature: Querying for data discovery in Discovery Page in Onezone GUI
 
     And user of browser clicks on add another query block icon in data discovery page
     And user of browser chooses "space" property for a query in query builder popup
-    And user of browser chooses "is" from comparators list in query builder popup
     And user of browser chooses "space_of_files_with_json_meta" from property values list in query builder popup
     And user of browser clicks "Add" button in query builder popup
 
@@ -405,14 +396,12 @@ Feature: Querying for data discovery in Discovery Page in Onezone GUI
     # author contains "John"
     And user of browser clicks on add another query block icon in data discovery page
     And user of browser chooses "author" property for a query in query builder popup
-    And user of browser chooses "contains" from comparators list in query builder popup
     And user of browser writes "John" to value input in query builder popup
     And user of browser clicks "Add" button in query builder popup
 
     # author.keyword is "Samantha Anderson"
     And user of browser clicks on add another query block icon in data discovery page
     And user of browser chooses "author.keyword" property for a query in query builder popup
-    And user of browser chooses "is" from comparators list in query builder popup
     And user of browser writes "Samantha Anderson" to value input in query builder popup
     And user of browser clicks "Add" button in query builder popup
 
@@ -422,7 +411,6 @@ Feature: Querying for data discovery in Discovery Page in Onezone GUI
 
     And user of browser clicks on 2 nd from the left add query block icon in data discovery page
     And user of browser chooses "author.keyword" property for a query in query builder popup
-    And user of browser chooses "is" from comparators list in query builder popup
     And user of browser writes "John Smith" to value input in query builder popup
     And user of browser clicks "Add" button in query builder popup
 

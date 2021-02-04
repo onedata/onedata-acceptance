@@ -276,13 +276,13 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser sees in the INFO section of Overview page that number of shares is 0
 
 
-  Scenario: User can remove share by removing directory which contains shared directory
+  Scenario: Removing directory which contained shared directory removes only share's files but not share itself
     Given using REST, user space-owner-user creates "share_dir3" share of "space1/dir2/dir3" supported by "oneprovider-1" provider
     When user of browser opens file browser for "space1" space
     And user of browser opens shares view of "space1"
     And user of browser sees that there is "share_dir3" share on shares view
 
-    # delete dir3
+    # delete dir2
     And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser clicks on menu for "dir2" directory in file browser
@@ -290,6 +290,10 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser clicks on "Yes" button in modal "Delete modal"
 
     And user of browser opens shares view of "space1"
-    Then user of browser sees there are no shares on shares view
+    Then user of browser sees that there is "share_dir3" share that points to deleted directory on shares view
+    And user of browser clicks "share_dir3" share in shares browser on shares view
+    And user of browser sees file browser on single share view
+    And user of browser sees "SHARED FILES HAVE BEEN DELETED" instead of file browser
+
     And user of browser clicks Overview of "space1" in the sidebar
-    And user of browser sees in the INFO section of Overview page that number of shares is 0
+    And user of browser sees in the INFO section of Overview page that number of shares is 1
