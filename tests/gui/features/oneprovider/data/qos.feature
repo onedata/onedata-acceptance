@@ -33,7 +33,7 @@ Feature: Quality of Service tests using single storage and single browser in One
     And user of browser clicks on "Close" button in modal "Quality of Service"
     Then user of browser sees QoS status tag for "file1" in file browser
     And user of browser chooses Quality of Service option from selection menu on file browser page
-    And user of browser sees [geo="PL"] QoS requirement in modal "Quality of Service"
+    And user of browser sees [geo = "PL"] QoS requirement in modal "Quality of Service"
 
 
   Scenario: User sees that there is no QoS file status and entries after deleting QoS requirements from file
