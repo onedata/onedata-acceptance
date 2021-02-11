@@ -1,4 +1,4 @@
-Feature: ACL subdirectories privileges tests using single browser in Oneprovider GUI
+Feature: ACL subdirectories privileges tests using multiple browser in Oneprovider GUI
 
   Examples:
   | subject_type  | subject_name  |
@@ -33,7 +33,7 @@ Feature: ACL subdirectories privileges tests using single browser in Oneprovider
 
     And opened [browser_user1, space_owner_browser] with [user1, space-owner-user] signed in to [Onezone, Onezone] service
 
-        
+
   Scenario Outline: List directory items
     When user of space_owner_browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
     Then user of browser_user1 <result> to see [file1, dir2] in "dir1" in "space1"

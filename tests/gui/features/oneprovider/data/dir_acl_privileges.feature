@@ -69,10 +69,12 @@ Feature: ACL directories privileges tests using single browser in Oneprovider GU
     Then user of browser_user1 <result> to remove "dir1" in "space1"
 
     Examples:
-    | result   |  privileges                              |
-    | succeeds |  [general:delete, data:list files]       |
-    | fails    |  all except [general:delete]             |
-    | fails    |  all except [data:list files]            |
+    | result   |  privileges                                                                       |
+    | succeeds |  [general:delete, data:delete child, data:list files, data:traverse directory]    |
+    | fails    |  all except [general:delete]                                                      |
+    | fails    |  all except [data:delete child]                                                   |
+    | fails    |  all except [data:list files]                                                     |
+    | fails    |  all except [data:traverse directory]                                             |
 
 
   Scenario Outline: Read directory ACL
