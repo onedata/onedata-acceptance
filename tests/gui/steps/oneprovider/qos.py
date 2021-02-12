@@ -11,6 +11,7 @@ from selenium.common.exceptions import NoSuchElementException
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.rest.provider import get_provider_id
+from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import wt
 from tests.utils.utils import repeat_failed
 
@@ -53,7 +54,7 @@ def process_storage_expression(expression, hosts):
     split_expression = expression.split('@')
     if len(split_expression) == 1:
         return expression
-    provider = split_expression[1].strip('/')
+    provider = split_expression[1]
     provider_name = hosts[provider]['name']
     return f'{split_expression[0]}@{provider_name}'
 
@@ -62,10 +63,15 @@ def process_provider_expression(expression, hosts, users):
     split_expression = expression.split(' is ')
     if len(split_expression) == 1:
         return expression
-    provider = split_expression[1].strip('/')
+    provider = split_expression[1]
     provider_name = hosts[provider]['name']
-    provider_id = get_provider_id(provider, hosts, users)[:6]
+    provider_id = get_provider_short_id(provider, hosts, users)
     return f'{split_expression[0]} is {provider_name} #{provider_id}'
+
+
+def get_provider_short_id(provider, hosts, users):
+    visible_id_index = 6
+    return get_provider_id(provider, hosts, users)[:visible_id_index]
 
 
 def process_expression(expression, hosts, users):
@@ -97,56 +103,24 @@ def assert_expression_in_quality_of_service_modal(selenium, browser_id,
                    f'in modal "Quality of Service"')
 
 
-def process_operand_expression(expression, hosts, users, operand):
-    split_expression = expression.split(operand)
-    processed = [process_nested_expression(exp, hosts, users) for exp in
-                 split_expression]
-    return operand.join(processed)
-
-
-def process_and_expression(expression, hosts, users):
-    return process_operand_expression(expression, hosts, users, ' AND ')
-
-
-def process_or_expression(expression, hosts, users):
-    return process_operand_expression(expression, hosts, users, ' OR ')
-
-
-def process_except_expression(expression, hosts, users):
-    return process_operand_expression(expression, hosts, users, ' EXCEPT ')
-
-
-def process_nested_expression(expression, hosts, users):
-    and_index = expression.find('AND')
-    and_index = and_index if and_index > 0 else len(expression)
-    or_index = expression.find('OR')
-    or_index = or_index if or_index > 0 else len(expression)
-    except_index = expression.find('EXCEPT')
-    except_index = except_index if except_index > 0 else len(expression)
-
-    # only possibility that they are equal is that none operand was found
-    if and_index == or_index == except_index:
-        return process_expression(expression, hosts, users)
-    min_index = min(and_index, or_index, except_index)
-    if min_index == and_index:
-        return process_and_expression(expression, hosts, users)
-    elif min_index == or_index:
-        return process_or_expression(expression, hosts, users)
-    elif min_index == except_index:
-        return process_except_expression(expression, hosts, users)
-
-
 def process_whole_nested_expression(expression, hosts, users):
-    plain_expression = expression.replace('[', '').replace(']', '')
-    return process_nested_expression(plain_expression, hosts, users)
+    plain_exp = expression.replace('[', '').replace(']', '')
+    provider1 = 'oneprovider-1'
+    provider2 = 'oneprovider-2'
+    provider1_name = hosts[provider1]['name']
+    provider2_name = hosts[provider2]['name']
+    provider1_id = get_provider_short_id(provider1, hosts, users)
+    provider2_id = get_provider_short_id(provider2, hosts, users)
+
+    plain_exp = plain_exp.replace('@oneprovider-1', f'@{provider1_name}')
+    plain_exp = plain_exp.replace('@oneprovider-2', f'@{provider2_name}')
+    plain_exp = plain_exp.replace('oneprovider-1', f'{provider1_name} '
+                                                   f'#{provider1_id}')
+    plain_exp = plain_exp.replace('oneprovider-2', f'{provider2_name} '
+                                                   f'#{provider2_id}')
+    return plain_exp
 
 
-# to process such expressions, parser would be needed so this only processes
-# expressions with assumptions:
-# -- there is only one level of the same operand (e.g.
-# [...AND... [...AND...]...] is forbidden)
-# -- first operand for the left is the highest level operand
-# also, this function does not check proper nesting - this belongs to gui
 @wt(parsers.parse('user of {browser_id} sees nested QoS requirement '
                   'in modal "Quality of Service":\n{expression}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -162,7 +136,7 @@ def assert_nested_expression_in_quality_of_service_modal(selenium, browser_id,
         if expression_in_modal == ready_expression:
             assert True
             return
-    assert False, (f'Not found "{expression}" QoS requirement '
+    assert False, (f'Not found "{ready_expression}" QoS requirement '
                    f'in modal "Quality of Service"')
 
 
@@ -223,6 +197,7 @@ def choose_property_in_add_condition_popup(selenium, browser_id,
 
 @wt(parsers.parse('user of {browser_id} chooses value of "{item}" at '
                   '"{provider}" in "Add QoS condition" popup'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def choose_value_of_item_at_provider_in_add_cond_popup(selenium, browser_id,
                                                        popups, item,
                                                        provider, hosts):
@@ -233,8 +208,40 @@ def choose_value_of_item_at_provider_in_add_cond_popup(selenium, browser_id,
     popups(driver).power_select.choose_item(f'{item} @{provider_name}')
 
 
-@wt(parsers.parse('user of {browser_id} chooses value of "{provider}" provider '
-                  'in "Add QoS condition" popup'))
+@wt(parsers.re('user of (?P<browser_id>.*?) sees (?P<providers>.*?) '
+               'providers? on values list in "Add QoS condition" popup'))
+def assert_list_of_providers_in_add_cond_popup(selenium, browser_id,
+                                               providers, hosts, popups):
+    expected = [hosts[provider]['name'] for provider in parse_seq(providers)]
+
+    driver = selenium[browser_id]
+    popup = popups(driver).get_query_builder_not_hidden_popup()
+    popup.qos_values_choice()
+    actual = [v.text.split(' #')[0] for v in popups(driver).power_select.items]
+    compare_lists(expected, actual)
+
+
+@wt(parsers.re('user of (?P<browser_id>.*?) sees (?P<storages>.*?) '
+               'storages? on values list in "Add QoS condition" popup'))
+def assert_list_of_storages_in_add_cond_popup(selenium, browser_id,
+                                              storages, hosts, popups):
+    expected_expressions = parse_seq(storages)
+    expected = []
+    for expression in expected_expressions:
+        [name, provider] = expression.split(' @')
+        provider_name = hosts[provider]['name']
+        expected.append(f'{name} @{provider_name}')
+
+    driver = selenium[browser_id]
+    popup = popups(driver).get_query_builder_not_hidden_popup()
+    popup.qos_values_choice()
+    actual = [v.text for v in popups(driver).power_select.items]
+    compare_lists(expected, actual)
+
+
+@wt(parsers.parse('user of {browser_id} chooses value of '
+                  '"{provider}" provider in "Add QoS condition" popup'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def choose_value_of_provider_item_in_add_cond_popup(selenium, browser_id,
                                                     popups, provider, hosts):
     provider_name = hosts[provider]['name']
@@ -252,8 +259,8 @@ def click_add_in_add_cond_popup(selenium, browser_id, popups):
     popup.add_button()
 
 
-@wt(parsers.parse('user of {browser_id} sees that {number} storage matches '
-                  'condition in modal "Quality of Service"'))
+@wt(parsers.re('user of (?P<browser_id>.*?) sees that (?P<number>.*?) '
+               'storages? match(es)? condition in modal "Quality of Service"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_num_of_matching_storages(selenium, browser_id, number, modals):
     driver = selenium[browser_id]
@@ -265,6 +272,32 @@ def assert_num_of_matching_storages(selenium, browser_id, number, modals):
         actual = modal.storage_matching
     assert number == actual, (f'{number} storages should match but {actual} '
                               f'matches')
+
+
+@wt(parsers.re('user of (?P<browser_id>.*?) sees that matching storages? '
+               '(is|are) (?P<storages>.+)'))
+def assert_matching_storage(selenium, browser_id, modals, storages, hosts,
+                            popups):
+    driver = selenium[browser_id]
+    expected_expressions = parse_seq(storages)
+    expected = []
+    for expression in expected_expressions:
+        [name, provider] = expression.split(' provided by ')
+        provider_name = hosts[provider]['name']
+        expected.append(f'{name} provided by {provider_name}')
+
+    modal = modals(driver).quality_of_service
+    modal.show_matching_storages()
+    actual = [elem.text for elem in popups(
+        driver).storages_matching_popover.storages]
+    compare_lists(expected, actual)
+
+
+def compare_lists(expected, actual):
+    assert len(actual) == len(expected), ('Expected number of providers does '
+                                          'not match actual')
+    for val in expected:
+        assert val in actual, f'Expected {val} provider not in actual'
 
 
 @wt(parsers.parse('user of browser_unified chooses "{operator}" operator in '

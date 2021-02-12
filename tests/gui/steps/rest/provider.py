@@ -1,4 +1,4 @@
-"""Steps for shares management using REST API.
+"""Steps for provider management using REST API.
 """
 
 __author__ = "Natalia Organek"

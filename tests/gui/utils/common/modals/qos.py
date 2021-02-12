@@ -35,6 +35,7 @@ class QualityOfServiceModal(Modal):
     query_builder = WebItem('.query-builder', cls=QueryBuilder)
     storage_matching = Label('.storages-matching-number')
     no_storage_matching = Label('.storages-matching-text')
+    show_matching_storages = Button('.storages-matching-info-icon')
 
     def __str__(self):
         return 'Quality of Service modal'

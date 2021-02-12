@@ -58,9 +58,12 @@ Feature: Quality of Service tests for 2 providers using multiple browsers where 
     When user of browser_unified creates "type2=posix2" QoS requirement for "file1" in space "space1"
     And user of browser_unified clicks on QoS status tag for "file1" in file browser
     And user of browser_unified sees that all QoS requirements are impossible
+    And user of browser_unified sees that no storage matches condition in modal "Quality of Service"
     And user of browser_emergency clicks on "Modify" button for "posix" storage record in Storages page in Onepanel
     And user of browser_emergency adds key="type2" value="posix2" in storage edit page
     Then user of browser_unified sees that all QoS requirements are fulfilled
+    And user of browser_unified sees that 1 storage matches condition in modal "Quality of Service"
+    And user of browser_unified sees that matching storage is "posix provided by oneprovider-1"
 
 
   Scenario: A QoS requirement with "and" operator is met after adding this QoS parameter to storage
@@ -89,22 +92,42 @@ Feature: Quality of Service tests for 2 providers using multiple browsers where 
     Then user of browser_unified sees that all QoS requirements are fulfilled
 
 
-  Scenario: Storage's id may be used in QoS graphical editor
+  Scenario: User can select one of storages of supporting providers in QoS graphical editor and it causes to match this storage
     When user of browser_unified opens file browser for "space1" space
     And user of browser_unified opens "Quality of Service" modal for "file1" file
     And user of browser_unified clicks on "Add Requirement" button in modal "Quality of Service"
 
     And user of browser_unified clicks on add query block icon in modal "Quality of Service"
     And user of browser_unified chooses "storage" property in "Add QoS condition" popup
+
+    And user of browser_unified sees ["posix @oneprovider-1", "posix @oneprovider-2"] storages on values list in "Add QoS condition" popup
     And user of browser_unified chooses value of "posix" at "oneprovider-1" in "Add QoS condition" popup
     And user of browser_unified clicks "Add" in "Add QoS condition" popup
-    And user of browser_unified sees that 1 storage matches condition in modal "Quality of Service"
+
     And user of browser_unified clicks on "Save" button in modal "Quality of Service"
     Then user of browser_unified sees [storage is posix @oneprovider-1] QoS requirement in modal "Quality of Service"
     And user of browser_unified sees that all QoS requirements are fulfilled
+    And user of browser_unified sees that 1 storage matches condition in modal "Quality of Service"
+    And user of browser_unified sees that matching storage is "posix provided by oneprovider-1"
 
 
-  Scenario: User can create nested expressions in QoS graphical editor
+  Scenario: Every possible storage matches when "any storage" condition is chosen
+    When user of browser_unified opens file browser for "space1" space
+    And user of browser_unified opens "Quality of Service" modal for "file1" file
+    And user of browser_unified clicks on "Add Requirement" button in modal "Quality of Service"
+
+    And user of browser_unified clicks on add query block icon in modal "Quality of Service"
+    And user of browser_unified chooses "any storage" property in "Add QoS condition" popup
+    And user of browser_unified clicks "Add" in "Add QoS condition" popup
+
+    And user of browser_unified clicks on "Save" button in modal "Quality of Service"
+    Then user of browser_unified sees [any storage] QoS requirement in modal "Quality of Service"
+    And user of browser_unified sees that all QoS requirements are fulfilled
+    And user of browser_unified sees that 2 storages match condition in modal "Quality of Service"
+    And user of browser_unified sees that matching storages are ["posix provided by oneprovider-1", "posix provided by oneprovider-2"]
+
+
+  Scenario: User sees matching storages count changing while editing nested expression in QoS visual editor and submits the expression successfully
     When user of browser_emergency adds "test_storage" storage in "oneprovider-1" Oneprovider panel service with following configuration:
           storage type: POSIX
           mount point: /volumes/persistence/storage

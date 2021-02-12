@@ -1,4 +1,5 @@
-"""Utils to facilitate operations on data discovery page in Onezone gui"""
+"""Utils to facilitate operations on query builder (used e.g. on data
+discovery page and QoS modal)"""
 
 __author__ = "Natalia Organek"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
