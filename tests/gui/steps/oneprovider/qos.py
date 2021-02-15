@@ -300,7 +300,7 @@ def compare_lists(expected, actual):
         assert val in actual, f'Expected {val} provider not in actual'
 
 
-@wt(parsers.parse('user of browser_unified chooses "{operator}" operator in '
+@wt(parsers.parse('user of {browser_id} chooses "{operator}" operator in '
                   '"Add QoS condition" popup'))
 def choose_operator_in_add_cond_popup(selenium, browser_id, popups, operator):
     driver = selenium[browser_id]
