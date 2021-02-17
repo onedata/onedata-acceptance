@@ -7,10 +7,10 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 from tests.gui.utils.common.modals.modal import Modal
+from tests.gui.utils.common.query_builder import QueryBuilder
 from tests.gui.utils.core.base import PageObject
-from tests.gui.utils.core.web_elements import (Button, Input, NamedButton,
-                                               WebItemsSequence, Label,
-                                               WebElement)
+from tests.gui.utils.core.web_elements import (
+    Button, Input, NamedButton, WebItemsSequence, Label, WebItem)
 
 
 class Requirement(PageObject):
@@ -31,6 +31,11 @@ class QualityOfServiceModal(Modal):
     close = NamedButton('.btn-default', text='Close')
     requirements = WebItemsSequence('.qos-entry', cls=Requirement)
     delete_confirm = NamedButton('.btn-danger', text='Yes, remove')
+
+    query_builder = WebItem('.query-builder', cls=QueryBuilder)
+    storage_matching = Label('.storages-matching-number')
+    no_storage_matching = Label('.storages-matching-text')
+    show_matching_storages = Button('.storages-matching-info-icon')
 
     def __str__(self):
         return 'Quality of Service modal'

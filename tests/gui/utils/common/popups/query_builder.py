@@ -23,10 +23,11 @@ class Item(PageObject):
         return self.web_elem.text
 
 
-class QueryBuilderPopup(PageObject):
+class ExpressionBuilderPopup(PageObject):
     and_operator = Button('.operator-and')
     or_operator = Button('.operator-or')
     not_operator = Button('.operator-not')
+    except_operator = Button('.operator-except')
 
     property_choice = Button('.ember-basic-dropdown-trigger')
     properties = WebItemsSequence('.ember-power-select-option', cls=Property)
@@ -40,6 +41,8 @@ class QueryBuilderPopup(PageObject):
                               '.ember-power-select-option', cls=Item)
     values_choice = Button(
         '.comparator-value .ember-basic-dropdown-trigger')
+    qos_values_choice = Button(
+        '.comparator-value-editor .ember-basic-dropdown-trigger')
 
     value = Input('.comparator-value')
     add_button = Button('.accept-condition')

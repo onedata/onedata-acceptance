@@ -19,5 +19,11 @@ class PowerSelect(PageObject):
                 item.click()
                 return
 
+    def choose_item_with_id(self, property_name):
+        for item in self.items:
+            if item.text.split('#')[0].strip() == property_name:
+                item.click()
+                return
+
     def __str__(self):
         return 'Power select options'
