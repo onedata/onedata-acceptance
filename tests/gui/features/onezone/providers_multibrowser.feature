@@ -64,6 +64,4 @@ Feature: Basic management of providers in Onezone GUI
 
     Then user of space_owner_browser sees 1 provider on the map on "space3" space providers data page
     And user of space_owner_browser sees "oneprovider-1" is on the providers list
-    And user of space_owner_browser clicks "oneprovider-1" provider icon on the map on providers data page
-
-    And user of space_owner_browser sees that provider popup for provider "oneprovider-1" has appeared on world map
+    # TODO: VFS-7382 check if provider has appeared on global map
