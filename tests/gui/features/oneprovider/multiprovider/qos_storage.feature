@@ -79,7 +79,7 @@ Feature: Quality of Service tests for 2 providers using multiple browsers where 
     Then user of browser_unified sees that all QoS requirements are fulfilled
 
 
-  Scenario: A QoS requirement with "or" operator is met after adding this QoS parameter to storage
+  Scenario: A QoS requirement with "or" operator is met only if minimum one of these QoS parameters is in storage
     When user of browser_unified creates "type=posix | geo=PL" QoS requirement for "file1" in space "space1"
     And user of browser_unified clicks on QoS status tag for "file1" in file browser
     And user of browser_unified sees that all QoS requirements are impossible
@@ -87,8 +87,18 @@ Feature: Quality of Service tests for 2 providers using multiple browsers where 
     And user of browser_emergency adds key="type" value="posix" in storage edit page
     And user of browser_unified sees that all QoS requirements are fulfilled
     And user of browser_emergency deletes all additional params in storage edit page
+    And user of browser_unified sees that all QoS requirements are impossible
     And user of browser_emergency clicks on "Modify" button for "posix" storage record in Storages page in Onepanel
     And user of browser_emergency adds key="geo" value="PL" in storage edit page
+    Then user of browser_unified sees that all QoS requirements are fulfilled
+
+
+  Scenario: A QoS requirement with "or" operator is met after adding one of these QoS parameters to storage
+    When user of browser_unified creates "type=posix | geo=PL" QoS requirement for "file1" in space "space1"
+    And user of browser_unified clicks on QoS status tag for "file1" in file browser
+    And user of browser_unified sees that all QoS requirements are impossible
+    And user of browser_emergency clicks on "Modify" button for "posix" storage record in Storages page in Onepanel
+    And user of browser_emergency adds key="type" value="posix" in storage edit page
     Then user of browser_unified sees that all QoS requirements are fulfilled
 
 
