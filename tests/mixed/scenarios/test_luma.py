@@ -41,6 +41,7 @@ from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.oneprovider.data import *
+from tests.gui.meta_steps.onepanel.storages import *
 
 from tests.mixed.steps.luma.common import *
 
@@ -50,6 +51,7 @@ from tests.oneclient.steps.multi_auth_steps import *
 
 from tests.mixed.steps.data_basic import *
 from tests.gui.meta_steps.oneprovider.data import *
+from tests.utils import acceptance_utils
 
 
 @fixture(scope='module')

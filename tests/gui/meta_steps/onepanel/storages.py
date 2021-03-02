@@ -135,6 +135,8 @@ def safely_create_storage_rest(storage_name, provider, config,
                 storage type: storage_type             --> required
                 mount point: mount_point               --> required
                 imported storage: true                 --> optional
+                LUMA feed: local                       --> optional, auto by
+                                                           default
         """
     _remove_storage_in_op_panel_using_rest(storage_name, provider, hosts,
                                            onepanel_credentials)
@@ -203,6 +205,12 @@ def _get_storage_id_list_by_name(storage_name, provider, hosts,
     return selected_ids
 
 
+def get_first_storage_id_by_name(storage_name, provider, hosts,
+                                 onepanel_credentials):
+    return _get_storage_id_list_by_name(storage_name, provider, hosts,
+                                        onepanel_credentials)[0]
+
+
 def _add_storage_in_op_panel_using_rest(config, storage_name, provider, hosts,
                                         onepanel_credentials):
     storage_config = {}
@@ -212,6 +220,9 @@ def _add_storage_in_op_panel_using_rest(config, storage_name, provider, hosts,
     if options.get('imported storage', False):
         storage_config['importedStorage'] = True
     storage_config['mountPoint'] = options['mount point']
+    luma_feed = options.get('LUMA feed')
+    if luma_feed:
+        storage_config['lumaFeed'] = luma_feed
 
     provider_hostname = hosts[provider]['hostname']
     onepanel_username = onepanel_credentials.username

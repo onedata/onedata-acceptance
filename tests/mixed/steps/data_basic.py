@@ -641,6 +641,21 @@ def upload_file_to_op(client, selenium, user, path, space, host, hosts,
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) uploads local file '
+               r'"(?P<path>.*)" to "(?P<space>.*)"'))
+def upload_local_file_to_op(client, selenium, user, path, tmpdir,
+                            op_container, popups, space, oz_page,
+                            tmp_memory):
+    client_lower = client.lower()
+    if client_lower == 'web gui':
+        go_to_filebrowser(selenium, user, oz_page, op_container,
+                          tmp_memory, space)
+        upload_file_to_cwd_in_data_tab(selenium, user, path, tmpdir,
+                                       op_container, popups)
+    else:
+        raise NoSuchClientException('Client: {} not found'.format(client))
+
+
 @wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) sees that owner\'s UID '
                r'and GID for "(?P<path>.*)" in space "(?P<space>[\w-]+)" '
                r'are (?P<res>equal|not equal) to (?P<uid>[\d]+) and '
