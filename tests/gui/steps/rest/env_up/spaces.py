@@ -11,6 +11,7 @@ import json
 import yaml
 
 from tests import OZ_REST_PORT, PANEL_REST_PORT, OP_REST_PORT
+from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.rest.shares import get_file_id_by_rest
 from tests.utils.bdd_utils import given, parsers
 from tests.utils.http_exceptions import (
@@ -401,3 +402,20 @@ def _rm_all_spaces_for_users_list(zone_hostname, users_db):
                                 user_credentials.password)
 
 
+@given(parsers.parse('there are no spaces of {user} in "{zone_host}" Onezone '
+                     'service'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def g_remove_all_space_supports_using_rest(hosts, users, user, zone_host):
+    zone_hostname = hosts[zone_host]['hostname']
+    user = users[user]
+    _rm_all_spaces_for_user(zone_hostname, user.username, user.password)
+
+
+def force_start_storage_scan(space_id, provider, hosts, onepanel_credentials):
+    provider_hostname = hosts[provider]['hostname']
+    onepanel_username = onepanel_credentials.username
+    onepanel_password = onepanel_credentials.password
+    http_post(ip=provider_hostname, port=PANEL_REST_PORT,
+              path=get_panel_rest_path('provider', 'spaces', space_id,
+                                       'storage-import', 'auto', 'force-start'),
+              auth=(onepanel_username, onepanel_password))

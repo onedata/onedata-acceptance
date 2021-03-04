@@ -405,3 +405,16 @@ def open_modal_for_file_browser_item(selenium, browser_id, modals, modal_name,
     click_option_in_data_row_menu_in_file_browser(selenium, browser_id, option,
                                                   modals)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
+
+
+def check_file_owner(selenium, browser_id, owner, file_name, tmp_memory,
+                     modals):
+    option = 'Information'
+    modal_name = 'File details'
+
+    click_menu_for_elem_in_file_browser(browser_id, file_name, tmp_memory)
+    click_option_in_data_row_menu_in_file_browser(selenium, browser_id, option,
+                                                  modals)
+    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
+    check_file_owner_in_file_details_modal(selenium, browser_id, modals, owner)
+    close_file_details_modal(selenium, browser_id, modals)

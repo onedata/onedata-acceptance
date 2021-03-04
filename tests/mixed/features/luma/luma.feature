@@ -1,4 +1,4 @@
-Feature: LUMA local feed acceptance tests
+Feature: LUMA local feed acceptance tests with non-imported storage
 
 
   Background:
@@ -40,7 +40,7 @@ Feature: LUMA local feed acceptance tests
     And opened browsers with [user1, user2] signed in to [onezone, onezone] service
 
 
-  Scenario: LUMA local feed mappings on POSIX storage for new files are respected in oneclient interface
+  Scenario: LUMA local feed storage mappings on POSIX storage for new files are respected in oneclient interface
     When LUMA local feed mappings are created with following configuration:
            oneprovider-1:
              luma_storage:
@@ -58,7 +58,6 @@ Feature: LUMA local feed acceptance tests
                    space POSIX storage defaults: 2002
                    space display defaults: 2022
 
-#    And user1 is idle for 30 seconds
     And using oneclient1, user1 succeeds to create file named "file_oneclient_u1_s1.txt" in "space1" in oneprovider-1
     And using REST, user1 succeeds to create file named "file_rest_u1_s1.txt" in "space1" in oneprovider-1
     And using web GUI, user1 uploads local file "file_upload_u1.txt" to "space1"

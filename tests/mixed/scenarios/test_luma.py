@@ -10,6 +10,7 @@ __license__ = ("This software is released under the MIT license cited in "
 from pytest import fixture
 from pytest_bdd import scenarios
 
+from tests.gui.steps.common.docker import *
 from tests.gui.steps.rest.env_up.users import *
 from tests.gui.steps.rest.env_up.groups import *
 from tests.gui.steps.rest.env_up.spaces import *
@@ -50,8 +51,9 @@ from tests.gui.conftest import *
 from tests.oneclient.steps.multi_auth_steps import *
 
 from tests.mixed.steps.data_basic import *
+from tests.mixed.steps.onepanel_basic import *
 from tests.gui.meta_steps.oneprovider.data import *
-from tests.utils import acceptance_utils
+from tests.utils.acceptance_utils import *
 
 
 @fixture(scope='module')
@@ -60,3 +62,4 @@ def screens():
 
 
 scenarios('../features/luma/luma.feature')
+scenarios('../features/luma/luma_imported.feature')
