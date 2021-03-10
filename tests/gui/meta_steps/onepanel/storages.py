@@ -13,6 +13,7 @@ import re
 import yaml
 
 from tests import PANEL_REST_PORT
+from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.steps.common.miscellaneous import type_string_into_active_element
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.modal import click_modal_button
@@ -35,6 +36,7 @@ from tests.gui.steps.onezone.spaces import (
 from tests.utils.bdd_utils import given, wt, parsers
 from tests.utils.rest_utils import (
     http_post, get_panel_rest_path, http_get, http_delete)
+from tests.utils.utils import repeat_failed
 
 
 @wt(parsers.parse('user of {browser_id} removes "{name}" storage '
@@ -135,7 +137,7 @@ def safely_create_storage_rest(storage_name, provider, config,
                 storage type: storage_type             --> required
                 mount point: mount_point               --> required
                 imported storage: true                 --> optional
-                LUMA feed: local                       --> optional, auto by
+                LUMA feed: local                       --> optional, 'auto' by
                                                            default
         """
     _remove_storage_in_op_panel_using_rest(storage_name, provider, hosts,
@@ -152,6 +154,7 @@ def remove_all_storages_named(storage_name, provider, hosts,
                                            onepanel_credentials)
 
 
+@repeat_failed(timeout=WAIT_BACKEND)
 def _remove_storage_in_op_panel_using_rest(storage_name, provider, hosts,
                                            onepanel_credentials):
     provider_hostname = hosts[provider]['hostname']
@@ -211,6 +214,7 @@ def get_first_storage_id_by_name(storage_name, provider, hosts,
                                         onepanel_credentials)[0]
 
 
+@repeat_failed(timeout=WAIT_BACKEND)
 def _add_storage_in_op_panel_using_rest(config, storage_name, provider, hosts,
                                         onepanel_credentials):
     storage_config = {}

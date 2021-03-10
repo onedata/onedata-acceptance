@@ -1,4 +1,4 @@
-Feature: LUMA local feed acceptance tests with non-imported storage
+Feature: LUMA local feed acceptance tests with imported storage
 
 
   Background:
@@ -27,7 +27,7 @@ Feature: LUMA local feed acceptance tests with non-imported storage
             providers:
               - oneprovider-1:
                   storage: luma_storage
-                  size: 1000000
+                  size: 1000000000
     And directory tree structure on local file system:
           user1:
             file_user1.txt:
@@ -35,6 +35,8 @@ Feature: LUMA local feed acceptance tests with non-imported storage
             file_user2.txt:
               size: 1 MiB
             file_another_user.txt:
+              size: 1 MiB
+            upload_file.txt:
               size: 1 MiB
     And oneclients [client1, client2]
       mounted in [/home/user1/onedata, /home/user2/onedata]
@@ -61,14 +63,21 @@ Feature: LUMA local feed acceptance tests with non-imported storage
     And using web GUI, user1 succeeds to see item named "file_user1.txt" in "space1" in oneprovider-1
     And using web GUI, user1 succeeds to see item named "file_user2.txt" in "space1" in oneprovider-1
     And using web GUI, user1 fails to see item named "file_another_user.txt" in "space1" in oneprovider-1
+    And using web GUI, user1 uploads local file "upload_file.txt" to "space1"
+
     Then using web GUI, user1 sees that user1 is owner of "file_user1.txt"
 
     And using web GUI, user2 succeeds to see item named "file_user1.txt" in "space1" in oneprovider-1
     And using web GUI, user2 succeeds to see item named "file_user2.txt" in "space1" in oneprovider-1
-    And using web GUI, user1 fails to see item named "file_another_user.txt" in "space1" in oneprovider-1
+    And using web GUI, user2 fails to see item named "file_another_user.txt" in "space1" in oneprovider-1
     And using web GUI, user2 sees that user2 is owner of "file_user2.txt"
 
     And using oneclient1, user1 sees that owner's UID and GID for "file_user1.txt" in space "space1" are equal to 7001 and 3013 respectively
     And using oneclient1, user1 sees that owner's UID and GID for "file_user2.txt" in space "space1" are equal to 7002 and 3013 respectively
+    And using oneclient1, user1 sees that owner's UID and GID for "upload_file.txt" in space "space1" are equal to 7001 and 3013 respectively
+    And using oneclient1, user1 fails to see item named "file_another_user.txt" in "space1" in oneprovider-1
+
     And using oneclient2, user2 sees that owner's UID and GID for "file_user1.txt" in space "space1" are equal to 7001 and 3013 respectively
     And using oneclient2, user2 sees that owner's UID and GID for "file_user2.txt" in space "space1" are equal to 7002 and 3013 respectively
+    And using oneclient2, user2 sees that owner's UID and GID for "upload_file.txt" in space "space1" are equal to 7001 and 3013 respectively
+    And using oneclient2, user2 fails to see item named "file_another_user.txt" in "space1" in oneprovider-1

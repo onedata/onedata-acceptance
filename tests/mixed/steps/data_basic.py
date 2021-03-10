@@ -653,7 +653,7 @@ def upload_local_file_to_op(client, selenium, user, path, tmpdir,
         upload_file_to_cwd_in_data_tab(selenium, user, path, tmpdir,
                                        op_container, popups)
     else:
-        raise NoSuchClientException('Client: {} not found'.format(client))
+        raise NoSuchClientException(f'Client: {client} not found')
 
 
 @wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) sees that owner\'s UID '

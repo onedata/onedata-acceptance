@@ -378,7 +378,3 @@ def count_files_while_scrolling(browser_id, count: int, tmp_memory):
 def check_file_owner_in_file_details_modal(selenium, browser_id, modals, owner):
     actual = modals(selenium[browser_id]).file_details.owner
     assert actual == owner, f'Expected {owner} as file owner but got {actual}'
-
-
-def close_file_details_modal(selenium, browser_id, modals):
-    modals(selenium[browser_id]).file_details.close()

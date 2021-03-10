@@ -35,8 +35,7 @@ def docker_configure_users(config, hosts):
 
 def _docker_configure_users(config, hosts):
     groups_cfg = yaml.load(config)
-    for group in groups_cfg:
-        group_cfg = groups_cfg[group]
+    for group, group_cfg in groups_cfg.items():
         gid = group_cfg['GID']
         try:
             docker_create_group(group, gid, hosts)
@@ -47,7 +46,7 @@ def _docker_configure_users(config, hosts):
             else:
                 raise e
         users_cfg = group_cfg['users']
-        for user in users_cfg:
+        for user, uid in users_cfg.items():
             uid = users_cfg[user]
             try:
                 docker_create_user_with_group(user, uid, group, hosts)

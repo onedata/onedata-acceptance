@@ -43,22 +43,20 @@ def wt_create_luma_mappings(config, users, spaces, hosts,
               ...
             ...
         """
-    _wt_create_luma_mappings(config, users, spaces, hosts, onepanel_credentials)
+    create_luma_mappings(config, users, spaces, hosts, onepanel_credentials)
 
 
-def _wt_create_luma_mappings(config, users, spaces, hosts,
-                             onepanel_credentials):
+def create_luma_mappings(config, users, spaces, hosts,
+                         onepanel_credentials):
     mappings = yaml.load(config)
     for provider in mappings:
         storages = mappings[provider]
-        for storage in storages:
-            storage_mappings = storages[storage]
+        for storage, storage_mappings in storages.items():
             storage_type = storage_mappings['type']
             storage_id = get_first_storage_id_by_name(storage, provider, hosts,
                                                       onepanel_credentials)
-            user_mappings = storage_mappings.get('users', [])
-            for user in user_mappings:
-                user_data = user_mappings[user]
+            user_mappings = storage_mappings.get('users', {})
+            for user, user_data in user_mappings.items():
                 storage_uid = user_data.get('storage uid')
                 display_uid = user_data.get('display uid')
                 set_user_luma_local_feed_mappings(provider, hosts, users,
@@ -66,9 +64,8 @@ def _wt_create_luma_mappings(config, users, spaces, hosts,
                                                   storage_id, storage_type,
                                                   user, storage_uid,
                                                   display_uid)
-            space_mappings = storage_mappings.get('spaces', [])
-            for space in space_mappings:
-                space_data = space_mappings[space]
+            space_mappings = storage_mappings.get('spaces', {})
+            for space, space_data in space_mappings.items():
                 default_gid = space_data.get('space POSIX storage defaults')
                 display_gid = space_data.get('space display defaults')
                 set_default_posix_credentials_luma_lf(provider, storage_id,
