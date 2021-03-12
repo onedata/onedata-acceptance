@@ -33,6 +33,7 @@ class Popups(object):
     upload_presenter = WebItemsSequence('.hidden-xs .up-single-upload',
                                         cls=UploadPresenter)
     menu_popup = WebItem('#webuiPopover1', cls=MenuPopup)
+    menu_popover = WebItem('.webui-popover.in', cls=MenuPopup)
     popover_menu = WebItem('.webui-popover.in', cls=PopoverMenu)
     selector_popup = WebItem('.webui-popover.in', cls=SelectorPopup)
     consumer_caveat_popup = WebItem('.webui-popover-tags-selector',

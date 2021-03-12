@@ -401,8 +401,13 @@ def assert_len_of_spaces_list_in_provider_popover(selenium, browser_id,
                                              'is not equal {}'.format(number))
 
 
-def click_on_menu_button_of_provider_on_providers_list(driver, provider_name,
-                                                       oz_page):
+@wt(parsers.parse('user of {browser_id} opens "{provider}" provider menu '
+                  'on space providers data page'))
+def click_on_menu_button_of_provider_on_providers_list(selenium, browser_id,
+                                                       provider, oz_page,
+                                                       hosts):
+    driver = selenium[browser_id]
+    provider_name = hosts[provider]['name']
     oz_page(driver)['data'].providers_page.providers_list[
         provider_name].menu_button()
 

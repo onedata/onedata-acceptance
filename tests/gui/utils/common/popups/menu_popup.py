@@ -21,5 +21,5 @@ class MenuPopup(PageObject):
     menu = WebItemsSequence('ul li', cls=MenuItem)
 
     def __str__(self):
-        return 'Member menu popup'
+        return 'Menu popup'
 

@@ -78,13 +78,12 @@ def send_copied_invite_token_in_oz_gui(selenium, user, oz_page, browser_list,
 def revoke_support_of_provider_in_list(selenium, browser_id, provider, oz_page,
                                        popups, modals, hosts):
     driver = selenium[browser_id]
-    provider_name = hosts[provider]['name']
     button = 'Cease support'
     notify_type = 'info'
     notify_text_regexp = 'Ceased.*[Ss]upport.*'
 
-    click_on_menu_button_of_provider_on_providers_list(driver, provider_name,
-                                                       oz_page)
+    click_on_menu_button_of_provider_on_providers_list(selenium, browser_id,
+                                                       provider, oz_page, hosts)
     click_on_cease_support_in_menu_of_provider_on_providers_list(driver, popups)
     wt_clicks_on_understand_risk_in_cease_support_modal(selenium, browser_id,
                                                         modals)

@@ -240,6 +240,17 @@ def click_provider_on_the_map_on_data_page(selenium, browser_id, provider,
     current_page.map.click_provider(provider_name, driver)
 
 
+@wt(parsers.re('user of (?P<browser_id>.*) hovers over '
+               'provider icon on the map on (?P<page>overview|providers) data '
+               'page and sees that provider name is "(?P<provider>.*)"'))
+def hover_provider_on_the_map_on_data_page(selenium, browser_id, provider,
+                                           oz_page, page, hosts):
+    driver = selenium[browser_id]
+    current_page = getattr(oz_page(driver)['data'], _get_subpage_name(page))
+    provider_name = hosts[provider]['name']
+    current_page.map.hover_and_check_provider(provider_name, driver)
+
+
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks the map on '
                '(?P<space_name>.*) space (?P<page>overview|providers) data '
                'page'))
