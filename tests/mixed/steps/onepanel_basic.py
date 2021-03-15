@@ -10,6 +10,7 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.steps.rest.env_up.spaces import force_start_storage_scan
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 from tests.mixed.utils.common import NoSuchClientException
@@ -589,3 +590,11 @@ def send_copied_invite_token(client, user, selenium, oz_page,
                                            tmp_memory, displays, clipboard)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
+
+
+@wt(parsers.parse('using REST, {user} forces start of storage import scan for '
+                  '"{space}" at "{provider}"'))
+def force_start_storage_import_scan(provider, space, spaces, hosts,
+                                    onepanel_credentials):
+    space_id = spaces[space]
+    force_start_storage_scan(space_id, provider, hosts, onepanel_credentials)
