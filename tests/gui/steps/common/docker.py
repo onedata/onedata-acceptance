@@ -47,7 +47,6 @@ def _docker_configure_users(config, hosts):
                 raise e
         users_cfg = group_cfg['users']
         for user, uid in users_cfg.items():
-            uid = users_cfg[user]
             try:
                 docker_create_user_with_group(user, uid, group, hosts)
             except subprocess.CalledProcessError as e:

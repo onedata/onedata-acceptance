@@ -65,7 +65,7 @@ def click_on_group_menu_button(selenium, browser_id, option, group,
     page = oz_page(driver)['groups']
     page.elements_list[group]()
     page.elements_list[group].menu()
-    popups(driver).popover_menu.menu[option]()
+    popups(driver).menu_popup_with_text.menu[option]()
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -178,7 +178,7 @@ def click_on_option_in_group_hierarchy_menu(selenium, browser_id, option):
 def click_on_option_in_group_hierarchy_tab_popup_menu(selenium, browser_id,
                                                       option, popups):
     driver = selenium[browser_id]
-    popups(driver).popover_menu.menu[option].click()
+    popups(driver).menu_popup_with_text.menu[option].click()
 
 
 @wt(parsers.parse('user of {browser_id} clicks on "{option}" '

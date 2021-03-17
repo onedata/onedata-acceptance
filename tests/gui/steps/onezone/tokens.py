@@ -24,7 +24,7 @@ def _open_menu_for_token(driver, oz_page, token_name):
 
 
 def click_option_for_token_row_menu(driver, option, popups):
-    popups(driver).popover_menu.menu[option.capitalize()]()
+    popups(driver).menu_popup_with_text.menu[option.capitalize()]()
 
 
 def _click_on_btn_for_token(driver, oz_page, token_name, btn, popups):
@@ -231,7 +231,7 @@ def click_menu_button_of_tokens_page(selenium, browser_id, oz_page):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_option_in_token_page_menu(selenium, browser_id, option, popups):
     driver = selenium[browser_id]
-    popups(driver).popover_menu.menu[option]()
+    popups(driver).menu_popup_with_text.menu[option]()
 
 
 @wt(parsers.parse('user of {browser_id} clicks "Revoke" toggle to '

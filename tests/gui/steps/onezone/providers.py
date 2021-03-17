@@ -414,7 +414,7 @@ def click_on_menu_button_of_provider_on_providers_list(selenium, browser_id,
 
 def click_on_cease_support_in_menu_of_provider_on_providers_list(driver,
                                                                  popups):
-    popups(driver).popover_menu.cease_support_from_providers_list_menu()
+    popups(driver).menu_popup_with_text.cease_support_from_providers_list_menu()
 
 
 @wt(parsers.parse('user of {browser_id} waits until provider "{provider_name}" '
