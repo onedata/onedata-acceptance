@@ -89,6 +89,15 @@ class ProvidersMap(Element):
 
         raise RuntimeError(f'Provider {provider_name} was not found on the map')
 
+    def hover_and_check_provider(self, provider_name, driver):
+        for prov in self.providers:
+            ActionChains(driver).move_to_element(prov).perform()
+            name = driver.find_element_by_css_selector('.tooltip-inner').text
+            if name == provider_name:
+                return
+
+        raise RuntimeError(f'Provider {provider_name} was not found on the map')
+
 
 class SpaceOverviewPage(PageObject):
     space_name = Label('.header-row .one-label')

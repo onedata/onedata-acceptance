@@ -25,7 +25,7 @@ def click_on_cancel_upload_button_on_popup(selenium, browser_id, popups,
 def click_on_confirm_cancel_upload(selenium, browser_id, popups):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    popups(driver).popover_menu.confirm_cancel_button.click()
+    popups(driver).menu_popup_with_text.confirm_cancel_button.click()
 
 
 @wt(parsers.parse('user of {browser_id} sees that number of uploads is'

@@ -401,15 +401,20 @@ def assert_len_of_spaces_list_in_provider_popover(selenium, browser_id,
                                              'is not equal {}'.format(number))
 
 
-def click_on_menu_button_of_provider_on_providers_list(driver, provider_name,
-                                                       oz_page):
+@wt(parsers.parse('user of {browser_id} opens "{provider}" provider menu '
+                  'on space providers data page'))
+def click_on_menu_button_of_provider_on_providers_list(selenium, browser_id,
+                                                       provider, oz_page,
+                                                       hosts):
+    driver = selenium[browser_id]
+    provider_name = hosts[provider]['name']
     oz_page(driver)['data'].providers_page.providers_list[
         provider_name].menu_button()
 
 
 def click_on_cease_support_in_menu_of_provider_on_providers_list(driver,
                                                                  popups):
-    popups(driver).popover_menu.cease_support_from_providers_list_menu()
+    popups(driver).menu_popup_with_text.cease_support_from_providers_list_menu()
 
 
 @wt(parsers.parse('user of {browser_id} waits until provider "{provider_name}" '

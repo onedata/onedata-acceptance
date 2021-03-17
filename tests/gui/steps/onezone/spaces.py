@@ -153,7 +153,7 @@ def click_on_option_in_space_menu(selenium, browser_id, space_name, button,
                                   oz_page, popups):
     driver = selenium[browser_id]
     oz_page(driver)['data'].spaces_header_list[space_name].click_menu()
-    popups(driver).popover_menu.menu[button]()
+    popups(driver).menu_popup_with_text.menu[button]()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on '
@@ -163,7 +163,7 @@ def click_on_option_in_menu(selenium, browser_id, button, oz_page, popups):
     driver = selenium[browser_id]
     page = oz_page(driver)['data']
     page.menu_button()
-    popups(driver).popover_menu.menu[button]()
+    popups(driver).menu_popup_with_text.menu[button]()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
@@ -238,6 +238,17 @@ def click_provider_on_the_map_on_data_page(selenium, browser_id, provider,
     current_page = getattr(oz_page(driver)['data'], _get_subpage_name(page))
     provider_name = hosts[provider]['name']
     current_page.map.click_provider(provider_name, driver)
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) hovers over '
+               'provider icon on the map on (?P<page>overview|providers) data '
+               'page and sees that provider name is "(?P<provider>.*)"'))
+def hover_provider_on_the_map_on_data_page(selenium, browser_id, provider,
+                                           oz_page, page, hosts):
+    driver = selenium[browser_id]
+    current_page = getattr(oz_page(driver)['data'], _get_subpage_name(page))
+    provider_name = hosts[provider]['name']
+    current_page.map.hover_and_check_provider(provider_name, driver)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks the map on '
@@ -436,7 +447,7 @@ def remove_harvester_from_harvesters_list(selenium, browser_id, oz_page,
     driver = selenium[browser_id]
     harvesters_list = oz_page(driver)['data'].harvesters_page.harvesters_list
     harvesters_list[harvester_name].click_harvester_menu_button(driver)
-    popups(driver).popover_menu.menu[popup_name]()
+    popups(driver).menu_popup_with_text.menu[popup_name]()
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     modals(driver).remove_harvester.remove()
 

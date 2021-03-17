@@ -274,7 +274,7 @@ def click_on_option_in_members_list_menu(selenium, browser_id, button, where,
     page = _find_members_page(onepanel, oz_page, driver, where)
     getattr(page, member).header.menu_button()
 
-    popups(driver).popover_menu.menu[button]()
+    popups(driver).menu_popup_with_text.menu[button]()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees that area with '
@@ -398,7 +398,7 @@ def remove_member_from_parent(selenium, browser_id, member_name, member_type,
         modal_name = 'remove subgroup from '
     modal_name += where
 
-    popups(driver).popover_menu.menu['Remove this member']()
+    popups(driver).menu_popup_with_text.menu['Remove this member']()
 
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     modals(driver).remove_member.remove()
@@ -413,7 +413,7 @@ def click_member_option_on_members_page(selenium, browser_id, option,
 
     page = oz_page(driver)['data'].members_page
     page.users.items[username].click_member_menu_button(driver)
-    popups(driver).popover_menu.menu[option]()
+    popups(driver).menu_popup_with_text.menu[option]()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees (?P<options>( |.)*) (is|are) '
@@ -429,7 +429,7 @@ def assert_options_for_user_are_enabled_or_disabled(selenium, browser_id,
     page.users.items[username].click_member_menu_button(driver)
 
     for option in parse_seq(options):
-        enabled = popups(driver).popover_menu.menu[option].is_enabled()
+        enabled = popups(driver).menu_popup_with_text.menu[option].is_enabled()
         error_msg = f'Popup {option} is in invalid state'
         if state == 'enabled':
             assert enabled, error_msg
@@ -481,7 +481,7 @@ def copy_invitation_token(selenium, browser_id, group, who, oz_page, tmp_memory,
     getattr(page.main_page.members, who + 's').header.menu_button()
     button = 'Invite {} using token'.format(who)
 
-    popups(driver).popover_menu.menu[button].click()
+    popups(driver).menu_popup_with_text.menu[button].click()
 
     wt_wait_for_modal_to_appear(selenium, browser_id, button, tmp_memory)
     modals(selenium[browser_id]).invite_using_token.copy()
@@ -497,7 +497,7 @@ def get_invitation_token(selenium, browser_id, group, who, oz_page, tmp_memory,
     page = oz_page(driver)['groups']
     page.elements_list[group]()
     page.main_page.menu_button()
-    popups(driver).popover_menu.menu['Invite ' + who]()
+    popups(driver).menu_popup_with_text.menu['Invite ' + who]()
     token = page.members_page.token.token
     tmp_memory[browser_id]['token'] = token
 

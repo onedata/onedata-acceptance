@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 from tests.gui.utils.common.common import Toggle
-from tests.gui.utils.common.popups import MenuPopup
+from tests.gui.utils.common.popups import MenuPopupWithLabel
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.web_elements import (Label, WebItemsSequence, Input,
@@ -67,7 +67,7 @@ class MemberAclPermission(PageObject):
     menu_button = Button('.btn-menu-toggle')
     menu = WebItem('.webui-popover-content '
                    '.one-webui-popover.one-collapsible-toolbar-popover',
-                   cls=MenuPopup)
+                   cls=MenuPopupWithLabel)
     acl_permission_group = WebItemsSequence('.privileges-tree-editor '
                                             '.one-tree-item.has-subtree ',
                                             cls=AclPermissionGroup)

@@ -17,9 +17,9 @@ class MenuItem(PageObject):
         self.click()
 
 
-class MenuPopup(PageObject):
+class MenuPopupWithLabel(PageObject):
     menu = WebItemsSequence('ul li', cls=MenuItem)
 
     def __str__(self):
-        return 'Member menu popup'
+        return 'Menu popup with label'
 

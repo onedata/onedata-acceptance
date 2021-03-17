@@ -20,7 +20,7 @@ def click_on_member_menu_option_in_harvester_indices_page(selenium, browser_id,
                                                           popups):
     driver = selenium[browser_id]
     oz_page(driver)['discovery'].indices_page.menu_button.click()
-    popups(driver).popover_menu.menu[text]()
+    popups(driver).menu_popup_with_text.menu[text]()
 
 
 @wt(parsers.parse('user of {browser_id} types "{index_name}" '

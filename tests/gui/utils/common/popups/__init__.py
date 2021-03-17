@@ -11,7 +11,7 @@ from tests.utils.utils import repeat_failed
 from .consumer_caveat import ConsumerCaveat
 from .matching_storages import MatchingStoragesPopup
 from .power_select import PowerSelect
-from .menu_popup import MenuPopup
+from .menu_popup import MenuPopupWithLabel
 from .query_builder import ExpressionBuilderPopup
 from .qos_delete import DeleteQosPopup
 from .selector_popup import SelectorPopup
@@ -19,7 +19,7 @@ from .upload_presenter import UploadPresenter
 from .user_account_menu import UserAccountPopup
 from .toolbar import ToolbarPopup
 from .deregister_provider import DeregisterProvider
-from .member_menu import PopoverMenu
+from .member_menu import MenuPopupWithText
 from .delete_account_menu import UserDeleteAccountPopoverMenu
 from .data_distribution_popup import DataDistributionPopup
 
@@ -32,8 +32,9 @@ class Popups(object):
                                 cls=UserAccountPopup)
     upload_presenter = WebItemsSequence('.hidden-xs .up-single-upload',
                                         cls=UploadPresenter)
-    menu_popup = WebItem('#webuiPopover1', cls=MenuPopup)
-    popover_menu = WebItem('.webui-popover.in', cls=PopoverMenu)
+    menu_popup = WebItem('#webuiPopover1', cls=MenuPopupWithLabel)
+    menu_popup_with_label = WebItem('.webui-popover.in', cls=MenuPopupWithLabel)
+    menu_popup_with_text = WebItem('.webui-popover.in', cls=MenuPopupWithText)
     selector_popup = WebItem('.webui-popover.in', cls=SelectorPopup)
     consumer_caveat_popup = WebItem('.webui-popover-tags-selector',
                                     cls=ConsumerCaveat)
