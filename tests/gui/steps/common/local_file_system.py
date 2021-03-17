@@ -60,7 +60,7 @@ def _mkdirs(cwd, dir_content=None):
 
     try:
         files_num = int(dir_content)
-    except TypeError:
+    except (TypeError, ValueError):
         for item in dir_content:
             if item.startswith('dir'):
                 new_dir = cwd.join(item)

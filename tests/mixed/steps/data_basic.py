@@ -641,6 +641,21 @@ def upload_file_to_op(client, selenium, user, path, space, host, hosts,
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) uploads local file '
+               r'"(?P<path>.*)" to "(?P<space>.*)"'))
+def upload_local_file_to_op(client, selenium, user, path, tmpdir,
+                            op_container, popups, space, oz_page,
+                            tmp_memory):
+    client_lower = client.lower()
+    if client_lower == 'web gui':
+        go_to_filebrowser(selenium, user, oz_page, op_container,
+                          tmp_memory, space)
+        upload_file_to_cwd_in_data_tab(selenium, user, path, tmpdir,
+                                       op_container, popups)
+    else:
+        raise NoSuchClientException(f'Client: {client} not found')
+
+
 @wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) sees that owner\'s UID '
                r'and GID for "(?P<path>.*)" in space "(?P<space>[\w-]+)" '
                r'are (?P<res>equal|not equal) to (?P<uid>[\d]+) and '
@@ -656,6 +671,20 @@ def assert_file_stats(client, user, path, space, uid, gid, res, users):
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) sees that owner\'s UID '
+               r'for "(?P<path>.*)" in space "(?P<space>.*)" '
+               r'is (?P<res>equal|not equal) to (?P<uid>.*)'))
+def assert_file_uid_stat(client, user, path, space, uid, res, users):
+    full_path = '{}/{}'.format(space, path)
+    client_lower = client.lower()
+    if 'oneclient' in client_lower:
+        oneclient_host = change_client_name_to_hostname(client_lower)
+        multi_file_steps.assert_file_uid(user, full_path, res, uid,
+                                         oneclient_host, users)
+    else:
+        raise NoSuchClientException('Client: {} not found'.format(client))
+
+
 @wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) opens "(?P<path>.*)" '
                r'in space "(?P<space>[\w-]+)" in (?P<host>.*)'))
 def assert_file_stats(client, user, path, space, users):
@@ -667,3 +696,10 @@ def assert_file_stats(client, user, path, space, users):
                                   users)
     else:
         raise NoSuchClientException('Client: {} not found'.format(client))
+
+
+@wt(parsers.parse('using web GUI, {user} sees that {owner} is owner of '
+                  '"{file_name}"'))
+def check_file_owner_web_gui(selenium, user, owner, file_name, tmp_memory,
+                             modals):
+    check_file_owner(selenium, user, owner, file_name, tmp_memory, modals)
