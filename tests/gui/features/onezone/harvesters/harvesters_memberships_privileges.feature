@@ -30,7 +30,15 @@ Feature: Basic management of harvester in Onezone GUI
 
 
   Scenario: User fails to see harvester without view harvester privilege
-    When user of browser1 creates "harvester11" harvester in Onezone page
+    Given initial spaces configuration in "onezone" Onezone service:
+            space1:
+              owner: admin
+              providers:
+                  - oneprovider-1:
+                      storage: posix
+                      size: 1000000
+    And user admin has "harvester11" harvester in "onezone" Onezone service
+    When using REST, user admin adds space "space1" to "harvester11" harvester
     And user of browser1 sends invitation token from "harvester11" harvester to user of browser2
     And user of browser2 joins to harvester in Onezone page
     And user of browser2 sees that "harvester11" has appeared on the harvesters list in the sidebar
@@ -42,12 +50,15 @@ Feature: Basic management of harvester in Onezone GUI
             privilege subtypes:
               View harvester: False
 
+    And user of browser2 refreshes site
     And user of browser2 clicks Members of "harvester11" harvester in the sidebar
     Then user of browser2 sees Insufficient privileges alert in harvester members subpage
     And user of browser2 clicks Spaces of "harvester11" harvester in the sidebar
     And user of browser2 sees Insufficient privileges alert on Spaces subpage
     And user of browser2 clicks Indices of "harvester11" harvester in the sidebar
     And user of browser2 sees Insufficient privileges alert on Indices subpage
+    And user of browser2 clicks Data discovery of "harvester11" harvester in the sidebar
+    And user of browser2 sees "This resource could not be loaded." alert on empty Data discovery page
 
     And user of browser1 removes "harvester11" harvester in Onezone page
 
@@ -275,7 +286,7 @@ Feature: Basic management of harvester in Onezone GUI
     And user of browser1 removes "harvester20" harvester in Onezone page
 
 
-  Scenario: User successfully removes space with remove space privilege
+  Scenario: User successfully removes space from harvester with remove space privilege
     Given admin user does not have access to any space
     When user of browser1 creates "space2" space in Onezone
     And user of browser1 creates "harvester21" harvester in Onezone page
