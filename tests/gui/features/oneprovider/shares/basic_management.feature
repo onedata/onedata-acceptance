@@ -297,3 +297,18 @@ Feature: Basic share management in Oneprovider GUI
 
     And user of browser clicks Overview of "space1" in the sidebar
     And user of browser sees in the INFO section of Overview page that number of shares is 1
+
+
+  Scenario: Share curl command can be used to get valid share info
+    Given using REST, user space-owner-user creates "share_file1" share of "space1/dir2/file1" supported by "oneprovider-1" provider
+    When user of browser opens file browser for "space1" space
+    And user of browser double clicks on item named "dir2" in file browser
+    And user of browser opens "share_file1" single share view of "file1" using modal icon
+
+    And user of browser clicks share link type selector on shares view
+    And user of browser chooses "Public REST endpoint" share link type on shares view
+    And user of browser copies public REST endpoint on shares view
+    And user of browser runs curl command copied from shares page
+    Then user of browser sees that curl result matches following config:
+           name: share_file1
+           file type: file

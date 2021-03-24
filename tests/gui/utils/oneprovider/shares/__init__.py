@@ -59,4 +59,5 @@ class SharesContentPage(PageObject):
     save_description = Button('.btn.ready')
     switch_editor_markdown = Button('.btn-switch-editor-mode')
     editor_mode = Label('.btn-switch-editor-mode .text')
+    link_type_selector = Button('.share-link-type-selector-trigger')
 

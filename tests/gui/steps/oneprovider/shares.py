@@ -269,6 +269,28 @@ def check_urls_are_equal(selenium, browser_id, op_container, clipboard,
     assert share_url == modal_url, err_msg
 
 
+@wt(parsers.parse('user of {browser_id} copies public REST endpoint '
+                  'on shares view'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def copy_share_link(selenium, browser_id, op_container):
+    op_container(selenium[browser_id]).shares_page.copy_icon()
+
+
+@wt(parsers.parse('user of {browser_id} clicks share link type selector '
+                  'on shares view'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_share_link_type_selector(selenium, browser_id, op_container):
+    op_container(selenium[browser_id]).shares_page.link_type_selector()
+
+
+@wt(parsers.parse('user of {browser_id} chooses "{url_type}" share link type '
+                  'on shares view'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def choose_share_link_type(selenium, browser_id, url_type, popups):
+    driver = selenium[browser_id]
+    popups(driver).power_select.choose_item(url_type)
+
+
 @wt(parsers.parse('user of {browser_id} opens description tab on share view'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_description_tab(selenium, browser_id, op_container):
@@ -337,7 +359,7 @@ def assert_message_no_file_browser(selenium, browser_id, message, public_share):
 @wt(parsers.parse('user of {browser_id} clicks share link type selector '
                   'on share\'s public interface'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_share_link_type_selector(selenium, browser_id, public_share):
+def click_public_share_link_type_selector(selenium, browser_id, public_share):
     public_share(selenium[browser_id]).link_type_selector()
 
 
