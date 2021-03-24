@@ -8,6 +8,10 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 import time
+
+import yaml
+
+from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import wt, parsers
 
 from selenium.common.exceptions import NoSuchElementException
@@ -328,3 +332,27 @@ def assert_message_no_file_browser(selenium, browser_id, message, public_share):
     _change_iframe_for_public_share_page(selenium, browser_id)
     msg = public_share(driver).no_files_message_header
     assert msg == message, f'{message} not on share\'s public interface'
+
+
+@wt(parsers.parse('user of {browser_id} clicks share link type selector '
+                  'on share\'s public interface'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_share_link_type_selector(selenium, browser_id, public_share):
+    public_share(selenium[browser_id]).link_type_selector()
+
+
+@wt(parsers.parse('user of {browser_id} chooses "{url_type}" share link type '
+                  'on share\'s public interface'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def choose_share_link_type(selenium, browser_id, url_type, public_share):
+    driver = selenium[browser_id]
+    type_popup = public_share(driver).url_type_popup
+    getattr(type_popup, transform(url_type))()
+
+
+@wt(parsers.parse('user of {browser_id} copies public REST endpoint '
+                  'on share\'s public interface'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def copy_public_share_link(selenium, browser_id, public_share):
+    public_share(selenium[browser_id]).copy_icon()
+

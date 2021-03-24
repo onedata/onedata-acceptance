@@ -123,3 +123,18 @@ Feature: Basic data tab operations on public shares in file browser
     And user of browser1 sees file browser on share's public interface
     And user of browser1 double clicks on item named "dir1" in file browser
     And user of browser1 sees item(s) named "file1" in file browser
+
+
+  Scenario: Public share curl command can be used to get valid share info
+    When user of space_owner_browser opens file browser for "space1" space
+    And user of space_owner_browser hands "share_dir1" share's URL of "dir1" to user of browser1
+
+    And user of browser1 opens received URL
+    And user of browser1 sees that public share is named "share_dir1"
+    And user of browser1 clicks share link type selector on share's public interface
+    And user of browser1 chooses "Public REST endpoint" share link type on share's public interface
+    And user of browser1 copies public REST endpoint on share's public interface
+    And user of browser1 runs curl command copied from public shares page
+    Then user of browser1 sees that curl result matches following config:
+           name: share_dir1
+           file type: dir

@@ -5,14 +5,23 @@ __copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-
-from tests.gui.utils.core.web_elements import Label, Button, Input, WebElement
+from tests.gui.utils.core.web_elements import (
+    Label, Button, Input, WebItem)
 from ..breadcrumbs import Breadcrumbs
 from ..file_browser import FileBrowser
+from ...core.base import PageObject
+
+
+class URLTypeSelector(PageObject):
+    public_share_link = Button('.option-share-link')
+    public_rest_endpoint = Button('.option-rest-link')
 
 
 class PublicShareView(object):
     name = Label('.fb-breadcrumbs-dir')
+    link_type_selector = Button('.url-type-selector-trigger')
+    url_type_popup = WebItem('.compact-url-type-selector-actions',
+                             cls=URLTypeSelector)
     url = Input('.clipboard-input.form-control')
     copy_icon = Button('.oneicon-browser-copy')
     breadcrumbs = Breadcrumbs('.file-browser-head-container')
