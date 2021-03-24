@@ -117,7 +117,7 @@ def click_on_web_elem(driver, web_elem, err_msg, delay=True):
     if not web_elem.is_displayed():
         web_elem.location_once_scrolled_into_view
     if web_elem.is_enabled() and web_elem.is_displayed() and not disabled:
-        # TODO make optional sleep and localize only those tests that need it or find better alternative
+        # TODO VFS-7484 make optional sleep and localize only those tests that need it or find better alternative
         # currently checking if elem is enabled not always work (probably after striping disabled from web elem
         # elem is not immediately clickable)
         if delay:

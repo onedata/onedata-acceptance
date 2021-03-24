@@ -267,7 +267,6 @@ sys.exit(ret)
         call(['./onenv', 'hosts'], cwd='one_env')
 
     if args.local:
-        # TODO: change this after python3 will be used in tests
         cmd = ['python3', '-m', 'pytest',
                '--test-type={}'.format(args.test_type),
                args.test_dir, '--junitxml={}'.format(args.report_path),
