@@ -294,7 +294,7 @@ def shell_check_type(user, file, file_type, client_node, users):
 
 @wt(parsers.re('mode of (?P<user>\w+)\'s (?P<file>.*) is (?P<mode>.*) on '
                '(?P<client_node>.*)'))
-@repeat_failed(interval=1, timeout=180, exceptions=AssertionError)
+@repeat_failed(interval=1, timeout=30, exceptions=AssertionError)
 def check_mode(user, file, mode, client_node, users):
     user = users[user]
     client = user.clients[client_node]
