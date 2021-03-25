@@ -86,7 +86,7 @@ class DataDistributionModal(Modal):
         start, _ = provider_record.start.split()
         return int(end) - int(start)
 
-
+# TODO VFS-7489 fix not working commented code
 # In case when fill color of canvas is changed,
 # variable fillColor must also change to new value
 _canvas_fill = """
@@ -135,6 +135,7 @@ function isCanvasFilled(cvs){
         for(var y = 1; y < height; ++y){
             idx = (x + y * width) * 4;
             pix = img_data.slice(idx, idx + 4);
+//            if(!arraysEqual(pix, refColor)) return false;
         }
     }
     if(arraysEqual(refColor, fillColor)){
