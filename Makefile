@@ -138,3 +138,7 @@ clean_swaggers:
 	rm -rf tests/mixed/onepanel_client
 	rm -rf tests/mixed/oneprovider_client
 	rm -rf tests/mixed/cdmi_client
+
+
+codetag-tracker:
+	./bamboos/scripts/codetag-tracker.sh --branch=${BRANCH} --excluded-dirs=
