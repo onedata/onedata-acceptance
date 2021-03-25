@@ -110,7 +110,6 @@ class Space(PageObject):
     menu_button = Button('.collapsible-toolbar-toggle')
 
     def click_menu(self):
-        self.click()
         self.menu_button.click()
 
 
@@ -144,7 +143,7 @@ class DiscoveryPage(GenericPage):
     rename_button = Button('.save-icon')
 
     spaces_list = WebItemsSequence('.content-harvesters-spaces '
-                                   '.row .list-header-row',
+                                   '.row.list-header-row',
                                    cls=Space)
 
     input_box = WebItem('.content-info-content-container', cls=InputBox)
