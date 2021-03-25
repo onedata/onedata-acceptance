@@ -241,7 +241,7 @@ def _add_storage_in_op_panel_using_rest(config, storage_name, provider, hosts,
 
 
 @wt(parsers.parse('user of {browser_id} adds key="{key}" value="{val}" in '
-                  'storage edit page'))
+                  'QoS parameters form in storage edit page'))
 def add_key_value_in_storage_page(selenium, browser_id, key,
                                   val, onepanel, modals):
     button = 'Proceed'
@@ -289,8 +289,8 @@ def _delete_all_additional_params_in_storage_page(selenium, browser_id,
         click_modal_button(selenium, browser_id, button, modal, modals)
 
 
-@given(parsers.parse('there are no additional params in storage edit page used '
-                     'by {browser_id}'))
+@given(parsers.parse('there are no additional params in QoS parameters form '
+                     'in storage edit page used by {browser_id}'))
 def g_delete_all_additional_params_in_storage_page(selenium, browser_id,
                                                    onepanel, modals):
     _delete_all_additional_params_in_storage_page(selenium, browser_id,
@@ -298,7 +298,7 @@ def g_delete_all_additional_params_in_storage_page(selenium, browser_id,
 
 
 @wt(parsers.parse('user of {browser_id} deletes all additional params in '
-                  'storage edit page'))
+                  'QoS parameters form in storage edit page'))
 def wt_delete_all_additional_params_in_storage_page(selenium, browser_id,
                                                     onepanel, modals):
     _delete_all_additional_params_in_storage_page(selenium, browser_id,
