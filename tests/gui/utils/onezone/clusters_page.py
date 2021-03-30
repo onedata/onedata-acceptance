@@ -18,9 +18,20 @@ class TokenPage(PageObject):
 
 class MenuItem(PageObject):
     name = id = Label('.item-name')
+    status_icon = WebElement('.sidebar-item-icon')
+    menu_button = Button('.btn-toolbar')
+
+    # conflicted clusters have 4-letter cluster id hash added to label
+    id_hash = Label('.conflict-label')
 
     def __call__(self):
         self.click()
+
+    def is_not_working(self):
+        return 'error' in self.status_icon.get_attribute('class')
+
+    def is_working(self):
+        return not self.is_not_working()
 
 
 class SubmenuItem(PageObject):
@@ -36,11 +47,12 @@ class ClustersPage(GenericPage):
     token_page = WebItem('.main-content', cls=TokenPage)
 
     menu_button = Button('.with-menu .collapsible-toolbar-toggle')
-    menu = WebItemsSequence('.sidebar-clusters .two-level-sidebar .one-label',
-                            cls=MenuItem)
+    menu = WebItemsSequence('.sidebar-clusters .two-level-sidebar '
+                            '.one-list-item', cls=MenuItem)
     submenu = WebItemsSequence('.second-level-items .item-header',
                                cls=SubmenuItem)
 
+    deregister_label = Button('.text-danger')
     deregister_provider = Button('.btn-danger.btn-deregister-provider')
     deregistration_checkbox = Button('.text-understand')
     confirm_deregistration = Button('.btn-danger.btn-deregister')

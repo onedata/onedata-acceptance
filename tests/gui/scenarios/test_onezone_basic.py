@@ -24,6 +24,7 @@ from tests.gui.steps.common.notifies import *
 from tests.gui.steps.common.miscellaneous import *
 from tests.gui.steps.common.login import *
 from tests.gui.steps.common.docker import *
+from tests.gui.steps.common.kubectl import *
 
 from tests.gui.steps.onepanel.account_management import *
 from tests.gui.steps.onepanel.nodes import *
@@ -83,6 +84,7 @@ scenarios('../features/onezone/login_page.feature')
 scenarios('../features/onezone/user_account_manage.feature')
 scenarios('../features/onezone/providers.feature')
 scenarios('../features/onezone/providers_multibrowser.feature')
+scenarios('../features/onezone/provider_duplicate.feature')
 scenarios('../features/onezone/full_name.feature')
 scenarios('../features/onezone/default_privileges.feature')
 

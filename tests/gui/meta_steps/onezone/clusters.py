@@ -9,11 +9,13 @@ __license__ = ("This software is released under the MIT license cited in "
 
 from tests.gui.meta_steps.onezone.tokens import (
     consume_token_from_copied_token)
+from tests.gui.steps.common.miscellaneous import click_option_in_popover_menu
 from tests.gui.steps.onezone.members import *
 from tests.utils.bdd_utils import given
 from tests.utils.utils import repeat_failed
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
-from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
+from tests.gui.steps.onezone.clusters import (
+    click_on_record_in_clusters_menu, click_cluster_menu_button)
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.onezone.harvesters.discovery import (
@@ -113,3 +115,16 @@ def no_member_in_parent(selenium, browser_id, member_name, member_type, name,
                                   onepanel, where, popups)
     except RuntimeError:
         pass
+
+
+@wt(parsers.parse('user of {browser_id} remembers "{provider}" cluster id'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def remember_cluster_id(selenium, browser_id, provider, oz_page, hosts,
+                        popups, tmp_memory, clipboard, displays):
+    option = 'Copy cluster ID'
+    click_on_record_in_clusters_menu(selenium, browser_id, oz_page, provider,
+                                     hosts)
+    click_cluster_menu_button(selenium, browser_id, provider, oz_page, hosts)
+    click_option_in_popover_menu(selenium, browser_id, option, popups)
+    cluster_id = clipboard.paste(display=displays[browser_id])
+    tmp_memory[provider]['cluster id'] = cluster_id

@@ -89,6 +89,12 @@ def click_option_in_popover_menu(selenium, browser_id, option, popups):
     popups(driver).menu_popup_with_label.menu[option]()
 
 
+@wt(parsers.parse('user of {browser_id} clicks "{option}" option in menu'))
+def click_option_in_popover_menu(selenium, browser_id, option, popups):
+    driver = selenium[browser_id]
+    popups(driver).menu_popup_with_text.menu[option]()
+
+
 @wt(parsers.re('pass'))
 def pass_test():
     pass
