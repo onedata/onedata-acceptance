@@ -46,7 +46,8 @@ def assert_record_not_in_clusters_menu(selenium, browser_id, oz_page, record,
                                        hosts):
     driver = selenium[browser_id]
     record = hosts[record]['name']
-    assert record not in oz_page(driver)['clusters'].menu
+    records = oz_page(driver)['clusters'].menu
+    assert not records or record not in oz_page(driver)['clusters'].menu
 
 
 @wt(parsers.parse('user of {browser_id} clicks on "{record}" in clusters menu'))
