@@ -86,8 +86,7 @@ class DataDistributionModal(Modal):
         start, _ = provider_record.start.split()
         return int(end) - int(start)
 
-
-# TODO fix not working commented code
+# TODO VFS-7489 fix not working commented code
 # In case when fill color of canvas is changed,
 # variable fillColor must also change to new value
 _canvas_fill = """
