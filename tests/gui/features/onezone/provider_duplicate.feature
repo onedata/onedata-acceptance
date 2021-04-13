@@ -1,11 +1,11 @@
-Feature: Basic management of duplicate providers in Onezone GUI
+Feature: Basic management of duplicate provider entries in Onezone GUI
 
   Background:
     Given user opened browser window
     And user of browser opened Onezone page
     And user of browser logged as admin to Onezone service
 
-  Scenario: User deletes dead duplicate provider
+  Scenario: User deregisters dead duplicated provider
     When user of browser sees only one "oneprovider-1" record in clusters menu
     And user of browser remembers "oneprovider-1" cluster id
 

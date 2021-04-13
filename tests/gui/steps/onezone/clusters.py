@@ -34,9 +34,20 @@ def copy_registration_cluster_token(selenium, browser_id, oz_page):
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_record_in_clusters_menu(selenium, browser_id, oz_page, record,
                                    hosts):
-    driver = selenium[browser_id]
+    records = _get_clusters(selenium, browser_id, oz_page)
     record = hosts[record]['name']
-    assert record in oz_page(driver)['clusters'].menu
+    assert record in records, f'{record} not in clusters'
+
+
+def _get_clusters(selenium, browser_id, oz_page):
+    driver = selenium[browser_id]
+    return oz_page(driver)['clusters'].menu
+
+
+def _get_cluster_record(selenium, browser_id, oz_page, record_name, hosts):
+    menu = _get_clusters(selenium, browser_id, oz_page)
+    record = hosts[record_name]['name']
+    return menu[record]
 
 
 @wt(parsers.parse('user of {browser_id} does not see "{record}" in clusters '
@@ -44,9 +55,8 @@ def assert_record_in_clusters_menu(selenium, browser_id, oz_page, record,
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_record_not_in_clusters_menu(selenium, browser_id, oz_page, record,
                                        hosts):
-    driver = selenium[browser_id]
     record = hosts[record]['name']
-    records = oz_page(driver)['clusters'].menu
+    records = _get_clusters(selenium, browser_id, oz_page)
     assert record not in records, f'{record} in clusters'
 
 
@@ -54,9 +64,7 @@ def assert_record_not_in_clusters_menu(selenium, browser_id, oz_page, record,
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_on_record_in_clusters_menu(selenium, browser_id, oz_page, record,
                                      hosts):
-    driver = selenium[browser_id]
-    record = hosts[record]['name']
-    oz_page(driver)['clusters'].menu[record]()
+    _get_cluster_record(selenium, browser_id, oz_page, record, hosts)()
 
 
 @wt(parsers.parse('user of {browser_id} clicks {option} of "{record}" '
@@ -80,9 +88,8 @@ def check_the_understand_notice(selenium, browser_id, oz_page):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_cluster_not_working_in_oz_panel(selenium, browser_id, provider,
                                            oz_page, hosts):
-    driver = selenium[browser_id]
-    provider = hosts[provider]['name']
-    provider_record = oz_page(driver)['clusters'].menu[provider]
+    provider_record = _get_cluster_record(selenium, browser_id, oz_page,
+                                          provider, hosts)
     assert provider_record.is_not_working(), f'Provider {provider} is working'
 
 
@@ -91,17 +98,15 @@ def assert_cluster_not_working_in_oz_panel(selenium, browser_id, provider,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_cluster_working_in_oz_panel(selenium, browser_id, provider,
                                        oz_page, hosts):
-    driver = selenium[browser_id]
-    provider = hosts[provider]['name']
-    provider_record = oz_page(driver)['clusters'].menu[provider]
+    provider_record = _get_cluster_record(selenium, browser_id, oz_page,
+                                          provider, hosts)
     assert provider_record.is_working(), f'Provider {provider} is not working'
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_cluster_menu_button(selenium, browser_id, provider, oz_page, hosts):
-    driver = selenium[browser_id]
-    provider = hosts[provider]['name']
-    provider_record = oz_page(driver)['clusters'].menu[provider]
+    provider_record = _get_cluster_record(selenium, browser_id, oz_page,
+                                          provider, hosts)
     provider_record.menu_button()
 
 
@@ -124,9 +129,8 @@ def assert_two_clusters_records(selenium, browser_id, provider, oz_page, hosts):
 
 def _assert_num_cluster_records(selenium, browser_id, provider, num, oz_page,
                                 hosts):
-    driver = selenium[browser_id]
+    records = _get_clusters(selenium, browser_id, oz_page)
     record = hosts[provider]['name']
-    records = oz_page(driver)['clusters'].menu
     selected = [row for row in records if row.name == record]
 
     assert len(selected) == num, (f'Expected {num} {record} record but got '
@@ -136,9 +140,8 @@ def _assert_num_cluster_records(selenium, browser_id, provider, num, oz_page,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def _get_old_or_new_cluster_record(selenium, browser_id, provider, oz_page,
                                    age, tmp_memory, hosts):
-    driver = selenium[browser_id]
     record_name = hosts[provider]['name']
-    records = oz_page(driver)['clusters'].menu
+    records = _get_clusters(selenium, browser_id, oz_page)
     old_id = tmp_memory[provider]['cluster id']
 
     selected = [row for row in records if row.name == record_name]

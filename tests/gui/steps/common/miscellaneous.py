@@ -84,13 +84,13 @@ def g_click_on_btn_in_popup(selenium, browser_id, btn, popup, popups):
 
 
 @wt(parsers.parse('user of {browser_id} clicks "{option}" option in menu popup'))
-def click_option_in_popover_menu(selenium, browser_id, option, popups):
+def click_option_in_popup_labeled_menu(selenium, browser_id, option, popups):
     driver = selenium[browser_id]
     popups(driver).menu_popup_with_label.menu[option]()
 
 
 @wt(parsers.parse('user of {browser_id} clicks "{option}" option in menu'))
-def click_option_in_popover_menu(selenium, browser_id, option, popups):
+def click_option_in_popup_text_menu(selenium, browser_id, option, popups):
     driver = selenium[browser_id]
     popups(driver).menu_popup_with_text.menu[option]()
 

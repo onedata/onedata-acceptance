@@ -9,7 +9,7 @@ __license__ = ("This software is released under the MIT license cited in "
 
 from tests.gui.meta_steps.onezone.tokens import (
     consume_token_from_copied_token)
-from tests.gui.steps.common.miscellaneous import click_option_in_popover_menu
+from tests.gui.steps.common.miscellaneous import click_option_in_popup_text_menu
 from tests.gui.steps.onezone.members import *
 from tests.utils.bdd_utils import given
 from tests.utils.utils import repeat_failed
@@ -125,6 +125,6 @@ def remember_cluster_id(selenium, browser_id, provider, oz_page, hosts,
     click_on_record_in_clusters_menu(selenium, browser_id, oz_page, provider,
                                      hosts)
     click_cluster_menu_button(selenium, browser_id, provider, oz_page, hosts)
-    click_option_in_popover_menu(selenium, browser_id, option, popups)
+    click_option_in_popup_text_menu(selenium, browser_id, option, popups)
     cluster_id = clipboard.paste(display=displays[browser_id])
     tmp_memory[provider]['cluster id'] = cluster_id
