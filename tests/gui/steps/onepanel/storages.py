@@ -100,8 +100,9 @@ def click_modify_storage_in_onepanel(selenium, browser_id, name,
     onepanel(driver).content.storages.click_modify_button_of_storage(driver,
                                                                      name)
 
+
 @wt(parsers.parse('user of {browser_id} types "{in_value}" into last key in '
-                  'posix storage edit page'))
+                  'posix QoS parameters form in storage edit page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def type_key_in_posix_storage_edit_page(selenium, browser_id,
                                         key, onepanel):
@@ -112,7 +113,7 @@ def type_key_in_posix_storage_edit_page(selenium, browser_id,
 
 
 @wt(parsers.parse('user of {browser_id} clicks value of modified record in '
-                  'posix storage edit page'))
+                  'QoS parameters form in posix storage edit page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_value_in_posix_storage_edit_page(selenium, browser_id, onepanel):
     driver = selenium[browser_id]
@@ -121,8 +122,8 @@ def click_value_in_posix_storage_edit_page(selenium, browser_id, onepanel):
     storage_posix.edit_form.posix_editor.params.click_value_in_modified_record()
 
 
-@wt(parsers.parse('user of {browser_id} deletes first additional param in posix'
-                  ' storage edit page'))
+@wt(parsers.parse('user of {browser_id} deletes first additional param '
+                  'in QoS parameters form in posix storage edit page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def delete_additional_param_in_posix_storage_edit_page(selenium, browser_id,
                                                        onepanel):
