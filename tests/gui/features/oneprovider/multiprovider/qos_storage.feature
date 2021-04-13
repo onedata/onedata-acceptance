@@ -66,12 +66,12 @@ Feature: Quality of Service tests for 2 providers using multiple browsers where 
     And user of browser_unified sees that matching storage is "posix provided by oneprovider-1"
 
 
-  Scenario: A QoS requirement with "and" operator is met when at least one of condition is met
+  Scenario: A QoS requirement with "and" operator is met when all joined conditions are met
     When user of browser_emergency clicks on "Modify" button for "posix" storage record in Storages page in Onepanel
     And user of browser_emergency adds key="type" value="posix" in QoS parameters form in storage edit page
     And user of browser_emergency clicks on "Modify" button for "posix" storage record in Storages page in Onepanel
     And user of browser_emergency adds key="geo" value="PL" in QoS parameters form in storage edit page
-    When user of browser_unified creates "type=posix & geo=PL" QoS requirement for "file1" in space "space1"
+    And user of browser_unified creates "type=posix & geo=PL" QoS requirement for "file1" in space "space1"
     And user of browser_unified clicks on QoS status tag for "file1" in file browser
     Then user of browser_unified sees that all QoS requirements are fulfilled
 
@@ -90,7 +90,7 @@ Feature: Quality of Service tests for 2 providers using multiple browsers where 
     Then user of browser_unified sees that all QoS requirements are fulfilled
 
 
-  Scenario: A QoS requirement with "or" operator is met when at least one of condition is met
+  Scenario: A QoS requirement with "or" operator is met when at least one of the conditions is met
     When user of browser_emergency clicks on "Modify" button for "posix" storage record in Storages page in Onepanel
     And user of browser_emergency adds key="type" value="posix" in QoS parameters form in storage edit page
     And user of browser_unified creates "type=posix | geo=PL" QoS requirement for "file1" in space "space1"
