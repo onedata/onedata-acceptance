@@ -10,6 +10,7 @@ import json
 import os
 import subprocess
 
+import yaml
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
 
@@ -113,19 +114,20 @@ def _set_env_variable(var_name, var_value):
     os.environ[var_name] = var_value
 
 
-@wt(parsers.parse('user of {browser_id} runs copied curl command'))
-def run_curl_command(clipboard, displays, browser_id, tmp_memory):
+@wt(parsers.parse('user of {browser_id} runs curl command copied from {page} '
+                  'page'))
+def run_curl_command(clipboard, displays, browser_id, tmp_memory, page):
     curl_cmd = clipboard.paste(display=displays[browser_id])
 
     # -k option avoids certificate check
     curl_cmd = curl_cmd + ' -k'
     status, output = subprocess.getstatusoutput(curl_cmd)
     assert status == 0, 'CURL command did not succeeded'
-    json_data = _process_curl_output(output)
+    json_data = _process_curl_output(output, page)
     tmp_memory[browser_id]['curl result'] = json_data
 
 
-def _process_curl_output(output):
+def _process_curl_data_discovery_output(output):
     output = output.replace('\\"', '"')
     output = output.split('\n')
     output_json = output[-1].split('"body"')[-1]
@@ -134,4 +136,34 @@ def _process_curl_output(output):
     output_json = output_json + '}}'
 
     return json.loads(output_json)
+
+
+def _process_onedata_curl_output(output):
+    output = output.split('\n')
+    output_json = output[-1]
+
+    return json.loads(output_json)
+
+
+def _process_curl_output(output, page):
+    if page == 'data discovery':
+        return _process_curl_data_discovery_output(output)
+    else:
+        return _process_onedata_curl_output(output)
+
+
+@wt(parsers.parse('user of {browser_id} sees that curl result matches '
+                  'following config:\n{config}'))
+def assert_curl_result_with_config(browser_id, tmp_memory, config):
+    curl_res = tmp_memory[browser_id]['curl result']
+    expected_data = yaml.load(config)
+
+    for key, val in expected_data.items():
+        assert curl_res[_camel_transform(key)] == val, (f'{key}: {val} not '
+                                                        f'in curl result')
+
+
+def _camel_transform(phrase: str):
+    output = phrase.title().replace(' ', '')
+    return output[0].lower() + output[1:]
 

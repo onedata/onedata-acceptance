@@ -80,4 +80,3 @@ def screens():
 
 scenarios('../features/onezone/tokens_basic.feature')
 scenarios('../features/onezone/invite_tokens.feature')
-
