@@ -87,11 +87,11 @@ def show_inactive_caveats(selenium, browser_id, oz_page):
     oz_page(driver)['tokens'].create_token_page.expand_caveats()
 
 
-@wt(parsers.parse('user of {browser_id} clicks on Join button '
+@wt(parsers.parse('user of {browser_id} clicks on Confirm button '
                   'on consume token page'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def click_on_join_button_on_tokens_page(selenium, browser_id, oz_page):
-    oz_page(selenium[browser_id])['tokens'].join_button()
+def click_on_confirm_button_on_tokens_page(selenium, browser_id, oz_page):
+    oz_page(selenium[browser_id])['tokens'].confirm_button()
 
 
 @wt(parsers.parse('user of {browser_id} chooses "{member_name}" {type} '

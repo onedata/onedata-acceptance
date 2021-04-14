@@ -155,7 +155,7 @@ class TokensPage(GenericPage):
     input_name = Input('.token-consumer .token-container input')
     _toggle = WebElement('.token-consumer '
                          '.ember-basic-dropdown-trigger[role="button"]')
-    join_button = NamedButton('button', text='Join')
+    confirm_button = NamedButton('button', text='Confirm')
 
     onezone_rest_access_template = WebElement('.template-onezoneRest')
 
