@@ -129,6 +129,7 @@ class PrivilegeTree(PageObject):
             for sub_name, sub_granted in sub_privileges.items():
                 sub_row = privilege_row.get_sub_privilege_row(sub_name)
                 sub_row.assert_privilege_granted(sub_granted)
+            privilege_row.collapse()
         privilege_row.assert_privilege_granted(granted)
 
     def set_privileges(self, privileges):
