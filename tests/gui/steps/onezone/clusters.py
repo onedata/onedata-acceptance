@@ -140,17 +140,25 @@ def _assert_num_cluster_records(selenium, browser_id, provider, num, oz_page,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def _get_old_or_new_cluster_record(selenium, browser_id, provider, oz_page,
                                    age, tmp_memory, hosts):
-    record_name = hosts[provider]['name']
     records = _get_clusters(selenium, browser_id, oz_page)
+    return get_old_or_new_cluster_record_from_list(provider, records, age,
+                                                   tmp_memory, hosts)
+
+
+def get_old_or_new_cluster_record_from_list(provider, prov_list, age,
+                                            tmp_memory, hosts):
+    record_name = hosts[provider]['name']
     old_id = tmp_memory[provider]['cluster id']
 
-    selected = [row for row in records if row.name == record_name]
+    selected = [row for row in prov_list if row.name == record_name]
 
     # conflicted clusters have 4-letter cluster id hash added to label
     if age == 'old':
-        new_list = [row for row in selected if row.id_hash == old_id[:4]]
+        new_list = [row for row in selected if row.id_hash.strip('#') ==
+                    old_id[:4]]
     else:
-        new_list = [row for row in selected if row.id_hash != old_id[:4]]
+        new_list = [row for row in selected if row.id_hash.strip('#') !=
+                    old_id[:4]]
 
     if new_list:
         return new_list[0]
@@ -171,8 +179,8 @@ def assert_new_cluster_working(selenium, browser_id, provider, oz_page, hosts,
 @wt(parsers.parse('user of {browser_id} clicks on "{provider}" with {age} '
                   'cluster id in clusters menu'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_old_cluster_record(selenium, browser_id, provider, age, oz_page,
-                             tmp_memory, hosts):
+def click_new_or_old_cluster_record(selenium, browser_id, provider, age,
+                                    oz_page, tmp_memory, hosts):
     record = _get_old_or_new_cluster_record(selenium, browser_id, provider,
                                             oz_page, age, tmp_memory, hosts)
     record.click()
@@ -184,3 +192,4 @@ def click_old_cluster_record(selenium, browser_id, provider, age, oz_page,
 def click_deregister_link_in_cluster_page(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
     oz_page(driver)['clusters'].deregister_label.click()
+
