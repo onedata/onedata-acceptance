@@ -51,7 +51,7 @@ def consume_received_token(selenium, browser_id, oz_page, tmp_memory):
     click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button)
     paste_received_token_into_text_field(selenium, browser_id, oz_page,
                                          tmp_memory)
-    click_on_join_button_on_tokens_page(selenium, browser_id, oz_page)
+    click_on_confirm_button_on_tokens_page(selenium, browser_id, oz_page)
 
 
 @wt(parsers.parse('user of {browser_id} joins group using copied token'))
@@ -65,7 +65,7 @@ def consume_token_from_copied_token(selenium, browser_id, oz_page, clipboard,
     click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button)
     paste_copied_token_into_text_field(selenium, browser_id, oz_page, clipboard,
                                        displays)
-    click_on_join_button_on_tokens_page(selenium, browser_id, oz_page)
+    click_on_confirm_button_on_tokens_page(selenium, browser_id, oz_page)
 
 
 @wt(parsers.parse('user of {browser_id} adds group "{elem_name}" as subgroup '
@@ -85,7 +85,7 @@ def add_element_with_copied_token(selenium, browser_id, elem_name, oz_page,
                                        displays)
     select_member_from_dropdown(selenium, browser_id, elem_name, modals,
                                 oz_page)
-    click_on_join_button_on_tokens_page(selenium, browser_id, oz_page)
+    click_on_confirm_button_on_tokens_page(selenium, browser_id, oz_page)
 
 
 @wt(parsers.parse('user of {browser_id} {result} to consume token for '

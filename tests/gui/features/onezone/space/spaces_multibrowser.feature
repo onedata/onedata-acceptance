@@ -41,5 +41,5 @@ Feature: Multi Browser basic management of spaces
 
     And user of browser1 clicks join an existing space on Welcome page
     And user of browser1 pastes received token into token text field
-    And user of browser1 clicks on Join button on consume token page
+    And user of browser1 clicks on Confirm button on consume token page
     Then user of browser1 sees that "space1" has appeared on the spaces list in the sidebar
