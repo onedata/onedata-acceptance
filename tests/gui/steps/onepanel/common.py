@@ -8,6 +8,8 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
+from tests.gui.steps.onezone.clusters import \
+    get_old_or_new_cluster_record_from_list
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt, given
 from tests.utils.utils import repeat_failed
@@ -35,8 +37,6 @@ def wt_click_on_subitem_for_item(selenium, browser_id_list, sidebar, sub_item,
     for browser_id in parse_seq(browser_id_list):
         nav = getattr(onepanel(selenium[browser_id]).sidebar,
                       transform(sidebar))
-
-        nav.scroll_to_bottom(selenium[browser_id])
         nav.items[record].submenu[sub_item].click()
 
 
@@ -92,3 +92,27 @@ def click_open_in_onezone_in_modal(selenium, browser_id, modals):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_open_in_onezone(selenium, browser_id, login_page):
     login_page(selenium[browser_id]).open_in_onezone()
+
+
+@wt(parsers.parse('user of {browser_id} sees that {age} "{record}" is not '
+                  'working in clusters sidebar'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_not_working_in_clusters_sidebar(selenium, browser_id, age, record,
+                                           onepanel, hosts, tmp_memory):
+    sidebar = 'CLUSTERS'
+    nav = getattr(onepanel(selenium[browser_id]).sidebar,
+                  transform(sidebar))
+    items = nav.get_all_items(selenium[browser_id])
+    item = get_old_or_new_cluster_record_from_list(record, items, age,
+                                                   tmp_memory, hosts)
+    assert item.is_not_working(), f'{record} is working in clusters sidebar'
+
+
+@wt(parsers.parse('user of {browser_id} sees Overview page of "{cluster}" '
+                  'cluster'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_overview_page_of_cluster(selenium, browser_id, cluster, onepanel,
+                                    hosts):
+    found = onepanel(selenium[browser_id]).content.overview.cluster_name
+    expected = hosts[cluster]['name']
+    assert found == expected, f'Overview of {expected} not visible'

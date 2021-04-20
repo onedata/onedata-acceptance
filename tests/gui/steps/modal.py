@@ -368,6 +368,15 @@ def assert_error_modal_with_text_appeared(selenium, browser_id, text):
     assert text.lower() in modal_text, message
 
 
+@wt(parsers.parse('user of {browser_id} sees that "{title}" '
+                  'error modal appeared'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_titled_error_modal_appeared(selenium, browser_id, title):
+    message = f'Modal is not titled "{title}"'
+    modal_text = modals(selenium[browser_id]).error.title.lower()
+    assert title.lower() in modal_text, message
+
+
 @wt(parsers.re('user of (?P<browser_id>.*) closes "(?P<modal>.*)" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def close_modal(selenium, browser_id, modal, modals):

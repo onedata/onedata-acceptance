@@ -13,6 +13,7 @@ from .modal import Modal
 class ErrorModal(Modal):
     close = NamedButton('button', text='Close')
     content = Label('.modal-body')
+    title = Label('h1 .one-label')
 
     def __str__(self):
         return 'Error modal'

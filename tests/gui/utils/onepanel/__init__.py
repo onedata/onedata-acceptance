@@ -16,6 +16,7 @@ from .ceph import CephContentPage
 from .clusters import ClustersSidebar, WelcomePage
 from .deployment import Deployment
 from .nodes import NodesContentPage
+from .overview import ClusterOverviewPage
 from .provider import ProviderContentPage
 from .spaces import SpacesContentPage
 from .storages import StorageContentPage
@@ -34,6 +35,7 @@ class Sidebar(PageObject):
 
 class Content(BaseContent):
     _main_content = '.main-content'
+    overview = WebItem(_main_content, cls=ClusterOverviewPage)
     welcome = WebItem(_main_content, cls=WelcomePage)
     deployment = WebItem(_main_content, cls=Deployment)
     nodes = WebItem(_main_content, cls=NodesContentPage)
