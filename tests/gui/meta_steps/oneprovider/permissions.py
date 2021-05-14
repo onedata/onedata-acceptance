@@ -121,7 +121,7 @@ def grant_acl_privileges_in_op_gui(selenium, browser_id, item_list, priv, name,
                                    oz_page, modals):
     option_in_menu = 'Data'
     option = 'spaces'
-    option_in_submenu = 'Data'
+    option_in_submenu = 'Files'
     path = item_list.replace('"', '')
 
     click_on_option_in_the_sidebar(selenium, browser_id, option_in_menu,

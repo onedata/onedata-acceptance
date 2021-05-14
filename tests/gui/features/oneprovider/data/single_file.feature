@@ -24,7 +24,7 @@ Feature: Basic data tab operations on single file in file browser
 
   Scenario: User downloads file and checks it's content
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser sees that current working directory displayed in breadcrumbs is space1
 
@@ -34,7 +34,7 @@ Feature: Basic data tab operations on single file in file browser
 
   Scenario: User removes existing file
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser sees that current working directory displayed in breadcrumbs is space1
 
@@ -48,7 +48,7 @@ Feature: Basic data tab operations on single file in file browser
 
   Scenario: User renames file
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser sees that current working directory displayed in breadcrumbs is space1
 
@@ -66,7 +66,7 @@ Feature: Basic data tab operations on single file in file browser
 
   Scenario: User sees that after uploading file with name of already existing file, the uploaded file appeared with suffix
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
 
     And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir

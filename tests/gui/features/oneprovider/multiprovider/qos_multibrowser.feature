@@ -28,7 +28,7 @@ Feature: Quality of Service in directory tests for 2 providers using multiple br
 
   Scenario: Nested file is replicated from one storage to storage which id was set as QoS requirement in parent dir
     When user of browser_unified clicks "space1" on the spaces list in the sidebar
-    And user of browser_unified clicks Data of "space1" in the sidebar
+    And user of browser_unified clicks Files of "space1" in the sidebar
     And user of browser_unified sees file browser in data tab in Oneprovider page
 
     And user of browser_emergency clicks on Storages item in submenu of "oneprovider-2" item in CLUSTERS sidebar in Onepanel
@@ -47,7 +47,7 @@ Feature: Quality of Service in directory tests for 2 providers using multiple br
 
   Scenario: File is replicated from one storage to storage which id was set as QoS requirement
     When user of browser_unified clicks "space1" on the spaces list in the sidebar
-    And user of browser_unified clicks Data of "space1" in the sidebar
+    And user of browser_unified clicks Files of "space1" in the sidebar
     And user of browser_unified sees file browser in data tab in Oneprovider page
     And user of browser_unified sees file chunks for file "file1" as follows:
           oneprovider-1: entirely filled

@@ -30,7 +30,7 @@ Feature: Basic data tab operations on several files in file browser
 
   Scenario: User selects a bunch of files using ctrl
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
 
     And user of browser sees items named ["file1", "file2", "file3", "file4", "file5", "file6", "file7"] in file browser in given order
@@ -41,7 +41,7 @@ Feature: Basic data tab operations on several files in file browser
 
   Scenario: User selects bunch of files using shift
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
 
     And user of browser sees items named ["file1", "file2", "file3", "file4", "file5", "file6", "file7"] in file browser in given order
@@ -51,7 +51,7 @@ Feature: Basic data tab operations on several files in file browser
 
   Scenario: User selects bunch of files using ctrl and shift
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
 
     And user of browser sees items named ["file1", "file2", "file3", "file4", "file5", "file6", "file7"] in file browser in given order
@@ -63,7 +63,7 @@ Feature: Basic data tab operations on several files in file browser
 
   Scenario: User removes several files
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
 
     And user of browser selects ["file1", "file2", "file3"] items from file browser with pressed ctrl

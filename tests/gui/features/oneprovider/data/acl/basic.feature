@@ -64,7 +64,7 @@ Feature: ACL basic tests using single browser in Oneprovider GUI
 
   Scenario: User cancels ACL editing
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
 
     # Set ACL record
@@ -140,7 +140,7 @@ Feature: ACL basic tests using single browser in Oneprovider GUI
   Scenario: User saves ACL entries for user and group
     # Set ACL record
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser clicks once on item named "file1" in file browser
     And user of browser clicks on menu for "file1" file in file browser
@@ -177,7 +177,7 @@ Feature: ACL basic tests using single browser in Oneprovider GUI
 
   Scenario Outline: User changes order of ACL entries
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser clicks on menu for "file1" file in file browser
     And user of browser clicks "Permissions" option in data row menu in file browser

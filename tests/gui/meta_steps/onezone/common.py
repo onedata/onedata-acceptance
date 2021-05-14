@@ -92,7 +92,7 @@ def wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts,
 def visit_file_browser(selenium, oz_page, providers_list, spaces_list,
                        browser_id_list, op_container, tmp_memory, hosts):
     option = 'spaces'
-    option_in_submenu = 'Data'
+    option_in_submenu = 'Files'
 
     for browser_id, provider, space in zip_longest(parse_seq(browser_id_list),
                                                    parse_seq(providers_list),

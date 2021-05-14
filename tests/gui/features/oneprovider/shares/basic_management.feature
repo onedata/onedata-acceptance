@@ -76,7 +76,7 @@ Feature: Basic share management in Oneprovider GUI
   Scenario: User opens share modal using shared status tag
     Given using REST, user space-owner-user creates "share_dir1" share of "space1/dir1" supported by "oneprovider-1" provider
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
 
     And user of browser clicks on shared status tag for "dir1" in file browser
@@ -196,7 +196,7 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser sees only items named ["dir3", "file1", "file2"] in file browser
 
      # delete file1
-    And user of browser clicks Data of "space1" in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser double clicks on item named "dir2" in file browser
     And user of browser clicks on menu for "file1" file in file browser
@@ -239,7 +239,7 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser sees that current working directory path visible in share's file browser is as follows: /dir3
     And user of browser clicks on /dir2 using breadcrumbs from share's info header
 
-    Then user of browser sees "data" label of current page
+    Then user of browser sees "files" label of current page
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser sees only items named ["dir3", "file1", "file2"] in file browser
 
@@ -264,7 +264,7 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser sees that there is "share_dir2" share on shares view
 
     # delete dir2
-    And user of browser clicks Data of "space1" in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser clicks on menu for "dir2" directory in file browser
     And user of browser clicks "Delete" option in data row menu in file browser
@@ -283,7 +283,7 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser sees that there is "share_dir3" share on shares view
 
     # delete dir2
-    And user of browser clicks Data of "space1" in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
     And user of browser clicks on menu for "dir2" directory in file browser
     And user of browser clicks "Delete" option in data row menu in file browser
