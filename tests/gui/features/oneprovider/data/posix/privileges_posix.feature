@@ -56,7 +56,7 @@ Feature: Oneprovider POSIX privileges GUI tests
 	# Change permission code
     When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
     And user of space_owner_browser clicks Files of "space1" in the sidebar
-    And user of space_owner_browser sees file browser in data tab in Oneprovider page
+    And user of space_owner_browser sees file browser in files tab in Oneprovider page
     And user of space_owner_browser clicks on menu for "file1" file in file browser
     And user of space_owner_browser clicks "Permissions" option in data row menu in file browser
     And user of space_owner_browser sees that "Edit permissions" modal has appeared
@@ -79,7 +79,7 @@ Feature: Oneprovider POSIX privileges GUI tests
 	# Change permission code
     When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
     And user of space_owner_browser clicks Files of "space1" in the sidebar
-    And user of space_owner_browser sees file browser in data tab in Oneprovider page
+    And user of space_owner_browser sees file browser in files tab in Oneprovider page
     And user of space_owner_browser clicks on menu for "dir1" directory in file browser
     And user of space_owner_browser clicks "Permissions" option in data row menu in file browser
     And user of space_owner_browser sees that "Edit permissions" modal has appeared

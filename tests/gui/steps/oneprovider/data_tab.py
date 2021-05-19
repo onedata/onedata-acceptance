@@ -1,4 +1,4 @@
-"""Steps used for handling of data tab elements (e.g. toolbar)
+"""Steps used for handling of files tab elements (e.g. toolbar)
 in various oneprovider GUI testing scenarios
 """
 
@@ -201,39 +201,39 @@ def wt_is_space_tree_root(selenium, browser_id, is_home, space_name,
 
 
 @wt(parsers.parse('user of {browser_id} sees nonempty {item_browser} '
-                  'in data tab in Oneprovider page'))
+                  'in files tab in Oneprovider page'))
 @repeat_failed(timeout=WAIT_BACKEND*2)
-def assert_nonempty_file_browser_in_data_tab_in_op(selenium, browser_id,
-                                                   op_container, tmp_memory,
-                                                   item_browser='file browser'):
+def assert_nonempty_file_browser_in_files_tab_in_op(selenium, browser_id,
+                                                    op_container, tmp_memory,
+                                                    item_browser='file browser'):
     switch_to_iframe(selenium, browser_id)
     check_file_browser_to_load(selenium, browser_id, tmp_memory, op_container,
                                item_browser)
     items_browser = tmp_memory[browser_id][transform(item_browser)]
-    assert not items_browser.is_empty(), (f'{item_browser} in data tab in op'
+    assert not items_browser.is_empty(), (f'{item_browser} in files tab in op'
                                           'should not be empty but is')
 
 
 @wt(parsers.parse('user of {browser_id} sees empty {item_browser} '
-                  'in data tab in Oneprovider page'))
+                  'in files tab in Oneprovider page'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_empty_file_browser_in_data_tab_in_op(selenium, browser_id,
-                                                op_container, tmp_memory,
-                                                item_browser='file browser'):
+def assert_empty_file_browser_in_files_tab_in_op(selenium, browser_id,
+                                                 op_container, tmp_memory,
+                                                 item_browser='file browser'):
     switch_to_iframe(selenium, browser_id)
     check_file_browser_to_load(selenium, browser_id, tmp_memory, op_container,
                                item_browser)
     items_browser = tmp_memory[browser_id][transform(item_browser)]
-    assert items_browser.is_empty(), (f'{item_browser} in data tab in op '
+    assert items_browser.is_empty(), (f'{item_browser} in files tab in op '
                                       'should be empty but is not')
     tmp_memory[browser_id][transform(item_browser)] = items_browser
 
 
 @wt(parsers.parse('user of {browser_id} sees {item_browser} '
-                  'in data tab in Oneprovider page'))
-def assert_file_browser_in_data_tab_in_op(selenium, browser_id, op_container,
-                                          tmp_memory,
-                                          item_browser='file browser'):
+                  'in files tab in Oneprovider page'))
+def assert_file_browser_in_files_tab_in_op(selenium, browser_id, op_container,
+                                           tmp_memory,
+                                           item_browser='file browser'):
     switch_to_iframe(selenium, browser_id)
     check_file_browser_to_load(selenium, browser_id, tmp_memory, op_container,
                                item_browser)

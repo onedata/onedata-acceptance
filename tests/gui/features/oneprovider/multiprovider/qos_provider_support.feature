@@ -37,7 +37,7 @@ Feature: Quality of Service in directory tests for 2 providers with 1 supporting
         size: 100
         unit: MiB
     And user of browser_unified clicks Files of "space1" in the sidebar
-    And user of browser_unified sees file browser in data tab in Oneprovider page
+    And user of browser_unified sees file browser in files tab in Oneprovider page
     And user of browser_unified clicks on QoS status tag for "file1" in file browser
     Then user of browser_unified sees that all QoS requirements are fulfilled
     And user of browser_unified sees that 2 storages match condition in modal "Quality of Service"

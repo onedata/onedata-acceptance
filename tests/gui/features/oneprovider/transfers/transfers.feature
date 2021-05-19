@@ -60,7 +60,7 @@ Feature: Oneprovider transfers functionality
     And user of browser sees that there is non-zero throughput in transfer chart
 
     And user of browser clicks Files of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
             oneprovider-2: entirely filled
@@ -98,7 +98,7 @@ Feature: Oneprovider transfers functionality
     And user of browser sees that there is non-zero throughput in transfer chart
 
     And user of browser clicks Files of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser sees file browser in files tab in Oneprovider page
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
@@ -127,7 +127,7 @@ Feature: Oneprovider transfers functionality
             status: failed
 
     And user of browser clicks Files of "smallSpace" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
             oneprovider-2: entirely empty
@@ -158,7 +158,7 @@ Feature: Oneprovider transfers functionality
             status: failed
 
     And user of browser clicks Files of "smallSpace" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser sees file browser in files tab in Oneprovider page
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
@@ -183,7 +183,7 @@ Feature: Oneprovider transfers functionality
             status: failed
 
     And user of browser clicks Files of "smallSpace" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
             oneprovider-2: entirely empty
@@ -214,7 +214,7 @@ Feature: Oneprovider transfers functionality
             status: failed
 
     And user of browser clicks Files of "smallSpace" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser sees file browser in files tab in Oneprovider page
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
@@ -246,7 +246,7 @@ Feature: Oneprovider transfers functionality
             status: completed
 
     And user of browser clicks Files of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser sees file browser in files tab in Oneprovider page
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
@@ -282,7 +282,7 @@ Feature: Oneprovider transfers functionality
     And user of browser sees that there is non-zero throughput in transfer chart
 
     And user of browser clicks Files of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely empty
             oneprovider-2: entirely filled
@@ -316,7 +316,7 @@ Feature: Oneprovider transfers functionality
             status: completed
 
     And user of browser clicks Files of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser sees file browser in files tab in Oneprovider page
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely empty
@@ -332,9 +332,9 @@ Feature: Oneprovider transfers functionality
 
     # download file to other provider
     And user of browser clicks on "oneprovider-2" provider on file browser page
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser sees file browser in files tab in Oneprovider page
     And user of browser refreshes site
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees file chunks for file "20B-0.txt" as follows:
             oneprovider-1: entirely filled
             oneprovider-2: never synchronized
@@ -342,7 +342,7 @@ Feature: Oneprovider transfers functionality
     And user of browser double clicks on item named "20B-0.txt" in file browser
     And user of browser is idle for 5 seconds
     And user of browser refreshes site
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees file chunks for file "20B-0.txt" as follows:
             oneprovider-1: entirely filled
             oneprovider-2: entirely filled
@@ -350,7 +350,7 @@ Feature: Oneprovider transfers functionality
     # evict file from oneprovider-1
     And user of browser evicts file "20B-0.txt" from provider oneprovider-1
     And user of browser refreshes site
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser sees file browser in files tab in Oneprovider page
     Then user of browser sees file chunks for file "20B-0.txt" as follows:
             oneprovider-1: entirely empty
             oneprovider-2: entirely filled

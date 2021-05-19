@@ -42,7 +42,7 @@ Feature: ACL basic subjects tests in Oneprovider GUI
     And opened browser with space-owner-user signed in to "onezone" service
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser sees file browser in files tab in Oneprovider page
     And user of browser clicks once on item named "file1" in file browser
     And user of browser clicks on menu for "file1" directory in file browser
     And user of browser clicks "Permissions" option in data row menu in file browser
@@ -131,7 +131,7 @@ Feature: ACL basic subjects tests in Oneprovider GUI
     And opened [space_owner_browser, browser_user3] with [space-owner-user, user3] signed in to [Onezone, Onezone] service
     When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
     And user of space_owner_browser clicks Files of "space1" in the sidebar
-    And user of space_owner_browser sees file browser in data tab in Oneprovider page
+    And user of space_owner_browser sees file browser in files tab in Oneprovider page
     And user of space_owner_browser clicks once on item named "file1" in file browser
 
     And user of space_owner_browser clicks on menu for "file1" directory in file browser

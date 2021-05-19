@@ -59,7 +59,7 @@ Feature: Onepanel features auto-cleaning
 
     # check data distribution
     And user of space_owner_browser clicks Files of "space2" in the sidebar
-    And user of space_owner_browser sees file browser in data tab in Oneprovider page
+    And user of space_owner_browser sees file browser in files tab in Oneprovider page
     And user of space_owner_browser double clicks on item named "dir1" in file browser
     And user of space_owner_browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
@@ -136,7 +136,7 @@ Feature: Onepanel features auto-cleaning
 
     # check data distribution
     And user of space_owner_browser clicks Files of "space2" in the sidebar
-    And user of space_owner_browser sees file browser in data tab in Oneprovider page
+    And user of space_owner_browser sees file browser in files tab in Oneprovider page
     And user of space_owner_browser double clicks on item named "dir1" in file browser
     And user of space_owner_browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
@@ -211,7 +211,7 @@ Feature: Onepanel features auto-cleaning
 
     # check data distribution
     And user of space_owner_browser clicks Files of "space2" in the sidebar
-    And user of space_owner_browser sees file browser in data tab in Oneprovider page
+    And user of space_owner_browser sees file browser in files tab in Oneprovider page
     And user of space_owner_browser double clicks on item named "dir1" in file browser
     And user of space_owner_browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled

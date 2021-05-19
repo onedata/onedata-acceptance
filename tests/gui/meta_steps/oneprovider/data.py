@@ -100,8 +100,8 @@ def see_items_in_op_gui(selenium, browser_id, path, subfiles, tmp_memory,
     selenium[browser_id].refresh()
 
     try:
-        assert_file_browser_in_data_tab_in_op(selenium, browser_id,
-                                              op_container, tmp_memory)
+        assert_file_browser_in_files_tab_in_op(selenium, browser_id,
+                                               op_container, tmp_memory)
     except NoSuchElementException:
         go_to_filebrowser(selenium, browser_id, oz_page, op_container,
                           tmp_memory, space)
@@ -169,9 +169,9 @@ def _check_files_tree(subtree, user, tmp_memory, cwd, selenium, op_container,
             assert_items_presence_in_file_browser(user, item, tmp_memory)
             if item.startswith('dir'):
                 double_click_on_item_in_file_browser(user, item, tmp_memory)
-                assert_empty_file_browser_in_data_tab_in_op(selenium, user,
-                                                            op_container,
-                                                            tmp_memory)
+                assert_empty_file_browser_in_files_tab_in_op(selenium, user,
+                                                             op_container,
+                                                             tmp_memory)
                 change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium,
                                                                user, cwd,
                                                                op_container)
@@ -204,8 +204,8 @@ def assert_space_content_in_op_gui(config, selenium, user, op_container,
                                    tmp_memory, tmpdir, space_name, oz_page,
                                    provider, hosts):
     try:
-        assert_file_browser_in_data_tab_in_op(selenium, user, op_container,
-                                              tmp_memory)
+        assert_file_browser_in_files_tab_in_op(selenium, user, op_container,
+                                               tmp_memory)
     except (KeyError, NoSuchElementException):
         go_to_filebrowser(selenium, user, oz_page, op_container,
                           tmp_memory, space_name)
@@ -219,15 +219,15 @@ def see_num_of_items_in_path_in_op_gui(selenium, user, tmp_memory, op_container,
     tab_name = 'data'
 
     try:
-        assert_file_browser_in_data_tab_in_op(selenium, user, op_container,
-                                              tmp_memory)
+        assert_file_browser_in_files_tab_in_op(selenium, user, op_container,
+                                               tmp_memory)
     except KeyError:
-        navigate_to_tab_in_op_using_gui(selenium, user, oz_page, provider, tab_name,
-                                        hosts, modals)
+        navigate_to_tab_in_op_using_gui(selenium, user, oz_page, provider,
+                                        tab_name, hosts, modals)
         _select_item(user, tmp_memory, path)
         refresh_site(selenium, user)
-        assert_file_browser_in_data_tab_in_op(selenium, user, op_container,
-                                              tmp_memory)
+        assert_file_browser_in_files_tab_in_op(selenium, user, op_container,
+                                               tmp_memory)
     assert_num_of_files_are_displayed_in_file_browser(user, num, tmp_memory)
 
 
@@ -235,9 +235,9 @@ def assert_file_content_in_op_gui(text, path, space, selenium, user, users,
                                   provider, hosts, oz_page, op_container,
                                   tmp_memory, tmpdir, modals):
     try:
-        assert_file_browser_in_data_tab_in_op(selenium, user,
-                                              op_container,
-                                              tmp_memory)
+        assert_file_browser_in_files_tab_in_op(selenium, user,
+                                               op_container,
+                                               tmp_memory)
         go_to_path_without_last_elem(user, tmp_memory, path)
     except (KeyError, NoSuchElementException):
         go_to_filebrowser(selenium, user, oz_page, op_container,
@@ -319,8 +319,8 @@ def successfully_upload_file_to_op_gui(path, selenium, browser_id, space,
 def upload_file_to_op_gui(path, selenium, browser_id, space, res, filename,
                           op_container, tmp_memory, oz_page, popups):
     try:
-        assert_file_browser_in_data_tab_in_op(selenium, browser_id,
-                                              op_container, tmp_memory)
+        assert_file_browser_in_files_tab_in_op(selenium, browser_id,
+                                               op_container, tmp_memory)
         go_to_path(browser_id, tmp_memory, path)
     except (KeyError, NoSuchElementException):
         go_to_filebrowser(selenium, browser_id, oz_page, op_container,
@@ -339,9 +339,9 @@ def upload_file_to_op_gui(path, selenium, browser_id, space, res, filename,
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_mtime_not_earlier_than_op_gui(path, time, browser_id, tmp_memory,
                                          selenium, op_container):
-    assert_nonempty_file_browser_in_data_tab_in_op(selenium, browser_id,
-                                                   op_container, tmp_memory,
-                                                   item_browser='file browser')
+    assert_nonempty_file_browser_in_files_tab_in_op(selenium, browser_id,
+                                                    op_container, tmp_memory,
+                                                    item_browser='file browser')
     item_name = _select_item(browser_id, tmp_memory, path)
     assert_item_in_file_browser_is_of_mdate(browser_id, item_name, time,
                                             tmp_memory)
@@ -383,19 +383,19 @@ def get_item_name_and_containing_dir_path(path):
                   'space'))
 def go_to_filebrowser(selenium, browser_id, oz_page, op_container,
                       tmp_memory, space):
-    option_in_menu = 'spaces'
-    option_in_submenu = 'Data'
+    space_option = 'spaces'
+    option_in_menu = 'Data'
     option_in_space_submenu = 'Files'
 
-    click_on_option_in_the_sidebar(selenium, browser_id, option_in_submenu,
+    click_on_option_in_the_sidebar(selenium, browser_id, option_in_menu,
                                    oz_page)
     click_element_on_lists_on_left_sidebar_menu(selenium, browser_id,
-                                                option_in_menu, space, oz_page)
+                                                space_option, space, oz_page)
     click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id, space,
                                                   option_in_space_submenu,
                                                   oz_page)
-    assert_file_browser_in_data_tab_in_op(selenium, browser_id, op_container,
-                                          tmp_memory)
+    assert_file_browser_in_files_tab_in_op(selenium, browser_id, op_container,
+                                           tmp_memory)
 
 
 def open_modal_for_file_browser_item(selenium, browser_id, modals, modal_name,

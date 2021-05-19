@@ -13,11 +13,11 @@ from tests.gui.steps.oneprovider_common import (
     g_click_on_the_given_main_menu_tab,
     wt_click_on_the_given_main_menu_tab)
 from tests.gui.steps.oneprovider.data_tab import (
-    assert_file_browser_in_data_tab_in_op,
+    assert_file_browser_in_files_tab_in_op,
     click_tooltip_from_toolbar_in_data_tab_in_op,
     assert_provider_chunk_in_data_distribution_empty,
     assert_provider_chunk_in_data_distribution_filled,
-    assert_nonempty_file_browser_in_data_tab_in_op,
+    assert_nonempty_file_browser_in_files_tab_in_op,
     click_button_from_file_browser_menu_bar)
 from tests.gui.steps.oneprovider.file_browser import (
     select_files_from_file_list_using_ctrl,
