@@ -19,14 +19,14 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
 
   Scenario: User uploads file on one provider, sees it's distribution, writes to it using cdmi on other provider and sees it's distribution
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
     And user of browser sees that item named "20B-0.txt" has appeared in file browser
 
     And user of browser is idle for 90 seconds
     And user of browser clicks file browser refresh button
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser clicks on menu for "20B-0.txt" file in file browser
     And user of browser clicks "Data distribution" option in data row menu in file browser
@@ -40,7 +40,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And using CDMI API space-owner-user writes "ABCD" to "/space1/20B-0.txt" starting at offset 20 in "oneprovider-2" provider
     And user of browser is idle for 90 seconds
     And user of browser clicks file browser refresh button
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser clicks on menu for "20B-0.txt" file in file browser
     And user of browser clicks "Data distribution" option in data row menu in file browser
@@ -53,8 +53,8 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
 
   Scenario: User uploads file, sees it's size, writes to it using cdmi and sees that size has grown
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
     And user of browser sees that item named "20B-0.txt" has appeared in file browser
 
@@ -69,7 +69,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And using CDMI API space-owner-user writes "ABCD" to "/space1/20B-0.txt" starting at offset 20 in "oneprovider-1" provider
     And user of browser is idle for 90 seconds
     And user of browser clicks file browser refresh button
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser sees that item named "20B-0.txt" is of 24 B size in file browser
     And user of browser clicks on menu for "20B-0.txt" file in file browser
@@ -81,14 +81,14 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
 
   Scenario: User uploads file on one provider, sees it's distribution, reads half of file on other provider using cdmi and again sees it's distribution
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
     And user of browser sees that item named "20B-0.txt" has appeared in file browser
 
     And user of browser is idle for 90 seconds
     And user of browser clicks file browser refresh button
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser sees file browser in files tab in Oneprovider page
     And user of browser clicks on menu for "20B-0.txt" file in file browser
     And user of browser clicks "Data distribution" option in data row menu in file browser
     And user of browser sees that "Data distribution" modal has appeared
@@ -99,7 +99,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And using CDMI API space-owner-user reads from "/space1/20B-0.txt" in range 10 to 20 in "oneprovider-2" provider
     And user of browser is idle for 90 seconds
     And user of browser clicks file browser refresh button
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser clicks on menu for "20B-0.txt" file in file browser
     And user of browser clicks "Data distribution" option in data row menu in file browser
@@ -112,8 +112,8 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
 
   Scenario: User uploads file, sees it's distribution, writes to it beyond the end of file using cdmi and sees it's distribution again
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
     And user of browser sees that item named "20B-0.txt" has appeared in file browser
 
@@ -126,7 +126,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And using CDMI API space-owner-user writes "ABCD" to "/space1/20B-0.txt" starting at offset 40 in "oneprovider-1" provider
     And user of browser is idle for 90 seconds
     And user of browser clicks file browser refresh button
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser clicks on menu for "20B-0.txt" file in file browser
     And user of browser clicks "Data distribution" option in data row menu in file browser
@@ -138,15 +138,15 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
 
   Scenario: User uploads file, appends some text to it, downloads it and sees it's content
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
     And user of browser sees that item named "20B-0.txt" has appeared in file browser
 
     And using CDMI API space-owner-user writes "ABCD" to "/space1/20B-0.txt" starting at offset 20 in "oneprovider-1" provider
     And user of browser is idle for 90 seconds
     And user of browser clicks file browser refresh button
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser double clicks on item named "20B-0.txt" in file browser
     Then user of browser sees that content of downloaded file "20B-0.txt" is equal to: "00000000000000000000ABCD"

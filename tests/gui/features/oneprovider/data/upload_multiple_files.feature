@@ -29,30 +29,30 @@ Feature: Uploading multiple files at once
 
   Scenario: User uploads 5 files at once
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload files from local directory "dir1" to remote current dir
     Then user of browser sees that there are 5 items in file browser
 
 
   Scenario: User uploads more than 50 files and uses files list lazy loading
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
 
     # upload 70 files
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser sees file browser in files tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload files from local directory "dir2" to remote current dir
 
     # check working of lazy loading
-    And user of browser sees nonempty file browser in data tab in Oneprovider page
+    And user of browser sees nonempty file browser in files tab in Oneprovider page
     And user of browser sees that content of current directory has been loaded
     Then user of browser scrolls to the bottom of file browser and sees there are 70 files
 
 
   Scenario: User can change directory while uploading files
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
 
     # create dir1
     And user of browser creates directory "dir1"
@@ -74,8 +74,8 @@ Feature: Uploading multiple files at once
 
   Scenario: Files uploaded by user are ordered by name
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser uses upload button from file browser menu bar to upload files from local directory "dir3" to remote current dir
     And user of browser uses upload button from file browser menu bar to upload files from local directory "dir4" to remote current dir

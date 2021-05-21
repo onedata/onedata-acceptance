@@ -1,4 +1,4 @@
-Feature: Basic data tab operations on public shares in file browser
+Feature: Basic operations on public shares in file browser
 
 
   Background:

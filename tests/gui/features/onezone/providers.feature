@@ -29,7 +29,7 @@ Feature: Basic management of providers in Onezone GUI
     And user of browser sees that provider popup for provider "oneprovider-1" has appeared on world map
 
     Then user of browser clicks on Visit provider button on provider popover
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees current provider named "oneprovider-1" on file browser page
 
 
@@ -66,7 +66,7 @@ Feature: Basic management of providers in Onezone GUI
     When user of browser waits until provider "oneprovider-1" goes offline on providers map
 
     And user of browser clicks on Data in the main menu
-    And user of browser clicks Data of "space1" in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
 
     Then user of browser sees alert with title "ALL SUPPORTING ONEPROVIDERS ARE OFFLINE" on Onezone page
     And provider named "oneprovider-1" is unpaused

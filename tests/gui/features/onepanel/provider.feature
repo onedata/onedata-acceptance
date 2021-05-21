@@ -24,8 +24,8 @@ Feature: Provider management in Onepanel GUI
     And user of browser_emergency sees that Domain attribute is equal to the hostname of "oneprovider-1" provider in Provider panel
 
     And user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Data of "space1" in the sidebar
-    And user of space_owner_browser sees file browser in data tab in Oneprovider page
+    And user of space_owner_browser clicks Files of "space1" in the sidebar
+    And user of space_owner_browser sees file browser in files tab in Oneprovider page
     And user of space_owner_browser sees current provider named "oneprovider-1" on file browser page
 
     # modify provider details
@@ -107,7 +107,7 @@ Feature: Provider management in Onepanel GUI
 
     And user of space_owner_browser clicks on Data in the main menu
     And user of space_owner_browser clicks "helloworld" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Data of "helloworld" in the sidebar
-    And user of space_owner_browser sees file browser in data tab in Oneprovider page
+    And user of space_owner_browser clicks Files of "helloworld" in the sidebar
+    And user of space_owner_browser sees file browser in files tab in Oneprovider page
     And user of space_owner_browser sees current provider named "oneprovider-1" on file browser page
 

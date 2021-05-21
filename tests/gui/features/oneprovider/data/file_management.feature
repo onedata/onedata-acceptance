@@ -28,8 +28,8 @@ Feature: Basic file management operations
 
   Scenario: User successfully pastes file copied from other directory
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser selects "file_d1_2" items from file browser with pressed ctrl
@@ -43,8 +43,8 @@ Feature: Basic file management operations
 
   Scenario: User successfully pastes file cut from other directory
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser selects "file_d1_2" items from file browser with pressed ctrl
@@ -58,8 +58,8 @@ Feature: Basic file management operations
 
   Scenario: User fails to paste file to where it was copied from
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser selects "file1" items from file browser with pressed ctrl
@@ -71,8 +71,8 @@ Feature: Basic file management operations
 
   Scenario: User fails to paste copied file to directory with identical file
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
     And user of browser selects "file1" items from file browser with pressed ctrl
     And user of browser chooses Copy option from selection menu on file browser page
 
@@ -84,8 +84,8 @@ Feature: Basic file management operations
 
   Scenario: Space owner can copy file to a directory which has 677 permission code
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
 
     # change permissions
     And user of browser clicks on menu for "dir1" directory in file browser
@@ -109,8 +109,8 @@ Feature: Basic file management operations
 
   Scenario: Space owner can move file to a directory which has 677 permission code
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
 
     # change permissions
     And user of browser clicks on menu for "dir1" directory in file browser

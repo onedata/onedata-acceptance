@@ -1,4 +1,4 @@
-Feature: Basic data tab operations on directory metadata in file browser
+Feature: Basic files tab operations on directory metadata in file browser
 
 
   Background:
@@ -25,8 +25,8 @@ Feature: Basic data tab operations on directory metadata in file browser
 
   Scenario Outline: Open metadata modal and check absence of any metadata
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser clicks on menu for "<item>" directory in file browser
     And user of browser clicks "Metadata" option in data row menu in file browser
@@ -43,8 +43,8 @@ Feature: Basic data tab operations on directory metadata in file browser
 
   Scenario Outline: User adds basic metadata entry and checks their presence with metadata status tag
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser does not see metadata status tag for "<item>" in file browser
     And user of browser opens "<modal>" metadata modal for "<item>"
@@ -64,8 +64,8 @@ Feature: Basic data tab operations on directory metadata in file browser
 
   Scenario Outline: Delete one of two basic metadata entries
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser opens "<modal>" metadata modal for "<item>"
     And user of browser adds basic entry with key "attr1" and value "val1"
@@ -91,8 +91,8 @@ Feature: Basic data tab operations on directory metadata in file browser
 
   Scenario Outline: Delete all basic metadata entries after saving it
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser opens "<modal>" metadata modal for "<item>"
     And user of browser adds basic entry with key "attr" and value "val"
@@ -116,8 +116,8 @@ Feature: Basic data tab operations on directory metadata in file browser
 
   Scenario Outline: Delete single basic metadata entry (one visit in modal)
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser opens "<modal>" metadata modal for "<item>"
     And user of browser adds basic entry with key "attr" and value "val"
@@ -139,8 +139,8 @@ Feature: Basic data tab operations on directory metadata in file browser
 
   Scenario Outline: User starts adding basic metadata, but discards changes
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser opens "<modal>" metadata modal for "<item>"
     And user of browser adds basic entry with key "attr" and value "val"
@@ -156,8 +156,8 @@ Feature: Basic data tab operations on directory metadata in file browser
 
   Scenario Outline: Add valid metadata in JSON format
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser opens "<modal>" metadata modal for "<item>"
     And user of browser clicks on JSON navigation tab in metadata modal
@@ -176,8 +176,8 @@ Feature: Basic data tab operations on directory metadata in file browser
 
   Scenario Outline: User doesn't see JSON metadata and metadata status tag after deleting JSON metadata
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser adds and saves '{"id": 1}' JSON metadata for "<item>"
     And user of browser opens metadata modal on JSON tab for "<item>"
@@ -199,8 +199,8 @@ Feature: Basic data tab operations on directory metadata in file browser
 
   Scenario Outline: Discard changes while entering metadata in JSON format
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser opens metadata modal on JSON tab for "<item>"
     And user of browser types '{"id": 1}' to JSON textarea in metadata modal
@@ -217,8 +217,8 @@ Feature: Basic data tab operations on directory metadata in file browser
 
   Scenario Outline: Add valid metadata in XML format
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser opens "<modal>" metadata modal for "<item>"
     And user of browser clicks on RDF navigation tab in metadata modal
@@ -237,8 +237,8 @@ Feature: Basic data tab operations on directory metadata in file browser
 
   Scenario Outline: User doesn't see RDF metadata and metadata status tag after deleting metadata in XML format
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser adds and saves '<content>' RDF metadata for "<item>"
     And user of browser opens metadata modal on RDF tab for "<item>"
@@ -260,8 +260,8 @@ Feature: Basic data tab operations on directory metadata in file browser
 
   Scenario Outline: Discard changes while entering metadata for directory in XML format
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser opens metadata modal on RDF tab for "<item>"
     And user of browser types '<content>' to RDF textarea in metadata modal
