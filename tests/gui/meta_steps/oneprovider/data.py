@@ -418,3 +418,21 @@ def check_file_owner(selenium, browser_id, owner, file_name, tmp_memory,
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     check_file_owner_in_file_details_modal(selenium, browser_id, modals, owner)
     close_modal(selenium, browser_id, modal_name, modals)
+
+
+@wt(parsers.parse('user of {browser_id} creates hardlink of "{file_name}" '
+                  'file in space "{space}" in file browser'))
+def create_hardlinks_of_file(selenium, browser_id, file_name, space,
+                             tmp_memory, oz_page, op_container, modals):
+    option = 'Create hard link'
+    button = 'hardlink'
+
+    go_to_filebrowser(selenium, browser_id, oz_page, op_container, tmp_memory,
+                      space)
+    _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id,
+                                                   file_name,
+                                                   space, tmp_memory, oz_page,
+                                                   op_container)
+    click_option_in_data_row_menu_in_file_browser(selenium, browser_id, option,
+                                                  modals)
+    click_file_browser_button(browser_id, button, tmp_memory)

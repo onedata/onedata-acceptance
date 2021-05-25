@@ -28,6 +28,7 @@ class DataRow(PageObject):
     metadata_tag = WebElement('.file-status-metadata')
     qos_tag = WebElement('.file-status-qos')
     no_access_tag = WebElement('.file-status-forbidden')
+    hardlink_tag = WebElement('.file-status-hardlinks')
     qos_inherited_tag = WebElement('.file-status-qos .oneicon-arrow-long-up')
     clickable_field = WebElement('.file-name')
     tag_label = Label('.file-status-tag')
@@ -52,6 +53,9 @@ class DataRow(PageObject):
             return False
         else:
             return True
+
+    def get_tag_text(self, name):
+        return getattr(self, f'{transform(name)}_tag').text
 
     def is_any_tag_visible(self):
         try:

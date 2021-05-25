@@ -27,6 +27,8 @@ class _FileBrowser(PageObject):
     new_directory_button = Button('.toolbar-buttons .file-action-newDirectory')
     upload_files_button = Button('.toolbar-buttons .browser-upload')
     refresh_button = Button('.toolbar-buttons .file-action-refresh')
+    hardlink_button = Button('.toolbar-buttons .oneicon-text-link')
+    symlink_button = Button('.toolbar-buttons .oneicon-shortcut')
     selection_menu_button = Button('.fb-selection-toolkit .oneicon-arrow-down')
     paste_button = Button('.toolbar-buttons .oneicon-browser-paste')
 
@@ -39,8 +41,6 @@ class _FileBrowser(PageObject):
     _bottom = WebElement('.table-bottom-spacing')
 
     _upload_input = WebElement('.fb-upload-trigger input')
-
-    refresh_button = Button('.fb-toolbar-button .oneicon-refresh')
 
     def __str__(self):
         return 'file browser in {}'.format(self.parent)
