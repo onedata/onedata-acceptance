@@ -21,6 +21,7 @@ class DataRow(PageObject):
     modification_date = Label('.fb-table-col-modification .file-item-text')
 
     _icon = WebElement('.file-icon')
+    _icon_tag = WebElement('.one-icon-tag')
     menu_button = Button('.fb-table-col-actions-menu .menu-toggle')
 
     _status_tag = WebElement('.file-status-tag')
@@ -41,10 +42,32 @@ class DataRow(PageObject):
         return 'file-selected' in self.web_elem.get_attribute('class')
 
     def is_file(self):
+        try:
+            'one-icon-tag' in self._icon_tag.get_attribute('class')
+        except RuntimeError:
+            pass
+        else:
+            return False
         return 'browser-file' in self._icon.get_attribute('class')
 
     def is_directory(self):
         return 'browser-directory' in self._icon.get_attribute('class')
+
+    def is_symbolic_link(self):
+        return ('browser-file' in self._icon.get_attribute('class') and
+                'oneicon-shortcut' in self._icon_tag.get_attribute('class'))
+
+    def is_directory_symbolic_link(self):
+        return ('browser-directory' in self._icon.get_attribute('class') and
+                'oneicon-shortcut' in self._icon_tag.get_attribute('class'))
+
+    def is_malformed_symbolic_link(self):
+        return ('browser-file' in self._icon.get_attribute('class') and
+                'oneicon-x' in self._icon_tag.get_attribute('class'))
+
+    def is_malformed_directory_symbolic_link(self):
+        return ('browser-directory' in self._icon.get_attribute('class') and
+                'oneicon-x' in self._icon_tag.get_attribute('class'))
 
     def is_tag_visible(self, name):
         try:

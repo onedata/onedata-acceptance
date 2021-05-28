@@ -191,15 +191,16 @@ def assert_num_of_files_are_displayed_in_file_browser(browser_id, num,
 
 
 @wt(parsers.re(r'user of (?P<browser_id>.*?) sees that item named '
-               r'"(?P<item_name>.*?)" is (?P<item_attr>file|directory) '
+               r'"(?P<item_name>.*?)" is ('
+               r'?P<item_attr>file|directory|symbolic link|'
+               r'directory symbolic link|malformed symbolic link) '
                r'in file browser'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_item_in_file_browser_is_of_type(browser_id, item_name, item_attr,
                                            tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
-    action = getattr(browser.data[item_name], 'is_{}'.format(item_attr))
-    assert action(), '"{}" is not {}, while it should'.format(item_name,
-                                                              item_attr)
+    action = getattr(browser.data[item_name], f'is_{transform(item_attr)}')
+    assert action(), f'"{item_name}" is not {item_attr}, while it should'
 
 
 @wt(parsers.parse('user of {browser_id} double clicks on item '
@@ -399,8 +400,6 @@ def check_file_owner_in_file_details_modal(selenium, browser_id, modals, owner):
 @wt(parsers.parse('user of {browser_id} sees that "File details" modal is '
                   'opened on "Hard links" tab'))
 def check_modal_opened_on_hardlinks_tab(selenium, browser_id, modals):
-    import pdb
-    pdb.set_trace()
     hardlink_tab = modals(selenium[browser_id]).file_details.hardlinks_tab
     assert hardlink_tab.is_active(), ('Hardlink tab is not active in file '
                                       'details modal')
@@ -458,4 +457,15 @@ def assert_hardlinks_paths_in_file_dets_modal(selenium, browser_id, paths,
     parsed_paths = parse_seq(paths)
     for path in parsed_paths:
         assert path in entries_paths, f'{path} not in {entries_paths}'
+
+
+@wt(parsers.parse('user of {browser_id} sees that {link_property} is "{value}" '
+                  'in "Symbolic link details" modal'))
+def assert_property_in_symlink_dets_modal(selenium, browser_id, link_property,
+                                          value, modals, clipboard, displays):
+    modal = modals(selenium[browser_id]).symbolic_link_details
+    actual_value = modal.get_property(link_property, clipboard, displays,
+                                      browser_id)
+    assert actual_value == value, (f'{link_property} has {actual_value} '
+                                   f'not expected {value}')
 

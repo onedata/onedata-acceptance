@@ -427,12 +427,32 @@ def create_hardlinks_of_file(selenium, browser_id, file_name, space,
     option = 'Create hard link'
     button = 'hardlink'
 
+    _create_link_in_file_browser(selenium, browser_id, file_name, space,
+                                 tmp_memory, oz_page, op_container, modals,
+                                 option, button)
+
+
+@wt(parsers.parse('user of {browser_id} creates symlink of "{file_name}" '
+                  'file in space "{space}" in file browser'))
+def create_hardlinks_of_file(selenium, browser_id, file_name, space,
+                             tmp_memory, oz_page, op_container, modals):
+    option = 'Create symbolic link'
+    button = 'symlink'
+
+    _create_link_in_file_browser(selenium, browser_id, file_name, space,
+                                 tmp_memory, oz_page, op_container, modals,
+                                 option, button)
+
+
+def _create_link_in_file_browser(selenium, browser_id, file_name, space,
+                                 tmp_memory, oz_page, op_container, modals,
+                                 option, button):
     go_to_filebrowser(selenium, browser_id, oz_page, op_container, tmp_memory,
                       space)
     _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id,
-                                                   file_name,
-                                                   space, tmp_memory, oz_page,
-                                                   op_container)
+                                                   file_name, space, tmp_memory,
+                                                   oz_page, op_container)
     click_option_in_data_row_menu_in_file_browser(selenium, browser_id, option,
                                                   modals)
     click_file_browser_button(browser_id, button, tmp_memory)
+

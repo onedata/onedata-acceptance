@@ -1,4 +1,4 @@
-Feature: Basic files tab operations on hardlinks and symlinks in file browser
+Feature: Basic files tab operations on hardlinks in file browser
 
 
   Background:
@@ -72,7 +72,7 @@ Feature: Basic files tab operations on hardlinks and symlinks in file browser
     And user of browser sees that path of "file1(1)(1)" hardlink is "/space1/file1(1)(1)" in "File details" modal
 
 
-  Scenario: User creates hardlinks in other directories tha original files
+  Scenario: User creates hardlinks in other directories than original files
     When user of browser opens file browser for "space1" space
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser sees only items named ["dir2", "file2"] in file browser
