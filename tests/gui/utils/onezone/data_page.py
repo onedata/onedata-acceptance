@@ -24,8 +24,8 @@ class Space(Element):
 
     overview = NamedButton('.one-list-level-2 .item-header',
                            text='Overview')
-    data = NamedButton('.one-list-level-2 .item-header',
-                       text='Data')
+    files = NamedButton('.one-list-level-2 .item-header',
+                        text='Files')
     shares = NamedButton('.one-list-level-2 .item-header',
                          text='Shares')
     transfers = NamedButton('.one-list-level-2 .item-header',

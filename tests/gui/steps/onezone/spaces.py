@@ -14,7 +14,7 @@ from tests.gui.utils.generic import transform, parse_seq
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 
-SPACE_TABS = ["Overview", "Data", "Shares", "Transfers", "Providers",
+SPACE_TABS = ["Overview", "Files", "Shares", "Transfers", "Providers",
               "Members", "Harvesters"]
 
 
@@ -260,7 +260,7 @@ def click_the_map_on_data_page(selenium, browser_id, oz_page, page, space_name):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks '
-               '(?P<option>Overview|Data|Shares|Transfers|Providers|Members|'
+               '(?P<option>Overview|Files|Shares|Transfers|Providers|Members|'
                'Harvesters) of "(?P<space_name>.*?)" in the sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
@@ -273,7 +273,7 @@ def click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
 
 
 def _get_number_of_disabled_elements_on_left_sidebar_menu(space):
-    page_names = ['overview', 'data', 'shares', 'transfers', 'providers',
+    page_names = ['overview', 'files', 'shares', 'transfers', 'providers',
                   'members', 'harvesters']
     return len([x for x in page_names if space.is_element_disabled(x)])
 

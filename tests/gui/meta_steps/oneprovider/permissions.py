@@ -10,7 +10,7 @@ from selenium.common.exceptions import StaleElementReferenceException
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.steps.oneprovider.permissions import *
 from tests.gui.meta_steps.oneprovider.data import (
-    assert_file_browser_in_data_tab_in_op, choose_option_from_selection_menu,
+    assert_file_browser_in_files_tab_in_op, choose_option_from_selection_menu,
     _click_menu_for_elem_somewhere_in_file_browser,
     open_modal_for_file_browser_item)
 from tests.gui.steps.oneprovider.file_browser import (
@@ -107,8 +107,8 @@ def grant_acl_privileges_to_selected_in_filebrowser(selenium, browser_id, priv,
                                                     name, op_container,
                                                     tmp_memory, popups, oz_page,
                                                     modals):
-    assert_file_browser_in_data_tab_in_op(selenium, browser_id, op_container,
-                                          tmp_memory)
+    assert_file_browser_in_files_tab_in_op(selenium, browser_id, op_container,
+                                           tmp_memory)
     _set_acl_privilages_for_selected(browser_id, selenium, popups, tmp_memory,
                                      priv, name, modals)
 
@@ -121,7 +121,7 @@ def grant_acl_privileges_in_op_gui(selenium, browser_id, item_list, priv, name,
                                    oz_page, modals):
     option_in_menu = 'Data'
     option = 'spaces'
-    option_in_submenu = 'Data'
+    option_in_submenu = 'Files'
     path = item_list.replace('"', '')
 
     click_on_option_in_the_sidebar(selenium, browser_id, option_in_menu,
@@ -130,8 +130,8 @@ def grant_acl_privileges_in_op_gui(selenium, browser_id, item_list, priv, name,
                                                 space, oz_page)
     click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id, space,
                                                   option_in_submenu, oz_page)
-    assert_file_browser_in_data_tab_in_op(selenium, browser_id, op_container,
-                                          tmp_memory)
+    assert_file_browser_in_files_tab_in_op(selenium, browser_id, op_container,
+                                           tmp_memory)
     select_files_from_file_list_using_ctrl(browser_id, path, tmp_memory)
     _set_acl_privilages_for_selected(browser_id, selenium, popups, tmp_memory,
                                      priv, name, modals)

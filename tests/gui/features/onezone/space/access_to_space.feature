@@ -49,7 +49,7 @@ Feature: Test user has access to space via group membership
 	And user of space_owner_browser uses upload button in toolbar to upload file "20B-0.txt" to current dir
 
     # Space-owner-user changes file acl
-    And user of space_owner_browser sees file browser in data tab in Oneprovider page
+    And user of space_owner_browser sees file browser in files tab in Oneprovider page
    	And user of space_owner_browser clicks once on item named "20B-0.txt" in file browser
     And user of space_owner_browser clicks the button from top menu bar with tooltip "Change element permissions"
     And user of space_owner_browser sees that "Edit permissions" modal has appeared
@@ -62,9 +62,9 @@ Feature: Test user has access to space via group membership
     And user of space_owner_browser clicks "Ok" confirmation button in displayed modal
     And user of space_owner_browser sees that the modal has disappeared
 
-    # User1 sees file in Oneprovider data tab
+    # User1 sees file in Oneprovider files tab
     And user of browser1 clicks on "oneprovider-1" provider in expanded "GO TO YOUR FILES" Onezone panel
     And user of browser1 clicks on the "Go to your files" button in "oneprovider-1" provider's popup displayed on world map
     And user of browser1 sees that Oneprovider session has started
-    And user of browser1 sees file browser in data tab in Oneprovider page
+    And user of browser1 sees file browser in files tab in Oneprovider page
     Then user of browser1 sees that item named "20B-0.txt" has appeared in file browser

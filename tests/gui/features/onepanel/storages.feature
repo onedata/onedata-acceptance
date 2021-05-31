@@ -135,7 +135,7 @@ Feature: Storage management using onepanel
 
     # confirm import of files
     And user of browser_unified is idle for 8 seconds
-    And user of browser_unified sees file browser in data tab in Oneprovider page
+    And user of browser_unified sees file browser in files tab in Oneprovider page
 
     And user of browser_unified sees only items named "dir1" in file browser
 
@@ -143,7 +143,7 @@ Feature: Storage management using onepanel
     And user of browser_unified copies dir2 to /volumes/persistence/storage/renamed_dir05 directory on docker
 
     And user of browser_unified is idle for 8 seconds
-    And user of browser_unified sees file browser in data tab in Oneprovider page
+    And user of browser_unified sees file browser in files tab in Oneprovider page
 
     And user of browser_unified sees that there is 1 item in file browser
 
@@ -160,7 +160,7 @@ Feature: Storage management using onepanel
 
     And user of browser_unified opens file browser for "space3" space
     And user of browser_unified is idle for 8 seconds
-    And user of browser_unified sees file browser in data tab in Oneprovider page
+    And user of browser_unified sees file browser in files tab in Oneprovider page
 
     Then user of browser_unified sees that there are 2 items in file browser
     And user of browser_unified sees item(s) named "dir2" in file browser
