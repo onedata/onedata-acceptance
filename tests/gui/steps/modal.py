@@ -64,7 +64,7 @@ def _find_modal(driver, modal_name):
         elements_list = ['group', 'token', 'cluster', 'harvester',
                          'spaces', 'rename', 'permissions', 'directory', 'data',
                          'share', 'metadata', 'delete', 'remove', 'quality',
-                         'file details']
+                         'file details', 'symbolic link']
         if any([name for name in elements_list
                 if name in modal_name.lower()]):
             modals = driver.find_elements_by_css_selector('.modal, '
@@ -114,6 +114,16 @@ def _wait_for_modal_to_disappear(driver, browser_id, tmp_memory):
         lambda _: not staleness_of(modal) or modal.is_displayed(),
         message='waiting for modal to disappear')
     tmp_memory[browser_id]['window']['modal'] = None
+
+
+def _wait_for_named_modal_to_disappear(driver, modal_name):
+    try:
+        modal = getattr(modals(driver), transform(modal_name))
+    except RuntimeError:
+        return
+    Wait(driver, WAIT_FRONTEND).until_not(
+        lambda _: not staleness_of(modal) or modal.is_displayed(),
+        message='waiting for modal to disappear')
 
 
 @wt(parsers.parse('user of {browser_id} sees that '
@@ -385,6 +395,7 @@ def close_modal(selenium, browser_id, modal, modals):
         getattr(modals(selenium[browser_id]), modal).close()
     except AttributeError:
         getattr(modals(selenium[browser_id]), modal).cancel()
+    _wait_for_named_modal_to_disappear(selenium[browser_id], modal)
 
 
 @wt(parsers.parse('user of {browser_id} clicks copy command icon in REST API '
