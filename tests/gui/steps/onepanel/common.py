@@ -110,7 +110,7 @@ def assert_not_working_in_clusters_sidebar(selenium, browser_id, age, record,
 
 @wt(parsers.parse('user of {browser_id} sees Overview page of "{cluster}" '
                   'cluster'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND * 2)
 def assert_overview_page_of_cluster(selenium, browser_id, cluster, onepanel,
                                     hosts):
     found = onepanel(selenium[browser_id]).content.overview.cluster_name
