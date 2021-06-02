@@ -436,8 +436,8 @@ def create_hardlinks_of_file(selenium, browser_id, file_name, space,
 
 @wt(parsers.parse('user of {browser_id} creates symlink of "{file_name}" '
                   'file in space "{space}" in file browser'))
-def create_hardlinks_of_file(selenium, browser_id, file_name, space,
-                             tmp_memory, oz_page, op_container, modals):
+def create_symlinks_of_file(selenium, browser_id, file_name, space,
+                            tmp_memory, oz_page, op_container, modals):
     option = 'Create symbolic link'
     button = 'symlink'
 

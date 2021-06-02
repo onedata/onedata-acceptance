@@ -399,14 +399,6 @@ def check_file_owner_in_file_details_modal(selenium, browser_id, modals, owner):
 
 @wt(parsers.parse('user of {browser_id} sees that "File details" modal is '
                   'opened on "Hard links" tab'))
-def check_modal_opened_on_hardlinks_tab(selenium, browser_id, modals):
-    hardlink_tab = modals(selenium[browser_id]).file_details.hardlinks_tab
-    assert hardlink_tab.is_active(), ('Hardlink tab is not active in file '
-                                      'details modal')
-
-
-@wt(parsers.parse('user of {browser_id} sees that "File details" modal is '
-                  'opened on "Hard links" tab'))
 def check_file_dets_modal_opened_on_hardlinks_tab(selenium, browser_id, modals):
     hardlink_tab = modals(selenium[browser_id]).file_details.hardlinks_tab
     assert hardlink_tab.is_active(), ('Hardlink tab is not active in file '

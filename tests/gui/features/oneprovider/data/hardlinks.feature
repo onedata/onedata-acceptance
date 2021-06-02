@@ -25,7 +25,7 @@ Feature: Basic files tab operations on hardlinks in file browser
     And user of browser logged as space-owner-user to Onezone service
 
 
-  Scenario: User creates hardlink of file in file browser and checks its presence
+  Scenario: User creates hardlink of file in the same directory in file browser and checks its presence
     When user of browser opens file browser for "space1" space
     And user of browser sees only items named ["dir1", "file1"] in file browser
     And user of browser clicks on menu for "file1" file in file browser
@@ -52,13 +52,13 @@ Feature: Basic files tab operations on hardlinks in file browser
   Scenario: User downloads hardlink of file
     When user of browser creates hardlink of "file1" file in space "space1" in file browser
     And user of browser double clicks on item named "file1(1)" in file browser
-    And user of browser sees that content of downloaded file "file1(1)" is equal to: "11111"
+    Then user of browser sees that content of downloaded file "file1(1)" is equal to: "11111"
 
 
   Scenario: User creates hardlink of hardlink
     When user of browser creates hardlink of "file1" file in space "space1" in file browser
     And user of browser creates hardlink of "file1(1)" file in space "space1" in file browser
-    Then user of browser sees only items named ["dir1", "file1", "file1(1)", "file1(1)(1)] in file browser
+    Then user of browser sees only items named ["dir1", "file1", "file1(1)", "file1(1)(1)"] in file browser
     And user of browser sees hardlink status tag with "3 hard links" text for "file1" in file browser
     And user of browser sees hardlink status tag with "3 hard links" text for "file1(1)" in file browser
     And user of browser sees hardlink status tag with "3 hard links" text for "file1(1)(1)" in file browser
@@ -114,16 +114,16 @@ Feature: Basic files tab operations on hardlinks in file browser
     And user of browser sees that path of "hardlink_file1" hardlink is "/space1/hardlink_file1" in "File details" modal
 
 
-  Scenario: Hardlink is no longer visible after hardlink removal
+  Scenario: Hardlink info is no longer visible after hardlink removal
     When user of browser creates hardlink of "file1" file in space "space1" in file browser
 
     # create another hardlink
     And user of browser clicks file browser hardlink button
-    And user of browser sees only items named ["dir1", "file1", "file1(1)", "file1(2)] in file browser
+    And user of browser sees only items named ["dir1", "file1", "file1(1)", "file1(2)"] in file browser
     And user of browser sees hardlink status tag with "3 hard links" text for "file1" in file browser
     And user of browser succeeds to remove "file1(1)" in "space1"
 
-    Then user of browser sees only items named ["dir1", "file1", "file1(2)] in file browser
+    Then user of browser sees only items named ["dir1", "file1", "file1(2)"] in file browser
     And user of browser sees hardlink status tag with "2 hard links" text for "file1" in file browser
     And user of browser clicks on hardlink status tag for "file1" in file browser
     And user of browser sees that "File details" modal has appeared
@@ -144,7 +144,7 @@ Feature: Basic files tab operations on hardlinks in file browser
     # create hardlink of file with status tags
     And user of browser creates hardlink of "file1" file in space "space1" in file browser
     And user of browser sees only items named ["dir1", "file1", "file1(1)"] in file browser
-    And user of browser sees QoS status tag for "file1(1)" in file browser
+    Then user of browser sees QoS status tag for "file1(1)" in file browser
     And user of browser sees metadata status tag for "file1(1)" in file browser
 
     # check QoS of hardlink
@@ -162,7 +162,7 @@ Feature: Basic files tab operations on hardlinks in file browser
 
     # add another hardlink
     And user of browser clicks file browser hardlink button
-    And user of browser sees only items named ["dir1", "file1", "file1(1)", file1(2)] in file browser
+    And user of browser sees only items named ["dir1", "file1", "file1(1)", "file1(2)"] in file browser
     And user of browser adds and saves '{"id": 1}' JSON metadata for "file1(1)"
     And user of browser creates "hello=WORLD" QoS requirement for "file1(1)" in space "space1"
 
