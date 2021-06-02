@@ -7,6 +7,8 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import time
+
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import wt, parsers
@@ -85,11 +87,12 @@ def check_the_understand_notice(selenium, browser_id, oz_page):
 
 @wt(parsers.parse('user of {browser_id} sees that "{provider}" cluster '
                   'is not working in clusters menu'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND * 2)
 def assert_cluster_not_working_in_oz_panel(selenium, browser_id, provider,
                                            oz_page, hosts):
     provider_record = _get_cluster_record(selenium, browser_id, oz_page,
                                           provider, hosts)
+    time.sleep(3)
     assert provider_record.is_not_working(), f'Provider {provider} is working'
 
 
