@@ -151,7 +151,7 @@ class SpaceProvidersPage(PageObject):
     providers_list = WebItemsSequence('.space-providers-list '
                                       'li.one-collapsible-list-item',
                                       cls=Provider)
-    add_support = NamedButton('button', text='Add support')
+    add_support = Button('.btn-add-support')
     get_support_page = WebItem('.ember-view', cls=GetSupportPage)
     map = WebItem('.space-providers-atlas', cls=ProvidersMap)
 
