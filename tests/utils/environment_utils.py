@@ -43,7 +43,8 @@ def start_environment(scenario_path, request, hosts, patch_path, users, test_con
     started = False
     while not started and attempts < START_ENV_MAX_RETRIES:
         try:
-            init_helm()
+            print('INFO: init helm disabled in helm 3 version')
+            # init_helm()
             run_onenv_command('init', cwd=None, onenv_path='one_env/onenv')
             if clean:
                 run_onenv_command('up', up_args)

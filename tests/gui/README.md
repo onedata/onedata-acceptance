@@ -88,7 +88,7 @@ Example for Linux: (invoke from onedata repo root dir)
 
 Example for OSX: (invoke from onedata repo root dir)
 ```
-/test_run.py -t tests/gui --test-type gui --driver=Chrome -i onedata/acceptance_gui:latest --local --no-clean --no-xvfb
+./test_run.py -t tests/gui --test-type gui --driver=Chrome -i onedata/acceptance_gui:latest --local --no-clean --no-xvfb
 ```
 
 New parameters:
@@ -98,6 +98,26 @@ New parameters:
 * ``--add-test-domain`` - when running tests on local machine option for adding entries to ``/etc/hosts`` is turned off by default. This may
 cause that some test will fail. You can enable adding entries to ``/etc/hosts`` using ``--add-test-domain`` option or add entries manually.
 
+
+
+# 3. Native environment on macOS 11.1+ and one-env with Helm 3
+
+- Install Python 3.6.13 from virtualenv
+    - install Command Line Tools for Xcode 12.5 from https://developer.apple.com/download/all/ or other source
+    - there are issues with compilation, see: https://github.com/pyenv/pyenv/issues/1746 https://github.com/pyenv/pyenv/issues/1746#issuecomment-780715744
+- Install test dependencies: `pip install -r tests/gui/requirements.txt`
+- Install Chrome and chromedriver: https://chromedriver.chromium.org/downloads put it in `/usr/local/bin/chromedriver`
+    - try to launch chromedriver - macOS will block its execution, go to Privacy settings and unlock this executable
+- Set up https://git.onedata.org/projects/VFS/repos/docker-openvpn-kube-for-mac/browse
+- Launch `one-env up` locally
+    - make sure that `./onenv status` returns valid environment
+    - make sure that GUI is accessible using domain names (it can have invalid certificate)
+
+Use command like this:
+
+```
+./test_run.py -t tests/gui/scenarios/test_onezone_basic.py --test-type gui -vvv --timeout 5 --reruns 0 --reruns-delay 0 --local --no-clean --driver=Chrome -k test_onezone_login_page_renders_with_proper_title
+```
 
 Test reports
 ============

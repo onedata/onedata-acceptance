@@ -271,6 +271,7 @@ sys.exit(ret)
                '--test-type={}'.format(args.test_type),
                args.test_dir, '--junitxml={}'.format(args.report_path),
                '--local'] + pass_args
+        print('run cmd', cmd)
         ret = call(cmd, stdin=None, stderr=None, stdout=None)
 
     else:
