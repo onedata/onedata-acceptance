@@ -109,6 +109,7 @@ cause that some test will fail. You can enable adding entries to ``/etc/hosts`` 
 - Install Chrome and chromedriver: https://chromedriver.chromium.org/downloads put it in `/usr/local/bin/chromedriver`
     - try to launch chromedriver - macOS will block its execution, go to Privacy settings and unlock this executable
 - Set up https://git.onedata.org/projects/VFS/repos/docker-openvpn-kube-for-mac/browse
+- Install helm 3 locally on macOS `brew install helm`
 - Launch `one-env up` locally
     - make sure that `./onenv status` returns valid environment
     - make sure that GUI is accessible using domain names (it can have invalid certificate)
