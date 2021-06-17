@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 import inspect
+import sys
 from functools import wraps
 from types import CodeType
 
@@ -124,10 +125,18 @@ def _create_decorator(wrapped, wrappers):
             return fun
 
         code = virtual_decorator.__code__
-        code_attrs = [getattr(code, attr) for attr in _CO_ATTRS]
 
-        code_attrs[_CO_ATTRS.index('co_filename')] = module.__file__
-        virtual_decorator.__code__ = CodeType(*code_attrs)
+        if sys.version_info.minor >= 8:
+            virtual_decorator.__code__ = code.replace(co_filename = module.__file__)
+        else:
+            code_attrs = [getattr(code, attr) for attr in _CO_ATTRS]
+            code_attrs[_CO_ATTRS.index('co_filename')] = module.__file__
+            virtual_decorator.__code__ = CodeType(*code_attrs)
+
+
+#        code_attrs = [getattr(code, attr) for attr in _CO_ATTRS]
+#        code_attrs[_CO_ATTRS.index('co_filename')] = module.__file__
+#        virtual_decorator.__code__ = CodeType(*code_attrs)
 
         virtual_decorator.__module__ = module.__name__
 
