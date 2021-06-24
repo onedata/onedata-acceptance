@@ -267,7 +267,10 @@ def click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
                                                   space_name, option, oz_page):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    oz_page(driver)['data'].spaces_header_list[space_name].click()
+    try:
+        oz_page(driver)['data'].spaces_header_list[space_name].click()
+    except RuntimeError:
+        oz_page(driver)['data'].choose_space(space_name)
     getattr(oz_page(driver)['data'].elements_list[space_name],
             transform(option)).click()
 
