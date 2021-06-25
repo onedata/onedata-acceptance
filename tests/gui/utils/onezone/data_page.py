@@ -198,4 +198,6 @@ class DataPage(GenericPage):
                 space.click()
                 if space.name == name:
                     return
+        else:
+            raise RuntimeError(f'{name} space not found')
 
