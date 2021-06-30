@@ -102,7 +102,6 @@ Feature: Management of privileges in onezone GUI
               Cancel replication: False
               Schedule eviction: False
               Cancel eviction: False
-    And user of browser2 clicks to minimalize ["Data management", "Transfer management"] privileges of "admin" user in space members subpage
     And user of browser2 sees following privileges of "admin" user in space members subpage:
           QoS management:
             granted: False

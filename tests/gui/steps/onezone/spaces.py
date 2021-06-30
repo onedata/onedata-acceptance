@@ -18,6 +18,14 @@ SPACE_TABS = ["Overview", "Files", "Shares", "Transfers", "Providers",
               "Members", "Harvesters"]
 
 
+def _choose_space_from_menu_list(oz_page, driver, name):
+    option = 'data'
+    try:
+        oz_page(driver)[option].spaces_header_list[name]()
+    except RuntimeError:
+        oz_page(driver)[option].choose_space(name)
+
+
 @wt(parsers.parse('user of {browser_id} clicks on Create space button '
                   'in spaces sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -111,11 +119,7 @@ def click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option,
         option = 'discovery'
 
     if option == 'spaces':
-        option = 'data'
-        try:
-            oz_page(driver)[option].spaces_header_list[name]()
-        except RuntimeError:
-            oz_page(driver)[option].choose_space(name)
+        _choose_space_from_menu_list(oz_page, driver, name)
     else:
         oz_page(driver)[option].elements_list[name].click()
 
@@ -270,10 +274,7 @@ def click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
                                                   space_name, option, oz_page):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    try:
-        oz_page(driver)['data'].spaces_header_list[space_name].click()
-    except RuntimeError:
-        oz_page(driver)['data'].choose_space(space_name)
+    _choose_space_from_menu_list(oz_page, driver, space_name)
     getattr(oz_page(driver)['data'].elements_list[space_name],
             transform(option)).click()
 
