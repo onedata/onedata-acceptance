@@ -788,17 +788,3 @@ def assert_ownership_privileges_warning_appeared_for_user(selenium, browser_id,
     ownership_warning = members_list.items[username].ownership_warning.text
     assert alert_text in ownership_warning, error_msg
 
-
-@wt(parsers.re('user of (?P<browser_id>.*) clicks to minimalize '
-               '(?P<privileges_list>.*) privileges of "(?P<member_name>.*)" '
-               '(?P<member_type>user|group) in '
-               '(?P<where>space|group|harvester|cluster) members subpage'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def minimalize_privileges(selenium, browser_id, privileges_list, oz_page,
-                          onepanel, where, member_name, member_type):
-    member_type = member_type + 's'
-
-    tree = get_privilege_tree(selenium, browser_id, onepanel, oz_page, where,
-                              member_type, member_name)
-    for name in parse_seq(privileges_list):
-        tree.privilege_groups[name].minimalize()
