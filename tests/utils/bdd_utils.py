@@ -126,7 +126,9 @@ def _create_decorator(wrapped, wrappers):
 
         code = virtual_decorator.__code__
 
-        if sys.version_info.minor >= 8:
+        version_info = sys.version_info
+        if ((version_info.major == 3 and version_info.minor >= 8) or
+                version_info.major > 3):
             virtual_decorator.__code__ = code.replace(co_filename = module.__file__)
         else:
             code_attrs = [getattr(code, attr) for attr in _CO_ATTRS]
