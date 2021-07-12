@@ -28,6 +28,7 @@ class DataRow(PageObject):
     shared_tag = WebElement('.file-status-shared')
     metadata_tag = WebElement('.file-status-metadata')
     qos_tag = WebElement('.file-status-qos')
+    dataset_tag = WebElement('.file-status-dataset')
     no_access_tag = WebElement('.file-status-forbidden')
     hardlink_tag = WebElement('.file-status-hardlinks')
     qos_inherited_tag = WebElement('.file-status-qos .oneicon-arrow-long-up')
