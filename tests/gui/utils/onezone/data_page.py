@@ -169,7 +169,8 @@ class DataPage(GenericPage):
                                           '.item-header', cls=Space)
 
     elements_list = WebItemsSequence('.sidebar-spaces '
-                                     'li.one-list-item.clickable', cls=Space)
+                                     'li.one-list-item.clickable.resource-item',
+                                     cls=Space)
 
     input_box = WebItem('.content-info-content-container', cls=InputBox)
 
@@ -190,3 +191,13 @@ class DataPage(GenericPage):
     providers = WebItemsSequence('.provider-online', cls=_Provider)
     choose_other_provider = Button('.choose-oneprovider-link')
     error_header = Label('.content-info-content-container h1')
+
+    def choose_space(self, name):
+        for space in self.elements_list:
+            if space.name == name or space.name == '':
+                space.click()
+                if space.name == name:
+                    return
+        else:
+            raise RuntimeError(f'{name} space not found')
+

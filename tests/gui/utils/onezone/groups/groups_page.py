@@ -43,7 +43,7 @@ class GroupsPage(GenericPage):
                                      '.one-list>.one-list-item.clickable',
                                      cls=Group)
 
-    create_group = Button('.oneicon-add-filled')
+    create_group = Button('.create-group-btn')
 
     menu = WebItemsSequence('.webui-popover-content '
                             '.one-collapsible-toolbar-popover '
