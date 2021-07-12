@@ -140,6 +140,12 @@ Example working both on **Linux** and **macOS**: (invoke from onedata repo root 
 ./test_run.py -t tests/gui --test-type gui --driver=Chrome --local --no-clean
 ```
 
+You can also use this command to run the simplest single test:
+
+```bash
+./test_run.py -t tests/gui/scenarios/test_onezone_basic.py --test-type gui -vvv --timeout 5 --reruns 0 --reruns-delay 0 --local --no-clean --driver=Chrome -k test_onezone_login_page_renders_with_proper_title
+```
+
 **New parameters:**
 
 * `--local` - starts tests on host instead of starting them in pod.
