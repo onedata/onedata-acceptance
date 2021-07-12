@@ -50,7 +50,7 @@ def start_environment(scenario_path, request, hosts, patch_path, users, test_con
                     ['helm', 'version'],
                     stdout=sp.PIPE
                 )
-                version_string = helm_version_proc.stdout
+                version_string = str(helm_version_proc.stdout)
                 version2_match = re.search(
                     r'Server:.*v2',
                     version_string
