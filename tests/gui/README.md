@@ -40,7 +40,9 @@ some time.
 
 **Note:** while `--add-test-domain` and `--update-etc-hosts` are required when setting up
 environment automatically, it can be problematic due to permissions of `/etc/hosts` file.
-Please contact our support if problems occur.
+The experimental and **not safe** method is to do `sudo chmod go+w /etc/hosts` locally and
+share `/etc` directory in docker.
+Please contact our support if you have issues with updating `/etc/hosts` for testing.
 
 **Note:** we recommend using `onedata/acceptance_gui:latest` testing docker image for
 current version of tests. For legacy versions of tests, use image defined in `Makefile`.
@@ -172,7 +174,7 @@ Depedencies to install:
 brew install zlib bzip2 openssl readline
 ```
 
-### Python virtualenv
+### Python using Pyenv
 
 Only Python in version 3.6.x (preferable 3.6.13) is currently supported.
 It is recommended to install and use `virtualenv`
