@@ -9,8 +9,8 @@ due to incompatibility with build-in selenium Firefox driver.
 # GUI acceptance/BDD tests
 
 GUI acceptance/BDD test can be run in few ways using `./test_run.py`:
- 1. Headless tests inside Pod on new Onedata environment
- 2. Tests using existing Onedata installation (or starting new preserving Onedata installation after tests)
+ 1. Headless tests inside Pod on new Onedata environment (automatic setup)
+ 2. Tests using existing Onedata installation (or starting new, preserving Onedata installation after tests)
     1. Headless tests inside Pod
     2. Non-headless tests on local machine
 
@@ -28,25 +28,44 @@ tests. For example you can filter out tests to single suite using scenario file:
 
 # 1. Headless tests inside Pod on new Onedata environment
 
-Using this method, the Onedata environment will be set up automatically with OZ and OP (for details see `environments`
-dir with configurations). Setting up environment can take some time.
+Using this method, the Onedata environment will be set up automatically with OZ and OP
+(for details see `environments` dir with configurations). Setting up environment can take
+some time.
 
-<!-- FIXME: we should use onedata/acceptance_gui:latest, but latest is not set to v5 - can we safely change latest to v8? -->
+**Example:** (invoke from onedata repo root dir)
 
-Example: (invoke from onedata repo root dir)
 ```bash
-./test_run.py -t tests/gui -i onedata/acceptance_gui:v8 --test-type gui --driver=Chrome --xvfb
+./test_run.py -t tests/gui -i onedata/acceptance_gui:latest --test-type gui --driver=Chrome --xvfb --add-test-domain --update-etc-hosts
 ```
+
+**Note:** while `--add-test-domain` and `--update-etc-hosts` are required when setting up
+environment automatically, it can be problematic due to permissions of `/etc/hosts` file.
+Please contact our support if problems occur.
+
+**Note:** we recommend using `onedata/acceptance_gui:latest` testing docker image for
+current version of tests. For legacy versions of tests, use image defined in `Makefile`.
 
 **Parameters:** (see also common parameters description above)
 
-* `-i onedata/gui_builder:latest` - use Docker image with dependencied for GUI tests (i.a. Xvfb, Selenium, Firefox, Chrome)
-* `--self-contained-html` - optional, if used generated report will be contained in 1 html file
-* `--firefox-logs` - optional, if used and driver is Firefox generated report will contain console logs from browser
+* `-i onedata/gui_builder:latest` - use Docker image with dependencied for GUI tests
+(i.a. Xvfb, Selenium, Firefox, Chrome)
 * `--xvfb` - starts xvfb, necessary if used with headless tests
-* `--xvfb-recording=<all|none|failed>` - optional, record all or none or failed tests as movies and save them to `<logdir>/movies`
-* `--no-mosaic-filter` - optional, if set videos of tests using multiple browsers will be recorded as different video for each browser (mosaic video created by default) 
-* `--sources` - optional, if set starts Onedata environment using sources. Sources have to be located in appropriate directories.
+* `--update-etc-hosts` - adds entries to `/etc/hosts` for all pods in deployment.
+When using this option script has to be run with root privileges.   
+* `--add-test-domain` - when running tests on local machine option for adding entries to
+`/etc/hosts` is turned off by default. This may cause that some test will fail.
+You can enable adding entries to `/etc/hosts` using `--add-test-domain` option or add
+entries manually.
+
+**Optional parameters:** (for advanced usage)
+
+* `--self-contained-html` - optional, if used generated report will be contained in 1 html file
+* `--firefox-logs` - optional, if used and driver is Firefox generated report will contain
+console logs from browser
+* `--no-mosaic-filter` - optional, if set videos of tests using multiple browsers will
+be recorded as different video for each browser (mosaic video created by default) 
+* `--sources` - optional, if set starts Onedata environment using sources. Sources have
+to be located in appropriate directories.
 
 
 # 2. Tests using existing Onedata installation
@@ -76,6 +95,8 @@ Example: (invoke from onedata repo root dir)
 
 **New parameters:**
 
+* `--xvfb-recording=<all|none|failed>` - optional, record all or none or failed tests
+as movies and save them to `<logdir>/movies`
 * `--no-clean` - prevents deleting environment after tests
 
 ## 2.2. Non-headless using local machine (BDD)
@@ -107,30 +128,19 @@ version for it from: https://chromedriver.chromium.org/downloads.
 
 ### Starting tests
 
-Example for **Linux**: (invoke from onedata repo root dir)
+**Note:** the one-env environment that is set up should be accessible via hostnames
+(eg. https://dev-onezone.default.svc.cluster.local). Make sure that you can open address
+of Onezone in your browser before starting tests.
 
-<!-- FIXME: check if update-etc-hosts is still needed, maybe it should be only as optional thing -->
-
-```bash
-./test_run.py -t tests/gui --test-type gui --driver=Chrome -i onedata/acceptance_gui:v8 --local --no-clean --update-etc-hosts
-```
-
-Example for **macOS**: (invoke from onedata repo root dir)
+Example working both on **Linux** and **macOS**: (invoke from onedata repo root dir)
 
 ```bash
-./test_run.py -t tests/gui --test-type gui --driver=Chrome -i onedata/acceptance_gui:v8 --local --no-clean
+./test_run.py -t tests/gui --test-type gui --driver=Chrome --local --no-clean
 ```
 
 **New parameters:**
 
 * `--local` - starts tests on host instead of starting them in pod.
-* `--update-etc-hosts` - adds entries to `/etc/hosts` for all pods in deployment.
-When using this option script has to be run with root privileges.   
-* `--add-test-domain` - when running tests on local machine option for adding entries to
-`/etc/hosts` is turned off by default. This may cause that some test will fail.
-You can enable adding entries to `/etc/hosts` using `--add-test-domain` option or add
-entries manually.
-
 
 # 3. macOS environment setup
 
@@ -219,7 +229,7 @@ The test report in HTML format with embedded screenshots of browser in failed te
 For some purposes, taking screenshots can be required in time of test run.
 
 In steps of scenarios simply use:
-```
+```python
 driver.get_screenshot_as_file('/tmp/some-screenshot.png')
 ```
 where driver is instance of Selenium WebDriver
