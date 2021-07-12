@@ -133,11 +133,6 @@ def _create_decorator(wrapped, wrappers):
             code_attrs[_CO_ATTRS.index('co_filename')] = module.__file__
             virtual_decorator.__code__ = CodeType(*code_attrs)
 
-
-#        code_attrs = [getattr(code, attr) for attr in _CO_ATTRS]
-#        code_attrs[_CO_ATTRS.index('co_filename')] = module.__file__
-#        virtual_decorator.__code__ = CodeType(*code_attrs)
-
         virtual_decorator.__module__ = module.__name__
 
         return virtual_decorator()
