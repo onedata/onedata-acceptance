@@ -1,8 +1,9 @@
 # Important notes
 
-- It is recommended to use Chrome for tests because it's recent versions are frequently used in tests development.
-- Currently the highest supported version of Firefox is 46.0.x - v47 is not supported due to incompatibility
-with build-in selenium Firefox driver.
+- It is recommended to use Chrome for tests because it's recent versions are frequently
+used in tests development.
+- Currently the highest supported version of Firefox is 46.0.x - v47 is not supported
+due to incompatibility with build-in selenium Firefox driver.
 
 
 # GUI acceptance/BDD tests
@@ -17,8 +18,11 @@ For use in CI see `Makefile` in project's root.
 
 **Common exectuion parameters:**
 
-* `--test-type gui` - set the test type use by core Onedata test helpers to differ from "cucumber" tests etc.
-* `-t tests/gui` - standard `./test_run.py` parameter to set the test cases path to gui tests. For example you can filter out tests to single suite using scenario file: `-t tests/gui/scenarios/test_onezone_basic.py`.
+* `--test-type gui` - set the test type use by core Onedata test helpers to differ from
+"cucumber" tests etc.
+* `-t tests/gui` - standard `./test_run.py` parameter to set the test cases path to gui
+tests. For example you can filter out tests to single suite using scenario file:
+`-t tests/gui/scenarios/test_onezone_basic.py`.
 * `--driver=<Firefox|Chrome>` - set the browser to test in (will be launched in headless mode)
 
 
@@ -120,11 +124,29 @@ Example for **macOS**: (invoke from onedata repo root dir)
 **New parameters:**
 
 * `--local` - starts tests on host instead of starting them in pod.
-* `--update-etc-hosts` - adds entries to `/etc/hosts` for all pods in deployment. When using this option script has to be run with root privileges.   
-* `--add-test-domain` - when running tests on local machine option for adding entries to `/etc/hosts` is turned off by default. This may cause that some test will fail. You can enable adding entries to `/etc/hosts` using `--add-test-domain` option or add entries manually.
+* `--update-etc-hosts` - adds entries to `/etc/hosts` for all pods in deployment.
+When using this option script has to be run with root privileges.   
+* `--add-test-domain` - when running tests on local machine option for adding entries to
+`/etc/hosts` is turned off by default. This may cause that some test will fail.
+You can enable adding entries to `/etc/hosts` using `--add-test-domain` option or add
+entries manually.
 
 
 # 3. macOS environment setup
+
+## Building sources of op-worker, oz-worker and onepanel (optional)
+
+**Note:** This step is not needed if you want to start one-env using packages or launch
+test on other existing environment.
+
+If you wish to build your own sources to launch one-env environment using local build,
+follow these tips for Docker for Mac:
+- add: `/var/cache/ccache` and `/var/cache/rebar3` to _Resources > File sharing_ directories
+- if you use Docker for Mac version 3.5.x or newer, set Docket context to `default`
+using command:
+```sh
+docker context use default
+```
 
 ## Python and it's packages
 
@@ -133,7 +155,8 @@ Example for **macOS**: (invoke from onedata repo root dir)
 You should also install Command Line Tools for Xcode (version 12.5 is proven to work).
 You can do this using `xcode-select --install` or download from https://developer.apple.com/download/all.
 
-Also `brew` should be used to install dependencies needed to build Python. Depedencies to install:
+Also `brew` should be used to install dependencies needed to build Python.
+Depedencies to install:
 
 ```bash
 brew install zlib bzip2 openssl readline
@@ -142,7 +165,8 @@ brew install zlib bzip2 openssl readline
 ### Python virtualenv
 
 Only Python in version 3.6.x (preferable 3.6.13) is currently supported.
-It is recommended to install and use `virtualenv` (http://sourabhbajaj.com/mac-setup/Python/virtualenv.html)
+It is recommended to install and use `virtualenv`
+(http://sourabhbajaj.com/mac-setup/Python/virtualenv.html)
 
 After installation of `virtualenv` you should install `3.6.13` (or newer) Python - there
 are some issues with building it on macOS `11.1+`, so please use these pages for help:
