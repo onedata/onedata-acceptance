@@ -51,7 +51,7 @@ Feature: Basic files tab operations on symlinks in file browser
   Scenario: User downloads symlink of file
     When user of browser creates symlink of "file1" file in space "space1" in file browser
     And user of browser double clicks on item named "file1(1)" in file browser
-    Then user of browser sees that content of downloaded file "file1" is equal to: "11111"
+    Then user of browser sees that content of downloaded file "file1(1)" is equal to: "11111"
 
 
   Scenario: User creates symlink to symlink
