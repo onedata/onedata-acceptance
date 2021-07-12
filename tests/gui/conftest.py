@@ -276,7 +276,7 @@ def xvfb(request, screens, screen_width, screen_height, screen_depth):
         finally:
             xvfb_utils.stop_session(xvfb_proc)
     else:
-        yield [os.environ.get('DISPLAY', None)]
+        yield [os.environ.get('DISPLAY', 'DUMMY_DISPLAY')]
 
 
 @fixture(scope='function')
