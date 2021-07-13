@@ -100,8 +100,8 @@ def see_items_in_op_gui(selenium, browser_id, path, subfiles, tmp_memory,
     selenium[browser_id].refresh()
 
     try:
-        assert_file_browser_in_files_tab_in_op(selenium, browser_id,
-                                               op_container, tmp_memory)
+        assert_browser_in_tab_in_op(selenium, browser_id,
+                                    op_container, tmp_memory)
     except NoSuchElementException:
         go_to_filebrowser(selenium, browser_id, oz_page, op_container,
                           tmp_memory, space)
@@ -204,8 +204,8 @@ def assert_space_content_in_op_gui(config, selenium, user, op_container,
                                    tmp_memory, tmpdir, space_name, oz_page,
                                    provider, hosts):
     try:
-        assert_file_browser_in_files_tab_in_op(selenium, user, op_container,
-                                               tmp_memory)
+        assert_browser_in_tab_in_op(selenium, user, op_container,
+                                    tmp_memory)
     except (KeyError, NoSuchElementException):
         go_to_filebrowser(selenium, user, oz_page, op_container,
                           tmp_memory, space_name)
@@ -219,15 +219,15 @@ def see_num_of_items_in_path_in_op_gui(selenium, user, tmp_memory, op_container,
     tab_name = 'data'
 
     try:
-        assert_file_browser_in_files_tab_in_op(selenium, user, op_container,
-                                               tmp_memory)
+        assert_browser_in_tab_in_op(selenium, user, op_container,
+                                    tmp_memory)
     except KeyError:
         navigate_to_tab_in_op_using_gui(selenium, user, oz_page, provider,
                                         tab_name, hosts, modals)
         _select_item(user, tmp_memory, path)
         refresh_site(selenium, user)
-        assert_file_browser_in_files_tab_in_op(selenium, user, op_container,
-                                               tmp_memory)
+        assert_browser_in_tab_in_op(selenium, user, op_container,
+                                    tmp_memory)
     assert_num_of_files_are_displayed_in_file_browser(user, num, tmp_memory)
 
 
@@ -235,9 +235,8 @@ def assert_file_content_in_op_gui(text, path, space, selenium, user, users,
                                   provider, hosts, oz_page, op_container,
                                   tmp_memory, tmpdir, modals):
     try:
-        assert_file_browser_in_files_tab_in_op(selenium, user,
-                                               op_container,
-                                               tmp_memory)
+        assert_browser_in_tab_in_op(selenium, user,
+                                    op_container, tmp_memory)
         go_to_path_without_last_elem(user, tmp_memory, path)
     except (KeyError, NoSuchElementException):
         go_to_filebrowser(selenium, user, oz_page, op_container,
@@ -319,8 +318,8 @@ def successfully_upload_file_to_op_gui(path, selenium, browser_id, space,
 def upload_file_to_op_gui(path, selenium, browser_id, space, res, filename,
                           op_container, tmp_memory, oz_page, popups):
     try:
-        assert_file_browser_in_files_tab_in_op(selenium, browser_id,
-                                               op_container, tmp_memory)
+        assert_browser_in_tab_in_op(selenium, browser_id,
+                                    op_container, tmp_memory)
         go_to_path(browser_id, tmp_memory, path)
     except (KeyError, NoSuchElementException):
         go_to_filebrowser(selenium, browser_id, oz_page, op_container,
@@ -394,8 +393,8 @@ def go_to_filebrowser(selenium, browser_id, oz_page, op_container,
     click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id, space,
                                                   option_in_space_submenu,
                                                   oz_page)
-    assert_file_browser_in_files_tab_in_op(selenium, browser_id, op_container,
-                                           tmp_memory)
+    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
+                                tmp_memory)
 
 
 def open_modal_for_file_browser_item(selenium, browser_id, modals, modal_name,

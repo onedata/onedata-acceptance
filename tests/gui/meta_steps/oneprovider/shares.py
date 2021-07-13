@@ -6,8 +6,7 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
-from tests.gui.steps.oneprovider.data_tab import \
-    assert_file_browser_in_files_tab_in_op
+from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.steps.onezone.spaces import \
     click_on_option_of_space_on_left_sidebar_menu
 from tests.gui.steps.modal import (
@@ -53,8 +52,8 @@ def open_single_share_view_by_modal(selenium, browser_id, share_name, modals,
                                                  item_name, tmp_memory)
     click_share_info_icon_in_share_directory_modal(selenium, browser_id, modals,
                                                    share_name)
-    assert_file_browser_in_files_tab_in_op(selenium, browser_id, op_container,
-                                           tmp_memory, items_browser)
+    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
+                                tmp_memory, items_browser)
     is_selected_share_named(selenium, browser_id, share_name, op_container)
 
 
@@ -96,8 +95,8 @@ def open_shares_view_of_given_space(selenium, browser_id, oz_page, space_name,
 
     click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
                                                   space_name, option, oz_page)
-    assert_file_browser_in_files_tab_in_op(selenium, browser_id, op_container,
-                                           tmp_memory, items_browser)
+    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
+                                tmp_memory, items_browser)
 
 
 @wt(parsers.parse('user of {browser_id} opens "{share_name}" single '
