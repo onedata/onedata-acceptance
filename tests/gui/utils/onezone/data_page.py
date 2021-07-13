@@ -30,6 +30,8 @@ class Space(Element):
                          text='Shares')
     transfers = NamedButton('.one-list-level-2 .item-header',
                             text='Transfers')
+    datasets = NamedButton('.one-list-level-2 .item-header',
+                           text='Datasets')
     providers = NamedButton('.one-list-level-2 .item-header',
                             text='Providers')
     members = NamedButton('.one-list-level-2 .item-header',
