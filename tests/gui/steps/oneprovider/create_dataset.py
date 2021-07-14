@@ -12,16 +12,15 @@ from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 
 
-@wt(parsers.parse('user of {browser_id} clicks Mark this directory as Dataset'
-                  ' toggle on Datasets menu in file1'))
+@wt(parsers.parse('user of {browser_id} clicks Mark this file as dataset toggle'
+                  ' in Datasets modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_mark_directory_as_dataset_toggle(browser_id, selenium, modals):
     driver = selenium[browser_id]
     modals(driver).file_datasets.dataset_toggle.check()
 
 
-@wt(parsers.parse('user of {browser_id} clicks Close button on Datasets'
-                  ' menu in file1'))
+@wt(parsers.parse('user of {browser_id} clicks Close button in Datasets modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_close_dataset_menu_button(browser_id, selenium, modals):
     driver = selenium[browser_id]

@@ -24,12 +24,12 @@ Feature: Create Dataset
     And user of browser opened onezone page
     And user of browser logged as space-owner-user to Onezone service
 
-    Scenario: User creates dataset
-      When user of browser clicks "space1" on the spaces list in the sidebar
-      And user of browser clicks Files of "space1" in the sidebar
-      And user of browser sees file browser in files tab in Oneprovider page
-      And user of browser clicks on menu for "file1" file in file browser
-      And user of browser clicks "Datasets" option in data row menu in file browser
-      And user of browser clicks Mark this directory as Dataset toggle on Datasets menu in file1
-      And user of browser clicks Close button on Datasets menu in file1
-      Then user of browser sees Dataset status tag for "file1" in file browser
+    Scenario: User sees that file has dataset tag set after marking it as dataset
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser clicks on menu for "file1" file in file browser
+    And user of browser clicks "Datasets" option in data row menu in file browser
+    And user of browser clicks Mark this file as dataset toggle in Datasets modal
+    And user of browser clicks Close button in Datasets modal
+    Then user of browser sees Dataset status tag for "file1" in file browser

@@ -123,7 +123,7 @@ class Modals(object):
     file_details = WebItem('.modal-dialog', cls=FileDetailsModal)
     symbolic_link_details = WebItem('.modal-dialog',
                                     cls=SymbolicLinkDetailsModal)
-    file_datasets = WebItem(' .modal-dialog', cls=DatasetsModal)
+    file_datasets = WebItem('.modal-dialog', cls=DatasetsModal)
 
     def __init__(self, driver):
         self.driver = driver
