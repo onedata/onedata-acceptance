@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2016-2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+import re
 import yaml
 import json
 import time
@@ -43,7 +44,26 @@ def start_environment(scenario_path, request, hosts, patch_path, users, test_con
     started = False
     while not started and attempts < START_ENV_MAX_RETRIES:
         try:
-            init_helm()
+            is_helm_v2 = False
+            try:
+                helm_version_proc = sp.run(
+                    ['helm', 'version'],
+                    stdout=sp.PIPE
+                )
+                version_string = str(helm_version_proc.stdout)
+                version2_match = re.search(
+                    r'Server:.*v2',
+                    version_string
+                )
+                if version2_match:
+                    is_helm_v2 = True
+            except FileNotFoundError:
+                is_helm_v2 = False
+            
+            if is_helm_v2:
+                print('Helm version 2.x is used - invoking init helm...')
+                init_helm()
+
             run_onenv_command('init', cwd=None, onenv_path='one_env/onenv')
             if clean:
                 run_onenv_command('up', up_args)
