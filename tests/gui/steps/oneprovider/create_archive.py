@@ -14,7 +14,7 @@ import re
 
 
 @wt(parsers.parse('user of {browser_id} sees that item "{name}" has {number}'
-                  ' archives'))
+                  ' Archives'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_item_in_dataset_browser_has_number_archives(browser_id, item_name,
                                                        number, tmp_memory):
@@ -41,15 +41,15 @@ def click_option_in_data_row_menu_in_datasets_browser(selenium, browser_id,
     modals(driver).data_row_menu.options[option].click()
 
 
-@wt(parsers.parse('user of {browser_id} clicks Create button on create'
-                  ' archive menu'))
+@wt(parsers.parse('user of {browser_id} clicks Create button in Create'
+                  ' Archive modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_in_create_archive_menu(selenium, browser_id, modals):
     driver = selenium[browser_id]
     modals(driver).datasets_archive.create_button()
 
 
-@wt(parsers.parse('user of {browser_id} clicks on {} in "{name}" archives'))
+@wt(parsers.parse('user of {browser_id} clicks on {} in "{name}" Archives'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_number_in_archives(browser_id, tmp_memory, name):
     browser = tmp_memory[browser_id]['dataset_browser']
@@ -57,7 +57,7 @@ def click_on_number_in_archives(browser_id, tmp_memory, name):
 
 
 @wt(parsers.parse('user of {browser_id} sees "{state_status}" on first archive'
-                  ' state on Archives menu'))
+                  ' state in archive browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def see_archive_state(browser_id, tmp_memory, state_status):
     browser = tmp_memory[browser_id]['dataset_browser']
