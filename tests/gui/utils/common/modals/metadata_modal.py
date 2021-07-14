@@ -80,6 +80,7 @@ class MetadataModal(Modal):
     discard_changes = NamedButton('.btn-warning', text='Discard changes')
 
     loading_alert = Label('.resource-load-error')
+    editor_disabled = Label('.label-text')
 
     def __str__(self):
         return 'Metadata modal'
