@@ -13,7 +13,7 @@ from tests.utils.utils import repeat_failed
 
 
 @wt(parsers.parse('user of {browser_id} click Dataset write protection toggle'
-                  ' on Datasets menu'))
+                  ' in Datasets modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_protection_toggle(browser_id, selenium, modals):
     driver = selenium[browser_id]
@@ -21,7 +21,7 @@ def click_protection_toggle(browser_id, selenium, modals):
 
 
 @wt(parsers.parse('user of {browser_id} click Metadata write protection toggle'
-                  ' on Datasets menu'))
+                  ' in Datasets modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_protection_toggle(browser_id, selenium, modals):
     driver = selenium[browser_id]
@@ -29,7 +29,7 @@ def click_protection_toggle(browser_id, selenium, modals):
 
 
 @wt(parsers.parse('user of {browser_id} sees {text} label '
-                  'in File Metadata menu'))
+                  'in Metadata modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def see_editor_disabled_label(browser_id, selenium, modals, text):
     driver = selenium[browser_id]
