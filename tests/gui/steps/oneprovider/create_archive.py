@@ -57,7 +57,7 @@ def click_on_number_in_archives(browser_id, tmp_memory, name):
 
 
 @wt(parsers.parse('user of {browser_id} sees "{state_status}" on first archive'
-                  ' state on Archive menu'))
+                  ' state on Archives menu'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def see_archive_state(browser_id, tmp_memory, state_status):
     browser = tmp_memory[browser_id]['dataset_browser']

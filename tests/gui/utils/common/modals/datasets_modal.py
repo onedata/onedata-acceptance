@@ -22,3 +22,4 @@ class DatasetsModal(Modal):
 
     def __str__(self):
         return 'Datasets modal'
+
