@@ -19,12 +19,12 @@ Feature: Create Dataset
                     - file2: 110
                     - file3: 110
 
-
     And user opened browser window
     And user of browser opened onezone page
     And user of browser logged as space-owner-user to Onezone service
 
-    Scenario: User sees that file has dataset tag set after marking it as dataset
+
+  Scenario: User sees that file has dataset tag set after marking it as dataset
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
