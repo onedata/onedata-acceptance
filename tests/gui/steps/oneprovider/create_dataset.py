@@ -15,7 +15,7 @@ from tests.utils.utils import repeat_failed
 @wt(parsers.parse('user of {browser_id} clicks Mark this file as dataset toggle'
                   ' in Datasets modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_mark_directory_as_dataset_toggle(browser_id, selenium, modals):
+def click_mark_file_as_dataset_toggle(browser_id, selenium, modals):
     driver = selenium[browser_id]
     modals(driver).file_datasets.dataset_toggle.check()
 

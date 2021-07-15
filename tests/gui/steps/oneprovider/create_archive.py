@@ -44,7 +44,7 @@ def click_option_in_data_row_menu_in_datasets_browser(selenium, browser_id,
 @wt(parsers.parse('user of {browser_id} clicks Create button in Create'
                   ' Archive modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_in_create_archive_menu(selenium, browser_id, modals):
+def click_button_in_create_archive_modal(selenium, browser_id, modals):
     driver = selenium[browser_id]
     modals(driver).datasets_archive.create_button()
 
