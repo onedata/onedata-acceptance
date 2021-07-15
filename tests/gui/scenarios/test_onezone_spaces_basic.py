@@ -15,6 +15,7 @@ from tests.gui.steps.rest.env_up.users import *
 from tests.gui.steps.rest.env_up.groups import *
 from tests.gui.steps.rest.env_up.spaces import *
 
+
 from tests.gui.steps.common.url import *
 from tests.gui.steps.common.browser_creation import *
 from tests.gui.steps.common.copy_paste import *
@@ -47,6 +48,7 @@ from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
+from tests.gui.steps.oneprovider.shared_linked_folder import *
 
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
@@ -69,3 +71,4 @@ scenarios('../features/onezone/space/create_new_space.feature')
 scenarios('../features/onezone/space/multispace.feature')
 scenarios('../features/onezone/space/spaces_memberships.feature')
 scenarios('../features/onezone/space/spaces_memberships_privileges.feature')
+scenarios('../features/oneprovider/shares/shared_folder_test.feature')
