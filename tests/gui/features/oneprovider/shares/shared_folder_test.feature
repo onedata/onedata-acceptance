@@ -21,19 +21,23 @@ Feature: shared and linked folders
     And user of browser logged as space-owner-user to Onezone service
 
 
-    Scenario: User shares folder
-      When user of browser clicks on Files in the space1 sidebar
-      And user of browser clicks on dir2 options menu
-      And user of browser clicks on the share option in the popover menu in dir2
-      And user of browser clicks on the create button in the modal window
-      And user of browser clicks on the close button in the second modal window
-      And user of browser clicks on dir1 options menu to make symbolic link
-      And user of browser clicks on the share option in the popover menu in dir1
-      And user of browser doubleclicks on the dir2 to enter it
-      And user of browser clicks on the place_the_symbolic_link button in the top right corner
-      And user of browser clicks on the shares button in the left sidebar
-      And user of browser clicks on the dir2 button to enter it in shares browser
-      And user of browser doubleclicks on the dir2 button in the item browser in shares page
-      Then user of browser sees error icon in the share_browser
+  Scenario: User cannot enter symlinked directory in shared directory which points outside share
+    When user of browser opens file browser for "space1" space
+    And user of browser clicks on menu for "dir2" file in file browser
+
+    And user of browser clicks "Share" option in data row menu in file browser
+    And user of browser clicks on "Create" button in modal "Share directory"
+    And user of browser clicks on "Close" button in modal "Share directory"
+    And user of browser clicks on menu for "dir1" file in file browser
+    And user of browser clicks "Create symbolic link" option in data row menu in file browser
+    And user of browser double clicks on item named "dir2" in file browser
+    And user of browser clicks file browser symlink button
+
+    And user of browser opens shares view of "space1"
+    And user of browser clicks "dir2" share in shares browser on shares view
+    And user of browser sees file browser on single share view
+    And user of browser double clicks on item named "dir2" in file browser
+    Then user of browser sees that item named "dir1" is malformed symbolic link in file browser
+
 
 
