@@ -29,6 +29,7 @@ class DataRow(PageObject):
     metadata_tag = WebElement('.file-status-metadata')
     qos_tag = WebElement('.file-status-qos')
     dataset_tag = WebElement('.file-status-dataset')
+    dataset_arrow_tag = WebElement('.dataset-status-arrow')
     data_protected_tag = WebElement('.file-data-protected-icon')
     metadata_protected_tag = WebElement('.file-metadata-protected-icon')
     no_access_tag = WebElement('.file-status-forbidden')

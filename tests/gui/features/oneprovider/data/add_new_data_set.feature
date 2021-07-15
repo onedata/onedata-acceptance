@@ -1,4 +1,4 @@
-Feature: Create archive
+Feature: Add new data set
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -19,12 +19,12 @@ Feature: Create archive
                     - file1: 100
                     - file2
 
-
     And user opened browser window
     And user of browser opened onezone page
     And user of browser logged as user1 to Onezone service
 
-    Scenario: User sees Editor disabled label after marking dataset and metadata write protection
+
+  Scenario: User sees Editor disabled label after marking dataset and metadata write protection
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
@@ -41,7 +41,8 @@ Feature: Create archive
     And user of browser sees Editor disabled label in Metadata modal
     And user of browser clicks on "Close" button in metadata modal
 
-    Scenario: User sees that file has dataset tag with arrow after marking its parent directory as dataset
+
+  Scenario: User sees that file has dataset tag with arrow after marking its parent directory as dataset
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
@@ -50,6 +51,7 @@ Feature: Create archive
     And user of browser clicks Mark this file as dataset toggle in Datasets modal
     And user of browser clicks Close button in Datasets modal
     Then user of browser double clicks on item named "dir1" in file browser
-    And user of browser sees Dataset status tag for "file1" in file browser
+    And user of browser sees Dataset status tag with arrow for "file1" in file browser
+
 
 
