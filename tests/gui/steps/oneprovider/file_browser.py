@@ -9,6 +9,7 @@ __license__ = ("This software is released under the MIT license cited in "
 
 from time import time
 from datetime import datetime
+import tarfile
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
@@ -16,6 +17,7 @@ from tests.gui.steps.modal import click_modal_button
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import wt, parsers
+
 
 
 @wt(parsers.parse('user of {browser_id} sees "{msg}" '
@@ -460,4 +462,19 @@ def assert_property_in_symlink_dets_modal(selenium, browser_id, link_property,
                                       browser_id)
     assert actual_value == value, (f'{link_property} has {actual_value} '
                                    f'not expected {value}')
+
+
+@wt(parsers.parse('user of {browser_id} checks contents {contents} of downloaded {file_name} file '
+                  'in download directory'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_contents_downloaded_tar_file(selenium, browser_id, contents, file_name, tmpdir):
+    
+    downloaded_tar_filename = tmpdir.join(browser_id, 'download', file_name).strpath
+
+    assert tarfile.is_tarfile(downloaded_tar_filename)
+    
+    tar = tarfile.open(downloaded_tar_filename)
+    files_list = tar.getnames()
+    for f in files_list :
+        assert f in contents, (f'{f} is missing in downloaded tar file ')
 
