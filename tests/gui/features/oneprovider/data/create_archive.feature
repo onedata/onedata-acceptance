@@ -19,12 +19,12 @@ Feature: Create archive
                     - file1: 100
                     - file2
 
-
     And user opened browser window
     And user of browser opened onezone page
     And user of browser logged as user1 to Onezone service
 
-    Scenario: User sees state on Archives menu after creating archive
+
+  Scenario: User sees state on Archives menu after creating archive
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
