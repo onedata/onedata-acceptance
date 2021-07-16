@@ -45,6 +45,7 @@ from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
 from tests.gui.steps.oneprovider.qos import *
+from tests.gui.steps.oneprovider.permissions import *
 from tests.gui.meta_steps.oneprovider.metadata import *
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.oneprovider.qos import *
@@ -60,6 +61,5 @@ from tests.utils.acceptance_utils import *
 def screens():
     return [0]
 
-
 scenarios('../features/oneprovider/data/hardlinks.feature')
-scenarios('../features/oneprovider/data/symlinks.feature')
+#scenarios('../features/oneprovider/data/symlinks.feature')
