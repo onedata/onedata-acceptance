@@ -7,7 +7,7 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
+from tests.gui.conftest import WAIT_FRONTEND
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 from tests.gui.utils.generic import transform
@@ -29,8 +29,7 @@ def click_protection_toggle(browser_id, selenium, modals):
     modals(driver).file_datasets.metadata_protection_toggle.check()
 
 
-@wt(parsers.parse('user of {browser_id} sees {text} label '
-                  'in Metadata modal'))
+@wt(parsers.parse('user of {browser_id} sees {text} label in Metadata modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def see_editor_disabled_label(browser_id, selenium, modals, text):
     driver = selenium[browser_id]
@@ -50,3 +49,34 @@ def see_tag_with_arrow(browser_id, status_type, item_name, tmp_memory):
               f' not visible'
     assert data_tag and arrow_tag, err_msg
 
+
+@wt(parsers.parse('user of {browser_id} clicks Remove button on Remove '
+                  'Selected Dataset modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_remove_button_on_remove_selected_dataset_modal(browser_id, selenium,
+                                                         modals):
+    driver = selenium[browser_id]
+    modals(driver).remove_selected_dataset.remove_button()
+
+
+@wt(parsers.parse('user of {browser_id} sees "{name}" in dataset browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def see_name_in_dataset_browser(browser_id, name, tmp_memory):
+    browser = tmp_memory[browser_id]['dataset_browser']
+    assert name in browser.data, f'{name} not found in dataset list'
+
+
+@wt(parsers.parse('user of {browser_id} does not see "{name}" in dataset'
+                  ' browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def not_see_name_in_dataset_browser(browser_id, name, tmp_memory):
+    browser = tmp_memory[browser_id]['dataset_browser']
+    assert name not in browser.data, f'{name} found in dataset list'
+
+
+@wt(parsers.parse('user of {browser_id} double clicks on item named'
+                  ' "{item_name}" in dataset browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def double_click_on_item_in_file_browser(browser_id, item_name, tmp_memory):
+    browser = tmp_memory[browser_id]['dataset_browser']
+    browser.data[item_name].double_click()
