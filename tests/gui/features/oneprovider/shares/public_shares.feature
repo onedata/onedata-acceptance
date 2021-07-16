@@ -65,6 +65,7 @@ Feature: Basic operations on public shares in file browser
 
     Then user of browser1 sees that public share is named "renamed_share_dir1"
 
+
   Scenario: User sees that he no longer can view public share after owner removed it
     When user of space_owner_browser opens file browser for "space1" space
     And user of space_owner_browser hands "share_dir1" share's URL of "dir1" to user of browser1
@@ -75,8 +76,9 @@ Feature: Basic operations on public shares in file browser
     And user of space_owner_browser opens "share_dir1" single share view of space "space1" using sidebar
     And user of space_owner_browser removes current share
 
-    And user of browser1 enters "share_dir1" to check content of directory
-    And user of browser1 sees "NO SUCH FILE OR DIRECTORY" sign in the directory browser
+    And user of browser1 sees file browser on share's public interface
+    And user of browser1 double clicks on item named "dir1" in file browser
+    And user of browser1 sees "NO SUCH FILE OR DIRECTORY" sign in the file browser
     And user of browser1 refreshes site
 
     Then user of browser1 sees "Share not found" error

@@ -7,7 +7,6 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import wt, parsers
 
@@ -71,27 +70,19 @@ def assert_file_browser_in_public_share(selenium, browser_id, public_share,
     tmp_memory[browser_id]['file_browser'] = file_browser
 
 
-@wt(parsers.parse('user of {browser_id} enters "share_dir1" directory'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def enter_shared_directory_in_shared_folder(selenium, browser_id, public_share,
-                                            tmp_memory):
-    _change_iframe_for_public_share_page(selenium, browser_id)
-    file_browser = public_share(selenium[browser_id]).file_browser
-    tmp_memory[browser_id]['file_browser'] = file_browser
-    file_browser.data[0].double_click()
-
-
 @wt(parsers.parse('user of {browser_id} sees "{expected_msg}" sign in the '
-                  'directory browser'))
+                  'file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def empty_share_directory_view(selenium, browser_id, tmp_memory, public_share,expected_msg):
+def empty_share_directory_view(selenium, browser_id, tmp_memory, public_share,
+                               expected_msg):
     file_browser = public_share(selenium[browser_id]).file_browser
     tmp_memory[browser_id]['file_browser'] = file_browser
 
-    displayed_msg = file_browser.error_dir_msg
-    assert expected_msg == displayed_msg, (f'Displayed empty dir msg '
-                                           f'"{displayed_msg}" does not match '
-                                           f'expected one "{expected_msg}"')
+    assert expected_msg == file_browser.error_dir_msg, (f'Displayed empty dir '
+                                            f'msg '
+                                            f'"{file_browser.error_dir_msg}" '
+                                            f'does not match '
+                                            f'expected one "{expected_msg}"')
 
 
 @wt(parsers.parse('user of {browser_id} sees "{error_msg}" error'))
