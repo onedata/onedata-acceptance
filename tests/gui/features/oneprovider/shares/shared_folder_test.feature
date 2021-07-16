@@ -1,4 +1,6 @@
-Feature: shared and linked folders
+Feature: Shared and linked folders
+
+
   Background:
     Given initial users configuration in "onezone" Onezone service:
             - space-owner-user

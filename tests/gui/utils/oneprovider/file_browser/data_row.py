@@ -57,12 +57,6 @@ class DataRow(PageObject):
         return ('browser-file' in self._icon.get_attribute('class') and
                 'oneicon-shortcut' in self._icon_tag.get_attribute('class'))
 
-
-    def is_symbolic_link_invalid(self):
-        return ('browser-file' in self._icon.get_attribute('class') and
-                'oneicon-x' in self._icon_tag.get_attribute('class'))
-
-
     def is_directory_symbolic_link(self):
         return ('browser-directory' in self._icon.get_attribute('class') and
                 'oneicon-shortcut' in self._icon_tag.get_attribute('class'))

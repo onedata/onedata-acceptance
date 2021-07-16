@@ -64,5 +64,5 @@ def screens():
     return [0, 1]
 
 
-#scenarios('../features/oneprovider/shares/public_shares.feature')
+scenarios('../features/oneprovider/shares/public_shares.feature')
 scenarios('../features/oneprovider/shares/shared_folder_test.feature')
