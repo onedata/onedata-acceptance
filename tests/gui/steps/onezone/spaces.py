@@ -408,14 +408,15 @@ def click_get_support_button_on_providers_page(selenium, browser_id, oz_page):
     oz_page(driver)['data'].providers_page.add_support()
 
 
-@wt(parsers.parse('user of {browser_id} sees {text} label on providers page'))
+@wt(parsers.parse('user of {browser_id} sees {text} alert on providers page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def see_insufficient_privileges_label_on_providers_page(selenium, browser_id,
                                                         oz_page, text):
     driver = selenium[browser_id]
     item_text = (oz_page(driver)['data'].providers_page.get_support_page
                  .insufficient_privileges)
-    assert item_text == text, f'label with {text} not found, {item_text}'
+    assert item_text == text, f'found {item_text} alert instead of expected' \
+                              f' {text}'
 
 
 @wt(parsers.parse('user of {browser_id} clicks Deploy your own provider tab '
