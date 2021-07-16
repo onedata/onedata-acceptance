@@ -4,6 +4,9 @@ Feature: Basic files tab operations on hardlinks in file browser
   Background:
     Given initial users configuration in "onezone" Onezone service:
             - space-owner-user
+    And initial groups configuration in "onezone" Onezone service:
+            group1:
+                owner: space-owner-user
     And initial spaces configuration in "onezone" Onezone service:
           space1:
             owner: space-owner-user
@@ -19,6 +22,8 @@ Feature: Basic files tab operations on hardlinks in file browser
                     - dir2
                     - file2: 11111
                 - file1: 11111
+            groups:
+                - group1
 
     And user opened browser window
     And user of browser opened onezone page
@@ -194,7 +199,7 @@ Feature: Basic files tab operations on hardlinks in file browser
     And user of browser sees that JSON textarea in metadata modal contains '{"id": 1}'
 
 
-  Scenario: User changes hardlink posix permissions inside of directory
+  Scenario: User sees change of hardlink posix permission
     When user of browser opens file browser for "space1" space
     And user of browser clicks on menu for "file1" file in file browser
     And user of browser clicks "Create hard link" option in data row menu in file browser
@@ -214,24 +219,27 @@ Feature: Basic files tab operations on hardlinks in file browser
     Then user of browser sees that current permission is "775"
 
 
-#  Scenario: User changes hardlink acl permissions outside of directory
-#    When user of browser opens file browser for "space1" space
-#    And user of browser clicks on menu for "file1" file in file browser
-#    And user of browser clicks "Create hard link" option in data row menu in file browser
-#    And user of browser double clicks on item named "dir1" in file browser
-#    And user of browser clicks file browser hardlink button
-#
-#    And user of browser clicks on menu for "file1" file in file browser
-#    And user of browser clicks "Permissions" option in data row menu in file browser
-#    And user of browser sees that "Edit permissions" modal has appeared
-#    And user of browser selects "POSIX" permission type in edit permissions modal
-#    And user of browser sets "775" permission code in edit permissions modal
-#    And user of browser clicks "Save" confirmation button in displayed modal
-#
-#    And user of browser opens file browser for "space1" space
-#    And user of browser clicks on menu for "file1" file in file browser
-#    And user of browser clicks "Permissions" option in data row menu in file browser
-#    Then user of browser_user1 sees that current permission is "775"
+  Scenario: User sees change of hardlink ACL permission
+    When user of browser opens file browser for "space1" space
+    And user of browser clicks on menu for "file1" file in file browser
+    And user of browser clicks "Create hard link" option in data row menu in file browser
+    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks file browser hardlink button
+
+    And user of browser opens file browser for "space1" space
+    And user of browser clicks on menu for "file1" file in file browser
+    And user of browser clicks "Permissions" option in data row menu in file browser
+    And user of browser sees that "Edit permissions" modal has appeared
+    And user of browser selects "ACL" permission type in edit permissions modal
+
+    And user of browser adds ACE with "attributes:read attributes" privilege set for group group1
+    And user of browser adds ACE with [general:delete, acl:read acl] privileges set for user space-owner-user
+    And user of browser clicks "Save" confirmation button in displayed modal
 
 
-
+    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks on menu for "file1" file in file browser
+    And user of browser clicks "Permissions" option in data row menu in file browser
+    And user of browser sees that "Edit permissions" modal has appeared
+    And user of browser selects "ACL" permission type in edit permissions modal
+    Then user of browser sees exactly 2 ACL records in edit permissions modal
