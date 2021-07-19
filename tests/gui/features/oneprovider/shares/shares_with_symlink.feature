@@ -1,4 +1,4 @@
-Feature: Shared and linked folders
+Feature: Shares with linked directories
 
 
   Background:
@@ -24,12 +24,14 @@ Feature: Shared and linked folders
 
 
   Scenario: User cannot enter symlinked directory in shared directory which points outside share
+    # create share
     When user of browser opens file browser for "space1" space
     And user of browser clicks on menu for "dir2" file in file browser
-
     And user of browser clicks "Share" option in data row menu in file browser
     And user of browser clicks on "Create" button in modal "Share directory"
     And user of browser clicks on "Close" button in modal "Share directory"
+
+    # create and place symbolic link
     And user of browser clicks on menu for "dir1" file in file browser
     And user of browser clicks "Create symbolic link" option in data row menu in file browser
     And user of browser double clicks on item named "dir2" in file browser
