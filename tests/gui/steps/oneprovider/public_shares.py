@@ -73,7 +73,7 @@ def assert_file_browser_in_public_share(selenium, browser_id, public_share,
 @wt(parsers.parse('user of {browser_id} sees "{expected_msg}" sign in the '
                   'file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def empty_share_directory_view(selenium, browser_id, tmp_memory, public_share,
+def assert_empty_file_browser_in_public_share(selenium, browser_id, tmp_memory, public_share,
                                expected_msg):
     file_browser = public_share(selenium[browser_id]).file_browser
     tmp_memory[browser_id]['file_browser'] = file_browser

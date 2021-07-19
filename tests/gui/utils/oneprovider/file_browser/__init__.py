@@ -39,7 +39,7 @@ class _FileBrowser(PageObject):
     empty_dir_msg = Label('.empty-dir-text')
     _empty_dir_icon = WebElement('.empty-dir-image')
     _bottom = WebElement('.table-bottom-spacing')
-    error_dir_msg= Label('.error-dir-text')
+    error_dir_msg = Label('.error-dir-text')
 
     _upload_input = WebElement('.fb-upload-trigger input')
 
