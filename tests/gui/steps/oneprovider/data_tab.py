@@ -557,7 +557,8 @@ def assert_provider_in_space(selenium, browser_id, provider, hosts, oz_page):
     _assert_provider_in_space(selenium, browser_id, provider, oz_page)
 
 
-@wt(parsers.parse('user of {browser_id} clicks file browser {button} button'))
+@wt(parsers.parse('user of {browser_id} clicks {button} button from file '
+                  'browser menu bar'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_file_browser_button(browser_id, button, tmp_memory):
     file_browser = tmp_memory[browser_id]['file_browser']

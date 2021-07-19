@@ -35,7 +35,7 @@ Feature: Shares with linked directories
     And user of browser clicks on menu for "dir1" file in file browser
     And user of browser clicks "Create symbolic link" option in data row menu in file browser
     And user of browser double clicks on item named "dir2" in file browser
-    And user of browser clicks file browser symlink button
+    And user of browser clicks "Place symbolic link" button from file browser menu bar
 
     And user of browser opens shares view of "space1"
     And user of browser clicks "dir2" share in shares browser on shares view
