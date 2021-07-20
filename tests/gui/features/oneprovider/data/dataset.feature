@@ -20,6 +20,8 @@ Feature: Basic dataset operations
                         - dir3:
                           - dir4:
                             - dir5
+                        - file2: 150
+                    - file3: 160
 
     And user opened browser window
     And user of browser opened onezone page
@@ -130,3 +132,88 @@ Feature: Basic dataset operations
     And user of browser sees that metadata write protection toggle is checked on "/space1/dir2/dir3/dir4" in ancestors list
     And user of browser sees that data write protection toggle is unchecked on "/space1/dir2/dir3/dir4" in ancestors list
     And user of browser clicks Close button in Datasets modal
+
+
+  Scenario: User sees data protected tag in modal's label of created file's hardlink
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser clicks on menu for "file3" file in file browser
+    And user of browser clicks "Create hard link" option in data row menu in file browser
+    And user of browser clicks file browser hardlink button
+
+    And user of browser clicks on menu for "file3" file in file browser
+    And user of browser clicks "Datasets" option in data row menu in file browser
+    And user of browser clicks Mark this file as dataset toggle in Datasets modal
+    And user of browser click Dataset write protection toggle in Datasets modal
+    And user of browser clicks Close button in Datasets modal
+
+    And user of browser clicks file browser refresh button
+    And user of browser clicks on menu for "file3(1)" file in file browser
+    And user of browser clicks "Datasets" option in data row menu in file browser
+    Then user of browser sees "File's data is write protected" label in Datasets modal
+
+
+  Scenario: User sees data and metadata protected tags on created file's hardlink
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser clicks on menu for "file3" file in file browser
+    And user of browser clicks "Create hard link" option in data row menu in file browser
+    And user of browser clicks file browser hardlink button
+
+    And user of browser clicks on menu for "file3" file in file browser
+    And user of browser clicks "Datasets" option in data row menu in file browser
+    And user of browser clicks Mark this file as dataset toggle in Datasets modal
+    And user of browser click Dataset write protection toggle in Datasets modal
+    And user of browser clicks Close button in Datasets modal
+
+    And user of browser clicks file browser refresh button
+    And user of browser clicks on menu for "file3(1)" file in file browser
+    And user of browser clicks "Datasets" option in data row menu in file browser
+    And user of browser clicks Mark this file as dataset toggle in Datasets modal
+    And user of browser click Metadata write protection toggle in Datasets modal
+    And user of browser clicks Close button in Datasets modal
+
+    Then user of browser sees data protected status tag for "file3(1)" in file browser
+    And user of browser sees metadata protected status tag for "file3(1)" in file browser
+
+
+  Scenario:  User sees both metadata and data protected tags on file's hardlinks in different directories
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks on menu for "file1" file in file browser
+    And user of browser clicks "Create hard link" option in data row menu in file browser
+    And user of browser changes current working directory to home using breadcrumbs
+
+    And user of browser double clicks on item named "dir2" in file browser
+    And user of browser clicks file browser hardlink button
+    And user of browser changes current working directory to home using breadcrumbs
+
+    And user of browser clicks on menu for "dir1" directory in file browser
+    And user of browser clicks "Datasets" option in data row menu in file browser
+    And user of browser clicks Mark this file as dataset toggle in Datasets modal
+    And user of browser click Dataset write protection toggle in Datasets modal
+    And user of browser clicks Close button in Datasets modal
+
+    And user of browser clicks on menu for "dir2" directory in file browser
+    And user of browser clicks "Datasets" option in data row menu in file browser
+    And user of browser clicks Mark this file as dataset toggle in Datasets modal
+    And user of browser click Metadata write protection toggle in Datasets modal
+    And user of browser clicks Close button in Datasets modal
+
+    And user of browser double clicks on item named "dir1" in file browser
+    Then user of browser sees data protected status tag for "file1" in file browser
+    And user of browser sees metadata protected status tag for "file1" in file browser
+    And user of browser changes current working directory to home using breadcrumbs
+
+    And user of browser double clicks on item named "dir2" in file browser
+    And user of browser sees data protected status tag for "file1" in file browser
+    And user of browser sees metadata protected status tag for "file1" in file browser
+
+
+
+
+

@@ -135,3 +135,12 @@ def see_toggle_checked_on_item_in_ancestor_list(browser_id, selenium, modals,
     elif text == 'metadata':
         err_msg = f'metadata write protection toggle is checked on {name}'
         assert item.metadata_protection_toggle.is_unchecked(), err_msg
+
+
+@wt(parsers.parse('user of {browser_id} sees "{text}" label in Datasets modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def see_toggle_checked_on_item_in_ancestor_list(browser_id, selenium, modals,
+                                                text):
+    driver = selenium[browser_id]
+    assert text in modals(driver).file_datasets.protected_tag_label, \
+        f'Text {text} not found in label '
