@@ -147,6 +147,7 @@ class GetSupportPage(PageObject):
     token_textarea = Label('.active textarea')
     copy = Button('.request-support-tab .copy-btn')
     forbidden_alert = WebElement('.error')
+    insufficient_privileges = Label('.text-center')
 
 
 class SpaceProvidersPage(PageObject):
