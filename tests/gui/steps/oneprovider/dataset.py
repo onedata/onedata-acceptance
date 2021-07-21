@@ -11,6 +11,7 @@ from tests.gui.conftest import WAIT_FRONTEND
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 from tests.gui.utils.generic import transform
+import time
 
 
 @wt(parsers.parse('user of {browser_id} click Dataset write protection toggle'
@@ -78,10 +79,17 @@ def not_see_name_in_dataset_browser(browser_id, name, tmp_memory):
 @wt(parsers.parse('user of {browser_id} double clicks on item named'
                   ' "{item_name}" in dataset browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def double_click_on_item_in_dataset_browser(browser_id, item_name, tmp_memory):
+def double_click_on_item_in_dataset_browser(browser_id, item_name, tmp_memory,
+                                            op_container, selenium):
     browser = tmp_memory[browser_id]['dataset_browser']
-    while item_name in browser.data:
+    breadcrumbs1 = (op_container(selenium[browser_id]).dataset_browser
+                    .breadcrumbs.pwd())
+    start = time.time()
+    while breadcrumbs1 == (op_container(selenium[browser_id]).dataset_browser
+                           .breadcrumbs.pwd()):
         browser.data[item_name].double_click()
+        if start+time.time() > start+WAIT_FRONTEND:
+            break
 
 
 @wt(parsers.parse('user of {browser_id} sees that {text} write protection '
