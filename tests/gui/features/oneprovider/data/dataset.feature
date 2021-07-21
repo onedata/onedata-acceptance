@@ -134,7 +134,8 @@ Feature: Basic dataset operations
     And user of browser clicks Close button in Datasets modal
 
 
-  Scenario: User sees data protected tag in modal's label of created file's hardlink
+  Scenario: User sees data protection tag in dataset modal of file's hardlink
+    #create hardlink
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
@@ -142,19 +143,22 @@ Feature: Basic dataset operations
     And user of browser clicks "Create hard link" option in data row menu in file browser
     And user of browser clicks file browser hardlink button
 
+    #mark file as dataset and set data protection
     And user of browser clicks on menu for "file3" file in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
     And user of browser clicks Mark this file as dataset toggle in Datasets modal
     And user of browser click Dataset write protection toggle in Datasets modal
     And user of browser clicks Close button in Datasets modal
 
+    #check file's data protection
     And user of browser clicks file browser refresh button
     And user of browser clicks on menu for "file3(1)" file in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
     Then user of browser sees "File's data is write protected" label in Datasets modal
 
 
-  Scenario: User sees data and metadata protected tags on created file's hardlink
+  Scenario: User sees data and metadata protection tags on created file's hardlink
+    #create hardlink
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
@@ -162,12 +166,14 @@ Feature: Basic dataset operations
     And user of browser clicks "Create hard link" option in data row menu in file browser
     And user of browser clicks file browser hardlink button
 
+    #mark file as dataset and set data protection
     And user of browser clicks on menu for "file3" file in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
     And user of browser clicks Mark this file as dataset toggle in Datasets modal
     And user of browser click Dataset write protection toggle in Datasets modal
     And user of browser clicks Close button in Datasets modal
 
+    #mark hardlink as dataset and set data protection
     And user of browser clicks file browser refresh button
     And user of browser clicks on menu for "file3(1)" file in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
@@ -175,11 +181,13 @@ Feature: Basic dataset operations
     And user of browser click Metadata write protection toggle in Datasets modal
     And user of browser clicks Close button in Datasets modal
 
+    #check hardlink's data protection tags
     Then user of browser sees data protected status tag for "file3(1)" in file browser
     And user of browser sees metadata protected status tag for "file3(1)" in file browser
 
 
-  Scenario:  User sees both metadata and data protected tags on file's hardlinks in different directories
+  Scenario:  User sees metadata and data protection tags on file and hardlink in different directories
+    #create hardlink
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
@@ -192,6 +200,7 @@ Feature: Basic dataset operations
     And user of browser clicks file browser hardlink button
     And user of browser changes current working directory to home using breadcrumbs
 
+    #mark directories as dataset and set data protection
     And user of browser clicks on menu for "dir1" directory in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
     And user of browser clicks Mark this file as dataset toggle in Datasets modal
@@ -204,6 +213,7 @@ Feature: Basic dataset operations
     And user of browser click Metadata write protection toggle in Datasets modal
     And user of browser clicks Close button in Datasets modal
 
+    #check file's and hardlink's protection status tagss
     And user of browser double clicks on item named "dir1" in file browser
     Then user of browser sees data protected status tag for "file1" in file browser
     And user of browser sees metadata protected status tag for "file1" in file browser
