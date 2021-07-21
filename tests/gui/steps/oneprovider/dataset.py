@@ -78,9 +78,10 @@ def not_see_name_in_dataset_browser(browser_id, name, tmp_memory):
 @wt(parsers.parse('user of {browser_id} double clicks on item named'
                   ' "{item_name}" in dataset browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def double_click_on_item_in_file_browser(browser_id, item_name, tmp_memory):
+def double_click_on_item_in_dataset_browser(browser_id, item_name, tmp_memory):
     browser = tmp_memory[browser_id]['dataset_browser']
-    browser.data[item_name].double_click()
+    while item_name in browser.data:
+        browser.data[item_name].double_click()
 
 
 @wt(parsers.parse('user of {browser_id} sees that {text} write protection '
@@ -135,3 +136,23 @@ def see_toggle_checked_on_item_in_ancestor_list(browser_id, selenium, modals,
     elif text == 'metadata':
         err_msg = f'metadata write protection toggle is checked on {name}'
         assert item.metadata_protection_toggle.is_unchecked(), err_msg
+
+
+@wt(parsers.parse('user of {browser_id} clicks Proceed button on'
+                  ' Detach Dataset modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_proceed_button_on_detach_dataset_modal(browser_id, selenium, modals):
+    driver = selenium[browser_id]
+    modals(driver).detach_dataset.proceed()
+
+
+@wt(parsers.parse('user of {browser_id} clicks on {name} button '
+                  'on dataset browser page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_detached_tab(browser_id, oz_page, selenium, name):
+    driver = selenium[browser_id]
+    driver.switch_to.default_content()
+    if name == 'detached':
+        oz_page(driver)['data'].dataset_page.detached()
+    elif name == 'attached':
+        oz_page(driver)['data'].dataset_page.attached()

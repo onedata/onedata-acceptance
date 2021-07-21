@@ -110,12 +110,18 @@ def assert_btn_is_not_in_file_browser_menu_bar(selenium, browser_id, btn_list,
 
 
 @wt(parsers.parse('user of {browser_id} sees that current working directory '
-                  'displayed in breadcrumbs is {path}'))
+                  'displayed in breadcrumbs on {text} browser is {path}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def is_displayed_breadcrumbs_in_data_tab_in_op_correct(selenium, browser_id,
-                                                       path, op_container):
+                                                       path, op_container,
+                                                       text):
     driver = selenium[browser_id]
-    breadcrumbs = op_container(driver).file_browser.breadcrumbs.pwd()
+    breadcrumbs = ' '
+    if text == 'file':
+        breadcrumbs = op_container(driver).file_browser.breadcrumbs.pwd()
+    elif text == 'dataset':
+        breadcrumbs = op_container(driver).dataset_browser.breadcrumbs.pwd()
+
     assert path == breadcrumbs, (f'expected breadcrumbs {path}; '
                                  f'displayed: {breadcrumbs}')
 

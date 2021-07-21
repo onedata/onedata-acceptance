@@ -37,22 +37,22 @@ Feature: Basic files tab operations on nested directory structure in file browse
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser sees that current working directory displayed in breadcrumbs is space1
+    And user of browser sees that current working directory displayed in breadcrumbs on file browser is space1
 
     And user of browser double clicks on item named "dir2" in file browser
-    And user of browser sees that current working directory displayed in breadcrumbs is /dir2
+    And user of browser sees that current working directory displayed in breadcrumbs on file browser is /dir2
     And user of browser double clicks on item named "dir4" in file browser
-    And user of browser sees that current working directory displayed in breadcrumbs is /dir2/dir4
+    And user of browser sees that current working directory displayed in breadcrumbs on file browser is /dir2/dir4
 
     And user of browser changes current working directory to home using breadcrumbs
-    Then user of browser sees that current working directory displayed in breadcrumbs is space1
+    Then user of browser sees that current working directory displayed in breadcrumbs on file browser is space1
 
 
   Scenario: User removes directory containing several files
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser sees that current working directory displayed in breadcrumbs is space1
+    And user of browser sees that current working directory displayed in breadcrumbs on file browser is space1
 
     And user of browser clicks on menu for "dir1" directory in file browser
     And user of browser clicks "Delete" option in data row menu in file browser

@@ -162,6 +162,11 @@ class _Provider(PageObject):
     name = id = Label('a .tab-name')
 
 
+class DatasetPage(PageObject):
+    detached = Button('.btn-effecitve')
+    attached = Button('.select-attached-datasets-btn')
+
+
 class DataPage(GenericPage):
     create_space_button = Button('.one-sidebar-toolbar-button '
                                  '.oneicon-add-filled')
@@ -181,6 +186,7 @@ class DataPage(GenericPage):
     members_page = WebItem('.main-content', cls=MembersPage)
     welcome_page = WebItem('.main-content', cls=WelcomePage)
     harvesters_page = WebItem('.main-content', cls=HarvestersPage)
+    dataset_page = WebItem('.main-content', cls=DatasetPage)
 
     # button in top right corner on all subpages
     menu_button = Button('.with-menu .collapsible-toolbar-toggle')

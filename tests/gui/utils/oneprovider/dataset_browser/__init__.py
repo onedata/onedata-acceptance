@@ -11,9 +11,11 @@ from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import WebItemsSequence, WebItem
 from .data_row import DataRow
 from .archive_row import ArchiveRow
+from ..breadcrumbs import Breadcrumbs
 
 
 class _DatasetBrowser(PageObject):
+    breadcrumbs = Breadcrumbs('.fb-breadcrumbs')
     data = WebItemsSequence('.data-row.fb-table-row', cls=DataRow)
     archives = WebItemsSequence('.data-row.fb-table-row', cls=ArchiveRow)
 
