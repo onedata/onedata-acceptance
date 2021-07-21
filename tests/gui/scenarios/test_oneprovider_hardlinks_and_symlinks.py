@@ -50,6 +50,7 @@ from tests.gui.meta_steps.oneprovider.permissions import *
 from tests.gui.meta_steps.oneprovider.metadata import *
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.oneprovider.qos import *
+
 from tests.mixed.steps.data_permissions import *
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
@@ -57,9 +58,11 @@ from tests.gui.meta_steps.onezone.common import *
 
 from tests.utils.acceptance_utils import *
 
+
 @fixture(scope='module')
 def screens():
     return [0]
+
 
 scenarios('../features/oneprovider/data/hardlinks.feature')
 scenarios('../features/oneprovider/data/symlinks.feature')

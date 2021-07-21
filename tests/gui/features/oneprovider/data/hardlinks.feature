@@ -199,13 +199,15 @@ Feature: Basic files tab operations on hardlinks in file browser
     And user of browser sees that JSON textarea in metadata modal contains '{"id": 1}'
 
 
-  Scenario: User sees change of hardlink posix permission
+  Scenario: User sees change of hardlink posix permission after second hardlink permissions change
+    #create hardlink
     When user of browser opens file browser for "space1" space
     And user of browser clicks on menu for "file1" file in file browser
     And user of browser clicks "Create hard link" option in data row menu in file browser
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser clicks file browser hardlink button
 
+    #change POSIX permission of created hardlink
     And user of browser clicks on menu for "file1" file in file browser
     And user of browser clicks "Permissions" option in data row menu in file browser
     And user of browser sees that "Edit permissions" modal has appeared
@@ -213,20 +215,23 @@ Feature: Basic files tab operations on hardlinks in file browser
     And user of browser sets "775" permission code in edit permissions modal
     And user of browser clicks "Save" confirmation button in displayed modal
 
-    And user of browser opens file browser for "space1" space
+    #check permission of original file
+    And user of browser changes current working directory to home using breadcrumbs
     And user of browser clicks on menu for "file1" file in file browser
     And user of browser clicks "Permissions" option in data row menu in file browser
     Then user of browser sees that current permission is "775"
 
 
-  Scenario: User sees change of hardlink ACL permission
+  Scenario: User sees change of hardlink ACL permission after second hardlink permissions change
+    #create hardlink
     When user of browser opens file browser for "space1" space
     And user of browser clicks on menu for "file1" file in file browser
     And user of browser clicks "Create hard link" option in data row menu in file browser
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser clicks file browser hardlink button
 
-    And user of browser opens file browser for "space1" space
+    #change ACL permission of created hardlink
+    And user of browser changes current working directory to home using breadcrumbs
     And user of browser clicks on menu for "file1" file in file browser
     And user of browser clicks "Permissions" option in data row menu in file browser
     And user of browser sees that "Edit permissions" modal has appeared
@@ -236,7 +241,7 @@ Feature: Basic files tab operations on hardlinks in file browser
     And user of browser adds ACE with [general:delete, acl:read acl] privileges set for user space-owner-user
     And user of browser clicks "Save" confirmation button in displayed modal
 
-
+    #check permission of original file
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser clicks on menu for "file1" file in file browser
     And user of browser clicks "Permissions" option in data row menu in file browser
