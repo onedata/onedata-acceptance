@@ -96,6 +96,7 @@ def test_user_can_change_directory_while_uploading_files():
 def test_files_uploaded_by_user_are_ordered_by_name():
     pass
 
+
 scenarios('../features/oneprovider/data/empty_file_browser.feature')
 scenarios('../features/oneprovider/data/single_file.feature')
 scenarios('../features/oneprovider/data/several_files.feature')
