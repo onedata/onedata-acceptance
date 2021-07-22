@@ -18,7 +18,7 @@ class _DatasetBrowser(PageObject):
     archives = WebItemsSequence('.data-row.fb-table-row', cls=ArchiveRow)
 
     def __str__(self):
-        return 'dataset browser in {}'.format(self.parent)
+        return f'dataset browser in {self.parent}'
 
 
 DatasetBrowser = partial(WebItem, cls=_DatasetBrowser)

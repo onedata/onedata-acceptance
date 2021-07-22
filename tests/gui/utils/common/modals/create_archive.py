@@ -1,4 +1,4 @@
-"""Utils and fixtures to facilitate operations on dataset_browser modal.
+"""Utils and fixtures to facilitate operations on create archive modal.
 """
 
 __author__ = "Katarzyna Such"
