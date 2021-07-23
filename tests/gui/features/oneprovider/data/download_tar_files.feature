@@ -36,9 +36,9 @@ Scenario: User successfully downloads tar file created from single directory
   And user of browser clicks on menu for "dir1" directory in file browser
   And user of browser clicks "Download (tar)" option in data row menu in file browser
   Then user of browser sees contents of downloaded "dir1.tar" TAR file in download directory has following structure:
-                  - dir1:
-                      - file1: 11111
-                      - file_d1_2: 11111
-                      - dir2:
-                          - file_d2_1: 11111
-                          - file_d2_2: 11111
+    - dir1:
+        - file1: 11111
+        - file_d1_2: 11111
+        - dir2:
+            - file_d2_1: 11111
+            - file_d2_2: 11111
