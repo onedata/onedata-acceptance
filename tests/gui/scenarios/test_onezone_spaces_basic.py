@@ -58,8 +58,6 @@ from tests.gui.meta_steps.onezone.tokens import *
 
 from tests.utils.acceptance_utils import *
 
-from tests.gui.steps.onezone.automation import *
-
 
 @fixture(scope='module')
 def screens():
