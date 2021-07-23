@@ -30,7 +30,7 @@ Feature: Basic files tab operations on hardlinks in file browser
     And user of browser sees only items named ["dir1", "file1"] in file browser
     And user of browser clicks on menu for "file1" file in file browser
     And user of browser clicks "Create hard link" option in data row menu in file browser
-    And user of browser clicks "Hardlink" button from file browser menu bar
+    And user of browser clicks "Place hard link" button from file browser menu bar
 
     Then user of browser sees only items named ["dir1", "file1", "file1(1)"] in file browser
     And user of browser sees hardlink status tag with "2 hard links" text for "file1" in file browser
@@ -83,13 +83,13 @@ Feature: Basic files tab operations on hardlinks in file browser
 
     # first hardlink in space1/dir1/dir2
     And user of browser double clicks on item named "dir2" in file browser
-    And user of browser clicks "Hardlink" button from file browser menu bar
+    And user of browser clicks "Place hard link" button from file browser menu bar
     Then user of browser sees only items named ["file2"] in file browser
     And user of browser sees hardlink status tag with "2 hard links" text for "file2" in file browser
 
     # second hardlink in space1
     And user of browser changes current working directory to home using breadcrumbs
-    And user of browser clicks "Hardlink" button from file browser menu bar
+    And user of browser clicks "Place hard link" button from file browser menu bar
     And user of browser sees only items named ["dir1", "file1", "file2"] in file browser
     And user of browser sees hardlink status tag with "3 hard links" text for "file2" in file browser
 
@@ -118,7 +118,7 @@ Feature: Basic files tab operations on hardlinks in file browser
     When user of browser creates hardlink of "file1" file in space "space1" in file browser
 
     # create another hardlink
-    And user of browser clicks "Hardlink" button from file browser menu bar
+    And user of browser clicks "Place hard link" button from file browser menu bar
     And user of browser sees only items named ["dir1", "file1", "file1(1)", "file1(2)"] in file browser
     And user of browser sees hardlink status tag with "3 hard links" text for "file1" in file browser
     And user of browser succeeds to remove "file1(1)" in "space1"
@@ -161,7 +161,7 @@ Feature: Basic files tab operations on hardlinks in file browser
     When user of browser creates hardlink of "file1" file in space "space1" in file browser
 
     # add another hardlink
-    And user of browser clicks "Hardlink" button from file browser menu bar
+    And user of browser clicks "Place hard link" button from file browser menu bar
     And user of browser sees only items named ["dir1", "file1", "file1(1)", "file1(2)"] in file browser
     And user of browser adds and saves '{"id": 1}' JSON metadata for "file1(1)"
     And user of browser creates "hello=WORLD" QoS requirement for "file1(1)" in space "space1"
