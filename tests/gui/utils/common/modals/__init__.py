@@ -72,6 +72,7 @@ class Modals(object):
     leave_space = WebItem('.modal-dialog',
                           cls=LeaveSpaceModal)
     leave_harvester = WebItem('.modal-dialog', cls=LeaveElementModal)
+    leave_inventory = WebItem('.modal-dialog', cls=LeaveElementModal)
     provider_popover = WebItem('.webui-popover .provider-place-drop',
                                cls=ProviderPopover)
     remove_member = WebItem('.remove-relation-modal.modal.in .modal-dialog',
@@ -113,6 +114,7 @@ class Modals(object):
     remove_token = WebItem('.modal-dialog', cls=RemoveModal)
     remove_harvester = WebItem('.modal-dialog', cls=RemoveModal)
     remove_space = WebItem('.modal-dialog', cls=RemoveModal)
+    remove_inventory = WebItem('.modal-dialog', cls=RemoveModal)
     rest_api_modal = WebItem('.modal-dialog', cls=RESTApiModal)
     clean_up_obsolete_tokens = WebItem('.modal-dialog',
                                        cls=CleanUpObsoleteTokensModal)
