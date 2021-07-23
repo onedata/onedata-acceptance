@@ -12,7 +12,9 @@ import time
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import wt, parsers
+from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.utils import repeat_failed
+from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 
 
 @wt(parsers.parse('user of {browser_id} clicks on Create automation inventory '
@@ -35,3 +37,75 @@ def input_name_into_input_box_on_main_automation_page(selenium, browser_id,
 def confirm_name_input_on_main_automation_page(selenium, browser_id,
                                                oz_page):
     oz_page(selenium[browser_id])['automation'].input_box.confirm()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) clicks on '
+               '"(?P<option>Rename|Leave|Remove)" '
+               'button in inventory "(?P<inventory>.*)" menu in the '
+               'sidebar'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_inventory_menu_button(selenium, browser_id, option, inventory,
+                                   oz_page, popups):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['automation']
+    page.elements_list[inventory]()
+    page.elements_list[inventory].menu()
+    popups(driver).menu_popup_with_text.menu[option]()
+
+
+@wt(parsers.parse('user of {browser_id} writes '
+                  '"{text}" into rename inventory text field'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def input_new_inventory_name_into_rename_inventory_inpux_box(selenium,
+                                                             browser_id, text,
+                                                             oz_page):
+    page = oz_page(selenium[browser_id])['automation']
+    page.elements_list[''].edit_box.value = text
+
+
+@wt(parsers.parse('user of {browser_id} clicks on confirmation button '
+                  'to rename inventory'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_confirmation_button_to_rename_inventory(selenium, browser_id,
+                                                     oz_page):
+    oz_page(selenium[browser_id])['automation'].elements_list[
+        ''].edit_box.confirm()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) confirms inventory rename '
+               'using (?P<option>.*)'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def confirm_rename_the_inventory(selenium, browser_id, option, oz_page):
+    if option == 'enter':
+        press_enter_on_active_element(selenium, browser_id)
+    else:
+        click_on_confirmation_button_to_rename_inventory(selenium, browser_id,
+                                                         oz_page)
+
+
+def _find_inventories(page, inventory):
+    return list(filter(lambda i: i.name == inventory, page.elements_list))
+
+
+@wt(parsers.re('users? of (?P<browser_ids>.*) (?P<option>does not see|sees) '
+               'inventory "(?P<inventory>.*)" on inventory list'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_inventory_exists(selenium, browser_ids, option, inventory, oz_page):
+    for browser_id in parse_seq(browser_ids):
+        inventories_count = len(_find_inventories(oz_page(selenium[browser_id])['automation'],
+                                             inventory))
+        if option == 'does not see':
+            assert inventories_count == 0, 'inventory "{}" found'.format(inventory)
+        else:
+            assert inventories_count == 1, 'inventory "{}" not found'.format(inventory)
+
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) opens inventory "(?P<inventory>.*)" '
+               '(?P<subpage>workflows|lambdas|members|main) subpage'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def go_to_group_subpage(selenium, browser_id, inventory, subpage, oz_page):
+    page = oz_page(selenium[browser_id])['automation']
+    page.elements_list[inventory]()
+    if subpage != 'main':
+        getattr(page.elements_list[inventory], subpage)()
