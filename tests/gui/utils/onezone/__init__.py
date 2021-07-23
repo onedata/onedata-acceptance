@@ -12,6 +12,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 
 from tests.gui.utils.core.web_elements import (WebElement, WebElementsSequence,
                                                Label, WebItem)
+from .automation_page import AutomationPage
 from .common import OZPanel
 from .data_page import DataPage
 from .providers_page import ProvidersPage
@@ -38,7 +39,8 @@ class OZLoggedIn(object):
         'groups': GroupsPage,
         'tokens': TokensPage,
         'discovery': DiscoveryPage,
-        'clusters': ClustersPage
+        'clusters': ClustersPage,
+        'automation': AutomationPage
     }
 
     def __init__(self, driver):

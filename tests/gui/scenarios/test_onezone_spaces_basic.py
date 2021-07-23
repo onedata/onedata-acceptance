@@ -58,14 +58,19 @@ from tests.gui.meta_steps.onezone.tokens import *
 
 from tests.utils.acceptance_utils import *
 
+from tests.gui.steps.onezone.automation import *
+
 
 @fixture(scope='module')
 def screens():
     return [0]
 
 
-scenarios('../features/onezone/space/spaces.feature')
-scenarios('../features/onezone/space/create_new_space.feature')
-scenarios('../features/onezone/space/multispace.feature')
-scenarios('../features/onezone/space/spaces_memberships.feature')
-scenarios('../features/onezone/space/spaces_memberships_privileges.feature')
+# scenarios('../features/onezone/space/spaces.feature')
+# scenarios('../features/onezone/space/create_new_space.feature')
+# scenarios('../features/onezone/space/multispace.feature')
+# scenarios('../features/onezone/space/spaces_memberships.feature')
+# scenarios('../features/onezone/space/spaces_memberships_privileges.feature')
+scenarios('../features/onezone/workflows.feature')
+
+
