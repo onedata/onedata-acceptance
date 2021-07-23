@@ -1,6 +1,5 @@
-"""This module contains gherkin steps to run acceptance tests featuring clusters
-management in onezone web GUI
-"""
+"""This module contains gherkin steps to run acceptance tests featuring
+automation management in onezone web GUI """
 
 __author__ = "Rafał Widziszewski"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
@@ -20,7 +19,7 @@ from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 @wt(parsers.parse('user of {browser_id} clicks on Create automation inventory '
                   'button in automation sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_create_automation_button_in_panel(selenium, browser_id, oz_page):
+def click_create_automation_button_in_sidebar(selenium, browser_id, oz_page):
     oz_page(selenium[browser_id])['automation'].create_automation()
 
 

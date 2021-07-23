@@ -39,8 +39,8 @@ class OZLoggedIn(object):
         'groups': GroupsPage,
         'tokens': TokensPage,
         'discovery': DiscoveryPage,
-        'clusters': ClustersPage,
-        'automation': AutomationPage
+        'automation': AutomationPage,
+        'clusters': ClustersPage
     }
 
     def __init__(self, driver):

@@ -1,4 +1,4 @@
-"""This module contains tests suite for spaces management using
+"""This module contains tests suite for automation management using
 Onezone GUI and single browser instance.
 """
 
@@ -66,4 +66,3 @@ def screens():
 
 
 scenarios('../features/onezone/automation_basics.feature')
-scenarios('../features/onezone/automation_membership.feature')
