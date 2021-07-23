@@ -66,11 +66,8 @@ def screens():
     return [0]
 
 
-# scenarios('../features/onezone/space/spaces.feature')
-# scenarios('../features/onezone/space/create_new_space.feature')
-# scenarios('../features/onezone/space/multispace.feature')
-# scenarios('../features/onezone/space/spaces_memberships.feature')
-# scenarios('../features/onezone/space/spaces_memberships_privileges.feature')
-scenarios('../features/onezone/workflows.feature')
-
-
+scenarios('../features/onezone/space/spaces.feature')
+scenarios('../features/onezone/space/create_new_space.feature')
+scenarios('../features/onezone/space/multispace.feature')
+scenarios('../features/onezone/space/spaces_memberships.feature')
+scenarios('../features/onezone/space/spaces_memberships_privileges.feature')
