@@ -56,7 +56,7 @@ def click_on_inventory_menu_button(selenium, browser_id, option, inventory,
 @wt(parsers.parse('user of {browser_id} writes '
                   '"{text}" into rename inventory text field'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def input_new_inventory_name_into_rename_inventory_inpux_box(selenium,
+def input_new_inventory_name_into_rename_inventory_input_box(selenium,
                                                              browser_id, text,
                                                              oz_page):
     page = oz_page(selenium[browser_id])['automation']
@@ -92,13 +92,14 @@ def _find_inventories(page, inventory):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_inventory_exists(selenium, browser_ids, option, inventory, oz_page):
     for browser_id in parse_seq(browser_ids):
-        inventories_count = len(_find_inventories(oz_page(selenium[browser_id])['automation'],
-                                             inventory))
+        inventories_count = len(_find_inventories(oz_page(selenium[browser_id])
+                                                  ['automation'], inventory))
         if option == 'does not see':
-            assert inventories_count == 0, 'inventory "{}" found'.format(inventory)
+            assert inventories_count == 0, 'inventory "{}" found'.format(
+                inventory)
         else:
-            assert inventories_count == 1, 'inventory "{}" not found'.format(inventory)
-
+            assert inventories_count == 1, 'inventory "{}" not found'.format(
+                inventory)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) opens inventory "(?P<inventory>.*)" '
