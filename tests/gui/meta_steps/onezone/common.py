@@ -10,7 +10,7 @@ from tests.gui.steps.common.browser_creation import \
 from tests.gui.steps.common.login import g_login_using_basic_auth
 from tests.gui.steps.common.url import g_open_onedata_service_page
 from tests.gui.steps.oneprovider.data_tab import (
-    assert_file_browser_in_files_tab_in_op,
+    assert_browser_in_tab_in_op,
     click_choose_other_oneprovider_on_file_browser,
     choose_provider_in_file_browser)
 from tests.gui.steps.onezone.providers import parse_seq
@@ -106,8 +106,8 @@ def visit_file_browser(selenium, oz_page, providers_list, spaces_list,
                                                        oz_page)
         choose_provider_in_file_browser(selenium, browser_id, provider,
                                         hosts, oz_page)
-        assert_file_browser_in_files_tab_in_op(selenium, browser_id,
-                                               op_container, tmp_memory)
+        assert_browser_in_tab_in_op(selenium, browser_id,
+                                    op_container, tmp_memory)
 
 
 @given(parsers.re('opened (?P<providers_list>.*) Oneprovider file browser '

@@ -47,6 +47,7 @@ from .shares_row_menu import SharesRowMenu
 from .delete_user_account import DeleteUserAccountModal
 from .symbolic_link_details import SymbolicLinkDetailsModal
 from .datasets_modal import DatasetsModal
+from .create_archive import CreateArchive
 
 
 class Modals(object):
@@ -124,6 +125,7 @@ class Modals(object):
     symbolic_link_details = WebItem('.modal-dialog',
                                     cls=SymbolicLinkDetailsModal)
     file_datasets = WebItem('.modal-dialog', cls=DatasetsModal)
+    create_archive = WebItem('.modal-dialog', cls=CreateArchive)
 
     def __init__(self, driver):
         self.driver = driver

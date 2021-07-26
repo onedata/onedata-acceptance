@@ -12,13 +12,15 @@ from .shares import SharesContentPage
 from .spaces import SpacesContentPage
 from .transfers import TransfersTab
 from .file_browser import FileBrowser
-from ..core.web_elements import WebItem, Label
+from ..core.web_elements import WebItem
+from .dataset_browser import DatasetBrowser
 
 
 class OPLoggedIn(object):
     file_browser = FileBrowser('.content-file-browser')
     shares_page = WebItem('.content-space-shares', cls=SharesContentPage)
     transfers = TransfersTab('.content-space-transfers')
+    dataset_browser = DatasetBrowser('.dataset-browser')
 
     def __init__(self, driver):
         self.web_elem = self.driver = driver
