@@ -81,7 +81,7 @@ Feature: Basic files tab operations on symlinks in file browser
     And user of browser sees that symbolic link target path is "/space1/file1(1)" in "Symbolic link details" modal
 
 
-  Scenario: Newly created symlink to directory has right information and leads to original directory
+  Scenario: Newly created symlink to directory has right information and leads to symlink directory
     When user of browser creates symlink of "dir1" file in space "space1" in file browser
     Then user of browser sees only items named ["dir1", "file1", "dir1(1)"] in file browser
     And user of browser sees that item named "dir1(1)" is directory symbolic link in file browser
@@ -96,7 +96,7 @@ Feature: Basic files tab operations on symlinks in file browser
 
     And user of browser double clicks on item named "dir1(1)" in file browser
     Then user of browser sees only items named ["dir2", "file2"] in file browser
-    And user of browser sees that current working directory displayed in breadcrumbs is /dir1
+    And user of browser sees that current working directory displayed in breadcrumbs is /dir1(1)
 
 
   Scenario: User creates symlinks in other directories than original files
