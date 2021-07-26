@@ -125,7 +125,7 @@ class Modals(object):
     symbolic_link_details = WebItem('.modal-dialog',
                                     cls=SymbolicLinkDetailsModal)
     file_datasets = WebItem('.modal-dialog', cls=DatasetsModal)
-    datasets_archive = WebItem('.modal-dialog', cls=CreateArchive)
+    create_archive = WebItem('.modal-dialog', cls=CreateArchive)
 
     def __init__(self, driver):
         self.driver = driver

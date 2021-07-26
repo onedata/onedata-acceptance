@@ -12,7 +12,7 @@ from tests.gui.utils.core.web_elements import Label, Button
 
 
 class DataRow(PageObject):
-    name = id = Label('.file-name-inner', parent_name='given data row')
+    name = id = Label('.file-name-inner')
     archive = Label('.fb-table-col-archives .file-item-text')
     menu_button = Button('.fb-table-col-actions-menu .menu-toggle')
     number_of_archive = Button('.archives-count-link')
