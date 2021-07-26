@@ -25,8 +25,7 @@ Feature: Create archive
 
 
   Scenario: User sees archive with "Preserved" state after creating it and waiting
-
-      # create dataset
+    # create dataset
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
@@ -43,4 +42,4 @@ Feature: Create archive
     And user of browser clicks on "Create" button in modal "Create Archive"
     Then user of browser sees that item "dir1" has 1 Archives
     And user of browser clicks on 1 in "dir1" Archives
-    And user of browser sees "Preserved" Archived: 1 files, 3 B on first archive state in archive browser
+    And user of browser sees "Preserved Archived: 1 files, 3 B" on first archive state in archive browser
