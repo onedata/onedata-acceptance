@@ -10,6 +10,7 @@ __license__ = "This software is released under the MIT license cited in " \
 from selenium.webdriver import ActionChains
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Label, Button, WebElement
+from tests.gui.utils.generic import transform
 
 
 class DataRow(PageObject):
@@ -18,6 +19,8 @@ class DataRow(PageObject):
     menu_button = Button('.fb-table-col-actions-menu .menu-toggle')
     archive_button = Button('.archives-count-link')
     clickable_field = WebElement('.file-name')
+    data_protected_tag = WebElement('.file-data-protected-icon')
+    metadata_protected_tag = WebElement('.file-metadata-protected-icon')
 
     def __str__(self):
         return '{item} in {parent}'.format(item=self.name,
@@ -25,3 +28,11 @@ class DataRow(PageObject):
 
     def double_click(self):
         ActionChains(self.driver).double_click(self.web_elem).perform()
+
+    def is_tag_visible(self, name):
+        try:
+            getattr(self, f'{transform(name)}_tag')
+        except RuntimeError:
+            return False
+        else:
+            return True

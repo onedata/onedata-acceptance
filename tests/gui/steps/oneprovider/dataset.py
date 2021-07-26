@@ -164,3 +164,32 @@ def click_on_detached_tab(browser_id, oz_page, selenium, name):
         oz_page(driver)['data'].dataset_page.detached()
     elif name == 'attached':
         oz_page(driver)['data'].dataset_page.attached()
+
+
+@wt(parsers.parse('user of {browser_id} clicks {text} write protection'
+                  ' toggle in Write Protection modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_protection_toggle(browser_id, selenium, modals, text):
+    driver = selenium[browser_id]
+    if text == 'data':
+        modals(driver).write_protection.data_protection_toggle.check()
+    if text == 'metadata':
+        modals(driver).write_protection.metadata_protection_toggle.check()
+
+
+@wt(parsers.parse('user of {browser_id} clicks Close button in Write '
+                  'Protection modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_close_button(browser_id, selenium, modals):
+    driver = selenium[browser_id]
+    modals(driver).write_protection.close_button()
+
+
+@wt(parsers.parse('user of {browser_id} sees {status_type} '
+                  'status tag for "{item_name}" in dataset browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_status_tag_for_file_in_dataset_browser(browser_id, status_type,
+                                                  item_name, tmp_memory):
+    browser = tmp_memory[browser_id]['dataset_browser']
+    err_msg = f'{status_type} tag for {item_name} in dataset browser not visible'
+    assert browser.data[item_name].is_tag_visible(transform(status_type)), err_msg
