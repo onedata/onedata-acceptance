@@ -16,11 +16,11 @@ from tests.gui.utils.onezone.common import EditBox, InputBox
 
 
 class Inventory(Element):
-    menu = Button('.collapsible-toolbar-toggle')
+    menu = Button('.atm-inventory-menu-trigger')
     workflows = NamedButton('.one-list-level-2 .item-header', text='Workflows')
     lambdas = NamedButton('.one-list-level-2 .item-header', text='Lambdas')
     members = NamedButton('.one-list-level-2 .item-header', text='Members')
-    edit_box = WebItem('.name-editor', cls=EditBox)
+    edit_box = WebItem('.name-editor.atm-inventory-name', cls=EditBox)
 
 
 class AutomationDetailsPage(PageObject):

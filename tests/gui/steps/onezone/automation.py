@@ -31,7 +31,8 @@ def input_name_into_input_box_on_main_automation_page(selenium, browser_id,
     oz_page(selenium[browser_id])['automation'].input_box.value = text
 
 
-@wt(parsers.parse('user of {browser_id} clicks on confirmation button'))
+@wt(parsers.parse('user of {browser_id} clicks on confirmation button on '
+                  'automation page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_name_input_on_main_automation_page(selenium, browser_id,
                                                oz_page):
@@ -43,7 +44,7 @@ def confirm_name_input_on_main_automation_page(selenium, browser_id,
                'button in inventory "(?P<inventory>.*)" menu in the '
                'sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_inventory_menu_button(selenium, browser_id, option, inventory,
+def click_option_in_inventory_menu(selenium, browser_id, option, inventory,
                                    oz_page, popups):
     driver = selenium[browser_id]
     page = oz_page(driver)['automation']
@@ -91,20 +92,18 @@ def _find_inventories(page, inventory):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_inventory_exists(selenium, browser_ids, option, inventory, oz_page):
     for browser_id in parse_seq(browser_ids):
-        inventories_count = len(_find_inventories(oz_page(selenium[browser_id])
-                                                  ['automation'], inventory))
+        elem_list = oz_page(selenium[browser_id])['automation'].elements_list
+
         if option == 'does not see':
-            assert inventories_count == 0, 'inventory "{}" found'.format(
-                inventory)
+            assert inventory not in elem_list
         else:
-            assert inventories_count == 1, 'inventory "{}" not found'.format(
-                inventory)
+            assert inventory in elem_list
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) opens inventory "(?P<inventory>.*)" '
                '(?P<subpage>workflows|lambdas|members|main) subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def go_to_group_subpage(selenium, browser_id, inventory, subpage, oz_page):
+def go_to_inventory_subpage(selenium, browser_id, inventory, subpage, oz_page):
     page = oz_page(selenium[browser_id])['automation']
     page.elements_list[inventory]()
     if subpage != 'main':

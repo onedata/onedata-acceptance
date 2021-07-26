@@ -11,14 +11,6 @@ Feature: Basic workflow management
                 - oneprovider-1:
                     storage: posix
                     size: 1000000
-#            storage:
-#                defaults:
-#                    provider: oneprovider-1
-#                directory tree:
-#                    - dir1
-#                    - dir2:
-#                        - file1: 100
-#                        - file2: 200
 
 
     And user opened browser window
@@ -30,7 +22,7 @@ Feature: Basic workflow management
     When user of browser clicks on Automation in the main menu
     And user of browser clicks on Create automation inventory button in automation sidebar
     And user of browser writes "inventory1" into inventory name text field
-    And user of browser clicks on confirmation button
+    And user of browser clicks on confirmation button on automation page
 
     And user of browser clicks on "Rename" button in inventory "inventory1" menu in the sidebar
     And user of browser writes "inventory2" into rename inventory text field
@@ -42,7 +34,7 @@ Feature: Basic workflow management
     When user of browser clicks on Automation in the main menu
     And user of browser clicks on Create automation inventory button in automation sidebar
     And user of browser writes "inventory1" into inventory name text field
-    And user of browser clicks on confirmation button
+    And user of browser clicks on confirmation button on automation page
 
     And user of browser clicks on "Remove" button in inventory "inventory1" menu in the sidebar
     And user of browser clicks on "Remove" button in modal "remove_inventory"
@@ -53,7 +45,7 @@ Feature: Basic workflow management
     When user of browser clicks on Automation in the main menu
     And user of browser clicks on Create automation inventory button in automation sidebar
     And user of browser writes "inventory1" into inventory name text field
-    And user of browser clicks on confirmation button
+    And user of browser clicks on confirmation button on automation page
 
     And user of browser clicks on "Leave" button in inventory "inventory1" menu in the sidebar
     And user of browser clicks on "Leave" button in modal "leave_inventory"
