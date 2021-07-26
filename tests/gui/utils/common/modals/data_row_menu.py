@@ -19,6 +19,16 @@ class DataRowMenu(Modal):
     options = WebItemsSequence('.file-actions.dropdown-menu a.clickable',
                                cls=Options)
 
+    def choose_option(self, name):
+        if name not in self.options:
+            self.scroll_to_bottom()
+        self.options[name].click()
+
+    def scroll_to_bottom(self):
+        option_len = len(self.options)
+        self.driver.execute_script('arguments[0].scrollIntoView();',
+                                   self.options[option_len-1].web_elem)
+
     def __str__(self):
         return 'Data row menu'
 
