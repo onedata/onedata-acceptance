@@ -1,4 +1,4 @@
-Feature: Basic workflow management
+Feature: Basic inventories management
 
 
   Background:

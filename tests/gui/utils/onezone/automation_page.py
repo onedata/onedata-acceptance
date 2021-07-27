@@ -13,6 +13,7 @@ from tests.gui.utils.core.web_elements import (Button, NamedButton, WebItem,
 from tests.gui.utils.onezone.generic_page import Element, GenericPage
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.onezone.common import EditBox, InputBox
+from tests.gui.utils.onezone.members_subpage import MembersPage
 
 
 class Inventory(Element):
@@ -40,3 +41,6 @@ class AutomationPage(GenericPage):
     input_box = WebItem('.content-info-content-container', cls=InputBox)
 
     main_page = WebItem('.col-content', cls=AutomationDetailsPage)
+
+    members_page = WebItem('.main-content', cls=MembersPage)
+

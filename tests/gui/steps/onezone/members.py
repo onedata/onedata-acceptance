@@ -25,7 +25,8 @@ from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 
-MENU_ELEM_TO_TAB_NAME = {'space': 'data', 'harvester': 'discovery'}
+MENU_ELEM_TO_TAB_NAME = {'space': 'data', 'harvester': 'discovery',
+                         'automation': 'automation'}
 
 
 def _change_to_tab_name(element):
@@ -264,8 +265,8 @@ def click_generate_token_in_subgroups_list(selenium, browser_id, group, oz_page,
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on "(?P<button>.*)" button '
                'in (?P<member>users|groups) list menu in '
-               '"(?P<name>.*)" (?P<where>group|space|cluster|harvester) '
-               'members view'))
+               '"(?P<name>.*)" (?P<where>group|space|cluster|harvester'
+               '|automation) members view'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_option_in_members_list_menu(selenium, browser_id, button, where,
                                          member, oz_page, onepanel, popups):
@@ -421,9 +422,9 @@ def click_member_option_on_members_page(selenium, browser_id, option,
                'users list'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_options_for_user_are_enabled_or_disabled(selenium, browser_id,
-                                                   options,
-                                                   oz_page, popups,
-                                                   username, state):
+                                                    options,
+                                                    oz_page, popups,
+                                                    username, state):
     driver = selenium[browser_id]
     page = oz_page(driver)['data'].members_page
     page.users.items[username].click_member_menu_button(driver)
@@ -447,7 +448,7 @@ def _get_cluster_members(selenium, browser_id, oz_page, onepanel):
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees "(?P<member_name>.*)" '
                'user in cluster members'))
-@repeat_failed(timeout=WAIT_BACKEND*4)
+@repeat_failed(timeout=WAIT_BACKEND * 4)
 def assert_user_in_cluster_members_page(selenium, browser_id, member_name,
                                         oz_page, onepanel):
     cluster_members = _get_cluster_members(selenium, browser_id, oz_page,
@@ -504,7 +505,8 @@ def get_invitation_token(selenium, browser_id, group, who, oz_page, tmp_memory,
 
 @wt(parsers.re('user of (?P<browser_id>.*) sets following privileges for '
                '"(?P<member_name>.*)" (?P<member_type>user|group) '
-               'in (?P<where>space|group|harvester|cluster) members subpage:'
+               'in (?P<where>space|group|harvester|automation|cluster) '
+               'members subpage: '
                r'\n(?P<config>(.|\s)*)'))
 def set_privileges_in_members_subpage(selenium, browser_id, member_name,
                                       member_type, where, config, onepanel,
@@ -527,7 +529,10 @@ def set_privileges_in_members_subpage(selenium, browser_id, member_name,
                'when all other are granted:'
                r'\n(?P<config>(.|\s)*)'))
 def set_some_privileges_in_members_subpage_other_granted(selenium, browser_id,
-        member_name, member_type, where, config, onepanel, oz_page):
+                                                         member_name,
+                                                         member_type, where,
+                                                         config, onepanel,
+                                                         oz_page):
     tree = get_privilege_tree(selenium, browser_id, onepanel, oz_page, where,
                               member_type + 's', member_name)
     tree.set_all_true()
@@ -549,8 +554,8 @@ def set_privileges_in_members_subpage_on_modal(selenium, browser_id, config,
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees following privileges of '
                '"(?P<member_name>.*)" (?P<member_type>user|group) '
-               'in (?P<where>space|group|harvester|cluster) members subpage:'
-               '\n(?P<config>(.|\s)*)'))
+               'in (?P<where>space|group|harvester|automation|cluster) '
+               'members subpage: \n(?P<config>(.|\s)*)'))
 def assert_privileges_in_members_subpage(selenium, browser_id, member_name,
                                          member_type, where, config, onepanel,
                                          oz_page):
@@ -787,4 +792,3 @@ def assert_ownership_privileges_warning_appeared_for_user(selenium, browser_id,
     error_msg = f'alert with text "{alert_text}" not found'
     ownership_warning = members_list.items[username].ownership_warning.text
     assert alert_text in ownership_warning, error_msg
-
