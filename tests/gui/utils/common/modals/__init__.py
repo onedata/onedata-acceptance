@@ -128,7 +128,7 @@ class Modals(object):
     symbolic_link_details = WebItem('.modal-dialog',
                                     cls=SymbolicLinkDetailsModal)
     file_datasets = WebItem('.modal-dialog', cls=DatasetsModal)
-    datasets_archive = WebItem('.modal-dialog', cls=CreateArchive)
+    create_archive = WebItem('.modal-dialog', cls=CreateArchive)
     remove_selected_dataset = WebItem('.modal-dialog',
                                       cls=RemoveSelectedDataset)
     detach_dataset = WebItem('.modal-dialog', cls=DetachDataset)

@@ -371,7 +371,7 @@ def click_menu_for_elem_in_file_browser(browser_id, item_name, tmp_memory):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_option_in_data_row_menu_in_file_browser(selenium, browser_id, option,
                                                   modals):
-    modals(selenium[browser_id]).data_row_menu.options[option].click()
+    modals(selenium[browser_id]).data_row_menu.choose_option(option)
 
 
 @wt(parsers.parse('user of {browser_id} scrolls to the bottom of file browser '

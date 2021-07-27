@@ -12,7 +12,7 @@ from tests.gui.utils.core.web_elements import NamedButton
 
 
 class CreateArchive(Modal):
-    create_button = NamedButton('.btn-primary', text='Create')
+    create = NamedButton('.btn-primary', text='Create')
 
     def __str__(self):
         return 'Create archive'
