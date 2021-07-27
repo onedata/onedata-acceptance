@@ -62,3 +62,4 @@ def screens():
 
 
 scenarios('../features/oneprovider/shares/basic_management.feature')
+scenarios('../features/oneprovider/shares/shares_with_symlink.feature')

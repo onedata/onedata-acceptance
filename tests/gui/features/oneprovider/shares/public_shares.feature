@@ -97,7 +97,7 @@ Feature: Basic operations on public shares in file browser
     # upload dir1/20B-0.txt
     And user of space_owner_browser double clicks on item named "dir1" in file browser
     And user of space_owner_browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
-    And user of browser1 clicks file browser refresh button
+    And user of browser1 clicks "Refresh" button from file browser menu bar
     And user of browser1 sees file browser on share's public interface
     Then user of browser1 sees item(s) named "20B-0.txt" in file browser
 
