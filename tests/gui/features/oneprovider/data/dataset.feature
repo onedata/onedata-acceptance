@@ -67,7 +67,7 @@ Feature: Basic dataset operations
     And user of browser clicks Datasets of "space1" in the sidebar
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser clicks on menu for "dir1" dataset in dataset browser
-    And user of browser clicks "Remove dataset" option in data row menu in desktop browser
+    And user of browser clicks "Remove dataset" option in data row menu in dataset browser
     And user of browser clicks Remove button on Remove Selected Dataset modal
     Then user of browser clicks Files of "space1" in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
@@ -143,7 +143,7 @@ Feature: Basic dataset operations
     And user of browser clicks Datasets of "space1" in the sidebar
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser clicks on menu for "dir1" dataset in dataset browser
-    And user of browser clicks "Detach" option in data row menu in desktop browser
+    And user of browser clicks "Detach" option in data row menu in dataset browser
     And user of browser clicks Proceed button on Detach Dataset modal
     And user of browser clicks on detached button on dataset browser page
     And user of browser sees dataset browser in datasets tab in Oneprovider page
@@ -180,11 +180,11 @@ Feature: Basic dataset operations
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser double clicks on item named "dir2" in dataset browser
     And user of browser clicks on menu for "dir3" dataset in dataset browser
-    And user of browser clicks "Detach" option in data row menu in desktop browser
+    And user of browser clicks "Detach" option in data row menu in dataset browser
     And user of browser clicks Proceed button on Detach Dataset modal
     And user of browser double clicks on item named "dir4" in dataset browser
     And user of browser clicks on menu for "dir5" dataset in dataset browser
-    And user of browser clicks "Detach" option in data row menu in desktop browser
+    And user of browser clicks "Detach" option in data row menu in dataset browser
     And user of browser clicks Proceed button on Detach Dataset modal
     And user of browser clicks on detached button on dataset browser page
     And user of browser sees dataset browser in datasets tab in Oneprovider page

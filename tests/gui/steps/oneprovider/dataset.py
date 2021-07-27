@@ -7,7 +7,7 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 from tests.gui.utils.generic import transform
@@ -78,18 +78,21 @@ def not_see_name_in_dataset_browser(browser_id, name, tmp_memory):
 
 @wt(parsers.parse('user of {browser_id} double clicks on item named'
                   ' "{item_name}" in dataset browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def double_click_on_item_in_dataset_browser(browser_id, item_name, tmp_memory,
                                             op_container, selenium):
     browser = tmp_memory[browser_id]['dataset_browser']
+    start = time.time()
+    while item_name not in browser.data:
+        time.sleep(1)
+        if start + time.time() > start + WAIT_BACKEND:
+            raise RuntimeError('waited too long')
     breadcrumbs1 = (op_container(selenium[browser_id]).dataset_browser
                     .breadcrumbs.pwd())
-    start = time.time()
-    while breadcrumbs1 == (op_container(selenium[browser_id]).dataset_browser
-                           .breadcrumbs.pwd()):
-        browser.data[item_name].double_click()
-        if start+time.time() > start+WAIT_FRONTEND:
-            break
+    err_msg = 'double click failed'
+    browser.data[item_name].double_click()
+    assert breadcrumbs1 != (op_container(selenium[browser_id]).dataset_browser
+           .breadcrumbs.pwd()), err_msg
 
 
 @wt(parsers.parse('user of {browser_id} sees that {text} write protection '
