@@ -11,6 +11,7 @@ Feature: Basic inventories management
                 - oneprovider-1:
                     storage: posix
                     size: 1000000
+    And initial inventories configuartion in "onezone" Onezone service:
 
 
     And user opened browser window
@@ -21,20 +22,17 @@ Feature: Basic inventories management
   Scenario: User creates and renames inventory
     When user of browser clicks on Automation in the main menu
     And user of browser clicks on Create automation inventory button in automation sidebar
-    And user of browser writes "inventory1" into inventory name text field
+    And user of browser writes "inventory2" into inventory name text field
     And user of browser clicks on confirmation button on automation page
 
-    And user of browser clicks on "Rename" button in inventory "inventory1" menu in the sidebar
-    And user of browser writes "inventory2" into rename inventory text field
+    And user of browser clicks on "Rename" button in inventory "inventory2" menu in the sidebar
+    And user of browser writes "inventory3" into rename inventory text field
     And user of browser confirms inventory rename using <confirmation_method>
-    Then user of browser sees inventory "inventory2" on inventory list
+    Then user of browser sees inventory "inventory3" on inventory list
 
 
   Scenario: User removes inventory
     When user of browser clicks on Automation in the main menu
-    And user of browser clicks on Create automation inventory button in automation sidebar
-    And user of browser writes "inventory1" into inventory name text field
-    And user of browser clicks on confirmation button on automation page
 
     And user of browser clicks on "Remove" button in inventory "inventory1" menu in the sidebar
     And user of browser clicks on "Remove" button in modal "remove_inventory"
@@ -43,9 +41,6 @@ Feature: Basic inventories management
 
   Scenario: User leaves inventory
     When user of browser clicks on Automation in the main menu
-    And user of browser clicks on Create automation inventory button in automation sidebar
-    And user of browser writes "inventory1" into inventory name text field
-    And user of browser clicks on confirmation button on automation page
 
     And user of browser clicks on "Leave" button in inventory "inventory1" menu in the sidebar
     And user of browser clicks on "Leave" button in modal "leave_inventory"

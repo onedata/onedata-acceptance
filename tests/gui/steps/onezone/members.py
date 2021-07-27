@@ -240,7 +240,7 @@ def click_element_to_close_its_dropdown(selenium, browser_id, type_name,
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks "(?P<member_name>.*)" '
                '(?P<member_type>user|group) in "(?P<name>.*)" '
-               '(?P<where>space|group|cluster|harvester) members '
+               '(?P<where>space|group|cluster|harvester|automation) members '
                '(?P<list_type>users|groups) list'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_element_in_members_list(selenium, browser_id, member_name, oz_page,
@@ -505,8 +505,8 @@ def get_invitation_token(selenium, browser_id, group, who, oz_page, tmp_memory,
 
 @wt(parsers.re('user of (?P<browser_id>.*) sets following privileges for '
                '"(?P<member_name>.*)" (?P<member_type>user|group) '
-               'in (?P<where>space|group|harvester|automation|cluster) '
-               'members subpage: '
+               'in (?P<where>space|group|harvester|cluster|automation) '
+               'members subpage:'
                r'\n(?P<config>(.|\s)*)'))
 def set_privileges_in_members_subpage(selenium, browser_id, member_name,
                                       member_type, where, config, onepanel,

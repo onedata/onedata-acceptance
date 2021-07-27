@@ -60,6 +60,7 @@ from tests.utils.acceptance_utils import *
 from tests.gui.steps.onezone.automation import *
 from tests.gui.meta_steps.onezone.tokens import *
 from tests.gui.steps.onezone.members import *
+from tests.gui.steps.rest.env_up.inventory import *
 
 
 @fixture(scope='module')
@@ -67,5 +68,5 @@ def screens():
     return [0]
 
 
-#scenarios('../features/onezone/automation_basics.feature')
+scenarios('../features/onezone/automation_basics.feature')
 scenarios('../features/onezone/automation_members.feature')
