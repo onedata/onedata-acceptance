@@ -13,7 +13,7 @@ from tests.gui.steps.oneprovider_common import (
     g_click_on_the_given_main_menu_tab,
     wt_click_on_the_given_main_menu_tab)
 from tests.gui.steps.oneprovider.data_tab import (
-    assert_file_browser_in_files_tab_in_op,
+    assert_browser_in_tab_in_op,
     click_tooltip_from_toolbar_in_data_tab_in_op,
     assert_provider_chunk_in_data_distribution_empty,
     assert_provider_chunk_in_data_distribution_filled,

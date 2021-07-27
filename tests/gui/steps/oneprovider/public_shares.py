@@ -7,7 +7,6 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import wt, parsers
 
@@ -71,12 +70,28 @@ def assert_file_browser_in_public_share(selenium, browser_id, public_share,
     tmp_memory[browser_id]['file_browser'] = file_browser
 
 
+@wt(parsers.parse('user of {browser_id} sees "{expected_msg}" sign in the '
+                  'file browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_empty_file_browser_in_public_share(selenium, browser_id, tmp_memory,
+                                              public_share, expected_msg):
+    file_browser = public_share(selenium[browser_id]).file_browser
+    tmp_memory[browser_id]['file_browser'] = file_browser
+
+    assert expected_msg == file_browser.error_dir_msg, (f'Displayed empty dir '
+                                            f'msg '
+                                            f'"{file_browser.error_dir_msg}" '
+                                            f'does not match '
+                                            f'expected one "{expected_msg}"')
+
+
 @wt(parsers.parse('user of {browser_id} sees "{error_msg}" error'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def no_public_share_view(selenium, browser_id, error_msg, public_share):
-    error_msg = error_msg.lower()
+    error_msg = error_msg.upper()
     driver = selenium[browser_id]
-    assert error_msg in public_share(driver).error_msg.lower(), (
+
+    assert error_msg == public_share(driver).share_not_found, (
         f'displayed error msg does not contain {error_msg}')
 
 
@@ -133,4 +148,3 @@ def choose_public_share_link_type(selenium, browser_id, url_type, public_share):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def copy_public_share_link(selenium, browser_id, public_share):
     public_share(selenium[browser_id]).copy_icon()
-
