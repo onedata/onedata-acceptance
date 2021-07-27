@@ -19,7 +19,7 @@ import time
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_protection_toggle(browser_id, selenium, modals):
     driver = selenium[browser_id]
-    modals(driver).file_datasets.data_protection_toggle.check()
+    modals(driver).datasets.data_protection_toggle.check()
 
 
 @wt(parsers.parse('user of {browser_id} click Metadata write protection toggle'
@@ -27,7 +27,7 @@ def click_protection_toggle(browser_id, selenium, modals):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_protection_toggle(browser_id, selenium, modals):
     driver = selenium[browser_id]
-    (modals(driver).file_datasets.metadata_protection_toggle
+    (modals(driver).datasets.metadata_protection_toggle
      .check())
 
 
@@ -76,22 +76,6 @@ def not_see_name_in_dataset_browser(browser_id, name, tmp_memory):
     assert name not in browser.data, f'{name} found in dataset list'
 
 
-@wt(parsers.parse('user of {browser_id} double clicks on item named'
-                  ' "{item_name}" in dataset browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def double_click_on_item_in_dataset_browser(browser_id, item_name, tmp_memory,
-                                            op_container, selenium):
-    browser = tmp_memory[browser_id]['dataset_browser']
-    breadcrumbs1 = (op_container(selenium[browser_id]).dataset_browser
-                    .breadcrumbs.pwd())
-    start = time.time()
-    while breadcrumbs1 == (op_container(selenium[browser_id]).dataset_browser
-                           .breadcrumbs.pwd()):
-        browser.data[item_name].double_click()
-        if start+time.time() > start+WAIT_FRONTEND:
-            break
-
-
 @wt(parsers.parse('user of {browser_id} sees that {text} write protection '
                   'toggle is checked in Ancestor Dataset menu in Datasets '
                   'modal'))
@@ -99,11 +83,11 @@ def double_click_on_item_in_dataset_browser(browser_id, item_name, tmp_memory,
 def see_that_toggle_is_checked(browser_id, selenium, modals, text):
     driver = selenium[browser_id]
     if text == 'metadata':
-        assert (modals(driver).file_datasets.ancestor_metadata_protection
+        assert (modals(driver).datasets.ancestor_metadata_protection
                 .is_checked()), f'metadata write protection toggle is ' \
                                 f'unchecked in ancestor dataset menu'
     elif text == 'data':
-        assert (modals(driver).file_datasets.ancestor_data_protection
+        assert (modals(driver).datasets.ancestor_data_protection
                 .is_checked()), f'data write protection toggle is unchecked ' \
                                 f'in ancestor dataset menu'
 
@@ -113,7 +97,7 @@ def see_that_toggle_is_checked(browser_id, selenium, modals, text):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_option_in_dataset_modal(browser_id, selenium, modals):
     driver = selenium[browser_id]
-    modals(driver).file_datasets.ancestor_option.click()
+    modals(driver).datasets.ancestor_option.click()
 
 
 @wt(parsers.parse('user of {browser_id} sees that {text} write protection '
@@ -122,7 +106,7 @@ def click_on_option_in_dataset_modal(browser_id, selenium, modals):
 def see_toggle_checked_on_item_in_ancestor_list(browser_id, selenium, modals,
                                                 text, name):
     driver = selenium[browser_id]
-    item = modals(driver).file_datasets.ancestors[name]
+    item = modals(driver).datasets.ancestors[name]
     if text == 'data':
         err_msg = f'data write protection toggle is unchecked on {name}'
         assert item.data_protection_toggle.is_checked(), err_msg
@@ -137,21 +121,13 @@ def see_toggle_checked_on_item_in_ancestor_list(browser_id, selenium, modals,
 def see_toggle_checked_on_item_in_ancestor_list(browser_id, selenium, modals,
                                                 text, name):
     driver = selenium[browser_id]
-    item = modals(driver).file_datasets.ancestors[name]
+    item = modals(driver).datasets.ancestors[name]
     if text == 'data':
         err_msg = f'data write protection toggle is checked on {name}'
         assert item.data_protection_toggle.is_unchecked(), err_msg
     elif text == 'metadata':
         err_msg = f'metadata write protection toggle is checked on {name}'
         assert item.metadata_protection_toggle.is_unchecked(), err_msg
-
-
-@wt(parsers.parse('user of {browser_id} clicks Proceed button on'
-                  ' Detach Dataset modal'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_proceed_button_on_detach_dataset_modal(browser_id, selenium, modals):
-    driver = selenium[browser_id]
-    modals(driver).detach_dataset.proceed()
 
 
 @wt(parsers.parse('user of {browser_id} clicks on {name} button '
@@ -191,5 +167,7 @@ def click_close_button(browser_id, selenium, modals):
 def assert_status_tag_for_file_in_dataset_browser(browser_id, status_type,
                                                   item_name, tmp_memory):
     browser = tmp_memory[browser_id]['dataset_browser']
-    err_msg = f'{status_type} tag for {item_name} in dataset browser not visible'
-    assert browser.data[item_name].is_tag_visible(transform(status_type)), err_msg
+    err_msg = (f'{status_type} tag for {item_name} in dataset browser '
+               f'not visible')
+    assert browser.data[item_name]\
+        .is_tag_visible(transform(status_type)), err_msg

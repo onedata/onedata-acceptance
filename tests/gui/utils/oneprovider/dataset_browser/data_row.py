@@ -23,7 +23,7 @@ class DataRow(PageObject):
     metadata_protected_tag = WebElement('.file-metadata-protected-icon')
 
     def __str__(self):
-        return f'{self.name} in {str(self.parent)}'r(self.parent))
+        return f'{self.name} in {str(self.parent)}'
 
     def double_click(self):
         ActionChains(self.driver).double_click(self.web_elem).perform()

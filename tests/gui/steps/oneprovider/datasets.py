@@ -17,7 +17,7 @@ from tests.utils.utils import repeat_failed
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_mark_file_as_dataset_toggle(browser_id, selenium, modals):
     driver = selenium[browser_id]
-    modals(driver).file_datasets.dataset_toggle.check()
+    modals(driver).datasets.dataset_toggle.check()
 
 
 @wt(parsers.parse('user of {browser_id} fails to click Mark this file as '
@@ -26,14 +26,7 @@ def click_mark_file_as_dataset_toggle(browser_id, selenium, modals):
 def click_mark_file_as_dataset_toggle(browser_id, selenium, modals):
     driver = selenium[browser_id]
     err_msg = 'user does not fail to create dataset'
-    assert not modals(driver).file_datasets.dataset_toggle.check(), err_msg
-
-
-@wt(parsers.parse('user of {browser_id} clicks Close button in Datasets modal'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_close_dataset_menu_button(browser_id, selenium, modals):
-    driver = selenium[browser_id]
-    modals(driver).file_datasets.dataset_close_button()
+    assert not modals(driver).datasets.dataset_toggle.check(), err_msg
 
 
 @wt(parsers.parse('user of {browser_id} clicks on menu '
@@ -51,3 +44,15 @@ def click_option_in_data_row_menu_in_datasets_browser(selenium, browser_id,
                                                       option, modals):
     driver = selenium[browser_id]
     modals(driver).data_row_menu.options[option].click()
+
+
+@wt(parsers.parse('user of {browser_id} cannot click "{option}" option'
+                  ' in data row menu in dataset browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def cannot_click_option_in_dataset_browser(selenium, browser_id, option,
+                                           modals):
+    driver = selenium[browser_id]
+    err_msg = f'{option} is clickable'
+    assert not modals(driver).data_row_menu.options[option].click(), err_msg
+
+

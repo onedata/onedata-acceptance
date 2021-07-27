@@ -203,14 +203,6 @@ def assert_item_in_file_browser_is_of_type(browser_id, item_name, item_attr,
     assert action(), f'"{item_name}" is not {item_attr}, while it should'
 
 
-@wt(parsers.parse('user of {browser_id} double clicks on item '
-                  'named "{item_name}" in file browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def double_click_on_item_in_file_browser(browser_id, item_name, tmp_memory):
-    browser = tmp_memory[browser_id]['file_browser']
-    browser.data[item_name].double_click()
-
-
 @wt(parsers.parse('user of {browser_id} clicks once on item '
                   'named "{item_name}" in file browser'))
 @repeat_failed(timeout=WAIT_BACKEND)
