@@ -205,7 +205,7 @@ Feature: Basic files tab operations on hardlinks in file browser
     And user of browser clicks on menu for "file1" file in file browser
     And user of browser clicks "Create hard link" option in data row menu in file browser
     And user of browser double clicks on item named "dir1" in file browser
-    And user of browser clicks file browser hardlink button
+    And user of browser clicks "Place hard link" button from file browser menu bar
 
     # change POSIX permission of created hardlink
     And user of browser clicks on menu for "file1" file in file browser
@@ -228,7 +228,7 @@ Feature: Basic files tab operations on hardlinks in file browser
     And user of browser clicks on menu for "file1" file in file browser
     And user of browser clicks "Create hard link" option in data row menu in file browser
     And user of browser double clicks on item named "dir1" in file browser
-    And user of browser clicks file browser hardlink button
+    And user of browser clicks "Place hard link" button from file browser menu bar
 
     # change ACL permission of created hardlink
     And user of browser changes current working directory to home using breadcrumbs
