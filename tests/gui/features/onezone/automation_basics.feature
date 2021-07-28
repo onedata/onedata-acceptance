@@ -19,16 +19,21 @@ Feature: Basic inventories management
     And user of browser logged as space-owner-user to Onezone service
 
 
-  Scenario: User creates and renames inventory
+  Scenario: User creates inventory
     When user of browser clicks on Automation in the main menu
     And user of browser clicks on Create automation inventory button in automation sidebar
     And user of browser writes "inventory2" into inventory name text field
     And user of browser clicks on confirmation button on automation page
+    And user of browser sees inventory "inventory2" on inventory list
 
-    And user of browser clicks on "Rename" button in inventory "inventory2" menu in the sidebar
-    And user of browser writes "inventory3" into rename inventory text field
-    And user of browser confirms inventory rename using <confirmation_method>
-    Then user of browser sees inventory "inventory3" on inventory list
+
+  Scenario: User renames inventory
+    When user of browser clicks on Automation in the main menu
+
+    And user of browser clicks on "Rename" button in inventory "inventory1" menu in the sidebar
+    And user of browser writes "inventory2" into rename inventory text field
+    And user of browser confirms inventory rename with confirmation button
+    Then user of browser sees inventory "inventory2" on inventory list
 
 
   Scenario: User removes inventory

@@ -44,3 +44,5 @@ class AutomationPage(GenericPage):
 
     members_page = WebItem('.main-content', cls=MembersPage)
 
+    privileges_err_msg = Label('.alert-promise-error')
+
