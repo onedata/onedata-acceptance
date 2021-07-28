@@ -72,14 +72,11 @@ def click_on_confirmation_button_to_rename_inventory(selenium, browser_id,
         ''].edit_box.confirm()
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) confirms inventory rename '
-               'using (?P<option>.*)'))
+@wt(parsers.re('user of (?P<browser_id>.*) confirms inventory rename with '
+               'confirmation button'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_rename_the_inventory(selenium, browser_id, option, oz_page):
-    if option == 'enter':
-        press_enter_on_active_element(selenium, browser_id)
-    else:
-        click_on_confirmation_button_to_rename_inventory(selenium, browser_id,
+def confirm_rename_the_inventory(selenium, browser_id, oz_page):
+    click_on_confirmation_button_to_rename_inventory(selenium, browser_id,
                                                          oz_page)
 
 
@@ -108,3 +105,16 @@ def go_to_inventory_subpage(selenium, browser_id, inventory, subpage, oz_page):
     page.elements_list[inventory]()
     if subpage != 'main':
         getattr(page.elements_list[inventory], subpage)()
+
+
+@wt(parsers.parse('user of {browser_ids} sees "{text}" label in "{inventory}" '
+                  'main page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_inventory_exists(selenium, browser_ids, option, inventory, oz_page, text):
+    for browser_id in parse_seq(browser_ids):
+        err_msg = oz_page(selenium[browser_id])['automation'].privileges_err_msg
+
+        if option == 'does not see':
+            assert text not in err_msg
+        else:
+            assert text in err_msg
