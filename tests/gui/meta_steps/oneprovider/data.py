@@ -14,6 +14,7 @@ from selenium.common.exceptions import (NoSuchElementException,
 from tests.gui.steps.oneprovider.file_browser import *
 from tests.gui.steps.oneprovider.data_tab import *
 from tests.gui.steps.oneprovider.metadata import *
+from tests.gui.steps.oneprovider.common import double_click_on_item_in_browser
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.common.url import refresh_site
 from tests.gui.meta_steps.oneprovider.common import (
@@ -107,7 +108,7 @@ def see_items_in_op_gui(selenium, browser_id, path, subfiles, tmp_memory,
                           tmp_memory, space)
 
     if path:
-        double_click_on_item_in_file_browser(browser_id, path, tmp_memory)
+        double_click_on_item_in_browser(browser_id, path, tmp_memory)
     if res == 'fails':
         assert_items_absence_in_file_browser(browser_id, subfiles, tmp_memory)
     else:
@@ -168,7 +169,7 @@ def _check_files_tree(subtree, user, tmp_memory, cwd, selenium, op_container,
         except AttributeError:
             assert_items_presence_in_file_browser(user, item, tmp_memory)
             if item.startswith('dir'):
-                double_click_on_item_in_file_browser(user, item, tmp_memory)
+                double_click_on_item_in_browser(user, item, tmp_memory)
                 assert_empty_file_browser_in_files_tab_in_op(selenium, user,
                                                              op_container,
                                                              tmp_memory)
@@ -177,8 +178,7 @@ def _check_files_tree(subtree, user, tmp_memory, cwd, selenium, op_container,
                                                                op_container)
         else:
             assert_items_presence_in_file_browser(user, item_name, tmp_memory)
-            double_click_on_item_in_file_browser(user, item_name,
-                                                 tmp_memory)
+            double_click_on_item_in_browser(user, item_name, tmp_memory)
 
             # if item is directory go deeper
             if item_name.startswith('dir'):
@@ -243,7 +243,7 @@ def assert_file_content_in_op_gui(text, path, space, selenium, user, users,
                           tmp_memory, space)
         go_to_path_without_last_elem(user, tmp_memory, path)
     item_name = _select_item(user, tmp_memory, path)
-    double_click_on_item_in_file_browser(user, item_name, tmp_memory)
+    double_click_on_item_in_browser(user, item_name, tmp_memory)
     has_downloaded_file_content(user, item_name, text, tmpdir)
     change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, user,
                                                    'home', op_container)
@@ -361,15 +361,14 @@ def go_to_path(browser_id, tmp_memory, path):
         path_list = [path]
     for directory in path_list:
         if directory != '':
-            double_click_on_item_in_file_browser(browser_id, directory, tmp_memory)
+            double_click_on_item_in_browser(browser_id, directory, tmp_memory)
 
 
 def go_to_path_without_last_elem(browser_id, tmp_memory, path):
     if '/' in path:
         _, path_list = get_item_name_and_containing_dir_path(path)
         for directory in path_list:
-            double_click_on_item_in_file_browser(browser_id, directory,
-                                                 tmp_memory)
+            double_click_on_item_in_browser(browser_id, directory, tmp_memory)
 
 
 def get_item_name_and_containing_dir_path(path):
