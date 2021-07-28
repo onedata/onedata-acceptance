@@ -425,7 +425,7 @@ def check_file_owner(selenium, browser_id, owner, file_name, tmp_memory,
 def create_hardlinks_of_file(selenium, browser_id, file_name, space,
                              tmp_memory, oz_page, op_container, modals):
     option = 'Create hard link'
-    button = 'hardlink'
+    button = 'place hard link'
 
     _create_link_in_file_browser(selenium, browser_id, file_name, space,
                                  tmp_memory, oz_page, op_container, modals,
@@ -437,7 +437,7 @@ def create_hardlinks_of_file(selenium, browser_id, file_name, space,
 def create_symlinks_of_file(selenium, browser_id, file_name, space,
                             tmp_memory, oz_page, op_container, modals):
     option = 'Create symbolic link'
-    button = 'symlink'
+    button = 'place symbolic link'
 
     _create_link_in_file_browser(selenium, browser_id, file_name, space,
                                  tmp_memory, oz_page, op_container, modals,
