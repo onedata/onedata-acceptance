@@ -11,7 +11,6 @@ from tests.gui.conftest import WAIT_FRONTEND
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 from tests.gui.utils.generic import transform
-import time
 
 
 @wt(parsers.parse('user of {browser_id} click Dataset write protection toggle'
