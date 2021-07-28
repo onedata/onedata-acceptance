@@ -650,7 +650,8 @@ def see_insufficient_permissions_alert(selenium, browser_id, oz_page, where,
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees privileges for '
                '"(?P<member_name>.*)" (?P<member_type>user|group) '
-               'in (?P<where>space|group|cluster|harvester) members subpage'))
+               'in (?P<where>space|group|cluster|harvester|automation) '
+               'members subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def see_privileges_for_member(selenium, browser_id, oz_page, where, member_type,
                               member_name, onepanel):
