@@ -222,7 +222,7 @@ Feature: Basic files tab operations on hardlinks in file browser
     Then user of browser sees that current permission is "775"
 
 
-  Scenario: User sees change of hardlink ACL permission after second hardlink permissions change
+  Scenario: User sees change of hardlink ACL permission after first hardlink permissions change
     # create hardlink
     When user of browser opens file browser for "space1" space
     And user of browser clicks on menu for "file1" file in file browser
