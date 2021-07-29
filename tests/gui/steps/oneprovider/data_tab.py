@@ -24,6 +24,8 @@ def check_browser_to_load(selenium, browser_id, tmp_memory, op_container,
         items_browser = op_container(driver).file_browser
     elif browser == 'dataset browser':
         items_browser = op_container(driver).dataset_browser
+    elif browser == 'archive file browser':
+        items_browser = op_container(driver).archive_file_browser
     else:
         items_browser = op_container(driver).shares_page.shares_browser
     tmp_memory[browser_id][transform(browser)] = items_browser
@@ -130,11 +132,17 @@ def is_displayed_breadcrumbs_in_data_tab_in_op_correct(selenium, browser_id,
                   'to {path} using breadcrumbs'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, browser_id, path,
-                                                   op_container):
+                                                   op_container, which_browser
+                                                   ='file browser'):
+    archive = False
+    if which_browser == 'archive file browser':
+        archive = True
     if path == 'home':
-        op_container(selenium[browser_id]).file_browser.breadcrumbs.home()
+        (getattr(op_container(selenium[browser_id]), transform(which_browser))
+         .breadcrumbs.home())
     else:
-        op_container(selenium[browser_id]).file_browser.breadcrumbs.chdir(path)
+        (getattr(op_container(selenium[browser_id]), transform(which_browser))
+         .breadcrumbs.chdir(path, archive))
 
 
 @wt(parsers.parse('user of {browser_id} sees that current working directory '
@@ -225,9 +233,9 @@ def assert_nonempty_file_browser_in_files_tab_in_op(selenium, browser_id,
 @wt(parsers.parse('user of {browser_id} sees empty {item_browser} '
                   'in files tab in Oneprovider page'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_empty_file_browser_in_files_tab_in_op(selenium, browser_id,
-                                                 op_container, tmp_memory,
-                                                 item_browser='file browser'):
+def assert_empty_browser_in_files_tab_in_op(selenium, browser_id,
+                                            op_container, tmp_memory,
+                                            item_browser='file browser'):
     switch_to_iframe(selenium, browser_id)
     check_browser_to_load(selenium, browser_id, tmp_memory, op_container,
                           item_browser)

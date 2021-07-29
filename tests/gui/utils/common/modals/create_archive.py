@@ -8,11 +8,12 @@ __license__ = "This software is released under the MIT license cited in " \
 
 
 from .modal import Modal
-from tests.gui.utils.core.web_elements import NamedButton
+from tests.gui.utils.core.web_elements import NamedButton, Input
 
 
 class CreateArchive(Modal):
     create = NamedButton('.btn-primary', text='Create')
+    description = Input('.textarea-field .form-control')
 
     def __str__(self):
         return 'Create archive'

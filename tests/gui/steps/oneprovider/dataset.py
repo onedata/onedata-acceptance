@@ -60,13 +60,6 @@ def click_remove_button_on_remove_selected_dataset_modal(browser_id, selenium,
     modals(driver).remove_selected_dataset.remove_button()
 
 
-@wt(parsers.parse('user of {browser_id} sees "{name}" in dataset browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def see_name_in_dataset_browser(browser_id, name, tmp_memory):
-    browser = tmp_memory[browser_id]['dataset_browser']
-    assert name in browser.data, f'{name} not found in dataset list'
-
-
 @wt(parsers.parse('user of {browser_id} does not see "{name}" in dataset'
                   ' browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)

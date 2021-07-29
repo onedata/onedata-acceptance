@@ -41,3 +41,19 @@ def see_archive_state(browser_id, tmp_memory, state_status):
     item_status = re.sub('\n', ' ', item_status)
     assert item_status == state_status, f'{item_status} state of archive does' \
                                         f' not match expected {state_status}'
+
+
+@wt(parsers.parse('user of {browser_id} writes "{text}" into description'
+                  ' text field'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def write_description(selenium, browser_id, modals, text):
+    driver = selenium[browser_id]
+    modals(driver).create_archive.description = text
+
+
+@wt(parsers.parse('user of {browser_id} double clicks on latest created '
+                  'archive'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def clicks_latest_created_archive(browser_id, tmp_memory):
+    browser = tmp_memory[browser_id]['dataset_browser']
+    browser.archives[0].double_click()

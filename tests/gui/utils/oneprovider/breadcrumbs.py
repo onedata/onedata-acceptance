@@ -32,7 +32,7 @@ class _Breadcrumbs(PageObject):
     def pwd(self):
         return '/'.join(directory.text for directory in self._breadcrumbs)
 
-    def chdir(self, path):
+    def chdir(self, path, archive=False):
         if not path or path == '/':
             self.home()
         else:
@@ -44,9 +44,16 @@ class _Breadcrumbs(PageObject):
 
             i, dir1, dir2 = None, None, None
             err_msg = '{dir} not found on {idx}th position in {item}'
-
-            for i, (dir1, dir2) in enumerate(izip(path, breadcrumbs)):
-                assert dir1 == dir2.text, err_msg.format(dir=dir1, idx=i, item=self)
+            if archive:
+                breadcrumbs_list = [elem for i, elem in enumerate(breadcrumbs)
+                                    if i != 1]
+                for i, (dir1, dir2) in enumerate(izip(path, breadcrumbs_list)):
+                    assert dir1 == dir2.text, err_msg.format(dir=dir1, idx=i,
+                                                             item=self)
+            else:
+                for i, (dir1, dir2) in enumerate(izip(path, breadcrumbs)):
+                    assert dir1 == dir2.text, err_msg.format(dir=dir1, idx=i,
+                                                             item=self)
 
             dir2.click()
 

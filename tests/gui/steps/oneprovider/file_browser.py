@@ -95,19 +95,20 @@ def assert_items_absence_in_file_browser(browser_id, item_list, tmp_memory):
 
 
 @wt(parsers.parse('user of {browser_id} sees item(s) '
-                  'named {item_list} in file browser'))
+                  'named {item_list} in {which_browser}'))
 @wt(parsers.parse('user of {browser_id} sees that item named '
-                  '{item_list} has appeared in file browser'))
+                  '{item_list} has appeared in {which_browser}'))
 @wt(parsers.parse('user of {browser_id} sees that items named '
-                  '{item_list} have appeared in file browser'))
+                  '{item_list} have appeared in {which_browser}'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_items_presence_in_file_browser(browser_id, item_list, tmp_memory):
-    file_browser = tmp_memory[browser_id]['file_browser']
-    data = _get_items_list_from_file_browser(browser_id, tmp_memory)
+def assert_items_presence_in_browser(browser_id, item_list, tmp_memory,
+                                     which_browser='file browser'):
+    browser = tmp_memory[browser_id][transform(which_browser)]
+    data = {f.name for f in browser.data}
     for item_name in parse_seq(item_list):
         assert (item_name in data and
-                file_browser.data[item_name].size), (f'not found "{item_name}" '
-                                                     f'in file browser')
+                browser.data[item_name].size), (f'not found "{item_name}" '
+                                                f'in browser')
 
 
 @wt(parsers.parse('user of {browser_id} sees only items named {item_list}'
@@ -179,11 +180,11 @@ def scroll_to_bottom_of_file_browser(browser_id, tmp_memory):
 
 
 @wt(parsers.re(r'user of (?P<browser_id>.+?) sees that there '
-               r'(is 1|are (?P<num>\d+)) items? in file browser'))
+               r'(is 1|are (?P<num>\d+)) items? in (?P<which_browser>.*)'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_num_of_files_are_displayed_in_file_browser(browser_id, num,
-                                                      tmp_memory):
-    browser = tmp_memory[browser_id]['file_browser']
+def assert_num_of_files_are_displayed_in_browser(browser_id, num, tmp_memory,
+                                                 which_browser='file_browser'):
+    browser = tmp_memory[browser_id][transform(which_browser)]
     err_msg = 'displayed number of files {} does not match expected {}'
     files_num = browser.data.count()
     num = 1 if num is None else int(num)

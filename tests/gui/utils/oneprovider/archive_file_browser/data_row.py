@@ -1,5 +1,5 @@
-"""Utils and fixtures to facilitate operation on archive row in dataset browser
-in oneprovider web GUI.
+"""Utils and fixtures to facilitate operation on dataset row in archive file
+browser in oneprovider web GUI.
 """
 
 __author__ = "Katarzyna Such"
@@ -12,8 +12,9 @@ from tests.gui.utils.core.web_elements import Label
 from selenium.webdriver import ActionChains
 
 
-class ArchiveRow(PageObject):
-    state = Label('.fb-table-col-state .file-item-text')
+class DataRow(PageObject):
+    name = id = Label('.file-name-inner')
+    size = Label('.fb-table-col-size .file-item-text')
 
     def double_click(self):
         ActionChains(self.driver).double_click(self.web_elem).perform()
