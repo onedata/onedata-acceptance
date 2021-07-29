@@ -68,5 +68,5 @@ def screens():
     return [0]
 
 
-scenarios('../features/onezone/automation_basics.feature')
+# scenarios('../features/onezone/automation_basics.feature')
 scenarios('../features/onezone/automation_members.feature')

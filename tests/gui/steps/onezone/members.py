@@ -376,7 +376,7 @@ def check_user_in_space_members_list(selenium, browser_id, option, username,
 
 @wt(parsers.re('user of (?P<browser_id>.*) removes "(?P<member_name>.*)" '
                '(?P<member_type>user|group) from "(?P<name>.*)" '
-               '(?P<where>cluster|group|harvester|space) members'))
+               '(?P<where>cluster|group|harvester|space|automation) members'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def remove_member_from_parent(selenium, browser_id, member_name, member_type,
                               name, oz_page, tmp_memory, onepanel, where,
@@ -397,6 +397,9 @@ def remove_member_from_parent(selenium, browser_id, member_name, member_type,
         modal_name = 'remove group from '
     else:
         modal_name = 'remove subgroup from '
+
+    if where == 'automation':
+        where = 'atm. inventory'
     modal_name += where
 
     popups(driver).menu_popup_with_text.menu['Remove this member']()
