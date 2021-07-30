@@ -32,7 +32,8 @@ def double_click_on_item_in_browser(browser_id, item_name, tmp_memory,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def is_displayed_breadcrumbs_in_data_tab_in_op_correct(selenium, browser_id,
                                                        path, op_container,
-                                                       which_browser):
+                                                       which_browser=
+                                                       'file browser'):
     driver = selenium[browser_id]
     breadcrumbs = getattr(op_container(driver),
                           transform(which_browser)).breadcrumbs.pwd()
@@ -76,7 +77,7 @@ def assert_items_presence_in_browser(browser_id, item_list, tmp_memory,
                   '{item_list} in {which_browser}'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_items_absence_in_browser(browser_id, item_list, tmp_memory,
-                                    which_browser):
+                                    which_browser='file browser'):
     data = _get_items_list_from_browser(browser_id, tmp_memory, which_browser)
     for item_name in parse_seq(item_list):
         assert item_name not in data, (f'found "{item_name}" in browser, '

@@ -155,7 +155,8 @@ def create_item_in_op_gui(selenium, browser_id, path, item_type, name,
                '(?P<which_browser>.*) is as follow:\n'
                r'(?P<config>(.|\s)*)'))
 def check_file_structure_in_browser(browser_id, config, selenium, tmp_memory,
-                                    op_container, tmpdir, which_browser):
+                                    op_container, tmpdir,
+                                    which_browser='file browser'):
     subtree = yaml.load(config)
     _check_files_tree(subtree, browser_id, tmp_memory, '', selenium,
                       op_container, tmpdir, which_browser)
