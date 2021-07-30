@@ -45,7 +45,7 @@ Feature: Basic files tab operations on single directory in file browser
     And user of browser clicks "Delete" option in data row menu in file browser
     And user of browser clicks on "Yes" button in modal "Delete modal"
 
-    Then user of browser sees that item named "dir1" has disappeared from files browser
+    Then user of browser sees that item named "dir1" has disappeared from file browser
 
 
   Scenario: User renames directory
@@ -60,6 +60,6 @@ Feature: Basic files tab operations on single directory in file browser
     And user of browser writes "new_dir1" into text field in modal "Rename modal"
     And user of browser confirms rename directory using enter
 
-    Then user of browser sees that item named "dir1" has disappeared from files browser
+    Then user of browser sees that item named "dir1" has disappeared from file browser
     And user of browser sees that item named "new_dir1" has appeared in file browser
     And user of browser sees that item named "new_dir1" is directory in file browser

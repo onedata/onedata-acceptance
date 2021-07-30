@@ -31,5 +31,5 @@ Feature: Create Dataset
     And user of browser clicks on menu for "file1" file in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
     And user of browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of browser clicks Close button in Datasets modal
+    And user of browser clicks on "Close" button in modal "Datasets"
     Then user of browser sees Dataset status tag for "file1" in file browser

@@ -8,7 +8,7 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 from tests.gui.meta_steps.oneprovider.data import *
-from tests.gui.steps.oneprovider.common import double_click_on_item_in_browser
+from tests.gui.steps.oneprovider.browser import double_click_on_item_in_browser
 from tests.gui.meta_steps.oneprovider.metadata import (
     assert_metadata_in_op_gui, set_metadata_in_op_gui,
     remove_all_metadata_in_op_gui, assert_such_metadata_not_exist_in_op_gui)
