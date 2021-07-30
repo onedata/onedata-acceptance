@@ -14,7 +14,7 @@ from selenium.common.exceptions import (NoSuchElementException,
 from tests.gui.steps.oneprovider.file_browser import *
 from tests.gui.steps.oneprovider.data_tab import *
 from tests.gui.steps.oneprovider.metadata import *
-from tests.gui.steps.oneprovider.common import double_click_on_item_in_browser
+from tests.gui.steps.oneprovider.browser import *
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.common.url import refresh_site
 from tests.gui.meta_steps.oneprovider.common import (
@@ -84,7 +84,7 @@ def remove_item_in_op_gui(selenium, browser_id, path, tmp_memory, op_container,
     if res == 'fails':
         assert_error_modal_with_text_appeared(selenium, browser_id, text)
     else:
-        assert_items_absence_in_file_browser(browser_id, path, tmp_memory)
+        assert_items_absence_in_browser(browser_id, path, tmp_memory)
 
 
 def remove_dir_and_parents_in_op_gui(selenium, browser_id, path, tmp_memory,
@@ -110,7 +110,7 @@ def see_items_in_op_gui(selenium, browser_id, path, subfiles, tmp_memory,
     if path:
         double_click_on_item_in_browser(browser_id, path, tmp_memory)
     if res == 'fails':
-        assert_items_absence_in_file_browser(browser_id, subfiles, tmp_memory)
+        assert_items_absence_in_browser(browser_id, subfiles, tmp_memory)
     else:
         assert_items_presence_in_browser(browser_id, subfiles, tmp_memory)
 

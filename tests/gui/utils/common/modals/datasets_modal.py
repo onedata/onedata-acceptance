@@ -15,7 +15,7 @@ from tests.gui.utils.onezone.generic_page import Element
 
 
 class ParentDatasetItem(Element):
-    name = id = Label('.azure')
+    name = id = Label('.file-path')
     metadata_protection_toggle = Toggle('.metadata-flag-toggle')
     data_protection_toggle = Toggle('.data-flag-toggle')
 

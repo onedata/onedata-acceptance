@@ -18,7 +18,6 @@ class DataRow(PageObject):
     archive = Label('.fb-table-col-archives .file-item-text')
     menu_button = Button('.fb-table-col-actions-menu .menu-toggle')
     number_of_archive = Button('.archives-count-link')
-    clickable_field = WebElement('.file-name')
     data_protected_tag = WebElement('.file-data-protected-icon')
     metadata_protected_tag = WebElement('.file-metadata-protected-icon')
 

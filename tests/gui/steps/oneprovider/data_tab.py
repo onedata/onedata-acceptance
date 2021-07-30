@@ -156,18 +156,18 @@ def is_displayed_dir_tree_in_data_tab_in_op_correct(selenium, browser_id, path,
 
 
 @wt(parsers.parse('user of {browser_id} changes current working directory '
-                  'to {path} using directory tree'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def change_cwd_using_dir_tree_in_data_tab_in_op(selenium, browser_id, path,
-                                                op_container):
-    driver = selenium[browser_id]
-    cwd = op_container(driver).data.sidebar.root_dir
-    cwd.click()
-    for directory in (dir for dir in path.split('/') if dir != ''):
-        if not cwd.is_expanded():
-            cwd.expand()
-        cwd = cwd[directory]
-        cwd.click()
+                  'to {path} using breadcrumbs'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, browser_id, path,
+                                                   op_container, which_browser
+                                                   ='file browser'):
+
+    if path == 'home':
+        (getattr(op_container(selenium[browser_id]), transform(which_browser))
+         .breadcrumbs.home())
+    else:
+        (getattr(op_container(selenium[browser_id]), transform(which_browser))
+         .breadcrumbs.chdir(path))
 
 
 @wt(parsers.parse('user of {browser_id} does not see {path} in directory tree'))

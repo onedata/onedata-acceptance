@@ -68,24 +68,3 @@ def wt_assert_provider_name_in_op(selenium, browser_id, val, op_container, hosts
          'expected {}'.format(displayed_name, val))
 
 
-@wt(parsers.parse('user of {browser_id} double clicks on item named'
-                  ' "{item_name}" in {which_browser}'))
-@repeat_failed(timeout=WAIT_BACKEND)
-def double_click_on_item_in_browser(browser_id, item_name, tmp_memory,
-                                    which_browser='file browser'):
-    which_browser = transform(which_browser)
-    browser = tmp_memory[browser_id][which_browser]
-    start = time.time()
-    while item_name not in browser.data:
-        time.sleep(1)
-        if start + time.time() > start + WAIT_BACKEND:
-            raise RuntimeError('waited too long')
-    browser.data[item_name].double_click()
-
-
-@wt(parsers.parse('user of {browser_id} sees "{name}" in {which_browser}'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def see_name_in_dataset_browser(browser_id, name, tmp_memory, which_browser):
-    which_browser = transform(which_browser)
-    browser = tmp_memory[browser_id][which_browser]
-    assert name in browser.data, f'{name} not found in {which_browser}'
