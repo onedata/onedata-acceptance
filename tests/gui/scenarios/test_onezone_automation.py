@@ -1,5 +1,5 @@
 """This module contains tests suite for automation management using
-Onezone GUI and single browser instance.
+Onezone GUI and multi browser instance.
 """
 
 __author__ = "Rafał Widziszewski"
@@ -65,7 +65,7 @@ from tests.gui.steps.rest.env_up.inventory import *
 
 @fixture(scope='module')
 def screens():
-    return [0]
+    return [0, 1]
 
 
 # scenarios('../features/onezone/automation_basics.feature')

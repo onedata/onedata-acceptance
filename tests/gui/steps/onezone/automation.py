@@ -77,11 +77,7 @@ def click_on_confirmation_button_to_rename_inventory(selenium, browser_id,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_rename_the_inventory(selenium, browser_id, oz_page):
     click_on_confirmation_button_to_rename_inventory(selenium, browser_id,
-                                                         oz_page)
-
-
-def _find_inventories(page, inventory):
-    return list(filter(lambda i: i.name == inventory, page.elements_list))
+                                                     oz_page)
 
 
 @wt(parsers.re('users? of (?P<browser_ids>.*) (?P<option>does not see|sees) '
@@ -110,7 +106,8 @@ def go_to_inventory_subpage(selenium, browser_id, inventory, subpage, oz_page):
 @wt(parsers.parse('user of {browser_ids} sees "{text}" label in "{inventory}" '
                   'main page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_inventory_exists(selenium, browser_ids, option, inventory, oz_page, text):
+def assert_inventory_exists(selenium, browser_ids, option, inventory, oz_page,
+                            text):
     for browser_id in parse_seq(browser_ids):
         err_msg = oz_page(selenium[browser_id])['automation'].privileges_err_msg
 

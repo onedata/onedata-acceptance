@@ -255,7 +255,6 @@ Feature: Management of inventories members
 
     # User1 fails to remove user
     And user of browser1 removes "space-owner-user" user from "inventory1" automation members
-    #And user of browser1 clicks on "Remove" button in modal "remove_member"
     And user of browser1 sees that error popup has appeared
     And user of browser1 clicks on "Close" button in modal "Error"
 
@@ -304,31 +303,36 @@ Feature: Management of inventories members
     Then user of browser1 clicks on "Invite group using token" button in groups list menu in "inventory1" automation members view
 
 
-#  Scenario: User successfully removes group to inventory with add group privilege
-#    When user of space_owner_browser clicks on Automation in the main menu
-#
-#    # Space-owner-user generates invitation token
-#    And user of space_owner_browser opens inventory "inventory1" members subpage
-#    And user of space_owner_browser clicks on "Invite group using token" button in groups list menu in "inventory1" automation members view
-#    And user of space_owner_browser copies invitation token from modal
-#    And user of space_owner_browser closes "Invite using token" modal
-#
-#    # Space-owner-user adds user1 to view inventory
-#    And user of space_owner_browser sends copied token to user of browser1
-#    And user of browser1 adds group "group1" to inventory using copied token
-#
-#    #User1 fails to generate an ivnitation token
-#    And user of browser1 opens inventory "inventory1" members subpage
-#    And user of browser1 clicks on "Invite group using token" button in groups list menu in "inventory1" automation members view
-#    And user of browser1 sees This resource could not be loaded alert in Invite user using token modal
-#    And user of browser1 closes "Invite using token" modal
-#
-#    # Space-owner-user changes privileges for group1
-#    And user of space_owner_browser clicks "group1" group in "inventory1" automation members groups list
-#    And user of space_owner_browser sets following privileges for "group1" group in automation members subpage:
-#         Group management:
-#            granted: Partially
-#            privilege subtypes:
-#              Remove group: True
-#
-#    Then user of browser1 clicks on "Invite group using token" button in groups list menu in "inventory1" automation members view
+  Scenario: User successfully removes group to inventory with add group privilege
+    When user of space_owner_browser clicks on Automation in the main menu
+
+    # Space-owner-user generates invitation token
+    When user of space_owner_browser clicks on Automation in the main menu
+
+    # Space-owner-user generates invitation token
+    And user of space_owner_browser opens inventory "inventory1" members subpage
+    And user of space_owner_browser clicks on "Invite group using token" button in groups list menu in "inventory1" automation members view
+    And user of space_owner_browser copies invitation token from modal
+    And user of space_owner_browser closes "Invite using token" modal
+
+    # Space-owner-user adds user1 to view inventory
+    And user of space_owner_browser sends copied token to user of browser1
+    And user of browser1 adds group "group1" to inventory using copied token
+
+    # User1 fails to remove group
+    And user of browser1 removes "group1" group from "inventory1" automation members
+    And user of browser1 sees that error popup has appeared
+    And user of browser1 clicks on "Close" button in modal "Error"
+
+    # Space-owner-user changes privileges for group1
+    And user of space_owner_browser clicks "group1" group in "inventory1" automation members groups list
+    And user of space_owner_browser sets following privileges for "group1" group in automation members subpage:
+         Group management:
+            granted: Partially
+            privilege subtypes:
+              Remove group: True
+
+    And user of browser1 opens inventory "inventory1" members subpage
+
+    #User1 removes group from inventory
+    Then user of browser1 removes "group1" group from "inventory1" automation members

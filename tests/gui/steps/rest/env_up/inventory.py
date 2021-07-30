@@ -7,7 +7,6 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 import json
-import pdb
 
 import yaml
 
