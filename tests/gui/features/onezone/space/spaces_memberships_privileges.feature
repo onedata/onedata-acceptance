@@ -299,6 +299,7 @@ Feature: Basic management of spaces privileges in Onezone GUI
             granted: False
     And user of browser_user1 sees that all tabs of "space1" are enabled
 
+
   Scenario: User fails to remove space because of lack in privileges
     When user of space_owner_browser clicks "space2" on the spaces list in the sidebar
     And user of space_owner_browser clicks Members of "space2" in the sidebar
