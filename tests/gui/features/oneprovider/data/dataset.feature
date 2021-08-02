@@ -140,9 +140,9 @@ Feature: Basic dataset operations
     Then user of browser double clicks on item named "dir4" in file browser
     And user of browser clicks on menu for "dir5" directory in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser sees that metadata write protection toggle is checked in Ancestor Dataset menu in Datasets modal
-    And user of browser sees that data write protection toggle is checked in Ancestor Dataset menu in Datasets modal
-    And user of browser clicks on Ancestor datasets option in Datasets modal
+    And user of browser sees that metadata write protection toggle is checked in Ancestor Datasets row in Datasets modal
+    And user of browser sees that data write protection toggle is checked in Ancestor Datasets row in Datasets modal
+    And user of browser expands Ancestor datasets row in Datasets modal
     And user of browser sees that data write protection toggle is checked on "/space1/dir2" in ancestors list
     And user of browser sees that metadata write protection toggle is unchecked on "/space1/dir2" in ancestors list
     And user of browser sees that metadata write protection toggle is checked on "/space1/dir2/dir3/dir4" in ancestors list
@@ -170,8 +170,8 @@ Feature: Basic dataset operations
 
     And user of browser clicks on detached view mode on dataset browser page
     And user of browser sees dataset browser in datasets tab in Oneprovider page
-    And user of browser sees item(s) named "dir1" in dataset browser
-    Then user of browser clicks Files of "space1" in the sidebar
+    Then user of browser sees item(s) named "dir1" in dataset browser
+    And user of browser clicks Files of "space1" in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser does not see Dataset status tag for "dir1" in file browser
 
@@ -228,7 +228,7 @@ Feature: Basic dataset operations
 
     And user of browser clicks on detached view mode on dataset browser page
     And user of browser sees dataset browser in datasets tab in Oneprovider page
-    And user of browser sees that the file structure in dataset browser is as follow:
+    Then user of browser sees that the file structure in dataset browser is as follow:
           - dir3:
               - dir5
     And user of browser clicks on attached view mode on dataset browser page

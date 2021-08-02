@@ -22,7 +22,7 @@ def click_protection_toggle(browser_id, selenium, modals, kind):
 
 
 @wt(parsers.parse('user of {browser_id} sees that {kind} write protection '
-                  'toggle is checked in Ancestor Dataset menu in Datasets '
+                  'toggle is checked in Ancestor Datasets row in Datasets '
                   'modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_general_toggle_checked_for_ancestors(browser_id, selenium, modals,
@@ -34,8 +34,8 @@ def assert_general_toggle_checked_for_ancestors(browser_id, selenium, modals,
                                  f' in ancestor dataset menu')
 
 
-@wt(parsers.parse('user of {browser_id} clicks on Ancestor datasets option'
-                  ' in Datasets modal'))
+@wt(parsers.parse('user of {browser_id} expands Ancestor datasets row '
+                  'in Datasets modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_option_in_dataset_modal(browser_id, selenium, modals):
     driver = selenium[browser_id]
@@ -89,12 +89,3 @@ def click_mark_file_as_dataset_toggle(browser_id, selenium, modals):
 def click_menu_for_elem_in_dataset_browser(browser_id, item_name, tmp_memory):
     browser = tmp_memory[browser_id]['dataset_browser']
     browser.data[item_name].menu_button()
-
-
-@wt(parsers.parse('user of {browser_id} clicks "{option}" option '
-                  'in data row menu in dataset browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_option_in_data_row_menu_in_datasets_browser(selenium, browser_id,
-                                                      option, modals):
-    driver = selenium[browser_id]
-    modals(driver).data_row_menu.options[option].click()

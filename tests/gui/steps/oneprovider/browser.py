@@ -95,3 +95,10 @@ def assert_num_of_files_are_displayed_in_browser(browser_id, num, tmp_memory,
     num = 1 if num is None else int(num)
     assert files_num == num, err_msg.format(files_num, num)
 
+
+@wt(parsers.parse('user of {browser_id} clicks "{option}" option '
+                  'in data row menu in {} browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
+                                             modals):
+    modals(selenium[browser_id]).data_row_menu.choose_option(option)
