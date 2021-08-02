@@ -32,17 +32,6 @@ def click_on_number_in_archives(browser_id, tmp_memory, name):
     browser.data[name].number_of_archive()
 
 
-@wt(parsers.parse('user of {browser_id} sees "{state_status}" on first archive'
-                  ' state in archive browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def see_archive_state(browser_id, tmp_memory, state_status):
-    browser = tmp_memory[browser_id]['dataset_browser']
-    item_status = browser.archives[0].state
-    item_status = re.sub('\n', ' ', item_status)
-    assert item_status == state_status, f'{item_status} state of archive does' \
-                                        f' not match expected {state_status}'
-
-
 @wt(parsers.parse('user of {browser_id} writes "{text}" into description'
                   ' text field'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -51,9 +40,29 @@ def write_description(selenium, browser_id, modals, text):
     modals(driver).create_archive.description = text
 
 
+@wt(parsers.parse('user of {browser_id} sees "{state_status}" on first archive'
+                  ' state in archive file browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def see_archive_state(browser_id, tmp_memory, state_status):
+    browser = tmp_memory[browser_id]['archive_file_browser']
+    item_status = browser.data[0].state
+    item_status = re.sub('\n', ' ', item_status)
+    assert item_status == state_status, f'{item_status} state of archive does' \
+                                        f' not match expected {state_status}'
+
+
 @wt(parsers.parse('user of {browser_id} double clicks on latest created '
                   'archive'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def clicks_latest_created_archive(browser_id, tmp_memory):
-    browser = tmp_memory[browser_id]['dataset_browser']
-    browser.archives[0].double_click()
+    browser = tmp_memory[browser_id]['archive_file_browser']
+    browser.data[0].double_click()
+
+
+@wt(parsers.parse('user of {browser_id} sees {tag_type} tag for latest created '
+                  'archive'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_tag_for_latest_created_archive(browser_id, tag_type, tmp_memory):
+    browser = tmp_memory[browser_id]['archive_file_browser']
+    err_msg = f'{tag_type} tag for latest created archive is not visible'
+    assert browser.data[0].is_tag_visible(tag_type), err_msg

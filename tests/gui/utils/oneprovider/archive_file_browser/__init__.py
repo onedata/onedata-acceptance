@@ -11,6 +11,7 @@ from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import WebItemsSequence, WebItem
 from .data_row import DataRow
 from ..breadcrumbs import Breadcrumbs
+from selenium.webdriver import ActionChains
 
 
 class _ArchiveFileBrowser(PageObject):
@@ -20,6 +21,11 @@ class _ArchiveFileBrowser(PageObject):
     def __str__(self):
         return f'archive file browser in {self.parent}'
 
+    def double_click(self):
+        ActionChains(self.driver).double_click(self.web_elem).perform()
+
 
 ArchiveFileBrowser = partial(WebItem, cls=_ArchiveFileBrowser)
+
+
 

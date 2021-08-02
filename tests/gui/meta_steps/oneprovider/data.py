@@ -26,6 +26,7 @@ from tests.gui.steps.onezone.spaces import (
     click_on_option_of_space_on_left_sidebar_menu,
     click_element_on_lists_on_left_sidebar_menu, click_on_option_in_the_sidebar)
 from tests.gui.steps.rest.env_up.spaces import init_storage
+from tests.gui.steps.oneprovider.archives import clicks_latest_created_archive
 
 
 def _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id, path,
@@ -187,7 +188,9 @@ def _check_files_tree(subtree, user, tmp_memory, cwd, selenium, op_container,
                                             which_browser)
 
             # if item is directory go deeper
-            if item_name.startswith('dir'):
+            if (item_name.startswith('dir') or
+                    (which_browser == 'archive file browser'
+                     and item_name == 'data')):
                 if isinstance(item_subtree, int):
                     assert_num_of_files_are_displayed_in_browser(user,
                                                                  item_subtree,
@@ -202,6 +205,8 @@ def _check_files_tree(subtree, user, tmp_memory, cwd, selenium, op_container,
                                                                user, cwd,
                                                                op_container,
                                                                which_browser)
+                if which_browser == 'archive file browser':
+                    clicks_latest_created_archive(user, tmp_memory)
             else:
                 has_downloaded_file_content(user, item_name, str(item_subtree),
                                             tmpdir)

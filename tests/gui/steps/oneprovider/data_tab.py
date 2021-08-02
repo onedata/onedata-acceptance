@@ -111,23 +111,6 @@ def assert_btn_is_not_in_file_browser_menu_bar(selenium, browser_id, btn_list,
             '{} should not be in selection menu'.format(btn))
 
 
-@wt(parsers.parse('user of {browser_id} sees that current working directory '
-                  'displayed in breadcrumbs on {text} browser is {path}'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def is_displayed_breadcrumbs_in_data_tab_in_op_correct(selenium, browser_id,
-                                                       path, op_container,
-                                                       text):
-    driver = selenium[browser_id]
-    breadcrumbs = ' '
-    if text == 'file':
-        breadcrumbs = op_container(driver).file_browser.breadcrumbs.pwd()
-    elif text == 'dataset':
-        breadcrumbs = op_container(driver).dataset_browser.breadcrumbs.pwd()
-
-    assert path == breadcrumbs, (f'expected breadcrumbs {path}; '
-                                 f'displayed: {breadcrumbs}')
-
-
 @wt(parsers.parse('user of {browser_id} changes current working directory '
                   'to {path} using breadcrumbs'))
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -153,21 +136,6 @@ def is_displayed_dir_tree_in_data_tab_in_op_correct(selenium, browser_id, path,
     driver = selenium[browser_id]
     cwd = op_container(driver).data.sidebar.cwd.pwd()
     assert path == cwd, 'expected path {}\n got: {}'.format(path, cwd)
-
-
-@wt(parsers.parse('user of {browser_id} changes current working directory '
-                  'to {path} using breadcrumbs'))
-@repeat_failed(timeout=WAIT_BACKEND)
-def change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, browser_id, path,
-                                                   op_container, which_browser
-                                                   ='file browser'):
-
-    if path == 'home':
-        (getattr(op_container(selenium[browser_id]), transform(which_browser))
-         .breadcrumbs.home())
-    else:
-        (getattr(op_container(selenium[browser_id]), transform(which_browser))
-         .breadcrumbs.chdir(path))
 
 
 @wt(parsers.parse('user of {browser_id} does not see {path} in directory tree'))
