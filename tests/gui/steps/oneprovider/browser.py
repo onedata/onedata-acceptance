@@ -94,3 +94,12 @@ def assert_num_of_files_are_displayed_in_browser(browser_id, num, tmp_memory,
     num = 1 if num is None else int(num)
     assert files_num == num, err_msg.format(files_num, num)
 
+
+@wt(parsers.parse('user of {browser_id} sees {status_type} '
+                  'status tag for "{item_name}" in {which_browser}'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_status_tag_for_file_in_browser(browser_id, status_type, item_name,
+                                          tmp_memory, which_browser):
+    browser = tmp_memory[browser_id][transform(which_browser)]
+    err_msg = f'{status_type} tag for {item_name} in {which_browser} not visible'
+    assert browser.data[item_name].is_tag_visible(transform(status_type)), err_msg

@@ -9,12 +9,15 @@ __license__ = "This software is released under the MIT license cited in " \
 
 from .modal import Modal
 from tests.gui.utils.core.web_elements import NamedButton, Input, Button
+from tests.gui.utils.common.common import Toggle
 
 
 class CreateArchive(Modal):
     create = NamedButton('.btn-primary', text='Create')
     description = Input('.textarea-field .form-control')
     bagit = Button('.option-bagit .one-way-radio-control')
+    create_nested_archives = Toggle('.createNestedArchives-field '
+                                    '.one-way-toggle-track')
 
     def __str__(self):
         return 'Create archive'

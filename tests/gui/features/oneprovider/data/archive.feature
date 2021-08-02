@@ -111,7 +111,7 @@ Feature: Archive basic operation
     And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
     And user of browser sees that item named "20B-0.txt" has appeared in file browser
 
-     #create archive
+     # create archive
     And user of browser clicks Datasets of "space1" in the sidebar
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser clicks on menu for "dir1" dataset in dataset browser
@@ -127,6 +127,7 @@ Feature: Archive basic operation
                - dir3:
                  - file1: 100
                  - 20B-0.txt
+
 
 Scenario: User sees BagIt tag after creating BagIt archive
     # create dataset
@@ -149,7 +150,6 @@ Scenario: User sees BagIt tag after creating BagIt archive
     And user of browser clicks on 2 in "dir1" Archives
     And user of browser sees archive file browser in archives tab in Oneprovider page
     Then user of browser sees BagIt tag for latest created archive
-
 
 
 Scenario: User sees BagIt metadata files and directory tree in „data” directory in archive browser after creating BagIt archive
@@ -189,3 +189,99 @@ Scenario: User sees BagIt metadata files and directory tree in „data” direct
          - tagmanifest-sha1.txt
          - tagmanifest-sha256.txt
          - tagmanifest-sha512.txt
+
+
+  Scenario: User sees symbolic links tag  on child datasets after creating nested archive on parent
+    # create dataset
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser clicks on menu for "dir1" directory in file browser
+    And user of browser clicks "Datasets" option in data row menu in file browser
+    And user of browser clicks Mark this file as dataset toggle in Datasets modal
+    And user of browser clicks on "Close" button in modal "Datasets"
+
+    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser double clicks on item named "dir2" in file browser
+
+    # create dataset
+    And user of browser clicks on menu for "dir3" directory in file browser
+    And user of browser clicks "Datasets" option in data row menu in file browser
+    And user of browser clicks Mark this file as dataset toggle in Datasets modal
+    And user of browser clicks on "Close" button in modal "Datasets"
+
+    And user of browser double clicks on item named "dir3" in file browser
+
+    # create dataset
+    And user of browser clicks on menu for "file1" file in file browser
+    And user of browser clicks "Datasets" option in data row menu in file browser
+    And user of browser clicks Mark this file as dataset toggle in Datasets modal
+    And user of browser clicks on "Close" button in modal "Datasets"
+
+    # create nested archive
+    And user of browser clicks Datasets of "space1" in the sidebar
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
+    And user of browser clicks on menu for "dir1" dataset in dataset browser
+    And user of browser clicks "Create archive" option in data row menu in dataset browser
+    And user of browser checks "Create nested archives" toggle in modal "Create Archive"
+    And user of browser clicks on "Create" button in modal "Create Archive"
+
+    Then user of browser clicks on 2 in "dir1" Archives
+    And user of browser sees archive file browser in archives tab in Oneprovider page
+    And user of browser double clicks on latest created archive
+    And user of browser double clicks on item named "dir1" in archive file browser
+    And user of browser double clicks on item named "dir2" in archive file browser
+    And user of browser sees symlink status tag for "dir3" in archive file browser
+    And user of browser double clicks on item named "dir3" in archive file browser
+    And user of browser sees symlink status tag for "file1" in archive file browser
+
+
+  Scenario: User sees that dataset has more archives than its parent after creating nested archive on child dataset
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser clicks on menu for "dir1" directory in file browser
+    And user of browser clicks "Datasets" option in data row menu in file browser
+    And user of browser clicks Mark this file as dataset toggle in Datasets modal
+    And user of browser clicks on "Close" button in modal "Datasets"
+
+    And user of browser double clicks on item named "dir1" in file browser
+
+    # create dataset
+    And user of browser clicks on menu for "dir2" directory in file browser
+    And user of browser clicks "Datasets" option in data row menu in file browser
+    And user of browser clicks Mark this file as dataset toggle in Datasets modal
+    And user of browser clicks on "Close" button in modal "Datasets"
+
+    And user of browser double clicks on item named "dir2" in file browser
+
+    # create dataset
+    And user of browser clicks on menu for "dir3" directory in file browser
+    And user of browser clicks "Datasets" option in data row menu in file browser
+    And user of browser clicks Mark this file as dataset toggle in Datasets modal
+    And user of browser clicks on "Close" button in modal "Datasets"
+
+    # create nested archive
+    And user of browser clicks Datasets of "space1" in the sidebar
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
+    And user of browser clicks on menu for "dir1" dataset in dataset browser
+    And user of browser clicks "Create archive" option in data row menu in dataset browser
+    And user of browser checks "Create nested archives" toggle in modal "Create Archive"
+    And user of browser clicks on "Create" button in modal "Create Archive"
+    And user of browser sees that item "dir1" has 1 Archives
+
+    And user of browser double clicks on item named "dir1" in dataset browser
+    And user of browser sees that item "dir2" has 1 Archives
+
+    # create nested archive
+    And user of browser clicks on menu for "dir2" dataset in dataset browser
+    And user of browser clicks "Create archive" option in data row menu in dataset browser
+    And user of browser checks "Create nested archives" toggle in modal "Create Archive"
+    And user of browser clicks on "Create" button in modal "Create Archive"
+    Then user of browser sees that item "dir2" has 2 Archives
+
+    And user of browser double clicks on item named "dir2" in dataset browser
+    And user of browser sees that item "dir3" has 2 Archives
+    And user of browser clicks Datasets of "space1" in the sidebar
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
+    And user of browser sees that item "dir1" has 1 Archives

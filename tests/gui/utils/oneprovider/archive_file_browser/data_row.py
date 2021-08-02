@@ -18,6 +18,7 @@ class DataRow(PageObject):
     size = Label('.fb-table-col-size .file-item-text')
     state = Label('.fb-table-col-state .file-item-text')
     bagit_tag = WebElement('.archive-bagit-tag')
+    symlink_tag = WebElement('.one-icon-tag-circle')
 
     def double_click(self):
         ActionChains(self.driver).double_click(self.web_elem).perform()

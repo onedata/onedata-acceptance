@@ -10,6 +10,7 @@ __license__ = ("This software is released under the MIT license cited in "
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
+from tests.gui.utils.generic import transform
 import re
 
 
@@ -66,3 +67,13 @@ def assert_tag_for_latest_created_archive(browser_id, tag_type, tmp_memory):
     browser = tmp_memory[browser_id]['archive_file_browser']
     err_msg = f'{tag_type} tag for latest created archive is not visible'
     assert browser.data[0].is_tag_visible(tag_type), err_msg
+
+
+@wt(parsers.parse('user of {browser_id} checks "{toggle_type}" toggle '
+                  'in modal "Create Archive"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def check_toggle_in_create_archive_modal(browser_id, selenium, modals,
+                                         toggle_type):
+    driver = selenium[browser_id]
+    getattr(modals(driver).create_archive, transform(toggle_type)).check()
+
