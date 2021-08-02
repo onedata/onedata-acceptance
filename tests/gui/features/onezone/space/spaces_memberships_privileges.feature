@@ -310,8 +310,8 @@ Feature: Basic management of spaces privileges in Onezone GUI
             privilege subtypes:
               Modify space: False
 
-    When user of browser_user1 clicks on Data in the main menu
+    And user of browser_user1 clicks on Data in the main menu
     And user of browser_user1 clicks "space1" on the spaces list in the sidebar
     And user of browser_user1 writes "space2" into rename space text field
-    And user of browser_user1 confirms rename the space using <confirmation_method>
+    And user of browser_user1 confirms rename the space using confirmation button
     Then user of browser_user1 sees that error modal with text "Changing name failed" appeared
