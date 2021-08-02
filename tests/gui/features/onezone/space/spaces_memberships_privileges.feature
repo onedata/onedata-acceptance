@@ -300,4 +300,17 @@ Feature: Basic management of spaces privileges in Onezone GUI
     And user of browser_user1 sees that all tabs of "space1" are enabled
 
 
+  Scenario: User invites other user to join given space
+    When user of space_owner_browser clicks on Data in the main menu
+    And user of space_owner_browser clicks "space2" on the spaces list in the sidebar
+    And user of space_owner_browser clicks Members of "space2" in the sidebar
+    And user of space_owner_browser clicks "user1" user in "space2" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
+            User management:
+              granted: True
 
+    And user of browser_user1 clicks on Data in the main menu
+    And user of browser_user1 clicks "space2" on the spaces list in the sidebar
+    And user of browser_user1 clicks Members of "space2" in the sidebar
+    And user of browser_user1 clicks on "Invite user using token" button in users list menu in "space2" space members view
+    Then user of browser_user1 sees that "Invite user using token" modal has appeared
