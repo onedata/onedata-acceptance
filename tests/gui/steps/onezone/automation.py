@@ -77,7 +77,7 @@ def click_on_confirmation_button_to_rename_inventory(selenium, browser_id,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_rename_the_inventory(selenium, browser_id, oz_page):
     click_on_confirmation_button_to_rename_inventory(selenium, browser_id,
-                                                         oz_page)
+                                                     oz_page)
 
 
 def _find_inventories(page, inventory):
@@ -90,11 +90,12 @@ def _find_inventories(page, inventory):
 def assert_inventory_exists(selenium, browser_ids, option, inventory, oz_page):
     for browser_id in parse_seq(browser_ids):
         elem_list = oz_page(selenium[browser_id])['automation'].elements_list
+        err_msg = f'inventory: {inventory} not found'
 
         if option == 'does not see':
-            assert inventory not in elem_list
+            assert inventory not in elem_list, err_msg
         else:
-            assert inventory in elem_list
+            assert inventory in elem_list, err_msg
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) opens inventory "(?P<inventory>.*)" '
@@ -110,11 +111,12 @@ def go_to_inventory_subpage(selenium, browser_id, inventory, subpage, oz_page):
 @wt(parsers.parse('user of {browser_ids} sees "{text}" label in "{inventory}" '
                   'main page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_inventory_exists(selenium, browser_ids, option, inventory, oz_page, text):
+def assert_inventory_exists(selenium, browser_ids, option, oz_page, text):
     for browser_id in parse_seq(browser_ids):
         err_msg = oz_page(selenium[browser_id])['automation'].privileges_err_msg
+        assert_err_msg = f'Error message: {text} not found'
 
         if option == 'does not see':
-            assert text not in err_msg
+            assert text not in err_msg, assert_err_msg
         else:
-            assert text in err_msg
+            assert text in err_msg, assert_err_msg

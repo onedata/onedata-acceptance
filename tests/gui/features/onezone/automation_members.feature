@@ -15,13 +15,11 @@ Feature: Management of inventories members
                 - oneprovider-1:
                     storage: posix
                     size: 1000000
-    And initial inventories configuartion in "onezone" Onezone service:
-
+    And initial inventories configuration in "onezone" Onezone service:
 
     And users opened [space_owner_browser, browser1] browsers' windows
     And users of [space_owner_browser, browser1] opened [Onezone, Onezone] page
     And users of [space_owner_browser, browser1] logged as [space-owner-user, user1] to [Onezone, Onezone] service
-
 
 
   Scenario: User invites group to inventory using token
@@ -57,8 +55,7 @@ Feature: Management of inventories members
     And user of space_owner_browser writes "inventory2" into rename inventory text field
     And user of space_owner_browser confirms inventory rename with confirmation button
 
-     # User1 sees inventory has different name
-    And user of space_owner_browser is idle for 4 seconds
+    # User1 sees inventory has different name
     Then user of browser1 sees inventory "inventory2" on inventory list
 
 
