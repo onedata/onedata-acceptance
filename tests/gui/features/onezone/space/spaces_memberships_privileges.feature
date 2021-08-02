@@ -299,5 +299,18 @@ Feature: Basic management of spaces privileges in Onezone GUI
             granted: False
     And user of browser_user1 sees that all tabs of "space1" are enabled
 
+  Scenario: User fails to remove space because of lack in privileges
+    When user of space_owner_browser clicks "space2" on the spaces list in the sidebar
+    And user of space_owner_browser clicks Members of "space2" in the sidebar
+    And user of space_owner_browser clicks "user1" user in "space2" space members users list
+    And user of space_owner_browser sees following privileges of "user1" user in space members subpage:
+          Space management:
+            granted: Partially
+            privilege subtypes:
+              Remove space: False
 
-
+    And user of browser_user1 clicks "space2" on the spaces list in the sidebar
+    And user of browser_user1 clicks on "Remove" button in space "space2" menu
+    And user of browser_user1 clicks on understand notice checkbox in "Remove space" modal
+    And user of browser_user1 clicks on "Remove" button in "Remove space" modal
+    Then user of browser_user1 sees that error modal with text "Removing the space failed" appeared
