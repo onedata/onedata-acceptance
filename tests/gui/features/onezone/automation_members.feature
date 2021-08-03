@@ -16,6 +16,8 @@ Feature: Management of inventories members
                     storage: posix
                     size: 1000000
     And initial inventories configuration in "onezone" Onezone service:
+        inventory1:
+            owner: space-owner-user
 
     And users opened [space_owner_browser, browser1] browsers' windows
     And users of [space_owner_browser, browser1] opened [Onezone, Onezone] page

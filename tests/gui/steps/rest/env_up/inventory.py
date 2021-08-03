@@ -50,22 +50,12 @@ def _inventories_creation(config, hosts, users, zone_name):
     for inventory_name, description in config.items():
         owner = users[description['owner']]
 
-        inventory_id = _create_inventory(hosts, zone_hostname, owner.username,
-                                         owner.password, inventory_name)
-        # inventories[inventory_name] = inventory_id
-
-        for user in description.get('users', {}):
-            try:
-                [(user, options)] = user.items()
-            except AttributeError:
-                privileges = None
-            else:
-                privileges = options['privileges']
+        _create_inventory(zone_hostname, owner.username, owner.password,
+                          inventory_name)
 
 
-def _create_inventory(hosts, zone_name, owner_username, owner_password,
+def _create_inventory(zone_hostname, owner_username, owner_password,
                       inventory_name):
-    zone_hostname = hosts[zone_name]['hostname']
     inventory_properties = json.dumps({'name': inventory_name})
 
     response = http_post(ip=zone_hostname, port=OZ_REST_PORT,
