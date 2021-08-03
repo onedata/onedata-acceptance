@@ -11,7 +11,7 @@ from time import sleep
 from selenium.webdriver.common.action_chains import ActionChains
 
 from tests.gui.utils.core.web_elements import (WebElement, WebElementsSequence,
-                                               Label, WebItem)
+                                               Label)
 from .common import OZPanel
 from .data_page import DataPage
 from .providers_page import ProvidersPage

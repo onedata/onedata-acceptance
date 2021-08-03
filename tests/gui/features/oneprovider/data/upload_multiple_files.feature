@@ -57,18 +57,18 @@ Feature: Uploading multiple files at once
     # create dir1
     And user of browser creates directory "dir1"
     And user of browser double clicks on item named "dir1" in file browser
-    And user of browser sees that current working directory displayed in breadcrumbs is /dir1
+    And user of browser sees that current working directory displayed in breadcrumbs on file browser is /dir1
 
     # start uploading files in dir1 and go back to root directory
     And user of browser uses upload button from file browser menu bar to upload files from local directory "dir2" to remote current dir without waiting for upload to finish
     And user of browser changes current working directory to home using breadcrumbs
-    And user of browser sees that current working directory displayed in breadcrumbs is space1
+    And user of browser sees that current working directory displayed in breadcrumbs on file browser is space1
     And user of browser waits for file upload to finish
     And user of browser sees that there is 1 item in file browser
 
     # go to dir and see if every file has been uploaded
     And user of browser double clicks on item named "dir1" in file browser
-    And user of browser sees that current working directory displayed in breadcrumbs is /dir1
+    And user of browser sees that current working directory displayed in breadcrumbs on file browser is /dir1
     Then user of browser scrolls to the bottom of file browser and sees there are 70 files
 
 
