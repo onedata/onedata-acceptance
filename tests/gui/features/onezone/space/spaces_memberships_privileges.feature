@@ -311,6 +311,7 @@ Feature: Basic management of spaces privileges in Onezone GUI
             granted: Partially
             privilege subtypes:
               Remove space: False
+
     And user of browser_user1 clicks "space2" on the spaces list in the sidebar
     And user of browser_user1 clicks on "Remove" button in space "space2" menu
     And user of browser_user1 clicks on understand notice checkbox in "Remove space" modal
