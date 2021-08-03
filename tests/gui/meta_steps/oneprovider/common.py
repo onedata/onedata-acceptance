@@ -21,10 +21,11 @@ from tests.gui.steps.oneprovider.data_tab import (
     click_button_from_file_browser_menu_bar)
 from tests.gui.steps.oneprovider.file_browser import (
     select_files_from_file_list_using_ctrl,
-    assert_items_presence_in_file_browser,
     deselect_items_from_file_browser,
-    confirm_create_new_directory, click_menu_for_elem_in_file_browser,
-    click_option_in_data_row_menu_in_file_browser)
+    confirm_create_new_directory, click_menu_for_elem_in_file_browser)
+from tests.gui.steps.oneprovider.browser import (
+    assert_items_presence_in_browser,
+    click_option_in_data_row_menu_in_browser)
 from tests.gui.steps.modal import (wt_wait_for_modal_to_appear,
                                    wt_click_on_confirmation_btn_in_modal,
                                    wt_wait_for_modal_to_disappear,
@@ -61,8 +62,8 @@ def replicate_file_to_provider(selenium, browser_id, name, tmp_memory,
     modal_name = 'Data distribution'
 
     click_menu_for_elem_in_file_browser(browser_id, name, tmp_memory)
-    click_option_in_data_row_menu_in_file_browser(selenium, browser_id,
-                                                  option, modals)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id,
+                                             option, modals)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
 
     replicate_item(selenium, browser_id, provider, hosts, popups)
@@ -79,8 +80,8 @@ def assert_eviction_done(selenium, browser_id, name, tmp_memory, modals):
     close_option = 'Close'
 
     click_menu_for_elem_in_file_browser(browser_id, name, tmp_memory)
-    click_option_in_data_row_menu_in_file_browser(selenium, browser_id,
-                                                  option, modals)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id,
+                                             option, modals)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
 
     assert_see_history_btn_shown(selenium, browser_id)
@@ -97,8 +98,8 @@ def wt_assert_file_chunks(selenium, browser_id, file_name, desc, tmp_memory,
     modal_name = 'Data distribution'
 
     click_menu_for_elem_in_file_browser(browser_id, file_name, tmp_memory)
-    click_option_in_data_row_menu_in_file_browser(selenium, browser_id,
-                                                  option, modals)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id,
+                                             option, modals)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     _assert_file_chunks(selenium, browser_id, hosts, desc, modals)
     wt_click_on_confirmation_btn_in_modal(selenium, browser_id, 'Close',
@@ -138,7 +139,7 @@ def create_directory(selenium, browser_id, name, tmp_memory,
     write_name_into_text_field_in_modal(selenium, browser_id, name,
                                         modal_name, modals)
     confirm_create_new_directory(selenium, browser_id, option, modals)
-    assert_items_presence_in_file_browser(browser_id, name, tmp_memory)
+    assert_items_presence_in_browser(browser_id, name, tmp_memory)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) migrates "(?P<name>.*)" from '
@@ -149,8 +150,8 @@ def migrate_file_to_provider(selenium, browser_id, name, tmp_memory, source,
     modal_name = 'Data distribution'
 
     click_menu_for_elem_in_file_browser(browser_id, name, tmp_memory)
-    click_option_in_data_row_menu_in_file_browser(selenium, browser_id,
-                                                  option, modals)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id,
+                                             option, modals)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     migrate_item(selenium, browser_id, source, target, hosts, popups)
     wt_click_on_confirmation_btn_in_modal(selenium, browser_id, 'Close',
