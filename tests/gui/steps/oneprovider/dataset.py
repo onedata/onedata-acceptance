@@ -89,3 +89,12 @@ def click_mark_file_as_dataset_toggle(browser_id, selenium, modals):
 def click_menu_for_elem_in_dataset_browser(browser_id, item_name, tmp_memory):
     browser = tmp_memory[browser_id]['dataset_browser']
     browser.data[item_name].menu_button()
+
+
+@wt(parsers.parse('user of {browser_id} sees "{text}" label in Datasets modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def see_toggle_checked_on_item_in_ancestor_list(browser_id, selenium, modals,
+                                                text):
+    driver = selenium[browser_id]
+    assert text in modals(driver).datasets.protected_tag_label, \
+        f'Text {text} not found in label '
