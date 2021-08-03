@@ -110,28 +110,6 @@ def assert_btn_is_not_in_file_browser_menu_bar(selenium, browser_id, btn_list,
 
 
 @wt(parsers.parse('user of {browser_id} sees that current working directory '
-                  'displayed in breadcrumbs is {path}'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def is_displayed_breadcrumbs_in_data_tab_in_op_correct(selenium, browser_id,
-                                                       path, op_container):
-    driver = selenium[browser_id]
-    breadcrumbs = op_container(driver).file_browser.breadcrumbs.pwd()
-    assert path == breadcrumbs, (f'expected breadcrumbs {path}; '
-                                 f'displayed: {breadcrumbs}')
-
-
-@wt(parsers.parse('user of {browser_id} changes current working directory '
-                  'to {path} using breadcrumbs'))
-@repeat_failed(timeout=WAIT_BACKEND)
-def change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, browser_id, path,
-                                                   op_container):
-    if path == 'home':
-        op_container(selenium[browser_id]).file_browser.breadcrumbs.home()
-    else:
-        op_container(selenium[browser_id]).file_browser.breadcrumbs.chdir(path)
-
-
-@wt(parsers.parse('user of {browser_id} sees that current working directory '
                   'displayed in directory tree is {path}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def is_displayed_dir_tree_in_data_tab_in_op_correct(selenium, browser_id, path,
@@ -142,18 +120,17 @@ def is_displayed_dir_tree_in_data_tab_in_op_correct(selenium, browser_id, path,
 
 
 @wt(parsers.parse('user of {browser_id} changes current working directory '
-                  'to {path} using directory tree'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def change_cwd_using_dir_tree_in_data_tab_in_op(selenium, browser_id, path,
-                                                op_container):
-    driver = selenium[browser_id]
-    cwd = op_container(driver).data.sidebar.root_dir
-    cwd.click()
-    for directory in (dir for dir in path.split('/') if dir != ''):
-        if not cwd.is_expanded():
-            cwd.expand()
-        cwd = cwd[directory]
-        cwd.click()
+                  'to {path} using breadcrumbs'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, browser_id, path,
+                                                   op_container, which_browser
+                                                   ='file browser'):
+    breadcrumbs = (getattr(op_container(selenium[browser_id]),
+                           transform(which_browser)).breadcrumbs)
+    if path == 'home':
+        breadcrumbs.home()
+    else:
+        breadcrumbs.chdir(path)
 
 
 @wt(parsers.parse('user of {browser_id} does not see {path} in directory tree'))
@@ -219,9 +196,9 @@ def assert_nonempty_file_browser_in_files_tab_in_op(selenium, browser_id,
 @wt(parsers.parse('user of {browser_id} sees empty {item_browser} '
                   'in files tab in Oneprovider page'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def assert_empty_file_browser_in_files_tab_in_op(selenium, browser_id,
-                                                 op_container, tmp_memory,
-                                                 item_browser='file browser'):
+def assert_empty_browser_in_files_tab_in_op(selenium, browser_id,
+                                            op_container, tmp_memory,
+                                            item_browser='file browser'):
     switch_to_iframe(selenium, browser_id)
     check_browser_to_load(selenium, browser_id, tmp_memory, op_container,
                           item_browser)
@@ -558,7 +535,8 @@ def assert_provider_in_space(selenium, browser_id, provider, hosts, oz_page):
     _assert_provider_in_space(selenium, browser_id, provider, oz_page)
 
 
-@wt(parsers.parse('user of {browser_id} clicks file browser {button} button'))
+@wt(parsers.parse('user of {browser_id} clicks "{button}" button from file '
+                  'browser menu bar'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_file_browser_button(browser_id, button, tmp_memory):
     file_browser = tmp_memory[browser_id]['file_browser']

@@ -15,14 +15,14 @@ from tests.gui.utils.onezone.generic_page import Element
 
 
 class ParentDatasetItem(Element):
-    name = id = Label('.azure')
+    name = id = Label('.file-path')
     metadata_protection_toggle = Toggle('.metadata-flag-toggle')
     data_protection_toggle = Toggle('.data-flag-toggle')
 
 
 class DatasetsModal(Modal):
     dataset_toggle = Toggle('.toggle-header .one-way-toggle-track')
-    dataset_close_button = Button('.close-btn')
+    close = Button('.close-btn')
     data_protection_toggle = Toggle('.direct-dataset-item .data-flag-toggle'
                                     ' .one-way-toggle-track')
     metadata_protection_toggle = Toggle('.direct-dataset-item '

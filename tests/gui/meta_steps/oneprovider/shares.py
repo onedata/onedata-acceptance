@@ -15,9 +15,10 @@ from tests.gui.steps.modal import (
     click_icon_in_share_directory_modal)
 from tests.gui.steps.oneprovider.file_browser import (
     click_menu_for_elem_in_file_browser,
-    click_option_in_data_row_menu_in_file_browser,
     click_on_status_tag_for_file_in_file_browser)
 from tests.gui.steps.oneprovider.shares import *
+from tests.gui.steps.oneprovider.browser import (
+    click_option_in_data_row_menu_in_browser)
 
 
 @wt(parsers.parse('user of {browser_id} creates "{share_name}" share of'
@@ -32,8 +33,8 @@ def create_share(selenium, browser_id, share_name, item_name, tmp_memory,
     button = 'Create'
 
     click_menu_for_elem_in_file_browser(browser_id, item_name, tmp_memory)
-    click_option_in_data_row_menu_in_file_browser(selenium, browser_id, option,
-                                                  modals)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
+                                             modals)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     write_name_into_text_field_in_modal(selenium, browser_id, share_name,
                                         modal_name, modals)

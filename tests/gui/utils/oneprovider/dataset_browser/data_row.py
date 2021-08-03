@@ -13,15 +13,13 @@ from tests.gui.utils.core.web_elements import Label, Button, WebElement
 
 
 class DataRow(PageObject):
-    name = id = Label('.file-name-inner', parent_name='given data row')
+    name = id = Label('.file-name-inner')
     archive = Label('.fb-table-col-archives .file-item-text')
     menu_button = Button('.fb-table-col-actions-menu .menu-toggle')
-    archive_button = Button('.archives-count-link')
-    clickable_field = WebElement('.file-name')
+    number_of_archive = Button('.archives-count-link')
 
     def __str__(self):
-        return '{item} in {parent}'.format(item=self.name,
-                                           parent=str(self.parent))
+        return f'{self.name} in {str(self.parent)}'
 
     def double_click(self):
         ActionChains(self.driver).double_click(self.web_elem).perform()

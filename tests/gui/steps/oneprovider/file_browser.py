@@ -74,42 +74,6 @@ def click_on_status_tag_for_file_in_file_browser(browser_id, status_type,
     browser.data[item_name].click_on_status_tag(status_type)
 
 
-def _get_items_list_from_file_browser(browser_id, tmp_memory):
-    file_browser = tmp_memory[browser_id]['file_browser']
-    data = {f.name for f in file_browser.data}
-    return data
-
-
-@wt(parsers.parse('user of {browser_id} sees that item named {item_list} '
-                  'has disappeared from files browser'))
-@wt(parsers.parse('user of {browser_id} sees that items named {item_list} '
-                  'have disappeared from files browser'))
-@wt(parsers.parse('user of {browser_id} does not see any item(s) named '
-                  '{item_list} in file browser'))
-@repeat_failed(timeout=WAIT_BACKEND)
-def assert_items_absence_in_file_browser(browser_id, item_list, tmp_memory):
-    data = _get_items_list_from_file_browser(browser_id, tmp_memory)
-    for item_name in parse_seq(item_list):
-        assert item_name not in data, (f'found "{item_name}" in file browser, '
-                                       f'while it should not')
-
-
-@wt(parsers.parse('user of {browser_id} sees item(s) '
-                  'named {item_list} in file browser'))
-@wt(parsers.parse('user of {browser_id} sees that item named '
-                  '{item_list} has appeared in file browser'))
-@wt(parsers.parse('user of {browser_id} sees that items named '
-                  '{item_list} have appeared in file browser'))
-@repeat_failed(timeout=WAIT_BACKEND)
-def assert_items_presence_in_file_browser(browser_id, item_list, tmp_memory):
-    file_browser = tmp_memory[browser_id]['file_browser']
-    data = _get_items_list_from_file_browser(browser_id, tmp_memory)
-    for item_name in parse_seq(item_list):
-        assert (item_name in data and
-                file_browser.data[item_name].size), (f'not found "{item_name}" '
-                                                     f'in file browser')
-
-
 @wt(parsers.parse('user of {browser_id} sees only items named {item_list}'
                   ' in file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -178,18 +142,6 @@ def scroll_to_bottom_of_file_browser(browser_id, tmp_memory):
     browser.scroll_to_bottom()
 
 
-@wt(parsers.re(r'user of (?P<browser_id>.+?) sees that there '
-               r'(is 1|are (?P<num>\d+)) items? in file browser'))
-@repeat_failed(timeout=WAIT_BACKEND)
-def assert_num_of_files_are_displayed_in_file_browser(browser_id, num,
-                                                      tmp_memory):
-    browser = tmp_memory[browser_id]['file_browser']
-    err_msg = 'displayed number of files {} does not match expected {}'
-    files_num = browser.data.count()
-    num = 1 if num is None else int(num)
-    assert files_num == num, err_msg.format(files_num, num)
-
-
 @wt(parsers.re(r'user of (?P<browser_id>.*?) sees that item named '
                r'"(?P<item_name>.*?)" is ('
                r'?P<item_attr>file|directory|symbolic link|'
@@ -201,14 +153,6 @@ def assert_item_in_file_browser_is_of_type(browser_id, item_name, item_attr,
     browser = tmp_memory[browser_id]['file_browser']
     action = getattr(browser.data[item_name], f'is_{transform(item_attr)}')
     assert action(), f'"{item_name}" is not {item_attr}, while it should'
-
-
-@wt(parsers.parse('user of {browser_id} double clicks on item '
-                  'named "{item_name}" in file browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def double_click_on_item_in_file_browser(browser_id, item_name, tmp_memory):
-    browser = tmp_memory[browser_id]['file_browser']
-    browser.data[item_name].double_click()
 
 
 @wt(parsers.parse('user of {browser_id} clicks once on item '
@@ -364,14 +308,6 @@ def confirm_rename_directory(selenium, browser_id, option, modals):
 def click_menu_for_elem_in_file_browser(browser_id, item_name, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
     browser.data[item_name].menu_button()
-
-
-@wt(parsers.parse('user of {browser_id} clicks "{option}" option '
-                  'in data row menu in file browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_option_in_data_row_menu_in_file_browser(selenium, browser_id, option,
-                                                  modals):
-    modals(selenium[browser_id]).data_row_menu.options[option].click()
 
 
 @wt(parsers.parse('user of {browser_id} scrolls to the bottom of file browser '

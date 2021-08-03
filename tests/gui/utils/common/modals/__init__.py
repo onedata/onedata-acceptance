@@ -49,6 +49,7 @@ from .symbolic_link_details import SymbolicLinkDetailsModal
 from .datasets_modal import DatasetsModal
 from .create_archive import CreateArchive
 from .remove_selected_dataset import RemoveSelectedDataset
+from .detach_dataset import DetachDataset
 
 
 class Modals(object):
@@ -125,10 +126,11 @@ class Modals(object):
     file_details = WebItem('.modal-dialog', cls=FileDetailsModal)
     symbolic_link_details = WebItem('.modal-dialog',
                                     cls=SymbolicLinkDetailsModal)
-    file_datasets = WebItem('.modal-dialog', cls=DatasetsModal)
-    datasets_archive = WebItem('.modal-dialog', cls=CreateArchive)
+    datasets = WebItem('.modal-dialog', cls=DatasetsModal)
+    create_archive = WebItem('.modal-dialog', cls=CreateArchive)
     remove_selected_dataset = WebItem('.modal-dialog',
                                       cls=RemoveSelectedDataset)
+    detach_dataset = WebItem('.modal-dialog', cls=DetachDataset)
 
     def __init__(self, driver):
         self.driver = driver

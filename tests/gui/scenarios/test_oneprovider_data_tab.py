@@ -48,9 +48,9 @@ from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
 from tests.gui.steps.oneprovider.permissions import *
-from tests.gui.steps.oneprovider.create_dataset import *
-from tests.gui.steps.oneprovider.create_archive import *
+from tests.gui.steps.oneprovider.archives import *
 from tests.gui.steps.oneprovider.dataset import *
+from tests.gui.steps.oneprovider.browser import *
 
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
@@ -106,6 +106,7 @@ scenarios('../features/oneprovider/data/several_files.feature')
 scenarios('../features/oneprovider/data/single_directory.feature')
 scenarios('../features/oneprovider/data/file_management.feature')
 scenarios('../features/oneprovider/data/nested_directories.feature')
+scenarios('../features/oneprovider/data/create_dataset.feature')
 scenarios('../features/oneprovider/data/create_archive.feature')
 scenarios('../features/oneprovider/data/dataset.feature')
 

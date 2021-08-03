@@ -147,6 +147,7 @@ class GetSupportPage(PageObject):
     token_textarea = Label('.active textarea')
     copy = Button('.request-support-tab .copy-btn')
     forbidden_alert = WebElement('.error')
+    insufficient_privileges = Label('.text-center')
 
 
 class SpaceProvidersPage(PageObject):
@@ -160,6 +161,11 @@ class SpaceProvidersPage(PageObject):
 
 class _Provider(PageObject):
     name = id = Label('a .tab-name')
+
+
+class DatasetHeader(PageObject):
+    detached = Button('.btn-effecitve')
+    attached = Button('.select-attached-datasets-btn')
 
 
 class DataPage(GenericPage):
@@ -181,6 +187,7 @@ class DataPage(GenericPage):
     members_page = WebItem('.main-content', cls=MembersPage)
     welcome_page = WebItem('.main-content', cls=WelcomePage)
     harvesters_page = WebItem('.main-content', cls=HarvestersPage)
+    dataset_header = WebItem('.main-content', cls=DatasetHeader)
 
     # button in top right corner on all subpages
     menu_button = Button('.with-menu .collapsible-toolbar-toggle')

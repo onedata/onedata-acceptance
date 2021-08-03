@@ -1,4 +1,4 @@
-"""Utils and fixtures to facilitate operations on create archive modal.
+"""Utils and fixtures to facilitate operations on detach dataset modal.
 """
 
 __author__ = "Katarzyna Such"
@@ -8,11 +8,11 @@ __license__ = "This software is released under the MIT license cited in " \
 
 
 from .modal import Modal
-from tests.gui.utils.core.web_elements import NamedButton
+from tests.gui.utils.core.web_elements import Button
 
 
-class CreateArchive(Modal):
-    create = NamedButton('.btn-primary', text='Create')
+class DetachDataset(Modal):
+    proceed = Button('.question-yes')
 
     def __str__(self):
-        return 'Create archive'
+        return 'Detach Dataset'
