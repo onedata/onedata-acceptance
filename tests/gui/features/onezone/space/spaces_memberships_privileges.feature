@@ -4,6 +4,7 @@ Feature: Basic management of spaces privileges in Onezone GUI
   Background:
     Given initial users configuration in "onezone" Onezone service:
             - user1
+            - user2
             - space-owner-user
     And initial groups configuration in "onezone" Onezone service:
           group1:
@@ -21,6 +22,7 @@ Feature: Basic management of spaces privileges in Onezone GUI
             owner: space-owner-user
             users:
                 - user1
+                - user2
             groups:
                 - group2
           space3:
