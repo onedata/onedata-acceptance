@@ -257,7 +257,6 @@ Feature: Basic dataset operations
     And user of browser clicks on "Close" button in modal "Datasets"
 
     # check file's data protection
-    And user of browser clicks "Refresh" button from file browser menu bar
     And user of browser clicks on menu for "file3(1)" file in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
     Then user of browser sees "File's data is write protected" label in Datasets modal
@@ -272,15 +271,14 @@ Feature: Basic dataset operations
     And user of browser clicks "Create hard link" option in data row menu in file browser
     And user of browser clicks "Place hard link" button from file browser menu bar
 
-    # mark file as dataset and set data protection
+    # mark file as dataset and set data write protection
     And user of browser clicks on menu for "file3" file in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
     And user of browser clicks Mark this file as dataset toggle in Datasets modal
     And user of browser click data write protection toggle in Datasets modal
     And user of browser clicks on "Close" button in modal "Datasets"
 
-    # mark hardlink as dataset and set data protection
-    And user of browser clicks "Refresh" button from file browser menu bar
+    # mark hardlink as dataset and set metadata write protection
     And user of browser clicks on menu for "file3(1)" file in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
     And user of browser clicks Mark this file as dataset toggle in Datasets modal
@@ -306,13 +304,14 @@ Feature: Basic dataset operations
     And user of browser clicks "Place hard link" button from file browser menu bar
     And user of browser changes current working directory to home using breadcrumbs
 
-    # mark directories as dataset and set data protection
+    #mark directory as dataset and set data write protection
     And user of browser clicks on menu for "dir1" directory in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
     And user of browser clicks Mark this file as dataset toggle in Datasets modal
     And user of browser click data write protection toggle in Datasets modal
     And user of browser clicks on "Close" button in modal "Datasets"
 
+    #mark directory as dataset and set metadata write protection
     And user of browser clicks on menu for "dir2" directory in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
     And user of browser clicks Mark this file as dataset toggle in Datasets modal
