@@ -32,7 +32,7 @@ Feature: Create archive
     And user of browser clicks on menu for "dir1" directory in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
     And user of browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of browser clicks Close button in Datasets modal
+    And user of browser clicks on "Close" button in modal "Datasets"
 
     And user of browser clicks Datasets of "space1" in the sidebar
     And user of browser sees dataset browser in datasets tab in Oneprovider page

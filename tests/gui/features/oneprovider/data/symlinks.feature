@@ -96,7 +96,7 @@ Feature: Basic files tab operations on symlinks in file browser
 
     And user of browser double clicks on item named "dir1(1)" in file browser
     Then user of browser sees only items named ["dir2", "file2"] in file browser
-    And user of browser sees that current working directory displayed in breadcrumbs is /dir1(1)
+    And user of browser sees that current working directory displayed in breadcrumbs on file browser is /dir1(1)
 
 
   Scenario: User creates symlinks in other directories than original files
