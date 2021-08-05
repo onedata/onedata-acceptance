@@ -39,7 +39,7 @@ Feature: Management of inventories members
     Then user of browser1 sees inventory "inventory1" on inventory list
 
 
-  Scenario: User joins an inventory with group invitation token and see inventory was renamed
+  Scenario: User joins an inventory with group invitation token and sees renamed inventory
     When user of space_owner_browser clicks on Automation in the main menu
 
     # Space-owner-user generates invitation token
@@ -48,7 +48,7 @@ Feature: Management of inventories members
     And user of space_owner_browser copies invitation token from modal
     And user of space_owner_browser closes "Invite using token" modal
 
-    # Space-owner-user adds user1 to view inventory
+    # Space-owner-user adds group1 to view inventory
     And user of space_owner_browser sends copied token to user of browser1
     And user of browser1 adds group "group1" to inventory using copied token
 
@@ -70,7 +70,7 @@ Feature: Management of inventories members
     And user of space_owner_browser copies invitation token from modal
     And user of space_owner_browser closes "Invite using token" modal
 
-    # Space-owner-user adds user1 to view inventory
+    # Space-owner-user adds group1 to view inventory
     And user of space_owner_browser sends copied token to user of browser1
     And user of browser1 adds group "group1" to inventory using copied token
 
@@ -83,5 +83,4 @@ Feature: Management of inventories members
               View inventory: False
 
     # User1 can not view inventory1 content
-    And user of browser1 refreshes site
     Then user of browser1 sees "Insufficient privileges to access this resource" label in "inventory1" main page

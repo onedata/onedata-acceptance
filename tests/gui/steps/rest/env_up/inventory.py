@@ -24,8 +24,6 @@ def inventories_creation(config, hosts, users, zone_name):
 
         inventory_name_1:
             owner: user_name
-            [users]:                        ---> optional
-                - user_name_2
         inventory_name_2:
             ...
 
@@ -35,9 +33,6 @@ def inventories_creation(config, hosts, users, zone_name):
             owner: user3
         inventory2:
             owner: user1
-            users:
-                - user2
-                - user3
     """
     _inventories_creation(config, hosts, users, zone_name)
 

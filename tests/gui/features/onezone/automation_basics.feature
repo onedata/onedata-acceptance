@@ -34,8 +34,8 @@ Feature: Basic inventories management
     And user of browser clicks on "Rename" button in inventory "inventory1" menu in the sidebar
     And user of browser writes "inventory2" into rename inventory text field
     And user of browser confirms inventory rename with confirmation button
-    Then user of browser sees inventory "inventory2" on inventory list
-
+    Then user of browser does not see inventory "inventory1" on inventory list
+    And user of browser sees inventory "inventory2" on inventory list
 
   Scenario: User removes inventory
     When user of browser clicks on Automation in the main menu

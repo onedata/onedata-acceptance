@@ -23,6 +23,7 @@ from .manage_account_page import ManageAccountPage
 from .uploads_page import UploadsPage
 from .automation_page import AutomationPage
 
+
 class OZLoggedIn(object):
     _atlas = WebElement('.onezone-atlas')
     _panels = WebElementsSequence('.main-menu-content li.main-menu-item')
