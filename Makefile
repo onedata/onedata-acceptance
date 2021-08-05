@@ -76,7 +76,7 @@ BROWSER                     ?= Chrome
 TIMEOUT			            ?= 300
 LOCAL_CHARTS_PATH           ?= ""
 PULL_ONLY_MISSING_IMAGES    ?= ""
-ONEZONE_CLIENT_PATH:=$(shell pwd)/tests/mixed
+MIXED_TESTS_ROOT:=$(shell pwd)/tests/mixed
 
 ifdef bamboo_GUI_PKG_VERIFICATION
     GUI_PKG_VERIFICATION = --gui-pkg-verification
@@ -86,38 +86,38 @@ ifdef PULL_ONLY_MISSING_IMAGES
 endif
 
 test_gui_pkg:
-	PYTHONPATH=${ONEZONE_CLIENT_PATH} ${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i ${ACCEPTANCE_GUI_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} \
+	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i ${ACCEPTANCE_GUI_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} \
 	-k=${KEYWORDS} --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} --reruns 1 --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${PULL_IMAGES_OPT}
 
 test_gui_src:
-	PYTHONPATH=${ONEZONE_CLIENT_PATH} ${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i ${ACCEPTANCE_GUI_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} --sources \
+	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i ${ACCEPTANCE_GUI_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} --sources \
 	 -k=${KEYWORDS} --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} --reruns 1 --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${PULL_IMAGES_OPT}
 
 test_mixed_pkg:
-	PYTHONPATH=${ONEZONE_CLIENT_PATH} ${TEST_RUN} -t tests/mixed/scenarios/${SUITE}.py --test-type mixed -vvv --driver=${BROWSER} -i ${ACCEPTANCE_MIXED_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} \
+	PYTHONPATH=${MIXED_TESTS_ROOT} ${TEST_RUN} -t tests/mixed/scenarios/${SUITE}.py --test-type mixed -vvv --driver=${BROWSER} -i ${ACCEPTANCE_MIXED_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} \
 	 --env-file=${ENV_FILE} -k=${KEYWORDS} --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH}  --reruns 1 --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${PULL_IMAGES_OPT}
 
 test_mixed_src:
-	PYTHONPATH=${ONEZONE_CLIENT_PATH} ${TEST_RUN} -t tests/mixed/scenarios/${SUITE}.py --test-type mixed -vvv --driver=${BROWSER} -i ${ACCEPTANCE_MIXED_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} \
+	PYTHONPATH=${MIXED_TESTS_ROOT} ${TEST_RUN} -t tests/mixed/scenarios/${SUITE}.py --test-type mixed -vvv --driver=${BROWSER} -i ${ACCEPTANCE_MIXED_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} \
 	--env-file=${ENV_FILE} --sources -k=${KEYWORDS} --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} --reruns 1 --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${PULL_IMAGES_OPT}
 
 test_oneclient_pkg:
-	PYTHONPATH=${ONEZONE_CLIENT_PATH} ${TEST_RUN} --test-type oneclient -vvv --test-dir tests/oneclient/scenarios/${SUITE}.py -i ${ACCEPTANCE_MIXED_IMAGE} -k=${KEYWORDS} \
+	${TEST_RUN} --test-type oneclient -vvv --test-dir tests/oneclient/scenarios/${SUITE}.py -i ${ACCEPTANCE_MIXED_IMAGE} -k=${KEYWORDS} \
 	 --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} ${PULL_IMAGES_OPT}
 
 test_oneclient_src:
-	PYTHONPATH=${ONEZONE_CLIENT_PATH} ${TEST_RUN} --test-type oneclient -vvv --test-dir tests/oneclient/scenarios/${SUITE}.py -i ${ACCEPTANCE_MIXED_IMAGE} -k=${KEYWORDS} \
+	${TEST_RUN} --test-type oneclient -vvv --test-dir tests/oneclient/scenarios/${SUITE}.py -i ${ACCEPTANCE_MIXED_IMAGE} -k=${KEYWORDS} \
 	 --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} --sources ${PULL_IMAGES_OPT}
 
 test_onedata_fs:
-	PYTHONPATH=${ONEZONE_CLIENT_PATH} ${TEST_RUN} --test-type onedata_fs -vvv --test-dir tests/onedata_fs/scenarios/test_unit_tests.py -i ${ACCEPTANCE_MIXED_IMAGE} -k=${KEYWORDS} \
+	${TEST_RUN} --test-type onedata_fs -vvv --test-dir tests/onedata_fs/scenarios/test_unit_tests.py -i ${ACCEPTANCE_MIXED_IMAGE} -k=${KEYWORDS} \
      --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} ${PULL_IMAGES_OPT}
 
 test_performance_pkg:
-	PYTHONPATH=${ONEZONE_CLIENT_PATH} ${TEST_RUN} --test-type performance -vvv --test-dir tests/performance --image ${ACCEPTANCE_MIXED_IMAGE} -k=${KEYWORDS} --local-charts-path=${LOCAL_CHARTS_PATH} ${PULL_IMAGES_OPT}
+	${TEST_RUN} --test-type performance -vvv --test-dir tests/performance --image ${ACCEPTANCE_MIXED_IMAGE} -k=${KEYWORDS} --local-charts-path=${LOCAL_CHARTS_PATH} ${PULL_IMAGES_OPT}
 
 test_performance_src:
-	PYTHONPATH=${ONEZONE_CLIENT_PATH} ${TEST_RUN} --test-type performance -vvv --test-dir tests/performance --image ${ACCEPTANCE_MIXED_IMAGE} -k=${KEYWORDS} --local-charts-path=${LOCAL_CHARTS_PATH} --sources ${PULL_IMAGES_OPT}
+	${TEST_RUN} --test-type performance -vvv --test-dir tests/performance --image ${ACCEPTANCE_MIXED_IMAGE} -k=${KEYWORDS} --local-charts-path=${LOCAL_CHARTS_PATH} --sources ${PULL_IMAGES_OPT}
 
 
 ##
@@ -125,10 +125,10 @@ test_performance_src:
 ##
 
 build_swaggers:
-	cd onezone_swagger && make python-client && cd generated/python && mv onezone_client ../../../tests/mixed
-	cd onepanel_swagger && make python-client && cd generated/python && mv onepanel_client ../../../tests/mixed
-	cd oneprovider_swagger && make python-client && cd generated/python && mv oneprovider_client ../../../tests/mixed
-	cd cdmi_swagger && make python-client  && cd generated/python && mv cdmi_client ../../../tests/mixed
+	cd onezone_swagger && make python-client && cd generated/python && mv onezone_client ${MIXED_TESTS_ROOT}
+	cd onepanel_swagger && make python-client && cd generated/python && mv onepanel_client ${MIXED_TESTS_ROOT}
+	cd oneprovider_swagger && make python-client && cd generated/python && mv oneprovider_client ${MIXED_TESTS_ROOT}
+	cd cdmi_swagger && make python-client  && cd generated/python && mv cdmi_client ${MIXED_TESTS_ROOT}
 
 
 ##
@@ -138,10 +138,14 @@ build_swaggers:
 clean: clean_swaggers
 
 clean_swaggers:
-	rm -rf tests/mixed/onezone_client
-	rm -rf tests/mixed/onepanel_client
-	rm -rf tests/mixed/oneprovider_client
-	rm -rf tests/mixed/cdmi_client
+	cd onezone_swagger && make clean
+	cd onepanel_swagger && make clean
+	cd oneprovider_swagger && make clean
+	cd cdmi_swagger && make clean
+	rm -rf ${MIXED_TESTS_ROOT}/onezone_client
+	rm -rf ${MIXED_TESTS_ROOT}/onepanel_client
+	rm -rf ${MIXED_TESTS_ROOT}/oneprovider_client
+	rm -rf ${MIXED_TESTS_ROOT}/cdmi_client
 
 
 codetag-tracker:
