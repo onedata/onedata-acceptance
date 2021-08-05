@@ -75,6 +75,8 @@ def click_on_state_view_mode_tab(browser_id, oz_page, selenium, state):
     getattr(oz_page(driver)['data'].dataset_header, state)()
 
 
+@wt(parsers.parse('user of {browser_id} clicks Mark this directory as dataset '
+                  'toggle in Datasets modal'))
 @wt(parsers.parse('user of {browser_id} clicks Mark this file as dataset toggle'
                   ' in Datasets modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)

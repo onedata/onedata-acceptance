@@ -240,7 +240,7 @@ Feature: Basic dataset operations
               - dir4
 
 
- Scenario: User sees data protection tag in dataset modal of file's hardlink
+ Scenario: User sees data protection tag in dataset modal for hardlink of data protected file
     # create hardlink
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar
@@ -256,13 +256,13 @@ Feature: Basic dataset operations
     And user of browser click data write protection toggle in Datasets modal
     And user of browser clicks on "Close" button in modal "Datasets"
 
-    # check file's data protection
+    # check hardlink's data protection
     And user of browser clicks on menu for "file3(1)" file in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
     Then user of browser sees "File's data is write protected" label in Datasets modal
 
 
-  Scenario: User sees data and metadata protection tags on created file's hardlink
+  Scenario: User sees both data and metadata protection tags on hardlinks if hardlinked files have these flags separately set
     # create hardlink
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar
@@ -290,7 +290,7 @@ Feature: Basic dataset operations
     And user of browser sees metadata protected status tag for "file3(1)" in file browser
 
 
-  Scenario:  User sees metadata and data protection tags on file and hardlink in different directories
+  Scenario: User sees both data and metadata protection tags on hardlinks if hardlinked files inherits these flags from their parents separately
     # create hardlink
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar
@@ -304,17 +304,17 @@ Feature: Basic dataset operations
     And user of browser clicks "Place hard link" button from file browser menu bar
     And user of browser changes current working directory to home using breadcrumbs
 
-    #mark directory as dataset and set data write protection
+    # mark directory as dataset and set data write protection
     And user of browser clicks on menu for "dir1" directory in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this file as dataset toggle in Datasets modal
+    And user of browser clicks Mark this directory as dataset toggle in Datasets modal
     And user of browser click data write protection toggle in Datasets modal
     And user of browser clicks on "Close" button in modal "Datasets"
 
-    #mark directory as dataset and set metadata write protection
+    # mark directory as dataset and set metadata write protection
     And user of browser clicks on menu for "dir2" directory in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this file as dataset toggle in Datasets modal
+    And user of browser clicks Mark this directory as dataset toggle in Datasets modal
     And user of browser click metadata write protection toggle in Datasets modal
     And user of browser clicks on "Close" button in modal "Datasets"
 
