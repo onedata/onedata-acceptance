@@ -300,7 +300,7 @@ Feature: Basic management of spaces privileges in Onezone GUI
     And user of browser_user1 sees that all tabs of "space1" are enabled
 
 
-  Scenario: User invites other user to join given space
+  Scenario: Non-space-owner successfully generates space invite token if he got user management privilege
     When user of space_owner_browser clicks on Data in the main menu
     And user of space_owner_browser clicks "space2" on the spaces list in the sidebar
     And user of space_owner_browser clicks Members of "space2" in the sidebar
