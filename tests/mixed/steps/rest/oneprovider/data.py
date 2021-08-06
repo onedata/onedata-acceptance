@@ -18,7 +18,7 @@ from tests.mixed.cdmi_client import ContainerApi, DataObjectApi
 from tests.mixed.cdmi_client.rest import ApiException as CdmiException
 from tests.mixed.oneprovider_client import BasicFileOperationsApi
 from tests.mixed.oneprovider_client import FilePathResolutionApi
-from tests.mixed.oneprovider_client.api_client import ApiException
+from tests.mixed.oneprovider_client.rest import ApiException
 from tests.mixed.oneprovider_client.rest import ApiException as OPException
 from tests.mixed.utils.common import *
 from tests.mixed.utils.data import (
