@@ -75,10 +75,8 @@ def click_on_state_view_mode_tab(browser_id, oz_page, selenium, state):
     getattr(oz_page(driver)['data'].dataset_header, state)()
 
 
-@wt(parsers.parse('user of {browser_id} clicks Mark this directory as dataset '
-                  'toggle in Datasets modal'))
-@wt(parsers.parse('user of {browser_id} clicks Mark this file as dataset toggle'
-                  ' in Datasets modal'))
+@wt(parsers.re('user of (?P<browser_id>.*) clicks Mark this (directory|file) '
+               'as dataset toggle in Datasets modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_mark_file_as_dataset_toggle(browser_id, selenium, modals):
     driver = selenium[browser_id]
@@ -95,7 +93,12 @@ def click_menu_for_elem_in_dataset_browser(browser_id, item_name, tmp_memory):
 
 @wt(parsers.parse('user of {browser_id} sees "{text}" label in Datasets modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def see_label_in_dataset_modal(browser_id, selenium, modals, text):
+def see_protected_tag_label_in_dataset_modal(browser_id, selenium, modals,
+                                             text):
     driver = selenium[browser_id]
-    assert text in modals(driver).datasets.data_protected_label, \
-        f'Text {text} not found in label '
+    error = f'Text: {text} not found in label '
+
+    if 'metadata' in text:
+        assert text in modals(driver).datasets.metadata_protected_label, error
+    else:
+        assert text in modals(driver).datasets.data_protected_label, error

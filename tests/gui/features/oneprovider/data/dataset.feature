@@ -290,7 +290,7 @@ Feature: Basic dataset operations
     And user of browser sees metadata protected status tag for "file3(1)" in file browser
 
 
-  Scenario: User sees both data and metadata protection tags on hardlinks if hardlinked files inherits these flags from their parents separately
+  Scenario: User sees both data and metadata protection tags on hardlinks if hardlinked files inherit these flags from their parents separately
     # create hardlink
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar
