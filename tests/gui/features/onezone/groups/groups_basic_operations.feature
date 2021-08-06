@@ -7,6 +7,8 @@ Feature: Basic management of groups with one user in Onezone GUI
     And initial groups configuration in "onezone" Onezone service:
           group1:
             owner: user1
+          group2:
+            owner: user1
 
     And user opened browser window
     And user of browser opened Onezone page
@@ -68,20 +70,4 @@ Feature: Basic management of groups with one user in Onezone GUI
     And user of browser sees that area with user invitation token has appeared
 
     Then user of browser sees non-empty token in token area
-
-
-  Scenario: User fails to view group after leaving it
-    When user of browser opens group "group1" main subpage
-    And user of browser copies a first resource ID from URL
-    And user of browser leaves group "group1"
-
-    And user of browser refreshes site
-
-    And user of browser changes webapp path to "/i#/onedata/groups" concatenated with copied item
-    And user of browser refreshes site
-
-    Then user of browser sees "YOU DON’T HAVE ACCESS TO THIS RESOURCE" error on groups page
-
-
-
 

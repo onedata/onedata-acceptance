@@ -78,10 +78,10 @@ def screens():
     return [0]
 
 
-scenarios('../features/onezone/groups/groups_creation.feature')
-scenarios('../features/onezone/groups/groups_basic_operations.feature')
-scenarios('../features/onezone/groups/groups_hierarchy.feature')
-scenarios('../features/onezone/groups/groups_memberships.feature')
+# scenarios('../features/onezone/groups/groups_creation.feature')
+# scenarios('../features/onezone/groups/groups_basic_operations.feature')
+# scenarios('../features/onezone/groups/groups_hierarchy.feature')
+# scenarios('../features/onezone/groups/groups_memberships.feature')
 scenarios('../features/onezone/groups/groups_memberships_privileges.feature')
 
 
