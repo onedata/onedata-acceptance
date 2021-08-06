@@ -4,6 +4,7 @@ Feature: Basic management of spaces privileges in Onezone GUI
   Background:
     Given initial users configuration in "onezone" Onezone service:
             - user1
+            - user2
             - space-owner-user
     And initial groups configuration in "onezone" Onezone service:
           group1:
@@ -21,6 +22,7 @@ Feature: Basic management of spaces privileges in Onezone GUI
             owner: space-owner-user
             users:
                 - user1
+                - user2
             groups:
                 - group2
           space3:
@@ -304,7 +306,7 @@ Feature: Basic management of spaces privileges in Onezone GUI
     When user of space_owner_browser clicks "space2" on the spaces list in the sidebar
     And user of space_owner_browser clicks Members of "space2" in the sidebar
     And user of space_owner_browser clicks "user1" user in "space2" space members users list
-    And user of space_owner_browser sees following privileges of "user1" user in space members subpage:
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage when all other are granted:
           Space management:
             granted: Partially
             privilege subtypes:
@@ -315,3 +317,19 @@ Feature: Basic management of spaces privileges in Onezone GUI
     And user of browser_user1 clicks on understand notice checkbox in "Remove space" modal
     And user of browser_user1 clicks on "Remove" button in "Remove space" modal
     Then user of browser_user1 sees that error modal with text "Removing the space failed" appeared
+
+
+ Scenario: User fails to generate space invite token because of lack in privileges
+    When user of space_owner_browser clicks on Data in the main menu
+    And user of space_owner_browser clicks "space2" on the spaces list in the sidebar
+    And user of space_owner_browser clicks Members of "space2" in the sidebar
+    And user of space_owner_browser clicks "user1" user in "space2" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage when all other are granted:
+          User management:
+            granted: False
+
+    And user of browser_user1 clicks on Data in the main menu
+    And user of browser_user1 clicks "space2" on the spaces list in the sidebar
+    And user of browser_user1 clicks Members of "space2" in the sidebar
+    And user of browser_user1 clicks on "Invite user using token" button in users list menu in "space2" space members view
+    Then user of browser_user1 sees This resource could not be loaded alert in "Invite using token" modal
