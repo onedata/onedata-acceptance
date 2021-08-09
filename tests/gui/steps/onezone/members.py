@@ -558,7 +558,7 @@ def set_privileges_in_members_subpage_on_modal(selenium, browser_id, config,
 @wt(parsers.re('user of (?P<browser_id>.*) sees following privileges of '
                '"(?P<member_name>.*)" (?P<member_type>user|group) '
                'in (?P<where>space|group|harvester|automation|cluster) '
-               'members subpage: \n(?P<config>(.|\s)*)'))
+               'members subpage:\n(?P<config>(.|\s)*)'))
 def assert_privileges_in_members_subpage(selenium, browser_id, member_name,
                                          member_type, where, config, onepanel,
                                          oz_page):

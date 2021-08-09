@@ -27,8 +27,8 @@ class _FileBrowser(PageObject):
     new_directory_button = Button('.toolbar-buttons .file-action-newDirectory')
     upload_files_button = Button('.toolbar-buttons .browser-upload')
     refresh_button = Button('.toolbar-buttons .file-action-refresh')
-    hardlink_button = Button('.toolbar-buttons .oneicon-text-link')
-    symlink_button = Button('.toolbar-buttons .oneicon-shortcut')
+    place_hard_link_button = Button('.toolbar-buttons .oneicon-text-link')
+    place_symbolic_link_button = Button('.toolbar-buttons .oneicon-shortcut')
     selection_menu_button = Button('.fb-selection-toolkit .oneicon-arrow-down')
     paste_button = Button('.toolbar-buttons .oneicon-browser-paste')
 
@@ -39,6 +39,7 @@ class _FileBrowser(PageObject):
     empty_dir_msg = Label('.empty-dir-text')
     _empty_dir_icon = WebElement('.empty-dir-image')
     _bottom = WebElement('.table-bottom-spacing')
+    error_dir_msg = Label('.error-dir-text')
 
     _upload_input = WebElement('.fb-upload-trigger input')
 

@@ -296,6 +296,7 @@ def assert_btn_in_modal_is_enabled(browser_id, btn_name, tmp_memory):
 
 @wt(parsers.parse('user of {browser_id} sees {text} alert '
                   'in "{modal}" modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_alert_text_in_modal(selenium, browser_id, modals, modal, text):
     driver = selenium[browser_id]
     modal = transform(modal)

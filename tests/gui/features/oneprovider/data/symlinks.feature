@@ -30,7 +30,7 @@ Feature: Basic files tab operations on symlinks in file browser
     And user of browser sees only items named ["dir1", "file1"] in file browser
     And user of browser clicks on menu for "file1" file in file browser
     And user of browser clicks "Create symbolic link" option in data row menu in file browser
-    And user of browser clicks file browser symlink button
+    And user of browser clicks "Place symbolic link" button from file browser menu bar
 
     Then user of browser sees only items named ["dir1", "file1", "file1(1)"] in file browser
     And user of browser sees that item named "file1(1)" is symbolic link in file browser
@@ -96,7 +96,7 @@ Feature: Basic files tab operations on symlinks in file browser
 
     And user of browser double clicks on item named "dir1(1)" in file browser
     Then user of browser sees only items named ["dir2", "file2"] in file browser
-    And user of browser sees that current working directory displayed in breadcrumbs is /dir1(1)
+    And user of browser sees that current working directory displayed in breadcrumbs on file browser is /dir1(1)
 
 
   Scenario: User creates symlinks in other directories than original files
@@ -110,7 +110,7 @@ Feature: Basic files tab operations on symlinks in file browser
 
     # first symlink in space1/dir1/dir2
     And user of browser double clicks on item named "dir2" in file browser
-    And user of browser clicks file browser symlink button
+    And user of browser clicks "Place symbolic link" button from file browser menu bar
     Then user of browser sees only items named ["file2"] in file browser
     And user of browser sees that item named "file2" is symbolic link in file browser
 
@@ -124,7 +124,7 @@ Feature: Basic files tab operations on symlinks in file browser
 
     # second symlink in space1
     And user of browser changes current working directory to home using breadcrumbs
-    And user of browser clicks file browser symlink button
+    And user of browser clicks "Place symbolic link" button from file browser menu bar
     And user of browser sees only items named ["dir1", "file1", "file2"] in file browser
     And user of browser sees that item named "file2" is symbolic link in file browser
 
@@ -166,7 +166,7 @@ Feature: Basic files tab operations on symlinks in file browser
     When user of browser creates symlink of "file1" file in space "space1" in file browser
 
     # create another symlink
-    And user of browser clicks file browser symlink button
+    And user of browser clicks "Place symbolic link" button from file browser menu bar
     And user of browser sees only items named ["dir1", "file1", "file1(1)", "file1(2)"] in file browser
     And user of browser succeeds to remove "file1(1)" in "space1"
 

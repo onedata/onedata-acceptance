@@ -1,5 +1,5 @@
 """This module contains tests suite for automation management using
-Onezone GUI and multi browser instance.
+Onezone GUI and multiple browser instances.
 """
 
 __author__ = "Rafał Widziszewski"
@@ -68,5 +68,5 @@ def screens():
     return [0, 1]
 
 
-# scenarios('../features/onezone/automation_basics.feature')
+scenarios('../features/onezone/automation_basics.feature')
 scenarios('../features/onezone/automation_members.feature')

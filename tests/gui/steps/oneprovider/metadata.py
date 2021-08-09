@@ -195,3 +195,12 @@ def clean_tab_textarea_in_metadata_modal(selenium, browser_id, tab_name,
 def click_metadata_modal_button(selenium, browser_id, button, modals):
     modal_name = "Metadata"
     click_modal_button(selenium, browser_id, button, modal_name, modals)
+
+
+@wt(parsers.parse('user of {browser_id} sees "{text}" label in Metadata modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def see_editor_disabled_label(browser_id, selenium, modals, text):
+    driver = selenium[browser_id]
+    item_status = modals(driver).metadata.editor_disabled
+    assert item_status == text, f'{item_status} does not match expected {text}'
+

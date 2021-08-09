@@ -88,9 +88,9 @@ def assert_inventory_exists(selenium, browser_ids, option, inventory, oz_page):
         elem_list = oz_page(selenium[browser_id])['automation'].elements_list
 
         if option == 'does not see':
-            assert inventory not in elem_list
+            assert inventory not in elem_list, f'inventory: {inventory} found'
         else:
-            assert inventory in elem_list
+            assert inventory in elem_list, f'inventory: {inventory} not found'
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) opens inventory "(?P<inventory>.*)" '
@@ -106,12 +106,11 @@ def go_to_inventory_subpage(selenium, browser_id, inventory, subpage, oz_page):
 @wt(parsers.parse('user of {browser_ids} sees "{text}" label in "{inventory}" '
                   'main page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_inventory_exists(selenium, browser_ids, option, inventory, oz_page,
-                            text):
+def assert_inventory_exists(selenium, browser_ids, option, oz_page, text):
     for browser_id in parse_seq(browser_ids):
         err_msg = oz_page(selenium[browser_id])['automation'].privileges_err_msg
 
         if option == 'does not see':
-            assert text not in err_msg
+            assert text not in err_msg, f'Error message: {text} found'
         else:
-            assert text in err_msg
+            assert text in err_msg, f'Error message: {text} not found'
