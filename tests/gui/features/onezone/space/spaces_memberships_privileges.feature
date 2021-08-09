@@ -330,4 +330,5 @@ Feature: Basic management of spaces privileges in Onezone GUI
     And user of browser_user1 clicks "space2" on the spaces list in the sidebar
     And user of browser_user1 clicks Members of "space2" in the sidebar
     And user of browser_user1 clicks on "Invite user using token" button in users list menu in "space2" space members view
-    Then user of browser_user1 sees that "Invite user using token" modal has appeared
+    And user of browser_user1 sees that "Invite user using token" modal has appeared
+    Then user of browser_user1 copies invitation token from modal
