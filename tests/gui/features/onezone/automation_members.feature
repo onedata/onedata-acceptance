@@ -317,10 +317,10 @@ Feature: Management of inventories members
     And user of space_owner_browser sends copied token to user of browser1
     And user of browser1 adds group "group1" to inventory using copied token
 
-    # User1 fails to remove group
-    And user of browser1 removes "group1" group from "inventory1" automation members
-    And user of browser1 sees that error popup has appeared
-    And user of browser1 clicks on "Close" button in modal "Error"
+#    # User1 fails to remove group
+#    And user of browser1 removes "group1" group from "inventory1" automation members
+#    And user of browser1 sees that error popup has appeared
+#    And user of browser1 clicks on "Close" button in modal "Error"
 
     # Space-owner-user changes privileges for group1
     And user of space_owner_browser clicks "group1" group in "inventory1" automation members groups list
