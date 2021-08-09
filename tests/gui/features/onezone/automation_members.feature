@@ -33,7 +33,7 @@ Feature: Management of inventories members
     And user of space_owner_browser copies invitation token from modal
     And user of space_owner_browser closes "Invite using token" modal
 
-    # Space-owner-user adds user1 to view inventory
+    # Space-owner-user adds group1 to view inventory
     And user of space_owner_browser sends copied token to user of browser1
     And user of browser1 adds group "group1" to inventory using copied token
     Then user of browser1 sees inventory "inventory1" on inventory list
@@ -95,7 +95,7 @@ Feature: Management of inventories members
     And user of space_owner_browser copies invitation token from modal
     And user of space_owner_browser closes "Invite using token" modal
 
-    # Space-owner-user adds user1 to view inventory
+    # Space-owner-user adds group1 to view inventory
     And user of space_owner_browser sends copied token to user of browser1
     And user of browser1 adds group "group1" to inventory using copied token
 
@@ -129,7 +129,7 @@ Feature: Management of inventories members
     And user of space_owner_browser copies invitation token from modal
     And user of space_owner_browser closes "Invite using token" modal
 
-    # Space-owner-user adds user1 to view inventory
+    # Space-owner-user adds group1 to view inventory
     And user of space_owner_browser sends copied token to user of browser1
     And user of browser1 adds group "group1" to inventory using copied token
 
@@ -143,7 +143,7 @@ Feature: Management of inventories members
 
     # User1 removes inventory
     And user of browser1 clicks on "Remove" button in inventory "inventory1" menu in the sidebar
-    And user of browser1 clicks on "Remove" button in modal "remove_inventory"
+    And user of browser1 clicks on "Remove" button in modal "Remove inventory"
     Then user of browser1 does not see inventory "inventory1" on inventory list
     And user of space_owner_browser does not see inventory "inventory1" on inventory list
 
@@ -157,7 +157,7 @@ Feature: Management of inventories members
     And user of space_owner_browser copies invitation token from modal
     And user of space_owner_browser closes "Invite using token" modal
 
-    # Space-owner-user adds user1 to view inventory
+    # Space-owner-user adds group1 to view inventory
     And user of space_owner_browser sends copied token to user of browser1
     And user of browser1 adds group "group1" to inventory using copied token
 
@@ -184,7 +184,7 @@ Feature: Management of inventories members
     And user of space_owner_browser copies invitation token from modal
     And user of space_owner_browser closes "Invite using token" modal
 
-    # Space-owner-user adds user1 to view inventory
+    # Space-owner-user adds group1 to view inventory
     And user of space_owner_browser sends copied token to user of browser1
     And user of browser1 adds group "group1" to inventory using copied token
 
@@ -216,7 +216,7 @@ Feature: Management of inventories members
     And user of space_owner_browser copies invitation token from modal
     And user of space_owner_browser closes "Invite using token" modal
 
-    # Space-owner-user adds user1 to view inventory
+    # Space-owner-user adds group1 to view inventory
     And user of space_owner_browser sends copied token to user of browser1
     And user of browser1 adds group "group1" to inventory using copied token
 
@@ -247,7 +247,7 @@ Feature: Management of inventories members
     And user of space_owner_browser copies invitation token from modal
     And user of space_owner_browser closes "Invite using token" modal
 
-    # Space-owner-user adds user1 to view inventory
+    # Space-owner-user adds group1 to view inventory
     And user of space_owner_browser sends copied token to user of browser1
     And user of browser1 adds group "group1" to inventory using copied token
 
@@ -280,7 +280,7 @@ Feature: Management of inventories members
     And user of space_owner_browser copies invitation token from modal
     And user of space_owner_browser closes "Invite using token" modal
 
-    # Space-owner-user adds user1 to view inventory
+    # Space-owner-user adds group1 to view inventory
     And user of space_owner_browser sends copied token to user of browser1
     And user of browser1 adds group "group1" to inventory using copied token
 
@@ -313,7 +313,7 @@ Feature: Management of inventories members
     And user of space_owner_browser copies invitation token from modal
     And user of space_owner_browser closes "Invite using token" modal
 
-    # Space-owner-user adds user1 to view inventory
+    # Space-owner-user adds group1 to view inventory
     And user of space_owner_browser sends copied token to user of browser1
     And user of browser1 adds group "group1" to inventory using copied token
 
