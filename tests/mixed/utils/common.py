@@ -42,31 +42,31 @@ def login_to_panel(username, password, host):
                                                 (Configuration as Conf_panel)
     from tests.mixed.onepanel_client import (ApiClient
                                                       as ApiClient_panel)
-    Conf_panel().verify_ssl = False
-    Conf_panel().username = username
-    Conf_panel().password = password
+    configuration = Conf_panel()
+    configuration.verify_ssl = False
+    configuration.username = username
+    configuration.password = password
+    configuration.host = 'https://{}:{}{}'.format(host,
+                                      OZ_REST_PORT,
+                                      CDMI_REST_PATH_PREFIX) 
 
-    client = ApiClient_panel(
-        host='https://{}:{}{}'.format(host,
-                                      PANEL_REST_PORT,
-                                      PANEL_REST_PATH_PREFIX))
-    return client
-
+    return ApiClient_panel(configuration=configuration)
 
 def login_to_cdmi(username, users, host, access_token=None,
                   identity_token=None):
     from tests.mixed.cdmi_client.configuration import (Configuration
                                                                 as Conf_CDMI)
     from tests.mixed.cdmi_client import (ApiClient as ApiClient_CDMI)
-    Conf_CDMI().verify_ssl = False
+    
+    configuration = Conf_CDMI()
+    configuration.verify_ssl = False
+    configuration.host = 'https://{}:{}{}'.format(host,
+                                      OZ_REST_PORT,
+                                      CDMI_REST_PATH_PREFIX) 
 
     header_value = access_token if access_token else users[username].token
 
-    client = ApiClient_CDMI(
-        host='https://{}:{}{}'.format(host,
-                                      OZ_REST_PORT,
-                                      CDMI_REST_PATH_PREFIX),
-        header_name='X-Auth-Token', header_value=header_value)
+    client = ApiClient_CDMI(configuration=configuration, header_name='X-Auth-Token', header_value=header_value)
 
     if identity_token:
         client.set_default_header('x-onedata-consumer-token', identity_token)
@@ -78,16 +78,13 @@ def login_to_provider(username, users, host):
                                                 Configuration as Conf_provider
     from tests.mixed.oneprovider_client import (ApiClient
                                                          as ApiClient_provider)
-    Conf_provider().verify_ssl = False
-
-    Conf_provider.host = 'https://{}:{}{}'.format(host,
+    configuration = Conf_provider()
+    configuration.verify_ssl = False
+    configuration.host = 'https://{}:{}{}'.format(host,
                                       OZ_REST_PORT,
                                       PROVIDER_REST_PATH_PREFIX)
 
-    client = ApiClient_provider(
-        Conf_provider, 
-        header_name = 'X-Auth-Token', header_value = users[username].token)
-    return client
+    return ApiClient_provider(configuration=configuration, header_name = 'X-Auth-Token', header_value = users[username].token)
 
 
 @wt(parsers.parse('{sender} sends {item_type} to {receiver}'))
