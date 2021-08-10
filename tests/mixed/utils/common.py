@@ -80,10 +80,12 @@ def login_to_provider(username, users, host):
                                                          as ApiClient_provider)
     Conf_provider().verify_ssl = False
 
-    client = ApiClient_provider(
-        host = 'https://{}:{}{}'.format(host,
+    Conf_provider.host = 'https://{}:{}{}'.format(host,
                                       OZ_REST_PORT,
-                                      PROVIDER_REST_PATH_PREFIX), 
+                                      PROVIDER_REST_PATH_PREFIX)
+
+    client = ApiClient_provider(
+        Conf_provider, 
         header_name = 'X-Auth-Token', header_value = users[username].token)
     return client
 
