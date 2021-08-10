@@ -20,6 +20,18 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
             owner: user1
             groups:
                 - group3
+          group5:
+            owner: user1
+            users:
+                - user2
+            groups:
+                - group4
+          group6:
+            owner: user1
+          group7:
+            owner: user2
+            users:
+                - user1
     And initial spaces configuration in "onezone" Onezone service:
           space1:
             owner: user1
@@ -62,3 +74,306 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
     And user of browser2 clicks "space1" on the spaces list in the sidebar
     And user of browser2 sees 2 effective groups in space members tile
 
+
+ Scenario: User views group
+   When user of browser1 opens group "group5" members subpage
+   And user of browser1 clicks "user2" user in "group5" group members users list
+   And user of browser1 sees privileges for "user2" user in group members subpage
+   And user of browser1 clicks on "user2" users checkbox
+   And user of browser1 clicks on bulk edit button
+   And user of browser1 sets following privileges on modal:
+         Group management:
+           granted: True
+
+   Then user of browser2 sees group "group5" on groups list
+
+
+ Scenario: User fails to view group because of lack in privileges
+   When user of browser1 opens group "group5" members subpage
+   And user of browser1 clicks "user2" user in "group5" group members users list
+   And user of browser1 sees privileges for "user2" user in group members subpage
+   And user of browser1 clicks on "user2" users checkbox
+   And user of browser1 clicks on bulk edit button
+   And user of browser1 sets following privileges on modal:
+         Group management:
+           granted: False
+
+   Then user of browser2 does not see group "group5" on groups list
+
+
+ Scenario: User fails to rename group because of lack in privileges
+   When user of browser1 opens group "group5" members subpage
+   And user of browser1 clicks "user2" user in "group5" group members users list
+   And user of browser1 sees privileges for "user2" user in group members subpage
+   And user of browser1 clicks on "user2" users checkbox
+   And user of browser1 clicks on bulk edit button
+   And user of browser1 sets following privileges on modal:
+         Group management:
+           granted: Partially
+           privilege subtypes:
+             Modify group: False
+
+   And user of browser2 clicks on "Rename" button in group "group5" menu in the sidebar
+   And user of browser2 writes "group_renamed" into rename group text field
+   And user of browser2 confirms group rename using confirmation button
+   Then user of browser2 sees that error modal with text "insufficient privileges" appeared
+
+
+  Scenario: User sets privileges for other user
+   When user of browser1 opens group "group5" members subpage
+   And user of browser1 clicks "user2" user in "group5" group members users list
+   And user of browser1 sees privileges for "user2" user in group members subpage
+   And user of browser1 clicks on "user2" users checkbox
+   And user of browser1 clicks on bulk edit button
+   And user of browser1 sets following privileges on modal:
+         Group management:
+           granted: Partially
+           privilege subtypes:
+             View privileges: True
+             Set privileges: True
+
+   And user of browser2 opens group "group5" members subpage
+   And user of browser2 clicks "user1" user in "group5" group members users list
+   And user of browser2 sees privileges for "user1" user in group members subpage
+   And user of browser2 clicks on "user1" users checkbox
+   And user of browser2 clicks on bulk edit button
+   And user of browser2 sets following privileges on modal:
+         Group management:
+           granted: Partially
+           privilege subtypes:
+             View privileges: False
+             Set privileges: False
+
+   Then user of browser2 sees following privileges of "user1" user in group members subpage:
+         Group management:
+           granted: Partially
+           privilege subtypes:
+             View privileges: False
+             Set privileges: False
+
+
+  Scenario: User fails to set privileges for other users because of lack in privileges
+   When user of browser1 opens group "group5" members subpage
+   And user of browser1 clicks "user2" user in "group5" group members users list
+   And user of browser1 sees privileges for "user2" user in group members subpage
+   And user of browser1 clicks on "user2" users checkbox
+   And user of browser1 clicks on bulk edit button
+   And user of browser1 sets following privileges on modal:
+         Group management:
+           granted: Partially
+           privilege subtypes:
+             View privileges: True
+             Set privileges: True
+
+   And user of browser2 opens group "group5" members subpage
+   And user of browser2 clicks "user1" user in "group5" group members users list
+   And user of browser2 sees privileges for "user1" user in group members subpage
+   And user of browser2 clicks on "user1" users checkbox
+   And user of browser2 clicks on bulk edit button
+   And user of browser2 sets following privileges on modal:
+         Group management:
+           granted: Partially
+           privilege subtypes:
+             View privileges: False
+             Set privileges: False
+
+   Then user of browser_user1 sees that error modal with text "insufficient privileges" appeared
+
+
+  Scenario: User fails to remove group because of lack in privileges
+   When user of browser1 opens group "group5" members subpage
+   And user of browser1 clicks "user2" user in "group5" group members users list
+   And user of browser1 sees privileges for "user2" user in group members subpage
+   And user of browser1 clicks on "user2" users checkbox
+   And user of browser1 clicks on bulk edit button
+   And user of browser1 sets following privileges on modal:
+         Group management:
+           granted: False
+
+   And user of browser2 clicks on "Remove" button in group "group5" menu in the sidebar
+   And user of browser2 clicks on "Remove" button in modal "REMOVE GROUP"
+   Then user of browser2 sees that error modal with text "insufficient privileges" appeared
+
+
+  Scenario: User fails to invite other user to join given group because of lack in privileges
+   When user of browser1 opens group "group5" members subpage
+   And user of browser1 clicks "user2" user in "group5" group members users list
+   And user of browser1 sees privileges for "user2" user in group members subpage
+   And user of browser1 clicks on "user2" users checkbox
+   And user of browser1 clicks on bulk edit button
+   And user of browser1 sets following privileges on modal:
+         User management:
+           granted: Partially
+           privilege subtypes:
+             Add user: False
+
+   And user of browser2 opens group "group5" members subpage
+   And user of browser2 clicks on "Invite group using token" button in groups list menu in "group5" group members view
+   Then user of browser2 sees This resource could not be loaded alert in "Invite using token" modal
+
+  Scenario: User removes other user from given group
+   When user of browser1 opens group "group5" members subpage
+   And user of browser1 clicks "user2" user in "group5" group members users list
+   And user of browser1 sees privileges for "user2" user in group members subpage
+   And user of browser1 clicks on "user2" users checkbox
+   And user of browser1 clicks on bulk edit button
+   And user of browser1 sets following privileges on modal:
+         User management:
+           granted: Partially
+           privilege subtypes:
+             Remove user: True
+
+   And user of browser2 opens group "group5" members subpage
+   And user of browser2 removes "user1" user from "group5" group members
+   Then user of browser1 does not see group "group5" on groups list
+
+
+  Scenario: User fails to invite group as subgroup because of lack in privileges
+   When user of browser1 opens group "group5" members subpage
+   And user of browser1 clicks "user2" user in "group5" group members users list
+   And user of browser1 sees privileges for "user2" user in group members subpage
+   And user of browser1 clicks on "user2" users checkbox
+   And user of browser1 clicks on bulk edit button
+   And user of browser1 sets following privileges on modal:
+         Group hierarchy management:
+           granted: Partially
+           privilege subtypes:
+             Add child group: False
+
+   And user of browser2 opens group "group5" hierarchy subpage
+   And user of browser2 clicks on group "group5" menu button in hierarchy subpage
+   And user of browser2 clicks on "Add child group" in group hierarchy menu
+   And user of browser2 clicks on "Create new group" in group hierarchy menu
+   And user of browser2 writes "child_group" into group name text field in create group modal
+   And user of browser2 clicks on "Create" button in modal "CREATE GROUP"
+   Then user of browser2 sees that error modal with text "Child group creation failed" appeared
+
+
+  Scenario: User fails to join group to space because of lack in privileges
+   When user of browser1 opens group "group5" members subpage
+   And user of browser1 clicks "user2" user in "group5" group members users list
+   And user of browser1 sees privileges for "user2" user in group members subpage
+   And user of browser1 clicks on "user2" users checkbox
+   And user of browser1 clicks on bulk edit button
+   And user of browser1 sets following privileges on modal:
+         Space management:
+           granted: False
+
+   And user of browser2 clicks "space1" on the spaces list in the sidebar
+   And user of browser2 clicks Members of "space1" in the sidebar
+   And user of browser2 clicks on "Invite group using token" button in groups list menu in "space1" space members view
+   Then user of browser2 sees This resource could not be loaded alert in "Invite using token" modal
+
+
+  Scenario: User creates new space but fails to allow given group to control it because of lack in privileges
+    When user of browser2 creates space "new_space"
+    And user of browser2 clicks on Data in the main menu
+    And user of browser2 clicks "new_space" on the spaces list in the sidebar
+    And user of browser2 clicks Members of "new_space" in the sidebar
+    And user of browser2 clicks on "Invite group using token" button in groups list menu in "new_space" space members view
+    And user of browser2 copies invitation token from modal
+    And user of browser2 closes "Invite using token" modal
+    And user of browser2 sends copied token to user of browser1
+
+    And user of browser1 adds group "group6" to space using copied token
+    And user of browser1 clicks "new_space" on the spaces list in the sidebar
+    And user of browser1 clicks Members of "new_space" in the sidebar
+
+    #User tries to invite group using token
+    And user of browser1 clicks on "Invite group using token" button in groups list menu in "new_space" space members view
+    Then user of browser1 sees This resource could not be loaded alert in "Invite using token" modal
+    And user of browser1 closes "Invite using token" modal
+
+    #User tries to add group through dropdown menu
+    And user of browser1 adds "group1" group to "new_space" space using available groups dropdown
+    And user of browser1 sees that error modal with text "insufficient privileges" appeared
+
+
+  # Tu nie powinno być remove?
+  Scenario: User leaves group from space
+   When user of browser1 opens group "group5" members subpage
+   And user of browser1 clicks "user2" user in "group5" group members users list
+   And user of browser1 sees privileges for "user2" user in group members subpage
+   And user of browser1 clicks on "user2" users checkbox
+   And user of browser1 clicks on bulk edit button
+   And user of browser1 sets following privileges on modal:
+         Space management:
+           granted: True
+
+   And user of browser2 clicks "space1" on the spaces list in the sidebar
+   And user of browser2 clicks Members of "space1" in the sidebar
+   And user of browser2 clicks "group4" group in "space1" space members groups list
+
+#   And user of browser2 removes "group4" group from "space1" space members
+
+  #Nie powinno być remove?
+  Scenario: User fails to leave group from space because of lack in privileges ??
+   When user of browser1 opens group "group5" members subpage
+   And user of browser1 clicks "user2" user in "group5" group members users list
+   And user of browser1 sees privileges for "user2" user in group members subpage
+   And user of browser1 clicks on "user2" users checkbox
+   And user of browser1 clicks on bulk edit button
+   And user of browser1 sets following privileges on modal:
+         Space management:
+           granted: False
+
+   And user of browser2 clicks "space1" on the spaces list in the sidebar
+   And user of browser2 clicks Members of "space1" in the sidebar
+   And user of browser2 clicks on "Invite group using token" button in groups list menu in "space1" space members view
+   Then user of browser2 sees This resource could not be loaded alert in "Invite using token" modal
+
+  #Nie ma privilegu do managementu?
+  Scenario: User fails to invite provider/get support for given group because of lack in privileges
+   When user of browser1 opens group "group5" members subpage
+   And user of browser1 clicks "user2" user in "group5" group members users list
+   And user of browser1 sees privileges for "user2" user in group members subpage
+   And user of browser1 clicks on "user2" users checkbox
+   And user of browser1 clicks on bulk edit button
+   And user of browser1 sets following privileges on modal:
+         Support management:
+           granted: False
+
+   And user of browser_user1 clicks Providers of "space1" in the sidebar
+   And user of browser_user1 clicks Add support button on providers page
+   And user of browser_user1 clicks Copy button on Add support page
+   Then user of browser_user1 sees an info notify with text matching to: .*copied.*
+
+  #Modal się nie pojawia
+  Scenario: User fails to join as subgroup because of lack in privileges
+   When user of browser2 opens group "group7" members subpage
+   And user of browser2 clicks "user1" user in "group7" group members users list
+   And user of browser2 sees privileges for "user1" user in group members subpage
+   And user of browser2 clicks on "user1" users checkbox
+   And user of browser2 clicks on bulk edit button
+   And user of browser2 sets following privileges on modal:
+         Group hierarchy management:
+           granted: Partially
+           privilege subtypes:
+             Add parent group: False
+
+   And user of browser1 opens group "group6" members subpage
+   And user of browser1 clicks on "Invite group using token" button in groups list menu in "group1" group members view
+   And user of browser1 copies invitation token from modal
+   And user of browser1 closes "Invite using token" modal
+
+   And user of browser2 adds group "group7" as subgroup using copied token
+
+  #Pojawia się modal
+  Scenario: User removes subgroup
+   When user of browser1 opens group "group5" members subpage
+   And user of browser1 clicks "user2" user in "group5" group members users list
+   And user of browser1 sees privileges for "user2" user in group members subpage
+   And user of browser1 clicks on "user2" users checkbox
+   And user of browser1 clicks on bulk edit button
+   And user of browser1 sets following privileges on modal:
+         Group hierarchy management:
+           granted: Partially
+           privilege subtypes:
+             Remove child group: True
+
+   And user of browser2 opens group "group5" hierarchy subpage
+   And user of browser2 clicks on group "group4" menu button in hierarchy subpage
+   And user of browser2 clicks on "Remove" in group hierarchy menu
+   And user of browser2 clicks on "Remove" button in modal "REMOVE GROUP"
+   Then user of browser2 does not see "group4" as a child of "group5" in hierarchy subpage
+   And user of browser2 does not see group "group4" on groups list
