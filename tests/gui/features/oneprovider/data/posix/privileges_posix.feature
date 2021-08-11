@@ -175,3 +175,31 @@ Feature: Oneprovider POSIX privileges GUI tests
       | file_name |
       | file1     |
       | dir1      |
+
+
+  Scenario: User fails to change directory permissions because of lack in privileges (POSIX)
+   When user of space_owner_browser sets dir1 POSIX 553 privileges in "space1"
+
+    # Fail to change directory permissions
+    And user of browser_user1 opens file browser for "space1" space
+    And user of browser_user1 clicks on menu for "dir1" directory in file browser
+    And user of browser_user1 clicks "Permissions" option in data row menu in file browser
+    And user of browser_user1 sees that "Edit permissions" modal has appeared
+    And user of browser_user1 selects "POSIX" permission type in edit permissions modal
+    And user of browser_user1 sets "775" permission code in edit permissions modal
+    And user of browser_user1 clicks "Save" confirmation button in displayed modal
+    Then user of browser_user1 sees that error modal with text "Modifying permissions failed!" appeared
+
+
+  Scenario: User fails to change file permissions because of lack in privileges (POSIX)
+   When user of space_owner_browser sets file1 POSIX 553 privileges in "space1"
+
+    # Fail to change file permissions
+    And user of browser_user1 opens file browser for "space1" space
+    And user of browser_user1 clicks on menu for "file1" directory in file browser
+    And user of browser_user1 clicks "Permissions" option in data row menu in file browser
+    And user of browser_user1 sees that "Edit permissions" modal has appeared
+    And user of browser_user1 selects "POSIX" permission type in edit permissions modal
+    And user of browser_user1 sets "775" permission code in edit permissions modal
+    And user of browser_user1 clicks "Save" confirmation button in displayed modal
+    Then user of browser_user1 sees that error modal with text "Modifying permissions failed!" appeared
