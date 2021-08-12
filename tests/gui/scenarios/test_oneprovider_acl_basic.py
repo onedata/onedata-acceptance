@@ -39,6 +39,7 @@ from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
 from tests.gui.steps.oneprovider.permissions import *
+from tests.gui.steps.oneprovider.browser import *
 
 from tests.gui.steps.onezone.providers import *
 

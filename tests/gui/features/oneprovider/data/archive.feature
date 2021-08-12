@@ -68,7 +68,7 @@ Feature: Archive basic operation
 
     And user of browser clicks on 1 in "dir1" Archives
     And user of browser sees archive file browser in archives tab in Oneprovider page
-    And user of browser double clicks on latest created archive
+    And user of browser double clicks on 1 archive
     Then user of browser sees that the file structure in archive file browser is as follow:
            - dir1:
                - dir2:
@@ -95,7 +95,7 @@ Feature: Archive basic operation
 
     And user of browser clicks on 1 in "dir1" Archives
     And user of browser sees archive file browser in archives tab in Oneprovider page
-    And user of browser double clicks on latest created archive
+    And user of browser double clicks on 1 archive
     Then user of browser sees that the file structure in archive file browser is as follow:
            - dir1:
                - dir2:
@@ -120,7 +120,7 @@ Feature: Archive basic operation
 
     And user of browser clicks on 2 in "dir1" Archives
     And user of browser sees archive file browser in archives tab in Oneprovider page
-    And user of browser double clicks on latest created archive
+    And user of browser double clicks on 1 archive
     Then user of browser sees that the file structure in archive file browser is as follow:
          - dir1:
              - dir2:
@@ -172,7 +172,7 @@ Scenario: User sees BagIt metadata files and directory tree in „data” direct
 
     And user of browser clicks on 2 in "dir1" Archives
     And user of browser sees archive file browser in archives tab in Oneprovider page
-    And user of browser double clicks on latest created archive
+    And user of browser double clicks on 1 archive
     Then user of browser sees that the file structure in archive file browser is as follow:
          - bagit.txt
          - data:
@@ -228,7 +228,7 @@ Scenario: User sees BagIt metadata files and directory tree in „data” direct
 
     Then user of browser clicks on 2 in "dir1" Archives
     And user of browser sees archive file browser in archives tab in Oneprovider page
-    And user of browser double clicks on latest created archive
+    And user of browser double clicks on 1 archive
     And user of browser double clicks on item named "dir1" in archive file browser
     And user of browser double clicks on item named "dir2" in archive file browser
     And user of browser sees symlink status tag for "dir3" in archive file browser
@@ -285,3 +285,168 @@ Scenario: User sees BagIt metadata files and directory tree in „data” direct
     And user of browser clicks Datasets of "space1" in the sidebar
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser sees that item "dir1" has 1 Archives
+
+
+  Scenario: User sees that files that did not change since creating last archive have 2 hardlinks tag after creating new incremental archive
+    # create dataset
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser clicks on menu for "dir4" directory in file browser
+    And user of browser clicks "Datasets" option in data row menu in file browser
+    And user of browser clicks Mark this file as dataset toggle in Datasets modal
+    And user of browser clicks on "Close" button in modal "Datasets"
+
+    # create archive
+    And user of browser clicks Datasets of "space1" in the sidebar
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
+    And user of browser clicks on menu for "dir4" dataset in dataset browser
+    And user of browser clicks "Create archive" option in data row menu in dataset browser
+    And user of browser clicks on "Create" button in modal "Create Archive"
+
+    # upload file
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser double clicks on item named "dir4" in file browser
+    And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
+    And user of browser sees that item named "20B-0.txt" has appeared in file browser
+
+    And user of browser clicks Datasets of "space1" in the sidebar
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
+
+    # create incremental archive
+    And user of browser clicks on menu for "dir4" dataset in dataset browser
+    And user of browser clicks "Create archive" option in data row menu in dataset browser
+    And user of browser checks "Incremental" toggle in modal "Create Archive"
+    And user of browser clicks on "Create" button in modal "Create Archive"
+
+    Then user of browser clicks on 2 in "dir4" Archives
+    And user of browser sees archive file browser in archives tab in Oneprovider page
+    And user of browser double clicks on 1 archive
+    And user of browser double clicks on item named "dir4" in archive file browser
+    And user of browser sees hardlink status tag with "2 hard links" text for "file2" in archive file browser
+    And user of browser does not see hardlink status tag for "20B-0.txt" in archive file browser
+
+
+  Scenario: User sees that files that did not change since creating last two archive (at least one incremental) have 3 hardlinks tag after creating new incremental archive
+    # create dataset
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser clicks on menu for "dir4" directory in file browser
+    And user of browser clicks "Datasets" option in data row menu in file browser
+    And user of browser clicks Mark this file as dataset toggle in Datasets modal
+    And user of browser clicks on "Close" button in modal "Datasets"
+
+    # create archive
+    And user of browser clicks Datasets of "space1" in the sidebar
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
+    And user of browser clicks on menu for "dir4" dataset in dataset browser
+    And user of browser clicks "Create archive" option in data row menu in dataset browser
+    And user of browser clicks on "Create" button in modal "Create Archive"
+
+    # create incremental archive
+    And user of browser clicks on menu for "dir4" dataset in dataset browser
+    And user of browser clicks "Create archive" option in data row menu in dataset browser
+    And user of browser checks "Incremental" toggle in modal "Create Archive"
+    And user of browser clicks on "Create" button in modal "Create Archive"
+
+    # create incremental archive
+    And user of browser clicks on menu for "dir4" dataset in dataset browser
+    And user of browser clicks "Create archive" option in data row menu in dataset browser
+    And user of browser checks "Incremental" toggle in modal "Create Archive"
+    And user of browser clicks on "Create" button in modal "Create Archive"
+
+    Then user of browser clicks on 2 in "dir4" Archives
+    And user of browser sees archive file browser in archives tab in Oneprovider page
+    And user of browser double clicks on 1 archive
+    And user of browser double clicks on item named "dir4" in archive file browser
+    And user of browser sees hardlink status tag with "3 hard links" text for "file2" in archive file browser
+
+
+  Scenario: User sees name of base archive after creating incremental archive
+    # create dataset
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser clicks on menu for "dir4" directory in file browser
+    And user of browser clicks "Datasets" option in data row menu in file browser
+    And user of browser clicks Mark this file as dataset toggle in Datasets modal
+    And user of browser clicks on "Close" button in modal "Datasets"
+
+    And user of browser clicks Datasets of "space1" in the sidebar
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
+
+    # create archive
+    And user of browser clicks on menu for "dir4" dataset in dataset browser
+    And user of browser clicks "Create archive" option in data row menu in dataset browser
+    And user of browser clicks on "Create" button in modal "Create Archive"
+
+    # create incremental archive
+    And user of browser clicks on menu for "dir4" dataset in dataset browser
+    And user of browser clicks "Create archive" option in data row menu in dataset browser
+    And user of browser checks "Incremental" toggle in modal "Create Archive"
+    And user of browser clicks on "Create" button in modal "Create Archive"
+
+    Then user of browser clicks on 2 in "dir4" Archives
+    And user of browser sees archive file browser in archives tab in Oneprovider page
+    And user of browser sees that base archive for latest created archive is 2 archive
+
+  Scenario: User sees that base archive, in create archive modal, is latest created archive, after checking incremental toggle
+    # create dataset
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser clicks on menu for "dir4" directory in file browser
+    And user of browser clicks "Datasets" option in data row menu in file browser
+    And user of browser clicks Mark this file as dataset toggle in Datasets modal
+    And user of browser clicks on "Close" button in modal "Datasets"
+
+    And user of browser clicks Datasets of "space1" in the sidebar
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
+
+    # create archive
+    And user of browser clicks on menu for "dir4" dataset in dataset browser
+    And user of browser clicks "Create archive" option in data row menu in dataset browser
+    And user of browser clicks on "Create" button in modal "Create Archive"
+
+    And user of browser clicks on 1 in "dir4" Archives
+    And user of browser sees archive file browser in archives tab in Oneprovider page
+    And user of browser clicks on Create Archive button in archive file browser
+    And user of browser checks "Incremental" toggle in modal "Create Archive"
+    Then user of browser sees that base archive name in Create Archive modal is the same as latest created archive name
+
+  Scenario: User creates incremental archive that has chosen base archive
+     # create dataset
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser clicks on menu for "dir4" directory in file browser
+    And user of browser clicks "Datasets" option in data row menu in file browser
+    And user of browser clicks Mark this file as dataset toggle in Datasets modal
+    And user of browser clicks on "Close" button in modal "Datasets"
+
+    And user of browser clicks Datasets of "space1" in the sidebar
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
+
+    # create archive
+    And user of browser clicks on menu for "dir4" dataset in dataset browser
+    And user of browser clicks "Create archive" option in data row menu in dataset browser
+    And user of browser writes "first archive" into description text field
+    And user of browser clicks on "Create" button in modal "Create Archive"
+
+    And user of browser clicks on 1 in "dir4" Archives
+    And user of browser sees archive file browser in archives tab in Oneprovider page
+    And user of browser copies 1 archive name in archive file browser to clipboard
+
+    # create archive
+    And user of browser clicks on Create Archive button in archive file browser
+    And user of browser clicks on "Create" button in modal "Create Archive"
+
+    And user of browser clicks on menu for archive that name was copied to clipboard
+    And user of browser clicks "Create incremental archive" option in data row menu in archive file browser
+    And user of browser clicks on "Create" button in modal "Create Archive"
+    And user of browser sees archive file browser in archives tab in Oneprovider page
+    Then user of browser sees that base archive for latest created archive is 3 archive
+
+

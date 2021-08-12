@@ -37,15 +37,6 @@ def click_menu_for_elem_in_dataset_browser(browser_id, item_name, tmp_memory):
     browser.data[item_name].menu_button()
 
 
-@wt(parsers.parse('user of {browser_id} clicks "{option}" option '
-                  'in data row menu in dataset browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_option_in_data_row_menu_in_datasets_browser(selenium, browser_id,
-                                                      option, modals):
-    driver = selenium[browser_id]
-    modals(driver).data_row_menu.options[option].click()
-
-
 @wt(parsers.parse('user of {browser_id} cannot click "{option}" option'
                   ' in data row menu in dataset browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)

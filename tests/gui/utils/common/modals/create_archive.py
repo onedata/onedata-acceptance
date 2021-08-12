@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 
 from .modal import Modal
-from tests.gui.utils.core.web_elements import NamedButton, Input, Button
+from tests.gui.utils.core.web_elements import NamedButton, Input, Button, Label
 from tests.gui.utils.common.common import Toggle
 
 
@@ -18,6 +18,8 @@ class CreateArchive(Modal):
     bagit = Button('.option-bagit .one-way-radio-control')
     create_nested_archives = Toggle('.createNestedArchives-field '
                                     '.one-way-toggle-track')
+    incremental = Toggle('.incremental-field .one-way-toggle-track')
+    base_archive = Label('.field-component.static-text-field')
 
     def __str__(self):
         return 'Create archive'

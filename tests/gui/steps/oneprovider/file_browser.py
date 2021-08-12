@@ -30,33 +30,6 @@ def assert_msg_instead_of_browser(browser_id, msg, tmp_memory):
                                   '{}'.format(displayed_msg, msg))
 
 
-@wt(parsers.parse('user of {browser_id} does not see {status_type} '
-                  'status tag for "{item_name}" in file browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_not_status_tag_for_file_in_file_browser(browser_id, status_type,
-                                                   item_name, tmp_memory):
-    browser = tmp_memory[browser_id]['file_browser']
-    err_msg = (f'{status_type} tag for {item_name} in file browser visible, '
-               f'while should not be')
-    assert not browser.data[item_name].is_tag_visible(status_type), err_msg
-
-
-@wt(parsers.parse('user of {browser_id} sees {status_type} '
-                  'status tag with "{text}" text for "{item_name}" '
-                  'in file browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_status_tag_text_for_file_in_file_browser(browser_id, status_type,
-                                                    text, item_name,
-                                                    tmp_memory):
-    assert_status_tag_for_file_in_browser(browser_id, status_type,
-                                          item_name, tmp_memory)
-    browser = tmp_memory[browser_id]['file_browser']
-    actual_text = browser.data[item_name].get_tag_text(transform(status_type))
-    err_msg = (f'{status_type} tag for {item_name} in file browser has text '
-               f'{actual_text} not {text}')
-    assert actual_text == text, err_msg
-
-
 @wt(parsers.parse('user of {browser_id} clicks on {status_type} status tag '
                   'for "{item_name}" in file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -300,14 +273,6 @@ def confirm_rename_directory(selenium, browser_id, option, modals):
 def click_menu_for_elem_in_file_browser(browser_id, item_name, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
     browser.data[item_name].menu_button()
-
-
-@wt(parsers.parse('user of {browser_id} clicks "{option}" option '
-                  'in data row menu in file browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_option_in_data_row_menu_in_file_browser(selenium, browser_id, option,
-                                                  modals):
-    modals(selenium[browser_id]).data_row_menu.choose_option(option)
 
 
 @wt(parsers.parse('user of {browser_id} scrolls to the bottom of file browser '

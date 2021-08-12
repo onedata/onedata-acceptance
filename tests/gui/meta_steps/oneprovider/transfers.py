@@ -14,8 +14,9 @@ from tests.gui.steps.oneprovider.data_tab import (
     click_choose_other_oneprovider_on_file_browser,
     choose_provider_in_file_browser, check_current_provider_in_space)
 from tests.gui.steps.oneprovider.file_browser import (
-    click_menu_for_elem_in_file_browser,
-    click_option_in_data_row_menu_in_file_browser)
+    click_menu_for_elem_in_file_browser)
+from tests.gui.steps.oneprovider.browser import (
+     click_option_in_data_row_menu_in_browser)
 from tests.gui.steps.oneprovider.transfers import (
     wait_for_transfers_page_to_load)
 from tests.gui.steps.onezone.spaces import (

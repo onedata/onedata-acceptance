@@ -15,6 +15,7 @@ from tests.gui.steps.oneprovider.file_browser import *
 from tests.gui.steps.oneprovider.data_tab import *
 from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.browser import *
+from tests.gui.steps.oneprovider.archives import clicks_on_archive
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.common.url import refresh_site
 from tests.gui.meta_steps.oneprovider.common import (
@@ -26,7 +27,6 @@ from tests.gui.steps.onezone.spaces import (
     click_on_option_of_space_on_left_sidebar_menu,
     click_element_on_lists_on_left_sidebar_menu, click_on_option_in_the_sidebar)
 from tests.gui.steps.rest.env_up.spaces import init_storage
-from tests.gui.steps.oneprovider.archives import clicks_latest_created_archive
 
 
 def _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id, path,
@@ -206,7 +206,7 @@ def _check_files_tree(subtree, user, tmp_memory, cwd, selenium, op_container,
                                                                op_container,
                                                                which_browser)
                 if which_browser == 'archive file browser':
-                    clicks_latest_created_archive(user, tmp_memory)
+                    clicks_on_archive(user, tmp_memory)
             else:
                 has_downloaded_file_content(user, item_name, str(item_subtree),
                                             tmpdir)
@@ -416,8 +416,8 @@ def open_modal_for_file_browser_item(selenium, browser_id, modals, modal_name,
     _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id, path,
                                                    space, tmp_memory, oz_page,
                                                    op_container)
-    click_option_in_data_row_menu_in_file_browser(selenium, browser_id, option,
-                                                  modals)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
+                                             modals)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
 
 
@@ -427,8 +427,8 @@ def check_file_owner(selenium, browser_id, owner, file_name, tmp_memory,
     modal_name = 'File details'
 
     click_menu_for_elem_in_file_browser(browser_id, file_name, tmp_memory)
-    click_option_in_data_row_menu_in_file_browser(selenium, browser_id, option,
-                                                  modals)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
+                                             modals)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     check_file_owner_in_file_details_modal(selenium, browser_id, modals, owner)
     close_modal(selenium, browser_id, modal_name, modals)
@@ -466,7 +466,7 @@ def _create_link_in_file_browser(selenium, browser_id, file_name, space,
     _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id,
                                                    file_name, space, tmp_memory,
                                                    oz_page, op_container)
-    click_option_in_data_row_menu_in_file_browser(selenium, browser_id, option,
-                                                  modals)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
+                                             modals)
     click_file_browser_button(browser_id, button, tmp_memory)
 

@@ -52,12 +52,12 @@ def see_archive_state(browser_id, tmp_memory, state_status):
                                         f' not match expected {state_status}'
 
 
-@wt(parsers.parse('user of {browser_id} double clicks on latest created '
+@wt(parsers.parse('user of {browser_id} double clicks on {number} '
                   'archive'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def clicks_latest_created_archive(browser_id, tmp_memory):
+def clicks_on_archive(browser_id, tmp_memory, number='1'):
     browser = tmp_memory[browser_id]['archive_file_browser']
-    browser.data[0].double_click()
+    browser.data[int(number)-1].double_click()
 
 
 @wt(parsers.parse('user of {browser_id} sees {tag_type} tag for latest created '
@@ -76,4 +76,71 @@ def check_toggle_in_create_archive_modal(browser_id, selenium, modals,
                                          toggle_type):
     driver = selenium[browser_id]
     getattr(modals(driver).create_archive, transform(toggle_type)).check()
+
+
+@wt(parsers.parse('user of {browser_id} sees that base archive for latest '
+                  'created archive is {number} archive'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_base_archive_description(browser_id, tmp_memory,
+                                    number):
+    browser = tmp_memory[browser_id]['archive_file_browser']
+    item_base_archive = browser.data[0].base_archive
+    base_archive_name = browser.data[int(number)-1].name
+    err_msg = (f'Item base archive: {item_base_archive} does not'
+               f' match  {base_archive_name}')
+    assert item_base_archive == base_archive_name , err_msg
+
+
+@wt(parsers.parse('user of {browser_id} clicks on hardlink tag for "{name}" '
+                  'in archive file browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_tag(browser_id, tmp_memory, name):
+    browser = tmp_memory[browser_id]['archive_file_browser']
+    browser.data[name].hardlink_tag.click()
+
+
+@wt(parsers.parse('user of browser clicks on {button} button in '
+                  'archive file browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_button_in_archive_browser(browser_id, tmp_memory, button):
+    browser = tmp_memory[browser_id]['archive_file_browser']
+    getattr(browser, transform(button))()
+
+
+@wt(parsers.parse('user of {browser_id} sees that base archive name in Create'
+                  ' Archive modal is the same as '
+                  'latest created archive name'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_name_same_as_latest_created(browser_id, tmp_memory, modals,
+                                       selenium):
+    driver = selenium[browser_id]
+    browser = tmp_memory[browser_id]['archive_file_browser']
+    latest_created_name = browser.data[0].name
+    base_archive_name = modals(driver).create_archive.base_archive
+    err_msg = (f'Latest created archive: {latest_created_name} is not '
+               f'the same as base name: {base_archive_name}')
+    assert latest_created_name == base_archive_name, err_msg
+
+
+@wt(parsers.parse('user of {browser_id} copies {number} archive name in '
+                  'archive file browser to clipboard'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def copy_archive_name_to_clipboard(browser_id, tmp_memory, number, clipboard,
+                                   displays):
+    browser = tmp_memory[browser_id]['archive_file_browser']
+    clipboard.copy(browser.data[int(number)-1].name,
+                   display=displays[browser_id])
+
+
+@wt(parsers.parse('user of {browser_id} clicks on menu for archive that'
+                  ' name was copied to clipboard'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_menu_for_archive(browser_id, tmp_memory, clipboard, displays):
+    browser = tmp_memory[browser_id]['archive_file_browser']
+    item_name = clipboard.paste(display=displays[browser_id])
+    browser.data[item_name].menu_button()
+
+
+
+
 
