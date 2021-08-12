@@ -14,5 +14,5 @@ class RemoveSelectedDataset(Modal):
     remove = NamedButton('.btn-danger', text='Remove')
 
     def __str__(self):
-        return 'RemoveSelectedDataset'
+        return 'Remove selected dataset'
 

@@ -10,7 +10,6 @@ __license__ = ("This software is released under the MIT license cited in "
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
-from tests.gui.utils.generic import transform
 
 
 @wt(parsers.parse('user of {browser_id} click {kind} write protection toggle'
@@ -23,7 +22,7 @@ def click_protection_toggle(browser_id, selenium, modals, kind):
 
 
 @wt(parsers.parse('user of {browser_id} sees that {kind} write protection '
-                  'toggle is checked in Ancestor Dataset menu in Datasets '
+                  'toggle is checked in Ancestor Datasets row in Datasets '
                   'modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_general_toggle_checked_for_ancestors(browser_id, selenium, modals,
@@ -35,8 +34,8 @@ def assert_general_toggle_checked_for_ancestors(browser_id, selenium, modals,
                                  f' in ancestor dataset menu')
 
 
-@wt(parsers.parse('user of {browser_id} clicks on Ancestor datasets option'
-                  ' in Datasets modal'))
+@wt(parsers.parse('user of {browser_id} expands Ancestor datasets row '
+                  'in Datasets modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_option_in_dataset_modal(browser_id, selenium, modals):
     driver = selenium[browser_id]
@@ -65,53 +64,6 @@ def assert_toggle_unchecked_on_item_in_ancestor_list(browser_id, selenium,
     item = modals(driver).datasets.ancestors[name]
     err_msg = f'{kind} write protection toggle is checked on {name}'
     assert getattr(item, protection_kind).is_unchecked(), err_msg
-
-
-@wt(parsers.parse('user of {browser_id} clicks Mark this file as dataset toggle'
-                  ' in Datasets modal'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_mark_file_as_dataset_toggle(browser_id, selenium, modals):
-    driver = selenium[browser_id]
-    modals(driver).datasets.dataset_toggle.check()
-
-
-@wt(parsers.parse('user of {browser_id} clicks on menu '
-                  'for "{item_name}" dataset in dataset browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_menu_for_elem_in_dataset_browser(browser_id, item_name, tmp_memory):
-    browser = tmp_memory[browser_id]['dataset_browser']
-    browser.data[item_name].menu_button()
-
-
-@wt(parsers.parse('user of {browser_id} clicks {text} write protection'
-                  ' toggle in Write Protection modal'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_protection_toggle(browser_id, selenium, modals, text):
-    driver = selenium[browser_id]
-    if text == 'data':
-        modals(driver).write_protection.data_protection_toggle.check()
-    if text == 'metadata':
-        modals(driver).write_protection.metadata_protection_toggle.check()
-
-
-@wt(parsers.parse('user of {browser_id} clicks Close button in Write '
-                  'Protection modal'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_close_button(browser_id, selenium, modals):
-    driver = selenium[browser_id]
-    modals(driver).write_protection.close_button()
-
-
-@wt(parsers.parse('user of {browser_id} sees {status_type} '
-                  'status tag for "{item_name}" in dataset browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_status_tag_for_file_in_dataset_browser(browser_id, status_type,
-                                                  item_name, tmp_memory):
-    browser = tmp_memory[browser_id]['dataset_browser']
-    err_msg = (f'{status_type} tag for {item_name} in dataset browser '
-               f'not visible')
-    assert browser.data[item_name]\
-        .is_tag_visible(transform(status_type)), err_msg
 
 
 @wt(parsers.parse('user of {browser_id} clicks Mark this file as dataset toggle'
