@@ -12,7 +12,7 @@ from tests.gui.utils.core.web_elements import Button
 
 
 class DetachDataset(Modal):
-    proceed = Button('.spin-button-label')
+    proceed = Button('.question-yes')
 
     def __str__(self):
         return 'Detach Dataset'

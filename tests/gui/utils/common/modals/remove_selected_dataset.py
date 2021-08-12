@@ -11,8 +11,8 @@ from tests.gui.utils.core.web_elements import NamedButton
 
 
 class RemoveSelectedDataset(Modal):
-    remove_button = NamedButton('.btn-danger', text='Remove')
+    remove = NamedButton('.btn-danger', text='Remove')
 
     def __str__(self):
-        return 'RemoveSelectedDataset'
+        return 'Remove selected dataset'
 

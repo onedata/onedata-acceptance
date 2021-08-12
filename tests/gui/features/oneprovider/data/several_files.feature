@@ -69,4 +69,4 @@ Feature: Basic files tab operations on several files in file browser
     And user of browser selects ["file1", "file2", "file3"] items from file browser with pressed ctrl
     And user of browser chooses Delete option from selection menu on file browser page
     And user of browser clicks on "Yes" button in modal "Delete modal"
-    Then user of browser sees that items named ["file1", "file2", "file3"] have disappeared from files browser
+    Then user of browser sees that items named ["file1", "file2", "file3"] have disappeared from file browser
