@@ -31,6 +31,7 @@ def login_to_oz(username, password, host):
     configuration.username = username
     configuration.password = password
     configuration.verify_ssl = False
+    configuration.safe_chars_for_path_param = '/'
     configuration.host = 'https://{}:{}{}'.format(host, OZ_REST_PORT,
                                                   OZ_REST_PATH_PREFIX)
 
@@ -44,6 +45,7 @@ def login_to_panel(username, password, host):
                                                       as ApiClient_panel)
     configuration = Conf_panel()
     configuration.verify_ssl = False
+    configuration.safe_chars_for_path_param = '/'
     configuration.username = username
     configuration.password = password
     configuration.host = 'https://{}:{}{}'.format(host,
@@ -60,6 +62,7 @@ def login_to_cdmi(username, users, host, access_token=None,
     
     configuration = Conf_CDMI()
     configuration.verify_ssl = False
+    configuration.safe_chars_for_path_param = '/'
     configuration.host = 'https://{}:{}{}'.format(host,
                                       OZ_REST_PORT,
                                       CDMI_REST_PATH_PREFIX) 
@@ -80,6 +83,7 @@ def login_to_provider(username, users, host):
                                                          as ApiClient_provider)
     configuration = Conf_provider()
     configuration.verify_ssl = False
+    configuration.safe_chars_for_path_param = '/'
     configuration.host = 'https://{}:{}{}'.format(host,
                                       OZ_REST_PORT,
                                       PROVIDER_REST_PATH_PREFIX)
