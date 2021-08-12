@@ -141,3 +141,11 @@ def click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
                                              modals):
     modals(selenium[browser_id]).data_row_menu.choose_option(option)
 
+
+@wt(parsers.parse('user of {browser_id} clicks on {state} view mode '
+                  'on {} browser page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_state_view_mode_tab(browser_id, oz_page, selenium, state):
+    driver = selenium[browser_id]
+    driver.switch_to.default_content()
+    getattr(oz_page(driver)['data'].dataset_header, transform(state))()
