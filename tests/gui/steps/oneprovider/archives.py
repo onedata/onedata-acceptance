@@ -91,14 +91,6 @@ def assert_base_archive_description(browser_id, tmp_memory,
     assert item_base_archive == base_archive_name , err_msg
 
 
-@wt(parsers.parse('user of {browser_id} clicks on hardlink tag for "{name}" '
-                  'in archive file browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_tag(browser_id, tmp_memory, name):
-    browser = tmp_memory[browser_id]['archive_file_browser']
-    browser.data[name].hardlink_tag.click()
-
-
 @wt(parsers.parse('user of browser clicks on {button} button in '
                   'archive file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -139,8 +131,3 @@ def click_menu_for_archive(browser_id, tmp_memory, clipboard, displays):
     browser = tmp_memory[browser_id]['archive_file_browser']
     item_name = clipboard.paste(display=displays[browser_id])
     browser.data[item_name].menu_button()
-
-
-
-
-

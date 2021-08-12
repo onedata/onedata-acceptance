@@ -19,6 +19,7 @@ class CreateArchive(Modal):
     create_nested_archives = Toggle('.createNestedArchives-field '
                                     '.one-way-toggle-track')
     incremental = Toggle('.incremental-field .one-way-toggle-track')
+    include_dip = Toggle('.includeDip-field .one-way-toggle-track')
     base_archive = Label('.field-component.static-text-field')
 
     def __str__(self):

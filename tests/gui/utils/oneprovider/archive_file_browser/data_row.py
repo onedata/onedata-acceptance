@@ -20,6 +20,7 @@ class DataRow(PageObject):
     bagit_tag = WebElement('.archive-bagit-tag')
     symlink_tag = WebElement('.one-icon-tag-circle')
     hardlink_tag = WebElement('.file-status-hardlinks')
+    dip_tag = WebElement('.archive-dip-tag')
     base_archive = Label('.base-archive-name')
     menu_button = Button('.file-row-actions-trigger')
 

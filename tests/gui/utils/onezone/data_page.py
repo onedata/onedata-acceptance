@@ -166,6 +166,8 @@ class _Provider(PageObject):
 class DatasetHeader(PageObject):
     detached = Button('.btn-effecitve')
     attached = Button('.select-attached-datasets-btn')
+    dip = Button('.select-archive-aip-btn')
+    aip = Button('.select-archive-dip-btn')
 
 
 class DataPage(GenericPage):

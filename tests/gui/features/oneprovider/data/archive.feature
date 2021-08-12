@@ -450,3 +450,103 @@ Scenario: User sees BagIt metadata files and directory tree in „data” direct
     Then user of browser sees that base archive for latest created archive is 3 archive
 
 
+  Scenario: User sees tag DIP after creating Include DIP archive
+    # create dataset
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser clicks on menu for "dir1" directory in file browser
+    And user of browser clicks "Datasets" option in data row menu in file browser
+    And user of browser clicks Mark this file as dataset toggle in Datasets modal
+    And user of browser clicks on "Close" button in modal "Datasets"
+
+    #create Include DIP archive
+    And user of browser clicks Datasets of "space1" in the sidebar
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
+    And user of browser clicks on menu for "dir1" dataset in dataset browser
+    And user of browser clicks "Create archive" option in data row menu in dataset browser
+    And user of browser checks "Include DIP" toggle in modal "Create Archive"
+    And user of browser clicks on "Create" button in modal "Create Archive"
+
+    And user of browser clicks on 1 in "dir1" Archives
+    And user of browser sees archive file browser in archives tab in Oneprovider page
+    Then user of browser sees DIP tag for latest created archive
+
+
+  Scenario: User sees directory tree in DIP tab in archive browser after creating Include DIP archive
+    # create dataset
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser clicks on menu for "dir1" directory in file browser
+    And user of browser clicks "Datasets" option in data row menu in file browser
+    And user of browser clicks Mark this file as dataset toggle in Datasets modal
+    And user of browser clicks on "Close" button in modal "Datasets"
+
+    # create Include DIP archive
+    And user of browser clicks Datasets of "space1" in the sidebar
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
+    And user of browser clicks on menu for "dir1" dataset in dataset browser
+    And user of browser clicks "Create archive" option in data row menu in dataset browser
+    And user of browser checks "Include DIP" toggle in modal "Create Archive"
+    And user of browser clicks on "Create" button in modal "Create Archive"
+
+    And user of browser clicks on 1 in "dir1" Archives
+    And user of browser sees archive file browser in archives tab in Oneprovider page
+    And user of browser double clicks on 1 archive
+    And user of browser clicks on DIP view mode on archive file browser page
+    And user of browser sees archive file browser in archives tab in Oneprovider page
+    Then user of browser sees that the file structure in archive file browser is as follow:
+           - dir1:
+               - dir2:
+                 - dir3:
+                   - file1
+
+
+Scenario: User sees BagIt metadata files and directory tree in AIP tab and directory tree in DIP tab in archive browser after creating BagIt and Include DIP archive
+      # create dataset
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser clicks on menu for "dir1" directory in file browser
+    And user of browser clicks "Datasets" option in data row menu in file browser
+    And user of browser clicks Mark this file as dataset toggle in Datasets modal
+    And user of browser clicks on "Close" button in modal "Datasets"
+
+    #create BagIt and Include DIP archive
+    And user of browser clicks Datasets of "space1" in the sidebar
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
+    And user of browser clicks on menu for "dir1" dataset in dataset browser
+    And user of browser clicks "Create archive" option in data row menu in dataset browser
+    And user of browser clicks on "BagIt" button in modal "Create Archive"
+    And user of browser checks "Include DIP" toggle in modal "Create Archive"
+    And user of browser clicks on "Create" button in modal "Create Archive"
+
+    And user of browser clicks on 1 in "dir1" Archives
+    And user of browser sees archive file browser in archives tab in Oneprovider page
+    And user of browser double clicks on 1 archive
+    Then user of browser sees that the file structure in archive file browser is as follow:
+         - bagit.txt
+         - data:
+             - dir1:
+               - dir2:
+                 - dir3:
+                    - file1
+         - manifest-md5.txt
+         - manifest-sha1.txt
+         - manifest-sha256.txt
+         - manifest-sha512.txt
+         - metadata.json
+         - tagmanifest-md5.txt
+         - tagmanifest-sha1.txt
+         - tagmanifest-sha256.txt
+         - tagmanifest-sha512.txt
+    And user of browser double clicks on 1 archive
+    And user of browser clicks on DIP view mode on archive file browser page
+    And user of browser sees archive file browser in archives tab in Oneprovider page
+    And user of browser sees that the file structure in archive file browser is as follow:
+             - dir1:
+                 - dir2:
+                   - dir3:
+                     - file1
+
