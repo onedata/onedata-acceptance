@@ -138,20 +138,6 @@ def is_displayed_dir_tree_in_data_tab_in_op_correct(selenium, browser_id, path,
     assert path == cwd, 'expected path {}\n got: {}'.format(path, cwd)
 
 
-@wt(parsers.parse('user of {browser_id} changes current working directory '
-                  'to {path} using breadcrumbs'))
-@repeat_failed(timeout=WAIT_BACKEND)
-def change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, browser_id, path,
-                                                   op_container, which_browser
-                                                   ='file browser'):
-    breadcrumbs = (getattr(op_container(selenium[browser_id]),
-                           transform(which_browser)).breadcrumbs)
-    if path == 'home':
-        breadcrumbs.home()
-    else:
-        breadcrumbs.chdir(path)
-
-
 @wt(parsers.parse('user of {browser_id} does not see {path} in directory tree'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_absence_of_path_in_dir_tree(selenium, browser_id, path,
