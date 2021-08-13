@@ -148,7 +148,7 @@ Feature: Dataset browser tests using user who is not the owner of a space
     And user of browser_user1 sees dataset browser in datasets tab in Oneprovider page
     And user of browser_user1 clicks on menu for "dir1" dataset in dataset browser
     And user of browser_user1 clicks "Remove dataset" option in data row menu in dataset browser
-    And user of browser_user1 clicks Remove button on Remove Selected Dataset modal
+    And user of browser_user1 clicks on "Remove" button in modal "Remove Selected Dataset"
     Then user of browser_user1 sees that error modal with text "Removing some dataset(s) failed!" appeared
 
 
@@ -207,7 +207,7 @@ Feature: Dataset browser tests using user who is not the owner of a space
     And user of browser_user1 sees dataset browser in datasets tab in Oneprovider page
     And user of browser_user1 clicks on menu for "dir1" dataset in dataset browser
     And user of browser_user1 clicks "Remove dataset" option in data row menu in dataset browser
-    And user of browser_user1 clicks Remove button on Remove Selected Dataset modal
+    And user of browser_user1 clicks on "Remove" button in modal "Remove Selected Dataset"
     Then user of browser_user1 clicks Files of "space1" in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
     And user of browser_user1 does not see Dataset status tag for "dir1" in file browser
@@ -279,9 +279,9 @@ Feature: Dataset browser tests using user who is not the owner of a space
     And user of browser_user1 clicks on menu for "dir1" dataset in dataset browser
     And user of browser_user1 clicks "Detach" option in data row menu in dataset browser
     And user of browser_user1 clicks on "Proceed" button in modal "Detach Dataset"
-    And user of browser_user1 clicks on detached button on dataset browser page
+    And user of browser_user1 clicks on detached view mode on dataset browser page
     And user of browser_user1 sees dataset browser in datasets tab in Oneprovider page
-    And user of browser_user1 sees "dir1" in dataset browser
+    And user of browser_user1 sees item(s) named "dir1" in dataset browser
     Then user of browser_user1 clicks Files of "space1" in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
     And user of browser_user1 does not see Dataset status tag for "dir1" in file browser
@@ -320,3 +320,39 @@ Feature: Dataset browser tests using user who is not the owner of a space
     And user of browser_user1 clicks "Create archive" option in data row menu in dataset browser
     And user of browser_user1 clicks on "Create" button in modal "Create Archive"
     Then user of browser_user1 sees that item "dir1" has 1 Archives
+
+
+  Scenario: User does not see archive file browser if he does not have view archives privilege
+   # create dataset
+    When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
+    And user of space_owner_browser clicks Files of "space1" in the sidebar
+    And user of space_owner_browser sees file browser in files tab in Oneprovider page
+    And user of space_owner_browser clicks on menu for "dir1" file in file browser
+    And user of space_owner_browser clicks "Datasets" option in data row menu in file browser
+    And user of space_owner_browser clicks Mark this file as dataset toggle in Datasets modal
+    And user of space_owner_browser clicks on "Close" button in modal "Datasets"
+
+    # create archive
+    And user of space_owner_browser clicks Datasets of "space1" in the sidebar
+    And user of space_owner_browser sees dataset browser in datasets tab in Oneprovider page
+    And user of space_owner_browser clicks on menu for "dir1" dataset in dataset browser
+    And user of space_owner_browser clicks "Create archive" option in data row menu in dataset browser
+    And user of space_owner_browser clicks on "Create" button in modal "Create Archive"
+
+   #create and send token
+    And user of space_owner_browser clicks on Tokens in the main menu
+    And user of space_owner_browser creates and checks token with following configuration:
+          type: invite
+          invite type: Invite user to space
+          invite target: space1
+    And user of space_owner_browser clicks on copy button in token view
+    And user of space_owner_browser sends copied token to user of browser_user1
+
+    And user of browser_user1 joins space using received token
+    And user of browser_user1 clicks Datasets of "space1" in the sidebar
+    And user of browser_user1 sees dataset browser in datasets tab in Oneprovider page
+    And user of browser_user1 clicks on 1 in "dir1" Archives
+
+    Then user of browser_user1 sees that error page with text "OPERATION NOT PERMITTED" appeared
+
+

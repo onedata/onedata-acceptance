@@ -102,3 +102,14 @@ def assert_num_of_files_are_displayed_in_browser(browser_id, num, tmp_memory,
 def click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
                                              modals):
     modals(selenium[browser_id]).data_row_menu.choose_option(option)
+
+
+@wt(parsers.parse('user of {browser_id} cannot click "{option}" option '
+                  'in data row menu in {} browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_not_click_option_in_data_row_menu(selenium, browser_id, option,
+                                             modals):
+    err_msg = f'user can click on option {option}'
+    assert not (modals(selenium[browser_id]).data_row_menu
+                .choose_option(option)), err_msg
+

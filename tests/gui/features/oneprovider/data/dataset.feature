@@ -81,7 +81,7 @@ Feature: Basic dataset operations
     And user of browser does not see Dataset status tag for "dir1" in file browser
 
 
-  Scenario: User sees directory tree in dataset browser after marking directories as dataset
+  Scenario: User sees datasets tree similar to directory tree in dataset browser after marking directories as dataset
     # create dataset
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar
@@ -116,7 +116,7 @@ Feature: Basic dataset operations
 
 
 
-  Scenario: User sees metadata, data write protection toggles checked in directory dataset modal after marking its parent directories
+  Scenario: User sees metadata and data write protection toggles checked in directory dataset modal after marking its parent directories as datasets
     # create dataset
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar
@@ -150,7 +150,7 @@ Feature: Basic dataset operations
     And user of browser clicks on "Close" button in modal "Datasets"
 
 
-  Scenario: User does not see dataset tag in file browser and see directory in Detached tab after detaching dataset
+  Scenario: User does not see dataset tag in file browser and see dataset in detached tab after detaching dataset
     # create dataset
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar
@@ -176,7 +176,7 @@ Feature: Basic dataset operations
     And user of browser does not see Dataset status tag for "dir1" in file browser
 
 
-  Scenario: User sees directory tree in Detached tab after detaching directories
+  Scenario: User sees detached datasets tree in detached tab after detaching datasets
     # create dataset
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar

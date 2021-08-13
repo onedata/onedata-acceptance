@@ -121,3 +121,22 @@ def assert_status_tag_for_file_in_dataset_browser(browser_id, status_type,
                f'not visible')
     assert browser.data[item_name]\
         .is_tag_visible(transform(status_type)), err_msg
+
+
+@wt(parsers.parse('user of {browser_id} sees that error page with text '
+                  '"{text}" appeared'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_page_with_error_appeared(browser_id, text, tmp_memory):
+    browser = tmp_memory[browser_id]['dataset_browser']
+    assert browser.error_msg == text, (f'page with text "{text}" not'
+                                       f' found, error = page.error_page')
+
+
+@wt(parsers.parse('user of {browser_id} fails to click Mark this file as '
+                  'dataset toggle in Datasets modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_mark_file_as_dataset_toggle(browser_id, selenium, modals):
+    driver = selenium[browser_id]
+    err_msg = 'user does not fail to create dataset'
+    assert not modals(driver).datasets.dataset_toggle.check(), err_msg
+
