@@ -612,3 +612,29 @@ def assert_tabs_of_space_disabled(selenium, browser_id, tabs_list, space_name,
 def assert_error_detail_text_spaces(selenium, browser_id, oz_page, text):
     page = oz_page(selenium[browser_id])['data']
     assert text in page.error_header, f'page with text "{text}" not found'
+
+
+@wt(parsers.parse('user of {browser_id} sees that provider "{provider1}" '
+                  'is on eastern side while provider "{provider2}" is on'
+                  ' western side'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def check_two_providers_places(selenium, browser_id, oz_page, hosts,
+                               provider1, provider2):
+    driver = selenium[browser_id]
+    page = 'providers'
+    current_page = getattr(oz_page(driver)['data'], _get_subpage_name(page))
+
+    provider1_name = hosts[provider1]['name']
+    provider2_name = hosts[provider2]['name']
+
+    provider1_position = current_page.map.check_providers_horizontal_position(
+        provider1_name, driver)
+    provider2_position = current_page.map.check_providers_horizontal_position(
+        provider2_name, driver)
+
+    # the higher value of position the further on the west provider appears
+    if provider1_position > provider2_position:
+        assert True
+    else:
+        assert False, (f'Provider "{provider1}" appears on the western side '
+                       f'while Provider "{provider2}" appears on the eastern')

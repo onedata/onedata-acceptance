@@ -11,6 +11,9 @@ Feature: Basic management of providers in Onezone GUI
                   - oneprovider-1:
                       storage: posix
                       size: 1000000
+                  - oneprovider-2:
+                      storage: posix
+                      size: 1000000
 
     And user opened browser window
     And user of browser opened Onezone page
@@ -70,3 +73,12 @@ Feature: Basic management of providers in Onezone GUI
 
     Then user of browser sees alert with title "ALL SUPPORTING ONEPROVIDERS ARE OFFLINE" on Onezone page
     And provider named "oneprovider-1" is unpaused
+
+
+  Scenario: Provider "circles" can be placed on map according to their position (check if two providers are places west/east)
+    When user of browser clicks on Data in the main menu
+    And user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Providers of "space1" in the sidebar
+    And user of browser sees "oneprovider-1" is on the providers list
+    And user of browser sees "oneprovider-2" is on the providers list
+    Then user of browser sees that provider "oneprovider-1" is on eastern side while provider "oneprovider-2" is on western side
