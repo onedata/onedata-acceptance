@@ -27,7 +27,6 @@ Feature: Oneprovider functionality using multiple providers and multiple browser
     When user of space_owner_browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
     And user of space_owner_browser sees that item named "20B-0.txt" has appeared in file browser
 
-    And user of space_owner_browser is idle for 90 seconds
     Then user of space_owner_browser sees file chunks for file "20B-0.txt" as follows:
             oneprovider-1: entirely filled
             oneprovider-2: never synchronized
@@ -43,7 +42,6 @@ Feature: Oneprovider functionality using multiple providers and multiple browser
             oneprovider-1: entirely filled
             oneprovider-2: entirely filled
 
-    And user of space_owner_browser is idle for 90 seconds
     And user of browser1 sees file chunks for file "20B-0.txt" as follows:
             oneprovider-1: entirely filled
             oneprovider-2: entirely filled
