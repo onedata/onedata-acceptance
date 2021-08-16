@@ -50,6 +50,7 @@ from .datasets_modal import DatasetsModal
 from .create_archive import CreateArchive
 from .remove_selected_dataset import RemoveSelectedDataset
 from .detach_dataset import DetachDataset
+from .reattach_dataset import ReattachDataset
 
 
 class Modals(object):
@@ -131,6 +132,7 @@ class Modals(object):
     remove_selected_dataset = WebItem('.modal-dialog',
                                       cls=RemoveSelectedDataset)
     detach_dataset = WebItem('.modal-dialog', cls=DetachDataset)
+    reattach_dataset = WebItem('.modal-dialog', cls=ReattachDataset)
 
     def __init__(self, driver):
         self.driver = driver
