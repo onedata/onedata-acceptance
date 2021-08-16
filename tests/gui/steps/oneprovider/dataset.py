@@ -100,3 +100,12 @@ def cannot_click_option_in_dataset_browser(selenium, browser_id, option,
     err_msg = f'{option} is clickable'
     assert not modals(driver).data_row_menu.options[option].click(), err_msg
 
+
+@wt(parsers.parse('user of {browser_id} sees that page with text '
+                  '"{text}" appeared'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_page_with_error_appeared(browser_id, text, tmp_memory):
+    browser = tmp_memory[browser_id]['dataset_browser']
+    assert browser.empty_dir_msg == text, (f'page with text "{text}" not'
+                                           f' found, error = page.error_page')
+

@@ -9,7 +9,8 @@ __license__ = ("This software is released under the MIT license cited in "
 
 from time import time
 from datetime import datetime
-
+import tarfile
+import yaml
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.modal import click_modal_button
@@ -361,4 +362,52 @@ def assert_property_in_symlink_dets_modal(selenium, browser_id, link_property,
                                       browser_id)
     assert actual_value == value, (f'{link_property} has {actual_value} '
                                    f'not expected {value}')
+
+
+@wt(parsers.parse('user of {browser_id} sees contents of downloaded '
+                  '"{file_name}" TAR file in download directory has '
+                  'following structure:\n{contents}'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_contents_downloaded_tar_file(selenium, browser_id, file_name,
+                                        contents, tmpdir, clipboard, displays):
+    configured_dir_contents = []
+    if file_name == 'archive':
+        file_name = f'archive_{clipboard.paste(display=displays[browser_id])}.tar'
+        contents = contents.replace('archive', file_name.split('.')[0])
+        # file_name = f'{file_name}.tar'
+
+    def _get_directory_contents(directory_tree, path=''):
+
+        if not directory_tree:
+            return
+
+        for item in directory_tree:
+            try:
+                [(name, content)] = item.items()
+            except AttributeError:
+                name = item
+                content = None
+
+            if path == '':
+                item_path = name
+            else:
+                item_path = path + '/' + name
+
+            configured_dir_contents.append(item_path)
+            if name.startswith('dir') or name.startswith('archive'):
+                _get_directory_contents(content, item_path)
+
+    downloaded_tar_filename = tmpdir.join(browser_id, 'download',
+                                          file_name).strpath
+
+    assert tarfile.is_tarfile(downloaded_tar_filename), (
+        f'{downloaded_tar_filename} is not valid TAR file archive')
+
+    tar = tarfile.open(downloaded_tar_filename)
+    files_list = tar.getnames()
+    dir_tree = yaml.load(contents)
+    _get_directory_contents(dir_tree)
+    for f in files_list:
+        assert f in configured_dir_contents, (
+            f'{f} is missing in downloaded tar file ')
 

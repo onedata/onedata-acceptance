@@ -127,7 +127,23 @@ def copy_archive_name_to_clipboard(browser_id, tmp_memory, number, clipboard,
 @wt(parsers.parse('user of {browser_id} clicks on menu for archive that'
                   ' name was copied to clipboard'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_menu_for_archive(browser_id, tmp_memory, clipboard, displays):
+def click_menu_for_named_archive(browser_id, tmp_memory, clipboard, displays):
     browser = tmp_memory[browser_id]['archive_file_browser']
     item_name = clipboard.paste(display=displays[browser_id])
     browser.data[item_name].menu_button()
+
+
+@wt(parsers.parse('user of {browser_id} clicks on menu for {number} archive'
+                  ' in archive file browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_menu_for_number_archive(browser_id, tmp_memory, number):
+    browser = tmp_memory[browser_id]['archive_file_browser']
+    browser.data[int(number)-1].menu_button()
+
+
+@wt(parsers.parse('user of {browser_id} writes "{text}" into confirmation '
+                  'box in Purge Archive modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def write_in_confirmation_box(browser_id, modals, text, selenium):
+    driver = selenium[browser_id]
+    modals(driver).purge_archive.confirmation_box = text

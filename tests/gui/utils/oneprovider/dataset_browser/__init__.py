@@ -9,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in " \
 from functools import partial
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (WebItemsSequence, WebItem,
-                                               WebElement)
+                                               WebElement, Label)
 from .data_row import DataRow
 from ..breadcrumbs import Breadcrumbs
 
@@ -18,6 +18,7 @@ class _DatasetBrowser(PageObject):
     breadcrumbs = Breadcrumbs('.fb-breadcrumbs')
     data = WebItemsSequence('.data-row.fb-table-row', cls=DataRow)
     _empty_dir_icon = WebElement('.empty-dir-image')
+    empty_dir_msg = Label('.empty-dir-text')
 
     def __str__(self):
         return f'dataset browser in {self.parent}'

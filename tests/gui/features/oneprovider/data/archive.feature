@@ -49,6 +49,36 @@ Feature: Archive basic operation
     And user of browser sees "Preserved Archived: 1 files, 3 B" on first archive state in archive file browser
 
 
+  Scenario: User sees that dataset does not have archive after purging archive
+    # create dataset
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser clicks on menu for "dir4" directory in file browser
+    And user of browser clicks "Datasets" option in data row menu in file browser
+    And user of browser clicks Mark this file as dataset toggle in Datasets modal
+    And user of browser clicks on "Close" button in modal "Datasets"
+
+    # create archive
+    And user of browser clicks Datasets of "space1" in the sidebar
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
+    And user of browser clicks on menu for "dir4" dataset in dataset browser
+    And user of browser clicks "Create archive" option in data row menu in dataset browser
+    And user of browser clicks on "Create" button in modal "Create Archive"
+
+    And user of browser sees that item "dir4" has 1 Archives
+    And user of browser clicks on 1 in "dir4" Archives
+    And user of browser sees archive file browser in archives tab in Oneprovider page
+    And user of browser clicks on menu for 1 archive in archive file browser
+    And user of browser clicks "Purge archive" option in data row menu in archive file browser
+    And user of browser writes "I understand that data of the archive will be lost" into confirmation box in Purge Archive modal
+    And user of browser clicks on "Purge archive" button in modal "Purge archive"
+    Then user of browser sees that page with text "NO ARCHIVES" appeared
+    And user of browser clicks Datasets of "space1" in the sidebar
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
+    And user of browser sees that item "dir4" has 0 Archives
+
+
   Scenario: User sees directory tree in archive browser after creating plain archive
     # create dataset
     When user of browser clicks "space1" on the spaces list in the sidebar
@@ -191,7 +221,7 @@ Scenario: User sees BagIt metadata files and directory tree in „data” direct
          - tagmanifest-sha512.txt
 
 
-  Scenario: User sees symbolic links tag  on child datasets after creating nested archive on parent
+  Scenario: User sees symbolic links on child datasets after creating nested archive on parent
     # create dataset
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar
@@ -285,6 +315,62 @@ Scenario: User sees BagIt metadata files and directory tree in „data” direct
     And user of browser clicks Datasets of "space1" in the sidebar
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser sees that item "dir1" has 1 Archives
+
+
+  Scenario: User sees directory tree after downloading tar with symlinks#
+    # create dataset
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser clicks on menu for "dir1" directory in file browser
+    And user of browser clicks "Datasets" option in data row menu in file browser
+    And user of browser clicks Mark this file as dataset toggle in Datasets modal
+    And user of browser clicks on "Close" button in modal "Datasets"
+
+    And user of browser double clicks on item named "dir1" in file browser
+
+    # create dataset
+    And user of browser clicks on menu for "dir2" directory in file browser
+    And user of browser clicks "Datasets" option in data row menu in file browser
+    And user of browser clicks Mark this file as dataset toggle in Datasets modal
+    And user of browser clicks on "Close" button in modal "Datasets"
+
+    And user of browser double clicks on item named "dir2" in file browser
+
+    # create dataset
+    And user of browser clicks on menu for "dir3" directory in file browser
+    And user of browser clicks "Datasets" option in data row menu in file browser
+    And user of browser clicks Mark this file as dataset toggle in Datasets modal
+    And user of browser clicks on "Close" button in modal "Datasets"
+
+    And user of browser double clicks on item named "dir3" in file browser
+
+    # create dataset
+    And user of browser clicks on menu for "file1" file in file browser
+    And user of browser clicks "Datasets" option in data row menu in file browser
+    And user of browser clicks Mark this file as dataset toggle in Datasets modal
+    And user of browser clicks on "Close" button in modal "Datasets"
+
+    # create nested archive
+    And user of browser clicks Datasets of "space1" in the sidebar
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
+    And user of browser clicks on menu for "dir1" dataset in dataset browser
+    And user of browser clicks "Create archive" option in data row menu in dataset browser
+    And user of browser checks "Create nested archives" toggle in modal "Create Archive"
+    And user of browser clicks on "Create" button in modal "Create Archive"
+
+    And user of browser clicks on 1 in "dir1" Archives
+    And user of browser sees archive file browser in archives tab in Oneprovider page
+    And user of browser clicks on menu for 1 archive in archive file browser
+    And user of browser clicks "Copy archive ID" option in data row menu in archive file browser
+    And user of browser clicks on menu for 1 archive in archive file browser
+    And user of browser clicks "Download (tar)" option in data row menu in archive file browser
+    Then user of browser sees contents of downloaded "archive" TAR file in download directory has following structure:
+                  - archive:
+                      - dir1:
+                        - dir2:
+                          - dir3:
+                             - file1
 
 
   Scenario: User sees that files that did not change since creating last archive have 2 hardlinks tag after creating new incremental archive
