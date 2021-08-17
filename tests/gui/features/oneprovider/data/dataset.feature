@@ -321,3 +321,19 @@ Feature: Basic dataset operations
 #    Then user of browser sees item(s) named "dir1" in dataset browser
 #  czeka na poprawki Staszka
 
+  Scenario: User fails to delete child directory after marking parent directory dataset data write protection
+    # create dataset
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser clicks on menu for "dir2" directory in file browser
+    And user of browser clicks "Datasets" option in data row menu in file browser
+    And user of browser clicks Mark this file as dataset toggle in Datasets modal
+
+    And user of browser click data write protection toggle in Datasets modal
+    And user of browser clicks on "Close" button in modal "Datasets"
+    And user of browser double clicks on item named "dir2" in file browser
+
+    And user of browser clicks on menu for "dir3" directory in file browser
+    And user of browser cannot click "Delete" option in data row menu in file browser
+
