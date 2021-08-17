@@ -7,6 +7,8 @@ Feature: Dataset browser tests using user who is not the owner of a space
       And initial spaces configuration in "onezone" Onezone service:
           space1:
               owner: space-owner-user
+              users:
+                - user1
               providers:
                   - oneprovider-1:
                       storage: posix
@@ -30,16 +32,12 @@ Feature: Dataset browser tests using user who is not the owner of a space
     And user of space_owner_browser clicks Mark this file as dataset toggle in Datasets modal
     And user of space_owner_browser clicks on "Close" button in modal "Datasets"
 
-    # create and send token
-    And user of space_owner_browser clicks on Tokens in the main menu
-    And user of space_owner_browser creates and checks token with following configuration:
-          type: invite
-          invite type: Invite user to space
-          invite target: space1
-    And user of space_owner_browser clicks on copy button in token view
-    And user of space_owner_browser sends copied token to user of browser_user1
+    And user of space_owner_browser clicks Members of "space1" in the sidebar
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
+          Dataset & archive management:
+            granted: False
 
-    And user of browser_user1 joins space using received token
     And user of browser_user1 clicks Datasets of "space1" in the sidebar
     And user of browser_user1 sees dataset browser in datasets tab in Oneprovider page
     And user of browser_user1 clicks on menu for "dir1" dataset in dataset browser
@@ -47,17 +45,13 @@ Feature: Dataset browser tests using user who is not the owner of a space
 
 
   Scenario: User fails to create dataset if he does not have manage datasets privilege
-    # create and send token
     When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks on Tokens in the main menu
-    And user of space_owner_browser creates and checks token with following configuration:
-          type: invite
-          invite type: Invite user to space
-          invite target: space1
-    And user of space_owner_browser clicks on copy button in token view
-    And user of space_owner_browser sends copied token to user of browser_user1
+    And user of space_owner_browser clicks Members of "space1" in the sidebar
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
+          Dataset & archive management:
+            granted: False
 
-    And user of browser_user1 joins space using received token
     And user of browser_user1 clicks Files of "space1" in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
     And user of browser_user1 clicks on menu for "dir1" file in file browser
@@ -76,16 +70,12 @@ Feature: Dataset browser tests using user who is not the owner of a space
     And user of space_owner_browser clicks Mark this file as dataset toggle in Datasets modal
     And user of space_owner_browser clicks on "Close" button in modal "Datasets"
 
-    # create and send token
-    And user of space_owner_browser clicks on Tokens in the main menu
-    And user of space_owner_browser creates and checks token with following configuration:
-          type: invite
-          invite type: Invite user to space
-          invite target: space1
-    And user of space_owner_browser clicks on copy button in token view
-    And user of space_owner_browser sends copied token to user of browser_user1
+    And user of space_owner_browser clicks Members of "space1" in the sidebar
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
+          Dataset & archive management:
+            granted: False
 
-    And user of browser_user1 joins space using received token
     And user of browser_user1 clicks Datasets of "space1" in the sidebar
     And user of browser_user1 sees dataset browser in datasets tab in Oneprovider page
     And user of browser_user1 clicks on menu for "dir1" dataset in dataset browser
@@ -104,16 +94,12 @@ Feature: Dataset browser tests using user who is not the owner of a space
     And user of space_owner_browser clicks Mark this file as dataset toggle in Datasets modal
     And user of space_owner_browser clicks on "Close" button in modal "Datasets"
 
-    # create and send token
-    And user of space_owner_browser clicks on Tokens in the main menu
-    And user of space_owner_browser creates and checks token with following configuration:
-          type: invite
-          invite type: Invite user to space
-          invite target: space1
-    And user of space_owner_browser clicks on copy button in token view
-    And user of space_owner_browser sends copied token to user of browser_user1
+    And user of space_owner_browser clicks Members of "space1" in the sidebar
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
+          Dataset & archive management:
+            granted: False
 
-    And user of browser_user1 joins space using received token
     And user of browser_user1 clicks Datasets of "space1" in the sidebar
     And user of browser_user1 sees dataset browser in datasets tab in Oneprovider page
     And user of browser_user1 clicks on menu for "dir1" dataset in dataset browser
@@ -135,15 +121,12 @@ Feature: Dataset browser tests using user who is not the owner of a space
     And user of space_owner_browser clicks Mark this file as dataset toggle in Datasets modal
     And user of space_owner_browser clicks on "Close" button in modal "Datasets"
 
-    # create and send token
-    And user of space_owner_browser clicks on Tokens in the main menu
-    And user of space_owner_browser creates and checks token with following configuration:
-          type: invite
-          invite type: Invite user to space
-          invite target: space1
-    And user of space_owner_browser clicks on copy button in token view
-    And user of space_owner_browser sends copied token to user of browser_user1
-    And user of browser_user1 joins space using received token
+    And user of space_owner_browser clicks Members of "space1" in the sidebar
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
+          Dataset & archive management:
+            granted: False
+
     And user of browser_user1 clicks Datasets of "space1" in the sidebar
     And user of browser_user1 sees dataset browser in datasets tab in Oneprovider page
     And user of browser_user1 clicks on menu for "dir1" dataset in dataset browser
@@ -153,22 +136,15 @@ Feature: Dataset browser tests using user who is not the owner of a space
 
 
   Scenario: User successfully creates dataset if he has manage datasets privilege
-    # create and send token
     When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks on Tokens in the main menu
-    And user of space_owner_browser creates and checks token with following configuration:
-          type: invite
-          invite type: Invite user to space
-          invite target: space1
-          privileges:
-            Dataset & archive management:
-              granted: Partially
-              privilege subtypes:
-                Manage datasets: True
-    And user of space_owner_browser clicks on copy button in token view
-    And user of space_owner_browser sends copied token to user of browser_user1
+    And user of space_owner_browser clicks Members of "space1" in the sidebar
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
+          Dataset & archive management:
+            granted: Partially
+            privilege subtypes:
+              Manage datasets: True
 
-    And user of browser_user1 joins space using received token
     And user of browser_user1 clicks Files of "space1" in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
     And user of browser_user1 clicks on menu for "dir1" file in file browser
@@ -188,21 +164,14 @@ Feature: Dataset browser tests using user who is not the owner of a space
     And user of space_owner_browser clicks Mark this file as dataset toggle in Datasets modal
     And user of space_owner_browser clicks on "Close" button in modal "Datasets"
 
-    # create and send token
-    And user of space_owner_browser clicks on Tokens in the main menu
-    And user of space_owner_browser creates and checks token with following configuration:
-          type: invite
-          invite type: Invite user to space
-          invite target: space1
-          privileges:
-            Dataset & archive management:
-              granted: Partially
-              privilege subtypes:
-                Manage datasets: True
-    And user of space_owner_browser clicks on copy button in token view
-    And user of space_owner_browser sends copied token to user of browser_user1
+    And user of space_owner_browser clicks Members of "space1" in the sidebar
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
+          Dataset & archive management:
+            granted: Partially
+            privilege subtypes:
+              Manage datasets: True
 
-    And user of browser_user1 joins space using received token
     And user of browser_user1 clicks Datasets of "space1" in the sidebar
     And user of browser_user1 sees dataset browser in datasets tab in Oneprovider page
     And user of browser_user1 clicks on menu for "dir1" dataset in dataset browser
@@ -223,29 +192,22 @@ Feature: Dataset browser tests using user who is not the owner of a space
     And user of space_owner_browser clicks Mark this file as dataset toggle in Datasets modal
     And user of space_owner_browser clicks on "Close" button in modal "Datasets"
 
-    #create and send token
-    And user of space_owner_browser clicks on Tokens in the main menu
-    And user of space_owner_browser creates and checks token with following configuration:
-          type: invite
-          invite type: Invite user to space
-          invite target: space1
-          privileges:
-            Dataset & archive management:
-              granted: Partially
-              privilege subtypes:
-                Manage datasets: True
-    And user of space_owner_browser clicks on copy button in token view
-    And user of space_owner_browser sends copied token to user of browser_user1
+    And user of space_owner_browser clicks Members of "space1" in the sidebar
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
+          Dataset & archive management:
+            granted: Partially
+            privilege subtypes:
+              Manage datasets: True
 
-    And user of browser_user1 joins space using received token
     And user of browser_user1 clicks Datasets of "space1" in the sidebar
     And user of browser_user1 sees dataset browser in datasets tab in Oneprovider page
     And user of browser_user1 clicks on menu for "dir1" dataset in dataset browser
     And user of browser_user1 clicks "Write protection" option in data row menu in dataset browser
     And user of browser_user1 clicks data write protection toggle in Write Protection modal
     And user of browser_user1 clicks metadata write protection toggle in Write Protection modal
-    And user of browser_user1 clicks Close button in Write Protection modal
-    And user of browser_user1 sees metadata protected status tag for "dir1" in dataset browser
+    And user of browser_user1 clicks on "Close" button in modal "Write Protection"
+    Then user of browser_user1 sees metadata protected status tag for "dir1" in dataset browser
     And user of browser_user1 sees data protected status tag for "dir1" in dataset browser
 
 
@@ -259,21 +221,14 @@ Feature: Dataset browser tests using user who is not the owner of a space
     And user of space_owner_browser clicks Mark this file as dataset toggle in Datasets modal
     And user of space_owner_browser clicks on "Close" button in modal "Datasets"
 
-   # create and send token
-    And user of space_owner_browser clicks on Tokens in the main menu
-    And user of space_owner_browser creates and checks token with following configuration:
-          type: invite
-          invite type: Invite user to space
-          invite target: space1
-          privileges:
-            Dataset & archive management:
-              granted: Partially
-              privilege subtypes:
-                Manage datasets: True
-    And user of space_owner_browser clicks on copy button in token view
-    And user of space_owner_browser sends copied token to user of browser_user1
+    And user of space_owner_browser clicks Members of "space1" in the sidebar
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
+          Dataset & archive management:
+            granted: Partially
+            privilege subtypes:
+              Manage datasets: True
 
-    And user of browser_user1 joins space using received token
     And user of browser_user1 clicks Datasets of "space1" in the sidebar
     And user of browser_user1 sees dataset browser in datasets tab in Oneprovider page
     And user of browser_user1 clicks on menu for "dir1" dataset in dataset browser
@@ -297,23 +252,16 @@ Feature: Dataset browser tests using user who is not the owner of a space
     And user of space_owner_browser clicks Mark this file as dataset toggle in Datasets modal
     And user of space_owner_browser clicks on "Close" button in modal "Datasets"
 
-   #create and send token
-    And user of space_owner_browser clicks on Tokens in the main menu
-    And user of space_owner_browser creates and checks token with following configuration:
-          type: invite
-          invite type: Invite user to space
-          invite target: space1
-          privileges:
-            Dataset & archive management:
-              granted: Partially
-              privilege subtypes:
-                Manage datasets: True
-                View archives: True
-                Create archives: True
-    And user of space_owner_browser clicks on copy button in token view
-    And user of space_owner_browser sends copied token to user of browser_user1
+    And user of space_owner_browser clicks Members of "space1" in the sidebar
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
+          Dataset & archive management:
+            granted: Partially
+            privilege subtypes:
+              Manage datasets: True
+              View archives: True
+              Create archives: True
 
-    And user of browser_user1 joins space using received token
     And user of browser_user1 clicks Datasets of "space1" in the sidebar
     And user of browser_user1 sees dataset browser in datasets tab in Oneprovider page
     And user of browser_user1 clicks on menu for "dir1" dataset in dataset browser
@@ -339,20 +287,14 @@ Feature: Dataset browser tests using user who is not the owner of a space
     And user of space_owner_browser clicks "Create archive" option in data row menu in dataset browser
     And user of space_owner_browser clicks on "Create" button in modal "Create Archive"
 
-   #create and send token
-    And user of space_owner_browser clicks on Tokens in the main menu
-    And user of space_owner_browser creates and checks token with following configuration:
-          type: invite
-          invite type: Invite user to space
-          invite target: space1
-    And user of space_owner_browser clicks on copy button in token view
-    And user of space_owner_browser sends copied token to user of browser_user1
+    And user of space_owner_browser clicks Members of "space1" in the sidebar
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
+          Dataset & archive management:
+            granted: False
 
-    And user of browser_user1 joins space using received token
     And user of browser_user1 clicks Datasets of "space1" in the sidebar
     And user of browser_user1 sees dataset browser in datasets tab in Oneprovider page
     And user of browser_user1 clicks on 1 in "dir1" Archives
-
     Then user of browser_user1 sees that error page with text "OPERATION NOT PERMITTED" appeared
-
 
