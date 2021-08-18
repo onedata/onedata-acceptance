@@ -124,5 +124,4 @@ Feature: Basic management of harvester in Onezone GUI
 
     # check harvesting progress
     Then user of browser expands "index1" index record in indices page
-    And user of browser is idle for 20 seconds
     And user of browser sees 100% progress for all spaces in "index1" index harvesting
