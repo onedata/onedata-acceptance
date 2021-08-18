@@ -37,6 +37,10 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
             owner: user1
             groups:
               - group4
+          space2:
+            owner: user1
+            users:
+                - user2
 
     And users opened [browser1, browser2] browsers' windows
     And user of [browser1, browser2] opened [Onezone, Onezone] page
@@ -326,38 +330,37 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
    And user of browser2 adds group "group7" as subgroup using copied token
    Then user of browser2 sees that error modal with text "insufficient privileges" appeared
 
-#  Two scenarios are for later correction
-#  Scenario: User removes subgroup
-#   When user of browser1 opens group "group5" members subpage
-#   And user of browser1 clicks "user2" user in "group5" group members users list
-#   And user of browser1 sees privileges for "user2" user in group members subpage
-#   And user of browser1 clicks on "user2" users checkbox
-#   And user of browser1 clicks on bulk edit button
-#   And user of browser1 sets following privileges on modal:
-#         Group hierarchy management:
-#           granted: Partially
-#           privilege subtypes:
-#             Remove child group: True
-#
-#   And user of browser2 opens group "group5" hierarchy subpage
-#   And user of browser2 clicks on group "group4" menu button in hierarchy subpage
-#   And user of browser2 clicks on "Remove" in group hierarchy menu
-#   And user of browser2 clicks on "Remove" button in modal "REMOVE GROUP"
-#   Then user of browser2 does not see "group4" as a child of "group5" in hierarchy subpage
-#   And user of browser2 does not see group "group4" on groups list
-#
 
-#  Scenario: User leaves group from space
-#   When user of browser2 opens group "group7" members subpage
-#   And user of browser2 clicks "user1" user in "group7" group members users list
-#   And user of browser2 sees privileges for "user1" user in group members subpage
-#   And user of browser2 clicks on "user1" users checkbox
-#   And user of browser2 clicks on bulk edit button
-#   And user of browser2 sets following privileges on modal:
-#         Space management:
-#           granted: True
-#
-#   And user of browser1 clicks "space1" on the spaces list in the sidebar
-#   And user of browser1 clicks on "Leave" button in space "space1" menu
-#   And user of browser1 clicks on Leave button
-#   Then user of browser1 sees that "space1" has disappeared on the spaces list in the sidebar
+  Scenario: User removes subgroup
+   When user of browser1 opens group "group5" members subpage
+   And user of browser1 clicks "user2" user in "group5" group members users list
+   And user of browser1 sees privileges for "user2" user in group members subpage
+   And user of browser1 clicks on "user2" users checkbox
+   And user of browser1 clicks on bulk edit button
+   And user of browser1 sets following privileges on modal:
+         Group hierarchy management:
+           granted: Partially
+           privilege subtypes:
+             Remove child group: True
+
+   And user of browser2 opens group "group5" hierarchy subpage
+    And user of browser2 clicks on group "group4" menu button to parent relation in hierarchy subpage
+    And user of browser2 clicks on "Remove relation" in relation menu
+    And user of browser2 clicks on "Remove" button in modal "REMOVE MEMBER"
+    Then user of browser2 does not see "base_group" as a child of "parent_group" in hierarchy subpage
+
+
+  Scenario: User leaves group from space
+   When user of browser1 opens group "group5" members subpage
+   And user of browser1 clicks "user2" user in "group5" group members users list
+   And user of browser1 sees privileges for "user2" user in group members subpage
+   And user of browser1 clicks on "user2" users checkbox
+   And user of browser1 clicks on bulk edit button
+   And user of browser1 sets following privileges on modal:
+         Space management:
+           granted: True
+
+   And user of browser2 clicks "space2" on the spaces list in the sidebar
+   And user of browser2 clicks on "Leave" button in space "space2" menu
+   And user of browser2 clicks on Leave button
+   Then user of browser2 sees that "space2" has disappeared on the spaces list in the sidebar
