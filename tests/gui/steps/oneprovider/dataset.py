@@ -81,3 +81,11 @@ def click_on_state_view_mode_tab(browser_id, oz_page, selenium, state):
 def click_menu_for_elem_in_dataset_browser(browser_id, item_name, tmp_memory):
     browser = tmp_memory[browser_id]['dataset_browser']
     browser.data[item_name].menu_button()
+
+
+@wt(parsers.parse('user of {browser_id} clicks Mark this file as dataset toggle'
+                  ' in Datasets modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_mark_file_as_dataset_toggle(browser_id, selenium, modals):
+    driver = selenium[browser_id]
+    modals(driver).datasets.dataset_toggle.check()

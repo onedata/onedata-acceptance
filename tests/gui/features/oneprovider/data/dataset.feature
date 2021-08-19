@@ -26,6 +26,17 @@ Feature: Basic dataset operations
     And user of browser logged as user1 to Onezone service
 
 
+  Scenario: User sees that file has dataset tag set after marking it as dataset
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser clicks on menu for "dir1" file in file browser
+    And user of browser clicks "Datasets" option in data row menu in file browser
+    And user of browser clicks Mark this file as dataset toggle in Datasets modal
+    And user of browser clicks on "Close" button in modal "Datasets"
+    Then user of browser sees Dataset status tag for "dir1" in file browser
+
+
   Scenario: User sees Editor disabled label after marking dataset and metadata write protection
     When user of browser creates dataset for item "dir1" in "space1"
     And user of browser clicks on menu for "dir1" directory in file browser
