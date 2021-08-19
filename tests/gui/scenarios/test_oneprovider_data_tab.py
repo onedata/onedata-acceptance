@@ -57,6 +57,7 @@ from tests.gui.steps.oneprovider_common import *
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.oneprovider.common import *
 from tests.gui.meta_steps.oneprovider.data import *
+from tests.gui.meta_steps.oneprovider.dataset import *
 
 from . import BROWSER
 
@@ -106,7 +107,6 @@ scenarios('../features/oneprovider/data/several_files.feature')
 scenarios('../features/oneprovider/data/single_directory.feature')
 scenarios('../features/oneprovider/data/file_management.feature')
 scenarios('../features/oneprovider/data/nested_directories.feature')
-scenarios('../features/oneprovider/data/create_dataset.feature')
 scenarios('../features/oneprovider/data/create_archive.feature')
 scenarios('../features/oneprovider/data/dataset.feature')
 
