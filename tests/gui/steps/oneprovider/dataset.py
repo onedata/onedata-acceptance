@@ -10,7 +10,6 @@ __license__ = ("This software is released under the MIT license cited in "
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
-from tests.gui.utils.generic import transform
 
 
 @wt(parsers.parse('user of {browser_id} click {kind} write protection toggle'
@@ -76,14 +75,6 @@ def click_on_state_view_mode_tab(browser_id, oz_page, selenium, state):
     getattr(oz_page(driver)['data'].dataset_header, state)()
 
 
-@wt(parsers.parse('user of {browser_id} clicks Mark this file as dataset toggle'
-                  ' in Datasets modal'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_mark_file_as_dataset_toggle(browser_id, selenium, modals):
-    driver = selenium[browser_id]
-    modals(driver).datasets.dataset_toggle.check()
-
-
 @wt(parsers.parse('user of {browser_id} clicks on menu '
                   'for "{item_name}" dataset in dataset browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -92,42 +83,9 @@ def click_menu_for_elem_in_dataset_browser(browser_id, item_name, tmp_memory):
     browser.data[item_name].menu_button()
 
 
-@wt(parsers.parse('user of {browser_id} clicks {text} write protection'
-                  ' toggle in Write Protection modal'))
+@wt(parsers.parse('user of {browser_id} clicks Mark this file as dataset toggle'
+                  ' in Datasets modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_protection_toggle(browser_id, selenium, modals, text):
+def click_mark_file_as_dataset_toggle(browser_id, selenium, modals):
     driver = selenium[browser_id]
-    if text == 'data':
-        modals(driver).write_protection.data_protection_toggle.check()
-    if text == 'metadata':
-        modals(driver).write_protection.metadata_protection_toggle.check()
-
-
-@wt(parsers.parse('user of {browser_id} sees {status_type} '
-                  'status tag for "{item_name}" in dataset browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_status_tag_for_file_in_dataset_browser(browser_id, status_type,
-                                                  item_name, tmp_memory):
-    browser = tmp_memory[browser_id]['dataset_browser']
-    err_msg = (f'{status_type} tag for {item_name} in dataset browser '
-               f'not visible')
-    assert browser.data[item_name]\
-        .is_tag_visible(transform(status_type)), err_msg
-
-
-@wt(parsers.parse('user of {browser_id} sees that error page with text '
-                  '"{text}" appeared'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_page_with_error_appeared(browser_id, text, tmp_memory):
-    browser = tmp_memory[browser_id]['dataset_browser']
-    assert browser.error_msg == text, f'page with text "{text}" not  found'
-
-
-@wt(parsers.parse('user of {browser_id} fails to click Mark this file as '
-                  'dataset toggle in Datasets modal'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def fail_to_mark_file_as_dataset_toggle(browser_id, selenium, modals):
-    driver = selenium[browser_id]
-    err_msg = 'user does not fail to create dataset'
-    assert not modals(driver).datasets.dataset_toggle.check(), err_msg
-
+    modals(driver).datasets.dataset_toggle.check()
