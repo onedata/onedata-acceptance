@@ -23,14 +23,7 @@ Feature: Dataset browser tests using user who is not the owner of a space
 
 
   Scenario: User cannot create archive for existing dataset if he does not have create archives privilege
-    # create dataset
-    When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Files of "space1" in the sidebar
-    And user of space_owner_browser sees file browser in files tab in Oneprovider page
-    And user of space_owner_browser clicks on menu for "dir1" file in file browser
-    And user of space_owner_browser clicks "Datasets" option in data row menu in file browser
-    And user of space_owner_browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of space_owner_browser clicks on "Close" button in modal "Datasets"
+    When user of space_owner_browser creates dataset for item "dir1" in "space1"
 
     And user of space_owner_browser clicks Members of "space1" in the sidebar
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
@@ -46,6 +39,7 @@ Feature: Dataset browser tests using user who is not the owner of a space
 
   Scenario: User fails to create dataset if he does not have manage datasets privilege
     When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
+
     And user of space_owner_browser clicks Members of "space1" in the sidebar
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
@@ -61,14 +55,7 @@ Feature: Dataset browser tests using user who is not the owner of a space
 
 
   Scenario: User fails to detach dataset if he does not have manage datasets privilege
-    # create dataset
-    When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Files of "space1" in the sidebar
-    And user of space_owner_browser sees file browser in files tab in Oneprovider page
-    And user of space_owner_browser clicks on menu for "dir1" file in file browser
-    And user of space_owner_browser clicks "Datasets" option in data row menu in file browser
-    And user of space_owner_browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of space_owner_browser clicks on "Close" button in modal "Datasets"
+    When user of space_owner_browser creates dataset for item "dir1" in "space1"
 
     And user of space_owner_browser clicks Members of "space1" in the sidebar
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
@@ -85,14 +72,7 @@ Feature: Dataset browser tests using user who is not the owner of a space
 
 
   Scenario: User fails to enable write protection for dataset if he does not have manage datasets privilege
-    # create dataset
-    When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Files of "space1" in the sidebar
-    And user of space_owner_browser sees file browser in files tab in Oneprovider page
-    And user of space_owner_browser clicks on menu for "dir1" file in file browser
-    And user of space_owner_browser clicks "Datasets" option in data row menu in file browser
-    And user of space_owner_browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of space_owner_browser clicks on "Close" button in modal "Datasets"
+    When user of space_owner_browser creates dataset for item "dir1" in "space1"
 
     And user of space_owner_browser clicks Members of "space1" in the sidebar
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
@@ -112,14 +92,7 @@ Feature: Dataset browser tests using user who is not the owner of a space
 
 
   Scenario: User fails to remove dataset if he does not have manage datasets privilege
-    # create dataset
-    When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Files of "space1" in the sidebar
-    And user of space_owner_browser sees file browser in files tab in Oneprovider page
-    And user of space_owner_browser clicks on menu for "dir1" file in file browser
-    And user of space_owner_browser clicks "Datasets" option in data row menu in file browser
-    And user of space_owner_browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of space_owner_browser clicks on "Close" button in modal "Datasets"
+    When user of space_owner_browser creates dataset for item "dir1" in "space1"
 
     And user of space_owner_browser clicks Members of "space1" in the sidebar
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
@@ -145,24 +118,12 @@ Feature: Dataset browser tests using user who is not the owner of a space
             privilege subtypes:
               Manage datasets: True
 
-    And user of browser_user1 clicks Files of "space1" in the sidebar
-    And user of browser_user1 sees file browser in files tab in Oneprovider page
-    And user of browser_user1 clicks on menu for "dir1" file in file browser
-    And user of browser_user1 clicks "Datasets" option in data row menu in file browser
-    And user of browser_user1 clicks Mark this file as dataset toggle in Datasets modal
-    And user of browser_user1 clicks on "Close" button in modal "Datasets"
+    When user of browser_user1 creates dataset for item "dir1" in "space1"
     Then user of browser_user1 sees Dataset status tag for "dir1" in file browser
 
 
   Scenario: User  successfully removes dataset if he has manage datasets privilege
-    # create dataset
-    When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Files of "space1" in the sidebar
-    And user of space_owner_browser sees file browser in files tab in Oneprovider page
-    And user of space_owner_browser clicks on menu for "dir1" file in file browser
-    And user of space_owner_browser clicks "Datasets" option in data row menu in file browser
-    And user of space_owner_browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of space_owner_browser clicks on "Close" button in modal "Datasets"
+    When user of space_owner_browser creates dataset for item "dir1" in "space1"
 
     And user of space_owner_browser clicks Members of "space1" in the sidebar
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
@@ -183,14 +144,7 @@ Feature: Dataset browser tests using user who is not the owner of a space
 
 
   Scenario: User successfully enable write protection for dataset if he has manage datasets privilege
-    # create dataset
-    When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Files of "space1" in the sidebar
-    And user of space_owner_browser sees file browser in files tab in Oneprovider page
-    And user of space_owner_browser clicks on menu for "dir1" file in file browser
-    And user of space_owner_browser clicks "Datasets" option in data row menu in file browser
-    And user of space_owner_browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of space_owner_browser clicks on "Close" button in modal "Datasets"
+    When user of space_owner_browser creates dataset for item "dir1" in "space1"
 
     And user of space_owner_browser clicks Members of "space1" in the sidebar
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
@@ -212,14 +166,7 @@ Feature: Dataset browser tests using user who is not the owner of a space
 
 
  Scenario: User successfully detaches dataset if he has manage datasets privilege
-   # create dataset
-    When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Files of "space1" in the sidebar
-    And user of space_owner_browser sees file browser in files tab in Oneprovider page
-    And user of space_owner_browser clicks on menu for "dir1" file in file browser
-    And user of space_owner_browser clicks "Datasets" option in data row menu in file browser
-    And user of space_owner_browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of space_owner_browser clicks on "Close" button in modal "Datasets"
+    When user of space_owner_browser creates dataset for item "dir1" in "space1"
 
     And user of space_owner_browser clicks Members of "space1" in the sidebar
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
@@ -237,20 +184,14 @@ Feature: Dataset browser tests using user who is not the owner of a space
     And user of browser_user1 clicks on detached view mode on dataset browser page
     And user of browser_user1 sees dataset browser in datasets tab in Oneprovider page
     And user of browser_user1 sees item(s) named "dir1" in dataset browser
+
     Then user of browser_user1 clicks Files of "space1" in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
     And user of browser_user1 does not see Dataset status tag for "dir1" in file browser
 
 
  Scenario: User successfully creates archive for existing dataset if he has create archives and manage datasets privilege
-   # create dataset
-    When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Files of "space1" in the sidebar
-    And user of space_owner_browser sees file browser in files tab in Oneprovider page
-    And user of space_owner_browser clicks on menu for "dir1" file in file browser
-    And user of space_owner_browser clicks "Datasets" option in data row menu in file browser
-    And user of space_owner_browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of space_owner_browser clicks on "Close" button in modal "Datasets"
+    When user of space_owner_browser creates dataset for item "dir1" in "space1"
 
     And user of space_owner_browser clicks Members of "space1" in the sidebar
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
@@ -271,14 +212,7 @@ Feature: Dataset browser tests using user who is not the owner of a space
 
 
   Scenario: User does not see archive file browser if he does not have view archives privilege
-   # create dataset
-    When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Files of "space1" in the sidebar
-    And user of space_owner_browser sees file browser in files tab in Oneprovider page
-    And user of space_owner_browser clicks on menu for "dir1" file in file browser
-    And user of space_owner_browser clicks "Datasets" option in data row menu in file browser
-    And user of space_owner_browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of space_owner_browser clicks on "Close" button in modal "Datasets"
+    When user of space_owner_browser creates dataset for item "dir1" in "space1"
 
     # create archive
     And user of space_owner_browser clicks Datasets of "space1" in the sidebar
