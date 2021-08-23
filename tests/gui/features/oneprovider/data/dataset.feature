@@ -30,7 +30,7 @@ Feature: Basic dataset operations
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser clicks on menu for "dir1" file in file browser
+    And user of browser clicks on menu for "dir1" directory in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
     And user of browser clicks Mark this file as dataset toggle in Datasets modal
     And user of browser clicks on "Close" button in modal "Datasets"
@@ -135,7 +135,6 @@ Feature: Basic dataset operations
 
 
   Scenario: User sees directory tree in Detached tab after detaching directories
-    # create dataset
     When user of browser creates dataset for item "dir2" in "space1"
     And user of browser double clicks on item named "dir2" in file browser
     And user of browser creates dataset for item "dir3" in "space1"
