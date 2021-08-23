@@ -333,3 +333,20 @@ Feature: Basic management of spaces privileges in Onezone GUI
     And user of browser_user1 clicks Members of "space2" in the sidebar
     And user of browser_user1 clicks on "Invite user using token" button in users list menu in "space2" space members view
     Then user of browser_user1 sees This resource could not be loaded alert in "Invite using token" modal
+
+
+  Scenario: User fails to rename space because of lack in privileges
+    When user of space_owner_browser clicks "space2" on the spaces list in the sidebar
+    And user of space_owner_browser clicks Members of "space2" in the sidebar
+    And user of space_owner_browser clicks "user1" user in "space2" space members users list
+    And user of space_owner_browser sees following privileges of "user1" user in space members subpage:
+          Space management:
+            granted: Partially
+            privilege subtypes:
+              Modify space: False
+
+    And user of browser_user1 clicks on Data in the main menu
+    And user of browser_user1 clicks "space1" on the spaces list in the sidebar
+    And user of browser_user1 writes "space2" into rename space text field
+    And user of browser_user1 confirms rename the space using confirmation button
+    Then user of browser_user1 sees that error modal with text "Changing name failed" appeared
