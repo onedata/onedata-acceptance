@@ -306,7 +306,7 @@ Feature: Basic management of spaces privileges in Onezone GUI
     When user of space_owner_browser clicks "space2" on the spaces list in the sidebar
     And user of space_owner_browser clicks Members of "space2" in the sidebar
     And user of space_owner_browser clicks "user1" user in "space2" space members users list
-    And user of space_owner_browser sets following privileges for "user1" user in space members subpage when all other are granted:
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
           Space management:
             granted: Partially
             privilege subtypes:
@@ -324,7 +324,7 @@ Feature: Basic management of spaces privileges in Onezone GUI
     And user of space_owner_browser clicks "space2" on the spaces list in the sidebar
     And user of space_owner_browser clicks Members of "space2" in the sidebar
     And user of space_owner_browser clicks "user1" user in "space2" space members users list
-    And user of space_owner_browser sets following privileges for "user1" user in space members subpage when all other are granted:
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
           User management:
             granted: False
 
@@ -339,7 +339,7 @@ Feature: Basic management of spaces privileges in Onezone GUI
     When user of space_owner_browser clicks "space2" on the spaces list in the sidebar
     And user of space_owner_browser clicks Members of "space2" in the sidebar
     And user of space_owner_browser clicks "user1" user in "space2" space members users list
-    And user of space_owner_browser sees following privileges of "user1" user in space members subpage:
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
           Space management:
             granted: Partially
             privilege subtypes:
@@ -357,7 +357,7 @@ Feature: Basic management of spaces privileges in Onezone GUI
     And user of space_owner_browser clicks "space2" on the spaces list in the sidebar
     And user of space_owner_browser clicks Members of "space2" in the sidebar
     And user of space_owner_browser clicks "user1" user in "space2" space members users list
-    And user of space_owner_browser sets following privileges for "user1" user in space members subpage when all other are granted:
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
           User management:
             granted: False
 
