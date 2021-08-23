@@ -9,8 +9,13 @@ __license__ = ("This software is released under the MIT license cited in "
 
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.utils.generic import transform
-from tests.utils.bdd_utils import wt, parsers
+from tests.utils.bdd_utils import wt, parsers, given
 from tests.utils.utils import repeat_failed
+
+
+@given(parsers.parse('user of browser writes elasticsearch ip: {ip}'))
+def set_ip(ip, hosts):
+    hosts["elasticsearch"] = {'ip': ip}
 
 
 @wt(parsers.parse('user of {browser_id} {action} Public toggle on '

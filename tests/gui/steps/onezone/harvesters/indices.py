@@ -10,6 +10,7 @@ __license__ = ("This software is released under the MIT license cited in "
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
+from tests.gui.utils.generic import parse_seq
 
 
 @wt(parsers.parse('user of {browser_id} clicks "{text}" in '
@@ -86,3 +87,68 @@ def assert_progress_in_harvesting(selenium, browser_id, oz_page,
         assert progress.progress_value == value, ('Harvesting process did not '
                                                   f'finished for '
                                                   f'"{progress.space}"')
+
+
+@wt(parsers.parse('user of {browser_id} unchecks all toggles apart from '
+                  '{stay_checked} in indices page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def uncheck_toggles_on_create_index_page(selenium, browser_id, oz_page,
+                                         stay_checked):
+    driver = selenium[browser_id]
+    stay_checked = parse_seq(stay_checked)
+    for toggle in oz_page(driver)['discovery'].indices_page.toggles:
+        if toggle not in stay_checked:
+            getattr(oz_page(driver)['discovery'].indices_page,
+                    toggle).check()
+
+
+@wt(parsers.parse('user of {browser_id} changes indices to "{index_name}" '
+                  'on GUI plugin tab on harvester configuration page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def change_indices_on_gui_plugin_tab(selenium, browser_id, oz_page, index_name,
+                                     popups):
+    driver = selenium[browser_id]
+    (oz_page(driver)['discovery'].configuration_page
+     .gui_plugin_tab.indices_edit())
+    (oz_page(driver)['discovery'].configuration_page
+     .gui_plugin_tab.choose_indices_expand())
+    popups(driver).power_select.choose_item(index_name)
+    (oz_page(driver)['discovery'].configuration_page
+     .gui_plugin_tab.indices_save())
+
+
+@wt(parsers.parse('user of {browser_id} does not see "{text}" in'
+                  ' results list on data discovery page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_not_text_on_data_discovery_page(selenium, browser_id,
+                                           data_discovery, text):
+    driver = selenium[browser_id]
+    assert (text not in data_discovery(driver).results_list[0].text,
+            f'{text} in result list')
+
+
+@wt(parsers.parse('user of {browser_id} sees rejected "{text}"'
+                  ' in results list on data discovery page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_rejected_on_data_discovery_page(selenium, browser_id,
+                                           data_discovery, text):
+    driver = selenium[browser_id]
+    text = f' __rejected: {text}'
+    assert (text in data_discovery(driver).results_list[0].text,
+            f'{text} not in result list')
+
+
+@wt(parsers.parse('user of browser sees that rejection is caused by field '
+                  '{key} of type {field_type} in document dir1'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_rejection_reason_on_data_discovery_page(selenium, browser_id,
+                                                   data_discovery, key,
+                                                   field_type, clipboard,
+                                                   displays):
+    driver = selenium[browser_id]
+    file_id = clipboard.paste(display=displays[browser_id])
+    text = (f'__rejectionReason: "failed to parse field {key} of type'
+            f' {field_type} in document with id {file_id}')
+    assert (text in data_discovery(driver).results_list[0].text,
+            f'{text} not in result list {data_discovery(driver).results_list[0].text}')
+

@@ -48,6 +48,22 @@ class IndicesPage(PageObject):
     indices_list = WebItemsSequence('.content-harvesters-indices .row '
                                     'li.one-collapsible-list-item', cls=Index)
     menu_button = Button('.with-menu .collapsible-toolbar-toggle')
+    basic = Toggle('.metadataXattrs-field .one-way-toggle-control')
+    json = Toggle('.metadataJson-field .one-way-toggle-control')
+    rdf = Toggle('.metadataRdf-field .one-way-toggle-control')
+    file_name = Toggle('.fileName-field .one-way-toggle-control')
+    file_type = Toggle('.fileType-field .one-way-toggle-control')
+    space_id = Toggle('.spaceId-field .one-way-toggle-control')
+    dataset_info = Toggle('.datasetInfo-field .one-way-toggle-control')
+    metadata_existence_flags = Toggle('.metadataExistenceFlags-field '
+                                      '.one-way-toggle-control')
+    include_rejection_reason = Toggle('.includeRejectionReason-field '
+                                      '.one-way-toggle-control')
+    retry_on_rejection = Toggle('.retryOnRejection-field '
+                                '.one-way-toggle-control')
+    toggles = ['basic', 'json', 'rdf', 'file_name', 'file_type', 'space_id',
+               'dataset_info', 'metadata_existence_flags',
+               'include_rejection_reason', 'retry_on_rejection']
 
 
 class GeneralTab(PageObject):
@@ -70,6 +86,11 @@ class GUIPluginTab(PageObject):
     injected_config = Label('.json-editor-textarea')
     version = Label('.gui-version')
     indices = WebItemsSequence('.indices-table tbody tr', cls=GUIPluginIndex)
+    indices_edit = NamedButton('.harvester-configuration-gui-indices '
+                               '.btn-default', text='Edit')
+    indices_save = NamedButton('.harvester-configuration-gui-indices '
+                               '.btn-primary', text='Save')
+    choose_indices_expand = Button('.form-group .ember-power-select-trigger')
 
 
 class ConfigurationPage(PageObject):

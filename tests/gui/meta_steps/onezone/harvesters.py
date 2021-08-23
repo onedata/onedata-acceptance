@@ -10,12 +10,15 @@ __license__ = ("This software is released under the MIT license cited in "
 from tests.gui.steps.onezone.harvesters.configuration import (
     click_button_in_tab_of_harvester_config_page,
     check_public_toggle_on_harvester_config_page,
-    assert_public_toggle_on_harvester_config_page)
+    assert_public_toggle_on_harvester_config_page,
+    click_on_tab_of_harvester_config_page)
 from tests.gui.steps.onezone.harvesters.indices import (
     click_on_member_menu_option_in_harvester_indices_page,
     type_index_name_to_input_field_in_indices_page,
     click_create_button_in_indices_page, assert_used_by_gui_tag_on_indices_page,
-    expand_index_record_in_indices_page, assert_progress_in_harvesting)
+    expand_index_record_in_indices_page, assert_progress_in_harvesting,
+    uncheck_toggles_on_create_index_page,
+    change_indices_on_gui_plugin_tab)
 from tests.gui.steps.onezone.members import *
 from tests.gui.steps.onezone.harvesters.discovery import (
     click_on_option_in_harvester_menu,
@@ -114,6 +117,7 @@ def join_space_to_harvester(selenium, browser_id, oz_page, space_name,
                             harvester_name, tmp_memory):
     option = 'Spaces'
     option2 = 'Discovery'
+    option3 = 'harvesters'
     button_name = 'add one of your spaces'
     button_in_modal = 'Add'
     modal = 'Add one of spaces'
@@ -121,6 +125,8 @@ def join_space_to_harvester(selenium, browser_id, oz_page, space_name,
     modal_name = 'Add one of your spaces'
 
     click_on_option_in_the_sidebar(selenium, browser_id, option2, oz_page)
+    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option3,
+                                                harvester_name, oz_page)
     click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id,
                                                       harvester_name, option,
                                                       oz_page)
@@ -316,3 +322,40 @@ def check_harvesting_process_in_harvester(selenium, browser_id, harvester,
     expand_index_record_in_indices_page(selenium, browser_id, oz_page,
                                         index)
     assert_progress_in_harvesting(selenium, browser_id, oz_page, index)
+
+
+@wt(parsers.parse('user of {browser_id} creates new index "{index_name}" that '
+                  'includes {toggles_list} toggles for "{harvester_name}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def create_index_with_toggles_list(browser_id, selenium,  index_name, popups,
+                                   toggles_list, harvester_name, oz_page):
+    option = "Indices"
+    text = "Create new index"
+    click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id,
+                                                      harvester_name, option,
+                                                      oz_page)
+    click_on_member_menu_option_in_harvester_indices_page(selenium, browser_id,
+                                                          text, oz_page,
+                                                          popups)
+    type_index_name_to_input_field_in_indices_page(selenium, browser_id,
+                                                   oz_page, index_name)
+    uncheck_toggles_on_create_index_page(selenium, browser_id, oz_page,
+                                         toggles_list)
+    click_create_button_in_indices_page(selenium, browser_id, oz_page)
+
+
+@wt(parsers.parse('user of {browser_id} changes indices to "{index_name}"'
+                  ' on GUI plugin tab for "{harvester_name}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def change_indices_for_harvester(browser_id, selenium, index_name,
+                                 harvester_name, oz_page, popups):
+    option = "Configuration"
+    tab_name = "GUI plugin"
+    click_on_option_of_harvester_on_left_sidebar_menu(selenium, browser_id,
+                                                      harvester_name, option,
+                                                      oz_page)
+    click_on_tab_of_harvester_config_page(selenium, browser_id, tab_name,
+                                          oz_page)
+    change_indices_on_gui_plugin_tab(selenium, browser_id, oz_page, index_name,
+                                     popups)
+
