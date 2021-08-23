@@ -66,7 +66,7 @@ Feature: Provider management in Onepanel GUI
     And user of space_owner_browser clicks Providers of "space1" in the sidebar
     And user of space_owner_browser sees "oneprovider-1" is on the providers list
     And using web gui, admin deregisters provider in "oneprovider-1" Oneprovider panel service
-    And user of space_owner_browser is idle for 8 seconds
+    And user of space_owner_browser is idle for 2 seconds
 
     # send registration token
     And user of space_owner_browser clicks on add new provider cluster button in clusters menu
@@ -83,7 +83,7 @@ Feature: Provider management in Onepanel GUI
     And user of browser_emergency types "admin@admin.email" to admin email field in step 2 of deployment process in Onepanel
     And user of browser_emergency clicks on Register button in step 2 of deployment process in Onepanel
 
-    And user of space_owner_browser is idle for 5 seconds
+    And user of space_owner_browser is idle for 2 seconds
     And user of browser_emergency selects POSIX from storage selector in step 5 of deployment process in Onepanel
     And user of browser_emergency types "posix" to Storage name field in POSIX form in step 5 of deployment process in Onepanel
 
