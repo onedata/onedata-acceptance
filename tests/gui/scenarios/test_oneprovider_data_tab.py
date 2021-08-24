@@ -65,15 +65,10 @@ from . import BROWSER
 
 from tests.utils.acceptance_utils import *
 
-from tests.gui.steps.onezone.automation import *
-from tests.gui.meta_steps.onezone.tokens import *
-from tests.gui.steps.onezone.members import *
-from tests.gui.steps.rest.env_up.inventory import *
-
 
 @fixture(scope='module')
 def screens():
-    return [0, 1]
+    return [0]
 
 
 scenario = partial(scenario, '../features/oneprovider/data/upload_multiple_files.feature')
@@ -117,7 +112,3 @@ scenarios('../features/oneprovider/data/nested_directories.feature')
 scenarios('../features/oneprovider/data/create_archive.feature')
 scenarios('../features/oneprovider/data/dataset.feature')
 scenarios('../features/oneprovider/data/dataset_privileges.feature')
-
-scenarios('../features/onezone/automation_basics.feature')
-scenarios('../features/onezone/automation_members.feature')
-
