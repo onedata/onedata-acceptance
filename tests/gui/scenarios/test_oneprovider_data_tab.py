@@ -39,6 +39,7 @@ from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.manage_account import *
 from tests.gui.steps.onezone.spaces import *
 from tests.gui.steps.onezone.groups import *
+from tests.gui.steps.onezone.members import *
 
 from tests.gui.steps.oneprovider.common import *
 from tests.gui.steps.oneprovider.data_tab import *
@@ -55,22 +56,19 @@ from tests.gui.steps.oneprovider.browser import *
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
 from tests.gui.meta_steps.onezone.common import *
+from tests.gui.meta_steps.onezone.tokens import *
 from tests.gui.meta_steps.oneprovider.common import *
 from tests.gui.meta_steps.oneprovider.data import *
+from tests.gui.meta_steps.oneprovider.dataset import *
 
 from . import BROWSER
 
 from tests.utils.acceptance_utils import *
 
-from tests.gui.steps.onezone.automation import *
-from tests.gui.meta_steps.onezone.tokens import *
-from tests.gui.steps.onezone.members import *
-from tests.gui.steps.rest.env_up.inventory import *
-
 
 @fixture(scope='module')
 def screens():
-    return [0, 1]
+    return [0]
 
 
 scenario = partial(scenario, '../features/oneprovider/data/upload_multiple_files.feature')
@@ -111,10 +109,6 @@ scenarios('../features/oneprovider/data/several_files.feature')
 scenarios('../features/oneprovider/data/single_directory.feature')
 scenarios('../features/oneprovider/data/file_management.feature')
 scenarios('../features/oneprovider/data/nested_directories.feature')
-scenarios('../features/oneprovider/data/create_dataset.feature')
 scenarios('../features/oneprovider/data/create_archive.feature')
 scenarios('../features/oneprovider/data/dataset.feature')
-
-scenarios('../features/onezone/automation_basics.feature')
-scenarios('../features/onezone/automation_members.feature')
-
+scenarios('../features/oneprovider/data/dataset_privileges.feature')
