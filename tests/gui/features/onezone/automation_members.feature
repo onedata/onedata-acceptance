@@ -8,6 +8,10 @@ Feature: Management of inventories members
     And initial groups configuration in "onezone" Onezone service:
           group1:
             owner: user1
+          group2:
+            owner: space-owner-user
+            users:
+                - user1
     And initial spaces configuration in "onezone" Onezone service:
         space1:
             owner: space-owner-user
@@ -99,7 +103,7 @@ Feature: Management of inventories members
     And user of space_owner_browser sends copied token to user of browser1
     And user of browser1 adds group "group1" to inventory using copied token
 
-    #User1 fails to rename inventory
+    # User1 fails to rename inventory
     And user of browser1 clicks on "Rename" button in inventory "inventory1" menu in the sidebar
     And user of browser1 writes "inventory2" into rename inventory text field
     And user of browser1 confirms inventory rename with confirmation button
@@ -220,7 +224,7 @@ Feature: Management of inventories members
     And user of space_owner_browser sends copied token to user of browser1
     And user of browser1 adds group "group1" to inventory using copied token
 
-    #User1 fails to generate an ivnitation token
+    # User1 fails to generate an ivnitation token
     And user of browser1 opens inventory "inventory1" members subpage
     And user of browser1 clicks on "Invite user using token" button in users list menu in "inventory1" automation members view
     And user of browser1 sees This resource could not be loaded alert in Invite user using token modal
@@ -266,7 +270,7 @@ Feature: Management of inventories members
 
     And user of browser1 opens inventory "inventory1" members subpage
 
-    #User1 removes space-owner-user from inventory and space-owner can not view inventory1
+    # User1 removes space-owner-user from inventory and space-owner can not view inventory1
     Then user of browser1 removes "space-owner-user" user from "inventory1" automation members
     And user of space_owner_browser does not see inventory "inventory1" on inventory list
 
@@ -284,7 +288,7 @@ Feature: Management of inventories members
     And user of space_owner_browser sends copied token to user of browser1
     And user of browser1 adds group "group1" to inventory using copied token
 
-    #User1 fails to generate an ivnitation token
+    # User1 fails to generate an ivnitation token
     And user of browser1 opens inventory "inventory1" members subpage
     And user of browser1 clicks on "Invite group using token" button in groups list menu in "inventory1" automation members view
     And user of browser1 sees This resource could not be loaded alert in Invite user using token modal
@@ -301,11 +305,23 @@ Feature: Management of inventories members
     Then user of browser1 clicks on "Invite group using token" button in groups list menu in "inventory1" automation members view
 
 
-  Scenario: User successfully removes group to inventory with add group privilege
-    When user of space_owner_browser clicks on Automation in the main menu
+  Scenario: User successfully removes group from inventory with remove group privilege
+
+    # Space-owner-user gives user1 privilege for adding group to inventory
+    When user of space_owner_browser opens group "group2" members subpage
+    And user of space_owner_browser clicks "user1" user in "group2" group members users list
+    And user of space_owner_browser sees privileges for "user1" user in group members subpage
+    And user of space_owner_browser refreshes site
+    And user of space_owner_browser clicks "user1" user in "group2" group members users list
+    And user of space_owner_browser sets following privileges for "user1" user in group members subpage:
+          Automation inventory management:
+            granted: Partially
+            privilege subtypes:
+              Add automation inventory: True
 
     # Space-owner-user generates invitation token
-    When user of space_owner_browser clicks on Automation in the main menu
+    And user of space_owner_browser clicks on Automation in the main menu
+    And user of space_owner_browser clicks on Automation in the main menu
 
     # Space-owner-user generates invitation token
     And user of space_owner_browser opens inventory "inventory1" members subpage
@@ -315,16 +331,16 @@ Feature: Management of inventories members
 
     # Space-owner-user adds group1 to view inventory
     And user of space_owner_browser sends copied token to user of browser1
-    And user of browser1 adds group "group1" to inventory using copied token
+    And user of browser1 adds group "group2" to inventory using copied token
 
-#    # User1 fails to remove group
-#    And user of browser1 removes "group1" group from "inventory1" automation members
-#    And user of browser1 sees that error popup has appeared
-#    And user of browser1 clicks on "Close" button in modal "Error"
+    # User1 fails to remove group
+    And user of browser1 removes "group2" group from "inventory1" automation members
+    And user of browser1 sees that error popup has appeared
+    And user of browser1 clicks on "Close" button in modal "Error"
 
     # Space-owner-user changes privileges for group1
-    And user of space_owner_browser clicks "group1" group in "inventory1" automation members groups list
-    And user of space_owner_browser sets following privileges for "group1" group in automation members subpage:
+    And user of space_owner_browser clicks "group2" group in "inventory1" automation members groups list
+    And user of space_owner_browser sets following privileges for "group2" group in automation members subpage:
          Group management:
             granted: Partially
             privilege subtypes:
@@ -332,5 +348,5 @@ Feature: Management of inventories members
 
     And user of browser1 opens inventory "inventory1" members subpage
 
-    #User1 removes group from inventory
-    Then user of browser1 removes "group1" group from "inventory1" automation members
+    # User1 removes group from inventory
+    Then user of browser1 removes "group2" group from "inventory1" automation members
