@@ -266,16 +266,6 @@ def confirm_rename_directory(selenium, browser_id, option, modals):
         click_modal_button(selenium, browser_id, button, modal, modals)
 
 
-@wt(parsers.parse('user of {browser_id} clicks on menu '
-                  'for "{item_name}" directory in file browser'))
-@wt(parsers.parse('user of {browser_id} clicks on menu '
-                  'for "{item_name}" file in file browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_menu_for_elem_in_file_browser(browser_id, item_name, tmp_memory):
-    browser = tmp_memory[browser_id]['file_browser']
-    browser.data[item_name].menu_button()
-
-
 @wt(parsers.parse('user of {browser_id} scrolls to the bottom of file browser '
                   'and sees there are {count} files'))
 def count_files_while_scrolling(browser_id, count: int, tmp_memory):
@@ -372,9 +362,9 @@ def assert_contents_downloaded_tar_file(selenium, browser_id, file_name,
                                         contents, tmpdir, clipboard, displays):
     configured_dir_contents = []
     if file_name == 'archive':
-        file_name = f'archive_{clipboard.paste(display=displays[browser_id])}.tar'
+        file_name = (f'archive_'
+                     f'{clipboard.paste(display=displays[browser_id])}.tar')
         contents = contents.replace('archive', file_name.split('.')[0])
-        # file_name = f'{file_name}.tar'
 
     def _get_directory_contents(directory_tree, path=''):
 

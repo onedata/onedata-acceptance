@@ -36,12 +36,12 @@ def _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id, path,
 
     try:
         go_to_path_without_last_elem(browser_id, tmp_memory, path)
-        click_menu_for_elem_in_file_browser(browser_id, item_name, tmp_memory)
+        click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
     except (KeyError, StaleElementReferenceException):
         go_to_filebrowser(selenium, browser_id, oz_page, op_container,
                           tmp_memory, space)
         go_to_path_without_last_elem(browser_id, tmp_memory, path)
-        click_menu_for_elem_in_file_browser(browser_id, item_name, tmp_memory)
+        click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
 
 
 @wt(parsers.re(r'user of (?P<browser_id>\w+) (?P<res>.*) to rename '
@@ -427,7 +427,7 @@ def check_file_owner(selenium, browser_id, owner, file_name, tmp_memory,
     option = 'Information'
     modal_name = 'File details'
 
-    click_menu_for_elem_in_file_browser(browser_id, file_name, tmp_memory)
+    click_menu_for_elem_in_browser(browser_id, file_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
                                              modals)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)

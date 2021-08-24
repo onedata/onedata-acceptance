@@ -27,22 +27,17 @@ Feature: Archive basic operation
 
 
   Scenario: User sees archive with "Preserved" state after creating it and waiting
-    # create dataset
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
-    And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser clicks on menu for "dir4" directory in file browser
-    And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
+    When user of browser creates dataset for item "dir4" in "space1"
 
+    # create archive with description
     And user of browser clicks Datasets of "space1" in the sidebar
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser sees that item "dir4" has 0 Archives
     And user of browser clicks on menu for "dir4" dataset in dataset browser
     And user of browser clicks "Create archive" option in data row menu in dataset browser
-    And user of browser writes "first archive" into description text field
+    And user of browser writes "first archive" into description text field in create archive modal
     And user of browser clicks on "Create" button in modal "Create Archive"
+
     Then user of browser sees that item "dir4" has 1 Archives
     And user of browser clicks on 1 in "dir4" Archives
     And user of browser sees archive file browser in archives tab in Oneprovider page
@@ -50,22 +45,9 @@ Feature: Archive basic operation
 
 
   Scenario: User sees that dataset does not have archive after purging archive
-    # create dataset
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
-    And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser clicks on menu for "dir4" directory in file browser
-    And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
-
-    # create archive
-    And user of browser clicks Datasets of "space1" in the sidebar
-    And user of browser sees dataset browser in datasets tab in Oneprovider page
-    And user of browser clicks on menu for "dir4" dataset in dataset browser
-    And user of browser clicks "Create archive" option in data row menu in dataset browser
-    And user of browser clicks on "Create" button in modal "Create Archive"
-
+    When user of browser creates dataset for item "dir4" in "space1"
+    And user of browser creates archive for item "dir4" in "space1" with following configuration:
+          layout: plain
     And user of browser sees that item "dir4" has 1 Archives
     And user of browser clicks on 1 in "dir4" Archives
     And user of browser sees archive file browser in archives tab in Oneprovider page
@@ -79,23 +61,11 @@ Feature: Archive basic operation
     And user of browser sees that item "dir4" has 0 Archives
 
 
+
   Scenario: User sees directory tree in archive browser after creating plain archive
-    # create dataset
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
-    And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser clicks on menu for "dir1" directory in file browser
-    And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
-
-    # create archive
-    And user of browser clicks Datasets of "space1" in the sidebar
-    And user of browser sees dataset browser in datasets tab in Oneprovider page
-    And user of browser clicks on menu for "dir1" dataset in dataset browser
-    And user of browser clicks "Create archive" option in data row menu in dataset browser
-    And user of browser clicks on "Create" button in modal "Create Archive"
-
+    When user of browser creates dataset for item "dir1" in "space1"
+    And user of browser creates archive for item "dir1" in "space1" with following configuration:
+          layout: plain
     And user of browser clicks on 1 in "dir1" Archives
     And user of browser sees archive file browser in archives tab in Oneprovider page
     And user of browser double clicks on 1 archive
@@ -107,26 +77,13 @@ Feature: Archive basic operation
 
 
   Scenario: User sees that newly created archive has new file and is different than archive created earlier after creating new plain archive
-    # create dataset
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
-    And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser clicks on menu for "dir1" directory in file browser
-    And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
-
-    # create archive
-    And user of browser clicks Datasets of "space1" in the sidebar
-    And user of browser sees dataset browser in datasets tab in Oneprovider page
-    And user of browser clicks on menu for "dir1" dataset in dataset browser
-    And user of browser clicks "Create archive" option in data row menu in dataset browser
-    And user of browser clicks on "Create" button in modal "Create Archive"
-
+    When user of browser creates dataset for item "dir1" in "space1"
+    And user of browser creates archive for item "dir1" in "space1" with following configuration:
+          layout: plain
     And user of browser clicks on 1 in "dir1" Archives
     And user of browser sees archive file browser in archives tab in Oneprovider page
     And user of browser double clicks on 1 archive
-    Then user of browser sees that the file structure in archive file browser is as follow:
+    And user of browser sees that the file structure in archive file browser is as follow:
            - dir1:
                - dir2:
                  - dir3:
@@ -141,13 +98,8 @@ Feature: Archive basic operation
     And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
     And user of browser sees that item named "20B-0.txt" has appeared in file browser
 
-     # create archive
-    And user of browser clicks Datasets of "space1" in the sidebar
-    And user of browser sees dataset browser in datasets tab in Oneprovider page
-    And user of browser clicks on menu for "dir1" dataset in dataset browser
-    And user of browser clicks "Create archive" option in data row menu in dataset browser
-    And user of browser clicks on "Create" button in modal "Create Archive"
-
+    And user of browser creates archive for item "dir1" in "space1" with following configuration:
+          layout: plain
     And user of browser clicks on 2 in "dir1" Archives
     And user of browser sees archive file browser in archives tab in Oneprovider page
     And user of browser double clicks on 1 archive
@@ -160,46 +112,18 @@ Feature: Archive basic operation
 
 
 Scenario: User sees BagIt tag after creating BagIt archive
-    # create dataset
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
-    And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser clicks on menu for "dir1" directory in file browser
-    And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
-
-    #create BagIt archive
-    And user of browser clicks Datasets of "space1" in the sidebar
-    And user of browser sees dataset browser in datasets tab in Oneprovider page
-    And user of browser clicks on menu for "dir1" dataset in dataset browser
-    And user of browser clicks "Create archive" option in data row menu in dataset browser
-    And user of browser clicks on "BagIt" button in modal "Create Archive"
-    And user of browser clicks on "Create" button in modal "Create Archive"
-
+    When user of browser creates dataset for item "dir1" in "space1"
+    And user of browser creates archive for item "dir1" in "space1" with following configuration:
+          layout: BagIt
     And user of browser clicks on 2 in "dir1" Archives
     And user of browser sees archive file browser in archives tab in Oneprovider page
     Then user of browser sees BagIt tag for latest created archive
 
 
 Scenario: User sees BagIt metadata files and directory tree in „data” directory in archive browser after creating BagIt archive
-      # create dataset
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
-    And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser clicks on menu for "dir1" directory in file browser
-    And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
-
-    #create BagIt archive
-    And user of browser clicks Datasets of "space1" in the sidebar
-    And user of browser sees dataset browser in datasets tab in Oneprovider page
-    And user of browser clicks on menu for "dir1" dataset in dataset browser
-    And user of browser clicks "Create archive" option in data row menu in dataset browser
-    And user of browser clicks on "BagIt" button in modal "Create Archive"
-    And user of browser clicks on "Create" button in modal "Create Archive"
-
+    When user of browser creates dataset for item "dir1" in "space1"
+    And user of browser creates archive for item "dir1" in "space1" with following configuration:
+              layout: BagIt
     And user of browser clicks on 2 in "dir1" Archives
     And user of browser sees archive file browser in archives tab in Oneprovider page
     And user of browser double clicks on 1 archive
@@ -222,39 +146,15 @@ Scenario: User sees BagIt metadata files and directory tree in „data” direct
 
 
   Scenario: User sees symbolic links on child datasets after creating nested archive on parent
-    # create dataset
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
-    And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser clicks on menu for "dir1" directory in file browser
-    And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
-
+    When user of browser creates dataset for item "dir1" in "space1"
     And user of browser double clicks on item named "dir1" in file browser
     And user of browser double clicks on item named "dir2" in file browser
-
-    # create dataset
-    And user of browser clicks on menu for "dir3" directory in file browser
-    And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
-
+    And user of browser creates dataset for item "dir3" in "space1"
     And user of browser double clicks on item named "dir3" in file browser
-
-    # create dataset
-    And user of browser clicks on menu for "file1" file in file browser
-    And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
-
-    # create nested archive
-    And user of browser clicks Datasets of "space1" in the sidebar
-    And user of browser sees dataset browser in datasets tab in Oneprovider page
-    And user of browser clicks on menu for "dir1" dataset in dataset browser
-    And user of browser clicks "Create archive" option in data row menu in dataset browser
-    And user of browser checks "Create nested archives" toggle in modal "Create Archive"
-    And user of browser clicks on "Create" button in modal "Create Archive"
+    And user of browser creates dataset for item "file1" in "space1"
+    And user of browser creates archive for item "dir1" in "space1" with following configuration:
+          layout: plain
+          create nested archives: True
 
     Then user of browser clicks on 2 in "dir1" Archives
     And user of browser sees archive file browser in archives tab in Oneprovider page
@@ -267,97 +167,41 @@ Scenario: User sees BagIt metadata files and directory tree in „data” direct
 
 
   Scenario: User sees that dataset has more archives than its parent after creating nested archive on child dataset
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
-    And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser clicks on menu for "dir1" directory in file browser
-    And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
-
+    When user of browser creates dataset for item "dir1" in "space1"
     And user of browser double clicks on item named "dir1" in file browser
-
-    # create dataset
-    And user of browser clicks on menu for "dir2" directory in file browser
-    And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
-
+    And user of browser creates dataset for item "dir2" in "space1"
     And user of browser double clicks on item named "dir2" in file browser
+    And user of browser creates dataset for item "dir3" in "space1"
 
-    # create dataset
-    And user of browser clicks on menu for "dir3" directory in file browser
-    And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
-
-    # create nested archive
-    And user of browser clicks Datasets of "space1" in the sidebar
-    And user of browser sees dataset browser in datasets tab in Oneprovider page
-    And user of browser clicks on menu for "dir1" dataset in dataset browser
-    And user of browser clicks "Create archive" option in data row menu in dataset browser
-    And user of browser checks "Create nested archives" toggle in modal "Create Archive"
-    And user of browser clicks on "Create" button in modal "Create Archive"
+    And user of browser creates archive for item "dir1" in "space1" with following configuration:
+          layout: plain
+          create nested archives: True
     And user of browser sees that item "dir1" has 1 Archives
-
     And user of browser double clicks on item named "dir1" in dataset browser
     And user of browser sees that item "dir2" has 1 Archives
-
-    # create nested archive
-    And user of browser clicks on menu for "dir2" dataset in dataset browser
-    And user of browser clicks "Create archive" option in data row menu in dataset browser
-    And user of browser checks "Create nested archives" toggle in modal "Create Archive"
-    And user of browser clicks on "Create" button in modal "Create Archive"
-    Then user of browser sees that item "dir2" has 2 Archives
+    And user of browser creates archive for item "dir2" in "space1" with following configuration:
+          layout: plain
+          create nested archives: True
 
     And user of browser double clicks on item named "dir2" in dataset browser
-    And user of browser sees that item "dir3" has 2 Archives
+    Then user of browser sees that item "dir3" has 2 Archives
     And user of browser clicks Datasets of "space1" in the sidebar
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser sees that item "dir1" has 1 Archives
 
 
-  Scenario: User sees directory tree after downloading tar with symlinks#
-    # create dataset
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
-    And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser clicks on menu for "dir1" directory in file browser
-    And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
-
+  Scenario: User sees directory tree after downloading tar with symlinks
+    When user of browser creates dataset for item "dir1" in "space1"
     And user of browser double clicks on item named "dir1" in file browser
-
-    # create dataset
-    And user of browser clicks on menu for "dir2" directory in file browser
-    And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
-
+    And user of browser creates dataset for item "dir2" in "space1"
     And user of browser double clicks on item named "dir2" in file browser
-
-    # create dataset
-    And user of browser clicks on menu for "dir3" directory in file browser
-    And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
-
+    And user of browser creates dataset for item "dir3" in "space1"
     And user of browser double clicks on item named "dir3" in file browser
+    And user of browser creates dataset for item "file1" in "space1"
 
-    # create dataset
-    And user of browser clicks on menu for "file1" file in file browser
-    And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
-
-    # create nested archive
-    And user of browser clicks Datasets of "space1" in the sidebar
-    And user of browser sees dataset browser in datasets tab in Oneprovider page
-    And user of browser clicks on menu for "dir1" dataset in dataset browser
-    And user of browser clicks "Create archive" option in data row menu in dataset browser
-    And user of browser checks "Create nested archives" toggle in modal "Create Archive"
-    And user of browser clicks on "Create" button in modal "Create Archive"
+    And user of browser creates archive for item "dir1" in "space1" with following configuration:
+          layout: plain
+          create nested archives: True
 
     And user of browser clicks on 1 in "dir1" Archives
     And user of browser sees archive file browser in archives tab in Oneprovider page
@@ -374,21 +218,9 @@ Scenario: User sees BagIt metadata files and directory tree in „data” direct
 
 
   Scenario: User sees that files that did not change since creating last archive have 2 hardlinks tag after creating new incremental archive
-    # create dataset
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
-    And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser clicks on menu for "dir4" directory in file browser
-    And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
-
-    # create archive
-    And user of browser clicks Datasets of "space1" in the sidebar
-    And user of browser sees dataset browser in datasets tab in Oneprovider page
-    And user of browser clicks on menu for "dir4" dataset in dataset browser
-    And user of browser clicks "Create archive" option in data row menu in dataset browser
-    And user of browser clicks on "Create" button in modal "Create Archive"
+    When user of browser creates dataset for item "dir4" in "space1"
+    And user of browser creates archive for item "dir4" in "space1" with following configuration:
+          layout: plain
 
     # upload file
     And user of browser clicks Files of "space1" in the sidebar
@@ -397,14 +229,9 @@ Scenario: User sees BagIt metadata files and directory tree in „data” direct
     And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
     And user of browser sees that item named "20B-0.txt" has appeared in file browser
 
-    And user of browser clicks Datasets of "space1" in the sidebar
-    And user of browser sees dataset browser in datasets tab in Oneprovider page
-
-    # create incremental archive
-    And user of browser clicks on menu for "dir4" dataset in dataset browser
-    And user of browser clicks "Create archive" option in data row menu in dataset browser
-    And user of browser checks "Incremental" toggle in modal "Create Archive"
-    And user of browser clicks on "Create" button in modal "Create Archive"
+    And user of browser creates archive for item "dir4" in "space1" with following configuration:
+          layout: plain
+          incremental: True
 
     Then user of browser clicks on 2 in "dir4" Archives
     And user of browser sees archive file browser in archives tab in Oneprovider page
@@ -415,34 +242,15 @@ Scenario: User sees BagIt metadata files and directory tree in „data” direct
 
 
   Scenario: User sees that files that did not change since creating last two archive (at least one incremental) have 3 hardlinks tag after creating new incremental archive
-    # create dataset
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
-    And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser clicks on menu for "dir4" directory in file browser
-    And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
-
-    # create archive
-    And user of browser clicks Datasets of "space1" in the sidebar
-    And user of browser sees dataset browser in datasets tab in Oneprovider page
-    And user of browser clicks on menu for "dir4" dataset in dataset browser
-    And user of browser clicks "Create archive" option in data row menu in dataset browser
-    And user of browser clicks on "Create" button in modal "Create Archive"
-
-    # create incremental archive
-    And user of browser clicks on menu for "dir4" dataset in dataset browser
-    And user of browser clicks "Create archive" option in data row menu in dataset browser
-    And user of browser checks "Incremental" toggle in modal "Create Archive"
-    And user of browser clicks on "Create" button in modal "Create Archive"
-
-    # create incremental archive
-    And user of browser clicks on menu for "dir4" dataset in dataset browser
-    And user of browser clicks "Create archive" option in data row menu in dataset browser
-    And user of browser checks "Incremental" toggle in modal "Create Archive"
-    And user of browser clicks on "Create" button in modal "Create Archive"
-
+    When user of browser creates dataset for item "dir4" in "space1"
+    And user of browser creates archive for item "dir4" in "space1" with following configuration:
+          layout: plain
+    And user of browser creates archive for item "dir4" in "space1" with following configuration:
+          layout: plain
+          incremental: True
+    And user of browser creates archive for item "dir4" in "space1" with following configuration:
+          layout: plain
+          incremental: True
     Then user of browser clicks on 2 in "dir4" Archives
     And user of browser sees archive file browser in archives tab in Oneprovider page
     And user of browser double clicks on 1 archive
@@ -451,75 +259,33 @@ Scenario: User sees BagIt metadata files and directory tree in „data” direct
 
 
   Scenario: User sees name of base archive after creating incremental archive
-    # create dataset
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
-    And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser clicks on menu for "dir4" directory in file browser
-    And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
-
-    And user of browser clicks Datasets of "space1" in the sidebar
-    And user of browser sees dataset browser in datasets tab in Oneprovider page
-
-    # create archive
-    And user of browser clicks on menu for "dir4" dataset in dataset browser
-    And user of browser clicks "Create archive" option in data row menu in dataset browser
-    And user of browser clicks on "Create" button in modal "Create Archive"
-
-    # create incremental archive
-    And user of browser clicks on menu for "dir4" dataset in dataset browser
-    And user of browser clicks "Create archive" option in data row menu in dataset browser
-    And user of browser checks "Incremental" toggle in modal "Create Archive"
-    And user of browser clicks on "Create" button in modal "Create Archive"
-
+    When user of browser creates dataset for item "dir4" in "space1"
+    And user of browser creates archive for item "dir4" in "space1" with following configuration:
+          layout: plain
+    And user of browser creates archive for item "dir4" in "space1" with following configuration:
+          layout: plain
+          incremental: True
     Then user of browser clicks on 2 in "dir4" Archives
     And user of browser sees archive file browser in archives tab in Oneprovider page
     And user of browser sees that base archive for latest created archive is 2 archive
 
+
   Scenario: User sees that base archive, in create archive modal, is latest created archive, after checking incremental toggle
-    # create dataset
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
-    And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser clicks on menu for "dir4" directory in file browser
-    And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
-
-    And user of browser clicks Datasets of "space1" in the sidebar
-    And user of browser sees dataset browser in datasets tab in Oneprovider page
-
-    # create archive
-    And user of browser clicks on menu for "dir4" dataset in dataset browser
-    And user of browser clicks "Create archive" option in data row menu in dataset browser
-    And user of browser clicks on "Create" button in modal "Create Archive"
-
+    When user of browser creates dataset for item "dir4" in "space1"
+    And user of browser creates archive for item "dir4" in "space1" with following configuration:
+          layout: plain
     And user of browser clicks on 1 in "dir4" Archives
     And user of browser sees archive file browser in archives tab in Oneprovider page
     And user of browser clicks on Create Archive button in archive file browser
     And user of browser checks "Incremental" toggle in modal "Create Archive"
     Then user of browser sees that base archive name in Create Archive modal is the same as latest created archive name
 
+
   Scenario: User creates incremental archive that has chosen base archive
-     # create dataset
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
-    And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser clicks on menu for "dir4" directory in file browser
-    And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
-
-    And user of browser clicks Datasets of "space1" in the sidebar
-    And user of browser sees dataset browser in datasets tab in Oneprovider page
-
-    # create archive
-    And user of browser clicks on menu for "dir4" dataset in dataset browser
-    And user of browser clicks "Create archive" option in data row menu in dataset browser
-    And user of browser writes "first archive" into description text field
-    And user of browser clicks on "Create" button in modal "Create Archive"
+    When user of browser creates dataset for item "dir4" in "space1"
+    And user of browser creates archive for item "dir4" in "space1" with following configuration:
+          description: first_archive
+          layout: plain
 
     And user of browser clicks on 1 in "dir4" Archives
     And user of browser sees archive file browser in archives tab in Oneprovider page
@@ -537,46 +303,20 @@ Scenario: User sees BagIt metadata files and directory tree in „data” direct
 
 
   Scenario: User sees tag DIP after creating Include DIP archive
-    # create dataset
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
-    And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser clicks on menu for "dir1" directory in file browser
-    And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
-
-    #create Include DIP archive
-    And user of browser clicks Datasets of "space1" in the sidebar
-    And user of browser sees dataset browser in datasets tab in Oneprovider page
-    And user of browser clicks on menu for "dir1" dataset in dataset browser
-    And user of browser clicks "Create archive" option in data row menu in dataset browser
-    And user of browser checks "Include DIP" toggle in modal "Create Archive"
-    And user of browser clicks on "Create" button in modal "Create Archive"
-
+    When user of browser creates dataset for item "dir1" in "space1"
+    And user of browser creates archive for item "dir1" in "space1" with following configuration:
+          layout: plain
+          include DIP: True
     And user of browser clicks on 1 in "dir1" Archives
     And user of browser sees archive file browser in archives tab in Oneprovider page
     Then user of browser sees DIP tag for latest created archive
 
 
   Scenario: User sees directory tree in DIP tab in archive browser after creating Include DIP archive
-    # create dataset
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
-    And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser clicks on menu for "dir1" directory in file browser
-    And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
-
-    # create Include DIP archive
-    And user of browser clicks Datasets of "space1" in the sidebar
-    And user of browser sees dataset browser in datasets tab in Oneprovider page
-    And user of browser clicks on menu for "dir1" dataset in dataset browser
-    And user of browser clicks "Create archive" option in data row menu in dataset browser
-    And user of browser checks "Include DIP" toggle in modal "Create Archive"
-    And user of browser clicks on "Create" button in modal "Create Archive"
-
+    When user of browser creates dataset for item "dir1" in "space1"
+    And user of browser creates archive for item "dir1" in "space1" with following configuration:
+          layout: plain
+          include DIP: True
     And user of browser clicks on 1 in "dir1" Archives
     And user of browser sees archive file browser in archives tab in Oneprovider page
     And user of browser double clicks on 1 archive
@@ -589,25 +329,11 @@ Scenario: User sees BagIt metadata files and directory tree in „data” direct
                    - file1
 
 
-Scenario: User sees BagIt metadata files and directory tree in AIP tab and directory tree in DIP tab in archive browser after creating BagIt and Include DIP archive
-      # create dataset
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
-    And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser clicks on menu for "dir1" directory in file browser
-    And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
-
-    #create BagIt and Include DIP archive
-    And user of browser clicks Datasets of "space1" in the sidebar
-    And user of browser sees dataset browser in datasets tab in Oneprovider page
-    And user of browser clicks on menu for "dir1" dataset in dataset browser
-    And user of browser clicks "Create archive" option in data row menu in dataset browser
-    And user of browser clicks on "BagIt" button in modal "Create Archive"
-    And user of browser checks "Include DIP" toggle in modal "Create Archive"
-    And user of browser clicks on "Create" button in modal "Create Archive"
-
+  Scenario: User sees BagIt metadata files and directory tree in AIP tab and directory tree in DIP tab in archive browser after creating BagIt and Include DIP archive
+    When user of browser creates dataset for item "dir1" in "space1"
+    And user of browser creates archive for item "dir1" in "space1" with following configuration:
+              layout: BagIt
+              include DIP: True
     And user of browser clicks on 1 in "dir1" Archives
     And user of browser sees archive file browser in archives tab in Oneprovider page
     And user of browser double clicks on 1 archive

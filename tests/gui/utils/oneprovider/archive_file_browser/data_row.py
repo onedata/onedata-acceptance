@@ -18,7 +18,7 @@ class DataRow(PageObject):
     size = Label('.fb-table-col-size .file-item-text')
     state = Label('.fb-table-col-state .file-item-text')
     bagit_tag = WebElement('.archive-bagit-tag')
-    symlink_tag = WebElement('.one-icon-tag-circle')
+    symlink_tag = WebElement('.fb-table-row-symlink .one-icon-tag-circle')
     hardlink_tag = WebElement('.file-status-hardlinks')
     dip_tag = WebElement('.archive-dip-tag')
     base_archive = Label('.base-archive-name')

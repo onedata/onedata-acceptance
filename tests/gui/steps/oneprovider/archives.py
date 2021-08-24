@@ -34,9 +34,10 @@ def click_on_number_in_archives(browser_id, tmp_memory, name):
 
 
 @wt(parsers.parse('user of {browser_id} writes "{text}" into description'
-                  ' text field'))
+                  ' text field in create archive modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def write_description(selenium, browser_id, modals, text):
+def write_description_in_create_archive_modal(selenium, browser_id, modals,
+                                              text):
     driver = selenium[browser_id]
     modals(driver).create_archive.description = text
 

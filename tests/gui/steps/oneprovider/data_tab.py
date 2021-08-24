@@ -117,15 +117,13 @@ def assert_btn_is_not_in_file_browser_menu_bar(selenium, browser_id, btn_list,
 def change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, browser_id, path,
                                                    op_container, which_browser
                                                    ='file browser'):
-    archive = False
-    if which_browser == 'archive file browser':
-        archive = True
+    breadcrumbs = getattr(op_container(selenium[browser_id]),
+                          transform(which_browser)).breadcrumbs
+    archive = which_browser == 'archive file browser'
     if path == 'home':
-        (getattr(op_container(selenium[browser_id]), transform(which_browser))
-         .breadcrumbs.home())
+        breadcrumbs.home()
     else:
-        (getattr(op_container(selenium[browser_id]), transform(which_browser))
-         .breadcrumbs.chdir(path, archive))
+        breadcrumbs.chdir(path, archive)
 
 
 @wt(parsers.parse('user of {browser_id} sees that current working directory '
