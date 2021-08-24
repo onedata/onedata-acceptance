@@ -180,7 +180,7 @@ Feature: Oneprovider POSIX privileges GUI tests
   Scenario Outline: User fails to change <item_type> permissions because of lack in privileges (POSIX)
     When user of space_owner_browser sets <name_of_item> POSIX 553 privileges in "space1"
 
-  # Fail to change file permissions
+    # Fail to change file permissions
     And user of browser_user1 opens file browser for "space1" space
     And user of browser_user1 clicks on menu for "<name_of_item>" <item_type> in file browser
     And user of browser_user1 clicks "Permissions" option in data row menu in file browser
