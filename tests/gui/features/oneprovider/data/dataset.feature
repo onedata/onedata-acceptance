@@ -239,5 +239,5 @@ Feature: Basic dataset operations
     And user of browser double clicks on item named "dir2" in file browser
 
     And user of browser clicks on menu for "dir3" directory in file browser
-    And user of browser cannot click "Delete" option in data row menu in file browser
+    Then user of browser cannot click "Delete" option in data row menu in file browser
 
