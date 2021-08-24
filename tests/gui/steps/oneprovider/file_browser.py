@@ -16,6 +16,8 @@ from tests.gui.steps.modal import click_modal_button
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import wt, parsers
+from tests.gui.steps.oneprovider.browser import (
+    assert_status_tag_for_file_in_browser)
 
 
 @wt(parsers.parse('user of {browser_id} sees "{msg}" '
@@ -40,25 +42,14 @@ def assert_not_status_tag_for_file_in_file_browser(browser_id, status_type,
 
 
 @wt(parsers.parse('user of {browser_id} sees {status_type} '
-                  'status tag for "{item_name}" in file browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_status_tag_for_file_in_file_browser(browser_id, status_type,
-                                               item_name, tmp_memory):
-    browser = tmp_memory[browser_id]['file_browser']
-    err_msg = f'{status_type} tag for {item_name} in file browser not visible'
-    assert browser.data[item_name].is_tag_visible(
-        transform(status_type)), err_msg
-
-
-@wt(parsers.parse('user of {browser_id} sees {status_type} '
                   'status tag with "{text}" text for "{item_name}" '
                   'in file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_status_tag_text_for_file_in_file_browser(browser_id, status_type,
                                                     text, item_name,
                                                     tmp_memory):
-    assert_status_tag_for_file_in_file_browser(browser_id, status_type,
-                                               item_name, tmp_memory)
+    assert_status_tag_for_file_in_browser(browser_id, status_type,
+                                          item_name, tmp_memory)
     browser = tmp_memory[browser_id]['file_browser']
     actual_text = browser.data[item_name].get_tag_text(transform(status_type))
     err_msg = (f'{status_type} tag for {item_name} in file browser has text '
@@ -344,7 +335,7 @@ def assert_num_of_hardlinks_in_file_dets_tab_name_modal(selenium, browser_id,
                                                         number, modals):
     name = modals(selenium[browser_id]).file_details.hardlinks_tab.tab_name
     actual_num = name.split()[-1].strip('(').strip(')')
-    assert number == actual_num, (f'Expected {number}, got {actual_num} in '
+    assert number == actual_num, (f'Expected {number}, got {actual_num} in ' 
                                   f'hardlinks tab name')
 
 
@@ -395,3 +386,4 @@ def assert_property_in_symlink_dets_modal(selenium, browser_id, link_property,
                                       browser_id)
     assert actual_value == value, (f'{link_property} has {actual_value} '
                                    f'not expected {value}')
+
