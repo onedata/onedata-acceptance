@@ -615,8 +615,7 @@ def assert_error_detail_text_spaces(selenium, browser_id, oz_page, text):
 
 
 @wt(parsers.parse('user of {browser_id} sees that provider "{provider1}" '
-                  'is on eastern side while provider "{provider2}" is on'
-                  ' western side'))
+                  'is placed east of "{oneprovider-2}" on world map'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_two_providers_places(selenium, browser_id, oz_page, hosts,
                                provider1, provider2):
@@ -634,7 +633,5 @@ def check_two_providers_places(selenium, browser_id, oz_page, hosts,
 
     # the higher value of position the further on the west provider appears
     assert provider1_position > provider2_position, (f'Provider "{provider1}" '
-                                                     f'appears on the western '
-                                                     f'side while Provider "'
-                                                     f'{provider2}" appears '
-                                                     f'on the eastern')
+                                                     f'appears west of provider'
+                                                     f' "{provider2}"')

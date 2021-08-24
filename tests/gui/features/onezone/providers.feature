@@ -81,4 +81,4 @@ Feature: Basic management of providers in Onezone GUI
     And user of browser clicks Providers of "space1" in the sidebar
     And user of browser sees "oneprovider-1" is on the providers list
     And user of browser sees "oneprovider-2" is on the providers list
-    Then user of browser sees that provider "oneprovider-1" is on eastern side while provider "oneprovider-2" is on western side
+    Then user of browser sees that provider "oneprovider-1" is placed east of "oneprovider-2" on world map
