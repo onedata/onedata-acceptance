@@ -46,7 +46,8 @@ def assert_status_tag_for_file_in_file_browser(browser_id, status_type,
                                                item_name, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
     err_msg = f'{status_type} tag for {item_name} in file browser not visible'
-    assert browser.data[item_name].is_tag_visible(transform(status_type)), err_msg
+    assert browser.data[item_name].is_tag_visible(
+        transform(status_type)), err_msg
 
 
 @wt(parsers.parse('user of {browser_id} sees {status_type} '
@@ -301,9 +302,7 @@ def confirm_rename_directory(selenium, browser_id, option, modals):
 
 
 @wt(parsers.parse('user of {browser_id} clicks on menu '
-                  'for "{item_name}" directory in file browser'))
-@wt(parsers.parse('user of {browser_id} clicks on menu '
-                  'for "{item_name}" file in file browser'))
+                  'for "{item_name}" {type} in file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_menu_for_elem_in_file_browser(browser_id, item_name, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
@@ -345,7 +344,7 @@ def assert_num_of_hardlinks_in_file_dets_tab_name_modal(selenium, browser_id,
                                                         number, modals):
     name = modals(selenium[browser_id]).file_details.hardlinks_tab.tab_name
     actual_num = name.split()[-1].strip('(').strip(')')
-    assert number == actual_num, (f'Expected {number}, got {actual_num} in ' 
+    assert number == actual_num, (f'Expected {number}, got {actual_num} in '
                                   f'hardlinks tab name')
 
 
@@ -396,4 +395,3 @@ def assert_property_in_symlink_dets_modal(selenium, browser_id, link_property,
                                       browser_id)
     assert actual_value == value, (f'{link_property} has {actual_value} '
                                    f'not expected {value}')
-
