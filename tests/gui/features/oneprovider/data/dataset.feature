@@ -171,15 +171,7 @@ Feature: Basic dataset operations
 
 
   Scenario: User sees dataset in attached tab after reattaching detached dataset
-    # create dataset
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
-    And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser clicks on menu for "dir1" directory in file browser
-    And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
-
+    When user of browser creates dataset for item "dir1" in "space1"
     And user of browser clicks Datasets of "space1" in the sidebar
     And user of browser sees dataset browser in datasets tab in Oneprovider page
 
@@ -199,15 +191,7 @@ Feature: Basic dataset operations
 
 
   Scenario: User fails to reattach dataset after deleting directory
-    # create dataset
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
-    And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser clicks on menu for "dir1" directory in file browser
-    And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
-
+    When user of browser creates dataset for item "dir1" in "space1"
     And user of browser clicks Datasets of "space1" in the sidebar
     And user of browser sees dataset browser in datasets tab in Oneprovider page
 
@@ -233,14 +217,7 @@ Feature: Basic dataset operations
     Then user of browser sees that error modal with text "Changing some dataset(s) state failed!" appeared
 
   Scenario: User sees dataset in detached tab after deleting directory
-    # create dataset
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
-    And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser clicks on menu for "dir1" directory in file browser
-    And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
+    When user of browser creates dataset for item "dir1" in "space1"
 
     # delete directory
     And user of browser clicks on menu for "dir1" directory in file browser
@@ -250,18 +227,13 @@ Feature: Basic dataset operations
     And user of browser clicks Datasets of "space1" in the sidebar
     And user of browser clicks on detached view mode on dataset browser page
     And user of browser sees dataset browser in datasets tab in Oneprovider page
-#    Then user of browser sees item(s) named "dir1" in dataset browser
-#  czeka na poprawki Staszka
+    Then user of browser sees item(s) named "dir1" in dataset browser
+
 
   Scenario: User fails to delete child directory after marking parent directory dataset data write protection
-    # create dataset
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
-    And user of browser sees file browser in files tab in Oneprovider page
+    When user of browser creates dataset for item "dir2" in "space1"
     And user of browser clicks on menu for "dir2" directory in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this file as dataset toggle in Datasets modal
-
     And user of browser click data write protection toggle in Datasets modal
     And user of browser clicks on "Close" button in modal "Datasets"
     And user of browser double clicks on item named "dir2" in file browser
