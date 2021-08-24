@@ -509,16 +509,20 @@ def get_invitation_token(selenium, browser_id, group, who, oz_page, tmp_memory,
 def set_privileges_in_members_subpage(selenium, browser_id, member_name,
                                       member_type, where, config, onepanel,
                                       oz_page):
-    option = 'Save'
-    member_type_new = member_type + 's'
-
-    privileges = yaml.load(config)
-    tree = get_privilege_tree(selenium, browser_id, onepanel, oz_page, where,
-                              member_type_new, member_name)
-    tree.set_privileges(privileges)
-    click_button_on_element_header_in_members(selenium, browser_id, option,
-                                              oz_page, where, member_name,
-                                              member_type, onepanel)
+    try:
+        assert_privileges_in_members_subpage(selenium, browser_id, member_name,
+                                             member_type, where, config,
+                                             onepanel, oz_page)
+    except AssertionError:
+        option = 'Save'
+        member_type_new = member_type + 's'
+        privileges = yaml.load(config)
+        tree = get_privilege_tree(selenium, browser_id, onepanel, oz_page, where,
+                                  member_type_new, member_name)
+        tree.set_privileges(privileges)
+        click_button_on_element_header_in_members(selenium, browser_id, option,
+                                                  oz_page, where, member_name,
+                                                  member_type, onepanel)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sets following privileges for '
