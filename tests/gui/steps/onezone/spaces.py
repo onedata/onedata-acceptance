@@ -633,8 +633,8 @@ def check_two_providers_places(selenium, browser_id, oz_page, hosts,
         provider2_name, driver)
 
     # the higher value of position the further on the west provider appears
-    if provider1_position > provider2_position:
-        assert True
-    else:
-        assert False, (f'Provider "{provider1}" appears on the western side '
-                       f'while Provider "{provider2}" appears on the eastern')
+    assert provider1_position > provider2_position, (f'Provider "{provider1}" '
+                                                     f'appears on the western '
+                                                     f'side while Provider "'
+                                                     f'{provider2}" appears '
+                                                     f'on the eastern')

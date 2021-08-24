@@ -102,7 +102,7 @@ class ProvidersMap(Element):
 
         raise RuntimeError(f'Provider {provider_name} was not found on the map')
 
-    def check_providers_horizontal_position(self, provider_name, driver):
+    def get_provider_horizontal_position(self, provider_name, driver):
         for prov in self.providers:
             ActionChains(driver).move_to_element(prov).perform()
             name = driver.find_element_by_css_selector('.tooltip-inner').text

@@ -75,7 +75,7 @@ Feature: Basic management of providers in Onezone GUI
     And provider named "oneprovider-1" is unpaused
 
 
-  Scenario: Provider "circles" can be placed on map according to their position (check if two providers are places west/east)
+  Scenario: Oneprovider-1 circle is placed east of oneprovider-2 circle on world map
     When user of browser clicks on Data in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Providers of "space1" in the sidebar
