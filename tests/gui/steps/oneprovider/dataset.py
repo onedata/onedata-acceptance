@@ -83,8 +83,8 @@ def click_menu_for_elem_in_dataset_browser(browser_id, item_name, tmp_memory):
     browser.data[item_name].menu_button()
 
 
-@wt(parsers.parse('user of {browser_id} clicks Mark this file as dataset toggle'
-                  ' in Datasets modal'))
+@wt(parsers.re('user of (?P<browser_id>.*) clicks Mark this (directory|file) '
+               'as dataset toggle in Datasets modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_mark_file_as_dataset_toggle(browser_id, selenium, modals):
     driver = selenium[browser_id]
@@ -116,3 +116,15 @@ def fail_to_mark_file_as_dataset_toggle(browser_id, selenium, modals):
     err_msg = 'user does not fail to create dataset'
     assert not modals(driver).datasets.dataset_toggle.check(), err_msg
 
+
+@wt(parsers.parse('user of {browser_id} sees "{text}" label in Datasets modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def see_protected_tag_label_in_dataset_modal(browser_id, selenium, modals,
+                                             text):
+    driver = selenium[browser_id]
+    error = f'Text: {text} not found in label '
+
+    if 'metadata' in text:
+        assert text in modals(driver).datasets.metadata_protected_label, error
+    else:
+        assert text in modals(driver).datasets.data_protected_label, error
