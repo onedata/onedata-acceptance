@@ -51,6 +51,7 @@ from .create_archive import CreateArchive
 from .remove_selected_dataset import RemoveSelectedDataset
 from .detach_dataset import DetachDataset
 from .write_protection import WriteProtection
+from .reattach_dataset import ReattachDataset
 
 
 class Modals(object):
@@ -76,6 +77,7 @@ class Modals(object):
     leave_space = WebItem('.modal-dialog',
                           cls=LeaveSpaceModal)
     leave_harvester = WebItem('.modal-dialog', cls=LeaveElementModal)
+    leave_inventory = WebItem('.modal-dialog', cls=LeaveElementModal)
     provider_popover = WebItem('.webui-popover .provider-place-drop',
                                cls=ProviderPopover)
     remove_member = WebItem('.remove-relation-modal.modal.in .modal-dialog',
@@ -117,6 +119,7 @@ class Modals(object):
     remove_token = WebItem('.modal-dialog', cls=RemoveModal)
     remove_harvester = WebItem('.modal-dialog', cls=RemoveModal)
     remove_space = WebItem('.modal-dialog', cls=RemoveModal)
+    remove_inventory = WebItem('.modal-dialog', cls=RemoveModal)
     rest_api_modal = WebItem('.modal-dialog', cls=RESTApiModal)
     clean_up_obsolete_tokens = WebItem('.modal-dialog',
                                        cls=CleanUpObsoleteTokensModal)
@@ -133,6 +136,7 @@ class Modals(object):
                                       cls=RemoveSelectedDataset)
     detach_dataset = WebItem('.modal-dialog', cls=DetachDataset)
     write_protection = WebItem('.modal-dialog', cls=WriteProtection)
+    reattach_dataset = WebItem('.modal-dialog', cls=ReattachDataset)
 
     def __init__(self, driver):
         self.driver = driver

@@ -172,7 +172,79 @@ Feature: Basic dataset operations
               - dir4
 
 
- Scenario: User sees data protection tag in dataset modal for hardlink of data protected file
+  Scenario: User sees dataset in attached tab after reattaching detached dataset
+    When user of browser creates dataset for item "dir1" in "space1"
+    And user of browser clicks Datasets of "space1" in the sidebar
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
+
+    # detach dataset
+    And user of browser clicks on menu for "dir1" dataset in dataset browser
+    And user of browser clicks "Detach" option in data row menu in dataset browser
+    And user of browser clicks on "Proceed" button in modal "Detach Dataset"
+
+    And user of browser clicks on detached view mode on dataset browser page
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
+    And user of browser clicks on menu for "dir1" dataset in dataset browser
+    And user of browser clicks "Reattach" option in data row menu in dataset browser
+    And user of browser clicks on "Proceed" button in modal "Reattach Dataset"
+    Then user of browser clicks on attached view mode on dataset browser page
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
+    And user of browser sees item(s) named "dir1" in dataset browser
+
+
+  Scenario: User fails to reattach dataset after deleting directory
+    When user of browser creates dataset for item "dir1" in "space1"
+    And user of browser clicks Datasets of "space1" in the sidebar
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
+
+    # detach dataset
+    And user of browser clicks on menu for "dir1" dataset in dataset browser
+    And user of browser clicks "Detach" option in data row menu in dataset browser
+    And user of browser clicks on "Proceed" button in modal "Detach Dataset"
+
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+
+    # delete directory
+    And user of browser clicks on menu for "dir1" directory in file browser
+    And user of browser clicks "Delete" option in data row menu in file browser
+    And user of browser clicks on "Yes" button in modal "Delete modal"
+
+    And user of browser clicks Datasets of "space1" in the sidebar
+    And user of browser clicks on detached view mode on dataset browser page
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
+    And user of browser clicks on menu for "dir1" dataset in dataset browser
+    And user of browser clicks "Reattach" option in data row menu in dataset browser
+    And user of browser clicks on "Proceed" button in modal "Reattach Dataset"
+    Then user of browser sees that error modal with text "Changing some dataset(s) state failed!" appeared
+
+  Scenario: User sees dataset in detached tab after deleting directory
+    When user of browser creates dataset for item "dir1" in "space1"
+
+    # delete directory
+    And user of browser clicks on menu for "dir1" directory in file browser
+    And user of browser clicks "Delete" option in data row menu in file browser
+    And user of browser clicks on "Yes" button in modal "Delete modal"
+
+    And user of browser clicks Datasets of "space1" in the sidebar
+    And user of browser clicks on detached view mode on dataset browser page
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
+    Then user of browser sees item(s) named "dir1" in dataset browser
+
+
+  Scenario: User fails to delete child directory after marking parent directory dataset data write protection
+    When user of browser creates dataset for item "dir2" in "space1"
+    And user of browser clicks on menu for "dir2" directory in file browser
+    And user of browser clicks "Datasets" option in data row menu in file browser
+    And user of browser click data write protection toggle in Datasets modal
+    And user of browser clicks on "Close" button in modal "Datasets"
+    And user of browser double clicks on item named "dir2" in file browser
+
+    And user of browser clicks on menu for "dir3" directory in file browser
+    Then user of browser cannot click "Delete" option in data row menu in file browser
+
+
+  Scenario: User sees data protection tag in dataset modal for hardlink of data protected file
     # create hardlink
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar
