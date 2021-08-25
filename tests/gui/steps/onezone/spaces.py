@@ -614,8 +614,8 @@ def assert_error_detail_text_spaces(selenium, browser_id, oz_page, text):
     assert text in page.error_header, f'page with text "{text}" not found'
 
 
-@wt(parsers.parse('user of {browser_id} sees that provider "{provider1}" '
-                  'is placed east of "{oneprovider-2}" on world map'))
+@wt(parsers.parse('user of {browser_id} sees that provider "{provider1}" is '
+                  'placed east of "{provider2}" on world map'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_two_providers_places(selenium, browser_id, oz_page, hosts,
                                provider1, provider2):
@@ -626,9 +626,9 @@ def check_two_providers_places(selenium, browser_id, oz_page, hosts,
     provider1_name = hosts[provider1]['name']
     provider2_name = hosts[provider2]['name']
 
-    provider1_position = current_page.map.check_providers_horizontal_position(
+    provider1_position = current_page.map.get_provider_horizontal_position(
         provider1_name, driver)
-    provider2_position = current_page.map.check_providers_horizontal_position(
+    provider2_position = current_page.map.get_provider_horizontal_position(
         provider2_name, driver)
 
     # the higher value of position the further on the west provider appears
