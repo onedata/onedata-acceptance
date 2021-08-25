@@ -215,7 +215,8 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
     And user of browser2 clicks on "Invite group using token" button in groups list menu in "group5" group members view
     Then user of browser2 sees This resource could not be loaded alert in "Invite using token" modal
 
-  Scenario: User successfully removes other user from given group if he has user management privileges
+
+  Scenario: User successfully removes other user from given group if he has remove user privileges
     When user of browser2 opens group "group7" members subpage
     And user of browser2 clicks "user2" user in "group7" group members users list
     And user of browser2 sees privileges for "user2" user in group members subpage
@@ -330,7 +331,7 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
     Then user of browser2 sees that error modal with text "insufficient privileges" appeared
 
 
-  Scenario: User successfully removes subgroup if he has group hierarchy management privileges
+  Scenario: User successfully removes subgroup if he has remove child group privileges
     When user of browser1 opens group "group5" members subpage
     And user of browser1 clicks "user2" user in "group5" group members users list
     And user of browser1 sees privileges for "user2" user in group members subpage
