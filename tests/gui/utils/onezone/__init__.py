@@ -21,6 +21,7 @@ from .discovery_page import DiscoveryPage
 from .clusters_page import ClustersPage
 from .manage_account_page import ManageAccountPage
 from .uploads_page import UploadsPage
+from .automation_page import AutomationPage
 
 
 class OZLoggedIn(object):
@@ -38,6 +39,7 @@ class OZLoggedIn(object):
         'groups': GroupsPage,
         'tokens': TokensPage,
         'discovery': DiscoveryPage,
+        'automation': AutomationPage,
         'clusters': ClustersPage
     }
 
