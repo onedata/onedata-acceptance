@@ -109,3 +109,15 @@ def assert_inventory_exists(selenium, browser_ids, oz_page, text):
         err_msg = oz_page(selenium[browser_id])['automation'].privileges_err_msg
 
         assert text in err_msg, f'Error message: {text} not found'
+
+
+@wt(parsers.parse('user of {browser_id} clicks on "Upload(json)" button from menu bar'))
+@repeat_failed(timeout=2*WAIT_BACKEND)
+def upload_workflow_as_json(selenium, browser_id, dir_path,tmpdir, op_container):
+    driver = selenium[browser_id]
+    directory = tmpdir.join(browser_id, *dir_path.split('/'))
+    if directory.isdir():
+        op_container(driver).file_browser.upload_files('\n'.join(
+            str(item) for item in directory.listdir() if item.isfile()))
+    else:
+        raise RuntimeError('directory {} does not exist'.format(str(directory)))
