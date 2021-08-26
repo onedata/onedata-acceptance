@@ -41,6 +41,10 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
             owner: user1
             users:
                 - user2
+          space3:
+            owner: user1
+            groups:
+              - group5
 
     And users opened [browser1, browser2] browsers' windows
     And user of [browser1, browser2] opened [Onezone, Onezone] page
@@ -359,16 +363,19 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
 
 
   Scenario: User successfully leaves group from space if he has space management privileges
-    When user of browser1 opens group "group5" members subpage
+    When user of browser2 clicks "space3" on the spaces list in the sidebar
+    And user of browser2 sees "space3" label on overview page
+
+    And user of browser1 opens group "group5" members subpage
     And user of browser1 clicks "user2" user in "group5" group members users list
     And user of browser1 sees privileges for "user2" user in group members subpage
     And user of browser1 clicks on "user2" users checkbox
     And user of browser1 clicks on bulk edit button
     And user of browser1 sets following privileges on modal:
-          Space management:
+          Group management:
+            granted: True
+          Group hierarchy management:
             granted: True
 
-    And user of browser2 clicks "space2" on the spaces list in the sidebar
-    And user of browser2 clicks on "Leave" button in space "space2" menu
-    And user of browser2 clicks on Leave button
-    Then user of browser2 sees that "space2" has disappeared on the spaces list in the sidebar
+    And user of browser2 leaves group "group5"
+    Then user of browser2 sees that "space3" has disappeared on the spaces list in the sidebar
