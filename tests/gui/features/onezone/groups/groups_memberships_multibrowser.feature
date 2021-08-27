@@ -362,7 +362,7 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
     Then user of browser2 does not see "base_group" as a child of "parent_group" in hierarchy subpage
 
 
-  Scenario: User successfully leaves group from space if he has space management privileges
+  Scenario: User successfully leaves group, and cannot view previously accessed space
     When user of browser2 clicks "space3" on the spaces list in the sidebar
     And user of browser2 sees "space3" label on overview page
 
