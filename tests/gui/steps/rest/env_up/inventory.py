@@ -17,7 +17,8 @@ from tests.utils.rest_utils import (http_post, get_zone_rest_path, http_put)
 
 @given(parsers.parse('initial inventories configuration in "{zone_name}" '
                      'Onezone service:\n{config}'))
-def inventories_creation(config, hosts, users, groups, zone_name):
+def inventories_creation(config, admin_credentials, hosts,
+                         users, groups, zone_name):
     """Create and configure inventories according to given config.
 
     Config format given in yaml is as follow:
@@ -45,17 +46,22 @@ def inventories_creation(config, hosts, users, groups, zone_name):
         inventory2:
             owner: user2
     """
-    _create_and_configure_inventories(config, hosts, users, zone_name, users,
-                                      groups)
+    _create_and_configure_inventories(config, admin_credentials,
+                                      hosts, users, groups
+                                      , zone_name)
 
 
-def _create_and_configure_inventories(config, hosts, users, zone_name):
+def _create_and_configure_inventories(config, admin_credentials,
+                                      hosts, users_db, groups_db,
+                                      zone_name):
     zone_hostname = hosts[zone_name]['hostname']
+    admin_credentials.token = admin_credentials.create_token(
+        hosts['onezone']['ip'])
 
     config = yaml.load(config)
 
     for inventory_name, description in config.items():
-        owner = users[description['owner']]
+        owner = users_db[description['owner']]
         users_to_add = description.get('users', [])
 
         inventory_id = _create_inventory(zone_hostname, owner.username,
@@ -104,7 +110,7 @@ def _add_user_to_inventory(zone_hostname, admin_username, admin_password,
         data = None
 
     http_put(ip=zone_hostname, port=OZ_REST_PORT,
-             path=get_zone_rest_path('spaces', inventory_id, 'users', user_id),
+             path=get_zone_rest_path('atm_inventories', inventory_id, 'users', user_id),
              auth=(admin_username, admin_password), data=data)
 
 
@@ -132,5 +138,6 @@ def _add_group_to_inventory(zone_hostname, admin_username, admin_password,
         data = None
 
     http_put(ip=zone_hostname, port=OZ_REST_PORT,
-             path=get_zone_rest_path('spaces', inventory_id, 'groups', group_id),
+             path=get_zone_rest_path('atm_inventories', inventory_id, 'groups',
+                                     group_id),
              auth=(admin_username, admin_password), data=data)

@@ -22,6 +22,10 @@ Feature: Management of inventories members
     And initial inventories configuration in "onezone" Onezone service:
         inventory1:
             owner: space-owner-user
+            users:
+              - user1
+            groups:
+              - group2
 
     And users opened [space_owner_browser, browser1] browsers' windows
     And users of [space_owner_browser, browser1] opened [Onezone, Onezone] page
@@ -67,16 +71,7 @@ Feature: Management of inventories members
 
   Scenario: User fails to see inventory without view inventory privilege
     When user of space_owner_browser clicks on Automation in the main menu
-
-    # Space-owner-user generates invitation token
     And user of space_owner_browser opens inventory "inventory1" members subpage
-    And user of space_owner_browser clicks on "Invite user using token" button in users list menu in "inventory1" automation members view
-    And user of space_owner_browser copies invitation token from modal
-    And user of space_owner_browser closes "Invite using token" modal
-
-    # Space-owner-user adds group1 to view inventory
-    And user of space_owner_browser sends copied token to user of browser1
-    And user of browser1 joins to inventory using copied token
 
     # Space-owner-user changes privileges for user1
     And user of space_owner_browser clicks "user1" user in "inventory1" automation members users list
@@ -87,21 +82,13 @@ Feature: Management of inventories members
               View inventory: False
 
     # User1 can not view inventory1 content
+    And user of browser1 opens inventory "inventory1" main subpage
     Then user of browser1 sees "Insufficient privileges to access this resource" label in "inventory1" main page
 
 
   Scenario: User successfully renames inventory with modify inventory privilege
     When user of space_owner_browser clicks on Automation in the main menu
-
-    # Space-owner-user generates invitation token
     And user of space_owner_browser opens inventory "inventory1" members subpage
-    And user of space_owner_browser clicks on "Invite user using token" button in users list menu in "inventory1" automation members view
-    And user of space_owner_browser copies invitation token from modal
-    And user of space_owner_browser closes "Invite using token" modal
-
-    # Space-owner-user adds group1 to view inventory
-    And user of space_owner_browser sends copied token to user of browser1
-    And user of browser1 joins to inventory using copied token
 
     # User1 fails to rename inventory
     And user of browser1 clicks on "Rename" button in inventory "inventory1" menu in the sidebar
@@ -126,16 +113,7 @@ Feature: Management of inventories members
 
   Scenario: User successfully removes inventory with remove inventory privilege
     When user of space_owner_browser clicks on Automation in the main menu
-
-    # Space-owner-user generates invitation token
     And user of space_owner_browser opens inventory "inventory1" members subpage
-    And user of space_owner_browser clicks on "Invite user using token" button in users list menu in "inventory1" automation members view
-    And user of space_owner_browser copies invitation token from modal
-    And user of space_owner_browser closes "Invite using token" modal
-
-    # Space-owner-user adds group1 to view inventory
-    And user of space_owner_browser sends copied token to user of browser1
-    And user of browser1 joins to inventory using copied token
 
     # Space-owner-user changes privileges for user1
     And user of space_owner_browser clicks "user1" user in "inventory1" automation members users list
@@ -154,16 +132,7 @@ Feature: Management of inventories members
 
   Scenario: User successfully views privileges with view privileges privilege
     When user of space_owner_browser clicks on Automation in the main menu
-
-    # Space-owner-user generates invitation token
     And user of space_owner_browser opens inventory "inventory1" members subpage
-    And user of space_owner_browser clicks on "Invite user using token" button in users list menu in "inventory1" automation members view
-    And user of space_owner_browser copies invitation token from modal
-    And user of space_owner_browser closes "Invite using token" modal
-
-    # Space-owner-user adds group1 to view inventory
-    And user of space_owner_browser sends copied token to user of browser1
-    And user of browser1 joins to inventory using copied token
 
     # Space-owner-user changes privileges for user1
     And user of space_owner_browser clicks "user1" user in "inventory1" automation members users list
@@ -181,16 +150,7 @@ Feature: Management of inventories members
 
   Scenario: User successfully sets privileges with set privileges privilege
     When user of space_owner_browser clicks on Automation in the main menu
-
-    # Space-owner-user generates invitation token
     And user of space_owner_browser opens inventory "inventory1" members subpage
-    And user of space_owner_browser clicks on "Invite user using token" button in users list menu in "inventory1" automation members view
-    And user of space_owner_browser copies invitation token from modal
-    And user of space_owner_browser closes "Invite using token" modal
-
-    # Space-owner-user adds group1 to view inventory
-    And user of space_owner_browser sends copied token to user of browser1
-    And user of browser1 joins to inventory using copied token
 
     # Space-owner-user changes privileges for user1
     And user of space_owner_browser clicks "user1" user in "inventory1" automation members users list
@@ -223,16 +183,7 @@ Feature: Management of inventories members
 
   Scenario: User successfully generates invitation token for user with add user privilege
     When user of space_owner_browser clicks on Automation in the main menu
-
-    # Space-owner-user generates invitation token
     And user of space_owner_browser opens inventory "inventory1" members subpage
-    And user of space_owner_browser clicks on "Invite user using token" button in users list menu in "inventory1" automation members view
-    And user of space_owner_browser copies invitation token from modal
-    And user of space_owner_browser closes "Invite using token" modal
-
-    # Space-owner-user adds group1 to view inventory
-    And user of space_owner_browser sends copied token to user of browser1
-    And user of browser1 joins to inventory using copied token
 
     # User1 fails to generate an ivnitation token
     And user of browser1 opens inventory "inventory1" members subpage
@@ -256,16 +207,7 @@ Feature: Management of inventories members
 
   Scenario: User successfully removes user from inventory with remove user privilege
     When user of space_owner_browser clicks on Automation in the main menu
-
-    # Space-owner-user generates invitation token
     And user of space_owner_browser opens inventory "inventory1" members subpage
-    And user of space_owner_browser clicks on "Invite user using token" button in users list menu in "inventory1" automation members view
-    And user of space_owner_browser copies invitation token from modal
-    And user of space_owner_browser closes "Invite using token" modal
-
-    # Space-owner-user adds group1 to view inventory
-    And user of space_owner_browser sends copied token to user of browser1
-    And user of browser1 joins to inventory using copied token
 
     # User1 fails to remove user
     And user of browser1 removes "space-owner-user" user from "inventory1" automation members
@@ -289,16 +231,7 @@ Feature: Management of inventories members
 
   Scenario: User successfully invites group to join inventory with add group privilege
     When user of space_owner_browser clicks on Automation in the main menu
-
-    # Space-owner-user generates invitation token
     And user of space_owner_browser opens inventory "inventory1" members subpage
-    And user of space_owner_browser clicks on "Invite user using token" button in users list menu in "inventory1" automation members view
-    And user of space_owner_browser copies invitation token from modal
-    And user of space_owner_browser closes "Invite using token" modal
-
-    # Space-owner-user adds group1 to view inventory
-    And user of space_owner_browser sends copied token to user of browser1
-    And user of browser1 joins to inventory using copied token
 
     # User1 fails to generate an ivnitation token
     And user of browser1 opens inventory "inventory1" members subpage
@@ -319,26 +252,8 @@ Feature: Management of inventories members
 
 
   Scenario: User successfully removes group from inventory with remove group privilege
-
-    # Space-owner-user gives user1 privilege for adding group to inventory
-    When user of space_owner_browser opens group "group2" members subpage
-    And user of space_owner_browser clicks "user1" user in "group2" group members users list
-    And user of space_owner_browser sets following privileges for "user1" user in group members subpage:
-          Automation inventory management:
-            granted: Partially
-            privilege subtypes:
-              Add automation inventory: True
-
-    # Space-owner-user generates invitation token
-    And user of space_owner_browser clicks on Automation in the main menu
+    When user of space_owner_browser clicks on Automation in the main menu
     And user of space_owner_browser opens inventory "inventory1" members subpage
-    And user of space_owner_browser clicks on "Invite group using token" button in groups list menu in "inventory1" automation members view
-    And user of space_owner_browser copies invitation token from modal
-    And user of space_owner_browser closes "Invite using token" modal
-
-    # Space-owner-user adds group1 to view inventory
-    And user of space_owner_browser sends copied token to user of browser1
-    And user of browser1 adds group "group2" to inventory using copied token
 
     # User1 fails to remove group
     And user of browser1 removes "group2" group from "inventory1" automation members
@@ -355,7 +270,7 @@ Feature: Management of inventories members
 
     # User1 removes group from inventory
     And user of browser1 removes "group2" group from "inventory1" automation members
-    Then user of browser1 does not see inventory "inventory1" on inventory list
+    And user of browser1 does not see group "group2" on groups list
 
 
 
