@@ -47,13 +47,11 @@ def inventories_creation(config, admin_credentials, hosts,
             owner: user2
     """
     _create_and_configure_inventories(config, admin_credentials,
-                                      hosts, users, groups
-                                      , zone_name)
+                                      hosts, users, groups, zone_name)
 
 
 def _create_and_configure_inventories(config, admin_credentials,
-                                      hosts, users_db, groups_db,
-                                      zone_name):
+                                      hosts, users_db, groups_db, zone_name):
     zone_hostname = hosts[zone_name]['hostname']
     admin_credentials.token = admin_credentials.create_token(
         hosts['onezone']['ip'])
@@ -65,8 +63,7 @@ def _create_and_configure_inventories(config, admin_credentials,
         users_to_add = description.get('users', [])
 
         inventory_id = _create_inventory(zone_hostname, owner.username,
-                                         owner.password,
-                                         inventory_name)
+                                         owner.password, inventory_name)
 
         _add_users_to_inventory(zone_hostname, admin_credentials, inventory_id,
                                 users_db, users_to_add)
@@ -89,54 +86,31 @@ def _create_inventory(zone_hostname, owner_username, owner_password,
 def _add_users_to_inventory(zone_hostname, admin_credentials, inventory_id,
                             users_db, users_to_add):
     for user in users_to_add:
-        try:
-            [(user, options)] = user.items()
-        except AttributeError:
-            privileges = None
-        else:
-            privileges = options['privileges']
-
         _add_user_to_inventory(zone_hostname, admin_credentials.username,
                                admin_credentials.password, inventory_id,
-                               users_db[user].id, privileges)
+                               users_db[user].id)
 
 
 def _add_user_to_inventory(zone_hostname, admin_username, admin_password,
-                           inventory_id, user_id, privileges):
-    if privileges:
-        data = json.dumps({'operation': 'set',
-                           'privileges': privileges})
-    else:
-        data = None
-
+                           inventory_id, user_id):
+    data = None
     http_put(ip=zone_hostname, port=OZ_REST_PORT,
-             path=get_zone_rest_path('atm_inventories', inventory_id, 'users', user_id),
+             path=get_zone_rest_path('atm_inventories', inventory_id, 'users',
+                                     user_id),
              auth=(admin_username, admin_password), data=data)
 
 
 def _add_groups_to_inventory(zone_hostname, admin_credentials, inventory_id,
                              groups_db, groups_to_add):
     for group in groups_to_add:
-        try:
-            [(group, options)] = group.items()
-        except AttributeError:
-            privileges = None
-        else:
-            privileges = options['privileges']
-
         _add_group_to_inventory(zone_hostname, admin_credentials.username,
                                 admin_credentials.password, inventory_id,
-                                groups_db[group], privileges)
+                                groups_db[group])
 
 
 def _add_group_to_inventory(zone_hostname, admin_username, admin_password,
-                            inventory_id, group_id, privileges):
-    if privileges:
-        data = json.dumps({'operation': 'set',
-                           'privileges': privileges})
-    else:
-        data = None
-
+                            inventory_id, group_id):
+    data = None
     http_put(ip=zone_hostname, port=OZ_REST_PORT,
              path=get_zone_rest_path('atm_inventories', inventory_id, 'groups',
                                      group_id),

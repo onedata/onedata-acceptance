@@ -26,6 +26,10 @@ Feature: Management of inventories members
               - user1
             groups:
               - group2
+        inventory2:
+            owner: space-owner-user
+            users:
+              - user1
 
     And users opened [space_owner_browser, browser1] browsers' windows
     And users of [space_owner_browser, browser1] opened [Onezone, Onezone] page
@@ -71,10 +75,10 @@ Feature: Management of inventories members
 
   Scenario: User fails to see inventory without view inventory privilege
     When user of space_owner_browser clicks on Automation in the main menu
-    And user of space_owner_browser opens inventory "inventory1" members subpage
+    And user of space_owner_browser opens inventory "inventory2" members subpage
 
     # Space-owner-user changes privileges for user1
-    And user of space_owner_browser clicks "user1" user in "inventory1" automation members users list
+    And user of space_owner_browser clicks "user1" user in "inventory2" automation members users list
     And user of space_owner_browser sets following privileges for "user1" user in automation members subpage:
           Inventory management:
             granted: Partially
@@ -82,8 +86,8 @@ Feature: Management of inventories members
               View inventory: False
 
     # User1 can not view inventory1 content
-    And user of browser1 opens inventory "inventory1" main subpage
-    Then user of browser1 sees "Insufficient privileges to access this resource" label in "inventory1" main page
+    And user of browser1 opens inventory "inventory2" main subpage
+    Then user of browser1 sees "Insufficient privileges to access this resource" label in "inventory2" main page
 
 
   Scenario: User successfully renames inventory with modify inventory privilege
@@ -171,7 +175,6 @@ Feature: Management of inventories members
               View privileges: True
               Set privileges: False
 
-#    And user of browser1 refreshes site
     And user of browser1 clicks "user1" user in "inventory1" automation members users list
     Then user of browser1 sees following privileges of "user1" user in automation members subpage:
           Inventory management:
@@ -207,26 +210,26 @@ Feature: Management of inventories members
 
   Scenario: User successfully removes user from inventory with remove user privilege
     When user of space_owner_browser clicks on Automation in the main menu
-    And user of space_owner_browser opens inventory "inventory1" members subpage
+    And user of space_owner_browser opens inventory "inventory2" members subpage
 
     # User1 fails to remove user
-    And user of browser1 removes "space-owner-user" user from "inventory1" automation members
+    And user of browser1 removes "space-owner-user" user from "inventory2" automation members
     And user of browser1 sees that error popup has appeared
     And user of browser1 clicks on "Close" button in modal "Error"
 
     # Space-owner-user changes privileges for user1
-    And user of space_owner_browser clicks "user1" user in "inventory1" automation members users list
+    And user of space_owner_browser clicks "user1" user in "inventory2" automation members users list
     And user of space_owner_browser sets following privileges for "user1" user in automation members subpage:
          User management:
             granted: Partially
             privilege subtypes:
               Remove user: True
 
-    And user of browser1 opens inventory "inventory1" members subpage
+    And user of browser1 opens inventory "inventory2" members subpage
 
     # User1 removes space-owner-user from inventory and space-owner can not view inventory1
-    Then user of browser1 removes "space-owner-user" user from "inventory1" automation members
-    And user of space_owner_browser does not see inventory "inventory1" on inventory list
+    Then user of browser1 removes "space-owner-user" user from "inventory2" automation members
+    And user of space_owner_browser does not see inventory "inventory2" on inventory list
 
 
   Scenario: User successfully invites group to join inventory with add group privilege
@@ -271,6 +274,3 @@ Feature: Management of inventories members
     # User1 removes group from inventory
     And user of browser1 removes "group2" group from "inventory1" automation members
     And user of browser1 does not see group "group2" on groups list
-
-
-
