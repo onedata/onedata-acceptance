@@ -9,7 +9,7 @@ __license__ = ("This software is released under the MIT license cited in "
 import time
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import transform, upload_file_path
 from tests.utils.bdd_utils import wt, parsers
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.utils import repeat_failed
@@ -111,13 +111,10 @@ def assert_inventory_exists(selenium, browser_ids, oz_page, text):
         assert text in err_msg, f'Error message: {text} not found'
 
 
-@wt(parsers.parse('user of {browser_id} clicks on "Upload(json)" button from menu bar'))
+@wt(parsers.parse('user of {browser_id} uses Upload(json) button from menu '
+                  'bar to upload workflow "{file_name}" to current dir '
+                  'without waiting for upload to finish'))
 @repeat_failed(timeout=2*WAIT_BACKEND)
-def upload_workflow_as_json(selenium, browser_id, dir_path,tmpdir, op_container):
+def upload_workflow_as_json(selenium, browser_id,file_name, oz_page):
     driver = selenium[browser_id]
-    directory = tmpdir.join(browser_id, *dir_path.split('/'))
-    if directory.isdir():
-        op_container(driver).file_browser.upload_files('\n'.join(
-            str(item) for item in directory.listdir() if item.isfile()))
-    else:
-        raise RuntimeError('directory {} does not exist'.format(str(directory)))
+    oz_page(driver)['automation'].upload_workflow(upload_file_path(file_name))
