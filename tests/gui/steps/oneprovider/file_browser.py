@@ -293,9 +293,7 @@ def confirm_rename_directory(selenium, browser_id, option, modals):
 
 
 @wt(parsers.parse('user of {browser_id} clicks on menu '
-                  'for "{item_name}" directory in file browser'))
-@wt(parsers.parse('user of {browser_id} clicks on menu '
-                  'for "{item_name}" file in file browser'))
+                  'for "{item_name}" {type} in file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_menu_for_elem_in_file_browser(browser_id, item_name, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
