@@ -125,25 +125,6 @@ Feature: Basic management of spaces privileges in Onezone GUI
     Then user of browser_user1 sees that error modal with text "insufficient privileges" appeared
 
 
-  Scenario: User fails to remove user from space without remove user privileges
-    When user of space_owner_browser clicks "space3" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Members of "space3" in the sidebar
-    And user of space_owner_browser clicks "user1" user in "space3" space members users list
-    And user of space_owner_browser sees following privileges of "user1" user in space members subpage:
-          User management:
-            granted: False
-
-    And user of browser_user1 clicks Members of "space3" in the sidebar
-    And user of browser_user1 clicks "user1" user in "space3" space members users list
-    And user of browser_user1 clicks show view expand button in space members subpage header
-    And user of browser_user1 clicks memberships view mode in space members subpage
-    And user of browser_user1 clicks "space-owner-user" user in "space3" space members users list
-    And user of browser_user1 clicks on "space-owner-user" member relation menu button to "space3" space
-    And user of browser_user1 clicks on "Remove relation" in space membership relation menu
-    And user of browser_user1 clicks on "Remove" button in modal "REMOVE MEMBER"
-    Then user of browser_user1 sees that error modal with text "insufficient privileges" appeared
-
-
   Scenario: Appropriate tabs are disabled after removing some of user privileges
     When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
     And user of space_owner_browser clicks Members of "space1" in the sidebar
@@ -306,7 +287,7 @@ Feature: Basic management of spaces privileges in Onezone GUI
     When user of space_owner_browser clicks "space2" on the spaces list in the sidebar
     And user of space_owner_browser clicks Members of "space2" in the sidebar
     And user of space_owner_browser clicks "user1" user in "space2" space members users list
-    And user of space_owner_browser sets following privileges for "user1" user in space members subpage when all other are granted:
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
           Space management:
             granted: Partially
             privilege subtypes:
@@ -324,7 +305,7 @@ Feature: Basic management of spaces privileges in Onezone GUI
     And user of space_owner_browser clicks "space2" on the spaces list in the sidebar
     And user of space_owner_browser clicks Members of "space2" in the sidebar
     And user of space_owner_browser clicks "user1" user in "space2" space members users list
-    And user of space_owner_browser sets following privileges for "user1" user in space members subpage when all other are granted:
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
           User management:
             granted: False
 
@@ -339,7 +320,7 @@ Feature: Basic management of spaces privileges in Onezone GUI
     When user of space_owner_browser clicks "space2" on the spaces list in the sidebar
     And user of space_owner_browser clicks Members of "space2" in the sidebar
     And user of space_owner_browser clicks "user1" user in "space2" space members users list
-    And user of space_owner_browser sees following privileges of "user1" user in space members subpage:
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
           Space management:
             granted: Partially
             privilege subtypes:
@@ -350,3 +331,35 @@ Feature: Basic management of spaces privileges in Onezone GUI
     And user of browser_user1 writes "space2" into rename space text field
     And user of browser_user1 confirms rename the space using confirmation button
     Then user of browser_user1 sees that error modal with text "Changing name failed" appeared
+
+
+  Scenario: User fails to remove other user from given space because of lack in privileges
+    When user of space_owner_browser clicks on Data in the main menu
+    And user of space_owner_browser clicks "space2" on the spaces list in the sidebar
+    And user of space_owner_browser clicks Members of "space2" in the sidebar
+    And user of space_owner_browser clicks "user1" user in "space2" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
+          User management:
+            granted: False
+
+    And user of browser_user1 clicks on Data in the main menu
+    And user of browser_user1 clicks "space2" on the spaces list in the sidebar
+    And user of browser_user1 removes "user2" user from "space2" space members
+    Then user of browser_user1 sees that error modal with text "insufficient privileges" appeared
+
+
+  Scenario: Non-space-owner successfully generates space invite token if he got user management privilege
+    When user of space_owner_browser clicks on Data in the main menu
+    And user of space_owner_browser clicks "space2" on the spaces list in the sidebar
+    And user of space_owner_browser clicks Members of "space2" in the sidebar
+    And user of space_owner_browser clicks "user1" user in "space2" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
+            User management:
+              granted: True
+
+    And user of browser_user1 clicks on Data in the main menu
+    And user of browser_user1 clicks "space2" on the spaces list in the sidebar
+    And user of browser_user1 clicks Members of "space2" in the sidebar
+    And user of browser_user1 clicks on "Invite user using token" button in users list menu in "space2" space members view
+    And user of browser_user1 sees that "Invite user using token" modal has appeared
+    Then user of browser_user1 copies invitation token from modal
