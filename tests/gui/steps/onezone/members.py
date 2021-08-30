@@ -55,7 +55,8 @@ def get_privilege_tree(selenium, browser_id, onepanel, oz_page, where,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks show view expand button in '
-               '(?P<where>space|group|cluster) members subpage header'))
+               '(?P<where>space|group|cluster|harvester) members subpage '
+               'header'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_show_view_option(selenium, browser_id, oz_page, where, onepanel):
     driver = selenium[browser_id]
@@ -65,7 +66,7 @@ def click_show_view_option(selenium, browser_id, oz_page, where, onepanel):
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks '
                '(?P<mode>direct|effective|privileges|memberships) view mode '
-               'in (?P<where>space|group|cluster) members subpage'))
+               'in (?P<where>space|group|cluster|harvester) members subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_mode_view_in_members_subpage(selenium, browser_id, mode, oz_page,
                                        where, onepanel):
