@@ -20,7 +20,6 @@ Feature: Basic inventories management
     And user of browser logged as space-owner-user to Onezone service
 
 
-
 #  Scenario: User creates inventory
 #    When user of browser clicks on Automation in the main menu
 #    And user of browser clicks on Create automation inventory button in automation sidebar
@@ -38,20 +37,20 @@ Feature: Basic inventories management
 #    And user of browser sees inventory "inventory2" on inventory list
 #
 #
-#  Scenario: User removes inventory
-#    When user of browser clicks on Automation in the main menu
-#    And user of browser clicks on "Remove" button in inventory "inventory1" menu in the sidebar
-#    And user of browser clicks on "Remove" button in modal "Remove inventory"
-#    Then user of browser does not see inventory "inventory1" on inventory list
-#
-#
-#  Scenario: User leaves inventory
-#    When user of browser clicks on Automation in the main menu
-#    And user of browser clicks on "Leave" button in inventory "inventory1" menu in the sidebar
-#    And user of browser clicks on "Leave" button in modal "leave_inventory"
-#    Then user of browser does not see inventory "inventory1" on inventory list
-
-
-  Scenario: User uploads inventory as json
+  Scenario: User removes inventory
     When user of browser clicks on Automation in the main menu
-    And user of browser uses Upload(json) button from menu bar to upload workflow "{file_name}" to current dir without waiting for upload to finish
+    And user of browser clicks on "Remove" button in inventory "inventory1" menu in the sidebar
+    And user of browser clicks on "Remove" button in modal "Remove inventory"
+    Then user of browser does not see inventory "inventory1" on inventory list
+
+
+  Scenario: User leaves inventory
+    When user of browser clicks on Automation in the main menu
+    And user of browser clicks on "Leave" button in inventory "inventory1" menu in the sidebar
+    And user of browser clicks on "Leave" button in modal "leave_inventory"
+    Then user of browser does not see inventory "inventory1" on inventory list
+
+
+#  Scenario: User uploads inventory as json
+#    When user of browser clicks on Automation in the main menu
+#    And user of browser uses Upload(json) button from menu bar to upload workflow "{workflow_upload.json}" to current dir without waiting for upload to finish

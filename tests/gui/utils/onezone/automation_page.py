@@ -47,8 +47,8 @@ class AutomationPage(GenericPage):
 
     privileges_err_msg = Label('.alert-promise-error')
 
-    upload_input = WebItem('input#upload-atm-workflow-schema-action-input')
-    # upload_input = WebItem('.upload-atm-workflow-schema-action-input')
+    # upload_input = WebItem('input#upload-atm-workflow-schema-action-input')
+    upload_input = WebElement('.upload-atm-workflow-schema-action-input')
 
     def upload_workflow(self, files):
         """This interaction is very hacky, because uploading files with Selenium
