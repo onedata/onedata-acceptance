@@ -1,4 +1,4 @@
-Feature: Spaces effective privileges
+Feature: Inventories effective privileges
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
