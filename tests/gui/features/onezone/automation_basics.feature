@@ -18,10 +18,6 @@ Feature: Basic inventories management
     And user opened browser window
     And user of browser opened onezone page
     And user of browser logged as space-owner-user to Onezone service
-    And directory tree structure on local file system:
-        browser:
-            workflow_upload.json:
-              size: 50 MiB
 
 
   Scenario: User creates inventory

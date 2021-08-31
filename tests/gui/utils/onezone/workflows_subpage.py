@@ -18,4 +18,6 @@ class Workflow(Element):
 
 
 class WorkflowsPage(PageObject):
-    elements_list = WebItemsSequence('atm-workflow-schemas-list', cls=Workflow)
+    elements_list = WebItemsSequence('.atm-workflow-schemas-list' 
+                                     ' .atm-workflow-schemas-list-entry',
+                                     cls=Workflow)
