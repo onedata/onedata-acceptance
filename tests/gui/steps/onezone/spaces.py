@@ -631,7 +631,7 @@ def check_two_providers_places(selenium, browser_id, oz_page, hosts,
     provider2_position = current_page.map.get_provider_horizontal_position(
         provider2_name, driver)
 
-    # the higher value of position the further on the west provider appears
+    # the higher value of position the further on the east provider appears
     assert provider1_position > provider2_position, (f'Provider "{provider1}" '
                                                      f'appears west of provider'
                                                      f' "{provider2}"')

@@ -11,9 +11,6 @@ Feature: Basic management of providers in Onezone GUI
                   - oneprovider-1:
                       storage: posix
                       size: 1000000
-                  - oneprovider-2:
-                      storage: posix
-                      size: 1000000
 
     And user opened browser window
     And user of browser opened Onezone page
