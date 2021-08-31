@@ -15,6 +15,7 @@ from tests.gui.utils.onezone.generic_page import Element, GenericPage
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.onezone.common import EditBox, InputBox
 from tests.gui.utils.onezone.members_subpage import MembersPage
+from tests.gui.utils.onezone.workflows_subpage import WorkflowsPage
 
 
 class Inventory(Element):
@@ -45,10 +46,11 @@ class AutomationPage(GenericPage):
 
     members_page = WebItem('.main-content', cls=MembersPage)
 
+    workflows_page = WebItem('.main-content', cls=WorkflowsPage)
+
     privileges_err_msg = Label('.alert-promise-error')
 
-    # upload_input = WebItem('input#upload-atm-workflow-schema-action-input')
-    upload_input = WebElement('.upload-atm-workflow-schema-action-input')
+    _upload_input = WebElement('.upload-atm-workflow-schema-action-input')
 
     def upload_workflow(self, files):
         """This interaction is very hacky, because uploading files with Selenium

@@ -18,25 +18,29 @@ Feature: Basic inventories management
     And user opened browser window
     And user of browser opened onezone page
     And user of browser logged as space-owner-user to Onezone service
+    And directory tree structure on local file system:
+        browser:
+            workflow_upload.json:
+              size: 50 MiB
 
 
-#  Scenario: User creates inventory
-#    When user of browser clicks on Automation in the main menu
-#    And user of browser clicks on Create automation inventory button in automation sidebar
-#    And user of browser writes "inventory2" into inventory name text field
-#    And user of browser clicks on confirmation button on automation page
-#    Then user of browser sees inventory "inventory2" on inventory list
-#
-#
-#  Scenario: User renames inventory
-#    When user of browser clicks on Automation in the main menu
-#    And user of browser clicks on "Rename" button in inventory "inventory1" menu in the sidebar
-#    And user of browser writes "inventory2" into rename inventory text field
-#    And user of browser confirms inventory rename with confirmation button
-#    Then user of browser does not see inventory "inventory1" on inventory list
-#    And user of browser sees inventory "inventory2" on inventory list
-#
-#
+  Scenario: User creates inventory
+    When user of browser clicks on Automation in the main menu
+    And user of browser clicks on Create automation inventory button in automation sidebar
+    And user of browser writes "inventory2" into inventory name text field
+    And user of browser clicks on confirmation button on automation page
+    Then user of browser sees inventory "inventory2" on inventory list
+
+
+  Scenario: User renames inventory
+    When user of browser clicks on Automation in the main menu
+    And user of browser clicks on "Rename" button in inventory "inventory1" menu in the sidebar
+    And user of browser writes "inventory2" into rename inventory text field
+    And user of browser confirms inventory rename with confirmation button
+    Then user of browser does not see inventory "inventory1" on inventory list
+    And user of browser sees inventory "inventory2" on inventory list
+
+
   Scenario: User removes inventory
     When user of browser clicks on Automation in the main menu
     And user of browser clicks on "Remove" button in inventory "inventory1" menu in the sidebar
@@ -51,6 +55,9 @@ Feature: Basic inventories management
     Then user of browser does not see inventory "inventory1" on inventory list
 
 
-#  Scenario: User uploads inventory as json
-#    When user of browser clicks on Automation in the main menu
-#    And user of browser uses Upload(json) button from menu bar to upload workflow "{workflow_upload.json}" to current dir without waiting for upload to finish
+  Scenario: User uploads inventory as json file
+    When user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uses Upload(json) button from menu bar to upload workflow "workflow_upload.json" to current dir without waiting for upload to finish
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser sees "workflow_upload" in workflows list in "inventory1" workflows subpage

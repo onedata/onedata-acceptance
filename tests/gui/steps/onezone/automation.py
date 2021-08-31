@@ -115,6 +115,16 @@ def assert_inventory_exists(selenium, browser_ids, oz_page, text):
                   'bar to upload workflow "{file_name}" to current dir '
                   'without waiting for upload to finish'))
 @repeat_failed(timeout=2*WAIT_BACKEND)
-def upload_workflow_as_json(selenium, browser_id,file_name, oz_page):
+def upload_workflow_as_json(selenium, browser_id, file_name, oz_page):
     driver = selenium[browser_id]
     oz_page(driver)['automation'].upload_workflow(upload_file_path(file_name))
+
+
+@wt(parsers.parse('user of {browser_id} sees "{workflow}" in workflows list '
+                  'in "{inventory}" workflows subpage'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_workflow_exists(selenium, browser_id, oz_page, workflow):
+    page = oz_page(selenium[browser_id])['automation']
+    page.workflows_page.elements_list[workflow].menu_button()
+
+    # assert workflow in page.workflows_page.elements_list, f'Workflow: {workflow} not found'
