@@ -216,7 +216,7 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
               Add user: False
 
     And user of browser2 opens group "group5" members subpage
-    And user of browser2 clicks on "Invite group using token" button in groups list menu in "group5" group members view
+    And user of browser2 clicks on "Invite user using token" button in users list menu in "group5" group members view
     Then user of browser2 sees This resource could not be loaded alert in "Invite using token" modal
 
 
