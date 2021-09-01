@@ -104,8 +104,14 @@ def test_files_uploaded_by_user_are_ordered_by_name():
 
 
 @skip_if_not_chrome
-@scenario('Stress testing by uploading 500 files and 2GB file')
-def test_files_uploaded_by_user_are_ordered_by_name():
+@scenario('Stress testing by uploading 2GB file')
+def test_stress_testing_by_uploading_2gb_file():
+    pass
+
+
+@skip_if_not_chrome
+@scenario('Stress testing by uploading 500 files')
+def test_stress_testing_by_uploading_500_files():
     pass
 
 

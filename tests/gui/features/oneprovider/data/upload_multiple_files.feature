@@ -10,7 +10,7 @@ Feature: Uploading multiple files at once
             providers:
                 - oneprovider-1:
                     storage: posix
-                    size: 1000000
+                    size: 10000000000
 
     And user opened browser window
     And user of browser opened onezone page
@@ -86,22 +86,24 @@ Feature: Uploading multiple files at once
     Then user of browser sees items named ["file0.txt", "file1.txt", "file10.txt", "file2.txt", "file23.txt", "file3.txt"] in file browser in given order
 
 
-    Scenario: Stress testing by uploading 500 files and 2GB file
+  Scenario: Stress testing by uploading 2GB file
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar
 
     # upload 2GB file
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload files from local directory "dir6" to remote current dir
-#    Then user of browser sees items named ["file2GB.txt"] in file browser in given order
-#    And user of browser is idle for 10 seconds
-#    And user of browser waits for file upload to finish
-#    And user of browser sees that there is 1 item in file browser
+    And user of browser waits for file upload to finish
+    Then user of browser sees that there is 1 item in file browser
+
+
+  Scenario: Stress testing by uploading 500 files
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
 
     # upload 500 files
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload files from local directory "dir5" to remote current dir
-
     And user of browser sees nonempty file browser in files tab in Oneprovider page
     And user of browser sees that content of current directory has been loaded
-    Then user of browser scrolls to the bottom of file browser and sees there are 501 files
+    Then user of browser scrolls to the bottom of file browser and sees there are 500 files
