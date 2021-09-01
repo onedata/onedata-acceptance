@@ -4,7 +4,7 @@ Feature: Clusters effective privileges
     Given initial users configuration in "onezone" Onezone service:
             - user2
             - user3
-    And user admin has no groups
+    And there is no groups in Onezone page used by admin before definition in next steps
     And initial groups configuration in "onezone" Onezone service:
           group1:
             owner: admin
@@ -79,7 +79,7 @@ Feature: Clusters effective privileges
     And user of browser_admin clicks show view expand button in cluster members subpage header
     And user of browser_admin clicks effective view mode in cluster members subpage
     And user of browser_admin clicks "user2" user in "oneprovider-1" cluster members users list
-   Then user of browser_admin sees following privileges of "user2" user in cluster members subpage:
+    Then user of browser_admin sees following privileges of "user2" user in cluster members subpage:
           Cluster management:
             granted: True
           User management:
@@ -92,42 +92,10 @@ Feature: Clusters effective privileges
     When user of browser_admin clicks on Groups in the main menu
     And user of browser_admin opens group "group2" members subpage
     And user of browser_admin clicks "group4" group in "group2" group members groups list
-    And user of browser_admin sets following privileges for "group4" group in group members subpage:
-          Group management:
-            granted: True
-          Group hierarchy management:
-            granted: True
-          User management:
-            granted: True
-          Space management:
-            granted: True
-          Handle management:
-            granted: True
-          Cluster management:
-            granted: True
-          Harvester management:
-            granted: True
-          Automation inventory management:
-            granted: True
+    And user of browser_admin sets all privileges true for "group4" group in group members subpage
     And user of browser_admin opens group "group3" members subpage
     And user of browser_admin clicks "group4" group in "group3" group members groups list
-    And user of browser_admin sets following privileges for "group4" group in group members subpage:
-          Group management:
-            granted: True
-          Group hierarchy management:
-            granted: True
-          User management:
-            granted: True
-          Space management:
-            granted: True
-          Handle management:
-            granted: True
-          Cluster management:
-            granted: True
-          Harvester management:
-            granted: True
-          Automation inventory management:
-            granted: True
+    And user of browser_admin sets all privileges true for "group4" group in group members subpage
     And user of browser_admin adds "group2" group to "oneprovider-1" cluster
     And user of browser_admin adds "group3" group to "oneprovider-1" cluster
     And user of browser_admin clicks "group2" group in "oneprovider-1" cluster members groups list
@@ -148,6 +116,8 @@ Feature: Clusters effective privileges
     And user of browser_admin clicks effective view mode in cluster members subpage
     And user of browser_admin clicks "group4" group in "oneprovider-1" cluster members groups list
     Then user of browser_admin sees following privileges of "group4" group in cluster members subpage:
+          Cluster management:
+            granted: False
           User management:
             granted: True
           Group management:
@@ -158,42 +128,10 @@ Feature: Clusters effective privileges
     When user of browser_admin clicks on Groups in the main menu
     And user of browser_admin opens group "group2" members subpage
     And user of browser_admin clicks "user3" user in "group2" group members users list
-    And user of browser_admin sets following privileges for "user3" user in group members subpage:
-          Group management:
-            granted: True
-          Group hierarchy management:
-            granted: True
-          User management:
-            granted: True
-          Space management:
-            granted: True
-          Handle management:
-            granted: True
-          Cluster management:
-            granted: True
-          Harvester management:
-            granted: True
-          Automation inventory management:
-            granted: True
+    And user of browser_admin sets all privileges true for "user3" user in group members subpage
     And user of browser_admin opens group "group3" members subpage
     And user of browser_admin clicks "user3" user in "group3" group members users list
-    And user of browser_admin sets following privileges for "user3" user in group members subpage:
-          Group management:
-            granted: True
-          Group hierarchy management:
-            granted: True
-          User management:
-            granted: True
-          Space management:
-            granted: True
-          Handle management:
-            granted: True
-          Cluster management:
-            granted: True
-          Harvester management:
-            granted: True
-          Automation inventory management:
-            granted: True
+    And user of browser_admin sets all privileges true for "user3" user in group members subpage
     And user of browser_admin adds "group2" group to "oneprovider-1" cluster
     And user of browser_admin adds "group3" group to "oneprovider-1" cluster
     And user of browser_admin clicks "group2" group in "oneprovider-1" cluster members groups list

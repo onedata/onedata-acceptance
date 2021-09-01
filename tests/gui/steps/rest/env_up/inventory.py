@@ -66,8 +66,7 @@ def _inventories_creation(config, hosts, users, zone_name, admin_credentials,
     for inventory_name, description in config.items():
         owner = users[description['owner']]
 
-        inventory_id = _create_inventory(zone_hostname, owner.username,
-                                         owner.password, inventory_name)
+        inventory_id = _create_inventory(zone_hostname, owner, inventory_name)
         for user in description.get('users', {}):
             try:
                 [(user, options)] = user.items()
@@ -93,13 +92,12 @@ def _inventories_creation(config, hosts, users, zone_name, admin_credentials,
                                     inventory_id, group_id, privileges)
 
 
-def _create_inventory(zone_hostname, owner_username, owner_password,
-                      inventory_name):
+def _create_inventory(zone_hostname, owner, inventory_name):
     inventory_properties = json.dumps({'name': inventory_name})
 
     response = http_post(ip=zone_hostname, port=OZ_REST_PORT,
                          path=get_zone_rest_path('user', 'atm_inventories'),
-                         auth=(owner_username, owner_password),
+                         auth=(owner.username, owner.password),
                          data=inventory_properties)
 
     return response.headers['location'].split('/')[-1]

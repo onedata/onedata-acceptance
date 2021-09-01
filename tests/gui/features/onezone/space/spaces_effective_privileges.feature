@@ -71,7 +71,6 @@ Feature: Spaces effective privileges
               Remove group: True
           Harvester management:
             granted: True
-    And user of browser refreshes site
     And user of browser clicks "group2" group in "space1" space members groups list
     And user of browser sees following privileges of "group2" group in space members subpage:
           QoS management:
@@ -83,7 +82,6 @@ Feature: Spaces effective privileges
               Remove group: False
           Harvester management:
             granted: False
-    And user of browser refreshes site
     And user of browser clicks show view expand button in space members subpage header
     And user of browser clicks effective view mode in space members subpage
     And user of browser clicks "group1" group in "space1" space members groups list
@@ -111,7 +109,6 @@ Feature: Spaces effective privileges
               Remove group: False
           Harvester management:
             granted: False
-    And user of browser refreshes site
     And user of browser clicks "user2" user in "space1" space members users list
     And user of browser sees following privileges of "user2" user in space members subpage:
           QoS management:
@@ -122,6 +119,7 @@ Feature: Spaces effective privileges
             granted: True
     And user of browser clicks show view expand button in space members subpage header
     And user of browser clicks effective view mode in space members subpage
+    And user of browser clicks "user2" user in "space1" space members users list
     Then user of browser sees following privileges of "user2" user in space members subpage:
           QoS management:
             granted: True
@@ -138,42 +136,10 @@ Feature: Spaces effective privileges
     When user of browser clicks on Groups in the main menu
     And user of browser opens group "group2" members subpage
     And user of browser clicks "group4" group in "group2" group members groups list
-    And user of browser sets following privileges for "group4" group in group members subpage:
-          Group management:
-            granted: True
-          Group hierarchy management:
-            granted: True
-          User management:
-            granted: True
-          Space management:
-            granted: True
-          Handle management:
-            granted: True
-          Cluster management:
-            granted: True
-          Harvester management:
-            granted: True
-          Automation inventory management:
-            granted: True
+    And user of browser sets all privileges true for "group4" group in group members subpage
     And user of browser opens group "group3" members subpage
     And user of browser clicks "group4" group in "group3" group members groups list
-    And user of browser sets following privileges for "group4" group in group members subpage:
-          Group management:
-            granted: True
-          Group hierarchy management:
-            granted: True
-          User management:
-            granted: True
-          Space management:
-            granted: True
-          Handle management:
-            granted: True
-          Cluster management:
-            granted: True
-          Harvester management:
-            granted: True
-          Automation inventory management:
-            granted: True
+    And user of browser sets all privileges true for "group4" group in group members subpage
     And user of browser clicks on Data in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Members of "space1" in the sidebar
@@ -196,7 +162,6 @@ Feature: Spaces effective privileges
             granted: False
           Support management:
             granted: True
-    And user of browser refreshes site
     And user of browser clicks show view expand button in space members subpage header
     And user of browser clicks effective view mode in space members subpage
     And user of browser clicks "group4" group in "space1" space members groups list
@@ -216,42 +181,10 @@ Feature: Spaces effective privileges
     When user of browser clicks on Groups in the main menu
     And user of browser opens group "group2" members subpage
     And user of browser clicks "user3" user in "group2" group members users list
-    And user of browser sets following privileges for "user3" user in group members subpage:
-          Group management:
-            granted: True
-          Group hierarchy management:
-            granted: True
-          User management:
-            granted: True
-          Space management:
-            granted: True
-          Handle management:
-            granted: True
-          Cluster management:
-            granted: True
-          Harvester management:
-            granted: True
-          Automation inventory management:
-            granted: True
+    And user of browser sets all privileges true for "user3" user in group members subpage
     And user of browser opens group "group3" members subpage
     And user of browser clicks "user3" user in "group3" group members users list
-    And user of browser sets following privileges for "user3" user in group members subpage:
-          Group management:
-            granted: True
-          Group hierarchy management:
-            granted: True
-          User management:
-            granted: True
-          Space management:
-            granted: True
-          Handle management:
-            granted: True
-          Cluster management:
-            granted: True
-          Harvester management:
-            granted: True
-          Automation inventory management:
-            granted: True
+    And user of browser sets all privileges true for "user3" user in group members subpage
     And user of browser clicks on Data in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Members of "space1" in the sidebar
@@ -274,7 +207,6 @@ Feature: Spaces effective privileges
             granted: False
           Support management:
             granted: True
-    And user of browser refreshes site
     And user of browser clicks show view expand button in space members subpage header
     And user of browser clicks effective view mode in space members subpage
     And user of browser clicks "user3" user in "space1" space members users list

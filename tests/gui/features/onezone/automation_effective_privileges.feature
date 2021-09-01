@@ -80,6 +80,7 @@ Feature: Inventories effective privileges
             granted: False
     And user of browser clicks show view expand button in automation members subpage header
     And user of browser clicks effective view mode in automation members subpage
+    And user of browser clicks "group1" group in "inventory1" automation members groups list
     Then user of browser sees following privileges of "group1" group in automation members subpage:
           Inventory management:
             granted: True
@@ -106,6 +107,7 @@ Feature: Inventories effective privileges
             granted: True
     And user of browser clicks show view expand button in automation members subpage header
     And user of browser clicks effective view mode in automation members subpage
+    And user of browser clicks "user2" user in "inventory1" automation members users list
     Then user of browser sees following privileges of "user2" user in automation members subpage:
           Inventory management:
             granted: True
@@ -113,46 +115,14 @@ Feature: Inventories effective privileges
             granted: True
 
 
-    Scenario: User sees that group effective privileges are the sum of its direct parents direct privileges
-      When user of browser clicks on Groups in the main menu
-      And user of browser opens group "group2" members subpage
-      And user of browser clicks "group4" group in "group2" group members groups list
-      And user of browser sets following privileges for "group4" group in group members subpage:
-            Group management:
-              granted: True
-            Group hierarchy management:
-              granted: True
-            User management:
-              granted: True
-            Space management:
-              granted: True
-            Handle management:
-              granted: True
-            Cluster management:
-              granted: True
-            Harvester management:
-              granted: True
-            Automation inventory management:
-              granted: True
-      And user of browser opens group "group3" members subpage
-      And user of browser clicks "group4" group in "group3" group members groups list
-      And user of browser sets following privileges for "group4" group in group members subpage:
-            Group management:
-              granted: True
-            Group hierarchy management:
-              granted: True
-            User management:
-              granted: True
-            Space management:
-              granted: True
-            Handle management:
-              granted: True
-            Cluster management:
-              granted: True
-            Harvester management:
-              granted: True
-            Automation inventory management:
-              granted: True
+  Scenario: User sees that group effective privileges are the sum of its direct parents direct privileges
+    When user of browser clicks on Groups in the main menu
+    And user of browser opens group "group2" members subpage
+    And user of browser clicks "group4" group in "group2" group members groups list
+    And user of browser sets all privileges true for "group4" group in group members subpage
+    And user of browser opens group "group3" members subpage
+    And user of browser clicks "group4" group in "group3" group members groups list
+    And user of browser sets all privileges true for "group4" group in group members subpage
     And user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" members subpage
     And user of browser clicks "group2" group in "inventory1" automation members groups list
@@ -181,42 +151,10 @@ Feature: Inventories effective privileges
     When user of browser clicks on Groups in the main menu
     And user of browser opens group "group2" members subpage
     And user of browser clicks "user3" user in "group2" group members users list
-    And user of browser sets following privileges for "user3" user in group members subpage:
-          Group management:
-            granted: True
-          Group hierarchy management:
-            granted: True
-          User management:
-            granted: True
-          Space management:
-            granted: True
-          Handle management:
-            granted: True
-          Cluster management:
-            granted: True
-          Harvester management:
-            granted: True
-          Automation inventory management:
-            granted: True
+    And user of browser sets all privileges true for "user3" user in group members subpage
     And user of browser opens group "group3" members subpage
     And user of browser clicks "user3" user in "group3" group members users list
-    And user of browser sets following privileges for "user3" user in group members subpage:
-          Group management:
-            granted: True
-          Group hierarchy management:
-            granted: True
-          User management:
-            granted: True
-          Space management:
-            granted: True
-          Handle management:
-            granted: True
-          Cluster management:
-            granted: True
-          Harvester management:
-            granted: True
-          Automation inventory management:
-            granted: True
+    And user of browser sets all privileges true for "user3" user in group members subpage
     And user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" members subpage
     And user of browser clicks "group2" group in "inventory1" automation members groups list
@@ -231,7 +169,6 @@ Feature: Inventories effective privileges
             granted: False
           Group management:
             granted: True
-    And user of browser refreshes site
     And user of browser clicks show view expand button in automation members subpage header
     And user of browser clicks effective view mode in automation members subpage
     And user of browser clicks "user3" user in "inventory1" automation members users list

@@ -528,6 +528,24 @@ def set_privileges_in_members_subpage(selenium, browser_id, member_name,
                                                   member_type, onepanel)
 
 
+@wt(parsers.re('user of (?P<browser_id>.*) sets all privileges true for '
+               '"(?P<member_name>.*)" (?P<member_type>user|group) '
+               'in (?P<where>space|group|harvester|cluster|automation) '
+               'members subpage'))
+def set_all_privileges_true_in_members_subpage(selenium, browser_id,
+                                               member_name,  member_type, where,
+                                               onepanel, oz_page):
+    option = 'Save'
+    member_type_new = member_type + 's'
+
+    tree = get_privilege_tree(selenium, browser_id, onepanel, oz_page, where,
+                              member_type_new, member_name)
+    tree.set_all_true()
+    click_button_on_element_header_in_members(selenium, browser_id, option,
+                                              oz_page, where, member_name,
+                                              member_type, onepanel)
+
+
 @wt(parsers.re('user of (?P<browser_id>.*) sets following privileges for '
                '"(?P<member_name>.*)" (?P<member_type>user|group) '
                'in (?P<where>space|group|harvester|cluster) members subpage '
@@ -570,6 +588,9 @@ def assert_privileges_in_members_subpage(selenium, browser_id, member_name,
     tree = get_privilege_tree(selenium, browser_id, onepanel, oz_page, where,
                               member_type, member_name)
     tree.assert_privileges(privileges)
+    driver = selenium[browser_id]
+    page = _find_members_page(onepanel, oz_page, driver, where)
+    page.close_member(driver)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees following privileges on modal:'
