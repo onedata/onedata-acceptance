@@ -103,6 +103,12 @@ def test_files_uploaded_by_user_are_ordered_by_name():
     pass
 
 
+@skip_if_not_chrome
+@scenario('Stress testing by uploading 500 files and 2GB file')
+def test_files_uploaded_by_user_are_ordered_by_name():
+    pass
+
+
 scenarios('../features/oneprovider/data/empty_file_browser.feature')
 scenarios('../features/oneprovider/data/single_file.feature')
 scenarios('../features/oneprovider/data/several_files.feature')
