@@ -123,3 +123,18 @@ def assert_status_tag_for_file_in_browser(browser_id, status_type,
     browser = tmp_memory[browser_id][transform(which_browser)]
     err_msg = f'{status_type} tag for {item_name} in browser not visible'
     assert browser.data[item_name].is_tag_visible(transform(status_type)), err_msg
+
+
+@wt(parsers.parse('user of {browser_id} clicks on menu '
+                  'for "{item_name}" directory in {which_browser}'))
+@wt(parsers.parse('user of {browser_id} clicks on menu '
+                  'for "{item_name}" file in {which_browser}'))
+@wt(parsers.parse('user of {browser_id} clicks on menu '
+                  'for "{item_name}" dataset in {which_browser}'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory,
+                                   which_browser='file browser'):
+    browser = tmp_memory[browser_id][transform(which_browser)]
+    browser.data[item_name].menu_button()
+
+

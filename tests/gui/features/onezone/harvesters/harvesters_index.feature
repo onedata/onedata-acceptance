@@ -25,7 +25,7 @@ Feature: Basic management of harvester index in Onezone GUI
     And user of browser logged as admin to Onezone service
 
 
-  Scenario: User sees basic metadata values and keys after creating index that includes only basic metadata
+  Scenario: User sees basic metadata values and keys after creating index that includes basic metadata
     When user of browser succeeds to write "dir1" directory basic metadata: "attr=val" in "space1"
     And user of browser adds "space1" space to "harvester1" harvester using available spaces dropdown
 
@@ -106,7 +106,7 @@ Feature: Basic management of harvester index in Onezone GUI
 
     And user of browser clicks Data discovery of "harvester1" harvester in the sidebar
     And user of browser sees Data Discovery page
-    And user of browser does not see "dir1" in results list on data discovery page
+    Then user of browser does not see "dir1" in results list on data discovery page
 
 
   Scenario: User sees file type after creating index that includes file type file details
@@ -213,8 +213,8 @@ Feature: Basic management of harvester index in Onezone GUI
       And user of browser clicks "harvester1" on the harvesters list in the sidebar
       And user of browser clicks Data discovery of "harvester1" harvester in the sidebar
       And user of browser sees Data Discovery page
-      Then user of browser sees rejected "["\"id\""]" in results list on data discovery page
-      And user of browser sees that rejection is caused by field [id] of type [long] in document dir1
+      Then user of browser sees rejected "["id"]" in results list on data discovery page
+      And user of browser sees that rejection is caused by field [id] of type [long]
 
 
     Scenario: User sees what is rejected in Data Discovery page after changing json metadata value and creating index that includes include retry on rejection toggles
@@ -238,5 +238,32 @@ Feature: Basic management of harvester index in Onezone GUI
       And user of browser clicks "harvester1" on the harvesters list in the sidebar
       And user of browser clicks Data discovery of "harvester1" harvester in the sidebar
       And user of browser sees Data Discovery page
-      Then user of browser sees rejected "["\"id\""]" in results list on data discovery page
+      Then user of browser sees rejected "["id"]" in results list on data discovery page
       And user of browser does not see "__rejectionReason" in results list on data discovery page
+
+
+   Scenario: User sees basic metadata values and keys after creating index that includes basic metadata
+      When user of browser succeeds to write "dir1" directory basic metadata: "attr=val" in "space1"
+      And  user of browser creates dataset for item "dir1" in "space1"
+      And user of browser creates archive for item "dir1" in "space1" with following configuration:
+          description: first_archive
+          layout: plain
+      And user of browser save time of latest archive creation for "dir1"
+
+     # copy archive id
+      And user of browser clicks on 1 in "dir1" Archives
+      And user of browser sees archive file browser in archives tab in Oneprovider page
+      And user of browser clicks on menu for 1 archive in archive file browser
+      And user of browser clicks "Copy archive ID" option in data row menu in archive file browser
+
+      And user of browser adds "space1" space to "harvester1" harvester using available spaces dropdown
+      And user of browser creates new index "index1" that includes ["basic", "file_name", "archive_info"] toggles for "harvester1"
+      And user of browser changes indices to "index1" on GUI plugin tab for "harvester1"
+      And user of browser clicks Data discovery of "harvester1" harvester in the sidebar
+      And user of browser sees Data Discovery page
+
+      Then user of browser sees archives id in results list on data discovery page
+      And user of browser sees archives description: "first_archive" in results list on data discovery page
+      And user of browser sees that archives creation time in results list on data discovery page is the same as on the archives page
+      And user of browser sees that file name for archive is "dir1" in results list on data discovery page
+

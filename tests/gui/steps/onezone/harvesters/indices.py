@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+from datetime import datetime
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
@@ -123,7 +124,7 @@ def change_indices_on_gui_plugin_tab(selenium, browser_id, oz_page, index_name,
 def assert_not_text_on_data_discovery_page(selenium, browser_id,
                                            data_discovery, text):
     driver = selenium[browser_id]
-    assert (text not in data_discovery(driver).results_list[0].text,
+    assert text not in data_discovery(driver).results_list[0].text, (
             f'{text} in result list')
 
 
@@ -134,12 +135,12 @@ def assert_rejected_on_data_discovery_page(selenium, browser_id,
                                            data_discovery, text):
     driver = selenium[browser_id]
     text = f' __rejected: {text}'
-    assert (text in data_discovery(driver).results_list[0].text,
-            f'{text} not in result list')
+    assert text in data_discovery(driver).results_list[1].text, (
+            f'{text} not in result list, {data_discovery(driver).results_list[1].text}')
 
 
 @wt(parsers.parse('user of browser sees that rejection is caused by field '
-                  '{key} of type {field_type} in document dir1'))
+                  '{key} of type {field_type}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_rejection_reason_on_data_discovery_page(selenium, browser_id,
                                                    data_discovery, key,
@@ -148,7 +149,63 @@ def assert_rejection_reason_on_data_discovery_page(selenium, browser_id,
     driver = selenium[browser_id]
     file_id = clipboard.paste(display=displays[browser_id])
     text = (f'__rejectionReason: "failed to parse field {key} of type'
-            f' {field_type} in document with id {file_id}')
-    assert (text in data_discovery(driver).results_list[0].text,
-            f'{text} not in result list {data_discovery(driver).results_list[0].text}')
+            f' {field_type} in document with id \'{file_id}\'')
+    assert text in data_discovery(driver).results_list[1].text, (
+        f'{text} not in result list'
+        f' {data_discovery(driver).results_list[1].text}')
+
+
+@wt(parsers.parse('user of {browser_id} sees archives id in results list on '
+                  'data discovery page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_id_on_data_discovery_page(selenium, browser_id, data_discovery,
+                                    clipboard, displays):
+    driver = selenium[browser_id]
+    archive_id = clipboard.paste(display=displays[browser_id])
+    info = f'archiveId: "{archive_id}"'
+    assert info in data_discovery(driver).results_list[2].text, (
+            f'{info} in result list, '
+            f'{data_discovery(driver).results_list[2].text}')
+
+
+@wt(parsers.parse('user of {browser_id} sees archives description: '
+                  '"{description}" in results list on data discovery page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_description_on_data_discovery_page(selenium, browser_id,
+                                              data_discovery, description):
+    driver = selenium[browser_id]
+    info = f'archiveDescription: "{description}"'
+
+    assert info in data_discovery(driver).results_list[2].text, (
+        f'{info} in result list, '
+        f'{data_discovery(driver).results_list[2].text}')
+
+
+@wt(parsers.parse('user of {browser_id} sees that archives creation time in'
+                  ' results list on data discovery page is the same as on '
+                  'the archives page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_creation_time_on_data_discovery_page(selenium, browser_id,
+                                                data_discovery, tmp_memory):
+    created_at = tmp_memory['created_at']
+    created_at = datetime.strptime(created_at, '%d %b %Y %H:%M').timestamp()
+    driver = selenium[browser_id]
+    timestamp = float(data_discovery(driver).results_list[2].text.split(",")[0]
+                      .split(': ')[2])
+    assert (created_at-60) < timestamp < (created_at+60), (
+        'archive creation time is not compatible with creation '
+        'time on archives page')
+
+
+@wt(parsers.parse('user of browser sees that file name for archive is '
+                  '"{file_name}" in results list on data discovery page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_archive_file_name_on_data_discovery_page(selenium, browser_id,
+                                                    data_discovery, file_name):
+    driver = selenium[browser_id]
+    info = f'fileName: "{file_name}"'
+
+    assert info in data_discovery(driver).results_list[2].text, (
+        f'{info} in result list, '
+        f'{data_discovery(driver).results_list[2].text}')
 

@@ -55,6 +55,7 @@ class IndicesPage(PageObject):
     file_type = Toggle('.fileType-field .one-way-toggle-control')
     space_id = Toggle('.spaceId-field .one-way-toggle-control')
     dataset_info = Toggle('.datasetInfo-field .one-way-toggle-control')
+    archive_info = Toggle('.archiveInfo-field .one-way-toggle-control')
     metadata_existence_flags = Toggle('.metadataExistenceFlags-field '
                                       '.one-way-toggle-control')
     include_rejection_reason = Toggle('.includeRejectionReason-field '

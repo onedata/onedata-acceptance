@@ -10,6 +10,7 @@ __license__ = ("This software is released under the MIT license cited in "
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
+from tests.gui.utils.generic import transform
 import re
 
 
@@ -41,3 +42,38 @@ def see_archive_state(browser_id, tmp_memory, state_status):
     item_status = re.sub('\n', ' ', item_status)
     assert item_status == state_status, f'{item_status} state of archive does' \
                                         f' not match expected {state_status}'
+
+
+@wt(parsers.parse('user of {browser_id} checks "{toggle_type}" toggle '
+                  'in modal "Create Archive"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def check_toggle_in_create_archive_modal(browser_id, selenium, modals,
+                                         toggle_type):
+    driver = selenium[browser_id]
+    getattr(modals(driver).create_archive, transform(toggle_type)).check()
+
+
+@wt(parsers.parse('user of {browser_id} writes "{text}" into description'
+                  ' text field in create archive modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def write_description_in_create_archive_modal(selenium, browser_id, modals,
+                                              text):
+    driver = selenium[browser_id]
+    modals(driver).create_archive.description = text
+
+
+@wt(parsers.parse('user of {browser_id} clicks on menu for {number} archive'
+                  ' in archive file browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_menu_for_number_archive(browser_id, tmp_memory, number):
+    browser = tmp_memory[browser_id]['archive_file_browser']
+    browser.data[int(number)-1].menu_button()
+
+
+@wt(parsers.parse('user of {browser_id} save time of latest archive creation '
+                  'for "{file_name}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def save_date_of_archive_creation(browser_id, tmp_memory, file_name):
+    browser = tmp_memory[browser_id]['dataset_browser']
+    tmp_memory['created_at'] = browser.data[file_name].archive_created_at
+

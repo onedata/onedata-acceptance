@@ -54,6 +54,7 @@ from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
 from tests.gui.steps.oneprovider.dataset import *
+from tests.gui.steps.oneprovider.archives import *
 
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
@@ -70,6 +71,7 @@ from tests.gui.meta_steps.onepanel.spaces import *
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.oneprovider.metadata import *
 from tests.gui.meta_steps.oneprovider.dataset import *
+from tests.gui.meta_steps.oneprovider.archives import *
 
 from tests.utils.acceptance_utils import *
 
