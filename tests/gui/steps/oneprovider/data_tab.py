@@ -343,6 +343,22 @@ def upload_file_to_cwd_in_data_tab_no_waiting(selenium, browser_id, file_path,
         raise RuntimeError('file {} does not exist'.format(str(file)))
 
 
+@wt(parsers.parse('user of {browser_id} uses upload button from file browser '
+                  'menu bar to upload files from local directory "{dir_path}" '
+                  'to remote current dir with weak connection'))
+@repeat_failed(timeout=2*WAIT_BACKEND)
+def upload_files_to_cwd_in_data_tab_with_weak_connection(selenium, browser_id, dir_path,
+                                               tmpdir, op_container):
+    driver = selenium[browser_id]
+    directory = tmpdir.join(browser_id, *dir_path.split('/'))
+    if directory.isdir():
+        for item in directory.listdir():
+            if item.isfile():
+                op_container(driver).file_browser.upload_file_with_weak_connection(str(item))
+    else:
+        raise RuntimeError('directory {} does not exist'.format(str(directory)))
+
+
 @wt(parsers.parse('user of {browser_id} sees that chunk bar for provider '
                   '"{provider}" is of {size} size'))
 @repeat_failed(timeout=WAIT_FRONTEND)

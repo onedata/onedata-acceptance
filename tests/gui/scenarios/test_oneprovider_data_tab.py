@@ -103,6 +103,12 @@ def test_files_uploaded_by_user_are_ordered_by_name():
     pass
 
 
+@skip_if_not_chrome
+@scenario('User with weak connection uploads multiple files')
+def test_user_with_weak_connection_uploads_multiple_files():
+    pass
+
+
 scenarios('../features/oneprovider/data/empty_file_browser.feature')
 scenarios('../features/oneprovider/data/single_file.feature')
 scenarios('../features/oneprovider/data/several_files.feature')
