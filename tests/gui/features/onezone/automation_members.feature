@@ -96,7 +96,7 @@ Feature: Management of inventories members
 
     # User1 fails to rename inventory
     And user of browser1 clicks on "Rename" button in inventory "inventory1" menu in the sidebar
-    And user of browser1 writes "inventory2" into rename inventory text field
+    And user of browser1 writes "renamed_inventory" into rename inventory text field
     And user of browser1 confirms inventory rename with confirmation button
     And user of browser1 sees that error popup has appeared
     And user of browser1 clicks on "Close" button in modal "Error"
@@ -111,8 +111,8 @@ Feature: Management of inventories members
 
     # User1 renames inventory
     And user of browser1 confirms inventory rename with confirmation button
-    Then user of browser1 sees inventory "inventory2" on inventory list
-    And user of space_owner_browser sees inventory "inventory2" on inventory list
+    Then user of browser1 sees inventory "renamed_inventory" on inventory list
+    And user of space_owner_browser sees inventory "renamed_inventory" on inventory list
 
 
   Scenario: User successfully removes inventory with remove inventory privilege
@@ -232,7 +232,7 @@ Feature: Management of inventories members
     And user of space_owner_browser does not see inventory "inventory2" on inventory list
 
 
-  Scenario: User successfully invites group to join inventory with add group privilege
+  Scenario: User successfully generates invitation token for group to join inventory with add group privilege
     When user of space_owner_browser clicks on Automation in the main menu
     And user of space_owner_browser opens inventory "inventory1" members subpage
 
@@ -273,4 +273,4 @@ Feature: Management of inventories members
 
     # User1 removes group from inventory
     And user of browser1 removes "group2" group from "inventory1" automation members
-    And user of browser1 does not see group "group2" on groups list
+    Then user of browser1 does not see group "group2" on groups list
