@@ -121,7 +121,7 @@ def upload_workflow_as_json(selenium, browser_id, file_name, oz_page):
 
 
 @wt(parsers.parse('user of {browser_id} sees "{workflow}" in workflows list '
-                  'in "{inventory}" workflows subpage'))
+                  'in inventory workflows subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_workflow_exists(selenium, browser_id, oz_page, workflow):
     page = oz_page(selenium[browser_id])['automation']

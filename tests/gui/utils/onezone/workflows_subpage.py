@@ -1,5 +1,5 @@
-"""Utils to facilitate operations on subpage of automation page in Onezone
-gui """
+"""Utils to facilitate operations on workflows subpage of automation page in
+Onezone gui """
 
 __author__ = "Rafał Widziszewski"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
