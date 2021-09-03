@@ -47,5 +47,5 @@ Feature: Basic inventories management
   Scenario: User leaves inventory
     When user of browser clicks on Automation in the main menu
     And user of browser clicks on "Leave" button in inventory "inventory1" menu in the sidebar
-    And user of browser clicks on "Leave" button in modal "leave_inventory"
+    And user of browser clicks on "Leave" button in modal "Leave inventory"
     Then user of browser does not see inventory "inventory1" on inventory list
