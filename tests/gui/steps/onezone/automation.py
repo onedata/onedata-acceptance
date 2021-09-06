@@ -111,7 +111,7 @@ def assert_inventory_exists(selenium, browser_ids, oz_page, text):
         assert text in err_msg, f'Error message: {text} not found'
 
 
-@wt(parsers.parse('user of {browser_id} uses Upload(json) button from menu '
+@wt(parsers.parse('user of {browser_id} uses Upload (json) button from menu '
                   'bar to upload workflow "{file_name}" to current dir '
                   'without waiting for upload to finish'))
 @repeat_failed(timeout=2*WAIT_BACKEND)
