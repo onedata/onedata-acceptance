@@ -25,12 +25,19 @@ def inventories_creation(config, admin_credentials, hosts,
 
         inventory_name_1:
             owner: user_name
+
             [users]:                        ---> optional
                 - user_name_2
-                - user_name_3
+                - user_name_3:
+                    [privileges]:           ---> optional
+                        - privilege_1
+                        - privilege_2
             [groups]:                       ---> optional
-                - group_name_1
-
+                - group_name_1:
+                    [privileges]:           ---> optional
+                        - privilege_1
+                        - privilege_2
+                - group_name_2
         inventory_name_2:
             ...
 
@@ -46,12 +53,12 @@ def inventories_creation(config, admin_credentials, hosts,
         inventory2:
             owner: user2
     """
-    _create_and_configure_inventories(config, admin_credentials,
-                                      hosts, users, groups, zone_name)
+    _inventories_creation(config, hosts, users, zone_name, admin_credentials,
+                          groups)
 
 
-def _create_and_configure_inventories(config, admin_credentials,
-                                      hosts, users_db, groups_db, zone_name):
+def _inventories_creation(config, hosts, users, zone_name, admin_credentials,
+                          groups):
     zone_hostname = hosts[zone_name]['hostname']
     admin_credentials.token = admin_credentials.create_token(
         hosts['onezone']['ip'])
@@ -59,59 +66,69 @@ def _create_and_configure_inventories(config, admin_credentials,
     config = yaml.load(config)
 
     for inventory_name, description in config.items():
-        owner = users_db[description['owner']]
-        users_to_add = description.get('users', [])
+        owner = users[description['owner']]
 
-        inventory_id = _create_inventory(zone_hostname, owner.username,
-                                         owner.password, inventory_name)
+        inventory_id = _create_inventory(zone_hostname, owner, inventory_name)
+        for user in description.get('users', {}):
+            try:
+                [(user, options)] = user.items()
+            except AttributeError:
+                privileges = None
+            else:
+                privileges = options['privileges']
 
-        _add_users_to_inventory(zone_hostname, admin_credentials, inventory_id,
-                                users_db, users_to_add)
-        _add_groups_to_inventory(zone_hostname, admin_credentials, inventory_id,
-                                 groups_db, description.get('groups', {}))
+            _add_user_to_inventory(zone_hostname, admin_credentials,
+                                   inventory_id, users[user].id, privileges)
+
+        for group in description.get('groups', {}):
+            try:
+                [(group, options)] = group.items()
+            except AttributeError:
+                privileges = None
+            else:
+                privileges = options['privileges']
+
+            group_id = groups[group]
+
+            _add_group_to_inventory(zone_hostname, admin_credentials,
+                                    inventory_id, group_id, privileges)
 
 
-def _create_inventory(zone_hostname, owner_username, owner_password,
-                      inventory_name):
+def _create_inventory(zone_hostname, owner, inventory_name):
     inventory_properties = json.dumps({'name': inventory_name})
 
     response = http_post(ip=zone_hostname, port=OZ_REST_PORT,
                          path=get_zone_rest_path('user', 'atm_inventories'),
-                         auth=(owner_username, owner_password),
+                         auth=(owner.username, owner.password),
                          data=inventory_properties)
 
     return response.headers['location'].split('/')[-1]
 
 
-def _add_users_to_inventory(zone_hostname, admin_credentials, inventory_id,
-                            users_db, users_to_add):
-    for user in users_to_add:
-        _add_user_to_inventory(zone_hostname, admin_credentials.username,
-                               admin_credentials.password, inventory_id,
-                               users_db[user].id)
+def _add_user_to_inventory(zone_hostname, admin_credentials,
+                           inventory_id, user_id, privileges):
+    if privileges:
+        data = json.dumps({'privileges': privileges})
+    else:
+        data = None
 
-
-def _add_user_to_inventory(zone_hostname, admin_username, admin_password,
-                           inventory_id, user_id):
-    data = None
     http_put(ip=zone_hostname, port=OZ_REST_PORT,
              path=get_zone_rest_path('atm_inventories', inventory_id, 'users',
                                      user_id),
-             auth=(admin_username, admin_password), data=data)
+             auth=(admin_credentials.username, admin_credentials.password),
+             data=data)
 
 
-def _add_groups_to_inventory(zone_hostname, admin_credentials, inventory_id,
-                             groups_db, groups_to_add):
-    for group in groups_to_add:
-        _add_group_to_inventory(zone_hostname, admin_credentials.username,
-                                admin_credentials.password, inventory_id,
-                                groups_db[group])
+def _add_group_to_inventory(zone_hostname, admin_credentials, inventory_id,
+                            group_id, privileges):
+    if privileges:
+        data = json.dumps({'privileges': privileges})
+    else:
+        data = None
 
-
-def _add_group_to_inventory(zone_hostname, admin_username, admin_password,
-                            inventory_id, group_id):
-    data = None
     http_put(ip=zone_hostname, port=OZ_REST_PORT,
-             path=get_zone_rest_path('atm_inventories', inventory_id, 'groups',
-                                     group_id),
-             auth=(admin_username, admin_password), data=data)
+             path=get_zone_rest_path('atm_inventories', inventory_id,
+                                     'groups', group_id),
+             auth=(admin_credentials.username, admin_credentials.password),
+             data=data)
+
