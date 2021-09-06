@@ -93,7 +93,7 @@ Feature: Uploading multiple files at once
     # upload 2GB file
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload files from local directory "dir6" to remote current dir
-    And user of browser waits for file upload to finish
+    And user of browser waits extended time for file upload to finish
     Then user of browser sees that there is 1 item in file browser
 
 
@@ -104,6 +104,5 @@ Feature: Uploading multiple files at once
     # upload 500 files
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload files from local directory "dir5" to remote current dir
-    And user of browser sees nonempty file browser in files tab in Oneprovider page
-    And user of browser sees that content of current directory has been loaded
+    And user of browser waits extended time for file upload to finish
     Then user of browser scrolls to the bottom of file browser and sees there are 500 files
