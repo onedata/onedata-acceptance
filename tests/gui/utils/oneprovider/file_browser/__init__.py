@@ -90,14 +90,5 @@ class _FileBrowser(PageObject):
         with rm_css_cls(self.driver, self._upload_input, 'hidden') as elem:
             elem.send_keys(files)
 
-    def upload_file_with_weak_connection(self, files):
-        """This interaction is very hacky, because uploading files with Selenium
-        needs to use input element, but we do not use it directly in frontend.
-        So we unhide an input element for a while and pass a local file path to it.
-        """
-        with rm_css_cls(self.driver, self._upload_input, 'hidden') as elem:
-            elem.send_keys(files)
-
-
 
 FileBrowser = partial(WebItem, cls=_FileBrowser)
