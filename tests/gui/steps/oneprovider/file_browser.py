@@ -463,42 +463,54 @@ def assert_property_in_symlink_dets_modal(selenium, browser_id, link_property,
                                    f'not expected {value}')
 
 
-@wt(parsers.parse('user of {browser_id} sees contents of downloaded "{file_name}" TAR file in '
-                  'download directory has following structure:\n{contents}'))
+@wt(parsers.parse('user of {browser_id} sees that contents of downloaded "{file_name}" TAR file in '
+                  'download directory have following structure:\n{contents}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_contents_downloaded_tar_file(selenium, browser_id, file_name, contents, tmpdir):
-    configured_dir_contents = []
+    configured_dir_contents = {}
     
     def _get_directory_contents(directory_tree, path=''):
       
-      if not directory_tree:
-        return
+        if not directory_tree:
+            return
 
-      for item in directory_tree:
-        try:
-            [(name, content)] = item.items()
-        except AttributeError:
-            name = item
-            content = None
+        for item in directory_tree:
+            try:
+                [(name, content)] = item.items()
+            except AttributeError:
+                name = item
+                content = None
 
-        if path == '':
-          item_path = name
-        else:
-          item_path = path + '/' + name
+            if path == '':
+                item_path = name
+            else:
+                item_path = path + '/' + name
 
-        configured_dir_contents.append(item_path)
-        if name.startswith('dir'):
-            _get_directory_contents(content, item_path)
-        
+            configured_dir_contents[item_path] = str(content)
+            if name.startswith('dir'):
+                configured_dir_contents[item_path] = None
+                _get_directory_contents(content, item_path)
+    
+    download_path = tmpdir.join(browser_id, 'download')
+    extract_path =  download_path.join('extract')
+    downloaded_tar_filename = download_path.join(file_name).strpath
 
-    downloaded_tar_filename = tmpdir.join(browser_id, 'download', file_name).strpath
-
-    assert tarfile.is_tarfile(downloaded_tar_filename), (f'{downloaded_tar_filename} is not valid TAR file archive')
+    assert tarfile.is_tarfile(downloaded_tar_filename), (  
+                f'{downloaded_tar_filename} is not valid TAR file archive')
     
     tar = tarfile.open(downloaded_tar_filename)
     files_list = tar.getnames()
+    tar.extractall(extract_path.strpath)
+    
     dir_tree = yaml.load(contents)
     _get_directory_contents(dir_tree)
+
     for f in files_list :
         assert f in configured_dir_contents, (f'{f} is missing in downloaded tar file ')
+        archive_file = tar.getmember(f)
+        if archive_file.isfile() :
+            with open(extract_path.join(f).strpath, 'r') as o:
+                file_contents = o.read()
+                assert str(file_contents) == str(configured_dir_contents[f]), (
+                    f'{f} content is different than expected {file_contents}!={configured_dir_contents[f]}')
 
