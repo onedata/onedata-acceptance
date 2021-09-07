@@ -108,6 +108,7 @@ Feature: Basic management of spaces privileges in Onezone GUI
 
     Then user of browser_user1 sees that [Members, Shares, Harvesters] of "space1" in the sidebar are disabled
 
+
   Scenario: User fails to remove group from space without remove group privileges
     When user of space_owner_browser clicks "space2" on the spaces list in the sidebar
     And user of space_owner_browser clicks Members of "space2" in the sidebar
@@ -301,7 +302,7 @@ Feature: Basic management of spaces privileges in Onezone GUI
     Then user of browser_user1 sees that error modal with text "Removing the space failed" appeared
 
 
- Scenario: User fails to generate space invite token because of lack in privileges
+  Scenario: User fails to generate space invite token because of lack in privileges
     When user of space_owner_browser clicks on Data in the main menu
     And user of space_owner_browser clicks "space2" on the spaces list in the sidebar
     And user of space_owner_browser clicks Members of "space2" in the sidebar
@@ -421,8 +422,8 @@ Feature: Basic management of spaces privileges in Onezone GUI
           Space management:
             granted: True
 
-   And user of browser_user1 clicks on Data in the main menu
-   Then user of browser_user1 sees that "space1" has appeared on the spaces list in the sidebar
+    And user of browser_user1 clicks on Data in the main menu
+    Then user of browser_user1 sees that "space1" has appeared on the spaces list in the sidebar
 
 
   Scenario: Non-owner-user fails to view space because of lack in privileges
@@ -433,8 +434,9 @@ Feature: Basic management of spaces privileges in Onezone GUI
           Space management:
             granted: False
 
-   And user of browser_user1 clicks on Data in the main menu
+    And user of browser_user1 clicks on Data in the main menu
     Then user of browser_user1 sees that [Members, Shares, Harvesters] of "space1" in the sidebar are disabled
+
 
   Scenario: Non-owner-user sets privileges for other user
     When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
@@ -447,19 +449,19 @@ Feature: Basic management of spaces privileges in Onezone GUI
               View privileges: True
               Set privileges: True
 
-   And user of browser_user1 clicks on Data in the main menu
-   And user of browser_user1 clicks "space1" on the spaces list in the sidebar
-   And user of browser_user1 clicks Members of "space1" in the sidebar
-   And user of browser_user1 clicks "user2" user in "space1" space members users list
-   And user of browser_user1 sets following privileges for "user2" user in space members subpage:
+    And user of browser_user1 clicks on Data in the main menu
+    And user of browser_user1 clicks "space1" on the spaces list in the sidebar
+    And user of browser_user1 clicks Members of "space1" in the sidebar
+    And user of browser_user1 clicks "user2" user in "space1" space members users list
+    And user of browser_user1 sets following privileges for "user2" user in space members subpage:
           Space management:
             granted: Partially
             privilege subtypes:
               View privileges: False
               Set privileges: False
 
-   And user of browser_user1 clicks "user2" user in "space1" space members users list
-   Then user of browser_user1 sees following privileges of "user2" user in space members subpage:
+    And user of browser_user1 clicks "user2" user in "space1" space members users list
+    Then user of browser_user1 sees following privileges of "user2" user in space members subpage:
           Space management:
             granted: Partially
             privilege subtypes:
@@ -478,15 +480,15 @@ Feature: Basic management of spaces privileges in Onezone GUI
               View privileges: True
               Set privileges: False
 
-   And user of browser_user1 clicks on Data in the main menu
-   And user of browser_user1 clicks "space1" on the spaces list in the sidebar
-   And user of browser_user1 clicks Members of "space1" in the sidebar
-   And user of browser_user1 clicks "user2" user in "space1" space members users list
-   And user of browser_user1 sets following privileges for "user2" user in space members subpage:
+    And user of browser_user1 clicks on Data in the main menu
+    And user of browser_user1 clicks "space1" on the spaces list in the sidebar
+    And user of browser_user1 clicks Members of "space1" in the sidebar
+    And user of browser_user1 clicks "user2" user in "space1" space members users list
+    And user of browser_user1 sets following privileges for "user2" user in space members subpage:
           Space management:
             granted: Partially
             privilege subtypes:
               View privileges: True
               Set privileges: True
 
-   Then user of browser_user1 sees that error modal with text "insufficient privileges" appeared
+    Then user of browser_user1 sees that error modal with text "insufficient privileges" appeared
