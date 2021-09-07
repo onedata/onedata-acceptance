@@ -8,6 +8,7 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 from tests.gui.meta_steps.oneprovider.data import *
+from tests.gui.steps.oneprovider.browser import double_click_on_item_in_browser
 from tests.gui.meta_steps.oneprovider.metadata import (
     assert_metadata_in_op_gui, set_metadata_in_op_gui,
     remove_all_metadata_in_op_gui, assert_such_metadata_not_exist_in_op_gui)
@@ -134,7 +135,7 @@ def create_dir_in_op(client, user, users, space, abs_path, hosts, tmp_memory,
 def go_to_dir(selenium, user, item_name, tmp_memory, op_container, space, oz_page):
     go_to_filebrowser(selenium, user, oz_page, op_container,
                       tmp_memory, space)
-    double_click_on_item_in_file_browser(user, item_name, tmp_memory)
+    double_click_on_item_in_browser(user, item_name, tmp_memory)
 
 
 @wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to see '

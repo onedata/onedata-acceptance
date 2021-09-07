@@ -11,7 +11,7 @@ from time import sleep
 from selenium.webdriver.common.action_chains import ActionChains
 
 from tests.gui.utils.core.web_elements import (WebElement, WebElementsSequence,
-                                               Label, WebItem)
+                                               Label)
 from .common import OZPanel
 from .data_page import DataPage
 from .providers_page import ProvidersPage
@@ -21,6 +21,7 @@ from .discovery_page import DiscoveryPage
 from .clusters_page import ClustersPage
 from .manage_account_page import ManageAccountPage
 from .uploads_page import UploadsPage
+from .automation_page import AutomationPage
 
 
 class OZLoggedIn(object):
@@ -32,12 +33,16 @@ class OZLoggedIn(object):
 
     provider_alert_message = Label('.content-info-content-container '
                                    '.text-center')
+
+    profile_username = Label('.main-menu-column .user-account-button-username')
+
     panels = {
         'data': DataPage,
         'providers': ProvidersPage,
         'groups': GroupsPage,
         'tokens': TokensPage,
         'discovery': DiscoveryPage,
+        'automation': AutomationPage,
         'clusters': ClustersPage
     }
 

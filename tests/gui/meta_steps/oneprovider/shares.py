@@ -6,8 +6,7 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
-from tests.gui.steps.oneprovider.data_tab import \
-    assert_file_browser_in_files_tab_in_op
+from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.steps.onezone.spaces import \
     click_on_option_of_space_on_left_sidebar_menu
 from tests.gui.steps.modal import (
@@ -16,9 +15,10 @@ from tests.gui.steps.modal import (
     click_icon_in_share_directory_modal)
 from tests.gui.steps.oneprovider.file_browser import (
     click_menu_for_elem_in_file_browser,
-    click_option_in_data_row_menu_in_file_browser,
     click_on_status_tag_for_file_in_file_browser)
 from tests.gui.steps.oneprovider.shares import *
+from tests.gui.steps.oneprovider.browser import (
+    click_option_in_data_row_menu_in_browser)
 
 
 @wt(parsers.parse('user of {browser_id} creates "{share_name}" share of'
@@ -33,8 +33,8 @@ def create_share(selenium, browser_id, share_name, item_name, tmp_memory,
     button = 'Create'
 
     click_menu_for_elem_in_file_browser(browser_id, item_name, tmp_memory)
-    click_option_in_data_row_menu_in_file_browser(selenium, browser_id, option,
-                                                  modals)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
+                                             modals)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     write_name_into_text_field_in_modal(selenium, browser_id, share_name,
                                         modal_name, modals)
@@ -53,8 +53,8 @@ def open_single_share_view_by_modal(selenium, browser_id, share_name, modals,
                                                  item_name, tmp_memory)
     click_share_info_icon_in_share_directory_modal(selenium, browser_id, modals,
                                                    share_name)
-    assert_file_browser_in_files_tab_in_op(selenium, browser_id, op_container,
-                                           tmp_memory, items_browser)
+    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
+                                tmp_memory, items_browser)
     is_selected_share_named(selenium, browser_id, share_name, op_container)
 
 
@@ -96,8 +96,8 @@ def open_shares_view_of_given_space(selenium, browser_id, oz_page, space_name,
 
     click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
                                                   space_name, option, oz_page)
-    assert_file_browser_in_files_tab_in_op(selenium, browser_id, op_container,
-                                           tmp_memory, items_browser)
+    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
+                                tmp_memory, items_browser)
 
 
 @wt(parsers.parse('user of {browser_id} opens "{share_name}" single '

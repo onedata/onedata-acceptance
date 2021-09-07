@@ -14,8 +14,8 @@ from tests.gui.utils.generic import transform, parse_seq
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 
-SPACE_TABS = ["Overview", "Files", "Shares", "Transfers", "Providers",
-              "Members", "Harvesters"]
+SPACE_TABS = ["Overview", "Files", "Shares", "Transfers", "Datasets",
+              "Providers", "Members", "Harvesters"]
 
 
 def _choose_space_from_menu_list(oz_page, driver, name):
@@ -100,7 +100,8 @@ def assert_new_created_space_has_appeared_on_spaces(selenium, browser_id,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
-               '(?P<option>Data|Providers|Groups|Tokens|Discovery|Clusters) '
+               '(?P<option>Data|Providers|Groups|Tokens|Discovery|Automation'
+               '|Clusters) '
                'in the main menu'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page):
@@ -267,8 +268,8 @@ def click_the_map_on_data_page(selenium, browser_id, oz_page, page, space_name):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks '
-               '(?P<option>Overview|Files|Shares|Transfers|Providers|Members|'
-               'Harvesters) of "(?P<space_name>.*?)" in the sidebar'))
+               '(?P<option>Overview|Files|Shares|Transfers|Datasets|Providers'
+               '|Members|Harvesters) of "(?P<space_name>.*?)" in the sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
                                                   space_name, option, oz_page):
@@ -408,17 +409,15 @@ def click_get_support_button_on_providers_page(selenium, browser_id, oz_page):
     oz_page(driver)['data'].providers_page.add_support()
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) sees (?P<alert_text>.*) alert '
-               'on providers page'))
+@wt(parsers.parse('user of {browser_id} sees {text} alert on providers page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def see_insufficient_permissions_alert_on_providers_page(selenium, browser_id,
-                                                         oz_page, alert_text):
+def see_insufficient_privileges_label_on_providers_page(selenium, browser_id,
+                                                        oz_page, text):
     driver = selenium[browser_id]
-
-    forbidden_alert = (oz_page(driver)['data'].providers_page.get_support_page
-                       .forbidden_alert.text)
-    assert alert_text in forbidden_alert, ('alert with text "{}" not found'
-                                           .format(alert_text))
+    item_text = (oz_page(driver)['data'].providers_page.get_support_page
+                 .insufficient_privileges)
+    assert item_text == text, f'found {item_text} alert instead of expected' \
+                              f' {text}'
 
 
 @wt(parsers.parse('user of {browser_id} clicks Deploy your own provider tab '
@@ -614,3 +613,26 @@ def assert_tabs_of_space_disabled(selenium, browser_id, tabs_list, space_name,
 def assert_error_detail_text_spaces(selenium, browser_id, oz_page, text):
     page = oz_page(selenium[browser_id])['data']
     assert text in page.error_header, f'page with text "{text}" not found'
+
+
+@wt(parsers.parse('user of {browser_id} sees that provider "{provider1}" is '
+                  'placed east of "{provider2}" on world map'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def check_two_providers_places(selenium, browser_id, oz_page, hosts,
+                               provider1, provider2):
+    driver = selenium[browser_id]
+    page = 'providers'
+    current_page = getattr(oz_page(driver)['data'], _get_subpage_name(page))
+
+    provider1_name = hosts[provider1]['name']
+    provider2_name = hosts[provider2]['name']
+
+    provider1_position = current_page.map.get_provider_horizontal_position(
+        provider1_name, driver)
+    provider2_position = current_page.map.get_provider_horizontal_position(
+        provider2_name, driver)
+
+    # the higher value of position the further on the east provider appears
+    assert provider1_position > provider2_position, (f'Provider "{provider1}" '
+                                                     f'appears west of provider'
+                                                     f' "{provider2}"')

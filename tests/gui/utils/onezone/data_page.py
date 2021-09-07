@@ -5,6 +5,8 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+import re
+
 from selenium.webdriver import ActionChains
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (Button, NamedButton,
@@ -30,6 +32,8 @@ class Space(Element):
                          text='Shares')
     transfers = NamedButton('.one-list-level-2 .item-header',
                             text='Transfers')
+    datasets = NamedButton('.one-list-level-2 .item-header',
+                           text='Datasets')
     providers = NamedButton('.one-list-level-2 .item-header',
                             text='Providers')
     members = NamedButton('.one-list-level-2 .item-header',
@@ -77,7 +81,7 @@ class SpaceMembersTile(PageObject):
 
 
 class ProvidersMap(Element):
-    providers = WebElementsSequence('.circle')
+    providers = WebElementsSequence('.one-atlas-point')
 
     def click_provider(self, provider_name, driver):
         for prov in self.providers:
@@ -95,6 +99,19 @@ class ProvidersMap(Element):
             name = driver.find_element_by_css_selector('.tooltip-inner').text
             if name == provider_name:
                 return
+
+        raise RuntimeError(f'Provider {provider_name} was not found on the map')
+
+    def get_provider_horizontal_position(self, provider_name, driver):
+        for prov in self.providers:
+            ActionChains(driver).move_to_element(prov).perform()
+            name = driver.find_element_by_css_selector('.tooltip-inner').text
+            if name == provider_name:
+                style = prov.get_attribute('style')
+                position = re.search(r'left:\s*(\d+\.*\d*)px', style).group(1)
+                position = float(position)
+
+                return position
 
         raise RuntimeError(f'Provider {provider_name} was not found on the map')
 
@@ -145,6 +162,7 @@ class GetSupportPage(PageObject):
     token_textarea = Label('.active textarea')
     copy = Button('.request-support-tab .copy-btn')
     forbidden_alert = WebElement('.error')
+    insufficient_privileges = Label('.text-center')
 
 
 class SpaceProvidersPage(PageObject):
@@ -158,6 +176,11 @@ class SpaceProvidersPage(PageObject):
 
 class _Provider(PageObject):
     name = id = Label('a .tab-name')
+
+
+class DatasetHeader(PageObject):
+    detached = Button('.btn-effecitve')
+    attached = Button('.select-attached-datasets-btn')
 
 
 class DataPage(GenericPage):
@@ -179,6 +202,7 @@ class DataPage(GenericPage):
     members_page = WebItem('.main-content', cls=MembersPage)
     welcome_page = WebItem('.main-content', cls=WelcomePage)
     harvesters_page = WebItem('.main-content', cls=HarvestersPage)
+    dataset_header = WebItem('.main-content', cls=DatasetHeader)
 
     # button in top right corner on all subpages
     menu_button = Button('.with-menu .collapsible-toolbar-toggle')
