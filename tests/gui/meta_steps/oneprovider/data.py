@@ -368,7 +368,9 @@ def _select_item(browser_id, tmp_memory, path):
     return item_name
 
 
-def go_to_path(browser_id, tmp_memory, path):
+@wt(parsers.parse('user of {browser_id} go to "{path}" in {which_browser}'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def go_to_path(browser_id, tmp_memory, path, which_browser='file browser'):
     if '/' in path:
         item_name, path_list = get_item_name_and_containing_dir_path(path)
         path_list.append(item_name)
@@ -376,7 +378,8 @@ def go_to_path(browser_id, tmp_memory, path):
         path_list = [path]
     for directory in path_list:
         if directory != '':
-            double_click_on_item_in_browser(browser_id, directory, tmp_memory)
+            double_click_on_item_in_browser(browser_id, directory, tmp_memory,
+                                            which_browser)
 
 
 def go_to_path_without_last_elem(browser_id, tmp_memory, path):

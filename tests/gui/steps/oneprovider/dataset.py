@@ -109,14 +109,6 @@ def fail_to_mark_file_as_dataset_toggle(browser_id, selenium, modals):
     assert not modals(driver).datasets.dataset_toggle.check(), err_msg
 
 
-@wt(parsers.parse('user of {browser_id} clicks on menu '
-                  'for "{item_name}" dataset in dataset browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_menu_for_elem_in_dataset_browser(browser_id, item_name, tmp_memory):
-    browser = tmp_memory[browser_id]['dataset_browser']
-    browser.data[item_name].menu_button()
-
-
 @wt(parsers.parse('user of {browser_id} cannot click "{option}" option'
                   ' in data row menu in dataset browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)

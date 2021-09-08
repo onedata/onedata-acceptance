@@ -1,4 +1,6 @@
-""""Meta steps for operations for datasets"""
+"""This module contains meta steps for operations on archives in Onezone
+using web GUI.
+"""
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"

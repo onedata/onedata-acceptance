@@ -1,4 +1,4 @@
-Feature: Basic dataset operations
+Feature: Basic datasets operations
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -74,8 +74,7 @@ Feature: Basic dataset operations
 
   Scenario: User sees directory tree in dataset browser after marking directories as dataset
     When user of browser creates dataset for item "dir2" in "space1"
-    And user of browser double clicks on item named "dir2" in file browser
-    And user of browser double clicks on item named "dir3" in file browser
+    And user of browser go to "/dir2/dir3" in file browser
     And user of browser creates dataset for item "dir4" in "space1"
     And user of browser double clicks on item named "dir4" in file browser
     And user of browser creates dataset for item "dir5" in "space1"
@@ -95,8 +94,7 @@ Feature: Basic dataset operations
     And user of browser click data write protection toggle in Datasets modal
     And user of browser clicks on "Close" button in modal "Datasets"
 
-    And user of browser double clicks on item named "dir2" in file browser
-    And user of browser double clicks on item named "dir3" in file browser
+    And user of browser go to "/dir2/dir3" in file browser
     And user of browser creates dataset for item "dir4" in "space1"
     And user of browser clicks on menu for "dir4" directory in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser

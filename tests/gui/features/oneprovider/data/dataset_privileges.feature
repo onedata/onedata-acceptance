@@ -208,7 +208,7 @@ Feature: Dataset browser tests using user who is not the owner of a space
     And user of browser_user1 clicks on menu for "dir1" dataset in dataset browser
     And user of browser_user1 clicks "Create archive" option in data row menu in dataset browser
     And user of browser_user1 clicks on "Create" button in modal "Create Archive"
-    Then user of browser_user1 sees that item "dir1" has 1 Archives
+    Then user of browser_user1 sees that item "dir1" has 1 archive
 
 
   Scenario: User does not see archive file browser if he does not have view archives privilege
@@ -224,6 +224,6 @@ Feature: Dataset browser tests using user who is not the owner of a space
 
     And user of browser_user1 clicks Datasets of "space1" in the sidebar
     And user of browser_user1 sees dataset browser in datasets tab in Oneprovider page
-    And user of browser_user1 clicks on 1 in "dir1" Archives
+    And user of browser_user1 clicks on archives count link for "dir1" in dataset browser
     Then user of browser_user1 sees that error page with text "OPERATION NOT PERMITTED" appeared
 

@@ -12,7 +12,7 @@ from tests.gui.utils.core.web_elements import Input, NamedButton
 
 
 class PurgeArchive(Modal):
-    confirmation_box = Input('.form-control')
+    confirmation_input = Input('.form-control')
     purge_archive = NamedButton('.btn-danger', text='Purge archive')
 
     def __str__(self):
