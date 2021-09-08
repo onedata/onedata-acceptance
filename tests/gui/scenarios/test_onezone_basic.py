@@ -70,6 +70,7 @@ from tests.gui.meta_steps.onepanel.spaces import *
 from tests.gui.meta_steps.onezone.spaces import *
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.oneprovider.common import *
+from tests.gui.meta_steps.onezone.groups import *
 
 from tests.utils.acceptance_utils import *
 from tests.mixed.steps.space_basic import *
@@ -87,6 +88,7 @@ scenarios('../features/onezone/providers_multibrowser.feature')
 scenarios('../features/onezone/clusters_as_admin.feature')
 scenarios('../features/onezone/full_name.feature')
 scenarios('../features/onezone/default_privileges.feature')
+scenarios('../features/onezone/clusters_effective_privileges.feature')
 
 # THIS SCENARIO HAS TO BE EXECUTED IN THE END
 scenarios('../features/onezone/delete_account.feature')

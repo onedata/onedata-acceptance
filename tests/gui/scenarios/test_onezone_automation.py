@@ -1,12 +1,11 @@
-"""This module contains tests suite for spaces management using
-Onezone GUI and single browser instance.
+"""This module contains tests suite for automation management using
+Onezone GUI and multiple browser instances.
 """
 
-__author__ = "Bartosz Walkowicz"
-__copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
+__author__ = "Rafał Widziszewski"
+__copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
-
 
 from pytest import fixture
 from pytest_bdd import scenario, scenarios
@@ -47,8 +46,6 @@ from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
-from tests.gui.steps.oneprovider.shares import *
-from tests.gui.steps.oneprovider.browser import *
 
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
@@ -60,15 +57,17 @@ from tests.gui.meta_steps.onezone.tokens import *
 
 from tests.utils.acceptance_utils import *
 
+from tests.gui.steps.onezone.automation import *
+from tests.gui.meta_steps.onezone.tokens import *
+from tests.gui.steps.onezone.members import *
+from tests.gui.steps.rest.env_up.inventory import *
+
 
 @fixture(scope='module')
 def screens():
-    return [0]
+    return [0, 1]
 
 
-scenarios('../features/onezone/space/spaces.feature')
-scenarios('../features/onezone/space/create_new_space.feature')
-scenarios('../features/onezone/space/multispace.feature')
-scenarios('../features/onezone/space/spaces_memberships.feature')
-scenarios('../features/onezone/space/spaces_memberships_privileges.feature')
-scenarios('../features/onezone/space/spaces_effective_privileges.feature')
+scenarios('../features/onezone/automation_basics.feature')
+scenarios('../features/onezone/automation_members.feature')
+scenarios('../features/onezone/automation_effective_privileges.feature')
