@@ -174,11 +174,7 @@ def click_on_state_view_mode_tab(browser_id, oz_page, selenium, state):
 
 
 @wt(parsers.parse('user of {browser_id} clicks on menu '
-                  'for "{item_name}" directory in {which_browser}'))
-@wt(parsers.parse('user of {browser_id} clicks on menu '
-                  'for "{item_name}" file in {which_browser}'))
-@wt(parsers.parse('user of {browser_id} clicks on menu '
-                  'for "{item_name}" dataset in {which_browser}'))
+                  'for "{item_name}" {type} in {which_browser}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory,
                                    which_browser='file browser'):
