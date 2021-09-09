@@ -368,7 +368,7 @@ def _select_item(browser_id, tmp_memory, path):
     return item_name
 
 
-@wt(parsers.parse('user of {browser_id} go to "{path}" in {which_browser}'))
+@wt(parsers.parse('user of {browser_id} goes to "{path}" in {which_browser}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def go_to_path(browser_id, tmp_memory, path, which_browser='file browser'):
     if '/' in path:

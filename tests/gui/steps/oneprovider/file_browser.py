@@ -382,7 +382,7 @@ def assert_contents_downloaded_tar_file(selenium, browser_id, file_name,
                 item_path = path + '/' + name
 
             configured_dir_contents[item_path] = str(content)
-            if name.startswith('dir'):
+            if name.startswith('dir') or name.startswith('archive'):
                 configured_dir_contents[item_path] = None
                 _get_directory_contents(content, item_path)
 
@@ -402,9 +402,9 @@ def assert_contents_downloaded_tar_file(selenium, browser_id, file_name,
 
     for f in files_list:
         assert f in configured_dir_contents, (f'{f} is missing in downloaded '
-                                              f'tar file ')
+                                              f'tar file')
         archive_file = tar.getmember(f)
-        if archive_file.isfile() :
+        if archive_file.isfile():
             with open(extract_path.join(f).strpath, 'r') as o:
                 file_contents = o.read()
                 assert str(file_contents) == str(configured_dir_contents[f]), (

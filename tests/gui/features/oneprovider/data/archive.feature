@@ -130,7 +130,7 @@ Feature: Basic archives operations
     Then user of browser clicks on archives count link for "dir1" in dataset browser
     And user of browser sees archive file browser in archives tab in Oneprovider page
     And user of browser double clicks on 1st archive on archives list in archive file browser
-    And user of browser go to "/dir1/dir2" in archive file browser
+    And user of browser goes to "/dir1/dir2" in archive file browser
     And user of browser sees symlink status tag for "dir3" in archive file browser
     And user of browser double clicks on item named "dir3" in archive file browser
     And user of browser sees symlink status tag for "file1" in archive file browser
@@ -179,12 +179,12 @@ Feature: Basic archives operations
     And user of browser clicks "Copy archive ID" option in data row menu in archive file browser
     And user of browser clicks on menu for 1 archive in archive file browser
     And user of browser clicks "Download (tar)" option in data row menu in archive file browser
-    Then user of browser sees contents of downloaded "archive" TAR file in download directory has following structure:
+    Then user of browser sees that contents of downloaded "archive" TAR file in download directory have following structure:
           - archive:
             - dir1:
               - dir2:
                 - dir3:
-                  - file1
+                  - file1: 100
 
 
   Scenario: User sees that files that did not change since creating last archive have 2 hardlinks tag after creating new incremental archive
