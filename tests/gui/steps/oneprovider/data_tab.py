@@ -274,14 +274,9 @@ def wait_for_file_upload_to_finish(selenium, browser_id, popups):
 
 @wt(parsers.re('user of (?P<browser_id>.*) waits extended time for file '
                'uploads? to finish'))
-@repeat_failed(timeout=WAIT_BACKEND*10)
+@repeat_failed(timeout=WAIT_BACKEND*12)
 def wait_extended_time_for_file_upload_to_finish(selenium, browser_id, popups):
-    driver = selenium[browser_id]
-    driver.switch_to.default_content()
-    assert not popups(driver).is_upload_presenter(), (
-        'file upload not finished '
-        'within given time')
-    switch_to_iframe(selenium, browser_id)
+    wait_for_file_upload_to_finish(selenium, browser_id, popups)
 
 
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '

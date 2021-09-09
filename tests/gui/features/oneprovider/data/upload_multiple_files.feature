@@ -86,7 +86,7 @@ Feature: Uploading multiple files at once
     Then user of browser sees items named ["file0.txt", "file1.txt", "file10.txt", "file2.txt", "file23.txt", "file3.txt"] in file browser in given order
 
 
-  Scenario: Stress testing by uploading 2GB file
+  Scenario: User successfully uploads 2 GB file (stress test)
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar
 
@@ -97,7 +97,7 @@ Feature: Uploading multiple files at once
     Then user of browser sees that there is 1 item in file browser
 
 
-  Scenario: Stress testing by uploading 500 files
+  Scenario: User successfully uploads 500 files (stress test)
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar
 
