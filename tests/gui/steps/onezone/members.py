@@ -55,8 +55,8 @@ def get_privilege_tree(selenium, browser_id, onepanel, oz_page, where,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks show view expand button in '
-               '(?P<where>space|group|cluster|harvester) members subpage '
-               'header'))
+               '(?P<where>space|group|cluster|harvester|automation) members'
+               ' subpage header'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_show_view_option(selenium, browser_id, oz_page, where, onepanel):
     driver = selenium[browser_id]
@@ -66,7 +66,8 @@ def click_show_view_option(selenium, browser_id, oz_page, where, onepanel):
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks '
                '(?P<mode>direct|effective|privileges|memberships) view mode '
-               'in (?P<where>space|group|cluster|harvester) members subpage'))
+               'in (?P<where>space|group|cluster|harvester|automation) '
+               'members subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_mode_view_in_members_subpage(selenium, browser_id, mode, oz_page,
                                        where, onepanel):
@@ -377,7 +378,7 @@ def check_user_in_space_members_list(selenium, browser_id, option, username,
 
 @wt(parsers.re('user of (?P<browser_id>.*) removes "(?P<member_name>.*)" '
                '(?P<member_type>user|group) from "(?P<name>.*)" '
-               '(?P<where>cluster|group|harvester|space) members'))
+               '(?P<where>cluster|group|harvester|space|automation) members'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def remove_member_from_parent(selenium, browser_id, member_name, member_type,
                               name, oz_page, tmp_memory, onepanel, where,
@@ -398,6 +399,9 @@ def remove_member_from_parent(selenium, browser_id, member_name, member_type,
         modal_name = 'remove group from '
     else:
         modal_name = 'remove subgroup from '
+
+    if where == 'automation':
+        where = 'atm. inventory'
     modal_name += where
 
     popups(driver).menu_popup_with_text.menu['Remove this member']()
@@ -528,6 +532,24 @@ def set_privileges_in_members_subpage(selenium, browser_id, member_name,
                                                   member_type, onepanel)
 
 
+@wt(parsers.re('user of (?P<browser_id>.*) sets all privileges true for '
+               '"(?P<member_name>.*)" (?P<member_type>user|group) '
+               'in (?P<where>space|group|harvester|cluster|automation) '
+               'members subpage'))
+def set_all_privileges_true_in_members_subpage(selenium, browser_id,
+                                               member_name,  member_type, where,
+                                               onepanel, oz_page):
+    option = 'Save'
+    member_type_new = member_type + 's'
+
+    tree = get_privilege_tree(selenium, browser_id, onepanel, oz_page, where,
+                              member_type_new, member_name)
+    tree.set_all_true()
+    click_button_on_element_header_in_members(selenium, browser_id, option,
+                                              oz_page, where, member_name,
+                                              member_type, onepanel)
+
+
 @wt(parsers.re('user of (?P<browser_id>.*) sets following privileges for '
                '"(?P<member_name>.*)" (?P<member_type>user|group) '
                'in (?P<where>space|group|harvester|cluster) members subpage '
@@ -570,6 +592,9 @@ def assert_privileges_in_members_subpage(selenium, browser_id, member_name,
     tree = get_privilege_tree(selenium, browser_id, onepanel, oz_page, where,
                               member_type, member_name)
     tree.assert_privileges(privileges)
+    driver = selenium[browser_id]
+    page = _find_members_page(onepanel, oz_page, driver, where)
+    page.close_member(driver)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees following privileges on modal:'
@@ -655,7 +680,8 @@ def see_insufficient_permissions_alert(selenium, browser_id, oz_page, where,
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees privileges for '
                '"(?P<member_name>.*)" (?P<member_type>user|group) '
-               'in (?P<where>space|group|cluster|harvester) members subpage'))
+               'in (?P<where>space|group|cluster|harvester|automation) '
+               'members subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def see_privileges_for_member(selenium, browser_id, oz_page, where, member_type,
                               member_name, onepanel):

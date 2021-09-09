@@ -33,6 +33,9 @@ class OZLoggedIn(object):
 
     provider_alert_message = Label('.content-info-content-container '
                                    '.text-center')
+
+    profile_username = Label('.main-menu-column .user-account-button-username')
+
     panels = {
         'data': DataPage,
         'providers': ProvidersPage,

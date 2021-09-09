@@ -108,3 +108,10 @@ class MembersPage(PageObject):
 
     forbidden_alert = WebElement('.alert.forbidden')
     bulk_edit_button = NamedButton('.btn', text='Bulk edit')
+
+    def close_member(self, driver):
+        driver.execute_script("window.scrollBy(0,0)")
+        driver.find_element_by_css_selector('.member-item '
+                                            '.one-collapsible-list-item-header'
+                                            '.opened').click()
+
