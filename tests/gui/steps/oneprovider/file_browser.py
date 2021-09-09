@@ -17,8 +17,6 @@ from tests.gui.steps.modal import click_modal_button
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import wt, parsers
-from tests.gui.steps.oneprovider.browser import (
-    assert_status_tag_for_file_in_browser)
 
 
 @wt(parsers.parse('user of {browser_id} sees "{msg}" '
@@ -354,13 +352,13 @@ def assert_property_in_symlink_dets_modal(selenium, browser_id, link_property,
                                    f'not expected {value}')
 
 
-@wt(parsers.parse('user of {browser_id} sees contents of downloaded '
-                  '"{file_name}" TAR file in download directory has '
-                  'following structure:\n{contents}'))
+@wt(parsers.parse('user of {browser_id} sees that contents of downloaded '
+                  '"{file_name}" TAR file in download directory have following'
+                  ' structure:\n{contents}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_contents_downloaded_tar_file(selenium, browser_id, file_name,
                                         contents, tmpdir, clipboard, displays):
-    configured_dir_contents = []
+    configured_dir_contents = {}
     if file_name == 'archive':
         file_name = (f'archive_'
                      f'{clipboard.paste(display=displays[browser_id])}.tar')
@@ -383,21 +381,33 @@ def assert_contents_downloaded_tar_file(selenium, browser_id, file_name,
             else:
                 item_path = path + '/' + name
 
-            configured_dir_contents.append(item_path)
-            if name.startswith('dir') or name.startswith('archive'):
+            configured_dir_contents[item_path] = str(content)
+            if name.startswith('dir'):
+                configured_dir_contents[item_path] = None
                 _get_directory_contents(content, item_path)
 
-    downloaded_tar_filename = tmpdir.join(browser_id, 'download',
-                                          file_name).strpath
+    download_path = tmpdir.join(browser_id, 'download')
+    extract_path = download_path.join('extract')
+    downloaded_tar_filename = download_path.join(file_name).strpath
 
     assert tarfile.is_tarfile(downloaded_tar_filename), (
-        f'{downloaded_tar_filename} is not valid TAR file archive')
+                f'{downloaded_tar_filename} is not valid TAR file archive')
 
     tar = tarfile.open(downloaded_tar_filename)
     files_list = tar.getnames()
+    tar.extractall(extract_path.strpath)
+
     dir_tree = yaml.load(contents)
     _get_directory_contents(dir_tree)
+
     for f in files_list:
-        assert f in configured_dir_contents, (
-            f'{f} is missing in downloaded tar file ')
+        assert f in configured_dir_contents, (f'{f} is missing in downloaded '
+                                              f'tar file ')
+        archive_file = tar.getmember(f)
+        if archive_file.isfile() :
+            with open(extract_path.join(f).strpath, 'r') as o:
+                file_contents = o.read()
+                assert str(file_contents) == str(configured_dir_contents[f]), (
+                    f'{f} content is different than expected '
+                    f'{file_contents}!={configured_dir_contents[f]}')
 
