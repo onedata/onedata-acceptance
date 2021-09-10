@@ -181,6 +181,9 @@ class _Provider(PageObject):
 class DatasetHeader(PageObject):
     detached = Button('.btn-effecitve')
     attached = Button('.select-attached-datasets-btn')
+
+
+class ArchiveFileHeader(PageObject):
     dip = Button('.select-archive-aip-btn')
     aip = Button('.select-archive-dip-btn')
 
@@ -205,6 +208,7 @@ class DataPage(GenericPage):
     welcome_page = WebItem('.main-content', cls=WelcomePage)
     harvesters_page = WebItem('.main-content', cls=HarvestersPage)
     dataset_header = WebItem('.main-content', cls=DatasetHeader)
+    archive_file_header = WebItem('.main-content', cls=ArchiveFileHeader)
 
     # button in top right corner on all subpages
     menu_button = Button('.with-menu .collapsible-toolbar-toggle')

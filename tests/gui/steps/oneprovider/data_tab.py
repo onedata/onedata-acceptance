@@ -20,14 +20,10 @@ from tests.utils.bdd_utils import given, wt, parsers
 def check_browser_to_load(selenium, browser_id, tmp_memory, op_container,
                           browser):
     driver = selenium[browser_id]
-    if browser == 'file browser':
-        items_browser = op_container(driver).file_browser
-    elif browser == 'dataset browser':
-        items_browser = op_container(driver).dataset_browser
-    elif browser == 'archive file browser':
-        items_browser = op_container(driver).archive_file_browser
-    else:
+    if browser == 'shares browser':
         items_browser = op_container(driver).shares_page.shares_browser
+    else:
+        items_browser = getattr(op_container(driver), transform(browser))
     tmp_memory[browser_id][transform(browser)] = items_browser
 
 

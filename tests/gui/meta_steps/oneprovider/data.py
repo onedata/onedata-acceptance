@@ -15,7 +15,7 @@ from tests.gui.steps.oneprovider.file_browser import *
 from tests.gui.steps.oneprovider.data_tab import *
 from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.browser import *
-from tests.gui.steps.oneprovider.archives import clicks_on_archive
+from tests.gui.steps.oneprovider.archives import double_click_on_archive
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.common.url import refresh_site
 from tests.gui.meta_steps.oneprovider.common import (
@@ -207,7 +207,7 @@ def _check_files_tree(subtree, user, tmp_memory, cwd, selenium, op_container,
                                                                op_container,
                                                                which_browser)
                 if which_browser == 'archive file browser':
-                    clicks_on_archive(user, tmp_memory)
+                    double_click_on_archive(user, tmp_memory)
             else:
                 has_downloaded_file_content(user, item_name, str(item_subtree),
                                             tmpdir)

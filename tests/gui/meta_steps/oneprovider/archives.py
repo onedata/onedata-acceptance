@@ -57,7 +57,6 @@ def _create_archive(browser_id, selenium, config, item_name, space_name,
     item_browser = 'dataset browser'
     option_in_data_row_menu = 'Create archive'
     button_name = 'Create'
-    # options = parse_seq(options)
     try:
         op_container(selenium[browser_id]).dataset_browser.breadcrumbs
     except RuntimeError:

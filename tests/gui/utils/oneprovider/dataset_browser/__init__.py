@@ -18,7 +18,6 @@ class _DatasetBrowser(PageObject):
     breadcrumbs = Breadcrumbs('.fb-breadcrumbs')
     data = WebItemsSequence('.data-row.fb-table-row', cls=DataRow)
     _empty_dir_icon = WebElement('.empty-dir-image')
-    empty_dir_msg = Label('.empty-dir-text')
     error_msg = Label('.error-dir-text')
 
     def __str__(self):

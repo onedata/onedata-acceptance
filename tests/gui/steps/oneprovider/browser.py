@@ -165,12 +165,13 @@ def assert_status_tag_for_file_in_browser(browser_id, status_type,
 
 
 @wt(parsers.parse('user of {browser_id} clicks on {state} view mode '
-                  'on {} browser page'))
+                  'on {which} browser page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_state_view_mode_tab(browser_id, oz_page, selenium, state):
+def click_on_state_view_mode_tab(browser_id, oz_page, selenium, state, which):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    getattr(oz_page(driver)['data'].dataset_header, transform(state))()
+    header = f'{transform(which)}_header'
+    getattr(getattr(oz_page(driver)['data'], header), transform(state))()
 
 
 @wt(parsers.parse('user of {browser_id} clicks on menu '

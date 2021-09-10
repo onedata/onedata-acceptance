@@ -66,15 +66,6 @@ def assert_toggle_unchecked_on_item_in_ancestor_list(browser_id, selenium,
     assert getattr(item, protection_kind).is_unchecked(), err_msg
 
 
-@wt(parsers.parse('user of {browser_id} clicks on {state} view mode '
-                  'on dataset browser page'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_state_view_mode_tab(browser_id, oz_page, selenium, state):
-    driver = selenium[browser_id]
-    driver.switch_to.default_content()
-    getattr(oz_page(driver)['data'].dataset_header, state)()
-
-
 @wt(parsers.re('user of (?P<browser_id>.*) clicks Mark this (directory|file) '
                'as dataset toggle in Datasets modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -130,14 +121,6 @@ def cannot_click_option_in_dataset_browser(selenium, browser_id, option,
     driver = selenium[browser_id]
     err_msg = f'{option} is clickable'
     assert not modals(driver).data_row_menu.options[option].click(), err_msg
-
-
-@wt(parsers.parse('user of {browser_id} sees that page with text '
-                  '"{text}" appeared'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_page_with_error_appeared(browser_id, text, tmp_memory):
-    browser = tmp_memory[browser_id]['dataset_browser']
-    assert browser.empty_dir_msg == text, f'page with text "{text}" not found'
 
 
 

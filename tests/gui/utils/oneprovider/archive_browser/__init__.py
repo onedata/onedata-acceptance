@@ -1,4 +1,4 @@
-"""Utils for archive file browser and it's components in Oneprovider GUI tests
+"""Utils for archive browser and it's components in Oneprovider GUI tests
 """
 
 __author__ = "Katarzyna Such"
@@ -8,20 +8,21 @@ __license__ = "This software is released under the MIT license cited in " \
 
 from functools import partial
 from tests.gui.utils.core.base import PageObject
-from tests.gui.utils.core.web_elements import WebItemsSequence, WebItem, Button
+from tests.gui.utils.core.web_elements import (WebItemsSequence, WebItem,
+                                               Button, Label)
 from .data_row import DataRow
 from ..breadcrumbs import Breadcrumbs
 
 
-class _ArchiveFileBrowser(PageObject):
+class _ArchiveBrowser(PageObject):
     data = WebItemsSequence('.data-row.fb-table-row', cls=DataRow)
     breadcrumbs = Breadcrumbs('.fb-breadcrumbs')
+    create_archive = Button('.hidden-xs .oneicon-browser-archive-add')
+    empty_dir_msg = Label('.empty-dir-text')
 
     def __str__(self):
-        return f'archive file browser in {self.parent}'
+        return f'archive browser in {self.parent}'
 
 
-ArchiveFileBrowser = partial(WebItem, cls=_ArchiveFileBrowser)
-
-
+ArchiveBrowser = partial(WebItem, cls=_ArchiveBrowser)
 
