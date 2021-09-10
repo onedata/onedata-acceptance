@@ -193,3 +193,4 @@ def get_group_id_list(user, users, zone_hostname):
                            path=get_zone_rest_path('groups'),
                            auth=(user, users[user].password))
     return groups_list.json()['groups']
+
