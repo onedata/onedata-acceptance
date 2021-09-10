@@ -6,24 +6,24 @@ Feature: Spaces effective privileges
             - user2
             - user3
     And initial groups configuration in "onezone" Onezone service:
-          group1:
+          child_group1:
             owner: user1
-          group2:
+          parent_group1:
             owner: user1
             users:
               - user2
               - user3
             groups:
-                - group1
-                - group4
-          group3:
+                - child_group1
+                - child_group2
+          parent_group2:
               owner: user1
               users:
                 - user3
               groups:
-                - group1
-                - group4
-          group4:
+                - child_group1
+                - child_group2
+          child_group2:
               owner: user1
 
     And initial spaces configuration in "onezone" Onezone service:
@@ -35,17 +35,17 @@ Feature: Spaces effective privileges
                       - space_add_harvester
                       - space_remove_harvester
             groups:
-                - group1:
+                - child_group1:
                     privileges:
                       - space_add_harvester
                       - space_remove_harvester
                       - space_remove_group
-                - group2:
+                - parent_group1:
                     privileges:
                       - space_view_qos
                       - space_manage_qos
                       - space_add_group
-                - group3:
+                - parent_group2:
                     privileges:
                       - space_add_support
                       - space_remove_support
@@ -60,8 +60,8 @@ Feature: Spaces effective privileges
     When user of browser clicks on Data in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Members of "space1" in the sidebar
-    And user of browser clicks "group1" group in "space1" space members groups list
-    And user of browser sees following privileges of "group1" group in space members subpage:
+    And user of browser clicks "child_group1" group in "space1" space members groups list
+    And user of browser sees following privileges of "child_group1" group in space members subpage:
           QoS management:
             granted: False
           Group management:
@@ -71,8 +71,8 @@ Feature: Spaces effective privileges
               Remove group: True
           Harvester management:
             granted: True
-    And user of browser clicks "group2" group in "space1" space members groups list
-    And user of browser sees following privileges of "group2" group in space members subpage:
+    And user of browser clicks "parent_group1" group in "space1" space members groups list
+    And user of browser sees following privileges of "parent_group1" group in space members subpage:
           QoS management:
             granted: True
           Group management:
@@ -84,8 +84,8 @@ Feature: Spaces effective privileges
             granted: False
     And user of browser clicks show view expand button in space members subpage header
     And user of browser clicks effective view mode in space members subpage
-    And user of browser clicks "group1" group in "space1" space members groups list
-    Then user of browser sees following privileges of "group1" group in space members subpage:
+    And user of browser clicks "child_group1" group in "space1" space members groups list
+    Then user of browser sees following privileges of "child_group1" group in space members subpage:
           QoS management:
             granted: True
           Group management:
@@ -98,8 +98,8 @@ Feature: Spaces effective privileges
     When user of browser clicks on Data in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Members of "space1" in the sidebar
-    And user of browser clicks "group2" group in "space1" space members groups list
-    And user of browser sees following privileges of "group2" group in space members subpage:
+    And user of browser clicks "parent_group1" group in "space1" space members groups list
+    And user of browser sees following privileges of "parent_group1" group in space members subpage:
           QoS management:
             granted: True
           Group management:
@@ -133,18 +133,11 @@ Feature: Spaces effective privileges
 
 
   Scenario: User sees that group effective privileges are the sum of its direct parents direct privileges
-    When user of browser clicks on Groups in the main menu
-    And user of browser opens group "group2" members subpage
-    And user of browser clicks "group4" group in "group2" group members groups list
-    And user of browser sets all privileges true for "group4" group in group members subpage
-    And user of browser opens group "group3" members subpage
-    And user of browser clicks "group4" group in "group3" group members groups list
-    And user of browser sets all privileges true for "group4" group in group members subpage
-    And user of browser clicks on Data in the main menu
+    When user of browser clicks on Data in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Members of "space1" in the sidebar
-    And user of browser clicks "group2" group in "space1" space members groups list
-    And user of browser sees following privileges of "group2" group in space members subpage:
+    And user of browser clicks "parent_group1" group in "space1" space members groups list
+    And user of browser sees following privileges of "parent_group1" group in space members subpage:
           QoS management:
             granted: True
           Group management:
@@ -154,8 +147,8 @@ Feature: Spaces effective privileges
               Remove group: False
           Harvester management:
             granted: False
-    And user of browser clicks "group3" group in "space1" space members groups list
-    And user of browser sees following privileges of "group3" group in space members subpage:
+    And user of browser clicks "parent_group2" group in "space1" space members groups list
+    And user of browser sees following privileges of "parent_group2" group in space members subpage:
           QoS management:
             granted: False
           Group management:
@@ -164,8 +157,8 @@ Feature: Spaces effective privileges
             granted: True
     And user of browser clicks show view expand button in space members subpage header
     And user of browser clicks effective view mode in space members subpage
-    And user of browser clicks "group4" group in "space1" space members groups list
-    Then user of browser sees following privileges of "group4" group in space members subpage:
+    And user of browser clicks "child_group2" group in "space1" space members groups list
+    Then user of browser sees following privileges of "child_group2" group in space members subpage:
           QoS management:
             granted: True
           Group management:
@@ -178,18 +171,11 @@ Feature: Spaces effective privileges
 
 
   Scenario: User sees that user effective privileges are the sum of its direct parents direct privileges
-    When user of browser clicks on Groups in the main menu
-    And user of browser opens group "group2" members subpage
-    And user of browser clicks "user3" user in "group2" group members users list
-    And user of browser sets all privileges true for "user3" user in group members subpage
-    And user of browser opens group "group3" members subpage
-    And user of browser clicks "user3" user in "group3" group members users list
-    And user of browser sets all privileges true for "user3" user in group members subpage
-    And user of browser clicks on Data in the main menu
+    When user of browser clicks on Data in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Members of "space1" in the sidebar
-    And user of browser clicks "group2" group in "space1" space members groups list
-    And user of browser sees following privileges of "group2" group in space members subpage:
+    And user of browser clicks "parent_group1" group in "space1" space members groups list
+    And user of browser sees following privileges of "parent_group1" group in space members subpage:
           QoS management:
             granted: True
           Group management:
@@ -199,8 +185,8 @@ Feature: Spaces effective privileges
               Remove group: False
           Harvester management:
             granted: False
-    And user of browser clicks "group3" group in "space1" space members groups list
-    And user of browser sees following privileges of "group3" group in space members subpage:
+    And user of browser clicks "parent_group2" group in "space1" space members groups list
+    And user of browser sees following privileges of "parent_group2" group in space members subpage:
           QoS management:
             granted: False
           Group management:

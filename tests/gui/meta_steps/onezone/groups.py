@@ -7,7 +7,6 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-from tests import OZ_REST_PORT
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.meta_steps.onezone.tokens import (
     consume_received_token, add_element_with_copied_token)
@@ -18,31 +17,6 @@ from tests.gui.steps.modal import (click_modal_button,
                                    close_modal)
 from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed
-from tests.utils.bdd_utils import given
-from tests.utils.rest_utils import get_zone_rest_path, http_get, http_delete
-from tests.utils.http_exceptions import HTTPForbidden
-
-
-@given(parsers.parse('user {user} has no groups'))
-def remove_all_groups_rest(user, hosts, users):
-    zone_hostname = hosts['onezone']['hostname']
-    groups_list = http_get(ip=zone_hostname, port=OZ_REST_PORT,
-                           path=get_zone_rest_path('groups'),
-                           auth=(user, users[user].password))
-    groups_id_list = groups_list.json()['groups']
-
-    for group in groups_id_list:
-        _remove_group(group, zone_hostname, user, users)
-
-
-def _remove_group(group_id, zone_hostname, user, users):
-    try:
-        http_delete(ip=zone_hostname, port=OZ_REST_PORT,
-                    path=get_zone_rest_path('groups', group_id),
-                    auth=(user, users[user].password))
-    except HTTPForbidden:
-        pass
-
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) renames group "(?P<group>.*)" '

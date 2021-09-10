@@ -6,24 +6,24 @@ Feature: Clusters effective privileges
             - user3
     And there is no groups in Onezone page used by admin before definition in next steps
     And initial groups configuration in "onezone" Onezone service:
-          group1:
+          child_group1:
             owner: admin
-          group2:
+          parent_group1:
             owner: admin
             users:
               - user2
               - user3
             groups:
-                - group1
-                - group4
-          group3:
+                - child_group1
+                - child_group2
+          parent_group2:
               owner: admin
               users:
                 - user3
               groups:
-                - group1
-                - group4
-          group4:
+                - child_group1
+                - child_group2
+          child_group2:
               owner: admin
 
     And users opened [browser_admin, browser_user2] browsers' windows
@@ -32,24 +32,24 @@ Feature: Clusters effective privileges
 
 
   Scenario: User sees that group effective privileges are the sum of its direct parent direct privileges and its direct privileges
-    When user of browser_admin adds "group1" group to "oneprovider-1" cluster
-    And user of browser_admin adds "group2" group to "oneprovider-1" cluster
-    And user of browser_admin clicks "group1" group in "oneprovider-1" cluster members groups list
-    And user of browser_admin sets following privileges for "group1" group in cluster members subpage:
+    When user of browser_admin adds "child_group1" group to "oneprovider-1" cluster
+    And user of browser_admin adds "parent_group1" group to "oneprovider-1" cluster
+    And user of browser_admin clicks "child_group1" group in "oneprovider-1" cluster members groups list
+    And user of browser_admin sets following privileges for "child_group1" group in cluster members subpage:
           Cluster management:
             granted: True
           Group management:
             granted: False
-    And user of browser_admin clicks "group2" group in "oneprovider-1" cluster members groups list
-    And user of browser_admin sets following privileges for "group2" group in cluster members subpage:
+    And user of browser_admin clicks "parent_group1" group in "oneprovider-1" cluster members groups list
+    And user of browser_admin sets following privileges for "parent_group1" group in cluster members subpage:
           Cluster management:
             granted: False
           Group management:
             granted: True
     And user of browser_admin clicks show view expand button in cluster members subpage header
     And user of browser_admin clicks effective view mode in cluster members subpage
-    And user of browser_admin clicks "group1" group in "oneprovider-1" cluster members groups list
-    Then user of browser_admin sees following privileges of "group1" group in cluster members subpage:
+    And user of browser_admin clicks "child_group1" group in "oneprovider-1" cluster members groups list
+    Then user of browser_admin sees following privileges of "child_group1" group in cluster members subpage:
           Cluster management:
             granted: True
           Group management:
@@ -60,9 +60,9 @@ Feature: Clusters effective privileges
     When user of browser_admin invites user of browser_user2 to "oneprovider-1" cluster
     And user of browser_user2 joins to cluster
 
-    And user of browser_admin adds "group2" group to "oneprovider-1" cluster
-    And user of browser_admin clicks "group2" group in "oneprovider-1" cluster members groups list
-    And user of browser_admin sets following privileges for "group2" group in cluster members subpage:
+    And user of browser_admin adds "parent_group1" group to "oneprovider-1" cluster
+    And user of browser_admin clicks "parent_group1" group in "oneprovider-1" cluster members groups list
+    And user of browser_admin sets following privileges for "parent_group1" group in cluster members subpage:
           Cluster management:
             granted: True
           Group management:
@@ -89,33 +89,26 @@ Feature: Clusters effective privileges
 
 
   Scenario: User sees that group effective privileges are the sum of its direct parents direct privileges
-    When user of browser_admin clicks on Groups in the main menu
-    And user of browser_admin opens group "group2" members subpage
-    And user of browser_admin clicks "group4" group in "group2" group members groups list
-    And user of browser_admin sets all privileges true for "group4" group in group members subpage
-    And user of browser_admin opens group "group3" members subpage
-    And user of browser_admin clicks "group4" group in "group3" group members groups list
-    And user of browser_admin sets all privileges true for "group4" group in group members subpage
-    And user of browser_admin adds "group2" group to "oneprovider-1" cluster
-    And user of browser_admin adds "group3" group to "oneprovider-1" cluster
-    And user of browser_admin clicks "group2" group in "oneprovider-1" cluster members groups list
-    And user of browser_admin sets following privileges for "group2" group in cluster members subpage:
+    When user of browser_admin adds "parent_group1" group to "oneprovider-1" cluster
+    And user of browser_admin adds "parent_group2" group to "oneprovider-1" cluster
+    And user of browser_admin clicks "parent_group1" group in "oneprovider-1" cluster members groups list
+    And user of browser_admin sets following privileges for "parent_group1" group in cluster members subpage:
           Cluster management:
             granted: False
           User management:
             granted: True
           Group management:
             granted: False
-    And user of browser_admin clicks "group3" group in "oneprovider-1" cluster members groups list
-    And user of browser_admin sets following privileges for "group3" group in cluster members subpage:
+    And user of browser_admin clicks "parent_group2" group in "oneprovider-1" cluster members groups list
+    And user of browser_admin sets following privileges for "parent_group2" group in cluster members subpage:
           Cluster management:
             granted: False
           Group management:
             granted: True
     And user of browser_admin clicks show view expand button in cluster members subpage header
     And user of browser_admin clicks effective view mode in cluster members subpage
-    And user of browser_admin clicks "group4" group in "oneprovider-1" cluster members groups list
-    Then user of browser_admin sees following privileges of "group4" group in cluster members subpage:
+    And user of browser_admin clicks "child_group2" group in "oneprovider-1" cluster members groups list
+    Then user of browser_admin sees following privileges of "child_group2" group in cluster members subpage:
           Cluster management:
             granted: False
           User management:
@@ -125,25 +118,18 @@ Feature: Clusters effective privileges
 
 
   Scenario: User sees that user effective privileges are the sum of its direct parents direct privileges
-    When user of browser_admin clicks on Groups in the main menu
-    And user of browser_admin opens group "group2" members subpage
-    And user of browser_admin clicks "user3" user in "group2" group members users list
-    And user of browser_admin sets all privileges true for "user3" user in group members subpage
-    And user of browser_admin opens group "group3" members subpage
-    And user of browser_admin clicks "user3" user in "group3" group members users list
-    And user of browser_admin sets all privileges true for "user3" user in group members subpage
-    And user of browser_admin adds "group2" group to "oneprovider-1" cluster
-    And user of browser_admin adds "group3" group to "oneprovider-1" cluster
-    And user of browser_admin clicks "group2" group in "oneprovider-1" cluster members groups list
-    And user of browser_admin sets following privileges for "group2" group in cluster members subpage:
+    When user of browser_admin adds "parent_group1" group to "oneprovider-1" cluster
+    And user of browser_admin adds "parent_group2" group to "oneprovider-1" cluster
+    And user of browser_admin clicks "parent_group1" group in "oneprovider-1" cluster members groups list
+    And user of browser_admin sets following privileges for "parent_group1" group in cluster members subpage:
           Cluster management:
             granted: False
           User management:
             granted: True
           Group management:
             granted: False
-    And user of browser_admin clicks "group3" group in "oneprovider-1" cluster members groups list
-    And user of browser_admin sets following privileges for "group3" group in cluster members subpage:
+    And user of browser_admin clicks "parent_group2" group in "oneprovider-1" cluster members groups list
+    And user of browser_admin sets following privileges for "parent_group2" group in cluster members subpage:
           Cluster management:
             granted: False
           Group management:
