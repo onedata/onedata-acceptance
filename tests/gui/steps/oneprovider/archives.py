@@ -65,8 +65,7 @@ def assert_archive_full_state_status(browser_id, tmp_memory, status,
 
 def assert_archive_partial_state_status(item_status, expected_status):
     assert expected_status == item_status, (
-        f'{expected_status} does not match'
-        f' {item_status}')
+        f'{expected_status} does not match {item_status}')
 
 
 @wt(parsers.re(r'user of (?P<browser_id>.*?) double clicks on '
@@ -88,7 +87,7 @@ def double_click_on_archive(browser_id, tmp_memory, ordinal='1'):
 def assert_tag_for_archive_in_archive_browser(browser_id, tag_type, tmp_memory,
                                               ordinal):
     browser = tmp_memory[browser_id]['archive_browser']
-    err_msg = f'{tag_type} tag for latest created archive is not visible'
+    err_msg = f'{tag_type} tag for {ordinal} archive is not visible'
     number = from_ordinal_number_to_int(ordinal)
     assert browser.data[number-1].is_tag_visible(tag_type), err_msg
 
