@@ -20,7 +20,7 @@ from tests.utils.bdd_utils import given, wt, parsers
 def check_browser_to_load(selenium, browser_id, tmp_memory, op_container,
                           browser):
     driver = selenium[browser_id]
-    if browser == 'shares browser':
+    if transform(browser) == 'shares_browser':
         items_browser = op_container(driver).shares_page.shares_browser
     else:
         items_browser = getattr(op_container(driver), transform(browser))

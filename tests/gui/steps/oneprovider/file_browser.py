@@ -353,16 +353,19 @@ def assert_property_in_symlink_dets_modal(selenium, browser_id, link_property,
 
 
 @wt(parsers.parse('user of {browser_id} sees that contents of downloaded '
-                  '"{file_name}" TAR file in download directory have following'
+                  '{name} TAR file (with ID in clipboard) in download '
+                  'directory have following structure:\n{contents}'))
+@wt(parsers.parse('user of {browser_id} sees that contents of downloaded '
+                  '"{name}" TAR file in download directory have following'
                   ' structure:\n{contents}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_contents_downloaded_tar_file(selenium, browser_id, file_name,
-                                        contents, tmpdir, clipboard, displays):
+def assert_contents_downloaded_tar_file(selenium, browser_id, contents, tmpdir,
+                                        clipboard, displays, name):
     configured_dir_contents = {}
-    if file_name == 'archive':
-        file_name = (f'archive_'
+    if name == 'archive':
+        name = (f'archive_'
                      f'{clipboard.paste(display=displays[browser_id])}.tar')
-        contents = contents.replace('archive', file_name.split('.')[0])
+        contents = contents.replace('archive', name.split('.')[0])
 
     def _get_directory_contents(directory_tree, path=''):
 
@@ -388,7 +391,7 @@ def assert_contents_downloaded_tar_file(selenium, browser_id, file_name,
 
     download_path = tmpdir.join(browser_id, 'download')
     extract_path = download_path.join('extract')
-    downloaded_tar_filename = download_path.join(file_name).strpath
+    downloaded_tar_filename = download_path.join(name).strpath
 
     assert tarfile.is_tarfile(downloaded_tar_filename), (
                 f'{downloaded_tar_filename} is not valid TAR file archive')
