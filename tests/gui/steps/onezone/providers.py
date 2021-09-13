@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import time
 from itertools import zip_longest
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
@@ -14,6 +15,8 @@ from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt, given
 from tests.utils.utils import repeat_failed
 
+
+TIMEOUT_FOR_OFFLINE_PROVIDER = 300
 
 @wt(parsers.parse('user of {browser_id} sees that provider popup for '
                   'provider named "{provider_name}" has appeared on '
@@ -426,5 +429,9 @@ def wait_until_provider_goes_offline(selenium, browser_id, oz_page,
     page = oz_page(driver)['providers']
     provider_record = page.elements_list[provider]
     provider_record.click()
+    start = time.time()
     while page.is_working():
-        pass
+        time.sleep(0.5)
+        if time.time() > start + TIMEOUT_FOR_OFFLINE_PROVIDER:
+            raise RuntimeError(f'Provider does not go offline within '
+                               f'{TIMEOUT_FOR_OFFLINE_PROVIDER}s.')
