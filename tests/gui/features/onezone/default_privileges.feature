@@ -11,6 +11,7 @@ Feature: Management of privileges in onezone GUI
             owner: admin
             users:
                 - user1
+    And there is no groups in Onezone page used by admin before definition in next steps
     And initial groups configuration in "onezone" Onezone service:
           group1:
             owner: user1
@@ -55,6 +56,7 @@ Feature: Management of privileges in onezone GUI
               Cancel replication: False
               Schedule eviction: False
               Cancel eviction: False
+    And user of browser2 clicks "group1" group in "space1" space members groups list
     And user of browser2 sees following privileges of "group1" group in space members subpage:
           QoS management:
             granted: False
@@ -102,6 +104,7 @@ Feature: Management of privileges in onezone GUI
               Cancel replication: False
               Schedule eviction: False
               Cancel eviction: False
+    And user of browser2 clicks "admin" user in "space1" space members users list
     And user of browser2 sees following privileges of "admin" user in space members subpage:
           QoS management:
             granted: False

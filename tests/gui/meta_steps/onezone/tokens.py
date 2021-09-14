@@ -56,6 +56,7 @@ def consume_received_token(selenium, browser_id, oz_page, tmp_memory):
 
 @wt(parsers.parse('user of {browser_id} joins group using copied token'))
 @wt(parsers.parse('user of {browser_id} joins to harvester in Onezone page'))
+@wt(parsers.parse('user of {browser_id} joins to inventory using copied token'))
 def consume_token_from_copied_token(selenium, browser_id, oz_page, clipboard,
                                     displays):
     option = 'Tokens'

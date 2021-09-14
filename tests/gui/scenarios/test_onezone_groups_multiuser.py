@@ -52,6 +52,7 @@ from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
+from tests.gui.steps.oneprovider.browser import *
 
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
@@ -85,4 +86,5 @@ scenarios('../features/onezone/groups/groups_subgroup.feature')
 scenarios('../features/onezone/groups/'
           'groups_multiple_users_with_multiple_groups.feature')
 scenarios('../features/onezone/groups/groups_memberships_multibrowser.feature')
+scenarios('../features/onezone/groups/groups_effective_privileges.feature')
 

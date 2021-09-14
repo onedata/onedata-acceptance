@@ -53,6 +53,7 @@ from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
+from tests.gui.steps.oneprovider.browser import *
 from tests.gui.steps.oneprovider.dataset import *
 from tests.gui.steps.oneprovider.archives import *
 
@@ -83,5 +84,6 @@ def screens():
 
 scenarios('../features/onezone/harvesters/harvesters.feature')
 scenarios('../features/onezone/harvesters/harvesters_memberships_privileges.feature')
+scenarios('../features/onezone/harvesters/harvesters_effective_privileges.feature')
 scenarios('../features/onezone/harvesters/harvesters_index.feature')
 
