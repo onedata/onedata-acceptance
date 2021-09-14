@@ -14,6 +14,8 @@ from .transfers import TransfersTab
 from .file_browser import FileBrowser
 from ..core.web_elements import WebItem
 from .dataset_browser import DatasetBrowser
+from .archive_file_browser import ArchiveFileBrowser
+from .archive_browser import ArchiveBrowser
 
 
 class OPLoggedIn(object):
@@ -21,6 +23,9 @@ class OPLoggedIn(object):
     shares_page = WebItem('.content-space-shares', cls=SharesContentPage)
     transfers = TransfersTab('.content-space-transfers')
     dataset_browser = DatasetBrowser('.dataset-browser')
+    archive_file_browser = ArchiveFileBrowser('.content-space-datasets '
+                                              '.file-browser')
+    archive_browser = ArchiveBrowser('.content-space-datasets .archive-browser')
 
     def __init__(self, driver):
         self.web_elem = self.driver = driver
