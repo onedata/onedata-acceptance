@@ -1,4 +1,6 @@
-""""Meta steps for operations for datasets"""
+"""This module contains meta steps for operations on archives in Onezone
+using web GUI.
+"""
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
@@ -55,7 +57,6 @@ def _create_archive(browser_id, selenium, config, item_name, space_name,
     item_browser = 'dataset browser'
     option_in_data_row_menu = 'Create archive'
     button_name = 'Create'
-    # options = parse_seq(options)
     try:
         op_container(selenium[browser_id]).dataset_browser.breadcrumbs
     except RuntimeError:
@@ -98,3 +99,4 @@ def _create_archive(browser_id, selenium, config, item_name, space_name,
 
     click_modal_button(selenium, browser_id, button_name,
                        option_in_data_row_menu, modals)
+

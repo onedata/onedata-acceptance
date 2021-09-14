@@ -22,10 +22,11 @@ from tests.gui.steps.oneprovider.data_tab import (
 from tests.gui.steps.oneprovider.file_browser import (
     select_files_from_file_list_using_ctrl,
     deselect_items_from_file_browser,
-    confirm_create_new_directory, click_menu_for_elem_in_file_browser)
+    confirm_create_new_directory)
 from tests.gui.steps.oneprovider.browser import (
     assert_items_presence_in_browser,
-    click_option_in_data_row_menu_in_browser)
+    click_option_in_data_row_menu_in_browser,
+    click_menu_for_elem_in_browser)
 from tests.gui.steps.modal import (wt_wait_for_modal_to_appear,
                                    wt_click_on_confirmation_btn_in_modal,
                                    wt_wait_for_modal_to_disappear,
@@ -61,7 +62,7 @@ def replicate_file_to_provider(selenium, browser_id, name, tmp_memory,
     option = 'Data distribution'
     modal_name = 'Data distribution'
 
-    click_menu_for_elem_in_file_browser(browser_id, name, tmp_memory)
+    click_menu_for_elem_in_browser(browser_id, name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
                                              option, modals)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
@@ -79,7 +80,7 @@ def assert_eviction_done(selenium, browser_id, name, tmp_memory, modals):
     modal_name = 'Data distribution'
     close_option = 'Close'
 
-    click_menu_for_elem_in_file_browser(browser_id, name, tmp_memory)
+    click_menu_for_elem_in_browser(browser_id, name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
                                              option, modals)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
@@ -97,7 +98,7 @@ def wt_assert_file_chunks(selenium, browser_id, file_name, desc, tmp_memory,
     option = 'Data distribution'
     modal_name = 'Data distribution'
 
-    click_menu_for_elem_in_file_browser(browser_id, file_name, tmp_memory)
+    click_menu_for_elem_in_browser(browser_id, file_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
                                              option, modals)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
@@ -149,7 +150,7 @@ def migrate_file_to_provider(selenium, browser_id, name, tmp_memory, source,
     option = 'Data distribution'
     modal_name = 'Data distribution'
 
-    click_menu_for_elem_in_file_browser(browser_id, name, tmp_memory)
+    click_menu_for_elem_in_browser(browser_id, name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
                                              option, modals)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
