@@ -41,16 +41,13 @@ class Index(PageObject):
             return True
 
 
-class IndicesPage(PageObject):
-    name_input = Input('.name-field .form-control')
-    schema_input = Input('.schema-field .form-control')
-    create_button = Button('.create-btn')
-    indices_list = WebItemsSequence('.content-harvesters-indices .row '
-                                    'li.one-collapsible-list-item', cls=Index)
-    menu_button = Button('.with-menu .collapsible-toolbar-toggle')
+class IncludeMetadata(PageObject):
     basic = Toggle('.metadataXattrs-field .one-way-toggle-control')
     json = Toggle('.metadataJson-field .one-way-toggle-control')
     rdf = Toggle('.metadataRdf-field .one-way-toggle-control')
+
+
+class IncludeFileDetails(PageObject):
     file_name = Toggle('.fileName-field .one-way-toggle-control')
     file_type = Toggle('.fileType-field .one-way-toggle-control')
     space_id = Toggle('.spaceId-field .one-way-toggle-control')
@@ -58,13 +55,23 @@ class IndicesPage(PageObject):
     archive_info = Toggle('.archiveInfo-field .one-way-toggle-control')
     metadata_existence_flags = Toggle('.metadataExistenceFlags-field '
                                       '.one-way-toggle-control')
+
+
+class IndicesPage(PageObject):
+    name_input = Input('.name-field .form-control')
+    schema_input = Input('.schema-field .form-control')
+    create_button = Button('.create-btn')
+    indices_list = WebItemsSequence('.content-harvesters-indices .row '
+                                    'li.one-collapsible-list-item', cls=Index)
+    menu_button = Button('.with-menu .collapsible-toolbar-toggle')
+    include_metadata = WebItem('.includeMetadata-field', cls=IncludeMetadata)
+    include_file_details = WebItem('.includeFileDetails-field',
+                                   cls=IncludeFileDetails)
+
     include_rejection_reason = Toggle('.includeRejectionReason-field '
                                       '.one-way-toggle-control')
     retry_on_rejection = Toggle('.retryOnRejection-field '
                                 '.one-way-toggle-control')
-    toggles = ['basic', 'json', 'rdf', 'file_name', 'file_type', 'space_id',
-               'dataset_info', 'metadata_existence_flags',
-               'include_rejection_reason', 'retry_on_rejection']
 
 
 class GeneralTab(PageObject):

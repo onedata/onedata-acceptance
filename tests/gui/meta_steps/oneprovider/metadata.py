@@ -81,7 +81,7 @@ def open_json_rdf_metadata_for_item(selenium, browser_id, tab, item_name,
 
 @wt(parsers.re('user of (?P<browser_id>.*?) (?P<res>.*) to write '
                '"(?P<path>.*)" (?P<item>file|directory)'
-               ' (?P<tab_name>basic|JSON|RDF) metadata: "(?P<val>.*)"'
+               ' (?P<tab_name>basic|JSON|RDF) metadata: (\'|")(?P<val>.*)(\'|")'
                ' in "(?P<space>.*)"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def set_metadata_in_op_gui(selenium, browser_id, path, tmp_memory, op_container,

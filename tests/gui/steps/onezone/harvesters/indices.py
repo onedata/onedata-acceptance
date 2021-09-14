@@ -95,12 +95,27 @@ def assert_progress_in_harvesting(selenium, browser_id, oz_page,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def uncheck_toggles_on_create_index_page(selenium, browser_id, oz_page,
                                          stay_checked):
+    toggles_dictionary = {'include_metadata': ['basic', 'json', 'rdf'],
+                          'include_file_details': ['file_name', 'file_type',
+                                                   'space_id', 'dataset_info',
+                                                   'metadata_existence_flags',
+                                                   'archive_info'],
+                          'rejection_toggles': ['include_rejection_reason',
+                                                'retry_on_rejection']
+                          }
     driver = selenium[browser_id]
     stay_checked = parse_seq(stay_checked)
-    for toggle in oz_page(driver)['discovery'].indices_page.toggles:
-        if toggle not in stay_checked:
-            getattr(oz_page(driver)['discovery'].indices_page,
-                    toggle).check()
+    for which_toggles in toggles_dictionary:
+        if which_toggles == 'rejection_toggles':
+            for toggle in toggles_dictionary[which_toggles]:
+                if toggle not in stay_checked:
+                    getattr(oz_page(driver)['discovery'].indices_page,
+                            toggle).check()
+        else:
+            for toggle in toggles_dictionary[which_toggles]:
+                if toggle not in stay_checked:
+                    getattr(getattr(oz_page(driver)['discovery'].indices_page,
+                                    which_toggles), toggle).check()
 
 
 @wt(parsers.parse('user of {browser_id} changes indices to "{index_name}" '
@@ -128,7 +143,7 @@ def assert_not_text_on_data_discovery_page(selenium, browser_id,
             f'{text} in result list')
 
 
-@wt(parsers.parse('user of {browser_id} sees rejected "{text}"'
+@wt(parsers.parse('user of {browser_id} sees rejected \'{text}\''
                   ' in results list on data discovery page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_rejected_on_data_discovery_page(selenium, browser_id,
