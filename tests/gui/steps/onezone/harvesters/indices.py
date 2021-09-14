@@ -170,7 +170,7 @@ def assert_rejection_reason_on_data_discovery_page(selenium, browser_id,
         f' {data_discovery(driver).results_list[1].text}')
 
 
-@wt(parsers.parse('user of {browser_id} sees archives id in results list on '
+@wt(parsers.parse('user of {browser_id} sees archives ID in results list on '
                   'data discovery page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_id_on_data_discovery_page(selenium, browser_id, data_discovery,

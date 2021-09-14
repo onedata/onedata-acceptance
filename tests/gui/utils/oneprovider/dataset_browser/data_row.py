@@ -17,6 +17,7 @@ class DataRow(PageObject):
     name = id = Label('.file-name-inner')
     number_of_archives = WebElement('.fb-table-col-archives .file-item-text')
     menu_button = Button('.fb-table-col-actions-menu .menu-toggle')
+    archive_created_at = Label('.fb-table-col-created .file-item-text')
     data_protected_tag = WebElement('.file-data-protected-icon')
     metadata_protected_tag = WebElement('.file-metadata-protected-icon')
 
