@@ -1,4 +1,6 @@
-""""Meta steps for operations for datasets"""
+"""This module contains meta steps for operations on datasets in Onezone
+using web GUI.
+"""
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
@@ -13,10 +15,9 @@ from tests.gui.steps.onezone.spaces import (
     click_on_option_of_space_on_left_sidebar_menu,
     click_on_option_in_the_sidebar)
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
-from tests.gui.steps.oneprovider.file_browser import (
-    click_menu_for_elem_in_file_browser)
 from tests.gui.steps.oneprovider.browser import (
-    click_option_in_data_row_menu_in_browser)
+    click_option_in_data_row_menu_in_browser,
+    click_menu_for_elem_in_browser)
 from tests.gui.steps.oneprovider.dataset import (
     click_mark_file_as_dataset_toggle)
 from tests.gui.steps.modal import click_modal_button
@@ -45,7 +46,7 @@ def create_dataset(browser_id, tmp_memory, item_name, space_name,
                                                       option_in_space, oz_page)
         assert_browser_in_tab_in_op(selenium, browser_id, op_container,
                                     tmp_memory)
-    click_menu_for_elem_in_file_browser(browser_id, item_name, tmp_memory)
+    click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
                                              option_in_data_row_menu, modals)
     click_mark_file_as_dataset_toggle(browser_id, selenium, modals)
