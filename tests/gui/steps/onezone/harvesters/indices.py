@@ -132,14 +132,23 @@ def change_indices_on_gui_plugin_tab(selenium, browser_id, oz_page, index_name,
     gui_plugin_tab.indices_save()
 
 
-@wt(parsers.parse('user of {browser_id} does not see "{text}" in'
+@wt(parsers.parse('user of {browser_id} does not see "{name}" in'
                   ' results list on data discovery page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_not_text_on_data_discovery_page(selenium, browser_id,
-                                           data_discovery, text):
+                                           data_discovery, name):
     driver = selenium[browser_id]
-    assert text not in data_discovery(driver).results_list[0].text, (
-            f'{text} in result list')
+    results_list = data_discovery(driver).results_list
+    for item in results_list:
+        assert name not in item.text, f'{name} in result list'
+
+
+def text_in_result_list(text, results_list):
+    for item in results_list:
+        if text in item.text:
+            break
+    else:
+        raise Exception(f'{text} not in results list')
 
 
 @wt(parsers.parse('user of {browser_id} sees rejected \'{info}\''
@@ -149,9 +158,8 @@ def assert_rejected_on_data_discovery_page(selenium, browser_id,
                                            data_discovery, info):
     driver = selenium[browser_id]
     info = f' __rejected: {info}'
-    text = data_discovery(driver).results_list[1].text
-    err_msg = f'{info} not in result list: {text}'
-    assert info in text, err_msg
+    results_list = data_discovery(driver).results_list
+    text_in_result_list(info, results_list)
 
 
 @wt(parsers.parse('user of browser sees that rejection is caused by field '
@@ -165,9 +173,8 @@ def assert_rejection_reason_on_data_discovery_page(selenium, browser_id,
     file_id = clipboard.paste(display=displays[browser_id])
     info = (f'__rejectionReason: "failed to parse field {key} of type'
             f' {field_type} in document with id \'{file_id}\'')
-    text = data_discovery(driver).results_list[1].text
-    err_msg = f'{info} not in result list: {text}'
-    assert info in text, err_msg
+    results_list = data_discovery(driver).results_list
+    text_in_result_list(info, results_list)
 
 
 @wt(parsers.parse('user of {browser_id} sees archives ID in results list on '
@@ -178,9 +185,8 @@ def assert_id_on_data_discovery_page(selenium, browser_id, data_discovery,
     driver = selenium[browser_id]
     archive_id = clipboard.paste(display=displays[browser_id])
     info = f'archiveId: "{archive_id}"'
-    text = data_discovery(driver).results_list[2].text
-    err_msg = f'{info} not in result list: {text}'
-    assert info in text, err_msg
+    results_list = data_discovery(driver).results_list
+    text_in_result_list(info, results_list)
 
 
 @wt(parsers.parse('user of {browser_id} sees archives description: '
@@ -190,9 +196,8 @@ def assert_description_on_data_discovery_page(selenium, browser_id,
                                               data_discovery, description):
     driver = selenium[browser_id]
     info = f'archiveDescription: "{description}"'
-    text = data_discovery(driver).results_list[2].text
-    err_msg = f'{info} not in result list: {text}'
-    assert info in text, err_msg
+    results_list = data_discovery(driver).results_list
+    text_in_result_list(info, results_list)
 
 
 @wt(parsers.parse('user of {browser_id} sees that archives creation time in'
@@ -218,7 +223,6 @@ def assert_archive_file_name_on_data_discovery_page(selenium, browser_id,
                                                     data_discovery, file_name):
     driver = selenium[browser_id]
     info = f'fileName: "{file_name}"'
-    text = data_discovery(driver).results_list[2].text
-    err_msg = f'{info} not in result list: {text}'
-    assert info in text, err_msg
+    results_list = data_discovery(driver).results_list
+    text_in_result_list(info, results_list)
 

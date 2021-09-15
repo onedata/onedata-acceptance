@@ -99,7 +99,7 @@ Feature: Basic management of harvester index in Onezone GUI
     When user of browser succeeds to write "dir1" directory basic metadata: "attr=val" in "space1"
     And user of browser adds "space1" space to "harvester1" harvester using available spaces dropdown
 
-    And user of browser creates new index "index1" that includes ["rdf", "file_name", "basic", "json"] toggles for "harvester1"
+    And user of browser creates new index "index1" that includes ["rdf", "basic", "json"] toggles for "harvester1"
     And user of browser changes indices to "index1" on GUI plugin tab for "harvester1"
 
     And user of browser clicks Data discovery of "harvester1" harvester in the sidebar
