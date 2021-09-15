@@ -39,6 +39,7 @@ from tests.gui.steps.oneprovider_common import *
 from tests.gui.conftest import *
 
 from tests.mixed.steps.space_basic import *
+from tests.mixed.steps.members import *
 
 from tests.gui.steps.oneprovider.common import *
 from tests.gui.steps.oneprovider.data_tab import *
