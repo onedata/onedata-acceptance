@@ -19,7 +19,7 @@ from tests.mixed.cdmi_client.rest import ApiException as CdmiException
 from tests.mixed.oneprovider_client import BasicFileOperationsApi
 from tests.mixed.oneprovider_client import FilePathResolutionApi
 from tests.mixed.oneprovider_client.rest import ApiException
-from tests.mixed.oneprovider_client.rest import ApiException as OPException
+#from tests.mixed.oneprovider_client.rest import ApiException as OPException
 from tests.mixed.utils.common import *
 from tests.mixed.utils.data import (
     check_files_tree, create_content, assert_ace, get_acl_metadata)
@@ -129,7 +129,7 @@ def see_items_in_op_rest(user, users, host, hosts, path_list, result, space):
         path = '{}/{}'.format(space, path)
 
         if result == 'fails':
-            with pytest.raises(OPException, 
+            with pytest.raises(Exception, 
                                message='There is item {}'.format(path)):
                 file_id = _lookup_file_id(path, client)
                 file_api.list_children(file_id)
@@ -302,7 +302,7 @@ def set_posix_permissions_in_op_rest(path, perm, user, users, host, hosts,
     file_id = _lookup_file_id(path, user_client_op)
 
     if result == 'fails':
-        with pytest.raises(ApiException):
+        with pytest.raises(Exception):
             file_api.set_attr(file_id, attribute={'mode': perm})
     else:
         file_api.set_attr(file_id, attribute={'mode': perm})
