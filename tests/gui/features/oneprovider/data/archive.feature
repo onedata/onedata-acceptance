@@ -182,7 +182,7 @@ Feature: Basic archives operations
     And user of browser clicks "Copy archive ID" option in data row menu in archive browser
     And user of browser clicks on menu for 1st archive in archive browser
     And user of browser clicks "Download (tar)" option in data row menu in archive browser
-    Then user of browser sees that contents of downloaded archive TAR file (with ID in clipboard) in download directory have following structure:
+    Then user of browser sees that contents of downloaded archive TAR file (with ID from clipboard) in download directory have following structure:
           - archive:
             - dir1:
               - dir2:

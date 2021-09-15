@@ -204,15 +204,15 @@ Feature: Basic management of harvester index in Onezone GUI
     # copy file id to clipboard
     And user of browser clicks on menu for "dir1" directory in file browser
     And user of browser clicks "Information" option in data row menu in file browser
-    And user of browser clicks on "File ID" button in modal "Directory Details"
-    And user of browser clicks on "Close" button in modal "Directory Details"
+    And user of browser clicks on "File ID" button in modal "File Details"
+    And user of browser clicks on "Close" button in modal "File Details"
 
     And user of browser clicks on Discovery in the main menu
     And user of browser clicks "harvester1" on the harvesters list in the sidebar
     And user of browser clicks Data discovery of "harvester1" harvester in the sidebar
     And user of browser sees Data Discovery page
     Then user of browser sees rejected '["id"]' in results list on data discovery page
-    And user of browser sees that rejection is caused by field [id] of type [long]
+    And user of browser sees that rejection is caused by field [id] of type [long] with ID from clipboard
 
 
   Scenario: User sees what is rejected in Data Discovery page after changing JSON metadata value and creating index that includes include retry on rejection toggles
@@ -246,11 +246,11 @@ Feature: Basic management of harvester index in Onezone GUI
     And user of browser creates archive for item "dir1" in "space1" with following configuration:
         description: first_archive
         layout: plain
-    And user of browser save time of latest archive creation for "dir1"
 
     # copy archive id
     And user of browser clicks on archives count link for "dir1" in dataset browser
     And user of browser sees archive browser in archives tab in Oneprovider page
+    And user of browser save time of latest archive creation for "dir1"
     And user of browser clicks on menu for 1st archive in archive browser
     And user of browser clicks "Copy archive ID" option in data row menu in archive browser
 

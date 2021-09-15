@@ -353,7 +353,7 @@ def assert_property_in_symlink_dets_modal(selenium, browser_id, link_property,
 
 
 @wt(parsers.parse('user of {browser_id} sees that contents of downloaded '
-                  '{name} TAR file (with ID in clipboard) in download '
+                  '{name} TAR file (with ID from clipboard) in download '
                   'directory have following structure:\n{contents}'))
 @wt(parsers.parse('user of {browser_id} sees that contents of downloaded '
                   '"{name}" TAR file in download directory have following'

@@ -212,6 +212,10 @@ def assert_page_with_error_appeared(browser_id, text, tmp_memory):
 @wt(parsers.parse('user of {browser_id} save time of latest archive creation '
                   'for "{file_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def save_date_of_archive_creation(browser_id, tmp_memory, file_name):
-    browser = tmp_memory[browser_id]['dataset_browser']
-    tmp_memory['created_at'] = browser.data[file_name].archive_created_at
+def save_date_of_archive_creation(browser_id, tmp_memory):
+    browser = tmp_memory[browser_id]['archive_browser']
+
+    name = browser.data[0].name
+    if '—' in name:
+        name = name.split(' —')[0]
+    tmp_memory['created_at'] = name

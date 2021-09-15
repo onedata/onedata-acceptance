@@ -14,6 +14,16 @@ from tests.utils.utils import repeat_failed
 from tests.gui.utils.generic import parse_seq
 
 
+create_index_toggles = {'include_metadata': ['basic', 'json', 'rdf'],
+                        'include_file_details': ['file_name', 'file_type',
+                                                 'space_id', 'dataset_info',
+                                                 'metadata_existence_flags',
+                                                 'archive_info'],
+                        'rejection_toggles': ['include_rejection_reason',
+                                              'retry_on_rejection']
+                        }
+
+
 @wt(parsers.parse('user of {browser_id} clicks "{text}" in '
                   'harvester indices page menu'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -95,27 +105,17 @@ def assert_progress_in_harvesting(selenium, browser_id, oz_page,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def uncheck_toggles_on_create_index_page(selenium, browser_id, oz_page,
                                          stay_checked):
-    toggles_dictionary = {'include_metadata': ['basic', 'json', 'rdf'],
-                          'include_file_details': ['file_name', 'file_type',
-                                                   'space_id', 'dataset_info',
-                                                   'metadata_existence_flags',
-                                                   'archive_info'],
-                          'rejection_toggles': ['include_rejection_reason',
-                                                'retry_on_rejection']
-                          }
     driver = selenium[browser_id]
     stay_checked = parse_seq(stay_checked)
-    for which_toggles in toggles_dictionary:
-        if which_toggles == 'rejection_toggles':
-            for toggle in toggles_dictionary[which_toggles]:
-                if toggle not in stay_checked:
-                    getattr(oz_page(driver)['discovery'].indices_page,
-                            toggle).check()
-        else:
-            for toggle in toggles_dictionary[which_toggles]:
-                if toggle not in stay_checked:
-                    getattr(getattr(oz_page(driver)['discovery'].indices_page,
-                                    which_toggles), toggle).check()
+    indices_page = oz_page(driver)['discovery'].indices_page
+    for toggles_group in create_index_toggles:
+        for toggle in create_index_toggles[toggles_group]:
+            if toggle not in stay_checked:
+                if toggles_group == 'rejection_toggles':
+                    getattr(indices_page, toggle).click()
+                else:
+                    toggles = getattr(indices_page, toggles_group)
+                    getattr(toggles, toggle).click()
 
 
 @wt(parsers.parse('user of {browser_id} changes indices to "{index_name}" '
@@ -124,13 +124,12 @@ def uncheck_toggles_on_create_index_page(selenium, browser_id, oz_page,
 def change_indices_on_gui_plugin_tab(selenium, browser_id, oz_page, index_name,
                                      popups):
     driver = selenium[browser_id]
-    (oz_page(driver)['discovery'].configuration_page
-     .gui_plugin_tab.indices_edit())
-    (oz_page(driver)['discovery'].configuration_page
-     .gui_plugin_tab.choose_indices_expand())
+    gui_plugin_tab = oz_page(driver)[
+        'discovery'].configuration_page.gui_plugin_tab
+    gui_plugin_tab.indices_edit()
+    gui_plugin_tab.choose_indices_expand()
     popups(driver).power_select.choose_item(index_name)
-    (oz_page(driver)['discovery'].configuration_page
-     .gui_plugin_tab.indices_save())
+    gui_plugin_tab.indices_save()
 
 
 @wt(parsers.parse('user of {browser_id} does not see "{text}" in'
@@ -143,19 +142,20 @@ def assert_not_text_on_data_discovery_page(selenium, browser_id,
             f'{text} in result list')
 
 
-@wt(parsers.parse('user of {browser_id} sees rejected \'{text}\''
+@wt(parsers.parse('user of {browser_id} sees rejected \'{info}\''
                   ' in results list on data discovery page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_rejected_on_data_discovery_page(selenium, browser_id,
-                                           data_discovery, text):
+                                           data_discovery, info):
     driver = selenium[browser_id]
-    text = f' __rejected: {text}'
-    assert text in data_discovery(driver).results_list[1].text, (
-            f'{text} not in result list, {data_discovery(driver).results_list[1].text}')
+    info = f' __rejected: {info}'
+    text = data_discovery(driver).results_list[1].text
+    err_msg = f'{info} not in result list: {text}'
+    assert info in text, err_msg
 
 
 @wt(parsers.parse('user of browser sees that rejection is caused by field '
-                  '{key} of type {field_type}'))
+                  '{key} of type {field_type} with ID from clipboard'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_rejection_reason_on_data_discovery_page(selenium, browser_id,
                                                    data_discovery, key,
@@ -163,24 +163,24 @@ def assert_rejection_reason_on_data_discovery_page(selenium, browser_id,
                                                    displays):
     driver = selenium[browser_id]
     file_id = clipboard.paste(display=displays[browser_id])
-    text = (f'__rejectionReason: "failed to parse field {key} of type'
+    info = (f'__rejectionReason: "failed to parse field {key} of type'
             f' {field_type} in document with id \'{file_id}\'')
-    assert text in data_discovery(driver).results_list[1].text, (
-        f'{text} not in result list'
-        f' {data_discovery(driver).results_list[1].text}')
+    text = data_discovery(driver).results_list[1].text
+    err_msg = f'{info} not in result list: {text}'
+    assert info in text, err_msg
 
 
 @wt(parsers.parse('user of {browser_id} sees archives ID in results list on '
                   'data discovery page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_id_on_data_discovery_page(selenium, browser_id, data_discovery,
-                                    clipboard, displays):
+                                     clipboard, displays):
     driver = selenium[browser_id]
     archive_id = clipboard.paste(display=displays[browser_id])
     info = f'archiveId: "{archive_id}"'
-    assert info in data_discovery(driver).results_list[2].text, (
-            f'{info} in result list, '
-            f'{data_discovery(driver).results_list[2].text}')
+    text = data_discovery(driver).results_list[2].text
+    err_msg = f'{info} not in result list: {text}'
+    assert info in text, err_msg
 
 
 @wt(parsers.parse('user of {browser_id} sees archives description: '
@@ -190,10 +190,9 @@ def assert_description_on_data_discovery_page(selenium, browser_id,
                                               data_discovery, description):
     driver = selenium[browser_id]
     info = f'archiveDescription: "{description}"'
-
-    assert info in data_discovery(driver).results_list[2].text, (
-        f'{info} in result list, '
-        f'{data_discovery(driver).results_list[2].text}')
+    text = data_discovery(driver).results_list[2].text
+    err_msg = f'{info} not in result list: {text}'
+    assert info in text, err_msg
 
 
 @wt(parsers.parse('user of {browser_id} sees that archives creation time in'
@@ -207,9 +206,9 @@ def assert_creation_time_on_data_discovery_page(selenium, browser_id,
     driver = selenium[browser_id]
     timestamp = float(data_discovery(driver).results_list[2].text.split(",")[0]
                       .split(': ')[2])
-    assert (created_at-60) < timestamp < (created_at+60), (
-        'archive creation time is not compatible with creation '
-        'time on archives page')
+    err_msg = 'archive creation time is not compatible with creation time on' \
+              ' archives page'
+    assert (created_at-60) < timestamp < (created_at+60), err_msg
 
 
 @wt(parsers.parse('user of browser sees that file name for archive is '
@@ -219,8 +218,7 @@ def assert_archive_file_name_on_data_discovery_page(selenium, browser_id,
                                                     data_discovery, file_name):
     driver = selenium[browser_id]
     info = f'fileName: "{file_name}"'
-
-    assert info in data_discovery(driver).results_list[2].text, (
-        f'{info} in result list, '
-        f'{data_discovery(driver).results_list[2].text}')
+    text = data_discovery(driver).results_list[2].text
+    err_msg = f'{info} not in result list: {text}'
+    assert info in text, err_msg
 
