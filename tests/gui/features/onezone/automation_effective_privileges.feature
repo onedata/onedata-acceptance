@@ -6,24 +6,24 @@ Feature: Inventories effective privileges
             - user2
             - user3
     And initial groups configuration in "onezone" Onezone service:
-          group1:
+          child_group1:
             owner: user1
-          group2:
+          parent_group1:
             owner: user1
             users:
               - user2
               - user3
             groups:
-                - group1
-                - group4
-          group3:
+                - child_group1
+                - child_group2
+          parent_group2:
               owner: user1
               users:
                 - user3
               groups:
-                - group1
-                - group4
-          group4:
+                - child_group1
+                - child_group2
+          child_group2:
               owner: user1
 
     And initial inventories configuration in "onezone" Onezone service:
@@ -35,20 +35,20 @@ Feature: Inventories effective privileges
                         - atm_inventory_manage_lambdas
                         - atm_inventory_manage_workflow_schemas
             groups:
-                - group1:
+                - child_group1:
                     privileges:
                         - atm_inventory_manage_lambdas
                         - atm_inventory_manage_workflow_schemas
                         - atm_inventory_add_user
                         - atm_inventory_remove_user
-                - group2:
+                - parent_group1:
                     privileges:
                         - atm_inventory_delete
                         - atm_inventory_set_privileges
                         - atm_inventory_update
                         - atm_inventory_view
                         - atm_inventory_view_privileges
-                - group3:
+                - parent_group2:
                     privileges:
                         - atm_inventory_add_group
                         - atm_inventory_remove_group
@@ -62,16 +62,16 @@ Feature: Inventories effective privileges
   Scenario: User sees that group effective privileges are the sum of its direct parent direct privileges and its direct privileges
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" members subpage
-    And user of browser clicks "group1" group in "inventory1" automation members groups list
-    And user of browser sees following privileges of "group1" group in automation members subpage:
+    And user of browser clicks "child_group1" group in "inventory1" automation members groups list
+    And user of browser sees following privileges of "child_group1" group in automation members subpage:
           Inventory management:
             granted: False
           Schema management:
             granted: True
           User management:
             granted: True
-    And user of browser clicks "group2" group in "inventory1" automation members groups list
-    And user of browser sees following privileges of "group2" group in automation members subpage:
+    And user of browser clicks "parent_group1" group in "inventory1" automation members groups list
+    And user of browser sees following privileges of "parent_group1" group in automation members subpage:
           Inventory management:
             granted: True
           Schema management:
@@ -80,8 +80,8 @@ Feature: Inventories effective privileges
             granted: False
     And user of browser clicks show view expand button in automation members subpage header
     And user of browser clicks effective view mode in automation members subpage
-    And user of browser clicks "group1" group in "inventory1" automation members groups list
-    Then user of browser sees following privileges of "group1" group in automation members subpage:
+    And user of browser clicks "child_group1" group in "inventory1" automation members groups list
+    Then user of browser sees following privileges of "child_group1" group in automation members subpage:
           Inventory management:
             granted: True
           Schema management:
@@ -93,8 +93,8 @@ Feature: Inventories effective privileges
   Scenario: User sees that user effective privileges are the sum of its direct parent direct privileges and its direct privileges
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" members subpage
-    And user of browser clicks "group2" group in "inventory1" automation members groups list
-    And user of browser sees following privileges of "group2" group in automation members subpage:
+    And user of browser clicks "parent_group1" group in "inventory1" automation members groups list
+    And user of browser sees following privileges of "parent_group1" group in automation members subpage:
           Inventory management:
             granted: True
           Schema management:
@@ -116,31 +116,24 @@ Feature: Inventories effective privileges
 
 
   Scenario: User sees that group effective privileges are the sum of its direct parents direct privileges
-    When user of browser clicks on Groups in the main menu
-    And user of browser opens group "group2" members subpage
-    And user of browser clicks "group4" group in "group2" group members groups list
-    And user of browser sets all privileges true for "group4" group in group members subpage
-    And user of browser opens group "group3" members subpage
-    And user of browser clicks "group4" group in "group3" group members groups list
-    And user of browser sets all privileges true for "group4" group in group members subpage
-    And user of browser clicks on Automation in the main menu
+    When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" members subpage
-    And user of browser clicks "group2" group in "inventory1" automation members groups list
-    And user of browser sees following privileges of "group2" group in automation members subpage:
+    And user of browser clicks "parent_group1" group in "inventory1" automation members groups list
+    And user of browser sees following privileges of "parent_group1" group in automation members subpage:
           Inventory management:
             granted: True
           Group management:
             granted: False
-    And user of browser clicks "group3" group in "inventory1" automation members groups list
-    And user of browser sees following privileges of "group3" group in automation members subpage:
+    And user of browser clicks "parent_group2" group in "inventory1" automation members groups list
+    And user of browser sees following privileges of "parent_group2" group in automation members subpage:
           Inventory management:
             granted: False
           Group management:
             granted: True
     And user of browser clicks show view expand button in automation members subpage header
     And user of browser clicks effective view mode in automation members subpage
-    And user of browser clicks "group4" group in "inventory1" automation members groups list
-    Then user of browser sees following privileges of "group4" group in automation members subpage:
+    And user of browser clicks "child_group2" group in "inventory1" automation members groups list
+    Then user of browser sees following privileges of "child_group2" group in automation members subpage:
           Inventory management:
             granted: True
           Group management:
@@ -148,23 +141,16 @@ Feature: Inventories effective privileges
 
 
   Scenario: User sees that user effective privileges are the sum of its direct parents direct privileges
-    When user of browser clicks on Groups in the main menu
-    And user of browser opens group "group2" members subpage
-    And user of browser clicks "user3" user in "group2" group members users list
-    And user of browser sets all privileges true for "user3" user in group members subpage
-    And user of browser opens group "group3" members subpage
-    And user of browser clicks "user3" user in "group3" group members users list
-    And user of browser sets all privileges true for "user3" user in group members subpage
-    And user of browser clicks on Automation in the main menu
+    When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" members subpage
-    And user of browser clicks "group2" group in "inventory1" automation members groups list
-    And user of browser sees following privileges of "group2" group in automation members subpage:
+    And user of browser clicks "parent_group1" group in "inventory1" automation members groups list
+    And user of browser sees following privileges of "parent_group1" group in automation members subpage:
           Inventory management:
             granted: True
           Group management:
             granted: False
-    And user of browser clicks "group3" group in "inventory1" automation members groups list
-    And user of browser sees following privileges of "group3" group in automation members subpage:
+    And user of browser clicks "parent_group2" group in "inventory1" automation members groups list
+    And user of browser sees following privileges of "parent_group2" group in automation members subpage:
           Inventory management:
             granted: False
           Group management:
