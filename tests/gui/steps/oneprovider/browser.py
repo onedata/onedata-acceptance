@@ -15,16 +15,37 @@ import time
 @wt(parsers.parse('user of {browser_id} double clicks on item named'
                   ' "{item_name}" in {which_browser}'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def double_click_on_item_in_browser(browser_id, item_name, tmp_memory,
+def double_click_on_item_in_browser(selenium, browser_id, item_name, tmp_memory,
+                                    op_container,
                                     which_browser='file browser'):
     which_browser = transform(which_browser)
     browser = tmp_memory[browser_id][which_browser]
+    driver = selenium[browser_id]
+
+    # checking if file is located in file browser
     start = time.time()
     while item_name not in browser.data:
         time.sleep(1)
         if time.time() > start + WAIT_BACKEND:
             raise RuntimeError('waited too long')
-    browser.data[item_name].double_click()
+
+    # if item is directory compare length of directories in breadcrumbs to
+    # check if double-click has entered it
+    if browser.data[item_name].is_directory == 'browser-directory':
+        breadcrumbs = getattr(op_container(driver),
+                              transform(which_browser)).breadcrumbs.pwd()
+        length_of_past_dir = len(breadcrumbs)
+
+        browser.data[item_name].double_click()
+
+        breadcrumbs = getattr(op_container(driver),
+                              transform(which_browser)).breadcrumbs.pwd()
+        length_of_current_dir = len(breadcrumbs)
+
+        assert length_of_past_dir < length_of_current_dir, \
+            f'Double click has not entered the directory'
+    else:
+        browser.data[item_name].double_click()
 
 
 @wt(parsers.parse('user of {browser_id} sees that current working directory '
@@ -104,7 +125,8 @@ def assert_status_tag_for_file_in_browser(browser_id, status_type, item_name,
                                           which_browser='file browser'):
     browser = tmp_memory[browser_id][transform(which_browser)]
     err_msg = f'{status_type} tag for {item_name} in {which_browser} not visible'
-    assert browser.data[item_name].is_tag_visible(transform(status_type)), err_msg
+    assert browser.data[item_name].is_tag_visible(
+        transform(status_type)), err_msg
 
 
 @wt(parsers.parse('user of {browser_id} sees {status_type} '
@@ -161,7 +183,8 @@ def assert_status_tag_for_file_in_browser(browser_id, status_type,
                                           which_browser='file browser'):
     browser = tmp_memory[browser_id][transform(which_browser)]
     err_msg = f'{status_type} tag for {item_name} in browser not visible'
-    assert browser.data[item_name].is_tag_visible(transform(status_type)), err_msg
+    assert browser.data[item_name].is_tag_visible(
+        transform(status_type)), err_msg
 
 
 @wt(parsers.parse('user of {browser_id} clicks on {state} view mode '
