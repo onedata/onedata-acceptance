@@ -9,9 +9,10 @@ __license__ = "This software is released under the MIT license cited in " \
 from tests.mixed.utils.common import login_to_oz
 from tests.mixed.onezone_client import SpaceApi
 from tests.mixed.onezone_client.rest import ApiException
+from tests.mixed.steps.rest.onezone.common import get_group
 import yaml
 
-privileges_translation = {
+PRIVILEGES_TRANSLATION = {
     'View space': 'space_view',
     'Modify space': 'space_update',
     'Remove space': 'space_delete',
@@ -51,7 +52,7 @@ privileges_translation = {
     'Cancel workflow executions': 'space_cancel_atm_workflow_executions'
 }
 
-privileges_groups = {
+PRIVILEGES_GROUPS = {
     'Space management': ['View space', 'Modify space', 'Remove space',
                          'View privileges', 'Set privileges'],
     'Data management': ['Read files', 'Write files', 'Register files',
@@ -86,14 +87,14 @@ def translate_privileges(config, grant, revoke):
                 else:
                     revoke.append(privilege)
         elif not privileges_group_items['granted']:
-            revoke.extend(privileges_groups[privileges_group])
+            revoke.extend(PRIVILEGES_GROUPS[privileges_group])
         else:
-            grant.extend(privileges_groups[privileges_group])
+            grant.extend(PRIVILEGES_GROUPS[privileges_group])
 
     for i in range(len(grant)):
-        grant[i] = privileges_translation[grant[i]]
+        grant[i] = PRIVILEGES_TRANSLATION[grant[i]]
     for i in range(len(revoke)):
-        revoke[i] = privileges_translation[revoke[i]]
+        revoke[i] = PRIVILEGES_TRANSLATION[revoke[i]]
 
 
 def fail_to_set_privileges_using_rest(user, users, hosts, host, spaces,
@@ -122,10 +123,8 @@ def assert_privileges_in_space_using_rest(user, users, hosts, host, spaces,
                                  hosts[host]['hostname'])
     space_api = SpaceApi(user_client_oz)
 
-    user_privileges = (space_api
-        .list_user_space_privileges(spaces[space_name],
-                                    users[member_name].id)
-        .to_dict()['privileges'])
+    user_privileges = (space_api.list_user_space_privileges(
+        spaces[space_name], users[member_name].id).to_dict()['privileges'])
     grant = []
     revoke = []
     translate_privileges(config, grant, revoke)
@@ -161,4 +160,24 @@ def assert_not_user_in_space_using_rest(user, users, hosts, host, spaces,
     assert users[member_name].id not in users_id_list, (
         f'user {member_name} is in space {space_name}')
 
+
+def add_group_to_space_using_rest(user, users, hosts, host, group_name, spaces,
+                                  space_name):
+    user_client_oz = login_to_oz(user, users[user].password,
+                                 hosts[host]['hostname'])
+    space_api = SpaceApi(user_client_oz)
+    group = get_group(group_name, user_client_oz)
+    space_api.add_group_to_space(spaces[space_name], group.group_id)
+
+
+def assert_group_in_space_using_rest(user, users, hosts, host, group_name,
+                                     spaces, space_name):
+    user_client_oz = login_to_oz(user, users[user].password,
+                                 hosts[host]['hostname'])
+    space_api = SpaceApi(user_client_oz)
+    group = get_group(group_name, user_client_oz).to_dict()['group_id']
+    space_groups = space_api.list_space_groups(spaces[space_name]).to_dict()[
+        'groups']
+    err_msg = f'"{group_name}" not in space "{space_name}" members page'
+    assert group in space_groups, err_msg
 

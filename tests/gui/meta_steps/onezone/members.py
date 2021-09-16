@@ -78,3 +78,18 @@ def assert_not_user_in_space_using_op_gui(user, space_name, member_name,
                                             member_name, member_type,
                                             space_name, parent_type,
                                             oz_page, onepanel)
+
+
+def assert_group_in_space_using_op_gui(selenium, user, space_name, oz_page,
+                                       group_name, onepanel):
+    option1 = 'Members'
+    option2 = 'sees'
+    member_type = 'group'
+    parent_type = 'space'
+    click_on_option_of_space_on_left_sidebar_menu(selenium, user,
+                                                  space_name, option1,
+                                                  oz_page)
+    assert_member_is_in_parent_members_list(selenium, user, option2,
+                                            group_name, member_type,
+                                            space_name, parent_type,
+                                            oz_page, onepanel)

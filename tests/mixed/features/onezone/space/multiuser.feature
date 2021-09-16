@@ -13,6 +13,15 @@ Feature: Multiuser
                 - oneprovider-1:
                     storage: posix
                     size: 1000000
+    And initial groups configuration in "onezone" Onezone service:
+          group1:
+            owner: user1
+            users:
+              - user2:
+                  privileges:
+                      - group_view
+                      - group_add_space
+                      - group_leave_space
     And opened browsers with [user1, user2] signed in to [onezone, onezone] service
 
   Scenario Outline: User invites other user to space using <client1>, that user joins to space using <client2> and using <client3> he sees that he has joined to new space
@@ -96,7 +105,16 @@ Feature: Multiuser
     When using <client1>, user2 invites user1 to space named "space1" in "onezone" Onezone service
     And using <client2>, user1 joins to space using received space invitation token in "onezone" Onezone service
     And using <client2>, user1 fails to invite "user3" to "space1" space members page in "onezone" Onezone service
-    Then using <client1>, user2 does not see "user3" on "space1" space members page in "onezone" Onezone service
+    Then using <client1>, user2 does not see "user3" user on "space1" space members page in "onezone" Onezone service
+
+  Examples:
+  | client1 | client2   |
+  | web GUI | REST      |
+  | REST    | web GUI   |
+
+  Scenario Outline: User adds group to space using <client1> which he is not an owner, and using <client2> checks if group was added
+    When using <client1>, user2 adds "group1" to space named "space1" in "onezone" Onezone service
+    Then using <client2>, user2 sees "group1" group on "space1" space members page in "onezone" Onezone service
 
   Examples:
   | client1 | client2   |
