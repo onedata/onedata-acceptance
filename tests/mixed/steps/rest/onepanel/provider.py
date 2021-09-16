@@ -11,7 +11,7 @@ __license__ = ("This software is released under the MIT license cited in "
 import yaml
 
 from tests.mixed.utils.common import *
-from tests.mixed.onepanel_client import (OneproviderApi,
+from onepanel_client import (OneproviderApi,
                                          ProviderDetails,
                                          ProviderRegisterRequest)
 

@@ -8,7 +8,7 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 
-from tests.mixed.onezone_client import (ProviderApi, UserApi, GroupApi,
+from onezone_client import (ProviderApi, UserApi, GroupApi,
                                         SpaceApi)
 
 
