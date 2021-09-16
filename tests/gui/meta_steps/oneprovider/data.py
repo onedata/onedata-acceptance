@@ -98,7 +98,8 @@ def remove_dir_and_parents_in_op_gui(selenium, browser_id, path, tmp_memory,
 @wt(parsers.re(r'user of (?P<browser_id>\w+) (?P<res>.*) to see '
                '(?P<subfiles>.*) in "(?P<path>.*)" in "(?P<space>.*)"'))
 def see_items_in_op_gui(selenium, browser_id, path, subfiles, tmp_memory, 
-                        op_container, res, space, oz_page):
+                        op_container, res, space, oz_page,
+                        which_browser='file browser'):
     selenium[browser_id].refresh()
 
     try:
@@ -109,7 +110,8 @@ def see_items_in_op_gui(selenium, browser_id, path, subfiles, tmp_memory,
                           tmp_memory, space)
 
     if path:
-        double_click_on_item_in_browser(browser_id, path, tmp_memory)
+        double_click_on_item_in_browser(selenium, browser_id, path, tmp_memory,
+                                        op_container, which_browser)
     if res == 'fails':
         assert_items_absence_in_browser(browser_id, subfiles, tmp_memory)
     else:
@@ -172,7 +174,8 @@ def _check_files_tree(subtree, user, tmp_memory, cwd, selenium, op_container,
             assert_items_presence_in_browser(user, item, tmp_memory,
                                              which_browser)
             if item.startswith('dir'):
-                double_click_on_item_in_browser(user, item, tmp_memory,
+                double_click_on_item_in_browser(selenium, user, item_name,
+                                                tmp_memory, op_container,
                                                 which_browser)
                 assert_empty_browser_in_files_tab_in_op(selenium, user,
                                                         op_container,
@@ -185,7 +188,8 @@ def _check_files_tree(subtree, user, tmp_memory, cwd, selenium, op_container,
         else:
             assert_items_presence_in_browser(user, item_name, tmp_memory,
                                              which_browser)
-            double_click_on_item_in_browser(user, item_name, tmp_memory,
+            double_click_on_item_in_browser(selenium, user, item_name,
+                                            tmp_memory, op_container,
                                             which_browser)
 
             # if item is directory go deeper
@@ -248,7 +252,8 @@ def see_num_of_items_in_path_in_op_gui(selenium, user, tmp_memory, op_container,
 
 def assert_file_content_in_op_gui(text, path, space, selenium, user, users,
                                   provider, hosts, oz_page, op_container,
-                                  tmp_memory, tmpdir, modals):
+                                  tmp_memory, tmpdir, modals,
+                                  which_browser='file browser'):
     try:
         assert_browser_in_tab_in_op(selenium, user,
                                     op_container, tmp_memory)
@@ -258,7 +263,8 @@ def assert_file_content_in_op_gui(text, path, space, selenium, user, users,
                           tmp_memory, space)
         go_to_path_without_last_elem(user, tmp_memory, path)
     item_name = _select_item(user, tmp_memory, path)
-    double_click_on_item_in_browser(user, item_name, tmp_memory)
+    double_click_on_item_in_browser(selenium, user, item_name, tmp_memory,
+                                    op_container, which_browser)
     has_downloaded_file_content(user, item_name, text, tmpdir)
     change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, user,
                                                    'home', op_container)
@@ -370,7 +376,7 @@ def _select_item(browser_id, tmp_memory, path):
 
 @wt(parsers.parse('user of {browser_id} goes to "{path}" in {which_browser}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def go_to_path(browser_id, tmp_memory, path, which_browser='file browser'):
+def go_to_path(selenium, browser_id, tmp_memory, path, op_container, which_browser='file browser'):
     if '/' in path:
         item_name, path_list = get_item_name_and_containing_dir_path(path)
         path_list.append(item_name)
@@ -378,15 +384,19 @@ def go_to_path(browser_id, tmp_memory, path, which_browser='file browser'):
         path_list = [path]
     for directory in path_list:
         if directory != '':
-            double_click_on_item_in_browser(browser_id, directory, tmp_memory,
+            double_click_on_item_in_browser(selenium, browser_id, item_name,
+                                            tmp_memory, op_container,
                                             which_browser)
 
 
-def go_to_path_without_last_elem(browser_id, tmp_memory, path):
+def go_to_path_without_last_elem(selenium, browser_id, tmp_memory, path,
+                                 op_container,which_browser='file browser'):
     if '/' in path:
         _, path_list = get_item_name_and_containing_dir_path(path)
         for directory in path_list:
-            double_click_on_item_in_browser(browser_id, directory, tmp_memory)
+            double_click_on_item_in_browser(selenium, browser_id, path,
+                                            tmp_memory, op_container,
+                                            which_browser)
 
 
 def get_item_name_and_containing_dir_path(path):
