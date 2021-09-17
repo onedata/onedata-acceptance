@@ -31,16 +31,16 @@ from tests.gui.steps.rest.env_up.spaces import init_storage
 
 def _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id, path,
                                                    space, tmp_memory, oz_page,
-                                                   op_container, which_browser='file browser'):
+                                                   op_container):
     item_name, _ = get_item_name_and_containing_dir_path(path)
 
     try:
-        go_to_path_without_last_elem(selenium, browser_id, path, tmp_memory,op_container, which_browser)
+        go_to_path_without_last_elem(browser_id, tmp_memory, path)
         click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
     except (KeyError, StaleElementReferenceException):
         go_to_filebrowser(selenium, browser_id, oz_page, op_container,
                           tmp_memory, space)
-        go_to_path_without_last_elem(selenium, browser_id, path, tmp_memory,op_container, which_browser)
+        go_to_path_without_last_elem(browser_id, tmp_memory, path)
         click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
 
 
@@ -257,11 +257,11 @@ def assert_file_content_in_op_gui(text, path, space, selenium, user, users,
     try:
         assert_browser_in_tab_in_op(selenium, user,
                                     op_container, tmp_memory)
-        go_to_path_without_last_elem(selenium, user, path, tmp_memory,op_container, which_browser)
+        go_to_path_without_last_elem(user, tmp_memory, path)
     except (KeyError, NoSuchElementException):
         go_to_filebrowser(selenium, user, oz_page, op_container,
                           tmp_memory, space)
-        go_to_path_without_last_elem(selenium, user, path, tmp_memory,op_container, which_browser)
+        go_to_path_without_last_elem(user, tmp_memory, path)
     item_name = _select_item(user, tmp_memory, path)
     double_click_on_item_in_browser(selenium, user, item_name, tmp_memory,
                                     op_container, which_browser)
@@ -367,9 +367,9 @@ def assert_mtime_not_earlier_than_op_gui(path, time, browser_id, tmp_memory,
                                             tmp_memory)
 
 
-def _select_item(selenium, browser_id, tmp_memory, path,op_container, which_browser ='file browser'):
+def _select_item(browser_id, tmp_memory, path):
     item_name, path = get_item_name_and_containing_dir_path(path)
-    go_to_path_without_last_elem(selenium, browser_id, path, tmp_memory,op_container, which_browser)
+    go_to_path_without_last_elem(browser_id, tmp_memory, path)
     select_files_from_file_list_using_ctrl(browser_id, item_name, tmp_memory)
     return item_name
 
