@@ -90,7 +90,7 @@ def remove_item_in_op_gui(selenium, browser_id, path, tmp_memory, op_container,
 
 def remove_dir_and_parents_in_op_gui(selenium, browser_id, path, tmp_memory,
                                      op_container, res, space, modals, oz_page):
-    item_name = _select_item(browser_id, tmp_memory, path)
+    item_name = _select_item(selenium, browser_id, tmp_memory, path, op_container)
     remove_item_in_op_gui(selenium, browser_id, item_name, tmp_memory,
                           op_container, res, space, modals, oz_page)
 
@@ -239,7 +239,7 @@ def see_num_of_items_in_path_in_op_gui(selenium, user, tmp_memory, op_container,
     except KeyError:
         navigate_to_tab_in_op_using_gui(selenium, user, oz_page, provider,
                                         tab_name, hosts, modals)
-        _select_item(user, tmp_memory, path)
+        _select_item(selenium, user, tmp_memory, path, op_container)
         refresh_site(selenium, user)
         assert_browser_in_tab_in_op(selenium, user, op_container,
                                     tmp_memory)
@@ -257,7 +257,7 @@ def assert_file_content_in_op_gui(text, path, space, selenium, user, users,
         go_to_filebrowser(selenium, user, oz_page, op_container,
                           tmp_memory, space)
         go_to_path_without_last_elem(selenium, user, tmp_memory, path , op_container)
-    item_name = _select_item(user, tmp_memory, path)
+    item_name = _select_item(selenium, user, tmp_memory, path, op_container)
     double_click_on_item_in_browser(user, item_name, tmp_memory, op_container)
     has_downloaded_file_content(user, item_name, text, tmpdir)
     change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, user,
@@ -356,7 +356,7 @@ def assert_mtime_not_earlier_than_op_gui(path, time, browser_id, tmp_memory,
     assert_nonempty_file_browser_in_files_tab_in_op(selenium, browser_id,
                                                     op_container, tmp_memory,
                                                     item_browser='file browser')
-    item_name = _select_item(browser_id, tmp_memory, path)
+    item_name = _select_item(selenium, browser_id, tmp_memory, path, op_container)
     assert_item_in_file_browser_is_of_mdate(browser_id, item_name, time,
                                             tmp_memory)
 
