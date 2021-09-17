@@ -30,7 +30,6 @@ Feature: Multiuser
     Then using <client3>, user1 sees that space named "space1" has appeared in "onezone" Onezone service
     And using <client1>, user2 sees that user1 is member of "space1" in "onezone" Onezone service
 
-
   Examples:
   | client1 | client2   | client3   |
   | web GUI | web GUI   | REST      |
@@ -111,6 +110,7 @@ Feature: Multiuser
   | client1 | client2   |
   | web GUI | REST      |
   | REST    | web GUI   |
+
 
   Scenario Outline: User adds group to space using <client1> which he is not an owner, and using <client2> checks if group was added
     When using <client1>, user2 adds "group1" to space named "space1" in "onezone" Onezone service

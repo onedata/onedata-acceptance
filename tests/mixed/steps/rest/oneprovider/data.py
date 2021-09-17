@@ -25,6 +25,7 @@ from tests.mixed.utils.data import (
     check_files_tree, create_content, assert_ace, get_acl_metadata)
 from tests.utils.acceptance_utils import time_attr, compare
 from tests.utils.http_exceptions import HTTPError
+from tests.mixed.oneprovider_client import QoSApi
 
 
 def _lookup_file_id(path, user_client_op):
@@ -339,3 +340,41 @@ def assert_time_relation_in_op_rest(path, time1_name, time2_name,
                                           comparator, host, hosts, user,
                                           users, cdmi)
 
+
+def create_qos_requirement_in_op_rest(user, users, hosts, host, expression,
+                                      space_name, file_name):
+    path = f'{space_name}/{file_name}'
+    client = login_to_provider(user, users, hosts[host]['hostname'])
+    qo_s_api = QoSApi(client)
+    file_id = _lookup_file_id(path, client)
+    data = {
+            "fileId": file_id,
+            "expression": expression
+            }
+    qo_s_api.add_qos_requirement(data)
+
+
+def assert_qos_file_status_in_op_rest(user, users, hosts, host, space_name,
+                                      file_name, option):
+    path = f'{space_name}/{file_name}'
+    client = login_to_provider(user, users, hosts[host]['hostname'])
+    qo_s_api = QoSApi(client)
+    file_id = _lookup_file_id(path, client)
+    qos = qo_s_api.get_file_qos_summary(file_id).to_dict()['requirements']
+    if not qos and option == 'sees':
+        raise Exception('there is no qos file status for "{file_name}" in space'
+                        ' "{space_name}"')
+    elif qos and option == 'does not see':
+        raise Exception('there is qos file status for "{file_name}" in space'
+                        ' "{space_name}"')
+
+
+def delete_qos_requirement_in_op_rest(user, users, hosts, host, space_name,
+                                      file_name):
+    path = f'{space_name}/{file_name}'
+    client = login_to_provider(user, users, hosts[host]['hostname'])
+    qo_s_api = QoSApi(client)
+    file_id = _lookup_file_id(path, client)
+    qos = qo_s_api.get_file_qos_summary(file_id).to_dict()['requirements']
+    for qos_id in qos:
+        qo_s_api.remove_qos_requirement(qos_id)
