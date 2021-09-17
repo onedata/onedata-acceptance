@@ -33,3 +33,6 @@ class DataRow(PageObject):
             return False
         else:
             return True
+
+    def is_directory(self):
+        return 'browser-directory' in self._icon.get_attribute('class')

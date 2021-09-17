@@ -34,3 +34,5 @@ class DataRow(PageObject):
     def get_tag_text(self, name):
         return getattr(self, f'{transform(name)}_tag').text
 
+    def is_directory(self):
+        return 'browser-directory' in self._icon.get_attribute('class')
