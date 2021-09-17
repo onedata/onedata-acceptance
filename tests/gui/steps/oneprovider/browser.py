@@ -16,7 +16,8 @@ import time
                   ' "{item_name}" in {which_browser}'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def double_click_on_item_in_browser(selenium, browser_id, item_name, tmp_memory,
-                                    op_container, which_browser='file browser'):
+                                    op_container,
+                                    which_browser='file browser'):
     which_browser = transform(which_browser)
     browser = tmp_memory[browser_id][which_browser]
     driver = selenium[browser_id]

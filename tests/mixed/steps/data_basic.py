@@ -132,12 +132,10 @@ def create_dir_in_op(client, user, users, space, abs_path, hosts, tmp_memory,
 
 @wt(parsers.re(r'using web GUI, (?P<user>\w+) double clicks on item '
                'named "(?P<item_name>.*)" in "(?P<space>.*)"'))
-def go_to_dir(selenium, user, item_name, tmp_memory, op_container,
-              space, oz_page, which_browser ='file browser'):
+def go_to_dir(selenium, user, item_name, tmp_memory, op_container, space, oz_page):
     go_to_filebrowser(selenium, user, oz_page, op_container,
                       tmp_memory, space)
-    double_click_on_item_in_browser(selenium, user, item_name, tmp_memory,
-                                    op_container, which_browser)
+    double_click_on_item_in_browser(user, item_name, tmp_memory)
 
 
 @wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to see '
