@@ -49,9 +49,9 @@ def login_to_panel(username, password, host):
     configuration.username = username
     configuration.password = password
     configuration.host = 'https://{}:{}{}'.format(host,
-                                      OZ_REST_PORT,
-                                      CDMI_REST_PATH_PREFIX) 
-
+                                      PANEL_REST_PORT,
+                                      PANEL_REST_PATH_PREFIX) 
+    
     return ApiClient_panel(configuration=configuration)
 
 def login_to_cdmi(username, users, host, access_token=None,
