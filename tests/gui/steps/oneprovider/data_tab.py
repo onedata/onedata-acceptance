@@ -14,6 +14,7 @@ from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.utils.generic import (parse_seq, upload_file_path, transform)
 from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import given, wt, parsers
+from selenium.webdriver.support.ui import WebDriverWait as Wait
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -270,13 +271,19 @@ def wait_for_file_upload_to_finish(selenium, browser_id, popups):
         'file upload not finished '
         'within given time')
     switch_to_iframe(selenium, browser_id)
+    return True
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) waits extended time for file '
                'uploads? to finish'))
-@repeat_failed(timeout=WAIT_BACKEND*12)
+@repeat_failed(timeout=WAIT_BACKEND*3)
 def wait_extended_time_for_file_upload_to_finish(selenium, browser_id, popups):
-    wait_for_file_upload_to_finish(selenium, browser_id, popups)
+    driver = selenium[browser_id]
+
+    return Wait(driver, WAIT_BACKEND).until(
+        lambda _: wait_for_file_upload_to_finish(selenium, browser_id, popups),
+        message='Dropdownmenu has not expanded'
+    )
 
 
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
