@@ -211,7 +211,7 @@ Feature: Basic management of harvester index in Onezone GUI
     And user of browser clicks "harvester1" on the harvesters list in the sidebar
     And user of browser clicks Data discovery of "harvester1" harvester in the sidebar
     And user of browser sees Data Discovery page
-    Then user of browser sees rejected '["id"]' in results list on data discovery page
+    Then user of browser sees rejected: ["id"] in results list on data discovery page
     And user of browser sees that rejection is caused by field [id] of type [long] with ID from clipboard
 
 
@@ -236,7 +236,7 @@ Feature: Basic management of harvester index in Onezone GUI
     And user of browser clicks "harvester1" on the harvesters list in the sidebar
     And user of browser clicks Data discovery of "harvester1" harvester in the sidebar
     And user of browser sees Data Discovery page
-    Then user of browser sees rejected '["id"]' in results list on data discovery page
+    Then user of browser sees rejected: ["id"] in results list on data discovery page
     And user of browser does not see "__rejectionReason" in results list on data discovery page
 
 
@@ -263,5 +263,5 @@ Feature: Basic management of harvester index in Onezone GUI
     Then user of browser sees archives ID in results list on data discovery page
     And user of browser sees archives description: "first_archive" in results list on data discovery page
     And user of browser sees that archives creation time in results list on data discovery page is the same as on the archives page
-    And user of browser sees that file name for archive is "dir1" in results list on data discovery page
+    And user of browser sees file name for archive: "dir1" in results list on data discovery page
 

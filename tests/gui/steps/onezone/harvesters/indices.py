@@ -14,7 +14,7 @@ from tests.utils.utils import repeat_failed
 from tests.gui.utils.generic import parse_seq
 
 
-create_index_toggles = {'include_metadata': ['basic', 'json', 'rdf'],
+CREATE_INDEX_TOGGLES = {'include_metadata': ['basic', 'json', 'rdf'],
                         'include_file_details': ['file_name', 'file_type',
                                                  'space_id', 'dataset_info',
                                                  'metadata_existence_flags',
@@ -108,8 +108,8 @@ def uncheck_toggles_on_create_index_page(selenium, browser_id, oz_page,
     driver = selenium[browser_id]
     stay_checked = parse_seq(stay_checked)
     indices_page = oz_page(driver)['discovery'].indices_page
-    for toggles_group in create_index_toggles:
-        for toggle in create_index_toggles[toggles_group]:
+    for toggles_group in CREATE_INDEX_TOGGLES:
+        for toggle in CREATE_INDEX_TOGGLES[toggles_group]:
             if toggle not in stay_checked:
                 if toggles_group == 'rejection_toggles':
                     getattr(indices_page, toggle).click()
@@ -143,38 +143,44 @@ def assert_not_text_on_data_discovery_page(selenium, browser_id,
         assert name not in item.text, f'{name} in result list'
 
 
-def text_in_result_list(text, results_list):
+def results_list_to_list_with_dictionaries(results_list):
+    results = []
     for item in results_list:
-        if text in item.text:
+        text = item.text.split('__onedata: ')[1]
+        text = text.replace('{', '')
+        text = text.replace('}', '')
+        result_dict = {}
+        for i in text.split(', '):
+            result_dict[i.split(': ')[0]] = i.split(': ')[1]
+        results.append(result_dict)
+
+    return results
+
+
+def text_in_result_list(key, value, results_list):
+    results = results_list_to_list_with_dictionaries(results_list)
+    for item in results:
+        if value == item.get(key):
             break
     else:
-        raise Exception(f'{text} not in results list')
-
-
-@wt(parsers.parse('user of {browser_id} sees rejected \'{info}\''
-                  ' in results list on data discovery page'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_rejected_on_data_discovery_page(selenium, browser_id,
-                                           data_discovery, info):
-    driver = selenium[browser_id]
-    info = f' __rejected: {info}'
-    results_list = data_discovery(driver).results_list
-    text_in_result_list(info, results_list)
+        raise Exception(f'{key}: {value} not in results list')
 
 
 @wt(parsers.parse('user of browser sees that rejection is caused by field '
-                  '{key} of type {field_type} with ID from clipboard'))
+                  '{field_name} of type {field_type} with ID from clipboard'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_rejection_reason_on_data_discovery_page(selenium, browser_id,
-                                                   data_discovery, key,
+                                                   data_discovery, field_name,
                                                    field_type, clipboard,
                                                    displays):
     driver = selenium[browser_id]
     file_id = clipboard.paste(display=displays[browser_id])
-    info = (f'__rejectionReason: "failed to parse field {key} of type'
-            f' {field_type} in document with id \'{file_id}\'')
+    key = '__rejectionReason'
+    info = (f'"failed to parse field {field_name} of type'
+            f' {field_type} in document with id \'{file_id}\'. Preview of '
+            f'field\'s value')
     results_list = data_discovery(driver).results_list
-    text_in_result_list(info, results_list)
+    text_in_result_list(key, info, results_list)
 
 
 @wt(parsers.parse('user of {browser_id} sees archives ID in results list on '
@@ -183,21 +189,10 @@ def assert_rejection_reason_on_data_discovery_page(selenium, browser_id,
 def assert_id_on_data_discovery_page(selenium, browser_id, data_discovery,
                                      clipboard, displays):
     driver = selenium[browser_id]
-    archive_id = clipboard.paste(display=displays[browser_id])
-    info = f'archiveId: "{archive_id}"'
+    archive_id = f'"{clipboard.paste(display=displays[browser_id])}"'
+    key = 'archiveId'
     results_list = data_discovery(driver).results_list
-    text_in_result_list(info, results_list)
-
-
-@wt(parsers.parse('user of {browser_id} sees archives description: '
-                  '"{description}" in results list on data discovery page'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_description_on_data_discovery_page(selenium, browser_id,
-                                              data_discovery, description):
-    driver = selenium[browser_id]
-    info = f'archiveDescription: "{description}"'
-    results_list = data_discovery(driver).results_list
-    text_in_result_list(info, results_list)
+    text_in_result_list(key, archive_id, results_list)
 
 
 @wt(parsers.parse('user of {browser_id} sees that archives creation time in'
@@ -216,13 +211,21 @@ def assert_creation_time_on_data_discovery_page(selenium, browser_id,
     assert (created_at-60) < timestamp < (created_at+60), err_msg
 
 
-@wt(parsers.parse('user of browser sees that file name for archive is '
-                  '"{file_name}" in results list on data discovery page'))
+@wt(parsers.parse('user of {browser_id} sees {text}: {info}'
+                  ' in results list on data discovery page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_archive_file_name_on_data_discovery_page(selenium, browser_id,
-                                                    data_discovery, file_name):
+def assert_info_on_data_discovery_page(selenium, browser_id, data_discovery,
+                                       info, text):
     driver = selenium[browser_id]
-    info = f'fileName: "{file_name}"'
+    key = set_key(text)
     results_list = data_discovery(driver).results_list
-    text_in_result_list(info, results_list)
+    text_in_result_list(key, info, results_list)
 
+
+def set_key(text):
+    if text == 'rejected':
+        return '__rejected'
+    elif text == 'archives description':
+        return 'archiveDescription'
+    else:
+        return 'fileName'
