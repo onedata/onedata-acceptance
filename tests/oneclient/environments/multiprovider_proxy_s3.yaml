@@ -1,5 +1,5 @@
 scenario: "1oz_2op_2oc/s3_posix.yaml"
-patch: "2op/2user_s3_posix.yaml"
+patch: "2user_s3_posix_proxy.yaml"
 
 
 oneclient:

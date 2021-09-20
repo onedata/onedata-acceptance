@@ -1,5 +1,5 @@
-scenario: "1oz_2op_2oc/local_volume.yaml"
-patch: "2op/2user_posix_2space_proxy.yaml"
+scenario: "1oz_2op_2oc/s3_posix.yaml"
+patch: "2op/2user_s3_posix.yaml"
 
 
 oneclient:
