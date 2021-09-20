@@ -88,6 +88,8 @@ Feature: Uploading multiple files at once
   Scenario: User with weak connection uploads multiple files
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar
+
+    # upload multiple files
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload files from local directory "dir1" to remote current dir with 50 kbps
     Then user of browser sees that there are 5 items in file browser
@@ -96,6 +98,8 @@ Feature: Uploading multiple files at once
   Scenario: User with weak connection uploads one large file
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar
+
+    # upload one larger file
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser uses upload button from file browser menu bar to upload local file "file1MiB.txt" to remote current dir with 150 kbps
-    And user of browser sees that there is 1 item in file browser
+    And user of browser uses upload button from file browser menu bar to upload local file "file1MiB.txt" to remote current dir with 1500 kbps
+    Then user of browser sees that there is 1 item in file browser

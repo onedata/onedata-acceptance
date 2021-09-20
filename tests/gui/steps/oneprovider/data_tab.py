@@ -370,8 +370,9 @@ def upload_file_to_cwd_in_data_tab_with_network_throttling(selenium, browser_id
                   'menu bar to upload files from local directory "{dir_path}" '
                   'to remote current dir with {speed} kbps'))
 @repeat_failed(timeout=2 * WAIT_BACKEND)
-def upload_files_to_cwd_in_data_tab_with_network_throttling(selenium, browser_id
-                                                            , dir_path, tmpdir,
+def upload_files_to_cwd_in_data_tab_with_network_throttling(selenium,
+                                                            browser_id,
+                                                            dir_path, tmpdir,
                                                             op_container,
                                                             popups, speed):
     driver = selenium[browser_id]
