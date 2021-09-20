@@ -182,3 +182,18 @@ def click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory,
     browser = tmp_memory[browser_id][transform(which_browser)]
     browser.data[item_name].menu_button()
 
+
+@wt(parsers.parse('user of {browser_id} double clicks on item named'
+                  '"{item_name}" in {which_browser} to download it with {speed}'
+                  ' kbps'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def download_file_with_network_throttling(selenium,browser_id, item_name,
+                                         tmp_memory,speed):
+    driver = selenium[browser_id]
+    driver.set_network_conditions(
+        latency=5,
+        download_throughput=float(speed) / 8 * 1024,
+        upload_throughput=500 * 1024)
+
+    double_click_on_item_in_browser(browser_id, item_name, tmp_memory)
+
