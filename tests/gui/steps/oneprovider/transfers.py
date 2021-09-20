@@ -126,7 +126,7 @@ def migrate_item(selenium, browser_id, source, target, hosts, popups):
     popups(driver).data_distribution_popup.menu[menu_option]()
 
     _expand_dropdown_in_migrate_record(driver)
-    _wait_for_dropdown_menu_to_expand(driver)
+    _wait_for_dropdown_menu_in_data_distribution_to_expand(driver)
     modals(driver).dropdown.options[target_name].click()
 
     data_distribution_modal.migrate.migrate_button()
