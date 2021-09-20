@@ -172,7 +172,7 @@ def _check_files_tree(subtree, user, tmp_memory, cwd, selenium, op_container,
             assert_items_presence_in_browser(user, item, tmp_memory,
                                              which_browser)
             if item.startswith('dir'):
-                double_click_on_item_in_browser(user, item, tmp_memory,op_container,
+                double_click_on_item_in_browser(selenium, user, item, tmp_memory,op_container,
                                                 which_browser)
                 assert_empty_browser_in_files_tab_in_op(selenium, user,
                                                         op_container,
@@ -185,7 +185,7 @@ def _check_files_tree(subtree, user, tmp_memory, cwd, selenium, op_container,
         else:
             assert_items_presence_in_browser(user, item_name, tmp_memory,
                                              which_browser)
-            double_click_on_item_in_browser(user, item_name, tmp_memory,op_container,
+            double_click_on_item_in_browser(selenium, user, item_name, tmp_memory, op_container,
                                             which_browser)
 
             # if item is directory go deeper
