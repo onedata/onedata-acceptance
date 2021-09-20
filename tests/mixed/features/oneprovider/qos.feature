@@ -21,7 +21,7 @@ Feature: Quality of Service mixed tests
 
   Scenario Outline: User adds QoS requirements to file using <client1> and using <client2> sees QoS file status
     When using <client1>, user1 creates "anyStorage" QoS requirement for "file1" in space "space1" in oneprovider-1
-    Then using <client2>, user1 sees QoS file status for "file1" in space "space1" in oneprovider-1
+    Then using <client2>, user1 sees that file "file1" has some QoS requirements in space "space1" in oneprovider-1
 
   Examples:
   | client1    | client2    |
@@ -32,7 +32,7 @@ Feature: Quality of Service mixed tests
   Scenario Outline: User deletes QoS requirements to file using <client2> and using <client1> sees that there is no QoS requirements to file
     When using <client1>, user1 creates "anyStorage" QoS requirement for "file1" in space "space1" in oneprovider-1
     And using <client2>, user1 deletes all QoS requirements for "file1" in space "space1" in oneprovider-1
-    Then using <client1>, user1 does not see QoS file status for "file1" in space "space1" in oneprovider-1
+    Then using <client1>, user1 sees that file "file1" has not QoS requirements in space "space1" in oneprovider-1
 
   Examples:
   | client1    | client2    |

@@ -128,7 +128,7 @@ def assert_qos_file_status_in_op_gui(user, file_name, space_name, tmp_memory,
                                                   space_name, option_of_space,
                                                   oz_page)
     assert_browser_in_tab_in_op(selenium, user, op_container, tmp_memory)
-    if option == 'sees':
+    if option == 'has some':
         assert_status_tag_for_file_in_browser(user, status_type,
                                               file_name, tmp_memory)
     else:

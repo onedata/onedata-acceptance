@@ -361,10 +361,10 @@ def assert_qos_file_status_in_op_rest(user, users, hosts, host, space_name,
     qo_s_api = QoSApi(client)
     file_id = _lookup_file_id(path, client)
     qos = qo_s_api.get_file_qos_summary(file_id).to_dict()['requirements']
-    if not qos and option == 'sees':
+    if not qos and option == 'has some':
         raise Exception('there is no qos file status for "{file_name}" in space'
                         ' "{space_name}"')
-    elif qos and option == 'does not see':
+    elif qos and option == 'has not':
         raise Exception('there is qos file status for "{file_name}" in space'
                         ' "{space_name}"')
 

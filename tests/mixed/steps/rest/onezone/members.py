@@ -75,6 +75,9 @@ PRIVILEGES_GROUPS = {
                               'Cancel workflow executions']
 }
 
+DEFAULT_GRANT = ['space_read_data', 'space_view', 'space_view_transfers',
+                 'space_write_data']
+
 
 def translate_privileges(config, grant, revoke):
     privileges = yaml.load(config)
@@ -83,7 +86,8 @@ def translate_privileges(config, grant, revoke):
             items = privileges_group_items['privilege subtypes'].items()
             for (privilege, granted) in items:
                 if granted:
-                    grant.append(privilege)
+                    if privilege not in grant:
+                        grant.append(privilege)
                 else:
                     revoke.append(privilege)
         elif not privileges_group_items['granted']:
@@ -95,6 +99,10 @@ def translate_privileges(config, grant, revoke):
         grant[i] = PRIVILEGES_TRANSLATION[grant[i]]
     for i in range(len(revoke)):
         revoke[i] = PRIVILEGES_TRANSLATION[revoke[i]]
+
+    for privilege in DEFAULT_GRANT:
+        if privilege not in revoke and privilege not in grant:
+            grant.append(privilege)
 
 
 def fail_to_set_privileges_using_rest(user, users, hosts, host, spaces,
@@ -130,9 +138,9 @@ def assert_privileges_in_space_using_rest(user, users, hosts, host, spaces,
     translate_privileges(config, grant, revoke)
     grant.sort()
     user_privileges.sort()
-    assert user_privileges == grant, (f'users privileges {user_privileges}'
-                                      f' does not match expected '
-                                      f'privileges: {grant}')
+    assert grant == user_privileges, (
+        f'users privileges {user_privileges} does not match expected '
+        f'privileges: {grant}')
 
 
 def fail_to_create_invitation_in_space_using_rest(user, users, hosts, host,
