@@ -104,12 +104,6 @@ def test_files_uploaded_by_user_are_ordered_by_name():
 
 
 @skip_if_not_chrome
-@scenario('User with weak connection uploads multiple files')
-def test_user_with_weak_connection_uploads_multiple_files():
-    pass
-
-
-@skip_if_not_chrome
 @scenario('User with weak connection uploads one large file')
 def test_user_with_weak_connection_uploads_one_large_file():
     pass
