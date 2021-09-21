@@ -115,7 +115,6 @@ IMAGES_CFG_PATHS = {
     'onezone': 'onezone_images/docker-dev-build-list.json',
     'oneprovider': 'oneprovider_images/docker-dev-build-list.json',
     'oneclient': 'oneclient_images/oc-docker-dev-build-list.json',
-    'luma': 'luma_images/luma-docker-build-report.json',
     'rest_cli': 'rest_cli_images/rest-cli-docker-build-report.json'
 }
 
