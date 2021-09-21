@@ -35,6 +35,8 @@ class DatasetsModal(Modal):
     ancestor_option = WebElement('.parent-group-dataset-item '
                                  '.dataset-label-section')
     ancestors = WebItemsSequence('.parent-dataset-item', cls=ParentDatasetItem)
+    data_protected_label = Label('.data-protected-tag')
+    metadata_protected_label = Label('.metadata-protected-tag')
 
     def __str__(self):
         return 'Datasets modal'

@@ -9,7 +9,8 @@ __license__ = ("This software is released under the MIT license cited in "
 
 from time import time
 from datetime import datetime
-
+import tarfile
+import yaml
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.modal import click_modal_button
@@ -26,43 +27,6 @@ def assert_msg_instead_of_browser(browser_id, msg, tmp_memory):
     displayed_msg = browser.browser_msg_header
     assert displayed_msg == msg, ('displayed {} does not match expected '
                                   '{}'.format(displayed_msg, msg))
-
-
-@wt(parsers.parse('user of {browser_id} does not see {status_type} '
-                  'status tag for "{item_name}" in file browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_not_status_tag_for_file_in_file_browser(browser_id, status_type,
-                                                   item_name, tmp_memory):
-    browser = tmp_memory[browser_id]['file_browser']
-    err_msg = (f'{status_type} tag for {item_name} in file browser visible, '
-               f'while should not be')
-    assert not browser.data[item_name].is_tag_visible(status_type), err_msg
-
-
-@wt(parsers.parse('user of {browser_id} sees {status_type} '
-                  'status tag for "{item_name}" in file browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_status_tag_for_file_in_file_browser(browser_id, status_type,
-                                               item_name, tmp_memory):
-    browser = tmp_memory[browser_id]['file_browser']
-    err_msg = f'{status_type} tag for {item_name} in file browser not visible'
-    assert browser.data[item_name].is_tag_visible(transform(status_type)), err_msg
-
-
-@wt(parsers.parse('user of {browser_id} sees {status_type} '
-                  'status tag with "{text}" text for "{item_name}" '
-                  'in file browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_status_tag_text_for_file_in_file_browser(browser_id, status_type,
-                                                    text, item_name,
-                                                    tmp_memory):
-    assert_status_tag_for_file_in_file_browser(browser_id, status_type,
-                                               item_name, tmp_memory)
-    browser = tmp_memory[browser_id]['file_browser']
-    actual_text = browser.data[item_name].get_tag_text(transform(status_type))
-    err_msg = (f'{status_type} tag for {item_name} in file browser has text '
-               f'{actual_text} not {text}')
-    assert actual_text == text, err_msg
 
 
 @wt(parsers.parse('user of {browser_id} clicks on {status_type} status tag '
@@ -300,16 +264,6 @@ def confirm_rename_directory(selenium, browser_id, option, modals):
         click_modal_button(selenium, browser_id, button, modal, modals)
 
 
-@wt(parsers.parse('user of {browser_id} clicks on menu '
-                  'for "{item_name}" directory in file browser'))
-@wt(parsers.parse('user of {browser_id} clicks on menu '
-                  'for "{item_name}" file in file browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_menu_for_elem_in_file_browser(browser_id, item_name, tmp_memory):
-    browser = tmp_memory[browser_id]['file_browser']
-    browser.data[item_name].menu_button()
-
-
 @wt(parsers.parse('user of {browser_id} scrolls to the bottom of file browser '
                   'and sees there are {count} files'))
 def count_files_while_scrolling(browser_id, count: int, tmp_memory):
@@ -396,4 +350,67 @@ def assert_property_in_symlink_dets_modal(selenium, browser_id, link_property,
                                       browser_id)
     assert actual_value == value, (f'{link_property} has {actual_value} '
                                    f'not expected {value}')
+
+
+@wt(parsers.parse('user of {browser_id} sees that contents of downloaded '
+                  '{name} TAR file (with ID in clipboard) in download '
+                  'directory have following structure:\n{contents}'))
+@wt(parsers.parse('user of {browser_id} sees that contents of downloaded '
+                  '"{name}" TAR file in download directory have following'
+                  ' structure:\n{contents}'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_contents_downloaded_tar_file(selenium, browser_id, contents, tmpdir,
+                                        clipboard, displays, name):
+    configured_dir_contents = {}
+    if name == 'archive':
+        name = (f'archive_'
+                     f'{clipboard.paste(display=displays[browser_id])}.tar')
+        contents = contents.replace('archive', name.split('.')[0])
+
+    def _get_directory_contents(directory_tree, path=''):
+
+        if not directory_tree:
+            return
+
+        for item in directory_tree:
+            try:
+                [(name, content)] = item.items()
+            except AttributeError:
+                name = item
+                content = None
+
+            if path == '':
+                item_path = name
+            else:
+                item_path = path + '/' + name
+
+            configured_dir_contents[item_path] = str(content)
+            if name.startswith('dir') or name.startswith('archive'):
+                configured_dir_contents[item_path] = None
+                _get_directory_contents(content, item_path)
+
+    download_path = tmpdir.join(browser_id, 'download')
+    extract_path = download_path.join('extract')
+    downloaded_tar_filename = download_path.join(name).strpath
+
+    assert tarfile.is_tarfile(downloaded_tar_filename), (
+                f'{downloaded_tar_filename} is not valid TAR file archive')
+
+    tar = tarfile.open(downloaded_tar_filename)
+    files_list = tar.getnames()
+    tar.extractall(extract_path.strpath)
+
+    dir_tree = yaml.load(contents)
+    _get_directory_contents(dir_tree)
+
+    for f in files_list:
+        assert f in configured_dir_contents, (f'{f} is missing in downloaded '
+                                              f'tar file')
+        archive_file = tar.getmember(f)
+        if archive_file.isfile():
+            with open(extract_path.join(f).strpath, 'r') as o:
+                file_contents = o.read()
+                assert str(file_contents) == str(configured_dir_contents[f]), (
+                    f'{f} content is different than expected '
+                    f'{file_contents}!={configured_dir_contents[f]}')
 

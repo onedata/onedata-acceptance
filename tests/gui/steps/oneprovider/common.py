@@ -13,7 +13,7 @@ from tests.utils.bdd_utils import given, parsers, wt
 from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.utils.generic import parse_url
+from tests.gui.utils.generic import parse_url, transform
 
 
 def _wait_for_op_session_to_start(selenium, browser_id_list):

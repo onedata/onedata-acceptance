@@ -64,7 +64,7 @@ def _find_modal(driver, modal_name):
         elements_list = ['group', 'token', 'cluster', 'harvester',
                          'spaces', 'rename', 'permissions', 'directory', 'data',
                          'share', 'metadata', 'delete', 'remove', 'quality',
-                         'file details', 'symbolic link']
+                         'file details', 'symbolic link', 'inventory']
         if any([name for name in elements_list
                 if name in modal_name.lower()]):
             modals = driver.find_elements_by_css_selector('.modal, '
@@ -296,6 +296,7 @@ def assert_btn_in_modal_is_enabled(browser_id, btn_name, tmp_memory):
 
 @wt(parsers.parse('user of {browser_id} sees {text} alert '
                   'in "{modal}" modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_alert_text_in_modal(selenium, browser_id, modals, modal, text):
     driver = selenium[browser_id]
     modal = transform(modal)
