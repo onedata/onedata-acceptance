@@ -115,22 +115,6 @@ def wt_mv_file(src_path, new_src_path, hosts):
     _docker_mv(src_path, new_src_path, hosts)
 
 
-@given(parsers.re('providers? named (?P<provider_list>.*?) (is|are) paused'))
-def pause_providers(hosts, provider_list):
-    pause_cmd = ['docker', 'pause']
-    for provider in parse_seq(provider_list):
-        container_id = hosts[provider]['container-id']
-        subprocess.call(pause_cmd + [container_id])
-
-
-@wt(parsers.re('providers? named (?P<provider_list>.*?) (is|are) unpaused'))
-def unpause_providers(hosts, provider_list):
-    unpause_cmd = ['docker', 'unpause']
-    for provider in parse_seq(provider_list):
-        container_id = hosts[provider]['container-id']
-        subprocess.call(unpause_cmd + [container_id])
-
-
 @wt(parsers.parse('elasticsearch plugin stops working'))
 def pause_elasticsearch_container(hosts):
     pause_cmd = ['docker', 'pause']
