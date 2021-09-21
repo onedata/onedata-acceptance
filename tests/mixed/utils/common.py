@@ -22,7 +22,8 @@ class NoSuchClientException(Exception):
         return repr(self.value)
 
 
-def setup_basic_configuration(configuration,host, port, path_prefix, username = None, password = None):
+def setup_basic_configuration(configuration, host, port, path_prefix,
+                              username = None, password = None):
     configuration.username = username
     configuration.password = password
     configuration.verify_ssl = False
