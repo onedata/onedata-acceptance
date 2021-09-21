@@ -8,9 +8,8 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 
-from onezone_client import (ProviderApi, UserApi, GroupApi,
-                                        SpaceApi)
-
+from onezone_client import (ProviderApi, UserApi,
+                            GroupApi, SpaceApi)
 
 def get_provider_with_name(client, provider_name):
     provider_api = ProviderApi(client)

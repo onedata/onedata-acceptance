@@ -76,7 +76,7 @@ BROWSER                     ?= Chrome
 TIMEOUT			            ?= 300
 LOCAL_CHARTS_PATH           ?= ""
 PULL_ONLY_MISSING_IMAGES    ?= ""
-MIXED_TESTS_ROOT:=$(shell pwd)/tests/mixed
+MIXED_TESTS_ROOT := $(shell pwd)/tests/mixed
 
 ifdef bamboo_GUI_PKG_VERIFICATION
     GUI_PKG_VERIFICATION = --gui-pkg-verification

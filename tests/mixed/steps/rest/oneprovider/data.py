@@ -20,8 +20,8 @@ from oneprovider_client import BasicFileOperationsApi
 from oneprovider_client import FilePathResolutionApi
 from oneprovider_client.rest import ApiException as OPException
 from tests.mixed.utils.common import *
-from tests.mixed.utils.data import (
-    check_files_tree, create_content, assert_ace, get_acl_metadata)
+from tests.mixed.utils.data import (check_files_tree, create_content,
+                                    assert_ace, get_acl_metadata)
 from tests.utils.acceptance_utils import time_attr, compare
 from tests.utils.http_exceptions import HTTPError
 
