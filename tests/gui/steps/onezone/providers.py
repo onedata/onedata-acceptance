@@ -21,8 +21,8 @@ from tests.utils.rest_utils import get_provider_rest_path, http_get
 from tests import OP_REST_PORT
 
 
-TIMEOUT_FOR_PROVIDER_GOES_OFFLINE = 300
-TIMEOUT_FOR_PROVIDER_GOES_ONLINE = 60
+TIMEOUT_FOR_PROVIDER_GOING_OFFLINE = 300
+TIMEOUT_FOR_PROVIDER_GOING_ONLINE = 60
 
 
 @wt(parsers.parse('user of {browser_id} sees that provider popup for '
@@ -434,9 +434,9 @@ def wait_until_provider_goes_offline(selenium, browser_id, oz_page,
     start = time.time()
     while page.is_working():
         time.sleep(0.5)
-        if time.time() > start + TIMEOUT_FOR_PROVIDER_GOES_OFFLINE:
-            raise RuntimeError(f'Provider does not go offline within '
-                               f'{TIMEOUT_FOR_PROVIDER_GOES_OFFLINE}s.')
+        if time.time() > start + TIMEOUT_FOR_PROVIDER_GOING_OFFLINE:
+            raise RuntimeError(f'Provider did not go offline within '
+                               f'{TIMEOUT_FOR_PROVIDER_GOING_OFFLINE}s.')
 
 
 @wt(parsers.parse('user of {browser_id} waits until provider "{provider_name}" '
@@ -455,13 +455,13 @@ def wait_until_provider_goes_online(selenium, browser_id, oz_page,
         pass
     while not page.is_working():
         time.sleep(0.5)
-        if time.time() > start + TIMEOUT_FOR_PROVIDER_GOES_OFFLINE:
-            raise RuntimeError(f'Provider does not go online within '
-                               f'{TIMEOUT_FOR_PROVIDER_GOES_OFFLINE}s.')
-    provider_is_online(provider_name, hosts, users)
+        if time.time() > start + TIMEOUT_FOR_PROVIDER_GOING_OFFLINE:
+            raise RuntimeError(f'Provider did not go online on providers map '
+                               f'within {TIMEOUT_FOR_PROVIDER_GOING_OFFLINE}s.')
+    wait_for_provider_online(provider_name, hosts, users)
 
 
-def provider_is_online(provider, hosts, users):
+def wait_for_provider_online(provider, hosts, users):
     user = 'admin'
     provider_hostname = hosts[provider]['hostname']
     start = time.time()
@@ -469,27 +469,33 @@ def provider_is_online(provider, hosts, users):
     while True:
         time.sleep(0.5)
         res = http_get(ip=provider_hostname, port=OP_REST_PORT,
-                       path=get_provider_rest_path('health'),
+                       path='/nagios',
                        auth=(user, users[user].password))
         if res.status_code == requests.codes.ok:
             return
 
-        if time.time() > start + TIMEOUT_FOR_PROVIDER_GOES_ONLINE:
-            raise RuntimeError(f'Provider does not go online within '
-                               f'{TIMEOUT_FOR_PROVIDER_GOES_OFFLINE}s.')
+        if time.time() > start + TIMEOUT_FOR_PROVIDER_GOING_ONLINE:
+            raise RuntimeError(f'Provider is still not working after '
+                               f'{TIMEOUT_FOR_PROVIDER_GOING_ONLINE}s.')
 
 
 @given(parsers.re('providers? named (?P<provider_list>.*?) (is|are) stopped'))
 def stop_providers(hosts, provider_list):
     for provider in parse_seq(provider_list):
         pod_name = hosts[provider]['pod-name']
-        cmd = [pod_name, '--', 'op_worker', 'stop']
-        run_kubectl_command('exec', cmd)
+        run_kubectl_command('exec',
+                            [pod_name, '--', 'service', 'op_panel', 'stop'])
+        run_kubectl_command('exec',
+                            [pod_name, '--', 'service', 'op_worker', 'stop'])
+        run_kubectl_command('exec',
+                            [pod_name, '--', 'service', 'cluster_manager', 'stop'])
+        run_kubectl_command('exec',
+                            [pod_name, '--', 'service', 'couchbase-server', 'stop'])
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def start_providers(hosts, provider_list):
     for provider in parse_seq(provider_list):
         pod_name = hosts[provider]['pod-name']
-        cmd = [pod_name, '--', 'op_worker', 'start']
+        cmd = [pod_name, '--', 'service', 'op_panel', 'start']
         run_kubectl_command('exec', cmd)
