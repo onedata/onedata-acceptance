@@ -215,15 +215,15 @@ def _get_support(zone_hostname, onepanel_credentials,
         provider_hostname = hosts[provider]['hostname']
         storage_name = options['storage']
 
-        if provider_name not in storages_db:
-            storages_db[provider_name] = {}
-
         try:
             storage_id = storages_db[provider_name][storage_name]
         except KeyError:
-            storage_id = storages_db[provider_name][storage_name] = \
+            if provider_name not in storages_db:
+                storages_db[provider_name] = {}
+            storages_db[provider_name][storage_name] = \
                 _get_storage_id(provider_hostname, onepanel_username,
                                 onepanel_password, storage_name)
+            storage_id = storages_db[provider_name][storage_name]
 
         token = http_post(ip=zone_hostname, port=OZ_REST_PORT,
                           path=get_zone_rest_path('spaces', space_id,
