@@ -9,7 +9,7 @@ __license__ = ("This software is released under the MIT license cited in "
 import time
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import transform, upload_file_path
 from tests.utils.bdd_utils import wt, parsers
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.utils import repeat_failed
@@ -109,3 +109,22 @@ def assert_inventory_exists(selenium, browser_ids, oz_page, text):
         err_msg = oz_page(selenium[browser_id])['automation'].privileges_err_msg
 
         assert text in err_msg, f'Error message: {text} not found'
+
+
+@wt(parsers.parse('user of {browser_id} uses Upload (json) button from menu '
+                  'bar to upload workflow "{file_name}" to current dir '
+                  'without waiting for upload to finish'))
+@repeat_failed(timeout=2*WAIT_BACKEND)
+def upload_workflow_as_json(selenium, browser_id, file_name, oz_page):
+    driver = selenium[browser_id]
+    oz_page(driver)['automation'].upload_workflow(upload_file_path(file_name))
+
+
+@wt(parsers.parse('user of {browser_id} sees "{workflow}" in workflows list '
+                  'in inventory workflows subpage'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_workflow_exists(selenium, browser_id, oz_page, workflow):
+    page = oz_page(selenium[browser_id])['automation']
+
+    assert workflow in page.workflows_page.elements_list, \
+        f'Workflow: {workflow} not found '

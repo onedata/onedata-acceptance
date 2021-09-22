@@ -8,8 +8,9 @@ __license__ = ("This software is released under the MIT license cited in "
 
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.base import PageObject
-from tests.gui.utils.core.web_elements import (
-    Label, NamedButton, WebItem, WebItemsSequence, WebElement)
+from tests.gui.utils.core.web_elements import (Label, NamedButton, WebItem,
+                                               WebItemsSequence, WebElement,
+                                               Button)
 
 
 class HardlinkEntry(PageObject):
@@ -26,11 +27,17 @@ class HardlinkTab(PageObject):
         return 'active' in self.tab.get_attribute('class')
 
 
+class GeneralInfo(PageObject):
+    file_id = Label('.file-info-row-cdmi-object-id .clipboard-input')
+    copy_id_button = Button('.file-info-row-cdmi-object-id .clipboard-btn')
+
+
 class FileDetailsModal(Modal):
     modal_name = Label('.modal-header h1')
     owner = Label('.file-info-row-owner .property-value')
     close = NamedButton('.btn-default', text='Close')
     hardlinks_tab = WebItem('.modal-body', cls=HardlinkTab)
+    general = WebItem('.table-info', cls=GeneralInfo)
 
     def __str__(self):
         return 'File details modal'

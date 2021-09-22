@@ -14,6 +14,7 @@ from tests import OZ_REST_PORT
 from tests.utils.bdd_utils import given, parsers
 from tests.utils.rest_utils import (
     http_post, http_put, get_zone_rest_path, http_get, http_delete)
+from tests.utils.http_exceptions import HTTPForbidden
 
 
 @given(parsers.parse('initial groups configuration in "{service}" '
@@ -145,10 +146,7 @@ def _add_child_group(zone_hostname, admin_credentials, parent_id, child_id,
 def _get_group_id(hosts, users, user, group_name):
     service = 'onezone'
     zone_hostname = hosts[service]['hostname']
-    groups_list = http_get(ip=zone_hostname, port=OZ_REST_PORT,
-                           path=get_zone_rest_path('groups'),
-                           auth=(user, users[user].password))
-    groups_id_list = groups_list.json()['groups']
+    groups_id_list = get_group_id_list(user, users, zone_hostname)
     for group_id in groups_id_list:
         group_details = http_get(ip=zone_hostname, port=OZ_REST_PORT,
                                  path=get_zone_rest_path('groups', group_id),
@@ -168,3 +166,31 @@ def remove_group_in_onezone(hosts, users, user, group_name):
         http_delete(ip=zone_hostname, port=OZ_REST_PORT,
                     path=get_zone_rest_path('groups', group_id),
                     auth=(user, users[user].password))
+
+
+@given(parsers.parse('there is no groups in Onezone page used by {user} before '
+                     'definition in next steps'))
+def remove_all_groups_rest(user, hosts, users):
+    zone_hostname = hosts['onezone']['hostname']
+
+    groups_id_list = get_group_id_list(user, users, zone_hostname)
+
+    for group in groups_id_list:
+        _try_to_remove_group(group, zone_hostname, user, users)
+
+
+def _try_to_remove_group(group_id, zone_hostname, user, users):
+    try:
+        http_delete(ip=zone_hostname, port=OZ_REST_PORT,
+                    path=get_zone_rest_path('groups', group_id),
+                    auth=(user, users[user].password))
+    except HTTPForbidden:
+        pass
+
+
+def get_group_id_list(user, users, zone_hostname):
+    groups_list = http_get(ip=zone_hostname, port=OZ_REST_PORT,
+                           path=get_zone_rest_path('groups'),
+                           auth=(user, users[user].password))
+    return groups_list.json()['groups']
+

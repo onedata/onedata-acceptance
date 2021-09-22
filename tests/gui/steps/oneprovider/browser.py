@@ -22,7 +22,7 @@ def double_click_on_item_in_browser(browser_id, item_name, tmp_memory,
     start = time.time()
     while item_name not in browser.data:
         time.sleep(1)
-        if start + time.time() > start + WAIT_BACKEND:
+        if time.time() > start + WAIT_BACKEND:
             raise RuntimeError('waited too long')
     browser.data[item_name].double_click()
 
@@ -96,8 +96,47 @@ def assert_num_of_files_are_displayed_in_browser(browser_id, num, tmp_memory,
     assert files_num == num, err_msg.format(files_num, num)
 
 
+@wt(parsers.parse('user of {browser_id} sees {status_type} '
+                  'status tag for "{item_name}" in {which_browser}'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_status_tag_for_file_in_browser(browser_id, status_type, item_name,
+                                          tmp_memory,
+                                          which_browser='file browser'):
+    browser = tmp_memory[browser_id][transform(which_browser)]
+    err_msg = f'{status_type} tag for {item_name} in {which_browser} not visible'
+    assert browser.data[item_name].is_tag_visible(transform(status_type)), err_msg
+
+
+@wt(parsers.parse('user of {browser_id} sees {status_type} '
+                  'status tag with "{text}" text for "{item_name}" '
+                  'in {which_browser}'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_status_tag_text_for_file_in_browser(browser_id, status_type, text,
+                                               item_name, tmp_memory,
+                                               which_browser='file browser'):
+    assert_status_tag_for_file_in_browser(browser_id, status_type,
+                                          item_name, tmp_memory, which_browser)
+    browser = tmp_memory[browser_id][transform(which_browser)]
+    actual_text = browser.data[item_name].get_tag_text(transform(status_type))
+    err_msg = (f'{status_type} tag for {item_name} in browser has text '
+               f'{actual_text} not {text}')
+    assert actual_text == text, err_msg
+
+
+@wt(parsers.parse('user of {browser_id} does not see {status_type} '
+                  'status tag for "{item_name}" in {which_browser}'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_not_status_tag_for_file_in_browser(browser_id, status_type,
+                                              item_name, tmp_memory,
+                                              which_browser='file browser'):
+    browser = tmp_memory[browser_id][transform(which_browser)]
+    err_msg = (f'{status_type} tag for {item_name} in {which_browser} visible, '
+               f'while should not be')
+    assert not browser.data[item_name].is_tag_visible(status_type), err_msg
+
+
 @wt(parsers.parse('user of {browser_id} clicks "{option}" option '
-                  'in data row menu in {} browser'))
+                  'in data row menu in {which_browser}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
                                              modals):
@@ -123,3 +162,23 @@ def assert_status_tag_for_file_in_browser(browser_id, status_type,
     browser = tmp_memory[browser_id][transform(which_browser)]
     err_msg = f'{status_type} tag for {item_name} in browser not visible'
     assert browser.data[item_name].is_tag_visible(transform(status_type)), err_msg
+
+
+@wt(parsers.parse('user of {browser_id} clicks on {state} view mode '
+                  'on {which} browser page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_state_view_mode_tab(browser_id, oz_page, selenium, state, which):
+    driver = selenium[browser_id]
+    driver.switch_to.default_content()
+    header = f'{transform(which)}_header'
+    getattr(getattr(oz_page(driver)['data'], header), transform(state))()
+
+
+@wt(parsers.parse('user of {browser_id} clicks on menu '
+                  'for "{item_name}" {type} in {which_browser}'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory,
+                                   which_browser='file browser'):
+    browser = tmp_memory[browser_id][transform(which_browser)]
+    browser.data[item_name].menu_button()
+
