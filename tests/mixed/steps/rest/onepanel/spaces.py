@@ -14,9 +14,9 @@ import yaml
 from tests.gui.conftest import WAIT_BACKEND
 from tests.mixed.utils.common import (login_to_panel, login_to_oz)
 from tests.mixed.steps.rest.onezone.common import get_space_with_name
-from tests.mixed.onepanel_client import (
-    SpaceModifyRequest, SpaceSupportRequest,
-    AutoStorageImportConfig, StorageImport, SpaceSupportApi, StoragesApi)
+from onepanel_client import (SpaceModifyRequest, SpaceSupportRequest,
+                             AutoStorageImportConfig, StorageImport, 
+                             SpaceSupportApi, StoragesApi)
 from tests.utils.utils import repeat_failed
 
 

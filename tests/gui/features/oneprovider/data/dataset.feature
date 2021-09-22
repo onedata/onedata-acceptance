@@ -89,7 +89,7 @@ Feature: Basic datasets operations
                   - dir5
 
 
-  Scenario: User sees metadata, data write protection toggles checked in directory dataset modal after marking its parent directories
+  Scenario: User sees metadata, data write protection toggles checked on ancestors list in directory dataset modal after marking its parent directories
     When user of browser creates dataset for item "dir2" in "space1"
     And user of browser clicks on menu for "dir2" directory in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser

@@ -334,7 +334,7 @@ ALL       ALL = (ALL) NOPASSWD: ALL
             run_params=run_params,
             # setting HOME allows to use k8s and minikube configs
             # from host
-            envs={'HOME': os.path.expanduser('~')}
+            envs={'HOME': os.path.expanduser('~'), 'PYTHONPATH' : os.environ['PYTHONPATH']}
         )
 
         if args.clean:

@@ -11,9 +11,8 @@ __license__ = ("This software is released under the MIT license cited in "
 import yaml
 
 from tests.mixed.utils.common import *
-from tests.mixed.onepanel_client import (OneproviderApi,
-                                         ProviderDetails,
-                                         ProviderRegisterRequest)
+from onepanel_client import (OneproviderApi,ProviderDetails,
+                             ProviderRegisterRequest)
 
 
 def modify_provider_in_op_panel_using_rest(user, users, provider_host, hosts,
