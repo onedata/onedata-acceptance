@@ -474,7 +474,7 @@ def wait_for_provider_online(provider, hosts, users):
     while True:
         time.sleep(0.5)
         res = http_get(ip=provider_hostname, port=OP_REST_PORT,
-                       path='/nagios',
+                       path=get_provider_rest_path('health'),
                        auth=(user, users[user].password))
         if res.status_code == requests.codes.ok:
             return
