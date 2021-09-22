@@ -93,8 +93,16 @@ class _DropdownSelector(PageObject, ExpandableMixin):
     _toggle = WebElement('.ember-basic-dropdown-trigger[role="button"]')
 
 
+class _MigrateDropdownSelector(PageObject, ExpandableMixin):
+    selected = Label('.ember-power-select-trigger')
+    providers_list = WebItemsSequence('ul li' ' .oneprovider-name',
+                                      cls=ButtonWithTextPageObject)
+    _toggle = WebElement('.ember-basic-dropdown-trigger[role="button"]')
+
+
 Toggle = partial(WebItem, cls=_Toggle)
 DropdownSelector = partial(WebItem, cls=_DropdownSelector)
+MigrateDropdownSelector = partial(WebItem, cls=_MigrateDropdownSelector)
 
 
 class LoginPage(object):
