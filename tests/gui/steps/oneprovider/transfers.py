@@ -97,17 +97,18 @@ def _expand_dropdown_in_migrate_record(driver):
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def _wait_for_dropdown_menu_in_data_distribution_to_expand(driver):
+def _wait_for_dropdown_menu_to_expand(driver):
     data_distribution_modal = modals(driver).data_distribution
 
     def check_dropdown_menu():
         dropdown_status = data_distribution_modal.migrate._toggle.get_attribute(
             'aria-expanded')
-        return True if (dropdown_status and 'true' == dropdown_status) \
-            else False
+        dropdown_status = str(dropdown_status)
+
+        return dropdown_status
 
     return Wait(driver, WAIT_BACKEND).until(
-        lambda _: check_dropdown_menu(),
+        check_dropdown_menu() == 'true',
         message='Dropdownmenu has not expanded'
     )
 
