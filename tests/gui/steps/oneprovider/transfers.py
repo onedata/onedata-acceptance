@@ -13,12 +13,10 @@ import yaml
 from selenium.common.exceptions import StaleElementReferenceException
 
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
-from tests.gui.steps.modal import wt_wait_for_modal_to_appear
 from tests.gui.utils.common.modals import Modals as modals
 from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import wt, parsers
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
-from selenium.webdriver.support.ui import WebDriverWait as Wait
 
 
 def _assert_transfer(transfer, item_type, desc, sufix, hosts):
@@ -96,23 +94,6 @@ def _expand_dropdown_in_migrate_record(driver):
     data_distribution_modal.migrate.expand_dropdown()
 
 
-@repeat_failed(timeout=WAIT_FRONTEND)
-def _wait_for_dropdown_menu_to_expand(driver):
-    data_distribution_modal = modals(driver).data_distribution
-
-    def check_dropdown_menu():
-        dropdown_status = data_distribution_modal.migrate._toggle.get_attribute(
-            'aria-expanded')
-        dropdown_status = str(dropdown_status)
-
-        return dropdown_status
-
-    return Wait(driver, WAIT_BACKEND).until(
-        check_dropdown_menu() == 'true',
-        message='Dropdownmenu has not expanded'
-    )
-
-
 @wt(parsers.re('user of (?P<browser_id>.*) migrates selected item from '
                'provider "(?P<source>.*)" to provider "(?P<target>.*)"'))
 def migrate_item(selenium, browser_id, source, target, hosts, popups):
@@ -127,7 +108,6 @@ def migrate_item(selenium, browser_id, source, target, hosts, popups):
     popups(driver).data_distribution_popup.menu[menu_option]()
 
     _expand_dropdown_in_migrate_record(driver)
-    _wait_for_dropdown_menu_in_data_distribution_to_expand(driver)
     modals(driver).migrate_dropdown.providers_list[target_name].click()
 
     data_distribution_modal.migrate.migrate_button()
