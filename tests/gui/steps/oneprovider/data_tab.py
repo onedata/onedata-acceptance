@@ -20,12 +20,10 @@ from tests.utils.bdd_utils import given, wt, parsers
 def check_browser_to_load(selenium, browser_id, tmp_memory, op_container,
                           browser):
     driver = selenium[browser_id]
-    if browser == 'file browser':
-        items_browser = op_container(driver).file_browser
-    elif browser == 'dataset browser':
-        items_browser = op_container(driver).dataset_browser
-    else:
+    if transform(browser) == 'shares_browser':
         items_browser = op_container(driver).shares_page.shares_browser
+    else:
+        items_browser = getattr(op_container(driver), transform(browser))
     tmp_memory[browser_id][transform(browser)] = items_browser
 
 
@@ -109,6 +107,21 @@ def assert_btn_is_not_in_file_browser_menu_bar(selenium, browser_id, btn_list,
             '{} should not be in selection menu'.format(btn))
 
 
+@wt(parsers.parse('user of {browser_id} changes current working directory '
+                  'to {path} using breadcrumbs'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, browser_id, path,
+                                                   op_container, which_browser
+                                                   ='file browser'):
+    breadcrumbs = getattr(op_container(selenium[browser_id]),
+                          transform(which_browser)).breadcrumbs
+    archive = which_browser == 'archive file browser'
+    if path == 'home':
+        breadcrumbs.home()
+    else:
+        breadcrumbs.chdir(path, archive)
+
+
 @wt(parsers.parse('user of {browser_id} sees that current working directory '
                   'displayed in directory tree is {path}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -117,20 +130,6 @@ def is_displayed_dir_tree_in_data_tab_in_op_correct(selenium, browser_id, path,
     driver = selenium[browser_id]
     cwd = op_container(driver).data.sidebar.cwd.pwd()
     assert path == cwd, 'expected path {}\n got: {}'.format(path, cwd)
-
-
-@wt(parsers.parse('user of {browser_id} changes current working directory '
-                  'to {path} using breadcrumbs'))
-@repeat_failed(timeout=WAIT_BACKEND)
-def change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, browser_id, path,
-                                                   op_container, which_browser
-                                                   ='file browser'):
-    breadcrumbs = (getattr(op_container(selenium[browser_id]),
-                           transform(which_browser)).breadcrumbs)
-    if path == 'home':
-        breadcrumbs.home()
-    else:
-        breadcrumbs.chdir(path)
 
 
 @wt(parsers.parse('user of {browser_id} does not see {path} in directory tree'))

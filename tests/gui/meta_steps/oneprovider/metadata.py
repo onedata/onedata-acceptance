@@ -11,12 +11,11 @@ from tests.gui.meta_steps.oneprovider.data import (
     open_modal_for_file_browser_item, go_to_filebrowser)
 from tests.gui.steps.modal import (
     wt_wait_for_modal_to_appear, assert_error_modal_with_text_appeared)
-from tests.gui.steps.oneprovider.file_browser import (
-    click_menu_for_elem_in_file_browser,
-    assert_status_tag_for_file_in_file_browser)
 from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.browser import (
-    click_option_in_data_row_menu_in_browser)
+    assert_status_tag_for_file_in_browser,
+    click_option_in_data_row_menu_in_browser,
+    click_menu_for_elem_in_browser)
 
 
 @wt(parsers.parse('user of {browser_id} opens "{modal_name}" metadata modal '
@@ -26,7 +25,7 @@ def open_metadata_modal(selenium, browser_id, modals, modal_name, item_name,
                         tmp_memory):
     option = 'Metadata'
 
-    click_menu_for_elem_in_file_browser(browser_id, item_name, tmp_memory)
+    click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
                                              modals)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
@@ -115,8 +114,8 @@ def set_metadata_in_op_gui(selenium, browser_id, path, tmp_memory, op_container,
     if res == 'fails':
         assert_error_modal_with_text_appeared(selenium, browser_id, text)
     else:
-        assert_status_tag_for_file_in_file_browser(browser_id, status_type,
-                                                   path, tmp_memory)
+        assert_status_tag_for_file_in_browser(browser_id, status_type,
+                                              path, tmp_memory)
 
 
 def _assert_metadata_loading_alert(selenium, browser_id, modals):

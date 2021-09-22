@@ -14,10 +14,10 @@ from tests.gui.steps.modal import (
     click_modal_button, click_share_info_icon_in_share_directory_modal,
     click_icon_in_share_directory_modal)
 from tests.gui.steps.oneprovider.file_browser import (
-    click_menu_for_elem_in_file_browser,
     click_on_status_tag_for_file_in_file_browser)
 from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider.browser import (
+    click_menu_for_elem_in_browser,
     click_option_in_data_row_menu_in_browser)
 
 
@@ -32,7 +32,7 @@ def create_share(selenium, browser_id, share_name, item_name, tmp_memory,
     modal_name = 'Share directory'
     button = 'Create'
 
-    click_menu_for_elem_in_file_browser(browser_id, item_name, tmp_memory)
+    click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
                                              modals)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)

@@ -56,6 +56,7 @@ def consume_received_token(selenium, browser_id, oz_page, tmp_memory):
 
 @wt(parsers.parse('user of {browser_id} joins group using copied token'))
 @wt(parsers.parse('user of {browser_id} joins to harvester in Onezone page'))
+@wt(parsers.parse('user of {browser_id} joins to inventory using copied token'))
 def consume_token_from_copied_token(selenium, browser_id, oz_page, clipboard,
                                     displays):
     option = 'Tokens'
@@ -72,7 +73,7 @@ def consume_token_from_copied_token(selenium, browser_id, oz_page, clipboard,
                   'using copied token'))
 @wt(parsers.re('user of (?P<browser_id>.*) adds '
                '(space|harvester|group) "(?P<elem_name>.*)" '
-               'to (harvester|space) using copied token'))
+               'to (harvester|space|inventory) using copied token'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_element_with_copied_token(selenium, browser_id, elem_name, oz_page,
                                   clipboard, displays, modals):

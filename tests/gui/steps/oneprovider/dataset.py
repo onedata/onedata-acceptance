@@ -66,26 +66,61 @@ def assert_toggle_unchecked_on_item_in_ancestor_list(browser_id, selenium,
     assert getattr(item, protection_kind).is_unchecked(), err_msg
 
 
-@wt(parsers.parse('user of {browser_id} clicks on {state} view mode '
-                  'on dataset browser page'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_state_view_mode_tab(browser_id, oz_page, selenium, state):
-    driver = selenium[browser_id]
-    driver.switch_to.default_content()
-    getattr(oz_page(driver)['data'].dataset_header, state)()
-
-
-@wt(parsers.parse('user of {browser_id} clicks Mark this file as dataset toggle'
-                  ' in Datasets modal'))
+@wt(parsers.re('user of (?P<browser_id>.*) clicks Mark this (directory|file) '
+               'as dataset toggle in Datasets modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_mark_file_as_dataset_toggle(browser_id, selenium, modals):
     driver = selenium[browser_id]
     modals(driver).datasets.dataset_toggle.check()
 
 
-@wt(parsers.parse('user of {browser_id} clicks on menu '
-                  'for "{item_name}" dataset in dataset browser'))
+@wt(parsers.parse('user of {browser_id} clicks {toggle_type} write protection'
+                  ' toggle in Write Protection modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_menu_for_elem_in_dataset_browser(browser_id, item_name, tmp_memory):
+def click_protection_toggle(browser_id, selenium, modals, toggle_type):
+    driver = selenium[browser_id]
+    getattr(modals(driver).write_protection,
+            f'{toggle_type}_protection_toggle').check()
+
+
+@wt(parsers.parse('user of {browser_id} sees that error page with text '
+                  '"{text}" appeared'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_page_with_error_appeared(browser_id, text, tmp_memory):
     browser = tmp_memory[browser_id]['dataset_browser']
-    browser.data[item_name].menu_button()
+    assert browser.error_msg == text, f'page with text "{text}" not  found'
+
+
+@wt(parsers.parse('user of {browser_id} fails to click Mark this file as '
+                  'dataset toggle in Datasets modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def fail_to_mark_file_as_dataset_toggle(browser_id, selenium, modals):
+    driver = selenium[browser_id]
+    err_msg = 'user does not fail to create dataset'
+    assert not modals(driver).datasets.dataset_toggle.check(), err_msg
+
+
+@wt(parsers.parse('user of {browser_id} sees "{text}" label in Datasets modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def see_protected_tag_label_in_dataset_modal(browser_id, selenium, modals,
+                                             text):
+    driver = selenium[browser_id]
+    error = f'Text: {text} not found in label '
+
+    if 'metadata' in text:
+        assert text in modals(driver).datasets.metadata_protected_label, error
+    else:
+        assert text in modals(driver).datasets.data_protected_label, error
+
+
+@wt(parsers.parse('user of {browser_id} cannot click "{option}" option'
+                  ' in data row menu in dataset browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def cannot_click_option_in_dataset_browser(selenium, browser_id, option,
+                                           modals):
+    driver = selenium[browser_id]
+    err_msg = f'{option} is clickable'
+    assert not modals(driver).data_row_menu.options[option].click(), err_msg
+
+
+

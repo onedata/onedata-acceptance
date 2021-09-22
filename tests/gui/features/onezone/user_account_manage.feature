@@ -60,3 +60,9 @@ Feature: Onezone account manage page
     And user of browser presses Sign in button in Onezone login page
     Then user of browser successfully signed in Onezone
 
+
+ Scenario: User sees that alias displayed in MANAGE ACCOUNT is tha same as in the USER ALIAS sidebar panel
+   When user of browser expands account settings dropdown in the sidebar
+   And user of browser clicks on Manage account item in expanded settings dropdown in the sidebar
+   Then user of browser sees that the user full name displayed in Profile page is "user1"
+   And user of browser sees "user1" alias in the sidebar panel
