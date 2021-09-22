@@ -5,6 +5,7 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+from tests.gui.utils.generic import rm_css_cls
 from tests.gui.utils.onezone.common import InputBox
 from tests.gui.utils.onezone.generic_page import GenericPage
 from tests.gui.utils.core.web_elements import (Button, NamedButton, WebItem,
@@ -14,6 +15,7 @@ from tests.gui.utils.onezone.generic_page import Element, GenericPage
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.onezone.common import EditBox, InputBox
 from tests.gui.utils.onezone.members_subpage import MembersPage
+from tests.gui.utils.onezone.workflows_subpage import WorkflowsPage
 
 
 class Inventory(Element):
@@ -44,5 +46,16 @@ class AutomationPage(GenericPage):
 
     members_page = WebItem('.main-content', cls=MembersPage)
 
+    workflows_page = WebItem('.main-content', cls=WorkflowsPage)
+
     privileges_err_msg = Label('.alert-promise-error')
 
+    _upload_input = WebElement('.upload-atm-workflow-schema-action-input')
+
+    def upload_workflow(self, files):
+        """This interaction is very hacky, because uploading files with Selenium
+        needs to use input element, but we do not use it directly in frontend.
+        So we unhide an input element for a while and pass a local file path to it.
+        """
+        with rm_css_cls(self.driver, self._upload_input, 'hidden') as elem:
+            elem.send_keys(files)

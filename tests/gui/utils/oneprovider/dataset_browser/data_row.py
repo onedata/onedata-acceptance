@@ -15,10 +15,8 @@ from tests.gui.utils.generic import transform
 
 class DataRow(PageObject):
     name = id = Label('.file-name-inner')
-    archive = Label('.fb-table-col-archives .file-item-text')
+    number_of_archives = WebElement('.fb-table-col-archives .file-item-text')
     menu_button = Button('.fb-table-col-actions-menu .menu-toggle')
-    number_of_archive = Button('.archives-count-link')
-    clickable_field = WebElement('.file-name')
     data_protected_tag = WebElement('.file-data-protected-icon')
     metadata_protected_tag = WebElement('.file-metadata-protected-icon')
 

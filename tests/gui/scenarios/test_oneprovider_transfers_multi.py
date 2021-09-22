@@ -42,6 +42,7 @@ from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
+from tests.gui.steps.oneprovider.browser import *
 from tests.gui.steps.oneprovider.transfers import *
 from tests.gui.meta_steps.oneprovider.common import *
 from tests.gui.meta_steps.onezone.common import *
