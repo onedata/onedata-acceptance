@@ -24,7 +24,7 @@ TEST_RUNNER_CONTAINER_NAME = 'test-runner'
 
 
 def get_images_option(test_type='oneclient', oz_image=None, op_image=None,
-                      rest_cli_image=None, oc_image=None, luma_image=None):
+                      rest_cli_image=None, oc_image=None):
     if test_type == 'upgrade':
         # in upgrade tests images are provided in test config and manually set are ignored
         return ''
@@ -37,7 +37,6 @@ def get_images_option(test_type='oneclient', oz_image=None, op_image=None,
     if test_type in ['oneclient', 'mixed', 'onedata_fs', 'performance', 'upgrade']:
         add_image_to_images_cfg(oc_image, 'oneclient', '--oc-image',
                                 images_cfg)
-        add_image_to_images_cfg(luma_image, 'LUMA', '--luma-image', images_cfg)
     return ' + '.join(images_cfg)
 
 
@@ -185,13 +184,6 @@ def main():
         dest='rest_cli_image')
 
     parser.add_argument(
-        '--luma-image', '-li',
-        action='store',
-        help='Luma image to use in tests',
-        default=get_default_image_for_service('luma'),
-        dest='luma_image')
-
-    parser.add_argument(
         '--update-etc-hosts', '-uh',
         action='store_true',
         help='If present adds entries to /etc/hosts on host machine for all zone '
@@ -259,7 +251,6 @@ sys.exit(ret)
         op_image=args.op_image,
         oc_image=args.oc_image,
         rest_cli_image=args.rest_cli_image,
-        luma_image=args.luma_image
     )
 
     if args.update_etc_hosts:
