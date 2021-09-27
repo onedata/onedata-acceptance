@@ -149,20 +149,22 @@ Feature: Basic operations on public shares in file browser
     And user of space_owner_browser sees file browser in files tab in Oneprovider page
     And user of space_owner_browser double clicks on item named "dir1" in file browser
 
-    # Set posix for 000
+    # Space owner user set posix of file1 to 000
     And user of space_owner_browser clicks on menu for "file1" file in file browser
     And user of space_owner_browser clicks "Permissions" option in data row menu in file browser
     And user of space_owner_browser sees that "Edit permissions" modal has appeared
     And user of space_owner_browser selects "POSIX" permission type in edit permissions modal
     And user of space_owner_browser sets "000" permission code in edit permissions modal
-    And user of space_owner_browser clicks "Save" confirmation button in displayed moda
+    And user of space_owner_browser clicks "Save" confirmation button in displayed modal
 
-    # Create share
-    And user of space_owner_browser creates "share_file1" share of "file1" file
-    And user of space_owner_browser hands "share_file1" share's URL of "file1" to user of browser1
+    # Space owner user hands over shared directory
+    And user of space_owner_browser changes current working directory to home using breadcrumbs
+    And user of space_owner_browser hands "share_dir1" share's URL of "dir1" to user of browser1
 
-    #Tries to download
+    # User fails to download file1
     And user of browser1 opens received URL
-    And user of browser1 sees that public share is named "share_file1"
-    And user of browser1 double clicks on item named "share_file1" in file browser
+    And user of browser1 sees that public share is named "share_dir1"
+    And user of browser1 sees file browser on share's public interface
+    And user of browser1 double clicks on item named "dir1" in file browser
+    And user of browser1 double clicks on item named "file1" in file browser
     And user of browser1 sees that error modal with text "Starting file download failed" appeared
