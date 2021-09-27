@@ -8,7 +8,6 @@ branches:
   # Oneprovider packages plan
   onedata: current_branch
   oneclient_docker_build: current_branch
-  luma_docker_build: develop
   rest_cli_docker_build: develop
 
   # Specification of branches from which sources for components will be pulled.
