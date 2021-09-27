@@ -141,3 +141,28 @@ Feature: Basic operations on public shares in file browser
     Then user of browser1 sees that curl result matches following config:
            name: share_dir1
            file type: dir
+
+
+  Scenario: User can't download with public view if posix if file is 000
+    When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
+    And user of space_owner_browser clicks Files of "space1" in the sidebar
+    And user of space_owner_browser sees file browser in files tab in Oneprovider page
+    And user of space_owner_browser double clicks on item named "dir1" in file browser
+
+    # Set posix for 000
+    And user of space_owner_browser clicks on menu for "file1" file in file browser
+    And user of space_owner_browser clicks "Permissions" option in data row menu in file browser
+    And user of space_owner_browser sees that "Edit permissions" modal has appeared
+    And user of space_owner_browser selects "POSIX" permission type in edit permissions modal
+    And user of space_owner_browser sets "000" permission code in edit permissions modal
+    And user of space_owner_browser clicks "Save" confirmation button in displayed moda
+
+    # Create share
+    And user of space_owner_browser creates "share_file1" share of "file1" file
+    And user of space_owner_browser hands "share_file1" share's URL of "file1" to user of browser1
+
+    #Tries to download
+    And user of browser1 opens received URL
+    And user of browser1 sees that public share is named "share_file1"
+    And user of browser1 double clicks on item named "share_file1" in file browser
+    And user of browser1 sees that error modal with text "Starting file download failed" appeared
