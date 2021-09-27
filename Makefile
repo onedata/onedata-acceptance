@@ -76,6 +76,7 @@ BROWSER                     ?= Chrome
 TIMEOUT			            ?= 300
 LOCAL_CHARTS_PATH           ?= ""
 PULL_ONLY_MISSING_IMAGES    ?= ""
+MIXED_TESTS_ROOT := $(shell pwd)/tests/mixed
 
 ifdef bamboo_GUI_PKG_VERIFICATION
     GUI_PKG_VERIFICATION = --gui-pkg-verification
@@ -93,11 +94,11 @@ test_gui_src:
 	 -k=${KEYWORDS} --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} --reruns 1 --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${PULL_IMAGES_OPT}
 
 test_mixed_pkg:
-	${TEST_RUN} -t tests/mixed/scenarios/${SUITE}.py --test-type mixed -vvv --driver=${BROWSER} -i ${ACCEPTANCE_MIXED_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} \
+	PYTHONPATH=${MIXED_TESTS_ROOT} ${TEST_RUN} -t tests/mixed/scenarios/${SUITE}.py --test-type mixed -vvv --driver=${BROWSER} -i ${ACCEPTANCE_MIXED_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} \
 	 --env-file=${ENV_FILE} -k=${KEYWORDS} --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH}  --reruns 1 --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${PULL_IMAGES_OPT}
 
 test_mixed_src:
-	${TEST_RUN} -t tests/mixed/scenarios/${SUITE}.py --test-type mixed -vvv --driver=${BROWSER} -i ${ACCEPTANCE_MIXED_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} \
+	PYTHONPATH=${MIXED_TESTS_ROOT} ${TEST_RUN} -t tests/mixed/scenarios/${SUITE}.py --test-type mixed -vvv --driver=${BROWSER} -i ${ACCEPTANCE_MIXED_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} \
 	--env-file=${ENV_FILE} --sources -k=${KEYWORDS} --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} --reruns 1 --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${PULL_IMAGES_OPT}
 
 test_oneclient_pkg:
@@ -124,10 +125,10 @@ test_performance_src:
 ##
 
 build_swaggers:
-	cd onezone_swagger && make python-client && cd generated/python && mv onezone_client ../../../tests/mixed
-	cd onepanel_swagger && make python-client && cd generated/python && mv onepanel_client ../../../tests/mixed
-	cd oneprovider_swagger && make python-client && cd generated/python && mv oneprovider_client ../../../tests/mixed
-	cd cdmi_swagger && make python-client  && cd generated/python && mv cdmi_client ../../../tests/mixed
+	cd onezone_swagger && make python-client && cd generated/python && mv onezone_client ${MIXED_TESTS_ROOT}
+	cd onepanel_swagger && make python-client && cd generated/python && mv onepanel_client ${MIXED_TESTS_ROOT}
+	cd oneprovider_swagger && make python-client && cd generated/python && mv oneprovider_client ${MIXED_TESTS_ROOT}
+	cd cdmi_swagger && make python-client  && cd generated/python && mv cdmi_client ${MIXED_TESTS_ROOT}
 
 
 ##
@@ -137,10 +138,14 @@ build_swaggers:
 clean: clean_swaggers
 
 clean_swaggers:
-	rm -rf tests/mixed/onezone_client
-	rm -rf tests/mixed/onepanel_client
-	rm -rf tests/mixed/oneprovider_client
-	rm -rf tests/mixed/cdmi_client
+	cd onezone_swagger && make clean
+	cd onepanel_swagger && make clean
+	cd oneprovider_swagger && make clean
+	cd cdmi_swagger && make clean
+	rm -rf ${MIXED_TESTS_ROOT}/onezone_client
+	rm -rf ${MIXED_TESTS_ROOT}/onepanel_client
+	rm -rf ${MIXED_TESTS_ROOT}/oneprovider_client
+	rm -rf ${MIXED_TESTS_ROOT}/cdmi_client
 
 
 codetag-tracker:

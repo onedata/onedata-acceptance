@@ -4,7 +4,7 @@ using REST API.
 
 from tests.mixed.utils.common import login_to_oz
 from tests.mixed.steps.rest.onezone.common import get_provider_with_name
-from tests.mixed.onezone_client import ProviderApi
+from onezone_client import ProviderApi
 
 
 def assert_provider_has_name_and_hostname_in_oz_rest(user, users, host_name,

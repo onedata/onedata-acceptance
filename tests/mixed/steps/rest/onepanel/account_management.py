@@ -9,7 +9,7 @@ __license__ = ("This software is released under the MIT license cited in "
 
 
 from tests.mixed.utils.common import *
-from tests.mixed.onepanel_client import OnepanelApi, UserModifyRequest
+from onepanel_client import OnepanelApi, UserModifyRequest
 
 
 def change_user_password_in_oz_panel_using_rest(user, new_password, zone_host,
