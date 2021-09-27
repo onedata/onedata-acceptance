@@ -143,7 +143,7 @@ Feature: Basic operations on public shares in file browser
            file type: dir
 
 
-  Scenario: User can't download with public view if posix if file is 000
+  Scenario: User fails to download a file in shared directory when the file has "000" POSIX permissions
     When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
     And user of space_owner_browser clicks Files of "space1" in the sidebar
     And user of space_owner_browser sees file browser in files tab in Oneprovider page
@@ -167,4 +167,4 @@ Feature: Basic operations on public shares in file browser
     And user of browser1 sees file browser on share's public interface
     And user of browser1 double clicks on item named "dir1" in file browser
     And user of browser1 double clicks on item named "file1" in file browser
-    And user of browser1 sees that error modal with text "Starting file download failed" appeared
+    Then user of browser1 sees that error modal with text "Starting file download failed" appeared
