@@ -15,9 +15,6 @@ onezoneImage: "docker.onedata.org/onezone-dev:develop"
 # be based off onedata/worker image.
 oneproviderImage: "docker.onedata.org/oneprovider-dev:develop"
 
-# Determines if luma should start.
-luma: false
-
 # Determines if onedata rest client should start.
 onedataCli: false
 
@@ -28,9 +25,6 @@ oneclientImage: "docker.onedata.org/oneclient-dev:ID-a6af7ae291"
 
 # Onedata rest client image to use.
 onedataCliImage: "docker.onedata.org/rest-cli:ID-ce4dc2f486"
-
-# Luma image to use.
-lumaImage: "docker.onedata.org/luma:ID-8e2da56615"
 
 # When enabled, onezoneImage and oneproviderImage will be pulled before every
 # deployment. If disabled, they will only be pulled if not existent.
