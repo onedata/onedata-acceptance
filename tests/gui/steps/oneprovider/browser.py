@@ -31,19 +31,27 @@ def double_click_on_item_in_browser(selenium, browser_id, item_name, tmp_memory,
 
     # if item is directory compare length of directories in breadcrumbs to
     # check if double-click has entered it
-    if browser.data[item_name].is_directory == 'browser-directory':
+    if browser.data[item_name].is_directory:
         breadcrumbs = getattr(op_container(driver),
                               transform(which_browser)).breadcrumbs.pwd()
-        length_of_past_dir = len(breadcrumbs)
 
-        browser.data[item_name].double_click()
+        # check if home directory where length of breadcrumbs can be shorter
+        if "/" not in breadcrumbs:
+            browser.data[item_name].double_click()
+            # if it was home and now it isn't it means double-click worked
+            if "/" in breadcrumbs:
+                assert True, f'Double click has not entered the directory'
+        else:
+            length_of_past_dir = len(breadcrumbs)
 
-        breadcrumbs = getattr(op_container(driver),
-                              transform(which_browser)).breadcrumbs.pwd()
-        length_of_current_dir = len(breadcrumbs)
+            browser.data[item_name].double_click()
 
-        assert length_of_past_dir < length_of_current_dir, \
-            f'Double click has not entered the directory'
+            breadcrumbs = getattr(op_container(driver),
+                                  transform(which_browser)).breadcrumbs.pwd()
+            length_of_current_dir = len(breadcrumbs)
+
+            assert length_of_past_dir < length_of_current_dir, \
+                f'Double click has not entered the directory'
     else:
         browser.data[item_name].double_click()
 
