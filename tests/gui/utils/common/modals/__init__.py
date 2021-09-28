@@ -129,6 +129,7 @@ class Modals(object):
 
     delete_user_account = WebItem('.modal-dialog', cls=DeleteUserAccountModal)
     file_details = WebItem('.modal-dialog', cls=FileDetailsModal)
+    directory_details = WebItem('.modal-dialog', cls=FileDetailsModal)
     symbolic_link_details = WebItem('.modal-dialog',
                                     cls=SymbolicLinkDetailsModal)
     datasets = WebItem('.modal-dialog', cls=DatasetsModal)

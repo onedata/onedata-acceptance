@@ -207,3 +207,15 @@ def assert_description_for_archive(browser_id, tmp_memory, description,
 def assert_page_with_error_appeared(browser_id, text, tmp_memory):
     browser = tmp_memory[browser_id]['archive_browser']
     assert browser.empty_dir_msg == text, f'page with text "{text}" not found'
+
+
+@wt(parsers.parse('user of {browser_id} saves time of latest archive creation '
+                  'for "{file_name}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def save_date_of_archive_creation(browser_id, tmp_memory):
+    browser = tmp_memory[browser_id]['archive_browser']
+
+    name = browser.data[0].name
+    if '—' in name:
+        name = name.split(' —')[0]
+    tmp_memory['created_at'] = name
