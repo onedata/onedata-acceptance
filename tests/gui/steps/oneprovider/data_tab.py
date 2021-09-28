@@ -275,7 +275,7 @@ def wait_for_file_upload_to_finish(selenium, browser_id, popups):
 
 @wt(parsers.re('user of (?P<browser_id>.*) waits extended time for file '
                'uploads? to finish'))
-@repeat_failed(timeout=WAIT_BACKEND*3)
+@repeat_failed(timeout=WAIT_BACKEND*8)
 def wait_extended_time_for_file_upload_to_finish(selenium, browser_id, popups):
     driver = selenium[browser_id]
 
@@ -335,7 +335,7 @@ def upload_files_to_cwd_in_data_tab_no_waiting(selenium, browser_id, dir_path,
                   'menu bar to upload files from local directory "{dir_path}" '
                   'to remote current dir and waits extended time for upload to '
                   'finish'))
-@repeat_failed(timeout=2*WAIT_BACKEND)
+@repeat_failed(timeout=8*WAIT_BACKEND)
 def upload_files_to_cwd_in_data_tab_extended_wait(selenium, browser_id,
                                                   dir_path, tmpdir,
                                                   op_container, popups):
