@@ -40,9 +40,15 @@ def double_click_on_item_in_browser(selenium, browser_id, item_name, tmp_memory,
                                   transform(which_browser)).breadcrumbs.pwd()
 
         # check if home directory where length of breadcrumbs doesn't matter
+        # if it was home and now it isn't it means double-click worked
         if "/" not in breadcrumbs:
             browser.data[item_name].double_click()
-            # if it was home and now it isn't it means double-click worked
+            try:
+                breadcrumbs = op_container(driver).shares_page.breadcrumbs.pwd()
+            except:
+                breadcrumbs = getattr(op_container(driver),
+                                      transform(
+                                          which_browser)).breadcrumbs.pwd()
             if "/" in breadcrumbs:
                 assert True, f'Double click has not entered the directory'
         else:
