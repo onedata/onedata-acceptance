@@ -51,6 +51,7 @@ from .create_archive import CreateArchive
 from .remove_selected_dataset import RemoveSelectedDataset
 from .detach_dataset import DetachDataset
 from .write_protection import WriteProtection
+from .purge_archive import PurgeArchive
 from .reattach_dataset import ReattachDataset
 
 
@@ -128,6 +129,7 @@ class Modals(object):
 
     delete_user_account = WebItem('.modal-dialog', cls=DeleteUserAccountModal)
     file_details = WebItem('.modal-dialog', cls=FileDetailsModal)
+    directory_details = WebItem('.modal-dialog', cls=FileDetailsModal)
     symbolic_link_details = WebItem('.modal-dialog',
                                     cls=SymbolicLinkDetailsModal)
     datasets = WebItem('.modal-dialog', cls=DatasetsModal)
@@ -136,6 +138,7 @@ class Modals(object):
                                       cls=RemoveSelectedDataset)
     detach_dataset = WebItem('.modal-dialog', cls=DetachDataset)
     write_protection = WebItem('.modal-dialog', cls=WriteProtection)
+    purge_archive = WebItem('.modal-dialog', cls=PurgeArchive)
     reattach_dataset = WebItem('.modal-dialog', cls=ReattachDataset)
 
     def __init__(self, driver):

@@ -11,9 +11,10 @@ from tests.gui.steps.modal import (
 from tests.gui.steps.oneprovider.data_tab import (
     choose_option_from_selection_menu)
 from tests.gui.steps.oneprovider.file_browser import (
-    click_on_item_in_file_browser, click_menu_for_elem_in_file_browser)
+    click_on_item_in_file_browser)
 from tests.gui.steps.oneprovider.browser import (
-    click_option_in_data_row_menu_in_browser)
+    click_option_in_data_row_menu_in_browser,
+    click_menu_for_elem_in_browser)
 from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.qos import (
     click_enter_as_text_link, confirm_entering_text)
@@ -109,7 +110,7 @@ def add_no_id_qos_requirement_in_modal(selenium, browser_id, modals, item_name,
 def open_qos_modal_for_file(selenium, browser_id, filename, modals, tmp_memory):
     qos = 'Quality of Service'
 
-    click_menu_for_elem_in_file_browser(browser_id, filename, tmp_memory)
+    click_menu_for_elem_in_browser(browser_id, filename, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, qos,
                                              modals)
     wt_wait_for_modal_to_appear(selenium, browser_id, qos, tmp_memory)

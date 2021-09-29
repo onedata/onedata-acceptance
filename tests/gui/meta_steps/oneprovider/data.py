@@ -15,6 +15,7 @@ from tests.gui.steps.oneprovider.file_browser import *
 from tests.gui.steps.oneprovider.data_tab import *
 from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.browser import *
+from tests.gui.steps.oneprovider.archives import double_click_on_archive
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.common.url import refresh_site
 from tests.gui.meta_steps.oneprovider.common import (
@@ -35,12 +36,12 @@ def _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id, path,
 
     try:
         go_to_path_without_last_elem(browser_id, tmp_memory, path)
-        click_menu_for_elem_in_file_browser(browser_id, item_name, tmp_memory)
+        click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
     except (KeyError, StaleElementReferenceException):
         go_to_filebrowser(selenium, browser_id, oz_page, op_container,
                           tmp_memory, space)
         go_to_path_without_last_elem(browser_id, tmp_memory, path)
-        click_menu_for_elem_in_file_browser(browser_id, item_name, tmp_memory)
+        click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
 
 
 @wt(parsers.re(r'user of (?P<browser_id>\w+) (?P<res>.*) to rename '
@@ -192,7 +193,9 @@ def _check_files_tree(subtree, user, tmp_memory, cwd, selenium, op_container,
                                             which_browser)
 
             # if item is directory go deeper
-            if item_name.startswith('dir'):
+            if (item_name.startswith('dir') or
+                    (which_browser == 'archive file browser'
+                     and item_name == 'data')):
                 if isinstance(item_subtree, int):
                     assert_num_of_files_are_displayed_in_browser(user,
                                                                  item_subtree,
@@ -207,6 +210,8 @@ def _check_files_tree(subtree, user, tmp_memory, cwd, selenium, op_container,
                                                                user, cwd,
                                                                op_container,
                                                                which_browser)
+                if which_browser == 'archive file browser':
+                    double_click_on_archive(user, tmp_memory)
             else:
                 has_downloaded_file_content(user, item_name, str(item_subtree),
                                             tmpdir)
@@ -367,7 +372,9 @@ def _select_item(browser_id, tmp_memory, path):
     return item_name
 
 
-def go_to_path(browser_id, tmp_memory, path):
+@wt(parsers.parse('user of {browser_id} goes to "{path}" in {which_browser}'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def go_to_path(browser_id, tmp_memory, path, which_browser='file browser'):
     if '/' in path:
         item_name, path_list = get_item_name_and_containing_dir_path(path)
         path_list.append(item_name)
@@ -375,7 +382,8 @@ def go_to_path(browser_id, tmp_memory, path):
         path_list = [path]
     for directory in path_list:
         if directory != '':
-            double_click_on_item_in_browser(browser_id, directory, tmp_memory)
+            double_click_on_item_in_browser(browser_id, directory, tmp_memory,
+                                            which_browser)
 
 
 def go_to_path_without_last_elem(browser_id, tmp_memory, path):
@@ -426,7 +434,7 @@ def check_file_owner(selenium, browser_id, owner, file_name, tmp_memory,
     option = 'Information'
     modal_name = 'File details'
 
-    click_menu_for_elem_in_file_browser(browser_id, file_name, tmp_memory)
+    click_menu_for_elem_in_browser(browser_id, file_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
                                              modals)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)

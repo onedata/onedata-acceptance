@@ -7,12 +7,22 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import time
 from itertools import zip_longest
+import requests
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt, given
+from tests.utils.environment_utils import run_kubectl_command
+from tests.utils.onenv_utils import OnenvError
 from tests.utils.utils import repeat_failed
+from tests.utils.rest_utils import get_provider_rest_path, http_get
+from tests import OP_REST_PORT
+
+
+TIMEOUT_FOR_PROVIDER_GOING_OFFLINE = 300
+TIMEOUT_FOR_PROVIDER_GOING_ONLINE = 60
 
 
 @wt(parsers.parse('user of {browser_id} sees that provider popup for '
@@ -426,5 +436,71 @@ def wait_until_provider_goes_offline(selenium, browser_id, oz_page,
     page = oz_page(driver)['providers']
     provider_record = page.elements_list[provider]
     provider_record.click()
+    start = time.time()
     while page.is_working():
+        time.sleep(0.5)
+        if time.time() > start + TIMEOUT_FOR_PROVIDER_GOING_OFFLINE:
+            raise RuntimeError(f'Provider did not go offline within '
+                               f'{TIMEOUT_FOR_PROVIDER_GOING_OFFLINE}s.')
+
+
+@wt(parsers.parse('user of {browser_id} waits until provider "{provider_name}" '
+                  'goes online on providers map'))
+def wait_until_provider_goes_online(selenium, browser_id, oz_page,
+                                    hosts, provider_name, users):
+    driver = selenium[browser_id]
+    provider = hosts[provider_name]['name']
+    page = oz_page(driver)['providers']
+    provider_record = page.elements_list[provider]
+    provider_record.click()
+    start = time.time()
+    try:
+        start_providers(hosts, provider_name)
+    except OnenvError:
         pass
+    while not page.is_working():
+        time.sleep(0.5)
+        if time.time() > start + TIMEOUT_FOR_PROVIDER_GOING_OFFLINE:
+            raise RuntimeError(f'Provider did not go online on providers map '
+                               f'within {TIMEOUT_FOR_PROVIDER_GOING_OFFLINE}s.')
+    wait_for_provider_online(provider_name, hosts, users)
+
+
+def wait_for_provider_online(provider, hosts, users):
+    user = 'admin'
+    provider_hostname = hosts[provider]['hostname']
+    start = time.time()
+
+    while True:
+        time.sleep(0.5)
+        res = http_get(ip=provider_hostname, port=OP_REST_PORT,
+                       path=get_provider_rest_path('health'),
+                       auth=(user, users[user].password))
+        if res.status_code == requests.codes.ok:
+            return
+
+        if time.time() > start + TIMEOUT_FOR_PROVIDER_GOING_ONLINE:
+            raise RuntimeError(f'Provider is still not working after '
+                               f'{TIMEOUT_FOR_PROVIDER_GOING_ONLINE}s.')
+
+
+@given(parsers.re('providers? named (?P<provider_list>.*?) (is|are) stopped'))
+def stop_providers(hosts, provider_list):
+    for provider in parse_seq(provider_list):
+        pod_name = hosts[provider]['pod-name']
+        run_kubectl_command('exec',
+                            [pod_name, '--', 'service', 'op_panel', 'stop'])
+        run_kubectl_command('exec',
+                            [pod_name, '--', 'service', 'op_worker', 'stop'])
+        run_kubectl_command('exec',
+                            [pod_name, '--', 'service', 'cluster_manager', 'stop'])
+        run_kubectl_command('exec',
+                            [pod_name, '--', 'service', 'couchbase-server', 'stop'])
+
+
+@repeat_failed(timeout=WAIT_BACKEND)
+def start_providers(hosts, provider_list):
+    for provider in parse_seq(provider_list):
+        pod_name = hosts[provider]['pod-name']
+        cmd = [pod_name, '--', 'service', 'op_panel', 'start']
+        run_kubectl_command('exec', cmd)

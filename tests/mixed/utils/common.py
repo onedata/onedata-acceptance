@@ -22,17 +22,23 @@ class NoSuchClientException(Exception):
         return repr(self.value)
 
 
+def setup_basic_configuration(configuration, host, port, path_prefix,
+                              username = "", password = ""):
+    configuration.username = username
+    configuration.password = password
+    configuration.verify_ssl = False
+    configuration.safe_chars_for_path_param = '/'
+    configuration.host = 'https://{}:{}{}'.format(host, port, path_prefix)
+
+
 def login_to_oz(username, password, host):
     from tests.mixed.onezone_client.configuration import (Configuration
                                                                    as Conf_OZ)
     from tests.mixed.onezone_client import (ApiClient as ApiClient_OZ)
 
     configuration = Conf_OZ()
-    configuration.username = username
-    configuration.password = password
-    configuration.verify_ssl = False
-    configuration.host = 'https://{}:{}{}'.format(host, OZ_REST_PORT,
-                                                  OZ_REST_PATH_PREFIX)
+    setup_basic_configuration(configuration, host, OZ_REST_PORT,
+                              OZ_REST_PATH_PREFIX, username, password)
 
     return ApiClient_OZ(configuration=configuration)
 
@@ -42,15 +48,11 @@ def login_to_panel(username, password, host):
                                                 (Configuration as Conf_panel)
     from tests.mixed.onepanel_client import (ApiClient
                                                       as ApiClient_panel)
-    Conf_panel().verify_ssl = False
-    Conf_panel().username = username
-    Conf_panel().password = password
+    configuration = Conf_panel()
+    setup_basic_configuration(configuration, host, PANEL_REST_PORT,
+                              PANEL_REST_PATH_PREFIX, username, password)
 
-    client = ApiClient_panel(
-        host='https://{}:{}{}'.format(host,
-                                      PANEL_REST_PORT,
-                                      PANEL_REST_PATH_PREFIX))
-    return client
+    return ApiClient_panel(configuration=configuration)
 
 
 def login_to_cdmi(username, users, host, access_token=None,
@@ -58,15 +60,16 @@ def login_to_cdmi(username, users, host, access_token=None,
     from tests.mixed.cdmi_client.configuration import (Configuration
                                                                 as Conf_CDMI)
     from tests.mixed.cdmi_client import (ApiClient as ApiClient_CDMI)
-    Conf_CDMI().verify_ssl = False
+
+    configuration = Conf_CDMI()
+    setup_basic_configuration(configuration, host, OZ_REST_PORT,
+                              CDMI_REST_PATH_PREFIX)
 
     header_value = access_token if access_token else users[username].token
 
-    client = ApiClient_CDMI(
-        host='https://{}:{}{}'.format(host,
-                                      OZ_REST_PORT,
-                                      CDMI_REST_PATH_PREFIX),
-        header_name='X-Auth-Token', header_value=header_value)
+    client = ApiClient_CDMI(configuration=configuration,
+                            header_name='X-Auth-Token',
+                            header_value=header_value)
 
     if identity_token:
         client.set_default_header('x-onedata-consumer-token', identity_token)
@@ -77,18 +80,17 @@ def login_to_provider(username, users, host, access_token=None):
     from tests.mixed.oneprovider_client.configuration import \
                                                 Configuration as Conf_provider
     from tests.mixed.oneprovider_client import (ApiClient
-                                                as ApiClient_provider)
-    Conf_provider().verify_ssl = False
+                                                         as ApiClient_provider)
 
     header_value = access_token if access_token else users[username].token
 
-    client = ApiClient_provider(
-        host='https://{}:{}{}'.format(host,
-                                      OZ_REST_PORT,
-                                      PROVIDER_REST_PATH_PREFIX), 
-        header_name='X-Auth-Token', header_value=header_value)
+    configuration = Conf_provider()
+    setup_basic_configuration(configuration, host, OZ_REST_PORT,
+                              PROVIDER_REST_PATH_PREFIX)
 
-    return client
+    return ApiClient_provider(configuration=configuration,
+                              header_name='X-Auth-Token',
+                              header_value=header_value)
 
 
 @wt(parsers.parse('{sender} sends {item_type} to {receiver}'))

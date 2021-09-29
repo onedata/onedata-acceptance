@@ -14,15 +14,14 @@ import pytest
 import yaml
 
 from tests.gui.utils.generic import parse_seq
-from tests.mixed.cdmi_client import ContainerApi, DataObjectApi
-from tests.mixed.cdmi_client.rest import ApiException as CdmiException
-from tests.mixed.oneprovider_client import BasicFileOperationsApi
-from tests.mixed.oneprovider_client import FilePathResolutionApi
-from tests.mixed.oneprovider_client.api_client import ApiException
-from tests.mixed.oneprovider_client.rest import ApiException as OPException
+from cdmi_client import ContainerApi, DataObjectApi
+from cdmi_client.rest import ApiException as CdmiException
+from oneprovider_client import BasicFileOperationsApi
+from oneprovider_client import FilePathResolutionApi
+from oneprovider_client.rest import ApiException as OPException
 from tests.mixed.utils.common import *
-from tests.mixed.utils.data import (
-    check_files_tree, create_content, assert_ace, get_acl_metadata)
+from tests.mixed.utils.data import (check_files_tree, create_content,
+                                    assert_ace, get_acl_metadata)
 from tests.utils.acceptance_utils import time_attr, compare
 from tests.utils.http_exceptions import HTTPError
 
@@ -330,7 +329,7 @@ def set_posix_permissions_in_op_rest(path, perm, user, users, host, hosts,
     file_id = _lookup_file_id(path, user_client_op)
 
     if result == 'fails':
-        with pytest.raises(ApiException):
+        with pytest.raises(OPException):
             file_api.set_attr(file_id, attribute={'mode': perm})
     else:
         file_api.set_attr(file_id, attribute={'mode': perm})

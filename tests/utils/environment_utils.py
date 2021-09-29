@@ -244,7 +244,6 @@ def parse_up_args(request, test_config):
     oz_image = request.config.getoption('--oz-image')
     op_image = request.config.getoption('--op-image')
     oc_image = request.config.getoption('--oc-image')
-    luma_image = request.config.getoption('--luma-image')
     rest_cli_image = request.config.getoption('--rest-cli-image')
     sources = request.config.getoption('--sources')
     timeout = request.config.getoption('--timeout')
@@ -260,8 +259,6 @@ def parse_up_args(request, test_config):
         up_args.extend(['-pi', op_image])
     if oc_image:
         up_args.extend(['-ci', oc_image])
-    if luma_image:
-        up_args.extend(['-li', luma_image])
     if rest_cli_image:
         up_args.extend(['-ri', rest_cli_image])
     if sources:

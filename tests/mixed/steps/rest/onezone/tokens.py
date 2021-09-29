@@ -12,7 +12,7 @@ import time
 import yaml
 import base64
 
-from tests.mixed.onezone_client import TokenApi
+from onezone_client import TokenApi
 from tests.mixed.utils.common import login_to_oz
 from tests.utils.bdd_utils import wt, parsers
 
