@@ -7,6 +7,8 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+from datetime import datetime
+
 import pytest
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
@@ -338,11 +340,18 @@ def upload_files_to_cwd_in_data_tab_no_waiting(selenium, browser_id, dir_path,
 @repeat_failed(timeout=100*WAIT_BACKEND)
 def upload_files_to_cwd_in_data_tab_extended_wait(selenium, browser_id,
                                                   dir_path, tmpdir,
-                                                  op_container, popups):
+                                                  op_container, popups,capsys):
+    now = datetime.now()
+    current_time = now.strftime("%H:%M:%S")
+    with capsys.disabled():
+        print("Upload function call =", current_time)
 
     upload_files_to_cwd_in_data_tab_no_waiting(selenium, browser_id, dir_path,
                                                tmpdir, op_container)
     wait_extended_time_for_file_upload_to_finish(selenium, browser_id, popups)
+
+    with capsys.disabled():
+        print("Upload function exit =", current_time)
 
 
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
