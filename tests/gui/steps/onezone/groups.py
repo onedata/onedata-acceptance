@@ -50,9 +50,9 @@ def assert_group_exists(selenium, browser_ids, option, group, oz_page):
         groups_count = len(_find_groups(oz_page(selenium[browser_id])['groups'],
                                         group))
         if option == 'does not see':
-            assert groups_count == 0, 'group "{}" found'.format(group)
+            assert groups_count == 0, f'group "{group}" found'
         else:
-            assert groups_count == 1, 'group "{}" not found'.format(group)
+            assert groups_count == 1, f'group "{group}" not found'
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on '

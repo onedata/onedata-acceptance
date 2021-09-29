@@ -201,6 +201,8 @@ def set_service_caveat(token_config, given_service):
             if curr_service == 'Any Oneprovider':
                 services_list.append('opw-*')
             else:
+                if curr_service == 'dev-onezone':
+                    curr_service = 'onezone'
                 services_list.append(f'ozw-{curr_service}')
     if op_service:
         for curr_service in op_service:

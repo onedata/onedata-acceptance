@@ -68,22 +68,6 @@ def wt_assert_provider_name_in_op(selenium, browser_id, val, op_container, hosts
          'expected {}'.format(displayed_name, val))
 
 
-@wt(parsers.parse('user of {browser_id} double clicks on item named'
-                  ' "{item_name}" in {which_browser}'))
-@repeat_failed(timeout=WAIT_BACKEND)
-def double_click_on_item_in_browser(browser_id, item_name, tmp_memory,
-                                    op_container, selenium, which_browser):
-    which_browser = transform(which_browser)
-    browser = tmp_memory[browser_id][which_browser]
-    start = time.time()
-    while item_name not in browser.data:
-        time.sleep(1)
-        if start + time.time() > start + WAIT_BACKEND:
-            raise RuntimeError('waited too long')
-    breadcrumbs1 = getattr(op_container(selenium[browser_id]),
-                           which_browser).breadcrumbs.pwd()
-    err_msg = 'double click failed'
-    browser.data[item_name].double_click()
-    assert breadcrumbs1 != getattr(op_container(selenium[browser_id]),
-           which_browser).breadcrumbs.pwd(), err_msg
+
+
 

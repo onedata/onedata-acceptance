@@ -22,7 +22,7 @@ def double_click_on_item_in_browser(browser_id, item_name, tmp_memory,
     start = time.time()
     while item_name not in browser.data:
         time.sleep(1)
-        if start + time.time() > start + WAIT_BACKEND:
+        if start > start + WAIT_BACKEND:
             raise RuntimeError('waited too long')
     browser.data[item_name].double_click()
 

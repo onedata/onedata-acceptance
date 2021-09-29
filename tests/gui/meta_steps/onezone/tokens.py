@@ -518,3 +518,20 @@ def create_token_with_basic_template(selenium, browser_id, name, template,
     type_new_token_name(selenium, browser_id, oz_page, name)
     click_create_token_button_in_create_token_page(selenium, browser_id,
                                                    oz_page)
+
+
+@wt(parsers.parse('using web GUI, {user} creates access token with caveats '
+                  'set for object that ID was copied to clipboard'))
+def create_token_with_object_id(displays, clipboard, user, selenium, oz_page,
+                                popups, users, groups, hosts, tmp_memory):
+    option = 'Tokens'
+    object_id = clipboard.paste(display=displays[user])
+    config = (f'name: access_token\ntype: access\ncaveats:\n  '
+              f'object ID:\n    -  {object_id}')
+    click_on_option_in_the_sidebar(selenium, user, option, oz_page)
+    create_token_with_config(selenium, user, config, oz_page, popups,
+                             users, groups, hosts, tmp_memory)
+
+
+
+

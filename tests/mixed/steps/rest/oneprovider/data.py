@@ -138,6 +138,23 @@ def see_items_in_op_rest(user, users, host, hosts, path_list, result, space):
             file_api.list_children(file_id)
 
 
+def see_item_in_op_rest_using_token(user, name, space, host,
+                                    tmp_memory, users, hosts, result):
+    path = f'{space}/{name}'
+    access_token = tmp_memory[user]['mailbox'].get('token', None)
+    client = login_to_provider(user, users, hosts[host]['hostname'],
+                               access_token=access_token)
+    file_api = BasicFileOperationsApi(client)
+    if result == 'fails':
+        with pytest.raises(OPException,
+                           message='There is item {}'.format(path)):
+            file_id = _lookup_file_id(path, client)
+            file_api.list_children(file_id)
+    else:
+        file_id = _lookup_file_id(path, client)
+        file_api.list_children(file_id)
+
+
 def create_directory_structure_in_op_rest(user, users, hosts, host, config, 
                                           space):
     items = yaml.load(config)
@@ -265,6 +282,17 @@ def append_to_file_in_op_rest(user, users, host, hosts, cdmi, path,
 def move_item_in_op_rest(src_path, dst_path, result, cdmi, host, hosts, user,
                          users):
     client = cdmi(hosts[host]['hostname'], users[user].token)
+    if result == 'fails':
+        with pytest.raises(HTTPError):
+            client.move_item(src_path, dst_path)
+    else:
+        client.move_item(src_path, dst_path)
+
+
+def move_item_in_op_rest_using_token(src_path, dst_path, result, host, hosts,
+                                     user, users, tmp_memory, cdmi):
+    access_token = tmp_memory[user]['mailbox'].get('token', None)
+    client = cdmi(hosts[host]['hostname'], access_token)
     if result == 'fails':
         with pytest.raises(HTTPError):
             client.move_item(src_path, dst_path)

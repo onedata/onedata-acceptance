@@ -14,7 +14,7 @@ Feature: Identity tokens tests
     And opened [browser1, browser2] with [user1, user2] signed in to ["onezone", "onezone"] service
 
 
-  Scenario Outline: User set in access token caveat succeeds to use that token only with their identity token
+  Scenario: User set in access token caveat succeeds to use that token only with their identity token
     When using web gui, user1 creates token with following configuration:
            name: access_token_for_user2
            type: access
@@ -32,9 +32,11 @@ Feature: Identity tokens tests
            type: identity
     And using web gui, user2 copies created token named "identity_token_of_user2"
     Then using REST with identity token, user2 succeeds to create file named "file1" using received token in "space1" in oneprovider-1
+    And using web gui, user1 succeeds to see items named "file1" in "space1" in oneprovider-1
 
 
-  Scenario Outline: User not set in access token caveat fails to use that token
+
+  Scenario: User not set in access token caveat fails to use that token
     When using web gui, user1 creates token with following configuration:
            name: access_token_for_user1
            type: access
@@ -52,3 +54,4 @@ Feature: Identity tokens tests
            type: identity
     And using web gui, user2 copies created token named "identity_token_of_user2"
     Then using REST with identity token, user2 fails to create file named "file1" using received token in "space1" in oneprovider-1
+    And using web gui, user1 fails to see items named "file1" in "space1" in oneprovider-1

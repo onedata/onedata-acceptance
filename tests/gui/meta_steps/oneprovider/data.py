@@ -94,6 +94,9 @@ def remove_dir_and_parents_in_op_gui(selenium, browser_id, path, tmp_memory,
                           op_container, res, space, modals, oz_page)
 
 
+@wt(parsers.re(r'using web gui, (?P<browser_id>\w+) (?P<res>.*) to see item '
+               'named "(?P<subfiles>.*)" in "(?P<path>.*)" in space'
+               '"(?P<space>.*)" in oneprovider-1'))
 @wt(parsers.re(r'user of (?P<browser_id>\w+) (?P<res>.*) to see '
                '(?P<subfiles>.*) in "(?P<path>.*)" in "(?P<space>.*)"'))
 def see_items_in_op_gui(selenium, browser_id, path, subfiles, tmp_memory, 
@@ -108,7 +111,8 @@ def see_items_in_op_gui(selenium, browser_id, path, subfiles, tmp_memory,
                           tmp_memory, space)
 
     if path:
-        double_click_on_item_in_browser(browser_id, path, tmp_memory)
+        for item in path.split('/'):
+            double_click_on_item_in_browser(browser_id, item, tmp_memory)
     if res == 'fails':
         assert_items_absence_in_browser(browser_id, subfiles, tmp_memory)
     else:
@@ -466,3 +470,20 @@ def _create_link_in_file_browser(selenium, browser_id, file_name, space,
                                              modals)
     click_file_browser_button(browser_id, button, tmp_memory)
 
+
+@wt(parsers.re(r'using web GUI, (?P<user>\w+) copies "(?P<name>.*)" ID to'
+               r' clipboard from "(?P<modal>.*)" modal in space '
+               r'"(?P<space>\w+)" in (?P<host>.*)'))
+def copy_object_id_to_tmp_memory(tmp_memory, selenium, user, name, space,
+                                 oz_page, op_container, modals, modal):
+    option = 'Information'
+    button = 'File ID'
+    if modal == 'Directory Details':
+        modal = 'File details'
+    _click_menu_for_elem_somewhere_in_file_browser(selenium, user, name,
+                                                   space, tmp_memory, oz_page,
+                                                   op_container)
+    click_option_in_data_row_menu_in_browser(selenium, user, option,
+                                             modals)
+    click_modal_button(selenium, user, button, modal, modals)
+    close_modal(selenium, user, modal, modals)
