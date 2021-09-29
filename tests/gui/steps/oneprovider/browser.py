@@ -32,10 +32,14 @@ def double_click_on_item_in_browser(selenium, browser_id, item_name, tmp_memory,
     # if item is directory compare length of directories in breadcrumbs to
     # check if double-click has entered it
     if browser.data[item_name].is_directory:
-        breadcrumbs = getattr(op_container(driver),
-                              transform(which_browser)).breadcrumbs.pwd()
+        # check if breadcrumbs are not in file browser in shares
+        try:
+            breadcrumbs = op_container(driver).shares_page.breadcrumbs.pwd()
+        except:
+            breadcrumbs = getattr(op_container(driver),
+                                  transform(which_browser)).breadcrumbs.pwd()
 
-        # check if home directory where length of breadcrumbs can be shorter
+        # check if home directory where length of breadcrumbs doesn't matter
         if "/" not in breadcrumbs:
             browser.data[item_name].double_click()
             # if it was home and now it isn't it means double-click worked
@@ -43,11 +47,15 @@ def double_click_on_item_in_browser(selenium, browser_id, item_name, tmp_memory,
                 assert True, f'Double click has not entered the directory'
         else:
             length_of_past_dir = len(breadcrumbs)
-
             browser.data[item_name].double_click()
 
-            breadcrumbs = getattr(op_container(driver),
-                                  transform(which_browser)).breadcrumbs.pwd()
+            try:
+                breadcrumbs = op_container(driver).shares_page.breadcrumbs.pwd()
+            except:
+                breadcrumbs = getattr(op_container(driver),
+                                      transform(
+                                          which_browser)).breadcrumbs.pwd()
+
             length_of_current_dir = len(breadcrumbs)
 
             assert length_of_past_dir < length_of_current_dir, \
@@ -212,4 +220,3 @@ def click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory,
                                    which_browser='file browser'):
     browser = tmp_memory[browser_id][transform(which_browser)]
     browser.data[item_name].menu_button()
-
