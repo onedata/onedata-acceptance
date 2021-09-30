@@ -101,8 +101,8 @@ Feature: Uploading multiple files at once
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar
 
-    # upload 500 files
+    # upload 300 files
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload files from local directory "dir5" to remote current dir and waits extended time for upload to finish
-    And user of browser2 refreshes site
+    And user of browser refreshes site
     Then user of browser scrolls to the bottom of file browser and sees there are 500 files
