@@ -96,11 +96,13 @@ Feature: Uploading multiple files at once
     Then user of browser sees that there is 1 item in file browser
 
 
+# TODO: Some uploaded files are not visible in file browser right after upload (VFS-8436)
   Scenario: User successfully uploads 300 files (stress test)
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar
 
     # upload 500 files
     And user of browser sees file browser in files tab in Oneprovider page
-    Then user of browser uses upload button from file browser menu bar to upload files from local directory "dir5" to remote current dir and waits extended time for upload to finish
-#    Then user of browser scrolls to the bottom of file browser and sees there are 500 files
+    And user of browser uses upload button from file browser menu bar to upload files from local directory "dir5" to remote current dir and waits extended time for upload to finish
+    And user of browser2 refreshes site
+    Then user of browser scrolls to the bottom of file browser and sees there are 500 files
