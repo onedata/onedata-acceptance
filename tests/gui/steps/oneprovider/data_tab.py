@@ -12,6 +12,7 @@ from datetime import datetime
 import pytest
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.conftest import WAIT_NORMAL_UPLOAD, WAIT_EXTENDED_UPLOAD
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.utils.generic import (parse_seq, upload_file_path, transform)
 from tests.utils.utils import repeat_failed
@@ -264,7 +265,7 @@ def resize_data_tab_sidebar(selenium, browser_id, direction, offset,
 
 @wt(parsers.re('user of (?P<browser_id>.*) waits for file uploads? to '
                'finish'))
-@repeat_failed(timeout=WAIT_BACKEND*100)
+@repeat_failed(timeout=WAIT_NORMAL_UPLOAD)
 def wait_for_file_upload_to_finish(selenium, browser_id, popups):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
@@ -272,19 +273,18 @@ def wait_for_file_upload_to_finish(selenium, browser_id, popups):
         'file upload not finished '
         'within given time')
     switch_to_iframe(selenium, browser_id)
-    return True
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) waits extended time for file '
                'uploads? to finish'))
-@repeat_failed(timeout=WAIT_BACKEND*100)
+@repeat_failed(timeout=WAIT_EXTENDED_UPLOAD)
 def wait_extended_time_for_file_upload_to_finish(selenium, browser_id, popups):
     driver = selenium[browser_id]
-
-    return Wait(driver, WAIT_BACKEND).until(
-        lambda _: wait_for_file_upload_to_finish(selenium, browser_id, popups),
-        message='Error occured during uploading files'
-    )
+    driver.switch_to.default_content()
+    assert not popups(driver).is_upload_presenter(), (
+        'file upload not finished '
+        'within given time')
+    switch_to_iframe(selenium, browser_id)
 
 
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
@@ -337,7 +337,7 @@ def upload_files_to_cwd_in_data_tab_no_waiting(selenium, browser_id, dir_path,
                   'menu bar to upload files from local directory "{dir_path}" '
                   'to remote current dir and waits extended time for upload to '
                   'finish'))
-@repeat_failed(timeout=100*WAIT_BACKEND)
+@repeat_failed(timeout=WAIT_EXTENDED_UPLOAD)
 def upload_files_to_cwd_in_data_tab_extended_wait(selenium, browser_id,
                                                   dir_path, tmpdir,
                                                   op_container, popups,capsys):
