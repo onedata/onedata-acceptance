@@ -99,6 +99,21 @@ def result_to_consume_token_for_elem(selenium, browser_id, oz_page, elem_name,
     _result_to_consume_token(selenium, browser_id, result, modals)
 
 
+@wt(parsers.parse('user of {browser_id} sees alert with text: "{text}" on '
+                  'tokens page while trying to consume token'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_alert_while_consuming_token(selenium, browser_id, oz_page,
+                                       clipboard, displays, text):
+    option = 'Tokens'
+    button = 'Consume token'
+
+    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
+    click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button)
+    paste_copied_token_into_text_field(selenium, browser_id, oz_page, clipboard,
+                                       displays)
+    assert_alert_on_tokens_page(browser_id, text, oz_page, selenium)
+
+
 @wt(parsers.parse('user of {browser_id} {result} to consume token'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def result_to_consume_token(selenium, browser_id, oz_page, result, clipboard,
