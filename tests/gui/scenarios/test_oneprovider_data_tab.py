@@ -111,8 +111,8 @@ def test_user_successfully_uploads_2_gb_file_stress_test():
 
 
 @skip_if_not_chrome
-@scenario('User successfully uploads 500 files (stress test)')
-def test_user_successfully_uploads_500_files_stress_test():
+@scenario('User successfully uploads 300 files (stress test)')
+def test_user_successfully_uploads_300_files_stress_test():
     pass
 
 
