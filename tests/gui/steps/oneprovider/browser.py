@@ -31,7 +31,7 @@ def double_click_on_item_in_browser(selenium, browser_id, item_name, tmp_memory,
 
     # if item is directory compare length of directories in breadcrumbs to
     # check if double-click has entered it
-    if browser.data[item_name].is_directory:
+    if item_name.startswith('dir'):
         # check if breadcrumbs are not in file browser in shares
         try:
             breadcrumbs = op_container(driver).shares_page.breadcrumbs.pwd()
