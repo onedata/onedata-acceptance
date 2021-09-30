@@ -345,13 +345,13 @@ def create_qos_requirement_in_op_rest(user, users, hosts, host, expression,
                                       space_name, file_name):
     path = f'{space_name}/{file_name}'
     client = login_to_provider(user, users, hosts[host]['hostname'])
-    qo_s_api = QoSApi(client)
+    qos_api = QoSApi(client)
     file_id = _lookup_file_id(path, client)
     data = {
             "fileId": file_id,
             "expression": expression
             }
-    qo_s_api.add_qos_requirement(data)
+    qos_api.add_qos_requirement(data)
 
 
 def assert_qos_file_status_in_op_rest(user, users, hosts, host, space_name,

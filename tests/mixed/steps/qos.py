@@ -31,7 +31,7 @@ def create_qos_requirement_in_op(client, user, selenium, modals, file_name,
 
 
 @wt(parsers.re('using (?P<client>.*), (?P<user>.+?) sees that file '
-               '"(?P<file_name>.*)" (?P<option>has not|has some) QoS '
+               '"(?P<file_name>.*)" (?P<option>has not got|has some) QoS '
                'requirements in space "(?P<space_name>.*)" in (?P<host>.*)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_qos_file_status_in_op(client, user, file_name, space_name, host,
