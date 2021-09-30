@@ -49,8 +49,8 @@ def double_click_on_item_in_browser(selenium, browser_id, item_name, tmp_memory,
                 breadcrumbs = getattr(op_container(driver),
                                       transform(
                                           which_browser)).breadcrumbs.pwd()
-            if "/" in breadcrumbs:
-                assert True, f'Double click has not entered the directory'
+            if "/" not in breadcrumbs:
+                assert False, f'Double click has not entered the directory'
         else:
             length_of_past_dir = len(breadcrumbs)
             browser.data[item_name].double_click()
