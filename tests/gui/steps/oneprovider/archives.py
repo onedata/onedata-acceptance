@@ -219,3 +219,13 @@ def save_date_of_archive_creation(browser_id, tmp_memory):
     if '—' in name:
         name = name.split(' —')[0]
     tmp_memory['created_at'] = name
+
+
+@wt(parsers.parse('user of {browser_id} goes back to dataset browser from '
+                  'archive browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def go_back_to_dataset_page_from_archive_browser(selenium, browser_id, oz_page):
+    driver = selenium[browser_id]
+    driver.switch_to.default_content()
+    oz_page(driver)['data'].archive_header.back_to_dataset_page()
+
