@@ -184,8 +184,8 @@ class DatasetHeader(PageObject):
 
 
 class ArchiveFileHeader(PageObject):
-    dip = Button('.select-archive-aip-btn')
-    aip = Button('.select-archive-dip-btn')
+    dip = Button('.select-archive-dip-btn')
+    aip = Button('.select-archive-aip-btn')
 
 
 class DataPage(GenericPage):
