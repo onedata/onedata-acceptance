@@ -83,6 +83,16 @@ def click_protection_toggle(browser_id, selenium, modals, toggle_type):
             f'{toggle_type}_protection_toggle').check()
 
 
+@wt(parsers.parse('user of {browser_id} cannot click {toggle_type} write '
+                  'protection toggle in Write Protection modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_protection_toggle(browser_id, selenium, modals, toggle_type):
+    driver = selenium[browser_id]
+    err_msg = f'{toggle_type}_protection_toggle is clickable'
+    assert not getattr(modals(driver).write_protection,
+                       f'{toggle_type}_protection_toggle').check(), err_msg
+
+
 @wt(parsers.parse('user of {browser_id} sees that error page with text '
                   '"{text}" appeared'))
 @repeat_failed(timeout=WAIT_FRONTEND)

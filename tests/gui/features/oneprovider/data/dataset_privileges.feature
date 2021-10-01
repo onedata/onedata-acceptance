@@ -83,12 +83,9 @@ Feature: Dataset browser tests using user who is not the owner of a space
     And user of browser_user1 clicks Datasets of "space1" in the sidebar
     And user of browser_user1 sees dataset browser in datasets tab in Oneprovider page
     And user of browser_user1 clicks on menu for "dir1" dataset in dataset browser
-    And user of browser_user1 clicks "Write protection" option in data row menu in dataset browser
-    And user of browser_user1 clicks data write protection toggle in Write Protection modal
-    Then user of browser_user1 sees that error modal with text "Changing write protection settings failed!" appeared
-    And user of browser_user1 closes "Error" modal
-    And user of browser_user1 clicks metadata write protection toggle in Write Protection modal
-    And user of browser_user1 sees that error modal with text "Changing write protection settings failed!" appeared
+    Then user of browser_user1 clicks "Write protection" option in data row menu in dataset browser
+    And user of browser_user1 cannot click data write protection toggle in Write Protection modal
+    And user of browser_user1 cannot click metadata write protection toggle in Write Protection modal
 
 
   Scenario: User fails to remove dataset if he does not have manage datasets privilege
