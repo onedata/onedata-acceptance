@@ -14,7 +14,7 @@ from onezone_client import (UserApi, SpaceCreateRequest,
 from tests.mixed.utils.common import login_to_oz
 from tests.mixed.steps.rest.onezone.common import (get_user_space_with_name,
                                                    get_provider_with_name,
-                                                   get_space_with_name)
+                                                   get_space_with_name,)
 from tests.gui.utils.generic import parse_seq
 
 
@@ -66,18 +66,6 @@ def remove_spaces_in_oz_using_rest(user, users, zone_name, hosts, space_list,
             space_api.remove_space(space.space_id)
 
 
-def delete_users_from_space_in_oz_using_rest(user_list, users, zone_name, hosts,
-                                             space_name, spaces,
-                                             user):
-    user_client = login_to_oz(user,
-                              users[user].password,
-                              hosts[zone_name]['hostname'])
-    space_api = SpaceApi(user_client)
-
-    for user in parse_seq(user_list):
-        space_api.remove_space_user(spaces[space_name], users[user].id)
-
-
 def remove_provider_support_for_space_in_oz_using_rest(user, users, zone_name,
                                                        hosts, provider_alias,
                                                        space_name, spaces,
@@ -92,27 +80,6 @@ def remove_provider_support_for_space_in_oz_using_rest(user, users, zone_name,
     space_api = SpaceApi(user_client)
     space_api.cease_support_by_provider(spaces[space_name],
                                         provider.provider_id)
-
-
-def add_users_to_space_in_oz_using_rest(user_list, users, zone_name, hosts,
-                                        space_name, spaces, user):
-    user_client = login_to_oz(user,
-                              users[user].password,
-                              hosts[zone_name]['hostname'])
-    space_api = SpaceApi(user_client)
-
-    for user in parse_seq(user_list):
-        space_api.add_space_user(spaces[space_name], users[user].id)
-
-
-def invite_other_users_to_space_using_rest(user, users, zone_name, hosts,
-                                           space_name, spaces, tmp_memory,
-                                           receiver):
-    user_client = login_to_oz(user, users[user].password,
-                              hosts[zone_name]['hostname'])
-    space_api = SpaceApi(user_client)
-    token = space_api.create_space_user_invite_token(spaces[space_name])
-    tmp_memory[receiver]['mailbox']['token'] = token.token
 
 
 def request_space_support_using_rest(user, users, space_name, zone_alias,
@@ -192,19 +159,6 @@ def assert_there_is_no_provider_for_space_in_oz_rest(user, users, zone_name,
                       'not be'.format(space_name, provider_name))
         assert (get_provider_with_name(admin_client, provider_name) not in
                 space_providers.providers), assert_msg
-
-
-def assert_user_is_member_of_space_rest(space_name, spaces, user, users,
-                                        user_list, zone_name, hosts):
-    user_client = login_to_oz(user,
-                              users[user].password,
-                              hosts[zone_name]['hostname'])
-    space_api = SpaceApi(user_client)
-    space_users = space_api.list_space_users(spaces[space_name]).users
-
-    for username in parse_seq(user_list):
-        assert users[username].id in space_users, \
-            'There is no user {} in space {}'.format(username, space_name)
 
 
 def assert_space_is_supported_by_provider_in_oz_rest(user, users, zone_host,
