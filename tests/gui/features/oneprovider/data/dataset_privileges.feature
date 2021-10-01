@@ -51,7 +51,7 @@ Feature: Dataset browser tests using user who is not the owner of a space
     And user of browser_user1 clicks on menu for "dir1" file in file browser
     And user of browser_user1 clicks "Datasets" option in data row menu in file browser
     Then user of browser_user1 fails to click Mark this file as dataset toggle in Datasets modal
-    And user of browser_user1 clicks on "Close" button in modal "Datasets"
+    And user of browser_user1 clicks on "X" button in modal "Datasets"
 
 
   Scenario: User fails to detach dataset if he does not have manage datasets privilege
