@@ -21,14 +21,14 @@ onedataCli: false
 # Determines if oneclients should start.
 oneclients: true
 
-oneclientImage: "docker.onedata.org/oneclient-dev:ID-1804d1b45d"
+oneclientImage: "docker.onedata.org/oneclient-dev:ID-3c60ebb24b"
 
 # Onedata rest client image to use.
 onedataCliImage: "docker.onedata.org/rest-cli:ID-e5fb6602e4"
 
 # When enabled, onezoneImage and oneproviderImage will be pulled before every
 # deployment. If disabled, they will only be pulled if not existent.
-forceImagePull: false
+forceImagePull: true
 
 spaces: false
 

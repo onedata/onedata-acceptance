@@ -522,7 +522,7 @@ def create_token_with_basic_template(selenium, browser_id, name, template,
 
 
 @wt(parsers.parse('using web GUI, {user} creates access token with caveats '
-                  'set for object that ID was copied to clipboard'))
+                  'set for object which ID was copied to clipboard'))
 def create_token_with_object_id(displays, clipboard, user, selenium, oz_page,
                                 popups, users, groups, hosts, tmp_memory):
     option = 'Tokens'

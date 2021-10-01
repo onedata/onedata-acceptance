@@ -126,15 +126,7 @@ def see_items_in_op_rest(user, users, host, hosts, path_list, result, space):
     file_api = BasicFileOperationsApi(client)
     for path in parse_seq(path_list):
         path = '{}/{}'.format(space, path)
-
-        if result == 'fails':
-            with pytest.raises(OPException, 
-                               message='There is item {}'.format(path)):
-                file_id = _lookup_file_id(path, client)
-                file_api.list_children(file_id)
-        else:
-            file_id = _lookup_file_id(path, client)
-            file_api.list_children(file_id)
+        check_if_tem_exists_or_not_exists(result, path, client, file_api)
 
 
 def see_item_in_op_rest_using_token(user, name, space, host,
@@ -144,14 +136,21 @@ def see_item_in_op_rest_using_token(user, name, space, host,
     client = login_to_provider(user, users, hosts[host]['hostname'],
                                access_token=access_token)
     file_api = BasicFileOperationsApi(client)
+    check_if_tem_exists_or_not_exists(result, path, client, file_api)
+
+
+def check_if_item_id_in_items(path, client, file_api):
+    file_id = _lookup_file_id(path, client)
+    file_api.list_children(file_id)
+
+
+def check_if_tem_exists_or_not_exists(result, path, client, file_api):
     if result == 'fails':
         with pytest.raises(OPException,
-                           message='There is item {}'.format(path)):
-            file_id = _lookup_file_id(path, client)
-            file_api.list_children(file_id)
+                           message=f'There is item {path}'):
+            check_if_item_id_in_items(path, client, file_api)
     else:
-        file_id = _lookup_file_id(path, client)
-        file_api.list_children(file_id)
+        check_if_item_id_in_items(path, client, file_api)
 
 
 def create_directory_structure_in_op_rest(user, users, hosts, host, config, 

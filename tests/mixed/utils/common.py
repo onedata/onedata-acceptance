@@ -23,7 +23,7 @@ class NoSuchClientException(Exception):
 
 
 def setup_basic_configuration(configuration, host, port, path_prefix,
-                              username = "", password = ""):
+                              username="", password=""):
     configuration.username = username
     configuration.password = password
     configuration.verify_ssl = False

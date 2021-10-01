@@ -32,7 +32,7 @@ Feature: Identity tokens tests
            type: identity
     And using web gui, user2 copies created token named "identity_token_of_user2"
     Then using REST with identity token, user2 succeeds to create file named "file1" using received token in "space1" in oneprovider-1
-    And using web gui, user1 succeeds to see items named "file1" in "space1" in oneprovider-1
+    And using web gui, user1 succeeds to see item named "file1" in "space1" in oneprovider-1
 
 
 
@@ -54,4 +54,4 @@ Feature: Identity tokens tests
            type: identity
     And using web gui, user2 copies created token named "identity_token_of_user2"
     Then using REST with identity token, user2 fails to create file named "file1" using received token in "space1" in oneprovider-1
-    And using web gui, user1 fails to see items named "file1" in "space1" in oneprovider-1
+    And using web gui, user1 fails to see item named "file1" in "space1" in oneprovider-1

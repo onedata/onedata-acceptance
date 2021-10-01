@@ -48,10 +48,10 @@ def create_groups_with_token(user, group_name, host, tmp_memory, hosts):
 @wt(parsers.re(r'(?P<user>\w+) fails to create group "(?P<group_name>.*)" '
                r'using REST using received token in "(?P<host>.*)" Onezone'
                r' service'))
-def fail_to_create_group_with_toke(user, group_name, host, tmp_memory, hosts):
+def fail_to_create_group_with_token(user, group_name, host, tmp_memory, hosts):
     try:
         create_groups_with_token(user, group_name, host, tmp_memory, hosts)
-        raise Exception('unction: create_groups_with_token worked but it '
+        raise Exception('function: create_groups_with_token worked but it '
                         'should not')
     except HTTPUnauthorized as err:
         if err.status_code == 404:

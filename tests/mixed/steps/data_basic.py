@@ -19,10 +19,6 @@ from tests.utils.bdd_utils import wt, parsers
 from tests.utils.path_utils import get_first_path_element
 
 
-def change_client_name_to_hostname(client_name):
-    return client_name.replace('oneclient', 'client')
-
-
 @wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to create '
                'file named "(?P<name>.*)" in "(?P<space>.*)" in (?P<host>.*)'))
 def create_file_in_op(client, user, users, space, name, hosts, tmp_memory, host,
@@ -57,26 +53,9 @@ def create_file_in_op_with_token(client, user, users, space, name, hosts,
         create_file_in_op_rest(user, users, host, hosts, full_path, result,
                                token)
     elif 'oneclient' in client_lower:
-        path = f'/home/{user}/onedata'
-        if result == 'succeeds':
-            mount_new_oneclient_result(user, path, request, hosts, users,
-                                       clients,
-                                       env_desc, tmp_memory, result,
-                                       client='oneclient')
-            oneclient_host = change_client_name_to_hostname(client_lower)
-            create_file_in_op_oneclient(user, full_path, users, result,
-                                        oneclient_host)
-        elif result == 'fails':
-            try:
-                mount_new_oneclient_result(user, path, request, hosts, users,
-                                           clients,
-                                           env_desc, tmp_memory, result,
-                                           client='oneclient')
-            except AssertionError:
-                oneclient_host = change_client_name_to_hostname(client_lower)
-                create_file_in_op_oneclient(user, full_path, users, result,
-                                            oneclient_host)
-
+        create_file_in_op_oneclient_with_tokens(user, request, hosts, users,
+                                                clients, env_desc, tmp_memory,
+                                                result, full_path, client_lower)
     else:
         raise NoSuchClientException('Client: {} not found'.format(client))
 
@@ -99,6 +78,8 @@ def assert_file_in_op_with_token(client, user, name, space, host, tmp_memory,
         oneclient_host = change_client_name_to_hostname(client_lower)
         see_items_in_op_oneclient(name, space, user, users, result,
                                   oneclient_host)
+    else:
+        raise NoSuchClientException(f'Client: {client} not found')
 
 
 @wt(parsers.re(r'using (?P<client>.*) with identity token, (?P<user>\w+) ('
@@ -116,24 +97,9 @@ def create_file_in_op_with_tokens(client, user, users, space, name, hosts,
                                access_token=access_token,
                                identity_token=identity_token)
     elif 'oneclient' in client_lower:
-        path = f'/home/{user}/onedata'
-
-        if result == 'succeeds':
-            mount_new_oneclient_result(user, path, request, hosts, users,
-                                       clients, env_desc, tmp_memory, result,
-                                       client='oneclient')
-            oneclient_host = change_client_name_to_hostname(client_lower)
-            create_file_in_op_oneclient(user, full_path, users, result,
-                                        oneclient_host)
-        else:
-            try:
-                mount_new_oneclient_result(user, path, request, hosts, users,
-                                           clients, env_desc, tmp_memory, result,
-                                           client='oneclient')
-            except AssertionError:
-                oneclient_host = change_client_name_to_hostname(client_lower)
-                create_file_in_op_oneclient(user, full_path, users, result,
-                                            oneclient_host)
+        create_file_in_op_oneclient_with_tokens(user, request, hosts, users,
+                                                clients, env_desc, tmp_memory,
+                                                result, full_path, client_lower)
 
     else:
         raise NoSuchClientException('Client: {} not found'.format(client))
@@ -182,14 +148,14 @@ def go_to_dir(selenium, user, item_name, tmp_memory, op_container, space, oz_pag
 
 
 @wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to see '
-               'items? named (?P<name_list>.*) in "(?P<space>.*)" in '
+               'item named (?P<name>.*) in "(?P<space>.*)" in '
                '(?P<host>.*)'))
-def see_item_in_op(client, user, users, result, name_list, space, host, hosts, 
+def see_item_in_op(client, user, users, result, name, space, host, hosts,
                    selenium, tmp_memory, op_container, oz_page):
     client_lower = client.lower()
     if client_lower == 'web gui':
-        item_name = name_list
-        name_list = name_list.replace('"', '')
+        item_name = name
+        name_list = name.replace('"', '')
         path = ''
         if '/' in name_list:
             item_name = name_list.split('/')[-1]
@@ -198,11 +164,11 @@ def see_item_in_op(client, user, users, result, name_list, space, host, hosts,
         see_items_in_op_gui(selenium, user, path, item_name, tmp_memory,
                             op_container, result, space, oz_page)
     elif client_lower == 'rest':
-        see_items_in_op_rest(user, users, host, hosts, name_list, 
+        see_items_in_op_rest(user, users, host, hosts, name,
                              result, space)
     elif 'oneclient' in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        see_items_in_op_oneclient(name_list, space, user, users, result,
+        see_items_in_op_oneclient(name, space, user, users, result,
                                   oneclient_host)
     else:
         raise NoSuchClientException('Client: {} not found'.format(client))
