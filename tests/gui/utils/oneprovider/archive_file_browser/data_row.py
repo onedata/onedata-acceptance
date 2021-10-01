@@ -33,3 +33,4 @@ class DataRow(PageObject):
 
     def get_tag_text(self, name):
         return getattr(self, f'{transform(name)}_tag').text
+

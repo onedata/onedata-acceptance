@@ -33,41 +33,41 @@ def double_click_on_item_in_browser(selenium, browser_id, item_name, tmp_memory,
     # check if double-click has entered it
     if item_name.startswith('dir'):
         # check if breadcrumbs are not in file browser in shares
-        try:
-            breadcrumbs = op_container(driver).shares_page.breadcrumbs.pwd()
-        except:
-            breadcrumbs = getattr(op_container(driver),
-                                  transform(which_browser)).breadcrumbs.pwd()
+        breadcrumbs = check_if_breadcrumbs_on_share_page(driver, op_container,
+                                                         which_browser)
+        message = f'Double click has not entered the directory'
 
         # check if home directory where length of breadcrumbs doesn't matter
         # if it was home and now it isn't it means double-click worked
         if "/" not in breadcrumbs:
             browser.data[item_name].double_click()
-            try:
-                breadcrumbs = op_container(driver).shares_page.breadcrumbs.pwd()
-            except:
-                breadcrumbs = getattr(op_container(driver),
-                                      transform(
-                                          which_browser)).breadcrumbs.pwd()
+            breadcrumbs = check_if_breadcrumbs_on_share_page(driver,
+                                                             op_container,
+                                                             which_browser)
             if "/" not in breadcrumbs:
-                assert False, f'Double click has not entered the directory'
+                assert False, message
         else:
             length_of_past_dir = len(breadcrumbs)
             browser.data[item_name].double_click()
-
-            try:
-                breadcrumbs = op_container(driver).shares_page.breadcrumbs.pwd()
-            except:
-                breadcrumbs = getattr(op_container(driver),
-                                      transform(
-                                          which_browser)).breadcrumbs.pwd()
-
+            breadcrumbs = check_if_breadcrumbs_on_share_page(driver,
+                                                             op_container,
+                                                             which_browser)
             length_of_current_dir = len(breadcrumbs)
 
-            assert length_of_past_dir < length_of_current_dir, \
-                f'Double click has not entered the directory'
+            assert length_of_past_dir < length_of_current_dir, message
     else:
         browser.data[item_name].double_click()
+
+
+def check_if_breadcrumbs_on_share_page(driver, op_container,
+                                       which_browser='file browser'):
+    try:
+        breadcrumbs = op_container(driver).shares_page.breadcrumbs.pwd()
+    except:
+        breadcrumbs = getattr(op_container(driver),
+                              transform(which_browser)).breadcrumbs.pwd()
+
+    return breadcrumbs
 
 
 @wt(parsers.parse('user of {browser_id} sees that current working directory '

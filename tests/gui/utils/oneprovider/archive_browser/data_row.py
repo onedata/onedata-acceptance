@@ -31,3 +31,4 @@ class DataRow(PageObject):
             return False
         else:
             return True
+

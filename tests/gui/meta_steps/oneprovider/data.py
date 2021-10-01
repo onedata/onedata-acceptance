@@ -136,7 +136,7 @@ def create_item_in_op_gui(selenium, browser_id, path, item_type, name,
 
     def _open_menu_for_item_in_file_browser():
         if path:
-            go_to_path(selenium, browser_id, tmp_memory, path , op_container)
+            go_to_path(selenium, browser_id, tmp_memory, path, op_container)
         click_button_from_file_browser_menu_bar(selenium, browser_id,
                                                 button, op_container)
 
@@ -264,8 +264,8 @@ def assert_file_content_in_op_gui(text, path, space, selenium, user, users,
     except (KeyError, NoSuchElementException):
         go_to_filebrowser(selenium, user, oz_page, op_container,
                           tmp_memory, space)
-        go_to_path_without_last_elem(selenium, user, tmp_memory, path
-                                     , op_container)
+        go_to_path_without_last_elem(selenium, user, tmp_memory, path,
+                                     op_container)
     item_name = _select_item(selenium, user, tmp_memory, path, op_container)
     double_click_on_item_in_browser(user, item_name, tmp_memory, op_container)
     has_downloaded_file_content(user, item_name, text, tmpdir)
@@ -344,11 +344,11 @@ def upload_file_to_op_gui(path, selenium, browser_id, space, res, filename,
     try:
         assert_browser_in_tab_in_op(selenium, browser_id,
                                     op_container, tmp_memory)
-        go_to_path(selenium, browser_id, tmp_memory, path , op_container)
+        go_to_path(selenium, browser_id, tmp_memory, path, op_container)
     except (KeyError, NoSuchElementException):
         go_to_filebrowser(selenium, browser_id, oz_page, op_container,
                           tmp_memory, space)
-        go_to_path(selenium, browser_id, tmp_memory, path , op_container)
+        go_to_path(selenium, browser_id, tmp_memory, path, op_container)
     if res == 'succeeds':
         upload_file_to_cwd_in_file_browser(selenium, browser_id, filename,
                                            op_container, popups)
@@ -381,7 +381,7 @@ def _select_item(selenium, browser_id, tmp_memory, path, op_container):
 
 @wt(parsers.parse('user of {browser_id} goes to "{path}" in {which_browser}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def go_to_path(selenium, browser_id, tmp_memory, path,op_container,
+def go_to_path(selenium, browser_id, tmp_memory, path, op_container,
                which_browser='file browser'):
     if '/' in path:
         item_name, path_list = get_item_name_and_containing_dir_path(path)
@@ -391,7 +391,7 @@ def go_to_path(selenium, browser_id, tmp_memory, path,op_container,
     for directory in path_list:
         if directory != '':
             double_click_on_item_in_browser(selenium, browser_id, directory,
-                                            tmp_memory,op_container,
+                                            tmp_memory, op_container,
                                             which_browser)
 
 

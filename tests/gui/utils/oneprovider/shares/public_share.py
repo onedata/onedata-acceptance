@@ -30,7 +30,7 @@ class PublicShareView(object):
     description_tab = Button('.nav-link-description')
     description = Label('.markdown-view')
     no_files_message_header = Label('.content-info-content-container h1')
-    share_not_found = Label('.text-center' ' .col-xs-12')
+    share_not_found = Label('.text-center .col-xs-12')
 
     def __init__(self, driver):
         self.web_elem = self.driver = driver
