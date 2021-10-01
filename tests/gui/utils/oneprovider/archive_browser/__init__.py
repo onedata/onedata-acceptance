@@ -17,7 +17,8 @@ from ..breadcrumbs import Breadcrumbs
 class _ArchiveBrowser(PageObject):
     data = WebItemsSequence('.data-row.fb-table-row', cls=DataRow)
     breadcrumbs = Breadcrumbs('.fb-breadcrumbs')
-    create_archive = Button('.hidden-xs .oneicon-browser-archive-add')
+    create_archive = Button('.hidden-xs .toolbar-buttons '
+                            '.oneicon-browser-archive-add')
     empty_dir_msg = Label('.empty-dir-text')
 
     def __str__(self):

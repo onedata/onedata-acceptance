@@ -184,8 +184,12 @@ class DatasetHeader(PageObject):
 
 
 class ArchiveFileHeader(PageObject):
-    dip = Button('.select-archive-aip-btn')
-    aip = Button('.select-archive-dip-btn')
+    dip = Button('.select-archive-dip-btn')
+    aip = Button('.select-archive-aip-btn')
+
+
+class ArchiveHeader(PageObject):
+    back_to_dataset_page = Button('.content-back-arrow-icon')
 
 
 class DataPage(GenericPage):
@@ -209,6 +213,7 @@ class DataPage(GenericPage):
     harvesters_page = WebItem('.main-content', cls=HarvestersPage)
     dataset_header = WebItem('.main-content', cls=DatasetHeader)
     archive_file_header = WebItem('.main-content', cls=ArchiveFileHeader)
+    archive_header = WebItem('.main-content', cls=ArchiveHeader)
 
     # button in top right corner on all subpages
     menu_button = Button('.with-menu .collapsible-toolbar-toggle')

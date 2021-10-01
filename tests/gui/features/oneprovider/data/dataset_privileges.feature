@@ -205,6 +205,8 @@ Feature: Dataset browser tests using user who is not the owner of a space
     And user of browser_user1 clicks on menu for "dir1" dataset in dataset browser
     And user of browser_user1 clicks "Create archive" option in data row menu in dataset browser
     And user of browser_user1 clicks on "Create" button in modal "Create Archive"
+    And user of browser_user1 goes back to dataset browser from archive browser
+    And user of browser_user1 sees dataset browser in datasets tab in Oneprovider page
     Then user of browser_user1 sees that item "dir1" has 1 archive
 
 

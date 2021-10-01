@@ -248,7 +248,6 @@ Feature: Basic management of harvester index in Onezone GUI
         layout: plain
 
     # copy archive id
-    And user of browser clicks on archives count link for "dir1" in dataset browser
     And user of browser sees archive browser in archives tab in Oneprovider page
     And user of browser saves time of latest archive creation for "dir1"
     And user of browser clicks on menu for 1st archive in archive browser

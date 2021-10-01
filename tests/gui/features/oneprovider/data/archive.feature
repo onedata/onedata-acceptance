@@ -38,18 +38,20 @@ Feature: Basic archives operations
     And user of browser writes "first archive" into description text field in create archive modal
     And user of browser clicks on "Create" button in modal "Create Archive"
 
-    Then user of browser sees that item "dir4" has 1 archive
-
-    And user of browser clicks on archives count link for "dir4" in dataset browser
-    And user of browser sees archive browser in archives tab in Oneprovider page
+    Then user of browser sees archive browser in archives tab in Oneprovider page
     And user of browser sees that 1st archive in archive browser has description: "first archive"
     And user of browser sees that 1st archive in archive browser has status: "preserved", number of files: "1 file", size: "3 B"
+    And user of browser goes back to dataset browser from archive browser
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
+    And user of browser sees that item "dir4" has 1 archive
 
 
   Scenario: User sees that dataset does not have archive after purging archive
     When user of browser creates dataset for item "dir4" in "space1"
     And user of browser creates archive for item "dir4" in "space1" with following configuration:
         layout: plain
+    And user of browser goes back to dataset browser from archive browser
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser sees that item "dir4" has 1 archive
     And user of browser clicks on archives count link for "dir4" in dataset browser
     And user of browser sees archive browser in archives tab in Oneprovider page
@@ -67,7 +69,6 @@ Feature: Basic archives operations
     When user of browser creates dataset for item "dir1" in "space1"
     And user of browser creates archive for item "dir1" in "space1" with following configuration:
         layout: plain
-    And user of browser clicks on archives count link for "dir1" in dataset browser
     And user of browser sees archive browser in archives tab in Oneprovider page
     And user of browser double clicks on 1st archive on archives list in archive browser
     And user of browser sees archive file browser in archives tab in Oneprovider page
@@ -82,7 +83,6 @@ Feature: Basic archives operations
     When user of browser creates dataset for item "dir1" in "space1"
     And user of browser creates archive for item "dir1" in "space1" with following configuration:
         layout: plain
-    And user of browser clicks on archives count link for "dir1" in dataset browser
     And user of browser sees archive browser in archives tab in Oneprovider page
     And user of browser double clicks on 1st archive on archives list in archive browser
     And user of browser sees archive file browser in archives tab in Oneprovider page
@@ -98,7 +98,6 @@ Feature: Basic archives operations
 
     And user of browser creates archive for item "dir1" in "space1" with following configuration:
         layout: plain
-    And user of browser clicks on archives count link for "dir1" in dataset browser
     And user of browser sees archive browser in archives tab in Oneprovider page
     And user of browser double clicks on 1st archive on archives list in archive browser
     And user of browser sees archive file browser in archives tab in Oneprovider page
@@ -114,7 +113,6 @@ Feature: Basic archives operations
     When user of browser creates dataset for item "dir1" in "space1"
     And user of browser creates archive for item "dir1" in "space1" with following configuration:
         layout: BagIt
-    And user of browser clicks on archives count link for "dir1" in dataset browser
     And user of browser sees archive browser in archives tab in Oneprovider page
     Then user of browser sees BagIt tag for 1st archive on archives list in archive browser
 
@@ -129,8 +127,7 @@ Feature: Basic archives operations
         layout: plain
         create nested archives: True
 
-    Then user of browser clicks on archives count link for "dir1" in dataset browser
-    And user of browser sees archive browser in archives tab in Oneprovider page
+    Then user of browser sees archive browser in archives tab in Oneprovider page
     And user of browser double clicks on 1st archive on archives list in archive browser
     And user of browser sees archive file browser in archives tab in Oneprovider page
     And user of browser goes to "/dir1/dir2" in archive file browser
@@ -149,13 +146,16 @@ Feature: Basic archives operations
     And user of browser creates archive for item "dir1" in "space1" with following configuration:
         layout: plain
         create nested archives: True
+    And user of browser goes back to dataset browser from archive browser
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser sees that item "dir1" has 1 archive
     And user of browser double clicks on item named "dir1" in dataset browser
     And user of browser sees that item "dir2" has 1 archive
     And user of browser creates archive for item "dir2" in "space1" with following configuration:
         layout: plain
         create nested archives: True
-
+    And user of browser goes back to dataset browser from archive browser
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser double clicks on item named "dir2" in dataset browser
     Then user of browser sees that item "dir3" has 2 archives
     And user of browser clicks Datasets of "space1" in the sidebar
@@ -176,7 +176,6 @@ Feature: Basic archives operations
         layout: plain
         create nested archives: True
 
-    And user of browser clicks on archives count link for "dir1" in dataset browser
     And user of browser sees archive browser in archives tab in Oneprovider page
     And user of browser clicks on menu for 1st archive in archive browser
     And user of browser clicks "Copy archive ID" option in data row menu in archive browser
@@ -204,8 +203,7 @@ Feature: Basic archives operations
         layout: plain
         incremental: True
 
-    Then user of browser clicks on archives count link for "dir4" in dataset browser
-    And user of browser sees archive browser in archives tab in Oneprovider page
+    Then user of browser sees archive browser in archives tab in Oneprovider page
     And user of browser double clicks on 1st archive on archives list in archive browser
     And user of browser sees archive file browser in archives tab in Oneprovider page
     And user of browser double clicks on item named "dir4" in archive file browser
@@ -217,14 +215,18 @@ Feature: Basic archives operations
     When user of browser creates dataset for item "dir4" in "space1"
     And user of browser creates archive for item "dir4" in "space1" with following configuration:
         layout: plain
+    And user of browser goes back to dataset browser from archive browser
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser creates archive for item "dir4" in "space1" with following configuration:
         layout: plain
         incremental: True
+    And user of browser goes back to dataset browser from archive browser
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser creates archive for item "dir4" in "space1" with following configuration:
         layout: plain
         incremental: True
-    Then user of browser clicks on archives count link for "dir4" in dataset browser
-    And user of browser sees archive browser in archives tab in Oneprovider page
+
+    Then user of browser sees archive browser in archives tab in Oneprovider page
     And user of browser double clicks on 1st archive on archives list in archive browser
     And user of browser sees archive file browser in archives tab in Oneprovider page
     And user of browser double clicks on item named "dir4" in archive file browser
@@ -235,11 +237,12 @@ Feature: Basic archives operations
     When user of browser creates dataset for item "dir4" in "space1"
     And user of browser creates archive for item "dir4" in "space1" with following configuration:
         layout: plain
+    And user of browser goes back to dataset browser from archive browser
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser creates archive for item "dir4" in "space1" with following configuration:
         layout: plain
         incremental: True
-    Then user of browser clicks on archives count link for "dir4" in dataset browser
-    And user of browser sees archive browser in archives tab in Oneprovider page
+    Then user of browser sees archive browser in archives tab in Oneprovider page
     And user of browser sees that base archive for latest created archive is 2nd archive on archives list in archive browser
 
 
@@ -247,7 +250,6 @@ Feature: Basic archives operations
     When user of browser creates dataset for item "dir4" in "space1"
     And user of browser creates archive for item "dir4" in "space1" with following configuration:
         layout: plain
-    And user of browser clicks on archives count link for "dir4" in dataset browser
     And user of browser sees archive browser in archives tab in Oneprovider page
     And user of browser clicks on Create Archive button in archive browser
     And user of browser checks "Incremental" toggle in modal "Create Archive"
@@ -260,7 +262,6 @@ Feature: Basic archives operations
         description: first_archive
         layout: plain
 
-    And user of browser clicks on archives count link for "dir4" in dataset browser
     And user of browser sees archive browser in archives tab in Oneprovider page
     And user of browser copies 1st archive name in archive browser to clipboard
 
@@ -280,7 +281,6 @@ Feature: Basic archives operations
     And user of browser creates archive for item "dir1" in "space1" with following configuration:
         layout: plain
         include DIP: True
-    And user of browser clicks on archives count link for "dir1" in dataset browser
     And user of browser sees archive browser in archives tab in Oneprovider page
     Then user of browser sees DIP tag for 1st archive on archives list in archive browser
 
@@ -290,7 +290,6 @@ Feature: Basic archives operations
     And user of browser creates archive for item "dir1" in "space1" with following configuration:
         layout: BagIt
         include DIP: True
-    And user of browser clicks on archives count link for "dir1" in dataset browser
     And user of browser sees archive browser in archives tab in Oneprovider page
     And user of browser double clicks on 1st archive on archives list in archive browser
     And user of browser sees archive file browser in archives tab in Oneprovider page
