@@ -158,6 +158,7 @@ class TokensPage(GenericPage):
     confirm_button = NamedButton('button', text='Confirm')
 
     onezone_rest_access_template = WebElement('.template-onezoneRest')
+    alert = Label('.alert')
 
     def expand_dropdown(self):
         self._toggle.click()
