@@ -28,9 +28,6 @@ Feature: Basic management of spaces privileges in Onezone GUI
                     provider: oneprovider-1
                 directory tree:
                     - dir1
-                    - dir2
-                    - file1
-                    - file2
           space2:
             owner: space-owner-user
             users:
@@ -518,11 +515,10 @@ Feature: Basic management of spaces privileges in Onezone GUI
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
           Data management:
-            granted: Partially
-            privilege subtypes:
-              Read files: True
+            granted: True
 
     And user of browser_user1 clicks Files of "space1" in the sidebar
+    Then user of browser_user1 sees item(s) named dir1 in file browser
 
 
   Scenario: Non-space-owner successfully creates directory if he got Write files privilege
@@ -531,9 +527,7 @@ Feature: Basic management of spaces privileges in Onezone GUI
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
           Data management:
-            granted: Partially
-            privilege subtypes:
-              Write files: False
+            granted: False
 
     And user of browser_user1 clicks Files of "space1" in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
@@ -547,14 +541,12 @@ Feature: Basic management of spaces privileges in Onezone GUI
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
           Data management:
-            granted: Partially
-            privilege subtypes:
-              Write files: True
+            granted: True
 
     And user of browser_user1 clicks "New directory" button from file browser menu bar
     And user of browser_user1 writes "new_directory" into text field in modal "Create dir"
     And user of browser_user1 confirms create new directory using button
-    Then user of browser_user1 sees that item named "dir1" has appeared in file browser
+    Then user of browser_user1 sees that item named "new_directory" has appeared in file browser
 
 
   Scenario: Non-space-owner successfully creates share if he got Manage shares privilege
@@ -563,9 +555,7 @@ Feature: Basic management of spaces privileges in Onezone GUI
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
           Data management:
-            granted: Partially
-            privilege subtypes:
-              Manage shares: False
+            granted: False
 
     And user of browser_user1 clicks Files of "space1" in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
@@ -579,12 +569,35 @@ Feature: Basic management of spaces privileges in Onezone GUI
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
           Data management:
-            granted: Partially
-            privilege subtypes:
-              Manage shares: True
+            granted: True
 
     And user of browser_user1 clicks on menu for "dir1" file in file browser
     And user of browser_user1 clicks "Share" option in data row menu in file browser
     And user of browser_user1 clicks on "Create" button in modal "Share directory"
-    And user of browser_user1 clicks on "Close" button in modal "Share directory"
+    Then user of browser_user1 clicks on "Close" button in modal "Share directory"
+
+
+  Scenario: Non-space-owner successfully views QoS if he got View QoS privilege
+    When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
+    And user of space_owner_browser clicks Members of "space1" in the sidebar
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
+          QoS management:
+            granted: False
+
+    And user of browser_user1 clicks Files of "space1" in the sidebar
+    And user of browser_user1 sees file browser in files tab in Oneprovider page
+    And user of browser_user1 sees that current working directory displayed in breadcrumbs on file browser is space1
+
+    And user of browser_user1 clicks on menu for "dir1" file in file browser
+    And user of browser_user1 sees that Quality of Service option is not in selection menu on file browser page
+
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
+          QoS management:
+            granted: Partially
+            privilege subtypes:
+              View QoS: True
+
+    Then user of browser_user1 sees that Quality of Service option is in selection menu on file browser page
 
