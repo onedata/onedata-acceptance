@@ -116,8 +116,9 @@ def see_items_in_op_gui(selenium, browser_id, path, subfiles, tmp_memory,
 
     if path:
         for item in path.split('/'):
-            double_click_on_item_in_browser(selenium, browser_id, path, tmp_memory,
-                                        op_container)
+            double_click_on_item_in_browser(selenium, browser_id, item,
+                                            tmp_memory, op_container)
+
     if res == 'fails':
         assert_items_absence_in_browser(browser_id, subfiles, tmp_memory)
     else:
