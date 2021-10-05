@@ -107,7 +107,8 @@ def see_items_in_op_gui(selenium, browser_id, path, subfiles, tmp_memory,
                           tmp_memory, space)
 
     if path:
-        double_click_on_item_in_file_browser(browser_id, path, tmp_memory)
+        double_click_on_item_in_file_browser(selenium, browser_id, path,
+                                             tmp_memory, op_container)
     if res == 'fails':
         assert_items_absence_in_file_browser(browser_id, subfiles, tmp_memory)
     else:
@@ -168,7 +169,8 @@ def _check_files_tree(subtree, user, tmp_memory, cwd, selenium, op_container,
         except AttributeError:
             assert_items_presence_in_file_browser(user, item, tmp_memory)
             if item.startswith('dir'):
-                double_click_on_item_in_file_browser(user, item, tmp_memory)
+                double_click_on_item_in_file_browser(selenium, user, item,
+                                                     tmp_memory, op_container)
                 assert_empty_file_browser_in_data_tab_in_op(selenium, user,
                                                             op_container,
                                                             tmp_memory)
@@ -177,8 +179,8 @@ def _check_files_tree(subtree, user, tmp_memory, cwd, selenium, op_container,
                                                                op_container)
         else:
             assert_items_presence_in_file_browser(user, item_name, tmp_memory)
-            double_click_on_item_in_file_browser(user, item_name,
-                                                 tmp_memory)
+            double_click_on_item_in_file_browser(selenium, user, item_name,
+                                                 tmp_memory, op_container)
 
             # if item is directory go deeper
             if item_name.startswith('dir'):
@@ -244,7 +246,8 @@ def assert_file_content_in_op_gui(text, path, space, selenium, user, users,
                           tmp_memory, space)
         go_to_path_without_last_elem(user, tmp_memory, path)
     item_name = _select_item(user, tmp_memory, path)
-    double_click_on_item_in_file_browser(user, item_name, tmp_memory)
+    double_click_on_item_in_file_browser(selenium, user, item_name, tmp_memory,
+                                         op_container)
     has_downloaded_file_content(user, item_name, text, tmpdir)
     change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, user,
                                                    'home', op_container)
@@ -354,7 +357,7 @@ def _select_item(browser_id, tmp_memory, path):
     return item_name
 
 
-def go_to_path(browser_id, tmp_memory, path):
+def go_to_path(selenium, browser_id, tmp_memory, path, op_container):
     if '/' in path:
         item_name, path_list = get_item_name_and_containing_dir_path(path)
         path_list.append(item_name)
@@ -362,15 +365,19 @@ def go_to_path(browser_id, tmp_memory, path):
         path_list = [path]
     for directory in path_list:
         if directory != '':
-            double_click_on_item_in_file_browser(browser_id, directory, tmp_memory)
+            double_click_on_item_in_file_browser(selenium, browser_id,
+                                                 directory, tmp_memory,
+                                                 op_container)
 
 
-def go_to_path_without_last_elem(browser_id, tmp_memory, path):
+def go_to_path_without_last_elem(selenium, browser_id, tmp_memory, path,
+                                 op_container):
     if '/' in path:
         _, path_list = get_item_name_and_containing_dir_path(path)
         for directory in path_list:
-            double_click_on_item_in_file_browser(browser_id, directory,
-                                                 tmp_memory)
+            double_click_on_item_in_file_browser(selenium, browser_id,
+                                                 directory, tmp_memory,
+                                                 op_container)
 
 
 def get_item_name_and_containing_dir_path(path):

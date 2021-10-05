@@ -189,9 +189,60 @@ def assert_item_in_file_browser_is_of_type(browser_id, item_name, item_attr,
 @wt(parsers.parse('user of {browser_id} double clicks on item '
                   'named "{item_name}" in file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def double_click_on_item_in_file_browser(browser_id, item_name, tmp_memory):
-    browser = tmp_memory[browser_id]['file_browser']
+def double_click_on_item_in_file_browser(selenium, browser_id, item_name,
+                                         tmp_memory, op_container,
+                                         which_browser='file browser'):
+    which_browser = transform(which_browser)
+    browser = tmp_memory[browser_id][which_browser]
+    driver = selenium[browser_id]
+
+    # checking if file is located in file browser
+    start = time.time()
+    while item_name not in browser.data:
+        time.sleep(1)
+        if time.time() > start + WAIT_BACKEND:
+            raise RuntimeError('waited too long')
     browser.data[item_name].double_click()
+
+    # if item is directory compare length of directories in breadcrumbs to
+    # check if double-click has entered it
+    if item_name.startswith('dir'):
+        # check if breadcrumbs are not in file browser in shares
+        breadcrumbs = check_if_breadcrumbs_on_share_page(driver, op_container,
+                                                         which_browser)
+        message = f'Double click has not entered the directory'
+
+        # check if home directory where length of breadcrumbs doesn't matter
+        # if it was home and now it isn't it means double-click worked
+        if "/" not in breadcrumbs:
+            browser.data[item_name].double_click()
+            breadcrumbs = check_if_breadcrumbs_on_share_page(driver,
+                                                             op_container,
+                                                             which_browser)
+            if "/" not in breadcrumbs:
+                assert False, message
+        else:
+            length_of_past_dir = len(breadcrumbs)
+            browser.data[item_name].double_click()
+            breadcrumbs = check_if_breadcrumbs_on_share_page(driver,
+                                                             op_container,
+                                                             which_browser)
+            length_of_current_dir = len(breadcrumbs)
+
+            assert length_of_past_dir < length_of_current_dir, message
+    else:
+        browser.data[item_name].double_click()
+
+
+def check_if_breadcrumbs_on_share_page(driver, op_container,
+                                       which_browser='file browser'):
+    try:
+        breadcrumbs = op_container(driver).shares_page.breadcrumbs.pwd()
+    except:
+        breadcrumbs = getattr(op_container(driver),
+                              transform(which_browser)).breadcrumbs.pwd()
+
+    return breadcrumbs
 
 
 @wt(parsers.parse('user of {browser_id} clicks once on item '
