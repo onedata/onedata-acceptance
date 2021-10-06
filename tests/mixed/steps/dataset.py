@@ -7,8 +7,9 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 from tests.gui.meta_steps.oneprovider.dataset import *
-from tests.mixed.oneprovider_client.api.dataset_api import DatasetApi
-from tests.mixed.utils.common import NoSuchClientException, login_to_provider
+from tests.mixed.steps.rest.oneprovider.data import (create_dataset_in_op_rest,
+    assert_dataset_for_item_in_op_rest, remove_dataset_in_op_rest)
+from tests.mixed.utils.common import NoSuchClientException
 
 
 @wt(parsers.re('using (?P<client>.*), (?P<user>.+?) creates dataset for item'
@@ -21,10 +22,45 @@ def create_dataset_in_op(client, user, item_name, space_name, host, tmp_memory,
     if client_lower == 'web gui':
         create_dataset(user, tmp_memory, item_name, space_name,
                        selenium, oz_page, op_container, modals)
-
     elif client_lower == 'rest':
-        path = f'{space_name}/{item_name}'
-        client = login_to_provider(user, users, hosts[host]['hostname'])
-        dataset_api = DatasetApi(client)
+        create_dataset_in_op_rest(user, users, hosts, host, space_name,
+                                  item_name)
     else:
         raise NoSuchClientException(f'Client: {client} not found')
+
+
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) (?P<option>does '
+               'not see|sees) dataset for item "(?P<item_name>.*)" in space'
+               ' "(?P<space_name>.*)" in (?P<host>.*)'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_dataset_for_item_in_op(client, user, item_name, space_name, host,
+                                  selenium, oz_page, op_container, tmp_memory,
+                                  users, hosts, spaces, option):
+    client_lower = client.lower()
+    if client_lower == 'web gui':
+        assert_dataset_for_item_in_op_gui(selenium, user, oz_page, space_name,
+                                          op_container, tmp_memory, item_name,
+                                          option)
+    elif client_lower == 'rest':
+        assert_dataset_for_item_in_op_rest(user, users, hosts, host, space_name,
+                                           item_name, spaces, option)
+    else:
+        raise NoSuchClientException(f'Client: {client} not found')
+
+
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) removes dataset for item '
+               '"(?P<item_name>.*)" in space "(?P<space_name>.*)" '
+               'in (?P<host>.*)'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def remove_dataset_in_op(client, user, item_name, space_name, host, selenium,
+                         oz_page, op_container, tmp_memory, modals, users,
+                         hosts, spaces):
+    client_lower = client.lower()
+    if client_lower == 'web gui':
+        remove_dataset_in_op_gui(selenium, user, oz_page, space_name,
+                                 op_container, tmp_memory, item_name, modals)
+    elif client_lower == 'rest':
+        remove_dataset_in_op_rest(user, users, hosts, host, space_name, item_name, spaces)
+    else:
+        raise NoSuchClientException(f'Client: {client} not found')
+

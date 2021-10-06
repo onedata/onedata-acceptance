@@ -17,7 +17,8 @@ from tests.gui.steps.onezone.spaces import (
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.steps.oneprovider.browser import (
     click_option_in_data_row_menu_in_browser,
-    click_menu_for_elem_in_browser)
+    click_menu_for_elem_in_browser, assert_items_presence_in_browser,
+    assert_items_absence_in_browser)
 from tests.gui.steps.oneprovider.dataset import (
     click_mark_file_as_dataset_toggle)
 from tests.gui.steps.modal import click_modal_button
@@ -52,3 +53,55 @@ def create_dataset(browser_id, tmp_memory, item_name, space_name,
     click_mark_file_as_dataset_toggle(browser_id, selenium, modals)
     click_modal_button(selenium, browser_id, button_name,
                        option_in_data_row_menu, modals)
+
+
+def assert_dataset_for_item_in_op_gui(selenium, browser_id, oz_page,
+                                      space_name, op_container, tmp_memory,
+                                      item_name, option):
+    option2 = 'Data'
+    element = 'spaces'
+    option_in_space = 'Datasets'
+    item_browser = 'dataset browser'
+    click_on_option_in_the_sidebar(selenium, browser_id, option2, oz_page)
+    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id,
+                                                element, space_name,
+                                                oz_page)
+    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
+                                                  space_name,
+                                                  option_in_space, oz_page)
+    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
+                                tmp_memory, item_browser=item_browser)
+    if option == 'sees':
+        assert_items_presence_in_browser(browser_id, item_name, tmp_memory,
+                                         which_browser=item_browser)
+    else:
+        assert_items_absence_in_browser(browser_id, item_name, tmp_memory,
+                                        which_browser=item_browser)
+
+
+def remove_dataset_in_op_gui(selenium, browser_id, oz_page, space_name,
+                             op_container, tmp_memory, item_name, modals):
+    option = 'Data'
+    element = 'spaces'
+    option_in_space = 'Datasets'
+    item_browser = 'dataset browser'
+    option_in_data_row_menu = 'Remove dataset'
+    button_name = 'Remove'
+    modal = 'Remove selected dataset'
+    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
+    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id,
+                                                element, space_name,
+                                                oz_page)
+    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
+                                                  space_name,
+                                                  option_in_space, oz_page)
+    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
+                                tmp_memory, item_browser=item_browser)
+    click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory,
+                                   which_browser=item_browser)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id,
+                                             option_in_data_row_menu, modals)
+    click_modal_button(selenium, browser_id, button_name,
+                       modal, modals)
+
+

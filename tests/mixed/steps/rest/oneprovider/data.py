@@ -19,6 +19,7 @@ from cdmi_client.rest import ApiException as CdmiException
 from oneprovider_client import BasicFileOperationsApi
 from oneprovider_client import FilePathResolutionApi
 from oneprovider_client.rest import ApiException as OPException
+from tests.mixed.oneprovider_client.api.dataset_api import DatasetApi
 from tests.mixed.utils.common import *
 from tests.mixed.utils.data import (check_files_tree, create_content,
                                     assert_ace, get_acl_metadata)
@@ -377,3 +378,50 @@ def delete_qos_requirement_in_op_rest(user, users, hosts, host, space_name,
     qos = qo_s_api.get_file_qos_summary(file_id).to_dict()['requirements']
     for qos_id in qos:
         qo_s_api.remove_qos_requirement(qos_id)
+
+
+def create_dataset_in_op_rest(user, users, hosts, host, space_name, item_name):
+    path = f'{space_name}/{item_name}'
+    client = login_to_provider(user, users, hosts[host]['hostname'])
+    dataset_api = DatasetApi(client)
+    file_id = _lookup_file_id(path, client)
+    data = {"rootFileId": f"{file_id}"}
+    dataset_api.establish_dataset(data)
+
+
+def assert_dataset_for_item_in_op_rest(user, users, hosts, host, space_name,
+                                       item_name, spaces, option):
+    client = login_to_provider(user, users, hosts[host]['hostname'])
+    dataset_api = DatasetApi(client)
+    space_id = f'{spaces[space_name]}'
+    state = 'attached'
+    datasets = dataset_api.list_space_top_datasets(space_id, state)
+    if option == 'sees':
+        for dataset in datasets.datasets:
+            if dataset.name == item_name:
+                break
+        else:
+            raise Exception(f'Dataset for item {item_name} not found')
+
+    else:
+        for dataset in datasets.datasets:
+            if dataset.name == item_name:
+                raise Exception(f'Dataset for item {item_name} found')
+
+
+def get_dataset_id(item_name, spaces, space_name, dataset_api):
+    space_id = f'{spaces[space_name]}'
+    state = 'attached'
+    datasets = dataset_api.list_space_top_datasets(space_id, state)
+    for dataset in datasets.datasets:
+        if dataset.name == item_name:
+            return dataset.dataset_id
+
+
+def remove_dataset_in_op_rest(user, users, hosts, host, space_name, item_name,
+                              spaces):
+    client = login_to_provider(user, users, hosts[host]['hostname'])
+    dataset_api = DatasetApi(client)
+    dataset_id = get_dataset_id(item_name, spaces, space_name, dataset_api)
+    dataset_api.remove_dataset(dataset_id)
+

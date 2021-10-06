@@ -21,13 +21,21 @@ Feature: Datasets mixed tests
 
   Scenario Outline: Using <client1>, user creates dataset for item then using <client2> user sees that dataset was created
     When using <client1>, user1 creates dataset for item "dir1"  in space "space1" in oneprovider-1
-
+    Then using <client2>, user1 sees dataset for item "dir1" in space "space1" in oneprovider-1
 
   Examples:
-  | client1    |
-  | REST       |
+  | client1    | client2    |
+  | REST       | web GUI    |
+  | web GUI    | REST       |
 
-#  Examples:
-#  | client1    | client2    |
-#  | REST       | web GUI    |
-#  | web GUI    | REST       |
+
+  Scenario Outline: Using <client1>, user removes dataset for item then using <client2> user does not see dataset
+    When using <client1>, user1 creates dataset for item "dir1"  in space "space1" in oneprovider-1
+    And using <client2>, user1 sees dataset for item "dir1" in space "space1" in oneprovider-1
+    Then using <client2>, user1 removes dataset for item "dir1" in space "space1" in oneprovider-1
+    And using <client1>, user1 does not see dataset for item "dir1" in space "space1" in oneprovider-1
+
+  Examples:
+  | client1    | client2    |
+  | REST       | web GUI    |
+  | web GUI    | REST       |
