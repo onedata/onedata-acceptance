@@ -32,7 +32,7 @@ def create_dataset(browser_id, tmp_memory, item_name, space_name,
     element = 'spaces'
     option_in_space = 'Files'
     option_in_data_row_menu = 'Datasets'
-    button_name = 'Close'
+    button_name = 'X'
 
     try:
         op_container(selenium[browser_id]).file_browser.breadcrumbs

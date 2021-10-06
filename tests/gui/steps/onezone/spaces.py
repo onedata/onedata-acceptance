@@ -22,7 +22,7 @@ def _choose_space_from_menu_list(oz_page, driver, name):
     option = 'data'
     try:
         oz_page(driver)[option].spaces_header_list[name]()
-    except RuntimeError:
+    except (RuntimeError, IndexError):
         oz_page(driver)[option].choose_space(name)
 
 
