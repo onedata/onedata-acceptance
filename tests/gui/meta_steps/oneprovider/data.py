@@ -33,12 +33,14 @@ def _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id, path,
     item_name, _ = get_item_name_and_containing_dir_path(path)
 
     try:
-        go_to_path_without_last_elem(browser_id, tmp_memory, path)
+        go_to_path_without_last_elem(selenium, browser_id, tmp_memory, path,
+                                     op_container)
         click_menu_for_elem_in_file_browser(browser_id, item_name, tmp_memory)
     except (KeyError, StaleElementReferenceException):
         go_to_filebrowser(selenium, browser_id, oz_page, op_container,
                           tmp_memory, space)
-        go_to_path_without_last_elem(browser_id, tmp_memory, path)
+        go_to_path_without_last_elem(selenium, browser_id, tmp_memory, path,
+                                     op_container)
         click_menu_for_elem_in_file_browser(browser_id, item_name, tmp_memory)
 
 
@@ -88,7 +90,8 @@ def remove_item_in_op_gui(selenium, browser_id, path, tmp_memory, op_container,
 
 def remove_dir_and_parents_in_op_gui(selenium, browser_id, path, tmp_memory,
                                      op_container, res, space, modals, oz_page):
-    item_name = _select_item(browser_id, tmp_memory, path)
+    item_name = _select_item(selenium, browser_id, tmp_memory, path,
+                             op_container)
     remove_item_in_op_gui(selenium, browser_id, item_name, tmp_memory,
                           op_container, res, space, modals, oz_page)
 
@@ -130,7 +133,7 @@ def create_item_in_op_gui(selenium, browser_id, path, item_type, name,
 
     def _open_menu_for_item_in_file_browser():
         if path:
-            go_to_path(browser_id, tmp_memory, path)
+            go_to_path(selenium, browser_id, tmp_memory, path, op_container)
         click_button_from_file_browser_menu_bar(selenium, browser_id,
                                                 button, op_container)
 
@@ -226,7 +229,7 @@ def see_num_of_items_in_path_in_op_gui(selenium, user, tmp_memory, op_container,
     except KeyError:
         navigate_to_tab_in_op_using_gui(selenium, user, oz_page, provider, tab_name,
                                         hosts, modals)
-        _select_item(user, tmp_memory, path)
+        _select_item(selenium, user, tmp_memory, path, op_container)
         refresh_site(selenium, user)
         assert_file_browser_in_data_tab_in_op(selenium, user, op_container,
                                               tmp_memory)
@@ -240,12 +243,14 @@ def assert_file_content_in_op_gui(text, path, space, selenium, user, users,
         assert_file_browser_in_data_tab_in_op(selenium, user,
                                               op_container,
                                               tmp_memory)
-        go_to_path_without_last_elem(user, tmp_memory, path)
+        go_to_path_without_last_elem(selenium, user, tmp_memory, path,
+                                     op_container)
     except (KeyError, NoSuchElementException):
         go_to_filebrowser(selenium, user, oz_page, op_container,
                           tmp_memory, space)
-        go_to_path_without_last_elem(user, tmp_memory, path)
-    item_name = _select_item(user, tmp_memory, path)
+        go_to_path_without_last_elem(selenium, user, tmp_memory, path,
+                                     op_container)
+    item_name = _select_item(selenium, user, tmp_memory, path, op_container)
     double_click_on_item_in_file_browser(selenium, user, item_name, tmp_memory,
                                          op_container)
     has_downloaded_file_content(user, item_name, text, tmpdir)
@@ -324,11 +329,11 @@ def upload_file_to_op_gui(path, selenium, browser_id, space, res, filename,
     try:
         assert_file_browser_in_data_tab_in_op(selenium, browser_id,
                                               op_container, tmp_memory)
-        go_to_path(browser_id, tmp_memory, path)
+        go_to_path(selenium, browser_id, tmp_memory, path, op_container)
     except (KeyError, NoSuchElementException):
         go_to_filebrowser(selenium, browser_id, oz_page, op_container,
                           tmp_memory, space)
-        go_to_path(browser_id, tmp_memory, path)
+        go_to_path(selenium, browser_id, tmp_memory, path, op_container)
     if res == 'succeeds':
         upload_file_to_cwd_in_file_browser(selenium, browser_id, filename,
                                            op_container, popups)
@@ -345,14 +350,16 @@ def assert_mtime_not_earlier_than_op_gui(path, time, browser_id, tmp_memory,
     assert_nonempty_file_browser_in_data_tab_in_op(selenium, browser_id,
                                                    op_container, tmp_memory,
                                                    item_browser='file browser')
-    item_name = _select_item(browser_id, tmp_memory, path)
+    item_name = _select_item(selenium, browser_id, tmp_memory, path,
+                             op_container)
     assert_item_in_file_browser_is_of_mdate(browser_id, item_name, time,
                                             tmp_memory)
 
 
-def _select_item(browser_id, tmp_memory, path):
+def _select_item(selenium, browser_id, tmp_memory, path, op_container):
     item_name, path = get_item_name_and_containing_dir_path(path)
-    go_to_path_without_last_elem(browser_id, tmp_memory, path)
+    go_to_path_without_last_elem(selenium, browser_id, tmp_memory, path,
+                                 op_container)
     select_files_from_file_list_using_ctrl(browser_id, item_name, tmp_memory)
     return item_name
 
