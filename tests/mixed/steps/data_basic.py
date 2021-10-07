@@ -116,7 +116,8 @@ def create_dir_in_op(client, user, users, space, abs_path, hosts, tmp_memory,
         if '/' in abs_path:
             go_to_filebrowser(selenium, user, oz_page, op_container,
                               tmp_memory, space)
-            go_to_path_without_last_elem(user, tmp_memory, abs_path)
+            go_to_path_without_last_elem(selenium, user, tmp_memory, abs_path,
+                                         op_container)
             create_item_in_op_gui(selenium, user, '',
                                   'directory', os.path.basename(abs_path),
                                   tmp_memory, op_container, result, space,
@@ -355,6 +356,7 @@ def write_to_file_in_op(client, user, text, file_name, space, host, users,
 @wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) reads "(?P<text>.*)" '
                'from file named "(?P<file_name>.*)" in '
                '"(?P<space>.*)" in (?P<host>.*)'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def read_from_file_in_op(client, user, text, file_name, space, host, users,
                          hosts, selenium, oz_page, op_container, tmp_memory,
                          tmpdir, modals):

@@ -272,7 +272,8 @@ def assert_file_content_in_op_gui(text, path, space, selenium, user, users,
         go_to_path_without_last_elem(selenium, user, tmp_memory, path,
                                      op_container)
     item_name = _select_item(selenium, user, tmp_memory, path, op_container)
-    double_click_on_item_in_browser(user, item_name, tmp_memory, op_container)
+    double_click_on_item_in_browser(selenium, user, item_name, tmp_memory,
+                                    op_container)
     has_downloaded_file_content(user, item_name, text, tmpdir)
     change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, user,
                                                    'home', op_container)
