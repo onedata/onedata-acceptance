@@ -46,9 +46,10 @@ class Client:
         self.file_stats = {}
 
     def mount(self, username, hosts, access_token, mode, gdb=False, retries=3,
-              clean_mountpoint=True):
+              clean_mountpoint=True, force_clean_spaces=True):
         if clean_mountpoint:
-            clean_mount_path(username, self)
+            clean_mount_path(username, self,
+                             force_clean_spaces=force_clean_spaces)
         if 'proxy' in mode:
             mode_flag = '--force-proxy-io'
         else:
@@ -176,7 +177,8 @@ def create_client(clients, username, mount_path, client_instance,
 
 def mount_users(clients, user_names, mount_paths, client_hosts,
                 client_instances, tokens, hosts, request, users, env_desc,
-                should_fail=False, clean_mountpoint=True):
+                should_fail=False, clean_mountpoint=True,
+                force_clean_spaces=True):
     params = zip(user_names, mount_paths, client_instances, client_hosts,
                  tokens)
 
@@ -200,15 +202,18 @@ def mount_users(clients, user_names, mount_paths, client_hosts,
         client_mode = client_conf.get('mode')
         retries = 1 if should_fail else 3
         ret = client.mount(username, hosts, access_token, client_mode,
-                           retries=retries, clean_mountpoint=clean_mountpoint)
+                           retries=retries, clean_mountpoint=clean_mountpoint,
+                           force_clean_spaces=force_clean_spaces)
 
         if ret != 0 and (access_token != BAD_TOKEN and not should_fail):
-            clean_mount_path(username, client)
+            clean_mount_path(username, client,
+                             force_clean_spaces=force_clean_spaces)
             pytest.skip('Environment error: error mounting client')
 
         if access_token != BAD_TOKEN and not should_fail and clean_mountpoint:
             try:
-                clean_spaces(client)
+                if force_clean_spaces:
+                    clean_spaces(client)
             except AssertionError:
                 pytest.skip('Environment error: failed to clean spaces')
 
@@ -237,9 +242,10 @@ def clean_clients(user_names, users, lazy=False):
         users[user_name].clients.clear()
 
 
-def clean_mount_path(user, client, lazy=False):
+def clean_mount_path(user, client, lazy=False, force_clean_spaces=True):
     try:
-        clean_spaces(client)
+        if force_clean_spaces:
+            clean_spaces(client)
     except FileNotFoundError:
         pass
     except Exception as e:
