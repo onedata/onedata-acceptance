@@ -65,7 +65,7 @@ Feature: Provider management in Onepanel GUI
     And user of space_owner_browser clicks "space1" on the spaces list in the sidebar
     And user of space_owner_browser clicks Providers of "space1" in the sidebar
     And user of space_owner_browser sees "oneprovider-1" is on the providers list
-    And using web gui, admin deregisters provider in "oneprovider-1" Oneprovider panel service
+    And user of browser_emergency deregisters provider in "oneprovider-1" Oneprovider panel service
     And user of space_owner_browser is idle for 8 seconds
 
     # send registration token
