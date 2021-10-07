@@ -19,10 +19,6 @@ from tests.utils.bdd_utils import wt, parsers
 from tests.utils.path_utils import get_first_path_element
 
 
-def change_client_name_to_hostname(client_name):
-    return client_name.replace('oneclient', 'client')
-
-
 @wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to create '
                'file named "(?P<name>.*)" in "(?P<space>.*)" in (?P<host>.*)'))
 def create_file_in_op(client, user, users, space, name, hosts, tmp_memory, host,
@@ -57,16 +53,33 @@ def create_file_in_op_with_token(client, user, users, space, name, hosts,
         create_file_in_op_rest(user, users, host, hosts, full_path, result,
                                token)
     elif 'oneclient' in client_lower:
-        path = f'/home/{user}/onedata'
-        mount_new_oneclient_result(user, path, request, hosts, users, clients,
-                                   env_desc, tmp_memory, result,
-                                   client='oneclient')
-        if result == 'succeeds':
-            oneclient_host = change_client_name_to_hostname(client_lower)
-            create_file_in_op_oneclient(user, full_path, users, result,
-                                        oneclient_host)
+        create_file_in_op_oneclient_with_tokens(user, request, hosts, users,
+                                                clients, env_desc, tmp_memory,
+                                                result, full_path, client_lower)
     else:
         raise NoSuchClientException('Client: {} not found'.format(client))
+
+
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to see '
+               r'item named "(?P<name>.*)" using received access token in '
+               r'"(?P<space>.*)" in (?P<host>.*)'))
+def assert_file_in_op_with_token(client, user, name, space, host, tmp_memory,
+                                 users, hosts, request, clients, env_desc,
+                                 result):
+
+    client_lower = client.lower()
+    if client_lower == 'rest':
+        see_item_in_op_rest_using_token(user, name, space, host, tmp_memory,
+                                        users, hosts, result)
+    elif 'oneclient' in client_lower:
+        path = f'/home/{user}/onedata'
+        mount_new_oneclient_with_token(user, path, request, hosts, users,
+                                       clients, env_desc, tmp_memory)
+        oneclient_host = change_client_name_to_hostname(client_lower)
+        see_items_in_op_oneclient(name, space, user, users, result,
+                                  oneclient_host)
+    else:
+        raise NoSuchClientException(f'Client: {client} not found')
 
 
 @wt(parsers.re(r'using (?P<client>.*) with identity token, (?P<user>\w+) ('
@@ -84,14 +97,10 @@ def create_file_in_op_with_tokens(client, user, users, space, name, hosts,
                                access_token=access_token,
                                identity_token=identity_token)
     elif 'oneclient' in client_lower:
-        path = f'/home/{user}/onedata'
-        mount_new_oneclient_result(user, path, request, hosts, users, clients,
-                                   env_desc, tmp_memory, result,
-                                   client='oneclient')
-        if result == 'succeeds':
-            oneclient_host = change_client_name_to_hostname(client_lower)
-            create_file_in_op_oneclient(user, full_path, users, result,
-                                        oneclient_host)
+        create_file_in_op_oneclient_with_tokens(user, request, hosts, users,
+                                                clients, env_desc, tmp_memory,
+                                                result, full_path, client_lower)
+
     else:
         raise NoSuchClientException('Client: {} not found'.format(client))
 
@@ -107,7 +116,8 @@ def create_dir_in_op(client, user, users, space, abs_path, hosts, tmp_memory,
         if '/' in abs_path:
             go_to_filebrowser(selenium, user, oz_page, op_container,
                               tmp_memory, space)
-            go_to_path_without_last_elem(user, tmp_memory, abs_path)
+            go_to_path_without_last_elem(selenium, user, tmp_memory, abs_path,
+                                         op_container)
             create_item_in_op_gui(selenium, user, '',
                                   'directory', os.path.basename(abs_path),
                                   tmp_memory, op_container, result, space,
@@ -141,20 +151,27 @@ def go_to_dir(selenium, user, item_name, tmp_memory, op_container, space,
 
 
 @wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to see '
-               'items? named (?P<name_list>.*) in "(?P<space>.*)" in '
+               'item named (?P<name>.*) in "(?P<space>.*)" in '
                '(?P<host>.*)'))
-def see_item_in_op(client, user, users, result, name_list, space, host, hosts, 
+def see_item_in_op(client, user, users, result, name, space, host, hosts,
                    selenium, tmp_memory, op_container, oz_page):
     client_lower = client.lower()
     if client_lower == 'web gui':
-        see_items_in_op_gui(selenium, user, '', name_list, tmp_memory, 
+        item_name = name
+        name_list = name.replace('"', '')
+        path = ''
+        if '/' in name_list:
+            item_name = name_list.split('/')[-1]
+            path = name_list.replace(item_name, '')[:-1]
+
+        see_items_in_op_gui(selenium, user, path, item_name, tmp_memory,
                             op_container, result, space, oz_page)
     elif client_lower == 'rest':
-        see_items_in_op_rest(user, users, host, hosts, name_list, 
+        see_items_in_op_rest(user, users, host, hosts, name,
                              result, space)
     elif 'oneclient' in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        see_items_in_op_oneclient(name_list, space, user, users, result,
+        see_items_in_op_oneclient(name, space, user, users, result,
                                   oneclient_host)
     else:
         raise NoSuchClientException('Client: {} not found'.format(client))
@@ -248,12 +265,13 @@ def remove_file_in_op(client, user, name, space, host, users, hosts,
 @wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) '
                r'renames item named "(?P<old_name>.*)" to "(?P<new_name>.*)" '
                r'in "(?P<space>.*)" in (?P<host>.*)'))
-def rename_item_in_op(client, user, users, result, space, old_name, new_name,
+def rename_item_in_op(client, user, users, space, old_name, new_name,
                       hosts, tmp_memory, host, selenium, op_container, cdmi,
                       modals, oz_page):
     old_path = '{}/{}'.format(space, old_name)
     new_path = '{}/{}'.format(space, new_name)
     client_lower = client.lower()
+    result = 'succeeds'
     if client_lower == 'web gui':
         rename_item(selenium, user, old_name, new_name, tmp_memory,
                     result, space, modals, oz_page, op_container)
@@ -261,6 +279,32 @@ def rename_item_in_op(client, user, users, result, space, old_name, new_name,
         move_item_in_op_rest(old_path, new_path, result, cdmi, host, hosts,
                              user, users)
     elif 'oneclient' in client_lower:
+        oneclient_host = change_client_name_to_hostname(client_lower)
+        multi_file_steps.rename(user, old_path, new_path, oneclient_host,
+                                users)
+    else:
+        raise NoSuchClientException('Client: {} not found'.format(client))
+
+
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) '
+               r'renames item named "(?P<old_name>.*)" to "(?P<new_name>.*)" '
+               r'using received access token in "(?P<space>.*)" '
+               r'in (?P<host>.*)'))
+def rename_item_in_op_using_token(client, user, users, space, old_name,
+                                  new_name, hosts, tmp_memory, host, cdmi,
+                                  request, clients, env_desc):
+    old_path = f'{space}/{old_name}'
+    new_path = f'{space}/{new_name}'
+    client_lower = client.lower()
+
+    if client_lower == 'rest':
+        result = 'succeds'
+        move_item_in_op_rest_using_token(old_path, new_path, result, host,
+                                         hosts, user, users, tmp_memory, cdmi)
+    elif 'oneclient' in client_lower:
+        path = f'/home/{user}/onedata'
+        mount_new_oneclient_with_token(user, path, request, hosts, users,
+                                       clients, env_desc, tmp_memory)
         oneclient_host = change_client_name_to_hostname(client_lower)
         multi_file_steps.rename(user, old_path, new_path, oneclient_host,
                                 users)
@@ -312,6 +356,7 @@ def write_to_file_in_op(client, user, text, file_name, space, host, users,
 @wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) reads "(?P<text>.*)" '
                'from file named "(?P<file_name>.*)" in '
                '"(?P<space>.*)" in (?P<host>.*)'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def read_from_file_in_op(client, user, text, file_name, space, host, users,
                          hosts, selenium, oz_page, op_container, tmp_memory,
                          tmpdir, modals):
