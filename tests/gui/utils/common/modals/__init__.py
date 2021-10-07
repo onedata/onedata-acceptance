@@ -12,8 +12,8 @@ from .create_dir import CreateDir
 from .add_storage import AddStorage
 from tests.gui.utils.core.web_elements import WebItem
 from tests.gui.utils.common.modals.create_group import CreateGroup
-from tests.gui.utils.common.common import DropdownSelector
-
+from tests.gui.utils.common.common import DropdownSelector, \
+                                          MigrateDropdownSelector
 from .data_distribution import DataDistributionModal
 from .data_row_menu import DataRowMenu
 from .delete_modal import DeleteModal
@@ -106,6 +106,7 @@ class Modals(object):
     add_one_of_harvesters = WebItem('.modal-dialog', cls=AddOneOfElementsModal)
     remove_space_from_harvester = WebItem('.modal-dialog', cls=RemoveModal)
     dropdown = DropdownSelector('.ember-basic-dropdown-content')
+    migrate_dropdown = MigrateDropdownSelector('.ember-basic-dropdown-content')
     data_row_menu = WebItem('.file-actions.dropdown-menu', cls=DataRowMenu)
     delete_modal = WebItem('.modal-dialog', cls=DeleteModal)
     rename_modal = WebItem('.modal-dialog', cls=RenameModal)
@@ -129,6 +130,7 @@ class Modals(object):
 
     delete_user_account = WebItem('.modal-dialog', cls=DeleteUserAccountModal)
     file_details = WebItem('.modal-dialog', cls=FileDetailsModal)
+    directory_details = WebItem('.modal-dialog', cls=FileDetailsModal)
     symbolic_link_details = WebItem('.modal-dialog',
                                     cls=SymbolicLinkDetailsModal)
     datasets = WebItem('.modal-dialog', cls=DatasetsModal)
