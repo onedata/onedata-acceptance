@@ -15,7 +15,8 @@ from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.utils.generic import (parse_seq, upload_file_path, transform)
 from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import given, wt, parsers
-from selenium.webdriver.support.ui import WebDriverWait as Wait
+from tests.gui.steps.rest.env_up import GUI_UPLOAD_CHUNK_SIZE
+from tests.gui.steps.rest.env_up import UPLOAD_INACTIVITY_PERIOD_SEC
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -338,18 +339,11 @@ def upload_files_to_cwd_in_data_tab_no_waiting(selenium, browser_id, dir_path,
 @repeat_failed(timeout=WAIT_EXTENDED_UPLOAD)
 def upload_files_to_cwd_in_data_tab_extended_wait(selenium, browser_id,
                                                   dir_path, tmpdir,
-                                                  op_container, popups,capsys):
-    now = datetime.now()
-    current_time = now.strftime("%H:%M:%S")
-    with capsys.disabled():
-        print("Upload function call =", current_time)
+                                                  op_container, popups):
 
     upload_files_to_cwd_in_data_tab_no_waiting(selenium, browser_id, dir_path,
                                                tmpdir, op_container)
     wait_extended_time_for_file_upload_to_finish(selenium, browser_id, popups)
-
-    with capsys.disabled():
-        print("Upload function exit =", current_time)
 
 
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
@@ -375,6 +369,34 @@ def upload_file_to_cwd_in_data_tab_no_waiting(selenium, browser_id, file_path,
         op_container(driver).file_browser.upload_files(upload_file_path(file))
     else:
         raise RuntimeError('file {} does not exist'.format(str(file)))
+
+
+def network_throttling_upload(driver):
+    upload_kb = (GUI_UPLOAD_CHUNK_SIZE / UPLOAD_INACTIVITY_PERIOD_SEC)*1024
+
+    driver.set_network_conditions(
+        latency=5,
+        download_throughput=500 * 1024,
+        upload_throughput=float(upload_kb) / 8 * 1024)
+
+
+@wt(parsers.parse('user of {browser_id} uses upload button from file browser '
+                  'menu bar to upload local file "{file_path}" '
+                  'to remote current dir with slow connection'))
+@repeat_failed(timeout=WAIT_EXTENDED_UPLOAD)
+def upload_file_to_cwd_in_data_tab_with_network_throttling(selenium, browser_id
+                                                           , file_path, tmpdir,
+                                                           op_container,
+                                                           popups):
+    driver = selenium[browser_id]
+    network_throttling_upload(driver)
+    file = tmpdir.join(browser_id, *file_path.split('/'))
+    if file.isfile():
+        op_container(driver).file_browser.upload_files(upload_file_path(file))
+    else:
+        raise RuntimeError('file {} does not exist'.format(str(file)))
+
+    wait_extended_time_for_file_upload_to_finish(selenium, browser_id, popups)
 
 
 @wt(parsers.parse('user of {browser_id} sees that chunk bar for provider '
