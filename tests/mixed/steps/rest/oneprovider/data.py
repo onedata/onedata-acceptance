@@ -380,12 +380,20 @@ def delete_qos_requirement_in_op_rest(user, users, hosts, host, space_name,
         qo_s_api.remove_qos_requirement(qos_id)
 
 
-def create_dataset_in_op_rest(user, users, hosts, host, space_name, item_name):
+def create_dataset_in_op_rest(user, users, hosts, host, space_name, item_name,
+                              option):
     path = f'{space_name}/{item_name}'
     client = login_to_provider(user, users, hosts[host]['hostname'])
     dataset_api = DatasetApi(client)
     file_id = _lookup_file_id(path, client)
     data = {"rootFileId": f"{file_id}"}
+    if ' data' in option:
+        data["protectionFlags"] = ["data_protection"]
+    if 'metadata' in option:
+        if "protectionFlags" in data:
+            data["protectionFlags"].append("metadata_protection")
+        else:
+            data["protectionFlags"] = ["metadata_protection"]
     dataset_api.establish_dataset(data)
 
 
@@ -424,4 +432,23 @@ def remove_dataset_in_op_rest(user, users, hosts, host, space_name, item_name,
     dataset_api = DatasetApi(client)
     dataset_id = get_dataset_id(item_name, spaces, space_name, dataset_api)
     dataset_api.remove_dataset(dataset_id)
+
+
+def assert_write_protection_flag_for_dataset_op_rest(user, users, hosts, host,
+                                                     space_name, item_name,
+                                                     spaces, option):
+    client = login_to_provider(user, users, hosts[host]['hostname'])
+    dataset_api = DatasetApi(client)
+    dataset_id = get_dataset_id(item_name, spaces, space_name, dataset_api)
+    dataset_info = dataset_api.get_dataset(dataset_id)
+    data = ' data'
+    metadata = ' metadata'
+    if data in option:
+        err_msg = 'dataset does not have data protection flag'
+        data_flag = 'data_protection'
+        assert data_flag in dataset_info.protection_flags, err_msg
+    if metadata in option:
+        err_msg = 'dataset does not have metadata protection flag'
+        metadata_flag = 'metadata_protection'
+        assert metadata_flag in dataset_info.protection_flags, err_msg
 

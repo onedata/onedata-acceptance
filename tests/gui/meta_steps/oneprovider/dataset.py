@@ -20,7 +20,7 @@ from tests.gui.steps.oneprovider.browser import (
     click_menu_for_elem_in_browser, assert_items_presence_in_browser,
     assert_items_absence_in_browser)
 from tests.gui.steps.oneprovider.dataset import (
-    click_mark_file_as_dataset_toggle)
+    click_mark_file_as_dataset_toggle, click_protection_toggle)
 from tests.gui.steps.modal import click_modal_button
 
 
@@ -28,8 +28,8 @@ from tests.gui.steps.modal import click_modal_button
                   '"{item_name}" in "{space_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_dataset(browser_id, tmp_memory, item_name, space_name,
-                   selenium, oz_page, op_container, modals):
-    option = 'Data'
+                   selenium, oz_page, op_container, modals, option):
+    option2 = 'Data'
     element = 'spaces'
     option_in_space = 'Files'
     option_in_data_row_menu = 'Datasets'
@@ -38,7 +38,7 @@ def create_dataset(browser_id, tmp_memory, item_name, space_name,
     try:
         op_container(selenium[browser_id]).file_browser.breadcrumbs
     except RuntimeError:
-        click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
+        click_on_option_in_the_sidebar(selenium, browser_id, option2, oz_page)
         click_element_on_lists_on_left_sidebar_menu(selenium, browser_id,
                                                     element, space_name,
                                                     oz_page)
@@ -51,6 +51,14 @@ def create_dataset(browser_id, tmp_memory, item_name, space_name,
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
                                              option_in_data_row_menu, modals)
     click_mark_file_as_dataset_toggle(browser_id, selenium, modals)
+    if ' data' in option:
+        toggle_type = 'data'
+        click_protection_toggle(browser_id, selenium, modals, toggle_type,
+                                option_in_data_row_menu)
+    if 'metadata' in option:
+        toggle_type = 'metadata'
+        click_protection_toggle(browser_id, selenium, modals, toggle_type,
+                                option_in_data_row_menu)
     click_modal_button(selenium, browser_id, button_name,
                        option_in_data_row_menu, modals)
 
