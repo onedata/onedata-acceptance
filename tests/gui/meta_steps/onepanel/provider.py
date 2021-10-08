@@ -60,7 +60,8 @@ def modify_provider_with_given_name_in_op_panel_using_gui(selenium, user,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) deregisters '
-               'provider in "(?P<host>.+?)" Oneprovider panel service'))
+               'provider in "(?P<provider_name>.+?)" Oneprovider panel '
+               'service'))
 def deregister_provider_in_op_panel_using_gui(selenium, browser_id,
                                               provider_name, onepanel, popups,
                                               hosts):
