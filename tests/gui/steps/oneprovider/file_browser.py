@@ -7,7 +7,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-from time import time
+import time
 from datetime import datetime
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
@@ -200,7 +200,6 @@ def double_click_on_item_in_file_browser(selenium, browser_id, item_name,
         time.sleep(1)
         if time.time() > start + WAIT_BACKEND:
             raise RuntimeError('waited too long')
-    browser.data[item_name].double_click()
 
     # if item is directory compare length of directories in breadcrumbs to
     # check if double-click has entered it
@@ -233,8 +232,7 @@ def check_if_breadcrumbs_on_share_page(driver, op_container):
     try:
         breadcrumbs = op_container(driver).shares_page.breadcrumbs.pwd()
     except:
-        breadcrumbs = getattr(op_container(driver),
-                              ['file_browser']).breadcrumbs.pwd()
+        breadcrumbs = op_container(driver).file_browser.breadcrumbs.pwd()
 
     return breadcrumbs
 
