@@ -144,6 +144,7 @@ Feature: Basic management of harvester in Onezone GUI
             granted: Partially
             privilege subtypes:
               Set privileges: True
+    And user of browser2 refreshes site
     Then user of browser2 sets following privileges for "user1" user in "harvester15" harvester:
           Harvester management:
             granted: True
