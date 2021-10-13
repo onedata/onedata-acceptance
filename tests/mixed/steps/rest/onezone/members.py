@@ -9,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in " \
 from tests.gui.utils.generic import parse_seq
 from tests.mixed.utils.common import login_to_oz
 from tests.mixed.onezone_client import SpaceApi
-from tests.mixed.onezone_client.rest import ApiException
+from onezone_client.rest import ApiException
 from tests.mixed.steps.rest.onezone.common import get_group
 import yaml
 

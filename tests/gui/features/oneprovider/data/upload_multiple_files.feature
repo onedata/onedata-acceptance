@@ -10,7 +10,7 @@ Feature: Uploading multiple files at once
             providers:
                 - oneprovider-1:
                     storage: posix
-                    size: 1000000
+                    size: 10000000000
 
     And user opened browser window
     And user of browser opened onezone page
@@ -25,6 +25,10 @@ Feature: Uploading multiple files at once
                 content: 10
               file23.txt:
                 content: 23
+            dir5: 300
+            dir6:
+              file2GB.txt:
+                size: 2 GiB
 
 
   Scenario: User uploads 5 files at once
@@ -80,3 +84,25 @@ Feature: Uploading multiple files at once
     And user of browser uses upload button from file browser menu bar to upload files from local directory "dir3" to remote current dir
     And user of browser uses upload button from file browser menu bar to upload files from local directory "dir4" to remote current dir
     Then user of browser sees items named ["file0.txt", "file1.txt", "file10.txt", "file2.txt", "file23.txt", "file3.txt"] in file browser in given order
+
+
+  Scenario: User successfully uploads 2 GB file (stress test)
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
+
+    # upload 2GB file
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser uses upload button from file browser menu bar to upload files from local directory "dir6" to remote current dir and waits extended time for upload to finish
+    Then user of browser sees that there is 1 item in file browser
+
+
+# TODO: Some uploaded files are not visible in file browser right after upload (VFS-8436)
+  Scenario: User successfully uploads 300 files (stress test)
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
+
+    # upload 300 files
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser uses upload button from file browser menu bar to upload files from local directory "dir5" to remote current dir and waits extended time for upload to finish
+# TODO: Uncomment when "Some uploaded files are not visible in file browser right after upload (VFS-8436)" will be fixed
+#    Then user of browser scrolls to the bottom of file browser and sees there are 300 files
