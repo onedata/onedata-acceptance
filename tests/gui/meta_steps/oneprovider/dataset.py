@@ -8,6 +8,8 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.meta_steps.oneprovider.data import (
+    go_to_path_without_last_elem, check_file_structure_in_browser)
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 from tests.gui.steps.onezone.spaces import (
@@ -47,6 +49,17 @@ def create_dataset(browser_id, tmp_memory, item_name, space_name,
                                                       option_in_space, oz_page)
         assert_browser_in_tab_in_op(selenium, browser_id, op_container,
                                     tmp_memory)
+
+    if '/' in item_name:
+        click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
+                                                      space_name,
+                                                      option_in_space, oz_page)
+        assert_browser_in_tab_in_op(selenium, browser_id, op_container,
+                                    tmp_memory)
+        go_to_path_without_last_elem(selenium, browser_id, tmp_memory,
+                                     item_name, op_container)
+        item_name = item_name.split('/')[-1]
+
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
                                              option_in_data_row_menu, modals)
@@ -113,3 +126,21 @@ def remove_dataset_in_op_gui(selenium, browser_id, oz_page, space_name,
                        modal, modals)
 
 
+def check_dataset_structure_in_op_gui(selenium, browser_id, oz_page, space_name,
+                                      config, op_container, tmpdir, tmp_memory):
+    option = 'Data'
+    element = 'spaces'
+    option_in_space = 'Datasets'
+    item_browser = 'dataset browser'
+    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
+    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id,
+                                                element, space_name,
+                                                oz_page)
+    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
+                                                  space_name,
+                                                  option_in_space, oz_page)
+    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
+                                tmp_memory, item_browser=item_browser)
+    check_file_structure_in_browser(browser_id, config, selenium, tmp_memory,
+                                    op_container, tmpdir,
+                                    which_browser=item_browser)

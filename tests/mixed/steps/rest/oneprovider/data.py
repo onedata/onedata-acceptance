@@ -452,3 +452,52 @@ def assert_write_protection_flag_for_dataset_op_rest(user, users, hosts, host,
         metadata_flag = 'metadata_protection'
         assert metadata_flag in dataset_info.protection_flags, err_msg
 
+
+def check_if_item_in_dataset_structure(datasets, item_name, dataset_api,
+                                       check_children=False,
+                                       item_subtree=None):
+    for dataset in datasets.datasets:
+        if dataset.name == item_name:
+            if check_children:
+                check_children_of_dataset_in_op_rest(dataset, dataset_api,
+                                                     item_subtree)
+            break
+    else:
+        raise Exception(f'There is no dataset for item {item_name}')
+
+
+def check_children_of_dataset_in_op_rest(dataset, dataset_api, item_subtree):
+    for child in item_subtree:
+        try:
+            [(child_name, child_subtree)] = child.items()
+            dataset_id = dataset.dataset_id
+            dataset_children = dataset_api.list_dataset_children(dataset_id)
+            check_children = True
+            check_if_item_in_dataset_structure(dataset_children, child_name,
+                                               dataset_api,
+                                               check_children=check_children,
+                                               item_subtree=child_subtree)
+
+        except AttributeError:
+            dataset_id = dataset.dataset_id
+            dataset_children = dataset_api.list_dataset_children(dataset_id)
+            check_if_item_in_dataset_structure(dataset_children, child,
+                                               dataset_api)
+
+
+def check_dataset_structure_in_op_rest(user, users, hosts, host, spaces,
+                                       space_name, config):
+    subtree = yaml.load(config)
+    client = login_to_provider(user, users, hosts[host]['hostname'])
+    dataset_api = DatasetApi(client)
+    space_id = f'{spaces[space_name]}'
+    state = 'attached'
+    for item in subtree:
+        [(item_name, item_subtree)] = item.items()
+        datasets = dataset_api.list_space_top_datasets(space_id, state)
+        check_children = True
+        check_if_item_in_dataset_structure(datasets, item_name,
+                                           dataset_api,
+                                           check_children=check_children,
+                                           item_subtree=item_subtree)
+

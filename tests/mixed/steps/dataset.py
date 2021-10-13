@@ -6,12 +6,14 @@ __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
+
 from tests.gui.meta_steps.oneprovider.dataset import *
 from tests.gui.steps.oneprovider.browser import (
     assert_status_tag_for_file_in_browser)
 from tests.mixed.steps.rest.oneprovider.data import (
     create_dataset_in_op_rest, assert_dataset_for_item_in_op_rest,
-    remove_dataset_in_op_rest, assert_write_protection_flag_for_dataset_op_rest)
+    remove_dataset_in_op_rest, assert_write_protection_flag_for_dataset_op_rest,
+    check_dataset_structure_in_op_rest)
 from tests.mixed.utils.common import NoSuchClientException
 
 
@@ -99,3 +101,23 @@ def assert_write_protection_flag_for_dataset(client, user, item_name, option,
                                                          option)
     else:
         raise NoSuchClientException(f'Client: {client} not found')
+
+
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) sees that datasets '
+               'structure in space "(?P<space_name>.*)" in (?P<host>.*) '
+               r'is as follow:\n(?P<config>(.|\s)*)'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def check_dataset_structure_in_op(client, user, space_name, host, config,
+                                  selenium, oz_page, op_container, tmpdir,
+                                  tmp_memory, users, hosts, spaces):
+    client_lower = client.lower()
+    if client_lower == 'web gui':
+        check_dataset_structure_in_op_gui(selenium, user, oz_page,
+                                          space_name, config, op_container,
+                                          tmpdir, tmp_memory)
+    elif client_lower == 'rest':
+        check_dataset_structure_in_op_rest(user, users, hosts, host, spaces,
+                                           space_name, config)
+    else:
+        raise NoSuchClientException(f'Client: {client} not found')
+

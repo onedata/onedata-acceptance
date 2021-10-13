@@ -15,6 +15,11 @@ Feature: Datasets mixed tests
               provider: oneprovider-1
             directory tree:
               - dir1
+              - dir2:
+                  - dir3:
+                    - dir4:
+                      - dir5
+                    - file1: 150
 
     And opened browser with user1 signed in to "onezone" service
 
@@ -50,3 +55,21 @@ Feature: Datasets mixed tests
   | client1    | client2    |
   | REST       | web GUI    |
   | web GUI    | REST       |
+
+
+  Scenario Outline: Using <client1>, user marks directories as dataset then using <client2> user sees dataset directory tree
+    When using <client1>, user1 creates dataset for item "dir2" in space "space1" in oneprovider-1
+    And using <client1>, user1 creates dataset for item "dir2/dir3/dir4" in space "space1" in oneprovider-1
+    And using <client1>, user1 creates dataset for item "dir2/dir3/file1" in space "space1" in oneprovider-1
+    And using <client1>, user1 creates dataset for item "dir2/dir3/dir4/dir5" in space "space1" in oneprovider-1
+    Then using <client2>, user1 sees that datasets structure in space "space1" in oneprovider-1 is as follow:
+         - dir2:
+           - dir4:
+             - dir5
+           - file1
+
+  Examples:
+  | client1    | client2    |
+  | REST       | web GUI    |
+  | web GUI    | REST       |
+
