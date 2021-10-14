@@ -104,18 +104,6 @@ def test_files_uploaded_by_user_are_ordered_by_name():
     pass
 
 
-@skip_if_not_chrome
-@scenario('User successfully uploads 2 GB file (stress test)')
-def test_user_successfully_uploads_2_gb_file_stress_test():
-    pass
-
-
-@skip_if_not_chrome
-@scenario('User successfully uploads 300 files (stress test)')
-def test_user_successfully_uploads_300_files_stress_test():
-    pass
-
-
 scenarios('../features/oneprovider/data/empty_file_browser.feature')
 scenarios('../features/oneprovider/data/single_file.feature')
 scenarios('../features/oneprovider/data/several_files.feature')
@@ -127,3 +115,14 @@ scenarios('../features/oneprovider/data/dataset.feature')
 scenarios('../features/oneprovider/data/dataset_privileges.feature')
 scenarios('../features/oneprovider/data/archive.feature')
 
+
+@skip_if_not_chrome
+@scenario('User successfully uploads 1 GB file (stress test)')
+def test_user_successfully_uploads_1_gb_file_stress_test():
+    pass
+
+
+@skip_if_not_chrome
+@scenario('User successfully uploads 300 files (stress test)')
+def test_user_successfully_uploads_300_files_stress_test():
+    pass
