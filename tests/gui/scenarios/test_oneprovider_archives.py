@@ -1,9 +1,9 @@
-"""This module contains tests suite for basic operations using
-Oneprovider data tab GUI and single browser instance.
+"""This module contains tests suite for basic operations on archives using
+Oneprovider GUI and single browser instance.
 """
 
-__author__ = "Bartosz Walkowicz"
-__copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
+__author__ = "Agnieszka Warchol"
+__copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
@@ -72,11 +72,4 @@ def screens():
     return [0]
 
 
-scenarios('../features/oneprovider/data/empty_file_browser.feature')
-scenarios('../features/oneprovider/data/single_file.feature')
-scenarios('../features/oneprovider/data/several_files.feature')
-scenarios('../features/oneprovider/data/single_directory.feature')
-scenarios('../features/oneprovider/data/file_management.feature')
-scenarios('../features/oneprovider/data/nested_directories.feature')
-scenarios('../features/oneprovider/data/download_tar_files.feature')
-
+scenarios('../features/oneprovider/data/archive.feature')
