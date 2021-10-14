@@ -1,5 +1,5 @@
 """This module contains tests suite for basic operations on datasets using
-Oneprovider GUI and browsers instance.
+Oneprovider GUI and multiple browsers instances.
 """
 
 __author__ = "Agnieszka Warchol"
