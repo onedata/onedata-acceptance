@@ -41,19 +41,29 @@ def double_click_on_item_in_browser(selenium, browser_id, item_name, tmp_memory,
         # if it was home and now it isn't it means double-click worked
         if "/" not in breadcrumbs:
             browser.data[item_name].double_click()
-            for _ in range(3):
+            for _ in range(5):
                 breadcrumbs = check_if_breadcrumbs_on_share_page(driver,
                                                                  op_container,
                                                                  which_browser)
+                if "/" not in breadcrumbs:
+                    time.sleep(1)
+                else:
+                    break
+
             if "/" not in breadcrumbs:
                 assert False, message
         else:
             length_of_past_dir = len(breadcrumbs)
             browser.data[item_name].double_click()
-            for _ in range(3):
+            for _ in range(5):
                 breadcrumbs = check_if_breadcrumbs_on_share_page(driver,
                                                                  op_container,
                                                                  which_browser)
+                if len(breadcrumbs) == length_of_past_dir:
+                    time.sleep(1)
+                else:
+                    break
+
             length_of_current_dir = len(breadcrumbs)
 
             assert length_of_past_dir < length_of_current_dir, message

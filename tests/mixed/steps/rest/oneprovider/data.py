@@ -528,3 +528,24 @@ def check_dataset_structure_in_op_rest(user, users, hosts, host, spaces,
                                            check_children=check_children,
                                            item_subtree=item_subtree)
 
+
+def check_effective_protection_flags_in_op_rest(user, users, hosts, host,
+                                                item_name, option):
+    client = login_to_provider(user, users, hosts[host]['hostname'])
+    dataset_api = DatasetApi(client)
+    if 'space1' not in item_name:
+        item_name = "/space1/" + item_name
+    file_id = _lookup_file_id(item_name, client)
+    summary = dataset_api.get_file_dataset_summary(file_id)
+    data = ' data'
+    metadata = 'metadata'
+    if data in option:
+        kind = 'data_protection'
+        err_msg = f'No data protection flag for {item_name}'
+        assert kind in summary.effective_protection_flags, err_msg
+
+    if metadata in option:
+        kind = 'metadata_protection'
+        err_msg = f'No matadata protection flag for {item_name}'
+        assert kind in summary.effective_protection_flags, err_msg
+

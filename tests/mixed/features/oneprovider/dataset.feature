@@ -46,7 +46,7 @@ Feature: Datasets mixed tests
   | web GUI    | REST       |
 
 
-  Scenario Outline: Using <client1>, user creates dataset with data and metadata write protection flags then using <client2> user sees  data and metadata write protection flags
+  Scenario Outline: Using <client1>, user creates dataset with data and metadata write protection flags then using <client2> user sees data and metadata write protection flags
     When using <client1>, user1 creates dataset with data and metadata write protection flags for item "dir1" in space "space1" in oneprovider-1
     And using <client2>, user1 sees dataset for item "dir1" in space "space1" in oneprovider-1
     Then using <client2>, user1 sees data and metadata write protection flags for dataset for item "dir1" in space "space1" in oneprovider-1
@@ -72,4 +72,16 @@ Feature: Datasets mixed tests
   | client1    | client2    |
   | REST       | web GUI    |
   | web GUI    | REST       |
+
+
+  Scenario Outline: Using <client1>, user marks directories as dataset with data and metadata write protection flags then using <client2> user sees that file has effective protection flags from its parents
+    When using <client1>, user1 creates dataset with metadata write protection flags for item "dir2" in space "space1" in oneprovider-1
+    And using <client1>, user1 creates dataset with data write protection flags for item "dir2/dir3" in space "space1" in oneprovider-1
+    Then using <client2>, user1 sees that item "dir2/dir3/dir4/dir5" has effective data and metadata write protection flags in space "space1" in oneprovider-1
+
+  Examples:
+  | client1    | client2    |
+  | REST       | web GUI    |
+  | web GUI    | REST       |
+
 

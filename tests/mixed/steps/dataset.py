@@ -13,14 +13,14 @@ from tests.gui.steps.oneprovider.browser import (
 from tests.mixed.steps.rest.oneprovider.data import (
     create_dataset_in_op_rest, assert_dataset_for_item_in_op_rest,
     remove_dataset_in_op_rest, assert_write_protection_flag_for_dataset_op_rest,
-    check_dataset_structure_in_op_rest)
+    check_dataset_structure_in_op_rest,
+    check_effective_protection_flags_in_op_rest)
 from tests.mixed.utils.common import NoSuchClientException
 
 
 @wt(parsers.re('using (?P<client>.*), (?P<user>.+?) creates dataset '
-               '(?P<option>|with data and metadata write protection flags )for '
-               'item "(?P<item_name>.*)" in space "(?P<space_name>.*)" '
-               'in (?P<host>.*)'))
+               '(?P<option>.*)for item "(?P<item_name>.*)" in space '
+               '"(?P<space_name>.*)" in (?P<host>.*)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_dataset_in_op(client, user, item_name, space_name, host, tmp_memory,
                          selenium, oz_page, op_container, modals, users, hosts,
@@ -120,4 +120,28 @@ def check_dataset_structure_in_op(client, user, space_name, host, config,
                                            space_name, config)
     else:
         raise NoSuchClientException(f'Client: {client} not found')
+
+
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) sees that item'
+               ' "(?P<item_name>.*)" has effective(?P<option>.*) '
+               'write protection flags in space "(?P<space_name>.*)" '
+               'in (?P<host>.*)'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def check_effective_protection_flags(client, user, item_name, option,
+                                     space_name, host, selenium, oz_page,
+                                     op_container, tmp_memory, modals, users,
+                                     hosts):
+    client_lower = client.lower()
+    if client_lower == 'web gui':
+        check_effective_protection_flags_in_op_gui(selenium, user,
+                                                   oz_page, space_name,
+                                                   op_container, tmp_memory,
+                                                   item_name, modals, option)
+
+    elif client_lower == 'rest':
+        check_effective_protection_flags_in_op_rest(user, users, hosts, host,
+                                                    item_name, option)
+    else:
+        raise NoSuchClientException(f'Client: {client} not found')
+
 

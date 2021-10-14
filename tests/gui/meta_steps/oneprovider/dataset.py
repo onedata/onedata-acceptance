@@ -20,9 +20,10 @@ from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.steps.oneprovider.browser import (
     click_option_in_data_row_menu_in_browser,
     click_menu_for_elem_in_browser, assert_items_presence_in_browser,
-    assert_items_absence_in_browser)
+    assert_items_absence_in_browser, assert_status_tag_for_file_in_browser)
 from tests.gui.steps.oneprovider.dataset import (
-    click_mark_file_as_dataset_toggle, click_protection_toggle)
+    click_mark_file_as_dataset_toggle, click_protection_toggle,
+    assert_general_toggle_checked_for_ancestors)
 from tests.gui.steps.modal import click_modal_button
 
 
@@ -144,3 +145,48 @@ def check_dataset_structure_in_op_gui(selenium, browser_id, oz_page, space_name,
     check_file_structure_in_browser(browser_id, config, selenium, tmp_memory,
                                     op_container, tmpdir,
                                     which_browser=item_browser)
+
+
+def check_effective_protection_flags_in_op_gui(selenium, browser_id, oz_page,
+                                               space_name, op_container,
+                                               tmp_memory, item_name, modals,
+                                               option):
+    option1 = 'Data'
+    element = 'spaces'
+    option_in_space = 'Files'
+    option_in_data_row_menu = 'Datasets'
+    click_on_option_in_the_sidebar(selenium, browser_id, option1, oz_page)
+    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id,
+                                                element, space_name,
+                                                oz_page)
+    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
+                                                  space_name,
+                                                  option_in_space, oz_page)
+    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
+                                tmp_memory)
+    go_to_path_without_last_elem(selenium, browser_id, tmp_memory,
+                                 item_name, op_container)
+    item_name = item_name.split('/')[-1]
+    click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id,
+                                             option_in_data_row_menu, modals)
+    data = ' data'
+    metadata = 'metadata'
+    if data in option:
+        kind = 'data'
+        check_effective_protection_flag(browser_id, selenium, modals, kind,
+                                        item_name, tmp_memory)
+    if metadata in option:
+        check_effective_protection_flag(browser_id, selenium, modals, metadata,
+                                        item_name, tmp_memory)
+
+
+def check_effective_protection_flag(browser_id, selenium, modals, kind,
+                                    item_name, tmp_memory):
+    try:
+        assert_general_toggle_checked_for_ancestors(browser_id, selenium,
+                                                    modals, kind)
+    except AssertionError:
+        status_type = kind+' protected'
+        assert_status_tag_for_file_in_browser(browser_id, status_type,
+                                              item_name, tmp_memory)
