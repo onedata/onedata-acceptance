@@ -98,7 +98,7 @@ Feature: Provider management in Onepanel GUI
     And user of space_owner_browser sees that there is no supporting provider "oneprovider-1" for space named "space1"
     And user of space_owner_browser creates space "helloworld"
     And user of space_owner_browser generates space support token for space "helloworld" and sends it to user of browser_emergency
-    And using web gui, admin supports "helloworld" space in "oneprovider-1" Oneprovider panel service with following configuration:
+    And user of browser_emergency supports "helloworld" space in "oneprovider-1" Oneprovider panel service with following configuration:
             storage: posix
             size: 10000000
 
