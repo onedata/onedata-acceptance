@@ -448,9 +448,26 @@ def get_dataset_id(item_name, spaces, space_name, dataset_api):
     space_id = f'{spaces[space_name]}'
     state = 'attached'
     datasets = dataset_api.list_space_top_datasets(space_id, state)
-    for dataset in datasets.datasets:
-        if dataset.name == item_name:
-            return dataset.dataset_id
+    if '/' in item_name:
+        path_list = item_name.split('/')
+        for dataset in datasets.datasets:
+            if dataset.name == path_list[0]:
+                dataset_id = dataset.dataset_id
+                return get_dataset_child_id(path_list, dataset_id, dataset_api)
+    else:
+        for dataset in datasets.datasets:
+            if dataset.name == item_name:
+                return dataset.dataset_id
+
+
+def get_dataset_child_id(path_list, dataset_id, dataset_api ):
+    for item in path_list[1:]:
+        dataset_children = dataset_api.list_dataset_children(dataset_id)
+        for dataset in dataset_children.datasets:
+            if dataset.name == item:
+                dataset_id = dataset.dataset_id
+                if item == path_list[-1]:
+                    return dataset_id
 
 
 def remove_dataset_in_op_rest(user, users, hosts, host, space_name, item_name,
@@ -529,8 +546,9 @@ def check_dataset_structure_in_op_rest(user, users, hosts, host, spaces,
                                            item_subtree=item_subtree)
 
 
-def check_effective_protection_flags_in_op_rest(user, users, hosts, host,
-                                                item_name, option):
+def check_effective_protection_flags_for_file_in_op_rest(user, users, hosts,
+                                                         host, item_name,
+                                                         option):
     client = login_to_provider(user, users, hosts[host]['hostname'])
     dataset_api = DatasetApi(client)
     if 'space1' not in item_name:
@@ -548,4 +566,41 @@ def check_effective_protection_flags_in_op_rest(user, users, hosts, host,
         kind = 'metadata_protection'
         err_msg = f'No matadata protection flag for {item_name}'
         assert kind in summary.effective_protection_flags, err_msg
+
+
+def set_protection_flags_for_dataset_in_op_rest(user, users, hosts, host,
+                                                item_name, option, spaces,
+                                                space_name):
+    client = login_to_provider(user, users, hosts[host]['hostname'])
+    toggle_data = ' data'
+    toggle_metadata = 'metadata'
+    data = {"setProtectionFlags": []}
+    if toggle_data in option:
+        data["setProtectionFlags"].append("data_protection")
+    if toggle_metadata in option:
+        data["setProtectionFlags"].append("metadata_protection")
+    dataset_api = DatasetApi(client)
+    dataset_id = get_dataset_id(item_name, spaces, space_name, dataset_api)
+    dataset_api.update_dataset(dataset_id, data)
+
+
+def check_effective_protection_flags_for_dataset_in_op_rest(user, users, hosts,
+                                                            host, item_name,
+                                                            option, spaces,
+                                                            space_name):
+    client = login_to_provider(user, users, hosts[host]['hostname'])
+    data = ' data'
+    metadata = 'metadata'
+    dataset_api = DatasetApi(client)
+    dataset_id = get_dataset_id(item_name, spaces, space_name, dataset_api)
+    dataset_information = dataset_api.get_dataset(dataset_id)
+
+    if data in option:
+        kind = 'data_protection'
+        err_msg = f'No data protection flag for {item_name}'
+        assert kind in dataset_information.effective_protection_flags, err_msg
+    if metadata in option:
+        kind = 'metadata_protection'
+        err_msg = f'No metadata protection flag for {item_name}'
+        assert kind in dataset_information.effective_protection_flags, err_msg
 
