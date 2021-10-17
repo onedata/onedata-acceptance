@@ -124,7 +124,7 @@ def assert_one_record_in_clusters_menu(selenium, browser_id, oz_page, provider,
 
 @wt(parsers.parse('user of {browser_id} waits for another "{provider}" '
                   'record to appear in clusters menu'))
-@repeat_failed(timeout=WAIT_BACKEND*4)
+@repeat_failed(timeout=WAIT_BACKEND*100)
 def assert_two_clusters_records(selenium, browser_id, provider, oz_page, hosts):
     _assert_num_cluster_records(selenium, browser_id, provider, 2, oz_page,
                                 hosts)
