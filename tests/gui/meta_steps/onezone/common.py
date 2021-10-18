@@ -44,13 +44,11 @@ def login_using_gui(host_list, selenium, driver, tmpdir, tmp_memory, xvfb,
         tmp_memory[browser] = tmp_memory[user]
         displays[browser] = displays[user]
 
-    if test_type == 'gui':
-        g_login_using_basic_auth(selenium, browser_id_list, user_list,
-                                 login_page,
-                                 users, host_list)
-    else:
-        g_login_using_basic_auth(selenium, user_list, user_list, login_page,
-                                 users, host_list)
+    # mixed tests use user_list instead of browser_id_list because
+    # some mixed steps don't use browser
+    login_ids = browser_id_list if test_type == 'gui' else user_list
+    g_login_using_basic_auth(selenium, login_ids, user_list, login_page,
+                             users, host_list)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
