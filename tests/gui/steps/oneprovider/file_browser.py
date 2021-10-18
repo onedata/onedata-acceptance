@@ -137,7 +137,7 @@ def assert_item_in_file_browser_is_of_mdate(browser_id, item_name,
     # %b - abbreviated month name
     item_date = datetime.strptime(browser.data[item_name].modification_date,
                                   date_fmt)
-    expected_date = datetime.fromtimestamp(time())
+    expected_date = datetime.fromtimestamp(time.time())
     err_msg = 'displayed mod time {} for {} does not match expected {}'
     assert abs(expected_date - item_date).seconds < err_time, err_msg.format(
         item_date, item_name, expected_date)

@@ -40,7 +40,7 @@ Feature: Basic management of spaces privileges in Onezone GUI
             granted: False
     And user of browser_user1 clicks Providers of "space1" in the sidebar
     And user of browser_user1 clicks Add support button on providers page
-    Then user of browser_user1 sees This resource could not be loaded alert on providers page
+    Then user of browser_user1 sees INSUFFICIENT PRIVILEGES alert on providers page
 
 
   Scenario: User sees and modifies privileges to his space
