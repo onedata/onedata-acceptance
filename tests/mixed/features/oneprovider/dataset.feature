@@ -98,3 +98,13 @@ Feature: Datasets mixed tests
   | REST       | web GUI    |
   | web GUI    | REST       |
 
+
+  Scenario Outline: Using <client1>, user creates dataset, and using <client2> user detaches dataset than using <client1> user sees that dataset was detached
+    When using <client1>, user1 creates dataset for item "dir1" in space "space1" in oneprovider-1
+    And using <client2>, user1 detaches dataset for item "dir1" in space "space1" in oneprovider-1
+    Then using <client1>, user1 sees that dataset for item "dir1" is detached in space "space1" in oneprovider-1
+
+  Examples:
+  | client1    | client2    |
+  | REST       | web GUI    |
+  | web GUI    | REST       |

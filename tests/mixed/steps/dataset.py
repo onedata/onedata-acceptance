@@ -16,7 +16,8 @@ from tests.mixed.steps.rest.oneprovider.data import (
     check_dataset_structure_in_op_rest,
     check_effective_protection_flags_for_file_in_op_rest,
     set_protection_flags_for_dataset_in_op_rest,
-    check_effective_protection_flags_for_dataset_in_op_rest)
+    check_effective_protection_flags_for_dataset_in_op_rest,
+    detach_dataset_in_op_rest, assert_dataset_detached_in_op_rest)
 from tests.mixed.utils.common import NoSuchClientException
 
 
@@ -30,7 +31,7 @@ def create_dataset_in_op(client, user, item_name, space_name, host, tmp_memory,
     client_lower = client.lower()
     if client_lower == 'web gui':
         create_dataset(user, tmp_memory, item_name, space_name,
-                       selenium, oz_page, op_container, modals, option)
+                       selenium, oz_page, op_container, modals, option=option)
     elif client_lower == 'rest':
         create_dataset_in_op_rest(user, users, hosts, host, space_name,
                                   item_name, option)
@@ -191,3 +192,38 @@ def check_effective_protection_flags_for_file(client, user, item_name, option,
     else:
         raise NoSuchClientException(f'Client: {client} not found')
 
+
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) detaches dataset '
+               'for item "(?P<item_name>.*)" in space "(?P<space_name>.*)" '
+               'in (?P<host>.*)'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def detach_dataset_in_op(client, user, selenium, space_name, op_container,
+                         tmp_memory, item_name, modals, oz_page, users, hosts,
+                         host, spaces):
+    client_lower = client.lower()
+    if client_lower == 'web gui':
+        detach_dataset_in_op_gui(selenium, user, oz_page, space_name,
+                                 op_container, tmp_memory, item_name, modals)
+    elif client_lower == 'rest':
+        detach_dataset_in_op_rest(user, users, hosts, host, item_name, spaces,
+                                  space_name)
+    else:
+        raise NoSuchClientException(f'Client: {client} not found')
+
+
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) sees that dataset for item'
+               ' "(?P<item_name>.*)" is detached in space "(?P<space_name>.*)"'
+               ' in (?P<host>.*)'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_dataset_detached_in_op(client, selenium, user, oz_page, space_name,
+                                  op_container, tmp_memory, item_name, users,
+                                  hosts, host, spaces):
+    client_lower = client.lower()
+    if client_lower == 'web gui':
+        assert_dataset_detached_in_op_gui(selenium, user, oz_page, item_name,
+                                          space_name, op_container, tmp_memory)
+    elif client_lower == 'rest':
+        assert_dataset_detached_in_op_rest(user, users, hosts, host, item_name,
+                                           spaces, space_name)
+    else:
+        raise NoSuchClientException(f'Client: {client} not found')

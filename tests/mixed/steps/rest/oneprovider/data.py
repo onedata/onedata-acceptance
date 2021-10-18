@@ -604,3 +604,25 @@ def check_effective_protection_flags_for_dataset_in_op_rest(user, users, hosts,
         err_msg = f'No metadata protection flag for {item_name}'
         assert kind in dataset_information.effective_protection_flags, err_msg
 
+
+def detach_dataset_in_op_rest(user, users, hosts, host, item_name, spaces,
+                              space_name):
+    client = login_to_provider(user, users, hosts[host]['hostname'])
+    data = {'state': "detached"}
+    dataset_api = DatasetApi(client)
+    dataset_id = get_dataset_id(item_name, spaces, space_name, dataset_api)
+    dataset_api.update_dataset(dataset_id, data)
+
+
+def assert_dataset_detached_in_op_rest(user, users, hosts, host, item_name, spaces, space_name):
+    client = login_to_provider(user, users, hosts[host]['hostname'])
+    dataset_api = DatasetApi(client)
+    space_id = f'{spaces[space_name]}'
+    state = 'detached'
+    detached_datasets = dataset_api.list_space_top_datasets(space_id, state)
+    for dataset in detached_datasets.datasets:
+        if dataset.name == item_name:
+            break
+    else:
+        raise Exception(f'Dataset for item {item_name} not found on detached'
+                        f' view mode')

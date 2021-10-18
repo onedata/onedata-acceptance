@@ -229,6 +229,10 @@ def click_on_state_view_mode_tab(browser_id, oz_page, selenium, state, which):
     driver.switch_to.default_content()
     header = f'{transform(which)}_header'
     getattr(getattr(oz_page(driver)['data'], header), transform(state))()
+    # if we make call to fast after changing view mode
+    # we do not see items in this mode, to avoid this wait some time
+    import time
+    time.sleep(0.2)
 
 
 @wt(parsers.parse('user of {browser_id} clicks on menu '
