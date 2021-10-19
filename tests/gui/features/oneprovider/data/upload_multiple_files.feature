@@ -96,7 +96,6 @@ Feature: Uploading multiple files at once
     And user of browser uses upload button from file browser menu bar to upload files from local directory "dir5" to remote current dir and waits extended time for upload to finish
 # TODO: Uncomment when "Some uploaded files are not visible in file browser right after upload (VFS-8436)" will be fixed
 #    Then user of browser scrolls to the bottom of file browser and sees there are 300 files
-#    And user of browser deletes files [space1/dir5]
 
 
   Scenario: User successfully uploads 1 GB file (stress test)
@@ -107,4 +106,9 @@ Feature: Uploading multiple files at once
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload files from local directory "dir6" to remote current dir and waits extended time for upload to finish
     Then user of browser sees that there is 1 item in file browser
-#    And user of browser deletes files [space1/dir6]
+
+    And user of browser is idle for 20 seconds
+    And user of browser clicks on menu for "file1GB.txt" directory in file browser
+    And user of browser clicks "Delete" option in data row menu in file browser
+    And user of browser clicks on "Yes" button in modal "Delete modal"
+    And user of browser removes dir6/file1GB.txt from providers storage mount point
