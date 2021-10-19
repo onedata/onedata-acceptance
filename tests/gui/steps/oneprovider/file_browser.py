@@ -35,7 +35,7 @@ def assert_msg_instead_of_browser(browser_id, msg, tmp_memory):
 def click_on_status_tag_for_file_in_file_browser(browser_id, status_type,
                                                  item_name, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
-    browser.data[item_name].click_on_status_tag(status_type)
+    browser.data[item_name].click_on_status_tag(transform(status_type))
 
 
 @wt(parsers.parse('user of {browser_id} sees only items named {item_list}'
