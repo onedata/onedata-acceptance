@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+
 from tests.gui.meta_steps.oneprovider.dataset import *
 from tests.gui.steps.oneprovider.browser import (
     assert_status_tag_for_file_in_browser)
@@ -17,7 +18,8 @@ from tests.mixed.steps.rest.oneprovider.data import (
     check_effective_protection_flags_for_file_in_op_rest,
     set_protection_flags_for_dataset_in_op_rest,
     check_effective_protection_flags_for_dataset_in_op_rest,
-    detach_dataset_in_op_rest, assert_dataset_detached_in_op_rest)
+    detach_dataset_in_op_rest, assert_dataset_detached_in_op_rest,
+    reattach_dataset_in_op_rest)
 from tests.mixed.utils.common import NoSuchClientException
 
 
@@ -225,5 +227,23 @@ def assert_dataset_detached_in_op(client, selenium, user, oz_page, space_name,
     elif client_lower == 'rest':
         assert_dataset_detached_in_op_rest(user, users, hosts, host, item_name,
                                            spaces, space_name)
+    else:
+        raise NoSuchClientException(f'Client: {client} not found')
+
+
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) reattaches dataset for '
+               'item "(?P<item_name>.*)" in space "(?P<space_name>.*)" '
+               'in (?P<host>.*)'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def reattach_dataset_in_op(client, user, selenium, space_name, op_container,
+                           tmp_memory, item_name, modals, oz_page, users, hosts,
+                           host, spaces):
+    client_lower = client.lower()
+    if client_lower == 'web gui':
+        reattach_dataset_in_op_gui(selenium, user, oz_page, space_name,
+                                   op_container, tmp_memory, item_name, modals)
+    elif client_lower == 'rest':
+        reattach_dataset_in_op_rest(user, users, hosts, host, item_name, spaces,
+                                    space_name)
     else:
         raise NoSuchClientException(f'Client: {client} not found')

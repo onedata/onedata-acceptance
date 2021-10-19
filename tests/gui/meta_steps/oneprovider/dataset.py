@@ -280,3 +280,32 @@ def assert_dataset_detached_in_op_gui(selenium, browser_id, oz_page, item_name,
     assert_items_presence_in_browser(browser_id, item_name, tmp_memory,
                                      which_browser=item_browser)
 
+
+def reattach_dataset_in_op_gui(selenium, browser_id, oz_page, space_name,
+                               op_container, tmp_memory, item_name, modals):
+    option = 'Data'
+    element = 'spaces'
+    option_in_space = 'Datasets'
+    item_browser = 'dataset browser'
+    which = 'dataset'
+    state = 'detached'
+    option_in_data_row_menu = 'Reattach'
+    modal = 'Detach Dataset'
+    button_name = 'Proceed'
+    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
+    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id,
+                                                element, space_name,
+                                                oz_page)
+    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
+                                                  space_name,
+                                                  option_in_space, oz_page)
+    click_on_state_view_mode_tab(browser_id, oz_page, selenium, state, which)
+    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
+                                tmp_memory, item_browser=item_browser)
+    click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory,
+                                   which_browser=item_browser)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id,
+                                             option_in_data_row_menu, modals)
+    click_modal_button(selenium, browser_id, button_name,
+                       modal, modals)
+

@@ -444,9 +444,9 @@ def assert_dataset_for_item_in_op_rest(user, users, hosts, host, space_name,
                 raise Exception(f'Dataset for item {item_name} found')
 
 
-def get_dataset_id(item_name, spaces, space_name, dataset_api):
+def get_dataset_id(item_name, spaces, space_name, dataset_api,
+                   state='attached'):
     space_id = f'{spaces[space_name]}'
-    state = 'attached'
     datasets = dataset_api.list_space_top_datasets(space_id, state)
     if '/' in item_name:
         path_list = item_name.split('/')
@@ -626,3 +626,16 @@ def assert_dataset_detached_in_op_rest(user, users, hosts, host, item_name, spac
     else:
         raise Exception(f'Dataset for item {item_name} not found on detached'
                         f' view mode')
+
+
+def reattach_dataset_in_op_rest(user, users, hosts, host, item_name, spaces,
+                                space_name):
+    client = login_to_provider(user, users, hosts[host]['hostname'])
+    data = {'state': "attached"}
+    dataset_api = DatasetApi(client)
+    state = 'detached'
+    dataset_id = get_dataset_id(item_name, spaces, space_name, dataset_api,
+                                state=state)
+
+    dataset_api.update_dataset(dataset_id, data)
+
