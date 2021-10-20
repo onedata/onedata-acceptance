@@ -87,7 +87,7 @@ def check_the_understand_notice(selenium, browser_id, oz_page):
 
 @wt(parsers.parse('user of {browser_id} sees that "{provider}" cluster '
                   'is not working in clusters menu'))
-@repeat_failed(timeout=WAIT_BACKEND * 2)
+@repeat_failed(timeout=WAIT_BACKEND * 4)
 def assert_cluster_not_working_in_oz_panel(selenium, browser_id, provider,
                                            oz_page, hosts):
     provider_record = _get_cluster_record(selenium, browser_id, oz_page,
@@ -124,7 +124,7 @@ def assert_one_record_in_clusters_menu(selenium, browser_id, oz_page, provider,
 
 @wt(parsers.parse('user of {browser_id} waits for another "{provider}" '
                   'record to appear in clusters menu'))
-@repeat_failed(timeout=WAIT_BACKEND*100)
+@repeat_failed(timeout=WAIT_BACKEND*4)
 def assert_two_clusters_records(selenium, browser_id, provider, oz_page, hosts):
     _assert_num_cluster_records(selenium, browser_id, provider, 2, oz_page,
                                 hosts)
