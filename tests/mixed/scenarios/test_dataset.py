@@ -49,6 +49,7 @@ from tests.gui.conftest import *
 from tests.mixed.steps.data_basic import *
 from tests.mixed.steps.qos import *
 from tests.mixed.steps.dataset import *
+from tests.mixed.steps.tokens_basic import *
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.onezone.common import *
 

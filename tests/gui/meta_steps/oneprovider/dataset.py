@@ -24,7 +24,8 @@ from tests.gui.steps.oneprovider.browser import (
     click_on_state_view_mode_tab)
 from tests.gui.steps.oneprovider.dataset import (
     click_mark_file_as_dataset_toggle, click_protection_toggle,
-    assert_general_toggle_checked_for_ancestors)
+    assert_general_toggle_checked_for_ancestors,
+    fail_to_mark_file_as_dataset_toggle)
 from tests.gui.steps.modal import click_modal_button
 
 
@@ -76,6 +77,28 @@ def create_dataset(browser_id, tmp_memory, item_name, space_name,
                                 option_in_data_row_menu)
     click_modal_button(selenium, browser_id, button_name,
                        option_in_data_row_menu, modals)
+
+
+def fail_to_create_dataset_in_op_gui(browser_id, tmp_memory, item_name,
+                                     space_name, selenium, oz_page,
+                                     op_container, modals):
+    option2 = 'Data'
+    element = 'spaces'
+    option_in_space = 'Files'
+    option_in_data_row_menu = 'Datasets'
+    click_on_option_in_the_sidebar(selenium, browser_id, option2, oz_page)
+    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id,
+                                                element, space_name,
+                                                oz_page)
+    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
+                                                  space_name,
+                                                  option_in_space, oz_page)
+    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
+                                tmp_memory)
+    click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id,
+                                             option_in_data_row_menu, modals)
+    fail_to_mark_file_as_dataset_toggle(browser_id, selenium, modals)
 
 
 def assert_dataset_for_item_in_op_gui(selenium, browser_id, oz_page,

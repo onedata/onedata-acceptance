@@ -3,6 +3,7 @@ Feature: Datasets mixed tests
   Background:
     Given initial users configuration in "onezone" Onezone service:
             - user1
+            - user2
     And initial spaces configuration in "onezone" Onezone service:
         space1:
           owner: user1
@@ -21,7 +22,7 @@ Feature: Datasets mixed tests
                       - dir5
                     - file1: 150
 
-    And opened browser with user1 signed in to "onezone" service
+    And opened [browser1, browser2] with [user1, user2] signed in to ["onezone", "onezone"] service
 
 
   Scenario Outline: Using <client1>, user creates dataset for item then using <client2> user sees that dataset was created
@@ -110,13 +111,56 @@ Feature: Datasets mixed tests
   | web GUI    | REST       |
 
 
-   Scenario Outline: Using <client1>, user detaches dataset than using <client1> user reattaches dataset
+  Scenario Outline: Using <client1>, user detaches dataset than using <client1> user reattaches dataset
     When using <client2>, user1 creates dataset for item "dir1" in space "space1" in oneprovider-1
     And using <client1>, user1 detaches dataset for item "dir1" in space "space1" in oneprovider-1
     And using <client2>, user1 reattaches dataset for item "dir1" in space "space1" in oneprovider-1
     Then using <client1>, user1 sees dataset for item "dir1" in space "space1" in oneprovider-1
+
   Examples:
   | client1    | client2    |
   | REST       | web GUI    |
   | web GUI    | REST       |
+
+
+  Scenario Outline: Using <client1>, user1 creates invite token with manage dataset privilege than using <client2> user2 can create dataset
+     When using <client1>, user1 creates token with following configuration:
+          name: invite token
+          type: invite
+          invite type: Invite user to space
+          invite target: space1
+          privileges:
+            Dataset & archive management:
+              granted: Partially
+              privilege subtypes:
+                Manage datasets: True
+    And if <client1> is web GUI, user1 copies created token
+    And user1 sends token to user2
+    And using <client2>, user2 successfully joins space space1 with received token
+    Then using <client2>, user2 creates dataset for item "dir1" in space "space1" in oneprovider-1
+    And using <client1>, user1 sees dataset for item "dir1" in space "space1" in oneprovider-1
+
+  Examples:
+  | client1    | client2    |
+  | REST       | web GUI    |
+  | web GUI    | REST       |
+
+
+  Scenario Outline: Using <client1>, user1 creates invite token without manage dataset privilege than using <client2> user2 fail to create dataset
+     When using <client1>, user1 creates token with following configuration:
+          name: invite token
+          type: invite
+          invite type: Invite user to space
+          invite target: space1
+    And if <client1> is web GUI, user1 copies created token
+    And user1 sends token to user2
+    And using <client2>, user2 successfully joins space space1 with received token
+    Then using <client2>, user2 fails to create dataset for item "dir1" in space "space1" in oneprovider-1
+    And using <client1>, user1 does not see dataset for item "dir1" in space "space1" in oneprovider-1
+
+  Examples:
+  | client1    | client2    |
+  | REST       | web GUI    |
+  | web GUI    | REST       |
+
 

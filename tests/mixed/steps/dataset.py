@@ -19,7 +19,7 @@ from tests.mixed.steps.rest.oneprovider.data import (
     set_protection_flags_for_dataset_in_op_rest,
     check_effective_protection_flags_for_dataset_in_op_rest,
     detach_dataset_in_op_rest, assert_dataset_detached_in_op_rest,
-    reattach_dataset_in_op_rest)
+    reattach_dataset_in_op_rest, fail_to_create_dataset_in_op_rest)
 from tests.mixed.utils.common import NoSuchClientException
 
 
@@ -37,6 +37,25 @@ def create_dataset_in_op(client, user, item_name, space_name, host, tmp_memory,
     elif client_lower == 'rest':
         create_dataset_in_op_rest(user, users, hosts, host, space_name,
                                   item_name, option)
+    else:
+        raise NoSuchClientException(f'Client: {client} not found')
+
+
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) fails to create dataset for'
+               ' item "(?P<item_name>.*)" in space '
+               '"(?P<space_name>.*)" in (?P<host>.*)'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def fail_to_create_dataset_in_op(client, user, item_name, space_name, host,
+                                 tmp_memory, selenium, oz_page, op_container,
+                                 modals, users, hosts):
+    client_lower = client.lower()
+    if client_lower == 'web gui':
+        fail_to_create_dataset_in_op_gui(user, tmp_memory, item_name,
+                                         space_name, selenium, oz_page,
+                                         op_container, modals)
+    elif client_lower == 'rest':
+        fail_to_create_dataset_in_op_rest(user, users, hosts, host, space_name,
+                                          item_name)
     else:
         raise NoSuchClientException(f'Client: {client} not found')
 
