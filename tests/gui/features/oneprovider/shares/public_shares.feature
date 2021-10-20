@@ -78,7 +78,7 @@ Feature: Basic data tab operations on public shares in file browser
 
     And user of browser1 refreshes site
 
-    Then user of browser1 sees "The resource could not be found" error
+    Then user of browser1 sees "Share not found" error
 
 
   Scenario: User sees new files in share's public interface after owner added them to shared directory

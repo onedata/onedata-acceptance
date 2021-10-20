@@ -135,9 +135,9 @@ def copy_current_URL(selenium, browser_id, clipboard, displays, tmp_memory):
 @wt(parsers.parse('user of {browser_id} sees "{error_msg}" error'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def no_public_share_view(selenium, browser_id, error_msg, public_share):
-    error_msg = error_msg.lower()
+    error_msg = error_msg.upper()
     driver = selenium[browser_id]
-    assert error_msg in public_share(driver).error_msg.lower(), (
+    assert error_msg == public_share(driver).share_not_found, (
         f'displayed error msg does not contain {error_msg}')
 
 

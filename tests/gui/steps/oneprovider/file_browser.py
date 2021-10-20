@@ -7,7 +7,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-from time import time
+import time
 from datetime import datetime
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
@@ -137,7 +137,7 @@ def assert_item_in_file_browser_is_of_mdate(browser_id, item_name,
     # %b - abbreviated month name
     item_date = datetime.strptime(browser.data[item_name].modification_date,
                                   date_fmt)
-    expected_date = datetime.fromtimestamp(time())
+    expected_date = datetime.fromtimestamp(time.time())
     err_msg = 'displayed mod time {} for {} does not match expected {}'
     assert abs(expected_date - item_date).seconds < err_time, err_msg.format(
         item_date, item_name, expected_date)
@@ -189,9 +189,52 @@ def assert_item_in_file_browser_is_of_type(browser_id, item_name, item_attr,
 @wt(parsers.parse('user of {browser_id} double clicks on item '
                   'named "{item_name}" in file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def double_click_on_item_in_file_browser(browser_id, item_name, tmp_memory):
+def double_click_on_item_in_file_browser(selenium, browser_id, item_name,
+                                         tmp_memory, op_container):
     browser = tmp_memory[browser_id]['file_browser']
-    browser.data[item_name].double_click()
+    driver = selenium[browser_id]
+
+    # checking if file is located in file browser
+    start = time.time()
+    while item_name not in browser.data:
+        time.sleep(1)
+        if time.time() > start + WAIT_BACKEND:
+            raise RuntimeError('waited too long')
+
+    # if item is directory compare length of directories in breadcrumbs to
+    # check if double-click has entered it
+    if item_name.startswith('dir'):
+        # check if breadcrumbs are not in file browser in shares
+        breadcrumbs = check_if_breadcrumbs_on_share_page(driver, op_container)
+        message = f'Double click has not entered the directory'
+
+        # check if home directory where length of breadcrumbs doesn't matter
+        # if it was home and now it isn't it means double-click worked
+        if "/" not in breadcrumbs:
+            browser.data[item_name].double_click()
+            breadcrumbs = check_if_breadcrumbs_on_share_page(driver,
+                                                             op_container)
+            if "/" not in breadcrumbs:
+                assert False, message
+        else:
+            length_of_past_dir = len(breadcrumbs)
+            browser.data[item_name].double_click()
+            breadcrumbs = check_if_breadcrumbs_on_share_page(driver,
+                                                             op_container)
+            length_of_current_dir = len(breadcrumbs)
+
+            assert length_of_past_dir < length_of_current_dir, message
+    else:
+        browser.data[item_name].double_click()
+
+
+def check_if_breadcrumbs_on_share_page(driver, op_container):
+    try:
+        breadcrumbs = op_container(driver).shares_page.breadcrumbs.pwd()
+    except:
+        breadcrumbs = op_container(driver).file_browser.breadcrumbs.pwd()
+
+    return breadcrumbs
 
 
 @wt(parsers.parse('user of {browser_id} clicks once on item '
