@@ -19,10 +19,6 @@ from tests.utils.bdd_utils import wt, parsers
 from tests.utils.path_utils import get_first_path_element
 
 
-def change_client_name_to_hostname(client_name):
-    return client_name.replace('oneclient', 'client')
-
-
 @wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to create '
                'file named "(?P<name>.*)" in "(?P<space>.*)" in (?P<host>.*)'))
 def create_file_in_op(client, user, users, space, name, hosts, tmp_memory, host,
