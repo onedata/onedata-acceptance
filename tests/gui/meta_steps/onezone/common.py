@@ -29,7 +29,7 @@ def login_using_gui(host_list, selenium, driver, tmpdir, tmp_memory, xvfb,
                     driver_kwargs, driver_type, firefox_logging, displays,
                     firefox_path, screen_width, screen_height, hosts,
                     users, login_page, browser_id_list, user_list,
-                    xvfb_recorder):
+                    xvfb_recorder, test_type):
     create_instances_of_webdriver(selenium, driver, user_list, tmpdir,
                                   tmp_memory, driver_kwargs, driver_type,
                                   firefox_logging, firefox_path,
@@ -38,14 +38,17 @@ def login_using_gui(host_list, selenium, driver, tmpdir, tmp_memory, xvfb,
     g_open_onedata_service_page(selenium, user_list, host_list, hosts)
 
     for browser, user in zip(parse_seq(browser_id_list), parse_seq(user_list)):
-        selenium[browser] = selenium[user]
+        if test_type == 'gui':
+            selenium[browser] = selenium[user]
+            selenium.pop(user, None)
         tmp_memory[browser] = tmp_memory[user]
         displays[browser] = displays[user]
 
-    for user, host_name in zip(parse_seq(user_list),
-                               parse_seq(host_list)):
-        g_login_using_basic_auth(selenium, user, user, login_page,
-                                 users, host_name)
+    # mixed tests use user_list instead of browser_id_list because
+    # some mixed steps don't use browser
+    login_ids = browser_id_list if test_type == 'gui' else user_list
+    g_login_using_basic_auth(selenium, login_ids, user_list, login_page,
+                             users, host_list)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)

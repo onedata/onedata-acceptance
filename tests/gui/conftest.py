@@ -162,6 +162,11 @@ def driver_type(request):
 
 
 @fixture(scope='session')
+def test_type(request):
+    return request.config.getoption('--test-type')
+
+
+@fixture(scope='session')
 def firefox_logging(request, driver_type):
     enabled = request.config.getoption('--firefox-logs')
     if enabled and driver_type.lower() != 'firefox':
