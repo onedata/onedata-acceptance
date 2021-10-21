@@ -86,7 +86,7 @@ Feature: Datasets mixed tests
   | web GUI            | REST               |
 
 
-  Scenario Outline: User of <client_checking> sees protection flags set via <client_checking> for datasets created previously via <client_checking>
+  Scenario Outline: User of <client_checking> sees protection flags set via <client_setting> for datasets created previously via <client_checking>
     When using <client_checking>, user1 creates dataset for item "dir2" in space "space1" in oneprovider-1
     And using <client_checking>, user1 creates dataset for item "dir2/dir3" in space "space1" in oneprovider-1
     And using <client_checking>, user1 creates dataset for item "dir2/dir3/file1" in space "space1" in oneprovider-1
