@@ -58,7 +58,8 @@ Feature: Basic datasets operations
   Scenario: User sees inherited dataset status tag after marking its parent directory as dataset
     When user of browser creates dataset for item "dir1" in "space1"
     And user of browser double clicks on item named "dir1" in file browser
-    Then user of browser sees inherited dataset status tag for "file1" in file browser
+    Then user of browser sees inherited status tag for "file1" in file browser
+    And user of browser clicks on inherited status tag for "file1" in file browser
     And user of browser sees Dataset status tag for "file1" in file browser
 
 
@@ -322,10 +323,12 @@ Feature: Basic datasets operations
 
     # check file's and hardlink's protection status tagss
     And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks on inherited status tag for "file1" in file browser
     Then user of browser sees data protected status tag for "file1" in file browser
     And user of browser sees metadata protected status tag for "file1" in file browser
     And user of browser changes current working directory to home using breadcrumbs
 
     And user of browser double clicks on item named "dir2" in file browser
+    And user of browser clicks on inherited status tag for "file1" in file browser
     And user of browser sees data protected status tag for "file1" in file browser
     And user of browser sees metadata protected status tag for "file1" in file browser
