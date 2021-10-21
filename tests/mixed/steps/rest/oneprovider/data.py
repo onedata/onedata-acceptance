@@ -424,6 +424,21 @@ def create_dataset_in_op_rest(user, users, hosts, host, space_name, item_name,
     dataset_api.establish_dataset(data)
 
 
+def fail_to_create_dataset_in_op_rest(user, users, hosts, host, space_name,
+                                      item_name):
+    path = f'{space_name}/{item_name}'
+    client = login_to_provider(user, users, hosts[host]['hostname'])
+    dataset_api = DatasetApi(client)
+    file_id = _lookup_file_id(path, client)
+    data = {"rootFileId": f"{file_id}"}
+    try:
+        dataset_api.establish_dataset(data)
+        raise Exception('function: establish_dataset worked but it should not')
+    except OPException as err:
+        if err.status == 400:
+            pass
+
+
 def assert_dataset_for_item_in_op_rest(user, users, hosts, host, space_name,
                                        item_name, spaces, option):
     client = login_to_provider(user, users, hosts[host]['hostname'])
