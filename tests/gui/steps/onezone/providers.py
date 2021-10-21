@@ -21,7 +21,7 @@ from tests.utils.rest_utils import get_provider_rest_path, http_get
 from tests import OP_REST_PORT
 
 
-TIMEOUT_FOR_PROVIDER_GOING_OFFLINE = 300
+TIMEOUT_FOR_PROVIDER_GOING_OFFLINE = 600
 TIMEOUT_FOR_PROVIDER_GOING_ONLINE = 60
 
 

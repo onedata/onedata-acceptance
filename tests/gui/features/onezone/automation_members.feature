@@ -66,11 +66,11 @@ Feature: Management of inventories members
 
     # Space-owner-user renames inventory
     And user of space_owner_browser clicks on "Rename" button in inventory "inventory1" menu in the sidebar
-    And user of space_owner_browser writes "inventory2" into rename inventory text field
+    And user of space_owner_browser writes "renamed_inventory1" into rename inventory text field
     And user of space_owner_browser confirms inventory rename with confirmation button
 
     # User1 sees inventory has different name
-    Then user of browser1 sees inventory "inventory2" on inventory list
+    Then user of browser1 sees inventory "renamed_inventory1" on inventory list
 
 
   Scenario: User fails to see inventory without view inventory privilege
