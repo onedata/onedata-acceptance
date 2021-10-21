@@ -121,7 +121,7 @@ def no_member_in_parent(selenium, browser_id, member_name, member_type, name,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def remember_cluster_id(selenium, browser_id, provider, oz_page, hosts,
                         popups, tmp_memory, clipboard, displays):
-    option = 'Copy cluster ID'
+    option = 'Copy ID'
     click_on_record_in_clusters_menu(selenium, browser_id, oz_page, provider,
                                      hosts)
     click_cluster_menu_button(selenium, browser_id, provider, oz_page, hosts)

@@ -12,8 +12,8 @@ from .create_dir import CreateDir
 from .add_storage import AddStorage
 from tests.gui.utils.core.web_elements import WebItem
 from tests.gui.utils.common.modals.create_group import CreateGroup
-from tests.gui.utils.common.common import DropdownSelector, \
-                                          MigrateDropdownSelector
+from tests.gui.utils.common.common import (DropdownSelector,
+                                           MigrateDropdownSelector)
 from .data_distribution import DataDistributionModal
 from .data_row_menu import DataRowMenu
 from .delete_modal import DeleteModal

@@ -158,7 +158,8 @@ def assert_status_tag_for_file_in_browser(browser_id, status_type, item_name,
                                           tmp_memory,
                                           which_browser='file browser'):
     browser = tmp_memory[browser_id][transform(which_browser)]
-    err_msg = f'{status_type} tag for {item_name} in {which_browser} not visible'
+    err_msg = (f'{status_type} tag for {item_name} in {which_browser} not '
+               f'visible')
     assert browser.data[item_name].is_tag_visible(
         transform(status_type)), err_msg
 
@@ -207,18 +208,6 @@ def assert_not_click_option_in_data_row_menu(selenium, browser_id, option,
     err_msg = f'user can click on option {option}'
     assert not (modals(selenium[browser_id]).data_row_menu
                 .choose_option(option)), err_msg
-
-
-@wt(parsers.parse('user of {browser_id} sees {status_type} '
-                  'status tag for "{item_name}" in {which_browser}'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_status_tag_for_file_in_browser(browser_id, status_type,
-                                          item_name, tmp_memory,
-                                          which_browser='file browser'):
-    browser = tmp_memory[browser_id][transform(which_browser)]
-    err_msg = f'{status_type} tag for {item_name} in browser not visible'
-    assert browser.data[item_name].is_tag_visible(
-        transform(status_type)), err_msg
 
 
 @wt(parsers.parse('user of {browser_id} clicks on {state} view mode '
