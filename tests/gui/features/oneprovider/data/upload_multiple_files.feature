@@ -111,4 +111,4 @@ Feature: Uploading multiple files at once
     And user of browser clicks on menu for "file1GB.txt" directory in file browser
     And user of browser clicks "Delete" option in data row menu in file browser
     And user of browser clicks on "Yes" button in modal "Delete modal"
-    And user of browser removes dir6/file1GB.txt from providers storage mount point
+    And user of browser removes file1GB.txt from provider's storage mount point
