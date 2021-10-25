@@ -526,7 +526,7 @@ def set_privileges_in_members_subpage(selenium, browser_id, member_name,
         privileges = yaml.load(config)
         tree = get_privilege_tree(selenium, browser_id, onepanel, oz_page, where,
                                   member_type_new, member_name)
-        tree.set_privileges(privileges)
+        tree.set_privileges(selenium, browser_id, privileges)
         click_button_on_element_header_in_members(selenium, browser_id, option,
                                                   oz_page, where, member_name,
                                                   member_type, onepanel)

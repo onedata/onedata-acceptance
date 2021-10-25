@@ -509,13 +509,17 @@ Feature: Basic management of spaces privileges in Onezone GUI
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
           Data management:
-            granted: False
+            granted: Partially
+            privilege subtypes:
+              Read files: False
 
     And user of browser_user1 sees that Files tab of "space1" is disabled
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
           Data management:
-            granted: True
+            granted: Partially
+            privilege subtypes:
+              Read files: True
 
     And user of browser_user1 clicks Files of "space1" in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
@@ -540,12 +544,16 @@ Feature: Basic management of spaces privileges in Onezone GUI
     And user of browser_user1 writes "new_directory" into text field in modal "Create dir"
     And user of browser_user1 confirms create new directory using button
     And user of browser_user1 sees that error modal with text "Creating directory failed" appeared
+    And user of browser_user1 closes "Error" modal
 
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
           Data management:
-            granted: True
+            granted: Partially
+            privilege subtypes:
+              Write files: True
 
+    And user of browser_user1 is idle for 1 seconds
     And user of browser_user1 clicks "New directory" button from file browser menu bar
     And user of browser_user1 writes "new_directory" into text field in modal "Create dir"
     And user of browser_user1 confirms create new directory using button
@@ -570,11 +578,16 @@ Feature: Basic management of spaces privileges in Onezone GUI
     And user of browser_user1 clicks "Share" option in data row menu in file browser
     And user of browser_user1 clicks on "Create" button in modal "Share directory"
     And user of browser_user1 sees that error modal with text "Creating share failed" appeared
+    And user of browser_user1 closes "Error" modal
+    And user of browser_user1 clicks on "Close" button in modal "Share directory"
+
 
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
           Data management:
-            granted: True
+            granted: Partially
+            privilege subtypes:
+              Manage shares: True
 
     And user of browser_user1 clicks on menu for "dir1" file in file browser
     And user of browser_user1 clicks "Share" option in data row menu in file browser
@@ -587,10 +600,8 @@ Feature: Basic management of spaces privileges in Onezone GUI
     And user of space_owner_browser clicks Members of "space1" in the sidebar
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
-          Qos management:
-            granted: Partially
-            privilege subtypes:
-              Manage shares: False
+          QoS management:
+            granted: False
 
     And user of browser_user1 clicks Files of "space1" in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
@@ -602,7 +613,9 @@ Feature: Basic management of spaces privileges in Onezone GUI
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
           QoS management:
-            granted: True
+            granted: Partially
+            privilege subtypes:
+              View QoS: True
 
     Then user of browser_user1 sees that Quality of Service option is in selection menu on file browser page
 
@@ -614,6 +627,7 @@ Feature: Basic management of spaces privileges in Onezone GUI
           QoS management:
             granted: Partially
             privilege subtypes:
+              View QoS: True
               Manage QoS: False
 
     And user of browser_user1 clicks Files of "space1" in the sidebar
