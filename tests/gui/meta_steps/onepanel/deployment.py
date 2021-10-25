@@ -197,11 +197,12 @@ def _setup_ceph_config(selenium, browser_id, onepanel, configuration, modals):
         osds = config['OSDs']
         osd1, osd2 = _unpack_osds(osds)
         first_number = 'first'
-        _set_osd_of_number(selenium, browser_id, osd1, first_number, onepanel)
+        _set_osd_of_number(selenium, browser_id, osd1, first_number, onepanel,
+                           modals)
         if osd2:
             second_number = 'second'
             _set_osd_of_number(selenium, browser_id, osd2, second_number,
-                               onepanel)
+                               onepanel, modals)
     deploy_button = 'Deploy'
     step = 'Ceph configuration step'
     wt_click_on_btn_in_deployment_step(selenium, browser_id, deploy_button,
@@ -215,14 +216,14 @@ def _unpack_osds(osds):
     return osds[0], osds[1]
 
 
-def _set_osd_of_number(selenium, browser_id, size, number, onepanel):
+def _set_osd_of_number(selenium, browser_id, size, number, onepanel, modals):
     osd_button = 'Add OSD'
     step = 'Ceph configuration step'
     wt_click_on_btn_in_deployment_step(selenium, browser_id, osd_button, step,
                                        onepanel)
     [size_number, size_unit] = size.split()
     type_osd_size_to_input(selenium, number, size_number, browser_id, onepanel)
-    choose_osd_unit(selenium, number, size_unit, browser_id, onepanel)
+    choose_osd_unit(selenium, number, size_unit, browser_id, onepanel, modals)
 
 
 @wt(parsers.parse('user of {browser_id} adds storage in step 5 of deployment '

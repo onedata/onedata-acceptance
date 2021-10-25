@@ -71,10 +71,6 @@ class OSD(PageObject):
     tib_button = NamedButton('.ember-power-select-option', text='TiB')
     pib_button = NamedButton('.ember-power-select-option', text='PiB')
 
-    def choose_unit(self, unit):
-        self.unit_selector()
-        getattr(self, f"{unit.lower()}_button")()
-
 
 class CephConfig(PageObject):
     manager_and_monitor = Toggle('.manager-monitor-section '
