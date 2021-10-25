@@ -30,6 +30,8 @@ Feature: Management of inventories members
             owner: space-owner-user
             users:
               - user1
+        inventory3:
+            owner: space-owner-user
 
     And users opened [space_owner_browser, browser1] browsers' windows
     And users of [space_owner_browser, browser1] opened [Onezone, Onezone] page
@@ -40,15 +42,15 @@ Feature: Management of inventories members
     When user of space_owner_browser clicks on Automation in the main menu
 
     # Space-owner-user generates invitation token
-    And user of space_owner_browser opens inventory "inventory1" members subpage
-    And user of space_owner_browser clicks on "Invite group using token" button in groups list menu in "inventory1" automation members view
+    And user of space_owner_browser opens inventory "inventory3" members subpage
+    And user of space_owner_browser clicks on "Invite group using token" button in groups list menu in "inventory3" automation members view
     And user of space_owner_browser copies invitation token from modal
     And user of space_owner_browser closes "Invite using token" modal
 
     # Space-owner-user adds group1 to view inventory
     And user of space_owner_browser sends copied token to user of browser1
     And user of browser1 adds group "group1" to inventory using copied token
-    Then user of browser1 sees inventory "inventory1" on inventory list
+    Then user of browser1 sees inventory "inventory3" on inventory list
 
 
   Scenario: User joins an inventory with group invitation token and sees renamed inventory
@@ -66,11 +68,11 @@ Feature: Management of inventories members
 
     # Space-owner-user renames inventory
     And user of space_owner_browser clicks on "Rename" button in inventory "inventory1" menu in the sidebar
-    And user of space_owner_browser writes "inventory2" into rename inventory text field
+    And user of space_owner_browser writes "renamed_inventory1" into rename inventory text field
     And user of space_owner_browser confirms inventory rename with confirmation button
 
     # User1 sees inventory has different name
-    Then user of browser1 sees inventory "inventory2" on inventory list
+    Then user of browser1 sees inventory "renamed_inventory1" on inventory list
 
 
   Scenario: User fails to see inventory without view inventory privilege
