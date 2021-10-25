@@ -105,8 +105,8 @@ def test_files_uploaded_by_user_are_ordered_by_name():
 
 
 @skip_if_not_chrome
-@scenario('User successfully uploads 2 GB file (stress test)')
-def test_user_successfully_uploads_2_gb_file_stress_test():
+@scenario('User successfully uploads 1 GB file (stress test)')
+def test_user_successfully_uploads_1_gb_file_stress_test():
     pass
 
 
