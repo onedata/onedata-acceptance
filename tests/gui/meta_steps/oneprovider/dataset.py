@@ -7,6 +7,8 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import re
+
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import (
     go_to_path_without_last_elem, check_file_structure_in_browser)
@@ -29,13 +31,27 @@ from tests.gui.steps.oneprovider.dataset import (
 from tests.gui.steps.modal import click_modal_button
 
 
+def go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
+                             option_in_space, op_container, tmp_memory,
+                             item_browser='file browser'):
+    option = 'Data'
+    element = 'spaces'
+    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
+    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id,
+                                                element, space_name,
+                                                oz_page)
+    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
+                                                  space_name,
+                                                  option_in_space, oz_page)
+    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
+                                tmp_memory, item_browser=item_browser)
+
+
 @wt(parsers.parse('user of {browser_id} creates dataset{option}for item '
                   '"{item_name}" in "{space_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_dataset(browser_id, tmp_memory, item_name, space_name,
                    selenium, oz_page, op_container, modals, option='no flags'):
-    option2 = 'Data'
-    element = 'spaces'
     option_in_space = 'Files'
     option_in_data_row_menu = 'Datasets'
     button_name = 'X'
@@ -43,15 +59,8 @@ def create_dataset(browser_id, tmp_memory, item_name, space_name,
     try:
         op_container(selenium[browser_id]).file_browser.breadcrumbs
     except RuntimeError:
-        click_on_option_in_the_sidebar(selenium, browser_id, option2, oz_page)
-        click_element_on_lists_on_left_sidebar_menu(selenium, browser_id,
-                                                    element, space_name,
-                                                    oz_page)
-        click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
-                                                      space_name,
-                                                      option_in_space, oz_page)
-        assert_browser_in_tab_in_op(selenium, browser_id, op_container,
-                                    tmp_memory)
+        go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
+                                 option_in_space, op_container, tmp_memory)
 
     if '/' in item_name:
         click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
@@ -67,7 +76,7 @@ def create_dataset(browser_id, tmp_memory, item_name, space_name,
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
                                              option_in_data_row_menu, modals)
     click_mark_file_as_dataset_toggle(browser_id, selenium, modals)
-    if ' data' in option:
+    if re.search("^(?!meta).*", 'data'):
         toggle_type = 'data'
         click_protection_toggle(browser_id, selenium, modals, toggle_type,
                                 option_in_data_row_menu)
@@ -82,19 +91,10 @@ def create_dataset(browser_id, tmp_memory, item_name, space_name,
 def fail_to_create_dataset_in_op_gui(browser_id, tmp_memory, item_name,
                                      space_name, selenium, oz_page,
                                      op_container, modals):
-    option2 = 'Data'
-    element = 'spaces'
     option_in_space = 'Files'
     option_in_data_row_menu = 'Datasets'
-    click_on_option_in_the_sidebar(selenium, browser_id, option2, oz_page)
-    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id,
-                                                element, space_name,
-                                                oz_page)
-    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
-                                                  space_name,
-                                                  option_in_space, oz_page)
-    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
-                                tmp_memory)
+    go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
+                             option_in_space, op_container, tmp_memory)
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
                                              option_in_data_row_menu, modals)
@@ -104,19 +104,11 @@ def fail_to_create_dataset_in_op_gui(browser_id, tmp_memory, item_name,
 def assert_dataset_for_item_in_op_gui(selenium, browser_id, oz_page,
                                       space_name, op_container, tmp_memory,
                                       item_name, option):
-    option2 = 'Data'
-    element = 'spaces'
     option_in_space = 'Datasets'
     item_browser = 'dataset browser'
-    click_on_option_in_the_sidebar(selenium, browser_id, option2, oz_page)
-    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id,
-                                                element, space_name,
-                                                oz_page)
-    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
-                                                  space_name,
-                                                  option_in_space, oz_page)
-    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
-                                tmp_memory, item_browser=item_browser)
+    go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
+                             option_in_space, op_container, tmp_memory,
+                             item_browser=item_browser)
     if option == 'sees':
         assert_items_presence_in_browser(browser_id, item_name, tmp_memory,
                                          which_browser=item_browser)
@@ -127,22 +119,14 @@ def assert_dataset_for_item_in_op_gui(selenium, browser_id, oz_page,
 
 def remove_dataset_in_op_gui(selenium, browser_id, oz_page, space_name,
                              op_container, tmp_memory, item_name, modals):
-    option = 'Data'
-    element = 'spaces'
     option_in_space = 'Datasets'
     item_browser = 'dataset browser'
     option_in_data_row_menu = 'Remove dataset'
     button_name = 'Remove'
     modal = 'Remove selected dataset'
-    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
-    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id,
-                                                element, space_name,
-                                                oz_page)
-    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
-                                                  space_name,
-                                                  option_in_space, oz_page)
-    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
-                                tmp_memory, item_browser=item_browser)
+    go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
+                             option_in_space, op_container, tmp_memory,
+                             item_browser=item_browser)
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory,
                                    which_browser=item_browser)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
@@ -153,19 +137,11 @@ def remove_dataset_in_op_gui(selenium, browser_id, oz_page, space_name,
 
 def check_dataset_structure_in_op_gui(selenium, browser_id, oz_page, space_name,
                                       config, op_container, tmpdir, tmp_memory):
-    option = 'Data'
-    element = 'spaces'
     option_in_space = 'Datasets'
     item_browser = 'dataset browser'
-    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
-    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id,
-                                                element, space_name,
-                                                oz_page)
-    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
-                                                  space_name,
-                                                  option_in_space, oz_page)
-    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
-                                tmp_memory, item_browser=item_browser)
+    go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
+                             option_in_space, op_container, tmp_memory,
+                             item_browser=item_browser)
     check_file_structure_in_browser(browser_id, config, selenium, tmp_memory,
                                     op_container, tmpdir,
                                     which_browser=item_browser)
@@ -174,30 +150,20 @@ def check_dataset_structure_in_op_gui(selenium, browser_id, oz_page, space_name,
 def check_effective_protection_flags_for_file_in_op_gui(
         selenium, browser_id, oz_page, space_name, op_container, tmp_memory,
         item_name, modals, option):
-    option1 = 'Data'
-    element = 'spaces'
     option_in_space = 'Files'
     option_in_data_row_menu = 'Datasets'
-    click_on_option_in_the_sidebar(selenium, browser_id, option1, oz_page)
-    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id,
-                                                element, space_name,
-                                                oz_page)
-    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
-                                                  space_name,
-                                                  option_in_space, oz_page)
-    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
-                                tmp_memory)
+    go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
+                             option_in_space, op_container, tmp_memory)
     go_to_path_without_last_elem(selenium, browser_id, tmp_memory,
                                  item_name, op_container)
     item_name = item_name.split('/')[-1]
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
                                              option_in_data_row_menu, modals)
-    data = ' data'
+    data = 'data'
     metadata = 'metadata'
-    if data in option:
-        kind = 'data'
-        check_effective_protection_flag(browser_id, selenium, modals, kind,
+    if re.search("^(?!meta).*", data):
+        check_effective_protection_flag(browser_id, selenium, modals, data,
                                         item_name, tmp_memory)
     if metadata in option:
         check_effective_protection_flag(browser_id, selenium, modals, metadata,
@@ -210,7 +176,7 @@ def check_effective_protection_flag(browser_id, selenium, modals, kind,
         assert_general_toggle_checked_for_ancestors(browser_id, selenium,
                                                     modals, kind)
     except AssertionError:
-        status_type = kind+' protected'
+        status_type = kind + ' protected'
         assert_status_tag_for_file_in_browser(browser_id, status_type,
                                               item_name, tmp_memory)
 
@@ -219,20 +185,12 @@ def set_protection_flags_for_dataset_in_op_gui(browser_id, selenium, oz_page,
                                                space_name, op_container,
                                                tmp_memory, item_name, modals,
                                                option):
-    option1 = 'Data'
-    element = 'spaces'
     option_in_space = 'Datasets'
     item_browser = 'dataset browser'
     option_in_data_row_menu = 'Write protection'
-    click_on_option_in_the_sidebar(selenium, browser_id, option1, oz_page)
-    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id,
-                                                element, space_name,
-                                                oz_page)
-    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
-                                                  space_name,
-                                                  option_in_space, oz_page)
-    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
-                                tmp_memory, item_browser=item_browser)
+    go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
+                             option_in_space, op_container, tmp_memory,
+                             item_browser=item_browser)
     go_to_path_without_last_elem(selenium, browser_id, tmp_memory,
                                  item_name, op_container,
                                  item_browser=item_browser)
@@ -243,11 +201,10 @@ def set_protection_flags_for_dataset_in_op_gui(browser_id, selenium, oz_page,
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
                                              option_in_data_row_menu, modals)
     button_name = 'Close'
-    data = ' data'
+    data = 'data'
     metadata = 'metadata'
-    if data in option:
-        kind = 'data'
-        click_protection_toggle(browser_id, selenium, modals, kind,
+    if re.search("^(?!meta).*", data):
+        click_protection_toggle(browser_id, selenium, modals, data,
                                 option_in_data_row_menu)
     if metadata in option:
         click_protection_toggle(browser_id, selenium, modals, metadata,
@@ -258,22 +215,14 @@ def set_protection_flags_for_dataset_in_op_gui(browser_id, selenium, oz_page,
 
 def detach_dataset_in_op_gui(selenium, browser_id, oz_page, space_name,
                              op_container, tmp_memory, item_name, modals):
-    option = 'Data'
-    element = 'spaces'
     option_in_space = 'Datasets'
     item_browser = 'dataset browser'
     option_in_data_row_menu = 'Detach'
     modal = 'Detach Dataset'
     button_name = 'Proceed'
-    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
-    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id,
-                                                element, space_name,
-                                                oz_page)
-    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
-                                                  space_name,
-                                                  option_in_space, oz_page)
-    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
-                                tmp_memory, item_browser=item_browser)
+    go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
+                             option_in_space, op_container, tmp_memory,
+                             item_browser=item_browser)
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory,
                                    which_browser=item_browser)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
@@ -284,19 +233,13 @@ def detach_dataset_in_op_gui(selenium, browser_id, oz_page, space_name,
 
 def assert_dataset_detached_in_op_gui(selenium, browser_id, oz_page, item_name,
                                       space_name, op_container, tmp_memory):
-    option = 'Data'
-    element = 'spaces'
     option_in_space = 'Datasets'
     which = 'dataset'
     state = 'detached'
     item_browser = 'dataset browser'
-    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
-    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id,
-                                                element, space_name,
-                                                oz_page)
-    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
-                                                  space_name,
-                                                  option_in_space, oz_page)
+    go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
+                             option_in_space, op_container, tmp_memory,
+                             item_browser=item_browser)
     click_on_state_view_mode_tab(browser_id, oz_page, selenium, state, which)
     assert_browser_in_tab_in_op(selenium, browser_id, op_container,
                                 tmp_memory, item_browser=item_browser)
@@ -306,8 +249,6 @@ def assert_dataset_detached_in_op_gui(selenium, browser_id, oz_page, item_name,
 
 def reattach_dataset_in_op_gui(selenium, browser_id, oz_page, space_name,
                                op_container, tmp_memory, item_name, modals):
-    option = 'Data'
-    element = 'spaces'
     option_in_space = 'Datasets'
     item_browser = 'dataset browser'
     which = 'dataset'
@@ -315,13 +256,9 @@ def reattach_dataset_in_op_gui(selenium, browser_id, oz_page, space_name,
     option_in_data_row_menu = 'Reattach'
     modal = 'Detach Dataset'
     button_name = 'Proceed'
-    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
-    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id,
-                                                element, space_name,
-                                                oz_page)
-    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
-                                                  space_name,
-                                                  option_in_space, oz_page)
+    go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
+                             option_in_space, op_container, tmp_memory,
+                             item_browser=item_browser)
     click_on_state_view_mode_tab(browser_id, oz_page, selenium, state, which)
     assert_browser_in_tab_in_op(selenium, browser_id, op_container,
                                 tmp_memory, item_browser=item_browser)

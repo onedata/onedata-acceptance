@@ -95,7 +95,7 @@ Feature: Datasets mixed tests
     Then using <client_checking>, user1 sees that dataset "dir2/dir3/file1" has effective data and metadata write protection flags in space "space1" in oneprovider-1
 
   Examples:
-  | client_checking    | client_setting    |
+  | client_checking    | client_setting     |
   | REST               | web GUI            |
   | web GUI            | REST               |
 

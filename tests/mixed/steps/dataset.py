@@ -97,7 +97,7 @@ def remove_dataset_in_op(client, user, item_name, space_name, host, selenium,
         raise NoSuchClientException(f'Client: {client} not found')
 
 
-@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) sees(?P<option>.*) write '
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) sees (?P<option>.*) write '
                'protection flags? for dataset for item "(?P<item_name>.*)" in'
                ' space "(?P<space_name>.*)" in (?P<host>.*)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -106,9 +106,9 @@ def assert_write_protection_flag_for_dataset(client, user, item_name, option,
                                              space_name, spaces):
     client_lower = client.lower()
     if client_lower == 'web gui':
-        data = ' data'
+        data = 'data'
         metadata = ' metadata'
-        if data in option:
+        if re.search("^(?!meta).*", data):
             status_type = 'data protected'
             assert_status_tag_for_file_in_browser(user, status_type, item_name,
                                                   tmp_memory, which_browser=
@@ -197,10 +197,9 @@ def set_protection_flags_for_dataset(client, user, option, item_name,
                'write protection flags? in space "(?P<space_name>.*)" '
                'in (?P<host>.*)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def check_effective_protection_flags_for_file(client, user, item_name, option,
-                                              space_name, host, selenium,
-                                              oz_page, op_container, tmp_memory,
-                                              modals, users, hosts, spaces):
+def check_effective_protection_flags_for_dataset(
+        client, user, item_name, option, space_name, host, selenium,
+        oz_page, op_container, tmp_memory, modals, users, hosts, spaces):
     client_lower = client.lower()
     if client_lower == 'web gui':
         check_effective_protection_flags_for_file_in_op_gui(

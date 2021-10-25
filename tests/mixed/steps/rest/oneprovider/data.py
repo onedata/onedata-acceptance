@@ -7,6 +7,7 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 import json
+import re
 from datetime import datetime
 from functools import partial
 
@@ -414,7 +415,7 @@ def create_dataset_in_op_rest(user, users, hosts, host, space_name, item_name,
     dataset_api = DatasetApi(client)
     file_id = _lookup_file_id(path, client)
     data = {"rootFileId": f"{file_id}"}
-    if ' data' in option:
+    if re.search("^(?!meta).*", 'data'):
         data["protectionFlags"] = ["data_protection"]
     if 'metadata' in option:
         if "protectionFlags" in data:
@@ -500,9 +501,9 @@ def assert_write_protection_flag_for_dataset_op_rest(user, users, hosts, host,
     dataset_api = DatasetApi(client)
     dataset_id = get_dataset_id(item_name, spaces, space_name, dataset_api)
     dataset_info = dataset_api.get_dataset(dataset_id)
-    data = ' data'
+    data = 'data'
     metadata = ' metadata'
-    if data in option:
+    if re.search("^(?!meta).*", data):
         err_msg = 'dataset does not have data protection flag'
         data_flag = 'data_protection'
         assert data_flag in dataset_info.protection_flags, err_msg
@@ -570,9 +571,9 @@ def check_effective_protection_flags_for_file_in_op_rest(user, users, hosts,
         item_name = "/space1/" + item_name
     file_id = _lookup_file_id(item_name, client)
     summary = dataset_api.get_file_dataset_summary(file_id)
-    data = ' data'
+    data = 'data'
     metadata = 'metadata'
-    if data in option:
+    if re.search("^(?!meta).*", data):
         kind = 'data_protection'
         err_msg = f'No data protection flag for {item_name}'
         assert kind in summary.effective_protection_flags, err_msg
@@ -587,10 +588,10 @@ def set_protection_flags_for_dataset_in_op_rest(user, users, hosts, host,
                                                 item_name, option, spaces,
                                                 space_name):
     client = login_to_provider(user, users, hosts[host]['hostname'])
-    toggle_data = ' data'
+    toggle_data = 'data'
     toggle_metadata = 'metadata'
     data = {"setProtectionFlags": []}
-    if toggle_data in option:
+    if re.search("^(?!meta).*", toggle_data):
         data["setProtectionFlags"].append("data_protection")
     if toggle_metadata in option:
         data["setProtectionFlags"].append("metadata_protection")
@@ -604,13 +605,13 @@ def check_effective_protection_flags_for_dataset_in_op_rest(user, users, hosts,
                                                             option, spaces,
                                                             space_name):
     client = login_to_provider(user, users, hosts[host]['hostname'])
-    data = ' data'
+    data = 'data'
     metadata = 'metadata'
     dataset_api = DatasetApi(client)
     dataset_id = get_dataset_id(item_name, spaces, space_name, dataset_api)
     dataset_information = dataset_api.get_dataset(dataset_id)
 
-    if data in option:
+    if re.search("^(?!meta).*", data):
         kind = 'data_protection'
         err_msg = f'No data protection flag for {item_name}'
         assert kind in dataset_information.effective_protection_flags, err_msg
