@@ -565,11 +565,11 @@ def check_dataset_structure_in_op_rest(user, users, hosts, host, spaces,
 
 def check_effective_protection_flags_for_file_in_op_rest(user, users, hosts,
                                                          host, item_name,
-                                                         option):
+                                                         option, space_name):
     client = login_to_provider(user, users, hosts[host]['hostname'])
     dataset_api = DatasetApi(client)
-    if 'space1' not in item_name:
-        item_name = "/space1/" + item_name
+    if space_name not in item_name:
+        item_name = f"/{space_name}/" + item_name
     file_id = _lookup_file_id(item_name, client)
     summary = dataset_api.get_file_dataset_summary(file_id)
     for flag in get_flags(option):

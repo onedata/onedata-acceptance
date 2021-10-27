@@ -159,7 +159,7 @@ def check_effective_protection_flags_for_file(client, user, item_name, option,
     elif client_lower == 'rest':
         check_effective_protection_flags_for_file_in_op_rest(user, users, hosts,
                                                              host, item_name,
-                                                             option)
+                                                             option, space_name)
     else:
         raise NoSuchClientException(f'Client: {client} not found')
 
