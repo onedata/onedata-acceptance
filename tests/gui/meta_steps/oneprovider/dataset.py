@@ -12,6 +12,7 @@ import re
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import (
     go_to_path_without_last_elem, check_file_structure_in_browser)
+from tests.mixed.steps.rest.oneprovider.data import get_flags
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 from tests.gui.steps.onezone.spaces import (
@@ -76,13 +77,9 @@ def create_dataset(browser_id, tmp_memory, item_name, space_name,
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
                                              option_in_data_row_menu, modals)
     click_mark_file_as_dataset_toggle(browser_id, selenium, modals)
-    if re.search("^(?!meta).*", 'data'):
-        toggle_type = 'data'
-        click_protection_toggle(browser_id, selenium, modals, toggle_type,
-                                option_in_data_row_menu)
-    if 'metadata' in option:
-        toggle_type = 'metadata'
-        click_protection_toggle(browser_id, selenium, modals, toggle_type,
+    flags = [item.replace('_protection', '') for item in get_flags(option)]
+    for flag in flags:
+        click_protection_toggle(browser_id, selenium, modals, flag,
                                 option_in_data_row_menu)
     click_modal_button(selenium, browser_id, button_name,
                        option_in_data_row_menu, modals)
@@ -160,13 +157,9 @@ def check_effective_protection_flags_for_file_in_op_gui(
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
                                              option_in_data_row_menu, modals)
-    data = 'data'
-    metadata = 'metadata'
-    if re.search("^(?!meta).*", data):
-        check_effective_protection_flag(browser_id, selenium, modals, data,
-                                        item_name, tmp_memory)
-    if metadata in option:
-        check_effective_protection_flag(browser_id, selenium, modals, metadata,
+    flags = [item.replace('_protection', '') for item in get_flags(option)]
+    for flag in flags:
+        check_effective_protection_flag(browser_id, selenium, modals, flag,
                                         item_name, tmp_memory)
 
 
@@ -201,13 +194,9 @@ def set_protection_flags_for_dataset_in_op_gui(browser_id, selenium, oz_page,
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
                                              option_in_data_row_menu, modals)
     button_name = 'Close'
-    data = 'data'
-    metadata = 'metadata'
-    if re.search("^(?!meta).*", data):
-        click_protection_toggle(browser_id, selenium, modals, data,
-                                option_in_data_row_menu)
-    if metadata in option:
-        click_protection_toggle(browser_id, selenium, modals, metadata,
+    flags = [item.replace('_protection', '') for item in get_flags(option)]
+    for flag in flags:
+        click_protection_toggle(browser_id, selenium, modals, flag,
                                 option_in_data_row_menu)
     click_modal_button(selenium, browser_id, button_name,
                        option_in_data_row_menu, modals)

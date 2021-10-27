@@ -19,7 +19,8 @@ from tests.mixed.steps.rest.oneprovider.data import (
     set_protection_flags_for_dataset_in_op_rest,
     check_effective_protection_flags_for_dataset_in_op_rest,
     detach_dataset_in_op_rest, assert_dataset_detached_in_op_rest,
-    reattach_dataset_in_op_rest, fail_to_create_dataset_in_op_rest)
+    reattach_dataset_in_op_rest, fail_to_create_dataset_in_op_rest,
+    get_flags)
 from tests.mixed.utils.common import NoSuchClientException
 
 
@@ -106,16 +107,10 @@ def assert_write_protection_flag_for_dataset(client, user, item_name, option,
                                              space_name, spaces):
     client_lower = client.lower()
     if client_lower == 'web gui':
-        data = 'data'
-        metadata = ' metadata'
-        if re.search("^(?!meta).*", data):
-            status_type = 'data protected'
-            assert_status_tag_for_file_in_browser(user, status_type, item_name,
-                                                  tmp_memory, which_browser=
-                                                  'dataset browser')
-        if metadata in option:
-            status_type = 'metadata protected'
-            assert_status_tag_for_file_in_browser(user, status_type, item_name,
+        flags = [item.replace('_protection',
+                              '_protected') for item in get_flags(option)]
+        for flag in flags:
+            assert_status_tag_for_file_in_browser(user, flag, item_name,
                                                   tmp_memory, which_browser=
                                                   'dataset browser')
     elif client_lower == 'rest':
