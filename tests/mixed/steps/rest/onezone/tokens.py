@@ -13,6 +13,7 @@ import yaml
 import base64
 
 from onezone_client import TokenApi
+from tests.mixed.steps.rest.onezone.members import translate_privileges
 from tests.mixed.utils.common import login_to_oz
 from tests.utils.bdd_utils import wt, parsers
 
@@ -75,9 +76,9 @@ def _create_token_with_config(user, config, users, hosts, tmp_memory, tokens,
     token_type = data['type']
     usage_limit = data.get('usage limit', False)
     caveats = data.get('caveats', False)
+    privileges = data.get('privileges', False)
 
     token_config = {"name": name, "type": {f"{token_type}Token": {}}}
-
     if token_type == 'invite':
         invite_type = data.get('invite type')
         invite_target = data.get('invite target', None)
@@ -96,6 +97,12 @@ def _create_token_with_config(user, config, users, hosts, tmp_memory, tokens,
     if caveats:
         parse_token_caveats(caveats, token_config, groups, users, spaces,
                             tmp_memory)
+    if privileges:
+        grant = []
+        revoke = []
+        translate_privileges(privileges, grant, revoke)
+        grant.sort()
+        token_config['privileges'] = grant
 
     user_client = login_to_oz(user, users[user].password,
                               hosts[zone_name]['hostname'])
@@ -201,6 +208,8 @@ def set_service_caveat(token_config, given_service):
             if curr_service == 'Any Oneprovider':
                 services_list.append('opw-*')
             else:
+                if curr_service == 'dev-onezone':
+                    curr_service = 'onezone'
                 services_list.append(f'ozw-{curr_service}')
     if op_service:
         for curr_service in op_service:

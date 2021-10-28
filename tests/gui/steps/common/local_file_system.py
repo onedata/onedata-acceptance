@@ -84,7 +84,8 @@ def specify_size(size_string):
     try:
         return int(size_string)
     except ValueError:
-        unit_dict = {'B': 1, 'KiB': 1024, 'MiB': 1024*1024}
+        unit_dict = {'B': 1, 'KiB': 1024, 'MiB': 1024*1024,
+                     'GiB': 1024*1024*1024}
         [size, unit] = size_string.split()
         return int(size) * unit_dict[unit]
 

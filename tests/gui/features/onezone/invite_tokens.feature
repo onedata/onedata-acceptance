@@ -73,30 +73,27 @@ Feature: Management of invite tokens in Onezone GUI
     And user of browser1 removes all tokens
 
 
-#  TODO: VFS-7565 implement new error handling in token consumer
-#  Scenario: User fails to consume group to space invite token with consumer caveat set not for them
-#    When user of browser1 creates and checks token with following configuration:
-#          type: invite
-#          invite type: Invite group to space
-#          invite target: space1
-#          usage limit: infinity
-#          caveats:
-#            consumer:
-#              - type: user
-#                by: id
-#                consumer name: user2
-#    And user of browser1 clicks on copy button in token view
-#    And user of browser1 sends copied token to user of browser2
-#
-#    # consume invite token
-#    And user of browser2 clicks on Tokens in the main menu
-#    And user of browser2 clicks on "Consume token" button in tokens sidebar
-#    And user of browser2 pastes received token into token text field
-#    And user of browser2 chooses "group1" group from dropdown on tokens page
-#    And user of browser2 clicks on Confirm button on consume token page
-#    Then user of browser2 sees that error modal with text "Consuming token failed" appeared
-#
-#    And user of browser1 removes all tokens
+  Scenario: User fails to consume group to space invite token with consumer caveat set not for them
+    When user of browser1 creates and checks token with following configuration:
+          type: invite
+          invite type: Invite group to space
+          invite target: space1
+          usage limit: infinity
+          caveats:
+            consumer:
+              - type: user
+                by: id
+                consumer name: user2
+    And user of browser1 clicks on copy button in token view
+    And user of browser1 sends copied token to user of browser2
+
+    # fail to consume invite token
+    And user of browser2 clicks on Tokens in the main menu
+    And user of browser2 clicks on "Consume token" button in tokens sidebar
+
+    And user of browser2 pastes received token into token text field
+    Then user of browser2 sees alert with text: "The consumer of provided token must authenticate as one of users (id)" on tokens page
+    And user of browser1 removes all tokens
 
 
   Scenario: User successfully consumes group to space invite token with consumer caveat set for Any user
@@ -250,23 +247,22 @@ Feature: Management of invite tokens in Onezone GUI
     And user of browser1 removes all tokens
 
 
-#  TODO: VFS-7565 implement new error handling in token consumer
-#  Scenario: Group fails to join space using invite token with consumer caveat set not for it
-#    When user of browser1 creates and checks token with following configuration:
-#          type: invite
-#          invite type: Invite group to space
-#          invite target: space1
-#          usage limit: infinity
-#          caveats:
-#            consumer:
-#              - type: group
-#                by: id
-#                consumer name: group2
-#    And user of browser1 clicks on copy button in token view
-#    And user of browser1 sends copied token to user of browser2
-#    Then user of browser2 fails to consume token for "group1" group
-#
-#    And user of browser1 removes all tokens
+  Scenario: Group fails to join space using invite token with consumer caveat set not for it
+    When user of browser1 creates and checks token with following configuration:
+          type: invite
+          invite type: Invite group to space
+          invite target: space1
+          usage limit: infinity
+          caveats:
+            consumer:
+              - type: group
+                by: id
+                consumer name: group2
+    And user of browser1 clicks on copy button in token view
+    And user of browser1 sends copied token to user of browser2
+    Then user of browser2 sees alert with text: "The consumer of provided token must authenticate as one of groups (id)" on tokens page while trying to consume token
+
+    And user of browser1 removes all tokens
 
 
   Scenario: Group succeeds to join space invite token with consumer caveat set for Any group
@@ -395,43 +391,41 @@ Feature: Management of invite tokens in Onezone GUI
     And user of browser1 removes all tokens
 
 
-#  TODO: VFS-7565 implement new error handling in token consumer
-#  Scenario: User fails to consume revoked token
-#    Given user admin has no harvesters
-#    And using REST, user admin creates "harvester6" harvester in "onezone" Onezone service
-#    When user of browser1 creates token with following configuration:
-#          name: token1
-#          type: invite
-#          invite type: Invite group to harvester
-#          invite target: harvester6
-#    And user of browser1 revokes token named "token1"
-#    And user of browser1 sees that created token configuration is as following:
-#          name: token1
-#          invite type: Invite group to harvester
-#          invite target: harvester6
-#          revoked: True
-#    And user of browser1 clicks on copy button in token view
-#    And user of browser1 sends copied token to user of browser2
-#    Then user of browser2 fails to consume token for "group1" group
-#
-#    And user of browser1 removes all tokens
+  Scenario: User fails to consume revoked token
+    Given user admin has no harvesters
+    And using REST, user admin creates "harvester6" harvester in "onezone" Onezone service
+    When user of browser1 creates token with following configuration:
+          name: token1
+          type: invite
+          invite type: Invite group to harvester
+          invite target: harvester6
+    And user of browser1 revokes token named "token1"
+    And user of browser1 sees that created token configuration is as following:
+          name: token1
+          invite type: Invite group to harvester
+          invite target: harvester6
+          revoked: True
+    And user of browser1 clicks on copy button in token view
+    And user of browser1 sends copied token to user of browser2
+    Then user of browser2 sees alert with text: "Provided token has been revoked." on tokens page while trying to consume token
+
+    And user of browser1 removes all tokens
 
 
-#  TODO: VFS-7565 implement new error handling in token consumer
-#  Scenario: User fails to consume deleted token
-#    Given user admin has no harvesters
-#    And using REST, user admin creates "harvester7" harvester in "onezone" Onezone service
-#    When user of browser1 creates and checks token with following configuration:
-#          name: token2
-#          type: invite
-#          invite type: Invite group to harvester
-#          invite target: harvester7
-#    And user of browser1 clicks on copy button in token view
-#    And user of browser1 sends copied token to user of browser2
-#    And user of browser1 removes token named "token2"
-#    Then user of browser2 fails to consume token for "group1" group
-#
-#    And user of browser1 removes all tokens
+  Scenario: User fails to consume deleted token
+    Given user admin has no harvesters
+    And using REST, user admin creates "harvester7" harvester in "onezone" Onezone service
+    When user of browser1 creates and checks token with following configuration:
+          name: token2
+          type: invite
+          invite type: Invite group to harvester
+          invite target: harvester7
+    And user of browser1 clicks on copy button in token view
+    And user of browser1 sends copied token to user of browser2
+    And user of browser1 removes token named "token2"
+    Then user of browser2 sees alert with text: "This resource could not be loaded" on tokens page while trying to consume token
+
+    And user of browser1 removes all tokens
 
 
   Scenario: User has default group member privileges after consuming user to group invite token with default settings

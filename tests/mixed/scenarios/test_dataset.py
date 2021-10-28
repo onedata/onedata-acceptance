@@ -1,13 +1,12 @@
-"""Test suite for tests using swaggers and browser
+"""Test suite for mixed datasets tests
 """
 
-__author__ = "Michal Cwiertnia"
-__copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
+__author__ = "Katarzyna Such"
+__copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-
-from pytest_bdd import scenarios
+from pytest_bdd import scenario, scenarios
 
 from tests.gui.steps.rest.env_up.users import *
 from tests.gui.steps.rest.env_up.groups import *
@@ -33,14 +32,6 @@ from tests.gui.steps.onezone.data_space_management import *
 from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.manage_account import *
 
-from tests.gui.steps.modal import *
-from tests.gui.steps.oneprovider_common import *
-
-from tests.gui.conftest import *
-
-from tests.mixed.steps.space_basic import *
-from tests.mixed.steps.members import *
-
 from tests.gui.steps.oneprovider.common import *
 from tests.gui.steps.oneprovider.data_tab import *
 from tests.gui.steps.oneprovider.file_browser import *
@@ -48,11 +39,26 @@ from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
-from tests.gui.steps.oneprovider.browser import *
-from tests.gui.meta_steps.onezone.common import *
-from tests.gui.meta_steps.oneprovider.common import *
 
-scenarios('../features/onezone/space/creation.feature')
-scenarios('../features/onezone/space/basic_management.feature')
-scenarios('../features/onezone/space/multiuser.feature')
-scenarios('../features/onezone/space/multiuser_with_admin.feature')
+from tests.gui.steps.modal import *
+from tests.gui.steps.oneprovider_common import *
+from tests.gui.meta_steps.onezone import *
+
+from tests.gui.conftest import *
+
+from tests.mixed.steps.data_basic import *
+from tests.mixed.steps.qos import *
+from tests.mixed.steps.dataset import *
+from tests.mixed.steps.tokens_basic import *
+from tests.gui.meta_steps.oneprovider.data import *
+from tests.gui.meta_steps.onezone.common import *
+
+from tests.oneclient.steps.auth_steps import *
+
+
+@pytest.fixture(scope='module')
+def screens():
+    return [0, 1]
+
+
+scenarios('../features/oneprovider/dataset.feature')
