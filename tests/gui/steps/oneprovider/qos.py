@@ -306,3 +306,16 @@ def choose_operator_in_add_cond_popup(selenium, browser_id, popups, operator):
     driver = selenium[browser_id]
     popup = popups(driver).get_query_builder_not_hidden_popup()
     getattr(popup, f'{operator.lower()}_operator').click()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*?) (?P<option>does not see|sees) '
+               '"Insufficient privileges to access this resource" in modal '
+               '"Quality of Service"'))
+def assert_error_label_in_qos_modal(selenium, browser_id, modals, option):
+    driver = selenium[browser_id]
+
+    if option == "sees":
+        assert modals(driver).quality_of_service.error_label, 'Label with "Insufficient privileges to access this resource" not found'
+        pdb.set_trace()
+    else:
+        assert not modals(driver).quality_of_service.error_label, 'Label with "Insufficient privileges to access this resource" found'

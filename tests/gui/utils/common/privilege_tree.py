@@ -96,7 +96,7 @@ class PrivilegeTree(PageObject):
     def get_privilege_row(self, name):
         return self.privileges[name]
 
-    def assert_privileges(self, privileges):
+    def assert_privileges(self, selenium, browser_id, privileges):
         """Assert privileges according to given config.
             For this method only dict should be passed!
 
@@ -117,13 +117,15 @@ class PrivilegeTree(PageObject):
                 User management:
                   granted: False
             """
-        self._assert_privileges(privileges)
+        self._assert_privileges(selenium, browser_id, privileges)
 
-    def _assert_privileges(self, privileges):
+    def _assert_privileges(self, selenium, browser_id, privileges):
         for privilege_name, privilege_group in privileges.items():
-            self._assert_privilege_group(privilege_group, privilege_name)
+            self._assert_privilege_group(selenium, browser_id, privilege_group,
+                                         privilege_name)
 
-    def _assert_privilege_group(self, group, name):
+    def _assert_privilege_group(self, selenium, browser_id, group, name):
+        driver = selenium[browser_id]
         privilege_row = self.privilege_groups[name]
         granted = group['granted']
         if granted == 'Partially':
@@ -132,7 +134,7 @@ class PrivilegeTree(PageObject):
             for sub_name, sub_granted in sub_privileges.items():
                 sub_row = privilege_row.get_sub_privilege_row(sub_name)
                 sub_row.assert_privilege_granted(sub_granted)
-            privilege_row.collapse()
+            privilege_row.collapse(driver)
         privilege_row.assert_privilege_granted(granted)
 
     def set_privileges(self, selenium, browser_id, privileges):

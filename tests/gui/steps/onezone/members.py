@@ -591,7 +591,7 @@ def assert_privileges_in_members_subpage(selenium, browser_id, member_name,
     privileges = yaml.load(config)
     tree = get_privilege_tree(selenium, browser_id, onepanel, oz_page, where,
                               member_type, member_name)
-    tree.assert_privileges(privileges)
+    tree.assert_privileges(selenium, browser_id, privileges)
     driver = selenium[browser_id]
     page = _find_members_page(onepanel, oz_page, driver, where)
     page.close_member(driver)

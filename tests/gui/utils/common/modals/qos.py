@@ -36,6 +36,7 @@ class QualityOfServiceModal(Modal):
     storage_matching = Label('.storages-matching-number')
     no_storage_matching = Label('.storages-matching-text')
     show_matching_storages = Button('.storages-matching-info-icon')
+    error_label = Label('.alert-promise-error')
 
     def __str__(self):
         return 'Quality of Service modal'

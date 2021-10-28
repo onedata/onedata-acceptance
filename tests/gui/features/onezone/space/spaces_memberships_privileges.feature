@@ -635,12 +635,16 @@ Feature: Basic management of spaces privileges in Onezone GUI
     And user of browser_user1 sees that current working directory displayed in breadcrumbs on file browser is space1
 
     And user of browser_user1 clicks on menu for "dir1" file in file browser
-    And user of browser_user1 sees that Quality of Service option is not in selection menu on file browser page
+    And user of browser_user1 clicks "Quality of Service" option in data row menu in file browser
+    And user of browser_user1 sees "Insufficient privileges to access this resource" in modal "Quality of Service"
+    And user of browser_user1 clicks on "Close" button in modal "Quality of Service"
 
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
           QoS management:
             granted: True
 
-    Then user of browser_user1 sees that Quality of Service option is in selection menu on file browser page
+    And user of browser_user1 clicks on menu for "dir1" file in file browser
+    And user of browser_user1 clicks "Quality of Service" option in data row menu in file browser
+    And user of browser_user1 does not see "Insufficient privileges to access this resource" in modal "Quality of Service"
 
