@@ -7,7 +7,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-from time import time
+import time
 from datetime import datetime
 import tarfile
 import yaml
@@ -35,7 +35,7 @@ def assert_msg_instead_of_browser(browser_id, msg, tmp_memory):
 def click_on_status_tag_for_file_in_file_browser(browser_id, status_type,
                                                  item_name, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
-    browser.data[item_name].click_on_status_tag(status_type)
+    browser.data[item_name].click_on_status_tag(transform(status_type))
 
 
 @wt(parsers.parse('user of {browser_id} sees only items named {item_list}'
@@ -81,7 +81,7 @@ def assert_item_in_file_browser_is_of_mdate(browser_id, item_name,
     # %b - abbreviated month name
     item_date = datetime.strptime(browser.data[item_name].modification_date,
                                   date_fmt)
-    expected_date = datetime.fromtimestamp(time())
+    expected_date = datetime.fromtimestamp(time.time())
     err_msg = 'displayed mod time {} for {} does not match expected {}'
     assert abs(expected_date - item_date).seconds < err_time, err_msg.format(
         item_date, item_name, expected_date)
@@ -353,7 +353,7 @@ def assert_property_in_symlink_dets_modal(selenium, browser_id, link_property,
 
 
 @wt(parsers.parse('user of {browser_id} sees that contents of downloaded '
-                  '{name} TAR file (with ID in clipboard) in download '
+                  '{name} TAR file (with ID from clipboard) in download '
                   'directory have following structure:\n{contents}'))
 @wt(parsers.parse('user of {browser_id} sees that contents of downloaded '
                   '"{name}" TAR file in download directory have following'

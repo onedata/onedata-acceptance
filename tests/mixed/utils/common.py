@@ -23,7 +23,7 @@ class NoSuchClientException(Exception):
 
 
 def setup_basic_configuration(configuration, host, port, path_prefix,
-                              username = "", password = ""):
+                              username="", password=""):
     configuration.username = username
     configuration.password = password
     configuration.verify_ssl = False
@@ -49,7 +49,7 @@ def login_to_panel(username, password, host):
     from tests.mixed.onepanel_client import (ApiClient
                                                       as ApiClient_panel)
     configuration = Conf_panel()
-    setup_basic_configuration(configuration, host, PANEL_REST_PORT, 
+    setup_basic_configuration(configuration, host, PANEL_REST_PORT,
                               PANEL_REST_PATH_PREFIX, username, password)
 
     return ApiClient_panel(configuration=configuration)
@@ -60,14 +60,14 @@ def login_to_cdmi(username, users, host, access_token=None,
     from tests.mixed.cdmi_client.configuration import (Configuration
                                                                 as Conf_CDMI)
     from tests.mixed.cdmi_client import (ApiClient as ApiClient_CDMI)
-    
+
     configuration = Conf_CDMI()
-    setup_basic_configuration(configuration, host, OZ_REST_PORT, 
+    setup_basic_configuration(configuration, host, OZ_REST_PORT,
                               CDMI_REST_PATH_PREFIX)
 
     header_value = access_token if access_token else users[username].token
 
-    client = ApiClient_CDMI(configuration=configuration, 
+    client = ApiClient_CDMI(configuration=configuration,
                             header_name='X-Auth-Token',
                             header_value=header_value)
 
@@ -76,18 +76,21 @@ def login_to_cdmi(username, users, host, access_token=None,
     return client
 
 
-def login_to_provider(username, users, host):
+def login_to_provider(username, users, host, access_token=None):
     from tests.mixed.oneprovider_client.configuration import \
                                                 Configuration as Conf_provider
     from tests.mixed.oneprovider_client import (ApiClient
                                                          as ApiClient_provider)
+
+    header_value = access_token if access_token else users[username].token
+
     configuration = Conf_provider()
-    setup_basic_configuration(configuration, host, OZ_REST_PORT, 
+    setup_basic_configuration(configuration, host, OZ_REST_PORT,
                               PROVIDER_REST_PATH_PREFIX)
 
-    return ApiClient_provider(configuration=configuration, 
-                              header_name = 'X-Auth-Token',
-                              header_value = users[username].token)
+    return ApiClient_provider(configuration=configuration,
+                              header_name='X-Auth-Token',
+                              header_value=header_value)
 
 
 @wt(parsers.parse('{sender} sends {item_type} to {receiver}'))

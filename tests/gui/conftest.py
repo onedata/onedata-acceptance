@@ -44,6 +44,15 @@ WAIT_FRONTEND = 4
 # when waiting for backend changes
 WAIT_BACKEND = 15
 
+# use this const when using: WebDriverWait(selenium, WAIT_NORMAL_UPLOAD).until(lambda s: ...)
+# when waiting for normal uploads to finish
+WAIT_NORMAL_UPLOAD = 60
+
+# use this const when using: WebDriverWait(selenium, WAIT_EXTENDED_UPLOAD).until(lambda s: ...)
+# when waiting for extended uploads to finish
+WAIT_EXTENDED_UPLOAD = 1500
+
+
 
 def pytest_configure(config):
     """Set default path for Selenium HTML report if explicit '--html=' not specified"""
@@ -150,6 +159,11 @@ def logdir(request):
 @fixture(scope='session')
 def driver_type(request):
     return request.config.getoption('--driver')
+
+
+@fixture(scope='session')
+def test_type(request):
+    return request.config.getoption('--test-type')
 
 
 @fixture(scope='session')
