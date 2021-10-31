@@ -34,6 +34,7 @@ Scenario: Non-space-owner successfully views transfers if he got View Transfers 
           Transfer management:
             granted: False
 
+    # Transfers in space1 tab is disabled when Read files privilege is not granted
     And user of browser_user1 sees that Transfers tab of "space1" is disabled
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
@@ -56,6 +57,7 @@ Scenario: Non-space-owner successfully views transfers if he got View Transfers 
               View transfers: True
               Schedule replication: False
 
+    # Non-space-owner checks if he can replicate file1 from oneprovider-1
     And user of browser_user1 clicks Files of "space1" in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
     And user of browser_user1 clicks on menu for "file1" file in file browser
@@ -97,7 +99,7 @@ Scenario: Non-space-owner successfully views transfers if he got View Transfers 
               View transfers: True
               Schedule eviction: False
 
-
+    # Non-space-owner checks if he can Evict file1 from oneprovider-1
     And user of browser_user1 clicks Files of "space1" in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
     And user of browser_user1 clicks on menu for "file1" file in file browser

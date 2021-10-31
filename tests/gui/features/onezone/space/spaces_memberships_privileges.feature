@@ -513,7 +513,9 @@ Feature: Basic management of spaces privileges in Onezone GUI
             privilege subtypes:
               Read files: False
 
+    # Files in space1 tab is disabled when Read files privilege is not granted
     And user of browser_user1 sees that Files tab of "space1" is disabled
+
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
           Data management:
@@ -521,6 +523,7 @@ Feature: Basic management of spaces privileges in Onezone GUI
             privilege subtypes:
               Read files: True
 
+    # Non-space-owner checks if he can view file in file browser
     And user of browser_user1 clicks Files of "space1" in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
     Then user of browser_user1 sees item(s) named dir1 in file browser
@@ -536,10 +539,10 @@ Feature: Basic management of spaces privileges in Onezone GUI
             privilege subtypes:
               Write files: False
 
+    # Non-space-owner checks if he can create directory in space1
     And user of browser_user1 clicks Files of "space1" in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
     And user of browser_user1 sees that current working directory displayed in breadcrumbs on file browser is space1
-
     And user of browser_user1 clicks "New directory" button from file browser menu bar
     And user of browser_user1 writes "new_directory" into text field in modal "Create dir"
     And user of browser_user1 confirms create new directory using button
@@ -570,17 +573,16 @@ Feature: Basic management of spaces privileges in Onezone GUI
             privilege subtypes:
               Manage shares: False
 
+    # Non-space-owner checks if he can create share in space1
     And user of browser_user1 clicks Files of "space1" in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
     And user of browser_user1 sees that current working directory displayed in breadcrumbs on file browser is space1
-
     And user of browser_user1 clicks on menu for "dir1" file in file browser
     And user of browser_user1 clicks "Share" option in data row menu in file browser
     And user of browser_user1 clicks on "Create" button in modal "Share directory"
     And user of browser_user1 sees that error modal with text "Creating share failed" appeared
     And user of browser_user1 closes "Error" modal
     And user of browser_user1 clicks on "Close" button in modal "Share directory"
-
 
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
@@ -603,10 +605,10 @@ Feature: Basic management of spaces privileges in Onezone GUI
           QoS management:
             granted: False
 
+    # Non-space-owner checks if he can select Quality of Service option of the directory
     And user of browser_user1 clicks Files of "space1" in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
     And user of browser_user1 sees that current working directory displayed in breadcrumbs on file browser is space1
-
     And user of browser_user1 clicks on menu for "dir1" file in file browser
     And user of browser_user1 sees that Quality of Service option is not in selection menu on file browser page
 
@@ -618,6 +620,7 @@ Feature: Basic management of spaces privileges in Onezone GUI
               View QoS: True
 
     Then user of browser_user1 sees that Quality of Service option is in selection menu on file browser page
+
 
   Scenario: Non-space-owner successfully menages QoS if he got Qos management privileges
     When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
@@ -633,7 +636,6 @@ Feature: Basic management of spaces privileges in Onezone GUI
     And user of browser_user1 clicks Files of "space1" in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
     And user of browser_user1 sees that current working directory displayed in breadcrumbs on file browser is space1
-
     And user of browser_user1 clicks on menu for "dir1" file in file browser
     And user of browser_user1 clicks "Quality of Service" option in data row menu in file browser
     And user of browser_user1 sees "Insufficient privileges to access this resource" in modal "Quality of Service"

@@ -158,6 +158,8 @@ def wt_cp_files_to_dst_path(browser_id, src_path, dst_path, tmpdir, hosts):
                   'from provider\'s storage mount point'))
 def wt_rm_files_to_storage_mount_point(src_path, hosts):
     _docker_rm(os.path.join(MOUNT_POINT, src_path), hosts)
+    pdb.set_trace()
+
 
 
 @given(parsers.parse('there is no {elems} in provider\'s storage mount point'))
