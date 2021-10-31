@@ -197,7 +197,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     # confirm change of file content
     And user of browser2 appends "34" to dir2/file1.txt file in provider's storage mount point
 
-    And user of browser2 is idle for 5 seconds
+    And user of browser2 is idle for 10 seconds
     And user of browser2 sees file browser in files tab in Oneprovider page
     And user of browser2 double clicks on item named "dir2" in file browser
     And user of browser2 double clicks on item named "file1.txt" in file browser
@@ -263,7 +263,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     # files in gui are not updated after local changes
     And user of browser2 appends "34" to dir2/file1.txt file in provider's storage mount point
 
-    And user of browser2 is idle for 5 seconds
+    And user of browser2 is idle for 10 seconds
     And user of browser2 sees file browser in files tab in Oneprovider page
     And user of browser2 double clicks on item named "dir2" in file browser
     And user of browser2 double clicks on item named "file1.txt" in file browser

@@ -339,6 +339,7 @@ Feature: Oneprovider transfers functionality
             oneprovider-2: never synchronized
 
     And user of browser double clicks on item named "20B-0.txt" in file browser
+    And user of browser is idle for 5 seconds
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees file chunks for file "20B-0.txt" as follows:
             oneprovider-1: entirely filled

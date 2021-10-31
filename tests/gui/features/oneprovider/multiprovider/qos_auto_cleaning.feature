@@ -37,7 +37,7 @@ Feature: Quality of Service tests for 2 providers with auto-cleaning using multi
     And user of browser_emergency opens "space1" record on spaces list in Spaces page in Onepanel
     And user of browser_emergency clicks on File popularity navigation tab in space "space1"
     And user of browser_emergency enables file-popularity in "space1" space in Onepanel
-    And user of browser_emergency is idle for 5 seconds
+    And user of browser_emergency is idle for 8 seconds
     And user of browser_emergency clicks on "Auto cleaning" navigation tab in space "space1"
     And user of browser_emergency enables auto-cleaning in "space1" space in Onepanel
 
@@ -49,7 +49,7 @@ Feature: Quality of Service tests for 2 providers with auto-cleaning using multi
     And user of browser_unified clicks on Data in the main menu
     And user of browser_unified creates 2 replicas of "anyStorage" QoS requirement for "large_file.txt" in space "space1"
     And user of browser_unified replicates "20B-0.txt" to provider "oneprovider-2"
-    And user of browser_emergency is idle for 5 seconds
+    And user of browser_emergency is idle for 8 seconds
 
     # set soft quota
     And user of browser_emergency clicks change soft quota button in auto-cleaning tab in Onepanel
@@ -63,7 +63,7 @@ Feature: Quality of Service tests for 2 providers with auto-cleaning using multi
 
     # start auto-cleaning
     And user of browser_emergency clicks on "Start cleaning now" button in auto-cleaning tab in Onepanel
-    And user of browser_emergency is idle for 5 seconds
+    And user of browser_emergency is idle for 25 seconds
 
     Then user of browser_emergency sees 20 B released size in cleaning report in Onepanel
     And user of browser_unified sees file chunks for file "large_file.txt" as follows:
