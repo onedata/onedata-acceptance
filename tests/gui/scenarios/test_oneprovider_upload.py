@@ -81,28 +81,28 @@ skip_if_not_chrome = mark.skipif(BROWSER != 'Chrome',
                                         'simulated in Chrome')
 
 
-@skip_if_not_chrome
-@scenario('User uploads 5 files at once')
-def test_user_uploads_5_files_at_once():
-    pass
-
-
-@skip_if_not_chrome
-@scenario('User uploads more than 50 files and uses files list lazy loading')
-def test_user_uploads_more_than_50_files_and_uses_files_list_lazy_loading():
-    pass
-
-
-@skip_if_not_chrome
-@scenario('User can change directory while uploading files')
-def test_user_can_change_directory_while_uploading_files():
-    pass
-
-
-@skip_if_not_chrome
-@scenario('Files uploaded by user are ordered by name')
-def test_files_uploaded_by_user_are_ordered_by_name():
-    pass
+# @skip_if_not_chrome
+# @scenario('User uploads 5 files at once')
+# def test_user_uploads_5_files_at_once():
+#     pass
+#
+#
+# @skip_if_not_chrome
+# @scenario('User uploads more than 50 files and uses files list lazy loading')
+# def test_user_uploads_more_than_50_files_and_uses_files_list_lazy_loading():
+#     pass
+#
+#
+# @skip_if_not_chrome
+# @scenario('User can change directory while uploading files')
+# def test_user_can_change_directory_while_uploading_files():
+#     pass
+#
+#
+# @skip_if_not_chrome
+# @scenario('Files uploaded by user are ordered by name')
+# def test_files_uploaded_by_user_are_ordered_by_name():
+#     pass
 
 
 @skip_if_not_chrome
@@ -111,7 +111,7 @@ def test_user_successfully_uploads_1_gb_file_stress_test():
     pass
 
 
-@skip_if_not_chrome
-@scenario('User successfully uploads 300 files (stress test)')
-def test_user_successfully_uploads_300_files_stress_test():
-    pass
+# @skip_if_not_chrome
+# @scenario('User successfully uploads 300 files (stress test)')
+# def test_user_successfully_uploads_300_files_stress_test():
+#     pass
