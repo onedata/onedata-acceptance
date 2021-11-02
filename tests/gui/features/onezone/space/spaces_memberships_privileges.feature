@@ -648,5 +648,5 @@ Feature: Basic management of spaces privileges in Onezone GUI
 
     And user of browser_user1 clicks on menu for "dir1" file in file browser
     And user of browser_user1 clicks "Quality of Service" option in data row menu in file browser
-    And user of browser_user1 does not see "Insufficient privileges to access this resource" in modal "Quality of Service"
+    Then user of browser_user1 does not see "Insufficient privileges to access this resource" in modal "Quality of Service"
 

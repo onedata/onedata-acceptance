@@ -575,7 +575,7 @@ def set_privileges_in_members_subpage_on_modal(selenium, browser_id, config,
     driver = selenium[browser_id]
     privileges = yaml.load(config)
     tree = modals(driver).change_privileges.privilege_tree
-    tree.set_privileges(privileges)
+    tree.set_privileges(selenium, browser_id, privileges)
     modals(driver).change_privileges.save_button.click()
 
 
