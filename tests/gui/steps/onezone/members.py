@@ -604,7 +604,7 @@ def assert_privileges_in_members_subpage_on_modal(selenium, browser_id, config,
     driver = selenium[browser_id]
     privileges = yaml.load(config)
     tree = modals(driver).change_privileges.privilege_tree
-    tree.assert_privileges(privileges)
+    tree.assert_privileges(selenium, browser_id, privileges)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks (?P<option>Save|Cancel) '
@@ -779,7 +779,7 @@ def assert_privilege_config_for_user(selenium, browser_id, item_name, where,
                                   list_type, onepanel)
     privilege_tree = get_privilege_tree(selenium, browser_id, onepanel, oz_page,
                                         where, list_type, name)
-    privilege_tree.assert_privileges(privileges)
+    privilege_tree.assert_privileges(selenium, browser_id, privileges)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on '

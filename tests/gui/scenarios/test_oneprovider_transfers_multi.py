@@ -62,3 +62,4 @@ def screens():
 
 
 scenarios('../features/oneprovider/transfers/transfers_multi.feature')
+scenarios('../features/onezone/space/spaces_memberships_privileges_multiprovider.feature')

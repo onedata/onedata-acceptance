@@ -250,7 +250,7 @@ def _create_token_with_config(selenium, browser_id, config, oz_page,
                                  oz_page)
     if privileges:
         tree = get_privileges_tree(selenium, browser_id, oz_page)
-        tree.set_privileges(privileges)
+        tree.set_privileges(selenium, browser_id, privileges)
     if caveats:
         show_inactive_caveats(selenium, browser_id, oz_page)
         _set_tokens_caveats(selenium, browser_id, oz_page, caveats, popups,
@@ -406,7 +406,7 @@ def _assert_token_configuration(selenium, browser_id, config, oz_page, users,
                                        oz_page)
     if privileges:
         tree = get_privileges_tree(selenium, browser_id, oz_page)
-        tree.assert_privileges(privileges)
+        tree.assert_privileges(selenium, browser_id, privileges)
     if caveats:
         assert_token_caveats(selenium, browser_id, oz_page, caveats, users,
                              groups, hosts, tmp_memory, creation)
