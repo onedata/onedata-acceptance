@@ -14,6 +14,7 @@ from functools import partial
 import pytest
 import yaml
 
+from tests.gui.meta_steps.oneprovider.dataset import get_flags
 from tests.gui.utils.generic import parse_seq
 from cdmi_client import ContainerApi, DataObjectApi
 from cdmi_client.rest import ApiException as CdmiException
@@ -27,9 +28,6 @@ from tests.mixed.utils.data import (check_files_tree, create_content,
 from tests.utils.acceptance_utils import time_attr, compare
 from tests.utils.http_exceptions import HTTPError
 from tests.mixed.oneprovider_client import QoSApi
-
-DATA_PROTECTION = 'data_protection'
-METADATA_PROTECTION = 'metadata_protection'
 
 
 def _lookup_file_id(path, user_client_op):
@@ -409,15 +407,6 @@ def delete_qos_requirement_in_op_rest(user, users, hosts, host, space_name,
     qos = qo_s_api.get_file_qos_summary(file_id).to_dict()['requirements']
     for qos_id in qos:
         qo_s_api.remove_qos_requirement(qos_id)
-
-
-def get_flags(option):
-    flags = []
-    if re.search("(?!meta)data", option):
-        flags.append(DATA_PROTECTION)
-    if 'metadata' in option:
-        flags.append(METADATA_PROTECTION)
-    return flags
 
 
 def create_dataset_in_op_rest(user, users, hosts, host, space_name, item_name,

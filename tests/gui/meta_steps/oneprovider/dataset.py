@@ -8,11 +8,9 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 import re
-
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import (
     go_to_path_without_last_elem, check_file_structure_in_browser)
-from tests.mixed.steps.rest.oneprovider.data import get_flags
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 from tests.gui.steps.onezone.spaces import (
@@ -30,6 +28,18 @@ from tests.gui.steps.oneprovider.dataset import (
     assert_general_toggle_checked_for_ancestors,
     fail_to_mark_file_as_dataset_toggle)
 from tests.gui.steps.modal import click_modal_button
+
+DATA_PROTECTION = 'data_protection'
+METADATA_PROTECTION = 'metadata_protection'
+
+
+def get_flags(option):
+    flags = []
+    if re.search("(?!meta)data", option):
+        flags.append(DATA_PROTECTION)
+    if 'metadata' in option:
+        flags.append(METADATA_PROTECTION)
+    return flags
 
 
 def go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
