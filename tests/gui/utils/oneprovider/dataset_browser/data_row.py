@@ -19,16 +19,29 @@ class DataRow(PageObject):
     menu_button = Button('.fb-table-col-actions-menu .menu-toggle')
     data_protected_tag = WebElement('.file-data-protected-icon')
     metadata_protected_tag = WebElement('.file-metadata-protected-icon')
+    _status_tag = WebElement('.file-status-tag')
+    clickable_field = WebElement('.file-name')
 
     def __str__(self):
         return f'{self.name} in {str(self.parent)}'
 
     def double_click(self):
-        ActionChains(self.driver).double_click(self.web_elem).perform()
+        if self.is_any_tag_visible():
+            ActionChains(self.driver).double_click(self.clickable_field).perform()
+        else:
+            ActionChains(self.driver).double_click(self.web_elem).perform()
 
     def is_tag_visible(self, name):
         try:
             getattr(self, f'{transform(name)}_tag')
+        except RuntimeError:
+            return False
+        else:
+            return True
+
+    def is_any_tag_visible(self):
+        try:
+            self._status_tag.get_attribute('class')
         except RuntimeError:
             return False
         else:

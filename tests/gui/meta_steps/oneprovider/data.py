@@ -413,12 +413,14 @@ def go_to_path(selenium, browser_id, tmp_memory, path, op_container,
 
 
 def go_to_path_without_last_elem(selenium, browser_id, tmp_memory, path,
-                                 op_container):
+                                 op_container, item_browser='file browser'):
     if '/' in path:
         _, path_list = get_item_name_and_containing_dir_path(path)
+
         for directory in path_list:
             double_click_on_item_in_browser(selenium, browser_id, directory,
-                                            tmp_memory, op_container)
+                                            tmp_memory, op_container,
+                                            item_browser)
 
 
 def get_item_name_and_containing_dir_path(path):
