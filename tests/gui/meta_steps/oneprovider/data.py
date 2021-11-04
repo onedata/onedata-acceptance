@@ -162,6 +162,18 @@ def create_item_in_op_gui(selenium, browser_id, path, item_type, name,
         assert_items_presence_in_browser(browser_id, name, tmp_memory)
 
 
+@wt(parsers.re(r'user of (?P<browser_id>\w+) sees that the file structure '
+               'for archive with description: "(?P<description>.*)" in '
+               '(?P<which_browser>.*) is as follow:\n'
+               r'(?P<config>(.|\s)*)'))
+def check_file_structure_for_archive(browser_id, config, selenium, tmp_memory,
+                                     op_container, tmpdir, description,
+                                     which_browser='file browser'):
+    subtree = yaml.load(config)
+    _check_files_tree(subtree, browser_id, tmp_memory, '', selenium,
+                      op_container, tmpdir, which_browser, description)
+
+
 @wt(parsers.re(r'user of (?P<browser_id>\w+) sees that the file structure in '
                '(?P<which_browser>.*) is as follow:\n'
                r'(?P<config>(.|\s)*)'))
@@ -174,7 +186,7 @@ def check_file_structure_in_browser(browser_id, config, selenium, tmp_memory,
 
 
 def _check_files_tree(subtree, user, tmp_memory, cwd, selenium, op_container,
-                      tmpdir, which_browser='file browser'):
+                      tmpdir, which_browser='file browser', description=''):
     for item in subtree:
         try:
             [(item_name, item_subtree)] = item.items()
@@ -199,7 +211,6 @@ def _check_files_tree(subtree, user, tmp_memory, cwd, selenium, op_container,
             double_click_on_item_in_browser(selenium, user, item_name,
                                             tmp_memory, op_container,
                                             which_browser)
-
             # if item is directory go deeper
             if (item_name.startswith('dir') or
                     (which_browser == 'archive file browser'
@@ -219,7 +230,7 @@ def _check_files_tree(subtree, user, tmp_memory, cwd, selenium, op_container,
                                                                op_container,
                                                                which_browser)
                 if which_browser == 'archive file browser':
-                    double_click_on_archive(user, tmp_memory)
+                    double_click_on_archive(user, tmp_memory, description)
             else:
                 has_downloaded_file_content(user, item_name, str(item_subtree),
                                             tmpdir)

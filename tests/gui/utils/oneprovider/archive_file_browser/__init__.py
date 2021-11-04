@@ -8,7 +8,8 @@ __license__ = "This software is released under the MIT license cited in " \
 
 from functools import partial
 from tests.gui.utils.core.base import PageObject
-from tests.gui.utils.core.web_elements import WebItemsSequence, WebItem, Button
+from tests.gui.utils.core.web_elements import (WebItemsSequence, WebItem,
+                                               WebElement)
 from .data_row import DataRow
 from ..breadcrumbs import Breadcrumbs
 
@@ -16,9 +17,18 @@ from ..breadcrumbs import Breadcrumbs
 class _ArchiveFileBrowser(PageObject):
     data = WebItemsSequence('.data-row.fb-table-row', cls=DataRow)
     breadcrumbs = Breadcrumbs('.fb-breadcrumbs')
+    _empty_dir_icon = WebElement('.empty-dir-image')
 
     def __str__(self):
         return f'archive file browser in {self.parent}'
+
+    def is_empty(self):
+        try:
+            self._empty_dir_icon
+        except RuntimeError:
+            return False
+        else:
+            return True
 
 
 ArchiveFileBrowser = partial(WebItem, cls=_ArchiveFileBrowser)

@@ -40,7 +40,7 @@ Feature: Basic archives operations
 
     Then user of browser sees archive browser in archives tab in Oneprovider page
     And user of browser sees that 1st archive in archive browser has description: "first archive"
-    And user of browser sees that 1st archive in archive browser has status: "preserved", number of files: "1 file", size: "3 B"
+    And user of browser sees that archive with description: "first archive" in archive browser has status: "preserved", number of files: "1 file", size: "3 B"
     And user of browser goes back to dataset browser from archive browser
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser sees that item "dir4" has 1 archive
@@ -49,13 +49,14 @@ Feature: Basic archives operations
   Scenario: User sees that dataset does not have archive after purging archive
     When user of browser creates dataset for item "dir4" in "space1"
     And user of browser creates archive for item "dir4" in "space1" with following configuration:
+        description: first archive
         layout: plain
     And user of browser goes back to dataset browser from archive browser
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser sees that item "dir4" has 1 archive
     And user of browser clicks on archives count link for "dir4" in dataset browser
     And user of browser sees archive browser in archives tab in Oneprovider page
-    And user of browser clicks on menu for 1st archive in archive browser
+    And user of browser clicks on menu for archive with description: "first archive" in archive browser
     And user of browser clicks "Purge archive" option in data row menu in archive browser
     And user of browser writes "I understand that data of the archive will be lost" into confirmation input in Purge Archive modal
     And user of browser clicks on "Purge archive" button in modal "Purge archive"
@@ -68,11 +69,12 @@ Feature: Basic archives operations
   Scenario: User sees directory tree in archive browser after creating plain archive
     When user of browser creates dataset for item "dir1" in "space1"
     And user of browser creates archive for item "dir1" in "space1" with following configuration:
+        description: first archive
         layout: plain
     And user of browser sees archive browser in archives tab in Oneprovider page
-    And user of browser double clicks on 1st archive on archives list in archive browser
+    And user of browser double clicks on archive with description: "first archive" on archives list in archive browser
     And user of browser sees archive file browser in archives tab in Oneprovider page
-    Then user of browser sees that the file structure in archive file browser is as follow:
+    Then user of browser sees that the file structure for archive with description: "first archive" in archive file browser is as follow:
          - dir1:
            - dir2:
              - dir3:
@@ -82,11 +84,12 @@ Feature: Basic archives operations
   Scenario: User sees that newly created archive has new file and is different than archive created earlier after creating new plain archive
     When user of browser creates dataset for item "dir1" in "space1"
     And user of browser creates archive for item "dir1" in "space1" with following configuration:
+        description: first archive
         layout: plain
     And user of browser sees archive browser in archives tab in Oneprovider page
-    And user of browser double clicks on 1st archive on archives list in archive browser
+    And user of browser double clicks on archive with description: "first archive" on archives list in archive browser
     And user of browser sees archive file browser in archives tab in Oneprovider page
-    And user of browser sees that the file structure in archive file browser is as follow:
+    And user of browser sees that the file structure for archive with description: "first archive" in archive file browser is as follow:
          - dir1:
            - dir2:
              - dir3:
@@ -97,11 +100,12 @@ Feature: Basic archives operations
     And user of browser sees that item named "20B-0.txt" has appeared in file browser
 
     And user of browser creates archive for item "dir1" in "space1" with following configuration:
+        description: second archive
         layout: plain
     And user of browser sees archive browser in archives tab in Oneprovider page
-    And user of browser double clicks on 1st archive on archives list in archive browser
+    And user of browser double clicks on archive with description: "second archive" on archives list in archive browser
     And user of browser sees archive file browser in archives tab in Oneprovider page
-    Then user of browser sees that the file structure in archive file browser is as follow:
+    Then user of browser sees that the file structure for archive with description: "second archive" in archive file browser is as follow:
          - dir1:
            - dir2:
              - dir3:
@@ -112,9 +116,10 @@ Feature: Basic archives operations
   Scenario: User sees BagIt tag after creating BagIt archive
     When user of browser creates dataset for item "dir1" in "space1"
     And user of browser creates archive for item "dir1" in "space1" with following configuration:
+        description: first archive
         layout: BagIt
     And user of browser sees archive browser in archives tab in Oneprovider page
-    Then user of browser sees BagIt tag for 1st archive on archives list in archive browser
+    Then user of browser sees BagIt tag for archive with description: "first archive" on archives list in archive browser
 
 
   Scenario: User sees symbolic links on child datasets after creating nested archive on parent
@@ -124,11 +129,12 @@ Feature: Basic archives operations
     And user of browser double clicks on item named "dir3" in file browser
     And user of browser creates dataset for item "file1" in "space1"
     And user of browser creates archive for item "dir1" in "space1" with following configuration:
+        description: first archive
         layout: plain
         create nested archives: True
 
     Then user of browser sees archive browser in archives tab in Oneprovider page
-    And user of browser double clicks on 1st archive on archives list in archive browser
+    And user of browser double clicks on archive with description: "first archive" on archives list in archive browser
     And user of browser sees archive file browser in archives tab in Oneprovider page
     And user of browser goes to "/dir1/dir2" in archive file browser
     And user of browser sees symlink status tag for "dir3" in archive file browser
@@ -173,13 +179,14 @@ Feature: Basic archives operations
     And user of browser creates dataset for item "file1" in "space1"
 
     And user of browser creates archive for item "dir1" in "space1" with following configuration:
+        description: first archive
         layout: plain
         create nested archives: True
 
     And user of browser sees archive browser in archives tab in Oneprovider page
-    And user of browser clicks on menu for 1st archive in archive browser
+    And user of browser clicks on menu for archive with description: "first archive" in archive browser
     And user of browser clicks "Copy archive ID" option in data row menu in archive browser
-    And user of browser clicks on menu for 1st archive in archive browser
+    And user of browser clicks on menu for archive with description: "first archive" in archive browser
     And user of browser clicks "Download (tar)" option in data row menu in archive browser
     Then user of browser sees that contents of downloaded archive TAR file (with ID from clipboard) in download directory have following structure:
           - archive:
@@ -200,11 +207,12 @@ Feature: Basic archives operations
     And user of browser sees that item named "20B-0.txt" has appeared in file browser
 
     And user of browser creates archive for item "dir4" in "space1" with following configuration:
+        description: second archive
         layout: plain
         incremental: True
 
     Then user of browser sees archive browser in archives tab in Oneprovider page
-    And user of browser double clicks on 1st archive on archives list in archive browser
+    And user of browser double clicks on archive with description: "second archive" on archives list in archive browser
     And user of browser sees archive file browser in archives tab in Oneprovider page
     And user of browser double clicks on item named "dir4" in archive file browser
     And user of browser sees hardlink status tag with "2 hard links" text for "file2" in archive file browser
@@ -223,11 +231,12 @@ Feature: Basic archives operations
     And user of browser goes back to dataset browser from archive browser
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser creates archive for item "dir4" in "space1" with following configuration:
+        description: third archive
         layout: plain
         incremental: True
 
     Then user of browser sees archive browser in archives tab in Oneprovider page
-    And user of browser double clicks on 1st archive on archives list in archive browser
+    And user of browser double clicks on archive with description: "third archive" on archives list in archive browser
     And user of browser sees archive file browser in archives tab in Oneprovider page
     And user of browser double clicks on item named "dir4" in archive file browser
     And user of browser sees hardlink status tag with "3 hard links" text for "file2" in archive file browser
@@ -236,14 +245,16 @@ Feature: Basic archives operations
   Scenario: User sees name of base archive after creating incremental archive
     When user of browser creates dataset for item "dir4" in "space1"
     And user of browser creates archive for item "dir4" in "space1" with following configuration:
+        description: first archive
         layout: plain
     And user of browser goes back to dataset browser from archive browser
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser creates archive for item "dir4" in "space1" with following configuration:
+        description: second archive
         layout: plain
         incremental: True
     Then user of browser sees archive browser in archives tab in Oneprovider page
-    And user of browser sees that base archive for latest created archive is 2nd archive on archives list in archive browser
+    And user of browser sees that base archive for archive with description: "second archive" is archive with description: "first archive" on archives list in archive browser
 
 
   Scenario: User sees that the base archive in create archive modal is the latest created archive after enabling incremental toggle
@@ -259,11 +270,11 @@ Feature: Basic archives operations
   Scenario: User creates incremental archive that has chosen base archive
     When user of browser creates dataset for item "dir4" in "space1"
     And user of browser creates archive for item "dir4" in "space1" with following configuration:
-        description: first_archive
+        description: first archive
         layout: plain
 
     And user of browser sees archive browser in archives tab in Oneprovider page
-    And user of browser copies 1st archive name in archive browser to clipboard
+    And user of browser copies archive with description: "first archive" name in archive browser to clipboard
 
     # create archive
     And user of browser clicks on Create Archive button in archive browser
@@ -273,33 +284,36 @@ Feature: Basic archives operations
     And user of browser clicks "Create incremental archive" option in data row menu in archive browser
     And user of browser clicks on "Create" button in modal "Create Archive"
     And user of browser sees archive browser in archives tab in Oneprovider page
-    Then user of browser sees that base archive for latest created archive is 3rd archive on archives list in archive browser
+    Then user of browser sees that base archive for latest created archive is archive with description: "first archive" on archives list in archive browser
 
 
   Scenario: User sees DIP tag after creating archive with "Include DIP" option
     When user of browser creates dataset for item "dir1" in "space1"
     And user of browser creates archive for item "dir1" in "space1" with following configuration:
+        description: DIP archive
         layout: plain
         include DIP: True
     And user of browser sees archive browser in archives tab in Oneprovider page
-    Then user of browser sees DIP tag for 1st archive on archives list in archive browser
+    Then user of browser sees DIP tag for archive with description: "DIP archive" on archives list in archive browser
+
 
 
   Scenario: User sees BagIt metadata files and directory tree in AIP tab and directory tree in DIP tab in archive browser after creating archive with "BagIt" layout and "Include DIP" option
     When user of browser creates dataset for item "dir1" in "space1"
     And user of browser creates archive for item "dir1" in "space1" with following configuration:
+        description: first archive
         layout: BagIt
         include DIP: True
     And user of browser sees archive browser in archives tab in Oneprovider page
-    And user of browser double clicks on 1st archive on archives list in archive browser
+    And user of browser double clicks on archive with description: "first archive" on archives list in archive browser
     And user of browser sees archive file browser in archives tab in Oneprovider page
-    Then user of browser sees that the file structure in archive file browser is as follow:
+    Then user of browser sees that the file structure for archive with description: "first archive" in archive file browser is as follow:
          - bagit.txt
          - data:
            - dir1:
              - dir2:
                - dir3:
-                 - file1
+                 - file1: 100
          - manifest-md5.txt
          - manifest-sha1.txt
          - manifest-sha256.txt
@@ -309,11 +323,13 @@ Feature: Basic archives operations
          - tagmanifest-sha1.txt
          - tagmanifest-sha256.txt
          - tagmanifest-sha512.txt
-    And user of browser double clicks on 1st archive on archives list in archive browser
+    And user of browser double clicks on archive with description: "first archive" on archives list in archive browser
     And user of browser clicks on DIP view mode on archive file browser page
     And user of browser sees archive file browser in archives tab in Oneprovider page
-    And user of browser sees that the file structure in archive file browser is as follow:
+    And user of browser sees that the file structure for archive with description: "first archive" in archive file browser is as follow:
          - dir1:
            - dir2:
              - dir3:
                - file1
+
+

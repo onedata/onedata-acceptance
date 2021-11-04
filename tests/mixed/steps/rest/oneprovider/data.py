@@ -13,12 +13,14 @@ from functools import partial
 import pytest
 import yaml
 
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import parse_seq, transform
 from cdmi_client import ContainerApi, DataObjectApi
 from cdmi_client.rest import ApiException as CdmiException
 from oneprovider_client import BasicFileOperationsApi
 from oneprovider_client import FilePathResolutionApi
 from oneprovider_client.rest import ApiException as OPException
+from tests.mixed.oneprovider_client.api.archive_api import ArchiveApi
+from tests.mixed.oneprovider_client.api.dataset_api import DatasetApi
 from tests.mixed.utils.common import *
 from tests.mixed.utils.data import (check_files_tree, create_content,
                                     assert_ace, get_acl_metadata)
@@ -404,3 +406,106 @@ def delete_qos_requirement_in_op_rest(user, users, hosts, host, space_name,
     qos = qo_s_api.get_file_qos_summary(file_id).to_dict()['requirements']
     for qos_id in qos:
         qo_s_api.remove_qos_requirement(qos_id)
+
+
+def create_dataset_in_op_rest(user, users, hosts, host, space_name, item_name,
+                              option):
+    path = f'{space_name}/{item_name}'
+    client = login_to_provider(user, users, hosts[host]['hostname'])
+    dataset_api = DatasetApi(client)
+    file_id = _lookup_file_id(path, client)
+    data = {"rootFileId": f"{file_id}"}
+    if ' data' in option:
+        data["protectionFlags"] = ["data_protection"]
+    if 'metadata' in option:
+        if "protectionFlags" in data:
+            data["protectionFlags"].append("metadata_protection")
+        else:
+            data["protectionFlags"] = ["metadata_protection"]
+    dataset_api.establish_dataset(data)
+
+
+def get_dataset_id(item_name, spaces, space_name, dataset_api,
+                   state='attached'):
+    space_id = f'{spaces[space_name]}'
+    datasets = dataset_api.list_space_top_datasets(space_id, state)
+    if '/' in item_name:
+        path_list = item_name.split('/')
+        for dataset in datasets.datasets:
+            if dataset.name == path_list[0]:
+                dataset_id = dataset.dataset_id
+                return get_dataset_child_id(path_list, dataset_id, dataset_api)
+    else:
+        for dataset in datasets.datasets:
+            if dataset.name == item_name:
+                return dataset.dataset_id
+
+
+def get_dataset_child_id(path_list, dataset_id, dataset_api):
+    for item in path_list[1:]:
+        dataset_children = dataset_api.list_dataset_children(dataset_id)
+        for dataset in dataset_children.datasets:
+            if dataset.name == item:
+                dataset_id = dataset.dataset_id
+                if item == path_list[-1]:
+                    return dataset_id
+
+
+def translate_config_for_archive(config):
+    for item in config:
+        if type(config[item]) is not bool:
+            config[item] = config[item].lower()
+
+
+def create_archive_in_op_rest(user, users, hosts, host, space_name, item_name,
+                              config, spaces, tmp_memory):
+    config = yaml.load(config)
+    translate_config_for_archive(config)
+    client = login_to_provider(user, users, hosts[host]['hostname'])
+    dataset_api = DatasetApi(client)
+    dataset_id = get_dataset_id(item_name, spaces, space_name, dataset_api)
+    archive_api = ArchiveApi(client)
+    description = config['description']
+    del config['description']
+    data = {'datasetId': dataset_id, 'config': config,
+            'description': description}
+    tmp_memory[description] = archive_api.create_archive(data).archive_id
+
+
+def assert_archive_in_op_rest(user, users, hosts, host, space_name, item_name,
+                              spaces, tmp_memory, option, description):
+    client = login_to_provider(user, users, hosts[host]['hostname'])
+    dataset_api = DatasetApi(client)
+    dataset_id = get_dataset_id(item_name, spaces, space_name, dataset_api)
+    archive_api = ArchiveApi(client)
+    dataset_archive = archive_api.list_dataset_archives(dataset_id)
+    archive_id = tmp_memory[description]
+    if option == 'sees':
+        for archive in dataset_archive.archives:
+            if archive == archive_id:
+                break
+        else:
+            raise Exception(f'Archive for item {item_name} not found')
+    else:
+        for archive in dataset_archive.archives:
+            if archive == archive_id:
+                raise Exception(f'Archive for item {item_name} found')
+        else:
+            pass
+
+
+def remove_archive_in_op_rest(user, users, hosts, host, description, tmp_memory):
+    client = login_to_provider(user, users, hosts[host]['hostname'])
+    archive_id = tmp_memory[description]
+    archive_api = ArchiveApi(client)
+    archive_api.purge_archive(archive_id)
+
+
+def assert_bagit_archive_in_op_rest(user, users, hosts, host, option,
+                                    tmp_memory, description):
+    client = login_to_provider(user, users, hosts[host]['hostname'])
+    archive_id = tmp_memory[description]
+    archive_api = ArchiveApi(client)
+    info = archive_api.get_archive(archive_id)
+    err_msg = 'archive is not BagIt'
+    assert info.config.layout == transform(option), err_msg

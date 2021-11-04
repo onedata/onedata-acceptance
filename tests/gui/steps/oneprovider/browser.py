@@ -53,20 +53,18 @@ def double_click_on_item_in_browser(selenium, browser_id, item_name, tmp_memory,
             if "/" not in breadcrumbs:
                 assert False, message
         else:
-            length_of_past_dir = len(breadcrumbs)
+            last_dir = breadcrumbs.split('/')[-1]
             browser.data[item_name].double_click()
             for _ in range(5):
                 breadcrumbs = check_if_breadcrumbs_on_share_page(driver,
                                                                  op_container,
                                                                  which_browser)
-                if len(breadcrumbs) == length_of_past_dir:
+                if breadcrumbs.split('/')[-1] == last_dir:
                     time.sleep(1)
                 else:
                     break
 
-            length_of_current_dir = len(breadcrumbs)
-
-            assert length_of_past_dir < length_of_current_dir, message
+            assert breadcrumbs.split('/')[-1] != last_dir, message
     else:
         browser.data[item_name].double_click()
 
