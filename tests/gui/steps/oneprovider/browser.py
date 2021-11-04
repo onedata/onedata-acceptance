@@ -14,7 +14,6 @@ import time
 
 @wt(parsers.parse('user of {browser_id} double clicks on item named'
                   ' "{item_name}" in {which_browser}'))
-@repeat_failed(timeout=WAIT_BACKEND)
 def double_click_on_item_in_browser(selenium, browser_id, item_name, tmp_memory,
                                     op_container,
                                     which_browser='file browser'):
@@ -71,11 +70,12 @@ def double_click_on_item_in_browser(selenium, browser_id, item_name, tmp_memory,
         browser.data[item_name].double_click()
 
 
+@repeat_failed(timeout=WAIT_BACKEND)
 def check_if_breadcrumbs_on_share_page(driver, op_container,
                                        which_browser='file browser'):
     try:
         breadcrumbs = op_container(driver).shares_page.breadcrumbs.pwd()
-    except:
+    except RuntimeError:
         breadcrumbs = getattr(op_container(driver),
                               transform(which_browser)).breadcrumbs.pwd()
 
