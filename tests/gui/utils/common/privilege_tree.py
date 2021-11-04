@@ -59,10 +59,13 @@ class PrivilegeGroup(PageObject):
 
     def collapse(self, driver):
         if self.is_expanded():
-            driver.execute_script(
-                "document.querySelector('.col-content').scrollTo(0, 0)")
-            driver.find_element_by_css_selector(
-                '.tree-circle .oneicon-square-minus-empty').click()
+            try:
+                driver.execute_script(
+                    "document.querySelector('.col-content').scrollTo(0, 0)")
+                driver.find_element_by_css_selector(
+                    '.tree-circle .oneicon-square-minus-empty').click()
+            except:
+                self.expander.click()
 
     def minimalize(self):
         self.expander.click()
