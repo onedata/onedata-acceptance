@@ -36,7 +36,7 @@ def double_click_on_item_in_browser(selenium, browser_id, item_name, tmp_memory,
 @repeat_failed(timeout=WAIT_BACKEND)
 def double_click_with_check(driver, op_container, browser, which_browser,
                             item_name):
-    # this function does not check correctly if two near directories
+    # this function does not check correctly if parent and children directory
     # have the same name
     browser.data[item_name].double_click()
     if item_name.startswith('dir'):
