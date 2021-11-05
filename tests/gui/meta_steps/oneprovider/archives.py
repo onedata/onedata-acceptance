@@ -10,6 +10,7 @@ __license__ = ("This software is released under the MIT license cited in "
 import yaml
 
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.meta_steps.oneprovider.dataset import go_to_and_assert_browser
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
@@ -131,21 +132,13 @@ def copy_archive_id_to_tmp_memory(selenium, browser_id, op_container, client,
 def assert_archive_in_op_gui(browser_id, selenium, item_name, space_name,
                              oz_page, op_container, tmp_memory, option,
                              description):
-    option2 = 'Data'
-    element = 'spaces'
     option_in_space = 'Datasets'
     dataset_browser = 'dataset browser'
     archive_browser = 'archive browser'
     archive_file_browser = 'archive file browser'
-    click_on_option_in_the_sidebar(selenium, browser_id, option2, oz_page)
-    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id,
-                                                element, space_name,
-                                                oz_page)
-    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
-                                                  space_name,
-                                                  option_in_space, oz_page)
-    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
-                                tmp_memory, item_browser=dataset_browser)
+    go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
+                             option_in_space, op_container, tmp_memory,
+                             item_browser=dataset_browser)
     if option == 'sees':
         click_on_number_in_archives(browser_id, tmp_memory, item_name)
         assert_browser_in_tab_in_op(selenium, browser_id, op_container,
@@ -175,23 +168,15 @@ def assert_archive_in_op_gui(browser_id, selenium, item_name, space_name,
 def remove_archive_in_op_gui(browser_id, selenium, item_name, space_name,
                              oz_page, op_container, tmp_memory, modals,
                              description):
-    option = 'Data'
-    element = 'spaces'
     option_in_space = 'Datasets'
     dataset_browser = 'dataset browser'
     archive_browser = 'archive browser'
     option_in_menu = 'Purge archive'
     text = 'I understand that data of the archive will be lost'
     button_name = 'Purge archive'
-    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
-    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id,
-                                                element, space_name,
-                                                oz_page)
-    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
-                                                  space_name,
-                                                  option_in_space, oz_page)
-    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
-                                tmp_memory, item_browser=dataset_browser)
+    go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
+                             option_in_space, op_container, tmp_memory,
+                             item_browser=dataset_browser)
     click_on_number_in_archives(browser_id, tmp_memory, item_name)
     assert_browser_in_tab_in_op(selenium, browser_id, op_container,
                                 tmp_memory, item_browser=archive_browser)
@@ -206,21 +191,13 @@ def remove_archive_in_op_gui(browser_id, selenium, item_name, space_name,
 def assert_bagit_archive_in_op_gui(browser_id, selenium, oz_page, space_name,
                                    op_container, tmp_memory, item_name, option,
                                    description):
-    option2 = 'Data'
-    element = 'spaces'
     option_in_space = 'Datasets'
     dataset_browser = 'dataset browser'
     archive_browser = 'archive browser'
     tag_type = transform(option)
-    click_on_option_in_the_sidebar(selenium, browser_id, option2, oz_page)
-    click_element_on_lists_on_left_sidebar_menu(selenium, browser_id,
-                                                element, space_name,
-                                                oz_page)
-    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
-                                                  space_name,
-                                                  option_in_space, oz_page)
-    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
-                                tmp_memory, item_browser=dataset_browser)
+    go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
+                             option_in_space, op_container, tmp_memory,
+                             item_browser=dataset_browser)
     click_on_number_in_archives(browser_id, tmp_memory, item_name)
     assert_browser_in_tab_in_op(selenium, browser_id, op_container,
                                 tmp_memory, item_browser=archive_browser)

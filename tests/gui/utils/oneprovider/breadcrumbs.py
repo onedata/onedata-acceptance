@@ -56,10 +56,15 @@ class _Breadcrumbs(PageObject):
                     for i in range(2, 2+(len(path)-len(breadcrumbs))):
                         path.remove(path[i])
 
-            for i, (dir1, dir2) in enumerate(izip(path, breadcrumbs_name)):
-                assert dir1 == dir2, err_msg.format(dir=dir1, idx=i,
-                                                    item=self)
-            breadcrumbs[breadcrumbs_name.index(dir2)-1].click()
+                for i, (dir1, dir2) in enumerate(izip(path, breadcrumbs_name)):
+                    assert dir1 == dir2, err_msg.format(dir=dir1, idx=i,
+                                                        item=self)
+                breadcrumbs[breadcrumbs_name.index(dir2)-1].click()
+            else:
+                for i, (dir1, dir2) in enumerate(izip(path, breadcrumbs)):
+                    assert dir1 == dir2.text, err_msg.format(dir=dir1, idx=i,
+                                                             item=self)
+                dir2.click()
 
 
 Breadcrumbs = partial(WebItem, cls=_Breadcrumbs)
