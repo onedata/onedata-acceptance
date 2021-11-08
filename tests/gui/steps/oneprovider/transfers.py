@@ -178,17 +178,17 @@ def wait_for_transfers_page_to_load(selenium, browser_id, op_container):
     op_container(selenium[browser_id]).transfers.ongoing_map_header
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) does not see (?P<option>Replicate '
-               'here|Migrate...|Evict) option when clicking on provider "('
+@wt(parsers.re('user of (?P<browser_id>.*) does not see "(?P<option>Replicate '
+               'here|Migrate...|Evict)" options when clicking on provider "('
                '?P<provider>.*)" menu button'))
-def assert_option_in_provider_popup_menu(selenium, browser_id, provider, hosts, popups, option):
+def assert_option_in_provider_popup_menu(selenium, browser_id, provider, hosts,
+                                         popups, options):
 
     driver = selenium[browser_id]
 
     provider_name = hosts[provider]['name']
-    (modals(driver).data_distribution.providers[provider_name].menu_button())
+    modals(driver).data_distribution.providers[provider_name].menu_button()
 
     menu = popups(driver).menu_popup_with_text.menu
-    for btn in parse_seq(option):
-        assert btn not in menu, (
-            '{} should not be in selection menu'.format(btn))
+    for element in parse_seq(options):
+        assert element not in menu, f'{element} should not be in selection menu'

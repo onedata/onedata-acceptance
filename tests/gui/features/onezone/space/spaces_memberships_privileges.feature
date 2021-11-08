@@ -539,7 +539,7 @@ Feature: Basic management of spaces privileges in Onezone GUI
             privilege subtypes:
               Write files: False
 
-    # Non-space-owner checks if he can create directory in space1
+    # Non-space-owner fails to create directory in space1
     And user of browser_user1 clicks Files of "space1" in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
     And user of browser_user1 sees that current working directory displayed in breadcrumbs on file browser is space1
@@ -573,7 +573,7 @@ Feature: Basic management of spaces privileges in Onezone GUI
             privilege subtypes:
               Manage shares: False
 
-    # Non-space-owner checks if he can create share in space1
+    # Non-space-owner fails to create share in space1
     And user of browser_user1 clicks Files of "space1" in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
     And user of browser_user1 sees that current working directory displayed in breadcrumbs on file browser is space1
@@ -597,7 +597,7 @@ Feature: Basic management of spaces privileges in Onezone GUI
     Then user of browser_user1 clicks on "Close" button in modal "Share directory"
 
 
-  Scenario: Non-space-owner successfully views QoS if he got View QoS privilege
+  Scenario: Non-space-owner successfully views QoS in menu if he got View QoS privilege
     When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
     And user of space_owner_browser clicks Members of "space1" in the sidebar
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
@@ -605,7 +605,7 @@ Feature: Basic management of spaces privileges in Onezone GUI
           QoS management:
             granted: False
 
-    # Non-space-owner checks if he can select Quality of Service option of the directory
+    # Non-space-owner fails to select Quality of Service option of the directory
     And user of browser_user1 clicks Files of "space1" in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
     And user of browser_user1 sees that current working directory displayed in breadcrumbs on file browser is space1
