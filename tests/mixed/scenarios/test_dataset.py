@@ -9,6 +9,8 @@ __license__ = "This software is released under the MIT license cited in " \
 from pytest_bdd import scenario, scenarios
 
 from tests.gui.steps.common.miscellaneous import *
+from tests.gui.steps.rest.env_up.users import *
+from tests.gui.conftest import *
 
 
 scenarios('../features/pass.feature')
