@@ -308,12 +308,9 @@ def choose_operator_in_add_cond_popup(selenium, browser_id, popups, operator):
     getattr(popup, f'{operator.lower()}_operator').click()
 
 
-@wt(parsers.re('user of (?P<browser_id>.*?) (?P<option>does not see|sees) '
-               '"(?P<text>.*?)" in modal '
+@wt(parsers.re('user of (?P<browser_id>.*?) sees "(?P<text>.*?)" in modal '
                '"Quality of Service"'))
-def assert_error_label_in_qos_modal(option):
+def assert_error_label_in_qos_modal(selenium, browser_id, modals, text):
+    driver = selenium[browser_id]
 
-    if option == "sees":
-        assert 'alert-promise-error', 'Label with "Insufficient privileges to access this resource" not found'
-    else:
-        assert 'no-qos-requirements-message', 'Label with "Insufficient privileges to access this resource" found'
+    assert text in modals(driver).quality_of_service.privileges_error,f'Label with "{text}" not found'
