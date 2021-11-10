@@ -10,7 +10,7 @@ import itertools
 import time
 import pytest
 
-from .client_utils import mount_users, clean_clients
+from ..oneclient.conftest import cleanup_env # fixme
 
 
 def performance(default_config, configs):
@@ -58,8 +58,7 @@ def performance(default_config, configs):
                     flushed_print('RUN {}/{}'.format(repeats+1, max_repeats))
 
                     try:
-                        test_results = test_function(self, request, hosts, users,
-                                                     clients, env_desc,
+                        test_results = test_function(self, hosts, users, env_desc,
                                                      merged_config.get('parameters', {}))
                     except Exception as e:
                         flushed_print('\t\tTestcase failed beceause of: ' + str(e))
@@ -72,7 +71,7 @@ def performance(default_config, configs):
                         successful_repeats += 1
                     finally:
                         repeats += 1
-                        clean_clients(users.keys(), users, lazy=True)
+                        cleanup_env(users)
 
                 config_report.add_to_report('completed', int(time.time()))
                 config_report.add_to_report('successful_repeats', successful_repeats)

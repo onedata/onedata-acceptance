@@ -60,9 +60,6 @@ def inventories_creation(config, admin_credentials, hosts,
 def _inventories_creation(config, hosts, users, zone_name, admin_credentials,
                           groups):
     zone_hostname = hosts[zone_name]['hostname']
-    admin_credentials.token = admin_credentials.create_token(
-        hosts['onezone']['ip'])
-
     config = yaml.load(config)
 
     for inventory_name, description in config.items():
@@ -78,7 +75,7 @@ def _inventories_creation(config, hosts, users, zone_name, admin_credentials,
                 privileges = options['privileges']
 
             _add_user_to_inventory(zone_hostname, admin_credentials,
-                                   inventory_id, users[user].id, privileges)
+                                   inventory_id, users[user].user_id, privileges)
 
         for group in description.get('groups', {}):
             try:
