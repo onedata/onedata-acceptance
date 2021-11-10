@@ -165,7 +165,7 @@ class CaveatField(PageObject):
             value = consumer.get('consumer name')
             if method == 'id':
                 if consumer_type == 'user':
-                    value = users[value].id
+                    value = users[value].user_id
                 elif consumer_type == 'group':
                     value = groups[value]
             if consumer_type == 'oneprovider' and method == 'name' and 'Any' \
@@ -325,7 +325,7 @@ class CaveatField(PageObject):
             value = consumer.get('consumer name')
             if method == 'id':
                 if consumer_type == 'user':
-                    value = users[value].id
+                    value = users[value].user_id
                 elif consumer_type == 'group':
                     value = groups[value]
             if consumer_type == 'oneprovider' and method == 'name' and 'Any' \

@@ -100,15 +100,16 @@ def emergency_passphrase(users, hosts):
 
 
 @fixture(autouse=True)
-def onepanel_credentials(users, emergency_passphrase):
-    creds = users['onepanel'] = AdminUser('onepanel', emergency_passphrase)
+def onepanel_credentials(users, hosts, emergency_passphrase):
+    creds = users['onepanel'] = AdminUser(
+        hosts['onezone']['hostname'], 'onepanel', emergency_passphrase)
     return creds
 
 
 @fixture(autouse=True)
 def admin_credentials(request, users, hosts):
     admin_username, admin_password = request.config.getoption('admin')
-    admin_user = users[admin_username] = AdminUser(admin_username,
+    admin_user = users[admin_username] = AdminUser(hosts['onezone']['hostname'], admin_username,
                                                    admin_password)
     return admin_user
 

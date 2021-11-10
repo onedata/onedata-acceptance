@@ -10,7 +10,7 @@ import re
 
 from tests.performance.conftest import AbstractPerformanceTest
 from tests.utils.performance_utils import Result, generate_configs, performance
-from tests.utils.client_utils import mkstemp, rm, user_home_dir, dd, mount_client, CLIENT_CONF
+from tests.utils.client_utils import user_home_dir
 
 
 REPEATS = 3
@@ -20,10 +20,6 @@ DD_OUTPUT_PATTERN = re.compile(DD_OUTPUT_REGEX)
 SYSBENCH_OUTPUT_REGEX = (r'Total transferred \d+.?\d+?\w+\s+\((\d+.?\d+)'
                          r'(\w+/\w+)\)\s+(\d+.?\d+?)\s+(\w+/\w+)')
 SYSBENCH_OUTPUT_PATTERN = re.compile(SYSBENCH_OUTPUT_REGEX, re.MULTILINE)
-DIRECT_IO_CLIENT_CONF = CLIENT_CONF('user1', '/home/user1/onedata', 
-                                    'oneclient-1', 'client11', 'token')
-PROXY_IO_CLIENT_CONF = CLIENT_CONF('user2', '/home/user2/onedata', 
-                                   'oneclient-2', 'client21', 'token')
 
 
 class Testdd(AbstractPerformanceTest):
@@ -42,26 +38,22 @@ class Testdd(AbstractPerformanceTest):
             'block_size': [1, 4, 128, 1024],
             'size': [1024, 10240]#, 1048576, 10485760]
         }, 'DD TEST -- block size: {block_size} size: {size}'))
-    def test_dd(self, request, hosts, users, clients, env_desc, params):
-        user_proxy = PROXY_IO_CLIENT_CONF.user
-        user_directio = DIRECT_IO_CLIENT_CONF.user
-        client_directio = mount_client(DIRECT_IO_CLIENT_CONF, clients, hosts,
-                                       request, users, env_desc)
-        client_proxy = mount_client(PROXY_IO_CLIENT_CONF, clients, hosts,
-                                    request, users, env_desc)
+    def test_dd(self, hosts, users, env_desc, params):
+        user_directio = 'user1'
+        user_proxy = 'user2'
+        client_directio = users[user_directio].mount_client(
+            'oneclient-1', 'client11', hosts, env_desc)
+        client_proxy = users[user_proxy].mount_client('oneclient-2', 'client21', hosts, env_desc)
 
         size = params['size']['value']
         size_unit = params['size']['unit']
         block_size = params['block_size']['value']
         block_size_unit = params['block_size']['unit']
 
-        test_file_directio = mkstemp(client_directio,
-                                     dir=client_directio.absolute_path('space1'))
+        test_file_directio = client_directio.mkstemp(dir=client_directio.absolute_path('space1'))
 
-        test_file_proxy = mkstemp(client_proxy,
-                                  dir=client_proxy.absolute_path('space1'))
-        test_file_host = mkstemp(client_proxy,
-                                 dir=user_home_dir(user_proxy))
+        test_file_proxy = client_proxy.mkstemp(dir=client_proxy.absolute_path('space1'))
+        test_file_host = client_proxy.mkstemp(dir=user_home_dir(user_proxy))
 
         test_result1 = execute_dd_test(client_directio, user_directio,
                                        test_file_directio, block_size,
@@ -77,9 +69,9 @@ class Testdd(AbstractPerformanceTest):
                                        block_size, block_size_unit, size,
                                        size_unit, 'host system')
 
-        rm(client_directio, test_file_directio, recursive=True, force=True)
-        rm(client_proxy, test_file_proxy, recursive=True, force=True)
-        rm(client_proxy, test_file_host, recursive=True, force=True)
+        client_directio.rm(test_file_directio, recursive=True, force=True)
+        client_proxy.rm(test_file_proxy, recursive=True, force=True)
+        client_proxy.rm(test_file_host, recursive=True, force=True)
 
         return test_result1 + test_result2 + test_result3
 
@@ -117,8 +109,8 @@ def do_dd(client, user, input, output, block_size, block_size_unit, size,
     block_size = convert_size(block_size, block_size_unit, 'k')
     count = size // block_size
 
-    return dd(client, int(block_size), int(count), output, unit='k',
-              output=True, error=True, input_file=input, user=user)
+    return client.dd(int(block_size), int(count), output, unit='k',
+                     output=True, error=True, input_file=input, user=user)
 
 
 def parse_dd_output(dd_output):

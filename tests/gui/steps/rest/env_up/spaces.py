@@ -117,7 +117,6 @@ def _create_and_configure_spaces(config, zone_name, admin_credentials,
                                  onepanel_credentials, hosts,
                                  users_db, groups_db, storages_db, spaces_db):
     zone_hostname = hosts[zone_name]['hostname']
-    admin_credentials.token = admin_credentials.create_token(hosts['onezone']['ip'])
 
     for space_name, description in yaml.load(config).items():
         owner = users_db[description['owner']]
@@ -158,7 +157,7 @@ def _add_users_to_space(zone_hostname, admin_credentials, space_id,
 
         _add_user_to_space(zone_hostname, admin_credentials.username,
                            admin_credentials.password, space_id,
-                           users_db[user].id, privileges)
+                           users_db[user].user_id, privileges)
 
 
 def _add_user_to_space(zone_hostname, admin_username, admin_password,

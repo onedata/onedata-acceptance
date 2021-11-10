@@ -96,7 +96,6 @@ Feature: Multi_regular_file_stat
 
   Scenario: Access time
     When user1 writes "TEST TEXT ONEDATA" to space1/file1 on client11
-    And user1 sees [file1] in space1 on client11
     And user2 sees [file1] in space1 on client21
     And user1 is idle for 2 seconds
     # call sleep, to be sure that time of write and read is different
