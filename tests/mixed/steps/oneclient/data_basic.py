@@ -28,8 +28,8 @@ def change_client_name_to_hostname(client_name):
     return client_name.replace('oneclient', 'client')
 
 
-@wt(parsers.parse('{user} mounts oneclient in {path} using received token'))
-def mount_new_oneclient_with_token(user, path, hosts, users, env_desc, tmp_memory):
+@wt(parsers.parse('{user} mounts oneclient using received token'))
+def mount_new_oneclient_with_token(user, hosts, users, env_desc, tmp_memory):
     token = tmp_memory[user]['mailbox']['token']
     users[user].mount_client('oneclient-1', 'client1', hosts, env_desc, token)
 
@@ -42,10 +42,10 @@ def mount_new_oneclient_with_token_fail(user, hosts, users, env_desc, tmp_memory
         failure(user, users)
 
 
-def mount_new_oneclient_result(user, path, hosts, users, env_desc, tmp_memory, result,
+def mount_new_oneclient_result(user, hosts, users, env_desc, tmp_memory, result,
                                client='oneclient'):
     if result == 'succeeds':
-        mount_new_oneclient_with_token(user, path, hosts, users, env_desc, tmp_memory)
+        mount_new_oneclient_with_token(user, hosts, users, env_desc, tmp_memory)
     else:
         mount_new_oneclient_with_token_fail(user, hosts, users, env_desc,
                                             tmp_memory, client=client)
@@ -65,11 +65,10 @@ def create_file_in_op_oneclient(user, path, users, result, host):
         multi_file_steps.create_reg_file(user, path, host, users)
 
 
-def create_file_in_op_oneclient_with_tokens(user, request, hosts, users, # fixme unsused variables
-                                            clients, env_desc, tmp_memory,
+def create_file_in_op_oneclient_with_tokens(user, hosts, users, env_desc, tmp_memory,
                                             result, full_path, client_lower):
     try:
-        mount_new_oneclient_result(user, "", hosts, users, env_desc, tmp_memory, result, # fixme path
+        mount_new_oneclient_result(user, hosts, users, env_desc, tmp_memory, result,
                                    client='oneclient')
         if result == 'succeeds':
             oneclient_host = change_client_name_to_hostname(client_lower)

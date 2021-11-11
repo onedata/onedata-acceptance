@@ -1,7 +1,7 @@
 Feature: LUMA provider test
 
   Background:
-    Given oneclient mounted in /home/user1/onedata using token by user1
+    Given oneclient mounted token by user1
 
     
   Scenario: Operations on POSIX storage

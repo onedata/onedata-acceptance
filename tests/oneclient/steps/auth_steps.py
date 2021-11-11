@@ -11,10 +11,8 @@ from tests.utils.acceptance_utils import make_arg_list
 from tests.utils.bdd_utils import given, wt, parsers
 
 
-@given(parsers.re('oneclient mounted in (?P<mount_path>.*) '
-                  'using (?P<token>(token|bad token)) by '
-                  '(?P<user>\w+)'))
-def default_mount(user, mount_path, token, hosts, users, env_desc):
+@given(parsers.re('oneclient mounted using (?P<token>(token|bad token)) by (?P<user>\w+)'))
+def default_mount(user, token, hosts, users, env_desc):
     users[user].mount_client('oneclient-1', 'client1', hosts, env_desc, token)
 
 
