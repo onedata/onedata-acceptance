@@ -92,6 +92,12 @@ def assert_non_zero_transfer_speed(selenium, browser_id, op_container):
 def _expand_dropdown_in_migrate_record(driver):
     data_distribution_modal = modals(driver).data_distribution
     data_distribution_modal.migrate.expand_dropdown()
+    assert len(modals(driver).migrate_dropdown.providers_list) > 0
+
+
+def check_provider_in_migrate_dropdown(driver, provider_name):
+    data_distribution_modal = modals(driver).data_distribution
+    return provider_name == data_distribution_modal.migrate.target_provider
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) migrates selected item from '
@@ -107,8 +113,9 @@ def migrate_item(selenium, browser_id, source, target, hosts, popups):
     data_distribution_modal.providers[source_name].menu_button()
     popups(driver).data_distribution_popup.menu[menu_option]()
 
-    _expand_dropdown_in_migrate_record(driver)
-    modals(driver).migrate_dropdown.providers_list[target_name].click()
+    if not check_provider_in_migrate_dropdown(driver, target_name):
+        _expand_dropdown_in_migrate_record(driver)
+        modals(driver).migrate_dropdown.providers_list[target_name].click()
 
     data_distribution_modal.migrate.migrate_button()
 

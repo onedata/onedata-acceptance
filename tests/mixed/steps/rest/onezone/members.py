@@ -9,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in " \
 from tests.gui.utils.generic import parse_seq
 from tests.mixed.utils.common import login_to_oz
 from tests.mixed.onezone_client import SpaceApi
-from tests.mixed.onezone_client.rest import ApiException
+from onezone_client.rest import ApiException
 from tests.mixed.steps.rest.onezone.common import get_group
 import yaml
 
@@ -80,8 +80,7 @@ DEFAULT_GRANT = ['space_read_data', 'space_view', 'space_view_transfers',
                  'space_write_data']
 
 
-def translate_privileges(config, grant, revoke):
-    privileges = yaml.load(config)
+def translate_privileges(privileges, grant, revoke):
     for (privileges_group, privileges_group_items) in privileges.items():
         if privileges_group_items['granted'] == 'Partially':
             items = privileges_group_items['privilege subtypes'].items()
@@ -112,7 +111,8 @@ def fail_to_set_privileges_using_rest(user, users, hosts, host, spaces,
     space_api = SpaceApi(user_client_oz)
     grant = []
     revoke = []
-    translate_privileges(config, grant, revoke)
+    privileges = yaml.load(config)
+    translate_privileges(privileges, grant, revoke)
     data = {"grant": grant, "revoke": revoke}
     try:
         space_api.update_user_space_privileges(spaces[space_name],
@@ -135,7 +135,8 @@ def assert_privileges_in_space_using_rest(user, users, hosts, host, spaces,
         spaces[space_name], users[member_name].id).privileges)
     grant = []
     revoke = []
-    translate_privileges(config, grant, revoke)
+    privileges = yaml.load(config)
+    translate_privileges(privileges, grant, revoke)
     grant.sort()
     user_privileges.sort()
     assert grant == user_privileges, (

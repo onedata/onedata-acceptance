@@ -29,41 +29,34 @@ def double_click_on_item_in_browser(selenium, browser_id, item_name, tmp_memory,
         if time.time() > start + WAIT_BACKEND:
             raise RuntimeError('waited too long')
 
-    # if item is directory compare length of directories in breadcrumbs to
-    # check if double-click has entered it
+    double_click_with_check(driver, op_container, browser, which_browser,
+                            item_name)
+
+
+@repeat_failed(timeout=WAIT_BACKEND)
+def double_click_with_check(driver, op_container, browser, which_browser,
+                            item_name):
+    # this function does not check correctly if parent and children directory
+    # have the same name
+    browser.data[item_name].double_click()
     if item_name.startswith('dir'):
-        # check if breadcrumbs are not in file browser in shares
-        breadcrumbs = check_if_breadcrumbs_on_share_page(driver, op_container,
-                                                         which_browser)
-        message = f'Double click has not entered the directory'
-
-        # check if home directory where length of breadcrumbs doesn't matter
-        # if it was home and now it isn't it means double-click worked
-        if "/" not in breadcrumbs:
-            browser.data[item_name].double_click()
+        for _ in range(5):
             breadcrumbs = check_if_breadcrumbs_on_share_page(driver,
                                                              op_container,
                                                              which_browser)
-            if "/" not in breadcrumbs:
-                assert False, message
-        else:
-            length_of_past_dir = len(breadcrumbs)
-            browser.data[item_name].double_click()
-            breadcrumbs = check_if_breadcrumbs_on_share_page(driver,
-                                                             op_container,
-                                                             which_browser)
-            length_of_current_dir = len(breadcrumbs)
-
-            assert length_of_past_dir < length_of_current_dir, message
-    else:
-        browser.data[item_name].double_click()
+            if breadcrumbs.split('/')[-1] == item_name:
+                return
+            else:
+                time.sleep(1)
+        raise RuntimeError(f'Double click has not entered the directory')
 
 
+@repeat_failed(timeout=WAIT_BACKEND)
 def check_if_breadcrumbs_on_share_page(driver, op_container,
                                        which_browser='file browser'):
     try:
         breadcrumbs = op_container(driver).shares_page.breadcrumbs.pwd()
-    except:
+    except RuntimeError:
         breadcrumbs = getattr(op_container(driver),
                               transform(which_browser)).breadcrumbs.pwd()
 
@@ -146,7 +139,8 @@ def assert_status_tag_for_file_in_browser(browser_id, status_type, item_name,
                                           tmp_memory,
                                           which_browser='file browser'):
     browser = tmp_memory[browser_id][transform(which_browser)]
-    err_msg = f'{status_type} tag for {item_name} in {which_browser} not visible'
+    err_msg = (f'{status_type} tag for {item_name} in {which_browser} not '
+               f'visible')
     assert browser.data[item_name].is_tag_visible(
         transform(status_type)), err_msg
 
@@ -197,18 +191,6 @@ def assert_not_click_option_in_data_row_menu(selenium, browser_id, option,
                 .choose_option(option)), err_msg
 
 
-@wt(parsers.parse('user of {browser_id} sees {status_type} '
-                  'status tag for "{item_name}" in {which_browser}'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_status_tag_for_file_in_browser(browser_id, status_type,
-                                          item_name, tmp_memory,
-                                          which_browser='file browser'):
-    browser = tmp_memory[browser_id][transform(which_browser)]
-    err_msg = f'{status_type} tag for {item_name} in browser not visible'
-    assert browser.data[item_name].is_tag_visible(
-        transform(status_type)), err_msg
-
-
 @wt(parsers.parse('user of {browser_id} clicks on {state} view mode '
                   'on {which} browser page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -217,6 +199,9 @@ def click_on_state_view_mode_tab(browser_id, oz_page, selenium, state, which):
     driver.switch_to.default_content()
     header = f'{transform(which)}_header'
     getattr(getattr(oz_page(driver)['data'], header), transform(state))()
+    # if we make call to fast after changing view mode
+    # we do not see items in this mode, to avoid this wait some time
+    time.sleep(0.2)
 
 
 @wt(parsers.parse('user of {browser_id} clicks on menu '
