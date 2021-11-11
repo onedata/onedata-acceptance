@@ -12,11 +12,9 @@ from tests.utils.bdd_utils import given, then, parsers
 
 
 @given(parsers.re('oneclients (?P<client_ids>.*)\n'
-                  'mounted in (?P<mount_paths>.*)\n' # fixme path not needed
-                  'on client_hosts (?P<client_hosts>.*) respectively,\n'
+                  'mounted on client_hosts (?P<client_hosts>.*) respectively,\n'
                   'using (?P<tokens>.*) by (?P<user_names>.*)'))
-def multi_mount(user_names, client_ids, mount_paths, client_hosts,
-                tokens, hosts, users, env_desc):
+def multi_mount(user_names, client_ids, client_hosts, tokens, hosts, users, env_desc):
     params = zip(list_parser(user_names), list_parser(client_ids),
                  list_parser(client_hosts), list_parser(tokens))
 

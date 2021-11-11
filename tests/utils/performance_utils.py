@@ -10,7 +10,7 @@ import itertools
 import time
 import pytest
 
-from ..oneclient.conftest import cleanup_env # fixme
+from ..oneclient.conftest import cleanup_env
 
 
 def performance(default_config, configs):
