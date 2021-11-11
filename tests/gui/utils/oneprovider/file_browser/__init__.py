@@ -6,7 +6,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-
+import pdb
 from functools import partial
 from contextlib import contextmanager
 
@@ -87,6 +87,7 @@ class _FileBrowser(PageObject):
         needs to use input element, but we do not use it directly in frontend.
         So we unhide an input element for a while and pass a local file path to it.
         """
+        pdb.set_trace()
         with rm_css_cls(self.driver, self._upload_input, 'hidden') as elem:
             elem.send_keys(files)
 
