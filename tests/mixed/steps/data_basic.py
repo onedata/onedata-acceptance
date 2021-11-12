@@ -62,16 +62,14 @@ def create_file_in_op_with_token(client, user, users, space, name, hosts,
                r'item named "(?P<name>.*)" using received access token in '
                r'"(?P<space>.*)" in (?P<host>.*)'))
 def assert_file_in_op_with_token(client, user, name, space, host, tmp_memory,
-                                 users, hosts, request, clients, env_desc,
-                                 result):
+                                 users, hosts, env_desc, result):
 
     client_lower = client.lower()
     if client_lower == 'rest':
         see_item_in_op_rest_using_token(user, name, space, host, tmp_memory,
                                         users, hosts, result)
     elif 'oneclient' in client_lower:
-        mount_new_oneclient_with_token(user, request, hosts, users,
-                                       clients, env_desc, tmp_memory)
+        mount_new_oneclient_with_token(user, hosts, users, env_desc, tmp_memory)
         oneclient_host = change_client_name_to_hostname(client_lower)
         see_items_in_op_oneclient(name, space, user, users, result,
                                   oneclient_host)
@@ -286,8 +284,7 @@ def rename_item_in_op(client, user, users, space, old_name, new_name,
                r'using received access token in "(?P<space>.*)" '
                r'in (?P<host>.*)'))
 def rename_item_in_op_using_token(client, user, users, space, old_name,
-                                  new_name, hosts, tmp_memory, host, cdmi,
-                                  request, clients, env_desc):
+                                  new_name, hosts, tmp_memory, host, cdmi, env_desc):
     old_path = f'{space}/{old_name}'
     new_path = f'{space}/{new_name}'
     client_lower = client.lower()
@@ -297,8 +294,7 @@ def rename_item_in_op_using_token(client, user, users, space, old_name,
         move_item_in_op_rest_using_token(old_path, new_path, result, host,
                                          hosts, user, users, tmp_memory, cdmi)
     elif 'oneclient' in client_lower:
-        mount_new_oneclient_with_token(user, request, hosts, users,
-                                       clients, env_desc, tmp_memory)
+        mount_new_oneclient_with_token(user, hosts, users, env_desc, tmp_memory)
         oneclient_host = change_client_name_to_hostname(client_lower)
         multi_file_steps.rename(user, old_path, new_path, oneclient_host,
                                 users)

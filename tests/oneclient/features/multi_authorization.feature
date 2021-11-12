@@ -20,8 +20,7 @@ Feature: Multi_authorization
 
   Scenario: Successful authorization - 2 clients of one user on different hosts
     Given oneclients [client11, client21]
-      mounted in [/home/user1/onedata, /home/user1/onedata]
-      on client_hosts [oneclient-1, oneclient-2] respectively,
+      mounted on client_hosts [oneclient-1, oneclient-2] respectively,
       using [token, token] by [user1, user1]
     Then last operation by user1 succeeds
     And [space1, space2] are mounted for user1 on [client11, client21]
