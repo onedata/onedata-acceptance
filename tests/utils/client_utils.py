@@ -63,9 +63,6 @@ class Client:
     def absolute_path(self, path):
         return os.path.join(self._mount_path, str(path))
 
-    def list_spaces(self):
-        return self.ls(path=self._mount_path)
-
     def perform(self, condition, timeout=None):
         if timeout is None:
             timeout = self.timeout
@@ -89,6 +86,9 @@ class Client:
                     timeout -= 1
 
         return condition_satisfied
+
+    def list_spaces(self):
+        return self.ls(path=self._mount_path)
 
     def ls(self, path='.'):
         return self.rpyc_connection.modules.os.listdir(path)

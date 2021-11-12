@@ -47,7 +47,7 @@ def create_file_in_op(client, user, users, space, name, hosts, tmp_memory, host,
                'file named "(?P<name>.*)" using received token in '
                '"(?P<space>.*)" in (?P<host>.*)'))
 def create_file_in_op_with_token(client, user, users, space, name, hosts,
-                                 tmp_memory, host, result, env_desc, request, clients):
+                                 tmp_memory, host, result, env_desc):
     full_path = '{}/{}'.format(space, name)
     client_lower = client.lower()
     if client_lower == 'rest':
@@ -55,8 +55,7 @@ def create_file_in_op_with_token(client, user, users, space, name, hosts,
         create_file_in_op_rest(user, users, host, hosts, full_path, result,
                                token)
     elif 'oneclient' in client_lower:
-        mount_new_oneclient_with_token(user, request, hosts, users,
-                                       clients, env_desc, tmp_memory)
+        mount_new_oneclient_with_token(user, hosts, users, env_desc, tmp_memory)
         if result == 'succeeds':
             oneclient_host = change_client_name_to_hostname(client_lower)
             create_file_in_op_oneclient(user, full_path, users, result,

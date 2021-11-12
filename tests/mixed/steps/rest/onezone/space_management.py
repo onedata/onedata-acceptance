@@ -74,7 +74,7 @@ def delete_users_from_space_in_oz_using_rest(user_list, users, zone_name, hosts,
     space_api = SpaceApi(user_client)
 
     for user in parse_seq(user_list):
-        space_api.remove_space_user(spaces[space_name], users[user].id)
+        space_api.remove_space_user(spaces[space_name], users[user].user_id)
 
 
 def remove_provider_support_for_space_in_oz_using_rest(user, users, zone_name,
@@ -101,7 +101,7 @@ def add_users_to_space_in_oz_using_rest(user_list, users, zone_name, hosts,
     space_api = SpaceApi(user_client)
 
     for user in parse_seq(user_list):
-        space_api.add_space_user(spaces[space_name], users[user].id)
+        space_api.add_space_user(spaces[space_name], users[user].user_id)
 
 
 def invite_other_users_to_space_using_rest(user, users, zone_name, hosts,
@@ -202,7 +202,7 @@ def assert_user_is_member_of_space_rest(space_name, spaces, user, users,
     space_users = space_api.list_space_users(spaces[space_name]).users
 
     for username in parse_seq(user_list):
-        assert users[username].id in space_users, \
+        assert users[username].user_id in space_users, \
             'There is no user {} in space {}'.format(username, space_name)
 
 

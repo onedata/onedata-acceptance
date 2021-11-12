@@ -6,7 +6,6 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 
-from tests.utils.docker_utils import run_cmd
 from tests.performance.conftest import AbstractPerformanceTest
 from tests.utils.performance_utils import generate_configs, performance
 
@@ -176,7 +175,7 @@ def sysbench(threads, total_size, file_number, mode, validate,
     cmd = sysbench_command(threads, total_size, file_number, mode,
                            validate, events, report_interval, time,
                            file_block_size, type, dir)
-    return run_cmd(user, client.docker_id, [cmd], output=output)
+    return client.run_cmd([cmd], output=output)
 
 
 def sysbench_command(threads, total_size, file_number, mode, validate,

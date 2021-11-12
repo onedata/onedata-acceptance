@@ -55,17 +55,15 @@ class Testdd(AbstractPerformanceTest):
         test_file_proxy = client_proxy.mkstemp(dir=client_proxy.absolute_path('space1'))
         test_file_host = client_proxy.mkstemp(dir=user_home_dir(user_proxy))
 
-        test_result1 = execute_dd_test(client_directio, user_directio,
-                                       test_file_directio, block_size,
+        test_result1 = execute_dd_test(client_directio, test_file_directio, block_size,
                                        block_size_unit, size, size_unit,
                                        'direct IO')
 
-        test_result2 = execute_dd_test(client_proxy, user_proxy,
-                                       test_file_proxy, block_size,
+        test_result2 = execute_dd_test(client_proxy, test_file_proxy, block_size,
                                        block_size_unit, size, size_unit,
                                        'cluster-proxy')
 
-        test_result3 = execute_dd_test(client_proxy, user_proxy, test_file_host,
+        test_result3 = execute_dd_test(client_proxy, test_file_host,
                                        block_size, block_size_unit, size,
                                        size_unit, 'host system')
 
@@ -78,18 +76,16 @@ class Testdd(AbstractPerformanceTest):
 
 ################################################################################
 
-def execute_dd_test(client, user, test_file, block_size, block_size_unit, size,
+def execute_dd_test(client, test_file, block_size, block_size_unit, size,
                     size_unit, description):
 
     dev_zero = os.path.join('/dev', 'zero')
 
-    write_throughput = parse_dd_output(do_dd(client, user, dev_zero, test_file,
-                                             block_size, block_size_unit, size,
-                                             size_unit))
+    write_throughput = parse_dd_output(do_dd(client, dev_zero, test_file, block_size,
+                                             block_size_unit, size, size_unit))
 
-    read_throughput = parse_dd_output(do_dd(client, user, test_file, dev_zero,
-                                            block_size, block_size_unit, size,
-                                            size_unit))
+    read_throughput = parse_dd_output(do_dd(client, test_file, dev_zero, block_size,
+                                            block_size_unit, size, size_unit))
 
     return [
         Result('write_throughput_{}'.format(description), write_throughput,
@@ -101,7 +97,7 @@ def execute_dd_test(client, user, test_file, block_size, block_size_unit, size,
     ]
 
 
-def do_dd(client, user, input, output, block_size, block_size_unit, size,
+def do_dd(client, input, output, block_size, block_size_unit, size,
           size_unit):
     block_size_unit = SI_prefix_to_default(block_size_unit)
     size_unit = SI_prefix_to_default(size_unit)
@@ -110,7 +106,7 @@ def do_dd(client, user, input, output, block_size, block_size_unit, size,
     count = size // block_size
 
     return client.dd(int(block_size), int(count), output, unit='k',
-                     output=True, error=True, input_file=input, user=user)
+                     output=True, error=True, input_file=input)
 
 
 def parse_dd_output(dd_output):

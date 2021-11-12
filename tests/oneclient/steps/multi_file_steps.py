@@ -199,7 +199,7 @@ def shell_move_base(user, file1, file2, client_node, users, should_fail=False):
 
     def condition():
         def fun():
-            ret = client.client_run_cmd(cmd, error=True)
+            ret = client.run_cmd(cmd, error=True)
             if ret != 0:
                 raise OSError("Command ended with exit code {}".format(ret))
 
@@ -282,7 +282,7 @@ def shell_check_type(user, file, file_type, client_node, users):
 
     def condition():
         cmd = 'stat --format=%F {}'.format(file_path)
-        stat_file_type = client.client_run_cmd(cmd, output=True)
+        stat_file_type = client.run_cmd(cmd, output=True)
         assert stat_file_type.strip() == file_type
 
     assert_(client.perform, condition)
