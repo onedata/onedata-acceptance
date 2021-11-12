@@ -11,7 +11,7 @@ __license__ = ("This software is released under the MIT license cited in "
 from tests.gui.meta_steps.oneprovider.dataset import *
 from tests.gui.steps.oneprovider.browser import (
     assert_status_tag_for_file_in_browser)
-from tests.mixed.steps.rest.oneprovider.data import (
+from tests.mixed.steps.rest.oneprovider.datasets import (
     create_dataset_in_op_rest, assert_dataset_for_item_in_op_rest,
     remove_dataset_in_op_rest, assert_write_protection_flag_for_dataset_op_rest,
     check_dataset_structure_in_op_rest,

@@ -223,7 +223,9 @@ def create_token_with_config(selenium, browser_id, config, oz_page,
 
 def _create_token_with_config(selenium, browser_id, config, oz_page,
                               popups, users, groups, hosts, tmp_memory):
+    option = 'Tokens'
     button = 'Create new token'
+    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
     click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button)
     click_create_custom_token(selenium, browser_id, oz_page)
 

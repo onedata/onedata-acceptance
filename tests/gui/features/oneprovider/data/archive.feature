@@ -209,7 +209,8 @@ Feature: Basic archives operations
     And user of browser creates archive for item "dir4" in "space1" with following configuration:
         description: second archive
         layout: plain
-        incremental: True
+        incremental:
+            enabled: True
 
     Then user of browser sees archive browser in archives tab in Oneprovider page
     And user of browser double clicks on archive with description: "second archive" on archives list in archive browser
@@ -227,13 +228,15 @@ Feature: Basic archives operations
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser creates archive for item "dir4" in "space1" with following configuration:
         layout: plain
-        incremental: True
+        incremental:
+            enabled: True
     And user of browser goes back to dataset browser from archive browser
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser creates archive for item "dir4" in "space1" with following configuration:
         description: third archive
         layout: plain
-        incremental: True
+        incremental:
+            enabled: True
 
     Then user of browser sees archive browser in archives tab in Oneprovider page
     And user of browser double clicks on archive with description: "third archive" on archives list in archive browser
@@ -252,7 +255,8 @@ Feature: Basic archives operations
     And user of browser creates archive for item "dir4" in "space1" with following configuration:
         description: second archive
         layout: plain
-        incremental: True
+        incremental:
+            enabled: True
     Then user of browser sees archive browser in archives tab in Oneprovider page
     And user of browser sees that base archive for archive with description: "second archive" is archive with description: "first archive" on archives list in archive browser
 

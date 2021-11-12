@@ -8,7 +8,7 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 from tests.gui.meta_steps.oneprovider.qos import *
-from tests.mixed.steps.rest.oneprovider.data import *
+from tests.mixed.steps.rest.oneprovider.qos import *
 
 
 @wt(parsers.re('using (?P<client>.*), (?P<user>.+?) creates '
