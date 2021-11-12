@@ -51,6 +51,7 @@ from tests.mixed.steps.qos import *
 from tests.mixed.steps.dataset import *
 from tests.mixed.steps.tokens_basic import *
 from tests.mixed.steps.archive import *
+from tests.mixed.steps.rest.oneprovider.archives import *
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.onezone.common import *
 

@@ -20,7 +20,7 @@ from tests.utils.utils import repeat_failed
 
 def translate_config_for_archive(config, tmp_memory):
     for item in config:
-        if type(config[item]) is 'str':
+        if isinstance(config[item], str):
             config[item] = config[item].lower()
     if 'create nested archives' in config:
         del config['create nested archives']
