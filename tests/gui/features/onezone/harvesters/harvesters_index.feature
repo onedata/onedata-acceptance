@@ -249,8 +249,8 @@ Feature: Basic management of harvester index in Onezone GUI
 
     # copy archive id
     And user of browser sees archive browser in archives tab in Oneprovider page
-    And user of browser saves time of latest archive creation for "dir1"
-    And user of browser clicks on menu for 1st archive in archive browser
+    And user of browser saves time of creation archive with description: "first_archive" for "dir1"
+    And user of browser clicks on menu for archive with description: "first_archive" in archive browser
     And user of browser clicks "Copy archive ID" option in data row menu in archive browser
 
     And user of browser adds "space1" space to "harvester1" harvester using available spaces dropdown

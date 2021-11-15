@@ -51,6 +51,18 @@ def get_archive_from_description(browser, description):
         raise Exception('failed to load archive from description')
 
 
+@wt(parsers.parse('user of {browser_id} saves time of creation archive with'
+                  ' description: "{description}" for "{file_name}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def save_date_of_archive_creation(browser_id, tmp_memory, description):
+    browser = tmp_memory[browser_id]['archive_browser']
+    archive = get_archive_from_description(browser, description)
+    name = archive.name
+    if '—' in name:
+        name = name.split(' —')[0]
+    tmp_memory['created_at'] = name
+
+
 @wt(parsers.re('user of (?P<browser_id>.*?) sees that archive with '
                'description: "(?P<description>.*?)" in archive browser '
                'has status: "(?P<status>.*?)", number of files: '
