@@ -16,7 +16,6 @@ from types import CodeType
 
 from pytest_bdd import when, then, parsers
 
-
 TIME_ATTR_MAPPING = {
     'access': 'atime',
     'modification': 'mtime',
@@ -54,14 +53,14 @@ def wt(name, converters=None):
         mod = inspect.getmodule(func)
         tmp_fun.__module__ = mod.__name__
         code = tmp_fun.__code__ if six.PY3 else tmp_fun.func_code
-        
+
         if sys.version_info.minor >= 8:
-            new_code = code.replace(co_filename = mod.__file__)
+            new_code = code.replace(co_filename=mod.__file__)
         else:
             args = [mod.__file__ if arg == 'co_filename' else getattr(code, arg)
-                for arg in CO_ARG_NAMES]
+                    for arg in CO_ARG_NAMES]
             new_code = CodeType(*args)
-            
+
         if six.PY3:
             tmp_fun.__code__ = new_code
         else:
@@ -79,8 +78,8 @@ def execute_command(cmd, error=None, should_fail=False):
         raise RuntimeError('{}: {}; {}'.format(error, err, output) if error
                            else 'Command did not fail: {}, Err: {}, Output: {}'
                            .format(' '.join(cmd), err, output)
-                           if should_fail else 'Error when executing command '
-                           '"{}": {}; {}'.format(' '.join(cmd), err, output))
+        if should_fail else 'Error when executing command '
+                            '"{}": {}; {}'.format(' '.join(cmd), err, output))
     return output
 
 
