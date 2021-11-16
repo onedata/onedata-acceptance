@@ -13,4 +13,5 @@ from pytest_bdd import scenario, scenarios
 from tests.gui.steps.common.miscellaneous import *
 
 
+# empty test for backward compatibility on bamboo
 scenarios('../features/pass.feature')

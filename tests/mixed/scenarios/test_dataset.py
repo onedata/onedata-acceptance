@@ -13,4 +13,5 @@ from tests.gui.steps.rest.env_up.users import *
 from tests.gui.conftest import *
 
 
+# empty test for backward compatibility on bamboo
 scenarios('../features/pass.feature')
