@@ -7,7 +7,6 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-import pdb
 
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import wt, parsers

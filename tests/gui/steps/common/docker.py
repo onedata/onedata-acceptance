@@ -8,7 +8,6 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 import os.path
-import pdb
 import subprocess
 
 import yaml
