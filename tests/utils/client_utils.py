@@ -277,8 +277,8 @@ class Client:
         else:
             if verbose:
                 print(proc.stdout.read().decode())
-            if verbose and not error:
-                print(proc.stderr.read().decode())
+                if not error:
+                    print(proc.stderr.read().decode())
             if retries > 0:
                 if verbose:
                     print("Command {} failed. Retries left: {}".format(" ".join(cmd), retries))

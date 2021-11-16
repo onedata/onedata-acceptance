@@ -34,20 +34,20 @@ def run_around_suite(request, env_description_abs_path):
 
 @pytest.fixture(autouse=True)
 def run_around_testcase(users):
-    cleanup_env(users)
+    unmount_all_clients_and_purge_spaces(users)
     yield
-    cleanup_env(users)
+    unmount_all_clients_and_purge_spaces(users)
 
 
-def cleanup_env(users):
+def unmount_all_clients_and_purge_spaces(users):
     for user in users.values():
         for client in user.clients.values():
-            cleanup_spaces(client)
+            purge_spaces(client)
             client.unmount()
         user.clients.clear()
 
 
-def cleanup_spaces(client):
+def purge_spaces(client):
     try:
         spaces = client.list_spaces()
         for space in spaces:
