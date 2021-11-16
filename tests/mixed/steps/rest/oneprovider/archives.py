@@ -92,9 +92,10 @@ def assert_number_of_archive_in_op_rest(user, users, hosts, host, space_name,
     dataset_id = get_dataset_id(item_name, spaces, space_name, dataset_api)
     archive_api = ArchiveApi(client)
     dataset_archive = archive_api.list_dataset_archives(dataset_id)
-    err_msg = (f'number of archives {len(dataset_archive.archives)} '
+    number_of_archives = len(dataset_archive.archives)
+    err_msg = (f'number of archives {number_of_archives} '
                f'expected number of archives: {number}')
-    assert int(number) == len(dataset_archive.archives), err_msg
+    assert int(number) == number_of_archives, err_msg
 
 
 def remove_archive_in_op_rest(user, users, hosts, host, description,
@@ -116,12 +117,16 @@ def remove_archive_in_op_rest(user, users, hosts, host, description,
                 raise OPException
 
 
-def assert_archive_with_option_in_op_rest(user, users, hosts, host, option,
-                                          tmp_memory, description):
+def get_archive_info(user, users, hosts, host, tmp_memory, description):
     client = login_to_provider(user, users, hosts[host]['hostname'])
     archive_id = tmp_memory[description]
     archive_api = ArchiveApi(client)
-    info = archive_api.get_archive(archive_id)
+    return archive_api.get_archive(archive_id)
+
+
+def assert_archive_with_option_in_op_rest(user, users, hosts, host, option,
+                                          tmp_memory, description):
+    info = get_archive_info(user, users, hosts, host, tmp_memory, description)
     err_msg = f'archive is not {option}'
     if transform(option) == 'bagit':
         assert info.config.layout == transform(option), err_msg
@@ -132,10 +137,7 @@ def assert_archive_with_option_in_op_rest(user, users, hosts, host, option,
 def assert_base_archive_for_archive_in_op_rest(user, users, hosts, host,
                                                tmp_memory, description,
                                                base_description):
-    client = login_to_provider(user, users, hosts[host]['hostname'])
-    archive_id = tmp_memory[description]
-    archive_api = ArchiveApi(client)
-    info = archive_api.get_archive(archive_id)
+    info = get_archive_info(user, users, hosts, host, tmp_memory, description)
     err_msg = (f'Base archive: {info.base_archive_id} does not match expected '
                f'archive {tmp_memory[base_description]}')
     assert tmp_memory[base_description] == info.base_archive_id, err_msg
@@ -167,7 +169,7 @@ def change_archive_callback(user, users, hosts, host, tmp_memory, description,
     client = login_to_provider(user, users, hosts[host]['hostname'])
     archive_id = tmp_memory[description]
     archive_api = ArchiveApi(client)
-    data = {f"{option}callback": new_callback}
+    data = {f"{option}Callback": new_callback}
     archive_api.update_archive(archive_id, data)
 
 
@@ -178,16 +180,12 @@ def change_archive_callback(user, users, hosts, host, tmp_memory, description,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_archive_callback(user, users, hosts, host, tmp_memory, description,
                             option, expected_callback):
-    client = login_to_provider(user, users, hosts[host]['hostname'])
-    archive_id = tmp_memory[description]
-    archive_api = ArchiveApi(client)
-    info = archive_api.get_archive(archive_id)
+    info = get_archive_info(user, users, hosts, host, tmp_memory, description)
     callback = f'{option}_callback'
-    if option == 'preserved':
-        err_msg = (f'callback {getattr(info, callback)} does '
-                   f'not match expected: {expected_callback}')
-        if getattr(info, callback) is None:
-            assert expected_callback == 'None', err_msg
-        else:
-            assert getattr(info, callback) == expected_callback, err_msg
+    err_msg = (f'callback {getattr(info, callback)} does '
+               f'not match expected: {expected_callback}')
+    if getattr(info, callback) is None:
+        assert expected_callback == 'None', err_msg
+    else:
+        assert getattr(info, callback) == expected_callback, err_msg
 
