@@ -2,8 +2,7 @@ Feature: LUMA acceptance tests using multiple providers
 
   Scenario: User cannot remove file using client if he is not its owner
     Given oneclients [client11, client12, client21, client22]
-      mounted in [/home/rob/onedata, /home/marie/onedata, /home/rob/onedata, /home/marie/onedata]
-      on client_hosts [oneclient-1, oneclient-1, oneclient-2, oneclient-2] respectively,
+      mounted on client_hosts [oneclient-1, oneclient-1, oneclient-2, oneclient-2] respectively,
       using [token, token, token, token] by [rob, marie, rob, marie]
     When rob creates directories [krk-pl-par-c/dir1] on client21
     And rob creates regular files [krk-pl-par-c/dir1/file1] on client21
@@ -20,8 +19,7 @@ Feature: LUMA acceptance tests using multiple providers
 
   Scenario: User not in LUMA cannot create file
     Given oneclients [client11, client12, client21]
-      mounted in [/home/rob/onedata, /home/karen/onedata, /home/rob/onedata]
-      on client_hosts [oneclient-1, oneclient-1, oneclient-2] respectively,
+      mounted on client_hosts [oneclient-1, oneclient-1, oneclient-2] respectively,
       using [token, token, token] by [rob, karen, rob]
     Then karen fails to create regular files [krk-pl-par-c/file2] on client12
     And rob can't stat [file2] in krk-pl-par-c on client11
@@ -32,8 +30,7 @@ Feature: LUMA acceptance tests using multiple providers
 
   Scenario: Imported directory ownership is correctly mapped on provider with LUMA and is not mapped on other provider
     Given oneclients [client11, client12, client21]
-      mounted in [/home/rob/onedata, /home/marie/onedata, /home/rob/onedata]
-      on client_hosts [oneclient-1, oneclient-1, oneclient-2] respectively,
+      mounted on client_hosts [oneclient-1, oneclient-1, oneclient-2] respectively,
       using [token, token, token] by [rob, marie, rob]
     And there is directory "volume-data-sync-rw-luma-test/Landsat-1" owned by 40001:42001 in container "volume-data-sync-rw-luma-test" on provider "oneprovider-1"
     # wait to ensure synchronization between providers
@@ -53,8 +50,7 @@ Feature: LUMA acceptance tests using multiple providers
 
   Scenario: Ownership of new file created on provider without LUMA is correctly mapped on storage with import
     Given oneclients [client11, client21]
-      mounted in [/home/rob/onedata, /home/rob/onedata]
-      on client_hosts [oneclient-1, oneclient-2] respectively,
+      mounted on client_hosts [oneclient-1, oneclient-2] respectively,
       using [token, token] by [rob, rob]
     When rob creates directories [krk-plirw-par-c/Landsat-2] on client21
     And rob creates regular files [krk-plirw-par-c/Landsat-2/file1] on client21

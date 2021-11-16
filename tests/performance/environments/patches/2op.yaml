@@ -36,13 +36,6 @@ spaces:
         - provider: "oneprovider-1"
           storage_name: "IdealNullStorage"
           size: '1000000000'
-  - name: space2
-    user: *user1
-    users:
-      - user: *user2
-    groups:
-      - group: *group1
-    supports:
         - provider: "oneprovider-2"
           storage_name: "IdealNullStorage"
           size: '1000000000'

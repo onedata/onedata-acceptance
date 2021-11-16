@@ -21,7 +21,6 @@ from tests.oneclient.steps import (
     multi_dir_steps, multi_reg_file_steps, multi_file_steps)
 from tests.utils.acceptance_utils import failure
 from tests.utils.bdd_utils import wt, parsers
-from tests.utils.client_utils import mount_users
 from tests.utils.utils import repeat_failed
 
 
@@ -29,36 +28,26 @@ def change_client_name_to_hostname(client_name):
     return client_name.replace('oneclient', 'client')
 
 
-@wt(parsers.parse('{user} mounts oneclient in {path} using received token'))
-def mount_new_oneclient_with_token(user, path, request, hosts, users,
-                                   clients, env_desc, tmp_memory):
+@wt(parsers.parse('{user} mounts oneclient using received token'))
+def mount_new_oneclient_with_token(user, hosts, users, env_desc, tmp_memory):
     token = tmp_memory[user]['mailbox']['token']
-    mount_users(clients, [user], [path], ['oneclient-1'], ['client1'],
-                [token], hosts, request, users, env_desc)
+    users[user].mount_client('oneclient-1', 'client1', hosts, env_desc, token)
 
 
-def mount_new_oneclient_with_token_fail(user, path, request, hosts, users,
-                                        clients, env_desc, tmp_memory,
+def mount_new_oneclient_with_token_fail(user, hosts, users, env_desc, tmp_memory,
                                         client='oneclient'):
     if 'oneclient' in client:
         token = tmp_memory[user]['mailbox']['token']
-        try:
-            mount_users(clients, [user], [path], ['oneclient-1'], ['client1'],
-                        [token], hosts, request, users, env_desc, should_fail=True)
-        except TimeoutError:
-            return
+        users[user].mount_client('oneclient-1', 'client1', hosts, env_desc, token)
         failure(user, users)
 
 
-def mount_new_oneclient_result(user, path, request, hosts, users, clients,
-                               env_desc, tmp_memory, result,
+def mount_new_oneclient_result(user, hosts, users, env_desc, tmp_memory, result,
                                client='oneclient'):
     if result == 'succeeds':
-        mount_new_oneclient_with_token(user, path, request, hosts, users,
-                                       clients, env_desc, tmp_memory)
+        mount_new_oneclient_with_token(user, hosts, users, env_desc, tmp_memory)
     else:
-        mount_new_oneclient_with_token_fail(user, path, request, hosts,
-                                            users, clients, env_desc,
+        mount_new_oneclient_with_token_fail(user, hosts, users, env_desc,
                                             tmp_memory, client=client)
 
 
@@ -76,25 +65,22 @@ def create_file_in_op_oneclient(user, path, users, result, host):
         multi_file_steps.create_reg_file(user, path, host, users)
 
 
-def create_file_in_op_oneclient_with_tokens(user, request, hosts, users,
-                                            clients, env_desc, tmp_memory,
+def create_file_in_op_oneclient_with_tokens(user, hosts, users, env_desc, tmp_memory,
                                             result, full_path, client_lower):
-    path = f'/home/{user}/onedata'
     try:
-        mount_new_oneclient_result(user, path, request, hosts, users,
-                                   clients, env_desc, tmp_memory, result,
+        mount_new_oneclient_result(user, hosts, users, env_desc, tmp_memory, result,
                                    client='oneclient')
         if result == 'succeeds':
             oneclient_host = change_client_name_to_hostname(client_lower)
             create_file_in_op_oneclient(user, full_path, users, result,
                                         oneclient_host)
-    except AssertionError:
+    except AssertionError as e:
         if result == 'fails':
             oneclient_host = change_client_name_to_hostname(client_lower)
             create_file_in_op_oneclient(user, full_path, users, result,
                                         oneclient_host)
         else:
-            raise AssertionError
+            raise e
 
 
 def see_items_in_op_oneclient(items, space, user, users, result, host):

@@ -116,7 +116,7 @@ def fail_to_set_privileges_using_rest(user, users, hosts, host, spaces,
     data = {"grant": grant, "revoke": revoke}
     try:
         space_api.update_user_space_privileges(spaces[space_name],
-                                               users[member_name].id, data)
+                                               users[member_name].user_id, data)
         raise Exception('function: space_api.update_user_space_privileges'
                         ' worked but it should not, because of lack in '
                         'privileges')
@@ -132,7 +132,7 @@ def assert_privileges_in_space_using_rest(user, users, hosts, host, spaces,
     space_api = SpaceApi(user_client_oz)
 
     user_privileges = (space_api.list_user_space_privileges(
-        spaces[space_name], users[member_name].id).privileges)
+        spaces[space_name], users[member_name].user_id).privileges)
     grant = []
     revoke = []
     privileges = yaml.load(config)
@@ -151,7 +151,7 @@ def fail_to_create_invitation_in_space_using_rest(user, users, hosts, host,
                                  hosts[host]['hostname'])
     space_api = SpaceApi(user_client_oz)
     try:
-        space_api.add_space_user(spaces[space_name], users[member_name].id)
+        space_api.add_space_user(spaces[space_name], users[member_name].user_id)
         raise Exception('function: space_api.add_space_user worked but it'
                         ' should not, because of lack in privileges')
     except ApiException as err:
@@ -178,7 +178,7 @@ def add_users_to_space_in_oz_using_rest(user_list, users, zone_name, hosts,
     space_api = SpaceApi(user_client)
 
     for user in parse_seq(user_list):
-        space_api.add_space_user(spaces[space_name], users[user].id)
+        space_api.add_space_user(spaces[space_name], users[user].user_id)
 
 
 def add_group_to_space_using_rest(user, users, hosts, host, group_name, spaces,
@@ -199,7 +199,7 @@ def delete_users_from_space_in_oz_using_rest(user_list, users, zone_name, hosts,
     space_api = SpaceApi(user_client)
 
     for user in parse_seq(user_list):
-        space_api.remove_space_user(spaces[space_name], users[user].id)
+        space_api.remove_space_user(spaces[space_name], users[user].user_id)
 
 
 def invite_other_users_to_space_using_rest(user, users, zone_name, hosts,
@@ -218,7 +218,7 @@ def assert_user_is_member_of_space_rest(space_name, spaces, user, users,
                                     space_name)
 
     for username in parse_seq(user_list):
-        assert users[username].id in space_users, \
+        assert users[username].user_id in space_users, \
             'There is no user {} in space {}'.format(username, space_name)
 
 
@@ -226,7 +226,7 @@ def assert_not_user_in_space_using_rest(user, users, hosts, host, spaces,
                                         space_name, member_name):
     users_id_list = get_users_id_list(user, users, hosts, host, spaces,
                                       space_name)
-    assert users[member_name].id not in users_id_list, (
+    assert users[member_name].user_id not in users_id_list, (
         f'user {member_name} is in space {space_name}')
 
 

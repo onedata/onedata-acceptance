@@ -7,14 +7,12 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 
-import os
 import errno
 import subprocess as sp
 
 from tests.utils.onenv_utils import cmd_exec
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import given, when, wt, parsers
-from tests.utils.client_utils import mkdir, rmdir, ls, rm, cp
 from tests.utils.utils import assert_generic, assert_, assert_expected_failure
 
 
@@ -27,7 +25,7 @@ def create_base(user, dirs, client_node, users, should_fail=False):
         path = client.absolute_path(dir)
 
         def condition():
-            assert_expected_failure(mkdir, should_fail, client, path)
+            assert_expected_failure(client.mkdir, should_fail, path)
         assert_(client.perform, condition)
 
 
@@ -48,7 +46,7 @@ def create_parents(user, paths, client_node, users):
         dir_path = client.absolute_path(path)
 
         def condition():
-            mkdir(client, dir_path, recursive=True)
+            client.mkdir(dir_path, recursive=True)
 
         assert_(client.perform, condition)
 
@@ -68,7 +66,7 @@ def delete_empty_base(user, dirs, client_node, users, should_fail=False):
         path = client.absolute_path(dir)
 
         def condition():
-            assert_expected_failure(rmdir, should_fail, client, path)
+            assert_expected_failure(client.rmdir, should_fail, path)
 
         assert_(client.perform, condition)
 
@@ -96,7 +94,7 @@ def delete_non_empty(user, dirs, client_node, users):
         path = client.absolute_path(dir)
 
         def condition():
-            rm(client, path, recursive=True, force=True)
+            client.rm(path, recursive=True, force=True)
 
         assert_(client.perform, condition)
 
@@ -112,7 +110,7 @@ def delete_parents(user, paths, client_node, users):
         dir_path = client.absolute_path(path)
 
         def condition():
-            rmdir(client, dir_path, recursive=True)
+            client.rmdir(dir_path, recursive=True)
 
         assert_(client.perform, condition)
 
@@ -125,7 +123,7 @@ def list_dirs_base(user, dir, client_node, users, should_fail=False):
 
     def condition():
         try:
-            content = ls(client, path=path)
+            content = client.ls(path=path)
             path_content.extend(content)
         except OSError as ex:
             if ex.errno == errno.EPERM:
@@ -158,7 +156,7 @@ def copy_dir(user, dir1, dir2, client_node, users):
     dest_path = client.absolute_path(dir2)
 
     def condition():
-        cp(client, src_path, dest_path, recursive=True)
+        client.cp(src_path, dest_path, recursive=True)
 
     assert_(client.perform, condition)
 

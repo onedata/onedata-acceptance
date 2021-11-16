@@ -2,8 +2,7 @@ Feature: Multi_directory_CRUD
 
   Background:
     Given oneclients [client11, client21]
-      mounted in [/home/user1/onedata, /home/user2/onedata]
-      on client_hosts [oneclient-1, oneclient-2] respectively,
+      mounted on client_hosts [oneclient-1, oneclient-2] respectively,
       using [token, token] by [user1, user2]
 
     

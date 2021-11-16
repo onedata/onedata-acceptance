@@ -16,16 +16,10 @@ from queue import Queue, Empty
 from tests.performance.conftest import AbstractPerformanceTest
 from tests.utils.performance_utils import (Result, generate_configs,
                                            performance, flushed_print)
-from tests.utils.client_utils import rm, truncate, cp, mount_client, CLIENT_CONF
 
 REPEATS = 1
 SUCCESS_RATE = 100
 LOGGING_INTERVAL = 30
-
-CLIENT_CONF_1 = CLIENT_CONF('user1', '/home/user1/onedata',
-                            'oneclient-1', 'client11', 'token')
-CLIENT_CONF_2 = CLIENT_CONF('user2', '/home/user2/onedata',
-                            'oneclient-2', 'client21', 'token')
 
 
 class TestTransferOnf(AbstractPerformanceTest):
@@ -59,12 +53,9 @@ class TestTransferOnf(AbstractPerformanceTest):
            'Files number: {files_number} '
            'Files size: {files_size} '
            'Threads number: {threads_num}'))
-    def test_transfer_onf(self, request, hosts, users, clients, env_desc,
-                          params):
-        client1 = mount_client(CLIENT_CONF_1, clients, hosts,
-                               request, users, env_desc)
-        client2 = mount_client(CLIENT_CONF_2, clients, hosts,
-                               request, users, env_desc)
+    def test_transfer_onf(self, hosts, users, env_desc, params):
+        client1 = users['user1'].mount_client('oneclient-1', 'client11', hosts, env_desc)
+        client2 = users['user2'].mount_client('oneclient-2', 'client21', hosts, env_desc)
 
         files_number = params['files_number']['value']
         file_size = params['files_size']['value']
@@ -95,7 +86,7 @@ def _create_files(client, files_num, file_size, dir_path):
     for i in range(files_num):
         if i % 100 == 0:
             flushed_print('\t\t\tCreated {}nth file'.format(i))
-        truncate(client, os.path.join(dir_path, 'file{}'.format(i)), file_size)
+        client.truncate(os.path.join(dir_path, 'file{}'.format(i)), file_size)
 
 
 def _execute_test(client, files_number, file_size, threads_num, dir_path):
@@ -151,7 +142,7 @@ def _copy_files(client, start, end, dir_path, queue):
         for i in range(start, end):
             src_file = os.path.join(dir_path, 'file{}'.format(i))
             dst_file = os.path.join(dir_path, 'file{}.bak'.format(i))
-            cp(client, src_file, dst_file)
+            client.cp(src_file, dst_file)
     except Exception as ex:
         queue.put(ex)
 
@@ -159,8 +150,8 @@ def _copy_files(client, start, end, dir_path, queue):
 def _teardown_after_test(client, files_number, dir_path):
     logging_time = time.time() + LOGGING_INTERVAL
     for i in range(files_number):
-        rm(client, os.path.join(dir_path, 'file{}'.format(i)))
-        rm(client, os.path.join(dir_path, 'file{}.bak'.format(i)))
+        client.rm(os.path.join(dir_path, 'file{}'.format(i)))
+        client.rm(os.path.join(dir_path, 'file{}.bak'.format(i)))
         if time.time() >= logging_time:
             flushed_print('\t\t\tDeleted {}nth file'.format(i))
             logging_time = time.time() + LOGGING_INTERVAL

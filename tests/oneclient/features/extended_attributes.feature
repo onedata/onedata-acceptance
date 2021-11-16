@@ -1,7 +1,7 @@
 Feature: Extended_attributes
 
   Background:
-    Given oneclient mounted in /home/user1/onedata using token by user1
+    Given oneclient mounted using token by user1
 
 
   Scenario Outline: Check extended attribute exists
