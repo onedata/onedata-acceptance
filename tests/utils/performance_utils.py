@@ -10,7 +10,7 @@ import itertools
 import time
 import pytest
 
-from ..oneclient.conftest import cleanup_env
+from ..oneclient.conftest import unmount_all_clients_and_purge_spaces
 
 
 def performance(default_config, configs):
@@ -71,7 +71,7 @@ def performance(default_config, configs):
                         successful_repeats += 1
                     finally:
                         repeats += 1
-                        cleanup_env(users)
+                        unmount_all_clients_and_purge_spaces(users)
 
                 config_report.add_to_report('completed', int(time.time()))
                 config_report.add_to_report('successful_repeats', successful_repeats)
