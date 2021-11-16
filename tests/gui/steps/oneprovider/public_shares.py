@@ -68,7 +68,6 @@ def is_public_share_cwd_correct(selenium, browser_id, cwd, public_share):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_file_browser_in_public_share(selenium, browser_id, public_share,
                                         tmp_memory):
-    pdb.set_trace()
     file_browser = public_share(selenium[browser_id]).file_browser
     tmp_memory[browser_id]['file_browser'] = file_browser
 

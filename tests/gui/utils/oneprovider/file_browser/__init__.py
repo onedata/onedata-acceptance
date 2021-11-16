@@ -87,7 +87,6 @@ class _FileBrowser(PageObject):
         needs to use input element, but we do not use it directly in frontend.
         So we unhide an input element for a while and pass a local file path to it.
         """
-        pdb.set_trace()
         with rm_css_cls(self.driver, self._upload_input, 'hidden') as elem:
             elem.send_keys(files)
 

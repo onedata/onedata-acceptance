@@ -8,6 +8,7 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 import pdb
+import subprocess
 from datetime import datetime
 
 import pytest
@@ -278,7 +279,7 @@ def wait_for_file_upload_to_finish(selenium, browser_id, popups):
 
 @wt(parsers.re('user of (?P<browser_id>.*) waits extended time for file '
                'uploads? to finish'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_EXTENDED_UPLOAD)
 def wait_extended_time_for_file_upload_to_finish(selenium, browser_id, popups):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
@@ -328,7 +329,6 @@ def upload_files_to_cwd_in_data_tab_no_waiting(selenium, browser_id, dir_path,
     driver = selenium[browser_id]
     directory = tmpdir.join(browser_id, *dir_path.split('/'))
     if directory.isdir():
-        pdb.set_trace()
         op_container(driver).file_browser.upload_files('\n'.join(
             str(item) for item in directory.listdir() if item.isfile()))
     else:
@@ -342,8 +342,7 @@ def upload_files_to_cwd_in_data_tab_no_waiting(selenium, browser_id, dir_path,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def upload_files_to_cwd_in_data_tab_extended_wait(selenium, browser_id,
                                                   dir_path, tmpdir,
-                                                  op_container, popups,capsys):
-    pdb.set_trace()
+                                                  op_container, popups):
     upload_files_to_cwd_in_data_tab_no_waiting(selenium, browser_id, dir_path,
                                                tmpdir, op_container)
     wait_extended_time_for_file_upload_to_finish(selenium, browser_id, popups)
@@ -572,3 +571,14 @@ def assert_provider_in_space(selenium, browser_id, provider, hosts, oz_page):
 def click_file_browser_button(browser_id, button, tmp_memory):
     file_browser = tmp_memory[browser_id]['file_browser']
     getattr(file_browser, f'{transform(button)}_button').click()
+
+
+@wt(parsers.parse('user of {browser_id} removes "{path}" from local file '
+                  'system'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def remove_file_from_local_file_system(browser_id, path,
+                                       tmpdir):
+    home_dir = tmpdir.join(browser_id)
+
+    cmd = ['rm', home_dir+path]
+    subprocess.check_call(cmd)

@@ -84,8 +84,8 @@ def specify_size(size_string):
     try:
         return int(size_string)
     except ValueError:
-        unit_dict = {'B': 1, 'KiB': 1024, 'MiB': 1024*1024,
-                     'GiB': 1024*1024*1024}
+        unit_dict = {'B': 1, 'KiB': 1024, 'MiB': 1024 * 1024,
+                     'GiB': 1024 * 1024 * 1024}
         [size, unit] = size_string.split()
         return int(size) * unit_dict[unit]
 
@@ -107,3 +107,18 @@ def download_file_to_local_file_system(browser_id, file_url, file_name,
 
     r = requests.get(file_url, allow_redirects=True)
     open(home_dir.join(file_name), 'wb').write(r.content)
+
+
+@given(parsers.parse('user of {browser_id} creates file named "{file_name}" '
+                     'sized: {item_size} in "{directory_name}" on local file '
+                     'system'))
+def create_file_on_local_file_system(browser_id, file_name, item_size,
+                                     directory_name, tmpdir):
+    home_dir = tmpdir.join(browser_id)
+    path = home_dir + directory_name
+    size = item_size
+    if size:
+        size = specify_size(size)
+        content = size * '1'
+
+    _mkfile(path.join(file_name), content)
