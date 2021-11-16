@@ -1,4 +1,4 @@
-Feature: Archives of Service mixed tests
+Feature: Archives mixed tests
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -60,6 +60,7 @@ Feature: Archives of Service mixed tests
         description: first archive
         layout: BagIt
     Then using <client_checking>, user1 sees BagIt archive with description: "first archive" for dataset for item "dir1" in space "space1" in oneprovider-1
+
   Examples:
   | client_creating    | client_checking    |
   | REST               | web GUI            |
@@ -125,7 +126,7 @@ Feature: Archives of Service mixed tests
   | web GUI            | REST               |
 
 
-  Scenario: Using web GUI, user1 sees that archive description has changed after, using REST, user1 changed it
+  Scenario: Using web GUI, user1 sees that archive description has been changed after user1 changed it using REST
     When using web GUI, user1 creates dataset for item "dir1" in space "space1" in oneprovider-1
     And using web GUI, user1 creates archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
         description: first archive
@@ -135,24 +136,24 @@ Feature: Archives of Service mixed tests
     And using web GUI, user1 does not see archive with description: "first archive" for item "dir1" in space "space1" in oneprovider-1
 
 
-  Scenario: Using REST, user changes preserved Callback
-      When using web GUI, user1 creates dataset for item "dir1" in space "space1" in oneprovider-1
-    And using web GUI, user1 creates archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
-        description: first archive
-        layout: plain
-    And using REST, user1 sees that preserved Callback is "None" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
-    And using REST, user1 changes archive preserved Callback to "https://archives.org/preserved_archives" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
-    Then using REST, user1 sees that preserved Callback is "https://archives.org/preserved_archives" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
-
-
-   Scenario: Using REST, user changes purged Callback
+  Scenario: User of REST sees new "preserved" callback URL after changing it
     When using web GUI, user1 creates dataset for item "dir1" in space "space1" in oneprovider-1
     And using web GUI, user1 creates archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
         description: first archive
         layout: plain
-    And using REST, user1 sees that purged Callback is "None" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
-    And using REST, user1 changes archive purged Callback to "https://archives.org/purged_archives" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
-    Then using REST, user1 sees that purged Callback is "https://archives.org/purged_archives" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
+    And using REST, user1 sees that preserved callback is "None" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
+    And using REST, user1 changes archive preserved callback to "https://archives.org/preserved_archives" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
+    Then using REST, user1 sees that preserved callback is "https://archives.org/preserved_archives" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
+
+
+   Scenario: User of REST sees new "purged" callback URL after changing it
+    When using web GUI, user1 creates dataset for item "dir1" in space "space1" in oneprovider-1
+    And using web GUI, user1 creates archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
+        description: first archive
+        layout: plain
+    And using REST, user1 sees that purged callback is "None" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
+    And using REST, user1 changes archive purged callback to "https://archives.org/purged_archives" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
+    Then using REST, user1 sees that purged callback is "https://archives.org/purged_archives" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
 
 
    Scenario Outline: User of <client_checking> sees archive after getting invite token with view archives privilege from user of <client_inviting>

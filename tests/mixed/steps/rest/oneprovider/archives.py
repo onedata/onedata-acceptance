@@ -158,7 +158,7 @@ def change_archive_description_in_op_rest(user, users, hosts, host, tmp_memory,
 
 
 @wt(parsers.re('using REST, (?P<user>.+?) changes archive (?P<option>.*) '
-               'Callback to "(?P<new_callback>.*)" for archive with '
+               'callback to "(?P<new_callback>.*)" for archive with '
                'description "(?P<description>.*)" for item "(?P<item_name>.*)" '
                'in space "(?P<space_name>.*)" in (?P<host>.*)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -167,11 +167,11 @@ def change_archive_callback(user, users, hosts, host, tmp_memory, description,
     client = login_to_provider(user, users, hosts[host]['hostname'])
     archive_id = tmp_memory[description]
     archive_api = ArchiveApi(client)
-    data = {f"{option}Callback": new_callback}
+    data = {f"{option}callback": new_callback}
     archive_api.update_archive(archive_id, data)
 
 
-@wt(parsers.re('using REST, (?P<user>.+?) sees that (?P<option>.*) Callback'
+@wt(parsers.re('using REST, (?P<user>.+?) sees that (?P<option>.*) callback'
                ' is "(?P<expected_callback>.*)" for archive with description '
                '"(?P<description>.*)" for item "(?P<item_name>.*)" '
                'in space "(?P<space_name>.*)" in (?P<host>.*)'))

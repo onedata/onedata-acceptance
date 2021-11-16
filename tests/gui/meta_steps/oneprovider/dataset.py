@@ -58,6 +58,19 @@ def go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
                                 tmp_memory, item_browser=item_browser)
 
 
+def get_item_name_from_path(selenium, browser_id, space_name, oz_page,
+                            op_container, tmp_memory, path, option_in_space,
+                            item_browser):
+    click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
+                                                  space_name,
+                                                  option_in_space, oz_page)
+    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
+                                tmp_memory, item_browser)
+    go_to_path_without_last_elem(selenium, browser_id, tmp_memory,
+                                 path, op_container, item_browser)
+    return path.split('/')[-1]
+
+
 @wt(parsers.parse('user of {browser_id} creates dataset{option}for item '
                   '"{item_name}" in "{space_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -74,14 +87,11 @@ def create_dataset(browser_id, tmp_memory, item_name, space_name,
                                  option_in_space, op_container, tmp_memory)
 
     if '/' in item_name:
-        click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
-                                                      space_name,
-                                                      option_in_space, oz_page)
-        assert_browser_in_tab_in_op(selenium, browser_id, op_container,
-                                    tmp_memory)
-        go_to_path_without_last_elem(selenium, browser_id, tmp_memory,
-                                     item_name, op_container)
-        item_name = item_name.split('/')[-1]
+        item_browser = 'file browser'
+        item_name = get_item_name_from_path(selenium, browser_id, space_name,
+                                            oz_page, op_container, tmp_memory,
+                                            item_name, option_in_space,
+                                            item_browser)
 
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,

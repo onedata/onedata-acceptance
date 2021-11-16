@@ -50,6 +50,7 @@ class _Breadcrumbs(PageObject):
 
             breadcrumbs_name = [item.text for item in breadcrumbs]
 
+            # works only if '...' is after archive name in path
             if '...' in breadcrumbs_name:
                 path[1] = '...'
                 if len(breadcrumbs_name) < len(path):

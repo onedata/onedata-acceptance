@@ -43,7 +43,7 @@ def write_description_in_create_archive_modal(selenium, browser_id, modals,
     modals(driver).create_archive.description = text
 
 
-def get_archive_from_description(browser, description):
+def get_archive_with_description(browser, description):
     for archive in browser.data:
         if description in archive.name:
             return archive
@@ -56,10 +56,8 @@ def get_archive_from_description(browser, description):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def save_date_of_archive_creation(browser_id, tmp_memory, description):
     browser = tmp_memory[browser_id]['archive_browser']
-    archive = get_archive_from_description(browser, description)
-    name = archive.name
-    if '—' in name:
-        name = name.split(' —')[0]
+    archive = get_archive_with_description(browser, description)
+    name = archive.name.split(' —')[0]
     tmp_memory['created_at'] = name
 
 
@@ -71,7 +69,7 @@ def save_date_of_archive_creation(browser_id, tmp_memory, description):
 def assert_archive_full_state_status(browser_id, tmp_memory, status,
                                      number_of_files, size, description):
     browser = tmp_memory[browser_id]['archive_browser']
-    archive = get_archive_from_description(browser, description)
+    archive = get_archive_with_description(browser, description)
     item_status = (re.sub('\n', ' ', archive.state).replace(':', ',')
                    .split(', '))
     item_status[0] = item_status[0].replace(' Archived', '').lower()
@@ -92,7 +90,7 @@ def assert_archive_partial_state_status(item_status, expected_status):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def double_click_on_archive(browser_id, tmp_memory, description):
     browser = tmp_memory[browser_id]['archive_browser']
-    archive = get_archive_from_description(browser, description)
+    archive = get_archive_with_description(browser, description)
     archive.double_click()
 
 
@@ -104,7 +102,7 @@ def assert_tag_for_archive_in_archive_browser(browser_id, tag_type, tmp_memory,
                                               description):
     browser = tmp_memory[browser_id]['archive_browser']
     err_msg = f'{tag_type} tag for archive with description is not visible'
-    archive = get_archive_from_description(browser, description)
+    archive = get_archive_with_description(browser, description)
     assert archive.is_tag_visible(tag_type), err_msg
 
 
@@ -124,7 +122,7 @@ def check_toggle_in_create_archive_modal(browser_id, selenium, modals,
 def compare_base_archive_name_with_archive_with_description(browser,
                                                             base_description,
                                                             item_base_archive):
-    base_archive_name = get_archive_from_description(browser,
+    base_archive_name = get_archive_with_description(browser,
                                                      base_description).name
     err_msg = (f'Item base archive: {item_base_archive} does not'
                f' match  {base_archive_name}')
@@ -152,7 +150,7 @@ def assert_base_archive_description_for_latest_created_archive(
 def assert_base_archive_description(browser_id, tmp_memory, base_description,
                                     description):
     browser = tmp_memory[browser_id]['archive_browser']
-    item_base_archive = get_archive_from_description(browser,
+    item_base_archive = get_archive_with_description(browser,
                                                      description).base_archive
     compare_base_archive_name_with_archive_with_description(browser,
                                                             base_description,
@@ -186,9 +184,9 @@ def assert_name_same_as_latest_created(browser_id, tmp_memory, modals,
                r'to clipboard'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def copy_archive_name_to_clipboard(browser_id, tmp_memory, description,
-                                   clipboard,displays):
+                                   clipboard, displays):
     browser = tmp_memory[browser_id]['archive_browser']
-    archive = get_archive_from_description(browser, description)
+    archive = get_archive_with_description(browser, description)
     clipboard.copy(archive.name, display=displays[browser_id])
 
 
@@ -205,7 +203,7 @@ def click_menu_for_named_archive(browser_id, tmp_memory, clipboard, displays):
                'with description: "(?P<description>.*?)" in archive browser'))
 def click_menu_for_archive(browser_id, tmp_memory, description):
     browser = tmp_memory[browser_id]['archive_browser']
-    archive = get_archive_from_description(browser, description)
+    archive = get_archive_with_description(browser, description)
     archive.menu_button()
 
 

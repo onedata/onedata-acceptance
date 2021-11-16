@@ -334,6 +334,6 @@ Feature: Basic archives operations
          - dir1:
            - dir2:
              - dir3:
-               - file1
+               - file1: 100
 
 
