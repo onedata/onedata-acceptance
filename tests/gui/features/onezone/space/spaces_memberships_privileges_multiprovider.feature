@@ -64,7 +64,7 @@ Feature: Basic management of spaces privileges in Onezone GUI with two providers
     And user of browser_user1 clicks on menu for "file1" file in file browser
     And user of browser_user1 clicks "Data distribution" option in data row menu in file browser
     And user of browser_user1 sees that "Data distribution" modal has appeared
-    And user of browser_user1 does not see "Replicate here" option when clicking on provider "oneprovider-2" menu button
+    And user of browser_user1 does not see "Replicate here" options when clicking on provider "oneprovider-2" menu button
 
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
@@ -107,7 +107,7 @@ Feature: Basic management of spaces privileges in Onezone GUI with two providers
     And user of browser_user1 clicks on menu for "file1" file in file browser
     And user of browser_user1 clicks "Data distribution" option in data row menu in file browser
     And user of browser_user1 sees that "Data distribution" modal has appeared
-    And user of browser_user1 does not see Evict option when clicking on provider "oneprovider-2" menu button
+    And user of browser_user1 does not see Evict options when clicking on provider "oneprovider-2" menu button
 
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
