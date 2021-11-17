@@ -12,7 +12,6 @@ Feature: Management of clusters entries as an admin user in Onezone GUI
     # oneprovider-1 menu has to be closed for proper checking on clusters list
     And user of browser clicks on Data in the main menu
     And user of browser kills "oneprovider-1" provider
-    And user of browser refreshes site
     And user of browser clicks on Clusters in the main menu
     And user of browser sees that "oneprovider-1" cluster is not working in clusters menu
 
