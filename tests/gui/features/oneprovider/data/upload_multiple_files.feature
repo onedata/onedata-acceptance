@@ -97,7 +97,7 @@ Feature: Uploading multiple files at once
 
 
   Scenario: User successfully uploads 1 GB file (stress test)
-    Given user of browser creates file named "file1GB.txt" sized: 1 GiB in "/dir6/" on local file system
+    Given user of browser creates file named "file1GB.txt" sized: 1 GiB in "/dir6" on local file system
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar
 

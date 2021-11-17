@@ -7,8 +7,6 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-import subprocess
-
 import pytest
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
@@ -337,7 +335,7 @@ def upload_files_to_cwd_in_data_tab_no_waiting(selenium, browser_id, dir_path,
                   'menu bar to upload files from local directory "{dir_path}" '
                   'to remote current dir and waits extended time for upload to '
                   'finish'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_EXTENDED_UPLOAD)
 def upload_files_to_cwd_in_data_tab_extended_wait(selenium, browser_id,
                                                   dir_path, tmpdir,
                                                   op_container, popups):
@@ -569,14 +567,3 @@ def assert_provider_in_space(selenium, browser_id, provider, hosts, oz_page):
 def click_file_browser_button(browser_id, button, tmp_memory):
     file_browser = tmp_memory[browser_id]['file_browser']
     getattr(file_browser, f'{transform(button)}_button').click()
-
-
-@wt(parsers.parse('user of {browser_id} removes "{path}" from local file '
-                  'system'))
-@repeat_failed(timeout=WAIT_BACKEND)
-def remove_file_from_local_file_system(browser_id, path,
-                                       tmpdir):
-    home_dir = tmpdir.join(browser_id)
-
-    cmd = ['rm', home_dir+path]
-    subprocess.check_call(cmd)
