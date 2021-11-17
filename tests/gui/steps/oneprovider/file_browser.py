@@ -325,7 +325,7 @@ def assert_num_of_hardlinks_in_file_dets_modal(selenium, browser_id, number,
 def assert_hardlink_path_in_file_dets_modal(selenium, browser_id, file,
                                             path, modals):
     entries = modals(selenium[browser_id]).file_details.hardlinks_tab.files
-    actual_path = entries[file].path
+    actual_path = entries[file].get_path_string()
     assert path == actual_path, (f'Hardlink {file} path should be {path}, '
                                  f'but is {actual_path}')
 
@@ -335,7 +335,7 @@ def assert_hardlink_path_in_file_dets_modal(selenium, browser_id, file,
 def assert_hardlinks_paths_in_file_dets_modal(selenium, browser_id, paths,
                                               modals):
     entries = modals(selenium[browser_id]).file_details.hardlinks_tab.files
-    entries_paths = [entry.path for entry in entries]
+    entries_paths = [entry.get_path_string() for entry in entries]
     parsed_paths = parse_seq(paths)
     for path in parsed_paths:
         assert path in entries_paths, f'{path} not in {entries_paths}'

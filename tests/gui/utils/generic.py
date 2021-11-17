@@ -62,6 +62,16 @@ def upload_file_path(file_name):
         file_name)
 
 
+def strip_path(path_string, separator = '/'):
+    """Strips string from whitespaces inside file path. Useful for file paths rendered
+    in DOM which contains `\\n` characters in `innerText`.
+    """
+    return separator.join(map(
+        lambda path_item: path_item.strip(),
+        path_string.split(separator)
+    ))
+
+
 @contextmanager
 def rm_css_cls(driver, web_elem, css_cls):
     driver.execute_script("$(arguments[0]).removeClass('{}')".format(css_cls),

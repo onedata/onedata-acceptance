@@ -50,8 +50,8 @@ Feature: Basic files tab operations on hardlinks in file browser
     Then user of browser sees that "File details" modal has appeared
     And user of browser sees that "File details" modal is opened on "Hard links" tab
     And user of browser sees that there are 2 hardlinks in "File details" modal
-    And user of browser sees that path of "file1" hardlink is "/space1/file1" in "File details" modal
-    And user of browser sees that path of "file1(1)" hardlink is "/space1/file1(1)" in "File details" modal
+    And user of browser sees that path of "file1" hardlink is "space1/file1" in "File details" modal
+    And user of browser sees that path of "file1(1)" hardlink is "space1/file1(1)" in "File details" modal
 
 
   Scenario: User downloads hardlink of file
@@ -72,9 +72,9 @@ Feature: Basic files tab operations on hardlinks in file browser
     And user of browser sees that "File details" modal has appeared
     And user of browser sees that "File details" modal is opened on "Hard links" tab
     And user of browser sees that there are 3 hardlinks in "File details" modal
-    And user of browser sees that path of "file1" hardlink is "/space1/file1" in "File details" modal
-    And user of browser sees that path of "file1(1)" hardlink is "/space1/file1(1)" in "File details" modal
-    And user of browser sees that path of "file1(1)(1)" hardlink is "/space1/file1(1)(1)" in "File details" modal
+    And user of browser sees that path of "file1" hardlink is "space1/file1" in "File details" modal
+    And user of browser sees that path of "file1(1)" hardlink is "space1/file1(1)" in "File details" modal
+    And user of browser sees that path of "file1(1)(1)" hardlink is "space1/file1(1)(1)" in "File details" modal
 
 
   Scenario: User creates hardlinks in other directories than original files
@@ -102,7 +102,7 @@ Feature: Basic files tab operations on hardlinks in file browser
     And user of browser sees that "File details" modal has appeared
     And user of browser sees that "File details" modal is opened on "Hard links" tab
     And user of browser sees that there are 3 hardlinks in "File details" modal
-    And user of browser sees paths ["/space1/dir1/file2", "/space1/file2", "/space1/dir1/dir2/file2"] of hardlinks in "File details" modal
+    And user of browser sees paths ["space1/dir1/file2", "space1/file2", "space1/dir1/dir2/file2"] of hardlinks in "File details" modal
 
 
   Scenario: New hardlink name is visible after hardlink rename
@@ -115,8 +115,8 @@ Feature: Basic files tab operations on hardlinks in file browser
     And user of browser sees that "File details" modal has appeared
     And user of browser sees that "File details" modal is opened on "Hard links" tab
     And user of browser sees that there are 2 hardlinks in "File details" modal
-    And user of browser sees that path of "file1" hardlink is "/space1/file1" in "File details" modal
-    And user of browser sees that path of "hardlink_file1" hardlink is "/space1/hardlink_file1" in "File details" modal
+    And user of browser sees that path of "file1" hardlink is "space1/file1" in "File details" modal
+    And user of browser sees that path of "hardlink_file1" hardlink is "space1/hardlink_file1" in "File details" modal
 
 
   Scenario: Hardlink info is no longer visible after hardlink removal
@@ -134,8 +134,8 @@ Feature: Basic files tab operations on hardlinks in file browser
     And user of browser sees that "File details" modal has appeared
     And user of browser sees that "File details" modal is opened on "Hard links" tab
     And user of browser sees that there are 2 hardlinks in "File details" modal
-    And user of browser sees that path of "file1" hardlink is "/space1/file1" in "File details" modal
-    And user of browser sees that path of "file1(2)" hardlink is "/space1/file1(2)" in "File details" modal
+    And user of browser sees that path of "file1" hardlink is "space1/file1" in "File details" modal
+    And user of browser sees that path of "file1(2)" hardlink is "space1/file1(2)" in "File details" modal
 
 
   Scenario: Newly created hardlink inherits metadata and QoS from original file
