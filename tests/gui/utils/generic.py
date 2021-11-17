@@ -66,10 +66,8 @@ def strip_path(path_string, separator = '/'):
     """Strips string from whitespaces inside file path. Useful for file paths rendered
     in DOM which contains `\\n` characters in `innerText`.
     """
-    return separator.join(map(
-        lambda path_item: path_item.strip(),
-        path_string.split(separator)
-    ))
+    return separator.join(
+        [path_item.strip() for path_item in path_string.split(separator)])
 
 
 @contextmanager
