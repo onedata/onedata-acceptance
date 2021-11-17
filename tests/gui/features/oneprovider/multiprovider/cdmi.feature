@@ -25,7 +25,6 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And user of browser sees that item named "20B-0.txt" has appeared in file browser
 
     And user of browser is idle for 90 seconds
-    And user of browser clicks "Refresh" button from file browser menu bar
     And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser clicks on menu for "20B-0.txt" file in file browser
@@ -86,8 +85,6 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
     And user of browser sees that item named "20B-0.txt" has appeared in file browser
 
-    And user of browser is idle for 90 seconds
-    And user of browser clicks "Refresh" button from file browser menu bar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser clicks on menu for "20B-0.txt" file in file browser
     And user of browser clicks "Data distribution" option in data row menu in file browser
