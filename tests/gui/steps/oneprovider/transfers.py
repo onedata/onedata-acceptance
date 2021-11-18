@@ -184,7 +184,7 @@ def wait_for_transfers_page_to_load(selenium, browser_id, op_container):
     op_container(selenium[browser_id]).transfers.ongoing_map_header
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) does not see "(?P<option>Replicate '
+@wt(parsers.re('user of (?P<browser_id>.*) does not see "(?P<options>Replicate '
                'here|Migrate...|Evict)" options when clicking on provider "('
                '?P<provider>.*)" menu button'))
 def assert_option_in_provider_popup_menu(selenium, browser_id, provider, hosts,
