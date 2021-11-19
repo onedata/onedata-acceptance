@@ -159,6 +159,7 @@ def _create_token_of_type(selenium, browser_id, token_type, oz_page, popups,
 
 @wt(parsers.re(r'user of (?P<browser_id>.*?) creates (?P<number>\d*?) '
                r'(?P<token_type>.*?) tokens?'))
+@repeat_failed(timeout=WAIT_BACKEND)
 def create_number_of_typed_token(selenium, browser_id, number: int, token_type,
                                  oz_page, popups):
     for i in range(number):
