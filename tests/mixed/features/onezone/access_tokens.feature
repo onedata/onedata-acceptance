@@ -324,8 +324,7 @@ Feature: Access tokens tests
     Examples:
     | client1     |
     | REST        |
-# TODO: VFS-8431
-#   | oneclient1  |
+   | oneclient1  |
 
 
   Scenario Outline: Using <client1>, user can rename file after getting token with caveat set for path, created by web GUI
@@ -344,8 +343,7 @@ Feature: Access tokens tests
     Examples:
     | client1     |
     | REST        |
-# TODO: VFS-8431
-#   | oneclient1  |
+   | oneclient1  |
 
 
   Scenario Outline: Using <client1>, user can see file after getting token with caveat set for object ID, created by web GUI
@@ -359,8 +357,7 @@ Feature: Access tokens tests
     Examples:
     | client1     |
     | REST        |
-# TODO: VFS-8431
-#    | oneclient1  |
+    | oneclient1  |
 
 
    Scenario Outline: Using <client1>, user can rename file after getting token with caveat set for object ID, created by web GUI
@@ -374,8 +371,7 @@ Feature: Access tokens tests
     Examples:
     | client1     |
     | REST        |
-# TODO: VFS-8431
-#    | oneclient1  |
+    | oneclient1  |
 
 
 
