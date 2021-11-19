@@ -8,6 +8,8 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 from selenium.webdriver import ActionChains
+from selenium.webdriver.common.keys import Keys
+
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Label, Button, WebElement
 from tests.gui.utils.generic import transform
@@ -27,9 +29,11 @@ class DataRow(PageObject):
 
     def double_click(self):
         if self.is_any_tag_visible():
-            ActionChains(self.driver).double_click(self.clickable_field).perform()
+            ActionChains(self.driver).click(self.clickable_field).perform()
+            ActionChains(self.driver).key_down(Keys.ENTER).perform()
         else:
-            ActionChains(self.driver).double_click(self.web_elem).perform()
+            ActionChains(self.driver).click(self.web_elem).perform()
+            ActionChains(self.driver).key_down(Keys.ENTER).perform()
 
     def is_tag_visible(self, name):
         try:
