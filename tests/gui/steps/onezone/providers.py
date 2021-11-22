@@ -15,14 +15,14 @@ from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt, given
 from tests.utils.environment_utils import run_kubectl_command
-from tests.utils.onenv_utils import OnenvError
+from tests.utils.onenv_utils import run_onenv_command
 from tests.utils.utils import repeat_failed
 from tests.utils.rest_utils import get_provider_rest_path, http_get
 from tests import OP_REST_PORT
 
 
 TIMEOUT_FOR_PROVIDER_GOING_OFFLINE = 300
-TIMEOUT_FOR_PROVIDER_GOING_ONLINE = 60
+TIMEOUT_FOR_PROVIDER_GOING_ONLINE = 120
 
 
 @wt(parsers.parse('user of {browser_id} sees that provider popup for '
@@ -454,15 +454,12 @@ def wait_until_provider_goes_online(selenium, browser_id, oz_page,
     provider_record = page.elements_list[provider]
     provider_record.click()
     start = time.time()
-    try:
-        start_providers(hosts, provider_name)
-    except OnenvError:
-        pass
+    start_providers(hosts, provider_name)
     while not page.is_working():
         time.sleep(0.5)
-        if time.time() > start + TIMEOUT_FOR_PROVIDER_GOING_OFFLINE:
+        if time.time() > start + TIMEOUT_FOR_PROVIDER_GOING_ONLINE:
             raise RuntimeError(f'Provider did not go online on providers map '
-                               f'within {TIMEOUT_FOR_PROVIDER_GOING_OFFLINE}s.')
+                               f'within {TIMEOUT_FOR_PROVIDER_GOING_ONLINE}s.')
     wait_for_provider_online(provider_name, hosts, users)
 
 
@@ -488,19 +485,11 @@ def wait_for_provider_online(provider, hosts, users):
 def stop_providers(hosts, provider_list):
     for provider in parse_seq(provider_list):
         pod_name = hosts[provider]['pod-name']
-        run_kubectl_command('exec',
-                            [pod_name, '--', 'service', 'op_panel', 'stop'])
-        run_kubectl_command('exec',
-                            [pod_name, '--', 'service', 'op_worker', 'stop'])
-        run_kubectl_command('exec',
-                            [pod_name, '--', 'service', 'cluster_manager', 'stop'])
-        run_kubectl_command('exec',
-                            [pod_name, '--', 'service', 'couchbase-server', 'stop'])
+        run_onenv_command('service', ['stop', pod_name])
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def start_providers(hosts, provider_list):
     for provider in parse_seq(provider_list):
         pod_name = hosts[provider]['pod-name']
-        cmd = [pod_name, '--', 'service', 'op_panel', 'start']
-        run_kubectl_command('exec', cmd)
+        run_onenv_command('service', ['start', pod_name])
