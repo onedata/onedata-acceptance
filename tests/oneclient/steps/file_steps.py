@@ -82,9 +82,9 @@ def check_size(user, file, size, users):
 
 
 @then(parsers.re('file type of (?P<user>\w+)\'s (?P<file>.*) is '
-                 '(?P<fileType>.*)'))
-def check_type(user, file, fileType, users):
-    multi_file_steps.check_type(user, file, fileType, 'client1', users)
+                 '(?P<file_type>.*)'))
+def check_type(user, file, file_type, users):
+    multi_file_steps.check_type(user, file, file_type, 'client1', users)
 
 
 @then(parsers.re('(?P<user>\w+) checks using shell stat if file type of '

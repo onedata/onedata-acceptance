@@ -42,7 +42,7 @@ Feature: Onepanel features auto-cleaning
     And user of space_owner_browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir without waiting for upload to finish
     And user of space_owner_browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
     And user of space_owner_browser changes current working directory to home using breadcrumbs
-    And user of space_owner_browser is idle for 10 seconds
+    And user of space_owner_browser is idle for 2 seconds
 
     # replicate data
     And user of space_owner_browser replicates "dir1" to provider "oneprovider-2"
@@ -69,7 +69,7 @@ Feature: Onepanel features auto-cleaning
             oneprovider-2: entirely filled
 
     # enable auto-cleaning
-    And user of browser1 is idle for 8 seconds
+    And user of browser1 is idle for 2 seconds
     And user of browser1 clicks on "Auto cleaning" navigation tab in space "space2"
     And user of browser1 enables auto-cleaning in "space2" space in Onepanel
 

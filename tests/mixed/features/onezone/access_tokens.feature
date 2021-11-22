@@ -145,7 +145,7 @@ Feature: Access tokens tests
              interface: Oneclient
     And using web GUI, user1 copies created token
     And user1 sends token to user2
-    And user2 mounts oneclient in /home/user2/onedata using received token
+    And user2 mounts oneclient using received token
     Then using REST, user2 fails to create file named "file3" using received token in "space1" in oneprovider-1
     And using oneclient1, user2 succeeds to create file named "file3" using received token in "space1" in oneprovider-1
 

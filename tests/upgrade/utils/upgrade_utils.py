@@ -11,7 +11,6 @@ from tests.utils.onenv_utils import run_onenv_command
 from tests.utils.path_utils import get_default_image_for_service
 from tests.utils.environment_utils import (update_etc_hosts, setup_hosts_cfg, configure_os,
                                            get_deployment_status, verify_env_ready)
-from tests.utils.client_utils import fusermount, mount_client
 
 
 class UpgradeTest:
@@ -39,9 +38,9 @@ class UpgradeTestsController:
     def add_test(self, name, setup, verify):
         self.__tests_list.append(UpgradeTest(name, setup, verify))
 
-    def mount_client(self, client_conf):
-        return mount_client(client_conf, self.clients, self.hosts,
-                            self.request, self.users, self.env_desc, clean_mountpoint=False)
+    def mount_client(self, username, client_host_alias, client_instance):
+        return self.users[username].mount_client(
+            client_host_alias, client_instance, self.hosts, self.env_desc)
 
     def run_tests(self):
         admin_user = self.users['admin']
@@ -65,10 +64,10 @@ class UpgradeTestsController:
         self.__unmount_clients()
 
     def __unmount_clients(self):
-        for client in self.clients.keys():
-            fusermount(self.clients[client], self.clients[client].mount_path,
-                       unmount=True, lazy=True)
-        self.clients.clear()
+        for user in self.users.values():
+            for client in user.clients.values():
+                client.unmount()
+            user.clients.clear()
 
 
 def upgrade_service(service_name, admin_user, hosts, version):

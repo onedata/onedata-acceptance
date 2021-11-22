@@ -39,8 +39,7 @@ Feature: LUMA local feed acceptance tests with imported storage
             upload_file.txt:
               size: 1 MiB
     And oneclients [client1, client2]
-      mounted in [/home/user1/onedata, /home/user2/onedata]
-      on client_hosts [oneclient-1, oneclient-1] respectively,
+      mounted on client_hosts [oneclient-1, oneclient-1] respectively,
       using [token, token] by [user1, user2]
     And opened browsers with [user1, user2] signed in to [onezone, onezone] service
 
