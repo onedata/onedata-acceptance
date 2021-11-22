@@ -243,7 +243,7 @@ Feature: Basic management of harvester index in Onezone GUI
   Scenario: User sees archive info after creating index that includes archive info file detail
     When user of browser succeeds to write "dir1" directory basic metadata: "attr=val" in "space1"
     And  user of browser creates dataset for item "dir1" in "space1"
-    And user of browser creates archive for item "dir1" in "space1" with following configuration:
+    And user of browser succeeds to create archive for item "dir1" in "space1" with following configuration:
         description: first_archive
         layout: plain
 

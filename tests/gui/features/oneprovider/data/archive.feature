@@ -48,7 +48,7 @@ Feature: Basic archives operations
 
   Scenario: User sees that dataset does not have archive after purging archive
     When user of browser creates dataset for item "dir4" in "space1"
-    And user of browser creates archive for item "dir4" in "space1" with following configuration:
+    And user of browser succeeds to create archive for item "dir4" in "space1" with following configuration:
         description: first archive
         layout: plain
     And user of browser goes back to dataset browser from archive browser
@@ -68,7 +68,7 @@ Feature: Basic archives operations
 
   Scenario: User sees directory tree in archive browser after creating plain archive
     When user of browser creates dataset for item "dir1" in "space1"
-    And user of browser creates archive for item "dir1" in "space1" with following configuration:
+    And user of browser succeeds to create archive for item "dir1" in "space1" with following configuration:
         description: first archive
         layout: plain
     And user of browser sees archive browser in archives tab in Oneprovider page
@@ -83,7 +83,7 @@ Feature: Basic archives operations
 
   Scenario: User sees that newly created archive has new file and is different than archive created earlier after creating new plain archive
     When user of browser creates dataset for item "dir1" in "space1"
-    And user of browser creates archive for item "dir1" in "space1" with following configuration:
+    And user of browser succeeds to create archive for item "dir1" in "space1" with following configuration:
         description: first archive
         layout: plain
     And user of browser sees archive browser in archives tab in Oneprovider page
@@ -99,7 +99,7 @@ Feature: Basic archives operations
     And user of browser succeeds to upload "20B-0.txt" to "/dir1/dir2/dir3" in "space1"
     And user of browser sees that item named "20B-0.txt" has appeared in file browser
 
-    And user of browser creates archive for item "dir1" in "space1" with following configuration:
+    And user of browser succeeds to create archive for item "dir1" in "space1" with following configuration:
         description: second archive
         layout: plain
     And user of browser sees archive browser in archives tab in Oneprovider page
@@ -115,7 +115,7 @@ Feature: Basic archives operations
 
   Scenario: User sees BagIt tag after creating BagIt archive
     When user of browser creates dataset for item "dir1" in "space1"
-    And user of browser creates archive for item "dir1" in "space1" with following configuration:
+    And user of browser succeeds to create archive for item "dir1" in "space1" with following configuration:
         description: first archive
         layout: BagIt
     And user of browser sees archive browser in archives tab in Oneprovider page
@@ -128,7 +128,7 @@ Feature: Basic archives operations
     And user of browser creates dataset for item "dir3" in "space1"
     And user of browser double clicks on item named "dir3" in file browser
     And user of browser creates dataset for item "file1" in "space1"
-    And user of browser creates archive for item "dir1" in "space1" with following configuration:
+    And user of browser succeeds to create archive for item "dir1" in "space1" with following configuration:
         description: first archive
         layout: plain
         create nested archives: True
@@ -149,7 +149,7 @@ Feature: Basic archives operations
     And user of browser double clicks on item named "dir2" in file browser
     And user of browser creates dataset for item "dir3" in "space1"
 
-    And user of browser creates archive for item "dir1" in "space1" with following configuration:
+    And user of browser succeeds to create archive for item "dir1" in "space1" with following configuration:
         layout: plain
         create nested archives: True
     And user of browser goes back to dataset browser from archive browser
@@ -157,7 +157,7 @@ Feature: Basic archives operations
     And user of browser sees that item "dir1" has 1 archive
     And user of browser double clicks on item named "dir1" in dataset browser
     And user of browser sees that item "dir2" has 1 archive
-    And user of browser creates archive for item "dir2" in "space1" with following configuration:
+    And user of browser succeeds to create archive for item "dir2" in "space1" with following configuration:
         layout: plain
         create nested archives: True
     And user of browser goes back to dataset browser from archive browser
@@ -178,7 +178,7 @@ Feature: Basic archives operations
     And user of browser double clicks on item named "dir3" in file browser
     And user of browser creates dataset for item "file1" in "space1"
 
-    And user of browser creates archive for item "dir1" in "space1" with following configuration:
+    And user of browser succeeds to create archive for item "dir1" in "space1" with following configuration:
         description: first archive
         layout: plain
         create nested archives: True
@@ -198,7 +198,7 @@ Feature: Basic archives operations
 
   Scenario: User sees that files that did not change since creating last archive have 2 hardlinks tag after creating new incremental archive
     When user of browser creates dataset for item "dir4" in "space1"
-    And user of browser creates archive for item "dir4" in "space1" with following configuration:
+    And user of browser succeeds to create archive for item "dir4" in "space1" with following configuration:
         layout: plain
 
     And user of browser clicks Files of "space1" in the sidebar
@@ -206,7 +206,7 @@ Feature: Basic archives operations
     And user of browser succeeds to upload "20B-0.txt" to "dir4" in "space1"
     And user of browser sees that item named "20B-0.txt" has appeared in file browser
 
-    And user of browser creates archive for item "dir4" in "space1" with following configuration:
+    And user of browser succeeds to create archive for item "dir4" in "space1" with following configuration:
         description: second archive
         layout: plain
         incremental:
@@ -222,17 +222,17 @@ Feature: Basic archives operations
 
   Scenario: User sees that files that did not change since creating last two base archives have 3 hardlinks tag after creating new incremental archive
     When user of browser creates dataset for item "dir4" in "space1"
-    And user of browser creates archive for item "dir4" in "space1" with following configuration:
+    And user of browser succeeds to create archive for item "dir4" in "space1" with following configuration:
         layout: plain
     And user of browser goes back to dataset browser from archive browser
     And user of browser sees dataset browser in datasets tab in Oneprovider page
-    And user of browser creates archive for item "dir4" in "space1" with following configuration:
+    And user of browser succeeds to create archive for item "dir4" in "space1" with following configuration:
         layout: plain
         incremental:
             enabled: True
     And user of browser goes back to dataset browser from archive browser
     And user of browser sees dataset browser in datasets tab in Oneprovider page
-    And user of browser creates archive for item "dir4" in "space1" with following configuration:
+    And user of browser succeeds to create archive for item "dir4" in "space1" with following configuration:
         description: third archive
         layout: plain
         incremental:
@@ -247,12 +247,12 @@ Feature: Basic archives operations
 
   Scenario: User sees name of base archive after creating incremental archive
     When user of browser creates dataset for item "dir4" in "space1"
-    And user of browser creates archive for item "dir4" in "space1" with following configuration:
+    And user of browser succeeds to create archive for item "dir4" in "space1" with following configuration:
         description: first archive
         layout: plain
     And user of browser goes back to dataset browser from archive browser
     And user of browser sees dataset browser in datasets tab in Oneprovider page
-    And user of browser creates archive for item "dir4" in "space1" with following configuration:
+    And user of browser succeeds to create archive for item "dir4" in "space1" with following configuration:
         description: second archive
         layout: plain
         incremental:
@@ -263,7 +263,7 @@ Feature: Basic archives operations
 
   Scenario: User sees that the base archive in create archive modal is the latest created archive after enabling incremental toggle
     When user of browser creates dataset for item "dir4" in "space1"
-    And user of browser creates archive for item "dir4" in "space1" with following configuration:
+    And user of browser succeeds to create archive for item "dir4" in "space1" with following configuration:
         layout: plain
     And user of browser sees archive browser in archives tab in Oneprovider page
     And user of browser clicks on Create Archive button in archive browser
@@ -273,7 +273,7 @@ Feature: Basic archives operations
 
   Scenario: User creates incremental archive that has chosen base archive
     When user of browser creates dataset for item "dir4" in "space1"
-    And user of browser creates archive for item "dir4" in "space1" with following configuration:
+    And user of browser succeeds to create archive for item "dir4" in "space1" with following configuration:
         description: first archive
         layout: plain
 
@@ -293,7 +293,7 @@ Feature: Basic archives operations
 
   Scenario: User sees DIP tag after creating archive with "Include DIP" option
     When user of browser creates dataset for item "dir1" in "space1"
-    And user of browser creates archive for item "dir1" in "space1" with following configuration:
+    And user of browser succeeds to create archive for item "dir1" in "space1" with following configuration:
         description: DIP archive
         layout: plain
         include DIP: True
@@ -304,7 +304,7 @@ Feature: Basic archives operations
 
   Scenario: User sees BagIt metadata files and directory tree in AIP tab and directory tree in DIP tab in archive browser after creating archive with "BagIt" layout and "Include DIP" option
     When user of browser creates dataset for item "dir1" in "space1"
-    And user of browser creates archive for item "dir1" in "space1" with following configuration:
+    And user of browser succeeds to create archive for item "dir1" in "space1" with following configuration:
         description: first archive
         layout: BagIt
         include DIP: True

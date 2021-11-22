@@ -26,7 +26,7 @@ Feature: Archives mixed tests
 
   Scenario Outline: User of <client_checking> sees archive created previously via <client_creating>
     When using <client_creating>, user1 creates dataset for item "dir1" in space "space1" in oneprovider-1
-    And using <client_creating>, user1 creates archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
+    And using <client_creating>, user1 succeeds to create archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
         description: first archive
         layout: plain
     Then using <client_checking>, user1 sees archive with description: "first archive" for item "dir1" in space "space1" in oneprovider-1
@@ -39,13 +39,13 @@ Feature: Archives mixed tests
 
   Scenario Outline: User of <client_checking> does not see archive removed previously via <client_removing>
     When using <client_checking>, user1 creates dataset for item "dir1" in space "space1" in oneprovider-1
-    And using <client_checking>, user1 creates archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
+    And using <client_checking>, user1 succeeds to create archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
         description: first archive
         layout: plain
-    And using <client_checking>, user1 creates archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
+    And using <client_checking>, user1 succeeds to create archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
         description: second archive
         layout: plain
-    Then using <client_removing>, user1 removes archive with description: "first archive" for item "dir1" in space "space1" in oneprovider-1
+    Then using <client_removing>, user1 succeeds to remove archive with description: "first archive" for item "dir1" in space "space1" in oneprovider-1
     And using <client_checking>, user1 does not see archive with description: "first archive" for item "dir1" in space "space1" in oneprovider-1
 
   Examples:
@@ -56,7 +56,7 @@ Feature: Archives mixed tests
 
   Scenario Outline: User of <client_checking> sees BagIt archive created previously via <client_creating>
     When using <client_creating>, user1 creates dataset for item "dir1" in space "space1" in oneprovider-1
-    And using <client_creating>, user1 creates archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
+    And using <client_creating>, user1 succeeds to create archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
         description: first archive
         layout: BagIt
     Then using <client_checking>, user1 sees BagIt archive with description: "first archive" for dataset for item "dir1" in space "space1" in oneprovider-1
@@ -71,14 +71,14 @@ Feature: Archives mixed tests
     When using <client_creating>, user1 creates dataset for item "dir1" in space "space1" in oneprovider-1
     And using <client_creating>, user1 creates dataset for item "dir1/dir2" in space "space1" in oneprovider-1
     And using <client_creating>, user1 creates dataset for item "dir1/dir2/dir4" in space "space1" in oneprovider-1
-    And using <client_creating>, user1 creates archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
+    And using <client_creating>, user1 succeeds to create archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
         description: first archive
         layout: plain
         create nested archives: True
     And using <client_checking>, user1 sees archive with description: "first archive" for item "dir1" in space "space1" in oneprovider-1
     And  using <client_checking>, user1 sees that dataset for item "dir1/dir2" has 1 archive in space "space1" in oneprovider-1
     And  using <client_checking>, user1 sees that dataset for item "dir1/dir2/dir4" has 1 archive in space "space1" in oneprovider-1
-    And using <client_creating>, user1 creates archive for item "dir1/dir2" in space "space1" in oneprovider-1 with following configuration:
+    And using <client_creating>, user1 succeeds to create archive for item "dir1/dir2" in space "space1" in oneprovider-1 with following configuration:
         description: second archive
         layout: plain
         create nested archives: True
@@ -95,7 +95,7 @@ Feature: Archives mixed tests
 
   Scenario Outline: User of <client_checking> sees DIP archive created previously via <client_creating>
     When using <client_creating>, user1 creates dataset for item "dir1" in space "space1" in oneprovider-1
-    And using <client_creating>, user1 creates archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
+    And using <client_creating>, user1 succeeds to create archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
         description: first archive
         layout: plain
         include DIP: True
@@ -109,10 +109,10 @@ Feature: Archives mixed tests
 
   Scenario Outline: User of <client_checking> sees that archive has base archive after <client_creating> created incremental archive
     When using <client_creating>, user1 creates dataset for item "dir1" in space "space1" in oneprovider-1
-    And using <client_creating>, user1 creates archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
+    And using <client_creating>, user1 succeeds to create archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
         description: first archive
         layout: plain
-    And using <client_creating>, user1 creates archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
+    And using <client_creating>, user1 succeeds to create archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
         description: second archive
         layout: plain
         incremental:
@@ -128,7 +128,7 @@ Feature: Archives mixed tests
 
   Scenario: Using web GUI, user1 sees that archive description has been changed after user1 changed it using REST
     When using web GUI, user1 creates dataset for item "dir1" in space "space1" in oneprovider-1
-    And using web GUI, user1 creates archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
+    And using web GUI, user1 succeeds to create archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
         description: first archive
         layout: plain
     And using REST, user1 changes archive description to "new archive description" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
@@ -138,7 +138,7 @@ Feature: Archives mixed tests
 
   Scenario: User of REST sees new "preserved" callback URL after changing it
     When using web GUI, user1 creates dataset for item "dir1" in space "space1" in oneprovider-1
-    And using web GUI, user1 creates archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
+    And using web GUI, user1 succeeds to create archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
         description: first archive
         layout: plain
     And using REST, user1 sees that preserved callback is "None" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
@@ -148,7 +148,7 @@ Feature: Archives mixed tests
 
    Scenario: User of REST sees new "purged" callback URL after changing it
     When using web GUI, user1 creates dataset for item "dir1" in space "space1" in oneprovider-1
-    And using web GUI, user1 creates archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
+    And using web GUI, user1 succeeds to create archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
         description: first archive
         layout: plain
     And using REST, user1 sees that purged callback is "None" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
@@ -158,7 +158,7 @@ Feature: Archives mixed tests
 
    Scenario Outline: User of <client_checking> sees archive after getting invite token with view archives privilege from user of <client_inviting>
     When using <client_inviting>, user1 creates dataset for item "dir1" in space "space1" in oneprovider-1
-    And using <client_inviting>, user1 creates archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
+    And using <client_inviting>, user1 succeeds to create archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
         description: first archive
         layout: plain
     And using <client_inviting>, user1 creates token with following configuration:
@@ -225,7 +225,7 @@ Feature: Archives mixed tests
     And if <client_inviting> is web GUI, user1 copies created token
     And user1 sends token to user2
     And using <client_creating>, user2 successfully joins space space1 with received token
-    Then using <client_creating>, user2 creates archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
+    Then using <client_creating>, user2 succeeds to create archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
         description: first archive
         layout: plain
     And using <client_inviting>, user1 sees archive with description: "first archive" for item "dir1" in space "space1" in oneprovider-1
@@ -238,7 +238,7 @@ Feature: Archives mixed tests
 
   Scenario Outline: User of <client_removing> cannot remove archive after getting invite token without remove archives privilege from user of <client_inviting>
     When using <client_inviting>, user1 creates dataset for item "dir1" in space "space1" in oneprovider-1
-    And using <client_inviting>, user1 creates archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
+    And using <client_inviting>, user1 succeeds to create archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
         description: first archive
         layout: plain
     And using <client_inviting>, user1 creates token with following configuration:
@@ -267,7 +267,7 @@ Feature: Archives mixed tests
 
   Scenario Outline: User of <client_removing> removes archive after getting invite token with remove archives privilege from user of <client_inviting>
     When using <client_inviting>, user1 creates dataset for item "dir1" in space "space1" in oneprovider-1
-    And using <client_inviting>, user1 creates archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
+    And using <client_inviting>, user1 succeeds to create archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
         description: first archive
         layout: plain
     And using <client_inviting>, user1 creates token with following configuration:
@@ -285,7 +285,7 @@ Feature: Archives mixed tests
     And if <client_inviting> is web GUI, user1 copies created token
     And user1 sends token to user2
     And using <client_removing>, user2 successfully joins space space1 with received token
-    Then using <client_removing>, user2 removes archive with description: "first archive" for item "dir1" in space "space1" in oneprovider-1
+    Then using <client_removing>, user2 succeeds to remove archive with description: "first archive" for item "dir1" in space "space1" in oneprovider-1
     And using <client_inviting>, user1 does not see archive with description: "first archive" for item "dir1" in space "space1" in oneprovider-1
 
   Examples:

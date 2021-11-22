@@ -16,8 +16,8 @@ from tests.mixed.steps.rest.oneprovider.archives import (
 from tests.mixed.utils.common import NoSuchClientException
 
 
-@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) (?P<option>creates|fails '
-               'to create) archive for item "(?P<item_name>.*)" in space'
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) (?P<option>succeeds|fails)'
+               ' to create archive for item "(?P<item_name>.*)" in space'
                ' "(?P<space_name>.*)" in (?P<host>.*) with following '
                r'configuration:\n(?P<config>(.|\s)*)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -57,8 +57,8 @@ def assert_archive_in_op(client, user, item_name, space_name, host, tmp_memory,
         raise NoSuchClientException(f'Client: {client} not found')
 
 
-@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) (?P<option>removes|fails '
-               'to remove) archive with description: "(?P<description>.*)" '
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) (?P<option>succeeds|fails) '
+               'to remove archive with description: "(?P<description>.*)" '
                'for item "(?P<item_name>.*)" in space "(?P<space_name>.*)" '
                'in (?P<host>.*)'))
 @repeat_failed(timeout=WAIT_FRONTEND)

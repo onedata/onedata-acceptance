@@ -70,8 +70,7 @@ def assert_archive_full_state_status(browser_id, tmp_memory, status,
                                      number_of_files, size, description):
     browser = tmp_memory[browser_id]['archive_browser']
     archive = get_archive_with_description(browser, description)
-    item_status = (re.sub('\n', ' ', archive.state).replace(':', ',')
-                   .split(', '))
+    item_status = archive.state.replace('\n', ' ').replace(':', ',').split(', ')
     item_status[0] = item_status[0].replace(' Archived', '').lower()
     number_of_files += 's' if number_of_files == '1 file' else ''
     assert_archive_partial_state_status(item_status[0], status)

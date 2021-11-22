@@ -39,7 +39,7 @@ ARCHIVE_BROWSER = 'archive browser'
 ARCHIVE_FILE_BROWSER = 'archive file browser'
 
 
-@wt(parsers.parse('user of {browser_id} {option} archive for item '
+@wt(parsers.parse('user of {browser_id} {option} to create archive for item '
                   '"{item_name}" in "{space_name}" with following '
                   'configuration:\n{config}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -91,7 +91,7 @@ def _create_archive(browser_id, selenium, config, item_name, space_name,
 
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory,
                                    DATASET_BROWSER)
-    if option == 'creates':
+    if option == 'succeeds':
         click_option_in_data_row_menu_in_browser(selenium, browser_id,
                                                  option_in_data_row_menu,
                                                  modals)
@@ -128,7 +128,7 @@ def _create_archive(browser_id, selenium, config, item_name, space_name,
             copy_archive_id_to_tmp_memory(selenium, browser_id, op_container,
                                           client, tmp_memory, modals, clipboard,
                                           displays, description)
-    elif option == 'fails to create':
+    elif option == 'fails':
         assert_not_click_option_in_data_row_menu(selenium, browser_id,
                                                  option_in_data_row_menu,
                                                  modals)
@@ -200,13 +200,13 @@ def remove_archive_in_op_gui(browser_id, selenium, item_name, space_name,
                                 tmp_memory, item_browser=ARCHIVE_BROWSER)
     click_menu_for_archive(browser_id, tmp_memory, description)
 
-    if option == 'removes':
+    if option == 'succeeds':
         click_option_in_data_row_menu_in_browser(selenium, browser_id,
                                                  option_in_menu, modals)
         write_in_confirmation_input(browser_id, modals, text, selenium)
         click_modal_button(selenium, browser_id, button_name,
                            option_in_menu, modals)
-    elif option == 'fails to remove':
+    elif option == 'fails':
         assert_not_click_option_in_data_row_menu(selenium, browser_id,
                                                  button_name,
                                                  modals)

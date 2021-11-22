@@ -28,10 +28,9 @@ def translate_config_for_archive(config, tmp_memory):
     if 'include DIP' in config:
         del config['include DIP']
         config['includeDip'] = 'true'
-    if 'incremental' in config:
-        if config['incremental']['basedOn']:
-            config['incremental']['basedOn'] = tmp_memory[config[
-                'incremental']['basedOn']]
+    if 'incremental' in config and config['incremental']['basedOn']:
+        config['incremental']['basedOn'] = tmp_memory[config[
+            'incremental']['basedOn']]
 
 
 def create_archive_in_op_rest(user, users, hosts, host, space_name, item_name,
@@ -43,17 +42,19 @@ def create_archive_in_op_rest(user, users, hosts, host, space_name, item_name,
     dataset_api = DatasetApi(client)
     dataset_id = get_dataset_id(item_name, spaces, space_name, dataset_api)
     archive_api = ArchiveApi(client)
-    description = config['description']
-    del config['description']
-    data = {'datasetId': dataset_id, 'config': config,
-            'description': description}
-    if option == 'creates':
+    data = {'datasetId': dataset_id, 'config': config}
+    if 'description' in config:
+        description = config['description']
+        del config['description']
+        data['description'] = description
+    else:
+        description = 'latest_created_archive'
+    if option == 'succeeds':
         tmp_memory[description] = archive_api.create_archive(
             data).archive_id
-    elif option == 'fails to create':
+    elif option == 'fails':
         try:
-            tmp_memory[description] = archive_api.create_archive(
-                data).archive_id
+            archive_api.create_archive(data).archive_id
             raise Exception(
                 'function: create_archive worked but it should not')
         except OPException as err:
@@ -93,7 +94,7 @@ def assert_number_of_archive_in_op_rest(user, users, hosts, host, space_name,
     archive_api = ArchiveApi(client)
     dataset_archive = archive_api.list_dataset_archives(dataset_id)
     number_of_archives = len(dataset_archive.archives)
-    err_msg = (f'number of archives {number_of_archives} '
+    err_msg = (f'number of archives {number_of_archives}, '
                f'expected number of archives: {number}')
     assert int(number) == number_of_archives, err_msg
 
@@ -103,13 +104,13 @@ def remove_archive_in_op_rest(user, users, hosts, host, description,
     client = login_to_provider(user, users, hosts[host]['hostname'])
     archive_id = tmp_memory[description]
     archive_api = ArchiveApi(client)
-    if option == 'removes':
+    if option == 'succeeds':
         archive_api.purge_archive(archive_id)
-    elif option == 'fails to remove':
+    elif option == 'fails':
         try:
             archive_api.purge_archive(archive_id)
             raise Exception(
-                'function: create_archive worked but it should not')
+                'removing archive worked but it should not')
         except OPException as err:
             if err.status == 400:
                 pass
@@ -131,7 +132,7 @@ def assert_archive_with_option_in_op_rest(user, users, hosts, host, option,
     if transform(option) == 'bagit':
         assert info.config.layout == transform(option), err_msg
     elif transform(option) == 'dip':
-        assert info.config.include_dip is True, err_msg
+        assert info.config.include_dip, err_msg
 
 
 def assert_base_archive_for_archive_in_op_rest(user, users, hosts, host,

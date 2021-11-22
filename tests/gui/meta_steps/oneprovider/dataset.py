@@ -118,9 +118,9 @@ def fail_to_create_dataset_in_op_gui(browser_id, tmp_memory, item_name,
     fail_to_mark_file_as_dataset_toggle(browser_id, selenium, modals)
 
 
-def assert_dataset_for_item_in_op_gui(selenium, browser_id, oz_page,
-                                      space_name, op_container, tmp_memory,
-                                      item_name, option):
+def assert_top_level_dataset_in_space_in_op_gui(selenium, browser_id, oz_page,
+                                                space_name, op_container,
+                                                tmp_memory, item_name, option):
     option_in_space = 'Datasets'
     item_browser = 'dataset browser'
     go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
@@ -154,6 +154,8 @@ def remove_dataset_in_op_gui(selenium, browser_id, oz_page, space_name,
 
 def check_dataset_structure_in_op_gui(selenium, browser_id, oz_page, space_name,
                                       config, op_container, tmpdir, tmp_memory):
+    # function checks only if what is in config exists, does not
+    # fail if there are more datasets
     option_in_space = 'Datasets'
     item_browser = 'dataset browser'
     go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
