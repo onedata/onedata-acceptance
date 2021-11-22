@@ -8,13 +8,17 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 import os
+import pdb
 import stat
+import subprocess
 
 import requests
 import yaml
 
 from tests.gui.utils.generic import suppress
-from tests.utils.bdd_utils import given, parsers
+from tests.utils.bdd_utils import given, parsers, wt
+from tests.gui.conftest import WAIT_BACKEND
+from tests.utils.utils import repeat_failed
 
 PERMS_777 = stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH
 
@@ -84,8 +88,8 @@ def specify_size(size_string):
     try:
         return int(size_string)
     except ValueError:
-        unit_dict = {'B': 1, 'KiB': 1024, 'MiB': 1024*1024,
-                     'GiB': 1024*1024*1024}
+        unit_dict = {'B': 1, 'KiB': 1024, 'MiB': 1024 * 1024,
+                     'GiB': 1024 * 1024 * 1024}
         [size, unit] = size_string.split()
         return int(size) * unit_dict[unit]
 
@@ -107,3 +111,26 @@ def download_file_to_local_file_system(browser_id, file_url, file_name,
 
     r = requests.get(file_url, allow_redirects=True)
     open(home_dir.join(file_name), 'wb').write(r.content)
+
+
+@given(parsers.parse('user of {browser_id} creates file named "{file_name}" '
+                     'sized: {item_size} in "{directory_name}" on local file '
+                     'system'))
+def create_file_on_local_file_system(browser_id, file_name, item_size,
+                                     directory_name, tmpdir):
+    home_dir = tmpdir.join(browser_id)
+    path = home_dir + directory_name
+    size = specify_size(item_size)
+    content = size * '1'
+
+    _mkfile(path.join(file_name), content)
+
+
+@wt(parsers.parse('user of {browser_id} removes "{path}" from local file '
+                  'system'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def remove_file_from_local_file_system(browser_id, path, tmpdir):
+    home_dir = tmpdir.join(browser_id)
+
+    cmd = ['rm', home_dir + path]
+    subprocess.check_call(cmd)

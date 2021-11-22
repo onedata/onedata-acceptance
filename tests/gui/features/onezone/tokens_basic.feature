@@ -79,7 +79,6 @@ Feature: Management of tokens basic features in Onezone GUI
   Scenario: User sees right tokens after filtering them
     When user of browser clicks on Tokens in the main menu
     And user of browser creates 2 access tokens
-    And user of browser is idle for 5 seconds
     And user of browser creates 2 identity tokens
     And user of browser creates 2 invite tokens
     And user of browser sees exactly 6 item(s) on tokens list in tokens sidebar
