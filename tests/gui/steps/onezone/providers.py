@@ -465,12 +465,14 @@ def wait_for_provider_online(provider, hosts, users):
 
     while True:
         time.sleep(0.5)
-        res = http_get(ip=provider_hostname, port=OP_REST_PORT,
-                       path='/nagios',
-                       auth=(user, users[user].password))
-        if res.status_code == requests.codes.ok:
-            return
-
+        try:
+            res = http_get(ip=provider_hostname, port=OP_REST_PORT,
+                           path=get_provider_rest_path('health'),
+                           auth=(user, users[user].password))
+            if res.status_code == requests.codes.ok:
+                return
+        except requests.exceptions.ConnectionError:
+            pass
         if time.time() > start + TIMEOUT_FOR_PROVIDER_GOING_ONLINE:
             raise RuntimeError(f'Provider is still not working after '
                                f'{TIMEOUT_FOR_PROVIDER_GOING_ONLINE}s.')
