@@ -2,7 +2,7 @@
 synchronization using Onezone GUI and single browser instance.
 """
 
-__author__ = "Natalia Organek"
+__author__ = "Such Katarzyna"
 __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
@@ -82,5 +82,8 @@ from tests.utils.acceptance_utils import *
 def screens():
     return [0]
 
-scenarios('../features/pass.feature')
 
+scenarios('../features/onezone/providers.feature')
+scenarios('../features/onezone/providers_multibrowser.feature')
+scenarios('../features/onezone/providers_offline.feature')
+scenarios('../features/onezone/clusters_as_admin.feature')
