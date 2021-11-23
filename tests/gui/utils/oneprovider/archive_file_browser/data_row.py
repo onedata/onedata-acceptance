@@ -19,9 +19,15 @@ class DataRow(PageObject):
     menu_button = Button('.file-row-actions-trigger')
     symlink_tag = WebElement('.fb-table-row-symlink .one-icon-tag-circle')
     hardlink_tag = WebElement('.file-status-hardlinks')
+    clickable_field = WebElement('.file-name')
+    _status_tag = WebElement('.file-status-tag')
 
     def double_click(self):
-        ActionChains(self.driver).double_click(self.web_elem).perform()
+        if self.is_any_tag_visible():
+            ActionChains(self.driver).double_click(
+                self.clickable_field).perform()
+        else:
+            ActionChains(self.driver).double_click(self.web_elem).perform()
 
     def is_tag_visible(self, name):
         try:
@@ -34,3 +40,10 @@ class DataRow(PageObject):
     def get_tag_text(self, name):
         return getattr(self, f'{transform(name)}_tag').text
 
+    def is_any_tag_visible(self):
+        try:
+            self._status_tag.get_attribute('class')
+        except RuntimeError:
+            return False
+        else:
+            return True
