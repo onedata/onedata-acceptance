@@ -117,6 +117,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 opens file browser for "space1" space
 
     And user of browser2 sees file browser in files tab in Oneprovider page
+    And user of browser2 clicks on the file browser background to ensure lack of pop ups
     And user of browser2 sees that the file structure in file browser is as follow:
           - dir2:
               - dir21:
@@ -131,6 +132,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     And user of browser2 refreshes site
     And user of browser2 sees file browser in files tab in Oneprovider page
+    And user of browser2 clicks on the file browser background to ensure lack of pop ups
     And user of browser2 sees that the file structure in file browser is as follow:
           - dir2:
               - dir22: 10
@@ -252,6 +254,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     # confirm update of files
     And user of browser2 sees file browser in files tab in Oneprovider page
 
+    And user of browser2 clicks on the file browser background to ensure lack of pop ups
     Then user of browser2 sees that the file structure in file browser is as follow:
            - dir2:
                - dir21:
@@ -325,6 +328,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser2 refreshes site
     And user of browser2 sees file browser in files tab in Oneprovider page
 
+    And user of browser2 clicks on the file browser background to ensure lack of pop ups
     Then user of browser2 sees that the file structure in file browser is as follow:
            - dir2:
                - dir22: 10
@@ -382,6 +386,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # confirm that new files were not detected
     And user of browser2 sees file browser in files tab in Oneprovider page
+    And user of browser2 clicks on the file browser background to ensure lack of pop ups
     Then user of browser2 sees that the file structure in file browser is as follow:
           - dir2:
               - dir21:
@@ -432,6 +437,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser1 waits until scanning is finished in storage import tab in Onepanel
 
     And user of browser2 sees file browser in files tab in Oneprovider page
+    And user of browser2 clicks on the file browser background to ensure lack of pop ups
     Then user of browser2 sees that the file structure in file browser is as follow:
           - dir2:
               - dir1: 5

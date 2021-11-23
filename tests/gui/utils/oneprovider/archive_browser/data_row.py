@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+import time
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Label, WebElement, Button
@@ -25,6 +26,7 @@ class DataRow(PageObject):
 
     def double_click(self):
         ActionChains(self.driver).click(self.web_elem).perform()
+        self.active_waiting()
         ActionChains(self.driver).key_down(Keys.ENTER).perform()
 
     def is_tag_visible(self, name):
@@ -35,3 +37,11 @@ class DataRow(PageObject):
         else:
             return True
 
+    def is_selected(self):
+        return 'file-selected' in self.web_elem.get_attribute('class')
+
+    def active_waiting(self):
+        for i in range(30):
+            time.sleep(0.1)
+            if self.is_selected():
+                break
