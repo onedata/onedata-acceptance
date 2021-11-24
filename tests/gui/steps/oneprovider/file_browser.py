@@ -33,9 +33,6 @@ def assert_msg_instead_of_browser(browser_id, msg, tmp_memory):
             assert displayed_msg == msg, (f'displayed {displayed_msg} does'
                                           f' not match expected {msg}')
 
-    assert displayed_msg == msg, (f'displayed {displayed_msg} does not match'
-                                  f' expected {msg}')
-
 
 @wt(parsers.parse('user of {browser_id} clicks on {status_type} status tag '
                   'for "{item_name}" in file browser'))
