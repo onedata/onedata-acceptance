@@ -82,5 +82,5 @@ from tests.utils.acceptance_utils import *
 def screens():
     return [0]
 
-
 scenarios('../features/pass.feature')
+
