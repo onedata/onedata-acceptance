@@ -37,6 +37,7 @@ Feature: Oneprovider functionality using multiple providers and multiple browser
             oneprovider-1: entirely filled
             oneprovider-2: never synchronized
 
+    And user of browser1 clicks on the file browser background to ensure lack of pop ups
     And user of browser1 double clicks on item named "20B-0.txt" in file browser
     And user of browser1 sees that content of downloaded file "20B-0.txt" is equal to: "00000000000000000000"
     And user of browser1 sees file chunks for file "20B-0.txt" as follows:

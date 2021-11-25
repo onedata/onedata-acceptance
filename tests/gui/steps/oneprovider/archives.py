@@ -223,7 +223,7 @@ def assert_description_for_archive(browser_id, tmp_memory, description,
                                    ordinal):
     browser = tmp_memory[browser_id]['archive_browser']
     number = from_ordinal_number_to_int(ordinal)
-    archive_description = browser.data[number-1].name.split('— ')[1]
+    archive_description = browser.data[number - 1].name.split('— ')[1]
     err_msg = (f'Archive description {archive_description} does not match'
                f' expected description: {description}')
     assert archive_description == description, err_msg
@@ -255,3 +255,10 @@ def assert_not_archive_with_description(tmp_memory, browser_id, description):
     else:
         pass
 
+
+@wt(parsers.parse('user of {browser_id} clicks on the archive browser '
+                  'background to ensure lack of pop ups'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def copy_object_id_to_tmp_memory(browser_id, tmp_memory):
+    archive_browser = tmp_memory[browser_id]['archive_browser']
+    archive_browser.click()

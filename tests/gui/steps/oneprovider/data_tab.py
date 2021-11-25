@@ -572,6 +572,6 @@ def click_file_browser_button(browser_id, button, tmp_memory):
 @wt(parsers.parse('user of {browser_id} clicks on the file browser background '
                   'to ensure lack of pop ups'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def copy_object_id_to_tmp_memory(browser_id, selenium, tmp_memory):
+def copy_object_id_to_tmp_memory(browser_id, tmp_memory):
     file_browser = tmp_memory[browser_id]['file_browser']
     file_browser.click()
