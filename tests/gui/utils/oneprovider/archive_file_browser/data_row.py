@@ -22,11 +22,18 @@ class DataRow(PageObject):
     menu_button = Button('.file-row-actions-trigger')
     symlink_tag = WebElement('.fb-table-row-symlink .one-icon-tag-circle')
     hardlink_tag = WebElement('.file-status-hardlinks')
+    clickable_field = WebElement('.file-name')
+    _status_tag = WebElement('.file-status-tag')
 
     def double_click(self):
-        ActionChains(self.driver).click(self.web_elem).perform()
-        self.active_waiting()
-        ActionChains(self.driver).key_down(Keys.ENTER).perform()
+        if self.is_any_tag_visible():
+            ActionChains(self.driver).click(self.clickable_field).perform()
+            self.active_waiting()
+            ActionChains(self.driver).key_down(Keys.ENTER).perform()
+        else:
+            ActionChains(self.driver).click(self.web_elem).perform()
+            self.active_waiting()
+            ActionChains(self.driver).key_down(Keys.ENTER).perform()
 
     def is_tag_visible(self, name):
         try:
@@ -38,6 +45,14 @@ class DataRow(PageObject):
 
     def get_tag_text(self, name):
         return getattr(self, f'{transform(name)}_tag').text
+
+    def is_any_tag_visible(self):
+        try:
+            self._status_tag.get_attribute('class')
+        except RuntimeError:
+            return False
+        else:
+            return True
 
     def is_selected(self):
         return 'file-selected' in self.web_elem.get_attribute('class')

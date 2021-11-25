@@ -15,6 +15,7 @@ from tests.gui.meta_steps.oneprovider.metadata import (
 from tests.gui.meta_steps.oneprovider.permissions import *
 from tests.mixed.steps.oneclient.data_basic import *
 from tests.mixed.steps.rest.oneprovider.data import *
+from tests.mixed.steps.rest.oneprovider.metadata import *
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.path_utils import get_first_path_element
 
