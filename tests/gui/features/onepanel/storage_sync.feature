@@ -188,7 +188,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
 
     # confirm update of files
     And user of browser2 sees file browser in files tab in Oneprovider page
-
+    And user of browser2 clicks on the file browser background to ensure lack of pop ups
     And user of browser2 sees that the file structure in file browser is as follow:
           - dir2:
               - dir21:
