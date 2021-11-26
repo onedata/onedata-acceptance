@@ -25,8 +25,13 @@ from tests.utils.bdd_utils import wt, parsers
 def assert_msg_instead_of_browser(browser_id, msg, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
     displayed_msg = browser.browser_msg_header
-    assert displayed_msg == msg, ('displayed {} does not match expected '
-                                  '{}'.format(displayed_msg, msg))
+    start = time.time()
+    while displayed_msg != msg:
+        time.sleep(1)
+        displayed_msg = browser.browser_msg_header
+        if time.time() > start + WAIT_BACKEND:
+            assert displayed_msg == msg, (f'displayed {displayed_msg} does'
+                                          f' not match expected {msg}')
 
 
 @wt(parsers.parse('user of {browser_id} clicks on {status_type} status tag '
