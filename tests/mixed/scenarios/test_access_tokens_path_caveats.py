@@ -1,9 +1,9 @@
 """Test suite for GUI, REST and Onepanel cooperation
- for tokens management tests
+ for access tokens tests
 """
 
-__author__ = "Natalia Organek"
-__copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
+__author__ = "Katarzyna Such"
+__copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
@@ -43,5 +43,4 @@ def screens():
     return [0, 1]
 
 
-scenarios('../features/onezone/identity_tokens.feature')
-scenarios('../features/onezone/invite_tokens.feature')
+scenarios('../features/onezone/access_tokens_path_caveats.feature')

@@ -1,7 +1,7 @@
-"""Test suite for mixed nested directory tests
+"""Test suite for mixed test of creating file
 """
 
-__author__ = "Michal Cwiertnia"
+__author__ = "Michal Stanisz, Michal Cwiertnia"
 __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
@@ -53,4 +53,4 @@ from tests.gui.meta_steps.onezone.common import *
 from tests.oneclient.steps.auth_steps import *
 
 
-scenarios('../features/oneprovider/nested_directories.feature')
+scenarios('../features/oneprovider/create_file.feature')

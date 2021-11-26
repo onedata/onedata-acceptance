@@ -1,4 +1,4 @@
-"""Test suite for mixed directories metadata management tests
+"""Test suite for mixed tests of setting directories metadata
 """
 
 __author__ = "Michal Stanisz, Michal Cwiertnia"
@@ -29,5 +29,5 @@ from tests.oneclient.steps.auth_steps import *
 from tests.gui.steps.common.miscellaneous import *
 
 
-scenarios('../features/oneprovider/directories_metadata.feature')
+scenarios('../features/oneprovider/directories_set_metadata.feature')
 

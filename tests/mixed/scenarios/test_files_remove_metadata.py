@@ -1,4 +1,4 @@
-"""Test suite for mixed files metadata management tests
+"""Test suite for mixed tests of removing files metadata
 """
 
 __author__ = "Michal Stanisz, Michal Cwiertnia"
@@ -30,4 +30,5 @@ from tests.gui.steps.common.miscellaneous import *
 from tests.gui.steps.common.url import *
 
 
-scenarios('../features/oneprovider/files_metadata.feature')
+scenarios('../features/oneprovider/files_remove_metadata.feature')
+

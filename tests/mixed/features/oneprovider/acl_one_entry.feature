@@ -45,15 +45,4 @@ Feature: ACL basic tests
     | group         | group1        | file1 |
 
 
-  Scenario Outline: User sets ACL with two entries
-    When using <client1>, user1 sets new ACE for <item> in space "space1" with [acl:read acl, acl:change acl] privileges set for user user1 in oneprovider-1
-    When using <client1>, user1 sets new ACE for <item> in space "space1" with <privileges> privileges set for <subject_type> <subject_name> in oneprovider-1
-    Then using <client2>, user1 sees that <item> in space "space1" has <privileges> privileges set for <subject_type> <subject_name> in second ACL record in oneprovider-1
-    And using <client2>, user1 sees that <item> in space "space1" has [acl:read acl, acl:change acl] privileges set for user user1 in first ACL record in oneprovider-1
 
-    Examples:
-    | privileges                              | subject_type  | subject_name  | item  |
-    | [data:read, data:write]                 | user          | user2         | file1 |
-    | [data:list files, data:add files]       | user          | user2         | dir1  |
-    | [deny, data:read, data:write]           | user          | user2         | file1 |
-    | [deny, data:list files, data:add files] | user          | user2         | dir1  |
