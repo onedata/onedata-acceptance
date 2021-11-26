@@ -212,7 +212,7 @@ Feature: Dataset browser tests using user who is not the owner of a space
 
   Scenario: User does not see archive file browser if he does not have view archives privilege
     When user of space_owner_browser creates dataset for item "dir1" in "space1"
-    And user of space_owner_browser creates archive for item "dir1" in "space1" with following configuration:
+    And user of space_owner_browser succeeds to create archive for item "dir1" in "space1" with following configuration:
           layout: plain
 
     And user of space_owner_browser clicks Members of "space1" in the sidebar

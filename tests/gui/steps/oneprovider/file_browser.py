@@ -25,8 +25,13 @@ from tests.utils.bdd_utils import wt, parsers
 def assert_msg_instead_of_browser(browser_id, msg, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
     displayed_msg = browser.browser_msg_header
-    assert displayed_msg == msg, ('displayed {} does not match expected '
-                                  '{}'.format(displayed_msg, msg))
+    start = time.time()
+    while displayed_msg != msg:
+        time.sleep(1)
+        displayed_msg = browser.browser_msg_header
+        if time.time() > start + WAIT_BACKEND:
+            assert displayed_msg == msg, (f'displayed {displayed_msg} does'
+                                          f' not match expected {msg}')
 
 
 @wt(parsers.parse('user of {browser_id} clicks on {status_type} status tag '
@@ -325,7 +330,7 @@ def assert_num_of_hardlinks_in_file_dets_modal(selenium, browser_id, number,
 def assert_hardlink_path_in_file_dets_modal(selenium, browser_id, file,
                                             path, modals):
     entries = modals(selenium[browser_id]).file_details.hardlinks_tab.files
-    actual_path = entries[file].path
+    actual_path = entries[file].get_path_string()
     assert path == actual_path, (f'Hardlink {file} path should be {path}, '
                                  f'but is {actual_path}')
 
@@ -335,7 +340,7 @@ def assert_hardlink_path_in_file_dets_modal(selenium, browser_id, file,
 def assert_hardlinks_paths_in_file_dets_modal(selenium, browser_id, paths,
                                               modals):
     entries = modals(selenium[browser_id]).file_details.hardlinks_tab.files
-    entries_paths = [entry.path for entry in entries]
+    entries_paths = [entry.get_path_string() for entry in entries]
     parsed_paths = parse_seq(paths)
     for path in parsed_paths:
         assert path in entries_paths, f'{path} not in {entries_paths}'

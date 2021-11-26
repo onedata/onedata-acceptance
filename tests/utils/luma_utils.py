@@ -30,7 +30,7 @@ def add_user_luma_mapping(
         mapping = {
             'onedataUser': {
                 'mappingScheme': 'onedataUser',
-                'onedataUserId': user.id
+                'onedataUserId': user.user_id
             },
             'storageUser': {
                 'storageCredentials': {

@@ -87,7 +87,7 @@ def set_user_luma_local_feed_mappings(provider, hosts, users,
     provider_hostname = hosts[provider]['hostname']
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password
-    user_id = users[user].id
+    user_id = users[user].user_id
     mapping_scheme = _set_onedata_user_mapping(storage_type, user_id,
                                                storage_uid, display_uid)
 
@@ -176,7 +176,7 @@ def _insert_mapping_of_uid_into_lf(uid, user, provider, hosts,
     onepanel_username = onepanel_credentials.username
     onepanel_password = onepanel_credentials.password
     mapping_scheme = {'mappingScheme': 'onedataUser',
-                      'onedataUserId': str(users[user].id)}
+                      'onedataUserId': str(users[user].user_id)}
 
     http_put(ip=provider_hostname, port=PANEL_REST_PORT,
              path=get_panel_rest_path('provider', 'storages', storage_id,

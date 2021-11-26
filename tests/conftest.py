@@ -12,11 +12,11 @@ import yaml
 import pytest
 
 from tests import (ENV_DIRS, SCENARIO_DIRS, PATCHES_DIR, LOGDIRS)
+from tests.utils import CLIENT_POD_LOGS_DIR
 from tests.utils.environment_utils import start_environment, clean_env
 from tests.utils.path_utils import (get_file_name, absolute_path_to_env_file,
                                     make_logdir)
 from tests.utils.onenv_utils import run_onenv_command
-from tests.utils.user_utils import AdminUser
 
 
 def pytest_addoption(parser):
@@ -114,7 +114,7 @@ def test_config(request):
 @pytest.fixture(scope='session')
 def users():
     """Dictionary with users credentials"""
-    return {'admin': AdminUser('admin', 'password')}
+    return {}
 
 
 @pytest.fixture()
@@ -276,8 +276,7 @@ def export_logs(request, env_description_abs_path=None):
         latest_logdir = max(timestamped_logdirs, key=extract_timestamp)
         logdir_path = os.path.join(logdir_path, latest_logdir)
 
-    run_onenv_command('export', [logdir_path, '-c', '/tmp/oc_logs'],
-                      fail_with_error=False)
+    run_onenv_command('export', [logdir_path, '-c', CLIENT_POD_LOGS_DIR], fail_with_error=False)
 
 
 def extract_timestamp(filename):

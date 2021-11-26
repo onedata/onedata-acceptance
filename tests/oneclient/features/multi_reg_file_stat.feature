@@ -2,15 +2,14 @@ Feature: Multi_regular_file_stat
 
   Background:
     Given oneclients [client11, client21]
-      mounted in [/home/user1/onedata, /home/user2/onedata]
-      on client_hosts [oneclient-1, oneclient-2] respectively,
+      mounted on client_hosts [oneclient-1, oneclient-2] respectively,
       using [token, token] by [user1, user2]
 
 
   Scenario: Check file type when empty
     When user1 creates regular files [space1/file1] on client11
-    And user1 sees [file1] in space1 on client11
     And user2 sees [file1] in space1 on client21
+    And user1 sees [file1] in space1 on client11 
     Then user2 checks using shell stat if file type of space1/file1 is regular empty file on client21
 
 
@@ -24,15 +23,15 @@ Feature: Multi_regular_file_stat
 
   Scenario: Check default access permissions
     When user1 creates regular files [space1/file1] on client11
-    And user1 sees [file1] in space1 on client11
     And user2 sees [file1] in space1 on client21
+    And user1 sees [file1] in space1 on client11
     Then mode of user2's space1/file1 is 664 on client21
 
 
   Scenario: Change access permissions
     When user1 creates regular files [space1/file1] on client11
-    And user1 sees [file1] in space1 on client11
     And user2 sees [file1] in space1 on client21
+    And user1 sees [file1] in space1 on client11
     And user1 changes space1/file1 mode to 211 on client11
     Then mode of user2's space1/file1 is 211 on client21
 
@@ -96,7 +95,6 @@ Feature: Multi_regular_file_stat
 
   Scenario: Access time
     When user1 writes "TEST TEXT ONEDATA" to space1/file1 on client11
-    And user1 sees [file1] in space1 on client11
     And user2 sees [file1] in space1 on client21
     And user1 is idle for 2 seconds
     # call sleep, to be sure that time of write and read is different

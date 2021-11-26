@@ -213,9 +213,8 @@ Feature: Basic datasets operations
     And user of browser clicks on detached view mode on dataset browser page
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser clicks on menu for "dir1" dataset in dataset browser
-    And user of browser clicks "Reattach" option in data row menu in dataset browser
-    And user of browser clicks on "Proceed" button in modal "Reattach Dataset"
-    Then user of browser sees that error modal with text "Changing some dataset(s) state failed!" appeared
+    Then user of browser cannot click "Reattach" option in data row menu in dataset browser
+
 
   Scenario: User sees dataset in detached tab after deleting directory
     When user of browser creates dataset for item "dir1" in "space1"
