@@ -177,14 +177,14 @@ Feature: Basic share management in Oneprovider GUI
     When user of browser opens file browser for "space1" space
 
     # upload file to shared directory
-    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser sees that current working directory displayed in breadcrumbs on file browser is /dir1
     And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
 
     And user of browser opens shares view of "space1"
     And user of browser clicks "share_dir1" share in shares browser on shares view
     And user of browser sees file browser on single share view
-    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks and presses enter on item named "dir1" in file browser
     Then user of browser sees that item named "20B-0.txt" has appeared in file browser on single share view
 
 
@@ -192,19 +192,19 @@ Feature: Basic share management in Oneprovider GUI
     Given using REST, user space-owner-user creates "share_dir2" share of "space1/dir2" supported by "oneprovider-1" provider
     When user of browser opens file browser for "space1" space
     And user of browser opens "share_dir2" single share view of "dir2" using modal icon
-    And user of browser double clicks on item named "dir2" in file browser
+    And user of browser clicks and presses enter on item named "dir2" in file browser
     And user of browser sees only items named ["dir3", "file1", "file2"] in file browser
 
      # delete file1
     And user of browser clicks Files of "space1" in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser double clicks on item named "dir2" in file browser
+    And user of browser clicks and presses enter on item named "dir2" in file browser
     And user of browser clicks on menu for "file1" file in file browser
     And user of browser clicks "Delete" option in data row menu in file browser
     And user of browser clicks on "Yes" button in modal "Delete modal"
 
     And user of browser opens "share_dir2" single share view of space "space1" using sidebar
-    And user of browser double clicks on item named "dir2" in file browser
+    And user of browser clicks and presses enter on item named "dir2" in file browser
     Then user of browser sees only items named ["dir3", "file2"] in file browser
 
 
@@ -215,11 +215,11 @@ Feature: Basic share management in Oneprovider GUI
 
     And user of browser sees that absolute share path visible in share's info header is as follows: /dir2
     And user of browser sees that current working directory path visible in share's file browser is as follows: share_dir2
-    And user of browser double clicks on item named "dir2" in file browser
+    And user of browser clicks and presses enter on item named "dir2" in file browser
     Then user of browser sees that current working directory path visible in share's file browser is as follows: /dir2
-    And user of browser double clicks on item named "dir3" in file browser
+    And user of browser clicks and presses enter on item named "dir3" in file browser
     Then user of browser sees that current working directory path visible in share's file browser is as follows: /dir2/dir3
-    And user of browser double clicks on item named "dir4" in file browser
+    And user of browser clicks and presses enter on item named "dir4" in file browser
     Then user of browser sees that current working directory path visible in share's file browser is as follows: /dir2/dir3/dir4
     And user of browser changes current working directory to /dir2 using breadcrumbs from share's file browser
     Then user of browser sees that current working directory path visible in share's file browser is as follows: /dir2
@@ -230,12 +230,12 @@ Feature: Basic share management in Oneprovider GUI
   Scenario: User can jump to files tab using breadcrumbs in single share view in full Onezone interface
     Given using REST, user space-owner-user creates "share_dir2_dir3" share of "space1/dir2/dir3" supported by "oneprovider-1" provider
     When user of browser opens file browser for "space1" space
-    And user of browser double clicks on item named "dir2" in file browser
+    And user of browser clicks and presses enter on item named "dir2" in file browser
     And user of browser opens "share_dir2_dir3" single share view of "dir3" using modal icon
 
     And user of browser sees that absolute share path visible in share's info header is as follows: /dir2/dir3
     And user of browser sees that current working directory path visible in share's file browser is as follows: share_dir2_dir3
-    And user of browser double clicks on item named "dir3" in file browser
+    And user of browser clicks and presses enter on item named "dir3" in file browser
     And user of browser sees that current working directory path visible in share's file browser is as follows: /dir3
     And user of browser clicks on /dir2 using breadcrumbs from share's info header
 
@@ -249,8 +249,8 @@ Feature: Basic share management in Oneprovider GUI
     When user of browser opens file browser for "space1" space
     And user of browser opens "share_dir2" single share view of "dir2" using modal icon
 
-    And user of browser double clicks on item named "dir2" in file browser
-    And user of browser double clicks on item named "file1" in file browser
+    And user of browser clicks and presses enter on item named "dir2" in file browser
+    And user of browser clicks and presses enter on item named "file1" in file browser
 
     Then user of browser sees that content of downloaded file "file1" is equal to: "11111"
 
@@ -302,7 +302,7 @@ Feature: Basic share management in Oneprovider GUI
   Scenario: Share curl command can be used to get valid share info
     Given using REST, user space-owner-user creates "share_file1" share of "space1/dir2/file1" supported by "oneprovider-1" provider
     When user of browser opens file browser for "space1" space
-    And user of browser double clicks on item named "dir2" in file browser
+    And user of browser clicks and presses enter on item named "dir2" in file browser
     And user of browser opens "share_file1" single share view of "file1" using modal icon
 
     And user of browser clicks share link type selector on shares view

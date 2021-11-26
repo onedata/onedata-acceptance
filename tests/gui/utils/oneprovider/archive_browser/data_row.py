@@ -24,7 +24,7 @@ class DataRow(PageObject):
     base_archive = Label('.base-archive-name')
     menu_button = Button('.file-row-actions-trigger')
 
-    def double_click(self):
+    def click_and_enter(self):
         ActionChains(self.driver).click(self.web_elem).perform()
         self.active_waiting()
         ActionChains(self.driver).key_down(Keys.ENTER).perform()

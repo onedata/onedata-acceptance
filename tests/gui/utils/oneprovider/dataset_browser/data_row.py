@@ -29,7 +29,7 @@ class DataRow(PageObject):
     def __str__(self):
         return f'{self.name} in {str(self.parent)}'
 
-    def double_click(self):
+    def click_and_enter(self):
         if self.is_any_tag_visible():
             ActionChains(self.driver).click(self.clickable_field).perform()
             self.active_waiting()

@@ -25,7 +25,7 @@ class DataRow(PageObject):
     clickable_field = WebElement('.file-name')
     _status_tag = WebElement('.file-status-tag')
 
-    def double_click(self):
+    def click_and_enter(self):
         if self.is_any_tag_visible():
             ActionChains(self.driver).click(self.clickable_field).perform()
             self.active_waiting()

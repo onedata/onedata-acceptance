@@ -83,14 +83,14 @@ def assert_archive_partial_state_status(item_status, expected_status):
         f'{expected_status} does not match {item_status}')
 
 
-@wt(parsers.re('user of (?P<browser_id>.*?) double clicks on '
+@wt(parsers.re('user of (?P<browser_id>.*?) clicks and presses enter on '
                'archive with description: "(?P<description>.*?)" on '
                'archives list in archive browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def double_click_on_archive(browser_id, tmp_memory, description):
+def click_and_press_enter_on_archive(browser_id, tmp_memory, description):
     browser = tmp_memory[browser_id]['archive_browser']
     archive = get_archive_with_description(browser, description)
-    archive.double_click()
+    archive.click_and_enter()
 
 
 @wt(parsers.re(r'user of (?P<browser_id>.*?) sees (?P<tag_type>.*?) tag for '
@@ -257,8 +257,10 @@ def assert_not_archive_with_description(tmp_memory, browser_id, description):
 
 
 @wt(parsers.parse('user of {browser_id} clicks on the archive browser '
-                  'background to ensure lack of pop ups'))
+                  'background'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def copy_object_id_to_tmp_memory(browser_id, tmp_memory):
+def click_archive_browser_background(browser_id, tmp_memory):
+    # This functions clicks on the browser background to ensure that step
+    # that uses click_and_enter function will work correctly
     archive_browser = tmp_memory[browser_id]['archive_browser']
     archive_browser.click()
