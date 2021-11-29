@@ -443,8 +443,10 @@ def wait_until_provider_goes_offline(selenium, browser_id, oz_page,
                   'goes online on providers map'))
 def wait_until_provider_goes_online(selenium, browser_id, oz_page,
                                     hosts, provider_name, users):
+    user = 'admin'
     driver = selenium[browser_id]
     provider = hosts[provider_name]['name']
+    provider_hostname = hosts[provider_name]['hostname']
     page = oz_page(driver)['providers']
     provider_record = page.elements_list[provider]
     provider_record.click()
@@ -453,6 +455,13 @@ def wait_until_provider_goes_online(selenium, browser_id, oz_page,
     while not page.is_working():
         time.sleep(0.5)
         if time.time() > start + TIMEOUT_FOR_PROVIDER_GOING_ONLINE:
+            try:
+                res = http_get(ip=provider_hostname, port=OP_REST_PORT,
+                               path=get_provider_rest_path('health'),
+                               auth=(user, users[user].password))
+                print(f'Respone from health check request: {res}')
+            except requests.exceptions.ConnectionError as e:
+                print(f'Exception from health check request: {e}')
             raise RuntimeError(f'Provider did not go online on providers map '
                                f'within {TIMEOUT_FOR_PROVIDER_GOING_ONLINE}s.')
     wait_for_provider_online(provider_name, hosts, users)
@@ -462,6 +471,7 @@ def wait_for_provider_online(provider, hosts, users):
     user = 'admin'
     provider_hostname = hosts[provider]['hostname']
     start = time.time()
+    exception = ''
 
     while True:
         time.sleep(0.5)
@@ -471,11 +481,14 @@ def wait_for_provider_online(provider, hosts, users):
                            auth=(user, users[user].password))
             if res.status_code == requests.codes.ok:
                 return
-        except requests.exceptions.ConnectionError:
-            pass
+        except requests.exceptions.ConnectionError as e:
+            exception = e
         if time.time() > start + TIMEOUT_FOR_PROVIDER_GOING_ONLINE:
+            if exception:
+                print(f'Exception from request: {exception}')
             raise RuntimeError(f'Provider is still not working after '
-                               f'{TIMEOUT_FOR_PROVIDER_GOING_ONLINE}s.')
+                               f'{TIMEOUT_FOR_PROVIDER_GOING_ONLINE}s. '
+                               f'Last response from health check request: {res}')
 
 
 @given(parsers.re('providers? named (?P<provider_list>.*?) (is|are) stopped'))
