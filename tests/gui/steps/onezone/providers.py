@@ -457,7 +457,7 @@ def wait_until_provider_goes_online(selenium, browser_id, oz_page,
         if time.time() > start + TIMEOUT_FOR_PROVIDER_GOING_ONLINE:
             try:
                 res = http_get(ip=provider_hostname, port=OP_REST_PORT,
-                               path=get_provider_rest_path('health'),
+                               path='/nagios',
                                auth=(user, users[user].password))
                 print(f'Respone from health check request: {res}')
             except requests.exceptions.ConnectionError as e:
@@ -477,7 +477,7 @@ def wait_for_provider_online(provider, hosts, users):
         time.sleep(0.5)
         try:
             res = http_get(ip=provider_hostname, port=OP_REST_PORT,
-                           path=get_provider_rest_path('health'),
+                           path='/nagios',
                            auth=(user, users[user].password))
             if res.status_code == requests.codes.ok:
                 return
