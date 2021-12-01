@@ -25,6 +25,7 @@ def click_and_press_enter_on_item_in_browser(selenium, browser_id, item_name,
     which_browser = transform(which_browser)
     browser = tmp_memory[browser_id][which_browser]
     driver = selenium[browser_id]
+    browser.click()
 
     # checking if file is located in file browser
     start = time.time()

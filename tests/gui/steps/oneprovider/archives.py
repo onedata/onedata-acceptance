@@ -90,6 +90,7 @@ def assert_archive_partial_state_status(item_status, expected_status):
 def click_and_press_enter_on_archive(browser_id, tmp_memory, description):
     browser = tmp_memory[browser_id]['archive_browser']
     archive = get_archive_with_description(browser, description)
+    browser.click()
     archive.click_and_enter()
 
 
