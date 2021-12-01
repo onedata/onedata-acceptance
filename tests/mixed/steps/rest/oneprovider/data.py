@@ -125,6 +125,20 @@ def remove_file_in_op_rest(user, users, host, hosts, path, result):
         do_api.delete_data_object(path)
 
 
+def remove_file_using_token_in_op_rest(user, users, host, hosts, path, result,
+                                       tmp_memory):
+    access_token = tmp_memory[user]['mailbox'].get('token', None)
+    client = login_to_cdmi(user, users, hosts[host]['hostname'],
+                           access_token=access_token)
+    do_api = DataObjectApi(client)
+    if result == 'fails':
+        with pytest.raises(CdmiException,
+                           message='Removing file did not fail'):
+            do_api.delete_data_object(path)
+    else:
+        do_api.delete_data_object(path)
+
+
 def see_items_in_op_rest(user, users, host, hosts, path_list, result, space):
     client = login_to_provider(user, users, hosts[host]['hostname'])
     file_api = BasicFileOperationsApi(client)

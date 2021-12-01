@@ -168,6 +168,7 @@ def stat_absent(user, path, files, client_node, users):
             p = os.path.join(path, f)
             try:
                 client.stat(p)
+                raise Exception(f'Failed: There is item {f}')
             except FileNotFoundError as exc_info:
                 assert p in exc_info.filename
 

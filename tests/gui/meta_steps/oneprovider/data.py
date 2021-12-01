@@ -108,6 +108,9 @@ def see_items_in_op_gui(selenium, browser_id, path, subfiles, tmp_memory,
     selenium[browser_id].refresh()
 
     try:
+        option = "Files"
+        click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
+                                                      space, option, oz_page)
         assert_browser_in_tab_in_op(selenium, browser_id,
                                     op_container, tmp_memory)
     except NoSuchElementException:

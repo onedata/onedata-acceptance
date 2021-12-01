@@ -44,5 +44,6 @@ def screens():
 
 
 scenarios('../features/onezone/access_tokens.feature')
+scenarios('../features/onezone/path_and_id_caveats.feature')
 scenarios('../features/onezone/identity_tokens.feature')
 scenarios('../features/onezone/invite_tokens.feature')
