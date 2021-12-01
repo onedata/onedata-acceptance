@@ -117,14 +117,6 @@ def see_protected_tag_label_in_dataset_modal(browser_id, selenium, modals,
         assert text in modals(driver).datasets.data_protected_label, error
 
 
-@wt(parsers.parse('user of {browser_id} cannot click "{option}" option'
-                  ' in data row menu in dataset browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def cannot_click_option_in_dataset_browser(selenium, browser_id, option,
-                                           modals):
-    driver = selenium[browser_id]
-    err_msg = f'{option} is clickable'
-    assert not modals(driver).data_row_menu.options[option].click(), err_msg
 
 
 
