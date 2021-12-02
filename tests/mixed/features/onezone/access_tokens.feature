@@ -259,7 +259,7 @@ Feature: Access tokens tests
               read only: True
     And using web GUI, user1 copies created token
     And user1 sends token to user2
-
+    And user2 mounts oneclient using received token
     Then using <client1>, user2 succeeds to see item named "file1" using received access token in "space1" in oneprovider-1
 
     Examples:

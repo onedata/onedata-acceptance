@@ -40,6 +40,8 @@ def change_client_name_to_hostname(client_name):
 def mount_new_oneclient_with_token(user, hosts, users, env_desc, tmp_memory):
     token = tmp_memory[user]['mailbox']['token']
     users[user].mount_client('oneclient-1', 'client1', hosts, env_desc, token)
+    # because oneclient is not working without ls on mountpoint
+    ls_on_mountpoint(users, user, 'client1')
 
 
 def mount_new_oneclient_with_token_fail(user, hosts, users, env_desc, tmp_memory,
@@ -80,7 +82,9 @@ def create_file_in_op_oneclient_with_tokens(user, hosts, users, env_desc, tmp_me
                                    client='oneclient')
 
         # because oneclient is not working without ls on mountpoint
-        ls_on_mountpoint(users, user, 'client1')
+
+        if users[user].clients:
+            ls_on_mountpoint(users, user, 'client1')
 
         if result == 'succeeds':
             oneclient_host = change_client_name_to_hostname(client_lower)
@@ -269,3 +273,13 @@ def remove_file_in_op_oneclient(user, path, host, users, res):
         multi_file_steps.delete_file_fail(user, path, host, users)
     else:
         multi_file_steps.delete_file(user, path, host, users)
+
+
+@wt(parsers.re(r'(?P<user>\w+) lists children of (?P<name>.*)'))
+def list_children_in_op_oneclient(name, user, users):
+    user1 = users[user]
+    client = user1.clients['client1']
+    path = client._mount_path+'/'+name
+    client.ls(path=path)
+
+

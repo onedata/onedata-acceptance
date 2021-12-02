@@ -70,12 +70,7 @@ def assert_file_in_op_with_token(client, user, name, space, host, tmp_memory,
         see_item_in_op_rest_using_token(user, name, space, host, tmp_memory,
                                         users, hosts, result)
     elif 'oneclient' in client_lower:
-        mount_new_oneclient_with_token(user, hosts, users, env_desc, tmp_memory)
         oneclient_host = change_client_name_to_hostname(client_lower)
-
-        # because oneclient is not working without ls on mountpoint
-        ls_on_mountpoint(users, user, oneclient_host)
-
         see_items_in_op_oneclient(name, space, user, users, result,
                                   oneclient_host)
     else:
@@ -272,11 +267,6 @@ def remove_file_using_token_in_op(client, user, name, space, host, users, hosts,
         remove_file_using_token_in_op_rest(user, users, host, hosts, full_path,
                                            result, tmp_memory)
     elif 'oneclient' in client_lower:
-        mount_new_oneclient_with_token(user, hosts, users, env_desc, tmp_memory)
-        oneclient_host = change_client_name_to_hostname(client_lower)
-
-        # because oneclient is not working without ls on mountpoint
-        ls_on_mountpoint(users, user, oneclient_host)
         oneclient_host = change_client_name_to_hostname(client_lower)
         remove_file_in_op_oneclient(user, full_path, oneclient_host,
                                     users, result)
@@ -323,12 +313,7 @@ def rename_item_in_op_using_token(client, user, users, space, old_name,
         move_item_in_op_rest_using_token(old_path, new_path, result, host,
                                          hosts, user, users, tmp_memory, cdmi)
     elif 'oneclient' in client_lower:
-        mount_new_oneclient_with_token(user, hosts, users, env_desc, tmp_memory)
         oneclient_host = change_client_name_to_hostname(client_lower)
-
-        # because oneclient is not working without ls on mountpoint
-        ls_on_mountpoint(users, user, oneclient_host)
-
         multi_file_steps.rename(user, old_path, new_path, oneclient_host,
                                 users)
     else:
