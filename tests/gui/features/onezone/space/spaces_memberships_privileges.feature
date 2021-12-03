@@ -594,7 +594,11 @@ Feature: Basic management of spaces privileges in Onezone GUI
     And user of browser_user1 clicks on menu for "dir1" file in file browser
     And user of browser_user1 clicks "Share" option in data row menu in file browser
     And user of browser_user1 clicks on "Create" button in modal "Share directory"
-    Then user of browser_user1 clicks on "Close" button in modal "Share directory"
+    And user of browser_user1 clicks on "Close" button in modal "Share directory"
+    And user of browser_user1 opens shares view of "space1"
+    And user of browser_user1 clicks "dir1" share in shares browser on shares view
+    And user of browser_user1 sees file browser on single share view
+    Then user of browser_user1 sees that item named "dir1" has appeared in file browser on single share view
 
 
   Scenario: Non-space-owner successfully views QoS in menu if he got View QoS privilege
