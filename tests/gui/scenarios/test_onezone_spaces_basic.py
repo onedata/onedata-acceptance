@@ -62,6 +62,7 @@ from tests.gui.meta_steps.onezone.tokens import *
 from tests.gui.meta_steps.oneprovider.transfers import *
 from tests.gui.meta_steps.oneprovider.common import *
 from tests.gui.meta_steps.oneprovider.shares import *
+from tests.gui.meta_steps.oneprovider.qos import *
 
 from tests.utils.acceptance_utils import *
 
