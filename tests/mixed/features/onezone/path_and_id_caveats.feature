@@ -112,7 +112,7 @@ Feature: Access tokens with caveats set for path or object ID tests
     | oneclient1  |
 
 
-  Scenario: Using <client1>, user does not see file added by user at path he does not have access after getting token with caveat set for path, created by web GUI
+  Scenario: Using oneclient1, user does not see file added by user at path he does not have access after getting token with caveat set for path, created by web GUI
      When using web GUI, user1 creates token with following configuration:
         name: access_token
         type: access
@@ -131,7 +131,7 @@ Feature: Access tokens with caveats set for path or object ID tests
     And user2 sees file4 in space1/dir1/dir2 on client1
 
 
-  Scenario: Using <client1>, user cannot see file after owner rename it using token with caveat set for path, created by web GUI
+  Scenario: Using oneclient1, user cannot see file after owner rename it using token with caveat set for path, created by web GUI
     When using web GUI, user1 creates token with following configuration:
         name: access_token
         type: access
@@ -149,7 +149,7 @@ Feature: Access tokens with caveats set for path or object ID tests
     Then user2 doesn't see file3 in space1/dir1/dir2 on client1
 
 
-  Scenario: Using <client1>, user can see file after owner rename it using token with caveat set for path, created by web GUI
+  Scenario: Using oneclient1, user can see file after owner rename it using token with caveat set for path, created by web GUI
     When using web GUI, user1 creates token with following configuration:
         name: access_token
         type: access
@@ -229,7 +229,7 @@ Feature: Access tokens with caveats set for path or object ID tests
     | oneclient1  |
 
 
-  Scenario: Using <client1>, user does not see file added by user at path he does not have access after getting token with caveat set for object ID, created by web GUI
+  Scenario: Using oneclient1, user does not see file added by user at path he does not have access after getting token with caveat set for object ID, created by web GUI
     When using web GUI, user1 copies "dir1/dir2" ID to clipboard from "File Details" modal in space "space1" in oneprovider-1
     And using web GUI, user1 creates access token with caveats set for object which ID was copied to clipboard
     And using web GUI, user1 copies created token
