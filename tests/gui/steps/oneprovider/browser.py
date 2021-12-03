@@ -18,13 +18,12 @@ import time
 def click_and_press_enter_on_item_in_browser(selenium, browser_id, item_name,
                                              tmp_memory, op_container,
                                              which_browser='file browser'):
-    # if function click_and_enter does not want to click on directory try using
-    # click_file_browser_background or click_archive_browser_background
-    # before it
-
     which_browser = transform(which_browser)
     browser = tmp_memory[browser_id][which_browser]
     driver = selenium[browser_id]
+
+    # clicking on the background of browser to ensure correct
+    # working of click_and enter
     browser.click()
 
     # checking if file is located in file browser
@@ -45,6 +44,7 @@ def click_and_enter_with_check(driver, op_container, browser, which_browser,
     # have the same name
     browser.data[item_name].click_and_enter()
     if item_name.startswith('dir'):
+        time.sleep(1)
         for _ in range(5):
             breadcrumbs = check_if_breadcrumbs_on_share_page(driver,
                                                              op_container,

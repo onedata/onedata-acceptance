@@ -338,7 +338,6 @@ Feature: Oneprovider transfers functionality
             oneprovider-1: entirely filled
             oneprovider-2: never synchronized
 
-    And user of browser clicks on the file browser background
     And user of browser clicks and presses enter on item named "20B-0.txt" in file browser
     And user of browser is idle for 5 seconds
     And user of browser sees file browser in files tab in Oneprovider page

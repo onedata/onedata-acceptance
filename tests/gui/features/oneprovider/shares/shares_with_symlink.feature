@@ -34,7 +34,6 @@ Feature: Shares with linked directories
     # create and place symbolic link
     And user of browser clicks on menu for "dir1" file in file browser
     And user of browser clicks "Create symbolic link" option in data row menu in file browser
-    And user of browser clicks on the file browser background
     And user of browser clicks and presses enter on item named "dir2" in file browser
     And user of browser clicks "Place symbolic link" button from file browser menu bar
 

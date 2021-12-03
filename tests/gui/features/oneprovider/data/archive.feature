@@ -72,7 +72,6 @@ Feature: Basic archives operations
         description: first archive
         layout: plain
     And user of browser sees archive browser in archives tab in Oneprovider page
-    And user of browser clicks on the archive browser background
     And user of browser clicks and presses enter on archive with description: "first archive" on archives list in archive browser
     And user of browser sees archive file browser in archives tab in Oneprovider page
     Then user of browser sees that the file structure for archive with description: "first archive" in archive file browser is as follow:
@@ -88,7 +87,6 @@ Feature: Basic archives operations
         description: first archive
         layout: plain
     And user of browser sees archive browser in archives tab in Oneprovider page
-    And user of browser clicks on the archive browser background
     And user of browser clicks and presses enter on archive with description: "first archive" on archives list in archive browser
     And user of browser sees archive file browser in archives tab in Oneprovider page
     And user of browser sees that the file structure for archive with description: "first archive" in archive file browser is as follow:
@@ -105,7 +103,6 @@ Feature: Basic archives operations
         description: second archive
         layout: plain
     And user of browser sees archive browser in archives tab in Oneprovider page
-    And user of browser clicks on the archive browser background
     And user of browser clicks and presses enter on archive with description: "second archive" on archives list in archive browser
     And user of browser sees archive file browser in archives tab in Oneprovider page
     Then user of browser sees that the file structure for archive with description: "second archive" in archive file browser is as follow:
@@ -137,7 +134,6 @@ Feature: Basic archives operations
         create nested archives: True
 
     Then user of browser sees archive browser in archives tab in Oneprovider page
-    And user of browser clicks on the archive browser background
     And user of browser clicks and presses enter on archive with description: "first archive" on archives list in archive browser
     And user of browser sees archive file browser in archives tab in Oneprovider page
     And user of browser goes to "/dir1/dir2" in archive file browser
@@ -217,7 +213,6 @@ Feature: Basic archives operations
             enabled: True
 
     Then user of browser sees archive browser in archives tab in Oneprovider page
-    And user of browser clicks on the archive browser background
     And user of browser clicks and presses enter on archive with description: "second archive" on archives list in archive browser
     And user of browser sees archive file browser in archives tab in Oneprovider page
     And user of browser clicks and presses enter on item named "dir4" in archive file browser
@@ -244,7 +239,6 @@ Feature: Basic archives operations
             enabled: True
 
     Then user of browser sees archive browser in archives tab in Oneprovider page
-    And user of browser clicks on the archive browser background
     And user of browser clicks and presses enter on archive with description: "third archive" on archives list in archive browser
     And user of browser sees archive file browser in archives tab in Oneprovider page
     And user of browser clicks and presses enter on item named "dir4" in archive file browser
@@ -315,7 +309,6 @@ Feature: Basic archives operations
         layout: BagIt
         include DIP: True
     And user of browser sees archive browser in archives tab in Oneprovider page
-    And user of browser clicks on the archive browser background
     And user of browser clicks and presses enter on archive with description: "first archive" on archives list in archive browser
     And user of browser sees archive file browser in archives tab in Oneprovider page
     Then user of browser sees that the file structure for archive with description: "first archive" in archive file browser is as follow:

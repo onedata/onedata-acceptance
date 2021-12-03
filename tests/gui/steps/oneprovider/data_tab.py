@@ -568,11 +568,3 @@ def click_file_browser_button(browser_id, button, tmp_memory):
     file_browser = tmp_memory[browser_id]['file_browser']
     getattr(file_browser, f'{transform(button)}_button').click()
 
-
-@wt(parsers.parse('user of {browser_id} clicks on the file browser background'))
-@repeat_failed(timeout=WAIT_BACKEND)
-def click_file_browser_background(browser_id, tmp_memory):
-    # This functions clicks on the browser background to ensure that step
-    # that uses click_and_enter function will work correctly
-    file_browser = tmp_memory[browser_id]['file_browser']
-    file_browser.click()

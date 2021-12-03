@@ -56,7 +56,6 @@ Feature: Storage management using onepanel
     And user of browser_unified opens file browser for "space1" space
     And user of browser_unified creates directory "new_dir"
     And user of browser_unified sees that item named "new_dir" has appeared in file browser
-    And user of browser_unified clicks on the file browser background
     And user of browser_unified clicks and presses enter on item named "new_dir" in file browser
     And user of browser_unified sees that current working directory displayed in breadcrumbs on file browser is /new_dir
     And user of browser_unified uses upload button from file browser menu bar to upload files from local directory "dir2" to remote current dir

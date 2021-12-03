@@ -15,7 +15,8 @@ from tests.gui.steps.oneprovider.file_browser import *
 from tests.gui.steps.oneprovider.data_tab import *
 from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.browser import *
-from tests.gui.steps.oneprovider.archives import click_and_press_enter_on_archive
+from tests.gui.steps.oneprovider.archives import \
+    click_and_press_enter_on_archive
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.common.url import refresh_site
 from tests.gui.meta_steps.oneprovider.common import (
@@ -103,7 +104,7 @@ def remove_dir_and_parents_in_op_gui(selenium, browser_id, path, tmp_memory,
                '"(?P<space>.*)" in oneprovider-1'))
 @wt(parsers.re(r'user of (?P<browser_id>\w+) (?P<res>.*) to see '
                '(?P<subfiles>.*) in "(?P<path>.*)" in "(?P<space>.*)"'))
-def see_items_in_op_gui(selenium, browser_id, path, subfiles, tmp_memory, 
+def see_items_in_op_gui(selenium, browser_id, path, subfiles, tmp_memory,
                         op_container, res, space, oz_page):
     selenium[browser_id].refresh()
 
@@ -195,7 +196,8 @@ def _check_files_tree(subtree, user, tmp_memory, cwd, selenium, op_container,
                                              which_browser)
             if item.startswith('dir'):
                 click_and_press_enter_on_item_in_browser(selenium, user, item,
-                                                         tmp_memory, op_container,
+                                                         tmp_memory,
+                                                         op_container,
                                                          which_browser)
                 assert_empty_browser_in_files_tab_in_op(selenium, user,
                                                         op_container,
@@ -222,7 +224,7 @@ def _check_files_tree(subtree, user, tmp_memory, cwd, selenium, op_container,
                                                                  which_browser)
                 else:
                     path_tmp = f'{cwd}/{item_name}'
-                    _check_files_tree(item_subtree, user,  tmp_memory, path_tmp,
+                    _check_files_tree(item_subtree, user, tmp_memory, path_tmp,
                                       selenium, op_container, tmpdir,
                                       which_browser)
                 change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium,
@@ -230,7 +232,8 @@ def _check_files_tree(subtree, user, tmp_memory, cwd, selenium, op_container,
                                                                op_container,
                                                                which_browser)
                 if which_browser == 'archive file browser':
-                    click_and_press_enter_on_archive(user, tmp_memory, description)
+                    click_and_press_enter_on_archive(user, tmp_memory,
+                                                     description)
             else:
                 has_downloaded_file_content(user, item_name, str(item_subtree),
                                             tmpdir)
@@ -283,7 +286,8 @@ def assert_file_content_in_op_gui(text, path, space, selenium, user, users,
         go_to_path_without_last_elem(selenium, user, tmp_memory, path,
                                      op_container)
     item_name = _select_item(selenium, user, tmp_memory, path, op_container)
-    click_and_press_enter_on_item_in_browser(selenium, user, item_name, tmp_memory,
+    click_and_press_enter_on_item_in_browser(selenium, user, item_name,
+                                             tmp_memory,
                                              op_container)
     has_downloaded_file_content(user, item_name, text, tmpdir)
     change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, user,
@@ -309,7 +313,7 @@ def create_directory_structure_in_op_gui(selenium, user, op_container, config,
 
     _create_content(selenium, user, items, cwd, space, tmp_memory,
                     op_container, modals, oz_page, popups)
-    
+
 
 def _create_item(selenium, browser_id, name, content, cwd, space, tmp_memory,
                  op_container, modals, oz_page, popups):
@@ -324,13 +328,13 @@ def _create_item(selenium, browser_id, name, content, cwd, space, tmp_memory,
     change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, browser_id,
                                                    'home', op_container)
     if not content:
-        return 
+        return
     cwd += '/' + name
-    _create_content(selenium, browser_id, content, cwd, space, tmp_memory, 
+    _create_content(selenium, browser_id, content, cwd, space, tmp_memory,
                     op_container, modals, oz_page, popups)
 
 
-def _create_content(selenium, browser_id, content, cwd, space, tmp_memory, 
+def _create_content(selenium, browser_id, content, cwd, space, tmp_memory,
                     op_container, modals, oz_page, popups):
     for item in content:
         try:
@@ -338,7 +342,7 @@ def _create_content(selenium, browser_id, content, cwd, space, tmp_memory,
         except AttributeError:
             name = item
             content = None
-        _create_item(selenium, browser_id, name, content, cwd, space, 
+        _create_item(selenium, browser_id, name, content, cwd, space,
                      tmp_memory, op_container, modals, oz_page, popups)
 
 
@@ -407,7 +411,8 @@ def go_to_path(selenium, browser_id, tmp_memory, path, op_container,
         path_list = [path]
     for directory in path_list:
         if directory != '':
-            click_and_press_enter_on_item_in_browser(selenium, browser_id, directory,
+            click_and_press_enter_on_item_in_browser(selenium, browser_id,
+                                                     directory,
                                                      tmp_memory, op_container,
                                                      which_browser)
 
@@ -418,7 +423,8 @@ def go_to_path_without_last_elem(selenium, browser_id, tmp_memory, path,
         _, path_list = get_item_name_and_containing_dir_path(path)
 
         for directory in path_list:
-            click_and_press_enter_on_item_in_browser(selenium, browser_id, directory,
+            click_and_press_enter_on_item_in_browser(selenium, browser_id,
+                                                     directory,
                                                      tmp_memory, op_container,
                                                      item_browser)
 

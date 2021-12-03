@@ -256,12 +256,3 @@ def assert_not_archive_with_description(tmp_memory, browser_id, description):
     else:
         pass
 
-
-@wt(parsers.parse('user of {browser_id} clicks on the archive browser '
-                  'background'))
-@repeat_failed(timeout=WAIT_BACKEND)
-def click_archive_browser_background(browser_id, tmp_memory):
-    # This functions clicks on the browser background to ensure that step
-    # that uses click_and_enter function will work correctly
-    archive_browser = tmp_memory[browser_id]['archive_browser']
-    archive_browser.click()
