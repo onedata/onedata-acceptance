@@ -3,10 +3,8 @@ default: release/20.02.15
 
 branches:
   # Specification of branches from which docker images list will be pulled.
-  # Onezone packages plan
-  onezone: current_branch
-  # Oneprovider packages plan
-  onedata: current_branch
+  onezone-pkg: current_branch
+  oneprovider-pkg: current_branch
   oneclient_docker_build: current_branch
   luma_docker_build: develop
   rest_cli_docker_build: release/20.02.15
