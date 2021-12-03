@@ -531,3 +531,15 @@ def copy_object_id_to_tmp_memory(tmp_memory, selenium, user, name, space,
                                              modals)
     click_modal_button(selenium, user, button, modal, modals)
     close_modal(selenium, user, modal, modals)
+
+
+@wt(parsers.parse('user of {browser_id} downloads item "{item_name}" by '
+                  'clicking and pressing enter and then sees that '
+                  'content of downloaded file is equal to: "{content}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_and_press_enter_with_content_check(selenium, browser_id, item_name,
+                                             content, tmpdir,
+                                             tmp_memory, op_container,):
+    click_and_press_enter_on_item_in_browser(selenium, browser_id, item_name,
+                                             tmp_memory, op_container)
+    has_downloaded_file_content(browser_id, item_name, content, tmpdir)

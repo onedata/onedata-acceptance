@@ -44,7 +44,6 @@ def click_and_enter_with_check(driver, op_container, browser, which_browser,
     # have the same name
     browser.data[item_name].click_and_enter()
     if item_name.startswith('dir'):
-        time.sleep(1)
         for _ in range(5):
             breadcrumbs = check_if_breadcrumbs_on_share_page(driver,
                                                              op_container,
