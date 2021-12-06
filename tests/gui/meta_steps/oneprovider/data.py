@@ -537,9 +537,11 @@ def copy_object_id_to_tmp_memory(tmp_memory, selenium, user, name, space,
                   'clicking and pressing enter and then sees that '
                   'content of downloaded file is equal to: "{content}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_and_press_enter_with_content_check(selenium, browser_id, item_name,
-                                             content, tmpdir,
-                                             tmp_memory, op_container,):
-    click_and_press_enter_on_item_in_browser(selenium, browser_id, item_name,
-                                             tmp_memory, op_container)
+def click_and_press_enter_with_content_check(browser_id, item_name, content,
+                                             tmpdir, tmp_memory,
+                                             which_browser='file browser'):
+    which_browser = transform(which_browser)
+    browser = tmp_memory[browser_id][which_browser]
+    browser.data[item_name].click_and_enter()
+
     has_downloaded_file_content(browser_id, item_name, content, tmpdir)

@@ -250,6 +250,7 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser opens "share_dir2" single share view of "dir2" using modal icon
 
     And user of browser clicks and presses enter on item named "dir2" in file browser
+    And user browser is idle for 5 seconds
     Then user of browser downloads item "file1" by clicking and pressing enter and then sees that content of downloaded file is equal to: "11111"
 
 
