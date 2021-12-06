@@ -112,7 +112,7 @@ Feature: Uploading multiple files at once
     And user of browser removes "/dir6/file1GB.txt" from local file system
 
 
-  Scenario: User with weak connection uploads one large file
+  Scenario: User with weak connection uploads 1 MB file
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar
 

@@ -118,6 +118,6 @@ def test_user_successfully_uploads_300_files_stress_test():
 
 
 @skip_if_not_chrome
-@scenario('User with weak connection uploads one large file')
-def test_user_with_weak_connection_uploads_one_large_file():
+@scenario('User with weak connection uploads 1 MB file')
+def test_user_with_weak_connection_uploads_1_MB_file():
     pass
