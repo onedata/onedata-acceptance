@@ -19,4 +19,6 @@ class BrowserRow(object):
         for i in range(30):
             time.sleep(0.1)
             if self.is_selected():
-                break
+                return
+
+        raise RuntimeError('Waited too long for being selected')
