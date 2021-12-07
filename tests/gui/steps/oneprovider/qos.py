@@ -308,16 +308,11 @@ def choose_operator_in_add_cond_popup(selenium, browser_id, popups, operator):
     getattr(popup, f'{operator.lower()}_operator').click()
 
 
-@wt(parsers.re('user of (?P<browser_id>.*?) (?P<option>sees|does not see) "('
-               '?P<text>.*?)" in modal '
+@wt(parsers.re('user of (?P<browser_id>.*?) sees "(?P<text>.*?)" in modal '
                '"Quality of Service"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_error_label_in_qos_modal(selenium, browser_id, modals, option, text):
+def assert_error_label_in_qos_modal(selenium, browser_id, modals, text):
     driver = selenium[browser_id]
 
-    if option == "sees":
-        assert text in modals(driver).quality_of_service.privileges_error, \
-            f'Label with "{text}" not found '
-    else:
-        assert not text in modals(driver).quality_of_service.privileges_error,\
-            f'Label with "{text}" found'
+    assert text in modals(driver).quality_of_service.privileges_error, \
+        f'Label with "{text}" not found '

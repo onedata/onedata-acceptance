@@ -85,7 +85,7 @@ Feature: Basic management of spaces privileges in Onezone GUI with two providers
   Scenario: Non-space-owner successfully schedules eviction if he got Transfer management privileges
     When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
 
-    #Space-owner replicates file1 for non-space-owner to schedule eviction
+    # Space-owner replicates file1 for non-space-owner to schedule eviction
     And user of space_owner_browser clicks Files of "space1" in the sidebar
     And user of space_owner_browser sees file browser in files tab in Oneprovider page
     And user of space_owner_browser clicks on menu for "file1" file in file browser

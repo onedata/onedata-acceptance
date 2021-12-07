@@ -626,7 +626,7 @@ Feature: Basic management of spaces privileges in Onezone GUI
     Then user of browser_user1 sees that Quality of Service option is in selection menu on file browser page
 
 
-  Scenario: Non-space-owner successfully menages QoS if he got Qos management privileges
+  Scenario: Non-space-owner successfully manages QoS if he got Qos management privileges
     When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
     And user of space_owner_browser clicks Members of "space1" in the sidebar
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
