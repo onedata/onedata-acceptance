@@ -9,13 +9,18 @@ __license__ = ("This software is released under the MIT license cited in "
 
 import yaml
 
+from tests.gui.meta_steps.oneprovider.data import (
+    _click_menu_for_elem_somewhere_in_file_browser)
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.modal import (
-    assert_error_modal_with_text_appeared, click_modal_button)
+    assert_error_modal_with_text_appeared, click_modal_button, close_modal)
+from tests.gui.steps.oneprovider.browser import (
+    click_option_in_data_row_menu_in_browser)
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.steps.onezone.tokens import *
 from tests.gui.steps.onezone.tokens import click_option_for_token_row_menu
-from tests.utils.bdd_utils import wt, parsers
+from tests.mixed.steps.oneclient.data_basic import ls_on_mountpoint
+from tests.utils.bdd_utils import wt, parsers, given
 from tests.utils.utils import repeat_failed
 
 
@@ -552,5 +557,58 @@ def create_token_with_object_id(displays, clipboard, user, selenium, oz_page,
                              users, groups, hosts, tmp_memory)
 
 
+@given(parsers.parse('using web GUI, {user} creates access token with caveats '
+                     'set for object ID for "{name}" in space '
+                     r'"{space}" in {host}'))
+def create_token_with_object_id(displays, clipboard, user, selenium, oz_page,
+                                popups, users, groups, hosts, tmp_memory,
+                                modals, name, space, op_container):
+    option = 'Information'
+    button = 'File ID'
+    modal = 'File details'
+    _click_menu_for_elem_somewhere_in_file_browser(selenium, user, name,
+                                                   space, tmp_memory, oz_page,
+                                                   op_container)
+    click_option_in_data_row_menu_in_browser(selenium, user, option,
+                                             modals)
+    click_modal_button(selenium, user, button, modal, modals)
+    close_modal(selenium, user, modal, modals)
+    option = 'Tokens'
+    object_id = clipboard.paste(display=displays[user])
+    config = (f'name: access_token\ntype: access\ncaveats:\n  '
+              f'object ID:\n    -  {object_id}')
+    click_on_option_in_the_sidebar(selenium, user, option, oz_page)
+    create_token_with_config(selenium, user, config, oz_page, popups,
+                             users, groups, hosts, tmp_memory)
 
+    click_copy_button_in_token_view(selenium, user, oz_page)
+    tmp_memory[user]['token'] = clipboard.paste(display=displays[user])
+
+
+@given(parsers.parse('{sender} sends {item_type} to {receiver}'))
+def given_send_copied_item_to_other_users(sender, receiver, item_type,
+                                          tmp_memory):
+    tmp_memory[receiver]['mailbox'][item_type.lower()] = \
+        tmp_memory[sender][item_type]
+
+
+@given(parsers.parse('{user} mounts oneclient using received token'))
+def given_mount_new_oneclient_with_token(user, hosts, users, env_desc,
+                                         tmp_memory):
+    token = tmp_memory[user]['mailbox']['token']
+    users[user].mount_client('oneclient-1', 'client1', hosts, env_desc, token)
+    # because oneclient is not working without ls on mountpoint
+    ls_on_mountpoint(users, user, 'client1')
+
+
+@given(parsers.parse('using web GUI, {user} creates token with '
+                     'following configuration:\n{config}'))
+def given_create_token(user, config, selenium, oz_page, popups, users,
+                       groups, hosts, tmp_memory, clipboard, displays):
+
+    create_token_with_config(selenium, user, config, oz_page, popups,
+                             users, groups, hosts, tmp_memory)
+
+    click_copy_button_in_token_view(selenium, user, oz_page)
+    tmp_memory[user]['token'] = clipboard.paste(display=displays[user])
 

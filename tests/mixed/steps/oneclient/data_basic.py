@@ -279,7 +279,7 @@ def remove_file_in_op_oneclient(user, path, host, users, res):
 def list_children_in_op_oneclient(name, user, users):
     user1 = users[user]
     client = user1.clients['client1']
-    path = client._mount_path+'/'+name
+    path = client._mount_path + '/' + name
     client.ls(path=path)
 
 

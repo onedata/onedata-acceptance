@@ -305,3 +305,20 @@ Feature: Access tokens tests
     | REST        |
     | oneclient1  |
 
+
+  Scenario: Using oneclient1, user can see file using token with caveat set for path, created by web GUI, after owner renames file
+    When using web GUI, user1 creates token with following configuration:
+        name: access_token
+        type: access
+        caveats:
+          path:
+            - space: space1
+              path: /dir1/dir4
+    And using web GUI, user1 copies created token
+    And user1 sends token to user2
+    And user2 mounts oneclient using received token
+    And user2 lists children of space1/dir1
+    And user2 doesn't see dir4 in space1/dir1 on client1
+    And using web GUI, user1 renames item named "dir1/dir2" to "dir1/dir4" in "space1" in oneprovider-1
+    Then user2 sees dir4 in space1/dir1 on client1
+
