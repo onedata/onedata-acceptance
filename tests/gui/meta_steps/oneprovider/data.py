@@ -533,9 +533,9 @@ def copy_object_id_to_tmp_memory(tmp_memory, selenium, user, name, space,
     close_modal(selenium, user, modal, modals)
 
 
-# TODO: Function just for the needs of scenario "User downloads files from
-#  shared directory on single share view in full Onezone interface" working
-#  properly (VFS-6383)
+# TODO: VFS-8740 Function just for the needs of scenario "User downloads
+#  files from shared directory on single share view in full Onezone
+#  interface" working properly
 @wt(parsers.parse('user of {browser_id} downloads item "{item_name}" by '
                   'clicking and pressing enter and then sees that '
                   'content of downloaded file is equal to: "{content}"'))

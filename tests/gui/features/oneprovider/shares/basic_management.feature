@@ -250,7 +250,7 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser opens "share_dir2" single share view of "dir2" using modal icon
 
     And user of browser clicks and presses enter on item named "dir2" in file browser
-    # TODO: Change steps below to commented steps after figuring out problems with click and enter not working correctly.(VFS-6383)
+    # TODO: VFS-8740 Change steps below to commented steps after figuring out problems with click and enter not working correctly.
     # After trying to enter "dir2" browser freezes which causes problems with checking if file is located in file browser in click and enter function.
     And user browser is idle for 5 seconds
     # Click and enter also doesn't work properly while downloading "file1.txt" which probably is caused by clicking on file browser before it
