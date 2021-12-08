@@ -145,5 +145,5 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And user of browser clicks "Refresh" button from file browser menu bar
     And user of browser sees file browser in files tab in Oneprovider page
 
-    And user of browser double clicks on item named "20B-0.txt" in file browser
+    And user of browser clicks and presses enter on item named "20B-0.txt" in file browser
     Then user of browser sees that content of downloaded file "20B-0.txt" is equal to: "00000000000000000000ABCD"

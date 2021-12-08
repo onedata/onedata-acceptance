@@ -83,14 +83,18 @@ def assert_archive_partial_state_status(item_status, expected_status):
         f'{expected_status} does not match {item_status}')
 
 
-@wt(parsers.re('user of (?P<browser_id>.*?) double clicks on '
+@wt(parsers.re('user of (?P<browser_id>.*?) clicks and presses enter on '
                'archive with description: "(?P<description>.*?)" on '
                'archives list in archive browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def double_click_on_archive(browser_id, tmp_memory, description):
+def click_and_press_enter_on_archive(browser_id, tmp_memory, description):
     browser = tmp_memory[browser_id]['archive_browser']
     archive = get_archive_with_description(browser, description)
-    archive.double_click()
+
+    # clicking on the background of browser to ensure correct
+    # working of click_and enter
+    browser.click()
+    archive.click_and_enter()
 
 
 @wt(parsers.re(r'user of (?P<browser_id>.*?) sees (?P<tag_type>.*?) tag for '
@@ -223,7 +227,7 @@ def assert_description_for_archive(browser_id, tmp_memory, description,
                                    ordinal):
     browser = tmp_memory[browser_id]['archive_browser']
     number = from_ordinal_number_to_int(ordinal)
-    archive_description = browser.data[number-1].name.split('— ')[1]
+    archive_description = browser.data[number - 1].name.split('— ')[1]
     err_msg = (f'Archive description {archive_description} does not match'
                f' expected description: {description}')
     assert archive_description == description, err_msg

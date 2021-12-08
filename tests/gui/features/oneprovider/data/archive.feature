@@ -72,7 +72,7 @@ Feature: Basic archives operations
         description: first archive
         layout: plain
     And user of browser sees archive browser in archives tab in Oneprovider page
-    And user of browser double clicks on archive with description: "first archive" on archives list in archive browser
+    And user of browser clicks and presses enter on archive with description: "first archive" on archives list in archive browser
     And user of browser sees archive file browser in archives tab in Oneprovider page
     Then user of browser sees that the file structure for archive with description: "first archive" in archive file browser is as follow:
          - dir1:
@@ -87,7 +87,7 @@ Feature: Basic archives operations
         description: first archive
         layout: plain
     And user of browser sees archive browser in archives tab in Oneprovider page
-    And user of browser double clicks on archive with description: "first archive" on archives list in archive browser
+    And user of browser clicks and presses enter on archive with description: "first archive" on archives list in archive browser
     And user of browser sees archive file browser in archives tab in Oneprovider page
     And user of browser sees that the file structure for archive with description: "first archive" in archive file browser is as follow:
          - dir1:
@@ -103,7 +103,7 @@ Feature: Basic archives operations
         description: second archive
         layout: plain
     And user of browser sees archive browser in archives tab in Oneprovider page
-    And user of browser double clicks on archive with description: "second archive" on archives list in archive browser
+    And user of browser clicks and presses enter on archive with description: "second archive" on archives list in archive browser
     And user of browser sees archive file browser in archives tab in Oneprovider page
     Then user of browser sees that the file structure for archive with description: "second archive" in archive file browser is as follow:
          - dir1:
@@ -126,7 +126,7 @@ Feature: Basic archives operations
     When user of browser creates dataset for item "dir1" in "space1"
     And user of browser goes to "/dir1/dir2" in file browser
     And user of browser creates dataset for item "dir3" in "space1"
-    And user of browser double clicks on item named "dir3" in file browser
+    And user of browser clicks and presses enter on item named "dir3" in file browser
     And user of browser creates dataset for item "file1" in "space1"
     And user of browser succeeds to create archive for item "dir1" in "space1" with following configuration:
         description: first archive
@@ -134,19 +134,19 @@ Feature: Basic archives operations
         create nested archives: True
 
     Then user of browser sees archive browser in archives tab in Oneprovider page
-    And user of browser double clicks on archive with description: "first archive" on archives list in archive browser
+    And user of browser clicks and presses enter on archive with description: "first archive" on archives list in archive browser
     And user of browser sees archive file browser in archives tab in Oneprovider page
     And user of browser goes to "/dir1/dir2" in archive file browser
     And user of browser sees symlink status tag for "dir3" in archive file browser
-    And user of browser double clicks on item named "dir3" in archive file browser
+    And user of browser clicks and presses enter on item named "dir3" in archive file browser
     And user of browser sees symlink status tag for "file1" in archive file browser
 
 
   Scenario: User sees that dataset has more archives than its parent after creating nested archive on child dataset
     When user of browser creates dataset for item "dir1" in "space1"
-    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser creates dataset for item "dir2" in "space1"
-    And user of browser double clicks on item named "dir2" in file browser
+    And user of browser clicks and presses enter on item named "dir2" in file browser
     And user of browser creates dataset for item "dir3" in "space1"
 
     And user of browser succeeds to create archive for item "dir1" in "space1" with following configuration:
@@ -155,14 +155,14 @@ Feature: Basic archives operations
     And user of browser goes back to dataset browser from archive browser
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser sees that item "dir1" has 1 archive
-    And user of browser double clicks on item named "dir1" in dataset browser
+    And user of browser clicks and presses enter on item named "dir1" in dataset browser
     And user of browser sees that item "dir2" has 1 archive
     And user of browser succeeds to create archive for item "dir2" in "space1" with following configuration:
         layout: plain
         create nested archives: True
     And user of browser goes back to dataset browser from archive browser
     And user of browser sees dataset browser in datasets tab in Oneprovider page
-    And user of browser double clicks on item named "dir2" in dataset browser
+    And user of browser clicks and presses enter on item named "dir2" in dataset browser
     Then user of browser sees that item "dir3" has 2 archives
     And user of browser clicks Datasets of "space1" in the sidebar
     And user of browser sees dataset browser in datasets tab in Oneprovider page
@@ -171,11 +171,11 @@ Feature: Basic archives operations
 
   Scenario: User sees real directory tree of downloaded tar generated for nested archive
     When user of browser creates dataset for item "dir1" in "space1"
-    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser creates dataset for item "dir2" in "space1"
-    And user of browser double clicks on item named "dir2" in file browser
+    And user of browser clicks and presses enter on item named "dir2" in file browser
     And user of browser creates dataset for item "dir3" in "space1"
-    And user of browser double clicks on item named "dir3" in file browser
+    And user of browser clicks and presses enter on item named "dir3" in file browser
     And user of browser creates dataset for item "file1" in "space1"
 
     And user of browser succeeds to create archive for item "dir1" in "space1" with following configuration:
@@ -213,9 +213,9 @@ Feature: Basic archives operations
             enabled: True
 
     Then user of browser sees archive browser in archives tab in Oneprovider page
-    And user of browser double clicks on archive with description: "second archive" on archives list in archive browser
+    And user of browser clicks and presses enter on archive with description: "second archive" on archives list in archive browser
     And user of browser sees archive file browser in archives tab in Oneprovider page
-    And user of browser double clicks on item named "dir4" in archive file browser
+    And user of browser clicks and presses enter on item named "dir4" in archive file browser
     And user of browser sees hardlink status tag with "2 hard links" text for "file2" in archive file browser
     And user of browser does not see hardlink status tag for "20B-0.txt" in archive file browser
 
@@ -239,9 +239,9 @@ Feature: Basic archives operations
             enabled: True
 
     Then user of browser sees archive browser in archives tab in Oneprovider page
-    And user of browser double clicks on archive with description: "third archive" on archives list in archive browser
+    And user of browser clicks and presses enter on archive with description: "third archive" on archives list in archive browser
     And user of browser sees archive file browser in archives tab in Oneprovider page
-    And user of browser double clicks on item named "dir4" in archive file browser
+    And user of browser clicks and presses enter on item named "dir4" in archive file browser
     And user of browser sees hardlink status tag with "3 hard links" text for "file2" in archive file browser
 
 
@@ -309,7 +309,7 @@ Feature: Basic archives operations
         layout: BagIt
         include DIP: True
     And user of browser sees archive browser in archives tab in Oneprovider page
-    And user of browser double clicks on archive with description: "first archive" on archives list in archive browser
+    And user of browser clicks and presses enter on archive with description: "first archive" on archives list in archive browser
     And user of browser sees archive file browser in archives tab in Oneprovider page
     Then user of browser sees that the file structure for archive with description: "first archive" in archive file browser is as follow:
          - bagit.txt
@@ -327,7 +327,7 @@ Feature: Basic archives operations
          - tagmanifest-sha1.txt
          - tagmanifest-sha256.txt
          - tagmanifest-sha512.txt
-    And user of browser double clicks on archive with description: "first archive" on archives list in archive browser
+    And user of browser clicks and presses enter on archive with description: "first archive" on archives list in archive browser
     And user of browser clicks on DIP view mode on archive file browser page
     And user of browser sees archive file browser in archives tab in Oneprovider page
     And user of browser sees that the file structure for archive with description: "first archive" in archive file browser is as follow:
