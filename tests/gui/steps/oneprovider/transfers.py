@@ -101,11 +101,6 @@ def check_provider_in_migrate_dropdown(driver, provider_name):
     return provider_name == data_distribution_modal.migrate.target_provider
 
 
-def check_provider_in_migrate_dropdown(driver, provider_name):
-    data_distribution_modal = modals(driver).data_distribution
-    return provider_name == data_distribution_modal.migrate.target_provider
-
-
 @wt(parsers.re('user of (?P<browser_id>.*) migrates selected item from '
                'provider "(?P<source>.*)" to provider "(?P<target>.*)"'))
 def migrate_item(selenium, browser_id, source, target, hosts, popups):
