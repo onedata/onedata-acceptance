@@ -24,7 +24,8 @@ class OPLoggedIn(object):
     transfers = TransfersTab('.content-space-transfers')
     dataset_browser = DatasetBrowser('.dataset-browser')
     archive_file_browser = ArchiveFileBrowser('.content-space-datasets '
-                                              '.file-browser')
+                                              '.dataset-archives-browser'
+                                              ' .file-browser')
     archive_browser = ArchiveBrowser('.content-space-datasets .archive-browser')
 
     def __init__(self, driver):

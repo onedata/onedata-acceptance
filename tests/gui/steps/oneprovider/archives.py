@@ -8,6 +8,7 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
+from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 from tests.gui.utils.generic import transform
@@ -254,4 +255,15 @@ def assert_not_archive_with_description(tmp_memory, browser_id, description):
             raise Exception(f'Archive with description: "{description}" found')
     else:
         pass
+
+
+@wt(parsers.parse('user of {browser_id} sees that error page with text '
+                  '"{text}" appeared in {which_browser}'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_page_with_error_appeared(browser_id, text, tmp_memory, selenium,
+                                    op_container, which_browser):
+    assert_browser_in_tab_in_op(selenium, browser_id, op_container, tmp_memory,
+                                item_browser=which_browser)
+    browser = tmp_memory[browser_id][transform(which_browser)]
+    assert browser.error_msg == text, f'page with text "{text}" not  found'
 

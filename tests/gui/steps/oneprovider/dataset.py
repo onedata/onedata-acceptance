@@ -87,14 +87,6 @@ def can_not_click_protection_toggle(browser_id, selenium, modals, toggle_type,
                        f'{toggle_type}_protection_toggle').check(), err_msg
 
 
-@wt(parsers.parse('user of {browser_id} sees that error page with text '
-                  '"{text}" appeared'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_page_with_error_appeared(browser_id, text, tmp_memory):
-    browser = tmp_memory[browser_id]['dataset_browser']
-    assert browser.error_msg == text, f'page with text "{text}" not  found'
-
-
 @wt(parsers.parse('user of {browser_id} fails to click Mark this file as '
                   'dataset toggle in Datasets modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)

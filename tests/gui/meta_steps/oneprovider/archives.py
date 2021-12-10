@@ -143,7 +143,8 @@ def copy_archive_id_to_tmp_memory(selenium, browser_id, op_container, client,
                                     tmp_memory, ARCHIVE_BROWSER)
         click_menu_for_archive(browser_id, tmp_memory, description)
         click_option_in_data_row_menu_in_browser(selenium, browser_id,
-                                                 option_in_menu, modals)
+                                                 option_in_menu, modals,
+                                                 ARCHIVE_BROWSER)
         tmp_memory[description] = clipboard.paste(
             display=displays[browser_id])
 

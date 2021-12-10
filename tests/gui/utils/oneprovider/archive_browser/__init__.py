@@ -20,6 +20,7 @@ class _ArchiveBrowser(PageObject):
     create_archive = Button('.hidden-xs .toolbar-buttons '
                             '.oneicon-browser-archive-add')
     empty_dir_msg = Label('.empty-dir-text')
+    error_msg = Label('.error-dir-text')
 
     def __str__(self):
         return f'archive browser in {self.parent}'

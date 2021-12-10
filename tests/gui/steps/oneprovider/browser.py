@@ -177,8 +177,14 @@ def assert_not_status_tag_for_file_in_browser(browser_id, status_type,
                   'in data row menu in {which_browser}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
-                                             modals):
-    modals(selenium[browser_id]).data_row_menu.choose_option(option)
+                                             modals,
+                                             which_browser='file browser'):
+
+    archive = 'archive browser' == which_browser
+    if archive:
+        modals(selenium[browser_id]).archive_row_menu.choose_option(option)
+    else:
+        modals(selenium[browser_id]).data_row_menu.choose_option(option)
 
 
 @wt(parsers.parse('user of {browser_id} cannot click "{option}" option '
