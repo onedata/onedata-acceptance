@@ -25,7 +25,7 @@ from tests.gui.steps.oneprovider.browser import (
 from tests.gui.steps.oneprovider.archives import (
     check_toggle_in_create_archive_modal,
     write_description_in_create_archive_modal, click_on_number_in_archives,
-    double_click_on_archive, click_menu_for_archive,
+    click_and_press_enter_on_archive, click_menu_for_archive,
     write_in_confirmation_input,
     assert_number_of_archives_for_item_in_dataset_browser,
     assert_tag_for_archive_in_archive_browser,
@@ -165,7 +165,7 @@ def assert_archive_in_op_gui(browser_id, selenium, item_name, space_name,
         click_on_number_in_archives(browser_id, tmp_memory, item_name)
         assert_browser_in_tab_in_op(selenium, browser_id, op_container,
                                     tmp_memory, item_browser=ARCHIVE_BROWSER)
-        double_click_on_archive(browser_id, tmp_memory, description)
+        click_and_press_enter_on_archive(browser_id, tmp_memory, description)
         assert_browser_in_tab_in_op(selenium, browser_id, op_container,
                                     tmp_memory,
                                     item_browser=ARCHIVE_FILE_BROWSER)

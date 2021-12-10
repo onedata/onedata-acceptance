@@ -28,7 +28,7 @@ Feature: Basic files tab operations on single file in file browser
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees that current working directory displayed in breadcrumbs on file browser is space1
 
-    And user of browser double clicks on item named "20B-0.txt" in file browser
+    And user of browser clicks and presses enter on item named "20B-0.txt" in file browser
     Then user of browser sees that content of downloaded file "20B-0.txt" is equal to: "11111111111111111111"
 
 

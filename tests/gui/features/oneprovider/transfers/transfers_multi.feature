@@ -62,7 +62,7 @@ Feature: Oneprovider transfers functionality using multiple browser instances
 
   Scenario: User replicates directory with 2 files on different providers to current provider
     When user of browser1 creates directory "dir1"
-    And user of browser1 double clicks on item named "dir1" in file browser
+    And user of browser1 clicks and presses enter on item named "dir1" in file browser
     And user of browser1 uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
     And user of browser1 sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
@@ -70,7 +70,7 @@ Feature: Oneprovider transfers functionality using multiple browser instances
 
     # Wait to ensure synchronization between providers
     And user of browser2 opens oneprovider-2 Oneprovider file browser for "space1" space
-    And user of browser2 double clicks on item named "dir1" in file browser
+    And user of browser2 clicks and presses enter on item named "dir1" in file browser
     And user of browser2 uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
     And user of browser2 sees file chunks for file "large_file(1).txt" as follows:
             oneprovider-1: never synchronized
@@ -100,7 +100,7 @@ Feature: Oneprovider transfers functionality using multiple browser instances
 
     And user of browser1 clicks Files of "space1" in the sidebar
     And user of browser1 sees file browser in files tab in Oneprovider page
-    And user of browser1 double clicks on item named "dir1" in file browser
+    And user of browser1 clicks and presses enter on item named "dir1" in file browser
     And user of browser1 is idle for 10 seconds
     And user of browser1 sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
@@ -145,7 +145,7 @@ Feature: Oneprovider transfers functionality using multiple browser instances
 
   Scenario: User migrates directory with 2 files on different providers to current provider
     When user of browser1 creates directory "dir1"
-    And user of browser1 double clicks on item named "dir1" in file browser
+    And user of browser1 clicks and presses enter on item named "dir1" in file browser
     And user of browser1 uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
     And user of browser1 sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
@@ -154,7 +154,7 @@ Feature: Oneprovider transfers functionality using multiple browser instances
     # Wait to ensure synchronization between providers
     And user of browser2 opens oneprovider-2 Oneprovider file browser for "space1" space
     And user of browser2 is idle for 10 seconds
-    And user of browser2 double clicks on item named "dir1" in file browser
+    And user of browser2 clicks and presses enter on item named "dir1" in file browser
     And user of browser2 uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
     And user of browser2 sees file chunks for file "large_file(1).txt" as follows:
             oneprovider-1: never synchronized
@@ -184,7 +184,7 @@ Feature: Oneprovider transfers functionality using multiple browser instances
 
     And user of browser1 clicks Files of "space1" in the sidebar
     And user of browser1 sees file browser in files tab in Oneprovider page
-    And user of browser1 double clicks on item named "dir1" in file browser
+    And user of browser1 clicks and presses enter on item named "dir1" in file browser
     And user of browser1 sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely empty
             oneprovider-2: entirely filled

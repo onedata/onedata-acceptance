@@ -27,7 +27,8 @@ Feature: Uploading multiple files at once
                 content: 23
             dir5: 300
             dir6:
-
+            file1MiB.txt:
+              size: 1 MiB
 
   Scenario: User uploads 5 files at once
     When user of browser clicks "space1" on the spaces list in the sidebar
@@ -58,7 +59,7 @@ Feature: Uploading multiple files at once
 
     # create dir1
     And user of browser creates directory "dir1"
-    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser sees that current working directory displayed in breadcrumbs on file browser is /dir1
 
     # start uploading files in dir1 and go back to root directory
@@ -69,7 +70,7 @@ Feature: Uploading multiple files at once
     And user of browser sees that there is 1 item in file browser
 
     # go to dir and see if every file has been uploaded
-    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser sees that current working directory displayed in breadcrumbs on file browser is /dir1
     Then user of browser scrolls to the bottom of file browser and sees there are 70 files
 
@@ -109,3 +110,13 @@ Feature: Uploading multiple files at once
     # deleting file from file browser and local file system
     And user of browser removes file1GB.txt from provider's storage mount point
     And user of browser removes "/dir6/file1GB.txt" from local file system
+
+
+  Scenario: User with weak connection uploads 1 MB file
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
+
+    # upload one larger file
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser uses upload button from file browser menu bar to upload local file "file1MiB.txt" to remote current dir with slow connection
+    Then user of browser sees that there is 1 item in file browser

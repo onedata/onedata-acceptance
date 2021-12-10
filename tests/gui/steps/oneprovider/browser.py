@@ -12,15 +12,19 @@ from tests.gui.utils.generic import transform, parse_seq
 import time
 
 
-@wt(parsers.parse('user of {browser_id} double clicks on item named'
+@wt(parsers.parse('user of {browser_id} clicks and presses enter on item named'
                   ' "{item_name}" in {which_browser}'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def double_click_on_item_in_browser(selenium, browser_id, item_name, tmp_memory,
-                                    op_container,
-                                    which_browser='file browser'):
+def click_and_press_enter_on_item_in_browser(selenium, browser_id, item_name,
+                                             tmp_memory, op_container,
+                                             which_browser='file browser'):
     which_browser = transform(which_browser)
     browser = tmp_memory[browser_id][which_browser]
     driver = selenium[browser_id]
+
+    # clicking on the background of browser to ensure correct
+    # working of click_and enter
+    browser.click()
 
     # checking if file is located in file browser
     start = time.time()
@@ -29,16 +33,16 @@ def double_click_on_item_in_browser(selenium, browser_id, item_name, tmp_memory,
         if time.time() > start + WAIT_BACKEND:
             raise RuntimeError('waited too long')
 
-    double_click_with_check(driver, op_container, browser, which_browser,
-                            item_name)
+    click_and_enter_with_check(driver, op_container, browser, which_browser,
+                               item_name)
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def double_click_with_check(driver, op_container, browser, which_browser,
-                            item_name):
+def click_and_enter_with_check(driver, op_container, browser, which_browser,
+                               item_name):
     # this function does not check correctly if parent and children directory
     # have the same name
-    browser.data[item_name].double_click()
+    browser.data[item_name].click_and_enter()
     if item_name.startswith('dir'):
         for _ in range(5):
             breadcrumbs = check_if_breadcrumbs_on_share_page(driver,
@@ -48,7 +52,7 @@ def double_click_with_check(driver, op_container, browser, which_browser,
                 return
             else:
                 time.sleep(1)
-        raise RuntimeError(f'Double click has not entered the directory')
+        raise RuntimeError(f'Click and enter has not entered the directory')
 
 
 @repeat_failed(timeout=WAIT_BACKEND)

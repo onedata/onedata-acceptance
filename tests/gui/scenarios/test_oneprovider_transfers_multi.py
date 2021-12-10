@@ -34,6 +34,7 @@ from tests.gui.steps.onezone.tokens import *
 from tests.gui.steps.onezone.data_space_management import *
 from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.manage_account import *
+from tests.gui.steps.onezone.members import *
 
 from tests.gui.steps.oneprovider.common import *
 from tests.gui.steps.oneprovider.data_tab import *
@@ -62,3 +63,4 @@ def screens():
 
 
 scenarios('../features/oneprovider/transfers/transfers_multi.feature')
+scenarios('../features/onezone/space/spaces_memberships_privileges_multiprovider.feature')
