@@ -526,7 +526,7 @@ def set_privileges_in_members_subpage(selenium, browser_id, member_name,
         privileges = yaml.load(config)
         tree = get_privilege_tree(selenium, browser_id, onepanel, oz_page, where,
                                   member_type_new, member_name)
-        tree.set_privileges(privileges)
+        tree.set_privileges(selenium, browser_id, privileges)
         click_button_on_element_header_in_members(selenium, browser_id, option,
                                                   oz_page, where, member_name,
                                                   member_type, onepanel)
@@ -575,7 +575,7 @@ def set_privileges_in_members_subpage_on_modal(selenium, browser_id, config,
     driver = selenium[browser_id]
     privileges = yaml.load(config)
     tree = modals(driver).change_privileges.privilege_tree
-    tree.set_privileges(privileges)
+    tree.set_privileges(selenium, browser_id, privileges)
     modals(driver).change_privileges.save_button.click()
 
 
@@ -591,7 +591,7 @@ def assert_privileges_in_members_subpage(selenium, browser_id, member_name,
     privileges = yaml.load(config)
     tree = get_privilege_tree(selenium, browser_id, onepanel, oz_page, where,
                               member_type, member_name)
-    tree.assert_privileges(privileges)
+    tree.assert_privileges(selenium, browser_id, privileges)
     driver = selenium[browser_id]
     page = _find_members_page(onepanel, oz_page, driver, where)
     page.close_member(driver)
@@ -604,7 +604,7 @@ def assert_privileges_in_members_subpage_on_modal(selenium, browser_id, config,
     driver = selenium[browser_id]
     privileges = yaml.load(config)
     tree = modals(driver).change_privileges.privilege_tree
-    tree.assert_privileges(privileges)
+    tree.assert_privileges(selenium, browser_id, privileges)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks (?P<option>Save|Cancel) '
@@ -779,7 +779,7 @@ def assert_privilege_config_for_user(selenium, browser_id, item_name, where,
                                   list_type, onepanel)
     privilege_tree = get_privilege_tree(selenium, browser_id, onepanel, oz_page,
                                         where, list_type, name)
-    privilege_tree.assert_privileges(privileges)
+    privilege_tree.assert_privileges(selenium, browser_id, privileges)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on '

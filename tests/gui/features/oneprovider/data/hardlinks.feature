@@ -56,7 +56,7 @@ Feature: Basic files tab operations on hardlinks in file browser
 
   Scenario: User downloads hardlink of file
     When user of browser creates hardlink of "file1" file in space "space1" in file browser
-    And user of browser double clicks on item named "file1(1)" in file browser
+    And user of browser clicks and presses enter on item named "file1(1)" in file browser
     Then user of browser sees that content of downloaded file "file1(1)" is equal to: "11111"
 
 
@@ -79,7 +79,7 @@ Feature: Basic files tab operations on hardlinks in file browser
 
   Scenario: User creates hardlinks in other directories than original files
     When user of browser opens file browser for "space1" space
-    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser sees only items named ["dir2", "file2"] in file browser
 
     # original file space1/dir1/file2
@@ -87,7 +87,7 @@ Feature: Basic files tab operations on hardlinks in file browser
     And user of browser clicks "Create hard link" option in data row menu in file browser
 
     # first hardlink in space1/dir1/dir2
-    And user of browser double clicks on item named "dir2" in file browser
+    And user of browser clicks and presses enter on item named "dir2" in file browser
     And user of browser clicks "Place hard link" button from file browser menu bar
     Then user of browser sees only items named ["file2"] in file browser
     And user of browser sees hardlink status tag with "2 hard links" text for "file2" in file browser
@@ -204,7 +204,7 @@ Feature: Basic files tab operations on hardlinks in file browser
     When user of browser opens file browser for "space1" space
     And user of browser clicks on menu for "file1" file in file browser
     And user of browser clicks "Create hard link" option in data row menu in file browser
-    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser clicks "Place hard link" button from file browser menu bar
 
     # change POSIX permission of created hardlink
@@ -227,7 +227,7 @@ Feature: Basic files tab operations on hardlinks in file browser
     When user of browser opens file browser for "space1" space
     And user of browser clicks on menu for "file1" file in file browser
     And user of browser clicks "Create hard link" option in data row menu in file browser
-    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser clicks "Place hard link" button from file browser menu bar
 
     # change ACL permission of created hardlink
@@ -242,7 +242,7 @@ Feature: Basic files tab operations on hardlinks in file browser
     And user of browser clicks "Save" confirmation button in displayed modal
 
     # check permission of original file
-    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser clicks on menu for "file1" file in file browser
     And user of browser clicks "Permissions" option in data row menu in file browser
     And user of browser sees that "Edit permissions" modal has appeared

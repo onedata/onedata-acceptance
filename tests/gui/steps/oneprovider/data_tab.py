@@ -598,3 +598,4 @@ def assert_provider_in_space(selenium, browser_id, provider, hosts, oz_page):
 def click_file_browser_button(browser_id, button, tmp_memory):
     file_browser = tmp_memory[browser_id]['file_browser']
     getattr(file_browser, f'{transform(button)}_button').click()
+
