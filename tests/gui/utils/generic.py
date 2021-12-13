@@ -114,9 +114,7 @@ def find_web_elem_with_text(web_elem_root, css_sel, text, err_msg):
         if item.text.lower() == text.lower():
             return item
     else:
-        with suppress(TypeError):
-            err_msg = err_msg()
-        raise RuntimeError(err_msg)
+        raise RuntimeError(f'Css element wtih "{text}" text not found')
 
 
 def click_on_web_elem(driver, web_elem, err_msg, delay=True):
