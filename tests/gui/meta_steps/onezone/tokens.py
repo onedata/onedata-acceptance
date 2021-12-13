@@ -19,7 +19,6 @@ from tests.gui.steps.oneprovider.browser import (
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.steps.onezone.tokens import *
 from tests.gui.steps.onezone.tokens import click_option_for_token_row_menu
-from tests.mixed.steps.oneclient.data_basic import ls_on_mountpoint
 from tests.utils.bdd_utils import wt, parsers, given
 from tests.utils.utils import repeat_failed
 
@@ -597,8 +596,6 @@ def given_mount_new_oneclient_with_token(user, hosts, users, env_desc,
                                          tmp_memory):
     token = tmp_memory[user]['mailbox']['token']
     users[user].mount_client('oneclient-1', 'client1', hosts, env_desc, token)
-    # because oneclient is not working without ls on mountpoint
-    ls_on_mountpoint(users, user, 'client1')
 
 
 @given(parsers.parse('using web GUI, {user} creates token with '

@@ -24,14 +24,6 @@ from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 
 
-# because oneclient is not working without ls on mountpoint
-def ls_on_mountpoint(users, user, oneclient_host):
-    user1 = users[user]
-    client = user1.clients[oneclient_host]
-    path = client._mount_path
-    client.ls(path=path)
-
-
 def change_client_name_to_hostname(client_name):
     return client_name.replace('oneclient', 'client')
 
@@ -40,8 +32,6 @@ def change_client_name_to_hostname(client_name):
 def mount_new_oneclient_with_token(user, hosts, users, env_desc, tmp_memory):
     token = tmp_memory[user]['mailbox']['token']
     users[user].mount_client('oneclient-1', 'client1', hosts, env_desc, token)
-    # because oneclient is not working without ls on mountpoint
-    ls_on_mountpoint(users, user, 'client1')
 
 
 def mount_new_oneclient_with_token_fail(user, hosts, users, env_desc, tmp_memory,
@@ -80,11 +70,6 @@ def create_file_in_op_oneclient_with_tokens(user, hosts, users, env_desc, tmp_me
     try:
         mount_new_oneclient_result(user, hosts, users, env_desc, tmp_memory, result,
                                    client='oneclient')
-
-        # because oneclient is not working without ls on mountpoint
-
-        if users[user].clients:
-            ls_on_mountpoint(users, user, 'client1')
 
         if result == 'succeeds':
             oneclient_host = change_client_name_to_hostname(client_lower)
