@@ -92,13 +92,12 @@ Feature: Access tokens with caveats set for path or object ID tests
     And user2 sees file4 in space1/dir1/dir2 on client1
 
 
-  Scenario: Using oneclient1, user cannot see file using token with caveat set for path, created by web GUI, after owner renames file
+  Scenario: Using oneclient1, user cannot see directory using token with caveat set for path, created by web GUI, after owner renames file
     When user2 lists children of space1/dir1/dir2
     And user2 sees file2 in space1/dir1/dir2 on client1
-    And using web GUI, user1 renames item named "dir1/dir2/file2" to "dir1/dir2/file3" in "space1" in oneprovider-1
-    And user2 is idle for 15 seconds
-    Then user2 doesn't see file2 in space1/dir1/dir2 on client1
-    And user2 doesn't see file3 in space1/dir1/dir2 on client1
+    And using web GUI, user1 renames item named "dir1/dir2" to "dir1/dir3" in "space1" in oneprovider-1
+    Then user2 doesn't see dir2 in space1/dir1 on client1
+    And user2 doesn't see dir3 in space1/dir1 on client1
 
 
 
