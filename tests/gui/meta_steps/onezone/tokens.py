@@ -556,15 +556,12 @@ def create_token_with_object_id(displays, clipboard, user, selenium, oz_page,
                              users, groups, hosts, tmp_memory)
 
 
-@given(parsers.parse('using web GUI, {user} creates access token with caveats '
-                     'set for object ID for "{name}" in space '
-                     r'"{space}" in {host}'))
-def create_token_with_object_id(displays, clipboard, user, selenium, oz_page,
-                                popups, users, groups, hosts, tmp_memory,
-                                modals, name, space, op_container):
+def _copy_object_id(displays, clipboard, user, selenium, oz_page, tmp_memory,
+                    modals, name, space, op_container):
     option = 'Information'
     button = 'File ID'
     modal = 'File details'
+
     _click_menu_for_elem_somewhere_in_file_browser(selenium, user, name,
                                                    space, tmp_memory, oz_page,
                                                    op_container)
@@ -572,30 +569,31 @@ def create_token_with_object_id(displays, clipboard, user, selenium, oz_page,
                                              modals)
     click_modal_button(selenium, user, button, modal, modals)
     close_modal(selenium, user, modal, modals)
+
+    tmp_memory["object_id"] = clipboard.paste(display=displays[user])
+
+
+@given(parsers.parse('using web GUI, {user} creates access token with caveats '
+                     'set for object ID for "{name}" in space '
+                     r'"{space}" in {host}'))
+def create_token_with_object_id(displays, clipboard, user, selenium, oz_page,
+                                popups, users, groups, hosts, tmp_memory,
+                                modals, name, space, op_container):
+
     option = 'Tokens'
-    object_id = clipboard.paste(display=displays[user])
+
+    _copy_object_id(displays, clipboard, user, selenium, oz_page, tmp_memory,
+                    modals, name, space, op_container)
+
+    object_id = tmp_memory["object_id"]
     config = (f'name: access_token\ntype: access\ncaveats:\n  '
               f'object ID:\n    -  {object_id}')
+
     click_on_option_in_the_sidebar(selenium, user, option, oz_page)
     create_token_with_config(selenium, user, config, oz_page, popups,
                              users, groups, hosts, tmp_memory)
-
     click_copy_button_in_token_view(selenium, user, oz_page)
     tmp_memory[user]['token'] = clipboard.paste(display=displays[user])
-
-
-@given(parsers.parse('{sender} sends {item_type} to {receiver}'))
-def given_send_copied_item_to_other_users(sender, receiver, item_type,
-                                          tmp_memory):
-    tmp_memory[receiver]['mailbox'][item_type.lower()] = \
-        tmp_memory[sender][item_type]
-
-
-@given(parsers.parse('{user} mounts oneclient using received token'))
-def given_mount_new_oneclient_with_token(user, hosts, users, env_desc,
-                                         tmp_memory):
-    token = tmp_memory[user]['mailbox']['token']
-    users[user].mount_client('oneclient-1', 'client1', hosts, env_desc, token)
 
 
 @given(parsers.parse('using web GUI, {user} creates token with '

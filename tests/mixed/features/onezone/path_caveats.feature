@@ -1,4 +1,4 @@
-Feature: Access tokens with caveats set for path or object ID tests
+Feature: Access tokens with caveats set for path tests
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -21,9 +21,6 @@ Feature: Access tokens with caveats set for path or object ID tests
                           - file2: 11111
                         - dir3
     And oneclient mounted using token by user1
-    And initial groups configuration in "onezone" Onezone service:
-          group1:
-            owner: user1
     And opened [browser1, browser2] with [user1, user2] signed in to ["onezone", "onezone"] service
     And using web GUI, user1 creates token with following configuration:
         name: access_token
