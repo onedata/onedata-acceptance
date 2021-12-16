@@ -20,7 +20,6 @@ Feature: Access tokens with caveats set for object ID tests
                         - dir2:
                           - file2: 11111
                         - dir3
-    And oneclient mounted using token by user1
     And opened [browser1, browser2] with [user1, user2] signed in to ["onezone", "onezone"] service
     And using web GUI, user1 creates access token with caveats set for object ID for "dir1/dir2" in space "space1" in oneprovider-1
     And user1 sends token to user2
