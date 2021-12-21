@@ -67,7 +67,8 @@ def rename_item(selenium, browser_id, path, new_path, tmp_memory, res, space,
     if res == 'fails':
         assert_error_modal_with_text_appeared(selenium, browser_id, text)
     else:
-        assert_items_presence_in_browser(browser_id, new_name, tmp_memory)
+        assert_items_presence_in_browser(selenium, browser_id, new_name,
+                                         tmp_memory)
 
 
 @wt(parsers.re(r'user of (?P<browser_id>\w+) (?P<res>.*) to remove '
@@ -88,7 +89,7 @@ def remove_item_in_op_gui(selenium, browser_id, path, tmp_memory, op_container,
     if res == 'fails':
         assert_error_modal_with_text_appeared(selenium, browser_id, text)
     else:
-        assert_items_absence_in_browser(browser_id, path, tmp_memory)
+        assert_items_absence_in_browser(selenium, browser_id, path, tmp_memory)
 
 
 def remove_dir_and_parents_in_op_gui(selenium, browser_id, path, tmp_memory,
@@ -121,9 +122,11 @@ def see_items_in_op_gui(selenium, browser_id, path, subfiles, tmp_memory,
                                                      tmp_memory, op_container)
 
     if res == 'fails':
-        assert_items_absence_in_browser(browser_id, subfiles, tmp_memory)
+        assert_items_absence_in_browser(selenium, browser_id, subfiles,
+                                        tmp_memory)
     else:
-        assert_items_presence_in_browser(browser_id, subfiles, tmp_memory)
+        assert_items_presence_in_browser(selenium, browser_id, subfiles,
+                                         tmp_memory)
 
 
 @wt(parsers.re(r'user of (?P<browser_id>\w+) (?P<res>.*) to create '
@@ -160,7 +163,7 @@ def create_item_in_op_gui(selenium, browser_id, path, item_type, name,
     if res == 'fails':
         assert_error_modal_with_text_appeared(selenium, browser_id, text)
     else:
-        assert_items_presence_in_browser(browser_id, name, tmp_memory)
+        assert_items_presence_in_browser(selenium, browser_id, name, tmp_memory)
 
 
 @wt(parsers.re(r'user of (?P<browser_id>\w+) sees that the file structure '
@@ -192,7 +195,7 @@ def _check_files_tree(subtree, user, tmp_memory, cwd, selenium, op_container,
         try:
             [(item_name, item_subtree)] = item.items()
         except AttributeError:
-            assert_items_presence_in_browser(user, item, tmp_memory,
+            assert_items_presence_in_browser(selenium, user, item, tmp_memory,
                                              which_browser)
             if item.startswith('dir'):
                 click_and_press_enter_on_item_in_browser(selenium, user, item,
@@ -208,8 +211,8 @@ def _check_files_tree(subtree, user, tmp_memory, cwd, selenium, op_container,
                                                                op_container,
                                                                which_browser)
         else:
-            assert_items_presence_in_browser(user, item_name, tmp_memory,
-                                             which_browser)
+            assert_items_presence_in_browser(selenium, user, item_name,
+                                             tmp_memory, which_browser)
             click_and_press_enter_on_item_in_browser(selenium, user, item_name,
                                                      tmp_memory, op_container,
                                                      which_browser)
@@ -232,8 +235,17 @@ def _check_files_tree(subtree, user, tmp_memory, cwd, selenium, op_container,
                                                                op_container,
                                                                which_browser)
                 if which_browser == 'archive file browser':
-                    click_and_press_enter_on_archive(user, tmp_memory,
-                                                     description)
+                    try:
+                        assert_browser_in_tab_in_op(selenium, user,
+                                                    op_container, tmp_memory,
+                                                    'archive browser')
+                        click_and_press_enter_on_archive(user, tmp_memory,
+                                                         description)
+                        assert_browser_in_tab_in_op(selenium, user,
+                                                    op_container, tmp_memory,
+                                                    'archive file browser')
+                    except RuntimeError:
+                        pass
             else:
                 has_downloaded_file_content(user, item_name, str(item_subtree),
                                             tmpdir)
@@ -355,7 +367,7 @@ def successfully_upload_file_to_op_gui(path, selenium, browser_id, space,
                       space)
     upload_file_to_cwd_in_file_browser(selenium, browser_id, path, op_container,
                                        popups)
-    assert_items_presence_in_browser(browser_id, path, tmp_memory)
+    assert_items_presence_in_browser(selenium, browser_id, path, tmp_memory)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<res>.*) to upload '
@@ -373,7 +385,8 @@ def upload_file_to_op_gui(path, selenium, browser_id, space, res, filename,
     if res == 'succeeds':
         upload_file_to_cwd_in_file_browser(selenium, browser_id, filename,
                                            op_container, popups)
-        assert_items_presence_in_browser(browser_id, filename, tmp_memory)
+        assert_items_presence_in_browser(selenium, browser_id, filename,
+                                         tmp_memory)
     else:
         upload_file_to_cwd_in_file_browser_no_waiting(selenium, browser_id,
                                                       filename, op_container)

@@ -25,7 +25,7 @@ class OPLoggedIn(object):
     dataset_browser = DatasetBrowser('.dataset-browser')
     archive_file_browser = ArchiveFileBrowser('.content-space-datasets '
                                               '.dataset-archives-browser'
-                                              ' .file-browser')
+                                              ' .filesystem-browser')
     archive_browser = ArchiveBrowser('.content-space-datasets .archive-browser')
 
     def __init__(self, driver):

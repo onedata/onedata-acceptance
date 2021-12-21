@@ -52,7 +52,7 @@ Feature: Basic archives operations
         layout: plain
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser sees that item "dir4" has 1 archive
-    And user of browser clicks on archives count link for "dir4" in dataset browser
+    And user of browser clicks on dataset for "dir4" in dataset browser
     And user of browser sees archive browser in archives tab in Oneprovider page
     And user of browser clicks on menu for archive with description: "first archive" in archive browser
     And user of browser clicks "Purge archive" option in data row menu in archive browser
@@ -243,7 +243,6 @@ Feature: Basic archives operations
     And user of browser succeeds to create archive for item "dir4" in "space1" with following configuration:
         description: first archive
         layout: plain
-    And user of browser goes back to dataset browser from archive browser
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser succeeds to create archive for item "dir4" in "space1" with following configuration:
         description: second archive
@@ -321,6 +320,7 @@ Feature: Basic archives operations
          - tagmanifest-sha256.txt
          - tagmanifest-sha512.txt
     And user of browser clicks and presses enter on archive with description: "first archive" on archives list in archive browser
+    And user of browser sees archive file browser in archives tab in Oneprovider page
     And user of browser clicks on DIP view mode on archive file browser page
     And user of browser sees archive file browser in archives tab in Oneprovider page
     And user of browser sees that the file structure for archive with description: "first archive" in archive file browser is as follow:

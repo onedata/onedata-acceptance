@@ -108,8 +108,10 @@ class Modals(object):
     remove_space_from_harvester = WebItem('.modal-dialog', cls=RemoveModal)
     dropdown = DropdownSelector('.ember-basic-dropdown-content')
     migrate_dropdown = MigrateDropdownSelector('.ember-basic-dropdown-content')
-    data_row_menu = WebItem('.webui-popover-inner .file-actions.dropdown-menu',
+    data_row_menu = WebItem('.file-actions.dropdown-menu',
                             cls=DataRowMenu)
+    dataset_row_menu = WebItem('.left-bottom .file-actions.dropdown-menu',
+                               cls=DataRowMenu)
     archive_row_menu = WebItem('.left-top .webui-popover-inner '
                                '.file-actions.dropdown-menu',
                                cls=ArchiveRowMenu)
