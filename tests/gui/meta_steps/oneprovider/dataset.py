@@ -147,7 +147,8 @@ def remove_dataset_in_op_gui(selenium, browser_id, oz_page, space_name,
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory,
                                    which_browser=item_browser)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
-                                             option_in_data_row_menu, modals)
+                                             option_in_data_row_menu, modals,
+                                             which_browser=item_browser)
     click_modal_button(selenium, browser_id, button_name,
                        modal, modals)
 
@@ -214,7 +215,8 @@ def set_protection_flags_for_dataset_in_op_gui(browser_id, selenium, oz_page,
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory,
                                    which_browser=item_browser)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
-                                             option_in_data_row_menu, modals)
+                                             option_in_data_row_menu, modals,
+                                             which_browser=item_browser)
     button_name = 'Close'
     flags = [item.replace('_protection', '') for item in get_flags(option)]
     for flag in flags:
@@ -237,7 +239,8 @@ def detach_dataset_in_op_gui(selenium, browser_id, oz_page, space_name,
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory,
                                    which_browser=item_browser)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
-                                             option_in_data_row_menu, modals)
+                                             option_in_data_row_menu, modals,
+                                             which_browser=item_browser)
     click_modal_button(selenium, browser_id, button_name,
                        modal, modals)
 
@@ -251,7 +254,8 @@ def assert_dataset_detached_in_op_gui(selenium, browser_id, oz_page, item_name,
     go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
                              option_in_space, op_container, tmp_memory,
                              item_browser=item_browser)
-    click_on_state_view_mode_tab(browser_id, oz_page, selenium, state, which)
+    click_on_state_view_mode_tab(browser_id, oz_page, selenium, state, which,
+                                 tmp_memory)
     assert_browser_in_tab_in_op(selenium, browser_id, op_container,
                                 tmp_memory, item_browser=item_browser)
     assert_items_presence_in_browser(selenium, browser_id, item_name,
@@ -270,13 +274,15 @@ def reattach_dataset_in_op_gui(selenium, browser_id, oz_page, space_name,
     go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
                              option_in_space, op_container, tmp_memory,
                              item_browser=item_browser)
-    click_on_state_view_mode_tab(browser_id, oz_page, selenium, state, which)
+    click_on_state_view_mode_tab(browser_id, oz_page, selenium, state, which,
+                                 tmp_memory)
     assert_browser_in_tab_in_op(selenium, browser_id, op_container,
                                 tmp_memory, item_browser=item_browser)
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory,
                                    which_browser=item_browser)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
-                                             option_in_data_row_menu, modals)
+                                             option_in_data_row_menu, modals,
+                                             which_browser=item_browser)
     click_modal_button(selenium, browser_id, button_name,
                        modal, modals)
 

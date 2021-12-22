@@ -3,14 +3,14 @@ default: develop
 
 branches:
   # Specification of branches from which docker images list will be pulled.
-  onezone-pkg: current_branch
-  oneprovider-pkg: current_branch
-  oneclient_docker_build: current_branch
+  onezone-pkg: develop
+  oneprovider-pkg: develop
+  oneclient_docker_build: develop
   rest_cli_docker_build: develop
 
   # Specification of branches from which sources for components will be pulled.
-  oz-worker: current_branch
-  op-worker: current_branch
-  onepanel: current_branch
-  cluster-manager: current_branch
-  oneclient: current_branch
+  oz-worker: develop
+  op-worker: develop
+  onepanel: develop
+  cluster-manager: develop
+  oneclient: develop
