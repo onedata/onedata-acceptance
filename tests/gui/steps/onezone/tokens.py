@@ -10,7 +10,7 @@ __license__ = ("This software is released under the MIT license cited in "
 from tests.gui.conftest import (
     WAIT_BACKEND, WAIT_FRONTEND)
 from tests.gui.utils.generic import transform
-from tests.utils.bdd_utils import wt, parsers
+from tests.utils.bdd_utils import wt, parsers, given
 from tests.utils.utils import repeat_failed
 
 
@@ -422,3 +422,9 @@ def assert_alert_on_tokens_page(browser_id, text, oz_page, selenium):
     alert = oz_page(selenium[browser_id])['tokens'].alert
     assert text in alert, f'{text} does not match alert: {alert}'
 
+
+@given(parsers.parse('{sender} sends {item_type} to {receiver}'))
+def given_send_copied_item_to_other_user(sender, receiver, item_type,
+                                         tmp_memory):
+    tmp_memory[receiver]['mailbox'][item_type.lower()] = \
+        tmp_memory[sender][item_type]
