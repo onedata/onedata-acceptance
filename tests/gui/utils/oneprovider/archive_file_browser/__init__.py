@@ -14,7 +14,6 @@ from tests.gui.utils.core.web_elements import (WebItemsSequence, WebItem,
 from .data_row import DataRow
 from ..breadcrumbs import Breadcrumbs
 from ...core import scroll_to_css_selector
-from ...onezone.data_page import ArchiveFileHeader
 
 
 class _ArchiveFileBrowser(PageObject):
@@ -24,8 +23,6 @@ class _ArchiveFileBrowser(PageObject):
     _empty_dir_icon = WebElement('.empty-dir-image')
     _data = WebElementsSequence('.data-row.fb-table-row')
     _bottom = WebElement('.table-bottom-spacing')
-    archive_file_header = WebItem('.archive-filesystem-table-head-row',
-                                  cls=ArchiveFileHeader)
     header = WebElement('.file-browser-head-container')
 
     def __str__(self):
@@ -48,11 +45,11 @@ class _ArchiveFileBrowser(PageObject):
         self.driver.execute_script('arguments[0].scrollTo(arguments[1]);',
                                    self.web_elem, self._bottom)
 
-    def get_attribute(self):
-        attribute = self.web_elem.get_attribute('class')
-        attribute = attribute.replace(' ', '.')
-        attribute = '.' + attribute
-        return attribute
+    def get_css_selector(self):
+        css_selector = self.web_elem.get_attribute('class')
+        css_selector = css_selector.replace(' ', '.')
+        css_selector = '.' + css_selector
+        return css_selector
 
     def click_on_dip_aip_view_mode(self, driver, option):
         selector = (f'.archive-filesystem-table-head-row'
@@ -60,7 +57,7 @@ class _ArchiveFileBrowser(PageObject):
         driver.find_element_by_css_selector(selector).click()
 
     def scroll_to_number_file(self, driver, number, browser):
-        selector = (browser.get_attribute() + ' ' +
+        selector = (browser.get_css_selector() + ' ' +
                     f'.data-row:nth-of-type({number})')
         scroll_to_css_selector(driver, selector)
 

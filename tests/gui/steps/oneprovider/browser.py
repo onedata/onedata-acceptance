@@ -88,15 +88,16 @@ def _get_items_list_from_browser(selenium, browser_id, tmp_memory,
 
     browser = tmp_memory[browser_id][transform(which_browser)]
     data = {f.name for f in browser.data if f.name}
+    driver = selenium[browser_id]
 
     if len(data) != len(browser.data):
         while len(data) != len(browser.data):
-            browser.scroll_to_number_file(selenium[browser_id], len(data),
+            browser.scroll_to_number_file(driver, len(data),
                                           browser)
             data1 = {f.name for f in browser.data if f.name}
             data.update(data1)
 
-        browser.scroll_to_number_file(selenium[browser_id], 2, browser)
+        browser.scroll_to_number_file(driver, 2, browser)
     return data
 
 
@@ -185,20 +186,25 @@ def assert_not_status_tag_for_file_in_browser(browser_id, status_type,
     assert not browser.data[item_name].is_tag_visible(status_type), err_msg
 
 
+def _choose_menu(selenium, browser_id, modals, which_browser):
+    archive = 'archive browser' == which_browser
+    dataset = 'dataset browser' == which_browser
+    if archive:
+        return modals(selenium[browser_id]).archive_row_menu
+    elif dataset:
+        return modals(selenium[browser_id]).dataset_row_menu
+    else:
+        return modals(selenium[browser_id]).data_row_menu
+
+
 @wt(parsers.parse('user of {browser_id} clicks "{option}" option '
                   'in data row menu in {which_browser}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
                                              modals,
                                              which_browser='file browser'):
-    archive = 'archive browser' == which_browser
-    dataset = 'dataset browser' == which_browser
-    if archive:
-        modals(selenium[browser_id]).archive_row_menu.choose_option(option)
-    elif dataset:
-        modals(selenium[browser_id]).dataset_row_menu.choose_option(option)
-    else:
-        modals(selenium[browser_id]).data_row_menu.choose_option(option)
+    menu = _choose_menu(selenium, browser_id, modals, which_browser)
+    menu.choose_option(option)
 
 
 @wt(parsers.parse('user of {browser_id} cannot click "{option}" option '
@@ -207,17 +213,9 @@ def click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
 def assert_not_click_option_in_data_row_menu(selenium, browser_id, option,
                                              modals, which):
     err_msg = f'user can click on option {option}'
-    archive = 'archive' == which
-    dataset = 'dataset' == which
-    if archive:
-        assert not (modals(selenium[browser_id]).archive_row_menu
-                    .choose_option(option)), err_msg
-    elif dataset:
-        assert not (modals(selenium[browser_id]).dataset_row_menu
-                    .choose_option(option)), err_msg
-    else:
-        assert not (modals(selenium[browser_id]).data_row_menu
-                    .choose_option(option)), err_msg
+    which_browser = which + ' browser'
+    menu = _choose_menu(selenium, browser_id, modals, which_browser)
+    assert not menu.choose_option(option), err_msg
 
 
 @wt(parsers.parse('user of {browser_id} clicks on {state} view mode '

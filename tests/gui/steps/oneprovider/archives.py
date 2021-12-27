@@ -238,7 +238,7 @@ def assert_description_for_archive(browser_id, tmp_memory, description,
 @wt(parsers.parse('user of {browser_id} sees that page with text '
                   '"{text}" appeared in archive browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_page_with_error_appeared(browser_id, text, tmp_memory):
+def assert_page_with_text_appeared(browser_id, text, tmp_memory):
     browser = tmp_memory[browser_id]['archive_browser']
     assert browser.empty_dir_msg == text, f'page with text "{text}" not found'
 
@@ -263,10 +263,11 @@ def assert_not_archive_with_description(tmp_memory, browser_id, description):
 
 
 @wt(parsers.parse('user of {browser_id} sees that error page with text '
-                  '"{text}" appeared in {which_browser}'))
+                  '"{text}" appeared in archive browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_page_with_error_appeared(browser_id, text, tmp_memory, selenium,
-                                    op_container, which_browser):
+                                    op_container):
+    which_browser = 'archive browser'
     assert_browser_in_tab_in_op(selenium, browser_id, op_container, tmp_memory,
                                 item_browser=which_browser)
     browser = tmp_memory[browser_id][transform(which_browser)]

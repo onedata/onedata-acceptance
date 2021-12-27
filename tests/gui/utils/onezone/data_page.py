@@ -183,11 +183,6 @@ class DatasetHeader(PageObject):
     attached = Button('.select-attached-datasets-btn')
 
 
-class ArchiveFileHeader(PageObject):
-    dip = Button('.select-archive-dip-btn')
-    aip = Button('.select-archive-aip-btn')
-
-
 class ArchiveHeader(PageObject):
     back_to_dataset_page = Button('.content-back-arrow-icon')
 
