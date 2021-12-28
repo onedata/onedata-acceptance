@@ -102,7 +102,7 @@ Feature: Oneprovider POSIX privileges GUI tests
 
 	# Fail to download file
     And user of browser_user1 opens file browser for "space1" space
-    Then user of browser_user1 double clicks on item named "file1" in file browser
+    Then user of browser_user1 clicks and presses enter on item named "file1" in file browser
     And user of browser_user1 sees that error modal with text "Starting file download failed" appeared
 
 
@@ -111,7 +111,7 @@ Feature: Oneprovider POSIX privileges GUI tests
 
 	# Fail to upload file
     And user of browser_user1 opens file browser for "space1" space
-    And user of browser_user1 double clicks on item named "dir1" in file browser
+    And user of browser_user1 clicks and presses enter on item named "dir1" in file browser
     And user of browser_user1 uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir without waiting for upload to finish
     Then user of browser_user1 sees that upload file failed
 
@@ -121,7 +121,7 @@ Feature: Oneprovider POSIX privileges GUI tests
 
 	# Fail to remove file
     And user of browser_user1 opens file browser for "space1" space
-    Then user of browser_user1 double clicks on item named "dir1" in file browser
+    Then user of browser_user1 clicks and presses enter on item named "dir1" in file browser
     And user of browser_user1 clicks on menu for "file11" file in file browser
     And user of browser_user1 clicks "Delete" option in data row menu in file browser
     And user of browser_user1 clicks on "Yes" button in modal "Delete modal"
@@ -133,7 +133,7 @@ Feature: Oneprovider POSIX privileges GUI tests
 
 	# Fail to rename file
     And user of browser_user1 opens file browser for "space1" space
-    And user of browser_user1 double clicks on item named "dir1" in file browser
+    And user of browser_user1 clicks and presses enter on item named "dir1" in file browser
     And user of browser_user1 clicks on menu for "file11" file in file browser
     And user of browser_user1 clicks "Rename" option in data row menu in file browser
     And user of browser_user1 sees that "Rename" modal has appeared
@@ -147,7 +147,7 @@ Feature: Oneprovider POSIX privileges GUI tests
 
 	# Fail to remove directory
     And user of browser_user1 opens file browser for "space1" space
-    And user of browser_user1 double clicks on item named "dir1" in file browser
+    And user of browser_user1 clicks and presses enter on item named "dir1" in file browser
     And user of browser_user1 clicks on menu for "dir12" directory in file browser
     And user of browser_user1 clicks "Delete" option in data row menu in file browser
     And user of browser_user1 clicks on "Yes" button in modal "Delete modal"

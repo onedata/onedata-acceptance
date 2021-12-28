@@ -14,6 +14,7 @@ from selenium.common.exceptions import StaleElementReferenceException
 
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.utils.common.modals import Modals as modals
+from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import wt, parsers
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
@@ -181,3 +182,19 @@ def change_transfer_space(selenium, browser_id, space, op_container):
 def wait_for_transfers_page_to_load(selenium, browser_id, op_container):
     switch_to_iframe(selenium, browser_id)
     op_container(selenium[browser_id]).transfers.ongoing_map_header
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) does not see "(?P<options>Replicate '
+               'here|Migrate...|Evict)" options when clicking on provider "('
+               '?P<provider>.*)" menu button'))
+def assert_option_in_provider_popup_menu(selenium, browser_id, provider, hosts,
+                                         popups, options):
+
+    driver = selenium[browser_id]
+
+    provider_name = hosts[provider]['name']
+    modals(driver).data_distribution.providers[provider_name].menu_button()
+
+    menu = popups(driver).menu_popup_with_text.menu
+    for element in parse_seq(options):
+        assert element not in menu, f'{element} should not be in selection menu'

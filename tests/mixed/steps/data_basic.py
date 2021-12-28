@@ -8,7 +8,7 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 from tests.gui.meta_steps.oneprovider.data import *
-from tests.gui.steps.oneprovider.browser import double_click_on_item_in_browser
+from tests.gui.steps.oneprovider.browser import click_and_press_enter_on_item_in_browser
 from tests.gui.meta_steps.oneprovider.metadata import (
     assert_metadata_in_op_gui, set_metadata_in_op_gui,
     remove_all_metadata_in_op_gui, assert_such_metadata_not_exist_in_op_gui)
@@ -70,7 +70,6 @@ def assert_file_in_op_with_token(client, user, name, space, host, tmp_memory,
         see_item_in_op_rest_using_token(user, name, space, host, tmp_memory,
                                         users, hosts, result)
     elif 'oneclient' in client_lower:
-        mount_new_oneclient_with_token(user, hosts, users, env_desc, tmp_memory)
         oneclient_host = change_client_name_to_hostname(client_lower)
         see_items_in_op_oneclient(name, space, user, users, result,
                                   oneclient_host)
@@ -92,8 +91,9 @@ def create_file_in_op_with_tokens(client, user, users, space, name, hosts,
                                access_token=access_token,
                                identity_token=identity_token)
     elif 'oneclient' in client_lower:
-        create_file_in_op_oneclient_with_tokens(user, hosts, users, env_desc, tmp_memory,
-                                                result, full_path, client_lower)
+        create_file_in_op_oneclient_with_tokens(user, hosts, users, env_desc,
+                                                tmp_memory, result, full_path,
+                                                client_lower)
 
     else:
         raise NoSuchClientException('Client: {} not found'.format(client))
@@ -134,14 +134,14 @@ def create_dir_in_op(client, user, users, space, abs_path, hosts, tmp_memory,
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
-@wt(parsers.re(r'using web GUI, (?P<user>\w+) double clicks on item '
+@wt(parsers.re(r'using web GUI, (?P<user>\w+) clicks and presses enter on item '
                'named "(?P<item_name>.*)" in "(?P<space>.*)"'))
 def go_to_dir(selenium, user, item_name, tmp_memory, op_container, space,
               oz_page):
     go_to_filebrowser(selenium, user, oz_page, op_container,
                       tmp_memory, space)
-    double_click_on_item_in_browser(selenium, user, item_name, tmp_memory,
-                                    op_container)
+    click_and_press_enter_on_item_in_browser(selenium, user, item_name, tmp_memory,
+                                             op_container)
 
 
 @wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) to see '
@@ -256,6 +256,24 @@ def remove_file_in_op(client, user, name, space, host, users, hosts,
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) (?P<result>\w+) '
+               'to remove file named "(?P<name>.*)" using received token in '
+               '"(?P<space>.*)" in (?P<host>.*)'))
+def remove_file_using_token_in_op(client, user, name, space, host, users, hosts,
+                                  tmp_memory, result, env_desc):
+    full_path = '{}/{}'.format(space, name)
+    client_lower = client.lower()
+    if client_lower == 'rest':
+        remove_file_using_token_in_op_rest(user, users, host, hosts, full_path,
+                                           result, tmp_memory)
+    elif 'oneclient' in client_lower:
+        oneclient_host = change_client_name_to_hostname(client_lower)
+        remove_file_in_op_oneclient(user, full_path, oneclient_host,
+                                    users, result)
+    else:
+        raise NoSuchClientException('Client: {} not found'.format(client))
+
+
 @wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) '
                r'renames item named "(?P<old_name>.*)" to "(?P<new_name>.*)" '
                r'in "(?P<space>.*)" in (?P<host>.*)'))
@@ -295,7 +313,6 @@ def rename_item_in_op_using_token(client, user, users, space, old_name,
         move_item_in_op_rest_using_token(old_path, new_path, result, host,
                                          hosts, user, users, tmp_memory, cdmi)
     elif 'oneclient' in client_lower:
-        mount_new_oneclient_with_token(user, hosts, users, env_desc, tmp_memory)
         oneclient_host = change_client_name_to_hostname(client_lower)
         multi_file_steps.rename(user, old_path, new_path, oneclient_host,
                                 users)

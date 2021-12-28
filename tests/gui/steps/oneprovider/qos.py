@@ -306,3 +306,13 @@ def choose_operator_in_add_cond_popup(selenium, browser_id, popups, operator):
     driver = selenium[browser_id]
     popup = popups(driver).get_query_builder_not_hidden_popup()
     getattr(popup, f'{operator.lower()}_operator').click()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*?) sees "(?P<text>.*?)" in modal '
+               '"Quality of Service"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_error_label_in_qos_modal(selenium, browser_id, modals, text):
+    driver = selenium[browser_id]
+
+    assert text in modals(driver).quality_of_service.privileges_error, \
+        f'Label with "{text}" not found '

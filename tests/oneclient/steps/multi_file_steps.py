@@ -13,6 +13,7 @@ import re
 import json
 import stat as stat_lib
 import subprocess as sp
+import time
 
 import jsondiff
 
@@ -168,6 +169,7 @@ def stat_absent(user, path, files, client_node, users):
             p = os.path.join(path, f)
             try:
                 client.stat(p)
+                raise Exception(f'Failed: There is item {f}')
             except FileNotFoundError as exc_info:
                 assert p in exc_info.filename
 
@@ -183,6 +185,7 @@ def ls_absent(user, files, path, client_node, users):
     files = list_parser(files)
 
     def condition():
+        time.sleep(1)
         listed_files = client.ls(path)
         for file in files:
             assert file not in listed_files, "File {} is in files list".format(file)

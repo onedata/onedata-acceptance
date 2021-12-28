@@ -66,10 +66,10 @@ class _FileBrowser(PageObject):
     @contextmanager
     def select_files(self):
         from platform import system as get_system
-        
+
         ctrl_or_cmd_key = \
             Keys.COMMAND if get_system() == 'Darwin' else Keys.LEFT_CONTROL
-        
+
         action = ActionChains(self.driver)
 
         action.shift_down = lambda: action.key_down(Keys.LEFT_SHIFT)

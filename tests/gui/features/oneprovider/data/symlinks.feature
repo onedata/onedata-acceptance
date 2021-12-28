@@ -50,7 +50,7 @@ Feature: Basic files tab operations on symlinks in file browser
 
   Scenario: User downloads symlink of file
     When user of browser creates symlink of "file1" file in space "space1" in file browser
-    And user of browser double clicks on item named "file1(1)" in file browser
+    And user of browser clicks and presses enter on item named "file1(1)" in file browser
     Then user of browser sees that content of downloaded file "file1(1)" is equal to: "11111"
 
 
@@ -94,14 +94,14 @@ Feature: Basic files tab operations on symlinks in file browser
     And user of browser sees that symbolic link target path is "/space1/dir1" in "Symbolic link details" modal
     And user of browser closes "Symbolic link details" modal
 
-    And user of browser double clicks on item named "dir1(1)" in file browser
+    And user of browser clicks and presses enter on item named "dir1(1)" in file browser
     Then user of browser sees only items named ["dir2", "file2"] in file browser
     And user of browser sees that current working directory displayed in breadcrumbs on file browser is /dir1(1)
 
 
   Scenario: User creates symlinks in other directories than original files
     When user of browser opens file browser for "space1" space
-    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser sees only items named ["dir2", "file2"] in file browser
 
     # original file space1/dir1/file2
@@ -109,7 +109,7 @@ Feature: Basic files tab operations on symlinks in file browser
     And user of browser clicks "Create symbolic link" option in data row menu in file browser
 
     # first symlink in space1/dir1/dir2
-    And user of browser double clicks on item named "dir2" in file browser
+    And user of browser clicks and presses enter on item named "dir2" in file browser
     And user of browser clicks "Place symbolic link" button from file browser menu bar
     Then user of browser sees only items named ["file2"] in file browser
     And user of browser sees that item named "file2" is symbolic link in file browser

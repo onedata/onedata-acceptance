@@ -37,7 +37,7 @@ Feature: Onepanel features auto-cleaning
     # upload files to created directory
     And user of space_owner_browser opens oneprovider-1 Oneprovider file browser for "space2" space
     And user of space_owner_browser creates directory "dir1"
-    And user of space_owner_browser double clicks on item named "dir1" in file browser
+    And user of space_owner_browser clicks and presses enter on item named "dir1" in file browser
     And user of space_owner_browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir without waiting for upload to finish
     And user of space_owner_browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir without waiting for upload to finish
     And user of space_owner_browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
@@ -60,7 +60,7 @@ Feature: Onepanel features auto-cleaning
     # check data distribution
     And user of space_owner_browser clicks Files of "space2" in the sidebar
     And user of space_owner_browser sees file browser in files tab in Oneprovider page
-    And user of space_owner_browser double clicks on item named "dir1" in file browser
+    And user of space_owner_browser clicks and presses enter on item named "dir1" in file browser
     And user of space_owner_browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
             oneprovider-2: entirely filled
@@ -115,7 +115,7 @@ Feature: Onepanel features auto-cleaning
     # upload files to created directory
     And user of space_owner_browser opens oneprovider-1 Oneprovider file browser for "space2" space
     And user of space_owner_browser creates directory "dir1"
-    And user of space_owner_browser double clicks on item named "dir1" in file browser
+    And user of space_owner_browser clicks and presses enter on item named "dir1" in file browser
     And user of space_owner_browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir without waiting for upload to finish
     And user of space_owner_browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
     And user of space_owner_browser changes current working directory to home using breadcrumbs
@@ -137,7 +137,7 @@ Feature: Onepanel features auto-cleaning
     # check data distribution
     And user of space_owner_browser clicks Files of "space2" in the sidebar
     And user of space_owner_browser sees file browser in files tab in Oneprovider page
-    And user of space_owner_browser double clicks on item named "dir1" in file browser
+    And user of space_owner_browser clicks and presses enter on item named "dir1" in file browser
     And user of space_owner_browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
             oneprovider-2: entirely filled
@@ -189,7 +189,7 @@ Feature: Onepanel features auto-cleaning
     # upload files to created directory
     And user of space_owner_browser opens oneprovider-1 Oneprovider file browser for "space2" space
     And user of space_owner_browser creates directory "dir1"
-    And user of space_owner_browser double clicks on item named "dir1" in file browser
+    And user of space_owner_browser clicks and presses enter on item named "dir1" in file browser
     And user of space_owner_browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir without waiting for upload to finish
     And user of space_owner_browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir without waiting for upload to finish
     And user of space_owner_browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
@@ -212,7 +212,7 @@ Feature: Onepanel features auto-cleaning
     # check data distribution
     And user of space_owner_browser clicks Files of "space2" in the sidebar
     And user of space_owner_browser sees file browser in files tab in Oneprovider page
-    And user of space_owner_browser double clicks on item named "dir1" in file browser
+    And user of space_owner_browser clicks and presses enter on item named "dir1" in file browser
     And user of space_owner_browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
             oneprovider-2: entirely filled
