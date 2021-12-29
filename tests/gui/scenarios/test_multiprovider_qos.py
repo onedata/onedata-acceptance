@@ -82,9 +82,7 @@ def screens():
     return [0, 1]
 
 
-scenarios('../features/oneprovider/multiprovider/qos_single_browser.feature')
+scenarios('../features/oneprovider/multiprovider/qos_storage.feature')
 scenarios('../features/oneprovider/multiprovider/qos_provider_support.feature')
 scenarios('../features/oneprovider/multiprovider/qos_auto_cleaning.feature')
-scenarios('../features/oneprovider/multiprovider/qos_multibrowser.feature')
-scenarios('../features/oneprovider/multiprovider/qos_storage.feature')
-scenarios('../features/oneprovider/data/qos.feature')
+

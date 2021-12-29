@@ -72,4 +72,7 @@ def screens():
     return [0]
 
 
-scenarios('../features/oneprovider/data/archive.feature')
+scenarios('../features/oneprovider/data/archive_basic.feature')
+scenarios('../features/oneprovider/data/archive_bagit_and_dip.feature')
+
+

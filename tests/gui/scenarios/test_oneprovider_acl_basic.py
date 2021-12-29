@@ -58,4 +58,3 @@ def screens():
 
 
 scenarios('../features/oneprovider/data/acl/basic.feature')
-scenarios('../features/oneprovider/data/acl/subjects.feature')

@@ -1,5 +1,5 @@
 """Test suite for GUI, REST and Onepanel cooperation
- for access tokens tests
+ for access tokens path caveats tests
 """
 
 __author__ = "Katarzyna Such"
@@ -34,6 +34,7 @@ from tests.mixed.utils.common import *
 from tests.gui.conftest import *
 
 from tests.oneclient.steps.auth_steps import *
+from tests.oneclient.steps.multi_file_steps import *
 
 from tests.gui.steps.common.miscellaneous import *
 
@@ -43,4 +44,4 @@ def screens():
     return [0, 1]
 
 
-scenarios('../features/onezone/access_tokens_path_caveats.feature')
+scenarios('../features/onezone/path_caveats.feature')

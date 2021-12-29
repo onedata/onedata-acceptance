@@ -83,7 +83,5 @@ def screens():
 
 
 scenarios('../features/onezone/harvesters/harvesters.feature')
-scenarios('../features/onezone/harvesters/harvesters_memberships_privileges.feature')
-scenarios('../features/onezone/harvesters/harvesters_effective_privileges.feature')
-scenarios('../features/onezone/harvesters/harvesters_index.feature')
+
 

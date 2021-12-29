@@ -1,5 +1,5 @@
-"""This module contains tests suite for spaces management using
-Onezone GUI and single browser instance.
+"""This module contains tests suite for spaces memberships privileges
+management using Onezone GUI and single browser instance.
 """
 
 __author__ = "Bartosz Walkowicz"
@@ -72,8 +72,9 @@ def screens():
     return [0]
 
 
-scenarios('../features/onezone/space/spaces.feature')
-scenarios('../features/onezone/space/create_new_space.feature')
-scenarios('../features/onezone/space/multispace.feature')
-scenarios('../features/onezone/space/spaces_memberships.feature')
-scenarios('../features/onezone/space/spaces_effective_privileges.feature')
+scenarios('../features/onezone/space/spaces_memberships_privileges.feature')
+scenarios('../features/onezone/space/'
+          'spaces_memberships_privileges_non_owner_user.feature')
+scenarios('../features/onezone/space/'
+          'spaces_memberships_privileges_non_space_owner.feature')
+

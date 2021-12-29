@@ -1,5 +1,5 @@
 """Test suite for GUI, REST and Onepanel cooperation
- for access tokens tests
+ for access tokens id caveats tests
 """
 
 __author__ = "Katarzyna Such"
@@ -44,6 +44,4 @@ def screens():
     return [0, 1]
 
 
-scenarios('../features/onezone/access_tokens.feature')
-
-
+scenarios('../features/onezone/id_caveats.feature')

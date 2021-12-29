@@ -79,7 +79,5 @@ def screens():
 
 
 scenarios('../features/onezone/harvesters/data_discovery.feature')
-scenarios('../features/onezone/harvesters/data_discovery_querying.feature')
-scenarios('../features/onezone/harvesters/data_discovery_helpers.feature')
 scenarios('../features/onezone/harvesters/public_data_discovery.feature')
 
