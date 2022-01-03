@@ -1,7 +1,7 @@
-Feature: Local Ceph deployment process using panel of zone and provider
+Feature: Embedded Ceph deployment process using panel of zone and provider
 
 
-  Scenario: User deploys cluster with Local Ceph and checks its configuration
+  Scenario: User deploys cluster with Embedded Ceph and checks its configuration
     Given users opened [browser_oz_panel, browser_op_panel] browsers' windows
     And users of [browser_oz_panel, browser_op_panel] opened [onezone zone panel, oneprovider-1 provider panel] page
     And users of [browser_oz_panel, browser_op_panel] created admin accounts "admin:password"
@@ -70,13 +70,13 @@ Feature: Local Ceph deployment process using panel of zone and provider
 
 
     # step5 in provider panel
-    And user of browser_op_panel selects Local Ceph from storage selector in step 5 of deployment process in Onepanel
-    And user of browser_op_panel types "test_ceph" to Storage name field in Local Ceph form in step 5 of deployment process in Onepanel
+    And user of browser_op_panel selects Embedded Ceph from storage selector in step 5 of deployment process in Onepanel
+    And user of browser_op_panel types "test_ceph" to Storage name field in Embedded Ceph form in step 5 of deployment process in Onepanel
     And user of browser_op_panel clicks on Add button in add storage form in step 5 of deployment process in Onepanel
     And user of browser_op_panel sees an info notify with text matching to: .*[Ss]torage.*added.*
 
     And user of browser_op_panel expands "test_ceph" record on storages list in step 5 of deployment process in Onepanel
-    And user of browser_op_panel sees that "test_ceph" Storage type is Local Ceph in step 5 of deployment process in Onepanel
+    And user of browser_op_panel sees that "test_ceph" Storage type is Embedded Ceph in step 5 of deployment process in Onepanel
 
     And user of browser_op_panel clicks on Finish button in step 5 of deployment process in Onepanel
     And user of browser_op_panel clicks on link to go to Emergency Onepanel interface in last step of deployment process in Onepanel
@@ -105,4 +105,3 @@ Feature: Local Ceph deployment process using panel of zone and provider
     And user of browser_op_panel clicks on Pools tab on Ceph page
     And user of browser_op_panel clicks on "test_ceph" on pools list on Ceph page
     And user of browser_op_panel sees that pool usage of "test_ceph" is 0 B on Ceph page
- 

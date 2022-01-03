@@ -71,7 +71,7 @@ def click_on_record_in_clusters_menu(selenium, browser_id, oz_page, record,
 
 @wt(parsers.parse('user of {browser_id} clicks {option} of "{record}" '
                   'in the sidebar'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def click_option_of_record_in_the_sidebar(selenium, browser_id, oz_page, option):
     driver = selenium[browser_id]
     oz_page(driver)['clusters'].submenu[option].click()

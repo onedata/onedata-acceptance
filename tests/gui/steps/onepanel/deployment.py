@@ -260,6 +260,7 @@ def wt_deactivate_lets_encrypt_toggle_in_deployment_step4(selenium, browser_id,
 
 @wt(parsers.parse('user of {browser_id} selects {storage_type} from storage '
                   'selector in step 5 of deployment process in Onepanel'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def wt_select_storage_type_in_deployment_step5(selenium, browser_id,
                                                storage_type, onepanel):
     storage_selector = (onepanel(
@@ -280,7 +281,7 @@ def wt_check_skip_storage_detection_in_deployment_step5(selenium, browser_id,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) enables "(?P<option>.*?)" '
-               'in (?P<form>POSIX|Local Ceph) form in step 5 of '
+               'in (?P<form>POSIX|Embedded Ceph) form in step 5 of '
                'deployment process in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_enable_storage_option_in_deployment_step5(selenium, browser_id, option,
@@ -291,7 +292,7 @@ def wt_enable_storage_option_in_deployment_step5(selenium, browser_id, option,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) types "(?P<text>.*?)" to '
-               '(?P<input_box>.*?) field in (?P<form>POSIX|Local Ceph) form '
+               '(?P<input_box>.*?) field in (?P<form>POSIX|Embedded Ceph) form '
                'in step 5 of deployment process in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_type_text_to_in_box_in_deployment_step5(selenium, browser_id, text, form,
