@@ -1,5 +1,5 @@
-"""This module contains tests suite for basic quality of service management
-using multiple provider instances and multiple browser instance.
+"""This module contains tests generally related with quality of service,
+using multiple providers instances and multiple browser instance.
 """
 
 __author__ = "Agnieszka Warchol"

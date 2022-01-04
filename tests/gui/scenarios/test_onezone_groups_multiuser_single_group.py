@@ -2,8 +2,8 @@
 using Onezone Groups GUI and multiple browser instances.
 """
 
-__author__ = "Lukasz Niemiec"
-__copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
+__author__ = "Katarzyna Such"
+__copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 

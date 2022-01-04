@@ -1,9 +1,9 @@
-"""This module contains tests suite for storage sync charts management in
+"""This module contains tests suite of charts for storage sync management in
 Onepanel GUI and multiple browser instances.
 """
 
-__author__ = "Bartosz Walkowicz"
-__copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
+__author__ = "Katarzyna Such"
+__copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 

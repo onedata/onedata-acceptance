@@ -1,4 +1,4 @@
-Feature: Tests for basic operations on nested directories
+Feature: Tests for creating nested directories
 
   Background:
     Given initial users configuration in "onezone" Onezone service:

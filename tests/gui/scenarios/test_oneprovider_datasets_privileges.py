@@ -2,8 +2,8 @@
 Oneprovider GUI and multiple browsers instances.
 """
 
-__author__ = "Agnieszka Warchol"
-__copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
+__author__ = "Katarzyna SUch"
+__copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 

@@ -1,5 +1,4 @@
-Feature: Basic management of spaces privileges using non owner user in Onezone GUI
-
+Feature: Basic management of space management privileges for spaces in Onezone GUI
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -43,6 +42,51 @@ Feature: Basic management of spaces privileges using non owner user in Onezone G
     And opened [browser_user1, space_owner_browser] with [user1, space-owner-user] signed in to [Onezone, Onezone] service
 
 
+  Scenario: User fails to see privileges without view privileges
+    When user of space_owner_browser clicks Members of "space1" in the sidebar
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sees following privileges of "user1" user in space members subpage:
+          Space management:
+            granted: Partially
+            privilege subtypes:
+              View privileges: False
+
+    And user of browser_user1 clicks "space1" on the spaces list in the sidebar
+    And user of browser_user1 clicks Members of "space1" in the sidebar
+    And user of browser_user1 clicks "space-owner-user" user in "space1" space members users list
+    Then user of browser_user1 sees Insufficient privileges alert for "space-owner-user" user in space members subpage
+
+
+  Scenario: User fails to see space without view space privilege
+    When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
+    And user of space_owner_browser clicks Members of "space1" in the sidebar
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
+          Space management:
+            granted: Partially
+            privilege subtypes:
+              View space: False
+
+    Then user of browser_user1 sees that [Members, Shares, Harvesters] of "space1" in the sidebar are disabled
+
+
+  Scenario: User fails to rename space because of lack in privileges
+    When user of space_owner_browser clicks "space2" on the spaces list in the sidebar
+    And user of space_owner_browser clicks Members of "space2" in the sidebar
+    And user of space_owner_browser clicks "user1" user in "space2" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
+          Space management:
+            granted: Partially
+            privilege subtypes:
+              Modify space: False
+
+    And user of browser_user1 clicks on Data in the main menu
+    And user of browser_user1 clicks "space1" on the spaces list in the sidebar
+    And user of browser_user1 writes "space2" into rename space text field
+    And user of browser_user1 confirms rename the space using confirmation button
+    Then user of browser_user1 sees that error modal with text "Changing name failed" appeared
+
+
   Scenario: Non-owner-user fails to remove space because of lack in privileges
     When user of space_owner_browser clicks "space2" on the spaces list in the sidebar
     And user of space_owner_browser clicks Members of "space2" in the sidebar
@@ -58,53 +102,6 @@ Feature: Basic management of spaces privileges using non owner user in Onezone G
     And user of browser_user1 clicks on understand notice checkbox in "Remove space" modal
     And user of browser_user1 clicks on "Remove" button in "Remove space" modal
     Then user of browser_user1 sees that error modal with text "Removing the space failed" appeared
-
-
-  Scenario: Non-owner-user fails to generate group invite token because of lack in privileges
-    When user of space_owner_browser clicks "space2" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Members of "space2" in the sidebar
-    And user of space_owner_browser clicks "user1" user in "space2" space members users list
-    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
-          Group management:
-            granted: False
-
-    And user of browser_user1 clicks on Data in the main menu
-    And user of browser_user1 clicks "space2" on the spaces list in the sidebar
-    And user of browser_user1 clicks Members of "space2" in the sidebar
-    And user of browser_user1 clicks on "Invite group using token" button in groups list menu in "space2" space members view
-    Then user of browser_user1 sees This resource could not be loaded alert in "Invite using token" modal
-
-
-  Scenario: Non-owner-user generates group invite token to join space
-    When user of space_owner_browser clicks "space2" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Members of "space2" in the sidebar
-    And user of space_owner_browser clicks "user1" user in "space2" space members users list
-    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
-          Group management:
-            granted: Partially
-            privilege subtypes:
-              Add group: True
-
-    And user of browser_user1 clicks on Data in the main menu
-    And user of browser_user1 clicks "space2" on the spaces list in the sidebar
-    And user of browser_user1 clicks Members of "space2" in the sidebar
-    And user of browser_user1 clicks on "Invite group using token" button in groups list menu in "space2" space members view
-    And user of browser_user1 sees that "Invite group using token" modal has appeared
-    Then user of browser_user1 copies invitation token from modal
-
-
-  Scenario: Non-owner-user generates add support token
-    When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Members of "space1" in the sidebar
-    And user of space_owner_browser clicks "user1" user in "space1" space members users list
-    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
-          Support management:
-            granted: True
-
-    And user of browser_user1 clicks Providers of "space1" in the sidebar
-    And user of browser_user1 clicks Add support button on providers page
-    And user of browser_user1 clicks Copy button on Add support page
-    Then user of browser_user1 sees an info notify with text matching to: .*copied.*
 
 
   Scenario: Non-owner-user views space

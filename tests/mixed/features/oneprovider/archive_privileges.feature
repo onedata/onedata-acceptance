@@ -1,4 +1,4 @@
-Feature: Archives mixed tests
+Feature: Archives privileges mixed tests
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -24,7 +24,7 @@ Feature: Archives mixed tests
     And opened [browser1, browser2] with [user1, user2] signed in to ["onezone", "onezone"] service
 
 
-   Scenario Outline: User of <client_checking> sees archive after getting invite token with view archives privilege from user of <client_inviting>
+  Scenario Outline: User of <client_checking> sees archive after getting invite token with view archives privilege from user of <client_inviting>
     When using <client_inviting>, user1 creates dataset for item "dir1" in space "space1" in oneprovider-1
     And using <client_inviting>, user1 succeeds to create archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
         description: first archive

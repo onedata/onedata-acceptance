@@ -35,7 +35,7 @@ Feature: BagIt and DIP archives operations
     Then user of browser sees BagIt tag for archive with description: "first archive" on archives list in archive browser
 
 
-   Scenario: User sees DIP tag after creating archive with "Include DIP" option
+  Scenario: User sees DIP tag after creating archive with "Include DIP" option
     When user of browser creates dataset for item "dir1" in "space1"
     And user of browser succeeds to create archive for item "dir1" in "space1" with following configuration:
         description: DIP archive

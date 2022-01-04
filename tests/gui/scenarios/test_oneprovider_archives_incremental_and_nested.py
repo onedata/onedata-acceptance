@@ -1,9 +1,9 @@
-"""This module contains tests suite for basic operations on incremental
+"""This module contains tests suite for operations on incremental
 and nested archives using Oneprovider GUI and single browser instance.
 """
 
-__author__ = "Agnieszka Warchol"
-__copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
+__author__ = "Katarzyna Such"
+__copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 

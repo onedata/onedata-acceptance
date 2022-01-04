@@ -1,9 +1,8 @@
-"""This module contains tests suite for basic quality of service management
-using multiple provider instances and multiple browser instance.
+"""This module contains tests suite for basic quality of service management.
 """
 
-__author__ = "Agnieszka Warchol"
-__copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
+__author__ = "Katarzyna Such"
+__copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 

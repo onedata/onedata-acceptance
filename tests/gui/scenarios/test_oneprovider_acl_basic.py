@@ -1,4 +1,4 @@
-"""This module contains tests suite for ACL basic operations  using Oneprovider 
+"""This module contains tests suite for ACL basic operations using Oneprovider
 GUI and single browser instance.
 """
 

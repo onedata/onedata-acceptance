@@ -1,8 +1,8 @@
-"""Test suite for tests using swaggers and browser
+"""Test suite regarding storage sync using swaggers and browser
 """
 
-__author__ = "Michal Cwiertnia"
-__copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
+__author__ = "Katarzyna Such"
+__copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 

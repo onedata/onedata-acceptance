@@ -2,8 +2,8 @@
 management using Onezone GUI and single browser instance.
 """
 
-__author__ = "Bartosz Walkowicz"
-__copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
+__author__ = "Katarzyna Such"
+__copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
@@ -74,7 +74,15 @@ def screens():
 
 scenarios('../features/onezone/space/spaces_memberships_privileges.feature')
 scenarios('../features/onezone/space/'
-          'spaces_memberships_privileges_non_owner_user.feature')
+          'spaces_memberships_data_privileges.feature')
 scenarios('../features/onezone/space/'
-          'spaces_memberships_privileges_non_space_owner.feature')
+          'spaces_memberships_group_privileges.feature')
+scenarios('../features/onezone/space/spaces_memberships_qos_privileges.feature')
+scenarios('../features/onezone/space/'
+          'spaces_memberships_user_privileges.feature')
+scenarios('../features/onezone/space/'
+          'spaces_memberships_space_privileges.feature')
+scenarios('../features/onezone/space/'
+          'spaces_memberships_support_privileges.feature')
+
 

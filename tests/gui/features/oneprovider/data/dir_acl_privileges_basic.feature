@@ -1,4 +1,4 @@
-Feature: ACL directories privileges tests using single browser in Oneprovider GUI
+Feature: Basic ACL directories privileges tests using single browser in Oneprovider GUI
 
   Examples:
   | subject_type  | subject_name  |

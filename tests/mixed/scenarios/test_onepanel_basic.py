@@ -1,4 +1,4 @@
-"""Test suite for tests using swaggers and browser
+"""Test suite for space and provider management using swaggers and browser
 """
 
 __author__ = "Michal Cwiertnia"
