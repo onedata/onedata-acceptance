@@ -131,13 +131,15 @@ def wt_type_property_to_in_box_in_deployment_step(selenium, browser_id, alias,
                'in (?P<step>step 1|step 2|step 3|web cert step|'
                'Ceph configuration step|step 5|last step) of '
                'deployment process in Onepanel'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def wt_click_on_btn_in_deployment_step(selenium, browser_id, btn, step,
                                        onepanel):
     step = step.rstrip('step') if 'Ceph configuration' in step else step
     step = getattr(onepanel(selenium[browser_id]).content.deployment,
                    step.lower().replace(' ', ''))
     getattr(step, transform(btn)).click()
+    if btn == 'Add host':
+        time.sleep(20)
 
 
 @wt(parsers.parse('user of {browser_id} sees that cluster '
