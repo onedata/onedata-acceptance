@@ -34,6 +34,7 @@ from tests.mixed.utils.common import *
 from tests.gui.conftest import *
 
 from tests.oneclient.steps.auth_steps import *
+from tests.oneclient.steps.multi_file_steps import *
 
 from tests.gui.steps.common.miscellaneous import *
 
@@ -44,5 +45,7 @@ def screens():
 
 
 scenarios('../features/onezone/access_tokens.feature')
+scenarios('../features/onezone/path_caveats.feature')
+scenarios('../features/onezone/id_caveats.feature')
 scenarios('../features/onezone/identity_tokens.feature')
 scenarios('../features/onezone/invite_tokens.feature')
