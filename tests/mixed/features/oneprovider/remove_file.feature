@@ -24,8 +24,6 @@ Feature: Tests for removing file in Oneprovider
     And opened browser with user1 signed in to "onezone" service
 
 
-
-
   Scenario Outline: User removes file using <client1> and using <client2> sees that it has disappeared
     When using <client3>, user1 succeeds to create file named "file1" in "space1" in oneprovider-1
     And using <client2>, user1 succeeds to see item named "file1" in "space1" in oneprovider-1

@@ -1,5 +1,5 @@
 """This module contains tests suite for management of public shares using
-Oneprovider GUI and multiple browser instance.
+Oneprovider GUI and multiple browsers instance.
 """
 
 __author__ = "Bartosz Walkowicz"

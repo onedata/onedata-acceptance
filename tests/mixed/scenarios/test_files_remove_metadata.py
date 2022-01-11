@@ -30,5 +30,10 @@ from tests.gui.steps.common.miscellaneous import *
 from tests.gui.steps.common.url import *
 
 
+@pytest.fixture(scope='module')
+def screens():
+    return [0]
+
+
 scenarios('../features/oneprovider/files_remove_metadata.feature')
 

@@ -1,5 +1,5 @@
-"""This module contains tests suite for ACL subdirectories privileges operations
-on files using Oneprovider GUI and single browser instance.
+"""This module contains tests suite for ACL subfiles privileges operations
+using Oneprovider GUI and multiple browsers instance.
 """
 
 __author__ = "Katarzyna Such"
@@ -43,5 +43,5 @@ def screens():
     return [0, 1]
 
 
-scenarios('../features/oneprovider/data/subdir_acl_privileges_file.feature')
+scenarios('../features/oneprovider/data/subfile_acl_privileges.feature')
 

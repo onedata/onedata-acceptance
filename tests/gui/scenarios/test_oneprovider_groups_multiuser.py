@@ -1,5 +1,5 @@
 """This module contains tests suite for groups management using
-Onezone GUI and multiple browser instances.
+Onezone GUI and multiple browsers instances.
 """
 
 __author__ = "Bartosz Walkowicz"

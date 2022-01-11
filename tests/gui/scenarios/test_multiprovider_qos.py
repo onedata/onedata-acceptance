@@ -1,5 +1,5 @@
 """This module contains tests generally related with quality of service,
-using multiple providers instances and multiple browser instance.
+using multiple providers instances and multiple browsers instance.
 """
 
 __author__ = "Agnieszka Warchol"

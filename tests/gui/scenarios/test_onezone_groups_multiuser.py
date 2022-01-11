@@ -1,5 +1,5 @@
 """This module contains tests suite for basic operations using
-Onezone Groups GUI and multiple browser instances.
+Onezone Groups GUI and multiple browsers instances.
 """
 
 __author__ = "Lukasz Niemiec"

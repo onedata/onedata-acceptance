@@ -1,5 +1,5 @@
 """This module contains tests suite for harvesters memberships privileges
- management using Onezone Harvesters GUI and single browser instance.
+ management using Onezone Harvesters GUI and multiple browsers instance.
 """
 
 __author__ = "Katarzyna Such"

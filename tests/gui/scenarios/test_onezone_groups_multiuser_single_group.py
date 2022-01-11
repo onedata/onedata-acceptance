@@ -1,5 +1,5 @@
 """This module contains tests suite for operations for single group management
-using Onezone Groups GUI and multiple browser instances.
+using Onezone Groups GUI and multiple browsers instances.
 """
 
 __author__ = "Katarzyna Such"

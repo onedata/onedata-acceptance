@@ -1,5 +1,5 @@
 """This module contains tests suite for ACL privileges operations
-on directories using Oneprovider GUI and single browser instance.
+on directories using Oneprovider GUI and multiple browsers instance.
 """
 
 __author__ = "Katarzyna Such"

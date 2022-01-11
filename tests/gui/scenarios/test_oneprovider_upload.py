@@ -73,7 +73,8 @@ def screens():
     return [0]
 
 
-scenario = partial(scenario, '../features/oneprovider/data/upload_multiple_files.feature')
+scenario = partial(scenario, '../features/oneprovider/data/'
+                             'upload_multiple_files.feature')
 
 skip_if_not_chrome = mark.skipif(BROWSER != 'Chrome',
                                  reason='some behaviour like multiple file '

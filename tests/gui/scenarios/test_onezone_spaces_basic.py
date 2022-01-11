@@ -1,5 +1,5 @@
 """This module contains tests suite for spaces management using
-Onezone GUI and single browser instance.
+Onezone GUI and multiple browsers instance.
 """
 
 __author__ = "Bartosz Walkowicz"
@@ -69,7 +69,7 @@ from tests.utils.acceptance_utils import *
 
 @fixture(scope='module')
 def screens():
-    return [0]
+    return [0, 1]
 
 
 scenarios('../features/onezone/space/spaces.feature')

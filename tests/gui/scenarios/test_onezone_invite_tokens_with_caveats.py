@@ -1,5 +1,5 @@
 """This module contains tests suite for invite tokens with caveats management
-using Onezone GUI and single browser instance.
+using Onezone GUI and multiple browsers instance.
 """
 
 __author__ = "Katarzyna Such"

@@ -1,5 +1,5 @@
 """This module contains tests suite of charts for storage sync management in
-Onepanel GUI and multiple browser instances.
+Onepanel GUI and multiple browsers instances.
 """
 
 __author__ = "Katarzyna Such"

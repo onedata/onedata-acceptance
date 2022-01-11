@@ -1,7 +1,7 @@
 """Test suite for mixed tests of renaming file
 """
 
-__author__ = "Such Katarzyna"
+__author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
@@ -51,6 +51,11 @@ from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.onezone.common import *
 
 from tests.oneclient.steps.auth_steps import *
+
+
+@pytest.fixture(scope='module')
+def screens():
+    return [0]
 
 
 scenarios('../features/oneprovider/rename_file.feature')

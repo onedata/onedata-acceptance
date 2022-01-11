@@ -53,4 +53,9 @@ from tests.gui.meta_steps.onezone.common import *
 from tests.oneclient.steps.auth_steps import *
 
 
-scenarios('../features/oneprovider/nested_directories_create.feature')
+@pytest.fixture(scope='module')
+def screens():
+    return [0]
+
+
+scenarios('../features/oneprovider/create_nested_directories.feature')

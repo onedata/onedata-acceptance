@@ -1,5 +1,6 @@
-"""This module contains tests suite for basic ACL privileges operations
-on directories using Oneprovider GUI and single browser instance.
+"""This module contains tests suite for ACL privileges operations
+on on removing and creating directories using Oneprovider GUI and multiple
+browser instance.
 """
 
 __author__ = "Katarzyna Such"
@@ -44,5 +45,6 @@ def screens():
     return [0, 1]
 
 
-scenarios('../features/oneprovider/data/dir_acl_privileges_basic.feature')
+scenarios('../features/oneprovider/data/'
+          'dir_acl_privileges_remove_create.feature')
 

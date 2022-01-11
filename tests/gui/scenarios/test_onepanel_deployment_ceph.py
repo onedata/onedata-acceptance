@@ -1,5 +1,5 @@
 """This module contains tests suite for Local Ceph deployment in
-Onepanel GUI and multiple browser instances.
+Onepanel GUI and multiple browsers instances.
 """
 
 __author__ = "Natalia Organek"
