@@ -260,6 +260,7 @@ def wt_deactivate_lets_encrypt_toggle_in_deployment_step4(selenium, browser_id,
 
 @wt(parsers.parse('user of {browser_id} selects {storage_type} from storage '
                   'selector in step 5 of deployment process in Onepanel'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def wt_select_storage_type_in_deployment_step5(selenium, browser_id,
                                                storage_type, onepanel):
     storage_selector = (onepanel(
