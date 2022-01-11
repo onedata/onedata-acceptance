@@ -42,6 +42,7 @@ class _FileBrowser(PageObject):
     error_dir_msg = Label('.error-dir-text')
 
     _upload_input = WebElement('.fb-upload-trigger input')
+    header = WebElement('.file-browser-head-container')
 
     def __str__(self):
         return 'file browser in {}'.format(self.parent)
@@ -89,6 +90,10 @@ class _FileBrowser(PageObject):
         """
         with rm_css_cls(self.driver, self._upload_input, 'hidden') as elem:
             elem.send_keys(files)
+
+    def click_on_background(self):
+        ActionChains(self.driver).move_to_element_with_offset(
+            self.header, 0, 0).click().perform()
 
 
 FileBrowser = partial(WebItem, cls=_FileBrowser)

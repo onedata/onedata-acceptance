@@ -7,7 +7,7 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-
+import time
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Label, WebElement, Button
 from selenium.webdriver import ActionChains
@@ -25,6 +25,7 @@ class DataRow(PageObject, BrowserRow):
     menu_button = Button('.file-row-actions-trigger')
 
     def click_and_enter(self):
+        time.sleep(0.1)
         ActionChains(self.driver).click(self.web_elem).perform()
         self.wait_for_selected()
         ActionChains(self.driver).key_down(Keys.ENTER).perform()

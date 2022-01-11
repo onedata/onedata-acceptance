@@ -140,7 +140,7 @@ def create_directory(selenium, browser_id, name, tmp_memory,
     write_name_into_text_field_in_modal(selenium, browser_id, name,
                                         modal_name, modals)
     confirm_create_new_directory(selenium, browser_id, option, modals)
-    assert_items_presence_in_browser(browser_id, name, tmp_memory)
+    assert_items_presence_in_browser(selenium, browser_id, name, tmp_memory)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) migrates "(?P<name>.*)" from '

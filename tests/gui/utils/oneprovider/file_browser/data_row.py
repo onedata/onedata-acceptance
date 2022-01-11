@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+import time
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
@@ -99,6 +100,7 @@ class DataRow(PageObject, BrowserRow):
                           f'cannot click on "{name}" in {self}')
 
     def click_and_enter(self):
+        time.sleep(0.1)
         if self.is_any_tag_visible():
             ActionChains(self.driver).click(self.clickable_field).perform()
         else:
