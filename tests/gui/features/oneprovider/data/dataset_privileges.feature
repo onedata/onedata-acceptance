@@ -12,7 +12,6 @@ Feature: Dataset browser tests using user who is not the owner of a space
               providers:
                   - oneprovider-1:
                       storage: posix
-                      storage: posix
                       size: 1000000
               storage:
                   defaults:

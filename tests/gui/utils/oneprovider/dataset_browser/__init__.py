@@ -21,6 +21,7 @@ class _DatasetBrowser(PageObject):
     _empty_dir_icon = WebElement('.empty-dir-image')
     error_msg = Label('.error-dir-text')
     header = WebElement('.file-browser-head-container')
+    _bottom = WebElement('.table-bottom-spacing')
 
     def __str__(self):
         return f'dataset browser in {self.parent}'

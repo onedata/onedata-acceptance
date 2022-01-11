@@ -94,8 +94,8 @@ def _get_items_list_from_browser(selenium, browser_id, tmp_memory,
         while len(data) != len(browser.data):
             browser.scroll_to_number_file(driver, len(data),
                                           browser)
-            data1 = {f.name for f in browser.data if f.name}
-            data.update(data1)
+            partial_data = {f.name for f in browser.data if f.name}
+            data.update(partial_data)
 
         browser.scroll_to_number_file(driver, 2, browser)
     return data
@@ -187,11 +187,9 @@ def assert_not_status_tag_for_file_in_browser(browser_id, status_type,
 
 
 def _choose_menu(selenium, browser_id, modals, which_browser):
-    archive = 'archive browser' == which_browser
-    dataset = 'dataset browser' == which_browser
-    if archive:
+    if which_browser == 'archive browser':
         return modals(selenium[browser_id]).archive_row_menu
-    elif dataset:
+    elif  which_browser == 'dataset browser':
         return modals(selenium[browser_id]).dataset_row_menu
     else:
         return modals(selenium[browser_id]).data_row_menu

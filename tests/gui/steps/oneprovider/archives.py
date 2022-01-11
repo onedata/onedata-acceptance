@@ -27,16 +27,6 @@ def assert_number_of_archives_for_item_in_dataset_browser(browser_id, name,
     assert number == item_number, err_msg
 
 
-@wt(parsers.parse('user of {browser_id} clicks on dataset for'
-                  ' "{name}" in dataset browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_dataset(browser_id, tmp_memory, name):
-    which_browser = transform('dataset browser')
-    browser = tmp_memory[browser_id][which_browser]
-    browser.click_on_background()
-    browser.data[name].click()
-
-
 @wt(parsers.parse('user of {browser_id} writes "{text}" into description'
                   ' text field in create archive modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)

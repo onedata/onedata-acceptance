@@ -109,6 +109,14 @@ def see_protected_tag_label_in_dataset_modal(browser_id, selenium, modals,
         assert text in modals(driver).datasets.data_protected_label, error
 
 
+@wt(parsers.parse('user of {browser_id} clicks on dataset for'
+                  ' "{name}" in dataset browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_dataset(browser_id, tmp_memory, name):
+    which_browser = transform('dataset browser')
+    browser = tmp_memory[browser_id][which_browser]
+    browser.click_on_background()
+    browser.data[name].click()
 
 
 

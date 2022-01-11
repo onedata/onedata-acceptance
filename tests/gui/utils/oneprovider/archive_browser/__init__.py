@@ -24,6 +24,7 @@ class _ArchiveBrowser(PageObject):
     empty_dir_msg = Label('.empty-dir-text')
     error_msg = Label('.error-dir-text')
     header = WebElement('.file-browser-head-container')
+    _bottom = WebElement('.table-bottom-spacing')
 
     def __str__(self):
         return f'archive browser in {self.parent}'

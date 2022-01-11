@@ -13,6 +13,7 @@ from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.meta_steps.oneprovider.data import go_to_path_without_last_elem
 from tests.gui.meta_steps.oneprovider.dataset import (
     go_to_and_assert_browser, get_item_name_from_path)
+from tests.gui.steps.oneprovider.dataset import click_on_dataset
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
@@ -25,7 +26,7 @@ from tests.gui.steps.oneprovider.browser import (
     assert_not_click_option_in_data_row_menu)
 from tests.gui.steps.oneprovider.archives import (
     check_toggle_in_create_archive_modal,
-    write_description_in_create_archive_modal, click_on_dataset,
+    write_description_in_create_archive_modal,
     click_and_press_enter_on_archive, click_menu_for_archive,
     write_in_confirmation_input,
     assert_number_of_archives_for_item_in_dataset_browser,
