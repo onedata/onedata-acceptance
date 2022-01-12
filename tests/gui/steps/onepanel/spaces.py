@@ -472,7 +472,7 @@ def click_start_cleaning_now(selenium, browser_id, onepanel):
 
 @wt(parsers.parse('user of {browser_id} sees {size} released size '
                   'in cleaning report in Onepanel'))
-@repeat_failed(interval=1, timeout=90,
+@repeat_failed(interval=1, timeout=120,
                exceptions=(AssertionError, StaleElementReferenceException))
 def see_released_size_in_cleaning_report(selenium, browser_id, onepanel, size):
     driver = selenium[browser_id]
