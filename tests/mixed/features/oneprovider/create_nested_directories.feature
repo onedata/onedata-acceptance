@@ -14,7 +14,7 @@ Feature: Tests for creating nested directories
     And opened browser with user1 signed in to "onezone" service
 
 
-  Scenario Outline: User create directory structure using <client1> and using <client2> sees that it has appeared
+  Scenario Outline: User creates directory structure using <client1> and using <client2> sees that it has appeared
     When using <client1>, user1 creates directory structure in "space1" space on oneprovider-1 as follow:
             - 20B-0.txt
             - dir1:
@@ -44,7 +44,7 @@ Feature: Tests for creating nested directories
   | web GUI    | oneclient1 |
 
 
-  Scenario Outline: User create directory structure using <client1> and using <client2> sees that it has appeared v2
+  Scenario Outline: User creates directory structure using <client1> and using <client2> sees that it has appeared v2
     When using <client1>, user1 creates directory structure in "space1" space on oneprovider-1 as follow:
             - 20B-0.txt
             - dir1:

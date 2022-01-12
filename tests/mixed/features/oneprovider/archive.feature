@@ -145,7 +145,7 @@ Feature: Archives mixed tests
     Then using REST, user1 sees that preserved callback is "https://archives.org/preserved_archives" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
 
 
-   Scenario: User of REST sees new "purged" callback URL after changing it
+  Scenario: User of REST sees new "purged" callback URL after changing it
     When using web GUI, user1 creates dataset for item "dir1" in space "space1" in oneprovider-1
     And using web GUI, user1 succeeds to create archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
         description: first archive
