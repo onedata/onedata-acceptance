@@ -8,6 +8,7 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
+from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 from tests.gui.utils.generic import transform
@@ -24,14 +25,6 @@ def assert_number_of_archives_for_item_in_dataset_browser(browser_id, name,
     err_msg = (f'displayed {item_number} archives for {name} does not match'
                f' expected {number}')
     assert number == item_number, err_msg
-
-
-@wt(parsers.parse('user of {browser_id} clicks on archives count link for'
-                  ' "{name}" in dataset browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_number_in_archives(browser_id, tmp_memory, name):
-    browser = tmp_memory[browser_id]['dataset_browser']
-    browser.data[name].number_of_archives.click()
 
 
 @wt(parsers.parse('user of {browser_id} writes "{text}" into description'
@@ -90,10 +83,9 @@ def assert_archive_partial_state_status(item_status, expected_status):
 def click_and_press_enter_on_archive(browser_id, tmp_memory, description):
     browser = tmp_memory[browser_id]['archive_browser']
     archive = get_archive_with_description(browser, description)
-
     # clicking on the background of browser to ensure correct
     # working of click_and enter
-    browser.click()
+    browser.click_on_background()
     archive.click_and_enter()
 
 
@@ -236,7 +228,7 @@ def assert_description_for_archive(browser_id, tmp_memory, description,
 @wt(parsers.parse('user of {browser_id} sees that page with text '
                   '"{text}" appeared in archive browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_page_with_error_appeared(browser_id, text, tmp_memory):
+def assert_page_with_text_appeared(browser_id, text, tmp_memory):
     browser = tmp_memory[browser_id]['archive_browser']
     assert browser.empty_dir_msg == text, f'page with text "{text}" not found'
 
@@ -258,4 +250,16 @@ def assert_not_archive_with_description(tmp_memory, browser_id, description):
             raise Exception(f'Archive with description: "{description}" found')
     else:
         pass
+
+
+@wt(parsers.parse('user of {browser_id} sees that error page with text '
+                  '"{text}" appeared in archive browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_page_with_error_appeared(browser_id, text, tmp_memory, selenium,
+                                    op_container):
+    which_browser = 'archive browser'
+    assert_browser_in_tab_in_op(selenium, browser_id, op_container, tmp_memory,
+                                item_browser=which_browser)
+    browser = tmp_memory[browser_id][transform(which_browser)]
+    assert browser.error_msg == text, f'page with text "{text}" not  found'
 

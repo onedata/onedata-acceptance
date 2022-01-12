@@ -29,12 +29,15 @@ class DataRow(PageObject, BrowserRow):
     def __str__(self):
         return f'{self.name} in {str(self.parent)}'
 
-    def click_and_enter(self):
+    def click(self):
         if self.is_any_tag_visible():
             ActionChains(self.driver).click(self.clickable_field).perform()
         else:
             ActionChains(self.driver).click(self.web_elem).perform()
         self.wait_for_selected()
+
+    def click_and_enter(self):
+        self.click()
         ActionChains(self.driver).key_down(Keys.ENTER).perform()
 
     def is_tag_visible(self, name):

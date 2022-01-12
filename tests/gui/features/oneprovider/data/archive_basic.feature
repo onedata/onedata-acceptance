@@ -41,7 +41,6 @@ Feature: Basic archives operations
     Then user of browser sees archive browser in archives tab in Oneprovider page
     And user of browser sees that 1st archive in archive browser has description: "first archive"
     And user of browser sees that archive with description: "first archive" in archive browser has status: "preserved", number of files: "1 file", size: "3 B"
-    And user of browser goes back to dataset browser from archive browser
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser sees that item "dir4" has 1 archive
 
@@ -51,17 +50,15 @@ Feature: Basic archives operations
     And user of browser succeeds to create archive for item "dir4" in "space1" with following configuration:
         description: first archive
         layout: plain
-    And user of browser goes back to dataset browser from archive browser
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser sees that item "dir4" has 1 archive
-    And user of browser clicks on archives count link for "dir4" in dataset browser
+    And user of browser clicks on dataset for "dir4" in dataset browser
     And user of browser sees archive browser in archives tab in Oneprovider page
     And user of browser clicks on menu for archive with description: "first archive" in archive browser
     And user of browser clicks "Purge archive" option in data row menu in archive browser
     And user of browser writes "I understand that data of the archive will be lost" into confirmation input in Purge Archive modal
     And user of browser clicks on "Purge archive" button in modal "Purge archive"
     Then user of browser sees that page with text "NO ARCHIVES" appeared in archive browser
-    And user of browser clicks Datasets of "space1" in the sidebar
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser sees that item "dir4" has 0 archives
 

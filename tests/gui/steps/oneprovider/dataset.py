@@ -87,14 +87,6 @@ def can_not_click_protection_toggle(browser_id, selenium, modals, toggle_type,
                        f'{toggle_type}_protection_toggle').check(), err_msg
 
 
-@wt(parsers.parse('user of {browser_id} sees that error page with text '
-                  '"{text}" appeared'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_page_with_error_appeared(browser_id, text, tmp_memory):
-    browser = tmp_memory[browser_id]['dataset_browser']
-    assert browser.error_msg == text, f'page with text "{text}" not  found'
-
-
 @wt(parsers.parse('user of {browser_id} fails to click Mark this file as '
                   'dataset toggle in Datasets modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -117,6 +109,14 @@ def see_protected_tag_label_in_dataset_modal(browser_id, selenium, modals,
         assert text in modals(driver).datasets.data_protected_label, error
 
 
+@wt(parsers.parse('user of {browser_id} clicks on dataset for'
+                  ' "{name}" in dataset browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_dataset(browser_id, tmp_memory, name):
+    which_browser = transform('dataset browser')
+    browser = tmp_memory[browser_id][which_browser]
+    browser.click_on_background()
+    browser.data[name].click()
 
 
 

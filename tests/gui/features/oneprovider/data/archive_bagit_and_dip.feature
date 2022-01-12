@@ -71,6 +71,7 @@ Feature: BagIt and DIP archives operations
          - tagmanifest-sha256.txt
          - tagmanifest-sha512.txt
     And user of browser clicks and presses enter on archive with description: "first archive" on archives list in archive browser
+    And user of browser sees archive file browser in archives tab in Oneprovider page
     And user of browser clicks on DIP view mode on archive file browser page
     And user of browser sees archive file browser in archives tab in Oneprovider page
     And user of browser sees that the file structure for archive with description: "first archive" in archive file browser is as follow:

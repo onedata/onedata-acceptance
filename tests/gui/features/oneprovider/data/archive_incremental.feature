@@ -26,7 +26,7 @@ Feature: Incremental archives operations
     And user of browser logged as user1 to Onezone service
 
 
-  Scenario: User sees that files that did not change since creating last archive have 2 hardlinks tag after creating new incremental archive
+   Scenario: User sees that files that did not change since creating last archive have 2 hardlinks tag after creating new incremental archive
     When user of browser creates dataset for item "dir4" in "space1"
     And user of browser succeeds to create archive for item "dir4" in "space1" with following configuration:
         layout: plain
@@ -54,13 +54,11 @@ Feature: Incremental archives operations
     When user of browser creates dataset for item "dir4" in "space1"
     And user of browser succeeds to create archive for item "dir4" in "space1" with following configuration:
         layout: plain
-    And user of browser goes back to dataset browser from archive browser
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser succeeds to create archive for item "dir4" in "space1" with following configuration:
         layout: plain
         incremental:
             enabled: True
-    And user of browser goes back to dataset browser from archive browser
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser succeeds to create archive for item "dir4" in "space1" with following configuration:
         description: third archive
@@ -80,7 +78,6 @@ Feature: Incremental archives operations
     And user of browser succeeds to create archive for item "dir4" in "space1" with following configuration:
         description: first archive
         layout: plain
-    And user of browser goes back to dataset browser from archive browser
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser succeeds to create archive for item "dir4" in "space1" with following configuration:
         description: second archive

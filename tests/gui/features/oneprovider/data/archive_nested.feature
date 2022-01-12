@@ -56,7 +56,6 @@ Feature: Nested archives operations
     And user of browser succeeds to create archive for item "dir1" in "space1" with following configuration:
         layout: plain
         create nested archives: True
-    And user of browser goes back to dataset browser from archive browser
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser sees that item "dir1" has 1 archive
     And user of browser clicks and presses enter on item named "dir1" in dataset browser
@@ -64,7 +63,6 @@ Feature: Nested archives operations
     And user of browser succeeds to create archive for item "dir2" in "space1" with following configuration:
         layout: plain
         create nested archives: True
-    And user of browser goes back to dataset browser from archive browser
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser clicks and presses enter on item named "dir2" in dataset browser
     Then user of browser sees that item "dir3" has 2 archives
