@@ -1,12 +1,13 @@
-"""Test suite for mixed file content tests
+"""Test suite for mixed ACL two entries tests
 """
 
-__author__ = "Michal Cwiertnia"
-__copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
+__author__ = "Katarzyna Such"
+__copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-from pytest_bdd import scenario, scenarios
+
+from pytest_bdd import scenarios
 
 from tests.gui.steps.rest.env_up.users import *
 from tests.gui.steps.rest.env_up.groups import *
@@ -43,10 +44,12 @@ from tests.gui.steps.oneprovider.spaces import *
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
 from tests.gui.meta_steps.onezone import *
+from tests.gui.meta_steps.oneprovider.data import *
 
 from tests.gui.conftest import *
 
 from tests.mixed.steps.data_basic import *
+from tests.mixed.steps.data_permissions import *
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.onezone.common import *
 
@@ -58,4 +61,5 @@ def screens():
     return [0]
 
 
-scenarios('../features/oneprovider/file_content.feature')
+scenarios('../features/oneprovider/acl_two_entries.feature')
+

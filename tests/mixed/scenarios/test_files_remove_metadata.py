@@ -1,8 +1,8 @@
-"""Test suite for mixed files metadata management tests
+"""Test suite for mixed tests of removing files metadata
 """
 
-__author__ = "Michal Stanisz, Michal Cwiertnia"
-__copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
+__author__ = "Katarzyna Such"
+__copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
@@ -30,4 +30,9 @@ from tests.gui.steps.common.miscellaneous import *
 from tests.gui.steps.common.url import *
 
 
-scenarios('../features/oneprovider/files_metadata.feature')
+@pytest.fixture(scope='module')
+def screens():
+    return [0]
+
+
+scenarios('../features/oneprovider/files_remove_metadata.feature')

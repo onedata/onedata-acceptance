@@ -1,9 +1,8 @@
-"""Test suite for GUI, REST and Onepanel cooperation
- for tokens management tests
+"""Test suite for mixed tests of removing directories metadata
 """
 
-__author__ = "Natalia Organek"
-__copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
+__author__ = "Katarzyna Such"
+__copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
@@ -20,13 +19,8 @@ from tests.gui.meta_steps.oneprovider.data import *
 
 from tests.mixed.steps.data_basic import *
 from tests.mixed.steps.onepanel_basic import *
-from tests.mixed.steps.tokens_basic import *
-from tests.mixed.steps.rest.onezone.tokens import *
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.onezone.common import *
-from tests.gui.meta_steps.onezone.common import *
-
-from tests.mixed.utils.common import *
 
 from tests.gui.conftest import *
 
@@ -37,8 +31,8 @@ from tests.gui.steps.common.miscellaneous import *
 
 @pytest.fixture(scope='module')
 def screens():
-    return [0, 1]
+    return [0]
 
 
-scenarios('../features/onezone/identity_tokens.feature')
-scenarios('../features/onezone/invite_tokens.feature')
+scenarios('../features/oneprovider/directories_remove_metadata.feature')
+

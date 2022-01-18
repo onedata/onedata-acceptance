@@ -54,4 +54,9 @@ from tests.oneclient.steps.auth_steps import *
 from tests.oneclient.steps.multi_auth_steps import *
 
 
+@pytest.fixture(scope='module')
+def screens():
+    return [0]
+
+
 scenarios('../features/oneprovider/directories_multi.feature')

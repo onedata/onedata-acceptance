@@ -1,10 +1,11 @@
-"""Test suite for mixed single file tests
+"""Test suite for mixed tests of removing file
 """
 
-__author__ = "Michal Stanisz, Michal Cwiertnia"
-__copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
+__author__ = "Katarzyna Such"
+__copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
+
 
 from pytest_bdd import scenario, scenarios
 
@@ -53,4 +54,9 @@ from tests.gui.meta_steps.onezone.common import *
 from tests.oneclient.steps.auth_steps import *
 
 
-scenarios('../features/oneprovider/single_file.feature')
+@pytest.fixture(scope='module')
+def screens():
+    return [0]
+
+
+scenarios('../features/oneprovider/remove_file.feature')

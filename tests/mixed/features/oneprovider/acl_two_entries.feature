@@ -34,17 +34,6 @@ Feature: ACL basic tests
             - dir1
 
 
-  Scenario Outline: User sets ACL with one entry
-    When using <client1>, user1 sets new ACE for <item> in space "space1" with [acl:read acl, acl:change acl] privileges set for <subject_type> <subject_name> in oneprovider-1
-    Then using <client2>, user1 sees that <item> in space "space1" has [acl:read acl, acl:change acl] privileges set for <subject_type> <subject_name> in first ACL record in oneprovider-1
-
-    Examples:
-    | subject_type  | subject_name  | item  |
-    | user          | user1         | file1 |
-    | user          | user1         | dir1  |
-    | group         | group1        | file1 |
-
-
   Scenario Outline: User sets ACL with two entries
     When using <client1>, user1 sets new ACE for <item> in space "space1" with [acl:read acl, acl:change acl] privileges set for user user1 in oneprovider-1
     When using <client1>, user1 sets new ACE for <item> in space "space1" with <privileges> privileges set for <subject_type> <subject_name> in oneprovider-1

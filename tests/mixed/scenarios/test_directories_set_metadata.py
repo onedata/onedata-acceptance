@@ -1,8 +1,8 @@
-"""Test suite for mixed directories metadata management tests
+"""Test suite for mixed tests of setting directories metadata
 """
 
-__author__ = "Michal Stanisz, Michal Cwiertnia"
-__copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
+__author__ = "Katarzyna Such"
+__copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
@@ -29,5 +29,10 @@ from tests.oneclient.steps.auth_steps import *
 from tests.gui.steps.common.miscellaneous import *
 
 
-scenarios('../features/oneprovider/directories_metadata.feature')
+@pytest.fixture(scope='module')
+def screens():
+    return [0]
+
+
+scenarios('../features/oneprovider/directories_set_metadata.feature')
 

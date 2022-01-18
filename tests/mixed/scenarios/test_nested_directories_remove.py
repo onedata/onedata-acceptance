@@ -1,8 +1,8 @@
-"""Test suite for mixed file content tests
+"""Test suite for mixed tests of removing nested directory
 """
 
-__author__ = "Michal Cwiertnia"
-__copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
+__author__ = "Katarzyna Such"
+__copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
@@ -58,4 +58,4 @@ def screens():
     return [0]
 
 
-scenarios('../features/oneprovider/file_content.feature')
+scenarios('../features/oneprovider/remove_nested_directories.feature')
