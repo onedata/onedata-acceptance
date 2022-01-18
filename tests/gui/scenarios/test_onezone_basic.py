@@ -1,5 +1,5 @@
 """This module contains tests suite for basic operations using
-Onezone GUI and single browser instance.
+Onezone GUI and multiple browsers instance.
 """
 
 __author__ = "Bartosz Walkowicz, Lukasz Niemiec"

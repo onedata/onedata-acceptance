@@ -1,4 +1,4 @@
-"""This module contains tests suite for hardlinks and symlinks
+"""This module contains tests suite for hardlinks
  using Oneprovider GUI and single browser instance.
 """
 

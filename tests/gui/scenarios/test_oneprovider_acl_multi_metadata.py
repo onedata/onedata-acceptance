@@ -1,12 +1,11 @@
-"""This module contains tests suite for ACL privileges operations 
-on files using Oneprovider GUI and multiple browsers instance.
+"""This module contains tests suite for ACL privileges operations
+on files using Oneprovider GUI and multiple browsers instances.
 """
 
-__author__ = "Michal Stanisz"
-__copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
+__author__ = "Katarzyna Such"
+__copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
-
 
 from pytest import fixture
 from pytest_bdd import scenario, scenarios
@@ -44,4 +43,6 @@ def screens():
     return [0, 1]
 
 
-scenarios('../features/oneprovider/data/file_acl_privileges.feature')
+scenarios('../features/oneprovider/data/'
+          'file_acl_privileges_multi_metadata.feature')
+

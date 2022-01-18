@@ -72,23 +72,3 @@ Feature: ACL files privileges tests using single browser in Oneprovider GUI
     | fails    |  all except [acl:change acl]  |
 
 
-  Scenario Outline: Write metadata to file
-    When user of space_owner_browser sets "file1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
-    Then user of browser_user1 <result> to write "file1" file basic metadata: "attr=val" in "space1"
-
-    Examples:
-    | result   |  privileges                                         |
-    | succeeds |  [metadata:read metadata, metadata:write metadata]  |
-    | fails    |  all except [metadata:write metadata]               |
-    | succeeds |  all except [metadata:read metadata]                |
-
-
-  Scenario Outline: Read files metadata
-    When user of space_owner_browser succeeds to write "file1" file basic metadata: "attr=val" in "space1"
-    And user of space_owner_browser sets selected items ACL <privileges> privileges for <subject_type> <subject_name>
-    Then user of browser_user1 <result> to read "file1" file basic metadata: "attr=val" in "space1"
-
-    Examples:
-    | result   |  privileges                            |
-    | succeeds |  [metadata:read metadata]              |
-    | fails    |  all except [metadata:read metadata]   |
