@@ -27,17 +27,17 @@ class TestOnedataFS(FSTestCases, unittest.TestCase):
 
     def make_fs(self):
         odfs = OnedataFS(self.provider_ip, self.token, insecure=True,
-                         force_proxy_io=True, no_buffer=False).opendir(
-            '/' + self.space)
+                         force_proxy_io=True, no_buffer=False,
+                         provider_timeout=120).opendir('/' + self.space)
         testdir = ''.join(
             random.choice(string.ascii_lowercase) for _ in range(16))
         odfs.makedir(testdir)
         return odfs.opendir(testdir)
 
     def destroy_fs(self, fs):
-        time.sleep(4)
+        time.sleep(15)
         # sometimes destroying OnedataFS throws Segmentation Fault
-        # when it hadn't handled all requests  
+        # when it hadn't handled all requests
         try:
             fs.close()
         except:
