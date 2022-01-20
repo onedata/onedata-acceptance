@@ -472,7 +472,7 @@ def click_start_cleaning_now(selenium, browser_id, onepanel):
 
 @wt(parsers.parse('user of {browser_id} sees {size} released size '
                   'in cleaning report in Onepanel'))
-@repeat_failed(interval=1, timeout=120,
+@repeat_failed(interval=1, timeout=220,
                exceptions=(AssertionError, StaleElementReferenceException))
 def see_released_size_in_cleaning_report(selenium, browser_id, onepanel, size):
     driver = selenium[browser_id]
@@ -483,7 +483,7 @@ def see_released_size_in_cleaning_report(selenium, browser_id, onepanel, size):
                                  cleaning_report.released_size.text).group(1)
         if released_size == size:
             return
-    assert False, f'released size is not {size}'
+    assert False, f'released size is not {size} {released_size}'
 
 
 def toggle_in_storage_import_configuration_is_enabled(selenium, browser_id,
