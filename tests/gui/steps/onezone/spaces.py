@@ -270,7 +270,7 @@ def click_the_map_on_data_page(selenium, browser_id, oz_page, page, space_name):
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks '
                '(?P<option>Overview|Files|Shares|Transfers|Datasets|Providers'
                '|Members|Harvesters) of "(?P<space_name>.*?)" in the sidebar'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
                                                   space_name, option, oz_page):
     driver = selenium[browser_id]
