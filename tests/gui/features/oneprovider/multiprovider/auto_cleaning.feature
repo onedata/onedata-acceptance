@@ -84,7 +84,7 @@ Feature: Onepanel features auto-cleaning
     And user of browser1 confirms changing value of hard quota in auto-cleaning tab in Onepanel
 
     And user of browser1 clicks on "Start cleaning now" button in auto-cleaning tab in Onepanel
-   And user of browser1 is idle for 5 seconds
+    And user of browser1 is idle for 5 seconds
     Then user of browser1 sees 100 MiB released size in cleaning report in Onepanel
 
     # check data distribution
