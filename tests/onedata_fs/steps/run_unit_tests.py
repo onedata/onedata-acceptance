@@ -50,7 +50,7 @@ def run_tests_in_container(client, cfg, hosts, users, python_version):
                                                 CONTAINER_TEST_CFG_FILE)
     run_cmd(ROOT_USER, hosts[client]['container-id'], dump_test_cfg_cmd)
 
-    run_tests_cmd = 'python{} -m {}'.format(python_version, TEST_MODULE)
+    run_tests_cmd = 'python{} -m {} --verbose'.format(python_version, TEST_MODULE)
     run_cmd(ROOT_USER, hosts[client]['container-id'],
             'cd {} && {}'.format(CONTAINER_ONEDATA_FS_DIR, run_tests_cmd))
 
