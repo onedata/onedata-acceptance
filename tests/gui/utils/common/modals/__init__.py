@@ -16,6 +16,7 @@ from tests.gui.utils.common.common import (DropdownSelector,
                                            MigrateDropdownSelector)
 from .data_distribution import DataDistributionModal
 from .data_row_menu import DataRowMenu
+from .archive_row_menu import ArchiveRowMenu
 from .delete_modal import DeleteModal
 from .file_details import FileDetailsModal
 from .login import LoginFormModal
@@ -107,7 +108,13 @@ class Modals(object):
     remove_space_from_harvester = WebItem('.modal-dialog', cls=RemoveModal)
     dropdown = DropdownSelector('.ember-basic-dropdown-content')
     migrate_dropdown = MigrateDropdownSelector('.ember-basic-dropdown-content')
-    data_row_menu = WebItem('.file-actions.dropdown-menu', cls=DataRowMenu)
+    data_row_menu = WebItem('.file-actions.dropdown-menu',
+                            cls=DataRowMenu)
+    dataset_row_menu = WebItem('.left-bottom .file-actions.dropdown-menu',
+                               cls=DataRowMenu)
+    archive_row_menu = WebItem('.left-top .webui-popover-inner '
+                               '.file-actions.dropdown-menu',
+                               cls=ArchiveRowMenu)
     delete_modal = WebItem('.modal-dialog', cls=DeleteModal)
     rename_modal = WebItem('.modal-dialog', cls=RenameModal)
     metadata = WebItem('.modal-dialog', cls=MetadataModal)

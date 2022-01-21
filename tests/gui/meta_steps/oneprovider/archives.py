@@ -9,9 +9,11 @@ __license__ = ("This software is released under the MIT license cited in "
 
 import yaml
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
+from tests.gui.meta_steps.oneprovider.data import go_to_path_without_last_elem
 from tests.gui.meta_steps.oneprovider.dataset import (
     go_to_and_assert_browser, get_item_name_from_path)
+from tests.gui.steps.oneprovider.dataset import click_on_dataset
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
@@ -24,7 +26,7 @@ from tests.gui.steps.oneprovider.browser import (
     assert_not_click_option_in_data_row_menu)
 from tests.gui.steps.oneprovider.archives import (
     check_toggle_in_create_archive_modal,
-    write_description_in_create_archive_modal, click_on_number_in_archives,
+    write_description_in_create_archive_modal,
     click_and_press_enter_on_archive, click_menu_for_archive,
     write_in_confirmation_input,
     assert_number_of_archives_for_item_in_dataset_browser,
@@ -84,17 +86,15 @@ def _create_archive(browser_id, selenium, config, item_name, space_name,
                                     tmp_memory, DATASET_BROWSER)
 
     if '/' in item_name:
-        item_name = get_item_name_from_path(selenium, browser_id, space_name,
-                                            oz_page, op_container, tmp_memory,
-                                            item_name, OPTION_IN_SPACE,
-                                            DATASET_BROWSER)
-
+        go_to_path_without_last_elem(selenium, browser_id, tmp_memory,
+                                     item_name, op_container, DATASET_BROWSER)
+        item_name = item_name.split('/')[-1]
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory,
                                    DATASET_BROWSER)
     if option == 'succeeds':
         click_option_in_data_row_menu_in_browser(selenium, browser_id,
                                                  option_in_data_row_menu,
-                                                 modals)
+                                                 modals, DATASET_BROWSER)
         data = yaml.load(config)
 
         description = data.get('description', False)
@@ -129,11 +129,13 @@ def _create_archive(browser_id, selenium, config, item_name, space_name,
                                           client, tmp_memory, modals, clipboard,
                                           displays, description)
     elif option == 'fails':
+        which = 'dataset'
         assert_not_click_option_in_data_row_menu(selenium, browser_id,
                                                  option_in_data_row_menu,
-                                                 modals)
+                                                 modals, which)
 
 
+@repeat_failed(timeout=WAIT_BACKEND)
 def copy_archive_id_to_tmp_memory(selenium, browser_id, op_container, client,
                                   tmp_memory, modals, clipboard, displays,
                                   description):
@@ -143,7 +145,8 @@ def copy_archive_id_to_tmp_memory(selenium, browser_id, op_container, client,
                                     tmp_memory, ARCHIVE_BROWSER)
         click_menu_for_archive(browser_id, tmp_memory, description)
         click_option_in_data_row_menu_in_browser(selenium, browser_id,
-                                                 option_in_menu, modals)
+                                                 option_in_menu, modals,
+                                                 ARCHIVE_BROWSER)
         tmp_memory[description] = clipboard.paste(
             display=displays[browser_id])
 
@@ -161,14 +164,15 @@ def assert_archive_in_op_gui(browser_id, selenium, item_name, space_name,
                                             DATASET_BROWSER)
 
     if option == 'sees':
-        click_on_number_in_archives(browser_id, tmp_memory, item_name)
+        click_on_dataset(browser_id, tmp_memory, item_name)
         assert_browser_in_tab_in_op(selenium, browser_id, op_container,
                                     tmp_memory, item_browser=ARCHIVE_BROWSER)
         click_and_press_enter_on_archive(browser_id, tmp_memory, description)
         assert_browser_in_tab_in_op(selenium, browser_id, op_container,
                                     tmp_memory,
                                     item_browser=ARCHIVE_FILE_BROWSER)
-        assert_items_presence_in_browser(browser_id, item_name, tmp_memory,
+        assert_items_presence_in_browser(selenium, browser_id, item_name,
+                                         tmp_memory,
                                          which_browser=ARCHIVE_FILE_BROWSER)
     else:
         try:
@@ -178,7 +182,7 @@ def assert_archive_in_op_gui(browser_id, selenium, item_name, space_name,
                                                                   number,
                                                                   tmp_memory)
         except AssertionError:
-            click_on_number_in_archives(browser_id, tmp_memory, item_name)
+            click_on_dataset(browser_id, tmp_memory, item_name)
             assert_browser_in_tab_in_op(selenium, browser_id, op_container,
                                         tmp_memory,
                                         item_browser=ARCHIVE_BROWSER)
@@ -195,21 +199,23 @@ def remove_archive_in_op_gui(browser_id, selenium, item_name, space_name,
     go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
                              OPTION_IN_SPACE, op_container, tmp_memory,
                              item_browser=DATASET_BROWSER)
-    click_on_number_in_archives(browser_id, tmp_memory, item_name)
+    click_on_dataset(browser_id, tmp_memory, item_name)
     assert_browser_in_tab_in_op(selenium, browser_id, op_container,
                                 tmp_memory, item_browser=ARCHIVE_BROWSER)
     click_menu_for_archive(browser_id, tmp_memory, description)
 
     if option == 'succeeds':
         click_option_in_data_row_menu_in_browser(selenium, browser_id,
-                                                 option_in_menu, modals)
+                                                 option_in_menu, modals,
+                                                 which_browser=ARCHIVE_BROWSER)
         write_in_confirmation_input(browser_id, modals, text, selenium)
         click_modal_button(selenium, browser_id, button_name,
                            option_in_menu, modals)
     elif option == 'fails':
+        which = 'archive'
         assert_not_click_option_in_data_row_menu(selenium, browser_id,
                                                  button_name,
-                                                 modals)
+                                                 modals, which)
 
 
 def assert_archive_with_option_in_op_gui(browser_id, selenium, oz_page,
@@ -219,7 +225,7 @@ def assert_archive_with_option_in_op_gui(browser_id, selenium, oz_page,
     go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
                              OPTION_IN_SPACE, op_container, tmp_memory,
                              item_browser=DATASET_BROWSER)
-    click_on_number_in_archives(browser_id, tmp_memory, item_name)
+    click_on_dataset(browser_id, tmp_memory, item_name)
     assert_browser_in_tab_in_op(selenium, browser_id, op_container,
                                 tmp_memory, item_browser=ARCHIVE_BROWSER)
     assert_tag_for_archive_in_archive_browser(browser_id, tag_type, tmp_memory,
@@ -248,7 +254,7 @@ def assert_base_archive_for_archive_in_op_gui(browser_id, selenium, item_name,
     go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
                              OPTION_IN_SPACE, op_container, tmp_memory,
                              item_browser=DATASET_BROWSER)
-    click_on_number_in_archives(browser_id, tmp_memory, item_name)
+    click_on_dataset(browser_id, tmp_memory, item_name)
     assert_browser_in_tab_in_op(selenium, browser_id, op_container,
                                 tmp_memory, item_browser=ARCHIVE_BROWSER)
     browser = tmp_memory[browser_id]['archive_browser']
