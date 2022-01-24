@@ -77,12 +77,8 @@ scenarios('../features/onezone/space/'
           'spaces_memberships_data_privileges.feature')
 scenarios('../features/onezone/space/'
           'spaces_memberships_group_privileges.feature')
-scenarios('../features/onezone/space/spaces_memberships_qos_privileges.feature')
 scenarios('../features/onezone/space/'
           'spaces_memberships_user_privileges.feature')
-scenarios('../features/onezone/space/'
-          'spaces_memberships_space_privileges.feature')
-scenarios('../features/onezone/space/'
-          'spaces_memberships_support_privileges.feature')
+
 
 

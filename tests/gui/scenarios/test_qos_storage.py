@@ -1,9 +1,9 @@
-"""This module contains tests generally related with quality of service,
-using multiple providers instances and multiple browsers instance.
+"""This module contains tests suite for basic quality of service storage
+ management using one provider instances and multiple browser instance.
 """
 
-__author__ = "Agnieszka Warchol"
-__copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
+__author__ = "Katarzyna Such"
+__copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
@@ -55,7 +55,6 @@ from tests.gui.steps.oneprovider.spaces import *
 from tests.gui.steps.oneprovider.transfers import *
 from tests.gui.steps.oneprovider.uploads import *
 from tests.gui.steps.oneprovider.qos import *
-from tests.gui.steps.oneprovider.browser import *
 
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
@@ -82,6 +81,4 @@ def screens():
     return [0, 1]
 
 
-scenarios('../features/oneprovider/multiprovider/qos_provider_support.feature')
-scenarios('../features/oneprovider/multiprovider/qos_auto_cleaning.feature')
-
+scenarios('../features/oneprovider/data/qos_storage_oneprovider.feature')

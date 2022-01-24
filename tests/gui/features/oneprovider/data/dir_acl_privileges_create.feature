@@ -1,4 +1,4 @@
-Feature: ACL directories privileges tests on removing and creating directories using single browser in Oneprovider GUI
+Feature: ACL directories privileges tests on creating directories using single browser in Oneprovider GUI
 
   Examples:
   | subject_type  | subject_name  |
@@ -43,14 +43,3 @@ Feature: ACL directories privileges tests on removing and creating directories u
     | fails    |  all except [data:traverse directory]                              |
 
 
-  Scenario Outline: Remove empty directory
-    When user of space_owner_browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
-    Then user of browser_user1 <result> to remove "dir1" in "space1"
-
-    Examples:
-    | result   |  privileges                                                                       |
-    | succeeds |  [general:delete, data:delete child, data:list files, data:traverse directory]    |
-    | fails    |  all except [general:delete]                                                      |
-    | fails    |  all except [data:delete child]                                                   |
-    | fails    |  all except [data:list files]                                                     |
-    | fails    |  all except [data:traverse directory]                                             |
