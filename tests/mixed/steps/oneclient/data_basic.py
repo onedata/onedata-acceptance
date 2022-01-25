@@ -20,7 +20,7 @@ from tests.mixed.utils.data import (
 from tests.oneclient.steps import (
     multi_dir_steps, multi_reg_file_steps, multi_file_steps)
 from tests.utils.acceptance_utils import failure
-from tests.utils.bdd_utils import wt, parsers
+from tests.utils.bdd_utils import wt, parsers, given
 from tests.utils.client_utils import mount_users
 from tests.utils.utils import repeat_failed
 
@@ -246,3 +246,22 @@ def remove_file_in_op_oneclient(user, path, host, users, res):
         multi_file_steps.delete_file_fail(user, path, host, users)
     else:
         multi_file_steps.delete_file(user, path, host, users)
+
+
+@wt(parsers.re(r'(?P<user>\w+) lists children of (?P<name>.*)'))
+def list_children_in_op_oneclient(name, user, users):
+    user1 = users[user]
+    client = user1.clients['client1']
+    path = client._mount_path + '/' + name
+    client.ls(path=path)
+
+
+@given(parsers.parse('{user} mounts oneclient using received token'))
+def given_mount_new_oneclient_with_token(user, hosts, users, env_desc,
+                                         tmp_memory, request, clients):
+    path = f'/home/{user}/onedata'
+    mount_new_oneclient_with_token(user, path, request, hosts, users,
+                                   clients, env_desc, tmp_memory)
+
+
+

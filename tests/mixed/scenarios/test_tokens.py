@@ -24,7 +24,7 @@ from tests.mixed.steps.tokens_basic import *
 from tests.mixed.steps.rest.onezone.tokens import *
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.onezone.common import *
-from tests.gui.meta_steps.onezone.common import *
+from tests.gui.meta_steps.onezone.tokens import *
 
 from tests.mixed.utils.common import *
 
@@ -38,3 +38,4 @@ from tests.gui.steps.common.miscellaneous import *
 scenarios('../features/onezone/access_tokens.feature')
 scenarios('../features/onezone/identity_tokens.feature')
 scenarios('../features/onezone/invite_tokens.feature')
+scenarios('../features/onezone/path_caveats.feature')

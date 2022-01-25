@@ -16,6 +16,9 @@ from tests.utils.rest_utils import (http_post, get_zone_rest_path,
                                     http_get)
 
 
+CORRECT_TOKEN = 'token'
+
+
 class User:
     def __init__(self, username, password=None, token=None, id=None):
         self.username = username
