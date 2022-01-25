@@ -185,7 +185,7 @@ Feature: Management of invite tokens with caveats in Onezone GUI
 
     And user of browser1 removes all tokens
 
-    Scenario: Provider succeeds to support space with invite token with consumer caveat set for them
+  Scenario: Provider succeeds to support space with invite token with consumer caveat set for them
     # unused_space is used only to introduce "oneprovider-1" for use of user1
     # thanks to this "oneprovider-1" is listed in consumer caveats popup
     Given additional spaces configuration in "onezone" Onezone service:
