@@ -212,7 +212,7 @@ Feature: Management of invite tokens with consumer caveats in Onezone GUI
           unit: GiB
 
 
-   Scenario: Provider succeeds to support space using invite token with consumer caveat set for Any Oneprovider
+  Scenario: Provider succeeds to support space using invite token with consumer caveat set for Any Oneprovider
     # unused_space is used only to introduce "oneprovider-1" for use of user1
     # thanks to this "oneprovider-1" is listed in consumer caveats popup
     Given additional spaces configuration in "onezone" Onezone service:

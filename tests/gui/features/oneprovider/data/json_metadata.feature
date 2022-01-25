@@ -36,7 +36,7 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
     Then user of browser sees metadata status tag for "<item>" in file browser
     And user of browser opens "<modal>" metadata modal for "<item>"
     And user of browser clicks on JSON navigation tab in metadata modal
-    Then user of browser sees that JSON textarea in metadata modal contains '{"id": 1}'
+    And user of browser sees that JSON textarea in metadata modal contains '{"id": 1}'
 
     Examples:
     | modal              | item  |
@@ -59,7 +59,7 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
 
     Then user of browser does not see metadata status tag for "<item>" in file browser
     And user of browser opens metadata modal on JSON tab for "<item>"
-    Then user of browser sees that JSON textarea in metadata modal is empty
+    And user of browser sees that JSON textarea in metadata modal is empty
 
     Examples:
     | item  |

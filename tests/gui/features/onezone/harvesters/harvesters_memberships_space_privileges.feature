@@ -1,4 +1,4 @@
-Feature: Basic management of harvester memberships privileges with groups in Onezone GUI
+Feature: Basic management of harvester memberships privileges with spaces in Onezone GUI
 
 
   Background:

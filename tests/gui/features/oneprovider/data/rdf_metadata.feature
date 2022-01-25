@@ -24,7 +24,7 @@ Feature: Basic data tab operations on directory RDF metadata in file browser
     And user of browser logged as space-owner-user to Onezone service
 
 
-   Scenario Outline: Add valid metadata in XML format
+  Scenario Outline: Add valid metadata in XML format
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Data of "space1" in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
@@ -36,10 +36,10 @@ Feature: Basic data tab operations on directory RDF metadata in file browser
     Then user of browser sees metadata status tag for "<item>" in file browser
     And user of browser opens "<modal>" metadata modal for "<item>"
     And user of browser clicks on RDF navigation tab in metadata modal
-    Then user of browser sees that RDF textarea in metadata modal contains '<content>'
+    And user of browser sees that RDF textarea in metadata modal contains '<content>'
 
     Examples:
-    | modal              | item  | content |
+    | modal              | item  | content                                                                     |
     | File metadata      | file1 | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML> |
     | Directory metadata | dir1  | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML> |
 
@@ -59,10 +59,10 @@ Feature: Basic data tab operations on directory RDF metadata in file browser
 
     Then user of browser does not see metadata status tag for "<item>" in file browser
     And user of browser opens metadata modal on RDF tab for "<item>" directory
-    Then user of browser sees that RDF textarea in metadata modal is empty
+    And user of browser sees that RDF textarea in metadata modal is empty
 
     Examples:
-    | item  | content |
+    | item  | content                                                                     |
     | file1 | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML> |
     | dir1  | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML> |
 
@@ -80,6 +80,6 @@ Feature: Basic data tab operations on directory RDF metadata in file browser
     Then user of browser sees that RDF textarea in metadata modal is empty
 
     Examples:
-    | item  | content |
+    | item  | content                                                                     |
     | file1 | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML> |
     | dir1  | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML> |

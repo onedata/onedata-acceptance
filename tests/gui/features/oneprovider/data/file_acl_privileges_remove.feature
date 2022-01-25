@@ -1,4 +1,4 @@
-Feature: ACL files privileges tests of changing and removing file using single browser in Oneprovider GUI
+Feature: ACL files privileges tests of changing and removing file using multiple browsers in Oneprovider GUI
 
   Examples:
   | subject_type  | subject_name  |

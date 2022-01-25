@@ -1,4 +1,4 @@
-Feature: Management of tokens basic features in Onezone GUI
+Feature: Deleting and revoking tokens tests in Onezone GUI
 
 
   Background:

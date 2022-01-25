@@ -1,6 +1,5 @@
 Feature: Basic files tab operations on directory metadata in file browser
 
-
   Background:
     Given initial users configuration in "onezone" Onezone service:
             - space-owner-user
@@ -22,6 +21,7 @@ Feature: Basic files tab operations on directory metadata in file browser
     And user opened browser window
     And user of browser opened onezone page
     And user of browser logged as space-owner-user to Onezone service
+
 
   Scenario Outline: Open metadata modal and check absence of any metadata
     When user of browser clicks "space1" on the spaces list in the sidebar
