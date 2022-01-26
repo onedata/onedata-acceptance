@@ -66,7 +66,7 @@ class OZLoggedIn(object):
                     # open page
                     if 'active' not in panel.get_attribute('class'):
                         panel.click()
-                    # collapse side panel
+                        # collapse side panel
                         ActionChains(self.web_elem).move_to_element(
                             self.web_elem.find_element_by_css_selector(
                                 '.row-heading .col-title')).perform()

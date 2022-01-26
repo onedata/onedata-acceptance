@@ -134,12 +134,20 @@ def wt_type_property_to_in_box_in_deployment_step(selenium, browser_id, alias,
 @repeat_failed(timeout=WAIT_BACKEND)
 def wt_click_on_btn_in_deployment_step(selenium, browser_id, btn, step,
                                        onepanel):
+    driver = selenium[browser_id]
     step = step.rstrip('step') if 'Ceph configuration' in step else step
-    step = getattr(onepanel(selenium[browser_id]).content.deployment,
+    step = getattr(onepanel(driver).content.deployment,
                    step.lower().replace(' ', ''))
     getattr(step, transform(btn)).click()
     if btn == 'Add host':
-        time.sleep(20)
+
+        for _ in range(10):
+            selector = driver.find_elements_by_css_selector(
+                '.cluster-host-table .cluster-host-table-row')
+            if len(selector) < 2:
+                time.sleep(1)
+            else:
+                break
 
 
 @wt(parsers.parse('user of {browser_id} sees that cluster '
