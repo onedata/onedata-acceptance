@@ -175,7 +175,7 @@ Feature: Access tokens tests
     And user1 sends token to user2
 
     Then user2 creates group "group4" using REST using received token in "onezone" Onezone service
-    And using web GUI, user1 sees that group named "group1" has appeared in "onezone" Onezone service
+    And using web GUI, user1 sees that group named "group4" has appeared in "onezone" Onezone service
 
 
   Scenario Outline: Using <client1>, user cannot create file after getting token with caveat set only for onezone service, created by web GUI
