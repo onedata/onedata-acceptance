@@ -200,7 +200,7 @@ def wt_click_yes_in_warning_modal_in_dns_setup_step(selenium, browser_id,
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on "Setup IP addresses" '
                'button in deployment setup IP step'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def wt_click_setup_ip_in_deployment_setup_ip(selenium, browser_id, onepanel):
     (onepanel(selenium[
                   browser_id]).content.deployment.setup_ip.setup_ip_addresses
