@@ -1,4 +1,4 @@
-Feature: Oneprovider transfers functionality using multiple browser instances
+Feature: Oneprovider transfers functionality using multiple browsers instances
 
   Background:
     Given initial users configuration in "onezone" Onezone service:

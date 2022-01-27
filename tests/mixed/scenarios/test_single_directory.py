@@ -53,4 +53,9 @@ from tests.gui.meta_steps.onezone.common import *
 from tests.oneclient.steps.auth_steps import *
 
 
+@pytest.fixture(scope='module')
+def screens():
+    return [0]
+
+
 scenarios('../features/oneprovider/single_directory.feature')

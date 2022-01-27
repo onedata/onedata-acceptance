@@ -76,8 +76,8 @@ from tests.mixed.steps.space_basic import *
 
 @fixture(scope='module')
 def screens():
-    return [0, 1]
+    return [0]
 
 
 scenarios('../features/onezone/tokens_basic.feature')
-scenarios('../features/onezone/invite_tokens.feature')
+

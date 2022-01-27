@@ -59,4 +59,6 @@ def screens():
     return [0]
 
 
-scenarios('../features/oneprovider/data/metadata.feature')
+scenarios('../features/oneprovider/data/basic_metadata.feature')
+scenarios('../features/oneprovider/data/json_metadata.feature')
+scenarios('../features/oneprovider/data/rdf_metadata.feature')

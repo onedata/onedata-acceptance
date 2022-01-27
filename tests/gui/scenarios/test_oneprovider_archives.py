@@ -1,5 +1,5 @@
-"""This module contains tests suite for basic operations on archives using
-Oneprovider GUI and single browser instance.
+"""This module contains tests suite for operations on BagIt, plain and DIP
+archives using Oneprovider GUI and single browser instance.
 """
 
 __author__ = "Agnieszka Warchol"
@@ -72,4 +72,7 @@ def screens():
     return [0]
 
 
-scenarios('../features/oneprovider/data/archive.feature')
+scenarios('../features/oneprovider/data/archive_basic.feature')
+scenarios('../features/oneprovider/data/archive_bagit_and_dip.feature')
+
+

@@ -79,11 +79,9 @@ from tests.utils.acceptance_utils import *
 
 @fixture(scope='module')
 def screens():
-    return [0, 1]
+    return [0]
 
 
 scenarios('../features/onezone/harvesters/harvesters.feature')
-scenarios('../features/onezone/harvesters/harvesters_memberships_privileges.feature')
-scenarios('../features/onezone/harvesters/harvesters_effective_privileges.feature')
-scenarios('../features/onezone/harvesters/harvesters_index.feature')
+
 
