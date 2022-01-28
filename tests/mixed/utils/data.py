@@ -138,7 +138,7 @@ def get_acl_metadata(curr_acl, priv, item_type, groups, name, users, path):
         name_id = groups[name]
     else:
         aceflags = '0x0'
-        name_id = users[name].id
+        name_id = users[name].user_id
     cdmi_item_type = get_item_type(path)
     ace['identifier'] = '{}#{}'.format(name, name_id)
     ace['acetype'] = acetype

@@ -20,7 +20,7 @@ Feature: Tests for basic operations on single file in Oneprovider
                 - oneprovider-1:
                     storage: posix
                     size: 1000000
-    And oneclient mounted in /home/user1/onedata using token by user1
+    And oneclient mounted using token by user1
     And opened browser with user1 signed in to "onezone" service
 
 
