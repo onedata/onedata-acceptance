@@ -1,5 +1,5 @@
 """This module contains tests suite for basic operations in
-Onepanel GUI and multiple browser instances.
+Onepanel GUI and multiple browsers instances.
 """
 
 __author__ = "Bartosz Walkowicz"

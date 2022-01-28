@@ -1,5 +1,5 @@
 """This module contains tests suite for storage sync management in
-Onepanel GUI and multiple browser instances.
+Onepanel GUI and multiple browsers instances.
 """
 
 __author__ = "Bartosz Walkowicz"
@@ -68,5 +68,4 @@ def screens():
     return [0, 1]
 
 
-scenarios('../features/onepanel/storage_sync_charts.feature')
 scenarios('../features/onepanel/storage_sync.feature')

@@ -1,5 +1,5 @@
 """This module contains tests suite for basic operations using
-multiple provider instances and multiple browser instance.
+multiple provider instances and multiple browsers instance.
 """
 
 __author__ = "Bartosz Walkowicz"

@@ -129,10 +129,9 @@ def _create_archive(browser_id, selenium, config, item_name, space_name,
                                           client, tmp_memory, modals, clipboard,
                                           displays, description)
     elif option == 'fails':
-        which = 'dataset'
         assert_not_click_option_in_data_row_menu(selenium, browser_id,
                                                  option_in_data_row_menu,
-                                                 modals, which)
+                                                 modals, DATASET_BROWSER)
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -212,10 +211,9 @@ def remove_archive_in_op_gui(browser_id, selenium, item_name, space_name,
         click_modal_button(selenium, browser_id, button_name,
                            option_in_menu, modals)
     elif option == 'fails':
-        which = 'archive'
         assert_not_click_option_in_data_row_menu(selenium, browser_id,
                                                  button_name,
-                                                 modals, which)
+                                                 modals, ARCHIVE_BROWSER)
 
 
 def assert_archive_with_option_in_op_gui(browser_id, selenium, oz_page,

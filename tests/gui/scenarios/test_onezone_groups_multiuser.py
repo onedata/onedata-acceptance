@@ -1,5 +1,5 @@
 """This module contains tests suite for basic operations using
-Onezone Groups GUI and multiple browser instances.
+Onezone Groups GUI and multiple browsers instances.
 """
 
 __author__ = "Lukasz Niemiec"
@@ -79,10 +79,6 @@ def screens():
     return [0, 1]
 
 
-scenarios('../features/onezone/groups/groups_join.feature')
-scenarios('../features/onezone/groups/'
-          'groups_multiple_users_with_single_group.feature')
-scenarios('../features/onezone/groups/groups_subgroup.feature')
 scenarios('../features/onezone/groups/'
           'groups_multiple_users_with_multiple_groups.feature')
 scenarios('../features/onezone/groups/groups_memberships_multibrowser.feature')

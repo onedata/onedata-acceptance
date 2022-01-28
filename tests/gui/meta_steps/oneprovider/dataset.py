@@ -127,8 +127,8 @@ def assert_top_level_dataset_in_space_in_op_gui(selenium, browser_id, oz_page,
                              option_in_space, op_container, tmp_memory,
                              item_browser=item_browser)
     if option == 'sees':
-        assert_items_presence_in_browser(selenium, browser_id, item_name, tmp_memory,
-                                         which_browser=item_browser)
+        assert_items_presence_in_browser(selenium, browser_id, item_name,
+                                         tmp_memory, which_browser=item_browser)
     else:
         assert_items_absence_in_browser(selenium, browser_id, item_name,
                                         tmp_memory, which_browser=item_browser)

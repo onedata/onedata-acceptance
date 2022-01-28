@@ -1,5 +1,5 @@
-"""This module contains tests suite for basic quality of service management
-using multiple provider instances and multiple browser instance.
+"""This module contains tests generally related with quality of service,
+using multiple providers instances and multiple browsers instance.
 """
 
 __author__ = "Agnieszka Warchol"
@@ -82,9 +82,6 @@ def screens():
     return [0, 1]
 
 
-scenarios('../features/oneprovider/multiprovider/qos_single_browser.feature')
 scenarios('../features/oneprovider/multiprovider/qos_provider_support.feature')
 scenarios('../features/oneprovider/multiprovider/qos_auto_cleaning.feature')
-scenarios('../features/oneprovider/multiprovider/qos_multibrowser.feature')
-scenarios('../features/oneprovider/multiprovider/qos_storage.feature')
-scenarios('../features/oneprovider/data/qos.feature')
+

@@ -44,8 +44,5 @@ def screens():
     return [0, 1]
 
 
-scenarios('../features/onezone/access_tokens.feature')
-scenarios('../features/onezone/path_caveats.feature')
-scenarios('../features/onezone/id_caveats.feature')
 scenarios('../features/onezone/identity_tokens.feature')
 scenarios('../features/onezone/invite_tokens.feature')
