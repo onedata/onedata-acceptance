@@ -83,5 +83,3 @@ def screens():
 
 scenarios('../features/oneprovider/multiprovider/qos_provider_support.feature')
 scenarios('../features/oneprovider/multiprovider/qos_auto_cleaning.feature')
-scenarios('../features/oneprovider/multiprovider/qos_storage.feature')
-

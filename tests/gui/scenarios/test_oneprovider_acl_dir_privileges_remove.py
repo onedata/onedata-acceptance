@@ -1,5 +1,5 @@
 """This module contains tests suite for ACL privileges operations
-on removing and creating directories using Oneprovider GUI and multiple
+on removing directories using Oneprovider GUI and multiple
 browser instance.
 """
 
@@ -45,5 +45,4 @@ def screens():
     return [0, 1]
 
 
-scenarios('../features/oneprovider/data/'
-          'dir_acl_privileges_remove_create.feature')
+scenarios('../features/oneprovider/data/dir_acl_privileges_remove.feature')
