@@ -175,7 +175,8 @@ def sysbench(threads, total_size, file_number, mode, validate,
     cmd = sysbench_command(threads, total_size, file_number, mode,
                            validate, events, report_interval, time,
                            file_block_size, type, dir)
-    return client.run_cmd([cmd], output=output)
+
+    return client.run_cmd(cmd, output=output)
 
 
 def sysbench_command(threads, total_size, file_number, mode, validate,
