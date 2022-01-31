@@ -1,4 +1,4 @@
-"""This module contains tests suite for Local Ceph deployment in
+"""This module contains tests suite for Embedded Ceph deployment in
 Onepanel GUI and multiple browsers instances.
 """
 

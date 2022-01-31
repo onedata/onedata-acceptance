@@ -27,7 +27,7 @@ class POSIX(PageObject):
     read_only = Toggle('.toggle-field-posix-readonly')
 
 
-class LocalCeph(PageObject):
+class EmbeddedCeph(PageObject):
     storage_name = Input('input.field-generic-name')
     imported_storage = Toggle('.toggle-field-generic-importedStorage')
     number_of_copies = Input('input.field-localceph-copiesNumber')
@@ -39,7 +39,7 @@ class StorageAddForm(PageObject):
     skip_storage_detection = Toggle('.toggle-field-generic-skipStorageDetection')
     add = Button('.submit-group button')
     posix = WebItem('form', cls=POSIX)
-    local_ceph = WebItem('form', cls=LocalCeph)
+    embedded_ceph = WebItem('form', cls=EmbeddedCeph)
 
 
 class POSIXEditorKeyValue(PageObject):
