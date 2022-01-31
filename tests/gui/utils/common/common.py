@@ -111,7 +111,7 @@ class LoginPage(object):
     username = Input('input[placeholder="Username"]')
     password = Input('input[placeholder="Password"]')
     passphrase = Input('input[placeholder="Passphrase"]')
-    sign_in = NamedButton('button .spin-button-label', text='Sign in')
+    sign_in = NamedButton('button', text='Sign in')
     err_msg = Label('.login-error-message')
     open_in_onezone = Button('.btn-login-onezone')
 
