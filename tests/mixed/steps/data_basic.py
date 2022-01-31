@@ -55,11 +55,9 @@ def create_file_in_op_with_token(client, user, users, space, name, hosts,
         create_file_in_op_rest(user, users, host, hosts, full_path, result,
                                token)
     elif 'oneclient' in client_lower:
-        mount_new_oneclient_with_token(user, hosts, users, env_desc, tmp_memory)
-        if result == 'succeeds':
-            oneclient_host = change_client_name_to_hostname(client_lower)
-            create_file_in_op_oneclient(user, full_path, users, result,
-                                        oneclient_host)
+        create_file_in_op_oneclient_with_tokens(user, hosts, users, env_desc,
+                                                tmp_memory,
+                                                result, full_path, client_lower)
     else:
         raise NoSuchClientException('Client: {} not found'.format(client))
 
@@ -78,13 +76,9 @@ def create_file_in_op_with_tokens(client, user, users, space, name, hosts, reque
                                access_token=access_token,
                                identity_token=identity_token)
     elif 'oneclient' in client_lower:
-        path = f'/home/{user}/onedata'
-        mount_new_oneclient_with_token(user, request, hosts, users,
-                                       clients, env_desc, tmp_memory)
-        if result == 'succeeds':
-            oneclient_host = change_client_name_to_hostname(client_lower)
-            create_file_in_op_oneclient_with_tokens(user, hosts, users, env_desc, tmp_memory,
-                                                    result, full_path, oneclient_host)
+        create_file_in_op_oneclient_with_tokens(user, hosts, users, env_desc,
+                                                tmp_memory, result, full_path,
+                                                client_lower)
     else:
         raise NoSuchClientException('Client: {} not found'.format(client))
 
