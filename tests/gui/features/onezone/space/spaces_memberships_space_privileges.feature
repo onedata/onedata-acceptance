@@ -4,25 +4,8 @@ Feature: Basic management of space management privileges for spaces in Onezone G
     Given initial users configuration in "onezone" Onezone service:
             - user1
             - space-owner-user
-    And initial groups configuration in "onezone" Onezone service:
-          group1:
-            owner: user1
-          group2:
-            owner: space-owner-user
-            groups:
-                - group1
     And initial spaces configuration in "onezone" Onezone service:
           space1:
-            owner: space-owner-user
-            users:
-                - user1
-          space2:
-            owner: space-owner-user
-            users:
-                - user1
-            groups:
-                - group2
-          space3:
             owner: space-owner-user
             users:
                 - user1

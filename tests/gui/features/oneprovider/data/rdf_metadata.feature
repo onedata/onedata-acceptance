@@ -35,10 +35,10 @@ Feature: Basic data tab operations on directory RDF metadata in file browser
     Then user of browser sees metadata status tag for "<item>" in file browser
     And user of browser opens "<modal>" metadata modal for "<item>"
     And user of browser clicks on RDF navigation tab in metadata modal
-    Then user of browser sees that RDF textarea in metadata modal contains '<content>'
+    And user of browser sees that RDF textarea in metadata modal contains '<content>'
 
     Examples:
-    | modal              | item  | content |
+    | modal              | item  | content                                                                     |
     | File metadata      | file1 | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML> |
     | Directory metadata | dir1  | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML> |
 
@@ -58,10 +58,10 @@ Feature: Basic data tab operations on directory RDF metadata in file browser
 
     Then user of browser does not see metadata status tag for "<item>" in file browser
     And user of browser opens metadata modal on RDF tab for "<item>" directory
-    Then user of browser sees that RDF textarea in metadata modal is empty
+    And user of browser sees that RDF textarea in metadata modal is empty
 
     Examples:
-    | item  | content |
+    | item  | content                                                                     |
     | file1 | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML> |
     | dir1  | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML> |
 
@@ -79,6 +79,6 @@ Feature: Basic data tab operations on directory RDF metadata in file browser
     Then user of browser sees that RDF textarea in metadata modal is empty
 
     Examples:
-    | item  | content |
+    | item  | content                                                                     |
     | file1 | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML> |
     | dir1  | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML> |
