@@ -63,15 +63,14 @@ class OZLoggedIn(object):
             item = item.replace('_', ' ').lower()
             for panel in self._panels:
                 if item == panel.text.lower():
-                    # open page
-                    if 'active' not in panel.get_attribute('class'):
-                        panel.click()
-                        # collapse side panel
-                        ActionChains(self.web_elem).move_to_element(
-                            self.web_elem.find_element_by_css_selector(
-                                '.row-heading .col-title')).perform()
-                        # wait for side panel to collapse
-                        sleep(0.2)
+                    panel.click()
+                    # collapse side panel
+                    ActionChains(self.web_elem).move_to_element(
+                        self.web_elem.find_element_by_css_selector(
+                            '.row-heading .col-title')).perform()
+                    # wait for side panel to collapse
+                    sleep(0.2)
+
                     return cls(self.web_elem, self.web_elem, parent=self)
         elif item == 'profile':
             return ManageAccountPage(self.web_elem, self._profile, self)
