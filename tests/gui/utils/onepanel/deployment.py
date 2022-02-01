@@ -77,7 +77,7 @@ class CephConfig(PageObject):
                                  '.one-way-toggle-control')
     add_osd = NamedButton('.btn-info', text='Add OSD')
     osds = WebItemsSequence('.osd-form', cls=OSD)
-    deploy = NamedButton('.spin-button-label', text='Deploy')
+    deploy = NamedButton('button', text='Deploy')
 
 
 class SetupDNS(PageObject):
