@@ -55,7 +55,7 @@ class SpaceSupportForm(PageObject):
     storage_import_configuration = WebItem('.import-configuration-section',
                                            cls=StorageImportConfiguration)
 
-    support_space = Button('.btn.ready')
+    support_space = Button('.btn-primary')
 
 
 class SpaceInfo(PageObject):

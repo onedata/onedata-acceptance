@@ -56,7 +56,7 @@ class SharesContentPage(PageObject):
     description_tab = Button('.nav-link-description')
     create_description = Button('.btn-content-info')
     description_input = Input('.code-textarea')
-    save_description = Button('.btn.ready')
+    save_description = Button('.btn-primary')
     switch_editor_markdown = Button('.btn-switch-editor-mode')
     editor_mode = Label('.btn-switch-editor-mode .text')
     link_type_selector = Button('.share-link-type-selector-trigger')
