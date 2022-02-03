@@ -33,6 +33,7 @@ from tests.utils.acceptance_utils import *
 from tests.gui.conftest import *
 
 from tests.oneclient.steps.auth_steps import *
+from tests.oneclient.steps.multi_file_steps import *
 
 from tests.gui.steps.common.miscellaneous import *
 

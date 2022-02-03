@@ -277,12 +277,13 @@ def remove_file_using_token_in_op(client, user, name, space, host, users, hosts,
 @wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) '
                r'renames item named "(?P<old_name>.*)" to "(?P<new_name>.*)" '
                r'in "(?P<space>.*)" in (?P<host>.*)'))
-def rename_item_in_op(client, user, users, result, space, old_name, new_name,
+def rename_item_in_op(client, user, users, space, old_name, new_name,
                       hosts, tmp_memory, host, selenium, op_container, cdmi,
                       modals, oz_page):
     old_path = '{}/{}'.format(space, old_name)
     new_path = '{}/{}'.format(space, new_name)
     client_lower = client.lower()
+    result = 'succeeds'
     if client_lower == 'web gui':
         rename_item(selenium, user, old_name, new_name, tmp_memory,
                     result, space, modals, oz_page, op_container)

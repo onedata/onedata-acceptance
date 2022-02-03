@@ -36,6 +36,7 @@ def start_environment(scenario_path, request, hosts, patch_path, users, test_con
     clean = not request.config.getoption('--no-clean')
     local = request.config.getoption('--local')
     up_args = parse_up_args(request, test_config)
+    up_args.extend(['--rsync'])
     up_args.extend(['{}'.format(scenario_path)])
     wait_args = parse_wait_args(request)
     patch_args = parse_patch_args(request, patch_path) if patch_path else []
