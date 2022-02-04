@@ -54,6 +54,7 @@ from .detach_dataset import DetachDataset
 from .write_protection import WriteProtection
 from .purge_archive import PurgeArchive
 from .reattach_dataset import ReattachDataset
+from .upload_workflow import UploadWorkflow
 
 
 class Modals(object):
@@ -148,6 +149,7 @@ class Modals(object):
     write_protection = WebItem('.modal-dialog', cls=WriteProtection)
     purge_archive = WebItem('.modal-dialog', cls=PurgeArchive)
     reattach_dataset = WebItem('.modal-dialog', cls=ReattachDataset)
+    upload_workflow = WebItem('.modal-dialog', cls=UploadWorkflow)
 
     def __init__(self, driver):
         self.driver = driver
