@@ -85,10 +85,7 @@ def _create_new_user(zone_hostname, onepanel_credentials, username, password,
                         path=get_zone_rest_path('user'),
                         auth=(username, password)).json()
     user_id = response['userId']
-    token = (_create_token(zone_hostname, username, password)
-             if generate_token else None)
-    return User(username=username, password=password, id=user_id,
-                token=token)
+    return User(username=username, zone_hostname=zone_hostname, password=password, user_id=user_id)
 
 
 def _create_user(zone_hostname, onepanel_credentials, admin_credentials,
@@ -114,7 +111,7 @@ def _create_user(zone_hostname, onepanel_credentials, admin_credentials,
     else:
         if rm_users:
             _rm_user(zone_hostname, admin_credentials,
-                     User(username, password, None, resp['userId']),
+                     User(zone_hostname, username, password, None, resp['userId']),
                      True)
             return _create_new_user(zone_hostname, onepanel_credentials,
                                     username, password, user_conf_details,
@@ -159,8 +156,7 @@ def _add_user_to_zone_cluster(zone_hostname, admin_credentials,
                                            .format(user_id)),
                    auth=(admin_username, admin_password),
                    data=json.dumps({'grant': cluster_privileges}))
-    token = _create_token(zone_hostname, username, password)
-    return User(username, password, token, user_id)
+    return User(username=username, zone_hostname=zone_hostname, password=password, user_id=user_id)
 
 
 def _rm_users(zone_hostname, admin_credentials, users_db,
@@ -174,7 +170,7 @@ def _rm_user(zone_hostname, admin_credentials, user_credentials,
              ignore_http_exceptions=False):
     admin_username = admin_credentials.username
     admin_password = admin_credentials.password
-    rm_zone_user = partial(_rm_zone_user, user_id=user_credentials.id)
+    rm_zone_user = partial(_rm_zone_user, user_id=user_credentials.user_id)
 
     try:
         rm_zone_user(zone_hostname, admin_username, admin_password)
@@ -185,15 +181,6 @@ def _rm_user(zone_hostname, admin_credentials, user_credentials,
 
 @repeat_failed(attempts=5)
 def _rm_zone_user(zone_hostname, admin_username, admin_password, user_id):
-    admin_username = 'admin'
     path = get_zone_rest_path('users', user_id)
     http_delete(ip=zone_hostname, port=OZ_REST_PORT, path=path,
                 auth=(admin_username, admin_password))
-
-
-@repeat_failed(attempts=5)
-def _create_token(zone_hostname, username, password):
-    response = http_post(ip=zone_hostname, port=OZ_REST_PORT, 
-                         path=get_zone_rest_path('user', 'client_tokens'),
-                         auth=(username, password))
-    return json.loads(response.content)['token']

@@ -184,7 +184,7 @@ def set_consumer_in_consumer_caveat(consumer, groups, users):
     cons_name = consumer.get('consumer name')
     if cons_type == 'user':
         value = (
-            'usr-*' if 'any' in cons_name else f'usr-{users[cons_name].id}')
+            'usr-*' if 'any' in cons_name else f'usr-{users[cons_name].user_id}')
     elif cons_type == 'group':
         value = ('grp-*' if 'any' in cons_name else f'grp-{groups[cons_name]}')
     else:

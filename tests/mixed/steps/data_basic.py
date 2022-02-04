@@ -47,8 +47,7 @@ def create_file_in_op(client, user, users, space, name, hosts, tmp_memory, host,
                'file named "(?P<name>.*)" using received token in '
                '"(?P<space>.*)" in (?P<host>.*)'))
 def create_file_in_op_with_token(client, user, users, space, name, hosts,
-                                 tmp_memory, host, result, request, clients,
-                                 env_desc):
+                                 tmp_memory, host, result, env_desc):
     full_path = '{}/{}'.format(space, name)
     client_lower = client.lower()
     if client_lower == 'rest':
@@ -56,10 +55,7 @@ def create_file_in_op_with_token(client, user, users, space, name, hosts,
         create_file_in_op_rest(user, users, host, hosts, full_path, result,
                                token)
     elif 'oneclient' in client_lower:
-        path = f'/home/{user}/onedata'
-        mount_new_oneclient_result(user, path, request, hosts, users, clients,
-                                   env_desc, tmp_memory, result,
-                                   client='oneclient')
+        mount_new_oneclient_with_token(user, hosts, users, env_desc, tmp_memory)
         if result == 'succeeds':
             oneclient_host = change_client_name_to_hostname(client_lower)
             create_file_in_op_oneclient(user, full_path, users, result,
@@ -71,9 +67,8 @@ def create_file_in_op_with_token(client, user, users, space, name, hosts,
 @wt(parsers.re(r'using (?P<client>.*) with identity token, (?P<user>\w+) ('
                r'?P<result>\w+) to create file named "(?P<name>.*)" using '
                'received token in "(?P<space>.*)" in (?P<host>.*)'))
-def create_file_in_op_with_tokens(client, user, users, space, name, hosts,
-                                  tmp_memory, host, result, request, clients,
-                                  env_desc, tokens):
+def create_file_in_op_with_tokens(client, user, users, space, name, hosts, request,
+                                  tmp_memory, host, result, env_desc, tokens, clients):
     full_path = '{}/{}'.format(space, name)
     client_lower = client.lower()
     if client_lower == 'rest':
@@ -84,13 +79,12 @@ def create_file_in_op_with_tokens(client, user, users, space, name, hosts,
                                identity_token=identity_token)
     elif 'oneclient' in client_lower:
         path = f'/home/{user}/onedata'
-        mount_new_oneclient_result(user, path, request, hosts, users, clients,
-                                   env_desc, tmp_memory, result,
-                                   client='oneclient')
+        mount_new_oneclient_with_token(user, request, hosts, users,
+                                       clients, env_desc, tmp_memory)
         if result == 'succeeds':
             oneclient_host = change_client_name_to_hostname(client_lower)
-            create_file_in_op_oneclient(user, full_path, users, result,
-                                        oneclient_host)
+            create_file_in_op_oneclient_with_tokens(user, hosts, users, env_desc, tmp_memory,
+                                                    result, full_path, oneclient_host)
     else:
         raise NoSuchClientException('Client: {} not found'.format(client))
 

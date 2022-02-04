@@ -88,7 +88,7 @@ def _groups_creation(config, service, admin_credentials,
                 privileges = options['privileges']
 
             _add_user_to_group(zone_hostname, admin_credentials,
-                               group_id, users[user].id, privileges)
+                               group_id, users[user].user_id, privileges)
 
     for group_name, description in config.items():
         group_id = groups[group_name]

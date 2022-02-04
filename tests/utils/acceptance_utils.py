@@ -15,7 +15,6 @@ from types import CodeType
 
 from pytest_bdd import when, then, parsers
 
-
 TIME_ATTR_MAPPING = {
     'access': 'atime',
     'modification': 'mtime',

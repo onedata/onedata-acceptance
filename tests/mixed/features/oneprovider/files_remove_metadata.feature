@@ -20,7 +20,7 @@ Feature: Files remove metadata tests
                 - oneprovider-1:
                     storage: posix
                     size: 1000000
-    And oneclient mounted in /home/user1/onedata using token by user1
+    And oneclient mounted using token by user1
     And opened browser with user1 signed in to "onezone" service
     And directory structure created by user1 in "space1" space on oneprovider-1 as follows:
             - file1

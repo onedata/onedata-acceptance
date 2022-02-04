@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 import pytest
+import errno
 
 from tests.conftest import export_logs
 
@@ -26,6 +27,40 @@ def xfail_by_env(xfail_by_env):
 
 
 @pytest.fixture(autouse=True, scope='module')
-def finalize(request, env_description_abs_path):
+def run_around_suite(request, env_description_abs_path):
     yield
     export_logs(request, env_description_abs_path)
+
+
+@pytest.fixture(autouse=True)
+def run_around_testcase(users):
+    unmount_all_clients_and_purge_spaces(users)
+    yield
+    unmount_all_clients_and_purge_spaces(users)
+
+
+def unmount_all_clients_and_purge_spaces(users):
+    for user in users.values():
+        for client in user.clients.values():
+            purge_spaces(client)
+            client.unmount()
+        user.clients.clear()
+
+
+def purge_spaces(client):
+    try:
+        spaces = client.list_spaces()
+        for space in spaces:
+            space_path = client.absolute_path(space)
+            try:
+                client.rm(path=space_path, recursive=True)
+            except FileNotFoundError:
+                pass
+            except OSError as e:
+                # ignore EACCES errors during cleaning
+                if e.errno == errno.EACCES:
+                    pass
+    except FileNotFoundError:
+        pass
+    except Exception as e:
+        print("Error during cleaning up spaces: {}".format(e))
