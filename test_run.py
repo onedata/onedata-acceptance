@@ -321,9 +321,6 @@ ALL       ALL = (ALL) NOPASSWD: ALL
             (minikube_config_path, 'ro'),
             ('/etc/passwd', 'ro')
         ]
-        envs = {'HOME': os.path.expanduser('~')}
-        if 'PYTHONPATH' in os.environ:
-            envs['PYTHONPATH'] = os.environ['PYTHONPATH']
         docker.run(
             tty=True,
             rm=True,
@@ -337,7 +334,7 @@ ALL       ALL = (ALL) NOPASSWD: ALL
             run_params=run_params,
             # setting HOME allows to use k8s and minikube configs
             # from host
-            envs=envs
+            envs={'HOME': os.path.expanduser('~')}
         )
 
         if args.clean:
