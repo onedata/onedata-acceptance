@@ -17,6 +17,6 @@ class EmergencyPassphrase(PageObject):
     new_passphrase_input = WebElement('.field-change-newPassword')
     retype_new_passphrase_input = WebElement('.field-change-newPasswordRetype')
 
-    change_button = NamedButton('button span', text='Change')
-    cancel_button = NamedButton('button span', text='Cancel')
+    change_button = NamedButton('button', text='Change')
+    cancel_button = NamedButton('button', text='Cancel')
 
