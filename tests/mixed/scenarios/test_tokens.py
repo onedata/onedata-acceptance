@@ -35,6 +35,10 @@ from tests.oneclient.steps.auth_steps import *
 from tests.gui.steps.common.miscellaneous import *
 
 
-scenarios('../features/onezone/access_tokens.feature')
+@pytest.fixture(scope='module')
+def screens():
+    return [0, 1]
+
+
 scenarios('../features/onezone/identity_tokens.feature')
 scenarios('../features/onezone/invite_tokens.feature')

@@ -49,5 +49,11 @@ from tests.gui.conftest import *
 from tests.mixed.steps.group_basic import *
 from tests.gui.meta_steps.onezone.common import *
 
+
+@pytest.fixture(scope='module')
+def screens():
+    return [0, 1]
+
+
 scenarios('../features/groups_basic.feature')
 scenarios('../features/groups_multiuser.feature')

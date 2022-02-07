@@ -50,6 +50,12 @@ from tests.gui.steps.oneprovider.spaces import *
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.oneprovider.common import *
 
+
+@pytest.fixture(scope='module')
+def screens():
+    return [0, 1]
+
+
 scenarios('../features/onezone/space/creation.feature')
 scenarios('../features/onezone/space/basic_management.feature')
 scenarios('../features/onezone/space/multiuser.feature')

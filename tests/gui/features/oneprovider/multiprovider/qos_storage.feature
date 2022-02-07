@@ -54,44 +54,6 @@ Feature: Quality of Service tests for 2 providers using multiple browsers where 
           oneprovider-2: entirely filled
 
 
-  Scenario: A single key-value based QoS requirement is met after adding this QoS parameter to storage
-    When user of browser_unified creates "type2=posix2" QoS requirement for "file1" in space "space1"
-    And user of browser_unified clicks on QoS status tag for "file1" in file browser
-    And user of browser_unified sees that all QoS requirements are impossible
-    And user of browser_unified sees that no storage matches condition in modal "Quality of Service"
-    And user of browser_emergency clicks on "Modify" button for "posix" storage record in Storages page in Onepanel
-    And user of browser_emergency adds key="type2" value="posix2" in storage edit page
-    Then user of browser_unified sees that all QoS requirements are fulfilled
-    And user of browser_unified sees that 1 storage matches condition in modal "Quality of Service"
-    And user of browser_unified sees that matching storage is "posix provided by oneprovider-1"
-
-
-  Scenario: A QoS requirement with "and" operator is met after adding this QoS parameter to storage
-    When user of browser_unified creates "type=posix & geo=PL" QoS requirement for "file1" in space "space1"
-    And user of browser_unified clicks on QoS status tag for "file1" in file browser
-    And user of browser_unified sees that all QoS requirements are impossible
-    And user of browser_emergency clicks on "Modify" button for "posix" storage record in Storages page in Onepanel
-    And user of browser_emergency adds key="type" value="posix" in storage edit page
-    And user of browser_unified is idle for 8 seconds
-    And user of browser_unified sees that all QoS requirements are impossible
-    And user of browser_emergency clicks on "Modify" button for "posix" storage record in Storages page in Onepanel
-    And user of browser_emergency adds key="geo" value="PL" in storage edit page
-    Then user of browser_unified sees that all QoS requirements are fulfilled
-
-
-  Scenario: A QoS requirement with "or" operator is met after adding this QoS parameter to storage
-    When user of browser_unified creates "type=posix | geo=PL" QoS requirement for "file1" in space "space1"
-    And user of browser_unified clicks on QoS status tag for "file1" in file browser
-    And user of browser_unified sees that all QoS requirements are impossible
-    And user of browser_emergency clicks on "Modify" button for "posix" storage record in Storages page in Onepanel
-    And user of browser_emergency adds key="type" value="posix" in storage edit page
-    And user of browser_unified sees that all QoS requirements are fulfilled
-    And user of browser_emergency deletes all additional params in storage edit page
-    And user of browser_emergency clicks on "Modify" button for "posix" storage record in Storages page in Onepanel
-    And user of browser_emergency adds key="geo" value="PL" in storage edit page
-    Then user of browser_unified sees that all QoS requirements are fulfilled
-
-
   Scenario: User can select one of storages of supporting providers in QoS graphical editor and it causes to match this storage
     When user of browser_unified opens file browser for "space1" space
     And user of browser_unified opens "Quality of Service" modal for "file1" file

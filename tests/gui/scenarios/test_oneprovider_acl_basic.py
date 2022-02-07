@@ -53,8 +53,7 @@ from tests.utils.acceptance_utils import *
 
 @fixture(scope='module')
 def screens():
-    return [0, 1]
+    return [0]
 
 
 scenarios('../features/oneprovider/data/acl/basic.feature')
-scenarios('../features/oneprovider/data/acl/subjects.feature')
