@@ -59,6 +59,6 @@ class ClustersPage(GenericPage):
 
     modify_provider_details = Button('.collapsible-toolbar-buttons '
                                      '.btn-modify-provider')
-    confirm_modify_provider_details = NamedButton('button span',
+    confirm_modify_provider_details = NamedButton('button',
                                                   text='Modify provider details')
 

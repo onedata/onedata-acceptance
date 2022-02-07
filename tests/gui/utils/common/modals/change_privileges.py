@@ -15,7 +15,7 @@ from tests.gui.utils.core.web_elements import WebItem, Button
 class ChangePrivilegesModal(Modal):
     privilege_tree = WebItem('.one-tree', cls=PrivilegeTree)
     cancel_button = Button('.cancel')
-    save_button = Button('.ready')
+    save_button = Button('.proceed')
 
     def __str__(self):
         return 'Change privileges in bulk menu'
