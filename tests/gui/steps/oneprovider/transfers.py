@@ -55,7 +55,7 @@ def assert_ended_transfer(selenium, browser_id, item_type, desc, hosts,
                ' in waiting transfers:\n(?P<desc>(.|\s)*)'))
 @repeat_failed(interval=0.5, timeout=40)
 def assert_waiting_transfer(selenium, browser_id, item_type, desc, hosts,
-                              op_container):
+                            op_container):
     transfer = op_container(selenium[browser_id]).transfers.waiting[0]
     _assert_transfer(transfer, item_type, desc, 'waiting', hosts)
 

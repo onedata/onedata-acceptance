@@ -67,5 +67,4 @@ def screens():
     return [0, 1]
 
 
-scenarios('../features/onepanel/storage_sync_charts.feature')
 scenarios('../features/onepanel/storage_sync.feature')
