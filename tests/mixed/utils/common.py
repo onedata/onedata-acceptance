@@ -90,8 +90,6 @@ def login_to_provider(username, users, host, access_token=None):
     return client
 
 
-@wt(parsers.parse('{sender} sends {item_type} to {receiver}'))
-def send_copied_item_to_other_users_rest(sender, receiver, item_type,
-                                         tmp_memory):
-    tmp_memory[receiver]['mailbox'][item_type.lower()] = \
-        tmp_memory[sender][item_type]
+@wt(parsers.parse('{sender} sends token to {receiver}'))
+def send_copied_token_to_other_user(sender, receiver, tmp_memory):
+    tmp_memory[receiver]['mailbox']['token'] = tmp_memory[sender]['token']
