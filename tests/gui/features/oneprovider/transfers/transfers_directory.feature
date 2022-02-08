@@ -13,6 +13,15 @@ Feature: Oneprovider transfers directories functionality
                 - oneprovider-2:
                     storage: posix
                     size: 100000000
+        smallSpace:
+            owner: space-owner-user
+            providers:
+                - oneprovider-1:
+                    storage: posix
+                    size: 100000000
+                - oneprovider-2:
+                    storage: posix
+                    size: 1000000
     And user opened browser window
     And user of browser opened onezone page
     And user of browser logged as space-owner-user to Onezone service
