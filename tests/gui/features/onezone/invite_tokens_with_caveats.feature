@@ -8,20 +8,6 @@ Feature: Management of invite tokens with caveats in Onezone GUI
     And initial spaces configuration in "onezone" Onezone service:
           space1:
             owner: admin
-          space2:
-            owner: user1
-          space3:
-            owner: admin
-
-    And initial groups configuration in "onezone" Onezone service:
-          group1:
-            owner: user1
-          group2:
-            owner: user2
-          group3:
-            owner: admin
-          group4:
-            owner: admin
 
     And users opened [browser1, browser2] browsers' windows
     And users of [browser1, browser2] opened [Onezone, Onezone] page

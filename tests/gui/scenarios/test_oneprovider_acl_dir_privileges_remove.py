@@ -45,5 +45,4 @@ def screens():
     return [0, 1]
 
 
-scenarios('../features/oneprovider/data/dir_acl_privileges_create.feature')
 scenarios('../features/oneprovider/data/dir_acl_privileges_remove.feature')
