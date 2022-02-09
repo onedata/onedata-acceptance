@@ -124,7 +124,7 @@ def assert_one_record_in_clusters_menu(selenium, browser_id, oz_page, provider,
 
 @wt(parsers.parse('user of {browser_id} waits for another "{provider}" '
                   'record to appear in clusters menu'))
-@repeat_failed(timeout=WAIT_BACKEND*10)
+@repeat_failed(timeout=WAIT_BACKEND*20)
 def assert_two_clusters_records(selenium, browser_id, provider, oz_page, hosts):
     time.sleep(30)
     _assert_num_cluster_records(selenium, browser_id, provider, 2, oz_page,
@@ -135,7 +135,6 @@ def _assert_num_cluster_records(selenium, browser_id, provider, num, oz_page,
                                 hosts):
     records = _get_clusters(selenium, browser_id, oz_page)
     record = hosts[provider]['name']
-    time.sleep(30)
     selected = [row for row in records if row.name == record]
 
     assert len(selected) == num, (f'Expected {num} {record} record but got '
