@@ -16,8 +16,7 @@ Feature: Management of clusters entries as an admin user in Onezone GUI
     And user of browser sees that "oneprovider-1" cluster is not working in clusters menu
 
     # Kubernetes provides provider's restart and registration
-    Then user of browser waits for another "oneprovider-1" record to appear in clusters menu
-    And user of browser sees that new "oneprovider-1" cluster is working
+    Then user of browser sees that new "oneprovider-1" cluster is working
 
     # assert new provider working
     And user of browser clicks on "oneprovider-1" with new cluster id in clusters menu

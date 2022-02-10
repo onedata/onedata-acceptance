@@ -9,7 +9,7 @@ __license__ = ("This software is released under the MIT license cited in "
 
 import time
 
-from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND, WAIT_EXTENDED_UPLOAD
+from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
@@ -122,15 +122,6 @@ def assert_one_record_in_clusters_menu(selenium, browser_id, oz_page, provider,
                                 hosts)
 
 
-@wt(parsers.parse('user of {browser_id} waits for another "{provider}" '
-                  'record to appear in clusters menu'))
-@repeat_failed(timeout=WAIT_BACKEND*20)
-def assert_two_clusters_records(selenium, browser_id, provider, oz_page, hosts):
-    time.sleep(30)
-    _assert_num_cluster_records(selenium, browser_id, provider, 2, oz_page,
-                                hosts)
-
-
 def _assert_num_cluster_records(selenium, browser_id, provider, num, oz_page,
                                 hosts):
     records = _get_clusters(selenium, browser_id, oz_page)
@@ -172,7 +163,7 @@ def get_old_or_new_cluster_record_from_list(provider, prov_list, age,
 
 @wt(parsers.parse('user of browser sees that {age} "{provider}" cluster is '
                   'working'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND*8)
 def assert_new_cluster_working(selenium, browser_id, provider, oz_page, hosts,
                                age, tmp_memory):
     record = _get_old_or_new_cluster_record(selenium, browser_id, provider,
