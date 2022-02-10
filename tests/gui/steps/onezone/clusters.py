@@ -163,7 +163,7 @@ def get_old_or_new_cluster_record_from_list(provider, prov_list, age,
 
 @wt(parsers.parse('user of browser sees that {age} "{provider}" cluster is '
                   'working'))
-@repeat_failed(timeout=WAIT_BACKEND*8)
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_new_cluster_working(selenium, browser_id, provider, oz_page, hosts,
                                age, tmp_memory):
     record = _get_old_or_new_cluster_record(selenium, browser_id, provider,

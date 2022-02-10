@@ -24,7 +24,6 @@ from tests.gui.steps.common.notifies import *
 from tests.gui.steps.common.miscellaneous import *
 from tests.gui.steps.common.login import *
 from tests.gui.steps.common.docker import *
-from tests.gui.steps.common.kubectl import *
 
 from tests.gui.steps.onepanel.account_management import *
 from tests.gui.steps.onepanel.nodes import *
@@ -87,4 +86,3 @@ def screens():
 scenarios('../features/onezone/providers.feature')
 scenarios('../features/onezone/providers_multibrowser.feature')
 scenarios('../features/onezone/providers_offline.feature')
-scenarios('../features/onezone/clusters_as_admin.feature')
