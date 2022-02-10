@@ -34,10 +34,6 @@ Feature: Basic management of support privileges for spaces in Onezone GUI
                 - user2
             groups:
                 - group2
-          space3:
-            owner: space-owner-user
-            users:
-                - user1
 
     And opened [browser_user1, space_owner_browser] with [user1, space-owner-user] signed in to [Onezone, Onezone] service
 
