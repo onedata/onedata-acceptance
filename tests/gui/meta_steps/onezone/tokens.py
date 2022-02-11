@@ -524,17 +524,25 @@ def create_token_with_basic_template(selenium, browser_id, name, template,
                                                    oz_page)
 
 
-@wt(parsers.parse('using web GUI, {user} creates access token with caveats '
-                  'set for object which ID was copied to clipboard'))
-def create_token_with_object_id(displays, clipboard, user, selenium, oz_page,
-                                popups, users, groups, hosts, tmp_memory):
+def _create_token_using_id(user, selenium, oz_page, popups, users, groups,
+                           hosts, tmp_memory, object_id):
     option = 'Tokens'
-    object_id = clipboard.paste(display=displays[user])
     config = (f'name: access_token\ntype: access\ncaveats:\n  '
               f'object ID:\n    -  {object_id}')
     click_on_option_in_the_sidebar(selenium, user, option, oz_page)
     create_token_with_config(selenium, user, config, oz_page, popups,
                              users, groups, hosts, tmp_memory)
+
+
+@wt(parsers.parse('using web GUI, {user} creates access token with caveats '
+                  'set for object which ID was copied to clipboard'))
+def create_token_using_copied_object_id(displays, clipboard, user, selenium,
+                                        oz_page, popups, users, groups, hosts,
+                                        tmp_memory):
+    object_id = clipboard.paste(display=displays[user])
+    _create_token_using_id(user, selenium, oz_page, popups, users, groups,
+                           hosts, tmp_memory, object_id)
+
 
 
 def _copy_object_id(displays, clipboard, user, selenium, oz_page, tmp_memory,
@@ -561,18 +569,12 @@ def create_token_with_object_id(displays, clipboard, user, selenium, oz_page,
                                 popups, users, groups, hosts, tmp_memory,
                                 modals, name, space, op_container):
 
-    option = 'Tokens'
-
     _copy_object_id(displays, clipboard, user, selenium, oz_page, tmp_memory,
                     modals, name, space, op_container)
 
     object_id = tmp_memory["object_id"]
-    config = (f'name: access_token\ntype: access\ncaveats:\n  '
-              f'object ID:\n    -  {object_id}')
-
-    click_on_option_in_the_sidebar(selenium, user, option, oz_page)
-    create_token_with_config(selenium, user, config, oz_page, popups,
-                             users, groups, hosts, tmp_memory)
+    _create_token_using_id(user, selenium, oz_page, popups, users, groups,
+                           hosts, tmp_memory, object_id)
     click_copy_button_in_token_view(selenium, user, oz_page)
     tmp_memory[user]['token'] = clipboard.paste(display=displays[user])
 
@@ -581,7 +583,6 @@ def create_token_with_object_id(displays, clipboard, user, selenium, oz_page,
                      'following configuration:\n{config}'))
 def given_create_token(user, config, selenium, oz_page, popups, users,
                        groups, hosts, tmp_memory, clipboard, displays):
-
     create_token_with_config(selenium, user, config, oz_page, popups,
                              users, groups, hosts, tmp_memory)
 
