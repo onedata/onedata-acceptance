@@ -73,23 +73,23 @@ def login_to_cdmi(username, users, host, access_token=None,
     return client
 
 
-def login_to_provider(username, users, host):
+def login_to_provider(username, users, host, access_token=None):
     from tests.mixed.oneprovider_client.configuration import \
                                                 Configuration as Conf_provider
     from tests.mixed.oneprovider_client import (ApiClient
                                                          as ApiClient_provider)
     Conf_provider().verify_ssl = False
 
+    header_value = access_token if access_token else users[username].token
+
     client = ApiClient_provider(
-        host = 'https://{}:{}{}'.format(host,
+        host='https://{}:{}{}'.format(host,
                                       OZ_REST_PORT,
                                       PROVIDER_REST_PATH_PREFIX), 
-        header_name = 'X-Auth-Token', header_value = users[username].token)
+        header_name='X-Auth-Token', header_value=header_value)
     return client
 
 
-@wt(parsers.parse('{sender} sends {item_type} to {receiver}'))
-def send_copied_item_to_other_users_rest(sender, receiver, item_type,
-                                         tmp_memory):
-    tmp_memory[receiver]['mailbox'][item_type.lower()] = \
-        tmp_memory[sender][item_type]
+@wt(parsers.parse('{sender} sends token to {receiver}'))
+def send_copied_token_to_other_user(sender, receiver, tmp_memory):
+    tmp_memory[receiver]['mailbox']['token'] = tmp_memory[sender]['token']

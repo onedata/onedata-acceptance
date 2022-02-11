@@ -26,6 +26,9 @@ BAD_TOKEN = 'bad token'
 CORRECT_TOKEN = 'token'
 
 
+CORRECT_TOKEN = 'token'
+
+
 class User:
     def __init__(self, zone_hostname, username, password=None, user_id=None):
         self.username = username

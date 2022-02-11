@@ -10,7 +10,7 @@ __license__ = ("This software is released under the MIT license cited in "
 from tests.gui.conftest import (
     WAIT_BACKEND, WAIT_FRONTEND)
 from tests.gui.utils.generic import transform
-from tests.utils.bdd_utils import wt, parsers
+from tests.utils.bdd_utils import wt, parsers, given
 from tests.utils.utils import repeat_failed
 
 
@@ -414,3 +414,10 @@ def choose_token_template(selenium, browser_id, template, oz_page):
     driver = selenium[browser_id]
     tokens_page = oz_page(driver)['tokens']
     getattr(tokens_page, f'{transform(template)}_template').click()
+
+
+@given(parsers.parse('{sender} sends {item_type} to {receiver}'))
+def given_send_copied_item_to_other_user(sender, receiver, item_type,
+                                         tmp_memory):
+    tmp_memory[receiver]['mailbox'][item_type.lower()] = \
+        tmp_memory[sender][item_type]

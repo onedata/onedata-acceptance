@@ -8,9 +8,21 @@ Feature: Access tokens tests
           space1:
             owner: user1
             providers:
-              - oneprovider-1:
-                  storage: posix
-                  size: 1000000
+                - oneprovider-1:
+                    storage: posix
+                    size: 1000000
+            storage:
+                defaults:
+                    provider: oneprovider-1
+                directory tree:
+                    - file1
+                    - dir1:
+                        - dir2:
+                          - file2: 11111
+                        - dir3
+    And initial groups configuration in "onezone" Onezone service:
+          group1:
+            owner: user1
     And opened [browser1, browser2] with [user1, user2] signed in to ["onezone", "onezone"] service
 
 
@@ -22,7 +34,7 @@ Feature: Access tokens tests
              read only: False
     And if <client2> is web gui, user1 copies created token
     And user1 sends token to user2
-    Then using <client1>, user2 succeeds to create file named "file1" using received token in "space1" in oneprovider-1
+    Then using <client1>, user2 succeeds to create file named "file3" using received token in "space1" in oneprovider-1
 
     Examples:
     | client1     | client2 |
@@ -40,7 +52,7 @@ Feature: Access tokens tests
     And if <client1> is web gui, user1 copies created token
     And user1 sends token to user2
     And using <client2>, user1 revokes token named "access_token"
-    Then using <client3>, user2 fails to create file named "file1" using received token in "space1" in oneprovider-1
+    Then using <client3>, user2 fails to create file named "file3" using received token in "space1" in oneprovider-1
 
     Examples:
     | client1 | client2 | client3    |
@@ -134,8 +146,8 @@ Feature: Access tokens tests
     And using web gui, user1 copies created token
     And user1 sends token to user2
     And user2 mounts oneclient using received token
-    Then using REST, user2 fails to create file named "file1" using received token in "space1" in oneprovider-1
-    And using oneclient1, user2 succeeds to create file named "file1" using received token in "space1" in oneprovider-1
+    Then using REST, user2 fails to create file named "file3" using received token in "space1" in oneprovider-1
+    And using oneclient1, user2 succeeds to create file named "file3" using received token in "space1" in oneprovider-1
 
 
   Scenario: User creates a file with REST but not with Oneclient using token with caveat set for REST interface
@@ -147,5 +159,166 @@ Feature: Access tokens tests
              interface: REST
     And using web gui, user1 copies created token
     And user1 sends token to user2
-    Then using oneclient1, user2 fails to create file named "file1" using received token in "space1" in oneprovider-1
-    And using REST, user2 succeeds to create file named "file1" using received token in "space1" in oneprovider-1
+    Then using oneclient1, user2 fails to create file named "file3" using received token in "space1" in oneprovider-1
+    And using REST, user2 succeeds to create file named "file3" using received token in "space1" in oneprovider-1
+
+
+  Scenario: Using REST, user can create a group in a space after getting token with caveat set for onezone service, created by web GUI
+    When using web GUI, user1 creates token with following configuration:
+        name: access_token
+        type: access
+        caveats:
+          service:
+            Service:
+              - dev-onezone
+    And using web GUI, user1 copies created token
+    And user1 sends token to user2
+
+    Then user2 creates group "group4" using REST using received token in "onezone" Onezone service
+    And using web GUI, user1 sees that group named "group4" has appeared in "onezone" Onezone service
+
+
+  Scenario Outline: Using <client1>, user cannot create file after getting token with caveat set only for onezone service, created by web GUI
+    When using web GUI, user1 creates token with following configuration:
+        name: access_token
+        type: access
+        caveats:
+          service:
+            Service:
+              - dev-onezone
+    And using web GUI, user1 copies created token
+    And user1 sends token to user2
+
+    Then using <client1>, user2 fails to create file named "file3" using received token in "space1" in oneprovider-1
+    And using web GUI, user1 fails to see item named "file3" in "space1" in oneprovider-1
+
+    Examples:
+    | client1     |
+    | REST        |
+    | oneclient1  |
+
+
+  Scenario Outline: Using <client1>, user can create file after getting token with caveat set for oneprovider service, created by web GUI
+    When using web GUI, user1 creates token with following configuration:
+        name: access_token
+        type: access
+        caveats:
+          service:
+            Service:
+              - Any Oneprovider
+    And using web GUI, user1 copies created token
+    And user1 sends token to user2
+
+    Then using <client1>, user2 succeeds to create file named "file3" using received token in "space1" in oneprovider-1
+    And using web GUI, user1 succeeds to see item named "file3" in "space1" in oneprovider-1
+
+    Examples:
+    | client1     |
+    | REST        |
+    | oneclient1  |
+
+
+  Scenario: Using REST, user cannot create a group in a space after getting token with caveat set only for oneprovider service, created by web GUI
+    When using web GUI, user1 creates token with following configuration:
+        name: access_token
+        type: access
+        caveats:
+          service:
+            Service:
+              - Any Oneprovider
+    And using web GUI, user1 copies created token
+    And user1 sends token to user2
+
+    Then user2 fails to create group "group1" using REST using received token in "onezone" Onezone service
+    And using web GUI, user1 does not see group named group1 in "onezone" Onezone service
+
+
+  Scenario Outline: Using <client1>, user fails to create file after getting token with caveat set only for "read only", created by web GUI
+    When using web GUI, user1 creates token with following configuration:
+           name: access_token
+           type: access
+           caveats:
+              read only: True
+    And using web GUI, user1 copies created token
+    And user1 sends token to user2
+
+    Then using <client1>, user2 fails to create file named "file3" using received token in "space1" in oneprovider-1
+    And using web GUI, user1 fails to see item named "file3" in "space1" in oneprovider-1
+
+    Examples:
+    | client1     |
+    | REST        |
+    | oneclient1  |
+
+
+  Scenario Outline: Using <client1>, user can see file after getting token with caveat set for "read only", created by web GUI
+    When using web GUI, user1 creates token with following configuration:
+           name: access_token
+           type: access
+           caveats:
+              read only: True
+    And using web GUI, user1 copies created token
+    And user1 sends token to user2
+    And user2 mounts oneclient using received token
+    Then using <client1>, user2 succeeds to see item named "file1" using received access token in "space1" in oneprovider-1
+
+    Examples:
+    | client1     |
+    | REST        |
+    | oneclient1  |
+
+
+  Scenario Outline: Using <client1>, user can create file after getting token with expiration time set in caveat, created by web GUI
+    When using web GUI, user1 creates token with following configuration:
+        name: access_token
+        type: access
+        caveats:
+          expiration:
+            after: 10
+    And using web GUI, user1 copies created token
+    And user1 sends token to user2
+
+    Then using <client1>, user2 succeeds to create file named "file3" using received token in "space1" in oneprovider-1
+    And using web GUI, user1 succeeds to see item named "file3" in "space1" in oneprovider-1
+
+    Examples:
+    | client1     |
+    | REST        |
+    | oneclient1  |
+
+
+  Scenario Outline: Using <client1>, user cannot create file after getting token with expiration time set in caveat, created by web GUI
+    When using web GUI, user1 creates token with following configuration:
+        name: access_token
+        type: access
+        caveats:
+          expiration:
+            after: 1
+    And using web GUI, user1 copies created token
+    And user1 sends token to user2
+    And user2 is idle for 70 seconds
+    Then using <client1>, user2 fails to create file named "file3" using received token in "space1" in oneprovider-1
+    And using web GUI, user1 fails to see item named "file3" in "space1" in oneprovider-1
+
+    Examples:
+    | client1     |
+    | REST        |
+    | oneclient1  |
+
+
+
+  Scenario: Using oneclient1, user can see file using token with caveat set for path, created by web GUI, after owner renames file
+    When using web GUI, user1 creates token with following configuration:
+        name: access_token
+        type: access
+        caveats:
+          path:
+            - space: space1
+              path: /dir1/dir4
+    And using web GUI, user1 copies created token
+    And user1 sends token to user2
+    And user2 mounts oneclient using received token
+    And user2 lists children of space1/dir1
+    And user2 doesn't see dir4 in space1/dir1 on client1
+    And using web GUI, user1 renames item named "dir1/dir2" to "dir1/dir4" in "space1" in oneprovider-1
+    Then user2 sees dir4 in space1/dir1 on client1

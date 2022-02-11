@@ -20,8 +20,12 @@ from tests.mixed.utils.data import (
 from tests.oneclient.steps import (
     multi_dir_steps, multi_reg_file_steps, multi_file_steps)
 from tests.utils.acceptance_utils import failure
-from tests.utils.bdd_utils import wt, parsers
+from tests.utils.bdd_utils import wt, parsers, given
 from tests.utils.utils import repeat_failed
+
+
+def change_client_name_to_hostname(client_name):
+    return client_name.replace('oneclient', 'client')
 
 
 @wt(parsers.parse('{user} mounts oneclient using received token'))
@@ -253,3 +257,21 @@ def remove_file_in_op_oneclient(user, path, host, users, res):
         multi_file_steps.delete_file_fail(user, path, host, users)
     else:
         multi_file_steps.delete_file(user, path, host, users)
+
+
+@wt(parsers.re(r'(?P<user>\w+) lists children of (?P<name>.*)'))
+def list_children_in_op_oneclient(name, user, users):
+    user1 = users[user]
+    client = user1.clients['client1']
+    path = client._mount_path + '/' + name
+    client.ls(path=path)
+
+
+@given(parsers.parse('{user} mounts oneclient using received token'))
+def given_mount_new_oneclient_with_token(user, hosts, users, env_desc,
+                                         tmp_memory):
+    token = tmp_memory[user]['mailbox']['token']
+    users[user].mount_client('oneclient-1', 'client1', hosts, env_desc, token)
+
+
+

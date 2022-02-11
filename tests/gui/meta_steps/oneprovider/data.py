@@ -103,6 +103,9 @@ def see_items_in_op_gui(selenium, browser_id, path, subfiles, tmp_memory,
     selenium[browser_id].refresh()
 
     try:
+        option = "Data"
+        click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
+                                                      space, option, oz_page)
         assert_file_browser_in_data_tab_in_op(selenium, browser_id,
                                               op_container, tmp_memory)
     except NoSuchElementException:
@@ -110,8 +113,9 @@ def see_items_in_op_gui(selenium, browser_id, path, subfiles, tmp_memory,
                           tmp_memory, space)
 
     if path:
-        double_click_on_item_in_file_browser(selenium, browser_id, path,
-                                             tmp_memory, op_container)
+        for item in path.split('/'):
+            double_click_on_item_in_file_browser(selenium, browser_id, item,
+                                                 tmp_memory, op_container)
     if res == 'fails':
         assert_items_absence_in_file_browser(browser_id, subfiles, tmp_memory)
     else:

@@ -321,7 +321,6 @@ ALL       ALL = (ALL) NOPASSWD: ALL
             (minikube_config_path, 'ro'),
             ('/etc/passwd', 'ro')
         ]
-
         docker.run(
             tty=True,
             rm=True,

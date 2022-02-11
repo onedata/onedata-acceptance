@@ -122,6 +122,44 @@ def remove_file_in_op_rest(user, users, host, hosts, path, result):
         do_api.delete_data_object(path)
 
 
+def remove_file_using_token_in_op_rest(user, users, host, hosts, path, result,
+                                       tmp_memory):
+    access_token = tmp_memory[user]['mailbox'].get('token', None)
+    client = login_to_cdmi(user, users, hosts[host]['hostname'],
+                           access_token=access_token)
+    do_api = DataObjectApi(client)
+    if result == 'fails':
+        with pytest.raises(CdmiException,
+                           message='Removing file did not fail'):
+            do_api.delete_data_object(path)
+    else:
+        do_api.delete_data_object(path)
+
+
+def see_item_in_op_rest_using_token(user, name, space, host,
+                                    tmp_memory, users, hosts, result):
+    path = f'{space}/{name}'
+    access_token = tmp_memory[user]['mailbox'].get('token', None)
+    client = login_to_provider(user, users, hosts[host]['hostname'],
+                               access_token=access_token)
+    file_api = BasicFileOperationsApi(client)
+    check_if_item_exists_or_not_exists(result, path, client, file_api)
+
+
+def check_if_item_exists_or_not_exists(result, path, client, file_api):
+    if result == 'fails':
+        with pytest.raises(OPException,
+                           message=f'There is item {path}'):
+            check_if_item_id_in_items(path, client, file_api)
+    else:
+        check_if_item_id_in_items(path, client, file_api)
+
+
+def check_if_item_id_in_items(path, client, file_api):
+    file_id = _lookup_file_id(path, client)
+    file_api.list_children(file_id)
+
+
 def see_items_in_op_rest(user, users, host, hosts, path_list, result, space):
     client = login_to_provider(user, users, hosts[host]['hostname'])
     file_api = BasicFileOperationsApi(client)
@@ -265,6 +303,17 @@ def append_to_file_in_op_rest(user, users, host, hosts, cdmi, path,
 def move_item_in_op_rest(src_path, dst_path, result, cdmi, host, hosts, user,
                          users):
     client = cdmi(hosts[host]['hostname'], users[user].token)
+    if result == 'fails':
+        with pytest.raises(HTTPError):
+            client.move_item(src_path, dst_path)
+    else:
+        client.move_item(src_path, dst_path)
+
+
+def move_item_in_op_rest_using_token(src_path, dst_path, result, host, hosts,
+                                     user, users, tmp_memory, cdmi):
+    access_token = tmp_memory[user]['mailbox'].get('token', None)
+    client = cdmi(hosts[host]['hostname'], access_token)
     if result == 'fails':
         with pytest.raises(HTTPError):
             client.move_item(src_path, dst_path)

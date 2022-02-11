@@ -18,6 +18,7 @@ from tests.gui.utils.common.common import DropdownSelector, \
 from .data_distribution import DataDistributionModal
 from .data_row_menu import DataRowMenu
 from .delete_modal import DeleteModal
+from .file_details import FileDetailsModal
 from .login import LoginFormModal
 from .deploying_cluster import ClusterDeploymentModal
 from .metadata_modal import MetadataModal
@@ -119,6 +120,7 @@ class Modals(object):
     change_privileges = WebItem('.modal-dialog', cls=ChangePrivilegesModal)
 
     delete_user_account = WebItem('.modal-dialog', cls=DeleteUserAccountModal)
+    file_details = WebItem('.modal-dialog', cls=FileDetailsModal)
 
     def __init__(self, driver):
         self.driver = driver
