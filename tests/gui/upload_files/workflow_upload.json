@@ -1,12 +1,76 @@
 {
-  "supplementaryAtmLambdas": {
-    "cb0efc0967b320bb3ddb5a3253604098ch8ede": {
-      "summary": "",
-      "schemaFormatVersion": 1,
-      "resultSpecs": [
+  "summary": "",
+  "schemaFormatVersion": 2,
+  "revision": {
+    "supplementaryAtmLambdas": {
+      "ca24fc2a40b6dfd7308631e432b43fc2ch8113": {
+        "1": {
+          "schemaFormatVersion": 2,
+          "revision": {
+            "schemaFormatVersion": 2,
+            "originalRevisionNumber": 1,
+            "atmLambdaRevision": {
+              "summary": "",
+              "state": "draft",
+              "resultSpecs": [
+                {
+                  "name": "data",
+                  "dataSpec": {
+                    "valueConstraints": {},
+                    "type": "object"
+                  }
+                }
+              ],
+              "resourceSpec": {
+                "memoryRequested": 104857600,
+                "memoryLimit": null,
+                "ephemeralStorageRequested": 104857600,
+                "ephemeralStorageLimit": null,
+                "cpuRequested": 0.1,
+                "cpuLimit": null
+              },
+              "preferredBatchSize": 100,
+              "operationSpec": {
+                "engine": "openfaas",
+                "dockerImage": "docker.onedata.org/in-out:v1",
+                "dockerExecutionOptions": {
+                  "readonly": false,
+                  "oneclientOptions": "",
+                  "oneclientMountPoint": "/mnt/onedata",
+                  "mountOneclient": false
+                }
+              },
+              "name": "inout",
+              "description": "",
+              "checksum": "bd0a36621337982e265322b90d4cc363",
+              "argumentSpecs": [
+                {
+                  "name": "data",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "dataSpec": {
+                    "valueConstraints": {},
+                    "type": "object"
+                  }
+                }
+              ]
+            }
+          },
+          "originalAtmLambdaId": "ca24fc2a40b6dfd7308631e432b43fc2ch8113"
+        }
+      }
+    },
+    "schemaFormatVersion": 2,
+    "originalRevisionNumber": 1,
+    "atmWorkflowSchemaRevision": {
+      "stores": [
         {
-          "name": "file",
-          "isBatch": false,
+          "type": "treeForest",
+          "requiresInitialValue": true,
+          "name": "input",
+          "id": "d15a9662427a244b33223cb2140f4f1ccfdcbf",
+          "description": "",
+          "defaultInitialValue": null,
           "dataSpec": {
             "valueConstraints": {
               "fileType": "ANY"
@@ -15,235 +79,46 @@
           }
         }
       ],
-      "operationSpec": {
-        "engine": "openfaas",
-        "dockerImage": "docker.onedata.org/inout:v1",
-        "dockerExecutionOptions": {
-          "readonly": false,
-          "oneclientOptions": "",
-          "oneclientMountPoint": "/mnt/onedata",
-          "mountOneclient": false
-        }
-      },
-      "name": "workflow_upload",
-      "description": "",
-      "checksum": "842e81c169c193d9e26bdda92509e1d0",
-      "argumentSpecs": [
+      "state": "draft",
+      "lanes": [
         {
-          "name": "file",
-          "isOptional": false,
-          "isBatch": false,
-          "defaultValue": null,
-          "dataSpec": {
-            "valueConstraints": {
-              "fileType": "ANY"
-            },
-            "type": "file"
-          }
+          "storeIteratorSpec": {
+            "storeSchemaId": "d15a9662427a244b33223cb2140f4f1ccfdcbf",
+            "maxBatchSize": 1
+          },
+          "parallelBoxes": [
+            {
+              "tasks": [
+                {
+                  "resultMappings": [],
+                  "resourceSpecOverride": null,
+                  "name": "inout",
+                  "lambdaRevisionNumber": 1,
+                  "lambdaId": "ca24fc2a40b6dfd7308631e432b43fc2ch8113",
+                  "id": "d25e1fadb0b7b440a90e20bdd0bbb573f948ec",
+                  "argumentMappings": [
+                    {
+                      "valueBuilder": {
+                        "valueBuilderType": "iteratedItem",
+                        "valueBuilderRecipe": null
+                      },
+                      "argumentName": "data"
+                    }
+                  ]
+                }
+              ],
+              "name": "Parallel box",
+              "id": "3f3e13bf18d1c97921a14bc6a1ee04319beff7"
+            }
+          ],
+          "name": "l1",
+          "maxRetries": 0,
+          "id": "1f1ddcd40d5b02b631ebfacd35f9bde7e899a3"
         }
-      ]
+      ],
+      "description": ""
     }
   },
-  "stores": [
-    {
-      "type": "treeForest",
-      "requiresInitialValue": true,
-      "name": "files",
-      "id": "2d44098984eb1d7fb7ca40f81c1226be6a19eb",
-      "description": "",
-      "defaultInitialValue": null,
-      "dataSpec": {
-        "valueConstraints": {
-          "fileType": "ANY"
-        },
-        "type": "file"
-      }
-    },
-    {
-      "type": "list",
-      "requiresInitialValue": false,
-      "name": "results",
-      "id": "6a6fe41264a012a7a9dfe4eb99858ee80415af",
-      "description": "",
-      "defaultInitialValue": null,
-      "dataSpec": {
-        "valueConstraints": {
-          "fileType": "ANY"
-        },
-        "type": "file"
-      }
-    }
-  ],
-  "state": "ready",
-  "schemaFormatVersion": 1,
-  "name": "workflow_upload",
-  "lanes": [
-    {
-      "storeIteratorSpec": {
-        "strategy": {
-          "type": "serial"
-        },
-        "storeSchemaId": "2d44098984eb1d7fb7ca40f81c1226be6a19eb"
-      },
-      "parallelBoxes": [
-        {
-          "tasks": [
-            {
-              "resultMappings": [
-                {
-                  "storeSchemaId": "6a6fe41264a012a7a9dfe4eb99858ee80415af",
-                  "resultName": "file",
-                  "dispatchFunction": "append"
-                }
-              ],
-              "name": "inout",
-              "lambdaId": "cb0efc0967b320bb3ddb5a3253604098ch8ede",
-              "id": "3fab17735d5840b31257547d447aca78ab4739",
-              "argumentMappings": [
-                {
-                  "valueBuilder": {
-                    "valueBuilderType": "iteratedItem",
-                    "valueBuilderRecipe": null
-                  },
-                  "argumentName": "file"
-                }
-              ]
-            },
-            {
-              "resultMappings": [
-                {
-                  "storeSchemaId": "6a6fe41264a012a7a9dfe4eb99858ee80415af",
-                  "resultName": "file",
-                  "dispatchFunction": "append"
-                }
-              ],
-              "name": "inout",
-              "lambdaId": "cb0efc0967b320bb3ddb5a3253604098ch8ede",
-              "id": "bfb92ceb533c5f9fd24171b990746d73690408",
-              "argumentMappings": [
-                {
-                  "valueBuilder": {
-                    "valueBuilderType": "iteratedItem",
-                    "valueBuilderRecipe": null
-                  },
-                  "argumentName": "file"
-                }
-              ]
-            }
-          ],
-          "name": "Parallel box",
-          "id": "980d48f468a69ee0df4b23d7d611f0219fe31b"
-        },
-        {
-          "tasks": [
-            {
-              "resultMappings": [
-                {
-                  "storeSchemaId": "6a6fe41264a012a7a9dfe4eb99858ee80415af",
-                  "resultName": "file",
-                  "dispatchFunction": "append"
-                }
-              ],
-              "name": "inout",
-              "lambdaId": "cb0efc0967b320bb3ddb5a3253604098ch8ede",
-              "id": "8cbd6946a796da8d864ceb107c3fb994d3fcb5",
-              "argumentMappings": [
-                {
-                  "valueBuilder": {
-                    "valueBuilderType": "iteratedItem",
-                    "valueBuilderRecipe": null
-                  },
-                  "argumentName": "file"
-                }
-              ]
-            }
-          ],
-          "name": "Parallel box",
-          "id": "81b6b77c43fb4e1644280f2c613781e7680c3d"
-        }
-      ],
-      "name": "lane1",
-      "id": "2a258a476275244b6b575287cab428a6ab3c23"
-    },
-    {
-      "storeIteratorSpec": {
-        "strategy": {
-          "type": "serial"
-        },
-        "storeSchemaId": "2d44098984eb1d7fb7ca40f81c1226be6a19eb"
-      },
-      "parallelBoxes": [
-        {
-          "tasks": [
-            {
-              "resultMappings": [
-                {
-                  "storeSchemaId": "6a6fe41264a012a7a9dfe4eb99858ee80415af",
-                  "resultName": "file",
-                  "dispatchFunction": "append"
-                }
-              ],
-              "name": "inout",
-              "lambdaId": "cb0efc0967b320bb3ddb5a3253604098ch8ede",
-              "id": "09d50b52639f704d297b9f2607c3a4b63e5e50",
-              "argumentMappings": [
-                {
-                  "valueBuilder": {
-                    "valueBuilderType": "iteratedItem",
-                    "valueBuilderRecipe": null
-                  },
-                  "argumentName": "file"
-                }
-              ]
-            }
-          ],
-          "name": "Parallel box",
-          "id": "5ecf3270807c19655a5c226e336a9205990d32"
-        }
-      ],
-      "name": "lane2",
-      "id": "7d0d114a1ec40cfebc6c648f106c04e295f861"
-    },
-    {
-      "storeIteratorSpec": {
-        "strategy": {
-          "type": "serial"
-        },
-        "storeSchemaId": "2d44098984eb1d7fb7ca40f81c1226be6a19eb"
-      },
-      "parallelBoxes": [
-        {
-          "tasks": [
-            {
-              "resultMappings": [
-                {
-                  "storeSchemaId": "6a6fe41264a012a7a9dfe4eb99858ee80415af",
-                  "resultName": "file",
-                  "dispatchFunction": "append"
-                }
-              ],
-              "name": "inout",
-              "lambdaId": "cb0efc0967b320bb3ddb5a3253604098ch8ede",
-              "id": "64d9b9eb725ae05f519071accf5229daab0de6",
-              "argumentMappings": [
-                {
-                  "valueBuilder": {
-                    "valueBuilderType": "iteratedItem",
-                    "valueBuilderRecipe": null
-                  },
-                  "argumentName": "file"
-                }
-              ]
-            }
-          ],
-          "name": "Parallel box",
-          "id": "c24b360b53b9bae0ed41ec438b050cb4ef3f6b"
-        }
-      ],
-      "name": "lane3",
-      "id": "60f90c2b35a0ed2bc95d770a86b4d017142fae"
-    }
-  ],
-  "description": "",
-  "atmWorkflowSchemaId": "4cdba1f2ea61cc25bc6a6cc193ae942fcha473"
+  "originalAtmWorkflowSchemaId": "eeb0fa2899d022a7c3419d3c22a06a2ach0077",
+  "name": "test-workflow"
 }

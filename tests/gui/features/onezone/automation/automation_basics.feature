@@ -55,5 +55,6 @@ Feature: Basic inventories management
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses Upload (json) button from menu bar to upload workflow "workflow_upload.json" to current dir without waiting for upload to finish
+    And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser opens inventory "inventory1" workflows subpage
-    Then user of browser sees "workflow_upload" in workflows list in inventory workflows subpage
+    Then user of browser sees "test-workflow" in workflows list in inventory workflows subpage
