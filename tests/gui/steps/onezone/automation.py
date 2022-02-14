@@ -130,12 +130,15 @@ def assert_workflow_exists(selenium, browser_id, oz_page, workflow):
         f'Workflow: {workflow} not found '
 
 
-@wt(parsers.parse('user of {browser_id} uses Add new lambda button '
-                  'from menu bar'))
+@wt(parsers.re('user of (?P<browser_id>.*) uses Add new '
+               '(?P<option>lambda|workflow) button from menu bar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_add_new_lambda_button_in_menu_bar(selenium, browser_id, oz_page):
+def click_add_new_button_in_menu_bar(selenium, browser_id, oz_page, option):
     driver = selenium[browser_id]
-    oz_page(driver)['automation'].main_page.add_new_lambda.click()
+    if option == "lambda":
+        oz_page(driver)['automation'].main_page.add_new_lambda.click()
+    else:
+        oz_page(driver)['automation'].main_page.add_new_workflow.click()
 
 
 @wt(parsers.parse('user of {browser_id} writes "{text}" into lambda name text '
@@ -222,3 +225,28 @@ def click_option_in_revision_menu_button(selenium, browser_id, oz_page, option,
         lambda_box.revision_list[revision_name].menu_button.click()
 
     popups(selenium[browser_id]).menu_popup_with_label.menu[option].click()
+
+
+@wt(parsers.parse('user of {browser_id} writes "{text}" into workflow name '
+                  'text field'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def input_name_into_input_box_on_main_workflows_page(selenium, browser_id,
+                                                    oz_page, text):
+    driver = selenium[browser_id]
+    oz_page(driver)['automation'].workflows_page.create_workflow_page.workflow_name.value = text
+
+
+@wt(parsers.re('user of browser confirms create new workflow using '
+               'Create button'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def confirm_workflow_creation(selenium, browser_id, oz_page):
+    driver = selenium[browser_id]
+    oz_page(driver)['automation'].workflows_page.new_workflow_page.create_button.click()
+
+
+@wt(parsers.re('And user of browser clicks Add store button in Editor '
+               'tab of Workflow'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_add_store_button(selenium, browser_id, oz_page):
+    driver = selenium[browser_id]
+    oz_page(driver)['automation'].workflows_page.workflow_editor_tab.add_store_button.click()
