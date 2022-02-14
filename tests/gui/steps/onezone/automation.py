@@ -138,26 +138,31 @@ def click_add_new_lambda_button_in_menu_bar(selenium, browser_id, oz_page):
     oz_page(driver)['automation'].main_page.add_new_lambda.click()
 
 
-@wt(parsers.parse('user of {browser_id} writes "{text}" into lambda name text '
-                  'field'))
+@wt(parsers.re('user of (?P<browser_id>.*) writes "(?P<text>.*)" into ('
+               '?P<text_field>lambda name|docker image) text field'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def write_lambda_name_in_lambda_edition_text_field(selenium, browser_id,
-                                                   oz_page, text):
+                                                   oz_page, text, text_field):
     driver = selenium[browser_id]
-    oz_page(driver)['automation'].lambdas_page.form.lambda_name.value = text
+    # content = transform(text_field)
+
+    form = oz_page(driver)['automation'].lambdas_page.form
+    setattr(form, transform(text_field), text)
+
+    # oz_page(driver)['automation'].lambdas_page.form.docker_image.value = text
 
 
 @wt(parsers.parse('user of {browser_id} writes "{text}" into docker image text '
                   'field'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def write_docker_image_in_lambda_edition_text_field(selenium, browser_id,
+def write_docker_image_in_lambda_text_field(selenium, browser_id,
                                                     oz_page, text):
     driver = selenium[browser_id]
     oz_page(driver)['automation'].lambdas_page.form.docker_image.value = text
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) confirms (lambda|revision) '
-               'creation by clicking Create button'))
+@wt(parsers.re('user of (?P<browser_id>.*) confirms create new '
+               '(lambda|revision) using Create button'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_lambda_creation(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
@@ -174,8 +179,8 @@ def assert_lambda_exists(selenium, browser_id, oz_page, lambda_name):
         f'Lambda: {lambda_name} not found '
 
 
-@wt(parsers.parse('user of {browser_id} clicks on Create new revision in "{'
-                  'lambda_name}"'))
+@wt(parsers.parse('user of {browser_id} clicks on Create new revision '
+                  'in "{lambda_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_create_new_revision_button(selenium, browser_id, oz_page,
                                         lambda_name):

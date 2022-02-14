@@ -12,7 +12,7 @@ Feature: Basic inventories management
                     storage: posix
                     size: 1000000
     And initial inventories configuration in "onezone" Onezone service:
-          inventory1:
+        inventory1:
             owner: space-owner-user
 
     And user opened browser window
