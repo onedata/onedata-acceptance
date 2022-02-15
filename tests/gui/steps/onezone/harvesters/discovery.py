@@ -7,6 +7,8 @@ __copyright__ = "Copyright (C) 2019 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import time
+
 from tests import ELASTICSEARCH_PORT
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import _enter_text
@@ -149,11 +151,16 @@ def choose_element_from_dropdown_in_add_element_modal(selenium, browser_id,
                                                       element_name, modals,
                                                       element):
     driver = selenium[browser_id]
-    modal_name = 'add_one_of_{}s'.format(element)
-
-    add_one_of_elements_modal = getattr(modals(driver), modal_name)
-    add_one_of_elements_modal.expand_dropdown()
-    modals(driver).dropdown.options[element_name].click()
+    modal_name = f'add_one_of_{element}s'
+    for _ in range(10):
+        try:
+            add_one_of_elements_modal = getattr(modals(driver), modal_name)
+            add_one_of_elements_modal.expand_dropdown()
+            modals(driver).dropdown.options[element_name].click()
+        except RuntimeError:
+            time.sleep(0.5)
+            continue
+        break
 
 
 @wt(parsers.parse('user of {browser_id} sees that "{space_name}" has appeared '
