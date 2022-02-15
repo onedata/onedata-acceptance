@@ -8,17 +8,29 @@ __license__ = "This software is released under the MIT license cited in " \
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import WebItemsSequence, Input, Label, \
-    Button, WebItem
+    Button, WebItem, NamedButton
 from tests.gui.utils.onezone.common import InputBox
 from tests.gui.utils.onezone.generic_page import Element
 
-class WorkflowEditorTab(PageObject):
+
+class Store(Element):
+    name = id = Label('.store-name')
+
+
+class WorkflowLane(Element):
+    add_paraller_box_button = Button('.create-parallel-box-action-trigger')
+    # paraller_box_list = WebItemsSequence('.lane-elements')
+
+
+class WorkflowVisualiser(PageObject):
+
+    create_lane_button = Button('.create-lane-action-trigger')
+    workflow_lanes = WebItemsSequence('.visualiser-elements '
+                                      '.workflow-visualiser-lane', cls = WorkflowLane)
+
     add_store_button = Button('.create-store-action-trigger')
-
-
-class NewWorkflowPage(PageObject):
-    workflow_name = WebItem('.name-field .text-like-field', cls=InputBox)
-    create_button = Button('.btn-primary')
+    stores_list = WebItemsSequence('.workflow-visualiser-stores-list '
+                                   '.tag-item', cls = Store)
 
 
 class Workflow(Element):
@@ -31,9 +43,9 @@ class WorkflowsPage(PageObject):
                                      ' .atm-workflow-schemas-list-entry',
                                      cls=Workflow)
 
-    new_workflow_page = WebItemsSequence('.content-atm-inventories-workflows-creator-view ', cls=NewWorkflowPage)
+    workflow_visualiser = WebItem('.workflow-visualiser ', cls = WorkflowVisualiser)
 
-    workflow_editor_tab=WebItemsSequence('.editor-tab-active ')
+    workflow_name = WebItem('.name-field .text-like-field', cls=InputBox)
 
-    workflow_details_tab=WebItemsSequence('.details-tab-active ')
+    create_button = NamedButton('.btn', text='Create')
 

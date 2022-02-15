@@ -231,22 +231,46 @@ def click_option_in_revision_menu_button(selenium, browser_id, oz_page, option,
                   'text field'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def input_name_into_input_box_on_main_workflows_page(selenium, browser_id,
-                                                    oz_page, text):
+                                                     oz_page, text):
     driver = selenium[browser_id]
-    oz_page(driver)['automation'].workflows_page.create_workflow_page.workflow_name.value = text
+    oz_page(driver)['automation'].workflows_page.workflow_name.value = text
 
 
-@wt(parsers.re('user of browser confirms create new workflow using '
-               'Create button'))
+@wt(parsers.parse('user of {browser_id} confirms create new workflow using '
+                  'Create button'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_workflow_creation(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
-    oz_page(driver)['automation'].workflows_page.new_workflow_page.create_button.click()
+    oz_page(driver)['automation'].workflows_page.create_button.click()
 
 
-@wt(parsers.re('And user of browser clicks Add store button in Editor '
-               'tab of Workflow'))
+@wt(parsers.parse('user of {browser_id} clicks Add store button '
+                  'in workflow visualizer'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_add_store_button(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
-    oz_page(driver)['automation'].workflows_page.workflow_editor_tab.add_store_button.click()
+    oz_page(driver)['automation'].workflows_page.workflow_visualiser.add_store_button.click()
+
+
+@wt(parsers.parse('user of {browser_id} writes "{text}" into store name text '
+                  'field in modal "Create new store"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def write_data_to_add_store_modal(selenium, browser_id, modals, text):
+    driver = selenium[browser_id]
+    modals(driver).create_new_store.name.value = text
+
+
+@wt(parsers.parse('user of {browser_id} clicks on "Create" button in modal "Create new store"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def confirm_store_creation(selenium, browser_id, modals):
+    driver = selenium[browser_id]
+    modals(driver).create_new_store.submit_button.click()
+
+
+@wt(parsers.parse('user of {browser_id} sees "{store_name}" in the stores list in workflow visualizer'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_store_in_store_list(selenium, browser_id, oz_page,store_name):
+    driver = selenium[browser_id]
+    stores_list = oz_page(driver)['automation'].workflows_page.workflow_visualiser.stores_list
+
+    assert store_name in stores_list, f'Store: {store_name} not found '
