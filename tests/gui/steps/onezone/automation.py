@@ -143,22 +143,9 @@ def click_add_new_lambda_button_in_menu_bar(selenium, browser_id, oz_page):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def write_lambda_name_in_lambda_edition_text_field(selenium, browser_id,
                                                    oz_page, text, text_field):
-    driver = selenium[browser_id]
-    # content = transform(text_field)
-
-    form = oz_page(driver)['automation'].lambdas_page.form
-    setattr(form, transform(text_field), text)
-
-    # oz_page(driver)['automation'].lambdas_page.form.docker_image.value = text
-
-
-@wt(parsers.parse('user of {browser_id} writes "{text}" into docker image text '
-                  'field'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def write_docker_image_in_lambda_text_field(selenium, browser_id,
-                                                    oz_page, text):
-    driver = selenium[browser_id]
-    oz_page(driver)['automation'].lambdas_page.form.docker_image.value = text
+    page = oz_page(selenium[browser_id])['automation']
+    label = getattr(page.lambdas_page.form, transform(text_field))
+    setattr(label, 'value', text)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) confirms create new '
