@@ -455,20 +455,6 @@ def assert_provider_chunk_in_data_distribution_empty(selenium, browser_id,
                        'Visible chunks: {}'.format(provider, chunks)
 
 
-@wt(parsers.parse('user of {browser_id} sees that chunk bar for provider '
-                  '"{provider}" is never synchronized'))
-@repeat_failed(timeout=WAIT_BACKEND)
-def assert_provider_chunk_in_data_distribution_never_synchronized(selenium,
-                                                                  browser_id,
-                                                                  provider,
-                                                                  modals,
-                                                                  hosts):
-    driver = selenium[browser_id]
-    provider = hosts[provider]['name']
-    data_distribution = modals(driver).data_distribution
-    data_distribution.providers[provider].never_synchronized_text
-
-
 @wt(parsers.parse('user of {browser_id} sees {chunks} chunk(s) for provider '
                   '"{provider}" in chunk bar'))
 @repeat_failed(timeout=WAIT_FRONTEND)

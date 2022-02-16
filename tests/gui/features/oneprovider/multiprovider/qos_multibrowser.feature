@@ -52,7 +52,7 @@ Feature: Quality of Service in directory tests for 2 providers using multiple br
     And user of browser_unified sees file browser in files tab in Oneprovider page
     And user of browser_unified sees file chunks for file "file1" as follows:
           oneprovider-1: entirely filled
-          oneprovider-2: never synchronized
+          oneprovider-2: entirely empty
 
     And user of browser_emergency clicks on Storages item in submenu of "oneprovider-2" item in CLUSTERS sidebar in Onepanel
     And user of browser_emergency expands "posix" record on storages list in storages page in Onepanel
