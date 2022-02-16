@@ -141,7 +141,7 @@ def click_add_new_lambda_button_in_menu_bar(selenium, browser_id, oz_page):
 @wt(parsers.re('user of (?P<browser_id>.*) writes "(?P<text>.*)" into ('
                '?P<text_field>lambda name|docker image) text field'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def write_lambda_name_in_lambda_edition_text_field(selenium, browser_id,
+def write_lambda_name_in_lambda_text_field(selenium, browser_id,
                                                    oz_page, text, text_field):
     page = oz_page(selenium[browser_id])['automation']
     label = getattr(page.lambdas_page.form, transform(text_field))
@@ -210,7 +210,7 @@ def click_option_in_revision_menu_button(selenium, browser_id, oz_page, option,
         collapse_revision_list_in_lambda(selenium, browser_id, oz_page,
                                          lambda_name)
         lambda_box.revision_list[revision_name].menu_button.click()
-    except:
+    except AssertionError('Collapse button not found'):
         lambda_box.revision_list[revision_name].menu_button.click()
 
     popups(selenium[browser_id]).menu_popup_with_label.menu[option].click()
