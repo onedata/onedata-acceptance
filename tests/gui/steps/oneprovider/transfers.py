@@ -158,19 +158,6 @@ def assert_see_history_btn_shown(selenium, browser_id):
         'Button "see history" not found in data distribution modal')
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) sees that item is never '
-               'synchronized in provider "(?P<provider>.*)"'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_item_never_synchronized(selenium, browser_id, provider, hosts):
-    provider_name = hosts[provider]['name']
-    assert (modals(selenium[browser_id])
-            .data_distribution
-            .providers[provider_name]
-            .distribution
-            .is_never_synchronized()), \
-        'Item is synchronized in provider {}'.format(provider_name)
-
-
 @wt(parsers.re('user of (?P<browser_id>.*) selects "(?P<space>.*)" space '
                'in transfers tab'))
 def change_transfer_space(selenium, browser_id, space, op_container):
