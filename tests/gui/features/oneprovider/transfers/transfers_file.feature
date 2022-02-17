@@ -40,7 +40,7 @@ Feature: Oneprovider transfers files functionality
 
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
-            oneprovider-2: never synchronized
+            oneprovider-2: entirely empty
     And user of browser replicates "large_file.txt" to provider "oneprovider-2"
 
     # Check that transfer appeared in transfer tab
@@ -127,7 +127,7 @@ Feature: Oneprovider transfers files functionality
     And user of browser is idle for 2 seconds
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
-            oneprovider-2: never synchronized
+            oneprovider-2: entirely empty
 
     And user of browser migrates "large_file.txt" from provider "oneprovider-1" to provider "oneprovider-2"
 
@@ -159,7 +159,7 @@ Feature: Oneprovider transfers files functionality
     And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
     And user of browser sees file chunks for file "20B-0.txt" as follows:
             oneprovider-1: entirely filled
-            oneprovider-2: never synchronized
+            oneprovider-2: entirely empty
 
     # download file to other provider
     And user of browser clicks on "oneprovider-2" provider on file browser page
@@ -167,7 +167,7 @@ Feature: Oneprovider transfers files functionality
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees file chunks for file "20B-0.txt" as follows:
             oneprovider-1: entirely filled
-            oneprovider-2: never synchronized
+            oneprovider-2: entirely empty
 
     And user of browser clicks and presses enter on item named "20B-0.txt" in file browser
     And user of browser is idle for 5 seconds
