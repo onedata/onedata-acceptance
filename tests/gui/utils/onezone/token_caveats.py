@@ -157,8 +157,9 @@ class CaveatField(PageObject):
 
     # consumer caveat
     def set_consumer_caveats(self, selenium, browser_id, popups,
-                             consumer_caveats, users, groups, hosts):
+                             consumer_caveats, users, groups, hosts, oz_page):
         self.activate()
+        oz_page(selenium[browser_id])['tokens'].create_token_page.hide_caveats()
         for consumer in consumer_caveats:
             consumer_type = consumer.get('type')
             method = consumer.get('by')
@@ -173,6 +174,8 @@ class CaveatField(PageObject):
                 value = hosts[value]['name']
             self.set_consumer_in_consumer_caveat(selenium, browser_id, popups,
                                                  consumer_type, method, value)
+        oz_page(selenium[browser_id])[
+            'tokens'].create_token_page.expand_caveats()
 
     def set_consumer_in_consumer_caveat(self, selenium, browser_id, popups,
                                         consumer_type, method, value):

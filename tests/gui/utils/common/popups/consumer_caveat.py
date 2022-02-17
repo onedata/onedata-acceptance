@@ -52,7 +52,7 @@ class ConsumerCaveat(PageObject):
     def __str__(self):
         return 'Consumer caveat popup'
 
-    @repeat_failed(timeout=10)
+    @repeat_failed(timeout=20)
     def select_type(self, consumer_type):
         button = getattr(self, f'{consumer_type}_consumer')
         button()

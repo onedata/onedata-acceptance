@@ -124,6 +124,10 @@ class CreateNewTokenPage(PageObject):
         if 'show' in self.show_inactive_caveats.web_elem.text.lower():
             self.show_inactive_caveats()
 
+    def hide_caveats(self):
+        if 'hide' in self.show_inactive_caveats.web_elem.text.lower():
+            self.show_inactive_caveats()
+
     def scroll_to_bottom(self):
         self.driver.execute_script('arguments[0].scrollTo(arguments[1]);',
                                    self.web_elem, self.footer)

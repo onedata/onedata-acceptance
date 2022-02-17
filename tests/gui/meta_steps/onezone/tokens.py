@@ -280,7 +280,8 @@ def _set_tokens_caveats(selenium, browser_id, oz_page, caveats, popups, users,
     if consumer_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'consumer')
         caveat.set_consumer_caveats(selenium, browser_id, popups,
-                                    consumer_caveats, users, groups, hosts)
+                                    consumer_caveats, users, groups, hosts,
+                                    oz_page)
     if service_caveats:
         caveat = get_caveat_by_name(selenium, browser_id, oz_page, 'service')
         caveat.set_service_caveats(selenium, browser_id, service_caveats,
