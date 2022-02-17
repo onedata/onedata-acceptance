@@ -1,4 +1,4 @@
-"""Utils and fixtures to facilitate operations on Create new store for
+"""Utils and fixtures to facilitate operations on Create new lane for
 workflow modal.
 """
 
@@ -11,9 +11,9 @@ from tests.gui.utils.core.web_elements import  Button, Input
 from .modal import Modal
 
 
-class CreateNewStore(Modal):
-    store_name = Input('.name-field .form-control')
+class CreateNewLane(Modal):
+    lane_name = Input('.name-field .form-control')
     create = Button('.btn-submit')
 
     def __str__(self):
-        return 'Create new store modal'
+        return 'Create new lane modal'

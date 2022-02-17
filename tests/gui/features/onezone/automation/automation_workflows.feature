@@ -44,31 +44,16 @@ Feature: Basic inventories management
 
   Scenario: User sees new lane after creating it
     When user of browser clicks on Automation in the main menu
-    And user of browser opens inventory "inventory1" lambdas subpage
+    And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses Add new workflow button from menu bar
     And user of browser writes "Workflow1" into workflow name text field
     And user of browser confirms create new workflow using Create button
-    And user of browser clicks Add store button in Editor tab of Workflow
+    And user of browser clicks Add store button in workflow visualizer
     And user of browser writes "Store1" into store name text field in modal "Create new store"
     And user of browser clicks on "Create" button in modal "Create new store"
-    And user of browser sees "Store1" in the stores list in Editor tab of Workflow
+    And user of browser sees "Store1" in the stores list in workflow visualizer
     And user of browser clicks on create lane button in the middle of workflow visualizer
-    And user of browser writes "Lane1" into lane name text field in modal "Create new store"
-    And user of browser clicks on "Create" button in modal "Create new lane"
-    Then user of browser sees "Lane1" in the workflow visualizer#
-
-  Scenario: User sees new lane after creating it
-    When user of browser clicks on Automation in the main menu
-    And user of browser opens inventory "inventory1" lambdas subpage
-    And user of browser uses Add new workflow button from menu bar
-    And user of browser writes "Workflow1" into workflow name text field
-    And user of browser confirms create new workflow using Create button
-    And user of browser clicks Add store button in Editor tab of Workflow
-    And user of browser writes "Store1" into store name text field in modal "Create new store"
-    And user of browser clicks on "Create" button in modal "Create new store"
-    And user of browser sees "Store1" in the stores list in Editor tab of Workflow
-    And user of browser clicks on create lane button in the middle of workflow visualizer
-    And user of browser writes "Lane1" into lane name text field in modal "Create new store"
+    And user of browser writes "Lane1" into lane name text field in modal "Create new lane"
     And user of browser clicks on "Create" button in modal "Create new lane"
     Then user of browser sees "Lane1" in the workflow visualizer
 
@@ -82,7 +67,7 @@ Feature: Basic inventories management
     And user of browser confirms lambda creation by clicking Create button
     And user of browser sees "Lambda1" in lambdas list in inventory lambdas subpage
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses Upload (json) button from menu bar to upload workflow "workflow_upload.json" to current dir without waiting for upload to finish
+    And user of browser uses Upload (json) button from menu bar to upload workflow "workflow_empty_lane.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser clicks on add parallel box button in "Lane1"
     And user of browser clicks on empty parallel box in "Lane1" to add lambda

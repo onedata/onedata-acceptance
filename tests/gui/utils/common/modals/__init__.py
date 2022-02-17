@@ -56,6 +56,7 @@ from .purge_archive import PurgeArchive
 from .reattach_dataset import ReattachDataset
 from .upload_workflow import UploadWorkflow
 from .create_new_store import CreateNewStore
+from .create_new_lane import CreateNewLane
 
 
 class Modals(object):
@@ -150,6 +151,9 @@ class Modals(object):
     write_protection = WebItem('.modal-dialog', cls=WriteProtection)
     purge_archive = WebItem('.modal-dialog', cls=PurgeArchive)
     reattach_dataset = WebItem('.modal-dialog', cls=ReattachDataset)
+    create_new_store = WebItem('.modal-dialog', cls=CreateNewStore)
+    create_new_lane = WebItem('.modal-dialog', cls=CreateNewLane)
+
 
     def __init__(self, driver):
         self.driver = driver
