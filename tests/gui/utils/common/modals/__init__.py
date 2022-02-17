@@ -132,6 +132,7 @@ class Modals(object):
     remove_harvester = WebItem('.modal-dialog', cls=RemoveModal)
     remove_space = WebItem('.modal-dialog', cls=RemoveModal)
     remove_inventory = WebItem('.modal-dialog', cls=RemoveModal)
+    remove_parallel_box = WebItem('.modal-dialog', cls=RemoveModal)
     rest_api_modal = WebItem('.modal-dialog', cls=RESTApiModal)
     clean_up_obsolete_tokens = WebItem('.modal-dialog',
                                        cls=CleanUpObsoleteTokensModal)
@@ -151,6 +152,7 @@ class Modals(object):
     write_protection = WebItem('.modal-dialog', cls=WriteProtection)
     purge_archive = WebItem('.modal-dialog', cls=PurgeArchive)
     reattach_dataset = WebItem('.modal-dialog', cls=ReattachDataset)
+    upload_workflow = WebItem('.modal-dialog', cls=UploadWorkflow)
     create_new_store = WebItem('.modal-dialog', cls=CreateNewStore)
     create_new_lane = WebItem('.modal-dialog', cls=CreateNewLane)
 

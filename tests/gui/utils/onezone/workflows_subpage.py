@@ -13,25 +13,40 @@ from tests.gui.utils.onezone.common import InputBox
 from tests.gui.utils.onezone.generic_page import Element
 
 
-class Store(Element):
-    name = id = Label('.store-name')
+class Task(Element):
+    menu_button = Button('.task-actions-trigger')
+
+
+class ParallelBox(Element):
+    add_task_button = Button('.create-task-action-trigger')
+    task = WebItem('.workflow-visualiser-task', cls=Task)
 
 
 class WorkflowLane(Element):
     name = id = Label('.lane-name')
-    add_paraller_box_button = Button('.create-parallel-box-action-trigger')
-    # paraller_box_list = WebItemsSequence('.lane-elements')
+    add_parallel_box_button = Button('.create-parallel-box-action-trigger')
+    parallel_box = WebItem('.workflow-visualiser-parallel-box ', cls=ParallelBox)
+
+
+class Store(Element):
+    name = id = Label('.store-name')
 
 
 class WorkflowVisualiser(PageObject):
 
     create_lane_button = Button('.create-lane-action-trigger')
     workflow_lanes = WebItemsSequence('.visualiser-elements '
-                                      '.workflow-visualiser-lane', cls = WorkflowLane)
+                                      '.workflow-visualiser-lane',
+                                      cls = WorkflowLane)
 
     add_store_button = Button('.create-store-action-trigger')
     stores_list = WebItemsSequence('.workflow-visualiser-stores-list '
                                    '.tag-item', cls = Store)
+
+
+class TaskAddForm(PageObject):
+    task_name = WebItem('.name-field .form-control', cls=InputBox)
+    create_button = Button('.btn-primary')
 
 
 class Workflow(Element):
@@ -44,9 +59,13 @@ class WorkflowsPage(PageObject):
                                      ' .atm-workflow-schemas-list-entry',
                                      cls=Workflow)
 
-    workflow_visualiser = WebItem('.workflow-visualiser ', cls = WorkflowVisualiser)
+    workflow_visualiser = WebItem('.workflow-visualiser ',
+                                  cls = WorkflowVisualiser)
 
     workflow_name = WebItem('.name-field .text-like-field', cls=InputBox)
 
     create_button = NamedButton('.btn', text='Create')
+
+    task_form = WebItem('.task-form-container ', cls=TaskAddForm)
+
 
