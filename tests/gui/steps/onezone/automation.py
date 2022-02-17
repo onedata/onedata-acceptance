@@ -210,7 +210,7 @@ def click_option_in_revision_menu_button(selenium, browser_id, oz_page, option,
         collapse_revision_list_in_lambda(selenium, browser_id, oz_page,
                                          lambda_name)
         lambda_box.revision_list[revision_name].menu_button.click()
-    except AssertionError('Collapse button not found'):
+    except BaseException:
         lambda_box.revision_list[revision_name].menu_button.click()
 
     popups(selenium[browser_id]).menu_popup_with_label.menu[option].click()
