@@ -38,15 +38,11 @@ class _Chunk(PageObject):
             raise RuntimeError('{} is not filled correctly: some columns '
                                'are not filled with one color'.format(self))
 
-    def is_never_synchronized(self):
-        return 'never-synchronized-text' in self._file_chunks_text.get_attribute('class')
-
 
 class _DataDistributionRecord(PageObject):
     name = id = Label('.oneprovider-name', parent_name='given provider')
     distribution = WebItem('.chunks-container', cls=_Chunk)
     menu_button = Button('.one-pill-button-actions-trigger')
-    never_synchronized_text = WebElement('.never-synchronized-text')
 
     def __str__(self):
         return 'provider record for "{item}" in ' \

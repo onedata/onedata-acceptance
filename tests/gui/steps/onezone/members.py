@@ -250,7 +250,12 @@ def click_element_in_members_list(selenium, browser_id, member_name, oz_page,
     driver = selenium[browser_id]
     page = _find_members_page(onepanel, oz_page, driver, where)
 
-    getattr(page, list_type).items[member_name].click()
+    members_list = getattr(page, list_type).items
+    for member in members_list:
+        if member.is_opened():
+            member.header.click()
+
+    members_list[member_name].click()
 
 
 @wt(parsers.parse('user of {browser_id} clicks on '

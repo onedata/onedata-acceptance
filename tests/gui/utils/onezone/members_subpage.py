@@ -60,6 +60,9 @@ class MembersItemRow(PageObject):
     def has_status_label(self, name):
         return any(x.text == name for x in self.status_labels)
 
+    def is_opened(self):
+        return 'active' in self.web_elem.get_attribute('class')
+
 
 class MembersList(PageObject):
     header = WebItem('li.list-header-row', cls=MembersHeaderRow)
