@@ -252,25 +252,35 @@ def click_add_store_button(selenium, browser_id, oz_page):
     oz_page(driver)['automation'].workflows_page.workflow_visualiser.add_store_button.click()
 
 
-@wt(parsers.parse('user of {browser_id} writes "{text}" into store name text '
-                  'field in modal "Create new store"'))
+@wt(parsers.parse('user of {browser_id} sees "{store_name}" in the stores '
+                  'list in workflow visualizer'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def write_data_to_add_store_modal(selenium, browser_id, modals, text):
-    driver = selenium[browser_id]
-    modals(driver).create_new_store.name.value = text
-
-
-@wt(parsers.parse('user of {browser_id} clicks on "Create" button in modal "Create new store"'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_store_creation(selenium, browser_id, modals):
-    driver = selenium[browser_id]
-    modals(driver).create_new_store.submit_button.click()
-
-
-@wt(parsers.parse('user of {browser_id} sees "{store_name}" in the stores list in workflow visualizer'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_store_in_store_list(selenium, browser_id, oz_page,store_name):
+def assert_store_in_store_list(selenium, browser_id, oz_page, store_name):
     driver = selenium[browser_id]
     stores_list = oz_page(driver)['automation'].workflows_page.workflow_visualiser.stores_list
 
-    assert store_name in stores_list, f'Store: {store_name} not found '
+    assert store_name in stores_list, f'Store: {store_name} not found'
+
+
+@wt(parsers.parse('user of {browser_id} clicks on create lane button in the middle of workflow visualizer'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_add_lane_button_in_store(selenium, browser_id, oz_page):
+    driver = selenium[browser_id]
+    oz_page(driver)['automation'].workflows_page.workflow_visualiser.create_lane_button.click()
+
+
+@wt(parsers.parse('user of {browser_id} sees "{lane_name}" in the workflow visualizer'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_lane_in_workflow_visualizer(selenium, browser_id, oz_page,lane_name):
+    driver = selenium[browser_id]
+    workflow_visualizer = oz_page(driver)['automation'].workflows_page.workflow_visualiser.workflow_lanes
+
+    assert lane_name in workflow_visualizer, f'Lane: {lane_name} not found'
+
+
+@wt(parsers.parse('user of {browser_id} clicks on add paraller box button in "{lane_name}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def add_paraller_box_to_lane(selenium, browser_id, oz_page, lane_name):
+    driver = selenium[browser_id]
+    workflow_visualizer = oz_page(driver)['automation'].workflows_page.workflow_visualiser.workflow_lanes[lane_name].add_paraller_box_button.click()
+

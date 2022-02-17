@@ -43,7 +43,7 @@ Feature: Deleting and revoking tokens tests in Onezone GUI
     And user of browser clicks "Modify" option in tokens view menu
     And user of browser clicks "Revoke" toggle to activate token
     And user of browser clicks "Save" button on tokens view
-    Then user of browser sees that token named "<token name>" is marked as active
+    And user of browser sees that token named "<token name>" is marked as active
 
     Examples:
     | token type| token name     |

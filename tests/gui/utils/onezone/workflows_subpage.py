@@ -18,6 +18,7 @@ class Store(Element):
 
 
 class WorkflowLane(Element):
+    name = id = Label('.lane-name')
     add_paraller_box_button = Button('.create-parallel-box-action-trigger')
     # paraller_box_list = WebItemsSequence('.lane-elements')
 
