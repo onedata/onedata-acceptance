@@ -16,6 +16,7 @@ from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.onezone.common import EditBox, InputBox
 from tests.gui.utils.onezone.members_subpage import MembersPage
 from tests.gui.utils.onezone.workflows_subpage import WorkflowsPage
+from tests.gui.utils.onezone.lambdas_subpage import LambdasPage
 
 
 class Inventory(Element):
@@ -29,8 +30,10 @@ class Inventory(Element):
 class AutomationDetailsPage(PageObject):
     upload_json = NamedButton('.upload-atm-workflow-schema-action-trigger',
                               text='Upload (json)')
-    add_new_workflow = NamedButton('.open-add-atm-workflow-schema-trigger',
-                                   text='Add new workflow')
+    add_new_workflow = NamedButton('.btn', text='Add new workflow')
+
+    add_new_lambda = NamedButton('.btn', text='Add new lambda')
+
 
 
 class AutomationPage(GenericPage):
@@ -42,11 +45,13 @@ class AutomationPage(GenericPage):
 
     input_box = WebItem('.content-info-content-container', cls=InputBox)
 
-    main_page = WebItem('.col-content', cls=AutomationDetailsPage)
+    main_page = WebItem('.main-content', cls=AutomationDetailsPage)
 
     members_page = WebItem('.main-content', cls=MembersPage)
 
     workflows_page = WebItem('.main-content', cls=WorkflowsPage)
+
+    lambdas_page = WebItem('.main-content', cls=LambdasPage)
 
     privileges_err_msg = Label('.alert-promise-error')
 
