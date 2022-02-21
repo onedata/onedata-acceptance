@@ -9,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in " \
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import WebItemsSequence, Input, Label, \
     Button, WebItem, NamedButton
-from tests.gui.utils.onezone.common import InputBox
+from tests.gui.utils.onezone.common import InputBox, EditBox
 from tests.gui.utils.onezone.generic_page import Element
 
 
@@ -19,7 +19,7 @@ class Task(Element):
 
 class ParallelBox(Element):
     add_task_button = Button('.create-task-action-trigger')
-    task = WebItem('.workflow-visualiser-task', cls=Task)
+    task_list = WebItemsSequence('.box-elements .draggable-task', cls=Task)
 
 
 class WorkflowLane(Element):
@@ -45,7 +45,7 @@ class WorkflowVisualiser(PageObject):
 
 
 class TaskAddForm(PageObject):
-    task_name = WebItem('.name-field .form-control', cls=InputBox)
+    task_name = WebItem('.name-field .text-like-field', cls=EditBox)
     create_button = Button('.btn-primary')
 
 

@@ -58,7 +58,7 @@ Feature: Basic inventories management
     Then user of browser sees "Lane1" in workflow visualizer
 
 
-  Scenario: User adds lambda  to uploaded workflow
+  Scenario: User adds lambda to uploaded workflow
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses Upload (json) button from menu bar to upload workflow "workflow_empty_lane.json" to current dir without waiting for upload to finish
@@ -68,8 +68,8 @@ Feature: Basic inventories management
     And user of browser uses Add new lambda button from menu bar
     And user of browser writes "Lambda1" into lambda name text field
     And user of browser writes "docker_image_example" into docker image text field
-    And user of browser confirms lambda creation by clicking Create button
-    And user of browser confirms task creation by clicking Create button
+    And user of browser confirms create new lambda using Create button
+    And user of browser confirms create new task using Create button
     Then user of browser sees task named "Lambda1" in "Lane1"
 
 
@@ -78,18 +78,17 @@ Feature: Basic inventories management
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses Upload (json) button from menu bar to upload workflow "workflow_upload.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
-    And user of browser clicks on "Modify" button in task "inout" menu in "Lane1" in workflow visualizer
-    And user of browser writes "Task1" into name text field
-    And user of browser confirms task edition by clicking Modify button
-    Then user of browser sees task named "Task1" in "Lane1"
+    And user of browser clicks on "Modify" button in task "Task1" menu in "Lane1" in workflow visualizer
+    And user of browser writes "Task2" into name text field
+    And user of browser confirms edition of task using Modify button
+    Then user of browser sees task named "Task2" in "Lane1"
 
 
-  Scenario: User removes parallel box in uploaded workflow
+  Scenario: User removes task in uploaded workflow
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses Upload (json) button from menu bar to upload workflow "workflow_upload.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
-    And user of browser clicks on "Remove" button in parallel box "inventory1" menu in "Lane1"
+    And user of browser clicks on "Remove" button in task "Task1" menu in "Lane1" in workflow visualizer
     And user of browser clicks on "Remove" button in modal "Remove parallel box"
-    Then user of browser sees task named "Task1" in "Lane1"
-
+    Then user of browser does not see task named "Task1" in "Lane1"
