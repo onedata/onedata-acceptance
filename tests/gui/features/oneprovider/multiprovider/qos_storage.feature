@@ -92,7 +92,7 @@ Feature: Quality of Service tests for 2 providers using multiple browsers where 
   Scenario: User sees matching storages count changing while editing nested expression in QoS visual editor and submits the expression successfully
     When user of browser_emergency adds "test_storage" storage in "oneprovider-1" Oneprovider panel service with following configuration:
           storage type: POSIX
-          mount point: /volumes/persistence/storage
+          mount point: /volumes/posix
     And user of browser_unified opens file browser for "space1" space
     And user of browser_unified opens "Quality of Service" modal for "file1" file
     And user of browser_unified clicks on "Add Requirement" button in modal "Quality of Service"

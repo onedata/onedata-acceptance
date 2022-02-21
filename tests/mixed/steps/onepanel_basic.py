@@ -255,7 +255,7 @@ def register_provider_in_op(client, request, user, hosts, users, selenium,
         storage:
             name: NFS
             type: posix
-            mount point: /volumes/persistence/storage
+            mount point: /volumes/posix
 
     """
 
