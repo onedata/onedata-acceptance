@@ -114,7 +114,7 @@ def assert_inventory_exists(selenium, browser_ids, oz_page, text):
 @wt(parsers.parse('user of {browser_id} uses Upload (json) button from menu '
                   'bar to upload workflow "{file_name}" to current dir '
                   'without waiting for upload to finish'))
-@repeat_failed(timeout=2*WAIT_BACKEND)
+@repeat_failed(timeout=2 * WAIT_BACKEND)
 def upload_workflow_as_json(selenium, browser_id, file_name, oz_page):
     driver = selenium[browser_id]
     oz_page(driver)['automation'].upload_workflow(upload_file_path(file_name))
@@ -128,3 +128,89 @@ def assert_workflow_exists(selenium, browser_id, oz_page, workflow):
 
     assert workflow in page.workflows_page.elements_list, \
         f'Workflow: {workflow} not found '
+
+
+@wt(parsers.parse('user of {browser_id} uses Add new lambda button '
+                  'from menu bar'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_add_new_lambda_button_in_menu_bar(selenium, browser_id, oz_page):
+    driver = selenium[browser_id]
+    oz_page(driver)['automation'].main_page.add_new_lambda.click()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) writes "(?P<text>.*)" into ('
+               '?P<text_field>lambda name|docker image) text field'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def write_lambda_name_in_lambda_text_field(selenium, browser_id,
+                                                   oz_page, text, text_field):
+    page = oz_page(selenium[browser_id])['automation']
+    label = getattr(page.lambdas_page.form, transform(text_field))
+    setattr(label, 'value', text)
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) confirms create new '
+               '(lambda|revision) using Create button'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def confirm_lambda_creation(selenium, browser_id, oz_page):
+    driver = selenium[browser_id]
+    oz_page(driver)['automation'].lambdas_page.form.create_button.click()
+
+
+@wt(parsers.parse('user of {browser_id} sees "{lambda_name}" in lambdas list '
+                  'in inventory lambdas subpage'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_lambda_exists(selenium, browser_id, oz_page, lambda_name):
+    page = oz_page(selenium[browser_id])['automation']
+
+    assert lambda_name in page.lambdas_page.elements_list, \
+        f'Lambda: {lambda_name} not found '
+
+
+@wt(parsers.parse('user of {browser_id} clicks on Create new revision '
+                  'in "{lambda_name}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_create_new_revision_button(selenium, browser_id, oz_page,
+                                        lambda_name):
+    page = oz_page(selenium[browser_id])['automation']
+    page.lambdas_page.elements_list[lambda_name].create_new_revision.click()
+
+
+def collapse_revision_list_in_lambda(selenium, browser_id, oz_page,
+                                     lambda_name):
+    page = oz_page(selenium[browser_id])['automation']
+    lambda_box = page.lambdas_page.elements_list[lambda_name]
+    lambda_box.show_revisions_button.click()
+
+
+@wt(parsers.parse('user of {browser_id} sees "{revision_name}" in lambdas '
+                  'revision list of "{lambda_name}" in '
+                  'inventory lambdas subpage'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_revision_in_lambda_bracket(selenium, browser_id, oz_page,
+                                      lambda_name, revision_name):
+    page = oz_page(selenium[browser_id])['automation']
+    lambda_box = page.lambdas_page.elements_list[lambda_name]
+    try:
+        collapse_revision_list_in_lambda(selenium, browser_id, oz_page,
+                                         lambda_name)
+    finally:
+        assert revision_name in lambda_box.revision_list, \
+            f'Lambda revision: {revision_name} not found'
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) clicks on "(?P<option>Redesign as '
+               'new revision)" button in revision "(?P<revision_name>.*)" '
+               'menu in the "(?P<lambda_name>.*)" revision list'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_option_in_revision_menu_button(selenium, browser_id, oz_page, option,
+                                         lambda_name, revision_name, popups):
+    page = oz_page(selenium[browser_id])['automation']
+    lambda_box = page.lambdas_page.elements_list[lambda_name]
+    try:
+        collapse_revision_list_in_lambda(selenium, browser_id, oz_page,
+                                         lambda_name)
+        lambda_box.revision_list[revision_name].menu_button.click()
+    except BaseException:
+        lambda_box.revision_list[revision_name].menu_button.click()
+
+    popups(selenium[browser_id]).menu_popup_with_label.menu[option].click()
