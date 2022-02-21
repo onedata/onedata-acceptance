@@ -120,15 +120,19 @@ def upload_workflow_as_json(selenium, browser_id, file_name, oz_page):
     oz_page(driver)['automation'].upload_workflow(upload_file_path(file_name))
 
 
-@wt(parsers.parse('user of {browser_id} sees "{workflow}" in workflows list '
-                  'in inventory workflows subpage'))
+@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>does not see|sees) '
+               '"(?P<workflow>.*)" in workflows list '
+               'in inventory workflows subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_workflow_exists(selenium, browser_id, oz_page, workflow):
+def assert_workflow_exists(selenium, browser_id, oz_page, workflow, option):
     page = oz_page(selenium[browser_id])['automation']
 
-    assert workflow in page.workflows_page.elements_list, \
-        f'Workflow: {workflow} not found '
-
+    if option == 'does not see':
+        assert workflow not in page.workflows_page.elements_list, \
+            f'Workflow: {workflow} found '
+    else:
+        assert workflow in page.workflows_page.elements_list, \
+            f'Workflow: {workflow} not found '
 
 @wt(parsers.re('user of (?P<browser_id>.*) uses Add new '
                '(?P<option>lambda|workflow) button from menu bar'))
@@ -330,4 +334,24 @@ def click_option_in_task_menu_button(selenium, browser_id, oz_page, lane_name,
     box.task_list[task_name].menu_button.click()
 
     popups(selenium[browser_id]).menu_popup_with_label.menu[option].click()
+
+
+@wt(parsers.parse('user of {browser_id} clicks on "{option}" button in '
+                  'workflow "{workflow}" menu in workflows subpage'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_option_in_workflow_menu_button(selenium, browser_id, oz_page,
+                                         workflow, option, popups):
+    page = oz_page(selenium[browser_id])['automation']
+    page.workflows_page[workflow].menu_button.click()
+    popups(selenium[browser_id]).menu_popup_with_label.menu[option].click()
+
+
+@wt(parsers.parse('user of {browser_id} writes "{text}" in name textfield '
+                  'of workflow "{workflow}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def insert_text_in_textfield_of_workflow(selenium, browser_id, oz_page,
+                                        workflow, text):
+    page = oz_page(selenium[browser_id])['automation']
+    page.workflows_page[workflow].name_input.value = text
+
 

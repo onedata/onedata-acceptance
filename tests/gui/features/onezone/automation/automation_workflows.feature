@@ -92,3 +92,41 @@ Feature: Basic inventories management
     And user of browser clicks on "Remove" button in task "Task1" menu in "Lane1" in workflow visualizer
     And user of browser clicks on "Remove" button in modal "Remove parallel box"
     Then user of browser does not see task named "Task1" in "Lane1"
+
+
+  Scenario: User removes workflow
+    When user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uses Upload (json) button from menu bar to upload workflow "workflow_upload.json" to current dir without waiting for upload to finish
+    And user of browser clicks on "Apply" button in modal "Upload workflow"
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser sees "test-workflow" in workflows list in inventory workflows subpage
+    And user of browser clicks on "Remove" button in workflow "workflow_upload" menu in workflows subpage
+    And user of browser clicks on "Remove" button in modal "Remove workflow"
+    Then user of browser does not see "test-workflow" in workflows list in inventory workflows subpage
+
+
+  Scenario: User sees new workflow name after changing its details
+    When user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uses Upload (json) button from menu bar to upload workflow "workflow_upload.json" to current dir without waiting for upload to finish
+    And user of browser clicks on "Apply" button in modal "Upload workflow"
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser sees "test-workflow" in workflows list in inventory workflows subpage
+    And user of browser clicks on "Change details" button in workflow "workflow_upload" menu in workflows subpage
+    And user of browser writes "Workflow1" in name textfield of workflow "workflow_upload"
+    And user of browser confirms edition of workflow details using Save button
+    Then user of browser sees "Workflow1" in workflows list in inventory workflows subpage
+
+
+  Scenario: User does not see workflow revision after removing it
+    When user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uses Upload (json) button from menu bar to upload workflow "workflow_upload.json" to current dir without waiting for upload to finish
+    And user of browser clicks on "Apply" button in modal "Upload workflow"
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser sees "test-workflow" in workflows list in inventory workflows subpage
+    And user of browser clicks on "Remove" button in revision "Lambda1" menu in the "Lambda1" revision list
+    And user of browser clicks on "Remove" button in modal "Remove workflow revision"
+    Then user of browser does not see "Revision1" in lambdas revision list of "Lambda2" in inventory lambdas subpage
+

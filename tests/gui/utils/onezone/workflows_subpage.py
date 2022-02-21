@@ -49,9 +49,23 @@ class TaskAddForm(PageObject):
     create_button = Button('.btn-primary')
 
 
-class Workflow(Element):
-    name = id = Label('.text-like-field')
+class Revision(Element):
+    name = id = Label('.name')
     menu_button = Button('.one-menu-toggle')
+
+
+class Workflow(Element):
+    name = id = Label('.name-field .text-like-field')
+
+    name_input = WebItem('.name-field .text-like-field', cls=EditBox)
+    save_button = Button('.btn-save')
+
+    menu_button = Button('.one-menu-toggle')
+    create_new_revision = Button('. create-atm-workflow-schema-revision-action-trigger')
+    show_revisions_button = Button('.expand-button')
+    revision_list = WebItemsSequence('.revisions-table '
+                                     '.revisions-table-revision-entry',
+                                     cls=Revision)
 
 
 class WorkflowsPage(PageObject):
