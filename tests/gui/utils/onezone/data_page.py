@@ -175,7 +175,7 @@ class SpaceProvidersPage(PageObject):
 
 
 class _Provider(PageObject):
-    name = id = Label('a .tab-name')
+    name = id = Label('.tab-name')
 
 
 class DatasetHeader(PageObject):
