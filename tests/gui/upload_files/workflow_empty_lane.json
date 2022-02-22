@@ -1,0 +1,41 @@
+{
+  "summary": "Example workflow made for gui tests",
+  "schemaFormatVersion": 2,
+  "revision": {
+    "supplementaryAtmLambdas": {},
+    "schemaFormatVersion": 2,
+    "originalRevisionNumber": 1,
+    "atmWorkflowSchemaRevision": {
+      "stores": [
+        {
+          "type": "list",
+          "requiresInitialValue": false,
+          "name": "Store1",
+          "id": "0ace9e9b20d6f712cff1cdf66207c76b77a068",
+          "description": "",
+          "defaultInitialValue": null,
+          "dataSpec": {
+            "valueConstraints": {},
+            "type": "integer"
+          }
+        }
+      ],
+      "state": "draft",
+      "lanes": [
+        {
+          "storeIteratorSpec": {
+            "storeSchemaId": "0ace9e9b20d6f712cff1cdf66207c76b77a068",
+            "maxBatchSize": 100
+          },
+          "parallelBoxes": [],
+          "name": "Lane1",
+          "maxRetries": 2,
+          "id": "11c6734eb794783a6c8e242b64833dce5ce7e8"
+        }
+      ],
+      "description": ""
+    }
+  },
+  "originalAtmWorkflowSchemaId": "7943025049ba3246a7bdb50800eb74fech1eee",
+  "name": "workflow_empty_lane"
+}
