@@ -38,6 +38,8 @@ def _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id, path,
     try:
         go_to_path_without_last_elem(selenium, browser_id, tmp_memory,
                                      path, op_container)
+        browser = tmp_memory[browser_id]['file_browser']
+        browser.click_on_background()
         click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
     except (KeyError, StaleElementReferenceException):
         go_to_filebrowser(selenium, browser_id, oz_page, op_container,
