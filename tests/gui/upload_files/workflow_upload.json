@@ -3,7 +3,7 @@
   "schemaFormatVersion": 2,
   "revision": {
     "supplementaryAtmLambdas": {
-      "258af9cb58e858005f81fb5845f9a0dbch6967": {
+      "85500fe9de1bb4b635631961742ac103ch2832": {
         "1": {
           "schemaFormatVersion": 2,
           "revision": {
@@ -56,7 +56,7 @@
               ]
             }
           },
-          "originalAtmLambdaId": "258af9cb58e858005f81fb5845f9a0dbch6967"
+          "originalAtmLambdaId": "85500fe9de1bb4b635631961742ac103ch2832"
         }
       }
     },
@@ -94,7 +94,7 @@
                   "resourceSpecOverride": null,
                   "name": "Task1",
                   "lambdaRevisionNumber": 1,
-                  "lambdaId": "258af9cb58e858005f81fb5845f9a0dbch6967",
+                  "lambdaId": "85500fe9de1bb4b635631961742ac103ch2832",
                   "id": "d25e1fadb0b7b440a90e20bdd0bbb573f948ec",
                   "argumentMappings": [
                     {
@@ -116,9 +116,9 @@
           "id": "1f1ddcd40d5b02b631ebfacd35f9bde7e899a3"
         }
       ],
-      "description": ""
+      "description": "test-workflow"
     }
   },
-  "originalAtmWorkflowSchemaId": "a66251ac542987543eb310d632d8132bchf346",
+  "originalAtmWorkflowSchemaId": "ecbe105a2de64930bdc1f5aff3bc2163ch640b",
   "name": "test-workflow"
 }

@@ -132,6 +132,7 @@ class Modals(object):
     remove_harvester = WebItem('.modal-dialog', cls=RemoveModal)
     remove_space = WebItem('.modal-dialog', cls=RemoveModal)
     remove_inventory = WebItem('.modal-dialog', cls=RemoveModal)
+    remove_workflow = WebItem('.modal-dialog', cls=RemoveModal)
     remove_task = WebItem('.modal-dialog', cls=RemoveModal)
     rest_api_modal = WebItem('.modal-dialog', cls=RESTApiModal)
     clean_up_obsolete_tokens = WebItem('.modal-dialog',

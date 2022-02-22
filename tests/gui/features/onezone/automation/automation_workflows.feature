@@ -101,7 +101,7 @@ Feature: Basic inventories management
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser sees "test-workflow" in workflows list in inventory workflows subpage
-    And user of browser clicks on "Remove" button in workflow "workflow_upload" menu in workflows subpage
+    And user of browser clicks on "Remove" button in workflow "test-workflow" menu in workflows subpage
     And user of browser clicks on "Remove" button in modal "Remove workflow"
     Then user of browser does not see "test-workflow" in workflows list in inventory workflows subpage
 
@@ -113,9 +113,9 @@ Feature: Basic inventories management
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser sees "test-workflow" in workflows list in inventory workflows subpage
-    And user of browser clicks on "Change details" button in workflow "workflow_upload" menu in workflows subpage
-    And user of browser writes "Workflow1" in name textfield of workflow "workflow_upload"
-    And user of browser confirms edition of workflow details using Save button
+    And user of browser clicks on "Change details" button in workflow "test-workflow" menu in workflows subpage
+    And user of browser writes "Workflow1" in name textfield of workflow "test-workflow"
+    And user of browser confirms edition of workflow "test-workflow" details using Save button
     Then user of browser sees "Workflow1" in workflows list in inventory workflows subpage
 
 
@@ -126,7 +126,7 @@ Feature: Basic inventories management
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser sees "test-workflow" in workflows list in inventory workflows subpage
-    And user of browser clicks on "Remove" button in revision "Lambda1" menu in the "Lambda1" revision list
+    And user of browser clicks on "Remove" button in revision "test-workflow" menu in the "test-workflow" workflow revision list
     And user of browser clicks on "Remove" button in modal "Remove workflow revision"
-    Then user of browser does not see "Revision1" in lambdas revision list of "Lambda2" in inventory lambdas subpage
+    Then user of browser does not see "Revision1" in lambdas workflow list of "Lambda2" in inventory workflow subpage
 
