@@ -58,7 +58,7 @@ Feature: Basic inventories management
     Then user of browser sees "Lane1" in workflow visualizer
 
 
-  Scenario: User adds lambda to uploaded workflow
+  Scenario: User sees lambda after adding it to uploaded workflow
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses Upload (json) button from menu bar to upload workflow "workflow_empty_lane.json" to current dir without waiting for upload to finish
@@ -84,11 +84,11 @@ Feature: Basic inventories management
     Then user of browser sees task named "Task2" in "Lane1"
 
 
-  Scenario: User removes task in uploaded workflow
+  Scenario: User does not see task in uploaded workflow after removing it
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses Upload (json) button from menu bar to upload workflow "workflow_upload.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser clicks on "Remove" button in task "Task1" menu in "Lane1" in workflow visualizer
-    And user of browser clicks on "Remove" button in modal "Remove parallel box"
+    And user of browser clicks on "Remove" button in modal "Remove task"
     Then user of browser does not see task named "Task1" in "Lane1"
