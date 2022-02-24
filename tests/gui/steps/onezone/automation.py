@@ -259,7 +259,7 @@ def assert_store_in_store_list(selenium, browser_id, oz_page, store_name):
 @wt(parsers.parse('user of {browser_id} clicks on create lane button in the '
                   'middle of workflow visualizer'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_add_lane_button_in_store(selenium, browser_id, oz_page):
+def click_add_lane_button_in_workflow_visualizer(selenium, browser_id, oz_page):
     page = oz_page(selenium[browser_id])['automation']
     page.workflows_page.workflow_visualiser.create_lane_button.click()
 
