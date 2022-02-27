@@ -404,3 +404,15 @@ def close_modal(selenium, browser_id, modal, modals):
 def click_copy_icon_in_rest_api_modal(selenium, browser_id, modals):
     modals(selenium[browser_id]).rest_api_modal.copy_command_button()
 
+
+@wt(parsers.parse('user of {browser_id} chooses "{option}" in dropdown menu '
+                  'in modal "{modal}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def choose_invite_type_in_oz_token_page(selenium, browser_id, modals,
+                                        popups, option, modal):
+    driver = selenium[browser_id]
+    modal = transform(modal)
+    getattr(modals(driver), modal).dropdown_menu.click()
+
+    popups(driver).power_select.choose_item(option)
+

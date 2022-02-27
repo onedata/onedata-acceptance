@@ -50,15 +50,12 @@ class TaskAddForm(PageObject):
 
 
 class Revision(Element):
-    name = id = Label('.name')
-    menu_button = Button('.revision-actions-trigger')
+    name = id = Label('.description')
+    menu_button = Button('.one-menu-toggle')
 
 
 class Workflow(Element):
     name = id = Label('.name-field .text-like-field')
-
-    name_input = WebItem('.name-field .text-like-field', cls=EditBox)
-    save_button = Button('.btn-save')
 
     menu_button = Button('.workflow-actions-trigger')
     create_new_revision = Button('. create-atm-workflow-schema-revision-action-trigger')
@@ -81,5 +78,10 @@ class WorkflowsPage(PageObject):
     create_button = NamedButton('.btn', text='Create')
 
     task_form = WebItem('.task-form-container ', cls=TaskAddForm)
+
+    workflow_name_input = WebItem('.name-field .text-like-field', cls=EditBox)
+
+    workflow_save_button = Button('.btn-save')
+
 
 

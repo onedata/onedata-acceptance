@@ -150,7 +150,7 @@ def click_add_new_button_in_menu_bar(selenium, browser_id, oz_page, option):
                '?P<text_field>lambda name|docker image) text field'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def write_lambda_name_in_lambda_text_field(selenium, browser_id,
-                                                   oz_page, text, text_field):
+                                           oz_page, text, text_field):
     page = oz_page(selenium[browser_id])['automation']
     label = getattr(page.lambdas_page.form, transform(text_field))
     setattr(label, 'value', text)
@@ -191,13 +191,13 @@ def collapse_revision_list(object):
     object.show_revisions_button.click()
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) sees "(?P<revision_name>.*)" in '
+@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>does not see|sees) '
+               '"(?P<revision_name>.*)" in '
                '(lambdas|workflows) revision list of "(?P<object_name>.*)" '
                'in inventory (?P<page>lambdas|workflows) subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_revision_in_object_bracket(selenium, browser_id, oz_page,
-                                      object_name, page):
-
+                                      object_name, page, option):
     if page == "lambdas":
         subpage = oz_page(selenium[browser_id])['automation'].lambdas_page
     else:
@@ -208,12 +208,17 @@ def assert_revision_in_object_bracket(selenium, browser_id, oz_page,
     try:
         collapse_revision_list(object)
     finally:
-        assert object_name in object.revision_list, \
-            f'Revision: {object_name} not found'
+        pdb.set_trace()
+        if option == 'does not see':
+            assert object_name not in object.revision_list, \
+                f'Revision: {object_name} found'
+        else:
+            assert object_name in object.revision_list, \
+                f'Revision: {object_name} not found'
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on "(?P<option>Redesign as '
-               'new revision|Duplicate to...|Download (json)|Remove)" button '
+               'new revision|Duplicate to...|Download \(json\)|Remove)" button '
                'in revision "(?P<revision_name>.*)" menu in the '
                '"(?P<object_name>.*)" (?P<object_type>lambda|workflow) '
                'revision list'))
@@ -221,7 +226,6 @@ def assert_revision_in_object_bracket(selenium, browser_id, oz_page,
 def click_option_in_revision_menu_button(selenium, browser_id, oz_page, option,
                                          object_name, revision_name, popups,
                                          object_type):
-
     if object_type == 'lambda':
         subpage = oz_page(selenium[browser_id])['automation'].lambdas_page
     else:
@@ -296,9 +300,10 @@ def assert_lane_in_workflow_visualizer(selenium, browser_id, oz_page,
                   'the middle of "{lane_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_parallel_box_to_lane(selenium, browser_id, oz_page, lane_name):
-   page = oz_page(selenium[browser_id])['automation']
-   workflow_visualiser = page.workflows_page.workflow_visualiser
-   workflow_visualiser.workflow_lanes[lane_name].add_parallel_box_button.click()
+    page = oz_page(selenium[browser_id])['automation']
+    workflow_visualiser = page.workflows_page.workflow_visualiser
+    workflow_visualiser.workflow_lanes[
+        lane_name].add_parallel_box_button.click()
 
 
 @wt(parsers.parse('user of {browser_id} clicks create task button in empty '
@@ -357,22 +362,31 @@ def click_option_in_workflow_menu_button(selenium, browser_id, oz_page,
     popups(selenium[browser_id]).menu_popup_with_label.menu[option].click()
 
 
-@wt(parsers.parse('user of {browser_id} writes "{text}" in name textfield '
-                  'of workflow "{workflow}"'))
+@wt(parsers.parse('user of {browser_id} writes "{text}" in name textfield of '
+                  'selected workflow'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def insert_text_in_textfield_of_workflow(selenium, browser_id, oz_page,
-                                        workflow, text):
+def insert_text_in_textfield_of_workflow(selenium, browser_id, oz_page, text):
     page = oz_page(selenium[browser_id])['automation']
-    page.workflows_page.elements_list[workflow].name_input.value = text
+    page.workflows_page.name_input.value = text
 
 
-@wt(parsers.parse('user of {browser_id confirms edition of workflow "{workflow}"'
-                  'details using Save button"'))
+@wt(parsers.parse('user of {browser_id} confirms edition of selected workflow '
+                  'details using Save button'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_in_workflow(selenium, browser_id, oz_page,
-                                        workflow):
-
+def click_button_in_workflow(selenium, browser_id, oz_page):
     page = oz_page(selenium[browser_id])['automation']
-    page.workflows_page[workflow].save_button.click()
+    page.workflows_page.save_button.click()
 
+
+@wt(parsers.parse('user of {browser_id} sees that downloaded content '
+                  'of "{file_name}" workflow is not empty'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def has_downloaded_workflow_file_content(browser_id, tmpdir, file_name):
+
+    downloaded_file = tmpdir.join(browser_id, 'download', file_name)
+    pdb.set_trace()
+    if downloaded_file.exists():
+        assert True
+    else:
+        raise RuntimeError('file {} has not been downloaded'.format(file_name))
 
