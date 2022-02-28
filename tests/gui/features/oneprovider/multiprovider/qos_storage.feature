@@ -54,7 +54,6 @@ Feature: Quality of Service tests for 2 providers using multiple browsers where 
           oneprovider-2: entirely filled
 
 
-
   Scenario: User can select one of storages of supporting providers in QoS graphical editor and it causes to match this storage
     When user of browser_unified opens file browser for "space1" space
     And user of browser_unified opens "Quality of Service" modal for "file1" file
