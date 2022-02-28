@@ -26,7 +26,7 @@ Feature: Basic workflows management
     And user of browser uses Upload (json) button from menu bar to upload workflow "workflow_upload.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser opens inventory "inventory1" workflows subpage
-    Then user of browser sees "test-workflow" in workflows list in inventory workflows subpage
+    Then user of browser sees "Workflow1" in workflows list in inventory workflows subpage
 
 
   Scenario: User sees new workflow after creating it
@@ -42,9 +42,7 @@ Feature: Basic workflows management
   Scenario: User sees new store after creating it
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses Add new workflow button from menu bar in workflows subpage
-    And user of browser writes "Workflow1" into workflow name text field
-    And user of browser confirms create new workflow using Create button
+    And user of browser creates workflow "Workflow1"
     And user of browser clicks Add store button in workflow visualizer
     And user of browser writes "Store1" into store name text field in modal "Create new store"
     And user of browser clicks on "Create" button in modal "Create new store"
@@ -54,9 +52,7 @@ Feature: Basic workflows management
   Scenario: User sees new lane after creating it
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses Add new workflow button from menu bar in workflows subpage
-    And user of browser writes "Workflow1" into workflow name text field
-    And user of browser confirms create new workflow using Create button
+    And user of browser creates workflow "Workflow1"
     And user of browser clicks Add store button in workflow visualizer
     And user of browser writes "Store1" into store name text field in modal "Create new store"
     And user of browser clicks on "Create" button in modal "Create new store"
