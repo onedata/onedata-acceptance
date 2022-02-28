@@ -10,6 +10,7 @@ __license__ = ("This software is released under the MIT license cited in "
 import time
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
+from tests.gui.steps.common.miscellaneous import _enter_text
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
@@ -75,6 +76,37 @@ def click_on_record_in_clusters_menu(selenium, browser_id, oz_page, record,
 def click_option_of_record_in_the_sidebar(selenium, browser_id, oz_page, option):
     driver = selenium[browser_id]
     oz_page(driver)['clusters'].submenu[option].click()
+
+
+@wt(parsers.parse('user of {browser_id} clicks "{button}" button in GUI '
+                  'settings page'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def click_button_in_gui_settings_page(selenium, browser_id, oz_page,
+                                      button):
+    driver = selenium[browser_id]
+    getattr(oz_page(driver)['clusters'].gui_settings_page, transform(button))()
+
+
+@wt(parsers.parse('user of {browser_id} writes "{text}" in the "{box}" in '
+                  'GUI settings page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def write_input_in_gui_settings_page(selenium, browser_id, oz_page, box,
+                                     text):
+    driver = selenium[browser_id]
+    input_box = getattr(oz_page(driver)['clusters'].gui_settings_page,
+                        transform(box))
+    _enter_text(input_box, text)
+
+
+@wt(parsers.parse('user of {browser_id} removes {notification} in GUI '
+                  'settings page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def remove_notification_in_gui_settings_page(selenium, browser_id, oz_page,
+                                             notification):
+    notification = notification + ' input'
+    text = ' '
+    write_input_in_gui_settings_page(selenium, browser_id, oz_page,
+                                     notification, text)
 
 
 @wt(parsers.parse('user of {browser_id} checks the understand notice '
@@ -187,4 +219,56 @@ def click_new_or_old_cluster_record(selenium, browser_id, provider, age,
 def click_deregister_link_in_cluster_page(selenium, browser_id, oz_page):
     driver = selenium[browser_id]
     oz_page(driver)['clusters'].deregister_label.click()
+
+
+@wt(parsers.parse('user of {browser_id} clicks on {setting} link in cookies'
+                  ' popup'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_link_in_popup(selenium, browser_id, popups, setting):
+    driver = selenium[browser_id]
+    setting = transform(setting)+'_link'
+    getattr(popups(driver).cookies, setting)()
+
+
+@wt(parsers.parse('user of {browser_id} clicks "{button}" button in '
+                  'cookies popup'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_link_in_popup(selenium, browser_id, popups, button):
+    driver = selenium[browser_id]
+    getattr(popups(driver).cookies, transform(button))()
+
+
+@wt(parsers.parse('user of {browser_id} sees "{text}" on {setting} page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_message_on_privacy_policy_page(selenium, browser_id, privacy_policy,
+                                          terms_of_use, text, setting):
+    err_msg = f'Message on {setting} page is not as expected'
+    if setting == 'privacy policy':
+        assert privacy_policy(selenium[browser_id]).message.text == text, (
+                err_msg)
+    else:
+        assert terms_of_use(selenium[browser_id]).message.text == text, (
+            err_msg)
+
+
+@wt(parsers.parse('user of {browser_id} clicks "{button}" button '
+                  'on {settings} page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_button_on_privacy_policy_page(selenium, browser_id, privacy_policy,
+                                        terms_of_use, button, setting):
+    if setting == 'privacy policy':
+        getattr(privacy_policy(selenium[browser_id]), transform(button))()
+    else:
+        getattr(terms_of_use(selenium[browser_id]), transform(button))()
+
+
+@wt(parsers.parse('user of {browser_id} goes to {setting} page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def go_to_setting_page(selenium, browser_id, oz_page, popups):
+    driver = selenium[browser_id]
+    oz_page(driver)['profile'].profile()
+    popups(driver).user_account_menu.options["Terms of use"].click()
+
+
+
 

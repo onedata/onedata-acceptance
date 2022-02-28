@@ -219,6 +219,18 @@ def public_share():
 
 
 @fixture(scope='session')
+def privacy_policy():
+    from tests.gui.utils import PrivacyPolicy
+    return PrivacyPolicy
+
+
+@fixture(scope='session')
+def terms_of_use():
+    from tests.gui.utils import TermsOfUse
+    return TermsOfUse
+
+
+@fixture(scope='session')
 def data_discovery():
     from tests.gui.utils import DataDiscoveryPage
     return DataDiscoveryPage
