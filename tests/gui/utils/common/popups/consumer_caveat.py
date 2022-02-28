@@ -6,11 +6,10 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-import time
-
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (
     Label, WebItemsSequence, Button, WebElement, Input, NamedButton)
+from tests.utils.utils import repeat_failed
 
 
 class TypeItem(PageObject):
@@ -53,7 +52,7 @@ class ConsumerCaveat(PageObject):
     def __str__(self):
         return 'Consumer caveat popup'
 
+    @repeat_failed(timeout=20)
     def select_type(self, consumer_type):
         button = getattr(self, f'{consumer_type}_consumer')
-        time.sleep(0.3)
         button()

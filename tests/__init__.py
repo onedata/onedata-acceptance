@@ -110,11 +110,3 @@ PATCHES_DIR = {
     'upgrade': UPGRADE_TESTS_PATCHES_DIR
 }
 
-IMAGES_CFG_PATHS = {
-    'onezone': 'onezone_images/docker-dev-build-list.json',
-    'oneprovider': 'oneprovider_images/docker-dev-build-list.json',
-    'oneclient': 'oneclient_images/oc-docker-dev-build-list.json',
-    'rest_cli': 'rest_cli_images/rest-cli-docker-build-report.json'
-}
-
-ARTIFACTS_DIR = 'artifacts_dir'
