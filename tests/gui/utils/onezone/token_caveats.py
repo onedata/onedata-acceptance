@@ -183,7 +183,6 @@ class CaveatField(PageObject):
         driver = selenium[browser_id]
         popup = popups(driver).consumer_caveat_popup
         popup.expand_consumer_types()
-        time.sleep(0.5)
         popup.select_type(consumer_type)
         if method == 'name':
             popup.list_option()
