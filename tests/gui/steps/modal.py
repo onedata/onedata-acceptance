@@ -321,7 +321,8 @@ def click_modal_button(selenium, browser_id, button, modal, modals):
 def write_name_into_text_field_in_modal(selenium, browser_id, item_name,
                                         modal_name, modals,
                                         name_textfield='input name'):
-
+    if name_textfield == '':
+        name_textfield = 'input name'
     modal = getattr(modals(selenium[browser_id]), transform(modal_name))
     setattr(modal, transform(name_textfield), item_name)
 
