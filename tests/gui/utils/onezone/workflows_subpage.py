@@ -45,7 +45,11 @@ class WorkflowVisualiser(PageObject):
 
 
 class RevisionDetails(PageObject):
-    description = WebItem('.description-field .field-component', cls=EditBox)
+    description = Input('.textarea-field .form-control')
+
+
+class NavigationTab(Element):
+    name = id = Label('.nav-link')
 
 
 class TaskAddForm(PageObject):
@@ -73,6 +77,8 @@ class WorkflowsPage(PageObject):
     elements_list = WebItemsSequence('.atm-workflow-schemas-list'
                                      ' .atm-workflow-schemas-list-entry',
                                      cls=Workflow)
+
+    navigation_tab = WebItemsSequence('.nav-tabs li', cls=NavigationTab)
 
     workflow_visualiser = WebItem('.workflow-visualiser',
                                   cls=WorkflowVisualiser)

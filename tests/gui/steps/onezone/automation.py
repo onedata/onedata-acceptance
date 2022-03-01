@@ -205,14 +205,14 @@ def assert_revision_in_object_bracket(selenium, browser_id, oz_page,
 
     try:
         collapse_revision_list(object)
-    finally:
-        pdb.set_trace()
-        if option == 'does not see':
-            assert object_name not in object.revision_list, \
-                f'Revision: {object_name} found'
-        else:
-            assert object_name in object.revision_list, \
-                f'Revision: {object_name} not found'
+    except:
+        pass
+    if option == 'does not see':
+        assert object_name not in object.revision_list, \
+            f'Revision: {object_name} found'
+    else:
+        assert object_name in object.revision_list, \
+            f'Revision: {object_name} not found'
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on "(?P<option>Redesign as '
@@ -351,6 +351,7 @@ def click_option_in_task_menu_button(selenium, browser_id, oz_page, lane_name,
 
     popups(driver).menu_popup_with_label.menu[option].click()
 
+
 @wt(parsers.parse('user of {browser_id} clicks on "{option}" button in '
                   'workflow "{workflow}" menu in workflows subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -366,25 +367,42 @@ def click_option_in_workflow_menu_button(selenium, browser_id, oz_page,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def insert_text_in_textfield_of_workflow(selenium, browser_id, oz_page, text):
     page = oz_page(selenium[browser_id])['automation']
-    page.workflows_page.name_input.value = text
+    page.workflows_page.workflow_name_input.value = text
 
 
 @wt(parsers.parse('user of {browser_id} confirms edition of selected workflow '
                   'details using Save button'))
+@wt(parsers.parse('user of {browser_id} Saves workflow edition by clicking '
+                  'Save button from menu bar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_in_workflow(selenium, browser_id, oz_page):
     page = oz_page(selenium[browser_id])['automation']
-    page.workflows_page.save_button.click()
+    page.workflows_page.workflow_save_button.click()
 
 
 @wt(parsers.parse('user of {browser_id} sees that downloaded content '
                   'of "{file_name}" workflow is not empty'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def has_downloaded_workflow_file_content(browser_id, tmpdir, file_name):
-
     downloaded_file = tmpdir.join(browser_id, 'download', file_name)
     if downloaded_file.exists():
         assert True
     else:
         raise RuntimeError('file {} has not been downloaded'.format(file_name))
+
+
+@wt(parsers.parse('user of {browser_id} changes workflow view to '
+                  '"{tab_name}" tab'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def change_navigation_tab_in_workflow(selenium, browser_id, oz_page, tab_name):
+    page = oz_page(selenium[browser_id])['automation']
+    page.workflows_page.navigation_tab[tab_name].click()
+
+
+@wt(parsers.parse('user of {browser_id} writes "{text}" in description '
+                  'textfield in workflow Details tab'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def insert_text_in_description_of_revision(selenium, browser_id, oz_page, text):
+    page = oz_page(selenium[browser_id])['automation']
+    page.workflows_page.revision_details.description = text
 

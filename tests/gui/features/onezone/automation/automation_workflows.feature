@@ -14,7 +14,7 @@ Feature: Basic workflows management
     And initial inventories configuration in "onezone" Onezone service:
         inventory1:
             owner: space-owner-user
-          inventory2:
+        inventory2:
             owner: space-owner-user
 
     And user opened browser window
@@ -107,10 +107,10 @@ Feature: Basic workflows management
     And user of browser uses Upload (json) button from menu bar to upload workflow "workflow_upload.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser sees "test-workflow" in workflows list in inventory workflows subpage
-    And user of browser clicks on "Remove" button in workflow "test-workflow" menu in workflows subpage
+    And user of browser sees "Workflow1" in workflows list in inventory workflows subpage
+    And user of browser clicks on "Remove" button in workflow "Workflow1" menu in workflows subpage
     And user of browser clicks on "Remove" button in modal "Remove workflow"
-    Then user of browser does not see "test-workflow" in workflows list in inventory workflows subpage
+    Then user of browser does not see "Workflow1" in workflows list in inventory workflows subpage
 
 
   Scenario: User sees new workflow name after changing its details
@@ -119,11 +119,11 @@ Feature: Basic workflows management
     And user of browser uses Upload (json) button from menu bar to upload workflow "workflow_upload.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser sees "test-workflow" in workflows list in inventory workflows subpage
-    And user of browser clicks on "Change details" button in workflow "test-workflow" menu in workflows subpage
-    And user of browser writes "Workflow1" in name textfield of selected workflow
+    And user of browser sees "Workflow1" in workflows list in inventory workflows subpage
+    And user of browser clicks on "Change details" button in workflow "Workflow1" menu in workflows subpage
+    And user of browser writes "WorkflowRenamed" in name textfield of selected workflow
     And user of browser confirms edition of selected workflow details using Save button
-    Then user of browser sees "Workflow1" in workflows list in inventory workflows subpage
+    Then user of browser sees "WorkflowRenamed" in workflows list in inventory workflows subpage
 
 
   Scenario: User does not see workflow revision after removing it
@@ -132,10 +132,10 @@ Feature: Basic workflows management
     And user of browser uses Upload (json) button from menu bar to upload workflow "workflow_upload.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser sees "test-workflow" in workflows list in inventory workflows subpage
-    And user of browser clicks on "Remove" button in revision "test-workflow" menu in the "test-workflow" workflow revision list
+    And user of browser sees "Workflow1" in workflows list in inventory workflows subpage
+    And user of browser clicks on "Remove" button in revision "Workflow1" menu in the "Workflow1" workflow revision list
     And user of browser clicks on "Remove" button in modal "Remove workflow revision"
-    Then user of browser does not see "test-workflow" in workflows revision list of "test-workflow" in inventory workflows subpage
+    Then user of browser does not see "Workflow1" in workflows revision list of "Workflow1" in inventory workflows subpage
 
 
   Scenario: User downloads revision workflow
@@ -144,9 +144,9 @@ Feature: Basic workflows management
     And user of browser uses Upload (json) button from menu bar to upload workflow "workflow_upload.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser sees "test-workflow" in workflows list in inventory workflows subpage
-    And user of browser clicks on "Download (json)" button in revision "test-workflow" menu in the "test-workflow" workflow revision list
-    Then user of browser sees that downloaded content of "test-workflow.json" workflow is not empty
+    And user of browser sees "Workflow1" in workflows list in inventory workflows subpage
+    And user of browser clicks on "Download (json)" button in revision "Workflow1" menu in the "Workflow1" workflow revision list
+    Then user of browser sees that downloaded content of "Workflow1.json" workflow is not empty
 
 
   Scenario: User sees new workflow revision after using redesign as new revision
@@ -155,13 +155,13 @@ Feature: Basic workflows management
     And user of browser uses Upload (json) button from menu bar to upload workflow "workflow_upload.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser sees "test-workflow" in workflows list in inventory workflows subpage
-    And user of browser clicks on "Redesign as new revision" button in revision "test-workflow" menu in the "test-workflow" workflow revision list
-    And user of browser changes workflow tab to "Details"
-    And user of browser writes "Revision2" in description textfield in workflow editor
+    And user of browser sees "Workflow1" in workflows list in inventory workflows subpage
+    And user of browser clicks on "Redesign as new revision" button in revision "Workflow1" menu in the "Workflow1" workflow revision list
+    And user of browser changes workflow view to "Details" tab
+    And user of browser writes "Revision1" in description textfield in workflow Details tab
     And user of browser Saves workflow edition by clicking Save button from menu bar
     And user of browser opens inventory "inventory1" workflows subpage
-    Then user of browser sees "test-workflow" in workflows revision list of "test-workflow" in inventory workflows subpage
+    Then user of browser sees "Revision1" in workflows revision list of "Workflow1" in inventory workflows subpage
 
 
   Scenario: User sees workflow in second inventory after duplicating it
@@ -170,10 +170,10 @@ Feature: Basic workflows management
     And user of browser uses Upload (json) button from menu bar to upload workflow "workflow_upload.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser sees "test-workflow" in workflows list in inventory workflows subpage
-    And user of browser clicks on "Duplicate to..." button in revision "test-workflow" menu in the "test-workflow" workflow revision list
+    And user of browser sees "Workflow1" in workflows list in inventory workflows subpage
+    And user of browser clicks on "Duplicate to..." button in revision "Workflow1" menu in the "Workflow1" workflow revision list
     And user of browser chooses "inventory2" in dropdown menu in modal "Duplicate revision"
     And user of browser clicks on "Apply" button in modal "Duplicate revision"
     And user of browser opens inventory "inventory2" workflows subpage
-    Then user of browser sees "test-workflow" in workflows list in inventory workflows subpage
+    Then user of browser sees "Workflow1" in workflows list in inventory workflows subpage
 
