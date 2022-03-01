@@ -35,7 +35,7 @@ class Consumer(PageObject):
 class ConsumerCaveat(PageObject):
     list_option = Button('.btn-list')
     id_option = Button('.btn-by-id')
-    consumer_type = WebElement('.ember-power-select-trigger')
+    consumer_type = WebElement('.ember-basic-dropdown-trigger--in-place')
     consumer_types = WebItemsSequence(
         '.ember-power-select-option', cls=TypeItem)
     consumers = WebItemsSequence('.selector-list .selector-item', cls=Consumer)
