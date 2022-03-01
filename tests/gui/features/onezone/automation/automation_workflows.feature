@@ -152,6 +152,9 @@ Feature: Basic inventories management
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser sees "test-workflow" in workflows list in inventory workflows subpage
     And user of browser clicks on "Redesign as new revision" button in revision "test-workflow" menu in the "test-workflow" workflow revision list
+    And user of browser changes workflow tab to "Details"
+    And user of browser writes "Revision2" in description textfield in workflow editor
+    And user of browser Saves workflow edition by clicking Save button from menu bar
     And user of browser opens inventory "inventory1" workflows subpage
     Then user of browser sees "test-workflow" in workflows revision list of "test-workflow" in inventory workflows subpage
 

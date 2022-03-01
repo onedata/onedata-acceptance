@@ -44,6 +44,10 @@ class WorkflowVisualiser(PageObject):
                                    '.tag-item', cls = Store)
 
 
+class RevisionDetails(PageObject):
+    description = WebItem('.description-field .field-component', cls=EditBox)
+
+
 class TaskAddForm(PageObject):
     task_name = WebItem('.name-field .text-like-field', cls=EditBox)
     create_button = Button('.btn-primary')
@@ -72,6 +76,8 @@ class WorkflowsPage(PageObject):
 
     workflow_visualiser = WebItem('.workflow-visualiser ',
                                   cls = WorkflowVisualiser)
+
+    revision_details = WebItem('.revision-details-form', cls=RevisionDetails)
 
     workflow_name = WebItem('.name-field .text-like-field', cls=InputBox)
 

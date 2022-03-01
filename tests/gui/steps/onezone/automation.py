@@ -384,7 +384,6 @@ def click_button_in_workflow(selenium, browser_id, oz_page):
 def has_downloaded_workflow_file_content(browser_id, tmpdir, file_name):
 
     downloaded_file = tmpdir.join(browser_id, 'download', file_name)
-    pdb.set_trace()
     if downloaded_file.exists():
         assert True
     else:
