@@ -55,6 +55,8 @@ from .write_protection import WriteProtection
 from .purge_archive import PurgeArchive
 from .reattach_dataset import ReattachDataset
 from .upload_workflow import UploadWorkflow
+from .create_new_store import CreateNewStore
+from .create_new_lane import CreateNewLane
 
 
 class Modals(object):
@@ -130,6 +132,7 @@ class Modals(object):
     remove_harvester = WebItem('.modal-dialog', cls=RemoveModal)
     remove_space = WebItem('.modal-dialog', cls=RemoveModal)
     remove_inventory = WebItem('.modal-dialog', cls=RemoveModal)
+    remove_task = WebItem('.modal-dialog', cls=RemoveModal)
     rest_api_modal = WebItem('.modal-dialog', cls=RESTApiModal)
     clean_up_obsolete_tokens = WebItem('.modal-dialog',
                                        cls=CleanUpObsoleteTokensModal)
@@ -150,6 +153,9 @@ class Modals(object):
     purge_archive = WebItem('.modal-dialog', cls=PurgeArchive)
     reattach_dataset = WebItem('.modal-dialog', cls=ReattachDataset)
     upload_workflow = WebItem('.modal-dialog', cls=UploadWorkflow)
+    create_new_store = WebItem('.modal-dialog', cls=CreateNewStore)
+    create_new_lane = WebItem('.modal-dialog', cls=CreateNewLane)
+
 
     def __init__(self, driver):
         self.driver = driver

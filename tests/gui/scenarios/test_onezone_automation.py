@@ -55,6 +55,7 @@ from tests.gui.steps.oneprovider.permissions import *
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.onezone.spaces import *
 from tests.gui.meta_steps.onezone.tokens import *
+from tests.gui.meta_steps.onezone.automation import *
 
 from tests.utils.acceptance_utils import *
 
@@ -73,3 +74,4 @@ scenarios('../features/onezone/automation/automation_basics.feature')
 scenarios('../features/onezone/automation/automation_members.feature')
 scenarios('../features/onezone/automation/automation_effective_privileges.feature')
 scenarios('../features/onezone/automation/automation_lambdas.feature')
+scenarios('../features/onezone/automation/automation_workflows.feature')

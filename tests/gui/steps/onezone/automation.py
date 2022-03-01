@@ -130,30 +130,35 @@ def assert_workflow_exists(selenium, browser_id, oz_page, workflow):
         f'Workflow: {workflow} not found '
 
 
-@wt(parsers.parse('user of {browser_id} uses Add new lambda button '
-                  'from menu bar'))
+@wt(parsers.re('user of (?P<browser_id>.*) uses '
+               '(?P<option>Add new lambda|Add new workflow) button from '
+               'menu bar in (lambdas|workflows) subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_add_new_lambda_button_in_menu_bar(selenium, browser_id, oz_page):
+def click_add_new_button_in_menu_bar(selenium, browser_id, oz_page, option):
     driver = selenium[browser_id]
-    oz_page(driver)['automation'].main_page.add_new_lambda.click()
+    getattr(oz_page(driver)['automation'].main_page, transform(option)).click()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) writes "(?P<text>.*)" into ('
                '?P<text_field>lambda name|docker image) text field'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def write_lambda_name_in_lambda_text_field(selenium, browser_id,
-                                                   oz_page, text, text_field):
+                                           oz_page, text, text_field):
     page = oz_page(selenium[browser_id])['automation']
     label = getattr(page.lambdas_page.form, transform(text_field))
     setattr(label, 'value', text)
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) confirms create new '
-               '(lambda|revision) using Create button'))
+@wt(parsers.re('user of (?P<browser_id>.*) confirms (create new|edition of) '
+               '(?P<option>lambda|revision|task) using (Create|Modify) button'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def confirm_lambda_creation(selenium, browser_id, oz_page):
-    driver = selenium[browser_id]
-    oz_page(driver)['automation'].lambdas_page.form.create_button.click()
+def confirm_lambda_creation_or_edition(selenium, browser_id, oz_page, option):
+    page = oz_page(selenium[browser_id])['automation']
+
+    if option == 'task':
+        page.workflows_page.task_form.create_button.click()
+    else:
+        page.lambdas_page.form.create_button.click()
 
 
 @wt(parsers.parse('user of {browser_id} sees "{lambda_name}" in lambdas list '
@@ -214,3 +219,115 @@ def click_option_in_revision_menu_button(selenium, browser_id, oz_page, option,
         lambda_box.revision_list[revision_name].menu_button.click()
 
     popups(selenium[browser_id]).menu_popup_with_label.menu[option].click()
+
+
+@wt(parsers.parse('user of {browser_id} writes "{text}" into workflow name '
+                  'text field'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def write_text_into_workflow_name_on_main_workflows_page(selenium, browser_id,
+                                                         oz_page, text):
+    page = oz_page(selenium[browser_id])['automation']
+    page.workflows_page.workflow_name.value = text
+
+
+@wt(parsers.parse('user of {browser_id} confirms create new workflow using '
+                  'Create button'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def confirm_workflow_creation(selenium, browser_id, oz_page):
+    page = oz_page(selenium[browser_id])['automation']
+    page.workflows_page.create_button.click()
+
+
+@wt(parsers.parse('user of {browser_id} clicks Add store button '
+                  'in workflow visualizer'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_add_store_button(selenium, browser_id, oz_page):
+    page = oz_page(selenium[browser_id])['automation']
+    page.workflows_page.workflow_visualiser.add_store_button.click()
+
+
+@wt(parsers.parse('user of {browser_id} sees "{store_name}" in the stores '
+                  'list in workflow visualizer'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_store_in_store_list(selenium, browser_id, oz_page, store_name):
+    page = oz_page(selenium[browser_id])['automation']
+    stores_list = page.workflows_page.workflow_visualiser.stores_list
+
+    assert store_name in stores_list, f'Store: {store_name} not found'
+
+
+@wt(parsers.parse('user of {browser_id} clicks on create lane button in the '
+                  'middle of workflow visualizer'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_add_lane_button_in_workflow_visualizer(selenium, browser_id, oz_page):
+    page = oz_page(selenium[browser_id])['automation']
+    page.workflows_page.workflow_visualiser.create_lane_button.click()
+
+
+@wt(parsers.parse('user of {browser_id} sees "{lane_name}" lane in workflow '
+                  'visualizer'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_lane_in_workflow_visualizer(selenium, browser_id, oz_page,
+                                       lane_name):
+    page = oz_page(selenium[browser_id])['automation']
+    workflow_visualizer = page.workflows_page.workflow_visualiser.workflow_lanes
+
+    assert lane_name in workflow_visualizer, f'Lane: {lane_name} not found'
+
+
+@wt(parsers.parse('user of {browser_id} clicks on add parallel box button in '
+                  'the middle of "{lane_name}" lane'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def add_parallel_box_to_lane(selenium, browser_id, oz_page, lane_name):
+    page = oz_page(selenium[browser_id])['automation']
+    workflow_visualiser = page.workflows_page.workflow_visualiser
+    workflow_visualiser.workflow_lanes[
+        lane_name].add_parallel_box_button.click()
+
+
+@wt(parsers.parse('user of {browser_id} clicks create task button in empty '
+                  'parallel box in "{lane_name}" lane'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def add_task_to_empty_parallel_box(selenium, browser_id, oz_page, lane_name):
+    page = oz_page(selenium[browser_id])['automation']
+    lane = page.workflows_page.workflow_visualiser.workflow_lanes[lane_name]
+    lane.parallel_box.add_task_button.click()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>does not see|sees) task '
+               'named "(?P<task_name>.*)" in "(?P<lane_name>.*)" lane'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_task_in_lane_in_workflow(selenium, browser_id, oz_page, lane_name,
+                                    task_name, option):
+    page = oz_page(selenium[browser_id])['automation']
+    workflow_visualiser = page.workflows_page.workflow_visualiser
+    task = workflow_visualiser.workflow_lanes[lane_name].parallel_box.task_list
+
+    if option == 'does not see':
+        assert task_name not in task, f'Task: {task_name} found'
+    else:
+        assert task_name in task, f'Task: {task_name} not found'
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) writes "(?P<task_name>.*)" '
+               'into name text field in task (creation|edition) subpage'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def write_task_name_in_task_edition_text_field(selenium, browser_id,
+                                               oz_page, task_name):
+    page = oz_page(selenium[browser_id])['automation']
+    page.workflows_page.task_form.task_name.value = task_name
+
+
+@wt(parsers.parse('user of {browser_id} clicks on "{option}" button in task '
+                  '"{task_name}" menu in "{lane_name}" lane '
+                  'in workflow visualizer'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_option_in_task_menu_button(selenium, browser_id, oz_page, lane_name,
+                                     task_name, option, popups):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['automation']
+    workflow_visualiser = page.workflows_page.workflow_visualiser
+    box = workflow_visualiser.workflow_lanes[lane_name].parallel_box
+    box.task_list[task_name].menu_button.click()
+
+    popups(driver).menu_popup_with_label.menu[option].click()
