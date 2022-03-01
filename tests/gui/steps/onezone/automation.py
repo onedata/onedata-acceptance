@@ -380,8 +380,8 @@ def click_button_in_workflow(selenium, browser_id, oz_page):
     page.workflows_page.workflow_save_button.click()
 
 
-@wt(parsers.parse('user of {browser_id} sees that downloaded content '
-                  'of "{file_name}" workflow is not empty'))
+@wt(parsers.parse('user of {browser_id} sees that "{file_name}" '
+                  'has been downloaded'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def has_downloaded_workflow_file_content(browser_id, tmpdir, file_name):
     downloaded_file = tmpdir.join(browser_id, 'download', file_name)

@@ -146,7 +146,7 @@ Feature: Basic workflows management
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser sees "Workflow1" in workflows list in inventory workflows subpage
     And user of browser clicks on "Download (json)" button in revision "Workflow1" menu in the "Workflow1" workflow revision list
-    Then user of browser sees that downloaded content of "Workflow1.json" workflow is not empty
+    Then user of browser sees that "Workflow1.json" has been downloaded
 
 
   Scenario: User sees new workflow revision after using redesign as new revision
