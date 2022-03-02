@@ -221,29 +221,31 @@ def click_deregister_link_in_cluster_page(selenium, browser_id, oz_page):
     oz_page(driver)['clusters'].deregister_label.click()
 
 
-@wt(parsers.parse('user of {browser_id} clicks on {setting} link in cookies'
-                  ' popup'))
+@wt(parsers.parse('user of {browser_id} clicks on {kind_of_agreement} link in '
+                  'cookies popup'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_link_in_popup(selenium, browser_id, popups, setting):
+def click_on_link_in_cookies_popup(selenium, browser_id, popups,
+                                   kind_of_agreement):
     driver = selenium[browser_id]
-    setting = transform(setting)+'_link'
-    getattr(popups(driver).cookies, setting)()
+    kind_of_agreement = transform(kind_of_agreement) + '_link'
+    getattr(popups(driver).cookies, kind_of_agreement)()
 
 
 @wt(parsers.parse('user of {browser_id} clicks "{button}" button in '
                   'cookies popup'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_link_in_popup(selenium, browser_id, popups, button):
+def click_button_in_cookies_popup(selenium, browser_id, popups, button):
     driver = selenium[browser_id]
     getattr(popups(driver).cookies, transform(button))()
 
 
-@wt(parsers.parse('user of {browser_id} sees "{text}" on {setting} page'))
+@wt(parsers.parse('user of {browser_id} sees "{text}" on {kind_of_agreement} '
+                  'page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_message_on_privacy_policy_page(selenium, browser_id, privacy_policy,
-                                          terms_of_use, text, setting):
-    err_msg = f'Message on {setting} page is not as expected'
-    if setting == 'privacy policy':
+def assert_message_on_agreement_page(selenium, browser_id, privacy_policy,
+                                     terms_of_use, text, kind_of_agreement):
+    err_msg = f'Message on {kind_of_agreement} page is not as expected'
+    if kind_of_agreement == 'privacy policy':
         assert privacy_policy(selenium[browser_id]).message.text == text, (
                 err_msg)
     else:
@@ -252,22 +254,23 @@ def assert_message_on_privacy_policy_page(selenium, browser_id, privacy_policy,
 
 
 @wt(parsers.parse('user of {browser_id} clicks "{button}" button '
-                  'on {settings} page'))
+                  'on {kind_of_agreement} page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_on_privacy_policy_page(selenium, browser_id, privacy_policy,
-                                        terms_of_use, button, setting):
-    if setting == 'privacy policy':
+def click_button_on_agreement_page(selenium, browser_id, privacy_policy,
+                                   terms_of_use, button, kind_of_agreement):
+    if kind_of_agreement == 'privacy policy':
         getattr(privacy_policy(selenium[browser_id]), transform(button))()
     else:
         getattr(terms_of_use(selenium[browser_id]), transform(button))()
 
 
-@wt(parsers.parse('user of {browser_id} goes to {setting} page'))
+@wt(parsers.parse('user of {browser_id} goes to {kind_of_agreement} page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def go_to_setting_page(selenium, browser_id, oz_page, popups):
+def go_to_agreement_page(selenium, browser_id, oz_page, popups,
+                         kind_of_agreement):
     driver = selenium[browser_id]
     oz_page(driver)['profile'].profile()
-    popups(driver).user_account_menu.options["Terms of use"].click()
+    popups(driver).user_account_menu.options[kind_of_agreement].click()
 
 
 

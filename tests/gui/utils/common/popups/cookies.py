@@ -16,4 +16,7 @@ class Cookies(PageObject):
     terms_of_use_link = Button('.terms-of-use-link')
     i_understand = Button('.accept-cookies')
 
+    def __str__(self):
+        return 'Cookies popup'
+
 

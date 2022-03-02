@@ -135,38 +135,43 @@ def remember_cluster_id(selenium, browser_id, provider, oz_page, hosts,
     tmp_memory[provider]['cluster id'] = cluster_id
 
 
-@wt(parsers.re(r'user of (?P<browser_id>\w+) (?P<operation>sets|removes) '
-               '(?P<setting>.*): "(?P<text>.*)" in GUI settings page of '
-               '"(?P<record>.*)"'))
+@wt(parsers.re(r'user of (?P<browser_id>\w+) (?P<operation>removes) '
+               '"(?P<text>.*)" text from (?P<kind_of_agreement>.*) in GUI'
+               ' settings page of "(?P<record>.*)"'))
+@wt(parsers.re(r'user of (?P<browser_id>\w+) (?P<operation>sets) '
+               '(?P<kind_of_agreement>.*): "(?P<text>.*)" in GUI settings page'
+               ' of "(?P<record>.*)"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def set_gui_settings(selenium, browser_id, oz_page, record, hosts, setting,
-                     text, operation):
+def set_gui_settings(selenium, browser_id, oz_page, record, hosts,
+                     kind_of_agreement, text, operation):
     menu = 'Clusters'
     option = 'GUI settings'
-    box = setting + ' input'
-    button = 'save ' + setting
+    box = kind_of_agreement + ' input'
+    button = 'save ' + kind_of_agreement
     click_on_option_in_the_sidebar(selenium, browser_id, menu, oz_page)
     click_on_record_in_clusters_menu(selenium, browser_id, oz_page, record,
                                      hosts)
     click_option_of_record_in_the_sidebar(selenium, browser_id, oz_page, option)
     click_button_in_gui_settings_page(selenium, browser_id, oz_page,
-                                      setting)
+                                      kind_of_agreement)
     if operation == 'sets':
         write_input_in_gui_settings_page(selenium, browser_id, oz_page, box,
                                          text)
     else:
         remove_notification_in_gui_settings_page(selenium, browser_id, oz_page,
-                                                 setting)
+                                                 kind_of_agreement)
     click_button_in_gui_settings_page(selenium, browser_id, oz_page,
                                       button)
+    # wait for save button to be clicked
     time.sleep(0.1)
 
 
-@wt(parsers.parse('user of {browser_id} inserts {setting} link in cookie '
-                  'consent notification in GUI settings page of "{record}"'))
+@wt(parsers.parse('user of {browser_id} inserts {kind_of_agreement} link in '
+                  'cookie consent notification in GUI settings page of '
+                  '"{record}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def insert_setting_link(selenium, browser_id, oz_page, setting):
-    link = 'insert ' + setting + ' link'
+def insert_setting_link(selenium, browser_id, oz_page, kind_of_agreement):
+    link = 'insert ' + kind_of_agreement + ' link'
     button = 'save cookie consent notification'
     click_button_in_gui_settings_page(selenium, browser_id, oz_page,
                                       link)
