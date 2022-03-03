@@ -22,6 +22,7 @@ from .deregister_provider import DeregisterProvider
 from .member_menu import MenuPopupWithText
 from .delete_account_menu import UserDeleteAccountPopoverMenu
 from .data_distribution_popup import DataDistributionPopup
+from .cookies import Cookies
 
 
 class Popups(object):
@@ -42,11 +43,13 @@ class Popups(object):
                                                cls=UserDeleteAccountPopoverMenu)
     query_builder_popups = WebItemsSequence('.query-builder-block-selector',
                                             cls=ExpressionBuilderPopup)
-    data_distribution_popup = WebItem('.webui-popover.in', cls=DataDistributionPopup)
+    data_distribution_popup = WebItem('.webui-popover.in',
+                                      cls=DataDistributionPopup)
     delete_qos_popup = WebItem('.webui-popover.in', cls=DeleteQosPopup)
     power_select = WebItem('.ember-power-select-dropdown', cls=PowerSelect)
     storages_matching_popover = WebItem(
         '.webui-popover-qos-expression-info-list', cls=MatchingStoragesPopup)
+    cookies = WebItem('.cookies-consent', cls=Cookies)
 
     def __init__(self, driver):
         self.driver = self.web_elem = driver
