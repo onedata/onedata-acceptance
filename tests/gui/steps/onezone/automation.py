@@ -196,16 +196,14 @@ def collapse_revision_list(object):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_revision_in_object_bracket(selenium, browser_id, oz_page,
                                       object_name, page, option):
-    if page == "lambdas":
-        subpage = oz_page(selenium[browser_id])['automation'].lambdas_page
-    else:
-        subpage = oz_page(selenium[browser_id])['automation'].workflows_page
+    page_name = page + '_page'
+    subpage = getattr(oz_page(selenium[browser_id])['automation'], page_name)
 
     object = subpage.elements_list[object_name]
 
     try:
         collapse_revision_list(object)
-    except:
+    except BaseException:
         pass
     if option == 'does not see':
         assert object_name not in object.revision_list, \
@@ -224,18 +222,16 @@ def assert_revision_in_object_bracket(selenium, browser_id, oz_page,
 def click_option_in_revision_menu_button(selenium, browser_id, oz_page, option,
                                          object_name, revision_name, popups,
                                          object_type):
-    if object_type == 'lambda':
-        subpage = oz_page(selenium[browser_id])['automation'].lambdas_page
-    else:
-        subpage = oz_page(selenium[browser_id])['automation'].workflows_page
-
+    page_name = object_type + 's_page'
+    subpage = getattr(oz_page(selenium[browser_id])['automation'], page_name)
     object = subpage.elements_list[object_name]
 
     try:
         collapse_revision_list(object)
-        object.revision_list[revision_name].menu_button.click()
     except BaseException:
-        object.revision_list[revision_name].menu_button.click()
+        pass
+
+    object.revision_list[revision_name].menu_button.click()
 
     popups(selenium[browser_id]).menu_popup_with_label.menu[option].click()
 
@@ -385,10 +381,7 @@ def click_button_in_workflow(selenium, browser_id, oz_page):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def has_downloaded_workflow_file_content(browser_id, tmpdir, file_name):
     downloaded_file = tmpdir.join(browser_id, 'download', file_name)
-    if downloaded_file.exists():
-        assert True
-    else:
-        raise RuntimeError('file {} has not been downloaded'.format(file_name))
+    assert downloaded_file.exists(), f'file {file_name} has not been downloaded'
 
 
 @wt(parsers.parse('user of {browser_id} changes workflow view to '

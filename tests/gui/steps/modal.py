@@ -18,7 +18,6 @@ from tests.gui.utils.generic import click_on_web_elem, transform
 from tests.utils.bdd_utils import given, wt, parsers
 from tests.utils.utils import repeat_failed
 
-
 in_type_to_id = {'username': 'login-form-username-input',
                  'password': 'login-form-password-input'}
 
@@ -409,11 +408,10 @@ def click_copy_icon_in_rest_api_modal(selenium, browser_id, modals):
 @wt(parsers.parse('user of {browser_id} chooses "{option}" in dropdown menu '
                   'in modal "{modal}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def choose_invite_type_in_oz_token_page(selenium, browser_id, modals,
-                                        popups, option, modal):
+def choose_option_in_dropdown_menu_in_modal(selenium, browser_id, modals,
+                                            popups, option, modal):
     driver = selenium[browser_id]
     modal = transform(modal)
     getattr(modals(driver), modal).dropdown_menu.click()
 
     popups(driver).power_select.choose_item(option)
-

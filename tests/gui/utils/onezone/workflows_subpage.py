@@ -66,7 +66,8 @@ class Workflow(Element):
     name = id = Label('.name-field .text-like-field')
 
     menu_button = Button('.workflow-actions-trigger')
-    create_new_revision = Button('. create-atm-workflow-schema-revision-action-trigger')
+    create_new_revision = Button('.create-atm-workflow-schema-revision-action'
+                                 '-trigger')
     show_revisions_button = Button('.expand-button')
     revision_list = WebItemsSequence('.revisions-table '
                                      '.revisions-table-revision-entry',
