@@ -16,6 +16,8 @@ Feature: Basic datasets operations
                 directory tree:
                     - dir1:
                         - file1: 100
+                        - dir2
+                        - dir22
                     - dir2:
                         - dir3:
                           - dir4:
@@ -331,3 +333,22 @@ Feature: Basic datasets operations
     And user of browser clicks on inherited status tag for "file1" in file browser
     And user of browser sees data protected status tag for "file1" in file browser
     And user of browser sees metadata protected status tag for "file1" in file browser
+    
+
+  # checks bugfix from VFS-8739
+  Scenario: User sees datasets that list correctly after creating directories and marking them as datasets
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser creates dataset for item "dir1" in "space1"
+    And user of browser clicks and presses enter on item named "dir1" in file browser
+    And user of browser creates dataset for item "dir2" in "space1"
+    And user of browser creates dataset for item "dir22" in "space1"
+    And user of browser clicks Datasets of "space1" in the sidebar
+    And user of browser sees dataset browser in files tab in Oneprovider page
+    Then user of browser sees that the file structure in dataset browser is as follow:
+          - dir1:
+              - dir2
+              - dir22
+    And user of browser clicks and presses enter on item named "dir1" in dataset browser
+    And user of browser sees that there are 2 items in dataset browser
