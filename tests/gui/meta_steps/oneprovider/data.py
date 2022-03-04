@@ -183,7 +183,7 @@ def check_file_structure_for_archive(browser_id, config, selenium, tmp_memory,
                       op_container, tmpdir, which_browser, description)
 
 
-@wt(parsers.re(r'user of (?P<browser_id>\w+) sees that the file structure in '
+@wt(parsers.re(r'user of (?P<browser_id>\w+) sees that the item structure in '
                '(?P<which_browser>.*) is as follow:\n'
                r'(?P<config>(.|\s)*)'))
 def check_file_structure_in_browser(browser_id, config, selenium, tmp_memory,

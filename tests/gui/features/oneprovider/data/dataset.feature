@@ -86,7 +86,7 @@ Feature: Basic datasets operations
 
     Then user of browser clicks Datasets of "space1" in the sidebar
     And user of browser sees dataset browser in datasets tab in Oneprovider page
-    And user of browser sees that the file structure in dataset browser is as follow:
+    And user of browser sees that the item structure in dataset browser is as follow:
           - dir2:
               - dir4:
                   - dir5
@@ -163,12 +163,12 @@ Feature: Basic datasets operations
 
     And user of browser clicks on detached view mode on dataset browser page
     And user of browser sees dataset browser in datasets tab in Oneprovider page
-    Then user of browser sees that the file structure in dataset browser is as follow:
+    Then user of browser sees that the item structure in dataset browser is as follow:
           - dir3:
               - dir5
     And user of browser clicks on attached view mode on dataset browser page
     And user of browser sees dataset browser in datasets tab in Oneprovider page
-    And user of browser sees that the file structure in dataset browser is as follow:
+    And user of browser sees that the item structure in dataset browser is as follow:
           - dir2:
               - dir4
 
@@ -333,10 +333,10 @@ Feature: Basic datasets operations
     And user of browser clicks on inherited status tag for "file1" in file browser
     And user of browser sees data protected status tag for "file1" in file browser
     And user of browser sees metadata protected status tag for "file1" in file browser
-    
+
 
   # checks bugfix from VFS-8739
-  Scenario: User sees datasets that list correctly after creating directories and marking them as datasets
+  Scenario: User sees proper list of datasets when their names have common prefix and end with digit
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
@@ -346,7 +346,7 @@ Feature: Basic datasets operations
     And user of browser creates dataset for item "dir22" in "space1"
     And user of browser clicks Datasets of "space1" in the sidebar
     And user of browser sees dataset browser in files tab in Oneprovider page
-    Then user of browser sees that the file structure in dataset browser is as follow:
+    Then user of browser sees that the item structure in dataset browser is as follow:
           - dir1:
               - dir2
               - dir22
