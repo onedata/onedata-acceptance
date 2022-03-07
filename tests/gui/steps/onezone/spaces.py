@@ -15,7 +15,7 @@ from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 
 SPACE_TABS = ["Overview", "Files", "Shares", "Transfers", "Datasets",
-              "Providers", "Members", "Harvesters"]
+              "Providers", "Members", "Harvesters", "Automation"]
 
 
 def _choose_space_from_menu_list(oz_page, driver, name):
@@ -269,7 +269,8 @@ def click_the_map_on_data_page(selenium, browser_id, oz_page, page, space_name):
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks '
                '(?P<option>Overview|Files|Shares|Transfers|Datasets|Providers'
-               '|Members|Harvesters) of "(?P<space_name>.*?)" in the sidebar'))
+               '|Members|Harvesters|Automation) of "(?P<space_name>.*?)" '
+               'in the sidebar'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
                                                   space_name, option, oz_page):

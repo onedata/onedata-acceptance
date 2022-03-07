@@ -70,8 +70,9 @@ def screens():
     return [0, 1]
 
 
-scenarios('../features/onezone/automation/automation_basics.feature')
-scenarios('../features/onezone/automation/automation_members.feature')
-scenarios('../features/onezone/automation/automation_effective_privileges.feature')
-scenarios('../features/onezone/automation/automation_lambdas.feature')
-scenarios('../features/onezone/automation/automation_workflows.feature')
+# scenarios('../features/onezone/automation/automation_basics.feature')
+# scenarios('../features/onezone/automation/automation_members.feature')
+# scenarios('../features/onezone/automation/automation_effective_privileges.feature')
+# scenarios('../features/onezone/automation/automation_lambdas.feature')
+# scenarios('../features/onezone/automation/automation_workflows.feature')
+scenarios('../features/onezone/automation/automation_workflows_execution.feature')

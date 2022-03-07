@@ -16,6 +16,7 @@ from tests.gui.utils.core.web_elements import (Button, NamedButton,
 from tests.gui.utils.onezone.generic_page import Element, GenericPage
 from .common import EditBox, InputBox
 from .members_subpage import MembersPage
+from ..oneprovider.automation import WorkflowExecutionPage
 
 
 class Space(Element):
@@ -40,6 +41,8 @@ class Space(Element):
                           text='Members')
     harvesters = NamedButton('.one-list-level-2 .item-header',
                              text='Harvesters')
+    automation = NamedButton('.one-list-level-2 .item-header',
+                             text='Automation')
     menu_button = Button('.collapsible-toolbar-toggle')
 
     def click_menu(self):
@@ -207,6 +210,7 @@ class DataPage(GenericPage):
     welcome_page = WebItem('.main-content', cls=WelcomePage)
     harvesters_page = WebItem('.main-content', cls=HarvestersPage)
     dataset_header = WebItem('.main-content', cls=DatasetHeader)
+    automation_page = WebItem('.main-content', cls=WorkflowExecutionPage)
 
     # button in top right corner on all subpages
     menu_button = Button('.with-menu .collapsible-toolbar-toggle')

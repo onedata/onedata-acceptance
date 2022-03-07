@@ -6,6 +6,7 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import pdb
 import time
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
@@ -331,3 +332,11 @@ def click_option_in_task_menu_button(selenium, browser_id, oz_page, lane_name,
     box.task_list[task_name].menu_button.click()
 
     popups(driver).menu_popup_with_label.menu[option].click()
+
+
+@wt(parsers.parse('user of {browser_id} clicks {tab_name} in the navigation bar'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_option_in_task_menu_button(selenium, browser_id, oz_page, tab_name):
+    driver = selenium[browser_id]
+    oz_page(driver)['data'].automation_page.navigation_tab[tab_name].click()
+
