@@ -429,8 +429,12 @@ def enable_option_in_auto_cleaning(selenium, browser_id, onepanel, option):
 def click_option_on_dropdown_rule(selenium, browser_id, onepanel, option, rule):
     driver = selenium[browser_id]
     tab = onepanel(driver).content.spaces.space.auto_cleaning
-    tab.selective_cleaning_form[rule].dropdown_button()
-    tab.selective_cleaning_form[rule].dropdown[option].click()
+    for i in range(5):
+        if tab.selective_cleaning_form[rule].value_limit != option:
+            tab.selective_cleaning_form[rule].dropdown_button()
+            tab.selective_cleaning_form[rule].dropdown[option].click()
+        else:
+            break
 
 
 @wt(parsers.parse('user of {browser_id} clicks change {quota} quota button '
