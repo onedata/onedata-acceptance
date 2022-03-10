@@ -58,6 +58,8 @@ from .upload_workflow import UploadWorkflow
 from .create_new_store import CreateNewStore
 from .create_new_lane import CreateNewLane
 from .duplicate_revision import DuplicateRevision
+from .select_files_directories_symlink import SelectFilesDirectoriesSymlinks
+from .function_pods_activity import FunctionPodsActivity
 
 
 class Modals(object):
@@ -159,6 +161,8 @@ class Modals(object):
     create_new_store = WebItem('.modal-dialog', cls=CreateNewStore)
     create_new_lane = WebItem('.modal-dialog', cls=CreateNewLane)
     duplicate_revision = WebItem('.modal-dialog', cls=DuplicateRevision)
+    select_files = WebItem('.modal-dialog', cls=SelectFilesDirectoriesSymlinks)
+    function_pods_activity = WebItem('.modal-dialog', cls=FunctionPodsActivity)
 
 
     def __init__(self, driver):

@@ -33,20 +33,20 @@ Feature: Workflows execution
     And user of browser clicks Automation of "space1" in the sidebar
     And user of browser clicks Run workflow in the navigation bar
     And user of browser chooses to run "Workflow1" revision of "Workflow1" workflow
-#    And user of browser chooses "large_file.txt" file as initial value for workflow
+    And user of browser chooses "large_file.txt" file as initial value for workflow in modal "Select files"
     And user of browser confirms Workflow deployment by clicking Run workflow button
     And user of browser waits for all workflows to start
     And user of browser waits for all workflows to finish
-#    And user of browser sees workflow in ended workflows:
-#            name: workflow_upload
-#            inventory: oneprovider-2
-#            status: completed
+    And user of browser sees workflow in ended workflows:
+            name: workflow_upload
+            inventory: oneprovider-2
+            status: completed
 
     And user of browser clicks on first executed workflow
     Then user of browser sees Finished status in status bar in workflow visualizer
     And user of browser clicks on "Task1" task in "Lane1" lane in workflow visualizer
     And user of browser clicks on "Pods activity" link in "Task1" task in "Lane1" lane in workflow visualizer
-#    And sees the last record status is finished in monitor
+    And user of browser waits for all pods to finish
 
 
 

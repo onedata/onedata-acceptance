@@ -12,28 +12,22 @@ from tests.gui.utils.core.web_elements import WebItemsSequence, Label, Icon, \
 from tests.gui.utils.core.web_objects import ButtonWithTextPageObject
 from tests.gui.utils.onezone.generic_page import Element
 
-TransferStatusList = ['completed', 'skipped', 'cancelled', 'failed', 'active',
-                      'evicting', 'scheduled', 'enqueued']
+WorkflowStatusList = ['scheduled', 'preparing', 'enqueued', 'active',
+                      'aborting', 'interrupted', 'cancelled', 'skipped',
+                      'finished', 'failed', 'unknown']
 
 
 class ExecutionRecord(PageObject):
-    name = Label('td:first-of-type')
-    username = Label('td:nth-of-type(2)')
-    destination = Label('td:nth-of-type(3)')
+    name = Label('cell-name')
+    inventory = Label('cell-inventory')
     status_icon = Icon('.cell-status')
     menu_button = Button('.cell-actions')
-    type_icon = Icon('.cell-type')
-    icon = Icon('.transfer-file-icon')
 
     def __init__(self, driver, web_elem, parent, **kwargs):
         super(ExecutionRecord, self).__init__(driver, web_elem, parent,
                                               **kwargs)
         status_class = self.status_icon.get_attribute('class').split()
-        self.status = [x for x in status_class if x in TransferStatusList][0]
-
-    def get_chart(self):
-        return TransferChart(self.driver, self.web_elem.find_element_by_xpath(
-            ' .//following-sibling::tr'), self.web_elem)
+        self.status = [x for x in status_class if x in WorkflowStatusList][0]
 
     def is_expanded(self):
         return 'expanded-row' in self.web_elem.get_attribute('class')
@@ -46,31 +40,7 @@ class ExecutionRecord(PageObject):
             self.web_elem.click()
 
     def __str__(self):
-        return 'Transfer row {} in {}'.format(self.name, self.parent)
-
-
-class ExecutionsRecordHistory(ExecutionRecord):
-    transferred = Label('td:nth-of-type(6)')
-    total_files = Label('td:nth-of-type(7)')
-
-
-class ExecutionsRecordActive(ExecutionRecord):
-    transferred = Label('td:nth-of-type(5)')
-    total_files = Label('td:nth-of-type(6)')
-
-
-class TransferChart(PageObject):
-    minute = WebItemsSequence('button.btn-default',
-                              cls=ButtonWithTextPageObject)
-    hour = WebItemsSequence('button.btn-default',
-                            cls=ButtonWithTextPageObject)
-    active = Label('button.btn-default.active')
-    # We take only last point in the chart
-    _speed = WebElement(
-        '.transfers-transfer-chart .ct-series line:last-of-type')
-
-    def get_speed(self):
-        return self._speed.get_attribute('ct:value').split(',')[1]
+        return 'Workflow row {} in {}'.format(self.name, self.parent)
 
 
 class Revision(Element):
@@ -109,7 +79,7 @@ class Store(Element):
 
 
 class WorkflowVisualiser(PageObject):
-    status_bar=Label('.workflow-status-text .workflow-status')
+    status_bar = Label('.workflow-status-text .workflow-status')
     workflow_lanes = WebItemsSequence('.visualiser-elements '
                                       '.workflow-visualiser-lane',
                                       cls=WorkflowLane)
@@ -128,13 +98,13 @@ class WorkflowExecutionPage(PageObject):
     run_workflow_button = NamedButton('.btn-submit', text='Run Workflow')
 
     _ended_list = WebItemsSequence('.atm-workflow-executions-table tr.data-row',
-                                   cls=ExecutionsRecordHistory)
+                                   cls=ExecutionRecord)
     _ongoing_list = WebItemsSequence(
         '.atm-workflow-executions-table tr.data-row',
-        cls=ExecutionsRecordActive)
+        cls=ExecutionRecord)
     _waiting_list = WebItemsSequence(
         '.atm-workflow-executions-table tr.data-row',
-        cls=ExecutionsRecordHistory)
+        cls=ExecutionRecord)
 
     workflow_visualiser = WebItem('.workflow-visualiser',
                                   cls=WorkflowVisualiser)
