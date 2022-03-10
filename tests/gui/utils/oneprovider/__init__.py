@@ -6,6 +6,7 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+from .automation import WorkflowExecutionPage
 from .data_tab import DataTab
 from .user_profile import UserProfile
 from .shares import SharesContentPage
@@ -27,6 +28,7 @@ class OPLoggedIn(object):
                                               '.dataset-archives-browser'
                                               ' .filesystem-browser')
     archive_browser = ArchiveBrowser('.content-space-datasets .archive-browser')
+    automation_page = WebItem('.content-space-automation', cls=WorkflowExecutionPage)
 
     def __init__(self, driver):
         self.web_elem = self.driver = driver

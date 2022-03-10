@@ -60,6 +60,7 @@ from tests.gui.meta_steps.onezone.automation import *
 from tests.utils.acceptance_utils import *
 
 from tests.gui.steps.onezone.automation import *
+from tests.gui.steps.oneprovider.automation import *
 from tests.gui.meta_steps.onezone.tokens import *
 from tests.gui.steps.onezone.members import *
 from tests.gui.steps.rest.env_up.inventory import *
@@ -70,9 +71,9 @@ def screens():
     return [0, 1]
 
 
-# scenarios('../features/onezone/automation/automation_basics.feature')
-# scenarios('../features/onezone/automation/automation_members.feature')
-# scenarios('../features/onezone/automation/automation_effective_privileges.feature')
-# scenarios('../features/onezone/automation/automation_lambdas.feature')
-# scenarios('../features/onezone/automation/automation_workflows.feature')
+scenarios('../features/onezone/automation/automation_basics.feature')
+scenarios('../features/onezone/automation/automation_members.feature')
+scenarios('../features/onezone/automation/automation_effective_privileges.feature')
+scenarios('../features/onezone/automation/automation_lambdas.feature')
+scenarios('../features/onezone/automation/automation_workflows.feature')
 scenarios('../features/onezone/automation/automation_workflows_execution.feature')

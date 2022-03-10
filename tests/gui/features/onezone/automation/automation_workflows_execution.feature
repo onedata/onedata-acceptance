@@ -31,26 +31,22 @@ Feature: Workflows execution
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Automation of "space1" in the sidebar
-    And user of browser clicks Ended in the navigation bar
-    And user of browser chooses "Revision1" in workflows revision list of "Workflow1" in inventory workflows subpage
-    And user of browser adds "File1" file as input of workflow
-#    And user of browser confirms clicks Run workflow button
-#
-#    Then user of browser waits for all workflows to start
-#    And user of browser waits for all workflows to finish
+    And user of browser clicks Run workflow in the navigation bar
+    And user of browser chooses to run "Workflow1" revision of "Workflow1" workflow
+#    And user of browser chooses "large_file.txt" file as initial value for workflow
+    And user of browser confirms Workflow deployment by clicking Run workflow button
+    And user of browser waits for all workflows to start
+    And user of browser waits for all workflows to finish
 #    And user of browser sees workflow in ended workflows:
-#            name: dir1
-#            destination: oneprovider-2
-#            username: space-owner-user
-#            transferred: 50 MiB
-#            type: replication
+#            name: workflow_upload
+#            inventory: oneprovider-2
 #            status: completed
-#
-#    And user of browser expands first transfer record
-#    And user of browser sees status in workflow visualizer
-#    And user of broswer clicks no parrallel box
-#    And user of browser sees Proccessed: 1
-#    And user of browser clicks Pods activity
+
+    And user of browser clicks on first executed workflow
+    Then user of browser sees Finished status in status bar in workflow visualizer
+    And user of browser clicks on "Task1" task in "Lane1" lane in workflow visualizer
+    And user of browser clicks on "Pods activity" link in "Task1" task in "Lane1" lane in workflow visualizer
+#    And sees the last record status is finished in monitor
 
 
 

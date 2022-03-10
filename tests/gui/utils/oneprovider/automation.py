@@ -1,4 +1,4 @@
-"""Utils and fixtures to facilitate operations on transfers in Oneprovider GUI
+"""Utils and fixtures to facilitate operations on workflows in Oneprovider GUI
 """
 
 __author__ = "Rafał Widziszewski"
@@ -8,12 +8,12 @@ __license__ = "This software is released under the MIT license cited in " \
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import WebItemsSequence, Label, Icon, \
-    Button, WebElement
+    Button, WebElement, NamedButton, WebItem
+from tests.gui.utils.core.web_objects import ButtonWithTextPageObject
 from tests.gui.utils.onezone.generic_page import Element
 
 TransferStatusList = ['completed', 'skipped', 'cancelled', 'failed', 'active',
                       'evicting', 'scheduled', 'enqueued']
-TransferTypeList = ['migration', 'replication', 'eviction']
 
 
 class ExecutionRecord(PageObject):
@@ -29,9 +29,7 @@ class ExecutionRecord(PageObject):
         super(ExecutionRecord, self).__init__(driver, web_elem, parent,
                                               **kwargs)
         status_class = self.status_icon.get_attribute('class').split()
-        type_class = self.type_icon.get_attribute('class').split()
         self.status = [x for x in status_class if x in TransferStatusList][0]
-        self.type = [x for x in type_class if x in TransferTypeList][0]
 
     def get_chart(self):
         return TransferChart(self.driver, self.web_elem.find_element_by_xpath(
@@ -46,12 +44,6 @@ class ExecutionRecord(PageObject):
     def collapse(self):
         if self.is_expanded():
             self.web_elem.click()
-
-    def is_file(self):
-        return 'oneicon-browser-file' in self.icon.get_attribute('class')
-
-    def is_directory(self):
-        return 'oneicon-browser-directory' in self.icon.get_attribute('class')
 
     def __str__(self):
         return 'Transfer row {} in {}'.format(self.name, self.parent)
@@ -68,10 +60,10 @@ class ExecutionsRecordActive(ExecutionRecord):
 
 
 class TransferChart(PageObject):
-    # minute = WebItemsSequence('button.btn-default',
-    #                           cls=ButtonWithTextPageObject)
-    # hour = WebItemsSequence('button.btn-default',
-    #                         cls=ButtonWithTextPageObject)
+    minute = WebItemsSequence('button.btn-default',
+                              cls=ButtonWithTextPageObject)
+    hour = WebItemsSequence('button.btn-default',
+                            cls=ButtonWithTextPageObject)
     active = Label('button.btn-default.active')
     # We take only last point in the chart
     _speed = WebElement(
@@ -81,21 +73,59 @@ class TransferChart(PageObject):
         return self._speed.get_attribute('ct:value').split(',')[1]
 
 
+class Revision(Element):
+    name = id = Label('.description')
+
+
 class Workflow(Element):
-    name = id = Label('.text-like-field')
-    menu_button = Button('.one-menu-toggle')
+    name = id = Label('.workflow-schema-name')
+
+    show_revisions_button = Button('.expand-button')
+    revision_list = WebItemsSequence('.revisions-table '
+                                     '.revisions-table-revision-entry',
+                                     cls=Revision)
 
 
 class NavigationTab(Element):
     name = id = Label('.tab-name')
 
 
+class Task(Element):
+    pods_activity = Button('.view-task-pods-activity-action-trigger')
+
+
+class ParallelBox(Element):
+    task_list = WebItemsSequence('.box-elements .draggable-task', cls=Task)
+
+
+class WorkflowLane(Element):
+    name = id = Label('.lane-name')
+    parallel_box = WebItem('.workflow-visualiser-parallel-box ',
+                           cls=ParallelBox)
+
+
+class Store(Element):
+    name = id = Label('.store-name')
+
+
+class WorkflowVisualiser(PageObject):
+    status_bar=Label('.workflow-status-text .workflow-status')
+    workflow_lanes = WebItemsSequence('.visualiser-elements '
+                                      '.workflow-visualiser-lane',
+                                      cls=WorkflowLane)
+
+    add_store_button = Button('.create-store-action-trigger')
+    stores_list = WebItemsSequence('.workflow-visualiser-stores-list '
+                                   '.tag-item', cls=Store)
+
+
 class WorkflowExecutionPage(PageObject):
     navigation_tab = WebItemsSequence('.nav-tabs .tab-label', cls=NavigationTab)
 
     workflow_list = WebItemsSequence('.atm-workflow-schemas-list'
-                                     ' .atm-workflow-schemas-list-entry',
-                                     cls=Workflow)
+                                     ' .list-entry', cls=Workflow)
+    input_icon = Button('.tag-creator-trigger')
+    run_workflow_button = NamedButton('.btn-submit', text='Run Workflow')
 
     _ended_list = WebItemsSequence('.atm-workflow-executions-table tr.data-row',
                                    cls=ExecutionsRecordHistory)
@@ -105,3 +135,28 @@ class WorkflowExecutionPage(PageObject):
     _waiting_list = WebItemsSequence(
         '.atm-workflow-executions-table tr.data-row',
         cls=ExecutionsRecordHistory)
+
+    workflow_visualiser = WebItem('.workflow-visualiser',
+                                  cls=WorkflowVisualiser)
+
+    @property
+    def ongoing(self):
+        self['ongoing'].click()
+        return self._ongoing_list
+
+    @property
+    def ended(self):
+        self['ended'].click()
+        return self._ended_list
+
+    @property
+    def waiting(self):
+        self['waiting'].click()
+        return self._waiting_list
+
+    def __getitem__(self, name):
+        for tab in self.navigation_tab:
+            if name in tab.name.lower():
+                return tab
+        else:
+            raise RuntimeError('no tab named {} in automation tab'.format(name))

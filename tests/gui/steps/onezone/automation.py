@@ -13,7 +13,8 @@ from tests.gui.utils.generic import transform, upload_file_path
 from tests.utils.bdd_utils import wt, parsers
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.utils import repeat_failed
-from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
+from tests.gui.steps.common.miscellaneous import press_enter_on_active_element, \
+    switch_to_iframe
 
 
 @wt(parsers.parse('user of {browser_id} clicks on Create automation inventory '
@@ -399,10 +400,4 @@ def insert_text_in_description_of_revision(selenium, browser_id, oz_page, text):
     page = oz_page(selenium[browser_id])['automation']
     page.workflows_page.revision_details.description = text
 
-
-@wt(parsers.parse('user of {browser_id} clicks {tab_name} in the navigation bar'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_option_in_task_menu_button(selenium, browser_id, oz_page, tab_name):
-    driver = selenium[browser_id]
-    oz_page(driver)['data'].automation_page.navigation_tab[tab_name].click()
 
