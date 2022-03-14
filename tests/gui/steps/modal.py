@@ -424,11 +424,10 @@ def assert_info_in_archive_recall_information_modal(selenium, browser_id,
 def assert_recall_duration_in_archive_recall_information_modal(selenium,
                                                                browser_id,
                                                                modals):
-
-    started_at = (modals(selenium[browser_id]).archive_recall_information
-                  .started_at)
-    finished_at = (modals(selenium[browser_id]).archive_recall_information
-                   .finished_at)
+    archive_recall_information = modals(selenium[browser_id]
+                                        ).archive_recall_information
+    started_at = archive_recall_information.started_at
+    finished_at = archive_recall_information.finished_at
     start = datetime.strptime(started_at, '%d %b %Y %H:%M:%S')
     finish = datetime.strptime(finished_at, '%d %b %Y %H:%M:%S')
 
@@ -452,7 +451,7 @@ def assert_not_all_files_were_recalled(selenium, browser_id, modals, kind):
 @wt(parsers.parse('user of {browser_id} sees that number of items failed is'
                   ' greater than 0'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_number_of_item_greater_then_zero(selenium, browser_id, modals):
+def assert_number_of_item_greater_than_zero(selenium, browser_id, modals):
     number = int(modals(selenium[browser_id]
                         ).archive_recall_information.items_failed)
     assert number > 0, 'Zero items failed'

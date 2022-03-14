@@ -10,26 +10,24 @@ Feature: Archive recall tests
                 - oneprovider-1:
                     storage: posix
                     size: 240000000
+            storage:
+                defaults:
+                    provider: oneprovider-1
+                directory tree:
+                    - dir1:
+                        - file1: 11111
 
     And user opened browser window
     And user of browser opened onezone page
     And user of browser logged as user1 to Onezone service
     And directory tree structure on local file system:
           browser:
-              large_file.txt:
-                size: 50 MiB
               file.txt:
                 size: 2 MiB
 
 
   Scenario: User successfully recalls archive if there is space on device
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
-    And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser creates directory "dir1"
-    And user of browser clicks and presses enter on item named "dir1" in file browser
-    And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
-    And user of browser clicks Files of "space1" in the sidebar
+    When user of browser clicks Files of "space1" in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser creates dataset for item "dir1" in "space1"
     And user of browser succeeds to create archive for item "dir1" in "space1" with following configuration:
@@ -43,18 +41,17 @@ Feature: Archive recall tests
     And user of browser clicks on recalled status tag for "dir1_recalled" in file browser
     Then user of browser sees status: "Archive recall finished successfully" in archive recall information modal
     And user of browser sees files recalled: "1 / 1" in archive recall information modal
-    And user of browser sees data recalled: "50 MiB / 50 MiB" in archive recall information modal
+    And user of browser sees data recalled: "5 B / 5 B" in archive recall information modal
     And user of browser sees that recall has been finished at the same time or after recall has been started
 
 
-  Scenario: User fails to recall archive if there is no space on device
+  Scenario: User fails to recall archive if there is no space enough on device
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser creates directory "dir1"
     And user of browser clicks and presses enter on item named "dir1" in file browser
 
-    # number of files that are being recalled must be greater than number of files recalled parallelly
+    # number of files that are being recalled must be greater than number of files recalled parallelly (as of 14.03.2022 it's 20 files) to make sure that quota will be exceeded
     And user of browser uses upload button from file browser menu bar to upload 50 local files "file.txt" to remote current dir
     And user of browser clicks Files of "space1" in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
