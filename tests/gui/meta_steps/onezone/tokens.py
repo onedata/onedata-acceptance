@@ -23,6 +23,7 @@ from tests.utils.bdd_utils import wt, parsers, given
 from tests.utils.utils import repeat_failed
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
 def _paste_token_into_text_field(selenium, browser_id, oz_page, token):
     page = oz_page(selenium[browser_id])['tokens']
     page.input_name = token
@@ -39,6 +40,7 @@ def paste_copied_token_into_text_field(selenium, browser_id, oz_page, clipboard,
 
 @wt(parsers.parse('user of {browser_id} pastes received token '
                   'into token text field'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def paste_received_token_into_text_field(selenium, browser_id,
                                          oz_page, tmp_memory):
     token = tmp_memory[browser_id]['mailbox']['token']
