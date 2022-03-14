@@ -219,6 +219,7 @@ def assert_empty_browser_in_files_tab_in_op(selenium, browser_id,
 
 @wt(parsers.parse('user of {browser_id} sees {item_browser} '
                   'in {} tab in Oneprovider page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_browser_in_tab_in_op(selenium, browser_id, op_container,
                                 tmp_memory, item_browser='file browser'):
     switch_to_iframe(selenium, browser_id)
@@ -360,6 +361,20 @@ def upload_file_to_cwd_in_data_tab(selenium, browser_id, file_path, tmpdir,
                                    op_container, popups):
     upload_file_to_cwd_in_data_tab_no_waiting(selenium, browser_id, file_path,
                                               tmpdir, op_container)
+    wait_for_file_upload_to_finish(selenium, browser_id, popups)
+
+
+@wt(parsers.parse('user of {browser_id} uses upload button from file browser '
+                  'menu bar to upload {number} local files "{file_path}" '
+                  'to remote current dir'))
+@repeat_failed(timeout=2 * WAIT_BACKEND)
+def upload_number_of_files_to_cwd_in_data_tab(selenium, browser_id, file_path,
+                                              tmpdir, op_container, popups,
+                                              number):
+    for i in range(int(number)):
+        upload_file_to_cwd_in_data_tab_no_waiting(selenium, browser_id,
+                                                  file_path, tmpdir,
+                                                  op_container)
     wait_for_file_upload_to_finish(selenium, browser_id, popups)
 
 
