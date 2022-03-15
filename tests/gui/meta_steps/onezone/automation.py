@@ -10,6 +10,7 @@ from selenium.common.exceptions import StaleElementReferenceException
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
+from tests.gui.steps.oneprovider.file_browser import _select_files
 from tests.gui.utils.generic import transform, upload_file_path
 from tests.utils.bdd_utils import wt, parsers
 from tests.gui.utils.generic import parse_seq, transform
@@ -41,15 +42,24 @@ def upload_and_assert_workflow_to_inventory_using_gui(selenium, browser_id,
         f'Workflow: {workflow} not found '
 
 
-@wt(parsers.parse('user of {browser_id} chooses "{file_path}" file as initial value '
-                  'for workflow'))
+@wt(parsers.parse(
+    'user of {browser_id} chooses "{item_list}" file as initial value '
+    'for workflow in modal "Select files"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def choose_file_as_initial_workflow_value(selenium, browser_id, op_container, file_path):
+def choose_file_as_initial_workflow_value(selenium, browser_id, item_list,
+                                          modals,op_container):
+
     switch_to_iframe(selenium, browser_id)
-    page = op_container(selenium[browser_id]).automation_page
-    # page.input_icon.click()
-    #
-    # #choose_file
+    driver = selenium[browser_id]
+    op_container(driver).automation_page.input_icon.click()
+
+    modal = modals(selenium[browser_id]).select_files
+    browser = modal['file_browser']
+
+    with browser.select_files() as selector:
+        _select_files(browser, selector, item_list)
+
+    modal.confirm_button.click()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) waits for all workflows to start'))
@@ -61,7 +71,7 @@ def wait_for_waiting_workflows_to_start(selenium, browser_id, op_container):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) waits for all workflows to finish'))
-@repeat_failed(interval=1, timeout=90,
+@repeat_failed(interval=1, timeout=180,
                exceptions=(AssertionError, StaleElementReferenceException))
 def wait_for_ongoing_workflows_to_finish(selenium, browser_id, op_container):
     assert len(op_container(selenium[browser_id]).automation_page.ongoing) == 0, \
@@ -73,4 +83,10 @@ def expand_workflow_record(selenium, browser_id, op_container):
     op_container(selenium[browser_id]).automation_page.ended[0].expand()
 
 
-
+@wt(parsers.parse('user of browser waits for all pods to finish execution in '
+                  'in modal "Function pods activity"'))
+@repeat_failed(interval=1, timeout=180,
+               exceptions=(AssertionError, StaleElementReferenceException))
+def assert_status_in_events_monitor(selenium, browser_id, modals):
+    modal = modals(selenium[browser_id]).pods_activity
+    assert len(modal.pods_list) == 0, 'Pods has not been terminated'

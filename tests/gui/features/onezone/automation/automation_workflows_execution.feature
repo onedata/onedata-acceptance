@@ -46,7 +46,7 @@ Feature: Workflows execution
     Then user of browser sees Finished status in status bar in workflow visualizer
     And user of browser clicks on "Task1" task in "Lane1" lane in workflow visualizer
     And user of browser clicks on "Pods activity" link in "Task1" task in "Lane1" lane in workflow visualizer
-    And user of browser waits for all pods to finish
+    And user of browser waits for all pods to finish execution in in modal "Function pods activity"
 
 
 
