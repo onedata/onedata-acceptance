@@ -61,6 +61,7 @@ from tests.gui.meta_steps.oneprovider.common import *
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.oneprovider.dataset import *
 from tests.gui.meta_steps.oneprovider.archives import *
+from tests.gui.meta_steps.onepanel.spaces import *
 
 from . import BROWSER
 
@@ -74,5 +75,5 @@ def screens():
 
 scenarios('../features/oneprovider/data/archive_basic.feature')
 scenarios('../features/oneprovider/data/archive_bagit_and_dip.feature')
-
+scenarios('../features/oneprovider/data/archive_recall.feature')
 

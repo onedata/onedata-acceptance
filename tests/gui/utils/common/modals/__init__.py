@@ -6,6 +6,7 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+from .archive_recall_information import ArchiveRecallInformation
 from .change_privileges import ChangePrivilegesModal
 from .clean_up_obsolete_tokens import CleanUpObsoleteTokensModal
 from .create_dir import CreateDir
@@ -24,6 +25,7 @@ from .deploying_cluster import ClusterDeploymentModal
 from .metadata_modal import MetadataModal
 from .menu_in_edit_permissions_modal import EditPermissionsRecordMenu
 from .qos import QualityOfServiceModal
+from .recall_archive import RecallArchive
 from .rename_modal import RenameModal
 from .rename_share_modal import RenameShareModal
 from .cease_support_for_space import CeaseSupportForSpaceModal
@@ -146,6 +148,9 @@ class Modals(object):
                                     cls=SymbolicLinkDetailsModal)
     datasets = WebItem('.modal-dialog', cls=DatasetsModal)
     create_archive = WebItem('.modal-dialog', cls=CreateArchive)
+    recall_archive = WebItem('.modal-dialog', cls=RecallArchive)
+    archive_recall_information = WebItem('.modal-dialog',
+                                         cls=ArchiveRecallInformation)
     remove_selected_dataset = WebItem('.modal-dialog',
                                       cls=RemoveSelectedDataset)
     detach_dataset = WebItem('.modal-dialog', cls=DetachDataset)

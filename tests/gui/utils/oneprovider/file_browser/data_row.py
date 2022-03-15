@@ -37,6 +37,7 @@ class DataRow(PageObject, BrowserRow):
     metadata_protected_tag = WebElement('.file-metadata-protected-icon')
     no_access_tag = WebElement('.file-status-forbidden')
     hardlink_tag = WebElement('.file-status-hardlinks')
+    recalled_tag = WebElement('.file-status-recalled')
     clickable_field = WebElement('.file-name')
     tag_label = Label('.file-status-tag')
 
