@@ -13,5 +13,5 @@ from tests.gui.utils.oneprovider import FileBrowser
 
 
 class SelectFilesDirectoriesSymlinks(PageObject):
-    file_browser = FileBrowser('items-select-browser-part')
+    file_browser = FileBrowser('.items-select-browser-part.upload-drop-zone-container')
     confirm_button = Button('.submit-selection-btn')

@@ -54,7 +54,7 @@ def choose_file_as_initial_workflow_value(selenium, browser_id, item_list,
     op_container(driver).automation_page.input_icon.click()
 
     modal = modals(selenium[browser_id]).select_files
-    browser = modal['file_browser']
+    browser = modal.file_browser
 
     with browser.select_files() as selector:
         _select_files(browser, selector, item_list)

@@ -24,8 +24,6 @@ def _assert_workflow(transfer, desc, sufix, hosts):
 
     desc = yaml.load(desc)
     for key, val in desc.items():
-        if key == 'destination':
-            val = hosts[val]['name']
         transfer_val = getattr(transfer, key.replace(' ', '_'))
         assert transfer_val == str(val), \
             'Transfer {} is {} instead of {} in {}'.format(key, transfer_val,
@@ -67,7 +65,7 @@ def choose_workflow_revision_to_run(selenium, browser_id, op_container,
 @repeat_failed(interval=0.5, timeout=90)
 def assert_ended_transfer(selenium, browser_id, desc, hosts,
                           op_container):
-    transfer = op_container(selenium[browser_id]).transfers.ended[0]
+    transfer = op_container(selenium[browser_id]).automation_page.ended[0]
     _assert_workflow(transfer, desc, 'ended', hosts)
 
 
