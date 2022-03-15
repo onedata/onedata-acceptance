@@ -8,6 +8,8 @@ __license__ = "This software is released under the MIT license cited in " \
 
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
+from tests.gui.steps.modal import _wait_for_modal_to_appear
+from tests.gui.steps.onezone.automation import assert_workflow_exists
 from tests.gui.utils.generic import transform, upload_file_path
 from tests.utils.bdd_utils import wt, parsers
 from tests.gui.utils.generic import parse_seq, transform
@@ -23,20 +25,22 @@ def create_workflow_using_gui(selenium, browser_id, oz_page, workflow_name):
     page.workflows_page.create_button.click()
 
 
-@wt(parsers.parse('user of {browser_id} confirm workflow upload to '
-                  '"{inventory}" inventory and then sees "{workflow}" '
-                  'in workflows list in inventory'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@wt(parsers.parse('user of {browser_id} uploads workflow "{file_name}" '
+                  'to "{inventory}" inventory and then sees "{workflow}"'
+                  ' in workflows list in inventory'))
 def upload_and_assert_workflow_to_inventory_using_gui(selenium, browser_id,
                                                       oz_page, modals,
-                                                      inventory, workflow):
+                                                      inventory, workflow,
+                                                      file_name, tmp_memory):
+
     driver = selenium[browser_id]
+    oz_page(driver)['automation'].upload_workflow(upload_file_path(file_name))
+    _wait_for_modal_to_appear(driver, browser_id, 'Upload workflow', tmp_memory)
     modals(driver).upload_workflow.apply.click()
     page = oz_page(driver)['automation']
     page.elements_list[inventory].workflows()
 
-    assert workflow in page.workflows_page.elements_list, \
-        f'Workflow: {workflow} not found '
+    assert_workflow_exists(selenium, browser_id, oz_page, workflow, 'sees')
 
 
 

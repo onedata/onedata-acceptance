@@ -185,14 +185,14 @@ def click_on_create_new_revision_button(selenium, browser_id, oz_page,
     page.lambdas_page.elements_list[lambda_name].create_new_revision.click()
 
 
-def collapse_revision_list(object):
+def collapse_revision_list(subpage):
     object.show_revisions_button.click()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>does not see|sees) '
-               '"(?P<revision_name>.*)" in '
-               '(lambdas|workflows) revision list of "(?P<object_name>.*)" '
-               'in inventory (?P<page>lambdas|workflows) subpage'))
+               '"(?P<revision_name>.*)" in revision list of '
+               '"(?P<object_name>.*)" in inventory '
+               '(?P<page>lambdas|workflows) subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_revision_in_object_bracket(selenium, browser_id, oz_page,
                                       object_name, page, option):
@@ -202,7 +202,7 @@ def assert_revision_in_object_bracket(selenium, browser_id, oz_page,
     object = subpage.elements_list[object_name]
 
     try:
-        collapse_revision_list(object)
+        collapse_revision_list(subpage)
     except BaseException:
         pass
     if option == 'does not see':
@@ -227,7 +227,7 @@ def click_option_in_revision_menu_button(selenium, browser_id, oz_page, option,
     object = subpage.elements_list[object_name]
 
     try:
-        collapse_revision_list(object)
+        collapse_revision_list(subpage)
     except BaseException:
         pass
 
