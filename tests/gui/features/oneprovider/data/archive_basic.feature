@@ -40,7 +40,7 @@ Feature: Basic archives operations
 
     Then user of browser sees archive browser in archives tab in Oneprovider page
     And user of browser sees that 1st archive in archive browser has description: "first archive"
-    And user of browser sees that archive with description: "first archive" in archive browser has status: "preserved", number of files: "1 file", size: "3 B"
+    And user of browser sees that archive with description: "first archive" in archive browser has status: "preserved", number of files: 1, size: "3 B"
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser sees that item "dir4" has 1 archive
 
