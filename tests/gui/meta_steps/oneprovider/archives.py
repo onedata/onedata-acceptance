@@ -8,6 +8,7 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 import yaml
+import time
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.meta_steps.oneprovider.data import go_to_path_without_last_elem
@@ -128,6 +129,8 @@ def _create_archive(browser_id, selenium, config, item_name, space_name,
             copy_archive_id_to_tmp_memory(selenium, browser_id, op_container,
                                           client, tmp_memory, modals, clipboard,
                                           displays, description)
+            # wait for "archive id copied to clipboard" message to disappear
+            time.sleep(5)
     elif option == 'fails':
         assert_not_click_option_in_data_row_menu(selenium, browser_id,
                                                  option_in_data_row_menu,
