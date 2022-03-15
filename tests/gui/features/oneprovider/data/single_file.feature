@@ -80,6 +80,6 @@ Feature: Basic files tab operations on single file in file browser
     And user of browser sees that current working directory displayed in breadcrumbs on file browser is space1
 
     #User downloads file
-    And user of browser double clicks on item named "20B-0.txt" in file browser to download it with 150 kbps
+    And user of browser downloads item named "20B-0.txt" with slow connection in file browser
     Then user of browser sees that content of downloaded file "20B-0.txt" is equal to: "11111111111111111111"
 

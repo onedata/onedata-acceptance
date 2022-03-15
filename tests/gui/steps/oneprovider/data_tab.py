@@ -12,11 +12,14 @@ import pytest
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.conftest import WAIT_NORMAL_UPLOAD, WAIT_EXTENDED_UPLOAD
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
+from tests.gui.steps.oneprovider.browser import \
+    click_and_press_enter_on_item_in_browser
 from tests.gui.utils.generic import (parse_seq, upload_file_path, transform)
 from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import given, wt, parsers
 from selenium.webdriver.support.ui import WebDriverWait as Wait
-from tests.gui.steps.rest.env_up import GUI_UPLOAD_CHUNK_SIZE
+from tests.gui.steps.rest.env_up import GUI_UPLOAD_CHUNK_SIZE, \
+    GUI_DOWNLOAD_CHUNK_SIZE, DOWNLOAD_INACTIVITY_PERIOD_SEC
 from tests.gui.steps.rest.env_up import UPLOAD_INACTIVITY_PERIOD_SEC
 
 
@@ -117,7 +120,6 @@ def assert_btn_is_not_in_file_browser_menu_bar(selenium, browser_id, btn_list,
 def change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, browser_id, path,
                                                    op_container, which_browser
                                                    ='file browser'):
-
     archive = which_browser == 'archive file browser'
     try:
         breadcrumbs = getattr(op_container(selenium[browser_id]),
@@ -438,7 +440,7 @@ def assert_provider_chunk_in_data_distribution_size(selenium, browser_id, size,
 
 @wt(parsers.parse('user of {browser_id} sees that chunk bar for provider '
                   '"{provider}" is entirely filled'))
-@repeat_failed(timeout=WAIT_BACKEND*2)
+@repeat_failed(timeout=WAIT_BACKEND * 2)
 def assert_provider_chunk_in_data_distribution_filled(selenium, browser_id,
                                                       provider, modals, hosts):
     driver = selenium[browser_id]
@@ -606,3 +608,23 @@ def click_file_browser_button(browser_id, button, tmp_memory):
     file_browser = tmp_memory[browser_id]['file_browser']
     getattr(file_browser, f'{transform(button)}_button').click()
 
+
+def network_throttling_download(driver):
+    download_kb = (GUI_DOWNLOAD_CHUNK_SIZE / DOWNLOAD_INACTIVITY_PERIOD_SEC) * 1024
+
+    driver.set_network_conditions(
+        latency = 5,
+        download_throughput = float(download_kb) / 8 * 1024,
+        upload_throughput = 500 * 1024)
+
+
+@wt(parsers.parse('user of {browser_id} downloads item named "{item_name}" '
+                  'with slow connection in {which_browser}'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def download_file_with_network_throttling(selenium, browser_id, item_name,
+                                          tmp_memory, op_container):
+    driver = selenium[browser_id]
+    network_throttling_download(driver)
+
+    click_and_press_enter_on_item_in_browser(selenium, browser_id, item_name,
+                                             tmp_memory, op_container)
