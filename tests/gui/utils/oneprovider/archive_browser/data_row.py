@@ -51,6 +51,3 @@ class DataRow(PageObject, BrowserRow):
             return False
         else:
             return True
-
-    def get_item_status(self):
-        self.state.find()
