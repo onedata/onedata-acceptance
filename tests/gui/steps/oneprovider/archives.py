@@ -8,6 +8,7 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
+from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 from tests.gui.utils.generic import transform
@@ -26,14 +27,6 @@ def assert_number_of_archives_for_item_in_dataset_browser(browser_id, name,
     assert number == item_number, err_msg
 
 
-@wt(parsers.parse('user of {browser_id} clicks on archives count link for'
-                  ' "{name}" in dataset browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_number_in_archives(browser_id, tmp_memory, name):
-    browser = tmp_memory[browser_id]['dataset_browser']
-    browser.data[name].number_of_archives.click()
-
-
 @wt(parsers.parse('user of {browser_id} writes "{text}" into description'
                   ' text field in create archive modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -43,20 +36,35 @@ def write_description_in_create_archive_modal(selenium, browser_id, modals,
     modals(driver).create_archive.description = text
 
 
-@wt(parsers.re('user of (?P<browser_id>.*?) sees that (?P<ordinal>1st|2nd|3rd|'
-               r'\d*?[4567890]th|\d*?11th|\d*?12th|\d*?13th|\d*?[^1]1st|'
-               r'\d*?[^1]2nd|\d*?[^1]3rd) archive in archive browser '
-               r'has status: "(?P<status>.*?)", number of files: '
-               r'"(?P<number_of_files>.*?)", size: "(?P<size>.*?)"'))
+def get_archive_with_description(browser, description):
+    for archive in browser.data:
+        if description in archive.name:
+            return archive
+    else:
+        raise Exception('failed to load archive from description')
+
+
+@wt(parsers.parse('user of {browser_id} saves time of creation archive with'
+                  ' description: "{description}" for "{file_name}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def save_date_of_archive_creation(browser_id, tmp_memory, description):
+    browser = tmp_memory[browser_id]['archive_browser']
+    archive = get_archive_with_description(browser, description)
+    name = archive.name.split(' —')[0]
+    tmp_memory['created_at'] = name
+
+
+@wt(parsers.re('user of (?P<browser_id>.*?) sees that archive with '
+               'description: "(?P<description>.*?)" in archive browser '
+               'has status: "(?P<status>.*?)", number of files: '
+               '"(?P<number_of_files>.*?)", size: "(?P<size>.*?)"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_archive_full_state_status(browser_id, tmp_memory, status,
-                                     number_of_files, size, ordinal):
+                                     number_of_files, size, description):
     browser = tmp_memory[browser_id]['archive_browser']
-    number = from_ordinal_number_to_int(ordinal)
-    item_status = (re.sub('\n', ' ', browser.data[number-1].state)
-                   .replace(':', ',').split(', '))
+    archive = get_archive_with_description(browser, description)
+    item_status = archive.state.replace('\n', ' ').replace(':', ',').split(', ')
     item_status[0] = item_status[0].replace(' Archived', '').lower()
-
     number_of_files += 's' if number_of_files == '1 file' else ''
     assert_archive_partial_state_status(item_status[0], status)
     assert_archive_partial_state_status(item_status[1], number_of_files)
@@ -68,28 +76,29 @@ def assert_archive_partial_state_status(item_status, expected_status):
         f'{expected_status} does not match {item_status}')
 
 
-@wt(parsers.re(r'user of (?P<browser_id>.*?) double clicks on '
-               r'(?P<ordinal>1st|2nd|3rd|\d*?[4567890]th|\d*?11th|\d*?12th|'
-               r'\d*?13th|\d*?[^1]1st|\d*?[^1]2nd|\d*?[^1]3rd) archive on '
-               r'archives list in archive browser'))
+@wt(parsers.re('user of (?P<browser_id>.*?) clicks and presses enter on '
+               'archive with description: "(?P<description>.*?)" on '
+               'archives list in archive browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def double_click_on_archive(browser_id, tmp_memory, ordinal='1'):
+def click_and_press_enter_on_archive(browser_id, tmp_memory, description):
     browser = tmp_memory[browser_id]['archive_browser']
-    number = from_ordinal_number_to_int(ordinal)
-    browser.data[number-1].double_click()
+    archive = get_archive_with_description(browser, description)
+    # clicking on the background of browser to ensure correct
+    # working of click_and enter
+    browser.click_on_background()
+    archive.click_and_enter()
 
 
 @wt(parsers.re(r'user of (?P<browser_id>.*?) sees (?P<tag_type>.*?) tag for '
-               r'(?P<ordinal>1st|2nd|3rd|\d*?[4567890]th|\d*?11th|\d*?12th|'
-               r'\d*?13th|\d*?[^1]1st|\d*?[^1]2nd|\d*?[^1]3rd) '
-               r'archive on archives list in archive browser'))
+               r'archive with description: "(?P<description>.*?)" on archives'
+               r' list in archive browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_tag_for_archive_in_archive_browser(browser_id, tag_type, tmp_memory,
-                                              ordinal):
+                                              description):
     browser = tmp_memory[browser_id]['archive_browser']
-    err_msg = f'{tag_type} tag for {ordinal} archive is not visible'
-    number = from_ordinal_number_to_int(ordinal)
-    assert browser.data[number-1].is_tag_visible(tag_type), err_msg
+    err_msg = f'{tag_type} tag for archive with description is not visible'
+    archive = get_archive_with_description(browser, description)
+    assert archive.is_tag_visible(tag_type), err_msg
 
 
 def from_ordinal_number_to_int(ordinal_number):
@@ -105,21 +114,42 @@ def check_toggle_in_create_archive_modal(browser_id, selenium, modals,
     getattr(modals(driver).create_archive, transform(toggle_type)).check()
 
 
-@wt(parsers.re(r'user of (?P<browser_id>.*?) sees that base archive for '
-               r'latest created archive is (?P<ordinal>1st|2nd|3rd|'
-               r'\d*?[4567890]th|\d*?11th|\d*?12th|\d*?13th|\d*?[^1]1st|'
-               r'\d*?[^1]2nd|\d*?[^1]3rd) archive on archives list '
-               r'in archive browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_base_archive_description(browser_id, tmp_memory,
-                                    ordinal):
-    browser = tmp_memory[browser_id]['archive_browser']
-    item_base_archive = browser.data[0].base_archive
-    number = from_ordinal_number_to_int(ordinal)
-    base_archive_name = browser.data[number-1].name
+def compare_base_archive_name_with_archive_with_description(browser,
+                                                            base_description,
+                                                            item_base_archive):
+    base_archive_name = get_archive_with_description(browser,
+                                                     base_description).name
     err_msg = (f'Item base archive: {item_base_archive} does not'
                f' match  {base_archive_name}')
-    assert item_base_archive == base_archive_name , err_msg
+    assert item_base_archive == base_archive_name, err_msg
+
+
+@wt(parsers.re(r'user of (?P<browser_id>.*?) sees that base archive for '
+               r'latest created archive is archive with description:'
+               r' "(?P<base_description>.*?)" on archives list'
+               r' in archive browser'))
+def assert_base_archive_description_for_latest_created_archive(
+        browser_id, tmp_memory, base_description):
+    browser = tmp_memory[browser_id]['archive_browser']
+    item_base_archive = browser.data[0].base_archive
+    compare_base_archive_name_with_archive_with_description(browser,
+                                                            base_description,
+                                                            item_base_archive)
+
+
+@wt(parsers.re(r'user of (?P<browser_id>.*?) sees that base archive for '
+               r'archive with description: "(?P<description>.*?)" is archive '
+               r'with description: "(?P<base_description>.*?)" on archives list'
+               r' in archive browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_base_archive_description(browser_id, tmp_memory, base_description,
+                                    description):
+    browser = tmp_memory[browser_id]['archive_browser']
+    item_base_archive = get_archive_with_description(browser,
+                                                     description).base_archive
+    compare_base_archive_name_with_archive_with_description(browser,
+                                                            base_description,
+                                                            item_base_archive)
 
 
 @wt(parsers.parse('user of browser clicks on {button} button in '
@@ -131,8 +161,7 @@ def click_button_in_archive_browser(browser_id, tmp_memory, button):
 
 
 @wt(parsers.parse('user of {browser_id} sees that base archive name in Create'
-                  ' Archive modal is the same as '
-                  'latest created archive name'))
+                  ' Archive modal is the same as latest created archive name'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_name_same_as_latest_created(browser_id, tmp_memory, modals,
                                        selenium):
@@ -145,17 +174,15 @@ def assert_name_same_as_latest_created(browser_id, tmp_memory, modals,
     assert latest_created_name == base_archive_name, err_msg
 
 
-@wt(parsers.re(r'user of (?P<browser_id>.*?) copies (?P<ordinal>1st|2nd|3rd|'
-               r'\d*?[4567890]th|\d*?11th|\d*?12th|\d*?13th|\d*?[^1]1st|'
-               r'\d*?[^1]2nd|\d*?[^1]3rd) archive name in archive browser '
+@wt(parsers.re(r'user of (?P<browser_id>.*?) copies archive with'
+               r' description: "(?P<description>.*?)" name in archive browser '
                r'to clipboard'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def copy_archive_name_to_clipboard(browser_id, tmp_memory, ordinal, clipboard,
-                                   displays):
+def copy_archive_name_to_clipboard(browser_id, tmp_memory, description,
+                                   clipboard, displays):
     browser = tmp_memory[browser_id]['archive_browser']
-    number = from_ordinal_number_to_int(ordinal)
-    clipboard.copy(browser.data[int(number)-1].name,
-                   display=displays[browser_id])
+    archive = get_archive_with_description(browser, description)
+    clipboard.copy(archive.name, display=displays[browser_id])
 
 
 @wt(parsers.parse('user of {browser_id} clicks on menu for archive that'
@@ -167,15 +194,12 @@ def click_menu_for_named_archive(browser_id, tmp_memory, clipboard, displays):
     browser.data[item_name].menu_button()
 
 
-@wt(parsers.re(r'user of (?P<browser_id>.*?) clicks on menu for '
-               r'(?P<ordinal>1st|2nd|3rd|\d*?[4567890]th|\d*?11th|'
-               r'\d*?12th|\d*?13th|\d*?[^1]1st|\d*?[^1]2nd|\d*?[^1]3rd)'
-               r' archive in archive browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_menu_for_number_archive(browser_id, tmp_memory, ordinal):
+@wt(parsers.re('user of (?P<browser_id>.*?) clicks on menu for archive '
+               'with description: "(?P<description>.*?)" in archive browser'))
+def click_menu_for_archive(browser_id, tmp_memory, description):
     browser = tmp_memory[browser_id]['archive_browser']
-    number = from_ordinal_number_to_int(ordinal)
-    browser.data[int(number)-1].menu_button()
+    archive = get_archive_with_description(browser, description)
+    archive.menu_button()
 
 
 @wt(parsers.parse('user of {browser_id} writes "{text}" into confirmation '
@@ -195,7 +219,7 @@ def assert_description_for_archive(browser_id, tmp_memory, description,
                                    ordinal):
     browser = tmp_memory[browser_id]['archive_browser']
     number = from_ordinal_number_to_int(ordinal)
-    archive_description = browser.data[number-1].name.split('— ')[1]
+    archive_description = browser.data[number - 1].name.split('— ')[1]
     err_msg = (f'Archive description {archive_description} does not match'
                f' expected description: {description}')
     assert archive_description == description, err_msg
@@ -204,6 +228,38 @@ def assert_description_for_archive(browser_id, tmp_memory, description,
 @wt(parsers.parse('user of {browser_id} sees that page with text '
                   '"{text}" appeared in archive browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_page_with_error_appeared(browser_id, text, tmp_memory):
+def assert_page_with_text_appeared(browser_id, text, tmp_memory):
     browser = tmp_memory[browser_id]['archive_browser']
     assert browser.empty_dir_msg == text, f'page with text "{text}" not found'
+
+
+@wt(parsers.parse('user of {browser_id} goes back to dataset browser from '
+                  'archive browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def go_back_to_dataset_page_from_archive_browser(selenium, browser_id, oz_page):
+    driver = selenium[browser_id]
+    driver.switch_to.default_content()
+    oz_page(driver)['data'].archive_header.back_to_dataset_page()
+
+
+def assert_not_archive_with_description(tmp_memory, browser_id, description):
+    browser = tmp_memory[browser_id]['archive_browser']
+    archives = browser.data
+    for item in archives:
+        if description in item.name:
+            raise Exception(f'Archive with description: "{description}" found')
+    else:
+        pass
+
+
+@wt(parsers.parse('user of {browser_id} sees that error page with text '
+                  '"{text}" appeared in archive browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_page_with_error_appeared(browser_id, text, tmp_memory, selenium,
+                                    op_container):
+    which_browser = 'archive browser'
+    assert_browser_in_tab_in_op(selenium, browser_id, op_container, tmp_memory,
+                                item_browser=which_browser)
+    browser = tmp_memory[browser_id][transform(which_browser)]
+    assert browser.error_msg == text, f'page with text "{text}" not  found'
+

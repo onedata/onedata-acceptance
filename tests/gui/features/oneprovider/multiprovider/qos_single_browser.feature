@@ -57,9 +57,9 @@ Feature: Quality of Service tests for 2 providers using single browser in Onepro
 
   Scenario: User successfully makes file inherit QoS requirement from directory
     When user of browser creates 2 replicas of "anyStorage" QoS requirement for "dir1" in space "space1"
-    And user of browser double clicks on item named "dir1" in file browser
-    And user of browser sees QoS status tag for "file2" in file browser
-    Then user of browser sees QoS inherited status tag for "file2" in file browser
+    And user of browser clicks and presses enter on item named "dir1" in file browser
+    Then user of browser sees inherited status tag for "file2" in file browser
+    And user of browser clicks on inherited status tag for "file2" in file browser
     And user of browser clicks on QoS status tag for "file2" in file browser
     And user of browser sees that all QoS requirements are fulfilled
     And user of browser clicks on "Close" button in modal "Quality of Service"

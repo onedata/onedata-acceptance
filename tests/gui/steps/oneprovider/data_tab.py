@@ -10,10 +10,14 @@ __license__ = ("This software is released under the MIT license cited in "
 import pytest
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
+from tests.gui.conftest import WAIT_NORMAL_UPLOAD, WAIT_EXTENDED_UPLOAD
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.utils.generic import (parse_seq, upload_file_path, transform)
 from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import given, wt, parsers
+from selenium.webdriver.support.ui import WebDriverWait as Wait
+from tests.gui.steps.rest.env_up import GUI_UPLOAD_CHUNK_SIZE
+from tests.gui.steps.rest.env_up import UPLOAD_INACTIVITY_PERIOD_SEC
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -113,9 +117,15 @@ def assert_btn_is_not_in_file_browser_menu_bar(selenium, browser_id, btn_list,
 def change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, browser_id, path,
                                                    op_container, which_browser
                                                    ='file browser'):
-    breadcrumbs = getattr(op_container(selenium[browser_id]),
-                          transform(which_browser)).breadcrumbs
+
     archive = which_browser == 'archive file browser'
+    try:
+        breadcrumbs = getattr(op_container(selenium[browser_id]),
+                              transform(which_browser)).breadcrumbs
+    except RuntimeError:
+        which_browser = 'archive browser'
+        breadcrumbs = getattr(op_container(selenium[browser_id]),
+                              transform(which_browser)).breadcrumbs
     if path == 'home':
         breadcrumbs.home()
     else:
@@ -180,7 +190,7 @@ def wt_is_space_tree_root(selenium, browser_id, is_home, space_name,
 
 @wt(parsers.parse('user of {browser_id} sees nonempty {item_browser} '
                   'in files tab in Oneprovider page'))
-@repeat_failed(timeout=WAIT_BACKEND*2)
+@repeat_failed(timeout=WAIT_BACKEND * 2)
 def assert_nonempty_file_browser_in_files_tab_in_op(selenium, browser_id,
                                                     op_container, tmp_memory,
                                                     item_browser='file browser'):
@@ -209,6 +219,7 @@ def assert_empty_browser_in_files_tab_in_op(selenium, browser_id,
 
 @wt(parsers.parse('user of {browser_id} sees {item_browser} '
                   'in {} tab in Oneprovider page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_browser_in_tab_in_op(selenium, browser_id, op_container,
                                 tmp_memory, item_browser='file browser'):
     switch_to_iframe(selenium, browser_id)
@@ -261,8 +272,20 @@ def resize_data_tab_sidebar(selenium, browser_id, direction, offset,
 
 @wt(parsers.re('user of (?P<browser_id>.*) waits for file uploads? to '
                'finish'))
-@repeat_failed(timeout=WAIT_BACKEND*3)
+@repeat_failed(timeout=WAIT_NORMAL_UPLOAD)
 def wait_for_file_upload_to_finish(selenium, browser_id, popups):
+    driver = selenium[browser_id]
+    driver.switch_to.default_content()
+    assert not popups(driver).is_upload_presenter(), (
+        'file upload not finished '
+        'within given time')
+    switch_to_iframe(selenium, browser_id)
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) waits extended time for file '
+               'uploads? to finish'))
+@repeat_failed(timeout=WAIT_EXTENDED_UPLOAD)
+def wait_extended_time_for_file_upload_to_finish(selenium, browser_id, popups):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
     assert not popups(driver).is_upload_presenter(), (
@@ -274,7 +297,7 @@ def wait_for_file_upload_to_finish(selenium, browser_id, popups):
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
                   'menu bar to upload file "{file_name}" to current dir '
                   'without waiting for upload to finish'))
-@repeat_failed(timeout=2*WAIT_BACKEND)
+@repeat_failed(timeout=2 * WAIT_BACKEND)
 def upload_file_to_cwd_in_file_browser_no_waiting(selenium, browser_id,
                                                   file_name, op_container):
     driver = selenium[browser_id]
@@ -283,7 +306,7 @@ def upload_file_to_cwd_in_file_browser_no_waiting(selenium, browser_id,
 
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
                   'menu bar to upload file "{file_name}" to current dir'))
-@repeat_failed(timeout=2*WAIT_BACKEND)
+@repeat_failed(timeout=2 * WAIT_BACKEND)
 def upload_file_to_cwd_in_file_browser(selenium, browser_id, file_name,
                                        op_container, popups):
     upload_file_to_cwd_in_file_browser_no_waiting(selenium, browser_id,
@@ -294,7 +317,7 @@ def upload_file_to_cwd_in_file_browser(selenium, browser_id, file_name,
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
                   'menu bar to upload files from local directory "{dir_path}" '
                   'to remote current dir'))
-@repeat_failed(timeout=2*WAIT_BACKEND)
+@repeat_failed(timeout=2 * WAIT_BACKEND)
 def upload_files_to_cwd_in_data_tab(selenium, browser_id, dir_path, tmpdir,
                                     op_container, popups):
     upload_files_to_cwd_in_data_tab_no_waiting(selenium, browser_id, dir_path,
@@ -305,7 +328,7 @@ def upload_files_to_cwd_in_data_tab(selenium, browser_id, dir_path, tmpdir,
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
                   'menu bar to upload files from local directory "{dir_path}" '
                   'to remote current dir without waiting for upload to finish'))
-@repeat_failed(timeout=2*WAIT_BACKEND)
+@repeat_failed(timeout=2 * WAIT_BACKEND)
 def upload_files_to_cwd_in_data_tab_no_waiting(selenium, browser_id, dir_path,
                                                tmpdir, op_container):
     driver = selenium[browser_id]
@@ -318,9 +341,22 @@ def upload_files_to_cwd_in_data_tab_no_waiting(selenium, browser_id, dir_path,
 
 
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
+                  'menu bar to upload files from local directory "{dir_path}" '
+                  'to remote current dir and waits extended time for upload to '
+                  'finish'))
+@repeat_failed(timeout=WAIT_EXTENDED_UPLOAD)
+def upload_files_to_cwd_in_data_tab_extended_wait(selenium, browser_id,
+                                                  dir_path, tmpdir,
+                                                  op_container, popups):
+    upload_files_to_cwd_in_data_tab_no_waiting(selenium, browser_id, dir_path,
+                                               tmpdir, op_container)
+    wait_extended_time_for_file_upload_to_finish(selenium, browser_id, popups)
+
+
+@wt(parsers.parse('user of {browser_id} uses upload button from file browser '
                   'menu bar to upload local file "{file_path}" '
                   'to remote current dir'))
-@repeat_failed(timeout=2*WAIT_BACKEND)
+@repeat_failed(timeout=2 * WAIT_BACKEND)
 def upload_file_to_cwd_in_data_tab(selenium, browser_id, file_path, tmpdir,
                                    op_container, popups):
     upload_file_to_cwd_in_data_tab_no_waiting(selenium, browser_id, file_path,
@@ -329,9 +365,23 @@ def upload_file_to_cwd_in_data_tab(selenium, browser_id, file_path, tmpdir,
 
 
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
+                  'menu bar to upload {number} local files "{file_path}" '
+                  'to remote current dir'))
+@repeat_failed(timeout=2 * WAIT_BACKEND)
+def upload_number_of_files_to_cwd_in_data_tab(selenium, browser_id, file_path,
+                                              tmpdir, op_container, popups,
+                                              number):
+    for i in range(int(number)):
+        upload_file_to_cwd_in_data_tab_no_waiting(selenium, browser_id,
+                                                  file_path, tmpdir,
+                                                  op_container)
+    wait_for_file_upload_to_finish(selenium, browser_id, popups)
+
+
+@wt(parsers.parse('user of {browser_id} uses upload button from file browser '
                   'menu bar to upload local file "{file_path}" '
                   'to remote current dir without waiting for upload to finish'))
-@repeat_failed(timeout=2*WAIT_BACKEND)
+@repeat_failed(timeout=2 * WAIT_BACKEND)
 def upload_file_to_cwd_in_data_tab_no_waiting(selenium, browser_id, file_path,
                                               tmpdir, op_container):
     driver = selenium[browser_id]
@@ -340,6 +390,34 @@ def upload_file_to_cwd_in_data_tab_no_waiting(selenium, browser_id, file_path,
         op_container(driver).file_browser.upload_files(upload_file_path(file))
     else:
         raise RuntimeError('file {} does not exist'.format(str(file)))
+
+
+def network_throttling_upload(driver):
+    upload_kb = (GUI_UPLOAD_CHUNK_SIZE / UPLOAD_INACTIVITY_PERIOD_SEC) * 1024
+
+    driver.set_network_conditions(
+        latency = 5,
+        download_throughput = 500 * 1024,
+        upload_throughput = float(upload_kb) / 8 * 1024)
+
+
+@wt(parsers.parse('user of {browser_id} uses upload button from file browser '
+                  'menu bar to upload local file "{file_path}" '
+                  'to remote current dir with slow connection'))
+@repeat_failed(timeout=WAIT_EXTENDED_UPLOAD)
+def upload_file_to_cwd_in_data_tab_with_network_throttling(selenium, browser_id,
+                                                           file_path, tmpdir,
+                                                           op_container,
+                                                           popups):
+    driver = selenium[browser_id]
+    network_throttling_upload(driver)
+    file = tmpdir.join(browser_id, file_path)
+    if file.isfile():
+        op_container(driver).file_browser.upload_files(upload_file_path(file))
+    else:
+        raise RuntimeError(f'file {str(file)} does not exist')
+
+    wait_extended_time_for_file_upload_to_finish(selenium, browser_id, popups)
 
 
 @wt(parsers.parse('user of {browser_id} sees that chunk bar for provider '
@@ -360,7 +438,7 @@ def assert_provider_chunk_in_data_distribution_size(selenium, browser_id, size,
 
 @wt(parsers.parse('user of {browser_id} sees that chunk bar for provider '
                   '"{provider}" is entirely filled'))
-@repeat_failed(timeout=WAIT_BACKEND)
+@repeat_failed(timeout=WAIT_BACKEND*2)
 def assert_provider_chunk_in_data_distribution_filled(selenium, browser_id,
                                                       provider, modals, hosts):
     driver = selenium[browser_id]
@@ -390,19 +468,6 @@ def assert_provider_chunk_in_data_distribution_empty(selenium, browser_id,
     chunks = distribution.chunks(size)
     assert not chunks, 'distribution for {} is not entirely empty. ' \
                        'Visible chunks: {}'.format(provider, chunks)
-
-
-@wt(parsers.parse('user of {browser_id} sees that chunk bar for provider '
-                  '"{provider}" is never synchronized'))
-@repeat_failed(timeout=WAIT_BACKEND)
-def assert_provider_chunk_in_data_distribution_never_synchronized(selenium,
-                                                                  browser_id,
-                                                                  provider,
-                                                                  modals, hosts):
-    driver = selenium[browser_id]
-    provider = hosts[provider]['name']
-    data_distribution = modals(driver).data_distribution
-    data_distribution.providers[provider].never_synchronized_text
 
 
 @wt(parsers.parse('user of {browser_id} sees {chunks} chunk(s) for provider '
@@ -540,3 +605,4 @@ def assert_provider_in_space(selenium, browser_id, provider, hosts, oz_page):
 def click_file_browser_button(browser_id, button, tmp_memory):
     file_browser = tmp_memory[browser_id]['file_browser']
     getattr(file_browser, f'{transform(button)}_button').click()
+

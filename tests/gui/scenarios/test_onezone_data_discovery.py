@@ -1,5 +1,5 @@
 """This module contains tests suite for basic operations using
-Onezone Harvesters GUI and single browser instance.
+Onezone Harvesters GUI and multiple browsers instance.
 """
 
 __author__ = "Agnieszka Warchol"
@@ -79,7 +79,5 @@ def screens():
 
 
 scenarios('../features/onezone/harvesters/data_discovery.feature')
-scenarios('../features/onezone/harvesters/data_discovery_querying.feature')
-scenarios('../features/onezone/harvesters/data_discovery_helpers.feature')
 scenarios('../features/onezone/harvesters/public_data_discovery.feature')
 

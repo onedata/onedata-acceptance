@@ -1,5 +1,5 @@
 """This module contains tests suite for basic operations in
-Onepanel GUI and multiple browser instances.
+Onepanel GUI and multiple browsers instances.
 """
 
 __author__ = "Bartosz Walkowicz"
@@ -85,4 +85,5 @@ def screens():
 scenarios('../features/onepanel/storages.feature')
 scenarios('../features/onepanel/provider.feature')
 scenarios('../features/onepanel/spaces.feature')
+scenarios('../features/onepanel/gui_settings.feature')
 

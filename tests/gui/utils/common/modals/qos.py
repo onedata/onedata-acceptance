@@ -27,7 +27,7 @@ class QualityOfServiceModal(Modal):
     confirm_text = Button('.oneicon-checked')
     expression = Input('.qos-info-row-expression .form-control')
     replicas_number = Input('.replicas-number-input')
-    save = NamedButton('.ready', text='Save')
+    save = NamedButton('.btn-primary', text='Save')
     close = NamedButton('.btn-default', text='Close')
     requirements = WebItemsSequence('.qos-entry', cls=Requirement)
     delete_confirm = NamedButton('.btn-danger', text='Yes, remove')
@@ -36,6 +36,7 @@ class QualityOfServiceModal(Modal):
     storage_matching = Label('.storages-matching-number')
     no_storage_matching = Label('.storages-matching-text')
     show_matching_storages = Button('.storages-matching-info-icon')
+    privileges_error = Label('.alert-promise-error')
 
     def __str__(self):
         return 'Quality of Service modal'

@@ -7,7 +7,7 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-from time import time
+import time
 from datetime import datetime
 import tarfile
 import yaml
@@ -25,8 +25,13 @@ from tests.utils.bdd_utils import wt, parsers
 def assert_msg_instead_of_browser(browser_id, msg, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
     displayed_msg = browser.browser_msg_header
-    assert displayed_msg == msg, ('displayed {} does not match expected '
-                                  '{}'.format(displayed_msg, msg))
+    start = time.time()
+    while displayed_msg != msg:
+        time.sleep(1)
+        displayed_msg = browser.browser_msg_header
+        if time.time() > start + WAIT_BACKEND:
+            assert displayed_msg == msg, (f'displayed {displayed_msg} does'
+                                          f' not match expected {msg}')
 
 
 @wt(parsers.parse('user of {browser_id} clicks on {status_type} status tag '
@@ -35,7 +40,7 @@ def assert_msg_instead_of_browser(browser_id, msg, tmp_memory):
 def click_on_status_tag_for_file_in_file_browser(browser_id, status_type,
                                                  item_name, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
-    browser.data[item_name].click_on_status_tag(status_type)
+    browser.data[item_name].click_on_status_tag(transform(status_type))
 
 
 @wt(parsers.parse('user of {browser_id} sees only items named {item_list}'
@@ -81,7 +86,7 @@ def assert_item_in_file_browser_is_of_mdate(browser_id, item_name,
     # %b - abbreviated month name
     item_date = datetime.strptime(browser.data[item_name].modification_date,
                                   date_fmt)
-    expected_date = datetime.fromtimestamp(time())
+    expected_date = datetime.fromtimestamp(time.time())
     err_msg = 'displayed mod time {} for {} does not match expected {}'
     assert abs(expected_date - item_date).seconds < err_time, err_msg.format(
         item_date, item_name, expected_date)
@@ -325,7 +330,7 @@ def assert_num_of_hardlinks_in_file_dets_modal(selenium, browser_id, number,
 def assert_hardlink_path_in_file_dets_modal(selenium, browser_id, file,
                                             path, modals):
     entries = modals(selenium[browser_id]).file_details.hardlinks_tab.files
-    actual_path = entries[file].path
+    actual_path = entries[file].get_path_string()
     assert path == actual_path, (f'Hardlink {file} path should be {path}, '
                                  f'but is {actual_path}')
 
@@ -335,7 +340,7 @@ def assert_hardlink_path_in_file_dets_modal(selenium, browser_id, file,
 def assert_hardlinks_paths_in_file_dets_modal(selenium, browser_id, paths,
                                               modals):
     entries = modals(selenium[browser_id]).file_details.hardlinks_tab.files
-    entries_paths = [entry.path for entry in entries]
+    entries_paths = [entry.get_path_string() for entry in entries]
     parsed_paths = parse_seq(paths)
     for path in parsed_paths:
         assert path in entries_paths, f'{path} not in {entries_paths}'
@@ -353,7 +358,7 @@ def assert_property_in_symlink_dets_modal(selenium, browser_id, link_property,
 
 
 @wt(parsers.parse('user of {browser_id} sees that contents of downloaded '
-                  '{name} TAR file (with ID in clipboard) in download '
+                  '{name} TAR file (with ID from clipboard) in download '
                   'directory have following structure:\n{contents}'))
 @wt(parsers.parse('user of {browser_id} sees that contents of downloaded '
                   '"{name}" TAR file in download directory have following'

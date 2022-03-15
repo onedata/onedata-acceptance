@@ -9,14 +9,21 @@ __license__ = ("This software is released under the MIT license cited in "
 
 import time
 from itertools import zip_longest
+import requests
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt, given
+from tests.utils.environment_utils import run_kubectl_command
+from tests.utils.onenv_utils import run_onenv_command
 from tests.utils.utils import repeat_failed
+from tests.utils.rest_utils import get_provider_rest_path, http_get
+from tests import OP_REST_PORT
 
 
-TIMEOUT_FOR_PROVIDER_GOES_OFFLINE = 300
+TIMEOUT_FOR_PROVIDER_GOING_OFFLINE = 300
+TIMEOUT_FOR_PROVIDER_GOING_ONLINE = 120
+
 
 @wt(parsers.parse('user of {browser_id} sees that provider popup for '
                   'provider named "{provider_name}" has appeared on '
@@ -432,6 +439,72 @@ def wait_until_provider_goes_offline(selenium, browser_id, oz_page,
     start = time.time()
     while page.is_working():
         time.sleep(0.5)
-        if time.time() > start + TIMEOUT_FOR_PROVIDER_GOES_OFFLINE:
-            raise RuntimeError(f'Provider does not go offline within '
-                               f'{TIMEOUT_FOR_PROVIDER_GOES_OFFLINE}s.')
+        if time.time() > start + TIMEOUT_FOR_PROVIDER_GOING_OFFLINE:
+            raise RuntimeError(f'Provider did not go offline within '
+                               f'{TIMEOUT_FOR_PROVIDER_GOING_OFFLINE}s.')
+
+
+@wt(parsers.parse('user of {browser_id} waits until provider "{provider_name}" '
+                  'goes online on providers map'))
+def wait_until_provider_goes_online(selenium, browser_id, oz_page,
+                                    hosts, provider_name, users):
+    user = 'admin'
+    driver = selenium[browser_id]
+    provider = hosts[provider_name]['name']
+    provider_hostname = hosts[provider_name]['hostname']
+    page = oz_page(driver)['providers']
+    provider_record = page.elements_list[provider]
+    provider_record.click()
+    start = time.time()
+    start_providers(hosts, provider_name)
+    while not page.is_working():
+        time.sleep(0.5)
+        if time.time() > start + TIMEOUT_FOR_PROVIDER_GOING_ONLINE:
+            try:
+                res = http_get(ip=provider_hostname, port=OP_REST_PORT,
+                               path=get_provider_rest_path('health'),
+                               auth=(user, users[user].password))
+                print(f'Respone from health check request: {res}')
+            except requests.exceptions.ConnectionError as e:
+                print(f'Exception from health check request: {e}')
+            raise RuntimeError(f'Provider did not go online on providers map '
+                               f'within {TIMEOUT_FOR_PROVIDER_GOING_ONLINE}s.')
+    wait_for_provider_online(provider_name, hosts, users)
+
+
+def wait_for_provider_online(provider, hosts, users):
+    user = 'admin'
+    provider_hostname = hosts[provider]['hostname']
+    start = time.time()
+    exception = ''
+
+    while True:
+        time.sleep(0.5)
+        try:
+            res = http_get(ip=provider_hostname, port=OP_REST_PORT,
+                           path=get_provider_rest_path('health'),
+                           auth=(user, users[user].password))
+            if res.status_code == requests.codes.ok:
+                return
+        except requests.exceptions.ConnectionError as e:
+            exception = e
+        if time.time() > start + TIMEOUT_FOR_PROVIDER_GOING_ONLINE:
+            if exception:
+                print(f'Exception from request: {exception}')
+            raise RuntimeError(f'Provider is still not working after '
+                               f'{TIMEOUT_FOR_PROVIDER_GOING_ONLINE}s. '
+                               f'Last response from health check request: {res}')
+
+
+@given(parsers.re('providers? named (?P<provider_list>.*?) (is|are) stopped'))
+def stop_providers(hosts, provider_list):
+    for provider in parse_seq(provider_list):
+        pod_name = hosts[provider]['pod-name']
+        run_onenv_command('service', ['stop', pod_name])
+
+
+@repeat_failed(timeout=WAIT_BACKEND)
+def start_providers(hosts, provider_list):
+    for provider in parse_seq(provider_list):
+        pod_name = hosts[provider]['pod-name']
+        run_onenv_command('service', ['start', pod_name])

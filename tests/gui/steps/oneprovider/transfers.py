@@ -14,6 +14,7 @@ from selenium.common.exceptions import StaleElementReferenceException
 
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.utils.common.modals import Modals as modals
+from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import wt, parsers
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
@@ -55,7 +56,7 @@ def assert_ended_transfer(selenium, browser_id, item_type, desc, hosts,
                ' in waiting transfers:\n(?P<desc>(.|\s)*)'))
 @repeat_failed(interval=0.5, timeout=40)
 def assert_waiting_transfer(selenium, browser_id, item_type, desc, hosts,
-                              op_container):
+                            op_container):
     transfer = op_container(selenium[browser_id]).transfers.waiting[0]
     _assert_transfer(transfer, item_type, desc, 'waiting', hosts)
 
@@ -92,6 +93,12 @@ def assert_non_zero_transfer_speed(selenium, browser_id, op_container):
 def _expand_dropdown_in_migrate_record(driver):
     data_distribution_modal = modals(driver).data_distribution
     data_distribution_modal.migrate.expand_dropdown()
+    assert len(modals(driver).migrate_dropdown.providers_list) > 0
+
+
+def check_provider_in_migrate_dropdown(driver, provider_name):
+    data_distribution_modal = modals(driver).data_distribution
+    return provider_name == data_distribution_modal.migrate.target_provider
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) migrates selected item from '
@@ -107,8 +114,9 @@ def migrate_item(selenium, browser_id, source, target, hosts, popups):
     data_distribution_modal.providers[source_name].menu_button()
     popups(driver).data_distribution_popup.menu[menu_option]()
 
-    _expand_dropdown_in_migrate_record(driver)
-    modals(driver).dropdown.options[target_name].click()
+    if not check_provider_in_migrate_dropdown(driver, target_name):
+        _expand_dropdown_in_migrate_record(driver)
+        modals(driver).migrate_dropdown.providers_list[target_name].click()
 
     data_distribution_modal.migrate.migrate_button()
 
@@ -150,19 +158,6 @@ def assert_see_history_btn_shown(selenium, browser_id):
         'Button "see history" not found in data distribution modal')
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) sees that item is never '
-               'synchronized in provider "(?P<provider>.*)"'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_item_never_synchronized(selenium, browser_id, provider, hosts):
-    provider_name = hosts[provider]['name']
-    assert (modals(selenium[browser_id])
-            .data_distribution
-            .providers[provider_name]
-            .distribution
-            .is_never_synchronized()), \
-        'Item is synchronized in provider {}'.format(provider_name)
-
-
 @wt(parsers.re('user of (?P<browser_id>.*) selects "(?P<space>.*)" space '
                'in transfers tab'))
 def change_transfer_space(selenium, browser_id, space, op_container):
@@ -174,3 +169,19 @@ def change_transfer_space(selenium, browser_id, space, op_container):
 def wait_for_transfers_page_to_load(selenium, browser_id, op_container):
     switch_to_iframe(selenium, browser_id)
     op_container(selenium[browser_id]).transfers.ongoing_map_header
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) does not see "(?P<options>Replicate '
+               'here|Migrate...|Evict)" options when clicking on provider "('
+               '?P<provider>.*)" menu button'))
+def assert_option_in_provider_popup_menu(selenium, browser_id, provider, hosts,
+                                         popups, options):
+
+    driver = selenium[browser_id]
+
+    provider_name = hosts[provider]['name']
+    modals(driver).data_distribution.providers[provider_name].menu_button()
+
+    menu = popups(driver).menu_popup_with_text.menu
+    for element in parse_seq(options):
+        assert element not in menu, f'{element} should not be in selection menu'

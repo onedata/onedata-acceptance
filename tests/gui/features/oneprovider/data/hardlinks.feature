@@ -50,13 +50,13 @@ Feature: Basic files tab operations on hardlinks in file browser
     Then user of browser sees that "File details" modal has appeared
     And user of browser sees that "File details" modal is opened on "Hard links" tab
     And user of browser sees that there are 2 hardlinks in "File details" modal
-    And user of browser sees that path of "file1" hardlink is "/space1/file1" in "File details" modal
-    And user of browser sees that path of "file1(1)" hardlink is "/space1/file1(1)" in "File details" modal
+    And user of browser sees that path of "file1" hardlink is "space1/file1" in "File details" modal
+    And user of browser sees that path of "file1(1)" hardlink is "space1/file1(1)" in "File details" modal
 
 
   Scenario: User downloads hardlink of file
     When user of browser creates hardlink of "file1" file in space "space1" in file browser
-    And user of browser double clicks on item named "file1(1)" in file browser
+    And user of browser clicks and presses enter on item named "file1(1)" in file browser
     Then user of browser sees that content of downloaded file "file1(1)" is equal to: "11111"
 
 
@@ -72,14 +72,14 @@ Feature: Basic files tab operations on hardlinks in file browser
     And user of browser sees that "File details" modal has appeared
     And user of browser sees that "File details" modal is opened on "Hard links" tab
     And user of browser sees that there are 3 hardlinks in "File details" modal
-    And user of browser sees that path of "file1" hardlink is "/space1/file1" in "File details" modal
-    And user of browser sees that path of "file1(1)" hardlink is "/space1/file1(1)" in "File details" modal
-    And user of browser sees that path of "file1(1)(1)" hardlink is "/space1/file1(1)(1)" in "File details" modal
+    And user of browser sees that path of "file1" hardlink is "space1/file1" in "File details" modal
+    And user of browser sees that path of "file1(1)" hardlink is "space1/file1(1)" in "File details" modal
+    And user of browser sees that path of "file1(1)(1)" hardlink is "space1/file1(1)(1)" in "File details" modal
 
 
   Scenario: User creates hardlinks in other directories than original files
     When user of browser opens file browser for "space1" space
-    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser sees only items named ["dir2", "file2"] in file browser
 
     # original file space1/dir1/file2
@@ -87,7 +87,7 @@ Feature: Basic files tab operations on hardlinks in file browser
     And user of browser clicks "Create hard link" option in data row menu in file browser
 
     # first hardlink in space1/dir1/dir2
-    And user of browser double clicks on item named "dir2" in file browser
+    And user of browser clicks and presses enter on item named "dir2" in file browser
     And user of browser clicks "Place hard link" button from file browser menu bar
     Then user of browser sees only items named ["file2"] in file browser
     And user of browser sees hardlink status tag with "2 hard links" text for "file2" in file browser
@@ -102,7 +102,7 @@ Feature: Basic files tab operations on hardlinks in file browser
     And user of browser sees that "File details" modal has appeared
     And user of browser sees that "File details" modal is opened on "Hard links" tab
     And user of browser sees that there are 3 hardlinks in "File details" modal
-    And user of browser sees paths ["/space1/dir1/file2", "/space1/file2", "/space1/dir1/dir2/file2"] of hardlinks in "File details" modal
+    And user of browser sees paths ["space1/dir1/file2", "space1/file2", "space1/dir1/dir2/file2"] of hardlinks in "File details" modal
 
 
   Scenario: New hardlink name is visible after hardlink rename
@@ -115,8 +115,8 @@ Feature: Basic files tab operations on hardlinks in file browser
     And user of browser sees that "File details" modal has appeared
     And user of browser sees that "File details" modal is opened on "Hard links" tab
     And user of browser sees that there are 2 hardlinks in "File details" modal
-    And user of browser sees that path of "file1" hardlink is "/space1/file1" in "File details" modal
-    And user of browser sees that path of "hardlink_file1" hardlink is "/space1/hardlink_file1" in "File details" modal
+    And user of browser sees that path of "file1" hardlink is "space1/file1" in "File details" modal
+    And user of browser sees that path of "hardlink_file1" hardlink is "space1/hardlink_file1" in "File details" modal
 
 
   Scenario: Hardlink info is no longer visible after hardlink removal
@@ -134,8 +134,8 @@ Feature: Basic files tab operations on hardlinks in file browser
     And user of browser sees that "File details" modal has appeared
     And user of browser sees that "File details" modal is opened on "Hard links" tab
     And user of browser sees that there are 2 hardlinks in "File details" modal
-    And user of browser sees that path of "file1" hardlink is "/space1/file1" in "File details" modal
-    And user of browser sees that path of "file1(2)" hardlink is "/space1/file1(2)" in "File details" modal
+    And user of browser sees that path of "file1" hardlink is "space1/file1" in "File details" modal
+    And user of browser sees that path of "file1(2)" hardlink is "space1/file1(2)" in "File details" modal
 
 
   Scenario: Newly created hardlink inherits metadata and QoS from original file
@@ -204,7 +204,7 @@ Feature: Basic files tab operations on hardlinks in file browser
     When user of browser opens file browser for "space1" space
     And user of browser clicks on menu for "file1" file in file browser
     And user of browser clicks "Create hard link" option in data row menu in file browser
-    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser clicks "Place hard link" button from file browser menu bar
 
     # change POSIX permission of created hardlink
@@ -227,7 +227,7 @@ Feature: Basic files tab operations on hardlinks in file browser
     When user of browser opens file browser for "space1" space
     And user of browser clicks on menu for "file1" file in file browser
     And user of browser clicks "Create hard link" option in data row menu in file browser
-    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser clicks "Place hard link" button from file browser menu bar
 
     # change ACL permission of created hardlink
@@ -242,7 +242,7 @@ Feature: Basic files tab operations on hardlinks in file browser
     And user of browser clicks "Save" confirmation button in displayed modal
 
     # check permission of original file
-    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser clicks on menu for "file1" file in file browser
     And user of browser clicks "Permissions" option in data row menu in file browser
     And user of browser sees that "Edit permissions" modal has appeared

@@ -35,8 +35,9 @@ Feature: Quality of Service in directory tests for 2 providers using multiple br
     And user of browser_emergency expands "posix" record on storages list in storages page in Onepanel
     And user of browser_emergency copies id of "posix" storage to clipboard via copy button
     And user of browser_unified creates QoS requirement with copied storageId for "dir1" from file browser
-    And user of browser_unified double clicks on item named "dir1" in file browser
+    And user of browser_unified clicks and presses enter on item named "dir1" in file browser
     And user of browser_unified uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
+    And user of browser_unified clicks on inherited status tag for "20B-0.txt" in file browser
     And user of browser_unified clicks on QoS status tag for "20B-0.txt" in file browser
     And user of browser_unified sees that all QoS requirements are fulfilled
     And user of browser_unified clicks on "Close" button in modal "Quality of Service"
@@ -51,7 +52,7 @@ Feature: Quality of Service in directory tests for 2 providers using multiple br
     And user of browser_unified sees file browser in files tab in Oneprovider page
     And user of browser_unified sees file chunks for file "file1" as follows:
           oneprovider-1: entirely filled
-          oneprovider-2: never synchronized
+          oneprovider-2: entirely empty
 
     And user of browser_emergency clicks on Storages item in submenu of "oneprovider-2" item in CLUSTERS sidebar in Onepanel
     And user of browser_emergency expands "posix" record on storages list in storages page in Onepanel

@@ -22,7 +22,7 @@ def _choose_space_from_menu_list(oz_page, driver, name):
     option = 'data'
     try:
         oz_page(driver)[option].spaces_header_list[name]()
-    except RuntimeError:
+    except (RuntimeError, IndexError):
         oz_page(driver)[option].choose_space(name)
 
 
@@ -101,9 +101,8 @@ def assert_new_created_space_has_appeared_on_spaces(selenium, browser_id,
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
                '(?P<option>Data|Providers|Groups|Tokens|Discovery|Automation'
-               '|Clusters) '
-               'in the main menu'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+               '|Clusters) in the main menu'))
+@repeat_failed(timeout=WAIT_BACKEND)
 def click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
@@ -270,7 +269,7 @@ def click_the_map_on_data_page(selenium, browser_id, oz_page, page, space_name):
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks '
                '(?P<option>Overview|Files|Shares|Transfers|Datasets|Providers'
                '|Members|Harvesters) of "(?P<space_name>.*?)" in the sidebar'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
                                                   space_name, option, oz_page):
     driver = selenium[browser_id]
@@ -551,8 +550,7 @@ def confirm_rename_the_space(selenium, browser_id, option, oz_page):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_tab_name_label(selenium, browser_id, tab_name, oz_page):
     driver = selenium[browser_id]
-    driver.switch_to.window(window_name=driver.window_handles[1])
-    label = oz_page(selenium[browser_id])['data'].tab_name
+    label = oz_page(driver)['data'].tab_name
     assert label.lower() == tab_name, f'User not on {tab_name} page'
 
 

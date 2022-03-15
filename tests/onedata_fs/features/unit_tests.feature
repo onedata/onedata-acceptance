@@ -11,5 +11,4 @@ Feature: Runs unit tests for onedata_fs in oneclient container
 
     Examples:
     | python_version |
-    | 2 |
     | 3 |

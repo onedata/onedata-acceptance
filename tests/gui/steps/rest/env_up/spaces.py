@@ -118,7 +118,6 @@ def _create_and_configure_spaces(config, zone_name, admin_credentials,
                                  onepanel_credentials, hosts,
                                  users_db, groups_db, storages_db, spaces_db):
     zone_hostname = hosts[zone_name]['hostname']
-    admin_credentials.token = admin_credentials.create_token(hosts['onezone']['ip'])
 
     for space_name, description in yaml.load(config).items():
         owner = users_db[description['owner']]
@@ -159,7 +158,7 @@ def _add_users_to_space(zone_hostname, admin_credentials, space_id,
 
         _add_user_to_space(zone_hostname, admin_credentials.username,
                            admin_credentials.password, space_id,
-                           users_db[user].id, privileges)
+                           users_db[user].user_id, privileges)
 
 
 def _add_user_to_space(zone_hostname, admin_username, admin_password,
@@ -216,15 +215,15 @@ def _get_support(zone_hostname, onepanel_credentials,
         provider_hostname = hosts[provider]['hostname']
         storage_name = options['storage']
 
-        if provider_name not in storages_db:
-            storages_db[provider_name] = {}
-
         try:
             storage_id = storages_db[provider_name][storage_name]
         except KeyError:
-            storage_id = storages_db[provider_name][storage_name] = \
+            if provider_name not in storages_db:
+                storages_db[provider_name] = {}
+            storages_db[provider_name][storage_name] = \
                 _get_storage_id(provider_hostname, onepanel_username,
                                 onepanel_password, storage_name)
+            storage_id = storages_db[provider_name][storage_name]
 
         token = http_post(ip=zone_hostname, port=OZ_REST_PORT,
                           path=get_zone_rest_path('spaces', space_id,

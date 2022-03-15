@@ -1,5 +1,5 @@
 """This module contains tests suite for management of public shares using
-Oneprovider GUI and multiple browser instance.
+Oneprovider GUI and multiple browsers instance.
 """
 
 __author__ = "Bartosz Walkowicz"
@@ -49,6 +49,7 @@ from tests.gui.steps.oneprovider.spaces import *
 from tests.gui.steps.oneprovider.browser import *
 from tests.gui.meta_steps.oneprovider.shares import *
 from tests.gui.meta_steps.oneprovider.data import *
+from tests.gui.meta_steps.oneprovider.permissions import *
 
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *

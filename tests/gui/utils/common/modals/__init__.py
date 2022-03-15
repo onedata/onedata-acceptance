@@ -6,16 +6,18 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+from .archive_recall_information import ArchiveRecallInformation
 from .change_privileges import ChangePrivilegesModal
 from .clean_up_obsolete_tokens import CleanUpObsoleteTokensModal
 from .create_dir import CreateDir
 from .add_storage import AddStorage
 from tests.gui.utils.core.web_elements import WebItem
 from tests.gui.utils.common.modals.create_group import CreateGroup
-from tests.gui.utils.common.common import DropdownSelector
-
+from tests.gui.utils.common.common import (DropdownSelector,
+                                           MigrateDropdownSelector)
 from .data_distribution import DataDistributionModal
 from .data_row_menu import DataRowMenu
+from .archive_row_menu import ArchiveRowMenu
 from .delete_modal import DeleteModal
 from .file_details import FileDetailsModal
 from .login import LoginFormModal
@@ -23,6 +25,7 @@ from .deploying_cluster import ClusterDeploymentModal
 from .metadata_modal import MetadataModal
 from .menu_in_edit_permissions_modal import EditPermissionsRecordMenu
 from .qos import QualityOfServiceModal
+from .recall_archive import RecallArchive
 from .rename_modal import RenameModal
 from .rename_share_modal import RenameShareModal
 from .cease_support_for_space import CeaseSupportForSpaceModal
@@ -53,6 +56,9 @@ from .detach_dataset import DetachDataset
 from .write_protection import WriteProtection
 from .purge_archive import PurgeArchive
 from .reattach_dataset import ReattachDataset
+from .upload_workflow import UploadWorkflow
+from .create_new_store import CreateNewStore
+from .create_new_lane import CreateNewLane
 
 
 class Modals(object):
@@ -106,7 +112,14 @@ class Modals(object):
     add_one_of_harvesters = WebItem('.modal-dialog', cls=AddOneOfElementsModal)
     remove_space_from_harvester = WebItem('.modal-dialog', cls=RemoveModal)
     dropdown = DropdownSelector('.ember-basic-dropdown-content')
-    data_row_menu = WebItem('.file-actions.dropdown-menu', cls=DataRowMenu)
+    migrate_dropdown = MigrateDropdownSelector('.ember-basic-dropdown-content')
+    data_row_menu = WebItem('.file-actions.dropdown-menu',
+                            cls=DataRowMenu)
+    dataset_row_menu = WebItem('.left-bottom .file-actions.dropdown-menu',
+                               cls=DataRowMenu)
+    archive_row_menu = WebItem('.left-top .webui-popover-inner '
+                               '.file-actions.dropdown-menu',
+                               cls=ArchiveRowMenu)
     delete_modal = WebItem('.modal-dialog', cls=DeleteModal)
     rename_modal = WebItem('.modal-dialog', cls=RenameModal)
     metadata = WebItem('.modal-dialog', cls=MetadataModal)
@@ -121,6 +134,7 @@ class Modals(object):
     remove_harvester = WebItem('.modal-dialog', cls=RemoveModal)
     remove_space = WebItem('.modal-dialog', cls=RemoveModal)
     remove_inventory = WebItem('.modal-dialog', cls=RemoveModal)
+    remove_task = WebItem('.modal-dialog', cls=RemoveModal)
     rest_api_modal = WebItem('.modal-dialog', cls=RESTApiModal)
     clean_up_obsolete_tokens = WebItem('.modal-dialog',
                                        cls=CleanUpObsoleteTokensModal)
@@ -129,16 +143,24 @@ class Modals(object):
 
     delete_user_account = WebItem('.modal-dialog', cls=DeleteUserAccountModal)
     file_details = WebItem('.modal-dialog', cls=FileDetailsModal)
+    directory_details = WebItem('.modal-dialog', cls=FileDetailsModal)
     symbolic_link_details = WebItem('.modal-dialog',
                                     cls=SymbolicLinkDetailsModal)
     datasets = WebItem('.modal-dialog', cls=DatasetsModal)
     create_archive = WebItem('.modal-dialog', cls=CreateArchive)
+    recall_archive = WebItem('.modal-dialog', cls=RecallArchive)
+    archive_recall_information = WebItem('.modal-dialog',
+                                         cls=ArchiveRecallInformation)
     remove_selected_dataset = WebItem('.modal-dialog',
                                       cls=RemoveSelectedDataset)
     detach_dataset = WebItem('.modal-dialog', cls=DetachDataset)
     write_protection = WebItem('.modal-dialog', cls=WriteProtection)
     purge_archive = WebItem('.modal-dialog', cls=PurgeArchive)
     reattach_dataset = WebItem('.modal-dialog', cls=ReattachDataset)
+    upload_workflow = WebItem('.modal-dialog', cls=UploadWorkflow)
+    create_new_store = WebItem('.modal-dialog', cls=CreateNewStore)
+    create_new_lane = WebItem('.modal-dialog', cls=CreateNewLane)
+
 
     def __init__(self, driver):
         self.driver = driver

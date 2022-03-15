@@ -13,7 +13,7 @@ import urllib3
 import requests
 import subprocess as sp
 from typing import Dict, List
-from requests.exceptions import ConnectTimeout, ConnectionError
+from requests.exceptions import ConnectTimeout
 
 from tests import PANEL_REST_PORT, OZ_REST_PORT
 from tests.utils.http_exceptions import HTTPError
@@ -23,7 +23,7 @@ from tests.utils.onenv_utils import (init_helm, client_alias_to_pod_mapping,
 from tests.utils.luma_utils import (get_local_feed_luma_storages, get_all_spaces_details,
                                     add_user_luma_mapping, add_spaces_luma_mapping, gen_uid,
                                     gen_gid)
-from tests.utils.user_utils import User
+from tests.utils.user_utils import User, AdminUser
 from tests.utils.rest_utils import get_zone_rest_path, http_get
 
 START_ENV_MAX_RETRIES = 3
@@ -44,26 +44,7 @@ def start_environment(scenario_path, request, hosts, patch_path, users, test_con
     started = False
     while not started and attempts < START_ENV_MAX_RETRIES:
         try:
-            is_helm_v2 = False
-            try:
-                helm_version_proc = sp.run(
-                    ['helm', 'version'],
-                    stdout=sp.PIPE
-                )
-                version_string = str(helm_version_proc.stdout)
-                version2_match = re.search(
-                    r'Server:.*v2',
-                    version_string
-                )
-                if version2_match:
-                    is_helm_v2 = True
-            except FileNotFoundError:
-                is_helm_v2 = False
-            
-            if is_helm_v2:
-                print('Helm version 2.x is used - invoking init helm...')
-                init_helm()
-
+            maybe_setup_helm()
             run_onenv_command('init', cwd=None, onenv_path='one_env/onenv')
             if clean:
                 run_onenv_command('up', up_args)
@@ -74,11 +55,8 @@ def start_environment(scenario_path, request, hosts, patch_path, users, test_con
             if not local:
                 update_etc_hosts()
             setup_hosts_cfg(hosts, request)
-            try:
-                users['admin'].create_token(hosts['onezone']['hostname'])
-            except ConnectionError:
-                # token creation fails when environment is not deployed
-                pass
+            zone_hostname = hosts['onezone']['hostname']
+            users['admin'] = AdminUser(zone_hostname, 'admin', 'password')
 
             if patch_path and clean:
                 run_onenv_command('patch', patch_args)
@@ -90,7 +68,7 @@ def start_environment(scenario_path, request, hosts, patch_path, users, test_con
             if patch_path:
                 with open(patch_path, 'r') as patch_file:
                     patch_cfg = yaml.load(patch_file)
-                setup_users(patch_cfg, users, hosts)
+                setup_users(patch_cfg, users, zone_hostname)
                 add_luma_mappings(patch_cfg, users, hosts)
 
             started = True
@@ -104,6 +82,28 @@ def start_environment(scenario_path, request, hosts, patch_path, users, test_con
 
     configure_os(scenario_path, dep_status)
     return 'ok'
+
+
+def maybe_setup_helm():
+    is_helm_v2 = False
+    try:
+        helm_version_proc = sp.run(
+            ['helm', 'version'],
+            stdout=sp.PIPE
+        )
+        version_string = str(helm_version_proc.stdout)
+        version2_match = re.search(
+            r'Server:.*v2',
+            version_string
+        )
+        if version2_match:
+            is_helm_v2 = True
+    except FileNotFoundError:
+        is_helm_v2 = False
+
+    if is_helm_v2:
+        print('Helm version 2.x is used - invoking init helm...')
+        init_helm()
 
 
 def update_etc_hosts():
@@ -149,13 +149,13 @@ def configure_os(scenario_path: str, dep_status) -> None:
             alias = service_name_to_alias_mapping(pod_name)
             os_config = os_configs.get('services').get(alias)
             if os_config:
-                create_users(pod_name, os_config.get('users'))
-                create_groups(pod_name, os_config.get('groups'))
+                create_users_in_pod(pod_name, os_config.get('users'))
+                create_groups_in_pod(pod_name, os_config.get('groups'))
         if service_type == 'oneclient':
             os_config = os_configs.get('services').get("oneclient")
             if os_config:
-                create_users(pod_name, os_config.get('users'))
-                create_groups(pod_name, os_config.get('groups'))
+                create_users_in_pod(pod_name, os_config.get('users'))
+                create_groups_in_pod(pod_name, os_config.get('groups'))
 
 
 def setup_hosts_cfg(hosts, request):
@@ -173,11 +173,12 @@ def setup_hosts_cfg(hosts, request):
             parse_elasticsearch_cfg(pod_cfg, hosts)
 
 
-def setup_users(patch_cfg, users, hosts):
+def setup_users(patch_cfg, users, zone_hostname):
     for user_cfg in patch_cfg.get('users'):
         user_name = user_cfg.get('name')
         password = user_cfg.get('password')
-        new_user = users[user_name] = User(user_name, password)
+        new_user = users[user_name] = User(
+            username=user_name, zone_hostname=zone_hostname, password=password)
         idps = user_cfg.get('idps', {})
         for idp_type in idps:
             new_user.idps.append(idp_type)
@@ -187,13 +188,10 @@ def setup_users(patch_cfg, users, hosts):
                                    .get('keycloakInstance', {})
                                    .get('idpName'))
                 new_user.keycloak_name = ('keycloak-{}'.format(keycloak_suffix))
-        new_user.create_token(hosts['onezone']['ip'])
-        new_user.retrieve_onedata_id(hosts['onezone']['ip'])
 
 
 def add_luma_mappings(patch_cfg, users, hosts):
     admin_user = users['admin']
-    admin_user.create_token(hosts['onezone']['ip'])
 
     spaces = get_all_spaces_details(admin_user, hosts)
     local_feed_luma_storages = get_local_feed_luma_storages(admin_user, hosts)
@@ -244,7 +242,6 @@ def parse_up_args(request, test_config):
     oz_image = request.config.getoption('--oz-image')
     op_image = request.config.getoption('--op-image')
     oc_image = request.config.getoption('--oc-image')
-    luma_image = request.config.getoption('--luma-image')
     rest_cli_image = request.config.getoption('--rest-cli-image')
     sources = request.config.getoption('--sources')
     timeout = request.config.getoption('--timeout')
@@ -260,8 +257,6 @@ def parse_up_args(request, test_config):
         up_args.extend(['-pi', op_image])
     if oc_image:
         up_args.extend(['-ci', oc_image])
-    if luma_image:
-        up_args.extend(['-li', luma_image])
     if rest_cli_image:
         up_args.extend(['-ri', rest_cli_image])
     if sources:
@@ -289,8 +284,8 @@ def parse_up_args(request, test_config):
     return up_args
 
 
-def create_users(pod_name: str, users: List[str]) -> None:
-    """Creates system users on pod specified by 'pod'."""
+def create_users_in_pod(pod_name: str, users: List[str]) -> None:
+    """Creates system users on pod specified by 'pod_name'."""
 
     def _user_exists(user: str, pod_name: str) -> bool:
         cmd = [pod_name, '--', 'id', '-u', user]
@@ -303,12 +298,13 @@ def create_users(pod_name: str, users: List[str]) -> None:
                   .format(username, pod_name))
         else:
             uid = str(gen_uid(username))
-            command = [pod_name, '--', 'adduser', '--disabled-password', '--gecos', '""', '--uid', uid, username]
+            command = [pod_name, '--', 'adduser', '--disabled-password', '--gecos', '""',
+                       '--uid', uid, username]
             run_kubectl_command('exec', command)
 
 
-def create_groups(pod_name: str, groups: Dict[str, List[str]]) -> None:
-    """Creates system groups on docker specified by 'container'."""
+def create_groups_in_pod(pod_name: str, groups: Dict[str, List[str]]) -> None:
+    """Creates system groups on pod specified by 'pod_name'."""
 
     def _group_exists(group: str, pod_name: str) -> bool:
         cmd = [pod_name, '--', 'grep', '-q', group, '/etc/group']

@@ -9,7 +9,6 @@ __license__ = "This software is released under the MIT license cited in " \
 import os
 import re
 import sys
-import pty
 import collections
 import subprocess as sp
 

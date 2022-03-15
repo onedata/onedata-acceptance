@@ -6,9 +6,7 @@ import yaml
 
 from tests.gui.meta_steps.onezone.common import g_wt_visit_op
 from tests.gui.steps.oneprovider.transfers import (
-    replicate_item,
-    assert_item_never_synchronized,
-    migrate_item, assert_see_history_btn_shown)
+    replicate_item, migrate_item, assert_see_history_btn_shown)
 from tests.gui.steps.oneprovider_common import (
     g_click_on_the_given_main_menu_tab,
     wt_click_on_the_given_main_menu_tab)
@@ -92,7 +90,7 @@ def assert_eviction_done(selenium, browser_id, name, tmp_memory, modals):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees file chunks for file '
-               '"(?P<file_name>.*)" as follows:\n(?P<desc>(.|\s)*)'))
+               r'"(?P<file_name>.*)" as follows:\n(?P<desc>(.|\s)*)'))
 def wt_assert_file_chunks(selenium, browser_id, file_name, desc, tmp_memory,
                           op_container, hosts, modals):
     option = 'Data distribution'
@@ -111,10 +109,7 @@ def wt_assert_file_chunks(selenium, browser_id, file_name, desc, tmp_memory,
 def _assert_file_chunks(selenium, browser_id, hosts, desc, modals):
     desc = yaml.load(desc)
     for provider, chunks in desc.items():
-        if chunks == 'never synchronized':
-            assert_item_never_synchronized(selenium, browser_id, provider,
-                                           hosts)
-        elif chunks == 'entirely empty':
+        if chunks == 'entirely empty':
             assert_provider_chunk_in_data_distribution_empty(selenium,
                                                              browser_id,
                                                              provider, modals,
@@ -140,7 +135,7 @@ def create_directory(selenium, browser_id, name, tmp_memory,
     write_name_into_text_field_in_modal(selenium, browser_id, name,
                                         modal_name, modals)
     confirm_create_new_directory(selenium, browser_id, option, modals)
-    assert_items_presence_in_browser(browser_id, name, tmp_memory)
+    assert_items_presence_in_browser(selenium, browser_id, name, tmp_memory)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) migrates "(?P<name>.*)" from '

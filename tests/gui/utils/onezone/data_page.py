@@ -162,7 +162,7 @@ class GetSupportPage(PageObject):
     token_textarea = Label('.active textarea')
     copy = Button('.request-support-tab .copy-btn')
     forbidden_alert = WebElement('.error')
-    insufficient_privileges = Label('.text-center')
+    insufficient_privileges = Label('.text-center .col-xs-12')
 
 
 class SpaceProvidersPage(PageObject):
@@ -175,7 +175,7 @@ class SpaceProvidersPage(PageObject):
 
 
 class _Provider(PageObject):
-    name = id = Label('a .tab-name')
+    name = id = Label('.tab-name')
 
 
 class DatasetHeader(PageObject):
@@ -183,9 +183,8 @@ class DatasetHeader(PageObject):
     attached = Button('.select-attached-datasets-btn')
 
 
-class ArchiveFileHeader(PageObject):
-    dip = Button('.select-archive-aip-btn')
-    aip = Button('.select-archive-dip-btn')
+class ArchiveHeader(PageObject):
+    back_to_dataset_page = Button('.content-back-arrow-icon')
 
 
 class DataPage(GenericPage):
@@ -208,7 +207,6 @@ class DataPage(GenericPage):
     welcome_page = WebItem('.main-content', cls=WelcomePage)
     harvesters_page = WebItem('.main-content', cls=HarvestersPage)
     dataset_header = WebItem('.main-content', cls=DatasetHeader)
-    archive_file_header = WebItem('.main-content', cls=ArchiveFileHeader)
 
     # button in top right corner on all subpages
     menu_button = Button('.with-menu .collapsible-toolbar-toggle')
@@ -217,7 +215,8 @@ class DataPage(GenericPage):
 
     tab_name = Label('.header-row')
 
-    current_provider = Label('.current-oneprovider-name')
+    current_provider = Label('.current-oneprovider-bar .oneprovider-name '
+                             '.tab-name')
     providers = WebItemsSequence('.provider-online', cls=_Provider)
     choose_other_provider = Button('.choose-oneprovider-link')
     error_header = Label('.content-info-content-container h1')

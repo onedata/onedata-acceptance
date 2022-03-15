@@ -44,6 +44,15 @@ WAIT_FRONTEND = 4
 # when waiting for backend changes
 WAIT_BACKEND = 15
 
+# use this const when using: WebDriverWait(selenium, WAIT_NORMAL_UPLOAD).until(lambda s: ...)
+# when waiting for normal uploads to finish
+WAIT_NORMAL_UPLOAD = 60
+
+# use this const when using: WebDriverWait(selenium, WAIT_EXTENDED_UPLOAD).until(lambda s: ...)
+# when waiting for extended uploads to finish
+WAIT_EXTENDED_UPLOAD = 1500
+
+
 
 def pytest_configure(config):
     """Set default path for Selenium HTML report if explicit '--html=' not specified"""
@@ -100,15 +109,16 @@ def emergency_passphrase(users, hosts):
 
 
 @fixture(autouse=True)
-def onepanel_credentials(users, emergency_passphrase):
-    creds = users['onepanel'] = AdminUser('onepanel', emergency_passphrase)
+def onepanel_credentials(users, hosts, emergency_passphrase):
+    creds = users['onepanel'] = AdminUser(
+        hosts['onezone']['hostname'], 'onepanel', emergency_passphrase)
     return creds
 
 
 @fixture(autouse=True)
 def admin_credentials(request, users, hosts):
     admin_username, admin_password = request.config.getoption('admin')
-    admin_user = users[admin_username] = AdminUser(admin_username,
+    admin_user = users[admin_username] = AdminUser(hosts['onezone']['hostname'], admin_username,
                                                    admin_password)
     return admin_user
 
@@ -150,6 +160,11 @@ def logdir(request):
 @fixture(scope='session')
 def driver_type(request):
     return request.config.getoption('--driver')
+
+
+@fixture(scope='session')
+def test_type(request):
+    return request.config.getoption('--test-type')
 
 
 @fixture(scope='session')
@@ -201,6 +216,18 @@ def op_container():
 def public_share():
     from tests.gui.utils import PublicShareView
     return PublicShareView
+
+
+@fixture(scope='session')
+def privacy_policy():
+    from tests.gui.utils import PrivacyPolicy
+    return PrivacyPolicy
+
+
+@fixture(scope='session')
+def terms_of_use():
+    from tests.gui.utils import TermsOfUse
+    return TermsOfUse
 
 
 @fixture(scope='session')

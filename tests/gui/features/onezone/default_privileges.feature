@@ -7,10 +7,6 @@ Feature: Management of privileges in onezone GUI
     And initial spaces configuration in "onezone" Onezone service:
           space1:
             owner: user1
-          space2:
-            owner: admin
-            users:
-                - user1
     And there is no groups in Onezone page used by admin before definition in next steps
     And initial groups configuration in "onezone" Onezone service:
           group1:

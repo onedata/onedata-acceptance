@@ -17,6 +17,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And user of browser opened onezone page
     And user of browser logged as space-owner-user to Onezone service
 
+
   Scenario: User uploads file on one provider, sees it's distribution, writes to it using cdmi on other provider and sees it's distribution
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar
@@ -25,7 +26,6 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And user of browser sees that item named "20B-0.txt" has appeared in file browser
 
     And user of browser is idle for 90 seconds
-    And user of browser clicks "Refresh" button from file browser menu bar
     And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser clicks on menu for "20B-0.txt" file in file browser
@@ -34,7 +34,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And user of browser sees that "Data distribution" modal has appeared
     And user of browser sees that chunk bar for provider "oneprovider-1" is entirely filled
 
-    And user of browser sees that item is never synchronized in provider "oneprovider-2"
+    And user of browser sees that chunk bar for provider "oneprovider-2" is entirely empty
     And user of browser clicks "Close" confirmation button in displayed modal
 
     And using CDMI API space-owner-user writes "ABCD" to "/space1/20B-0.txt" starting at offset 20 in "oneprovider-2" provider
@@ -86,14 +86,12 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
     And user of browser sees that item named "20B-0.txt" has appeared in file browser
 
-    And user of browser is idle for 90 seconds
-    And user of browser clicks "Refresh" button from file browser menu bar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser clicks on menu for "20B-0.txt" file in file browser
     And user of browser clicks "Data distribution" option in data row menu in file browser
     And user of browser sees that "Data distribution" modal has appeared
     And user of browser sees that chunk bar for provider "oneprovider-1" is entirely filled
-    And user of browser sees that item is never synchronized in provider "oneprovider-2"
+    And user of browser sees that chunk bar for provider "oneprovider-2" is entirely empty
     And user of browser clicks "Close" confirmation button in displayed modal
 
     And using CDMI API space-owner-user reads from "/space1/20B-0.txt" in range 10 to 20 in "oneprovider-2" provider
@@ -148,5 +146,5 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And user of browser clicks "Refresh" button from file browser menu bar
     And user of browser sees file browser in files tab in Oneprovider page
 
-    And user of browser double clicks on item named "20B-0.txt" in file browser
+    And user of browser clicks and presses enter on item named "20B-0.txt" in file browser
     Then user of browser sees that content of downloaded file "20B-0.txt" is equal to: "00000000000000000000ABCD"

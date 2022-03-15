@@ -1,5 +1,5 @@
 """This module contains tests suite for automation management using
-Onezone GUI and multiple browser instances.
+Onezone GUI and multiple browsers instances.
 """
 
 __author__ = "Rafał Widziszewski"
@@ -55,6 +55,7 @@ from tests.gui.steps.oneprovider.permissions import *
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.onezone.spaces import *
 from tests.gui.meta_steps.onezone.tokens import *
+from tests.gui.meta_steps.onezone.automation import *
 
 from tests.utils.acceptance_utils import *
 
@@ -69,6 +70,8 @@ def screens():
     return [0, 1]
 
 
-scenarios('../features/onezone/automation_basics.feature')
-scenarios('../features/onezone/automation_members.feature')
-scenarios('../features/onezone/automation_effective_privileges.feature')
+scenarios('../features/onezone/automation/automation_basics.feature')
+scenarios('../features/onezone/automation/automation_members.feature')
+scenarios('../features/onezone/automation/automation_effective_privileges.feature')
+scenarios('../features/onezone/automation/automation_lambdas.feature')
+scenarios('../features/onezone/automation/automation_workflows.feature')

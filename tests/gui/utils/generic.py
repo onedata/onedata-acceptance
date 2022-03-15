@@ -62,6 +62,14 @@ def upload_file_path(file_name):
         file_name)
 
 
+def strip_path(path_string, separator = '/'):
+    """Strips string from whitespaces inside file path. Useful for file paths rendered
+    in DOM which contains `\\n` characters in `innerText`.
+    """
+    return separator.join(
+        [path_item.strip() for path_item in path_string.split(separator)])
+
+
 @contextmanager
 def rm_css_cls(driver, web_elem, css_cls):
     driver.execute_script("$(arguments[0]).removeClass('{}')".format(css_cls),
@@ -106,9 +114,7 @@ def find_web_elem_with_text(web_elem_root, css_sel, text, err_msg):
         if item.text.lower() == text.lower():
             return item
     else:
-        with suppress(TypeError):
-            err_msg = err_msg()
-        raise RuntimeError(err_msg)
+        raise RuntimeError(f'Css element wtih "{text}" text not found')
 
 
 def click_on_web_elem(driver, web_elem, err_msg, delay=True):

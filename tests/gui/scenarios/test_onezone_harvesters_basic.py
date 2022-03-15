@@ -54,6 +54,8 @@ from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
 from tests.gui.steps.oneprovider.browser import *
+from tests.gui.steps.oneprovider.dataset import *
+from tests.gui.steps.oneprovider.archives import *
 
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
@@ -69,16 +71,17 @@ from tests.gui.meta_steps.onezone.data_discovery import *
 from tests.gui.meta_steps.onepanel.spaces import *
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.oneprovider.metadata import *
+from tests.gui.meta_steps.oneprovider.dataset import *
+from tests.gui.meta_steps.oneprovider.archives import *
 
 from tests.utils.acceptance_utils import *
 
 
 @fixture(scope='module')
 def screens():
-    return [0, 1]
+    return [0]
 
 
 scenarios('../features/onezone/harvesters/harvesters.feature')
-scenarios('../features/onezone/harvesters/harvesters_memberships_privileges.feature')
-scenarios('../features/onezone/harvesters/harvesters_effective_privileges.feature')
+
 

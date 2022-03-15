@@ -34,13 +34,13 @@ Feature: Shares with linked directories
     # create and place symbolic link
     And user of browser clicks on menu for "dir1" file in file browser
     And user of browser clicks "Create symbolic link" option in data row menu in file browser
-    And user of browser double clicks on item named "dir2" in file browser
+    And user of browser clicks and presses enter on item named "dir2" in file browser
     And user of browser clicks "Place symbolic link" button from file browser menu bar
 
     And user of browser opens shares view of "space1"
     And user of browser clicks "dir2" share in shares browser on shares view
     And user of browser sees file browser on single share view
-    And user of browser double clicks on item named "dir2" in file browser
+    And user of browser clicks and presses enter on item named "dir2" in file browser
     Then user of browser sees that item named "dir1" is malformed symbolic link in file browser
 
 

@@ -16,6 +16,28 @@ class TokenPage(PageObject):
     copy = Button('.copy-btn')
 
 
+class GuiSettingsPage(PageObject):
+    sign_in_notification = Button('.sign-in-notification-item')
+    sign_in_notification_input = WebElement('.sign-in-notification-input')
+    save_sign_in_notification = Button('.btn-save')
+
+    privacy_policy = Button('.privacy-policy-item')
+    privacy_policy_input = WebElement('.privacy-policy .pell-content')
+    save_privacy_policy = Button('.privacy-policy .btn-save')
+
+    terms_of_use = Button('.terms-of-use-item')
+    terms_of_use_input = WebElement('.terms-of-use .pell-content')
+    save_terms_of_use = Button('.terms-of-use .btn-save')
+
+    cookie_consent_notification = Button('.cookie-consent-notification-item')
+    cookie_consent_notification_input = WebElement(
+        '.cookie-consent-notification-input')
+    save_cookie_consent_notification = Button(
+        '.cookie-consent-notification .btn-save')
+    insert_privacy_policy_link = Button('.insert-privacy-policy-link')
+    insert_terms_of_use_link = Button('.insert-terms-of-use-link')
+
+
 class MenuItem(PageObject):
     name = id = Label('.item-name')
     status_icon = WebElement('.sidebar-item-icon')
@@ -59,6 +81,10 @@ class ClustersPage(GenericPage):
 
     modify_provider_details = Button('.collapsible-toolbar-buttons '
                                      '.btn-modify-provider')
-    confirm_modify_provider_details = NamedButton('button span',
+    confirm_modify_provider_details = NamedButton('button',
                                                   text='Modify provider details')
+    gui_settings_page = WebItem('.content-clusters-gui-settings',
+                                cls=GuiSettingsPage)
+
+
 

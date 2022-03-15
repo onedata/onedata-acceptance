@@ -16,6 +16,8 @@ Feature: Basic datasets operations
                 directory tree:
                     - dir1:
                         - file1: 100
+                        - dir2
+                        - dir22
                     - dir2:
                         - dir3:
                           - dir4:
@@ -35,7 +37,7 @@ Feature: Basic datasets operations
     And user of browser clicks on menu for "dir1" directory in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
     And user of browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
+    And user of browser clicks on "X" button in modal "Datasets"
     Then user of browser sees Dataset status tag for "dir1" in file browser
 
 
@@ -43,9 +45,9 @@ Feature: Basic datasets operations
     When user of browser creates dataset for item "dir1" in "space1"
     And user of browser clicks on menu for "dir1" directory in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser click data write protection toggle in Datasets modal
-    And user of browser click metadata write protection toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
+    And user of browser clicks data write protection toggle in Datasets modal
+    And user of browser clicks metadata write protection toggle in Datasets modal
+    And user of browser clicks on "X" button in modal "Datasets"
 
     Then user of browser sees data protected status tag for "dir1" in file browser
     And user of browser sees metadata protected status tag for "dir1" in file browser
@@ -57,8 +59,9 @@ Feature: Basic datasets operations
 
   Scenario: User sees inherited dataset status tag after marking its parent directory as dataset
     When user of browser creates dataset for item "dir1" in "space1"
-    And user of browser double clicks on item named "dir1" in file browser
-    Then user of browser sees inherited dataset status tag for "file1" in file browser
+    And user of browser clicks and presses enter on item named "dir1" in file browser
+    Then user of browser sees inherited status tag for "file1" in file browser
+    And user of browser clicks on inherited status tag for "file1" in file browser
     And user of browser sees Dataset status tag for "file1" in file browser
 
 
@@ -78,12 +81,12 @@ Feature: Basic datasets operations
     When user of browser creates dataset for item "dir2" in "space1"
     And user of browser goes to "/dir2/dir3" in file browser
     And user of browser creates dataset for item "dir4" in "space1"
-    And user of browser double clicks on item named "dir4" in file browser
+    And user of browser clicks and presses enter on item named "dir4" in file browser
     And user of browser creates dataset for item "dir5" in "space1"
 
     Then user of browser clicks Datasets of "space1" in the sidebar
     And user of browser sees dataset browser in datasets tab in Oneprovider page
-    And user of browser sees that the file structure in dataset browser is as follow:
+    And user of browser sees that the item structure in dataset browser is as follow:
           - dir2:
               - dir4:
                   - dir5
@@ -93,17 +96,17 @@ Feature: Basic datasets operations
     When user of browser creates dataset for item "dir2" in "space1"
     And user of browser clicks on menu for "dir2" directory in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser click data write protection toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
+    And user of browser clicks data write protection toggle in Datasets modal
+    And user of browser clicks on "X" button in modal "Datasets"
 
     And user of browser goes to "/dir2/dir3" in file browser
     And user of browser creates dataset for item "dir4" in "space1"
     And user of browser clicks on menu for "dir4" directory in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser click metadata write protection toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
+    And user of browser clicks metadata write protection toggle in Datasets modal
+    And user of browser clicks on "X" button in modal "Datasets"
 
-    Then user of browser double clicks on item named "dir4" in file browser
+    Then user of browser clicks and presses enter on item named "dir4" in file browser
     And user of browser clicks on menu for "dir5" directory in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
     And user of browser sees that metadata write protection toggle is checked in Ancestor Datasets row in Datasets modal
@@ -113,7 +116,7 @@ Feature: Basic datasets operations
     And user of browser sees that metadata write protection toggle is unchecked on "/space1/dir2" in ancestors list
     And user of browser sees that metadata write protection toggle is checked on "/space1/dir2/dir3/dir4" in ancestors list
     And user of browser sees that data write protection toggle is unchecked on "/space1/dir2/dir3/dir4" in ancestors list
-    And user of browser clicks on "Close" button in modal "Datasets"
+    And user of browser clicks on "X" button in modal "Datasets"
 
 
   Scenario: User does not see dataset tag in file browser and see directory in Detached tab after detaching dataset
@@ -136,16 +139,16 @@ Feature: Basic datasets operations
 
   Scenario: User sees directory tree in Detached tab after detaching directories
     When user of browser creates dataset for item "dir2" in "space1"
-    And user of browser double clicks on item named "dir2" in file browser
+    And user of browser clicks and presses enter on item named "dir2" in file browser
     And user of browser creates dataset for item "dir3" in "space1"
-    And user of browser double clicks on item named "dir3" in file browser
+    And user of browser clicks and presses enter on item named "dir3" in file browser
     And user of browser creates dataset for item "dir4" in "space1"
-    And user of browser double clicks on item named "dir4" in file browser
+    And user of browser clicks and presses enter on item named "dir4" in file browser
     And user of browser creates dataset for item "dir5" in "space1"
 
     And user of browser clicks Datasets of "space1" in the sidebar
     And user of browser sees dataset browser in datasets tab in Oneprovider page
-    And user of browser double clicks on item named "dir2" in dataset browser
+    And user of browser clicks and presses enter on item named "dir2" in dataset browser
 
     # detach dataset
     And user of browser clicks on menu for "dir3" dataset in dataset browser
@@ -153,19 +156,19 @@ Feature: Basic datasets operations
     And user of browser clicks on "Proceed" button in modal "Detach Dataset"
 
     # detach dataset
-    And user of browser double clicks on item named "dir4" in dataset browser
+    And user of browser clicks and presses enter on item named "dir4" in dataset browser
     And user of browser clicks on menu for "dir5" dataset in dataset browser
     And user of browser clicks "Detach" option in data row menu in dataset browser
     And user of browser clicks on "Proceed" button in modal "Detach Dataset"
 
     And user of browser clicks on detached view mode on dataset browser page
     And user of browser sees dataset browser in datasets tab in Oneprovider page
-    Then user of browser sees that the file structure in dataset browser is as follow:
+    Then user of browser sees that the item structure in dataset browser is as follow:
           - dir3:
               - dir5
     And user of browser clicks on attached view mode on dataset browser page
     And user of browser sees dataset browser in datasets tab in Oneprovider page
-    And user of browser sees that the file structure in dataset browser is as follow:
+    And user of browser sees that the item structure in dataset browser is as follow:
           - dir2:
               - dir4
 
@@ -212,9 +215,8 @@ Feature: Basic datasets operations
     And user of browser clicks on detached view mode on dataset browser page
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser clicks on menu for "dir1" dataset in dataset browser
-    And user of browser clicks "Reattach" option in data row menu in dataset browser
-    And user of browser clicks on "Proceed" button in modal "Reattach Dataset"
-    Then user of browser sees that error modal with text "Changing some dataset(s) state failed!" appeared
+    Then user of browser cannot click "Reattach" option in data row menu in dataset browser
+
 
   Scenario: User sees dataset in detached tab after deleting directory
     When user of browser creates dataset for item "dir1" in "space1"
@@ -234,9 +236,9 @@ Feature: Basic datasets operations
     When user of browser creates dataset for item "dir2" in "space1"
     And user of browser clicks on menu for "dir2" directory in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser click data write protection toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
-    And user of browser double clicks on item named "dir2" in file browser
+    And user of browser clicks data write protection toggle in Datasets modal
+    And user of browser clicks on "X" button in modal "Datasets"
+    And user of browser clicks and presses enter on item named "dir2" in file browser
 
     And user of browser clicks on menu for "dir3" directory in file browser
     Then user of browser cannot click "Delete" option in data row menu in file browser
@@ -255,8 +257,8 @@ Feature: Basic datasets operations
     And user of browser clicks on menu for "file3" file in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
     And user of browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of browser click data write protection toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
+    And user of browser clicks data write protection toggle in Datasets modal
+    And user of browser clicks on "X" button in modal "Datasets"
 
     # check hardlink's data protection
     And user of browser clicks on menu for "file3(1)" file in file browser
@@ -277,15 +279,15 @@ Feature: Basic datasets operations
     And user of browser clicks on menu for "file3" file in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
     And user of browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of browser click data write protection toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
+    And user of browser clicks data write protection toggle in Datasets modal
+    And user of browser clicks on "X" button in modal "Datasets"
 
     # mark hardlink as dataset and set metadata write protection
     And user of browser clicks on menu for "file3(1)" file in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
     And user of browser clicks Mark this file as dataset toggle in Datasets modal
-    And user of browser click metadata write protection toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
+    And user of browser clicks metadata write protection toggle in Datasets modal
+    And user of browser clicks on "X" button in modal "Datasets"
 
     # check hardlink's data protection tags
     Then user of browser sees data protected status tag for "file3(1)" in file browser
@@ -297,12 +299,12 @@ Feature: Basic datasets operations
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser clicks on menu for "file1" file in file browser
     And user of browser clicks "Create hard link" option in data row menu in file browser
     And user of browser changes current working directory to home using breadcrumbs
 
-    And user of browser double clicks on item named "dir2" in file browser
+    And user of browser clicks and presses enter on item named "dir2" in file browser
     And user of browser clicks "Place hard link" button from file browser menu bar
     And user of browser changes current working directory to home using breadcrumbs
 
@@ -310,22 +312,43 @@ Feature: Basic datasets operations
     And user of browser clicks on menu for "dir1" directory in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
     And user of browser clicks Mark this directory as dataset toggle in Datasets modal
-    And user of browser click data write protection toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
+    And user of browser clicks data write protection toggle in Datasets modal
+    And user of browser clicks on "X" button in modal "Datasets"
 
     # mark directory as dataset and set metadata write protection
     And user of browser clicks on menu for "dir2" directory in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
     And user of browser clicks Mark this directory as dataset toggle in Datasets modal
-    And user of browser click metadata write protection toggle in Datasets modal
-    And user of browser clicks on "Close" button in modal "Datasets"
+    And user of browser clicks metadata write protection toggle in Datasets modal
+    And user of browser clicks on "X" button in modal "Datasets"
 
     # check file's and hardlink's protection status tagss
-    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks and presses enter on item named "dir1" in file browser
+    And user of browser clicks on inherited status tag for "file1" in file browser
     Then user of browser sees data protected status tag for "file1" in file browser
     And user of browser sees metadata protected status tag for "file1" in file browser
     And user of browser changes current working directory to home using breadcrumbs
 
-    And user of browser double clicks on item named "dir2" in file browser
+    And user of browser clicks and presses enter on item named "dir2" in file browser
+    And user of browser clicks on inherited status tag for "file1" in file browser
     And user of browser sees data protected status tag for "file1" in file browser
     And user of browser sees metadata protected status tag for "file1" in file browser
+
+
+  # checks bugfix from VFS-8739
+  Scenario: User sees proper list of datasets when their names have common prefix and end with digit
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser creates dataset for item "dir1" in "space1"
+    And user of browser clicks and presses enter on item named "dir1" in file browser
+    And user of browser creates dataset for item "dir2" in "space1"
+    And user of browser creates dataset for item "dir22" in "space1"
+    And user of browser clicks Datasets of "space1" in the sidebar
+    And user of browser sees dataset browser in files tab in Oneprovider page
+    Then user of browser sees that the item structure in dataset browser is as follow:
+          - dir1:
+              - dir2
+              - dir22
+    And user of browser clicks and presses enter on item named "dir1" in dataset browser
+    And user of browser sees that there are 2 items in dataset browser
