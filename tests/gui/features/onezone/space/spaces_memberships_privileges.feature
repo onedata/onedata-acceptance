@@ -24,8 +24,6 @@ Feature: Basic management of privileges for spaces in Onezone GUI
     And opened [browser_user1, space_owner_browser] with [user1, space-owner-user] signed in to [Onezone, Onezone] service
 
 
-
-
   Scenario: User fails to see privileges of another user until he is granted all privileges by becoming an owner
     When user of browser_user1 clicks Members of "space1" in the sidebar
     And user of browser_user1 clicks "space-owner-user" user in "space1" space members users list

@@ -25,7 +25,8 @@ class ParallelBox(Element):
 class WorkflowLane(Element):
     name = id = Label('.lane-name')
     add_parallel_box_button = Button('.create-parallel-box-action-trigger')
-    parallel_box = WebItem('.workflow-visualiser-parallel-box ', cls=ParallelBox)
+    parallel_box = WebItem('.workflow-visualiser-parallel-box ',
+                           cls=ParallelBox)
 
 
 class Store(Element):
@@ -33,15 +34,14 @@ class Store(Element):
 
 
 class WorkflowVisualiser(PageObject):
-
     create_lane_button = Button('.create-lane-action-trigger')
     workflow_lanes = WebItemsSequence('.visualiser-elements '
                                       '.workflow-visualiser-lane',
-                                      cls = WorkflowLane)
+                                      cls=WorkflowLane)
 
     add_store_button = Button('.create-store-action-trigger')
     stores_list = WebItemsSequence('.workflow-visualiser-stores-list '
-                                   '.tag-item', cls = Store)
+                                   '.tag-item', cls=Store)
 
 
 class TaskAddForm(PageObject):
@@ -66,18 +66,18 @@ class Workflow(Element):
 
 
 class WorkflowsPage(PageObject):
-    elements_list = WebItemsSequence('.atm-workflow-schemas-list' 
+    elements_list = WebItemsSequence('.atm-workflow-schemas-list'
                                      ' .atm-workflow-schemas-list-entry',
                                      cls=Workflow)
 
-    workflow_visualiser = WebItem('.workflow-visualiser ',
-                                  cls = WorkflowVisualiser)
+    workflow_visualiser = WebItem('.workflow-visualiser',
+                                  cls=WorkflowVisualiser)
 
     workflow_name = WebItem('.name-field .text-like-field', cls=InputBox)
 
     create_button = NamedButton('.btn', text='Create')
 
-    task_form = WebItem('.task-form-container ', cls=TaskAddForm)
+    task_form = WebItem('.task-form-container', cls=TaskAddForm)
 
     workflow_name_input = WebItem('.name-field .text-like-field', cls=EditBox)
 

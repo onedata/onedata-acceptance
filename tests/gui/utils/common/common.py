@@ -114,6 +114,7 @@ class LoginPage(object):
     sign_in = NamedButton('button', text='Sign in')
     err_msg = Label('.login-error-message')
     open_in_onezone = Button('.btn-login-onezone')
+    login_notification_message = WebElement('.login-notification')
 
     def __init__(self, driver):
         self.web_elem = self.driver = driver

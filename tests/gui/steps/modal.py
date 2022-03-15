@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 import re
 
+from datetime import datetime
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.common.keys import Keys
@@ -321,7 +322,8 @@ def click_modal_button(selenium, browser_id, button, modal, modals):
 def write_name_into_text_field_in_modal(selenium, browser_id, item_name,
                                         modal_name, modals,
                                         name_textfield='input name'):
-
+    if name_textfield == '':
+        name_textfield = 'input name'
     modal = getattr(modals(selenium[browser_id]), transform(modal_name))
     setattr(modal, transform(name_textfield), item_name)
 
@@ -405,6 +407,56 @@ def click_copy_icon_in_rest_api_modal(selenium, browser_id, modals):
     modals(selenium[browser_id]).rest_api_modal.copy_command_button()
 
 
+@wt(parsers.parse('user of {browser_id} sees {info}: "{text}" in archive '
+                  'recall information modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_info_in_archive_recall_information_modal(selenium, browser_id,
+                                                    modals, info, text):
+    information = getattr(modals(selenium[browser_id]
+                                 ).archive_recall_information, transform(info))
+    assert text in information, (f'{info}: {text} does not match {information} '
+                                 f'in archive recall information modal')
+
+
+@wt(parsers.parse('user of {browser_id} sees that recall has been finished at '
+                  'the same time or after recall has been started'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_recall_duration_in_archive_recall_information_modal(selenium,
+                                                               browser_id,
+                                                               modals):
+    archive_recall_information = modals(selenium[browser_id]
+                                        ).archive_recall_information
+    started_at = archive_recall_information.started_at
+    finished_at = archive_recall_information.finished_at
+    start = datetime.strptime(started_at, '%d %b %Y %H:%M:%S')
+    finish = datetime.strptime(finished_at, '%d %b %Y %H:%M:%S')
+
+    err_msg = 'Recall start time is greater than finish time'
+    assert start <= finish, err_msg
+
+
+@wt(parsers.parse('user of {browser_id} sees that not all {kind} were '
+                  'recalled'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_not_all_files_were_recalled(selenium, browser_id, modals, kind):
+    kind = kind + ' recalled'
+    info = getattr(modals(selenium[browser_id]).archive_recall_information,
+                   transform(kind)).replace(' MiB', '').split(' / ')
+    all_data = int(info[1])
+    recalled = int(info[0])
+    err_msg = f'Number of recalled {kind} is not smaller then all {kind}'
+    assert all_data > recalled, err_msg
+
+
+@wt(parsers.parse('user of {browser_id} sees that number of items failed is'
+                  ' greater than 0'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_number_of_item_greater_than_zero(selenium, browser_id, modals):
+    number = int(modals(selenium[browser_id]
+                        ).archive_recall_information.items_failed)
+    assert number > 0, 'Zero items failed'
+
+
 @wt(parsers.parse('user of {browser_id} chooses "{option}" in dropdown menu '
                   'in modal "{modal}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -415,4 +467,3 @@ def choose_invite_type_in_oz_token_page(selenium, browser_id, modals,
     getattr(modals(driver), modal).dropdown_menu.click()
 
     popups(driver).power_select.choose_item(option)
-

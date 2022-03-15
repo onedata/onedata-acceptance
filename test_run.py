@@ -17,7 +17,7 @@ from subprocess import *
 import xml.etree.ElementTree as ElementTree
 
 from bamboos.docker.environment import docker
-from tests.utils.path_utils import get_default_image_for_service
+from tests.utils.path_utils import read_image_from_artifact
 from tests.utils.docker_utils import pull_docker_image_with_retries
 
 TEST_RUNNER_CONTAINER_NAME = 'test-runner'
@@ -98,16 +98,10 @@ def clean_env(image, script_dir, kube_config_path, minikube_config_path,
         docker.remove(container, force=True)
 
 
-def remove_one_env_container():
-    container = docker.ps(all=True, quiet=True, filters=[('name', 'one-env')])
-    if container:
-        docker.remove(container, force=True)
-
-
 def main():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-        description='Run Common Tests.')
+        description='Run Onedata acceptance tests.')
 
     parser.add_argument(
         '--image', '-i',
@@ -134,7 +128,7 @@ def main():
         '--test-type', '-tt',
         action='store',
         default='oneclient',
-        help='Type of test (oneclient, env_up, performance, packaging, gui)',
+        help='Type of test (oneclient, mixed, onedata_fs, performance, upgrade, gui)',
         dest='test_type')
 
     parser.add_argument(
@@ -159,28 +153,28 @@ def main():
         '--oz-image', '-zi',
         action='store',
         help='Onezone image to use in tests',
-        default=get_default_image_for_service('onezone'),
+        default=read_image_from_artifact('onezone'),
         dest='oz_image')
 
     parser.add_argument(
         '--op-image', '-pi',
         action='store',
         help='Oneprovider image to use in tests',
-        default=get_default_image_for_service('oneprovider'),
+        default=read_image_from_artifact('oneprovider'),
         dest='op_image')
 
     parser.add_argument(
         '--oc-image', '-ci',
         action='store',
         help='Oneclient image to use in tests',
-        default=get_default_image_for_service('oneclient'),
+        default=read_image_from_artifact('oneclient'),
         dest='oc_image')
 
     parser.add_argument(
         '--rest-cli-image', '-ri',
         action='store',
         help='Rest cli image to use in tests',
-        default=get_default_image_for_service('rest_cli'),
+        default=read_image_from_artifact('rest_cli'),
         dest='rest_cli_image')
 
     parser.add_argument(
@@ -299,7 +293,6 @@ ALL       ALL = (ALL) NOPASSWD: ALL
         if args.clean:
             clean_env(args.image, script_dir, kube_config_path,
                       minikube_config_path, one_env_data_dir)
-        remove_one_env_container()
 
         run_params = ['--shm-size=128m']
         reflect = [
@@ -335,7 +328,6 @@ ALL       ALL = (ALL) NOPASSWD: ALL
         if args.clean:
             clean_env(args.image, script_dir, kube_config_path,
                       minikube_config_path, one_env_data_dir)
-        remove_one_env_container()
 
     report = load_test_report(args.report_path)
     # If exit code != 0 then bamboo always fails build.

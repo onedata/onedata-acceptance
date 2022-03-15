@@ -85,4 +85,5 @@ def screens():
 scenarios('../features/onepanel/storages.feature')
 scenarios('../features/onepanel/provider.feature')
 scenarios('../features/onepanel/spaces.feature')
+scenarios('../features/onepanel/gui_settings.feature')
 

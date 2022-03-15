@@ -38,6 +38,8 @@ def _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id, path,
     try:
         go_to_path_without_last_elem(selenium, browser_id, tmp_memory,
                                      path, op_container)
+        browser = tmp_memory[browser_id]['file_browser']
+        browser.click_on_background()
         click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
     except (KeyError, StaleElementReferenceException):
         go_to_filebrowser(selenium, browser_id, oz_page, op_container,
@@ -181,8 +183,8 @@ def check_file_structure_for_archive(browser_id, config, selenium, tmp_memory,
                       op_container, tmpdir, which_browser, description)
 
 
-@wt(parsers.re(r'user of (?P<browser_id>\w+) sees that the file structure in '
-               '(?P<which_browser>.*) is as follow:\n'
+@wt(parsers.re(r'user of (?P<browser_id>\w+) sees that the (file|item) '
+               'structure in (?P<which_browser>.*) is as follow:\n'
                r'(?P<config>(.|\s)*)'))
 def check_file_structure_in_browser(browser_id, config, selenium, tmp_memory,
                                     op_container, tmpdir,

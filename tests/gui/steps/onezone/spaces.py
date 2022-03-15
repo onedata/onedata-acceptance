@@ -101,9 +101,8 @@ def assert_new_created_space_has_appeared_on_spaces(selenium, browser_id,
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
                '(?P<option>Data|Providers|Groups|Tokens|Discovery|Automation'
-               '|Clusters) '
-               'in the main menu'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+               '|Clusters) in the main menu'))
+@repeat_failed(timeout=WAIT_BACKEND)
 def click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
