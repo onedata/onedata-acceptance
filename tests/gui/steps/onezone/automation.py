@@ -186,7 +186,7 @@ def click_on_create_new_revision_button(selenium, browser_id, oz_page,
 
 
 def collapse_revision_list(subpage):
-    object.show_revisions_button.click()
+    subpage.show_revisions_button.click()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>does not see|sees) '
@@ -202,7 +202,7 @@ def assert_revision_in_object_bracket(selenium, browser_id, oz_page,
     object = subpage.elements_list[object_name]
 
     try:
-        collapse_revision_list(subpage)
+        collapse_revision_list(object)
     except BaseException:
         pass
     if option == 'does not see':
@@ -227,7 +227,7 @@ def click_option_in_revision_menu_button(selenium, browser_id, oz_page, option,
     object = subpage.elements_list[object_name]
 
     try:
-        collapse_revision_list(subpage)
+        collapse_revision_list(object)
     except BaseException:
         pass
 
