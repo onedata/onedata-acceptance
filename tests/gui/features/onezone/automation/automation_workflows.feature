@@ -102,21 +102,14 @@ Feature: Basic workflows management
 
 
   Scenario: User removes workflow
-    When user of browser clicks on Automation in the main menu
-    And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses Upload (json) button from menu bar to upload workflow "workflow_upload.json" to current dir without waiting for upload to finish
-    And user of browser clicks on "Apply" button in modal "Upload workflow"
-    And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser sees "Workflow1" in workflows list in inventory workflows subpage
+    When user of browser uploads workflow "workflow_upload.json" to "inventory1" inventory and then sees "Workflow1" in workflows list in inventory
     And user of browser clicks on "Remove" button in workflow "Workflow1" menu in workflows subpage
     And user of browser clicks on "Remove" button in modal "Remove workflow"
     Then user of browser does not see "Workflow1" in workflows list in inventory workflows subpage
 
 
   Scenario: User sees new workflow name after changing its details
-    When user of browser clicks on Automation in the main menu
-    And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uploads workflow "workflow_upload.json" to "inventory1" inventory and then sees "Workflow1" in workflows list in inventory
+    When user of browser uploads workflow "workflow_upload.json" to "inventory1" inventory and then sees "Workflow1" in workflows list in inventory
     And user of browser clicks on "Change details" button in workflow "Workflow1" menu in workflows subpage
     And user of browser writes "WorkflowRenamed" in name textfield of selected workflow
     And user of browser confirms edition of selected workflow details using Save button
@@ -124,26 +117,20 @@ Feature: Basic workflows management
 
 
   Scenario: User does not see workflow revision after removing it
-    When user of browser clicks on Automation in the main menu
-    And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uploads workflow "workflow_upload.json" to "inventory1" inventory and then sees "Workflow1" in workflows list in inventory
+    When user of browser uploads workflow "workflow_upload.json" to "inventory1" inventory and then sees "Workflow1" in workflows list in inventory
     And user of browser clicks on "Remove" button in revision "Workflow1" menu in the "Workflow1" workflow revision list
     And user of browser clicks on "Remove" button in modal "Remove workflow revision"
     Then user of browser does not see "Workflow1" in revision list of "Workflow1" in inventory workflows subpage
 
 
   Scenario: User downloads revision workflow
-    When user of browser clicks on Automation in the main menu
-    And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uploads workflow "workflow_upload.json" to "inventory1" inventory and then sees "Workflow1" in workflows list in inventory
+    When user of browser uploads workflow "workflow_upload.json" to "inventory1" inventory and then sees "Workflow1" in workflows list in inventory
     And user of browser clicks on "Download (json)" button in revision "Workflow1" menu in the "Workflow1" workflow revision list
     Then user of browser sees that "Workflow1.json" has been downloaded
 
 
   Scenario: User sees new workflow revision after using redesign as new revision
-    When user of browser clicks on Automation in the main menu
-    And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uploads workflow "workflow_upload.json" to "inventory1" inventory and then sees "Workflow1" in workflows list in inventory
+    When user of browser uploads workflow "workflow_upload.json" to "inventory1" inventory and then sees "Workflow1" in workflows list in inventory
     And user of browser clicks on "Redesign as new revision" button in revision "Workflow1" menu in the "Workflow1" workflow revision list
     And user of browser changes workflow view to "Details" tab
     And user of browser writes "Revision1" in description textfield in workflow Details tab
@@ -153,9 +140,7 @@ Feature: Basic workflows management
 
 
   Scenario: User sees workflow in second inventory after duplicating it
-    When user of browser clicks on Automation in the main menu
-    And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uploads workflow "workflow_upload.json" to "inventory1" inventory and then sees "Workflow1" in workflows list in inventory
+    When user of browser uploads workflow "workflow_upload.json" to "inventory1" inventory and then sees "Workflow1" in workflows list in inventory
     And user of browser clicks on "Duplicate to..." button in revision "Workflow1" menu in the "Workflow1" workflow revision list
     And user of browser chooses "inventory2" in dropdown menu in modal "Duplicate revision"
     And user of browser clicks on "Apply" button in modal "Duplicate revision"
