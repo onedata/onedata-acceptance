@@ -315,7 +315,7 @@ Feature: Management of inventories members
     # Space-owner-user creates a lambda
     When user of space_owner_browser clicks on Automation in the main menu
     And user of space_owner_browser opens inventory "inventory1" lambdas subpage
-    And user of space_owner_browser uses Add new lambda button from menu bar
+    And user of space_owner_browser uses Add new lambda button from menu bar in lambdas subpage
     And user of space_owner_browser writes "Lambda1" into lambda name text field
     And user of space_owner_browser writes "docker_image_example" into docker image text field
     And user of space_owner_browser confirms create new lambda using Create button
@@ -342,7 +342,7 @@ Feature: Management of inventories members
 
     # User1 adds new revision
     And user of browser1 opens inventory "inventory1" lambdas subpage
-    And user of browser1 uses Add new lambda button from menu bar
+    And user of browser1 uses Add new lambda button from menu bar in lambdas subpage
     And user of browser1 writes "Lambda1" into lambda name text field
     And user of browser1 writes "docker_image_example" into docker image text field
     And user of browser1 confirms create new lambda using Create button
@@ -362,9 +362,9 @@ Feature: Management of inventories members
     # User1 fails to edit workflow name
     And user of browser1 clicks on Automation in the main menu
     And user of browser1 opens inventory "inventory1" workflows subpage
-    And user of browser clicks on "Change details" button in workflow "Workflow1" menu in workflows subpage
-    And user of browser writes "Workflow Renamed" in name textfield of selected workflow
-    And user of browser confirms edition of selected workflow details using Save button
+    And user of browser1 clicks on "Change details" button in workflow "Workflow1" menu in workflows subpage
+    And user of browser1 writes "Workflow Renamed" in name textfield of selected workflow
+    And user of browser1 confirms edition of selected workflow details using Save button
     And user of browser1 sees that error popup has appeared
     And user of browser1 clicks on "Close" button in modal "Error"
 
@@ -374,13 +374,13 @@ Feature: Management of inventories members
          Schema management:
             granted: Partially
             privilege subtypes:
-              Manage workflows schemas: True
+              Manage workflow schemas: True
 
 
     # User1 sees edited workflow
-    And user of browser clicks on "Change details" button in workflow "Workflow1" menu in workflows subpage
-    And user of browser writes "Workflow Renamed" in name textfield of selected workflow
-    And user of browser confirms edition of selected workflow details using Save button
-    Then user of browser sees "Workflow Renamed" in workflows list in inventory workflows subpage
+    And user of browser1 clicks on "Change details" button in workflow "Workflow1" menu in workflows subpage
+    And user of browser1 writes "Workflow Renamed" in name textfield of selected workflow
+    And user of browser1 confirms edition of selected workflow details using Save button
+    Then user of browser1 sees "Workflow Renamed" in workflows list in inventory workflows subpage
 
 
