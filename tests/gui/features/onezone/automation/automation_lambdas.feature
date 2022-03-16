@@ -41,7 +41,7 @@ Feature: Basic lambdas management
     And user of browser clicks on Create new revision in "Lambda1"
     And user of browser writes "Lambda2" into lambda name text field
     And user of browser confirms create new revision using Create button
-    Then user of browser sees "Lambda2" in lambdas revision list of "Lambda2" in inventory lambdas subpage
+    Then user of browser sees "Lambda2" in revision list of "Lambda2" in inventory lambdas subpage
 
 
   Scenario: User sees new lambda revision after using redesign as new revision
@@ -55,5 +55,5 @@ Feature: Basic lambdas management
     And user of browser clicks on "Redesign as new revision" button in revision "Lambda1" menu in the "Lambda1" lambda revision list
     And user of browser writes "Lambda2" into lambda name text field
     And user of browser confirms create new revision using Create button
-    Then user of browser sees "Lambda2" in lambdas revision list of "Lambda2" in inventory lambdas subpage
+    Then user of browser sees "Lambda2" in revision list of "Lambda2" in inventory lambdas subpage
 
