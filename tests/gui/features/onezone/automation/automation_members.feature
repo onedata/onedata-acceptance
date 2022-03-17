@@ -280,13 +280,7 @@ Feature: Management of inventories members
 
   Scenario: User successfully manages lambda with manage lambda privilege
     # Space-owner-user creates a lambda
-    When user of space_owner_browser clicks on Automation in the main menu
-    And user of space_owner_browser opens inventory "inventory1" lambdas subpage
-    And user of space_owner_browser uses Add new lambda button from menu bar in lambdas subpage
-    And user of space_owner_browser writes "Lambda1" into lambda name text field
-    And user of space_owner_browser writes "docker_image_example" into docker image text field
-    And user of space_owner_browser confirms create new lambda using Create button
-    And user of space_owner_browser sees "Lambda1" in lambdas list in inventory lambdas subpage
+    When user of space_owner_browser creates "Lambda1" lambda from "example_image" docker image in "inventory1" inventory
     And user of space_owner_browser opens inventory "inventory1" members subpage
 
     # User1 fails to add new revision
@@ -317,12 +311,7 @@ Feature: Management of inventories members
 
   Scenario: User successfully manages workflow with manage workflows schema privilege
     # Space-owner-user uploads workflow
-    When user of space_owner_browser clicks on Automation in the main menu
-    And user of space_owner_browser opens inventory "inventory1" workflows subpage
-    And user of space_owner_browser uses Upload (json) button from menu bar to upload workflow "workflow_upload.json" to current dir without waiting for upload to finish
-    And user of space_owner_browser clicks on "Apply" button in modal "Upload workflow"
-    And user of space_owner_browser opens inventory "inventory1" workflows subpage
-    And user of space_owner_browser sees "Workflow1" in workflows list in inventory workflows subpage
+    When user of space_owner_browser uploads "Workflow1" workflow from "workflow_upload.json" file to "inventory1" inventory
     And user of space_owner_browser opens inventory "inventory1" members subpage
 
     # User1 fails to edit workflow name
