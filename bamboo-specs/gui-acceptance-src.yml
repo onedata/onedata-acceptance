@@ -149,21 +149,21 @@ Chrome POSIX tests multiuser:
           useLocalLicenseKey: 'true'
         buildHangingConfig.enabled: 'false'
   tasks:
-  - script:
+  - script: &clear-env
       interpreter: BINSH_OR_CMDEXE
       scripts:
       - curl ${bamboo.OnedataFinalTasksURL} | bash -
       description: Clear env
-  - script:
+  - script: &restart-minikube
       interpreter: BINSH_OR_CMDEXE
       scripts:
       - sudo ${HOME}/restart_minikube.sh
       description: Restart minikube
-  - checkout:
+  - checkout: &checkout
       path: onedata
       force-clean-build: 'true'
       description: Checkout Default Repository
-  - script:
+  - script: &init-submodules
       interpreter: BINSH_OR_CMDEXE
       scripts:
       - |-
@@ -172,25 +172,25 @@ Chrome POSIX tests multiuser:
         make submodules
       working-dir: onedata
       description: Init submodules
-  - script:
+  - script: &download-artifacts
       interpreter: BINSH_OR_CMDEXE
       scripts:
       - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
       working-dir: onedata
       description: Download artifacts
-  - script:
+  - script: 
       interpreter: BINSH_OR_CMDEXE
       scripts:
       - make SUITE=test_oneprovider_posix_multiuser BROWSER=Chrome TIMEOUT=600 test_gui_src
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
+  - test-parser: &parse-test-results
       type: junit
       ignore-time: 'false'
       test-results: onedata/test-reports/results*.xml
       description: Parse test results
-  - script:
+  - script: &pack-logs
       interpreter: BINSH_OR_CMDEXE
       scripts:
       - |-
@@ -199,7 +199,7 @@ Chrome POSIX tests multiuser:
         mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
         mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
       description: Pack logs
-  - script:
+  - script: &clear-env-in-onedata
       interpreter: BINSH_OR_CMDEXE
       scripts:
       - curl ${bamboo.OnedataFinalTasksURL} | bash -
