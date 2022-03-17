@@ -65,7 +65,8 @@ def _find_modal(driver, modal_name):
         elements_list = ['group', 'token', 'cluster', 'harvester',
                          'spaces', 'rename', 'permissions', 'directory', 'data',
                          'share', 'metadata', 'delete', 'remove', 'quality',
-                         'file details', 'symbolic link', 'inventory']
+                         'file details', 'symbolic link', 'inventory',
+                         'workflow']
         if any([name for name in elements_list
                 if name in modal_name.lower()]):
             modals = driver.find_elements_by_css_selector('.modal, '
@@ -456,3 +457,14 @@ def assert_number_of_item_greater_than_zero(selenium, browser_id, modals):
                         ).archive_recall_information.items_failed)
     assert number > 0, 'Zero items failed'
 
+
+@wt(parsers.parse('user of {browser_id} chooses "{option}" in dropdown menu '
+                  'in modal "{modal}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def choose_option_in_dropdown_menu_in_modal(selenium, browser_id, modals,
+                                            popups, option, modal):
+    driver = selenium[browser_id]
+    modal = transform(modal)
+    getattr(modals(driver), modal).dropdown_menu.click()
+
+    popups(driver).power_select.choose_item(option)

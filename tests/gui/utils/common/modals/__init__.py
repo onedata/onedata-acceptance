@@ -59,6 +59,7 @@ from .reattach_dataset import ReattachDataset
 from .upload_workflow import UploadWorkflow
 from .create_new_store import CreateNewStore
 from .create_new_lane import CreateNewLane
+from .duplicate_revision import DuplicateRevision
 
 
 class Modals(object):
@@ -134,6 +135,8 @@ class Modals(object):
     remove_harvester = WebItem('.modal-dialog', cls=RemoveModal)
     remove_space = WebItem('.modal-dialog', cls=RemoveModal)
     remove_inventory = WebItem('.modal-dialog', cls=RemoveModal)
+    remove_workflow = WebItem('.modal-dialog', cls=RemoveModal)
+    remove_workflow_revision = WebItem('.modal-dialog', cls=RemoveModal)
     remove_task = WebItem('.modal-dialog', cls=RemoveModal)
     rest_api_modal = WebItem('.modal-dialog', cls=RESTApiModal)
     clean_up_obsolete_tokens = WebItem('.modal-dialog',
@@ -160,6 +163,7 @@ class Modals(object):
     upload_workflow = WebItem('.modal-dialog', cls=UploadWorkflow)
     create_new_store = WebItem('.modal-dialog', cls=CreateNewStore)
     create_new_lane = WebItem('.modal-dialog', cls=CreateNewLane)
+    duplicate_revision = WebItem('.modal-dialog', cls=DuplicateRevision)
 
 
     def __init__(self, driver):
