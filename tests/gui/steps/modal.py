@@ -458,7 +458,6 @@ def assert_number_of_item_greater_than_zero(selenium, browser_id, modals):
     assert number > 0, 'Zero items failed'
 
 
-
 @wt(parsers.parse('user of {browser_id} chooses "{option}" in dropdown menu '
                   'in modal "{modal}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
