@@ -73,13 +73,13 @@ Feature: Basic files tab operations on single file in file browser
     Then user of browser sees that item named "20B-0(1).txt" has appeared in file browser
 
 
-  Scenario: User with weak connection downloads file and checks it's content
+  Scenario: User with weak connection downloads file
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Files of "space1" in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees that current working directory displayed in breadcrumbs on file browser is space1
 
-    #User downloads file
+    # User downloads file
     And user of browser downloads item named "20B-0.txt" with slow connection in file browser
     Then user of browser sees that content of downloaded file "20B-0.txt" is equal to: "11111111111111111111"
 

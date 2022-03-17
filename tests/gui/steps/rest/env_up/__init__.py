@@ -9,7 +9,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 # Values of variables depend on settings in gui/backend and
 # should be synchronized with them.
-# GUI_UPLOAD/DOWNLOAD_CHUNK_SIZE and is given in MB and
+# GUI_UPLOAD/DOWNLOAD_CHUNK_SIZE is given in MB and
 # UPLOAD/DOWNLOAD_INACTIVITY is given in seconds
 
 GUI_UPLOAD_CHUNK_SIZE = 1
