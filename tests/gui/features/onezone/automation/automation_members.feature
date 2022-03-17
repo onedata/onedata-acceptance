@@ -278,40 +278,7 @@ Feature: Management of inventories members
     Then user of browser1 does not see group "group2" on groups list
 
 
-  Scenario: User successfully manages lambda with menage lambda privilege
-    # Space-owner-user creates a lambda
-    When user of space_owner_browser clicks on Automation in the main menu
-    And user of space_owner_browser opens inventory "inventory1" lambdas subpage
-    And user of space_owner_browser uses Add new lambda button from menu bar
-    And user of space_owner_browser writes "Lambda1" into lambda name text field
-    And user of space_owner_browser writes "docker_image_example" into docker image text field
-    And user of space_owner_browser confirms create new lambda using Create button
-    And user of space_owner_browser sees "Lambda1" in lambdas list in inventory lambdas subpage
-    And user of space_owner_browser opens inventory "inventory1" members subpage
-
-    # User1 fails to add new revision
-    And user of browser1 clicks on Automation in the main menu
-    And user of browser1 opens inventory "inventory1" members subpage
-    And user of browser1 clicks on Create new revision in "Lambda1"
-    And user of browser1 sees that error popup has appeared
-    And user of browser1 clicks on "Close" button in modal "Error"
-
-    # Space-owner-user changes privileges for group2
-    And user of space_owner_browser clicks "group2" group in "inventory1" automation members groups list
-    And user of space_owner_browser sets following privileges for "group2" group in automation members subpage:
-         Schema management:
-            granted: Partially
-            privilege subtypes:
-              Manage lambdas: True
-
-
-    # User1 adds new revision
-    And user of browser1 clicks on Create new revision in "Lambda1"
-    And user of browser1 writes "Lambda2" into lambda name text field
-    And user of browser1 confirms create new revision using Create button
-    Then user of browser1 sees "Lambda2" in lambdas revision list of "Lambda2" in inventory lambdas subpage
-
-  Scenario: User successfully manages lambda with menage lambda privilege
+  Scenario: User successfully manages lambda with manage lambda privilege
     # Space-owner-user creates a lambda
     When user of space_owner_browser clicks on Automation in the main menu
     And user of space_owner_browser opens inventory "inventory1" lambdas subpage
@@ -342,14 +309,13 @@ Feature: Management of inventories members
 
     # User1 adds new revision
     And user of browser1 opens inventory "inventory1" lambdas subpage
-    And user of browser1 uses Add new lambda button from menu bar in lambdas subpage
-    And user of browser1 writes "Lambda1" into lambda name text field
-    And user of browser1 writes "docker_image_example" into docker image text field
-    And user of browser1 confirms create new lambda using Create button
-    Then user of browser1 sees "Lambda1" in lambdas list in inventory lambdas subpage
+    And user of browser1 clicks on Create new revision in "Lambda1"
+    And user of browser1 writes "Lambda2" into lambda name text field
+    And user of browser1 confirms create new revision using Create button
+    Then user of browser1 sees "Lambda2" in revision list of "Lambda2" in inventory lambdas subpage
 
 
-  Scenario: User successfully manages workflow with menage workflows schema privilege
+  Scenario: User successfully manages workflow with manage workflows schema privilege
     # Space-owner-user uploads workflow
     When user of space_owner_browser clicks on Automation in the main menu
     And user of space_owner_browser opens inventory "inventory1" workflows subpage
