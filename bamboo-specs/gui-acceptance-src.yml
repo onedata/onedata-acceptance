@@ -6787,7 +6787,7 @@ Chrome oneprovider ACL files:
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
-      - sudo ${HOME}/restart_minikube.sh
+      - echo Clear env; sudo ${HOME}/restart_minikube.sh
       description: Restart minikube
   - checkout:
       path: onedata
