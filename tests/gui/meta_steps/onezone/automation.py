@@ -6,7 +6,6 @@ __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.steps.modal import _wait_for_modal_to_appear, click_modal_button
 from tests.gui.steps.onezone.automation import assert_workflow_exists, \
@@ -31,14 +30,12 @@ def create_workflow_using_gui(selenium, browser_id, oz_page, workflow_name):
     confirm_workflow_creation(selenium, browser_id, oz_page)
 
 
-@wt(parsers.parse('user of {browser_id} uploads workflow "{file_name}" '
-                  'to "{inventory}" inventory and then sees "{workflow}"'
-                  ' in workflows list in inventory'))
+@wt(parsers.parse('user of {browser_id} uploads "{workflow}" workflow from '
+                  '"{file_name}" file to "{inventory}" inventory'))
 def upload_and_assert_workflow_to_inventory_using_gui(selenium, browser_id,
                                                       oz_page, modals,
                                                       inventory, workflow,
                                                       file_name, tmp_memory):
-
     driver = selenium[browser_id]
     click_on_option_in_the_sidebar(selenium, browser_id, 'Automation', oz_page)
     go_to_inventory_subpage(selenium, browser_id, inventory,
@@ -50,7 +47,3 @@ def upload_and_assert_workflow_to_inventory_using_gui(selenium, browser_id,
                             'workflows', oz_page)
 
     assert_workflow_exists(selenium, browser_id, oz_page, workflow, 'sees')
-
-
-
-
