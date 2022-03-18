@@ -147,8 +147,8 @@ def click_add_new_button_in_menu_bar(selenium, browser_id, oz_page, option):
 @wt(parsers.re('user of (?P<browser_id>.*) writes "(?P<text>.*)" into ('
                '?P<text_field>lambda name|docker image) text field'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def write_lambda_name_in_lambda_text_field(selenium, browser_id,
-                                           oz_page, text, text_field):
+def write_text_into_lambda_form(selenium, browser_id,
+                                oz_page, text, text_field):
     page = oz_page(selenium[browser_id])['automation']
     label = getattr(page.lambdas_page.form, transform(text_field))
     setattr(label, 'value', text)
