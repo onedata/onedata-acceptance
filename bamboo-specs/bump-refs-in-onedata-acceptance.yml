@@ -1,0 +1,72 @@
+version: 2
+plan:
+  project-key: VFS
+  key: OA
+  name: bump refs in onedata-acceptance
+  description: Automatically updates submodules to develop
+stages:
+- Autocommit:
+    manual: false
+    final: false
+    jobs:
+    - Autocommit
+Autocommit:
+  key: JOB1
+  tasks:
+# Checkout Task for default repository will be added implicitly during Specs import
+  - script:
+      interpreter: SHELL
+      scripts:
+      - |-
+        git clone ssh://git@git.onedata.org:7999/vfs/onedata-acceptance.git
+        cd onedata-acceptance
+        git checkout ${bamboo.planRepository.branchName}
+      description: Source Code Checkout
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - |-
+        git submodule init
+        git submodule update
+        git status
+        ./update_refs.sh "origin/${bamboo.planRepository.branchName}" "origin/develop" "Bamboo Agent" "bamboo@cloud.plgrid.pl"
+        git status
+        git -c push.default=simple push --set-upstream origin ${bamboo.planRepository.branchName}
+      working-dir: onedata-acceptance
+      description: Autocommit
+  final-tasks:
+  - script:
+      interpreter: SHELL
+      scripts:
+      - rm -rf onedata-acceptance
+      description: Cleanup
+  requirements:
+  - system.docker.executable
+  - onedata
+  artifact-subscriptions: []
+repositories:
+- onedata-acceptance:
+    scope: global
+triggers:
+# Trigger type TriggerProperties{name='Single daily build', description='Daily build', conditions=[], enabled=true} is not supported yet
+- cron: 0 15 0 * * ?
+branches:
+  create: manually
+  delete:
+    after-deleted-days: 30
+    after-inactive-days: 30
+  link-to-jira: true
+# notifications:
+# - events:
+#   - plan-completed
+#   recipients:
+# Notification recipient com.atlassian.bamboo.plugins.bamboo-hipchat:recipient.hipchat is not supported yet
+# Notification recipient com.atlassian.bamboo.plugins.bamboo-slack:recipient.slack is not supported yet
+labels: []
+dependencies:
+  require-all-stages-passing: false
+  enabled-for-branches: true
+  block-strategy: none
+  plans: []
+other:
+  concurrent-build-plugin: system-default

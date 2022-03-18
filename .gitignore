@@ -32,3 +32,6 @@ oneprovider_meta/oneprovider/DEBIAN/control
 
 # VSCode
 .vscode
+
+# Emacs
+*~
