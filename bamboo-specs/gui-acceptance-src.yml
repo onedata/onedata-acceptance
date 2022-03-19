@@ -140,7 +140,7 @@ stages:
 #   artifact-subscriptions: []
 Chrome POSIX tests multiuser:
   key: CPTM
-  other:
+  other: &common-opts
     clean-working-dir: true
     all-other-apps:
       custom:
@@ -205,65 +205,34 @@ Chrome POSIX tests multiuser:
       - curl ${bamboo.OnedataFinalTasksURL} | bash -
       working-dir: onedata
       description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  artifacts: &artifacts
+    - name: report
+      location: onedata/tests/gui/logs/
+      pattern: '**/*.*'
+      shared: false
+      required: false
+    - name: onezone_images
+      location: onedata/onezone_images
+      pattern: docker-dev-build-list.json
+      shared: false
+      required: false
+    - name: oneprovider_images
+      location: onedata/oneprovider_images
+      pattern: docker-dev-build-list.json
+      shared: false
+      required: false
   requirements:
   - kubeadm
   artifact-subscriptions: []
 Chrome onepanel deployment basic tests:
   key: CODBT
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      description: Clear env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -271,82 +240,23 @@ Chrome onepanel deployment basic tests:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome oneprovider ACL subdirectories:
   key: COAS
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -354,56 +264,17 @@ Chrome oneprovider ACL subdirectories:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Codetag Tracker:
   key: CDTR
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - checkout:
       force-clean-build: 'true'
@@ -427,40 +298,13 @@ Codetag Tracker:
   artifact-subscriptions: []
 Chrome onezone automations tests:
   key: COAT
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -468,81 +312,22 @@ Chrome onezone automations tests:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   artifact-subscriptions: []
 Chrome qos basic:
   key: CQB
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -550,82 +335,23 @@ Chrome qos basic:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome onezone harvesters basic tests:
   key: COHBT
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -633,82 +359,23 @@ Chrome onezone harvesters basic tests:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome oneprovider ACL directories privileges create:
   key: COADPC
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -716,82 +383,23 @@ Chrome oneprovider ACL directories privileges create:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome oneprovider archives incremental and nested:
   key: COAIN
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -799,81 +407,22 @@ Chrome oneprovider archives incremental and nested:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   artifact-subscriptions: []
 Chrome oneprovider ACL files metadata:
   key: COAFM2
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -881,42 +430,10 @@ Chrome oneprovider ACL files metadata:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
@@ -1010,40 +527,13 @@ Chrome oneprovider ACL files metadata:
 #   artifact-subscriptions: []
 Chrome onezone providers basic tests:
   key: COPBT
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -1051,42 +541,10 @@ Chrome onezone providers basic tests:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   artifact-subscriptions: []
@@ -1179,40 +637,13 @@ Chrome onezone providers basic tests:
 #   artifact-subscriptions: []
 Chrome POSIX tests:
   key: CPT
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -1220,81 +651,22 @@ Chrome POSIX tests:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   artifact-subscriptions: []
 Chrome oneprovider ACL directories privileges metadata:
   key: COADPM
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -1302,42 +674,10 @@ Chrome oneprovider ACL directories privileges metadata:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
@@ -1430,40 +770,13 @@ Chrome oneprovider ACL directories privileges metadata:
 #   artifact-subscriptions: []
 Chrome oneprovider ACL directories privileges remove:
   key: COADPR
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -1471,82 +784,23 @@ Chrome oneprovider ACL directories privileges remove:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome onezone spaces memberships privileges:
   key: COSMP
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -1554,81 +808,22 @@ Chrome onezone spaces memberships privileges:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   artifact-subscriptions: []
 Chrome oneprovider ACL remove file:
   key: COARF
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -1636,82 +831,23 @@ Chrome oneprovider ACL remove file:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome oneprovider symlinks:
   key: COSL
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -1719,82 +855,23 @@ Chrome oneprovider symlinks:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome transfers multi browser tests:
   key: CTMBT
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -1802,42 +879,10 @@ Chrome transfers multi browser tests:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   artifact-subscriptions: []
@@ -1929,40 +974,13 @@ Chrome transfers multi browser tests:
 #   artifact-subscriptions: []
 Chrome onezone harversters privileges add and remove:
   key: COHPAR
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -1970,82 +988,23 @@ Chrome onezone harversters privileges add and remove:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome onezone groups multiuser single group:
   key: COGMSG
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -2053,81 +1012,22 @@ Chrome onezone groups multiuser single group:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   artifact-subscriptions: []
 Chrome onepanel basic tests:
   key: COBT
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -2135,82 +1035,23 @@ Chrome onepanel basic tests:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome multiprovider basic tests:
   key: CMBT
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -2218,82 +1059,23 @@ Chrome multiprovider basic tests:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome onezone invite tokens with caveats:
   key: COITWC
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -2301,82 +1083,23 @@ Chrome onezone invite tokens with caveats:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome transfers files:
   key: CTF
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -2384,81 +1107,22 @@ Chrome transfers files:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   artifact-subscriptions: []
 Chrome shares basic tests:
   key: CSBT
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -2466,81 +1130,22 @@ Chrome shares basic tests:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   artifact-subscriptions: []
 Chrome onezone spaces multiuser tests:
   key: COSMT
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -2548,81 +1153,22 @@ Chrome onezone spaces multiuser tests:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   artifact-subscriptions: []
 Chrome storage sync charts:
   key: CSSC
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -2630,81 +1176,22 @@ Chrome storage sync charts:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   artifact-subscriptions: []
 Chrome onezone spaces memberships privileges data:
   key: COSMPD
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -2712,81 +1199,22 @@ Chrome onezone spaces memberships privileges data:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   artifact-subscriptions: []
 Chrome oneprovider data tab tests:
   key: CODTT
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -2794,81 +1222,22 @@ Chrome oneprovider data tab tests:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   artifact-subscriptions: []
 Chrome transfers directories:
   key: CTD
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -2876,81 +1245,22 @@ Chrome transfers directories:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   artifact-subscriptions: []
 Chrome onezone basic tests:
   key: COBTT
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -2958,42 +1268,10 @@ Chrome onezone basic tests:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   artifact-subscriptions: []
@@ -3251,40 +1529,13 @@ Chrome onezone basic tests:
 #   artifact-subscriptions: []
 Chrome onezone data discovery helpers:
   key: CODDH
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -3292,82 +1543,23 @@ Chrome onezone data discovery helpers:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome storage sync tests:
   key: CSST
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -3375,81 +1567,22 @@ Chrome storage sync tests:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   artifact-subscriptions: []
 Chrome oneprovider hardlinks:
   key: COH
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -3457,82 +1590,23 @@ Chrome oneprovider hardlinks:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome onezone data discovery tests:
   key: CODDT
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -3540,82 +1614,23 @@ Chrome onezone data discovery tests:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome oneprovider ACL subfiles:
   key: COASF
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -3623,82 +1638,23 @@ Chrome oneprovider ACL subfiles:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome onepanel deployment ceph:
   key: CODC
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -3706,82 +1662,23 @@ Chrome onepanel deployment ceph:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome oneprovider ACL subdirectories remove:
   key: COASD
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -3789,82 +1686,23 @@ Chrome oneprovider ACL subdirectories remove:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome oneprovider ACL subjects:
   key: COABS
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -3872,82 +1710,23 @@ Chrome oneprovider ACL subjects:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome onezone data discovery querying:
   key: CODDQ
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -3955,82 +1734,23 @@ Chrome onezone data discovery querying:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome oneprovider archives tests:
   key: COAT2
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -4038,81 +1758,22 @@ Chrome oneprovider archives tests:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   artifact-subscriptions: []
 Chrome onepanel ceph spaces:
   key: COCS
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -4120,82 +1781,23 @@ Chrome onepanel ceph spaces:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome onezone tokens delete:
   key: COTD
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -4203,42 +1805,10 @@ Chrome onezone tokens delete:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
@@ -4332,40 +1902,13 @@ Chrome onezone tokens delete:
 #   artifact-subscriptions: []
 Chrome onezone groups basic tests:
   key: COGBT
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -4373,42 +1916,10 @@ Chrome onezone groups basic tests:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   artifact-subscriptions: []
@@ -4501,40 +2012,13 @@ Chrome onezone groups basic tests:
 #   artifact-subscriptions: []
 Chrome onezone spaces basic tests:
   key: COSBT
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -4542,81 +2026,22 @@ Chrome onezone spaces basic tests:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   artifact-subscriptions: []
 Chrome onepanel login tests:
   key: COLT
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -4624,82 +2049,23 @@ Chrome onepanel login tests:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome oneprovider datasets privileges:
   key: CODP
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -4707,81 +2073,22 @@ Chrome oneprovider datasets privileges:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   artifact-subscriptions: []
 Chrome onezone tokens tests:
   key: COTT
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -4789,82 +2096,23 @@ Chrome onezone tokens tests:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome onezone harvesters index:
   key: COHI
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -4872,82 +2120,23 @@ Chrome onezone harvesters index:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome onezone harversters index metadata:
   key: COHIM
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -4955,82 +2144,23 @@ Chrome onezone harversters index metadata:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome onezone harvesters memberships privileges:
   key: COHMP
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -5038,82 +2168,23 @@ Chrome onezone harvesters memberships privileges:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome onezone harvesters effective privileges:
   key: COHEP
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -5121,82 +2192,23 @@ Chrome onezone harvesters effective privileges:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome onepanel two hosts deployment tests:
   key: COTHDT
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -5204,82 +2216,23 @@ Chrome onepanel two hosts deployment tests:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome oneprovider upload tests:
   key: COUT
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -5287,42 +2240,10 @@ Chrome oneprovider upload tests:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   artifact-subscriptions: []
@@ -5434,40 +2355,13 @@ Chrome oneprovider upload tests:
 #   artifact-subscriptions: []
 Chrome onezone invite tokens with consumer caveats:
   key: COITWCC
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -5475,82 +2369,23 @@ Chrome onezone invite tokens with consumer caveats:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome oneprovider datasets tests:
   key: CODT
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -5558,81 +2393,22 @@ Chrome oneprovider datasets tests:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   artifact-subscriptions: []
 Chrome onezone invite tokens:
   key: COIT
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -5640,82 +2416,23 @@ Chrome onezone invite tokens:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome public shares tests:
   key: CPST
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -5723,42 +2440,10 @@ Chrome public shares tests:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   artifact-subscriptions: []
@@ -5851,40 +2536,13 @@ Chrome public shares tests:
 #   artifact-subscriptions: []
 Chrome onezone groups multiuser tests:
   key: COGMUT
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -5892,42 +2550,10 @@ Chrome onezone groups multiuser tests:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   artifact-subscriptions: []
@@ -6023,40 +2649,13 @@ Chrome onezone groups multiuser tests:
 #   artifact-subscriptions: []
 Chrome oneprovider ACL directories privileges:
   key: COADP
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -6064,82 +2663,23 @@ Chrome oneprovider ACL directories privileges:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome multiprovider QoS storage:
   key: CMQS
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -6147,82 +2687,23 @@ Chrome multiprovider QoS storage:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome oneprovider ACL basic:
   key: COAB
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -6230,82 +2711,23 @@ Chrome oneprovider ACL basic:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome multiprovider QoS tests:
   key: CMQT
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -6313,82 +2735,23 @@ Chrome multiprovider QoS tests:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome QoS storage:
   key: CQS
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -6396,82 +2759,23 @@ Chrome QoS storage:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome metadata test:
   key: CMT
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -6479,82 +2783,23 @@ Chrome metadata test:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome onepanel members tests:
   key: COMT
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -6562,42 +2807,10 @@ Chrome onepanel members tests:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
@@ -6691,40 +2904,13 @@ Chrome onepanel members tests:
 #   artifact-subscriptions: []
 Chrome multiprovider multiuser tests:
   key: CMMT
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -6732,82 +2918,23 @@ Chrome multiprovider multiuser tests:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
   artifact-subscriptions: []
 Chrome oneprovider ACL files:
   key: COAF
-  other:
-    clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+  other: *common-opts
   tasks:
   - script: *clear-env
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - echo Clear env; sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - checkout:
-      path: onedata
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
-      working-dir: onedata
-      description: Download artifacts
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
   - script:
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -6815,42 +2942,10 @@ Chrome oneprovider ACL files:
       working-dir: onedata
       description: Run Selenium tests
   final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/gui/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/gui/logs
-        mv onedata/tests/gui/logs/report.* onedata/tests/gui/logs/gui_report
-        mv onedata/tests/gui/logs/gui_report/images.yaml onedata/tests/gui/logs
-      description: Pack logs
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      working-dir: onedata
-      description: Clear env
-  artifacts:
-  - name: report
-    location: onedata/tests/gui/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata/oneprovider_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
   requirements:
   - kubeadm
   - onedata
@@ -6881,6 +2976,8 @@ notifications:
   - users:
     - plgjliput
 labels: []
+triggers:
+  - cron: 0 0 1 1 1 ? *
 dependencies:
   require-all-stages-passing: true
   enabled-for-branches: true
