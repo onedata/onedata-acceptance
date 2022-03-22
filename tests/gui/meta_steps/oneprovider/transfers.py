@@ -58,8 +58,7 @@ def evict_file(selenium, browser_id, provider, popups, file_name, tmp_memory,
     confirm_button = 'Close'
 
     click_menu_for_elem_in_browser(browser_id, file_name, tmp_memory)
-    click_option_in_data_row_menu_in_browser(selenium, browser_id,
-                                             option, modals)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
 
     data_distribution_modal = modals(driver).data_distribution

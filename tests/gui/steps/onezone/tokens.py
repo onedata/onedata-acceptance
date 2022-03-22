@@ -12,6 +12,7 @@ from tests.gui.conftest import (
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import wt, parsers, given
 from tests.utils.utils import repeat_failed
+from tests.gui.utils.common.popups import Popups as popups
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -102,7 +103,7 @@ def select_member_from_dropdown(selenium, browser_id, member_name, modals,
     driver = selenium[browser_id]
 
     oz_page(driver)['tokens'].expand_dropdown()
-    modals(driver).dropdown.options[member_name].click()
+    popups(driver).dropdown.options[member_name].click()
 
 
 @wt(parsers.parse('user of {browser_id} clicks on "Create token" button '

@@ -223,9 +223,9 @@ def click_relation_menu_button(selenium, browser_id, member_name, name, oz_page,
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on "(?P<option>.*)" '
                'in (?P<where>space|group) membership relation menu'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_option_in_relation_menu_button(selenium, browser_id, option):
+def click_option_in_relation_menu_button(selenium, browser_id, option, popups):
     driver = selenium[browser_id]
-    modals(driver).membership_relation_menu.options[option].click()
+    popups(driver).membership_relation_menu.options[option].click()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks "(?P<type_name>.*)" '
@@ -412,7 +412,7 @@ def remove_member_from_parent(selenium, browser_id, member_name, member_type,
     popups(driver).menu_popup_with_text.menu['Remove this member']()
 
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    modals(driver).remove_member.remove()
+    modals(driver).remove_modal.remove()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks "(?P<option>( |.)*)" for '

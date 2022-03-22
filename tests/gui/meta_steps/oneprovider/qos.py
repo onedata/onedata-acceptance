@@ -115,8 +115,7 @@ def open_qos_modal_for_file(selenium, browser_id, filename, modals, tmp_memory):
     qos = 'Quality of Service'
 
     click_menu_for_elem_in_browser(browser_id, filename, tmp_memory)
-    click_option_in_data_row_menu_in_browser(selenium, browser_id, qos,
-                                             modals)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, qos)
     wt_wait_for_modal_to_appear(selenium, browser_id, qos, tmp_memory)
 
 

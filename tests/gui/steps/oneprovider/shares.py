@@ -24,16 +24,6 @@ def assert_item_in_file_browser_in_shares_page(selenium, browser_id, item_name,
     assert item_name in data, f'Item  {item_name} not in file browser'
 
 
-@wt(parsers.parse('user of {browser_id} clicks "{option}" option '
-                  'in shares actions row menu in file browser'))
-@wt(parsers.parse('user of {browser_id} clicks "{option}" option '
-                  'in shares actions row menu in shares browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_option_in_data_row_menu_in_share_file_browser(selenium, browser_id,
-                                                        option, modals):
-    modals(selenium[browser_id]).shares_row_menu.options[option].click()
-
-
 @wt(parsers.parse('user of {browser_id} sees that absolute share path '
                   'visible in share\'s info header is as follows: {path}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -95,10 +85,10 @@ def click_menu_button_on_shares_page(selenium, browser_id, op_container):
 @wt(parsers.parse('user of {browser_id} clicks "{option}" option '
                   'in shares actions row menu'))
 @wt(parsers.parse('user of {browser_id} clicks "{option}" option '
-                  'in shares actions row menu in shares browser'))
+                  'in shares actions row menu in {} browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_option_in_share_row_menu(selenium, browser_id, option, modals):
-    modals(selenium[browser_id]).shares_row_menu.options[option].click()
+def click_option_in_share_row_menu(selenium, browser_id, option, popups):
+    popups(selenium[browser_id]).shares_row_menu.options[option].click()
 
 
 @wt(parsers.parse('user of {browser_id} sees there are no shares '

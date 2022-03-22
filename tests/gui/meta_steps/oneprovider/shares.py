@@ -33,8 +33,7 @@ def create_share(selenium, browser_id, share_name, item_name, tmp_memory,
     button = 'Create'
 
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
-    click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
-                                             modals)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     write_name_into_text_field_in_modal(selenium, browser_id, share_name,
                                         modal_name, modals)

@@ -95,7 +95,7 @@ def _create_archive(browser_id, selenium, config, item_name, space_name,
     if option == 'succeeds':
         click_option_in_data_row_menu_in_browser(selenium, browser_id,
                                                  option_in_data_row_menu,
-                                                 modals, DATASET_BROWSER)
+                                                 DATASET_BROWSER)
         data = yaml.load(config)
 
         description = data.get('description', False)
@@ -134,7 +134,7 @@ def _create_archive(browser_id, selenium, config, item_name, space_name,
     elif option == 'fails':
         assert_not_click_option_in_data_row_menu(selenium, browser_id,
                                                  option_in_data_row_menu,
-                                                 modals, DATASET_BROWSER)
+                                                 DATASET_BROWSER)
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
@@ -147,7 +147,7 @@ def copy_archive_id_to_tmp_memory(selenium, browser_id, op_container, client,
                                     tmp_memory, ARCHIVE_BROWSER)
         click_menu_for_archive(browser_id, tmp_memory, description)
         click_option_in_data_row_menu_in_browser(selenium, browser_id,
-                                                 option_in_menu, modals,
+                                                 option_in_menu,
                                                  ARCHIVE_BROWSER)
         tmp_memory[description] = clipboard.paste(
             display=displays[browser_id])
@@ -208,7 +208,7 @@ def remove_archive_in_op_gui(browser_id, selenium, item_name, space_name,
 
     if option == 'succeeds':
         click_option_in_data_row_menu_in_browser(selenium, browser_id,
-                                                 option_in_menu, modals,
+                                                 option_in_menu,
                                                  which_browser=ARCHIVE_BROWSER)
         write_in_confirmation_input(browser_id, modals, text, selenium)
         click_modal_button(selenium, browser_id, button_name,
@@ -216,7 +216,7 @@ def remove_archive_in_op_gui(browser_id, selenium, item_name, space_name,
     elif option == 'fails':
         assert_not_click_option_in_data_row_menu(selenium, browser_id,
                                                  button_name,
-                                                 modals, ARCHIVE_BROWSER)
+                                                 ARCHIVE_BROWSER)
 
 
 def assert_archive_with_option_in_op_gui(browser_id, selenium, oz_page,

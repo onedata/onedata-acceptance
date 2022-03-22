@@ -78,11 +78,11 @@ def set_posix_permissions_in_op_gui(selenium, browser_id, space, path, perm,
 
 @wt(parsers.re('user of (?P<browser_id>\w+) adds ACE with (?P<priv>.*) '
                  'privileges? set for (?P<type>.*?) (?P<name>.*)'))
-def set_acl_entry_in_op_gui(selenium, browser_id, priv, name, modals):
+def set_acl_entry_in_op_gui(selenium, browser_id, priv, name, modals, popups):
     permission_type = 'acl'
 
     select_permission_type(selenium, browser_id, permission_type, modals)
-    select_acl_subject(selenium, browser_id, name, modals)
+    select_acl_subject(selenium, browser_id, name, modals, popups)
     expand_subject_record_in_edit_permissions_modal(selenium, browser_id,
                                                     modals, name)
     select_acl_options(selenium, browser_id, priv, modals, name)
@@ -97,7 +97,7 @@ def _set_acl_privilages_for_selected(browser_id, selenium, popups, tmp_memory,
                                       tmp_memory)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
 
-    set_acl_entry_in_op_gui(selenium, browser_id, priv, name, modals)
+    set_acl_entry_in_op_gui(selenium, browser_id, priv, name, modals, popups)
     wt_click_on_confirmation_btn_in_modal(selenium, browser_id, 'Save',
                                           tmp_memory)
 

@@ -95,7 +95,7 @@ def create_dataset(browser_id, tmp_memory, item_name, space_name,
 
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
-                                             option_in_data_row_menu, modals)
+                                             option_in_data_row_menu)
     click_mark_file_as_dataset_toggle(browser_id, selenium, modals)
     flags = [item.replace('_protection', '') for item in get_flags(option)]
     for flag in flags:
@@ -114,7 +114,7 @@ def fail_to_create_dataset_in_op_gui(browser_id, tmp_memory, item_name,
                              option_in_space, op_container, tmp_memory)
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
-                                             option_in_data_row_menu, modals)
+                                             option_in_data_row_menu)
     fail_to_mark_file_as_dataset_toggle(browser_id, selenium, modals)
 
 
@@ -147,7 +147,7 @@ def remove_dataset_in_op_gui(selenium, browser_id, oz_page, space_name,
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory,
                                    which_browser=item_browser)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
-                                             option_in_data_row_menu, modals,
+                                             option_in_data_row_menu,
                                              which_browser=item_browser)
     click_modal_button(selenium, browser_id, button_name,
                        modal, modals)
@@ -179,7 +179,7 @@ def check_effective_protection_flags_for_file_in_op_gui(
     item_name = item_name.split('/')[-1]
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
-                                             option_in_data_row_menu, modals)
+                                             option_in_data_row_menu)
     flags = [item.replace('_protection', '') for item in get_flags(option)]
     for flag in flags:
         check_effective_protection_flag(browser_id, selenium, modals, flag,
@@ -215,7 +215,7 @@ def set_protection_flags_for_dataset_in_op_gui(browser_id, selenium, oz_page,
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory,
                                    which_browser=item_browser)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
-                                             option_in_data_row_menu, modals,
+                                             option_in_data_row_menu,
                                              which_browser=item_browser)
     button_name = 'Close'
     flags = [item.replace('_protection', '') for item in get_flags(option)]
@@ -239,7 +239,7 @@ def detach_dataset_in_op_gui(selenium, browser_id, oz_page, space_name,
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory,
                                    which_browser=item_browser)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
-                                             option_in_data_row_menu, modals,
+                                             option_in_data_row_menu,
                                              which_browser=item_browser)
     click_modal_button(selenium, browser_id, button_name,
                        modal, modals)
@@ -281,7 +281,7 @@ def reattach_dataset_in_op_gui(selenium, browser_id, oz_page, space_name,
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory,
                                    which_browser=item_browser)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
-                                             option_in_data_row_menu, modals,
+                                             option_in_data_row_menu,
                                              which_browser=item_browser)
     click_modal_button(selenium, browser_id, button_name,
                        modal, modals)

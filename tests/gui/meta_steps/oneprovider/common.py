@@ -61,8 +61,7 @@ def replicate_file_to_provider(selenium, browser_id, name, tmp_memory,
     modal_name = 'Data distribution'
 
     click_menu_for_elem_in_browser(browser_id, name, tmp_memory)
-    click_option_in_data_row_menu_in_browser(selenium, browser_id,
-                                             option, modals)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
 
     replicate_item(selenium, browser_id, provider, hosts, popups)
@@ -79,8 +78,7 @@ def assert_eviction_done(selenium, browser_id, name, tmp_memory, modals):
     close_option = 'Close'
 
     click_menu_for_elem_in_browser(browser_id, name, tmp_memory)
-    click_option_in_data_row_menu_in_browser(selenium, browser_id,
-                                             option, modals)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
 
     assert_see_history_btn_shown(selenium, browser_id)
@@ -97,8 +95,7 @@ def wt_assert_file_chunks(selenium, browser_id, file_name, desc, tmp_memory,
     modal_name = 'Data distribution'
 
     click_menu_for_elem_in_browser(browser_id, file_name, tmp_memory)
-    click_option_in_data_row_menu_in_browser(selenium, browser_id,
-                                             option, modals)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     _assert_file_chunks(selenium, browser_id, hosts, desc, modals)
     wt_click_on_confirmation_btn_in_modal(selenium, browser_id, 'Close',
@@ -146,8 +143,7 @@ def migrate_file_to_provider(selenium, browser_id, name, tmp_memory, source,
     modal_name = 'Data distribution'
 
     click_menu_for_elem_in_browser(browser_id, name, tmp_memory)
-    click_option_in_data_row_menu_in_browser(selenium, browser_id,
-                                             option, modals)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     migrate_item(selenium, browser_id, source, target, hosts, popups)
     wt_click_on_confirmation_btn_in_modal(selenium, browser_id, 'Close',

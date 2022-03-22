@@ -82,7 +82,7 @@ def consume_token_from_copied_token(selenium, browser_id, oz_page, clipboard,
                'to (harvester|space|inventory) using copied token'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_element_with_copied_token(selenium, browser_id, elem_name, oz_page,
-                                  clipboard, displays, modals):
+                                  clipboard, displays, popups):
     option = 'Tokens'
     button = 'Consume token'
 
@@ -90,7 +90,7 @@ def add_element_with_copied_token(selenium, browser_id, elem_name, oz_page,
     click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button)
     paste_copied_token_into_text_field(selenium, browser_id, oz_page, clipboard,
                                        displays)
-    select_member_from_dropdown(selenium, browser_id, elem_name, modals,
+    select_member_from_dropdown(selenium, browser_id, elem_name, popups,
                                 oz_page)
     click_on_confirm_button_on_tokens_page(selenium, browser_id, oz_page)
 
@@ -568,8 +568,7 @@ def _copy_object_id(displays, clipboard, user, selenium, oz_page, tmp_memory,
     _click_menu_for_elem_somewhere_in_file_browser(selenium, user, name,
                                                    space, tmp_memory, oz_page,
                                                    op_container)
-    click_option_in_data_row_menu_in_browser(selenium, user, option,
-                                             modals)
+    click_option_in_data_row_menu_in_browser(selenium, user, option)
     click_modal_button(selenium, user, button, modal, modals)
     close_modal(selenium, user, modal, modals)
 
