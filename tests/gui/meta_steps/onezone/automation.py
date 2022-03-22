@@ -11,7 +11,8 @@ from tests.gui.steps.modal import _wait_for_modal_to_appear, click_modal_button
 from tests.gui.steps.onezone.automation import assert_workflow_exists, \
     go_to_inventory_subpage, upload_workflow_as_json, confirm_workflow_creation, \
     write_text_into_workflow_name_on_main_workflows_page, \
-    click_add_new_button_in_menu_bar
+    click_add_new_button_in_menu_bar, write_text_into_lambda_form, \
+    assert_lambda_exists, confirm_lambda_creation_or_edition
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.utils.generic import transform, upload_file_path
 from tests.utils.bdd_utils import wt, parsers
@@ -47,3 +48,26 @@ def upload_and_assert_workflow_to_inventory_using_gui(selenium, browser_id,
                             'workflows', oz_page)
 
     assert_workflow_exists(selenium, browser_id, oz_page, workflow, 'sees')
+
+
+@wt(parsers.parse('user of {browser_id} creates "{lambda_name}" lambda from '
+                  '"{docker_image}" docker image in "{inventory}" inventory'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def create_lambda_using_gui(selenium, browser_id, oz_page, lambda_name,
+                            docker_image, inventory):
+    click_on_option_in_the_sidebar(selenium, browser_id, 'Automation', oz_page)
+    go_to_inventory_subpage(selenium, browser_id, inventory,
+                            'lambdas', oz_page)
+    click_add_new_button_in_menu_bar(selenium, browser_id, oz_page,
+                                     'Add new lambda')
+    write_text_into_lambda_form(selenium, browser_id, oz_page,
+                                lambda_name, 'lambda name')
+    write_text_into_lambda_form(selenium, browser_id, oz_page,
+                                docker_image, 'docker image')
+
+    confirm_lambda_creation_or_edition(selenium, browser_id, oz_page, 'lambda')
+
+    go_to_inventory_subpage(selenium, browser_id, inventory,
+                            'lambdas', oz_page)
+
+    assert_lambda_exists(selenium, browser_id, oz_page, lambda_name)
