@@ -1,4 +1,4 @@
-"""Utils and fixtures to facilitate operations on Upload workflow modal.
+"""Utils and fixtures to facilitate operations on Duplicate revision modal.
 """
 
 __author__ = "Rafał Widziszewski"
@@ -7,12 +7,14 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 from tests.gui.utils.common.modals.modal import Modal
-from tests.gui.utils.core.web_elements import (NamedButton)
+from tests.gui.utils.core.web_elements import (NamedButton, WebElement)
 
 
-class UploadWorkflow(Modal):
+class DuplicateRevision(Modal):
     apply = NamedButton('button', text='Apply')
     cancel = NamedButton('button', text='Cancel')
+    dropdown_menu = WebElement('.dropdown-field-trigger')
 
     def __str__(self):
-        return 'Upload workflow modal'
+        return 'Duplicate revision modal'
+

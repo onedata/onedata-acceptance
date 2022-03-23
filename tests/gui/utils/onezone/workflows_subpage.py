@@ -44,14 +44,34 @@ class WorkflowVisualiser(PageObject):
                                    '.tag-item', cls=Store)
 
 
+class RevisionDetails(PageObject):
+    description = Input('.textarea-field .form-control')
+
+
+class NavigationTab(Element):
+    name = id = Label('.nav-link')
+
+
 class TaskAddForm(PageObject):
     task_name = WebItem('.name-field .text-like-field', cls=EditBox)
     create_button = Button('.btn-primary')
 
 
-class Workflow(Element):
-    name = id = Label('.text-like-field')
+class Revision(Element):
+    name = id = Label('.description')
     menu_button = Button('.one-menu-toggle')
+
+
+class Workflow(Element):
+    name = id = Label('.name-field .text-like-field')
+
+    menu_button = Button('.workflow-actions-trigger')
+    create_new_revision = Button('.create-atm-workflow-schema-revision-action'
+                                 '-trigger')
+    show_revisions_button = Button('.expand-button')
+    revision_list = WebItemsSequence('.revisions-table '
+                                     '.revisions-table-revision-entry',
+                                     cls=Revision)
 
 
 class WorkflowsPage(PageObject):
@@ -59,11 +79,22 @@ class WorkflowsPage(PageObject):
                                      ' .atm-workflow-schemas-list-entry',
                                      cls=Workflow)
 
+    navigation_tab = WebItemsSequence('.nav-tabs li', cls=NavigationTab)
+
     workflow_visualiser = WebItem('.workflow-visualiser',
                                   cls=WorkflowVisualiser)
+
+    revision_details = WebItem('.revision-details-form', cls=RevisionDetails)
 
     workflow_name = WebItem('.name-field .text-like-field', cls=InputBox)
 
     create_button = NamedButton('.btn', text='Create')
 
     task_form = WebItem('.task-form-container', cls=TaskAddForm)
+
+    workflow_name_input = WebItem('.name-field .text-like-field', cls=EditBox)
+
+    workflow_save_button = Button('.btn-save')
+
+
+

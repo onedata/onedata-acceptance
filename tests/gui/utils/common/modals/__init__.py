@@ -48,6 +48,7 @@ from .datasets_modals.reattach_dataset import ReattachDataset
 from .workflows_modals.upload_workflow import UploadWorkflow
 from .workflows_modals.create_new_store import CreateNewStore
 from .workflows_modals.create_new_lane import CreateNewLane
+from .duplicate_revision import DuplicateRevision
 
 
 class Modals(object):
@@ -120,6 +121,7 @@ class Modals(object):
     rest_api_modal = WebItem('.modal-dialog', cls=RESTApiModal)
     configure_web_cert = WebItem('#configure-web-cert-modal',
                                  cls=ConfigureWebCertModal)
+    duplicate_revision = WebItem('.modal-dialog', cls=DuplicateRevision)
 
     def __init__(self, driver):
         self.driver = driver

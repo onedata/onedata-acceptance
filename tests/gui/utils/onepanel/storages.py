@@ -17,6 +17,7 @@ from tests.gui.utils.core.web_elements import (
     WebItemsSequence, Label, NamedButton, Input, WebItem, WebElement, Button,
     WebElementsSequence)
 from tests.gui.utils.onezone.common import InputBox
+from tests.utils.utils import repeat_failed
 
 
 class POSIX(PageObject):
@@ -118,8 +119,11 @@ class StorageContentPage(PageObject):
     add_storage = NamedButton('button', text='Add storage')
     cancel = NamedButton('button', text='Cancel')
 
+    @repeat_failed(timeout=15)
     def click_modify_button_of_storage(self, driver, storage_name):
         for index, record in enumerate(self.storages):
             if record.name == storage_name:
                 driver.execute_script(f'$(".btn-default")[{index}].click();')
+                err_msg = f'{record.name} is not expanded after being clicked'
+                assert record.is_expanded(), err_msg
 
