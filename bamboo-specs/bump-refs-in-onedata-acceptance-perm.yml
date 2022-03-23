@@ -4,8 +4,6 @@ plan:
 plan-permissions:
 - users:
   - plgdutka
-  - plgcwiertni
-  - plgktrzepla
   groups:
   - plggveildev
   permissions:
