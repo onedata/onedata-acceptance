@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 from tests.gui.utils.core.web_elements import NamedButton
-from ..modals.modal import Modal
+from ..modal import Modal
 
 
 class DeleteModal(Modal):
