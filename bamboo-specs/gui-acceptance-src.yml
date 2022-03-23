@@ -4,6 +4,48 @@ plan:
   key: GAOT
   name: gui acceptance src
   description: GUI acceptance tests using environment deployed from sources
+variables:
+  # OC_IMAGE_OVERRIDE: null
+  # OP_IMAGE_OVERRIDE: null
+  # OZ_IMAGE_OVERRIDE: null
+  version_major: '2'
+  version_minor: '1'
+repositories:
+- onedata-acceptance:
+    scope: global
+branches:
+  create: manually
+  delete:
+    after-deleted-days: never
+    after-inactive-days: 30
+  link-to-jira: true
+notifications:
+- events:
+  - plan-failed
+  recipients:
+  - users:
+    - plgjliput
+labels: []
+triggers: []
+dependencies:
+  require-all-stages-passing: true
+  enabled-for-branches: true
+  block-strategy: none
+  plans: []
+other:
+  concurrent-build-plugin: '3'
+  all-other-apps:
+    custom:
+      com.atlassian.bamboo.plugin.hungbuildkiller:
+        stopped.enabled: 'true'
+        add_comment_when_hung.enabled: 'true'
+      buildExpiryConfig:
+        period: weeks
+        expiryTypeBuildLog: 'true'
+        enabled: 'true'
+        expiryTypeArtifact: 'true'
+        duration: '1'
+
 stages:
 # - Build:
 #     manual: false
@@ -2950,49 +2992,3 @@ Chrome oneprovider ACL files:
   - kubeadm
   - onedata
   artifact-subscriptions: []
-variables:
-  # OC_IMAGE_OVERRIDE: null
-  # OP_IMAGE_OVERRIDE: null
-  # OZ_IMAGE_OVERRIDE: null
-  version_major: '2'
-  version_minor: '1'
-repositories:
-- onedata-acceptance:
-    scope: global
-branches:
-  create: manually
-  delete:
-    after-deleted-days: never
-    after-inactive-days: 30
-  link-to-jira: true
-notifications:
-# - events:
-#   - plan-completed
-#   recipients:
-# Notification recipient com.atlassian.bamboo.plugins.bamboo-slack:recipient.slack is not supported yet
-- events:
-  - plan-failed
-  recipients:
-  - users:
-    - plgjliput
-labels: []
-triggers:
-  - cron: 0 0 1 1 1 ? *
-dependencies:
-  require-all-stages-passing: true
-  enabled-for-branches: true
-  block-strategy: none
-  plans: []
-other:
-  concurrent-build-plugin: '3'
-  all-other-apps:
-    custom:
-      com.atlassian.bamboo.plugin.hungbuildkiller:
-        stopped.enabled: 'true'
-        add_comment_when_hung.enabled: 'true'
-      buildExpiryConfig:
-        period: weeks
-        expiryTypeBuildLog: 'true'
-        enabled: 'true'
-        expiryTypeArtifact: 'true'
-        duration: '1'
