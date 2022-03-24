@@ -16,6 +16,7 @@ from ..core.web_elements import WebItem
 from .dataset_browser import DatasetBrowser
 from .archive_file_browser import ArchiveFileBrowser
 from .archive_browser import ArchiveBrowser
+from .archive_container import ArchiveContainer
 
 
 class OPLoggedIn(object):
@@ -27,6 +28,7 @@ class OPLoggedIn(object):
                                               '.dataset-archives-browser'
                                               ' .filesystem-browser')
     archive_browser = ArchiveBrowser('.content-space-datasets .archive-browser')
+    archive_container = ArchiveContainer('.archive-browser-container')
 
     def __init__(self, driver):
         self.web_elem = self.driver = driver

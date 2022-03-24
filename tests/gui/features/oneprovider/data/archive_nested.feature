@@ -17,7 +17,9 @@ Feature: Nested archives operations
                     - dir1:
                       - dir2:
                         - dir3:
-                          - file1: 100
+                          - dir4:
+                            - dir5:
+                              - file1: 100
                     - dir4:
                       - file2: 100
 
@@ -30,7 +32,7 @@ Feature: Nested archives operations
     When user of browser creates dataset for item "dir1" in "space1"
     And user of browser goes to "/dir1/dir2" in file browser
     And user of browser creates dataset for item "dir3" in "space1"
-    And user of browser clicks and presses enter on item named "dir3" in file browser
+    And user of browser goes to "/dir3/dir4/dir5" in file browser
     And user of browser creates dataset for item "file1" in "space1"
     And user of browser succeeds to create archive for item "dir1" in "space1" with following configuration:
         description: first archive
@@ -42,7 +44,7 @@ Feature: Nested archives operations
     And user of browser sees archive file browser in archives tab in Oneprovider page
     And user of browser goes to "/dir1/dir2" in archive file browser
     And user of browser sees symlink status tag for "dir3" in archive file browser
-    And user of browser clicks and presses enter on item named "dir3" in archive file browser
+    And user of browser goes to "/dir3/dir4/dir5" in archive file browser
     And user of browser sees symlink status tag for "file1" in archive file browser
 
 
@@ -77,7 +79,7 @@ Feature: Nested archives operations
     And user of browser creates dataset for item "dir2" in "space1"
     And user of browser clicks and presses enter on item named "dir2" in file browser
     And user of browser creates dataset for item "dir3" in "space1"
-    And user of browser clicks and presses enter on item named "dir3" in file browser
+    And user of browser goes to "/dir3/dir4/dir5" in file browser
     And user of browser creates dataset for item "file1" in "space1"
 
     And user of browser succeeds to create archive for item "dir1" in "space1" with following configuration:
@@ -95,5 +97,7 @@ Feature: Nested archives operations
             - dir1:
               - dir2:
                 - dir3:
-                  - file1: 100
+                  - dir4:
+                    - dir5:
+                      - file1: 100
 
