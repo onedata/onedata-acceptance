@@ -178,7 +178,7 @@ def click_on_option_in_menu(selenium, browser_id, button, oz_page, popups):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_confirm_or_cancel_button_on_leave_space_page(selenium, browser_id,
                                                        button_name, modals):
-    getattr(modals(selenium[browser_id]).leave_space, button_name.lower())()
+    getattr(modals(selenium[browser_id]).leave_modal, button_name.lower())()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on '

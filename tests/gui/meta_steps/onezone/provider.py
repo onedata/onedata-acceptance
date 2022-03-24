@@ -44,7 +44,7 @@ def assert_provider_has_name_and_hostname_in_oz_gui(selenium, user, oz_page,
     if test_domain:
         assert_provider_hostname_matches_test_hostname(selenium, user,
                                                        domain_provider,
-                                                       hosts, modals)
+                                                       hosts)
     else:
         assert_provider_hostname_matches_known_domain(selenium, user,
                                                       domain_provider,

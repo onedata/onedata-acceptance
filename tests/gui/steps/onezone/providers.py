@@ -14,7 +14,7 @@ import requests
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import parsers, wt, given
-from tests.utils.environment_utils import run_kubectl_command
+from tests.gui.utils.common.popups import Popups as popups
 from tests.utils.onenv_utils import run_onenv_command
 from tests.utils.utils import repeat_failed
 from tests.utils.rest_utils import get_provider_rest_path, http_get
@@ -72,12 +72,12 @@ def assert_provider_hostname_matches_known_domain(selenium, browser_id,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_provider_hostname_matches_test_hostname(selenium, browser_id,
                                                    provider, hosts, oz_page,
-                                                   displays, clipboard, modals):
+                                                   displays, clipboard):
     driver = selenium[browser_id]
     expected_domain = "{}.test".format(hosts[provider]['hostname'])
     page = oz_page(driver)['providers']
     page.elements_list[0]()
-    _click_copy_hostname(driver, modals)
+    _click_copy_hostname(driver, popups)
     displayed_domain = clipboard.paste(display=displays[browser_id])
     assert displayed_domain == expected_domain, \
         'displayed {} provider hostname instead ' \

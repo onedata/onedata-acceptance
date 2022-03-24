@@ -74,13 +74,13 @@ def create_another_share(selenium, browser_id, share_name, modals):
 @wt(parsers.parse('user of {browser_id} removes current share'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def remove_current_share(selenium, browser_id, op_container, modals,
-                         tmp_memory):
+                         tmp_memory, popups):
     option = 'Remove'
     modal_name = 'Remove share'
     button = 'Remove'
 
     click_menu_button_on_shares_page(selenium, browser_id, op_container)
-    click_option_in_share_row_menu(selenium, browser_id, option, modals)
+    click_option_in_share_row_menu(selenium, browser_id, option, popups)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     click_modal_button(selenium, browser_id, button, modal_name, modals)
 
@@ -148,14 +148,13 @@ def copy_url_of_share(selenium, browser_id, share_name, item_name, modals,
                   ' in single share view'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def rename_share_from_single_view(selenium, browser_id, new_name, op_container,
-                                  modals, tmp_memory):
+                                  modals, tmp_memory, popups):
     option = 'Rename'
     modal_name = 'Rename share'
     button = 'Rename'
 
     click_menu_button_on_shares_page(selenium, browser_id, op_container)
-    click_option_in_data_row_menu_in_share_file_browser(selenium, browser_id,
-                                                        option, modals)
+    click_option_in_share_row_menu(selenium, browser_id, option, popups)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     write_name_into_text_field_in_modal(selenium, browser_id, new_name,
                                         modal_name, modals)

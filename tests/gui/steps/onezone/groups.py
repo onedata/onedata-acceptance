@@ -12,6 +12,7 @@ from tests.utils.bdd_utils import wt, parsers
 from tests.gui.utils.common.modals import Modals as modals
 from tests.gui.utils.generic import parse_seq, transform
 from tests.gui.conftest import WAIT_FRONTEND
+from selenium.webdriver.common.keys import Keys
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 
 
