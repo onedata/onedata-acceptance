@@ -1,0 +1,941 @@
+version: 2
+plan:
+  project-key: VFS
+  key: MAOST
+  name: mixed acceptance src
+  description: Acceptance tests using different clients concurrently. Environment deployed from sources.
+variables:
+  version_major: '2'
+  version_minor: '1'
+repositories:
+- onedata-acceptance:
+    scope: global
+branches:
+  create: manually
+  delete:
+    after-deleted-days: never
+    after-inactive-days: 30
+  link-to-jira: true
+notifications:
+- events:
+  - plan-failed
+  recipients:
+  - users:
+    - plgjliput
+labels: []
+triggers: []
+dependencies:
+  require-all-stages-passing: true
+  enabled-for-branches: true
+  block-strategy: none
+  plans: []
+other:
+  concurrent-build-plugin: '3'
+  all-other-apps:
+    custom:
+      com.atlassian.bamboo.plugin.hungbuildkiller:
+        stopped.enabled: 'true'
+        add_comment_when_hung.enabled: 'true'
+      buildExpiryConfig:
+        period: weeks
+        expiryTypeBuildLog: 'true'
+        enabled: 'true'
+        expiryTypeArtifact: 'true'
+        duration: '1'
+stages:
+- Acceptance Test:
+    manual: false
+    final: false
+    jobs:
+    - Chrome QoS tests
+    - Chrome create file tests
+    - Chrome storage sync
+    - Chrome ACL one entry
+    - Chrome permission POSIX multi tests
+    - Chrome spaces basic tests
+    - Chrome onepanel tests
+    - Chrome permission POSIX tests
+    - Chrome files movement tests
+    - Chrome directories movement tests
+    - Chrome files multi tests
+    - Chrome access tokens path caveats
+    - Chrome nested directories create
+    - Chrome single directory tests
+    - Chrome files set metadata
+    - Chrome remove file tests
+    - Chrome directories multi tests
+    - Chrome groups basic tests
+    - Chrome single directory tests 2
+    - Chrome archives tests
+    - Chrome archive privileges
+    - Chrome directories set metadata
+    - Chrome nested directories remove
+    - Chrome ACL two entries
+    - Chrome tokens tests
+    - Chrome access tokens
+    - Chrome file content tests
+    - Chrome files remove metadata
+    - Chrome rename file tests
+    - Chrome datasets tests
+    - Chrome files times tests
+    - Chrome access tokens id caveats
+    - Chrome directories times tests
+    - Chrome directories remove metadata
+Chrome QoS tests:
+  key: CQT
+  other: &common-opts
+    clean-working-dir: true
+    all-other-apps:
+      custom:
+        auto: {}
+        clover:
+          useLocalLicenseKey: 'true'
+        buildHangingConfig.enabled: 'false'
+  tasks:
+  - script: &clear-env
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - curl ${bamboo.OnedataFinalTasksURL} | bash -
+      description: Clear env
+  - script: &restart-minikube
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - sudo ${HOME}/restart_minikube.sh
+      description: Restart minikube
+  - checkout: &checkout
+      path: onedata-acceptance
+      force-clean-build: 'true'
+      description: Checkout Default Repository
+  - script: &init-submodules
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - |-
+        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
+        git remote -v
+        make submodules
+      working-dir: onedata-acceptance
+      description: Init submodules
+  - script: &download-artifacts
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
+      working-dir: onedata-acceptance
+      description: Download artifacts
+  - script: &build-swaggers
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make build_swaggers
+      working-dir: onedata-acceptance
+      description: Build swaggers
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make SUITE=test_qos TIMEOUT=600 test_mixed_src
+      working-dir: onedata-acceptance
+      description: Run acceptance mixed tests in Chrome
+  final-tasks:
+  - test-parser: &parse-test-results
+      type: junit
+      ignore-time: 'false'
+      test-results: onedata-acceptance/test-reports/results*.xml
+      description: Parse test results
+  - script: &pack-logs
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - |-
+        cp onedata-acceptance/test-reports/*.xml onedata-acceptance/tests/mixed/logs
+        cp onedata-acceptance/one_env/sources_info.yaml onedata-acceptance/tests/mixed/logs
+        mv onedata-acceptance/tests/mixed/logs/report.* onedata-acceptance/tests/mixed/logs/gui_report
+        mv onedata-acceptance/tests/mixed/logs/gui_report/images.yaml onedata-acceptance/tests/mixed/logs
+      description: Pack logs
+  - script: &clear-env-in-onedata
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - curl ${bamboo.OnedataFinalTasksURL} | bash -
+      working-dir: onedata-acceptance
+      description: Clear env
+  artifacts: &artifacts
+  - name: report
+    location: onedata-acceptance/tests/mixed/logs/
+    pattern: '**/*.*'
+    shared: false
+    required: false
+  - name: onezone_images
+    location: onedata-acceptance/onezone_images
+    pattern: docker-dev-build-list.json
+    shared: false
+    required: false
+  - name: oneprovider_images
+    location: onedata-acceptance/oneprovider_images
+    pattern: docker-dev-build-list.json
+    shared: false
+    required: false
+  requirements: &requirements
+  - kubeadm
+  artifact-subscriptions: []
+Chrome create file tests:
+  key: CCFT
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make SUITE=test_create_file TIMEOUT=600 test_mixed_src
+      working-dir: onedata-acceptance
+      description: Run acceptance mixed tests in Chrome
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome storage sync:
+  key: CSS
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make SUITE=test_storage_sync TIMEOUT=600 test_mixed_src
+      working-dir: onedata-acceptance
+      description: Run acceptance mixed tests in Chrome
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome ACL one entry:
+  key: CAOE
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make SUITE=test_acl_one_entry TIMEOUT=600 test_mixed_src
+      working-dir: onedata-acceptance
+      description: Run acceptance mixed tests in Chrome
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome permission POSIX multi tests:
+  key: CPPMT
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make SUITE=test_permission_posix_multi ENV_FILE=1oz_1op_2oc TIMEOUT=600 test_mixed_src
+      working-dir: onedata-acceptance
+      description: Run acceptance mixed tests in Chrome
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome spaces basic tests:
+  key: STIC
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make SUITE=test_spaces_basic TIMEOUT=600 test_mixed_src
+      working-dir: onedata-acceptance
+      description: Run acceptance mixed tests in Chrome
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome onepanel tests:
+  key: COT
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make SUITE=test_onepanel_basic TIMEOUT=600 test_mixed_src
+      working-dir: onedata-acceptance
+      description: Run acceptance mixed tests in Chrome
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome permission POSIX tests:
+  key: CPPT
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make SUITE=test_permission_posix TIMEOUT=600 test_mixed_src
+      working-dir: onedata
+      description: Run acceptance mixed tests in Chrome
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome files movement tests:
+  key: CFMT2
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make SUITE=test_files_movement TIMEOUT=600 test_mixed_src
+      working-dir: onedata-acceptance
+      description: Run acceptance mixed tests in Chrome
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome directories movement tests:
+  key: CDMT2
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make SUITE=test_directories_movement TIMEOUT=600 test_mixed_src
+      working-dir: onedata-acceptance
+      description: Run acceptance mixed tests in Chrome
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome files multi tests:
+  key: CFMT3
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make SUITE=test_files_multi ENV_FILE=1oz_1op_2oc TIMEOUT=600 test_mixed_src
+      working-dir: onedata-acceptance
+      description: Run acceptance mixed tests in Chrome
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome access tokens path caveats:
+  key: CATPC
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make SUITE=test_access_tokens_path_caveats TIMEOUT=600 test_mixed_src
+      working-dir: onedata-acceptance
+      description: Run acceptance mixed tests in Chrome
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome nested directories create:
+  key: CNDC
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make SUITE=test_nested_directories_create TIMEOUT=600 test_mixed_src
+      working-dir: onedata-acceptance
+      description: Run acceptance mixed tests in Chrome
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome single directory tests:
+  key: CSDT
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make SUITE=test_single_directory TIMEOUT=600 test_mixed_src
+      working-dir: onedata-acceptance
+      description: Run acceptance mixed tests in Chrome
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome files set metadata:
+  key: CFSM
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make SUITE=test_files_set_metadata TIMEOUT=600 test_mixed_src
+      working-dir: onedata-acceptance
+      description: Run acceptance mixed tests in Chrome
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome remove file tests:
+  key: CRFT
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make SUITE=test_remove_file TIMEOUT=600 test_mixed_src
+      working-dir: onedata-acceptance
+      description: Run acceptance mixed tests in Chrome
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome directories multi tests:
+  key: CDMT3
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make SUITE=test_directories_multi ENV_FILE=1oz_1op_2oc TIMEOUT=600 test_mixed_src
+      working-dir: onedata-acceptance
+      description: Run acceptance mixed tests in Chrome
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome groups basic tests:
+  key: CGBT
+  other: *common-opts
+  tasks:
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - |-
+        ONE_ENV_DEPLOYMENT_DIR="/home/bamboo/.one-env"
+        docker run -v ${ONE_ENV_DEPLOYMENT_DIR}:${ONE_ENV_DEPLOYMENT_DIR} \
+                   -v ${bamboo.build.working.directory}:${bamboo.build.working.directory} \
+                   alpine sh -c "rm -rf ${ONE_ENV_DEPLOYMENT_DIR}/* ${bamboo.build.working.directory}/onedata"
+      description: Clear env
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make SUITE=test_groups_basic TIMEOUT=600 test_mixed_src
+      working-dir: onedata-acceptance
+      description: Run acceptance mixed tests in Chrome
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome single directory tests 2:
+  key: CSDT2
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make SUITE=test_single_directory2 TIMEOUT=600 test_mixed_src
+      working-dir: onedata-acceptance
+      description: Run acceptance mixed tests in Chrome
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome archives tests:
+  key: CAT2
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make SUITE=test_archives TIMEOUT=600 test_mixed_src
+      working-dir: onedata-acceptance
+      description: Run acceptance mixed tests in Chrome
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome archive privileges:
+  key: CAP
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make SUITE=test_archive_privileges TIMEOUT=600 test_mixed_src
+      working-dir: onedata-acceptance
+      description: Run acceptance mixed tests in Chrome
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome directories set metadata:
+  key: CDSM
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make SUITE=test_directories_set_metadata TIMEOUT=600 test_mixed_src
+      working-dir: onedata-acceptance
+      description: Run acceptance mixed tests in Chrome
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome nested directories remove:
+  key: CNDR
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make SUITE=test_nested_directories_remove TIMEOUT=600 test_mixed_src
+      working-dir: onedata-acceptance
+      description: Run acceptance mixed tests in Chrome
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome ACL two entries:
+  key: CATE
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make SUITE=test_acl_two_entries TIMEOUT=600 test_mixed_src
+      working-dir: onedata-acceptance
+      description: Run acceptance mixed tests in Chrome
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome tokens tests:
+  key: CTT
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make SUITE=test_tokens TIMEOUT=600 test_mixed_src
+      working-dir: onedata-acceptance
+      description: Run acceptance mixed tests in Chrome
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome access tokens:
+  key: CATC
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make SUITE=test_access_tokens TIMEOUT=600 test_mixed_src
+      working-dir: onedata-acceptance
+      description: Run acceptance mixed tests in Chrome
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome file content tests:
+  key: CFCT
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make SUITE=test_file_content TIMEOUT=600 test_mixed_src
+      working-dir: onedata-acceptance
+      description: Run acceptance mixed tests in Chrome
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome files remove metadata:
+  key: CFRM
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make SUITE=test_files_remove_metadata TIMEOUT=600 test_mixed_src
+      working-dir: onedata-acceptance
+      description: Run acceptance mixed tests in Chrome
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome rename file tests:
+  key: CRFT1
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make SUITE=test_rename_file TIMEOUT=600 test_mixed_src
+      working-dir: onedata-acceptance
+      description: Run acceptance mixed tests in Chrome
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome datasets tests:
+  key: CDT
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make SUITE=test_dataset TIMEOUT=600 test_mixed_src
+      working-dir: onedata-acceptance
+      description: Run acceptance mixed tests in Chrome
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome files times tests:
+  key: CFTT
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make SUITE=test_files_times TIMEOUT=600 test_mixed_src
+      working-dir: onedata-acceptance
+      description: Run acceptance mixed tests in Chrome
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome access tokens id caveats:
+  key: CATIC
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make SUITE=test_access_tokens_id_caveats TIMEOUT=600 test_mixed_src
+      working-dir: onedata-acceptance
+      description: Run acceptance mixed tests in Chrome
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome directories times tests:
+  key: CDTT
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make SUITE=test_directories_times TIMEOUT=600 test_mixed_src
+      working-dir: onedata-acceptance
+      description: Run acceptance mixed tests in Chrome
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome directories remove metadata:
+  key: CDRM
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - make SUITE=test_directories_remove_metadata TIMEOUT=600 test_mixed_src
+      working-dir: onedata-acceptance
+      description: Run acceptance mixed tests in Chrome
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-in-onedata
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
