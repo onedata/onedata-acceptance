@@ -4,12 +4,12 @@ plan:
   key: GAOT
   name: gui acceptance src
   description: GUI acceptance tests using environment deployed from sources
-variables:
+# Uncomment and set the following variables to override docker
+# images to be used
+# variables:
   # OC_IMAGE_OVERRIDE: null
   # OP_IMAGE_OVERRIDE: null
   # OZ_IMAGE_OVERRIDE: null
-  version_major: '2'
-  version_minor: '1'
 repositories:
 - onedata-acceptance:
     scope: global
@@ -192,16 +192,6 @@ Chrome POSIX tests multiuser:
       pattern: '**/*.*'
       shared: false
       required: false
-    # - name: onezone_images
-    #   location: onedata-acceptance/onezone_images
-    #   pattern: docker-dev-build-list.json
-    #   shared: false
-    #   required: false
-    # - name: oneprovider_images
-    #   location: onedata-acceptance/oneprovider_images
-    #   pattern: docker-dev-build-list.json
-    #   shared: false
-    #   required: false
   requirements: &requirements
   - kubeadm
   - onedata
