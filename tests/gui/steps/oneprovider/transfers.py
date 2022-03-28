@@ -14,7 +14,6 @@ from selenium.common.exceptions import StaleElementReferenceException
 
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.utils.common.modals import Modals as modals
-from tests.gui.utils.common.popups import Popups as popups
 from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import wt, parsers
@@ -91,7 +90,7 @@ def assert_non_zero_transfer_speed(selenium, browser_id, op_container):
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
-def _expand_dropdown_in_migrate_record(driver):
+def _expand_dropdown_in_migrate_record(driver, popups):
     data_distribution_modal = modals(driver).data_distribution
     data_distribution_modal.migrate.expand_dropdown()
     assert len(popups(driver).migrate_dropdown.providers_list) > 0
@@ -116,7 +115,7 @@ def migrate_item(selenium, browser_id, source, target, hosts, popups):
     popups(driver).data_distribution_popup.menu[menu_option]()
 
     if not check_provider_in_migrate_dropdown(driver, target_name):
-        _expand_dropdown_in_migrate_record(driver)
+        _expand_dropdown_in_migrate_record(driver, popups)
         popups(driver).migrate_dropdown.providers_list[target_name].click()
 
     data_distribution_modal.migrate.migrate_button()

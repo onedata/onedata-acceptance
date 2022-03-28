@@ -27,13 +27,14 @@ from tests.gui.steps.oneprovider.browser import (
                   ' "{item_name}" directory'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_share(selenium, browser_id, share_name, item_name, tmp_memory,
-                 modals):
+                 modals, popups):
     option = 'Share'
     modal_name = 'Share directory'
     button = 'Create'
 
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
-    click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
+                                             popups)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     write_name_into_text_field_in_modal(selenium, browser_id, share_name,
                                         modal_name, modals)

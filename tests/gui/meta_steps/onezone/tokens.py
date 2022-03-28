@@ -18,7 +18,6 @@ from tests.gui.steps.oneprovider.browser import (
     click_option_in_data_row_menu_in_browser)
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.steps.onezone.tokens import *
-from tests.gui.steps.onezone.tokens import click_option_for_token_row_menu
 from tests.utils.bdd_utils import wt, parsers, given
 from tests.utils.utils import repeat_failed
 
@@ -99,9 +98,10 @@ def add_element_with_copied_token(selenium, browser_id, elem_name, oz_page,
                   '"{elem_name}" {elem}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def result_to_consume_token_for_elem(selenium, browser_id, oz_page, elem_name,
-                                     result, clipboard, displays, modals):
+                                     result, clipboard, displays, modals,
+                                     popups):
     add_element_with_copied_token(selenium, browser_id, elem_name, oz_page,
-                                  clipboard, displays, modals)
+                                  clipboard, displays, popups)
     _result_to_consume_token(selenium, browser_id, result, modals)
 
 
@@ -560,7 +560,7 @@ def create_token_with_object_id(displays, clipboard, user, selenium, oz_page,
 
 
 def _copy_object_id(displays, clipboard, user, selenium, oz_page, tmp_memory,
-                    modals, name, space, op_container):
+                    modals, name, space, op_container, popups):
     option = 'Information'
     button = 'File ID'
     modal = 'File details'
@@ -568,7 +568,7 @@ def _copy_object_id(displays, clipboard, user, selenium, oz_page, tmp_memory,
     _click_menu_for_elem_somewhere_in_file_browser(selenium, user, name,
                                                    space, tmp_memory, oz_page,
                                                    op_container)
-    click_option_in_data_row_menu_in_browser(selenium, user, option)
+    click_option_in_data_row_menu_in_browser(selenium, user, option, popups)
     click_modal_button(selenium, user, button, modal, modals)
     close_modal(selenium, user, modal, modals)
 
@@ -585,7 +585,7 @@ def create_token_with_object_id(displays, clipboard, user, selenium, oz_page,
     option = 'Tokens'
 
     _copy_object_id(displays, clipboard, user, selenium, oz_page, tmp_memory,
-                    modals, name, space, op_container)
+                    modals, name, space, op_container, popups)
 
     object_id = tmp_memory["object_id"]
     config = (f'name: access_token\ntype: access\ncaveats:\n  '

@@ -12,7 +12,6 @@ from tests.gui.conftest import (
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import wt, parsers, given
 from tests.utils.utils import repeat_failed
-from tests.gui.utils.common.popups import Popups as popups
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -98,7 +97,7 @@ def click_on_confirm_button_on_tokens_page(selenium, browser_id, oz_page):
 @wt(parsers.parse('user of {browser_id} chooses "{member_name}" {type} '
                   'from dropdown on tokens page'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def select_member_from_dropdown(selenium, browser_id, member_name, modals,
+def select_member_from_dropdown(selenium, browser_id, member_name, popups,
                                 oz_page):
     driver = selenium[browser_id]
 

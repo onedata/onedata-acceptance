@@ -55,13 +55,14 @@ def navigate_to_tab_in_op_using_gui(selenium, user, oz_page, provider,
 
 @wt(parsers.re('user of (?P<browser_id>.*) replicates "(?P<name>.*)" to '
                'provider "(?P<provider>.*)"'))
-def replicate_file_to_provider(selenium, browser_id, name, tmp_memory,
-                               provider, op_container, hosts, modals, popups):
+def replicate_file_to_provider(selenium, browser_id, name, tmp_memory, provider,
+                               hosts, popups):
     option = 'Data distribution'
     modal_name = 'Data distribution'
 
     click_menu_for_elem_in_browser(browser_id, name, tmp_memory)
-    click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
+                                             popups)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
 
     replicate_item(selenium, browser_id, provider, hosts, popups)
@@ -72,13 +73,14 @@ def replicate_file_to_provider(selenium, browser_id, name, tmp_memory,
 
 @wt(parsers.parse('user of {browser_id} waits for "{name}" file eviction '
                   'to finish'))
-def assert_eviction_done(selenium, browser_id, name, tmp_memory, modals):
+def assert_eviction_done(selenium, browser_id, name, tmp_memory, popups):
     option = 'Data distribution'
     modal_name = 'Data distribution'
     close_option = 'Close'
 
     click_menu_for_elem_in_browser(browser_id, name, tmp_memory)
-    click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
+                                             popups)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
 
     assert_see_history_btn_shown(selenium, browser_id)
@@ -90,12 +92,13 @@ def assert_eviction_done(selenium, browser_id, name, tmp_memory, modals):
 @wt(parsers.re('user of (?P<browser_id>.*) sees file chunks for file '
                r'"(?P<file_name>.*)" as follows:\n(?P<desc>(.|\s)*)'))
 def wt_assert_file_chunks(selenium, browser_id, file_name, desc, tmp_memory,
-                          op_container, hosts, modals):
+                          op_container, hosts, modals, popups):
     option = 'Data distribution'
     modal_name = 'Data distribution'
 
     click_menu_for_elem_in_browser(browser_id, file_name, tmp_memory)
-    click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
+                                             popups)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     _assert_file_chunks(selenium, browser_id, hosts, desc, modals)
     wt_click_on_confirmation_btn_in_modal(selenium, browser_id, 'Close',
@@ -138,12 +141,13 @@ def create_directory(selenium, browser_id, name, tmp_memory,
 @wt(parsers.re('user of (?P<browser_id>.*) migrates "(?P<name>.*)" from '
                'provider "(?P<source>.*)" to provider "(?P<target>.*)"'))
 def migrate_file_to_provider(selenium, browser_id, name, tmp_memory, source,
-                             target, op_container, hosts, modals, popups):
+                             target, hosts, popups):
     option = 'Data distribution'
     modal_name = 'Data distribution'
 
     click_menu_for_elem_in_browser(browser_id, name, tmp_memory)
-    click_option_in_data_row_menu_in_browser(selenium, browser_id, option)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
+                                             popups)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     migrate_item(selenium, browser_id, source, target, hosts, popups)
     wt_click_on_confirmation_btn_in_modal(selenium, browser_id, 'Close',

@@ -105,7 +105,7 @@ def add_group_to_cluster(selenium, browser_id, oz_page, onepanel, hosts,
                                          onepanel, popups)
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id,
                                                       group_name, modals,
-                                                      element_type)
+                                                      element_type, popups)
     click_modal_button(selenium, browser_id, button_name, modal, modals)
 
 

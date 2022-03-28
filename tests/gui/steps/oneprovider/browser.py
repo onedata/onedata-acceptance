@@ -9,7 +9,6 @@ from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 from tests.gui.utils.generic import transform, parse_seq
-from tests.gui.utils.common.popups import Popups as popups
 import time
 
 
@@ -186,7 +185,7 @@ def assert_not_status_tag_for_file_in_browser(browser_id, status_type,
     assert not browser.data[item_name].is_tag_visible(status_type), err_msg
 
 
-def _choose_menu(selenium, browser_id, which_browser):
+def _choose_menu(selenium, browser_id, which_browser, popups):
     if which_browser == 'archive browser':
         return popups(selenium[browser_id]).archive_row_menu
     elif which_browser == 'dataset browser':
@@ -199,8 +198,9 @@ def _choose_menu(selenium, browser_id, which_browser):
                   'in data row menu in {which_browser}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
+                                             popups,
                                              which_browser='file browser'):
-    menu = _choose_menu(selenium, browser_id, which_browser)
+    menu = _choose_menu(selenium, browser_id, which_browser, popups)
     menu.choose_option(option)
 
 
@@ -208,9 +208,9 @@ def click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
                   'in data row menu in {which_browser}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_not_click_option_in_data_row_menu(selenium, browser_id, option,
-                                             which_browser):
+                                             which_browser, popups):
     err_msg = f'user can click on option {option}'
-    menu = _choose_menu(selenium, browser_id, which_browser)
+    menu = _choose_menu(selenium, browser_id, which_browser, popups)
     assert not menu.choose_option(option), err_msg
 
 

@@ -310,7 +310,7 @@ def assert_provider_has_given_name_and_known_hostname_in_oz(client, user,
                                                             provider, host,
                                                             users, hosts,
                                                             selenium, oz_page,
-                                                            modals):
+                                                            popups):
 
     provider_name = hosts[provider_name]['name']
 
@@ -324,6 +324,6 @@ def assert_provider_has_given_name_and_known_hostname_in_oz(client, user,
         from tests.gui.meta_steps.onezone.provider import \
                             assert_provider_has_name_and_hostname_in_oz_gui
         assert_provider_has_name_and_hostname_in_oz_gui(
-            selenium, user, oz_page, provider_name, provider, hosts, modals)
+            selenium, user, oz_page, provider_name, provider, hosts, popups)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))

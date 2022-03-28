@@ -29,7 +29,7 @@ from tests.utils.bdd_utils import parsers, wt
 def assert_provider_has_name_and_hostname_in_oz_gui(selenium, user, oz_page,
                                                     provider_name,
                                                     domain_provider, hosts,
-                                                    modals, with_refresh=False,
+                                                    popups, with_refresh=False,
                                                     test_domain=False):
     option = 'Data'
 
@@ -44,11 +44,11 @@ def assert_provider_has_name_and_hostname_in_oz_gui(selenium, user, oz_page,
     if test_domain:
         assert_provider_hostname_matches_test_hostname(selenium, user,
                                                        domain_provider,
-                                                       hosts)
+                                                       hosts, popups)
     else:
         assert_provider_hostname_matches_known_domain(selenium, user,
                                                       domain_provider,
-                                                      hosts, modals)
+                                                      hosts, popups)
 
 
 def assert_there_is_no_provider_in_oz_gui(selenium, user, oz_page,

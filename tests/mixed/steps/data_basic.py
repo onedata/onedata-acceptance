@@ -176,12 +176,12 @@ def see_item_in_op(client, user, users, result, name, space, host, hosts,
                '"(?P<space>.*)" in (?P<host>.*)'))
 def remove_empty_dir_in_op(client, user, users, result, space, name, hosts,
                            selenium, op_container, tmp_memory, host,
-                           modals, oz_page):
+                           modals, oz_page, popups):
     full_path = '{}/{}'.format(space, name)
     client_lower = client.lower()
     if client_lower == 'web gui':
         remove_item_in_op_gui(selenium, user, name, tmp_memory, op_container, 
-                              'succeds', space, modals, oz_page)
+                              'succeds', space, modals, oz_page, popups)
     elif client_lower == 'rest':
         remove_dir_in_op_rest(user, users, host, hosts, full_path)
     elif 'oneclient' in client_lower:
@@ -197,13 +197,13 @@ def remove_empty_dir_in_op(client, user, users, result, space, name, hosts,
                '(?P<host>.*)'))
 def remove_empty_dir_and_parents_in_op(client, user, users, space, name, hosts,
                                        selenium, op_container, tmp_memory,
-                                       host, modals, oz_page):
+                                       host, modals, oz_page, popups):
     first_path_elem = get_first_path_element(name)
     client_lower = client.lower()
     if client_lower == 'web gui':
         remove_dir_and_parents_in_op_gui(selenium, user, first_path_elem,
                                          tmp_memory, op_container, 'succeds',
-                                         space, modals, oz_page)
+                                         space, modals, oz_page, popups)
     elif client_lower == 'rest':
         remove_dir_in_op_rest(user, users, host, hosts,
                               '{}/{}'.format(space, first_path_elem))
@@ -219,12 +219,12 @@ def remove_empty_dir_and_parents_in_op(client, user, users, space, name, hosts,
                r'\(rm -rf\) named "(?P<name>.*)" in "(?P<space>.*)" in '
                '(?P<host>.*)'))
 def remove_dir_in_op(client, user, users, space, name, hosts, selenium,
-                     op_container, tmp_memory, host, modals, oz_page):
+                     op_container, tmp_memory, host, modals, oz_page, popups):
     full_path = '{}/{}'.format(space, name)
     client_lower = client.lower()
     if client_lower == 'web gui':
         remove_item_in_op_gui(selenium, user, name, tmp_memory, op_container,
-                              'succeds', space, modals, oz_page)
+                              'succeds', space, modals, oz_page, popups)
     elif client_lower == 'rest':
         remove_dir_in_op_rest(user, users, host, hosts, full_path)
     elif 'oneclient' in client_lower:
@@ -240,12 +240,12 @@ def remove_dir_in_op(client, user, users, space, name, hosts, selenium,
                '(?P<host>.*)'))
 def remove_file_in_op(client, user, name, space, host, users, hosts,
                       tmp_memory, selenium, op_container, result,
-                      modals, oz_page):
+                      modals, oz_page, popups):
     full_path = '{}/{}'.format(space, name)
     client_lower = client.lower()
     if client_lower == 'web gui':
         remove_item_in_op_gui(selenium, user, name, tmp_memory, op_container, 
-                              result, space, modals, oz_page)
+                              result, space, modals, oz_page, popups)
     elif client_lower == 'rest':
         remove_file_in_op_rest(user, users, host, hosts, full_path, result)
     elif 'oneclient' in client_lower:
@@ -279,14 +279,14 @@ def remove_file_using_token_in_op(client, user, name, space, host, users, hosts,
                r'in "(?P<space>.*)" in (?P<host>.*)'))
 def rename_item_in_op(client, user, users, space, old_name, new_name,
                       hosts, tmp_memory, host, selenium, op_container, cdmi,
-                      modals, oz_page):
+                      modals, oz_page, popups):
     old_path = '{}/{}'.format(space, old_name)
     new_path = '{}/{}'.format(space, new_name)
     client_lower = client.lower()
     result = 'succeeds'
     if client_lower == 'web gui':
         rename_item(selenium, user, old_name, new_name, tmp_memory,
-                    result, space, modals, oz_page, op_container)
+                    result, space, modals, oz_page, op_container, popups)
     elif client_lower == 'rest':
         move_item_in_op_rest(old_path, new_path, result, cdmi, host, hosts,
                              user, users)
@@ -588,13 +588,14 @@ def assert_directory_structure_in_op(client, selenium, user, op_container, oz_pa
                'in (?P<host>.*)'))
 def set_metadata_in_op(client, selenium, user, tab_name, val, cdmi, op_container,
                        space, path, host, hosts, users, tmp_memory, modals,
-                       oz_page, item):
+                       oz_page, item, popups):
     full_path = '{}/{}'.format(space, path)
     client_lower = client.lower()
     if client_lower == 'web gui':
         tab_name = tab_name.upper() if tab_name != 'basic' else tab_name
         set_metadata_in_op_gui(selenium, user, path, tmp_memory, op_container, 's',
-                               space, tab_name, val, modals, oz_page, item)
+                               space, tab_name, val, modals, oz_page, item,
+                               popups)
     elif client_lower == 'rest':
         set_metadata_in_op_rest(user, users, host, hosts, cdmi, full_path,
                                 tab_name, val)
@@ -613,16 +614,16 @@ def set_metadata_in_op(client, selenium, user, tab_name, val, cdmi, op_container
                '(?P<tab_name>.*) metadata for "(?P<path>.*?)" '
                '(?P<item>file|directory) is '
                '(?P<val>.*) in space "(?P<space>.*)" in (?P<host>.*)'))
-def assert_metadata_in_op(client, selenium, user, tab_name, val, cdmi, op_container,
-                          space, path, host, hosts, users, tmp_memory, item, modals,
-                          oz_page):
+def assert_metadata_in_op(client, selenium, user, tab_name, val, cdmi,
+                          op_container, space, path, host, hosts, users,
+                          tmp_memory, item, modals, oz_page, popups):
     full_path = '{}/{}'.format(space, path)
     client_lower = client.lower()
     if client_lower == 'web gui':
         tab_name = tab_name.upper() if tab_name != 'basic' else tab_name
         assert_metadata_in_op_gui(selenium, user, path, tmp_memory, op_container,
                                   's', space, tab_name, val, modals, oz_page,
-                                  item)
+                                  item, popups)
     elif client_lower == 'rest':
         assert_metadata_in_op_rest(user, users, host, hosts, cdmi,
                                    full_path, tab_name, val)
@@ -640,12 +641,13 @@ def assert_metadata_in_op(client, selenium, user, tab_name, val, cdmi, op_contai
                'in (?P<host>.*)'))
 def remove_all_metadata_in_op(client, selenium, user, users, space, op_container,
                               tmp_memory, path, host, hosts, cdmi, oz_page,
-                              modals, item):
+                              modals, item, popups):
     full_path = '{}/{}'.format(space, path)
     client_lower = client.lower()
     if client_lower == 'web gui':
         remove_all_metadata_in_op_gui(selenium, user, space, op_container,
-                                      tmp_memory, path, oz_page, modals, item)
+                                      tmp_memory, path, oz_page, modals, item,
+                                      popups)
     elif client_lower == 'rest':
         remove_all_metadata_in_op_rest(user, users, host, hosts, cdmi,
                                        full_path)
@@ -664,7 +666,7 @@ def remove_all_metadata_in_op(client, selenium, user, users, space, op_container
                '(?P<host>.*)'))
 def assert_no_such_metadata_in_op(client, selenium, user, users, space, op_container,
                                   tmp_memory, path, host, hosts, cdmi, val,
-                                  tab_name, item, modals, oz_page):
+                                  tab_name, item, modals, oz_page, popups):
     full_path = '{}/{}'.format(space, path)
     client_lower = client.lower()
     if client_lower == 'web gui':
@@ -672,7 +674,7 @@ def assert_no_such_metadata_in_op(client, selenium, user, users, space, op_conta
         assert_such_metadata_not_exist_in_op_gui(selenium, user, path,
                                                  tmp_memory, op_container,
                                                  space, tab_name, val, modals,
-                                                 oz_page, item)
+                                                 oz_page, item, popups)
     elif client_lower == 'rest':
         assert_no_such_metadata_in_op_rest(user, users, host, hosts, cdmi,
                                            full_path, tab_name, val)
@@ -757,5 +759,6 @@ def assert_file_stats(client, user, path, space, users):
 @wt(parsers.parse('using web GUI, {user} sees that {owner} is owner of '
                   '"{file_name}"'))
 def check_file_owner_web_gui(selenium, user, owner, file_name, tmp_memory,
-                             modals):
-    check_file_owner(selenium, user, owner, file_name, tmp_memory, modals)
+                             modals, popups):
+    check_file_owner(selenium, user, owner, file_name, tmp_memory, modals,
+                     popups)

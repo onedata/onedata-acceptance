@@ -15,7 +15,6 @@ from tests.gui.steps.common.miscellaneous import _enter_text
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
-from tests.gui.utils.common.popups import Popups as popups
 
 
 @wt(parsers.parse('user of {browser_id} clicks on {button_name} button '
@@ -150,7 +149,7 @@ def click_button_in_harvester_spaces_page(selenium, browser_id, oz_page,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_element_from_dropdown_in_add_element_modal(selenium, browser_id,
                                                       element_name, modals,
-                                                      element):
+                                                      element, popups):
     driver = selenium[browser_id]
     modal_name = 'add_one_of_elements'
     for _ in range(10):

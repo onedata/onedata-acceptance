@@ -9,7 +9,6 @@ __license__ = ("This software is released under the MIT license cited in "
 
 
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.utils.common.popups import Popups as popups
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 
@@ -26,7 +25,8 @@ def expand_account_settings_in_oz(selenium, browser_id, oz_page):
                r'(?P<option>Logout|Manage account) item in expanded '
                r'settings dropdown in the sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_option_in_account_settings_in_oz(selenium, browser_id, option):
+def click_on_option_in_account_settings_in_oz(selenium, browser_id, option,
+                                              popups):
     driver = selenium[browser_id]
     popups(driver).user_account_menu.options[option].click()
 
