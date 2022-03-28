@@ -43,12 +43,12 @@ def go_to_tab_in_provider(browser_id_list, tab_name, selenium):
 
 
 def navigate_to_tab_in_op_using_gui(selenium, user, oz_page, provider,
-                                    main_menu_tab, hosts, modals):
+                                    main_menu_tab, hosts, popups):
     title = selenium[user].title
 
     if 'onezone' in title.lower():
         g_wt_visit_op(selenium, oz_page, user, provider, hosts,
-                      modals)
+                      popups)
 
     wt_click_on_the_given_main_menu_tab(selenium, user, main_menu_tab)
 

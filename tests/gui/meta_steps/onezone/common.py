@@ -52,11 +52,11 @@ def login_using_gui(host_list, selenium, driver, tmpdir, tmp_memory, xvfb,
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def visit_op(selenium, browser_id, oz_page, provider_name, modals):
+def visit_op(selenium, browser_id, oz_page, provider_name, popups):
     driver = selenium[browser_id]
     providers_panel = oz_page(driver)['providers']
     providers_panel[provider_name]()
-    click_visit_provider(driver, modals)
+    click_visit_provider(driver, popups)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -65,22 +65,22 @@ def click_visit_provider(driver, popups):
 
 
 def g_wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts,
-                  modals):
+                  popups):
     providers_list = list_parser(providers_list)
     for browser_id, provider in zip_longest(list_parser(browser_id_list),
                                             providers_list,
                                             fillvalue=providers_list[-1]):
         visit_op(selenium, browser_id, oz_page, hosts[provider]['name'],
-                 modals)
+                 popups)
 
 
 @given(parsers.re('opened (?P<providers_list>.*) Oneprovider view in web GUI '
                   'by (users? of )?(?P<browser_id_list>.*)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def g_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts,
-               modals):
+               popups):
     g_wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts,
-                  modals)
+                  popups)
 
 
 @wt(parsers.re('users? of (?P<browser_id_list>.*) opens? '

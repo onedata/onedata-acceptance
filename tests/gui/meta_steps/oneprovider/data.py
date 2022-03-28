@@ -274,7 +274,7 @@ def assert_space_content_in_op_gui(config, selenium, user, op_container,
 
 def see_num_of_items_in_path_in_op_gui(selenium, user, tmp_memory, op_container,
                                        path, space, num, oz_page, provider,
-                                       hosts, modals):
+                                       hosts, popups):
     tab_name = 'data'
 
     try:
@@ -282,7 +282,7 @@ def see_num_of_items_in_path_in_op_gui(selenium, user, tmp_memory, op_container,
                                     tmp_memory)
     except KeyError:
         navigate_to_tab_in_op_using_gui(selenium, user, oz_page, provider,
-                                        tab_name, hosts, modals)
+                                        tab_name, hosts, popups)
         _select_item(selenium, user, tmp_memory, path, op_container)
         refresh_site(selenium, user)
         assert_browser_in_tab_in_op(selenium, user, op_container,

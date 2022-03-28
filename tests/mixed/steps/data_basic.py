@@ -325,13 +325,13 @@ def rename_item_in_op_using_token(client, user, users, space, old_name,
                '(?P<host>.*)'))
 def see_num_of_items_in_op(client, user, num, space, host, users,
                            hosts, tmp_memory, selenium, op_container,
-                           oz_page, modals):
+                           oz_page, popups):
     num = int(num) if num is not None else 1
     client_lower = client.lower()
     if client_lower == 'web gui':
         see_num_of_items_in_path_in_op_gui(selenium, user, tmp_memory,
                                            op_container, '', space, num,
-                                           oz_page, host, hosts, modals)
+                                           oz_page, host, hosts, popups)
     elif client_lower == 'rest':
         assert_num_of_files_in_path_in_op_rest(num, space, user, users, host,
                                                hosts)
