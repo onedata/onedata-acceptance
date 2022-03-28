@@ -4,9 +4,7 @@ plan:
   key: MAOST
   name: mixed acceptance src
   description: Acceptance tests using different clients concurrently. Environment deployed from sources.
-variables:
-  version_major: '2'
-  version_minor: '1'
+variables: []
 repositories:
 - onedata-acceptance:
     scope: global
@@ -325,7 +323,7 @@ Chrome permission POSIX tests:
       interpreter: BINSH_OR_CMDEXE
       scripts:
       - make SUITE=test_permission_posix TIMEOUT=600 test_mixed_src
-      working-dir: onedata
+      working-dir: onedata-acceptance
       description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
