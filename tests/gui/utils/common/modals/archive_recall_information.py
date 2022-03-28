@@ -22,3 +22,17 @@ class ArchiveRecallInformation(Modal):
 
     def __str__(self):
         return 'Archive recall information'
+
+    def get_progress_info(self, type):
+        if type in ['files_recalled', 'data_recalled']:
+            return parse_progress(getattr(self, type))
+        else:
+            raise RuntimeError(f'"{type}" is not a progress info in archive recall modal')
+
+# Parses one recall progress values in format: <current_value>/<target_value>,
+# eg. "1 B / 3 B" to tuple containing two strings: (current_value, target_value).
+def parse_progress(progress_text_content):
+    [progress_info, total_info] = progress_text_content.split('/')
+    progress_info = progress_info.strip()
+    total_info = total_info.strip()
+    return (progress_info, total_info)
