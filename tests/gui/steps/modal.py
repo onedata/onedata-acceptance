@@ -15,7 +15,6 @@ from selenium.webdriver.common.keys import Keys
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.utils import Modals as modals
-from tests.gui.utils.common.modals.archive_recall_information import parse_progress
 from tests.gui.utils.generic import click_on_web_elem, transform
 from tests.utils.bdd_utils import given, wt, parsers
 from tests.utils.utils import repeat_failed
@@ -419,11 +418,11 @@ def assert_info_in_archive_recall_information_modal(selenium, browser_id,
     information = getattr(recall_modal, info_type)
     if info_type in ['files_recalled', 'data_recalled']:
         current_progress = recall_modal.get_progress_info(info_type)
-        expected_progress = parse_progress(text)
+        expected_progress = recall_modal.parse_progress(text)
         info_equal = current_progress == expected_progress
         assert info_equal, (f'{info}: {current_progress} progress info does not match '
                             f'{expected_progress} in archive recall information modal, '
-                            f'raw text content: "{info}"')
+                            f'raw text content: "{text}"')
     else:
         assert text in information, (f'{info}: {text} does not match {information} '
                                     f'in archive recall information modal')
