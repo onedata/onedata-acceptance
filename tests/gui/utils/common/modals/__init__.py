@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 from .archives_modals.archive_recall_information import ArchiveRecallInformation
-from .space_management_modals.change_privileges import ChangePrivilegesModal
+from .management_modals.change_privileges import ChangePrivilegesModal
 from .tokens_modals.clean_up_obsolete_tokens import CleanUpObsoleteTokensModal
 from .files_modals.create_dir import CreateDir
 from .storage_modals.add_storage import AddStorage
@@ -15,16 +15,16 @@ from tests.gui.utils.core.web_elements import WebItem
 from .basic_modals.create_group import CreateGroup
 from .files_modals.data_distribution import DataDistributionModal
 from .basic_modals.delete_modal import DeleteModal
-from .details_modal.details_modal import DetailsModal
+from .files_modals.details_modal import DetailsModal
 from .basic_modals.login import LoginFormModal
-from .space_management_modals.deploying_cluster import ClusterDeploymentModal
+from .management_modals.deploying_cluster import ClusterDeploymentModal
 from .files_modals.metadata_modal import MetadataModal
 from .files_modals.qos import QualityOfServiceModal
 from .archives_modals.recall_archive import RecallArchive
 from .basic_modals.rename_modal import RenameModal
-from .space_management_modals.cease_support_for_space import (
+from .management_modals.cease_support_for_space import (
     CeaseSupportForSpaceModal)
-from .space_management_modals.edit_permissions import EditPermissionsModal
+from .files_modals.edit_permissions import EditPermissionsModal
 from .configure_web_cert import ConfigureWebCertModal
 from .basic_modals.remove import RemoveModal
 from .troubles_modals.error_modal import ErrorModal
@@ -37,8 +37,8 @@ from .basic_modals.leave_element import LeaveElementModal
 from .storage_modals.modify_storage import ModifyStorage
 from .rest_api_modal import RESTApiModal
 from .files_modals.share_directory import ShareDirectory
-from .space_management_modals.delete_user_account import DeleteUserAccountModal
-from .details_modal.symbolic_link_details import SymbolicLinkDetailsModal
+from .management_modals.delete_user_account import DeleteUserAccountModal
+from .files_modals.symbolic_link_details import SymbolicLinkDetailsModal
 from .datasets_modals.datasets_modal import DatasetsModal
 from .archives_modals.create_archive import CreateArchive
 from .datasets_modals.detach_dataset import DetachDataset
@@ -74,6 +74,10 @@ class Modals(object):
     metadata = WebItem('.modal-dialog', cls=MetadataModal)
     share_directory = WebItem('.modal-dialog', cls=ShareDirectory)
     write_protection = WebItem('.modal-dialog', cls=WriteProtection)
+    details_modal = WebItem('.modal-dialog', cls=DetailsModal)
+    symbolic_link_details = WebItem('.modal-dialog',
+                                    cls=SymbolicLinkDetailsModal)
+    edit_permissions = WebItem('.modal-dialog', cls=EditPermissionsModal)
 
     # troubles modals
     emergency_interface = WebItem('.modal-dialog', cls=EmergencyInterface)
@@ -88,10 +92,6 @@ class Modals(object):
     clean_up_obsolete_tokens = WebItem('.modal-dialog',
                                        cls=CleanUpObsoleteTokensModal)
 
-    # details modals
-    details_modal = WebItem('.modal-dialog', cls=DetailsModal)
-    symbolic_link_details = WebItem('.modal-dialog',
-                                    cls=SymbolicLinkDetailsModal)
     # archives modals
     create_archive = WebItem('.modal-dialog', cls=CreateArchive)
     recall_archive = WebItem('.modal-dialog', cls=RecallArchive)
@@ -110,14 +110,13 @@ class Modals(object):
     create_new_lane = WebItem('.modal-dialog', cls=CreateNewLane)
     duplicate_revision = WebItem('.modal-dialog', cls=DuplicateRevision)
 
-    # space management modals
+    # management modals
     change_privileges = WebItem('.modal-dialog', cls=ChangePrivilegesModal)
     delete_user_account = WebItem('.modal-dialog', cls=DeleteUserAccountModal)
     cluster_deployment = WebItem('.new-cluster-deploy-progress.modal-body',
                                  cls=ClusterDeploymentModal)
     cease_support_for_space = WebItem('.modal.in .modal-dialog',
                                       cls=CeaseSupportForSpaceModal)
-    edit_permissions = WebItem('.modal-dialog', cls=EditPermissionsModal)
 
     rest_api_modal = WebItem('.modal-dialog', cls=RESTApiModal)
     configure_web_cert = WebItem('#configure-web-cert-modal',

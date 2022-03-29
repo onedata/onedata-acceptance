@@ -34,7 +34,7 @@ def check_modal_name(modal_name):
         return 'add_one_of_elements'
     elif 'rename' in modal_name:
         return 'rename_modal'
-    elif modal_name == 'file_details' or modal_name == 'directory_details':
+    elif modal_name in ['file_details', 'directory_details']:
         return 'details_modal'
     else:
         return modal_name
