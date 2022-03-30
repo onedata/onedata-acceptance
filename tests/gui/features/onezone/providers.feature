@@ -29,7 +29,7 @@ Feature: Basic management of providers in Onezone GUI
     And user of browser sees that provider popup for provider "oneprovider-1" has appeared on world map
 
     Then user of browser clicks on Visit provider button on provider popover
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees current provider named "oneprovider-1" on file browser page
 
 

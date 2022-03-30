@@ -43,8 +43,8 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
 
 	# User1 checks permission code
     Then user of browser1 clicks "space1" on the spaces list in the sidebar
-    And user of browser1 clicks Data of "space1" in the sidebar
-    And user of browser1 sees file browser in data tab in Oneprovider page
+    And user of browser1 clicks Files of "space1" in the sidebar
+    And user of browser1 sees file browser in files tab in Oneprovider page
     And user of browser1 clicks on menu for "file1" file in file browser
     And user of browser1 clicks "Permissions" option in data row menu in file browser
     And user of browser1 sees that "Edit permissions" modal has appeared
@@ -58,8 +58,8 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
 
 	# User1 checks permission code
     Then user of browser1 clicks "space1" on the spaces list in the sidebar
-    And user of browser1 clicks Data of "space1" in the sidebar
-    And user of browser1 sees file browser in data tab in Oneprovider page
+    And user of browser1 clicks Files of "space1" in the sidebar
+    And user of browser1 sees file browser in files tab in Oneprovider page
     And user of browser1 clicks on menu for "dir1" file in file browser
     And user of browser1 clicks "Permissions" option in data row menu in file browser
     And user of browser1 sees that "Edit permissions" modal has appeared
@@ -72,9 +72,9 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
 
 	# User1 creates dir
     When user of browser1 clicks "space2" on the spaces list in the sidebar
-    And user of browser1 clicks Data of "space2" in the sidebar
-    And user of browser1 sees file browser in data tab in Oneprovider page
-    And user of browser1 double clicks on item named "dir1" in file browser
+    And user of browser1 clicks Files of "space2" in the sidebar
+    And user of browser1 sees file browser in files tab in Oneprovider page
+    And user of browser1 clicks and presses enter on item named "dir1" in file browser
     And user of browser1 clicks "New directory" button from file browser menu bar
     And user of browser1 writes "dir2" into text field in modal "Create dir"
     And user of browser1 confirms create new directory using button
@@ -93,9 +93,9 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
 
 	# User1 creates dir
     When user of browser1 clicks "space2" on the spaces list in the sidebar
-    And user of browser1 clicks Data of "space2" in the sidebar
-    And user of browser1 sees file browser in data tab in Oneprovider page
-    And user of browser1 double clicks on item named "dir1" in file browser
+    And user of browser1 clicks Files of "space2" in the sidebar
+    And user of browser1 sees file browser in files tab in Oneprovider page
+    And user of browser1 clicks and presses enter on item named "dir1" in file browser
     And user of browser1 clicks "New directory" button from file browser menu bar
     And user of browser1 writes "dir2" into text field in modal "Create dir"
     And user of browser1 confirms create new directory using button
@@ -116,9 +116,9 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
 
 	# User1 creates dir
     When user of browser1 clicks "space2" on the spaces list in the sidebar
-    And user of browser1 clicks Data of "space2" in the sidebar
-    And user of browser1 sees file browser in data tab in Oneprovider page
-    And user of browser1 double clicks on item named "dir1" in file browser
+    And user of browser1 clicks Files of "space2" in the sidebar
+    And user of browser1 sees file browser in files tab in Oneprovider page
+    And user of browser1 clicks and presses enter on item named "dir1" in file browser
     And user of browser1 clicks "New directory" button from file browser menu bar
     And user of browser1 writes "dir2" into text field in modal "Create dir"
     And user of browser1 confirms create new directory using button
@@ -137,9 +137,9 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
 
 	# Space-owner-user uploads file
     When user of space_owner_browser clicks "space2" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Data of "space2" in the sidebar
-    And user of space_owner_browser sees file browser in data tab in Oneprovider page
-    And user of space_owner_browser double clicks on item named "dir1" in file browser
+    And user of space_owner_browser clicks Files of "space2" in the sidebar
+    And user of space_owner_browser sees file browser in files tab in Oneprovider page
+    And user of space_owner_browser clicks and presses enter on item named "dir1" in file browser
     And user of space_owner_browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
     And user of space_owner_browser changes current working directory to home using breadcrumbs
 
@@ -148,9 +148,9 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
 
 	# User1 fails to remove file
     And user of browser1 clicks "space2" on the spaces list in the sidebar
-    And user of browser1 clicks Data of "space2" in the sidebar
-    And user of browser1 sees file browser in data tab in Oneprovider page
-    And user of browser1 double clicks on item named "dir1" in file browser
+    And user of browser1 clicks Files of "space2" in the sidebar
+    And user of browser1 sees file browser in files tab in Oneprovider page
+    And user of browser1 clicks and presses enter on item named "dir1" in file browser
     Then user of browser1 clicks on menu for "20B-0.txt" directory in file browser
     And user of browser1 clicks "Delete" option in data row menu in file browser
     And user of browser1 clicks on "Yes" button in modal "Delete modal"
@@ -161,9 +161,9 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
 
 	# Space-owner-user uploads file
     When user of space_owner_browser clicks "space2" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Data of "space2" in the sidebar
-    And user of space_owner_browser sees file browser in data tab in Oneprovider page
-    And user of space_owner_browser double clicks on item named "dir1" in file browser
+    And user of space_owner_browser clicks Files of "space2" in the sidebar
+    And user of space_owner_browser sees file browser in files tab in Oneprovider page
+    And user of space_owner_browser clicks and presses enter on item named "dir1" in file browser
     And user of space_owner_browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
     And user of space_owner_browser changes current working directory to home using breadcrumbs
 
@@ -172,9 +172,9 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
 
 	# User1 fails to rename file
     And user of browser1 clicks "space2" on the spaces list in the sidebar
-    And user of browser1 clicks Data of "space2" in the sidebar
-    And user of browser1 sees file browser in data tab in Oneprovider page
-    And user of browser1 double clicks on item named "dir1" in file browser
+    And user of browser1 clicks Files of "space2" in the sidebar
+    And user of browser1 sees file browser in files tab in Oneprovider page
+    And user of browser1 clicks and presses enter on item named "dir1" in file browser
     Then user of browser1 clicks on menu for "20B-0.txt" directory in file browser
     And user of browser1 clicks "Rename" option in data row menu in file browser
     And user of browser1 sees that "Rename" modal has appeared
@@ -190,8 +190,8 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
 
 	# User1 fails to upload file
     And user of browser1 clicks "space2" on the spaces list in the sidebar
-    And user of browser1 clicks Data of "space2" in the sidebar
-    And user of browser1 sees file browser in data tab in Oneprovider page
-    And user of browser1 double clicks on item named "dir1" in file browser
+    And user of browser1 clicks Files of "space2" in the sidebar
+    And user of browser1 sees file browser in files tab in Oneprovider page
+    And user of browser1 clicks and presses enter on item named "dir1" in file browser
     Then user of browser1 uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir without waiting for upload to finish
     And user of browser1 sees that upload file failed

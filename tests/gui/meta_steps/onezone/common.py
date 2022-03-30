@@ -10,7 +10,7 @@ from tests.gui.steps.common.browser_creation import \
 from tests.gui.steps.common.login import g_login_using_basic_auth
 from tests.gui.steps.common.url import g_open_onedata_service_page
 from tests.gui.steps.oneprovider.data_tab import (
-    assert_file_browser_in_data_tab_in_op,
+    assert_browser_in_tab_in_op,
     click_choose_other_oneprovider_on_file_browser,
     choose_provider_in_file_browser)
 from tests.gui.steps.onezone.providers import parse_seq
@@ -29,7 +29,7 @@ def login_using_gui(host_list, selenium, driver, tmpdir, tmp_memory, xvfb,
                     driver_kwargs, driver_type, firefox_logging, displays,
                     firefox_path, screen_width, screen_height, hosts,
                     users, login_page, browser_id_list, user_list,
-                    xvfb_recorder):
+                    xvfb_recorder, test_type):
     create_instances_of_webdriver(selenium, driver, user_list, tmpdir,
                                   tmp_memory, driver_kwargs, driver_type,
                                   firefox_logging, firefox_path,
@@ -38,46 +38,49 @@ def login_using_gui(host_list, selenium, driver, tmpdir, tmp_memory, xvfb,
     g_open_onedata_service_page(selenium, user_list, host_list, hosts)
 
     for browser, user in zip(parse_seq(browser_id_list), parse_seq(user_list)):
-        selenium[browser] = selenium[user]
+        if test_type == 'gui':
+            selenium[browser] = selenium[user]
+            selenium.pop(user, None)
         tmp_memory[browser] = tmp_memory[user]
         displays[browser] = displays[user]
 
-    for user, host_name in zip(parse_seq(user_list),
-                               parse_seq(host_list)):
-        g_login_using_basic_auth(selenium, user, user, login_page,
-                                 users, host_name)
+    # mixed tests use user_list instead of browser_id_list because
+    # some mixed steps don't use browser
+    login_ids = browser_id_list if test_type == 'gui' else user_list
+    g_login_using_basic_auth(selenium, login_ids, user_list, login_page,
+                             users, host_list)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def visit_op(selenium, browser_id, oz_page, provider_name, modals):
+def visit_op(selenium, browser_id, oz_page, provider_name, popups):
     driver = selenium[browser_id]
     providers_panel = oz_page(driver)['providers']
     providers_panel[provider_name]()
-    click_visit_provider(driver, modals)
+    click_visit_provider(driver, popups)
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_visit_provider(driver, modals):
-    modals(driver).provider_popover.visit_provider()
+def click_visit_provider(driver, popups):
+    popups(driver).provider_popover.visit_provider()
 
 
 def g_wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts,
-                  modals):
+                  popups):
     providers_list = list_parser(providers_list)
     for browser_id, provider in zip_longest(list_parser(browser_id_list),
                                             providers_list,
                                             fillvalue=providers_list[-1]):
         visit_op(selenium, browser_id, oz_page, hosts[provider]['name'],
-                 modals)
+                 popups)
 
 
-@given(parsers.re('opened (?P<providers_list>.*) Oneprovider view in web GUI by '
-                  '(users? of )?(?P<browser_id_list>.*)'))
+@given(parsers.re('opened (?P<providers_list>.*) Oneprovider view in web GUI '
+                  'by (users? of )?(?P<browser_id_list>.*)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def g_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts,
-               modals):
+               popups):
     g_wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts,
-                  modals)
+                  popups)
 
 
 @wt(parsers.re('users? of (?P<browser_id_list>.*) opens? '
@@ -92,7 +95,7 @@ def wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts,
 def visit_file_browser(selenium, oz_page, providers_list, spaces_list,
                        browser_id_list, op_container, tmp_memory, hosts):
     option = 'spaces'
-    option_in_submenu = 'Data'
+    option_in_submenu = 'Files'
 
     for browser_id, provider, space in zip_longest(parse_seq(browser_id_list),
                                                    parse_seq(providers_list),
@@ -106,8 +109,8 @@ def visit_file_browser(selenium, oz_page, providers_list, spaces_list,
                                                        oz_page)
         choose_provider_in_file_browser(selenium, browser_id, provider,
                                         hosts, oz_page)
-        assert_file_browser_in_data_tab_in_op(selenium, browser_id,
-                                              op_container, tmp_memory)
+        assert_browser_in_tab_in_op(selenium, browser_id,
+                                    op_container, tmp_memory)
 
 
 @given(parsers.re('opened (?P<providers_list>.*) Oneprovider file browser '

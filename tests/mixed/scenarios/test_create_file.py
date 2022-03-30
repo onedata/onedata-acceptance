@@ -6,7 +6,6 @@ __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-
 from pytest_bdd import scenario, scenarios
 
 from tests.gui.steps.rest.env_up.users import *
@@ -60,4 +59,3 @@ def screens():
 
 
 scenarios('../features/oneprovider/create_file.feature')
-

@@ -1,5 +1,6 @@
 Feature: Deleting and revoking tokens tests in Onezone GUI
 
+
   Background:
     Given initial users configuration in "onezone" Onezone service:
             - space-owner-user:

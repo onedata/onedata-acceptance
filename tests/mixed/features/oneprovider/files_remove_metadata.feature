@@ -1,5 +1,5 @@
 Feature: Files remove metadata tests
-  
+
   Examples:
   | client1    | client2    |
   | REST       | web GUI    |
@@ -9,7 +9,7 @@ Feature: Files remove metadata tests
   | web GUI    | oneclient1 |
   | oneclient1 | web GUI    |
 
-  
+
   Background:
     Given initial users configuration in "onezone" Onezone service:
             - user1

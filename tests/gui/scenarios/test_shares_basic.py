@@ -43,8 +43,10 @@ from tests.gui.steps.oneprovider.data_tab import *
 from tests.gui.steps.oneprovider.file_browser import *
 from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.shares import *
+from tests.gui.steps.oneprovider.public_shares import *
 from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
+from tests.gui.steps.oneprovider.browser import *
 from tests.gui.meta_steps.oneprovider.shares import *
 from tests.gui.meta_steps.oneprovider.data import *
 
@@ -61,3 +63,4 @@ def screens():
 
 
 scenarios('../features/oneprovider/shares/basic_management.feature')
+scenarios('../features/oneprovider/shares/shares_with_symlink.feature')

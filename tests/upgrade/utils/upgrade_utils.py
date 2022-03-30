@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 from tests.utils.docker_utils import pull_docker_image_with_retries
 from tests.utils.onenv_utils import run_onenv_command
-from tests.utils.path_utils import get_default_image_for_service
+from tests.utils.path_utils import read_image_from_artifact
 from tests.utils.environment_utils import (update_etc_hosts, setup_hosts_cfg, configure_os,
                                            get_deployment_status, verify_env_ready)
 
@@ -95,7 +95,7 @@ def run_upgrade_command(pod_name, service, version):
 
 def prepare_image_upgrade_command(service, version):
     if version == 'default':
-        image = get_default_image_for_service(service)
+        image = read_image_from_artifact(service)
     else:
         image = "docker.onedata.org/{}-dev:{}".format(service, version)
     pull_docker_image_with_retries(image)

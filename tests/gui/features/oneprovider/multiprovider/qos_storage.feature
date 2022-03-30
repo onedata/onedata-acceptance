@@ -25,7 +25,7 @@ Feature: Quality of Service tests for 2 providers using multiple browsers where 
     And users of [browser_unified, browser_emergency] opened [Onezone, oneprovider-1 provider panel] page
     And user of [browser_unified, browser_emergency] logged as [user1, admin] to [Onezone, emergency interface of Onepanel] service
     And user of browser_emergency clicks on Storages item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
-    And there are no additional params in storage edit page used by browser_emergency
+    And there are no additional params in QoS parameters form in storage edit page used by browser_emergency
 
 
   Scenario: File is replicated after migration from one storage with QoS requirement

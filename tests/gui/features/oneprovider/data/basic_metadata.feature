@@ -1,5 +1,4 @@
-Feature: Basic data tab operations on directory metadata in file browser
-
+Feature: Basic files tab operations on directory metadata in file browser
 
   Background:
     Given initial users configuration in "onezone" Onezone service:
@@ -23,10 +22,11 @@ Feature: Basic data tab operations on directory metadata in file browser
     And user of browser opened onezone page
     And user of browser logged as space-owner-user to Onezone service
 
+
   Scenario Outline: Open metadata modal and check absence of any metadata
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser clicks on menu for "<item>" directory in file browser
     And user of browser clicks "Metadata" option in data row menu in file browser
@@ -43,8 +43,8 @@ Feature: Basic data tab operations on directory metadata in file browser
 
   Scenario Outline: User adds basic metadata entry and checks their presence with metadata status tag
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser does not see metadata status tag for "<item>" in file browser
     And user of browser opens "<modal>" metadata modal for "<item>"
@@ -64,8 +64,8 @@ Feature: Basic data tab operations on directory metadata in file browser
 
   Scenario Outline: Delete one of two basic metadata entries
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser opens "<modal>" metadata modal for "<item>"
     And user of browser adds basic entry with key "attr1" and value "val1"
@@ -91,8 +91,8 @@ Feature: Basic data tab operations on directory metadata in file browser
 
   Scenario Outline: Delete all basic metadata entries after saving it
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser opens "<modal>" metadata modal for "<item>"
     And user of browser adds basic entry with key "attr" and value "val"
@@ -116,8 +116,8 @@ Feature: Basic data tab operations on directory metadata in file browser
 
   Scenario Outline: Delete single basic metadata entry (one visit in modal)
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser opens "<modal>" metadata modal for "<item>"
     And user of browser adds basic entry with key "attr" and value "val"
@@ -139,8 +139,8 @@ Feature: Basic data tab operations on directory metadata in file browser
 
   Scenario Outline: User starts adding basic metadata, but discards changes
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser opens "<modal>" metadata modal for "<item>"
     And user of browser adds basic entry with key "attr" and value "val"

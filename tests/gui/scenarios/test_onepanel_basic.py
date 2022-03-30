@@ -1,5 +1,5 @@
 """This module contains tests suite for basic operations in
-Onepanel GUI and multiple browser instances.
+Onepanel GUI and multiple browsers instances.
 """
 
 __author__ = "Bartosz Walkowicz"
@@ -53,6 +53,7 @@ from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
+from tests.gui.steps.oneprovider.browser import *
 
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
@@ -84,4 +85,5 @@ def screens():
 scenarios('../features/onepanel/storages.feature')
 scenarios('../features/onepanel/provider.feature')
 scenarios('../features/onepanel/spaces.feature')
+scenarios('../features/onepanel/gui_settings.feature')
 

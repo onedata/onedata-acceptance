@@ -60,6 +60,9 @@ class MembersItemRow(PageObject):
     def has_status_label(self, name):
         return any(x.text == name for x in self.status_labels)
 
+    def is_opened(self):
+        return 'active' in self.web_elem.get_attribute('class')
+
 
 class MembersList(PageObject):
     header = WebItem('li.list-header-row', cls=MembersHeaderRow)
@@ -108,3 +111,10 @@ class MembersPage(PageObject):
 
     forbidden_alert = WebElement('.alert.forbidden')
     bulk_edit_button = NamedButton('.btn', text='Bulk edit')
+
+    def close_member(self, driver):
+        driver.execute_script("window.scrollBy(0,0)")
+        driver.find_element_by_css_selector('.member-item '
+                                            '.one-collapsible-list-item-header'
+                                            '.opened').click()
+

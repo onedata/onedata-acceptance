@@ -27,7 +27,7 @@ class DataDistributionItem(PageObject):
         self.click()
 
 
-class PopoverMenu(PageObject):
+class MenuPopupWithText(PageObject):
     menu = WebItemsSequence('.webui-popover-content '
                             '.one-collapsible-toolbar-popover .dropdown-menu '
                             '.one-collapsible-toolbar-item', cls=MenuItem)
@@ -37,5 +37,5 @@ class PopoverMenu(PageObject):
     confirm_cancel_button = Button('.btn-danger')
 
     def __str__(self):
-        return 'Menu popup'
+        return 'Menu popup with text'
 

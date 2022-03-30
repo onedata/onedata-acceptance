@@ -59,19 +59,24 @@ def modify_provider_with_given_name_in_op_panel_using_gui(selenium, user,
                                           new_domain, onepanel)
 
 
-def deregister_provider_in_op_panel_using_gui(selenium, user, provider_name,
-                                              onepanel, popups, hosts):
+@wt(parsers.re('user of (?P<browser_id>.*?) deregisters '
+               'provider in "(?P<provider_name>.+?)" Oneprovider panel '
+               'service'))
+def deregister_provider_in_op_panel_using_gui(selenium, browser_id,
+                                              provider_name, onepanel, popups,
+                                              hosts):
     sidebar = 'CLUSTERS'
     sub_item = 'Provider'
     content = 'provider'
     popup = 'Deregister provider'
 
-    wt_click_on_subitem_for_item(selenium, user, sidebar, sub_item,
+    wt_click_on_subitem_for_item(selenium, browser_id, sidebar, sub_item,
                                  provider_name, onepanel, hosts)
-    wt_click_on_btn_in_content(selenium, user, 'Deregister provider', content,
-                               onepanel)
-    wt_click_on_btn_in_popup(selenium, user, 'Yes, deregister', popup, popups)
-    notify_visible_with_text(selenium, user, 'info',
+    wt_click_on_btn_in_content(selenium, browser_id, 'Deregister provider',
+                               content, onepanel)
+    wt_click_on_btn_in_popup(selenium, browser_id, 'Yes, deregister', popup,
+                             popups)
+    notify_visible_with_text(selenium, browser_id, 'info',
                              '.*[Pp]rovider.*deregistered.*')
 
 

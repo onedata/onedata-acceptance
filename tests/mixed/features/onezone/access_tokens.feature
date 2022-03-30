@@ -32,15 +32,15 @@ Feature: Access tokens tests
            type: access
            caveats:
              read only: False
-    And if <client2> is web gui, user1 copies created token
+    And if <client2> is web GUI, user1 copies created token
     And user1 sends token to user2
     Then using <client1>, user2 succeeds to create file named "file3" using received token in "space1" in oneprovider-1
 
     Examples:
     | client1     | client2 |
-    | REST        | web gui |
+    | REST        | web GUI |
     | oneclient1  | REST    |
-    | oneclient1  | web gui |
+    | oneclient1  | web GUI |
 
 
   Scenario Outline: User cannot use an access token created with <client1> and revoked with <client2> when using <client3>
@@ -49,17 +49,17 @@ Feature: Access tokens tests
            type: access
            caveats:
              read only: False
-    And if <client1> is web gui, user1 copies created token
+    And if <client1> is web GUI, user1 copies created token
     And user1 sends token to user2
     And using <client2>, user1 revokes token named "access_token"
     Then using <client3>, user2 fails to create file named "file3" using received token in "space1" in oneprovider-1
 
     Examples:
     | client1 | client2 | client3    |
-    | REST    | web gui | oneclient1 |
-    | web gui | REST    | REST       |
-    | REST    | web gui | REST       |
-    | web gui | REST    | oneclient1 |
+    | REST    | web GUI | oneclient1 |
+    | web GUI | REST    | REST       |
+    | REST    | web GUI | REST       |
+    | web GUI | REST    | oneclient1 |
 
 
   Scenario Outline: User sees all token caveats in token configuration using <client1> after setting them in new access token with <client2>
@@ -132,18 +132,18 @@ Feature: Access tokens tests
 
     Examples:
     | client1    | client2 |
-    | REST       | web gui |
-    | web gui    | REST    |
+    | REST       | web GUI |
+    | web GUI    | REST    |
 
 
   Scenario: User creates a file with Oneclient but not with REST using token with caveat set for Oneclient interface
-    When using web gui, user1 creates token with following configuration:
+    When using web GUI, user1 creates token with following configuration:
            name: access_token
            type: access
            caveats:
              read only: False
              interface: Oneclient
-    And using web gui, user1 copies created token
+    And using web GUI, user1 copies created token
     And user1 sends token to user2
     And user2 mounts oneclient using received token
     Then using REST, user2 fails to create file named "file3" using received token in "space1" in oneprovider-1
@@ -151,13 +151,13 @@ Feature: Access tokens tests
 
 
   Scenario: User creates a file with REST but not with Oneclient using token with caveat set for REST interface
-    When using web gui, user1 creates token with following configuration:
+    When using web GUI, user1 creates token with following configuration:
            name: access_token
            type: access
            caveats:
              read only: False
              interface: REST
-    And using web gui, user1 copies created token
+    And using web GUI, user1 copies created token
     And user1 sends token to user2
     Then using oneclient1, user2 fails to create file named "file3" using received token in "space1" in oneprovider-1
     And using REST, user2 succeeds to create file named "file3" using received token in "space1" in oneprovider-1
@@ -306,7 +306,6 @@ Feature: Access tokens tests
     | oneclient1  |
 
 
-
   Scenario: Using oneclient1, user can see file using token with caveat set for path, created by web GUI, after owner renames file
     When using web GUI, user1 creates token with following configuration:
         name: access_token
@@ -322,3 +321,4 @@ Feature: Access tokens tests
     And user2 doesn't see dir4 in space1/dir1 on client1
     And using web GUI, user1 renames item named "dir1/dir2" to "dir1/dir4" in "space1" in oneprovider-1
     Then user2 sees dir4 in space1/dir1 on client1
+

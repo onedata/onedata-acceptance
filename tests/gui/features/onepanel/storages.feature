@@ -56,8 +56,8 @@ Feature: Storage management using onepanel
     And user of browser_unified opens file browser for "space1" space
     And user of browser_unified creates directory "new_dir"
     And user of browser_unified sees that item named "new_dir" has appeared in file browser
-    And user of browser_unified double clicks on item named "new_dir" in file browser
-    And user of browser_unified sees that current working directory displayed in breadcrumbs is /new_dir
+    And user of browser_unified clicks and presses enter on item named "new_dir" in file browser
+    And user of browser_unified sees that current working directory displayed in breadcrumbs on file browser is /new_dir
     And user of browser_unified uses upload button from file browser menu bar to upload files from local directory "dir2" to remote current dir
     Then user of browser_unified sees that there are 5 items in file browser
 
@@ -78,7 +78,6 @@ Feature: Storage management using onepanel
     And user of <browser> types "/volumes/persistence/storage2" to Mount point field in POSIX edit form for "<storage_name>" storage in Onepanel
     And user of <browser> clicks on Save button in edit form for "<storage_name>" storage in Onepanel
     And user of <browser> clicks on "Proceed" button in modal "Modify Storage"
-    And user of <browser> is idle for 2 seconds
     And user of <browser> expands "<storage_name>" record on storages list in storages page in Onepanel
     Then user of <browser> sees that "<storage_name>" Mount point is /volumes/persistence/storage2 in storages page in Onepanel
 
@@ -98,7 +97,6 @@ Feature: Storage management using onepanel
     Then user of <browser> expands toolbar for "<storage_name>" storage record in Storages page in Onepanel
     And user of <browser> clicks on Remove storage option in storage's toolbar in Onepanel
     And user of <browser> clicks on "Remove" button in modal "Remove storage"
-    And user of <browser> is idle for 2 seconds
     And user of <browser> sees that "<storage_name>" has disappeared from the storages list
 
     Examples:
@@ -134,21 +132,18 @@ Feature: Storage management using onepanel
     And user of browser_unified opens file browser for "space3" space
 
     # confirm import of files
-    And user of browser_unified is idle for 8 seconds
-    And user of browser_unified sees file browser in data tab in Oneprovider page
+    And user of browser_unified sees file browser in files tab in Oneprovider page
 
     And user of browser_unified sees only items named "dir1" in file browser
 
     And using docker, admin renames /volumes/persistence/storage/dir path to /volumes/persistence/storage/renamed_dir05
     And user of browser_unified copies dir2 to /volumes/persistence/storage/renamed_dir05 directory on docker
 
-    And user of browser_unified is idle for 8 seconds
-    And user of browser_unified sees file browser in data tab in Oneprovider page
+    And user of browser_unified sees file browser in files tab in Oneprovider page
 
     And user of browser_unified sees that there is 1 item in file browser
 
     And user of browser_unified clicks on Clusters in the main menu
-    And user of browser_unified is idle for 8 seconds
     And user of browser_unified clicks on "oneprovider-1" in clusters menu
     And user of browser_unified clicks on Storages item in submenu of "oneprovider-1" item in CLUSTERS sidebar in Onepanel
     And user of browser_unified is idle for 2 seconds
@@ -159,8 +154,7 @@ Feature: Storage management using onepanel
     And user of browser_unified clicks on "Proceed" button in modal "Modify storage"
 
     And user of browser_unified opens file browser for "space3" space
-    And user of browser_unified is idle for 8 seconds
-    And user of browser_unified sees file browser in data tab in Oneprovider page
+    And user of browser_unified sees file browser in files tab in Oneprovider page
 
     Then user of browser_unified sees that there are 2 items in file browser
     And user of browser_unified sees item(s) named "dir2" in file browser

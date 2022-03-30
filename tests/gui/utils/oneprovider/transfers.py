@@ -13,7 +13,7 @@ from tests.gui.utils.oneprovider.data_tab.space_selector import SpaceRecord
 from tests.gui.utils.core.web_elements import (Label, WebElement,
                                                Icon, WebItemsSequence,
                                                ButtonWithTextPageObject,
-                                               WebItem)
+                                               WebItem, Button)
 
 TransferStatusList = ['completed', 'skipped', 'cancelled', 'failed', 'active',
                       'evicting', 'scheduled', 'enqueued']
@@ -25,6 +25,7 @@ class TransferRecord(PageObject):
     username = Label('td:nth-of-type(2)')
     destination = Label('td:nth-of-type(3)')
     status_icon = Icon('.cell-status')
+    menu_button = Button('.cell-actions')
     type_icon = Icon('.cell-type')
     icon = Icon('.transfer-file-icon')
 

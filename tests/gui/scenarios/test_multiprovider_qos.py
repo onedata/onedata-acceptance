@@ -1,5 +1,5 @@
-"""This module contains tests suite for basic quality of service management
-using multiple provider instances and multiple browser instance.
+"""This module contains tests generally related with quality of service,
+using multiple providers instances and multiple browsers instance.
 """
 
 __author__ = "Agnieszka Warchol"
@@ -55,6 +55,7 @@ from tests.gui.steps.oneprovider.spaces import *
 from tests.gui.steps.oneprovider.transfers import *
 from tests.gui.steps.oneprovider.uploads import *
 from tests.gui.steps.oneprovider.qos import *
+from tests.gui.steps.oneprovider.browser import *
 
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
@@ -83,3 +84,4 @@ def screens():
 
 scenarios('../features/oneprovider/multiprovider/qos_provider_support.feature')
 scenarios('../features/oneprovider/multiprovider/qos_auto_cleaning.feature')
+

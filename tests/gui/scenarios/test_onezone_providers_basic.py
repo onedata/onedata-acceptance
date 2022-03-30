@@ -1,4 +1,5 @@
-"""This module contains tests suite for basic providers management.
+"""This module contains tests suite for providers of space
+synchronization using Onezone GUI and multiple browsers instance.
 """
 
 __author__ = "Katarzyna Such"
@@ -53,6 +54,7 @@ from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
+from tests.gui.steps.oneprovider.browser import *
 
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *

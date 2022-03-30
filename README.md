@@ -30,7 +30,7 @@ VM directory on the official minikube website.
 GUI tests
 ===========
 The whole procedure for running gui tests is described in details in the
-``tests/gui/README.md`` file.
+[tests/gui/README.md](./tests/gui/README.md) file.
 
 Oneclient tests
 =================

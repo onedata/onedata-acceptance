@@ -202,7 +202,7 @@ def add_subgroups_using_op_gui(selenium, user, oz_page, parent, group_list,
                                                         clipboard, onepanel,
                                                         popups)
         add_element_with_copied_token(selenium, user, child, oz_page,
-                                      clipboard, displays, modals)
+                                      clipboard, displays, popups)
 
 
 def remove_subgroups_using_op_gui(selenium, user, oz_page, group_list,
@@ -237,7 +237,7 @@ def fail_to_add_subgroups_using_op_gui(selenium, user, oz_page, parent,
         modal = 'error'
 
         add_element_with_copied_token(selenium, user, child, oz_page,
-                                      clipboard, displays, modals)
+                                      clipboard, displays, popups)
         assert_error_modal_with_text_appeared(selenium, user, error)
         close_modal(selenium, user, modal, modals)
 

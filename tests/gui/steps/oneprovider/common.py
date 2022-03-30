@@ -13,12 +13,11 @@ from tests.utils.bdd_utils import given, parsers, wt
 from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.utils.generic import parse_url
+from tests.gui.utils.generic import parse_url, transform
 
 
 def _wait_for_op_session_to_start(selenium, browser_id_list):
-    # TODO rm *4 when provider session starts becomes faster
-    @repeat_failed(timeout=WAIT_BACKEND*4)
+    @repeat_failed(timeout=WAIT_BACKEND)
     def _assert_correct_url(d):
         try:
             found = parse_url(d.current_url).group('where')
@@ -67,3 +66,5 @@ def wt_assert_provider_name_in_op(selenium, browser_id, val, op_container, hosts
     assert displayed_name == val, \
         ('displayed {} provider name in Oneprovider GUI instead of '
          'expected {}'.format(displayed_name, val))
+
+

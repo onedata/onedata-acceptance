@@ -94,3 +94,6 @@ Feature: Access tokens with caveats set for path tests
     And using web GUI, user1 renames item named "dir1/dir2" to "dir1/dir3" in "space1" in oneprovider-1
     Then user2 doesn't see dir2 in space1/dir1 on client1
     And user2 doesn't see dir3 in space1/dir1 on client1
+
+
+

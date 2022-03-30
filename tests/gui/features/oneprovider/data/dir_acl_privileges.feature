@@ -53,7 +53,6 @@ Feature: ACL directories privileges tests using single browser in Oneprovider GU
     | fails    |  all except [general:delete]  |
 
 
-
   Scenario Outline: Read directory ACL
     When user of space_owner_browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
     Then user of browser_user1 <result> to read "dir1" ACL in "space1"
@@ -72,4 +71,5 @@ Feature: ACL directories privileges tests using single browser in Oneprovider GU
     | result   |  privileges                   |
     | succeeds |  [acl]                        |
     | fails    |  all except [acl:change acl]  |
+
 

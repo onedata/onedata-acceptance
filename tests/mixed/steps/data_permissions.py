@@ -66,14 +66,14 @@ def grant_acl_privileges_in_op(client, selenium, user, cdmi, op_container, space
                '(?P<num>.*) ACL record in (?P<host>.*)'))
 def assert_ace_in_op(client, selenium, user, cdmi, op_container, space, path, host,
                      hosts, users, num, priv, type, name, numerals, tmp_memory,
-                     modals, oz_page):
+                     modals, oz_page, popups):
     full_path = f'{space}/{path}'
     client_lower = client.lower()
 
     if client_lower == 'web gui':
         assert_ace_in_op_gui(selenium, user, priv, type, name, num, space,
                              path, tmp_memory, modals, numerals, oz_page,
-                             op_container)
+                             op_container, popups)
     elif client_lower == 'rest':
         priv = _remove_parent_acl_from_string(priv)
         assert_ace_in_op_rest(user, users, host, hosts, cdmi, numerals,
@@ -94,13 +94,13 @@ def assert_ace_in_op(client, selenium, user, cdmi, op_container, space, path, ho
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_posix_permissions_in_op(client, user, item_path, space, mode,
                                    host, selenium, op_container, tmp_memory,
-                                   modals, users, hosts, oz_page):
+                                   modals, users, hosts, oz_page, popups):
     full_path = f'{space}/{item_path}'
     client_lower = client.lower()
     if client_lower == 'web gui':
         assert_posix_permissions_in_op_gui(selenium, user, space, item_path,
                                            mode, oz_page, op_container,
-                                           tmp_memory, modals)
+                                           tmp_memory, modals, popups)
     elif client_lower == 'rest':
         assert_posix_permissions_in_op_rest(full_path, mode, user, users,
                                             host, hosts)
@@ -117,13 +117,13 @@ def assert_posix_permissions_in_op(client, user, item_path, space, mode,
                '"(?P<item_path>.*)" in "(?P<space>.*)" in (?P<host>.*)'))
 def set_posix_permissions_in_op(client, user, item_path, space, mode, result,
                                 host, selenium, op_container, tmp_memory, modals,
-                                users, hosts, oz_page):
+                                users, hosts, oz_page, popups):
     full_path = f'{space}/{item_path}'
     client_lower = client.lower()
     if client_lower == 'web gui':
         set_posix_permissions_in_op_gui(selenium, user, space, item_path,
                                         mode, op_container, tmp_memory,
-                                        modals, oz_page)
+                                        modals, oz_page, popups)
     elif client_lower == 'rest':
         set_posix_permissions_in_op_rest(full_path, mode, user, users, host,
                                          hosts, result)

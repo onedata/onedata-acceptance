@@ -3,17 +3,26 @@ Feature: Basic management of privileges for spaces in Onezone GUI
   Background:
     Given initial users configuration in "onezone" Onezone service:
             - user1
+            - user2
             - space-owner-user
-    And initial groups configuration in "onezone" Onezone service:
-          group1:
-            owner: user1
     And initial spaces configuration in "onezone" Onezone service:
           space1:
             owner: space-owner-user
             users:
                 - user1
+                - user2
+            providers:
+                - oneprovider-1:
+                    storage: posix
+                    size: 1000000
+            storage:
+                defaults:
+                    provider: oneprovider-1
+                directory tree:
+                    - dir1
 
     And opened [browser_user1, space_owner_browser] with [user1, space-owner-user] signed in to [Onezone, Onezone] service
+
 
   Scenario: User fails to see privileges of another user until he is granted all privileges by becoming an owner
     When user of browser_user1 clicks Members of "space1" in the sidebar
@@ -63,7 +72,7 @@ Feature: Basic management of privileges for spaces in Onezone GUI
             granted: Partially
             privilege subtypes:
               View space: False
-    And user of browser_user1 sees that [Overview, Data, Transfers, Providers] tabs of "space1" are enabled
+    And user of browser_user1 sees that [Overview, Files, Transfers, Providers] tabs of "space1" are enabled
     And user of browser_user1 sees that [Shares, Members, Harvesters] tabs of "space1" are disabled
 
     # All tabs are enabled when only view space from space management category is granted
@@ -84,10 +93,10 @@ Feature: Basic management of privileges for spaces in Onezone GUI
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage when all other are granted:
           Space management:
             granted: False
-    And user of browser_user1 sees that [Overview, Data, Transfers, Providers] tabs of "space1" are enabled
+    And user of browser_user1 sees that [Overview, Files, Transfers, Providers] tabs of "space1" are enabled
     And user of browser_user1 sees that [Shares, Members, Harvesters] tabs of "space1" are disabled
 
-    # Only data tab is disabled when only read files is not granted
+    # Only files tab is disabled when only read files is not granted
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage when all other are granted:
           Data management:
@@ -95,7 +104,7 @@ Feature: Basic management of privileges for spaces in Onezone GUI
             privilege subtypes:
               Read files: False
     And user of browser_user1 sees that [Overview, Shares, Transfers, Providers, Members, Harvesters] tabs of "space1" are enabled
-    And user of browser_user1 sees that Data tab of "space1" is disabled
+    And user of browser_user1 sees that Files tab of "space1" is disabled
 
     # All tabs are enabled when only read files from data management category is granted
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
@@ -114,13 +123,13 @@ Feature: Basic management of privileges for spaces in Onezone GUI
               View changes stream: False
     And user of browser_user1 sees that all tabs of "space1" are enabled
 
-    # Only data tab is disabled when none from data management category are granted
+    # Only files tab is disabled when none from data management category are granted
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage when all other are granted:
           Data management:
             granted: False
     And user of browser_user1 sees that [Overview, Shares, Transfers, Providers, Members, Harvesters] tabs of "space1" are enabled
-    And user of browser_user1 sees that Data tab of "space1" is disabled
+    And user of browser_user1 sees that Files tab of "space1" is disabled
 
     # Only transfers tab is disabled when only view transfers is not granted
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
@@ -129,7 +138,7 @@ Feature: Basic management of privileges for spaces in Onezone GUI
             granted: Partially
             privilege subtypes:
               View transfers: False
-    And user of browser_user1 sees that [Overview, Data, Shares, Providers, Members, Harvesters] tabs of "space1" are enabled
+    And user of browser_user1 sees that [Overview, Files, Shares, Providers, Members, Harvesters] tabs of "space1" are enabled
     And user of browser_user1 sees that Transfers tab of "space1" is disabled
 
     # All tabs are enabled when only view transfers from transfer management category is granted
@@ -150,7 +159,7 @@ Feature: Basic management of privileges for spaces in Onezone GUI
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage when all other are granted:
           Transfer management:
             granted: False
-    And user of browser_user1 sees that [Overview, Data, Shares, Providers, Members, Harvesters] tabs of "space1" are enabled
+    And user of browser_user1 sees that [Overview, Files, Shares, Providers, Members, Harvesters] tabs of "space1" are enabled
     And user of browser_user1 sees that Transfers tab of "space1" is disabled
 
     # All tabs are enabled when none from QoS management category are granted

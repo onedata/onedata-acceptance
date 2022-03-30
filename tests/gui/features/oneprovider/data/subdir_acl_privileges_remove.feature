@@ -1,4 +1,4 @@
-Feature: ACL subdirectories privileges on directories tests using multiple browsers in Oneprovider GUI
+Feature: ACL subdirectories privileges on removing directories tests using multiple browsers in Oneprovider GUI
 
   Examples:
   | subject_type  | subject_name  |
@@ -55,4 +55,5 @@ Feature: ACL subdirectories privileges on directories tests using multiple brows
     | fails    |  all except [data:delete child]                                                   |
     | fails    |  all except [data:list files]                                                     |
     | fails    |  all except [data:traverse directory]                                             |
+
 

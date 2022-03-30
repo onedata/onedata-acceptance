@@ -1,5 +1,5 @@
 """This module contains tests suite for storage sync management in
-Onepanel GUI and multiple browser instances.
+Onepanel GUI and multiple browsers instances.
 """
 
 __author__ = "Bartosz Walkowicz"
@@ -48,6 +48,7 @@ from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
+from tests.gui.steps.oneprovider.browser import *
 
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.onezone.spaces import *

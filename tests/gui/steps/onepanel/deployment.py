@@ -104,10 +104,12 @@ def type_osd_size_to_input(selenium, number, size: str, browser_id, onepanel):
 @wt(parsers.parse('user of {browser_id} sets "{unit}" as size unit of {number} '
                   'OSD in Ceph configuration step of deployment process in '
                   'Onepanel'))
-def choose_osd_unit(selenium, number, unit, browser_id, onepanel):
-    step = onepanel(selenium[browser_id]).content.deployment.cephconfiguration
+def choose_osd_unit(selenium, number, unit, browser_id, onepanel, popups):
+    driver = selenium[browser_id]
+    step = onepanel(driver).content.deployment.cephconfiguration
     osd_index = 0 if number == 'first' else 1
-    step.osds[osd_index].choose_unit(unit)
+    step.osds[osd_index].unit_selector()
+    popups(driver).dropdown.options[unit].click()
 
 
 @wt(parsers.re('user of (?P<browser_id>.+?) types '
@@ -129,13 +131,23 @@ def wt_type_property_to_in_box_in_deployment_step(selenium, browser_id, alias,
                'in (?P<step>step 1|step 2|step 3|web cert step|'
                'Ceph configuration step|step 5|last step) of '
                'deployment process in Onepanel'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def wt_click_on_btn_in_deployment_step(selenium, browser_id, btn, step,
                                        onepanel):
+    driver = selenium[browser_id]
     step = step.rstrip('step') if 'Ceph configuration' in step else step
-    step = getattr(onepanel(selenium[browser_id]).content.deployment,
+    step = getattr(onepanel(driver).content.deployment,
                    step.lower().replace(' ', ''))
     getattr(step, transform(btn)).click()
+    if btn == 'Add host':
+
+        for _ in range(10):
+            selector = driver.find_elements_by_css_selector(
+                '.cluster-host-table .cluster-host-table-row')
+            if len(selector) < 2:
+                time.sleep(1)
+            else:
+                break
 
 
 @wt(parsers.parse('user of {browser_id} sees that cluster '
@@ -188,7 +200,7 @@ def wt_click_yes_in_warning_modal_in_dns_setup_step(selenium, browser_id,
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on "Setup IP addresses" '
                'button in deployment setup IP step'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def wt_click_setup_ip_in_deployment_setup_ip(selenium, browser_id, onepanel):
     (onepanel(selenium[
                   browser_id]).content.deployment.setup_ip.setup_ip_addresses
@@ -223,7 +235,7 @@ def wt_assert_ip_address_in_deployment_setup_ip(selenium, browser_id, onepanel,
 @wt(parsers.re('user of (?P<browser_id>.*) sees that IP address of '
                '"(?P<host>.*)" host is that of "(?P<ip_host>.*)" in'
                ' deployment setup IP step'))
-@repeat_failed(timeout=WAIT_BACKEND*2, interval=1)
+@repeat_failed(timeout=WAIT_BACKEND*4, interval=1)
 def wt_assert_ip_address_of_known_host_in_deployment_setup_ip(selenium, host,
                                                               browser_id, hosts,
                                                               onepanel,
@@ -258,6 +270,7 @@ def wt_deactivate_lets_encrypt_toggle_in_deployment_step4(selenium, browser_id,
 
 @wt(parsers.parse('user of {browser_id} selects {storage_type} from storage '
                   'selector in step 5 of deployment process in Onepanel'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def wt_select_storage_type_in_deployment_step5(selenium, browser_id,
                                                storage_type, onepanel):
     storage_selector = (onepanel(
@@ -278,7 +291,7 @@ def wt_check_skip_storage_detection_in_deployment_step5(selenium, browser_id,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) enables "(?P<option>.*?)" '
-               'in (?P<form>POSIX|Local Ceph) form in step 5 of '
+               'in (?P<form>POSIX|Embedded Ceph) form in step 5 of '
                'deployment process in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_enable_storage_option_in_deployment_step5(selenium, browser_id, option,
@@ -289,7 +302,7 @@ def wt_enable_storage_option_in_deployment_step5(selenium, browser_id, option,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) types "(?P<text>.*?)" to '
-               '(?P<input_box>.*?) field in (?P<form>POSIX|Local Ceph) form '
+               '(?P<input_box>.*?) field in (?P<form>POSIX|Embedded Ceph) form '
                'in step 5 of deployment process in Onepanel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def wt_type_text_to_in_box_in_deployment_step5(selenium, browser_id, text, form,
