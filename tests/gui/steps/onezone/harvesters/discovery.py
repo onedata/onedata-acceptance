@@ -149,14 +149,14 @@ def click_button_in_harvester_spaces_page(selenium, browser_id, oz_page,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_element_from_dropdown_in_add_element_modal(selenium, browser_id,
                                                       element_name, modals,
-                                                      element):
+                                                      element, popups):
     driver = selenium[browser_id]
-    modal_name = f'add_one_of_{element}s'
+    modal_name = 'add_one_of_elements'
     for _ in range(10):
         try:
             add_one_of_elements_modal = getattr(modals(driver), modal_name)
             add_one_of_elements_modal.expand_dropdown()
-            modals(driver).dropdown.options[element_name].click()
+            popups(driver).dropdown.options[element_name].click()
         except RuntimeError:
             time.sleep(0.5)
             continue

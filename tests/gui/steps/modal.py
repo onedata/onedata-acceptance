@@ -24,6 +24,22 @@ in_type_to_id = {'username': 'login-form-username-input',
                  'password': 'login-form-password-input'}
 
 
+def check_modal_name(modal_name):
+    modal_name = transform(modal_name)
+    if 'remove' in modal_name:
+        return 'remove_modal'
+    elif 'leave' in modal_name:
+        return 'leave_modal'
+    elif 'add_one' in modal_name:
+        return 'add_one_of_elements'
+    elif 'rename' in modal_name:
+        return 'rename_modal'
+    elif modal_name in ['file_details', 'directory_details']:
+        return 'details_modal'
+    else:
+        return modal_name
+
+
 @wt(parsers.parse('user of {browser_id} sees that '
                   'modal "Add storage" has appeared'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -119,6 +135,7 @@ def _wait_for_modal_to_disappear(driver, browser_id, tmp_memory):
 
 
 def _wait_for_named_modal_to_disappear(driver, modal_name):
+    modal_name = check_modal_name(modal_name)
     try:
         modal = getattr(modals(driver), transform(modal_name))
     except RuntimeError:
@@ -301,7 +318,7 @@ def assert_btn_in_modal_is_enabled(browser_id, btn_name, tmp_memory):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_alert_text_in_modal(selenium, browser_id, modals, modal, text):
     driver = selenium[browser_id]
-    modal = transform(modal)
+    modal = check_modal_name(modal)
     forbidden_alert_text = getattr(modals(driver), modal).forbidden_alert.text
     assert text in forbidden_alert_text, (
         'found {} text instead of {}'.format(forbidden_alert_text, text))
@@ -312,7 +329,7 @@ def assert_alert_text_in_modal(selenium, browser_id, modals, modal, text):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_modal_button(selenium, browser_id, button, modal, modals):
     button = transform(button)
-    modal = transform(modal)
+    modal = check_modal_name(modal)
     getattr(getattr(modals(selenium[browser_id]), modal), button)()
 
 
@@ -325,7 +342,8 @@ def write_name_into_text_field_in_modal(selenium, browser_id, item_name,
                                         name_textfield='input name'):
     if name_textfield == '':
         name_textfield = 'input name'
-    modal = getattr(modals(selenium[browser_id]), transform(modal_name))
+    modal_name = check_modal_name(modal_name)
+    modal = getattr(modals(selenium[browser_id]), modal_name)
     setattr(modal, transform(name_textfield), item_name)
 
 
@@ -393,7 +411,7 @@ def assert_titled_error_modal_appeared(selenium, browser_id, title):
 @wt(parsers.re('user of (?P<browser_id>.*) closes "(?P<modal>.*)" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def close_modal(selenium, browser_id, modal, modals):
-    modal = transform(modal)
+    modal = check_modal_name(modal)
     try:
         getattr(modals(selenium[browser_id]), modal).close()
     except AttributeError:

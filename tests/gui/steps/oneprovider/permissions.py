@@ -110,10 +110,10 @@ def expand_acl_modal(selenium, browser_id, num, numerals, modals):
 @wt(parsers.parse('user of {browser_id} selects {subject} from subject list '
                   'in ACL record in edit permissions modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def select_acl_subject(selenium, browser_id, subject, modals):
+def select_acl_subject(selenium, browser_id, subject, modals, popups):
     driver = selenium[browser_id]
     modals(driver).edit_permissions.acl.expand_dropdown()
-    modals(driver).dropdown.options[subject].click()
+    popups(driver).dropdown.options[subject].click()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees exactly (?P<val>\d+) ACL '
@@ -239,24 +239,23 @@ def assert_acl_subject(selenium, browser_id, modals, num, numerals, type, name):
                'in (?P<num>.*) ACL record in edit permissions modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_btn_in_acl_record(selenium, browser_id, modals, btn, num,
-                               numerals):
+                               numerals, popups):
     driver = selenium[browser_id]
     n = _get_index(selenium, browser_id, num, modals, numerals)
 
     btn = btn.strip('\"')
-    perm = (modals(driver).edit_permissions.acl
-        .member_permission_list[n])
+    perm = (modals(driver).edit_permissions.acl.member_permission_list[n])
     perm.menu_button()
-    modals(driver).menu_in_edit_permissions.menu[btn.capitalize()]()
+    popups(driver).menu_in_edit_permissions.menu[btn.capitalize()]()
 
 
 @wt(parsers.re('user of (?P<browser_id>\w+) sees that (?P<subjects>.*) '
                '(is|are) in subject list in ACL record'))
 def assert_subject_in_list_in_acl_record(selenium, browser_id, subjects, modals,
-                                         tmp_memory):
+                                         tmp_memory, popups):
     driver = selenium[browser_id]
     modals(driver).edit_permissions.acl.expand_dropdown()
-    subject_list = modals(driver).dropdown.options
+    subject_list = popups(driver).dropdown.options
     for subject in parse_seq(subjects):
         assert subject in subject_list, f'{subject} not found in subjects list'
 

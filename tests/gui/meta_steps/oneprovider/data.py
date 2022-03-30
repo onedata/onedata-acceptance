@@ -52,7 +52,7 @@ def _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id, path,
 @wt(parsers.re(r'user of (?P<browser_id>\w+) (?P<res>.*) to rename '
                '"(?P<path>.*)" to "(?P<new_path>.*)" in "(?P<space>.*)"'))
 def rename_item(selenium, browser_id, path, new_path, tmp_memory, res, space,
-                modals, oz_page, op_container):
+                modals, oz_page, op_container, popups):
     option = 'Rename'
     modal_header = 'Rename'
     modal_name = 'Rename modal'
@@ -60,7 +60,7 @@ def rename_item(selenium, browser_id, path, new_path, tmp_memory, res, space,
     text = 'Renaming the file failed'
     new_name = new_path.split('/')[-1]
 
-    open_modal_for_file_browser_item(selenium, browser_id, modals, modal_header,
+    open_modal_for_file_browser_item(selenium, browser_id, popups, modal_header,
                                      path, tmp_memory, option, space, oz_page,
                                      op_container)
     write_name_into_text_field_in_modal(selenium, browser_id, new_name,
@@ -76,14 +76,14 @@ def rename_item(selenium, browser_id, path, new_path, tmp_memory, res, space,
 @wt(parsers.re(r'user of (?P<browser_id>\w+) (?P<res>.*) to remove '
                '"(?P<path>.*)" in "(?P<space>.*)"'))
 def remove_item_in_op_gui(selenium, browser_id, path, tmp_memory, op_container,
-                          res, space, modals, oz_page):
+                          res, space, modals, oz_page, popups):
     option = 'Delete'
     button = 'Yes'
     modal = 'Delete modal'
     modal_header = 'Delete'
     text = 'Deleting file(s) failed'
 
-    open_modal_for_file_browser_item(selenium, browser_id, modals, modal_header,
+    open_modal_for_file_browser_item(selenium, browser_id, popups, modal_header,
                                      path, tmp_memory, option, space, oz_page,
                                      op_container)
     click_modal_button(selenium, browser_id, button, modal, modals)
@@ -95,11 +95,12 @@ def remove_item_in_op_gui(selenium, browser_id, path, tmp_memory, op_container,
 
 
 def remove_dir_and_parents_in_op_gui(selenium, browser_id, path, tmp_memory,
-                                     op_container, res, space, modals, oz_page):
+                                     op_container, res, space, modals, oz_page,
+                                     popups):
     item_name = _select_item(selenium, browser_id, tmp_memory, path,
                              op_container)
     remove_item_in_op_gui(selenium, browser_id, item_name, tmp_memory,
-                          op_container, res, space, modals, oz_page)
+                          op_container, res, space, modals, oz_page, popups)
 
 
 @wt(parsers.re(r'using web gui, (?P<browser_id>\w+) (?P<res>.*) to see item '
@@ -273,7 +274,7 @@ def assert_space_content_in_op_gui(config, selenium, user, op_container,
 
 def see_num_of_items_in_path_in_op_gui(selenium, user, tmp_memory, op_container,
                                        path, space, num, oz_page, provider,
-                                       hosts, modals):
+                                       hosts, popups):
     tab_name = 'data'
 
     try:
@@ -281,7 +282,7 @@ def see_num_of_items_in_path_in_op_gui(selenium, user, tmp_memory, op_container,
                                     tmp_memory)
     except KeyError:
         navigate_to_tab_in_op_using_gui(selenium, user, oz_page, provider,
-                                        tab_name, hosts, modals)
+                                        tab_name, hosts, popups)
         _select_item(selenium, user, tmp_memory, path, op_container)
         refresh_site(selenium, user)
         assert_browser_in_tab_in_op(selenium, user, op_container,
@@ -472,25 +473,25 @@ def go_to_filebrowser(selenium, browser_id, oz_page, op_container,
                                 tmp_memory)
 
 
-def open_modal_for_file_browser_item(selenium, browser_id, modals, modal_name,
+def open_modal_for_file_browser_item(selenium, browser_id, popups, modal_name,
                                      path, tmp_memory, option, space,
                                      oz_page, op_container):
     _click_menu_for_elem_somewhere_in_file_browser(selenium, browser_id, path,
                                                    space, tmp_memory, oz_page,
                                                    op_container)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
-                                             modals)
+                                             popups)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
 
 
 def check_file_owner(selenium, browser_id, owner, file_name, tmp_memory,
-                     modals):
+                     modals, popups):
     option = 'Information'
     modal_name = 'File details'
 
     click_menu_for_elem_in_browser(browser_id, file_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
-                                             modals)
+                                             popups)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     check_file_owner_in_file_details_modal(selenium, browser_id, modals, owner)
     close_modal(selenium, browser_id, modal_name, modals)
@@ -499,29 +500,29 @@ def check_file_owner(selenium, browser_id, owner, file_name, tmp_memory,
 @wt(parsers.parse('user of {browser_id} creates hardlink of "{file_name}" '
                   'file in space "{space}" in file browser'))
 def create_hardlinks_of_file(selenium, browser_id, file_name, space,
-                             tmp_memory, oz_page, op_container, modals):
+                             tmp_memory, oz_page, op_container, popups):
     option = 'Create hard link'
     button = 'place hard link'
 
     _create_link_in_file_browser(selenium, browser_id, file_name, space,
-                                 tmp_memory, oz_page, op_container, modals,
+                                 tmp_memory, oz_page, op_container, popups,
                                  option, button)
 
 
 @wt(parsers.parse('user of {browser_id} creates symlink of "{file_name}" '
                   'file in space "{space}" in file browser'))
 def create_symlinks_of_file(selenium, browser_id, file_name, space,
-                            tmp_memory, oz_page, op_container, modals):
+                            tmp_memory, oz_page, op_container, popups):
     option = 'Create symbolic link'
     button = 'place symbolic link'
 
     _create_link_in_file_browser(selenium, browser_id, file_name, space,
-                                 tmp_memory, oz_page, op_container, modals,
+                                 tmp_memory, oz_page, op_container, popups,
                                  option, button)
 
 
 def _create_link_in_file_browser(selenium, browser_id, file_name, space,
-                                 tmp_memory, oz_page, op_container, modals,
+                                 tmp_memory, oz_page, op_container, popups,
                                  option, button):
     go_to_filebrowser(selenium, browser_id, oz_page, op_container, tmp_memory,
                       space)
@@ -529,7 +530,7 @@ def _create_link_in_file_browser(selenium, browser_id, file_name, space,
                                                    file_name, space, tmp_memory,
                                                    oz_page, op_container)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
-                                             modals)
+                                             popups)
     click_file_browser_button(browser_id, button, tmp_memory)
 
 
@@ -537,7 +538,7 @@ def _create_link_in_file_browser(selenium, browser_id, file_name, space,
                r' clipboard from "(?P<modal>.*)" modal in space '
                r'"(?P<space>\w+)" in (?P<host>.*)'))
 def copy_object_id_to_tmp_memory(tmp_memory, selenium, user, name, space,
-                                 oz_page, op_container, modals, modal):
+                                 oz_page, op_container, modals, modal, popups):
     option = 'Information'
     button = 'File ID'
     if modal == 'Directory Details':
@@ -545,8 +546,7 @@ def copy_object_id_to_tmp_memory(tmp_memory, selenium, user, name, space,
     _click_menu_for_elem_somewhere_in_file_browser(selenium, user, name,
                                                    space, tmp_memory, oz_page,
                                                    op_container)
-    click_option_in_data_row_menu_in_browser(selenium, user, option,
-                                             modals)
+    click_option_in_data_row_menu_in_browser(selenium, user, option, popups)
     click_modal_button(selenium, user, button, modal, modals)
     close_modal(selenium, user, modal, modals)
 

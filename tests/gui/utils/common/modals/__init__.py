@@ -6,165 +6,121 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-from .archive_recall_information import ArchiveRecallInformation
-from .change_privileges import ChangePrivilegesModal
-from .clean_up_obsolete_tokens import CleanUpObsoleteTokensModal
-from .create_dir import CreateDir
-from .add_storage import AddStorage
+from .archives_modals.archive_recall_information import ArchiveRecallInformation
+from .management_modals.change_privileges import ChangePrivilegesModal
+from .tokens_modals.clean_up_obsolete_tokens import CleanUpObsoleteTokensModal
+from .files_modals.create_dir import CreateDir
+from .storage_modals.add_storage import AddStorage
 from tests.gui.utils.core.web_elements import WebItem
-from tests.gui.utils.common.modals.create_group import CreateGroup
-from tests.gui.utils.common.common import (DropdownSelector,
-                                           MigrateDropdownSelector)
-from .data_distribution import DataDistributionModal
-from .data_row_menu import DataRowMenu
-from .archive_row_menu import ArchiveRowMenu
-from .delete_modal import DeleteModal
-from .file_details import FileDetailsModal
-from .login import LoginFormModal
-from .deploying_cluster import ClusterDeploymentModal
-from .metadata_modal import MetadataModal
-from .menu_in_edit_permissions_modal import EditPermissionsRecordMenu
-from .qos import QualityOfServiceModal
-from .recall_archive import RecallArchive
-from .rename_modal import RenameModal
-from .rename_share_modal import RenameShareModal
-from .cease_support_for_space import CeaseSupportForSpaceModal
-from .edit_permissions import EditPermissionsModal
+from .basic_modals.create_group import CreateGroup
+from .files_modals.data_distribution import DataDistributionModal
+from .basic_modals.delete_modal import DeleteModal
+from .files_modals.details_modal import DetailsModal
+from .basic_modals.login import LoginFormModal
+from .management_modals.deploying_cluster import ClusterDeploymentModal
+from .files_modals.metadata_modal import MetadataModal
+from .files_modals.qos import QualityOfServiceModal
+from .archives_modals.recall_archive import RecallArchive
+from .basic_modals.rename_modal import RenameModal
+from .management_modals.cease_support_for_space import (
+    CeaseSupportForSpaceModal)
+from .files_modals.edit_permissions import EditPermissionsModal
 from .configure_web_cert import ConfigureWebCertModal
-from .remove import RemoveModal
-from .leave_space import LeaveSpaceModal
-from .leave_parent import LeaveParentModal
-from .error_modal import ErrorModal
-from .invite_using_token import InviteUsingTokenModal
-from .dns_configuration_warning import DNSConfigurationWarningModal
-from .provider_popover import ProviderPopover
-from .membership_relation_menu import MembershipRelationMenu
-from .groups_hierarchy_menu import GroupHierarchyMenu
-from .emergency_interface import EmergencyInterface
-from .add_one_of_elements import AddOneOfElementsModal
-from .leave_element import LeaveElementModal
-from .modify_storage import ModifyStorage
+from .basic_modals.remove import RemoveModal
+from .troubles_modals.error_modal import ErrorModal
+from .tokens_modals.invite_using_token import InviteUsingTokenModal
+from .troubles_modals.dns_configuration_warning import (
+    DNSConfigurationWarningModal)
+from .troubles_modals.emergency_interface import EmergencyInterface
+from .basic_modals.add_one_of_elements import AddOneOfElementsModal
+from .basic_modals.leave_element import LeaveElementModal
+from .storage_modals.modify_storage import ModifyStorage
 from .rest_api_modal import RESTApiModal
-from .share_directory import ShareDirectory
-from .shares_row_menu import SharesRowMenu
-from .delete_user_account import DeleteUserAccountModal
-from .symbolic_link_details import SymbolicLinkDetailsModal
-from .datasets_modal import DatasetsModal
-from .create_archive import CreateArchive
-from .remove_selected_dataset import RemoveSelectedDataset
-from .detach_dataset import DetachDataset
-from .write_protection import WriteProtection
-from .purge_archive import PurgeArchive
-from .reattach_dataset import ReattachDataset
-from .upload_workflow import UploadWorkflow
-from .create_new_store import CreateNewStore
-from .create_new_lane import CreateNewLane
-from .duplicate_revision import DuplicateRevision
+from .files_modals.share_directory import ShareDirectory
+from .management_modals.delete_user_account import DeleteUserAccountModal
+from .files_modals.symbolic_link_details import SymbolicLinkDetailsModal
+from .datasets_modals.datasets_modal import DatasetsModal
+from .archives_modals.create_archive import CreateArchive
+from .datasets_modals.detach_dataset import DetachDataset
+from .files_modals.write_protection import WriteProtection
+from .archives_modals.purge_archive import PurgeArchive
+from .datasets_modals.reattach_dataset import ReattachDataset
+from .workflows_modals.upload_workflow import UploadWorkflow
+from .workflows_modals.create_new_store import CreateNewStore
+from .workflows_modals.create_new_lane import CreateNewLane
+from .workflows_modals.duplicate_revision import DuplicateRevision
 
 
 class Modals(object):
-    add_storage = WebItem('.panel-onezone-modal.in', cls=AddStorage)
-    data_distribution = WebItem('.modal-dialog', cls=DataDistributionModal)
-    cluster_deployment = WebItem('.new-cluster-deploy-progress.modal-body',
-                                 cls=ClusterDeploymentModal)
-    cease_support_for_space = WebItem('.modal.in .modal-dialog',
-                                      cls=CeaseSupportForSpaceModal)
-    login = WebItem('#login-form-modal', cls=LoginFormModal)
-    edit_permissions = WebItem('.modal-dialog',
-                               cls=EditPermissionsModal)
-    configure_web_cert = WebItem('#configure-web-cert-modal',
-                                 cls=ConfigureWebCertModal)
-    dns_configuration_warning = WebItem('.new-cluster-dns-proceed-modal.modal',
-                                        cls=DNSConfigurationWarningModal)
-    remove_group = WebItem('.group-remove-modal.modal.in .modal-dialog',
-                           cls=RemoveModal)
-    leave_group = WebItem('.leave-modal.modal.in .modal-dialog',
-                          cls=LeaveElementModal)
-    leave_parent = WebItem('.leave-parent-modal.modal.in .modal-dialog',
-                           cls=LeaveParentModal)
-    leave_space = WebItem('.modal-dialog',
-                          cls=LeaveSpaceModal)
-    leave_harvester = WebItem('.modal-dialog', cls=LeaveElementModal)
-    leave_inventory = WebItem('.modal-dialog', cls=LeaveElementModal)
-    provider_popover = WebItem('.webui-popover .provider-place-drop',
-                               cls=ProviderPopover)
-    remove_member = WebItem('.remove-relation-modal.modal.in .modal-dialog',
-                            cls=RemoveModal)
-    modify_storage = WebItem('.modify-storage-modal.modal.in .modal-dialog',
-                             cls=ModifyStorage)
-    remove_storage = WebItem('.remove-storage-modal.modal.in .modal-dialog',
-                             cls=RemoveModal)
-    error = WebItem('.alert-global.modal.in .modal-dialog',
-                    cls=ErrorModal)
-    invite_using_token = WebItem('.generate-invite-token-modal.modal.in '
-                                 '.modal-dialog',
-                                 cls=InviteUsingTokenModal)
-    group_hierarchy_menu = WebItem('.group-actions.one-webui-popover',
-                                   cls=GroupHierarchyMenu)
-    relation_menu = WebItem('.line-actions.one-webui-popover',
-                            cls=GroupHierarchyMenu)
-    create_group = WebItem('.modal-dialog', cls=CreateGroup)
-    create_dir = WebItem('.modal-dialog', cls=CreateDir)
-    membership_relation_menu = WebItem('.relation-actions.one-webui-popover',
-                                       cls=MembershipRelationMenu)
-    emergency_interface = WebItem('.modal-dialog', cls=EmergencyInterface)
-    add_one_of_groups = WebItem('.modal-dialog', cls=AddOneOfElementsModal)
-    add_one_of_spaces = WebItem('.modal-dialog', cls=AddOneOfElementsModal)
-    add_one_of_harvesters = WebItem('.modal-dialog', cls=AddOneOfElementsModal)
-    remove_space_from_harvester = WebItem('.modal-dialog', cls=RemoveModal)
-    dropdown = DropdownSelector('.ember-basic-dropdown-content')
-    migrate_dropdown = MigrateDropdownSelector('.ember-basic-dropdown-content')
-    data_row_menu = WebItem('.file-actions.dropdown-menu',
-                            cls=DataRowMenu)
-    dataset_row_menu = WebItem('.left-bottom .file-actions.dropdown-menu',
-                               cls=DataRowMenu)
-    archive_row_menu = WebItem('.left-top .webui-popover-inner '
-                               '.file-actions.dropdown-menu',
-                               cls=ArchiveRowMenu)
+
+    # basic modals
+    remove_modal = WebItem('.modal-dialog', cls=RemoveModal)
+    leave_modal = WebItem('.modal-dialog', cls=LeaveElementModal)
+    add_one_of_elements = WebItem('.modal-dialog', cls=AddOneOfElementsModal)
     delete_modal = WebItem('.modal-dialog', cls=DeleteModal)
     rename_modal = WebItem('.modal-dialog', cls=RenameModal)
-    metadata = WebItem('.modal-dialog', cls=MetadataModal)
-    menu_in_edit_permissions = WebItem('.over-modals .webui-popover-content '
-                                       '.one-webui-popover',
-                                       cls=EditPermissionsRecordMenu)
-    share_directory = WebItem('.modal-dialog', cls=ShareDirectory)
-    shares_row_menu = WebItem('.share-actions.dropdown-menu', cls=SharesRowMenu)
-    rename_share = WebItem('.modal-dialog', cls=RenameShareModal)
-    remove_share = WebItem('.modal-dialog', cls=RemoveModal)
-    remove_token = WebItem('.modal-dialog', cls=RemoveModal)
-    remove_harvester = WebItem('.modal-dialog', cls=RemoveModal)
-    remove_space = WebItem('.modal-dialog', cls=RemoveModal)
-    remove_inventory = WebItem('.modal-dialog', cls=RemoveModal)
-    remove_workflow = WebItem('.modal-dialog', cls=RemoveModal)
-    remove_workflow_revision = WebItem('.modal-dialog', cls=RemoveModal)
-    remove_task = WebItem('.modal-dialog', cls=RemoveModal)
-    rest_api_modal = WebItem('.modal-dialog', cls=RESTApiModal)
-    clean_up_obsolete_tokens = WebItem('.modal-dialog',
-                                       cls=CleanUpObsoleteTokensModal)
-    quality_of_service = WebItem('.modal-dialog', cls=QualityOfServiceModal)
-    change_privileges = WebItem('.modal-dialog', cls=ChangePrivilegesModal)
+    login = WebItem('#login-form-modal', cls=LoginFormModal)
+    create_group = WebItem('.modal-dialog', cls=CreateGroup)
 
-    delete_user_account = WebItem('.modal-dialog', cls=DeleteUserAccountModal)
-    file_details = WebItem('.modal-dialog', cls=FileDetailsModal)
-    directory_details = WebItem('.modal-dialog', cls=FileDetailsModal)
+    # storage modals
+    add_storage = WebItem('.panel-onezone-modal.in', cls=AddStorage)
+    modify_storage = WebItem('.modify-storage-modal.modal.in .modal-dialog',
+                             cls=ModifyStorage)
+
+    # files modals
+    data_distribution = WebItem('.modal-dialog', cls=DataDistributionModal)
+    create_dir = WebItem('.modal-dialog', cls=CreateDir)
+    quality_of_service = WebItem('.modal-dialog', cls=QualityOfServiceModal)
+    metadata = WebItem('.modal-dialog', cls=MetadataModal)
+    share_directory = WebItem('.modal-dialog', cls=ShareDirectory)
+    write_protection = WebItem('.modal-dialog', cls=WriteProtection)
+    details_modal = WebItem('.modal-dialog', cls=DetailsModal)
     symbolic_link_details = WebItem('.modal-dialog',
                                     cls=SymbolicLinkDetailsModal)
-    datasets = WebItem('.modal-dialog', cls=DatasetsModal)
+    edit_permissions = WebItem('.modal-dialog', cls=EditPermissionsModal)
+
+    # troubles modals
+    emergency_interface = WebItem('.modal-dialog', cls=EmergencyInterface)
+    dns_configuration_warning = WebItem('.new-cluster-dns-proceed-modal.modal',
+                                        cls=DNSConfigurationWarningModal)
+    error = WebItem('.alert-global.modal.in .modal-dialog',
+                    cls=ErrorModal)
+
+    # tokens modals
+    invite_using_token = WebItem('.generate-invite-token-modal.modal.in '
+                                 '.modal-dialog', cls=InviteUsingTokenModal)
+    clean_up_obsolete_tokens = WebItem('.modal-dialog',
+                                       cls=CleanUpObsoleteTokensModal)
+
+    # archives modals
     create_archive = WebItem('.modal-dialog', cls=CreateArchive)
     recall_archive = WebItem('.modal-dialog', cls=RecallArchive)
     archive_recall_information = WebItem('.modal-dialog',
                                          cls=ArchiveRecallInformation)
-    remove_selected_dataset = WebItem('.modal-dialog',
-                                      cls=RemoveSelectedDataset)
-    detach_dataset = WebItem('.modal-dialog', cls=DetachDataset)
-    write_protection = WebItem('.modal-dialog', cls=WriteProtection)
     purge_archive = WebItem('.modal-dialog', cls=PurgeArchive)
+
+    # datasets modals
+    datasets = WebItem('.modal-dialog', cls=DatasetsModal)
+    detach_dataset = WebItem('.modal-dialog', cls=DetachDataset)
     reattach_dataset = WebItem('.modal-dialog', cls=ReattachDataset)
+
+    # workflows modals
     upload_workflow = WebItem('.modal-dialog', cls=UploadWorkflow)
     create_new_store = WebItem('.modal-dialog', cls=CreateNewStore)
     create_new_lane = WebItem('.modal-dialog', cls=CreateNewLane)
     duplicate_revision = WebItem('.modal-dialog', cls=DuplicateRevision)
 
+    # management modals
+    change_privileges = WebItem('.modal-dialog', cls=ChangePrivilegesModal)
+    delete_user_account = WebItem('.modal-dialog', cls=DeleteUserAccountModal)
+    cluster_deployment = WebItem('.new-cluster-deploy-progress.modal-body',
+                                 cls=ClusterDeploymentModal)
+    cease_support_for_space = WebItem('.modal.in .modal-dialog',
+                                      cls=CeaseSupportForSpaceModal)
+
+    rest_api_modal = WebItem('.modal-dialog', cls=RESTApiModal)
+    configure_web_cert = WebItem('#configure-web-cert-modal',
+                                 cls=ConfigureWebCertModal)
 
     def __init__(self, driver):
         self.driver = driver
