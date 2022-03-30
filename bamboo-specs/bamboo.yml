@@ -6,3 +6,7 @@
 !include 'gui-acceptance-src.yml'
 ---
 !include 'gui-acceptance-src-perm.yml'
+---
+!include 'mixed-acceptance-src.yml'
+---
+!include 'mixed-acceptance-src-perm.yml'
