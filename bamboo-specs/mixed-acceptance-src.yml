@@ -542,16 +542,7 @@ Chrome directories multi tests:
 Chrome groups basic tests:
   key: CGBT
   other: *common-opts
-  tasks:
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        ONE_ENV_DEPLOYMENT_DIR="/home/bamboo/.one-env"
-        docker run -v ${ONE_ENV_DEPLOYMENT_DIR}:${ONE_ENV_DEPLOYMENT_DIR} \
-                   -v ${bamboo.build.working.directory}:${bamboo.build.working.directory} \
-                   alpine sh -c "rm -rf ${ONE_ENV_DEPLOYMENT_DIR}/* ${bamboo.build.working.directory}/onedata"
-      description: Clear env
+  tasks: *clear-env
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
