@@ -146,7 +146,7 @@ Chrome QoS tests:
         mv onedata-acceptance/tests/mixed/logs/report.* onedata-acceptance/tests/mixed/logs/gui_report
         mv onedata-acceptance/tests/mixed/logs/gui_report/images.yaml onedata-acceptance/tests/mixed/logs
       description: Pack logs
-  - script: &clear-env-in-onedata
+  - script: &clear-env-and-working-dir
       interpreter: BINSH_OR_CMDEXE
       scripts:
       - curl ${bamboo.OnedataFinalTasksURL} | bash -
@@ -190,7 +190,7 @@ Chrome create file tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -213,7 +213,7 @@ Chrome storage sync:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -236,7 +236,7 @@ Chrome ACL one entry:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -259,7 +259,7 @@ Chrome permission POSIX multi tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -282,7 +282,7 @@ Chrome spaces basic tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -305,7 +305,7 @@ Chrome onepanel tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -328,7 +328,7 @@ Chrome permission POSIX tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -351,7 +351,7 @@ Chrome files movement tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -374,7 +374,7 @@ Chrome directories movement tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -397,7 +397,7 @@ Chrome files multi tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -420,7 +420,7 @@ Chrome access tokens path caveats:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -443,7 +443,7 @@ Chrome nested directories create:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -466,7 +466,7 @@ Chrome single directory tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -489,7 +489,7 @@ Chrome files set metadata:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -512,7 +512,7 @@ Chrome remove file tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -535,7 +535,7 @@ Chrome directories multi tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -565,7 +565,7 @@ Chrome groups basic tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -588,7 +588,7 @@ Chrome single directory tests 2:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -611,7 +611,7 @@ Chrome archives tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -634,7 +634,7 @@ Chrome archive privileges:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -657,7 +657,7 @@ Chrome directories set metadata:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -680,7 +680,7 @@ Chrome nested directories remove:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -703,7 +703,7 @@ Chrome ACL two entries:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -726,7 +726,7 @@ Chrome tokens tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -749,7 +749,7 @@ Chrome access tokens:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -772,7 +772,7 @@ Chrome file content tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -795,7 +795,7 @@ Chrome files remove metadata:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -818,7 +818,7 @@ Chrome rename file tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -841,7 +841,7 @@ Chrome datasets tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -864,7 +864,7 @@ Chrome files times tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -887,7 +887,7 @@ Chrome access tokens id caveats:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -910,7 +910,7 @@ Chrome directories times tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -933,7 +933,7 @@ Chrome directories remove metadata:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
