@@ -126,7 +126,7 @@ multiprovider replication proxyio:
         mv onedata-acceptance/tests/oneclient/logs/*/*/images.yaml onedata-acceptance/tests/oneclient/logs
         tar czf test_logs.tar.gz onedata-acceptance/tests/oneclient/logs
       description: Pack logs
-  - script: &clear-env-in-onedata
+  - script: &clear-env-and-working-dir
       interpreter: BINSH_OR_CMDEXE
       scripts:
       - curl ${bamboo.OnedataFinalTasksURL} | bash -
@@ -159,7 +159,7 @@ multiprovider regular file CRUD directio:
   final-tasks:
   - script: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -182,7 +182,7 @@ multiprovider directory stat directio:
   final-tasks:
   - script: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -205,7 +205,7 @@ luma proxy:
   final-tasks:
   - script: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -228,7 +228,7 @@ singleprovider directory stat multiclient directio:
   final-tasks:
   - script: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -251,7 +251,7 @@ singleprovider regular file stat multiclient directio:
   final-tasks:
   - script: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -274,7 +274,7 @@ directory CRUD:
   final-tasks:
   - script: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -297,7 +297,7 @@ multiprovider proxy directory stat proxyio:
   final-tasks:
   - script: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -320,7 +320,7 @@ luma provider:
   final-tasks:
   - script: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -343,7 +343,7 @@ multiprovider regular file stat proxyio:
   final-tasks:
   - script: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -366,7 +366,7 @@ singleprovider regular file CRUD multiclient proxyio:
   final-tasks:
   - script: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -389,7 +389,7 @@ multiprovider proxy regular file stat proxyio:
   final-tasks:
   - script: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -412,7 +412,7 @@ multiprovider directory CRUD directio:
   final-tasks:
   - script: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -435,7 +435,7 @@ multiprovider replication directio:
   final-tasks:
   - script: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -459,7 +459,7 @@ singleprovider directory CRUD multiclient directio:
   final-tasks:
   - script: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -483,7 +483,7 @@ singleprovider regular file CRUD multiclient directio:
   final-tasks:
   - script: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -506,7 +506,7 @@ multiprovider proxy directory CRUD proxyio:
   final-tasks:
   - script: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -529,7 +529,7 @@ multiprovider regular file CRUD proxyio:
   final-tasks:
   - script: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -552,7 +552,7 @@ regular file stat directio:
   final-tasks:
   - script: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -575,7 +575,7 @@ multiprovider proxy regular file CRUD proxyio:
   final-tasks:
   - script: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -599,7 +599,7 @@ singleprovider extended attributes:
   final-tasks:
   - script: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -622,7 +622,7 @@ multiprovider proxy s3 regular file stat proxyio:
   final-tasks:
   - script: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -645,7 +645,7 @@ regular file stat proxyio:
   final-tasks:
   - script: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -668,7 +668,7 @@ multiprovider proxy s3 directory stat proxyio:
   final-tasks:
   - script: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -706,7 +706,7 @@ onedata_fs tests:
         mv onedata/tests/onedata_fs/logs/*/*/images.yaml onedata/tests/onedata_fs/logs
         tar czf test_logs.tar.gz onedata/tests/onedata_fs/logs
       description: Pack logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -729,7 +729,7 @@ regular file CRUD directio:
   final-tasks:
   - script: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -752,7 +752,7 @@ multiprovider regular file stat directio:
   final-tasks:
   - script: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -775,7 +775,7 @@ multiprovider proxy s3 regular file CRUD proxyio:
   final-tasks:
   - script: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -798,7 +798,7 @@ authorization:
   final-tasks:
   - script: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -821,7 +821,7 @@ regular file CRUD proxyio:
   final-tasks:
   - script: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -844,7 +844,7 @@ multiprovider proxy s3 directory CRUD proxyio:
   final-tasks:
   - script: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -867,7 +867,7 @@ directory stat:
   final-tasks:
   - script: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -890,7 +890,7 @@ multiclient authorization:
   final-tasks:
   - script: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -921,7 +921,7 @@ singleprovider regular file stat multiclient proxyio:
         mv onedata/tests/oneclient/logs/*/*/images.yaml onedata/tests/oneclient/logs
         tar czf test_logs.tar.gz onedata/tests/oneclient/logs
       description: Pack logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
