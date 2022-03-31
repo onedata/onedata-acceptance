@@ -915,13 +915,9 @@ singleprovider regular file stat multiclient proxyio:
   - script: *parse-test-results
   - script:
       interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/oneclient/logs
-        mv onedata/tests/oneclient/logs/*/*/images.yaml onedata/tests/oneclient/logs
-        tar czf test_logs.tar.gz onedata/tests/oneclient/logs
-      description: Pack logs
+      scripts: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
+
