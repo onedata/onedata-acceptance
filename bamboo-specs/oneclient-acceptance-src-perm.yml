@@ -1,0 +1,17 @@
+version: 2
+plan:
+  key: VFS-OAS
+plan-permissions:
+- users:
+  - plgcwiertni
+  permissions:
+  - view
+  - edit
+  - build
+  - clone
+  - admin
+- roles:
+  - logged-in
+  - anonymous
+  permissions:
+  - view
