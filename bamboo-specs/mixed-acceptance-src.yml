@@ -4,7 +4,6 @@ plan:
   key: MAOST
   name: mixed acceptance src
   description: Acceptance tests using different clients concurrently. Environment deployed from sources.
-variables: []
 repositories:
 - onedata-acceptance:
     scope: global
@@ -542,7 +541,8 @@ Chrome directories multi tests:
 Chrome groups basic tests:
   key: CGBT
   other: *common-opts
-  tasks: *clear-env
+  tasks:
+  - script: *clear-env
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
