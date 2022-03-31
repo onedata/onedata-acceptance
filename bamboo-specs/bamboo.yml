@@ -11,6 +11,6 @@
 ---
 !include 'mixed-acceptance-src-perm.yml'
 ---
-!include 'oneclient-acceptance-src.yml'
+!include 'oneclient-acceptance-pkg.yml'
 ---
-!include 'oneclient-acceptance-src-perm.yml'
+!include 'oneclient-acceptance-pkg-perm.yml'
