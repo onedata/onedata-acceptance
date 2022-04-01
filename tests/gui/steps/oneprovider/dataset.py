@@ -119,4 +119,56 @@ def click_on_dataset(browser_id, tmp_memory, name):
     browser.data[name].click()
 
 
+@wt(parsers.parse('user of {browser_id} sees path to root file: "{path}" '
+                  'for "{name}" dataset in dataset browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_path_to_root_file(browser_id, tmp_memory, path, name):
+    which_browser = transform('dataset browser')
+    browser = tmp_memory[browser_id][which_browser]
+    path_to_root = browser.data[name].path_to_root_file
+    err_msg = (f'Path to root: "{path_to_root} does not match expected'
+               f' path: "{path}"')
+    assert path == path_to_root, err_msg
+
+
+@wt(parsers.parse('user of {browser_id} sees that one of two listed datasets'
+                  ' "{name}" has got root file deleted'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_one_of_two_dataset_has_deleted_root(browser_id, tmp_memory, name):
+    which_browser = transform('dataset browser')
+    browser = tmp_memory[browser_id][which_browser]
+    number_of_deleted_icon = 0
+    for dataset in browser.data:
+        if dataset.name == name:
+            try:
+                dataset.deleted_root_file_icon
+                number_of_deleted_icon += 1
+            except RuntimeError:
+                pass
+    err_msg = (f'Number of deleted icon in detached dataset list '
+               f'is {number_of_deleted_icon}, but should be 1')
+    assert number_of_deleted_icon == 1, err_msg
+
+
+@wt(parsers.parse('user of {browser_id} sees two same root file paths '
+                  '"{path}" for datasets named "{name}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_two_identical_root_file_paths(browser_id, tmp_memory, name, path):
+    which_browser = transform('dataset browser')
+    browser = tmp_memory[browser_id][which_browser]
+    path1 = ''
+    path2 = ''
+    for dataset in browser.data:
+        if dataset.name == name:
+            if not path1:
+                path1 = dataset.path_to_root_file
+            else:
+                path2 = dataset.path_to_root_file
+
+    assert path1 == path2, f'"{path1}" and "{path2}" should be identical'
+    assert path1 == path, (f'"{path1}" match "{path2}" but does not match '
+                           f'expected "{path}"')
+
+
+
 
