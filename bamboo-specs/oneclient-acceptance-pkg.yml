@@ -157,7 +157,7 @@ multiprovider regular file CRUD directio:
       working-dir: onedata-acceptance
       description: Run acceptance mixed tests in Chrome
   final-tasks:
-  - script: *parse-test-results
+  - test-parser: *parse-test-results
   - script: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
