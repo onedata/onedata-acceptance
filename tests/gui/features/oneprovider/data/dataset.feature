@@ -352,3 +352,31 @@ Feature: Basic datasets operations
               - dir22
     And user of browser clicks and presses enter on item named "dir1" in dataset browser
     And user of browser sees that there are 2 items in dataset browser
+
+
+  Scenario: User sees path to dataset root file after creating datasets and entering them
+    When user of browser creates dataset for item "dir2" in "space1"
+    And user of browser goes to "/dir2/dir3/dir4" in file browser
+    And user of browser creates dataset for item "dir5" in "space1"
+    And user of browser clicks Datasets of "space1" in the sidebar
+    And user of browser sees dataset browser in files tab in Oneprovider page
+    Then user of browser sees path to root file: "/space1/dir2" for "dir2" dataset in dataset browser
+    And user of browser clicks and presses enter on item named "dir2" in dataset browser
+    And user of browser sees path to root file: "/space1/dir2/dir3/dir4/dir5" for "dir5" dataset in dataset browser
+
+
+  Scenario: User sees same paths to detached datasets root files after deleting dataset root file and recreating file marked as dataset with the same name
+    When user of browser creates dataset for item "dir1" in "space1"
+    And user of browser succeeds to remove "dir1" in "space1"
+    And user of browser creates directory "dir1"
+    And user of browser creates dataset for item "dir1" in "space1"
+    And user of browser clicks Datasets of "space1" in the sidebar
+    And user of browser sees dataset browser in files tab in Oneprovider page
+    And user of browser clicks on menu for "dir1" dataset in dataset browser
+    And user of browser clicks "Detach" option in data row menu in dataset browser
+    And user of browser clicks on "Proceed" button in modal "Detach Dataset"
+    And user of browser clicks on detached view mode on dataset browser page
+    And user of browser sees dataset browser in datasets tab in Oneprovider page
+    Then user of browser sees that one of two listed datasets "dir1" has got root file deleted
+    And user of browser sees two same root file paths "/space1/dir1" for datasets named "dir1"
+
