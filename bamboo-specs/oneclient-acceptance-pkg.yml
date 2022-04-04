@@ -131,7 +131,7 @@ multiprovider replication proxyio:
       scripts:
       - curl ${bamboo.OnedataFinalTasksURL} | bash -
       working-dir: onedata-acceptance
-      description: Clear env
+      description: Clear env and working dir
   artifacts: &artifacts
   - name: test_logs.tar.gz
     pattern: test_logs.tar.gz
