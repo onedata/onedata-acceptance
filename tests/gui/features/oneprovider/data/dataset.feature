@@ -365,7 +365,7 @@ Feature: Basic datasets operations
     And user of browser sees path to root file: "/space1/dir2/dir3/dir4/dir5" for "dir5" dataset in dataset browser
 
 
-  Scenario: User sees same paths to datasets root files after deleting dataset root file, then creating file with the same name, creating and detaching dataset
+  Scenario: User sees same paths to detached datasets root files after deleting dataset root file and recreating file marked as dataset with the same name
     When user of browser creates dataset for item "dir1" in "space1"
     And user of browser succeeds to remove "dir1" in "space1"
     And user of browser creates directory "dir1"
