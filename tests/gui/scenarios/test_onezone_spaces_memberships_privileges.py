@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+
 from pytest import fixture
 from pytest_bdd import scenario, scenarios
 
@@ -46,6 +47,10 @@ from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
+from tests.gui.steps.oneprovider.shares import *
+from tests.gui.steps.oneprovider.browser import *
+from tests.gui.steps.oneprovider.qos import *
+from tests.gui.steps.oneprovider.transfers import *
 
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
@@ -54,6 +59,10 @@ from tests.gui.steps.oneprovider.permissions import *
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.onezone.spaces import *
 from tests.gui.meta_steps.onezone.tokens import *
+from tests.gui.meta_steps.oneprovider.transfers import *
+from tests.gui.meta_steps.oneprovider.common import *
+from tests.gui.meta_steps.oneprovider.shares import *
+from tests.gui.meta_steps.oneprovider.qos import *
 
 from tests.utils.acceptance_utils import *
 
@@ -65,7 +74,11 @@ def screens():
 
 scenarios('../features/onezone/space/spaces_memberships_privileges.feature')
 scenarios('../features/onezone/space/'
+          'spaces_memberships_data_privileges.feature')
+scenarios('../features/onezone/space/'
           'spaces_memberships_group_privileges.feature')
 scenarios('../features/onezone/space/'
           'spaces_memberships_user_privileges.feature')
+
+
 

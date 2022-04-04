@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+
 from pytest import fixture
 from pytest_bdd import scenario, scenarios
 
@@ -51,6 +52,7 @@ from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
+from tests.gui.steps.oneprovider.browser import *
 
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
@@ -81,4 +83,3 @@ scenarios('../features/onezone/groups/groups_join.feature')
 scenarios('../features/onezone/groups/'
           'groups_multiple_users_with_single_group.feature')
 scenarios('../features/onezone/groups/groups_subgroup.feature')
-

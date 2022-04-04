@@ -61,6 +61,16 @@ def assert_alert_text_on_data_disc_page(selenium, browser_id, error_msg,
     assert error_msg == data_discovery(selenium[browser_id]).error_message, msg
 
 
+@wt(parsers.parse('user of {browser_id} sees "{error_msg}" alert on empty Data '
+                  'discovery page'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def see_alert_on_data_discovery_page(selenium, browser_id, data_discovery,
+                                     error_msg):
+    switch_to_iframe(selenium, browser_id, '.plugin-frame')
+    assert_alert_text_on_data_disc_page(selenium, browser_id, error_msg,
+                                        data_discovery)
+
+
 @wt(parsers.parse('user of {browser_id} sees Data Discovery page with Ecrin '
                   'GUI'))
 @wt(parsers.parse('user of {browser_id} sees public data discovery page with '

@@ -5,6 +5,8 @@ __copyright__ = "Copyright (C) 2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+import re
+
 from selenium.webdriver import ActionChains
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (Button, NamedButton,
@@ -24,12 +26,14 @@ class Space(Element):
 
     overview = NamedButton('.one-list-level-2 .item-header',
                            text='Overview')
-    data = NamedButton('.one-list-level-2 .item-header',
-                       text='Data')
+    files = NamedButton('.one-list-level-2 .item-header',
+                        text='Files')
     shares = NamedButton('.one-list-level-2 .item-header',
                          text='Shares')
     transfers = NamedButton('.one-list-level-2 .item-header',
                             text='Transfers')
+    datasets = NamedButton('.one-list-level-2 .item-header',
+                           text='Datasets')
     providers = NamedButton('.one-list-level-2 .item-header',
                             text='Providers')
     members = NamedButton('.one-list-level-2 .item-header',
@@ -77,7 +81,7 @@ class SpaceMembersTile(PageObject):
 
 
 class ProvidersMap(Element):
-    providers = WebElementsSequence('.circle')
+    providers = WebElementsSequence('.one-atlas-point')
 
     def click_provider(self, provider_name, driver):
         for prov in self.providers:
@@ -86,6 +90,28 @@ class ProvidersMap(Element):
             if name == provider_name:
                 prov.click()
                 return
+
+        raise RuntimeError(f'Provider {provider_name} was not found on the map')
+
+    def hover_and_check_provider(self, provider_name, driver):
+        for prov in self.providers:
+            ActionChains(driver).move_to_element(prov).perform()
+            name = driver.find_element_by_css_selector('.tooltip-inner').text
+            if name == provider_name:
+                return
+
+        raise RuntimeError(f'Provider {provider_name} was not found on the map')
+
+    def get_provider_horizontal_position(self, provider_name, driver):
+        for prov in self.providers:
+            ActionChains(driver).move_to_element(prov).perform()
+            name = driver.find_element_by_css_selector('.tooltip-inner').text
+            if name == provider_name:
+                style = prov.get_attribute('style')
+                position = re.search(r'left:\s*(\d+\.*\d*)px', style).group(1)
+                position = float(position)
+
+                return position
 
         raise RuntimeError(f'Provider {provider_name} was not found on the map')
 
@@ -149,7 +175,16 @@ class SpaceProvidersPage(PageObject):
 
 
 class _Provider(PageObject):
-    name = id = Label('a .tab-name')
+    name = id = Label('.tab-name')
+
+
+class DatasetHeader(PageObject):
+    detached = Button('.btn-effecitve')
+    attached = Button('.select-attached-datasets-btn')
+
+
+class ArchiveHeader(PageObject):
+    back_to_dataset_page = Button('.content-back-arrow-icon')
 
 
 class DataPage(GenericPage):
@@ -161,7 +196,8 @@ class DataPage(GenericPage):
                                           '.item-header', cls=Space)
 
     elements_list = WebItemsSequence('.sidebar-spaces '
-                                     'li.one-list-item.clickable', cls=Space)
+                                     'li.one-list-item.clickable.resource-item',
+                                     cls=Space)
 
     input_box = WebItem('.content-info-content-container', cls=InputBox)
 
@@ -170,6 +206,7 @@ class DataPage(GenericPage):
     members_page = WebItem('.main-content', cls=MembersPage)
     welcome_page = WebItem('.main-content', cls=WelcomePage)
     harvesters_page = WebItem('.main-content', cls=HarvestersPage)
+    dataset_header = WebItem('.main-content', cls=DatasetHeader)
 
     # button in top right corner on all subpages
     menu_button = Button('.with-menu .collapsible-toolbar-toggle')
@@ -178,7 +215,18 @@ class DataPage(GenericPage):
 
     tab_name = Label('.header-row')
 
-    current_provider = Label('.current-oneprovider-name')
+    current_provider = Label('.current-oneprovider-bar .oneprovider-name '
+                             '.tab-name')
     providers = WebItemsSequence('.provider-online', cls=_Provider)
     choose_other_provider = Button('.choose-oneprovider-link')
     error_header = Label('.content-info-content-container h1')
+
+    def choose_space(self, name):
+        for space in self.elements_list:
+            if space.name == name or space.name == '':
+                space.click()
+                if space.name == name:
+                    return
+        else:
+            raise RuntimeError(f'{name} space not found')
+

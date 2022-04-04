@@ -1,4 +1,4 @@
-"""This module contains tests suite for ACL privileges operations 
+"""This module contains tests suite for ACL privileges operations
 on directories using Oneprovider GUI and multiple browsers instance.
 """
 
@@ -45,4 +45,3 @@ def screens():
 
 
 scenarios('../features/oneprovider/data/dir_acl_privileges.feature')
-

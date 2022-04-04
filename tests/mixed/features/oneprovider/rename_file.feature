@@ -24,6 +24,7 @@ Feature: Tests for renaming file in Oneprovider
     And opened browser with user1 signed in to "onezone" service
 
 
+
   Scenario Outline: User creates file using <client1> and renames it using <client2>
     When using <client3>, user1 succeeds to create file named "file1" in "space1" in oneprovider-1
     And using <client2>, user1 succeeds to see item named "file1" in "space1" in oneprovider-1
@@ -38,3 +39,5 @@ Feature: Tests for renaming file in Oneprovider
     And using <client1>, user1 renames item named "file1" to "file2" in "space1" in oneprovider-1
     Then using <client2>, user1 succeeds to see item named "file2" in "space1" in oneprovider-1
     And using <client2>, user1 fails to see item named "file1" in "space1" in oneprovider-1
+
+

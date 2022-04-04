@@ -24,7 +24,7 @@ def _open_menu_for_token(driver, oz_page, token_name):
 
 
 def click_option_for_token_row_menu(driver, option, popups):
-    popups(driver).popover_menu.menu[option.capitalize()]()
+    popups(driver).menu_popup_with_text.menu[option.capitalize()]()
 
 
 def _click_on_btn_for_token(driver, oz_page, token_name, btn, popups):
@@ -87,22 +87,22 @@ def show_inactive_caveats(selenium, browser_id, oz_page):
     oz_page(driver)['tokens'].create_token_page.expand_caveats()
 
 
-@wt(parsers.parse('user of {browser_id} clicks on Join button '
+@wt(parsers.parse('user of {browser_id} clicks on Confirm button '
                   'on consume token page'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def click_on_join_button_on_tokens_page(selenium, browser_id, oz_page):
-    oz_page(selenium[browser_id])['tokens'].join_button()
+def click_on_confirm_button_on_tokens_page(selenium, browser_id, oz_page):
+    oz_page(selenium[browser_id])['tokens'].confirm_button()
 
 
 @wt(parsers.parse('user of {browser_id} chooses "{member_name}" {type} '
                   'from dropdown on tokens page'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def select_member_from_dropdown(selenium, browser_id, member_name, modals,
+def select_member_from_dropdown(selenium, browser_id, member_name, popups,
                                 oz_page):
     driver = selenium[browser_id]
 
     oz_page(driver)['tokens'].expand_dropdown()
-    modals(driver).dropdown.options[member_name].click()
+    popups(driver).dropdown.options[member_name].click()
 
 
 @wt(parsers.parse('user of {browser_id} clicks on "Create token" button '
@@ -231,7 +231,7 @@ def click_menu_button_of_tokens_page(selenium, browser_id, oz_page):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_option_in_token_page_menu(selenium, browser_id, option, popups):
     driver = selenium[browser_id]
-    popups(driver).popover_menu.menu[option]()
+    popups(driver).menu_popup_with_text.menu[option]()
 
 
 @wt(parsers.parse('user of {browser_id} clicks "Revoke" toggle to '
@@ -414,6 +414,13 @@ def choose_token_template(selenium, browser_id, template, oz_page):
     driver = selenium[browser_id]
     tokens_page = oz_page(driver)['tokens']
     getattr(tokens_page, f'{transform(template)}_template').click()
+
+
+@wt(parsers.parse('user of {browser_id} sees alert with text: "{text}" on '
+                  'tokens page'))
+def assert_alert_on_tokens_page(browser_id, text, oz_page, selenium):
+    alert = oz_page(selenium[browser_id])['tokens'].alert
+    assert text in alert, f'{text} does not match alert: {alert}'
 
 
 @given(parsers.parse('{sender} sends {item_type} to {receiver}'))

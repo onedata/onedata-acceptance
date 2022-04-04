@@ -1,12 +1,13 @@
 """This module contains tests suite for ACL subdirectories privileges
-operations on removing directories using Oneprovider GUI and multiple
-browsers instance.
+operations on directories using Oneprovider GUI and multiple browsers instance.
 """
 
 __author__ = "Katarzyna Such"
 __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
+
+
 from pytest import fixture
 from pytest_bdd import scenario, scenarios
 
@@ -43,4 +44,6 @@ def screens():
 
 
 scenarios('../features/oneprovider/data/subdir_acl_privileges_remove.feature')
+
+
 

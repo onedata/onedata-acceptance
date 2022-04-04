@@ -13,6 +13,7 @@ import re
 import yaml
 
 from tests import PANEL_REST_PORT
+from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.steps.common.miscellaneous import type_string_into_active_element
 from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.modal import click_modal_button
@@ -35,6 +36,7 @@ from tests.gui.steps.onezone.spaces import (
 from tests.utils.bdd_utils import given, wt, parsers
 from tests.utils.rest_utils import (
     http_post, get_panel_rest_path, http_get, http_delete)
+from tests.utils.utils import repeat_failed
 
 
 @wt(parsers.parse('user of {browser_id} removes "{name}" storage '
@@ -135,6 +137,8 @@ def safely_create_storage_rest(storage_name, provider, config,
                 storage type: storage_type             --> required
                 mount point: mount_point               --> required
                 imported storage: true                 --> optional
+                LUMA feed: local                       --> optional, 'auto' by
+                                                           default
         """
     _remove_storage_in_op_panel_using_rest(storage_name, provider, hosts,
                                            onepanel_credentials)
@@ -150,6 +154,7 @@ def remove_all_storages_named(storage_name, provider, hosts,
                                            onepanel_credentials)
 
 
+@repeat_failed(timeout=WAIT_BACKEND)
 def _remove_storage_in_op_panel_using_rest(storage_name, provider, hosts,
                                            onepanel_credentials):
     provider_hostname = hosts[provider]['hostname']
@@ -203,6 +208,13 @@ def _get_storage_id_list_by_name(storage_name, provider, hosts,
     return selected_ids
 
 
+def get_first_storage_id_by_name(storage_name, provider, hosts,
+                                 onepanel_credentials):
+    return _get_storage_id_list_by_name(storage_name, provider, hosts,
+                                        onepanel_credentials)[0]
+
+
+@repeat_failed(timeout=WAIT_BACKEND)
 def _add_storage_in_op_panel_using_rest(config, storage_name, provider, hosts,
                                         onepanel_credentials):
     storage_config = {}
@@ -212,6 +224,9 @@ def _add_storage_in_op_panel_using_rest(config, storage_name, provider, hosts,
     if options.get('imported storage', False):
         storage_config['importedStorage'] = True
     storage_config['mountPoint'] = options['mount point']
+    luma_feed = options.get('LUMA feed')
+    if luma_feed:
+        storage_config['lumaFeed'] = luma_feed
 
     provider_hostname = hosts[provider]['hostname']
     onepanel_username = onepanel_credentials.username
@@ -226,7 +241,7 @@ def _add_storage_in_op_panel_using_rest(config, storage_name, provider, hosts,
 
 
 @wt(parsers.parse('user of {browser_id} adds key="{key}" value="{val}" in '
-                  'storage edit page'))
+                  'QoS parameters form in storage edit page'))
 def add_key_value_in_storage_page(selenium, browser_id, key,
                                   val, onepanel, modals):
     button = 'Proceed'
@@ -274,8 +289,8 @@ def _delete_all_additional_params_in_storage_page(selenium, browser_id,
         click_modal_button(selenium, browser_id, button, modal, modals)
 
 
-@given(parsers.parse('there are no additional params in storage edit page used '
-                     'by {browser_id}'))
+@given(parsers.parse('there are no additional params in QoS parameters form '
+                     'in storage edit page used by {browser_id}'))
 def g_delete_all_additional_params_in_storage_page(selenium, browser_id,
                                                    onepanel, modals):
     _delete_all_additional_params_in_storage_page(selenium, browser_id,
@@ -283,7 +298,7 @@ def g_delete_all_additional_params_in_storage_page(selenium, browser_id,
 
 
 @wt(parsers.parse('user of {browser_id} deletes all additional params in '
-                  'storage edit page'))
+                  'QoS parameters form in storage edit page'))
 def wt_delete_all_additional_params_in_storage_page(selenium, browser_id,
                                                     onepanel, modals):
     _delete_all_additional_params_in_storage_page(selenium, browser_id,

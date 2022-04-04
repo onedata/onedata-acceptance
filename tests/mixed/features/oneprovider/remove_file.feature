@@ -28,7 +28,7 @@ Feature: Tests for removing file in Oneprovider
     When using <client3>, user1 succeeds to create file named "file1" in "space1" in oneprovider-1
     And using <client2>, user1 succeeds to see item named "file1" in "space1" in oneprovider-1
 	And using <client1>, user1 succeeds to remove file named "file1" in "space1" in oneprovider-1
-    Then using <client2>, user1 fails to see item named "file1" in "space1" in oneprovider-1
+	Then using <client2>, user1 fails to see item named "file1" in "space1" in oneprovider-1
 
 
   Scenario Outline: User creates file using <client1>, removes it using <client2> and then recreates it using <client1>
@@ -42,3 +42,4 @@ Feature: Tests for removing file in Oneprovider
     And using <client3>, user1 succeeds to create file named "file1" in "space1" in oneprovider-1
     Then using <client2>, user1 succeeds to see item named "file1" in "space1" in oneprovider-1
     And using <client1>, user1 succeeds to see item named "file1" in "space1" in oneprovider-1
+

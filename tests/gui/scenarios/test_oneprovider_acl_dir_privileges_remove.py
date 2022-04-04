@@ -1,5 +1,5 @@
 """This module contains tests suite for ACL privileges operations
-on removing directories using Oneprovider GUI and multiple
+on on removing directories using Oneprovider GUI and multiple
 browser instance.
 """
 

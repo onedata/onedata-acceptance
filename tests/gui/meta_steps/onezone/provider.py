@@ -29,7 +29,7 @@ from tests.utils.bdd_utils import parsers, wt
 def assert_provider_has_name_and_hostname_in_oz_gui(selenium, user, oz_page,
                                                     provider_name,
                                                     domain_provider, hosts,
-                                                    modals, with_refresh=False,
+                                                    popups, with_refresh=False,
                                                     test_domain=False):
     option = 'Data'
 
@@ -44,11 +44,11 @@ def assert_provider_has_name_and_hostname_in_oz_gui(selenium, user, oz_page,
     if test_domain:
         assert_provider_hostname_matches_test_hostname(selenium, user,
                                                        domain_provider,
-                                                       hosts, modals)
+                                                       hosts, popups)
     else:
         assert_provider_hostname_matches_known_domain(selenium, user,
                                                       domain_provider,
-                                                      hosts, modals)
+                                                      hosts, popups)
 
 
 def assert_there_is_no_provider_in_oz_gui(selenium, user, oz_page,
@@ -78,13 +78,12 @@ def send_copied_invite_token_in_oz_gui(selenium, user, oz_page, browser_list,
 def revoke_support_of_provider_in_list(selenium, browser_id, provider, oz_page,
                                        popups, modals, hosts):
     driver = selenium[browser_id]
-    provider_name = hosts[provider]['name']
     button = 'Cease support'
     notify_type = 'info'
     notify_text_regexp = 'Ceased.*[Ss]upport.*'
 
-    click_on_menu_button_of_provider_on_providers_list(driver, provider_name,
-                                                       oz_page)
+    click_on_menu_button_of_provider_on_providers_list(selenium, browser_id,
+                                                       provider, oz_page, hosts)
     click_on_cease_support_in_menu_of_provider_on_providers_list(driver, popups)
     wt_clicks_on_understand_risk_in_cease_support_modal(selenium, browser_id,
                                                         modals)

@@ -10,6 +10,7 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.steps.rest.env_up.spaces import force_start_storage_scan
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 from tests.mixed.utils.common import NoSuchClientException
@@ -138,7 +139,7 @@ def assert_provider_has_given_name_and_test_hostname_in_oz(client, request, user
                                                            provider_name, provider,
                                                            host, users, hosts,
                                                            selenium, oz_page,
-                                                           modals):
+                                                           popups):
 
     test_domain = '{}.test'.format(hosts[provider]['hostname'])
 
@@ -153,7 +154,7 @@ def assert_provider_has_given_name_and_test_hostname_in_oz(client, request, user
                                 assert_provider_has_name_and_hostname_in_oz_gui
         assert_provider_has_name_and_hostname_in_oz_gui(selenium, user, oz_page,
                                                         provider_name, provider,
-                                                        hosts, modals,
+                                                        hosts, popups,
                                                         with_refresh=True,
                                                         test_domain=True)
     else:
@@ -589,3 +590,11 @@ def send_copied_invite_token(client, user, selenium, oz_page,
                                            tmp_memory, displays, clipboard)
     else:
         raise NoSuchClientException('Client: {} not found.'.format(client))
+
+
+@wt(parsers.parse('using REST, {user} forces start of storage import scan for '
+                  '"{space}" at "{provider}"'))
+def force_start_storage_import_scan(provider, space, spaces, hosts,
+                                    onepanel_credentials):
+    space_id = spaces[space]
+    force_start_storage_scan(space_id, provider, hosts, onepanel_credentials)

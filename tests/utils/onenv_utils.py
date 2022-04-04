@@ -186,7 +186,6 @@ def get(key):
     return config[key]
 
 
-# FIXME use config reader from reauserders
 def load_yaml(path):
     with open(path) as f:
         return yaml.load(f)

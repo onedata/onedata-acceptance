@@ -1,5 +1,5 @@
 """This module contains tests suite for ACL privileges operations
-on creating directories using Oneprovider GUI and multiple
+on on creating directories using Oneprovider GUI and multiple
 browser instance.
 """
 

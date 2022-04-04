@@ -9,7 +9,8 @@ __license__ = ("This software is released under the MIT license cited in "
 
 import time
 from datetime import datetime
-
+import tarfile
+import yaml
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.modal import click_modal_button
@@ -33,70 +34,13 @@ def assert_msg_instead_of_browser(browser_id, msg, tmp_memory):
                                           f' not match expected {msg}')
 
 
-@wt(parsers.parse('user of {browser_id} does not see {status_type} '
-                  'status tag for "{item_name}" in file browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_not_status_tag_for_file_in_file_browser(browser_id, status_type,
-                                                   item_name, tmp_memory):
-    browser = tmp_memory[browser_id]['file_browser']
-    err_msg = (f'{status_type} tag for {item_name} in file browser visible, '
-               f'while should not be')
-    assert not browser.data[item_name].is_tag_visible(status_type), err_msg
-
-
-@wt(parsers.parse('user of {browser_id} sees {status_type} '
-                  'status tag for "{item_name}" in file browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_status_tag_for_file_in_file_browser(browser_id, status_type,
-                                               item_name, tmp_memory):
-    browser = tmp_memory[browser_id]['file_browser']
-    err_msg = f'{status_type} tag for {item_name} in file browser not visible'
-    assert browser.data[item_name].is_tag_visible(transform(status_type)), err_msg
-
-
 @wt(parsers.parse('user of {browser_id} clicks on {status_type} status tag '
                   'for "{item_name}" in file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_status_tag_for_file_in_file_browser(browser_id, status_type,
                                                  item_name, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
-    browser.data[item_name].click_on_status_tag(status_type)
-
-
-def _get_items_list_from_file_browser(browser_id, tmp_memory):
-    file_browser = tmp_memory[browser_id]['file_browser']
-    data = {f.name for f in file_browser.data}
-    return data
-
-
-@wt(parsers.parse('user of {browser_id} sees that item named {item_list} '
-                  'has disappeared from files browser'))
-@wt(parsers.parse('user of {browser_id} sees that items named {item_list} '
-                  'have disappeared from files browser'))
-@wt(parsers.parse('user of {browser_id} does not see any item(s) named '
-                  '{item_list} in file browser'))
-@repeat_failed(timeout=WAIT_BACKEND)
-def assert_items_absence_in_file_browser(browser_id, item_list, tmp_memory):
-    data = _get_items_list_from_file_browser(browser_id, tmp_memory)
-    for item_name in parse_seq(item_list):
-        assert item_name not in data, (f'found "{item_name}" in file browser, '
-                                       f'while it should not')
-
-
-@wt(parsers.parse('user of {browser_id} sees item(s) '
-                  'named {item_list} in file browser'))
-@wt(parsers.parse('user of {browser_id} sees that item named '
-                  '{item_list} has appeared in file browser'))
-@wt(parsers.parse('user of {browser_id} sees that items named '
-                  '{item_list} have appeared in file browser'))
-@repeat_failed(timeout=WAIT_BACKEND)
-def assert_items_presence_in_file_browser(browser_id, item_list, tmp_memory):
-    file_browser = tmp_memory[browser_id]['file_browser']
-    data = _get_items_list_from_file_browser(browser_id, tmp_memory)
-    for item_name in parse_seq(item_list):
-        assert (item_name in data and
-                file_browser.data[item_name].size), (f'not found "{item_name}" '
-                                                     f'in file browser')
+    browser.data[item_name].click_on_status_tag(transform(status_type))
 
 
 @wt(parsers.parse('user of {browser_id} sees only items named {item_list}'
@@ -167,79 +111,17 @@ def scroll_to_bottom_of_file_browser(browser_id, tmp_memory):
     browser.scroll_to_bottom()
 
 
-@wt(parsers.re(r'user of (?P<browser_id>.+?) sees that there '
-               r'(is 1|are (?P<num>\d+)) items? in file browser'))
-@repeat_failed(timeout=WAIT_BACKEND)
-def assert_num_of_files_are_displayed_in_file_browser(browser_id, num,
-                                                      tmp_memory):
-    browser = tmp_memory[browser_id]['file_browser']
-    err_msg = 'displayed number of files {} does not match expected {}'
-    files_num = browser.data.count()
-    num = 1 if num is None else int(num)
-    assert files_num == num, err_msg.format(files_num, num)
-
-
 @wt(parsers.re(r'user of (?P<browser_id>.*?) sees that item named '
-               r'"(?P<item_name>.*?)" is (?P<item_attr>file|directory) '
+               r'"(?P<item_name>.*?)" is ('
+               r'?P<item_attr>file|directory|symbolic link|'
+               r'directory symbolic link|malformed symbolic link) '
                r'in file browser'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_item_in_file_browser_is_of_type(browser_id, item_name, item_attr,
                                            tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
-    action = getattr(browser.data[item_name], 'is_{}'.format(item_attr))
-    assert action(), '"{}" is not {}, while it should'.format(item_name,
-                                                              item_attr)
-
-
-@wt(parsers.parse('user of {browser_id} double clicks on item '
-                  'named "{item_name}" in file browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def double_click_on_item_in_file_browser(selenium, browser_id, item_name,
-                                         tmp_memory, op_container):
-    browser = tmp_memory[browser_id]['file_browser']
-    driver = selenium[browser_id]
-
-    # checking if file is located in file browser
-    start = time.time()
-    while item_name not in browser.data:
-        time.sleep(1)
-        if time.time() > start + WAIT_BACKEND:
-            raise RuntimeError('waited too long')
-
-    # if item is directory compare length of directories in breadcrumbs to
-    # check if double-click has entered it
-    if item_name.startswith('dir'):
-        # check if breadcrumbs are not in file browser in shares
-        breadcrumbs = check_if_breadcrumbs_on_share_page(driver, op_container)
-        message = f'Double click has not entered the directory'
-
-        # check if home directory where length of breadcrumbs doesn't matter
-        # if it was home and now it isn't it means double-click worked
-        if "/" not in breadcrumbs:
-            browser.data[item_name].double_click()
-            breadcrumbs = check_if_breadcrumbs_on_share_page(driver,
-                                                             op_container)
-            if "/" not in breadcrumbs:
-                assert False, message
-        else:
-            length_of_past_dir = len(breadcrumbs)
-            browser.data[item_name].double_click()
-            breadcrumbs = check_if_breadcrumbs_on_share_page(driver,
-                                                             op_container)
-            length_of_current_dir = len(breadcrumbs)
-
-            assert length_of_past_dir < length_of_current_dir, message
-    else:
-        browser.data[item_name].double_click()
-
-
-def check_if_breadcrumbs_on_share_page(driver, op_container):
-    try:
-        breadcrumbs = op_container(driver).shares_page.breadcrumbs.pwd()
-    except:
-        breadcrumbs = op_container(driver).file_browser.breadcrumbs.pwd()
-
-    return breadcrumbs
+    action = getattr(browser.data[item_name], f'is_{transform(item_attr)}')
+    assert action(), f'"{item_name}" is not {item_attr}, while it should'
 
 
 @wt(parsers.parse('user of {browser_id} clicks once on item '
@@ -387,24 +269,6 @@ def confirm_rename_directory(selenium, browser_id, option, modals):
         click_modal_button(selenium, browser_id, button, modal, modals)
 
 
-@wt(parsers.parse('user of {browser_id} clicks on menu '
-                  'for "{item_name}" directory in file browser'))
-@wt(parsers.parse('user of {browser_id} clicks on menu '
-                  'for "{item_name}" file in file browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_menu_for_elem_in_file_browser(browser_id, item_name, tmp_memory):
-    browser = tmp_memory[browser_id]['file_browser']
-    browser.data[item_name].menu_button()
-
-
-@wt(parsers.parse('user of {browser_id} clicks "{option}" option '
-                  'in data row menu in file browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_option_in_data_row_menu_in_file_browser(selenium, browser_id, option,
-                                                  modals):
-    modals(selenium[browser_id]).data_row_menu.options[option].click()
-
-
 @wt(parsers.parse('user of {browser_id} scrolls to the bottom of file browser '
                   'and sees there are {count} files'))
 def count_files_while_scrolling(browser_id, count: int, tmp_memory):
@@ -421,3 +285,137 @@ def count_files_while_scrolling(browser_id, count: int, tmp_memory):
         err_msg = (f'There are {len(detected_files)} files in file browser '
                    f'when should be {count}')
         assert len(detected_files) == count, err_msg
+
+
+def check_file_owner_in_file_details_modal(selenium, browser_id, modals, owner):
+    actual = modals(selenium[browser_id]).details_modal.owner
+    assert actual == owner, f'Expected {owner} as file owner but got {actual}'
+
+
+@wt(parsers.parse('user of {browser_id} sees that "File details" modal is '
+                  'opened on "Hard links" tab'))
+def check_file_dets_modal_opened_on_hardlinks_tab(selenium, browser_id, modals):
+    hardlink_tab = modals(selenium[browser_id]).details_modal.hardlinks_tab
+    assert hardlink_tab.is_active(), ('Hardlink tab is not active in file '
+                                      'details modal')
+
+
+def assert_num_of_hardlinks_in_file_dets_tab_name_modal(selenium, browser_id,
+                                                        number, modals):
+    name = modals(selenium[browser_id]).details_modal.hardlinks_tab.tab_name
+    actual_num = name.split()[-1].strip('(').strip(')')
+    assert number == actual_num, (f'Expected {number}, got {actual_num} in ' 
+                                  f'hardlinks tab name')
+
+
+def assert_num_of_hardlinks_entry_in_file_dets_modal(selenium, browser_id,
+                                                     number, modals):
+    entries = modals(selenium[browser_id]).details_modal.hardlinks_tab.files
+    assert len(entries) == int(number), (f'Expected {number} hardlinks '
+                                         f'entries, got {len(entries)}')
+
+
+@wt(parsers.parse('user of {browser_id} sees that there are {number} '
+                  'hardlinks in "File details" modal'))
+def assert_num_of_hardlinks_in_file_dets_modal(selenium, browser_id, number,
+                                               modals):
+    assert_num_of_hardlinks_in_file_dets_tab_name_modal(selenium, browser_id,
+                                                        number, modals)
+    assert_num_of_hardlinks_entry_in_file_dets_modal(selenium, browser_id,
+                                                     number, modals)
+
+
+@wt(parsers.parse('user of {browser_id} sees that path of "{file}" hardlink '
+                  'is "{path}" in "File details" modal'))
+def assert_hardlink_path_in_file_dets_modal(selenium, browser_id, file,
+                                            path, modals):
+    entries = modals(selenium[browser_id]).details_modal.hardlinks_tab.files
+    actual_path = entries[file].get_path_string()
+    assert path == actual_path, (f'Hardlink {file} path should be {path}, '
+                                 f'but is {actual_path}')
+
+
+@wt(parsers.parse('user of {browser_id} sees paths {paths} '
+                  'of hardlinks in "File details" modal'))
+def assert_hardlinks_paths_in_file_dets_modal(selenium, browser_id, paths,
+                                              modals):
+    entries = modals(selenium[browser_id]).details_modal.hardlinks_tab.files
+    entries_paths = [entry.get_path_string() for entry in entries]
+    parsed_paths = parse_seq(paths)
+    for path in parsed_paths:
+        assert path in entries_paths, f'{path} not in {entries_paths}'
+
+
+@wt(parsers.parse('user of {browser_id} sees that {link_property} is "{value}" '
+                  'in "Symbolic link details" modal'))
+def assert_property_in_symlink_dets_modal(selenium, browser_id, link_property,
+                                          value, modals, clipboard, displays):
+    modal = modals(selenium[browser_id]).symbolic_link_details
+    actual_value = modal.get_property(link_property, clipboard, displays,
+                                      browser_id)
+    assert actual_value == value, (f'{link_property} has {actual_value} '
+                                   f'not expected {value}')
+
+
+@wt(parsers.parse('user of {browser_id} sees that contents of downloaded '
+                  '{name} TAR file (with ID from clipboard) in download '
+                  'directory have following structure:\n{contents}'))
+@wt(parsers.parse('user of {browser_id} sees that contents of downloaded '
+                  '"{name}" TAR file in download directory have following'
+                  ' structure:\n{contents}'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_contents_downloaded_tar_file(selenium, browser_id, contents, tmpdir,
+                                        clipboard, displays, name):
+    configured_dir_contents = {}
+    if name == 'archive':
+        name = (f'archive_'
+                     f'{clipboard.paste(display=displays[browser_id])}.tar')
+        contents = contents.replace('archive', name.split('.')[0])
+
+    def _get_directory_contents(directory_tree, path=''):
+
+        if not directory_tree:
+            return
+
+        for item in directory_tree:
+            try:
+                [(name, content)] = item.items()
+            except AttributeError:
+                name = item
+                content = None
+
+            if path == '':
+                item_path = name
+            else:
+                item_path = path + '/' + name
+
+            configured_dir_contents[item_path] = str(content)
+            if name.startswith('dir') or name.startswith('archive'):
+                configured_dir_contents[item_path] = None
+                _get_directory_contents(content, item_path)
+
+    download_path = tmpdir.join(browser_id, 'download')
+    extract_path = download_path.join('extract')
+    downloaded_tar_filename = download_path.join(name).strpath
+
+    assert tarfile.is_tarfile(downloaded_tar_filename), (
+                f'{downloaded_tar_filename} is not valid TAR file archive')
+
+    tar = tarfile.open(downloaded_tar_filename)
+    files_list = tar.getnames()
+    tar.extractall(extract_path.strpath)
+
+    dir_tree = yaml.load(contents)
+    _get_directory_contents(dir_tree)
+
+    for f in files_list:
+        assert f in configured_dir_contents, (f'{f} is missing in downloaded '
+                                              f'tar file')
+        archive_file = tar.getmember(f)
+        if archive_file.isfile():
+            with open(extract_path.join(f).strpath, 'r') as o:
+                file_contents = o.read()
+                assert str(file_contents) == str(configured_dir_contents[f]), (
+                    f'{f} content is different than expected '
+                    f'{file_contents}!={configured_dir_contents[f]}')
+

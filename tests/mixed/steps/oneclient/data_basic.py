@@ -70,6 +70,7 @@ def create_file_in_op_oneclient_with_tokens(user, hosts, users, env_desc, tmp_me
     try:
         mount_new_oneclient_result(user, hosts, users, env_desc, tmp_memory, result,
                                    client='oneclient')
+
         if result == 'succeeds':
             oneclient_host = change_client_name_to_hostname(client_lower)
             create_file_in_op_oneclient(user, full_path, users, result,
@@ -272,6 +273,4 @@ def given_mount_new_oneclient_with_token(user, hosts, users, env_desc,
                                          tmp_memory):
     token = tmp_memory[user]['mailbox']['token']
     users[user].mount_client('oneclient-1', 'client1', hosts, env_desc, token)
-
-
 

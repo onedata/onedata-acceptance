@@ -47,7 +47,7 @@ Feature: Basic management of groups with one user in Onezone GUI
     And user of browser clicks on "Consume token" button in tokens sidebar
     And user of browser pastes copied token into token text field
     And user of browser chooses "group1" group from dropdown on tokens page
-    And user of browser clicks on Join button on consume token page
+    And user of browser clicks on Confirm button on consume token page
 
     Then user of browser sees that error modal with text "Consuming token failed" appeared
 

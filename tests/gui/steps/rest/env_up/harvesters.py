@@ -88,6 +88,20 @@ def _remove_harvester(harvester_id, zone_hostname, user, users):
 @given(parsers.re('spaces? (?P<space_list>.*) belongs? to '
                   '"(?P<harvester_name>.*)" harvester of user '
                   '(?P<username>.*)'))
+def g_add_space_to_harvester(space_list, harvester_name, spaces, harvesters,
+                             hosts, username, users):
+    add_space_to_harvester(space_list, harvester_name, spaces, harvesters,
+                           hosts, username, users)
+
+
+@wt(parsers.re('using REST, user (?P<username>.*) adds spaces? '
+               '(?P<space_list>.*) to "(?P<harvester_name>.*)" harvester'))
+def wt_add_space_to_harvester(space_list, harvester_name, spaces, harvesters,
+                              hosts, username, users):
+    add_space_to_harvester(space_list, harvester_name, spaces, harvesters,
+                           hosts, username, users)
+
+
 def add_space_to_harvester(space_list, harvester_name, spaces, harvesters,
                            hosts, username, users):
     for space in parse_seq(space_list):

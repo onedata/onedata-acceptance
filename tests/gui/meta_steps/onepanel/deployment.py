@@ -177,17 +177,18 @@ def _parse_provider(provider_name, provider_domain):
 
 @wt(parsers.parse('user of {brwoser_id} deploys Ceph with following '
                   'configuration:\n{config}'))
-def setup_ceph_config(selenium, browser_id, onepanel, config, modals):
+def setup_ceph_config(selenium, browser_id, onepanel, config, modals, popups):
     """
     Manager And Monitor: True/False
     OSDs:          - only with Manager&Monitor enabled
       - 1.5 GiB
       - 2 GiB      - takes one or two OSDs
     """
-    _setup_ceph_config(selenium, browser_id, onepanel, config, modals)
+    _setup_ceph_config(selenium, browser_id, onepanel, config, modals, popups)
 
 
-def _setup_ceph_config(selenium, browser_id, onepanel, configuration, modals):
+def _setup_ceph_config(selenium, browser_id, onepanel, configuration, modals,
+                       popups):
     config = yaml.load(configuration)
     manager_and_monitor = config.get('Manager And Monitor', False)
     if manager_and_monitor:
@@ -197,11 +198,12 @@ def _setup_ceph_config(selenium, browser_id, onepanel, configuration, modals):
         osds = config['OSDs']
         osd1, osd2 = _unpack_osds(osds)
         first_number = 'first'
-        _set_osd_of_number(selenium, browser_id, osd1, first_number, onepanel)
+        _set_osd_of_number(selenium, browser_id, osd1, first_number, onepanel,
+                           popups)
         if osd2:
             second_number = 'second'
             _set_osd_of_number(selenium, browser_id, osd2, second_number,
-                               onepanel)
+                               onepanel, popups)
     deploy_button = 'Deploy'
     step = 'Ceph configuration step'
     wt_click_on_btn_in_deployment_step(selenium, browser_id, deploy_button,
@@ -215,14 +217,14 @@ def _unpack_osds(osds):
     return osds[0], osds[1]
 
 
-def _set_osd_of_number(selenium, browser_id, size, number, onepanel):
+def _set_osd_of_number(selenium, browser_id, size, number, onepanel, popups):
     osd_button = 'Add OSD'
     step = 'Ceph configuration step'
     wt_click_on_btn_in_deployment_step(selenium, browser_id, osd_button, step,
                                        onepanel)
     [size_number, size_unit] = size.split()
     type_osd_size_to_input(selenium, number, size_number, browser_id, onepanel)
-    choose_osd_unit(selenium, number, size_unit, browser_id, onepanel)
+    choose_osd_unit(selenium, number, size_unit, browser_id, onepanel, popups)
 
 
 @wt(parsers.parse('user of {browser_id} adds storage in step 5 of deployment '

@@ -35,3 +35,4 @@ Feature: Files create metadata tests
     | basic | attr=val  |
     | JSON  | {"id": 1} |
     | RDF   | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML>|
+

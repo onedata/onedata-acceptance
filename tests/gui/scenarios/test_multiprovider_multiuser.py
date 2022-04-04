@@ -1,5 +1,5 @@
 """This module contains tests suite for basic operations using
-multiple provider instances and multiple browser instance.
+multiple provider instances and multiple browsers instance.
 """
 
 __author__ = "Bartosz Walkowicz"
@@ -52,6 +52,7 @@ from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
 from tests.gui.steps.oneprovider.transfers import *
 from tests.gui.steps.oneprovider.uploads import *
+from tests.gui.steps.oneprovider.browser import *
 
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
@@ -62,7 +63,6 @@ from tests.gui.meta_steps.onezone.spaces import *
 from tests.gui.meta_steps.onezone.tokens import *
 from tests.gui.meta_steps.onezone.common import *
 
-from tests.gui.meta_steps.onepanel.spaces import *
 from tests.gui.meta_steps.onepanel.spaces import *
 from tests.gui.meta_steps.onepanel.provider import *
 

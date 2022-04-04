@@ -61,7 +61,6 @@ OZ_REST_PORT = 443
 OP_REST_PORT = 443
 PANEL_REST_PORT = 9443
 ELASTICSEARCH_PORT = 9200
-LUMA_REST_PORT = 8080
 PANEL_REST_PATH_PREFIX = '/api/v3/onepanel'
 OZ_REST_PATH_PREFIX = '/api/v3/onezone'
 PROVIDER_REST_PATH_PREFIX = '/api/v3/oneprovider'
@@ -111,11 +110,3 @@ PATCHES_DIR = {
     'upgrade': UPGRADE_TESTS_PATCHES_DIR
 }
 
-IMAGES_CFG_PATHS = {
-    'onezone': 'onezone_images/docker-dev-build-list.json',
-    'oneprovider': 'oneprovider_images/docker-dev-build-list.json',
-    'oneclient': 'oneclient_images/oc-docker-dev-build-list.json',
-    'rest_cli': 'rest_cli_images/rest-cli-docker-build-report.json'
-}
-
-ARTIFACTS_DIR = 'artifacts_dir'

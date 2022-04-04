@@ -16,7 +16,7 @@ class ManageAccountPage(GenericPage):
     rename_full_name = Button('.full-name-editor .edit-icon')
     rename_username = Button('.username-editor .edit-icon')
     rename_password = Button('.password-editor-trigger .edit-icon')
-    change_password = Button('.user-credentials-form .ready')
+    change_password = Button('.user-credentials-form .btn-primary')
     edit_box = WebItem('.editor', cls=EditBox)
     edit_user_name_box = WebItem('.username-editor', cls=EditBox)
     current_password_box = Input('.field-verify-currentPassword')
