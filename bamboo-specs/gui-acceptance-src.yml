@@ -180,12 +180,12 @@ Chrome POSIX tests multiuser:
         mv onedata-acceptance/tests/gui/logs/report.* onedata-acceptance/tests/gui/logs/gui_report
         mv onedata-acceptance/tests/gui/logs/gui_report/images.yaml onedata-acceptance/tests/gui/logs
       description: Pack logs
-  - script: &clear-env-in-onedata
+  - script: &clear-env-and-working-dir
       interpreter: BINSH_OR_CMDEXE
       scripts:
       - curl ${bamboo.OnedataFinalTasksURL} | bash -
       working-dir: onedata-acceptance
-      description: Clear env
+      description: Clear env and working dir
   artifacts: &artifacts
     - name: report
       location: onedata-acceptance/tests/gui/logs/
@@ -214,7 +214,7 @@ Chrome onepanel deployment basic tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -236,7 +236,7 @@ Chrome oneprovider ACL subdirectories:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -280,7 +280,7 @@ Chrome onezone automations tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -302,7 +302,7 @@ Chrome qos basic:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -324,7 +324,7 @@ Chrome onezone harvesters basic tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -346,7 +346,7 @@ Chrome oneprovider ACL directories privileges create:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -368,7 +368,7 @@ Chrome oneprovider archives incremental and nested:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -390,7 +390,7 @@ Chrome oneprovider ACL files metadata:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -412,7 +412,7 @@ Chrome onezone providers basic tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -434,7 +434,7 @@ Chrome POSIX tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -456,7 +456,7 @@ Chrome oneprovider ACL directories privileges metadata:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -478,7 +478,7 @@ Chrome oneprovider ACL directories privileges remove:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -500,7 +500,7 @@ Chrome onezone spaces memberships privileges:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -522,7 +522,7 @@ Chrome oneprovider ACL remove file:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -544,7 +544,7 @@ Chrome oneprovider symlinks:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -566,7 +566,7 @@ Chrome transfers multi browser tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -588,7 +588,7 @@ Chrome onezone harversters privileges add and remove:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -610,7 +610,7 @@ Chrome onezone groups multiuser single group:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -632,7 +632,7 @@ Chrome onepanel basic tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -654,7 +654,7 @@ Chrome multiprovider basic tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -676,7 +676,7 @@ Chrome onezone invite tokens with caveats:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -698,7 +698,7 @@ Chrome transfers files:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -720,7 +720,7 @@ Chrome shares basic tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -742,7 +742,7 @@ Chrome onezone spaces multiuser tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -764,7 +764,7 @@ Chrome storage sync charts:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -786,7 +786,7 @@ Chrome onezone spaces memberships privileges data:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -808,7 +808,7 @@ Chrome oneprovider data tab tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -830,7 +830,7 @@ Chrome transfers directories:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -852,7 +852,7 @@ Chrome onezone basic tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -874,7 +874,7 @@ Chrome onezone data discovery helpers:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -896,7 +896,7 @@ Chrome storage sync tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -918,7 +918,7 @@ Chrome oneprovider hardlinks:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -940,7 +940,7 @@ Chrome onezone data discovery tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -962,7 +962,7 @@ Chrome oneprovider ACL subfiles:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -984,7 +984,7 @@ Chrome onepanel deployment ceph:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -1006,7 +1006,7 @@ Chrome oneprovider ACL subdirectories remove:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -1028,7 +1028,7 @@ Chrome oneprovider ACL subjects:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -1050,7 +1050,7 @@ Chrome onezone data discovery querying:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -1072,7 +1072,7 @@ Chrome oneprovider archives tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -1094,7 +1094,7 @@ Chrome onepanel ceph spaces:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -1116,7 +1116,7 @@ Chrome onezone tokens delete:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -1138,7 +1138,7 @@ Chrome onezone groups basic tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -1160,7 +1160,7 @@ Chrome onezone spaces basic tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -1182,7 +1182,7 @@ Chrome onepanel login tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -1204,7 +1204,7 @@ Chrome oneprovider datasets privileges:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -1226,7 +1226,7 @@ Chrome onezone tokens tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -1248,7 +1248,7 @@ Chrome onezone harvesters index:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -1270,7 +1270,7 @@ Chrome onezone harversters index metadata:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -1292,7 +1292,7 @@ Chrome onezone harvesters memberships privileges:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -1314,7 +1314,7 @@ Chrome onezone harvesters effective privileges:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -1336,7 +1336,7 @@ Chrome onepanel two hosts deployment tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -1358,7 +1358,7 @@ Chrome oneprovider upload tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -1380,7 +1380,7 @@ Chrome onezone invite tokens with consumer caveats:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -1402,7 +1402,7 @@ Chrome oneprovider datasets tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -1424,7 +1424,7 @@ Chrome onezone invite tokens:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -1446,7 +1446,7 @@ Chrome public shares tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -1468,7 +1468,7 @@ Chrome onezone groups multiuser tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -1490,7 +1490,7 @@ Chrome oneprovider ACL directories privileges:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -1512,7 +1512,7 @@ Chrome multiprovider QoS storage:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -1534,7 +1534,7 @@ Chrome oneprovider ACL basic:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -1556,7 +1556,7 @@ Chrome multiprovider QoS tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -1578,7 +1578,7 @@ Chrome QoS storage:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -1600,7 +1600,7 @@ Chrome metadata test:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -1622,7 +1622,7 @@ Chrome onepanel members tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -1644,7 +1644,7 @@ Chrome multiprovider multiuser tests:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
@@ -1666,7 +1666,7 @@ Chrome oneprovider ACL files:
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
-  - script: *clear-env-in-onedata
+  - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []

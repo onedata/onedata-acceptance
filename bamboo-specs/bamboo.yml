@@ -10,3 +10,7 @@
 !include 'mixed-acceptance-src.yml'
 ---
 !include 'mixed-acceptance-src-perm.yml'
+---
+!include 'oneclient-acceptance-pkg.yml'
+---
+!include 'oneclient-acceptance-pkg-perm.yml'
