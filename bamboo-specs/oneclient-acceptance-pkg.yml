@@ -117,9 +117,9 @@ multiprovider replication proxyio:
       ignore-time: 'false'
       test-results: onedata-acceptance/test-reports/results*.xml
       description: Parse test results
-  - script:
+  - script: &pack-logs
       interpreter: BINSH_OR_CMDEXE
-      scripts: &pack-logs
+      scripts: 
       - |-
         cp onedata-acceptance/test-reports/*.xml onedata-acceptance/tests/oneclient/logs
         cp onedata-acceptance/one_env/sources_info.yaml onedata-acceptance/tests/oneclient/logs
@@ -913,9 +913,7 @@ singleprovider regular file stat multiclient proxyio:
       description: Run acceptance mixed tests in Chrome
   final-tasks:
   - script: *parse-test-results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts: *pack-logs
+  - script: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
