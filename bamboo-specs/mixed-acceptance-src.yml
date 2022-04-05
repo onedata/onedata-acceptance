@@ -4,7 +4,6 @@ plan:
   key: MAOST
   name: mixed acceptance src
   description: Acceptance tests using different clients concurrently. Environment deployed from sources.
-variables: []
 repositories:
 - onedata-acceptance:
     scope: global
@@ -151,7 +150,7 @@ Chrome QoS tests:
       scripts:
       - curl ${bamboo.OnedataFinalTasksURL} | bash -
       working-dir: onedata-acceptance
-      description: Clear env
+      description: Clear env and working dir
   artifacts: &artifacts
   - name: report
     location: onedata-acceptance/tests/mixed/logs/

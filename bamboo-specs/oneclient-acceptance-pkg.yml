@@ -117,9 +117,9 @@ multiprovider replication proxyio:
       ignore-time: 'false'
       test-results: onedata-acceptance/test-reports/results*.xml
       description: Parse test results
-  - script:
+  - script: &pack-logs
       interpreter: BINSH_OR_CMDEXE
-      scripts: &pack-logs
+      scripts: 
       - |-
         cp onedata-acceptance/test-reports/*.xml onedata-acceptance/tests/oneclient/logs
         cp onedata-acceptance/one_env/sources_info.yaml onedata-acceptance/tests/oneclient/logs
@@ -131,7 +131,7 @@ multiprovider replication proxyio:
       scripts:
       - curl ${bamboo.OnedataFinalTasksURL} | bash -
       working-dir: onedata-acceptance
-      description: Clear env
+      description: Clear env and working dir
   artifacts: &artifacts
   - name: test_logs.tar.gz
     pattern: test_logs.tar.gz
@@ -147,7 +147,7 @@ multiprovider regular file CRUD directio:
   - script: *clear-env
   - script: *restart-minikube
   - script: *force-clean-repo
-  - script: *checkout
+  - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -157,7 +157,7 @@ multiprovider regular file CRUD directio:
       working-dir: onedata-acceptance
       description: Run acceptance mixed tests in Chrome
   final-tasks:
-  - script: *parse-test-results
+  - test-parser: *parse-test-results
   - script: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
@@ -170,7 +170,7 @@ multiprovider directory stat directio:
   - script: *clear-env
   - script: *restart-minikube
   - script: *force-clean-repo
-  - script: *checkout
+  - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -180,7 +180,7 @@ multiprovider directory stat directio:
       working-dir: onedata-acceptance
       description: Run acceptance mixed tests in Chrome
   final-tasks:
-  - script: *parse-test-results
+  - test-parser: *parse-test-results
   - script: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
@@ -193,7 +193,7 @@ luma proxy:
   - script: *clear-env
   - script: *restart-minikube
   - script: *force-clean-repo
-  - script: *checkout
+  - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -203,7 +203,7 @@ luma proxy:
       working-dir: onedata-acceptance
       description: Run acceptance mixed tests in Chrome
   final-tasks:
-  - script: *parse-test-results
+  - test-parser: *parse-test-results
   - script: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
@@ -216,7 +216,7 @@ singleprovider directory stat multiclient directio:
   - script: *clear-env
   - script: *restart-minikube
   - script: *force-clean-repo
-  - script: *checkout
+  - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -226,7 +226,7 @@ singleprovider directory stat multiclient directio:
       working-dir: onedata-acceptance
       description: Run acceptance mixed tests in Chrome
   final-tasks:
-  - script: *parse-test-results
+  - test-parser: *parse-test-results
   - script: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
@@ -239,7 +239,7 @@ singleprovider regular file stat multiclient directio:
   - script: *clear-env
   - script: *restart-minikube
   - script: *force-clean-repo
-  - script: *checkout
+  - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -249,7 +249,7 @@ singleprovider regular file stat multiclient directio:
       working-dir: onedata-acceptance
       description: Run acceptance mixed tests in Chrome
   final-tasks:
-  - script: *parse-test-results
+  - test-parser: *parse-test-results
   - script: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
@@ -262,7 +262,7 @@ directory CRUD:
   - script: *clear-env
   - script: *restart-minikube
   - script: *force-clean-repo
-  - script: *checkout
+  - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -272,7 +272,7 @@ directory CRUD:
       working-dir: onedata-acceptance
       description: Run acceptance mixed tests in Chrome
   final-tasks:
-  - script: *parse-test-results
+  - test-parser: *parse-test-results
   - script: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
@@ -285,7 +285,7 @@ multiprovider proxy directory stat proxyio:
   - script: *clear-env
   - script: *restart-minikube
   - script: *force-clean-repo
-  - script: *checkout
+  - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -295,7 +295,7 @@ multiprovider proxy directory stat proxyio:
       working-dir: onedata-acceptance
       description: Run acceptance mixed tests in Chrome
   final-tasks:
-  - script: *parse-test-results
+  - test-parser: *parse-test-results
   - script: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
@@ -308,7 +308,7 @@ luma provider:
   - script: *clear-env
   - script: *restart-minikube
   - script: *force-clean-repo
-  - script: *checkout
+  - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -318,7 +318,7 @@ luma provider:
       working-dir: onedata-acceptance
       description: Run acceptance mixed tests in Chrome
   final-tasks:
-  - script: *parse-test-results
+  - test-parser: *parse-test-results
   - script: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
@@ -331,7 +331,7 @@ multiprovider regular file stat proxyio:
   - script: *clear-env
   - script: *restart-minikube
   - script: *force-clean-repo
-  - script: *checkout
+  - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -341,7 +341,7 @@ multiprovider regular file stat proxyio:
       working-dir: onedata-acceptance
       description: Run acceptance mixed tests in Chrome
   final-tasks:
-  - script: *parse-test-results
+  - test-parser: *parse-test-results
   - script: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
@@ -354,7 +354,7 @@ singleprovider regular file CRUD multiclient proxyio:
   - script: *clear-env
   - script: *restart-minikube
   - script: *force-clean-repo
-  - script: *checkout
+  - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -364,7 +364,7 @@ singleprovider regular file CRUD multiclient proxyio:
       working-dir: onedata-acceptance
       description: Run acceptance mixed tests in Chrome
   final-tasks:
-  - script: *parse-test-results
+  - test-parser: *parse-test-results
   - script: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
@@ -377,7 +377,7 @@ multiprovider proxy regular file stat proxyio:
   - script: *clear-env
   - script: *restart-minikube
   - script: *force-clean-repo
-  - script: *checkout
+  - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -387,7 +387,7 @@ multiprovider proxy regular file stat proxyio:
       working-dir: onedata-acceptance
       description: Run acceptance mixed tests in Chrome
   final-tasks:
-  - script: *parse-test-results
+  - test-parser: *parse-test-results
   - script: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
@@ -400,7 +400,7 @@ multiprovider directory CRUD directio:
   - script: *clear-env
   - script: *restart-minikube
   - script: *force-clean-repo
-  - script: *checkout
+  - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -410,7 +410,7 @@ multiprovider directory CRUD directio:
       working-dir: onedata-acceptance
       description: Run acceptance mixed tests in Chrome
   final-tasks:
-  - script: *parse-test-results
+  - test-parser: *parse-test-results
   - script: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
@@ -423,7 +423,7 @@ multiprovider replication directio:
   - script: *clear-env
   - script: *restart-minikube
   - script: *force-clean-repo
-  - script: *checkout
+  - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -433,7 +433,7 @@ multiprovider replication directio:
       working-dir: onedata-acceptance
       description: Run acceptance mixed tests in Chrome
   final-tasks:
-  - script: *parse-test-results
+  - test-parser: *parse-test-results
   - script: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
@@ -446,7 +446,7 @@ singleprovider directory CRUD multiclient directio:
   - script: *clear-env
   - script: *restart-minikube
   - script: *force-clean-repo
-  - script: *checkout
+  - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -457,7 +457,7 @@ singleprovider directory CRUD multiclient directio:
       working-dir: onedata-acceptance
       description: Run acceptance mixed tests in Chrome
   final-tasks:
-  - script: *parse-test-results
+  - test-parser: *parse-test-results
   - script: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
@@ -470,7 +470,7 @@ singleprovider regular file CRUD multiclient directio:
   - script: *clear-env
   - script: *restart-minikube
   - script: *force-clean-repo
-  - script: *checkout
+  - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -481,7 +481,7 @@ singleprovider regular file CRUD multiclient directio:
       working-dir: onedata-acceptance
       description: Run acceptance mixed tests in Chrome
   final-tasks:
-  - script: *parse-test-results
+  - test-parser: *parse-test-results
   - script: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
@@ -494,7 +494,7 @@ multiprovider proxy directory CRUD proxyio:
   - script: *clear-env
   - script: *restart-minikube
   - script: *force-clean-repo
-  - script: *checkout
+  - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -504,7 +504,7 @@ multiprovider proxy directory CRUD proxyio:
       working-dir: onedata-acceptance
       description: Run acceptance mixed tests in Chrome
   final-tasks:
-  - script: *parse-test-results
+  - test-parser: *parse-test-results
   - script: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
@@ -517,7 +517,7 @@ multiprovider regular file CRUD proxyio:
   - script: *clear-env
   - script: *restart-minikube
   - script: *force-clean-repo
-  - script: *checkout
+  - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -527,7 +527,7 @@ multiprovider regular file CRUD proxyio:
       working-dir: onedata-acceptance
       description: Run acceptance mixed tests in Chrome
   final-tasks:
-  - script: *parse-test-results
+  - test-parser: *parse-test-results
   - script: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
@@ -540,7 +540,7 @@ regular file stat directio:
   - script: *clear-env
   - script: *restart-minikube
   - script: *force-clean-repo
-  - script: *checkout
+  - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -550,7 +550,7 @@ regular file stat directio:
       working-dir: onedata-acceptance
       description: Run acceptance mixed tests in Chrome
   final-tasks:
-  - script: *parse-test-results
+  - test-parser: *parse-test-results
   - script: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
@@ -563,7 +563,7 @@ multiprovider proxy regular file CRUD proxyio:
   - script: *clear-env
   - script: *restart-minikube
   - script: *force-clean-repo
-  - script: *checkout
+  - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -573,7 +573,7 @@ multiprovider proxy regular file CRUD proxyio:
       working-dir: onedata-acceptance
       description: Run acceptance mixed tests in Chrome
   final-tasks:
-  - script: *parse-test-results
+  - test-parser: *parse-test-results
   - script: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
@@ -586,7 +586,7 @@ singleprovider extended attributes:
   - script: *clear-env
   - script: *restart-minikube
   - script: *force-clean-repo
-  - script: *checkout
+  - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -597,7 +597,7 @@ singleprovider extended attributes:
       working-dir: onedata-acceptance
       description: Run acceptance mixed tests in Chrome
   final-tasks:
-  - script: *parse-test-results
+  - test-parser: *parse-test-results
   - script: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
@@ -610,7 +610,7 @@ multiprovider proxy s3 regular file stat proxyio:
   - script: *clear-env
   - script: *restart-minikube
   - script: *force-clean-repo
-  - script: *checkout
+  - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -620,7 +620,7 @@ multiprovider proxy s3 regular file stat proxyio:
       working-dir: onedata-acceptance
       description: Run acceptance mixed tests in Chrome
   final-tasks:
-  - script: *parse-test-results
+  - test-parser: *parse-test-results
   - script: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
@@ -633,7 +633,7 @@ regular file stat proxyio:
   - script: *clear-env
   - script: *restart-minikube
   - script: *force-clean-repo
-  - script: *checkout
+  - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -643,7 +643,7 @@ regular file stat proxyio:
       working-dir: onedata-acceptance
       description: Run acceptance mixed tests in Chrome
   final-tasks:
-  - script: *parse-test-results
+  - test-parser: *parse-test-results
   - script: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
@@ -656,7 +656,7 @@ multiprovider proxy s3 directory stat proxyio:
   - script: *clear-env
   - script: *restart-minikube
   - script: *force-clean-repo
-  - script: *checkout
+  - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -666,7 +666,7 @@ multiprovider proxy s3 directory stat proxyio:
       working-dir: onedata-acceptance
       description: Run acceptance mixed tests in Chrome
   final-tasks:
-  - script: *parse-test-results
+  - test-parser: *parse-test-results
   - script: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
@@ -679,7 +679,7 @@ onedata_fs tests:
   - script: *clear-env
   - script: *restart-minikube
   - script: *force-clean-repo
-  - script: *checkout
+  - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -717,7 +717,7 @@ regular file CRUD directio:
   - script: *clear-env
   - script: *restart-minikube
   - script: *force-clean-repo
-  - script: *checkout
+  - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -727,7 +727,7 @@ regular file CRUD directio:
       working-dir: onedata-acceptance
       description: Run acceptance mixed tests in Chrome
   final-tasks:
-  - script: *parse-test-results
+  - test-parser: *parse-test-results
   - script: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
@@ -740,7 +740,7 @@ multiprovider regular file stat directio:
   - script: *clear-env
   - script: *restart-minikube
   - script: *force-clean-repo
-  - script: *checkout
+  - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -750,7 +750,7 @@ multiprovider regular file stat directio:
       working-dir: onedata-acceptance
       description: Run acceptance mixed tests in Chrome
   final-tasks:
-  - script: *parse-test-results
+  - test-parser: *parse-test-results
   - script: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
@@ -763,7 +763,7 @@ multiprovider proxy s3 regular file CRUD proxyio:
   - script: *clear-env
   - script: *restart-minikube
   - script: *force-clean-repo
-  - script: *checkout
+  - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -773,7 +773,7 @@ multiprovider proxy s3 regular file CRUD proxyio:
       working-dir: onedata-acceptance
       description: Run acceptance mixed tests in Chrome
   final-tasks:
-  - script: *parse-test-results
+  - test-parser: *parse-test-results
   - script: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
@@ -786,7 +786,7 @@ authorization:
   - script: *clear-env
   - script: *restart-minikube
   - script: *force-clean-repo
-  - script: *checkout
+  - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -796,7 +796,7 @@ authorization:
       working-dir: onedata-acceptance
       description: Run acceptance mixed tests in Chrome
   final-tasks:
-  - script: *parse-test-results
+  - test-parser: *parse-test-results
   - script: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
@@ -809,7 +809,7 @@ regular file CRUD proxyio:
   - script: *clear-env
   - script: *restart-minikube
   - script: *force-clean-repo
-  - script: *checkout
+  - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -819,7 +819,7 @@ regular file CRUD proxyio:
       working-dir: onedata-acceptance
       description: Run acceptance mixed tests in Chrome
   final-tasks:
-  - script: *parse-test-results
+  - test-parser: *parse-test-results
   - script: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
@@ -832,7 +832,7 @@ multiprovider proxy s3 directory CRUD proxyio:
   - script: *clear-env
   - script: *restart-minikube
   - script: *force-clean-repo
-  - script: *checkout
+  - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -842,7 +842,7 @@ multiprovider proxy s3 directory CRUD proxyio:
       working-dir: onedata-acceptance
       description: Run acceptance mixed tests in Chrome
   final-tasks:
-  - script: *parse-test-results
+  - test-parser: *parse-test-results
   - script: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
@@ -855,7 +855,7 @@ directory stat:
   - script: *clear-env
   - script: *restart-minikube
   - script: *force-clean-repo
-  - script: *checkout
+  - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -865,7 +865,7 @@ directory stat:
       working-dir: onedata-acceptance
       description: Run acceptance mixed tests in Chrome
   final-tasks:
-  - script: *parse-test-results
+  - test-parser: *parse-test-results
   - script: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
@@ -878,7 +878,7 @@ multiclient authorization:
   - script: *clear-env
   - script: *restart-minikube
   - script: *force-clean-repo
-  - script: *checkout
+  - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -888,7 +888,7 @@ multiclient authorization:
       working-dir: onedata-acceptance
       description: Run acceptance mixed tests in Chrome
   final-tasks:
-  - script: *parse-test-results
+  - test-parser: *parse-test-results
   - script: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
@@ -901,7 +901,7 @@ singleprovider regular file stat multiclient proxyio:
   - script: *clear-env
   - script: *restart-minikube
   - script: *force-clean-repo
-  - script: *checkout
+  - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -912,16 +912,10 @@ singleprovider regular file stat multiclient proxyio:
       working-dir: onedata-acceptance
       description: Run acceptance mixed tests in Chrome
   final-tasks:
-  - script: *parse-test-results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/oneclient/logs
-        mv onedata/tests/oneclient/logs/*/*/images.yaml onedata/tests/oneclient/logs
-        tar czf test_logs.tar.gz onedata/tests/oneclient/logs
-      description: Pack logs
+  - test-parser: *parse-test-results
+  - script: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
+
