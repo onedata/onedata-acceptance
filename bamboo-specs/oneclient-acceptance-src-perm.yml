@@ -3,7 +3,8 @@ plan:
   key: VFS-OAS
 plan-permissions:
 - users:
-  - plgcwiertni
+  - plglopiola
+  - plgmstanisz
   permissions:
   - view
   - edit
