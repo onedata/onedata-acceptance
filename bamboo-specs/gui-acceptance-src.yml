@@ -159,7 +159,7 @@ Chrome POSIX tests multiuser:
       - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
       working-dir: onedata-acceptance
       description: Download artifacts
-  - script: 
+  - script: &run-selenium-tests 
       interpreter: BINSH_OR_CMDEXE
       scripts:
       - make SUITE=test_oneprovider_posix_multiuser BROWSER=Chrome TIMEOUT=600 test_gui_src
@@ -205,11 +205,9 @@ Chrome onepanel deployment basic tests:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_onepanel_deployment_basic ENV_FILE=1oz_1op_not_deployed BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -227,11 +225,9 @@ Chrome oneprovider ACL subdirectories:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_oneprovider_acl_subdir BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -255,7 +251,7 @@ Codetag Tracker:
         make submodules
       description: Init submodules
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make codetag-tracker BRANCH=${bamboo.planRepository.branchName}
       description: Codetag Tracker
@@ -271,11 +267,9 @@ Chrome onezone automations tests:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_onezone_automation BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -293,11 +287,9 @@ Chrome qos basic:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make ENV_FILE=1oz_2op_deployed SUITE=test_qos_basic BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -315,11 +307,9 @@ Chrome onezone harvesters basic tests:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_basic BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -337,11 +327,9 @@ Chrome oneprovider ACL directories privileges create:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_oneprovider_acl_dir_privileges_create BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -359,11 +347,9 @@ Chrome oneprovider archives incremental and nested:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_oneprovider_archives_incremental_and_nested BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -381,11 +367,9 @@ Chrome oneprovider ACL files metadata:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_oneprovider_acl_files_metadata BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -403,11 +387,9 @@ Chrome onezone providers basic tests:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_onezone_providers_basic BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -425,11 +407,9 @@ Chrome POSIX tests:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_oneprovider_posix BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -447,11 +427,9 @@ Chrome oneprovider ACL directories privileges metadata:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_oneprovider_acl_dir_privileges_metadata BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -469,11 +447,9 @@ Chrome oneprovider ACL directories privileges remove:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_oneprovider_acl_dir_privileges_remove BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -491,11 +467,9 @@ Chrome onezone spaces memberships privileges:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_onezone_spaces_memberships_privileges BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -513,11 +487,9 @@ Chrome oneprovider ACL remove file:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_oneprovider_acl_files BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -535,11 +507,9 @@ Chrome oneprovider symlinks:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_oneprovider_symlinks BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -557,11 +527,9 @@ Chrome transfers multi browser tests:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_oneprovider_transfers_multi ENV_FILE=1oz_2op_deployed BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -579,11 +547,9 @@ Chrome onezone harversters privileges add and remove:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_privileges_add_remove BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -601,11 +567,9 @@ Chrome onezone groups multiuser single group:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_onezone_groups_multiuser_single_group BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -623,11 +587,9 @@ Chrome onepanel basic tests:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_onepanel_basic BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -645,11 +607,9 @@ Chrome multiprovider basic tests:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make ENV_FILE=1oz_2op_deployed SUITE=test_multiprovider_basic BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -667,11 +627,9 @@ Chrome onezone invite tokens with caveats:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make ENV_FILE=1oz_2op_elasticsearch SUITE=test_onezone_invite_tokens_with_caveats BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -689,11 +647,9 @@ Chrome transfers files:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_oneprovider_transfers_files ENV_FILE=1oz_2op_deployed BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -711,11 +667,9 @@ Chrome shares basic tests:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_shares_basic BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -733,11 +687,9 @@ Chrome onezone spaces multiuser tests:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_onezone_spaces_multiuser BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -755,11 +707,9 @@ Chrome storage sync charts:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_storage_sync_charts BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -777,11 +727,9 @@ Chrome onezone spaces memberships privileges data:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_onezone_spaces_memberships_privileges_data BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -799,11 +747,9 @@ Chrome oneprovider data tab tests:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_oneprovider_data_tab BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -821,11 +767,9 @@ Chrome transfers directories:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_oneprovider_transfers_directories ENV_FILE=1oz_2op_deployed BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -843,11 +787,9 @@ Chrome onezone basic tests:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_onezone_basic BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -865,11 +807,9 @@ Chrome onezone data discovery helpers:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_data_discovery_helpers BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -887,11 +827,9 @@ Chrome storage sync tests:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_storage_sync BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -909,11 +847,9 @@ Chrome oneprovider hardlinks:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_oneprovider_hardlinks BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -931,11 +867,9 @@ Chrome onezone data discovery tests:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_data_discovery BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -953,11 +887,9 @@ Chrome oneprovider ACL subfiles:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_oneprovider_acl_subfile BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -975,11 +907,9 @@ Chrome onepanel deployment ceph:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_onepanel_deployment_ceph ENV_FILE=1oz_1op_not_deployed BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -997,11 +927,9 @@ Chrome oneprovider ACL subdirectories remove:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_oneprovider_acl_subdir_remove BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1019,11 +947,9 @@ Chrome oneprovider ACL subjects:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_oneprovider_acl_subjects BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1041,11 +967,9 @@ Chrome onezone data discovery querying:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_data_discovery_querying BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1063,11 +987,9 @@ Chrome oneprovider archives tests:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_oneprovider_archives BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1085,11 +1007,9 @@ Chrome onepanel ceph spaces:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_onepanel_ceph_spaces ENV_FILE=1oz_1op_not_deployed BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1107,11 +1027,9 @@ Chrome onezone tokens delete:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make ENV_FILE=1oz_2op_elasticsearch SUITE=test_onezone_tokens_delete BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1129,11 +1047,9 @@ Chrome onezone groups basic tests:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_onezone_groups_basic BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1151,11 +1067,9 @@ Chrome onezone spaces basic tests:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_onezone_spaces_basic BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1173,11 +1087,9 @@ Chrome onepanel login tests:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_onepanel_login BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1195,11 +1107,9 @@ Chrome oneprovider datasets privileges:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_oneprovider_datasets_privileges BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1217,11 +1127,9 @@ Chrome onezone tokens tests:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make ENV_FILE=1oz_2op_elasticsearch SUITE=test_onezone_tokens BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1239,11 +1147,9 @@ Chrome onezone harvesters index:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_index BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1261,11 +1167,9 @@ Chrome onezone harversters index metadata:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_index_metadata BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1283,11 +1187,9 @@ Chrome onezone harvesters memberships privileges:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_memberships_privileges BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1305,11 +1207,9 @@ Chrome onezone harvesters effective privileges:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_effective_privileges BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1327,11 +1227,9 @@ Chrome onepanel two hosts deployment tests:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_onepanel_deployment_with_2_hosts ENV_FILE=1oz_1op_not_deployed_2_nodes BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1349,11 +1247,9 @@ Chrome oneprovider upload tests:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_oneprovider_upload BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1371,11 +1267,9 @@ Chrome onezone invite tokens with consumer caveats:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make ENV_FILE=1oz_2op_elasticsearch SUITE=test_onezone_invite_tokens_with_consumer_caveats BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1393,11 +1287,9 @@ Chrome oneprovider datasets tests:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_oneprovider_datasets BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1415,11 +1307,9 @@ Chrome onezone invite tokens:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make ENV_FILE=1oz_2op_elasticsearch SUITE=test_onezone_invite_tokens BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1437,11 +1327,9 @@ Chrome public shares tests:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_public_shares BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1459,11 +1347,9 @@ Chrome onezone groups multiuser tests:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_onezone_groups_multiuser BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1481,11 +1367,9 @@ Chrome oneprovider ACL directories privileges:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_oneprovider_acl_dir_privileges BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1503,11 +1387,9 @@ Chrome multiprovider QoS storage:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make ENV_FILE=1oz_2op_deployed SUITE=test_multiprovider_qos_storage BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1525,11 +1407,9 @@ Chrome oneprovider ACL basic:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_oneprovider_acl_basic BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1547,11 +1427,9 @@ Chrome multiprovider QoS tests:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make ENV_FILE=1oz_2op_deployed SUITE=test_multiprovider_qos BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1569,11 +1447,9 @@ Chrome QoS storage:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make ENV_FILE=1oz_2op_deployed SUITE=test_qos_storage BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1591,11 +1467,9 @@ Chrome metadata test:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_metadata BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1613,11 +1487,9 @@ Chrome onepanel members tests:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_onepanel_members BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1635,11 +1507,9 @@ Chrome multiprovider multiuser tests:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make ENV_FILE=1oz_2op_deployed SUITE=test_multiprovider_multiuser BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1657,11 +1527,9 @@ Chrome oneprovider ACL files:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-selenium-tests
       scripts:
       - make SUITE=test_oneprovider_acl_files BROWSER=Chrome TIMEOUT=600 test_gui_src
-      working-dir: onedata-acceptance
-      description: Run Selenium tests
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs

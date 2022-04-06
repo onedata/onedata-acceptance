@@ -124,7 +124,7 @@ Chrome QoS tests:
       - make build_swaggers
       working-dir: onedata-acceptance
       description: Build swaggers
-  - script:
+  - script: &run-acceptance-tests
       interpreter: BINSH_OR_CMDEXE
       scripts:
       - make SUITE=test_qos TIMEOUT=600 test_mixed_src
@@ -181,11 +181,9 @@ Chrome create file tests:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_create_file TIMEOUT=600 test_mixed_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -204,11 +202,9 @@ Chrome storage sync:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_storage_sync TIMEOUT=600 test_mixed_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -227,11 +223,9 @@ Chrome ACL one entry:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_acl_one_entry TIMEOUT=600 test_mixed_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -250,11 +244,9 @@ Chrome permission POSIX multi tests:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_permission_posix_multi ENV_FILE=1oz_1op_2oc TIMEOUT=600 test_mixed_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -273,11 +265,9 @@ Chrome spaces basic tests:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_spaces_basic TIMEOUT=600 test_mixed_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -296,11 +286,9 @@ Chrome onepanel tests:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_onepanel_basic TIMEOUT=600 test_mixed_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -319,11 +307,9 @@ Chrome permission POSIX tests:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_permission_posix TIMEOUT=600 test_mixed_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -342,11 +328,9 @@ Chrome files movement tests:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_files_movement TIMEOUT=600 test_mixed_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -365,11 +349,9 @@ Chrome directories movement tests:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_directories_movement TIMEOUT=600 test_mixed_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -388,11 +370,9 @@ Chrome files multi tests:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_files_multi ENV_FILE=1oz_1op_2oc TIMEOUT=600 test_mixed_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -411,11 +391,9 @@ Chrome access tokens path caveats:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_access_tokens_path_caveats TIMEOUT=600 test_mixed_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -434,11 +412,9 @@ Chrome nested directories create:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_nested_directories_create TIMEOUT=600 test_mixed_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -457,11 +433,9 @@ Chrome single directory tests:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_single_directory TIMEOUT=600 test_mixed_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -480,11 +454,9 @@ Chrome files set metadata:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_files_set_metadata TIMEOUT=600 test_mixed_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -503,11 +475,9 @@ Chrome remove file tests:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_remove_file TIMEOUT=600 test_mixed_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -526,11 +496,9 @@ Chrome directories multi tests:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_directories_multi ENV_FILE=1oz_1op_2oc TIMEOUT=600 test_mixed_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -556,11 +524,9 @@ Chrome groups basic tests:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_groups_basic TIMEOUT=600 test_mixed_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -579,11 +545,9 @@ Chrome single directory tests 2:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_single_directory2 TIMEOUT=600 test_mixed_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -602,11 +566,9 @@ Chrome archives tests:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_archives TIMEOUT=600 test_mixed_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -625,11 +587,9 @@ Chrome archive privileges:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_archive_privileges TIMEOUT=600 test_mixed_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -648,11 +608,9 @@ Chrome directories set metadata:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_directories_set_metadata TIMEOUT=600 test_mixed_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -671,11 +629,9 @@ Chrome nested directories remove:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_nested_directories_remove TIMEOUT=600 test_mixed_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -694,11 +650,9 @@ Chrome ACL two entries:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_acl_two_entries TIMEOUT=600 test_mixed_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -717,11 +671,9 @@ Chrome tokens tests:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_tokens TIMEOUT=600 test_mixed_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -740,11 +692,9 @@ Chrome access tokens:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_access_tokens TIMEOUT=600 test_mixed_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -763,11 +713,9 @@ Chrome file content tests:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_file_content TIMEOUT=600 test_mixed_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -786,11 +734,9 @@ Chrome files remove metadata:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_files_remove_metadata TIMEOUT=600 test_mixed_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -809,11 +755,9 @@ Chrome rename file tests:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_rename_file TIMEOUT=600 test_mixed_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -832,11 +776,9 @@ Chrome datasets tests:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_dataset TIMEOUT=600 test_mixed_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -855,11 +797,9 @@ Chrome files times tests:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_files_times TIMEOUT=600 test_mixed_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -878,11 +818,9 @@ Chrome access tokens id caveats:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_access_tokens_id_caveats TIMEOUT=600 test_mixed_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -901,11 +839,9 @@ Chrome directories times tests:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_directories_times TIMEOUT=600 test_mixed_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -924,11 +860,9 @@ Chrome directories remove metadata:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_directories_remove_metadata TIMEOUT=600 test_mixed_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
