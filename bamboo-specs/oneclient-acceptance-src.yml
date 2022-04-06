@@ -73,7 +73,7 @@ stages:
     - multiprovider s3 regular file CRUD proxyio
 multiprovider s3 directory stat proxyio:
   key: MSDSP
-  other:
+  other: &common-opts
     clean-working-dir: true
   tasks:
   - script: &clear-env
@@ -86,11 +86,6 @@ multiprovider s3 directory stat proxyio:
       scripts:
       - sudo ${HOME}/restart_minikube.sh
       description: Restart minikube
-  - script: &force-clean-repo
-      interpreter: SHELL
-      scripts:
-      - docker run -v $bamboo_build_working_directory:/build alpine sh -c 'rm -rf /build/onedata'
-      description: Force clean repo
   - checkout: &checkout
       path: onedata-acceptance
       force-clean-build: 'true'
@@ -110,7 +105,7 @@ multiprovider s3 directory stat proxyio:
       - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
       working-dir: onedata-acceptance
       description: Download artifacts
-  - script:
+  - script: &run-acceptance-tests
       interpreter: BINSH_OR_CMDEXE
       scripts:
       - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_s3 IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
@@ -147,21 +142,17 @@ multiprovider s3 directory stat proxyio:
   artifact-subscriptions: []
 multiprovider directory CRUD proxyio:
   key: MDCP
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -171,21 +162,17 @@ multiprovider directory CRUD proxyio:
   artifact-subscriptions: []
 multiprovider replication directio:
   key: MRD
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multiprovider_replication ENV_FILE=multiprovider_directio_env IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -195,22 +182,17 @@ multiprovider replication directio:
   artifact-subscriptions: []
 singleprovider regular file CRUD multiclient directio:
   key: SRFCMD
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
-      - |
-        make SUITE=test_multi_reg_file_CRUD ENV_FILE=singleprovider_multiclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
+      - make SUITE=test_multi_reg_file_CRUD ENV_FILE=singleprovider_multiclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -220,21 +202,17 @@ singleprovider regular file CRUD multiclient directio:
   artifact-subscriptions: []
 regular file stat proxyio:
   key: RFSP
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_reg_file_stat ENV_FILE=singleprovider_singleclient_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -244,21 +222,17 @@ regular file stat proxyio:
   artifact-subscriptions: []
 regular file CRUD directio:
   key: RFCD
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_reg_file_CRUD ENV_FILE=singleprovider_singleclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -268,21 +242,17 @@ regular file CRUD directio:
   artifact-subscriptions: []
 multiprovider proxy s3 directory CRUD proxyio:
   key: MPSDCP
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_proxy_s3 IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -292,21 +262,17 @@ multiprovider proxy s3 directory CRUD proxyio:
   artifact-subscriptions: []
 directory CRUD:
   key: DC
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_directory_CRUD ENV_FILE=singleprovider_singleclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -316,21 +282,17 @@ directory CRUD:
   artifact-subscriptions: []
 multiprovider s3 directory CRUD proxyio:
   key: MSDCP
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_s3 IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -340,21 +302,17 @@ multiprovider s3 directory CRUD proxyio:
   artifact-subscriptions: []
 multiprovider directory CRUD directio:
   key: MDCD
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -364,21 +322,17 @@ multiprovider directory CRUD directio:
   artifact-subscriptions: []
 singleprovider directory stat multiclient directio:
   key: SDSMD
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_directory_stat ENV_FILE=singleprovider_multiclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -388,21 +342,17 @@ singleprovider directory stat multiclient directio:
   artifact-subscriptions: []
 luma proxy:
   key: LPR
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_luma_proxy ENV_FILE=singleprovider_multistorage IGNORE_XFAIL=1 TIMEOUT=600 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -412,21 +362,17 @@ luma proxy:
   artifact-subscriptions: []
 regular file CRUD proxyio:
   key: RFCP
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_reg_file_CRUD ENV_FILE=singleprovider_singleclient_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -436,21 +382,17 @@ regular file CRUD proxyio:
   artifact-subscriptions: []
 singleprovider regular file stat multiclient directio:
   key: SRFSMD
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_reg_file_stat ENV_FILE=singleprovider_multiclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -460,21 +402,17 @@ singleprovider regular file stat multiclient directio:
   artifact-subscriptions: []
 multiprovider directory stat proxyio:
   key: MDSP
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -484,21 +422,17 @@ multiprovider directory stat proxyio:
   artifact-subscriptions: []
 multiprovider replication proxyio:
   key: MRP
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multiprovider_replication ENV_FILE=multiprovider_1space IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -508,21 +442,17 @@ multiprovider replication proxyio:
   artifact-subscriptions: []
 singleprovider regular file CRUD multiclient proxyio:
   key: SRFCMP
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_reg_file_CRUD ENV_FILE=singleprovider_multiclient_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -532,21 +462,17 @@ singleprovider regular file CRUD multiclient proxyio:
   artifact-subscriptions: []
 multiprovider proxy s3 directory stat proxyio:
   key: MPSDSP
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_proxy_s3 IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -556,21 +482,17 @@ multiprovider proxy s3 directory stat proxyio:
   artifact-subscriptions: []
 multiprovider regular file stat directio:
   key: MRFSD
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -580,21 +502,17 @@ multiprovider regular file stat directio:
   artifact-subscriptions: []
 luma provider:
   key: LP
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_luma_provider ENV_FILE=singleprovider_multistorage TIMEOUT=720 IGNORE_XFAIL=1 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -604,21 +522,17 @@ luma provider:
   artifact-subscriptions: []
 directory stat:
   key: DS
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_directory_stat ENV_FILE=singleprovider_singleclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -628,21 +542,17 @@ directory stat:
   artifact-subscriptions: []
 multiprovider directory stat directio:
   key: MDSD
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -652,21 +562,17 @@ multiprovider directory stat directio:
   artifact-subscriptions: []
 multiprovider proxy regular file CRUD proxyio:
   key: MPRFCP
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxy IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -676,12 +582,10 @@ multiprovider proxy regular file CRUD proxyio:
   artifact-subscriptions: []
 singleprovider directory CRUD multiclient directio:
   key: SDCMD
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
@@ -690,8 +594,6 @@ singleprovider directory CRUD multiclient directio:
       scripts:
       - |
         make SUITE=test_multi_directory_CRUD ENV_FILE=singleprovider_multiclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -701,21 +603,17 @@ singleprovider directory CRUD multiclient directio:
   artifact-subscriptions: []
 multiprovider proxy s3 regular file stat proxyio:
   key: MPSRFSP
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxy_s3 IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -725,17 +623,15 @@ multiprovider proxy s3 regular file stat proxyio:
   artifact-subscriptions: []
 authorization:
   key: AUT
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make test_oneclient_src SUITE=test_authorization  ENV_FILE=singleclient_authorization IGNORE_XFAIL=1
       working-dir: onedata-acceptance
@@ -749,12 +645,10 @@ authorization:
   artifact-subscriptions: []
 singleprovider regular file stat multiclient proxyio:
   key: SRFSMP
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
@@ -763,8 +657,6 @@ singleprovider regular file stat multiclient proxyio:
       scripts:
       - |
         make SUITE=test_multi_reg_file_stat ENV_FILE=singleprovider_multiclient_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -774,21 +666,17 @@ singleprovider regular file stat multiclient proxyio:
   artifact-subscriptions: []
 multiprovider proxy directory stat proxyio:
   key: MPDSP
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_proxy IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -798,21 +686,17 @@ multiprovider proxy directory stat proxyio:
   artifact-subscriptions: []
 multiprovider regular file stat proxyio:
   key: MRFSP
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -822,21 +706,17 @@ multiprovider regular file stat proxyio:
   artifact-subscriptions: []
 multiprovider regular file CRUD directio:
   key: MRFCD
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -846,21 +726,17 @@ multiprovider regular file CRUD directio:
   artifact-subscriptions: []
 multiclient authorization:
   key: MA
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_authorization ENV_FILE=multiclient_authorization IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -870,21 +746,17 @@ multiclient authorization:
   artifact-subscriptions: []
 multiprovider s3 regular file stat proxyio:
   key: MSRFSP
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_s3 IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -894,21 +766,17 @@ multiprovider s3 regular file stat proxyio:
   artifact-subscriptions: []
 multiprovider proxy s3 regular file CRUD proxyio:
   key: MPSRFCP
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxy_s3 IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -918,21 +786,17 @@ multiprovider proxy s3 regular file CRUD proxyio:
   artifact-subscriptions: []
 multiprovider proxy regular file stat proxyio:
   key: MPRFSP
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxy IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -942,12 +806,10 @@ multiprovider proxy regular file stat proxyio:
   artifact-subscriptions: []
 singleprovider extended attributes:
   key: SEA
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
@@ -956,8 +818,6 @@ singleprovider extended attributes:
       scripts:
       - |
         make SUITE=test_extended_attributes ENV_FILE=singleprovider_singleclient_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -967,21 +827,17 @@ singleprovider extended attributes:
   artifact-subscriptions: []
 regular file stat directio:
   key: RFSD
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_reg_file_stat ENV_FILE=singleprovider_singleclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -991,21 +847,17 @@ regular file stat directio:
   artifact-subscriptions: []
 multiprovider proxy directory CRUD proxyio:
   key: MPDCP
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_proxy IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1015,21 +867,17 @@ multiprovider proxy directory CRUD proxyio:
   artifact-subscriptions: []
 multiprovider regular file CRUD proxyio:
   key: MRFCP
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1039,21 +887,17 @@ multiprovider regular file CRUD proxyio:
   artifact-subscriptions: []
 multiprovider s3 regular file CRUD proxyio:
   key: MSRFCP
-  other:
-    clean-working-dir: true
+  other: *common-opts
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - script: *force-clean-repo
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_s3 IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
