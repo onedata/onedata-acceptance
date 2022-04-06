@@ -25,8 +25,12 @@ def create_base(user, dirs, client_node, users, should_fail=False):
         path = client.absolute_path(dir)
 
         def condition():
-            assert_expected_failure(client.mkdir, should_fail, path)
-        assert_(client.perform, condition)
+            client.mkdir(path)
+
+        if should_fail:
+            assert_expected_failure(client.mkdir, path)
+        else:
+            assert_(client.perform, condition)
 
 
 @when(parsers.re('(?P<user>\w+) creates directories (?P<dirs>.*)\son '
@@ -66,9 +70,12 @@ def delete_empty_base(user, dirs, client_node, users, should_fail=False):
         path = client.absolute_path(dir)
 
         def condition():
-            assert_expected_failure(client.rmdir, should_fail, path)
+            client.rmdir(path)
 
-        assert_(client.perform, condition)
+        if should_fail:
+            assert_expected_failure(client.rmdir, path)
+        else:
+            assert_(client.perform, condition)
 
 
 @wt(parsers.re('(?P<user>\w+) deletes directories \(rmdir\) (?P<dirs>.*) on '
