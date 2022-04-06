@@ -168,7 +168,7 @@ Chrome QoS tests:
     shared: false
     required: false
   requirements: &requirements
-  - kubeadm
+  - minikube
   artifact-subscriptions: []
 Chrome create file tests:
   key: CCFT

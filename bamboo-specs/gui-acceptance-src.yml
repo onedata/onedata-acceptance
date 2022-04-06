@@ -193,8 +193,7 @@ Chrome POSIX tests multiuser:
       shared: false
       required: false
   requirements: &requirements
-  - kubeadm
-  - onedata
+  - minikube
   artifact-subscriptions: []
 Chrome onepanel deployment basic tests:
   key: CODBT
