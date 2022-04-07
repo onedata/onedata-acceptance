@@ -28,7 +28,7 @@ def create_base(user, dirs, client_node, users, should_fail=False):
             client.mkdir(path)
 
         if should_fail:
-            assert_expected_failure(client.mkdir, path)
+            assert_expected_failure(condition)
         else:
             assert_(client.perform, condition)
 
@@ -73,7 +73,7 @@ def delete_empty_base(user, dirs, client_node, users, should_fail=False):
             client.rmdir(path)
 
         if should_fail:
-            assert_expected_failure(client.rmdir, path)
+            assert_expected_failure(condition)
         else:
             assert_(client.perform, condition)
 

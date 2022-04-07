@@ -130,7 +130,7 @@ def mv_base(user, file1, file2, client_node, users, should_fail=False):
         client.mv(src, dest)
 
     if should_fail:
-        assert_expected_failure(client.mv, src, dest)
+        assert_expected_failure(condition)
     else:
         assert_(client.perform, condition)
 
@@ -151,7 +151,7 @@ def rename_base(user, file1, file2, client_node, users, should_fail=False):
         client.osrename(src, dest)
 
     if should_fail:
-        assert_expected_failure(client.osrename, src, dest)
+        assert_expected_failure(condition)
     else:
         assert_(client.perform, condition)
 
@@ -234,7 +234,7 @@ def delete_file_base(user, files, client_node, users, should_fail=False):
             client.rm(path)
 
         if should_fail:
-            assert_expected_failure(client.rm, path)
+            assert_expected_failure(condition)
         else:
             assert_(client.perform, condition)
 
