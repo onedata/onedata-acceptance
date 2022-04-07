@@ -101,9 +101,8 @@ def assert_new_created_space_has_appeared_on_spaces(selenium, browser_id,
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
                '(?P<option>Data|Providers|Groups|Tokens|Discovery|Automation'
-               '|Clusters) '
-               'in the main menu'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+               '|Clusters) in the main menu'))
+@repeat_failed(timeout=WAIT_BACKEND)
 def click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
@@ -179,21 +178,21 @@ def click_on_option_in_menu(selenium, browser_id, button, oz_page, popups):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_confirm_or_cancel_button_on_leave_space_page(selenium, browser_id,
                                                        button_name, modals):
-    getattr(modals(selenium[browser_id]).leave_space, button_name.lower())()
+    getattr(modals(selenium[browser_id]).leave_modal, button_name.lower())()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
                'understand notice checkbox in "Remove space" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_remove_space_understand_notice(selenium, browser_id, modals):
-    modals(selenium[browser_id]).remove_space.understand_notice()
+    modals(selenium[browser_id]).remove_modal.understand_notice()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
                '"Remove" button in "Remove space" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_remove_space_button(selenium, browser_id, modals):
-    modals(selenium[browser_id]).remove_space.remove()
+    modals(selenium[browser_id]).remove_modal.remove()
 
 
 @wt(parsers.parse('user of {browser_id} sees that "{space_name}" '
@@ -456,7 +455,7 @@ def remove_harvester_from_harvesters_list(selenium, browser_id, oz_page,
     harvesters_list[harvester_name].click_harvester_menu_button(driver)
     popups(driver).menu_popup_with_text.menu[popup_name]()
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    modals(driver).remove_harvester.remove()
+    modals(driver).remove_modal.remove()
 
 
 @wt(parsers.parse('user of {browser_id} clicks '

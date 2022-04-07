@@ -23,12 +23,12 @@ from tests.mixed.utils.common import NoSuchClientException
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_archive_in_op(client, user, item_name, space_name, host, tmp_memory,
                          selenium, oz_page, op_container, modals, users, hosts,
-                         config, spaces, clipboard, displays, option):
+                         config, spaces, clipboard, displays, option, popups):
     client_lower = client.lower()
     if client_lower == 'web gui':
         create_archive(user, selenium, config, item_name, space_name,
                        oz_page, op_container, tmp_memory, modals,
-                       clipboard, displays, option)
+                       clipboard, displays, option, popups)
     elif client_lower == 'rest':
         create_archive_in_op_rest(user, users, hosts, host, space_name,
                                   item_name, config, spaces, tmp_memory, option)
@@ -64,12 +64,12 @@ def assert_archive_in_op(client, user, item_name, space_name, host, tmp_memory,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def remove_archive_in_op(client, user, item_name, space_name, host, tmp_memory,
                          selenium, oz_page, op_container, users, hosts,
-                         modals, description, option):
+                         modals, description, option, popups):
     client_lower = client.lower()
     if client_lower == 'web gui':
         remove_archive_in_op_gui(user, selenium, item_name, space_name,
                                  oz_page, op_container, tmp_memory, modals,
-                                 description, option)
+                                 description, option, popups)
     elif client_lower == 'rest':
         remove_archive_in_op_rest(user, users, hosts, host,
                                   description, tmp_memory, option)

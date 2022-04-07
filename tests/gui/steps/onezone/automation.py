@@ -148,8 +148,8 @@ def click_add_new_button_in_menu_bar(selenium, browser_id, oz_page, option):
 @wt(parsers.re('user of (?P<browser_id>.*) writes "(?P<text>.*)" into ('
                '?P<text_field>lambda name|docker image) text field'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def write_lambda_name_in_lambda_text_field(selenium, browser_id,
-                                           oz_page, text, text_field):
+def write_text_into_lambda_form(selenium, browser_id,
+                                oz_page, text, text_field):
     page = oz_page(selenium[browser_id])['automation']
     label = getattr(page.lambdas_page.form, transform(text_field))
     setattr(label, 'value', text)
@@ -186,14 +186,14 @@ def click_on_create_new_revision_button(selenium, browser_id, oz_page,
     page.lambdas_page.elements_list[lambda_name].create_new_revision.click()
 
 
-def collapse_revision_list(object):
-    object.show_revisions_button.click()
+def collapse_revision_list(subpage):
+    subpage.show_revisions_button.click()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>does not see|sees) '
-               '"(?P<revision_name>.*)" in '
-               '(lambdas|workflows) revision list of "(?P<object_name>.*)" '
-               'in inventory (?P<page>lambdas|workflows) subpage'))
+               '"(?P<revision_name>.*)" in revision list of '
+               '"(?P<object_name>.*)" in inventory '
+               '(?P<page>lambdas|workflows) subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_revision_in_object_bracket(selenium, browser_id, oz_page,
                                       object_name, page, option):

@@ -104,12 +104,12 @@ def type_osd_size_to_input(selenium, number, size: str, browser_id, onepanel):
 @wt(parsers.parse('user of {browser_id} sets "{unit}" as size unit of {number} '
                   'OSD in Ceph configuration step of deployment process in '
                   'Onepanel'))
-def choose_osd_unit(selenium, number, unit, browser_id, onepanel, modals):
+def choose_osd_unit(selenium, number, unit, browser_id, onepanel, popups):
     driver = selenium[browser_id]
     step = onepanel(driver).content.deployment.cephconfiguration
     osd_index = 0 if number == 'first' else 1
     step.osds[osd_index].unit_selector()
-    modals(driver).dropdown.options[unit].click()
+    popups(driver).dropdown.options[unit].click()
 
 
 @wt(parsers.re('user of (?P<browser_id>.+?) types '

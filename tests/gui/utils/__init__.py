@@ -17,3 +17,5 @@ from .oneprovider.shares.public_share import PublicShareView
 from .common.modals import Modals
 from .common.popups import Popups
 from .common.common import LoginPage
+from .onezone.privacy_policy import PrivacyPolicy
+from .onezone.terms_of_use import TermsOfUse

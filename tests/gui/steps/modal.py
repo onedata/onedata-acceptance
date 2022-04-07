@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 import re
 
+from datetime import datetime
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.common.keys import Keys
@@ -18,8 +19,25 @@ from tests.gui.utils.generic import click_on_web_elem, transform
 from tests.utils.bdd_utils import given, wt, parsers
 from tests.utils.utils import repeat_failed
 
+
 in_type_to_id = {'username': 'login-form-username-input',
                  'password': 'login-form-password-input'}
+
+
+def check_modal_name(modal_name):
+    modal_name = transform(modal_name)
+    if 'remove' in modal_name:
+        return 'remove_modal'
+    elif 'leave' in modal_name:
+        return 'leave_modal'
+    elif 'add_one' in modal_name:
+        return 'add_one_of_elements'
+    elif 'rename' in modal_name:
+        return 'rename_modal'
+    elif modal_name in ['file_details', 'directory_details']:
+        return 'details_modal'
+    else:
+        return modal_name
 
 
 @wt(parsers.parse('user of {browser_id} sees that '
@@ -63,7 +81,8 @@ def _find_modal(driver, modal_name):
         elements_list = ['group', 'token', 'cluster', 'harvester',
                          'spaces', 'rename', 'permissions', 'directory', 'data',
                          'share', 'metadata', 'delete', 'remove', 'quality',
-                         'file details', 'symbolic link', 'inventory']
+                         'file details', 'symbolic link', 'inventory',
+                         'workflow']
         if any([name for name in elements_list
                 if name in modal_name.lower()]):
             modals = driver.find_elements_by_css_selector('.modal, '
@@ -116,6 +135,7 @@ def _wait_for_modal_to_disappear(driver, browser_id, tmp_memory):
 
 
 def _wait_for_named_modal_to_disappear(driver, modal_name):
+    modal_name = check_modal_name(modal_name)
     try:
         modal = getattr(modals(driver), transform(modal_name))
     except RuntimeError:
@@ -298,7 +318,7 @@ def assert_btn_in_modal_is_enabled(browser_id, btn_name, tmp_memory):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_alert_text_in_modal(selenium, browser_id, modals, modal, text):
     driver = selenium[browser_id]
-    modal = transform(modal)
+    modal = check_modal_name(modal)
     forbidden_alert_text = getattr(modals(driver), modal).forbidden_alert.text
     assert text in forbidden_alert_text, (
         'found {} text instead of {}'.format(forbidden_alert_text, text))
@@ -309,7 +329,7 @@ def assert_alert_text_in_modal(selenium, browser_id, modals, modal, text):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_modal_button(selenium, browser_id, button, modal, modals):
     button = transform(button)
-    modal = transform(modal)
+    modal = check_modal_name(modal)
     getattr(getattr(modals(selenium[browser_id]), modal), button)()
 
 
@@ -322,7 +342,8 @@ def write_name_into_text_field_in_modal(selenium, browser_id, item_name,
                                         name_textfield='input name'):
     if name_textfield == '':
         name_textfield = 'input name'
-    modal = getattr(modals(selenium[browser_id]), transform(modal_name))
+    modal_name = check_modal_name(modal_name)
+    modal = getattr(modals(selenium[browser_id]), modal_name)
     setattr(modal, transform(name_textfield), item_name)
 
 
@@ -390,7 +411,7 @@ def assert_titled_error_modal_appeared(selenium, browser_id, title):
 @wt(parsers.re('user of (?P<browser_id>.*) closes "(?P<modal>.*)" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def close_modal(selenium, browser_id, modal, modals):
-    modal = transform(modal)
+    modal = check_modal_name(modal)
     try:
         getattr(modals(selenium[browser_id]), modal).close()
     except AttributeError:
@@ -403,6 +424,56 @@ def close_modal(selenium, browser_id, modal, modals):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_copy_icon_in_rest_api_modal(selenium, browser_id, modals):
     modals(selenium[browser_id]).rest_api_modal.copy_command_button()
+
+
+@wt(parsers.parse('user of {browser_id} sees {info}: "{text}" in archive '
+                  'recall information modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_info_in_archive_recall_information_modal(selenium, browser_id,
+                                                    modals, info, text):
+    information = getattr(modals(selenium[browser_id]
+                                 ).archive_recall_information, transform(info))
+    assert text in information, (f'{info}: {text} does not match {information} '
+                                 f'in archive recall information modal')
+
+
+@wt(parsers.parse('user of {browser_id} sees that recall has been finished at '
+                  'the same time or after recall has been started'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_recall_duration_in_archive_recall_information_modal(selenium,
+                                                               browser_id,
+                                                               modals):
+    archive_recall_information = modals(selenium[browser_id]
+                                        ).archive_recall_information
+    started_at = archive_recall_information.started_at
+    finished_at = archive_recall_information.finished_at
+    start = datetime.strptime(started_at, '%d %b %Y %H:%M:%S')
+    finish = datetime.strptime(finished_at, '%d %b %Y %H:%M:%S')
+
+    err_msg = 'Recall start time is greater than finish time'
+    assert start <= finish, err_msg
+
+
+@wt(parsers.parse('user of {browser_id} sees that not all {kind} were '
+                  'recalled'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_not_all_files_were_recalled(selenium, browser_id, modals, kind):
+    kind = kind + ' recalled'
+    info = getattr(modals(selenium[browser_id]).archive_recall_information,
+                   transform(kind)).replace(' MiB', '').split(' / ')
+    all_data = int(info[1])
+    recalled = int(info[0])
+    err_msg = f'Number of recalled {kind} is not smaller then all {kind}'
+    assert all_data > recalled, err_msg
+
+
+@wt(parsers.parse('user of {browser_id} sees that number of items failed is'
+                  ' greater than 0'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_number_of_item_greater_than_zero(selenium, browser_id, modals):
+    number = int(modals(selenium[browser_id]
+                        ).archive_recall_information.items_failed)
+    assert number > 0, 'Zero items failed'
 
 
 @wt(parsers.parse('user of {browser_id} chooses "{option}" in dropdown menu '

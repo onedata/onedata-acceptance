@@ -8,6 +8,7 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 import yaml
+import time
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.meta_steps.oneprovider.data import go_to_path_without_last_elem
@@ -47,7 +48,7 @@ ARCHIVE_FILE_BROWSER = 'archive file browser'
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_archive(browser_id, selenium, config, item_name, space_name,
                    oz_page, op_container, tmp_memory, modals, clipboard,
-                   displays, option):
+                   displays, option, popups):
     """Create archive according to given config.
 
     Config format given in yaml is as follow:
@@ -68,12 +69,12 @@ def create_archive(browser_id, selenium, config, item_name, space_name,
     """
     _create_archive(browser_id, selenium, config, item_name, space_name,
                     oz_page, op_container, tmp_memory, modals, clipboard,
-                    displays, option)
+                    displays, option, popups)
 
 
 def _create_archive(browser_id, selenium, config, item_name, space_name,
                     oz_page, op_container, tmp_memory, modals,
-                    clipboard, displays, option):
+                    clipboard, displays, option, popups):
     option_in_data_row_menu = 'Create archive'
     button_name = 'Create'
     try:
@@ -94,7 +95,7 @@ def _create_archive(browser_id, selenium, config, item_name, space_name,
     if option == 'succeeds':
         click_option_in_data_row_menu_in_browser(selenium, browser_id,
                                                  option_in_data_row_menu,
-                                                 modals, DATASET_BROWSER)
+                                                 popups, DATASET_BROWSER)
         data = yaml.load(config)
 
         description = data.get('description', False)
@@ -126,17 +127,19 @@ def _create_archive(browser_id, selenium, config, item_name, space_name,
         client = 'web GUI'
         if description:
             copy_archive_id_to_tmp_memory(selenium, browser_id, op_container,
-                                          client, tmp_memory, modals, clipboard,
+                                          client, tmp_memory, popups, clipboard,
                                           displays, description)
+            # wait for "archive id copied to clipboard" message to disappear
+            time.sleep(5)
     elif option == 'fails':
         assert_not_click_option_in_data_row_menu(selenium, browser_id,
                                                  option_in_data_row_menu,
-                                                 modals, DATASET_BROWSER)
+                                                 DATASET_BROWSER, popups)
 
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def copy_archive_id_to_tmp_memory(selenium, browser_id, op_container, client,
-                                  tmp_memory, modals, clipboard, displays,
+                                  tmp_memory, popups, clipboard, displays,
                                   description):
     if client.lower() == 'web gui':
         option_in_menu = 'Copy archive ID'
@@ -144,7 +147,7 @@ def copy_archive_id_to_tmp_memory(selenium, browser_id, op_container, client,
                                     tmp_memory, ARCHIVE_BROWSER)
         click_menu_for_archive(browser_id, tmp_memory, description)
         click_option_in_data_row_menu_in_browser(selenium, browser_id,
-                                                 option_in_menu, modals,
+                                                 option_in_menu, popups,
                                                  ARCHIVE_BROWSER)
         tmp_memory[description] = clipboard.paste(
             display=displays[browser_id])
@@ -191,7 +194,7 @@ def assert_archive_in_op_gui(browser_id, selenium, item_name, space_name,
 
 def remove_archive_in_op_gui(browser_id, selenium, item_name, space_name,
                              oz_page, op_container, tmp_memory, modals,
-                             description, option):
+                             description, option, popups):
     option_in_menu = 'Purge archive'
     text = 'I understand that data of the archive will be lost'
     button_name = 'Purge archive'
@@ -205,7 +208,7 @@ def remove_archive_in_op_gui(browser_id, selenium, item_name, space_name,
 
     if option == 'succeeds':
         click_option_in_data_row_menu_in_browser(selenium, browser_id,
-                                                 option_in_menu, modals,
+                                                 option_in_menu, popups,
                                                  which_browser=ARCHIVE_BROWSER)
         write_in_confirmation_input(browser_id, modals, text, selenium)
         click_modal_button(selenium, browser_id, button_name,
@@ -213,7 +216,7 @@ def remove_archive_in_op_gui(browser_id, selenium, item_name, space_name,
     elif option == 'fails':
         assert_not_click_option_in_data_row_menu(selenium, browser_id,
                                                  button_name,
-                                                 modals, ARCHIVE_BROWSER)
+                                                 ARCHIVE_BROWSER, popups)
 
 
 def assert_archive_with_option_in_op_gui(browser_id, selenium, oz_page,

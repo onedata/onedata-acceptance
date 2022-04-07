@@ -124,3 +124,11 @@ def wt_assert_err_msg_about_credentials(selenium, browser_id, login_page):
     assert login_page(selenium[browser_id]).err_msg, \
         'no err msg about invalid credentials found'
 
+
+@wt(parsers.parse('user of {browser_id} sees sign in notification message: '
+                  '"{text}" in the login page'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_sign_in_notification(login_page, text, selenium, browser_id):
+    err_msg = "sign in notification message is not as expected"
+    assert login_page(selenium[browser_id]
+                      ).login_notification_message.text == text, err_msg

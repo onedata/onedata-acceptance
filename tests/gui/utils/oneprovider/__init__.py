@@ -17,6 +17,7 @@ from ..core.web_elements import WebItem
 from .dataset_browser import DatasetBrowser
 from .archive_file_browser import ArchiveFileBrowser
 from .archive_browser import ArchiveBrowser
+from .archive_container import ArchiveContainer
 
 
 class OPLoggedIn(object):
@@ -28,6 +29,7 @@ class OPLoggedIn(object):
                                               '.dataset-archives-browser'
                                               ' .filesystem-browser')
     archive_browser = ArchiveBrowser('.content-space-datasets .archive-browser')
+    archive_container = ArchiveContainer('.archive-browser-container')
     automation_page = WebItem('.content-space-automation', cls=WorkflowExecutionPage)
 
     def __init__(self, driver):

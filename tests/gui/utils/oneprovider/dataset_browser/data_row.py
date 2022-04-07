@@ -25,6 +25,8 @@ class DataRow(PageObject, BrowserRow):
     metadata_protected_tag = WebElement('.file-metadata-protected-icon')
     _status_tag = WebElement('.file-status-tag')
     clickable_field = WebElement('.file-name')
+    path_to_root_file = Label('.dataset-info-secondary-file-path-internal')
+    deleted_root_file_icon = WebElement('.one-icon-tag-circle')
 
     def __str__(self):
         return f'{self.name} in {str(self.parent)}'

@@ -75,7 +75,8 @@ def get_item_name_from_path(selenium, browser_id, space_name, oz_page,
                   '"{item_name}" in "{space_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_dataset(browser_id, tmp_memory, item_name, space_name,
-                   selenium, oz_page, op_container, modals, option='no flags'):
+                   selenium, oz_page, op_container, modals, popups,
+                   option='no flags'):
     option_in_space = 'Files'
     option_in_data_row_menu = 'Datasets'
     button_name = 'X'
@@ -95,7 +96,7 @@ def create_dataset(browser_id, tmp_memory, item_name, space_name,
 
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
-                                             option_in_data_row_menu, modals)
+                                             option_in_data_row_menu, popups)
     click_mark_file_as_dataset_toggle(browser_id, selenium, modals)
     flags = [item.replace('_protection', '') for item in get_flags(option)]
     for flag in flags:
@@ -107,14 +108,14 @@ def create_dataset(browser_id, tmp_memory, item_name, space_name,
 
 def fail_to_create_dataset_in_op_gui(browser_id, tmp_memory, item_name,
                                      space_name, selenium, oz_page,
-                                     op_container, modals):
+                                     op_container, modals, popups):
     option_in_space = 'Files'
     option_in_data_row_menu = 'Datasets'
     go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
                              option_in_space, op_container, tmp_memory)
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
-                                             option_in_data_row_menu, modals)
+                                             option_in_data_row_menu, popups)
     fail_to_mark_file_as_dataset_toggle(browser_id, selenium, modals)
 
 
@@ -135,7 +136,8 @@ def assert_top_level_dataset_in_space_in_op_gui(selenium, browser_id, oz_page,
 
 
 def remove_dataset_in_op_gui(selenium, browser_id, oz_page, space_name,
-                             op_container, tmp_memory, item_name, modals):
+                             op_container, tmp_memory, item_name, modals,
+                             popups):
     option_in_space = 'Datasets'
     item_browser = 'dataset browser'
     option_in_data_row_menu = 'Remove dataset'
@@ -147,7 +149,7 @@ def remove_dataset_in_op_gui(selenium, browser_id, oz_page, space_name,
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory,
                                    which_browser=item_browser)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
-                                             option_in_data_row_menu, modals,
+                                             option_in_data_row_menu, popups,
                                              which_browser=item_browser)
     click_modal_button(selenium, browser_id, button_name,
                        modal, modals)
@@ -169,7 +171,7 @@ def check_dataset_structure_in_op_gui(selenium, browser_id, oz_page, space_name,
 
 def check_effective_protection_flags_for_file_in_op_gui(
         selenium, browser_id, oz_page, space_name, op_container, tmp_memory,
-        item_name, modals, option):
+        item_name, modals, option, popups):
     option_in_space = 'Files'
     option_in_data_row_menu = 'Datasets'
     go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
@@ -179,7 +181,7 @@ def check_effective_protection_flags_for_file_in_op_gui(
     item_name = item_name.split('/')[-1]
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
-                                             option_in_data_row_menu, modals)
+                                             option_in_data_row_menu, popups)
     flags = [item.replace('_protection', '') for item in get_flags(option)]
     for flag in flags:
         check_effective_protection_flag(browser_id, selenium, modals, flag,
@@ -200,7 +202,7 @@ def check_effective_protection_flag(browser_id, selenium, modals, kind,
 def set_protection_flags_for_dataset_in_op_gui(browser_id, selenium, oz_page,
                                                space_name, op_container,
                                                tmp_memory, item_name, modals,
-                                               option):
+                                               option, popups):
     option_in_space = 'Datasets'
     item_browser = 'dataset browser'
     option_in_data_row_menu = 'Write protection'
@@ -215,7 +217,7 @@ def set_protection_flags_for_dataset_in_op_gui(browser_id, selenium, oz_page,
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory,
                                    which_browser=item_browser)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
-                                             option_in_data_row_menu, modals,
+                                             option_in_data_row_menu, popups,
                                              which_browser=item_browser)
     button_name = 'Close'
     flags = [item.replace('_protection', '') for item in get_flags(option)]
@@ -227,7 +229,8 @@ def set_protection_flags_for_dataset_in_op_gui(browser_id, selenium, oz_page,
 
 
 def detach_dataset_in_op_gui(selenium, browser_id, oz_page, space_name,
-                             op_container, tmp_memory, item_name, modals):
+                             op_container, tmp_memory, item_name, modals,
+                             popups):
     option_in_space = 'Datasets'
     item_browser = 'dataset browser'
     option_in_data_row_menu = 'Detach'
@@ -239,7 +242,7 @@ def detach_dataset_in_op_gui(selenium, browser_id, oz_page, space_name,
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory,
                                    which_browser=item_browser)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
-                                             option_in_data_row_menu, modals,
+                                             option_in_data_row_menu, popups,
                                              which_browser=item_browser)
     click_modal_button(selenium, browser_id, button_name,
                        modal, modals)
@@ -263,7 +266,8 @@ def assert_dataset_detached_in_op_gui(selenium, browser_id, oz_page, item_name,
 
 
 def reattach_dataset_in_op_gui(selenium, browser_id, oz_page, space_name,
-                               op_container, tmp_memory, item_name, modals):
+                               op_container, tmp_memory, item_name, modals,
+                               popups):
     option_in_space = 'Datasets'
     item_browser = 'dataset browser'
     which = 'dataset'
@@ -281,7 +285,7 @@ def reattach_dataset_in_op_gui(selenium, browser_id, oz_page, space_name,
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory,
                                    which_browser=item_browser)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
-                                             option_in_data_row_menu, modals,
+                                             option_in_data_row_menu, popups,
                                              which_browser=item_browser)
     click_modal_button(selenium, browser_id, button_name,
                        modal, modals)
