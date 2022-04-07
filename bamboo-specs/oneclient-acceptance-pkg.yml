@@ -105,7 +105,7 @@ multiprovider replication proxyio:
       - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
       working-dir: onedata-acceptance
       description: Download artifacts
-  - script:
+  - script: &run-acceptance-tests
       interpreter: BINSH_OR_CMDEXE
       scripts:
       - make SUITE=test_multiprovider_replication ENV_FILE=multiprovider_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
@@ -151,11 +151,9 @@ multiprovider regular file CRUD directio:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_directio IGNORE_XFAIL=1 TIMEOUT=420 KEYWORDS='"not hardlink"' test_oneclient_pkg
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -174,11 +172,9 @@ multiprovider directory stat directio:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -197,11 +193,9 @@ luma proxy:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_luma_proxy ENV_FILE=singleprovider_multistorage IGNORE_XFAIL=1 TIMEOUT=600 test_oneclient_pkg
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -220,11 +214,9 @@ singleprovider directory stat multiclient directio:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_directory_stat ENV_FILE=singleprovider_multiclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -243,11 +235,9 @@ singleprovider regular file stat multiclient directio:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_reg_file_stat ENV_FILE=singleprovider_multiclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -266,11 +256,9 @@ directory CRUD:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_directory_CRUD ENV_FILE=singleprovider_singleclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -289,11 +277,9 @@ multiprovider proxy directory stat proxyio:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_proxy IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -312,11 +298,9 @@ luma provider:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_luma_provider ENV_FILE=singleprovider_multistorage TIMEOUT=600 IGNORE_XFAIL=1 test_oneclient_pkg
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -335,11 +319,9 @@ multiprovider regular file stat proxyio:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxyio IGNORE_XFAIL=1 TIMEOUT=420 KEYWORDS='"not hardlink"' test_oneclient_pkg
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -358,11 +340,9 @@ singleprovider regular file CRUD multiclient proxyio:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_reg_file_CRUD ENV_FILE=singleprovider_multiclient_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -381,11 +361,9 @@ multiprovider proxy regular file stat proxyio:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxy IGNORE_XFAIL=1 TIMEOUT=420 KEYWORDS='"not hardlink"' test_oneclient_pkg
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -404,11 +382,9 @@ multiprovider directory CRUD directio:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -427,11 +403,9 @@ multiprovider replication directio:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multiprovider_replication ENV_FILE=multiprovider_directio_env IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -454,8 +428,6 @@ singleprovider directory CRUD multiclient directio:
       scripts:
       - |
         make SUITE=test_multi_directory_CRUD ENV_FILE=singleprovider_multiclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -478,8 +450,6 @@ singleprovider regular file CRUD multiclient directio:
       scripts:
       - |
         make SUITE=test_multi_reg_file_CRUD ENV_FILE=singleprovider_multiclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -498,11 +468,9 @@ multiprovider proxy directory CRUD proxyio:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_proxy IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -521,11 +489,9 @@ multiprovider regular file CRUD proxyio:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxyio IGNORE_XFAIL=1 TIMEOUT=420 KEYWORDS='"not hardlink"' test_oneclient_pkg
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -544,11 +510,9 @@ regular file stat directio:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_reg_file_stat ENV_FILE=singleprovider_singleclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -567,11 +531,9 @@ multiprovider proxy regular file CRUD proxyio:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxy IGNORE_XFAIL=1 TIMEOUT=420 KEYWORDS='"not hardlink"' test_oneclient_pkg
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -594,8 +556,6 @@ singleprovider extended attributes:
       scripts:
       - |
         make SUITE=test_extended_attributes ENV_FILE=singleprovider_singleclient_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -614,11 +574,9 @@ multiprovider proxy s3 regular file stat proxyio:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxy_s3 IGNORE_XFAIL=1 TIMEOUT=420 KEYWORDS='"not hardlink"' test_oneclient_pkg
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -637,11 +595,9 @@ regular file stat proxyio:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_reg_file_stat ENV_FILE=singleprovider_singleclient_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -660,11 +616,9 @@ multiprovider proxy s3 directory stat proxyio:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_proxy_s3 IGNORE_XFAIL=1 TIMEOUT=420 KEYWORDS='"not hardlink"' test_oneclient_pkg
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -683,7 +637,7 @@ onedata_fs tests:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make test_onedata_fs
       working-dir: onedata-acceptance
@@ -721,11 +675,9 @@ regular file CRUD directio:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_reg_file_CRUD ENV_FILE=singleprovider_singleclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -744,11 +696,9 @@ multiprovider regular file stat directio:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_directio IGNORE_XFAIL=1 TIMEOUT=420 KEYWORDS='"not hardlink"' test_oneclient_pkg
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -767,11 +717,9 @@ multiprovider proxy s3 regular file CRUD proxyio:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxy_s3 IGNORE_XFAIL=1 TIMEOUT=420 KEYWORDS='"not hardlink"' test_oneclient_pkg
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -790,11 +738,9 @@ authorization:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make test_oneclient_pkg SUITE=test_authorization  ENV_FILE=singleclient_authorization IGNORE_XFAIL=1
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -813,11 +759,9 @@ regular file CRUD proxyio:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_reg_file_CRUD ENV_FILE=singleprovider_singleclient_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -836,11 +780,9 @@ multiprovider proxy s3 directory CRUD proxyio:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_proxy_s3 IGNORE_XFAIL=1 TIMEOUT=420 KEYWORDS='"not hardlink"' test_oneclient_pkg
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -859,11 +801,9 @@ directory stat:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_directory_stat ENV_FILE=singleprovider_singleclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -882,11 +822,9 @@ multiclient authorization:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_multi_authorization ENV_FILE=multiclient_authorization IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -909,8 +847,6 @@ singleprovider regular file stat multiclient proxyio:
       scripts:
       - |
         make SUITE=test_multi_reg_file_stat ENV_FILE=singleprovider_multiclient_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
-      working-dir: onedata-acceptance
-      description: Run acceptance mixed tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs

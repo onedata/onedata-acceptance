@@ -1,9 +1,9 @@
 version: 2
 plan:
   project-key: VFS
-  key: MAOST
-  name: mixed acceptance src
-  description: Acceptance tests using different clients concurrently. Environment deployed from sources.
+  key: OAS
+  name: oneclient acceptance src
+  description: oneclient acceptance tests using environment deployed from sources
 repositories:
 - onedata-acceptance:
     scope: global
@@ -13,81 +13,68 @@ branches:
     after-deleted-days: never
     after-inactive-days: 30
   link-to-jira: true
-notifications:
-- events:
-  - plan-failed
-  recipients:
-  - users:
-    - plgjliput
+notifications: []
 labels: []
 triggers: []
 dependencies:
-  require-all-stages-passing: true
+  require-all-stages-passing: false
   enabled-for-branches: true
   block-strategy: none
   plans: []
 other:
   concurrent-build-plugin: '3'
   all-other-apps:
-    custom:
-      com.atlassian.bamboo.plugin.hungbuildkiller:
-        stopped.enabled: 'true'
-        add_comment_when_hung.enabled: 'true'
-      buildExpiryConfig:
-        period: weeks
-        expiryTypeBuildLog: 'true'
-        enabled: 'true'
-        expiryTypeArtifact: 'true'
-        duration: '1'
+    custom.com.atlassian.bamboo.plugin.hungbuildkiller:
+      stopped.enabled: 'true'
+      add_comment_when_hung.enabled: 'true'
 stages:
 - Acceptance Test:
     manual: false
     final: false
     jobs:
-    - Chrome QoS tests
-    - Chrome create file tests
-    - Chrome storage sync
-    - Chrome ACL one entry
-    - Chrome permission POSIX multi tests
-    - Chrome spaces basic tests
-    - Chrome onepanel tests
-    - Chrome permission POSIX tests
-    - Chrome files movement tests
-    - Chrome directories movement tests
-    - Chrome files multi tests
-    - Chrome access tokens path caveats
-    - Chrome nested directories create
-    - Chrome single directory tests
-    - Chrome files set metadata
-    - Chrome remove file tests
-    - Chrome directories multi tests
-    - Chrome groups basic tests
-    - Chrome single directory tests 2
-    - Chrome archives tests
-    - Chrome archive privileges
-    - Chrome directories set metadata
-    - Chrome nested directories remove
-    - Chrome ACL two entries
-    - Chrome tokens tests
-    - Chrome access tokens
-    - Chrome file content tests
-    - Chrome files remove metadata
-    - Chrome rename file tests
-    - Chrome datasets tests
-    - Chrome files times tests
-    - Chrome access tokens id caveats
-    - Chrome directories times tests
-    - Chrome directories remove metadata
-Chrome QoS tests:
-  key: CQT
+    - multiprovider s3 directory stat proxyio
+    - multiprovider directory CRUD proxyio
+    - multiprovider replication directio
+    - singleprovider regular file CRUD multiclient directio
+    - regular file stat proxyio
+    - regular file CRUD directio
+    - multiprovider proxy s3 directory CRUD proxyio
+    - directory CRUD
+    - multiprovider s3 directory CRUD proxyio
+    - multiprovider directory CRUD directio
+    - singleprovider directory stat multiclient directio
+    - luma proxy
+    - regular file CRUD proxyio
+    - singleprovider regular file stat multiclient directio
+    - multiprovider directory stat proxyio
+    - multiprovider replication proxyio
+    - singleprovider regular file CRUD multiclient proxyio
+    - multiprovider proxy s3 directory stat proxyio
+    - multiprovider regular file stat directio
+    - luma provider
+    - directory stat
+    - multiprovider directory stat directio
+    - multiprovider proxy regular file CRUD proxyio
+    - singleprovider directory CRUD multiclient directio
+    - multiprovider proxy s3 regular file stat proxyio
+    - authorization
+    - singleprovider regular file stat multiclient proxyio
+    - multiprovider proxy directory stat proxyio
+    - multiprovider regular file stat proxyio
+    - multiprovider regular file CRUD directio
+    - multiclient authorization
+    - multiprovider s3 regular file stat proxyio
+    - multiprovider proxy s3 regular file CRUD proxyio
+    - multiprovider proxy regular file stat proxyio
+    - singleprovider extended attributes
+    - regular file stat directio
+    - multiprovider proxy directory CRUD proxyio
+    - multiprovider regular file CRUD proxyio
+    - multiprovider s3 regular file CRUD proxyio
+multiprovider s3 directory stat proxyio:
+  key: MSDSP
   other: &common-opts
     clean-working-dir: true
-    all-other-apps:
-      custom:
-        auto: {}
-        clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
   tasks:
   - script: &clear-env
       interpreter: BINSH_OR_CMDEXE
@@ -113,21 +100,15 @@ Chrome QoS tests:
       working-dir: onedata-acceptance
       description: Init submodules
   - script: &download-artifacts
-      interpreter: BINSH_OR_CMDEXE
+      interpreter: SHELL
       scripts:
       - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} branchConfig.yaml
       working-dir: onedata-acceptance
       description: Download artifacts
-  - script: &build-swaggers
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - make build_swaggers
-      working-dir: onedata-acceptance
-      description: Build swaggers
   - script: &run-acceptance-tests
       interpreter: BINSH_OR_CMDEXE
       scripts:
-      - make SUITE=test_qos TIMEOUT=600 test_mixed_src
+      - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_s3 IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
       working-dir: onedata-acceptance
       description: Run acceptance mixed tests in Chrome
   final-tasks:
@@ -140,10 +121,10 @@ Chrome QoS tests:
       interpreter: BINSH_OR_CMDEXE
       scripts:
       - |-
-        cp onedata-acceptance/test-reports/*.xml onedata-acceptance/tests/mixed/logs
-        cp onedata-acceptance/one_env/sources_info.yaml onedata-acceptance/tests/mixed/logs
-        mv onedata-acceptance/tests/mixed/logs/report.* onedata-acceptance/tests/mixed/logs/gui_report
-        mv onedata-acceptance/tests/mixed/logs/gui_report/images.yaml onedata-acceptance/tests/mixed/logs
+        cp onedata-acceptance/test-reports/*.xml onedata-acceptance/tests/oneclient/logs
+        cp onedata-acceptance/one_env/sources_info.yaml onedata-acceptance/tests/oneclient/logs
+        mv onedata-acceptance/tests/oneclient/logs/*/*/images.yaml onedata-acceptance/tests/oneclient/logs
+        tar czf test_logs.tar.gz onedata-acceptance/tests/oneclient/logs
       description: Pack logs
   - script: &clear-env-and-working-dir
       interpreter: BINSH_OR_CMDEXE
@@ -152,26 +133,15 @@ Chrome QoS tests:
       working-dir: onedata-acceptance
       description: Clear env and working dir
   artifacts: &artifacts
-  - name: report
-    location: onedata-acceptance/tests/mixed/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  - name: onezone_images
-    location: onedata-acceptance/onezone_images
-    pattern: docker-dev-build-list.json
-    shared: false
-    required: false
-  - name: oneprovider_images
-    location: onedata-acceptance/oneprovider_images
-    pattern: docker-dev-build-list.json
+  - name: test_logs.tar.gz
+    pattern: test_logs.tar.gz
     shared: false
     required: false
   requirements: &requirements
   - minikube
   artifact-subscriptions: []
-Chrome create file tests:
-  key: CCFT
+multiprovider directory CRUD proxyio:
+  key: MDCP
   other: *common-opts
   tasks:
   - script: *clear-env
@@ -179,11 +149,10 @@ Chrome create file tests:
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
-  - script: *build-swaggers
   - script:
       <<: *run-acceptance-tests
       scripts:
-      - make SUITE=test_create_file TIMEOUT=600 test_mixed_src
+      - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -191,8 +160,8 @@ Chrome create file tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome storage sync:
-  key: CSS
+multiprovider replication directio:
+  key: MRD
   other: *common-opts
   tasks:
   - script: *clear-env
@@ -200,11 +169,10 @@ Chrome storage sync:
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
-  - script: *build-swaggers
   - script:
       <<: *run-acceptance-tests
       scripts:
-      - make SUITE=test_storage_sync TIMEOUT=600 test_mixed_src
+      - make SUITE=test_multiprovider_replication ENV_FILE=multiprovider_directio_env IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -212,8 +180,8 @@ Chrome storage sync:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome ACL one entry:
-  key: CAOE
+singleprovider regular file CRUD multiclient directio:
+  key: SRFCMD
   other: *common-opts
   tasks:
   - script: *clear-env
@@ -221,11 +189,10 @@ Chrome ACL one entry:
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
-  - script: *build-swaggers
   - script:
       <<: *run-acceptance-tests
       scripts:
-      - make SUITE=test_acl_one_entry TIMEOUT=600 test_mixed_src
+      - make SUITE=test_multi_reg_file_CRUD ENV_FILE=singleprovider_multiclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -233,8 +200,8 @@ Chrome ACL one entry:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome permission POSIX multi tests:
-  key: CPPMT
+regular file stat proxyio:
+  key: RFSP
   other: *common-opts
   tasks:
   - script: *clear-env
@@ -242,11 +209,10 @@ Chrome permission POSIX multi tests:
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
-  - script: *build-swaggers
   - script:
       <<: *run-acceptance-tests
       scripts:
-      - make SUITE=test_permission_posix_multi ENV_FILE=1oz_1op_2oc TIMEOUT=600 test_mixed_src
+      - make SUITE=test_reg_file_stat ENV_FILE=singleprovider_singleclient_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -254,8 +220,8 @@ Chrome permission POSIX multi tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome spaces basic tests:
-  key: STIC
+regular file CRUD directio:
+  key: RFCD
   other: *common-opts
   tasks:
   - script: *clear-env
@@ -263,11 +229,10 @@ Chrome spaces basic tests:
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
-  - script: *build-swaggers
   - script:
       <<: *run-acceptance-tests
       scripts:
-      - make SUITE=test_spaces_basic TIMEOUT=600 test_mixed_src
+      - make SUITE=test_reg_file_CRUD ENV_FILE=singleprovider_singleclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -275,8 +240,8 @@ Chrome spaces basic tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome onepanel tests:
-  key: COT
+multiprovider proxy s3 directory CRUD proxyio:
+  key: MPSDCP
   other: *common-opts
   tasks:
   - script: *clear-env
@@ -284,11 +249,10 @@ Chrome onepanel tests:
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
-  - script: *build-swaggers
   - script:
       <<: *run-acceptance-tests
       scripts:
-      - make SUITE=test_onepanel_basic TIMEOUT=600 test_mixed_src
+      - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_proxy_s3 IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -296,8 +260,8 @@ Chrome onepanel tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome permission POSIX tests:
-  key: CPPT
+directory CRUD:
+  key: DC
   other: *common-opts
   tasks:
   - script: *clear-env
@@ -305,11 +269,10 @@ Chrome permission POSIX tests:
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
-  - script: *build-swaggers
   - script:
       <<: *run-acceptance-tests
       scripts:
-      - make SUITE=test_permission_posix TIMEOUT=600 test_mixed_src
+      - make SUITE=test_directory_CRUD ENV_FILE=singleprovider_singleclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -317,8 +280,8 @@ Chrome permission POSIX tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome files movement tests:
-  key: CFMT2
+multiprovider s3 directory CRUD proxyio:
+  key: MSDCP
   other: *common-opts
   tasks:
   - script: *clear-env
@@ -326,11 +289,10 @@ Chrome files movement tests:
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
-  - script: *build-swaggers
   - script:
       <<: *run-acceptance-tests
       scripts:
-      - make SUITE=test_files_movement TIMEOUT=600 test_mixed_src
+      - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_s3 IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -338,8 +300,8 @@ Chrome files movement tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome directories movement tests:
-  key: CDMT2
+multiprovider directory CRUD directio:
+  key: MDCD
   other: *common-opts
   tasks:
   - script: *clear-env
@@ -347,11 +309,10 @@ Chrome directories movement tests:
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
-  - script: *build-swaggers
   - script:
       <<: *run-acceptance-tests
       scripts:
-      - make SUITE=test_directories_movement TIMEOUT=600 test_mixed_src
+      - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -359,8 +320,8 @@ Chrome directories movement tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome files multi tests:
-  key: CFMT3
+singleprovider directory stat multiclient directio:
+  key: SDSMD
   other: *common-opts
   tasks:
   - script: *clear-env
@@ -368,11 +329,10 @@ Chrome files multi tests:
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
-  - script: *build-swaggers
   - script:
       <<: *run-acceptance-tests
       scripts:
-      - make SUITE=test_files_multi ENV_FILE=1oz_1op_2oc TIMEOUT=600 test_mixed_src
+      - make SUITE=test_multi_directory_stat ENV_FILE=singleprovider_multiclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -380,8 +340,8 @@ Chrome files multi tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome access tokens path caveats:
-  key: CATPC
+luma proxy:
+  key: LPR
   other: *common-opts
   tasks:
   - script: *clear-env
@@ -389,11 +349,10 @@ Chrome access tokens path caveats:
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
-  - script: *build-swaggers
   - script:
       <<: *run-acceptance-tests
       scripts:
-      - make SUITE=test_access_tokens_path_caveats TIMEOUT=600 test_mixed_src
+      - make SUITE=test_luma_proxy ENV_FILE=singleprovider_multistorage IGNORE_XFAIL=1 TIMEOUT=600 test_oneclient_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -401,8 +360,8 @@ Chrome access tokens path caveats:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome nested directories create:
-  key: CNDC
+regular file CRUD proxyio:
+  key: RFCP
   other: *common-opts
   tasks:
   - script: *clear-env
@@ -410,11 +369,10 @@ Chrome nested directories create:
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
-  - script: *build-swaggers
   - script:
       <<: *run-acceptance-tests
       scripts:
-      - make SUITE=test_nested_directories_create TIMEOUT=600 test_mixed_src
+      - make SUITE=test_reg_file_CRUD ENV_FILE=singleprovider_singleclient_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -422,8 +380,8 @@ Chrome nested directories create:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome single directory tests:
-  key: CSDT
+singleprovider regular file stat multiclient directio:
+  key: SRFSMD
   other: *common-opts
   tasks:
   - script: *clear-env
@@ -431,11 +389,10 @@ Chrome single directory tests:
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
-  - script: *build-swaggers
   - script:
       <<: *run-acceptance-tests
       scripts:
-      - make SUITE=test_single_directory TIMEOUT=600 test_mixed_src
+      - make SUITE=test_multi_reg_file_stat ENV_FILE=singleprovider_multiclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -443,8 +400,8 @@ Chrome single directory tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome files set metadata:
-  key: CFSM
+multiprovider directory stat proxyio:
+  key: MDSP
   other: *common-opts
   tasks:
   - script: *clear-env
@@ -452,11 +409,10 @@ Chrome files set metadata:
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
-  - script: *build-swaggers
   - script:
       <<: *run-acceptance-tests
       scripts:
-      - make SUITE=test_files_set_metadata TIMEOUT=600 test_mixed_src
+      - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -464,8 +420,8 @@ Chrome files set metadata:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome remove file tests:
-  key: CRFT
+multiprovider replication proxyio:
+  key: MRP
   other: *common-opts
   tasks:
   - script: *clear-env
@@ -473,11 +429,10 @@ Chrome remove file tests:
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
-  - script: *build-swaggers
   - script:
       <<: *run-acceptance-tests
       scripts:
-      - make SUITE=test_remove_file TIMEOUT=600 test_mixed_src
+      - make SUITE=test_multiprovider_replication ENV_FILE=multiprovider_1space IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -485,8 +440,8 @@ Chrome remove file tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome directories multi tests:
-  key: CDMT3
+singleprovider regular file CRUD multiclient proxyio:
+  key: SRFCMP
   other: *common-opts
   tasks:
   - script: *clear-env
@@ -494,11 +449,10 @@ Chrome directories multi tests:
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
-  - script: *build-swaggers
   - script:
       <<: *run-acceptance-tests
       scripts:
-      - make SUITE=test_directories_multi ENV_FILE=1oz_1op_2oc TIMEOUT=600 test_mixed_src
+      - make SUITE=test_multi_reg_file_CRUD ENV_FILE=singleprovider_multiclient_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -506,28 +460,8 @@ Chrome directories multi tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome groups basic tests:
-  key: CGBT
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - checkout: *checkout
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_groups_basic TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
-Chrome single directory tests 2:
-  key: CSDT2
+multiprovider proxy s3 directory stat proxyio:
+  key: MPSDSP
   other: *common-opts
   tasks:
   - script: *clear-env
@@ -535,11 +469,10 @@ Chrome single directory tests 2:
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
-  - script: *build-swaggers
   - script:
       <<: *run-acceptance-tests
       scripts:
-      - make SUITE=test_single_directory2 TIMEOUT=600 test_mixed_src
+      - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_proxy_s3 IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -547,8 +480,8 @@ Chrome single directory tests 2:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome archives tests:
-  key: CAT2
+multiprovider regular file stat directio:
+  key: MRFSD
   other: *common-opts
   tasks:
   - script: *clear-env
@@ -556,11 +489,10 @@ Chrome archives tests:
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
-  - script: *build-swaggers
   - script:
       <<: *run-acceptance-tests
       scripts:
-      - make SUITE=test_archives TIMEOUT=600 test_mixed_src
+      - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -568,8 +500,8 @@ Chrome archives tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome archive privileges:
-  key: CAP
+luma provider:
+  key: LP
   other: *common-opts
   tasks:
   - script: *clear-env
@@ -577,11 +509,10 @@ Chrome archive privileges:
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
-  - script: *build-swaggers
   - script:
       <<: *run-acceptance-tests
       scripts:
-      - make SUITE=test_archive_privileges TIMEOUT=600 test_mixed_src
+      - make SUITE=test_luma_provider ENV_FILE=singleprovider_multistorage TIMEOUT=720 IGNORE_XFAIL=1 test_oneclient_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -589,8 +520,8 @@ Chrome archive privileges:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome directories set metadata:
-  key: CDSM
+directory stat:
+  key: DS
   other: *common-opts
   tasks:
   - script: *clear-env
@@ -598,11 +529,10 @@ Chrome directories set metadata:
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
-  - script: *build-swaggers
   - script:
       <<: *run-acceptance-tests
       scripts:
-      - make SUITE=test_directories_set_metadata TIMEOUT=600 test_mixed_src
+      - make SUITE=test_directory_stat ENV_FILE=singleprovider_singleclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -610,8 +540,8 @@ Chrome directories set metadata:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome nested directories remove:
-  key: CNDR
+multiprovider directory stat directio:
+  key: MDSD
   other: *common-opts
   tasks:
   - script: *clear-env
@@ -619,11 +549,10 @@ Chrome nested directories remove:
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
-  - script: *build-swaggers
   - script:
       <<: *run-acceptance-tests
       scripts:
-      - make SUITE=test_nested_directories_remove TIMEOUT=600 test_mixed_src
+      - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -631,8 +560,8 @@ Chrome nested directories remove:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome ACL two entries:
-  key: CATE
+multiprovider proxy regular file CRUD proxyio:
+  key: MPRFCP
   other: *common-opts
   tasks:
   - script: *clear-env
@@ -640,11 +569,10 @@ Chrome ACL two entries:
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
-  - script: *build-swaggers
   - script:
       <<: *run-acceptance-tests
       scripts:
-      - make SUITE=test_acl_two_entries TIMEOUT=600 test_mixed_src
+      - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxy IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -652,8 +580,8 @@ Chrome ACL two entries:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome tokens tests:
-  key: CTT
+singleprovider directory CRUD multiclient directio:
+  key: SDCMD
   other: *common-opts
   tasks:
   - script: *clear-env
@@ -661,11 +589,11 @@ Chrome tokens tests:
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
-  - script: *build-swaggers
   - script:
-      <<: *run-acceptance-tests
+      interpreter: BINSH_OR_CMDEXE
       scripts:
-      - make SUITE=test_tokens TIMEOUT=600 test_mixed_src
+      - |
+        make SUITE=test_multi_directory_CRUD ENV_FILE=singleprovider_multiclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -673,8 +601,8 @@ Chrome tokens tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome access tokens:
-  key: CATC
+multiprovider proxy s3 regular file stat proxyio:
+  key: MPSRFSP
   other: *common-opts
   tasks:
   - script: *clear-env
@@ -682,11 +610,10 @@ Chrome access tokens:
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
-  - script: *build-swaggers
   - script:
       <<: *run-acceptance-tests
       scripts:
-      - make SUITE=test_access_tokens TIMEOUT=600 test_mixed_src
+      - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxy_s3 IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -694,8 +621,8 @@ Chrome access tokens:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome file content tests:
-  key: CFCT
+authorization:
+  key: AUT
   other: *common-opts
   tasks:
   - script: *clear-env
@@ -703,11 +630,12 @@ Chrome file content tests:
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
-  - script: *build-swaggers
   - script:
       <<: *run-acceptance-tests
       scripts:
-      - make SUITE=test_file_content TIMEOUT=600 test_mixed_src
+      - make test_oneclient_src SUITE=test_authorization  ENV_FILE=singleclient_authorization IGNORE_XFAIL=1
+      working-dir: onedata-acceptance
+      description: Run acceptance oneclient tests in Chrome
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -715,8 +643,8 @@ Chrome file content tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome files remove metadata:
-  key: CFRM
+singleprovider regular file stat multiclient proxyio:
+  key: SRFSMP
   other: *common-opts
   tasks:
   - script: *clear-env
@@ -724,11 +652,11 @@ Chrome files remove metadata:
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
-  - script: *build-swaggers
   - script:
-      <<: *run-acceptance-tests
+      interpreter: BINSH_OR_CMDEXE
       scripts:
-      - make SUITE=test_files_remove_metadata TIMEOUT=600 test_mixed_src
+      - |
+        make SUITE=test_multi_reg_file_stat ENV_FILE=singleprovider_multiclient_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -736,8 +664,8 @@ Chrome files remove metadata:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome rename file tests:
-  key: CRFT1
+multiprovider proxy directory stat proxyio:
+  key: MPDSP
   other: *common-opts
   tasks:
   - script: *clear-env
@@ -745,11 +673,10 @@ Chrome rename file tests:
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
-  - script: *build-swaggers
   - script:
       <<: *run-acceptance-tests
       scripts:
-      - make SUITE=test_rename_file TIMEOUT=600 test_mixed_src
+      - make SUITE=test_multi_directory_stat ENV_FILE=multiprovider_proxy IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -757,8 +684,8 @@ Chrome rename file tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome datasets tests:
-  key: CDT
+multiprovider regular file stat proxyio:
+  key: MRFSP
   other: *common-opts
   tasks:
   - script: *clear-env
@@ -766,11 +693,10 @@ Chrome datasets tests:
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
-  - script: *build-swaggers
   - script:
       <<: *run-acceptance-tests
       scripts:
-      - make SUITE=test_dataset TIMEOUT=600 test_mixed_src
+      - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -778,8 +704,8 @@ Chrome datasets tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome files times tests:
-  key: CFTT
+multiprovider regular file CRUD directio:
+  key: MRFCD
   other: *common-opts
   tasks:
   - script: *clear-env
@@ -787,11 +713,10 @@ Chrome files times tests:
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
-  - script: *build-swaggers
   - script:
       <<: *run-acceptance-tests
       scripts:
-      - make SUITE=test_files_times TIMEOUT=600 test_mixed_src
+      - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -799,8 +724,8 @@ Chrome files times tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome access tokens id caveats:
-  key: CATIC
+multiclient authorization:
+  key: MA
   other: *common-opts
   tasks:
   - script: *clear-env
@@ -808,11 +733,10 @@ Chrome access tokens id caveats:
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
-  - script: *build-swaggers
   - script:
       <<: *run-acceptance-tests
       scripts:
-      - make SUITE=test_access_tokens_id_caveats TIMEOUT=600 test_mixed_src
+      - make SUITE=test_multi_authorization ENV_FILE=multiclient_authorization IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -820,8 +744,8 @@ Chrome access tokens id caveats:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome directories times tests:
-  key: CDTT
+multiprovider s3 regular file stat proxyio:
+  key: MSRFSP
   other: *common-opts
   tasks:
   - script: *clear-env
@@ -829,11 +753,10 @@ Chrome directories times tests:
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
-  - script: *build-swaggers
   - script:
       <<: *run-acceptance-tests
       scripts:
-      - make SUITE=test_directories_times TIMEOUT=600 test_mixed_src
+      - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_s3 IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -841,8 +764,8 @@ Chrome directories times tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome directories remove metadata:
-  key: CDRM
+multiprovider proxy s3 regular file CRUD proxyio:
+  key: MPSRFCP
   other: *common-opts
   tasks:
   - script: *clear-env
@@ -850,11 +773,131 @@ Chrome directories remove metadata:
   - checkout: *checkout
   - script: *init-submodules
   - script: *download-artifacts
-  - script: *build-swaggers
   - script:
       <<: *run-acceptance-tests
       scripts:
-      - make SUITE=test_directories_remove_metadata TIMEOUT=600 test_mixed_src
+      - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxy_s3 IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-and-working-dir
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+multiprovider proxy regular file stat proxyio:
+  key: MPRFSP
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script:
+      <<: *run-acceptance-tests
+      scripts:
+      - make SUITE=test_multi_reg_file_stat ENV_FILE=multiprovider_proxy IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-and-working-dir
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+singleprovider extended attributes:
+  key: SEA
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - |
+        make SUITE=test_extended_attributes ENV_FILE=singleprovider_singleclient_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-and-working-dir
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+regular file stat directio:
+  key: RFSD
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script:
+      <<: *run-acceptance-tests
+      scripts:
+      - make SUITE=test_reg_file_stat ENV_FILE=singleprovider_singleclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-and-working-dir
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+multiprovider proxy directory CRUD proxyio:
+  key: MPDCP
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script:
+      <<: *run-acceptance-tests
+      scripts:
+      - make SUITE=test_multi_directory_CRUD ENV_FILE=multiprovider_proxy IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-and-working-dir
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+multiprovider regular file CRUD proxyio:
+  key: MRFCP
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script:
+      <<: *run-acceptance-tests
+      scripts:
+      - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-and-working-dir
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+multiprovider s3 regular file CRUD proxyio:
+  key: MSRFCP
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script:
+      <<: *run-acceptance-tests
+      scripts:
+      - make SUITE=test_multi_reg_file_CRUD ENV_FILE=multiprovider_s3 IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
