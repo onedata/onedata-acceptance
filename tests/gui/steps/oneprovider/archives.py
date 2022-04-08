@@ -38,11 +38,8 @@ def write_description_in_create_archive_modal(selenium, browser_id, modals,
 
 def get_archive_with_description(browser, description):
     for archive in browser.data:
-        try:
-            if description == archive.description:
-                return archive
-        except RuntimeError:
-            pass
+        if description == archive.description:
+            return archive
     else:
         raise Exception('failed to load archive from description')
 

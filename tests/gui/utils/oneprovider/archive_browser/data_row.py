@@ -33,7 +33,7 @@ class ArchiveState(PageObject):
 
 class DataRow(PageObject, BrowserRow):
     name = id = Label('.file-name-inner')
-    description = Label('.secondary-description-internal')
+    description = Label('.secondary-description')
     state = WebItem('.fb-table-col-state .file-item-text', cls=ArchiveState)
     bagit_tag = WebElement('.archive-bagit-tag')
     dip_tag = WebElement('.archive-dip-tag')
