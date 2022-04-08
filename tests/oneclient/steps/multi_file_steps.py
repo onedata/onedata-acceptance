@@ -127,9 +127,12 @@ def mv_base(user, file1, file2, client_node, users, should_fail=False):
     dest = client.absolute_path(file2)
 
     def condition():
-        assert_expected_failure(client.mv, should_fail, src, dest)
+        client.mv(src, dest)
 
-    assert_(client.perform, condition)
+    if should_fail:
+        assert_expected_failure(condition)
+    else:
+        assert_(client.perform, condition)
 
 
 @wt(parsers.re('(?P<user>\w+) renames (?P<file1>.*) to (?P<file2>.*)'
@@ -145,9 +148,12 @@ def rename_base(user, file1, file2, client_node, users, should_fail=False):
     dest = client.absolute_path(file2)
 
     def condition():
-        assert_expected_failure(client.osrename, should_fail, src, dest)
+        client.osrename(src, dest)
 
-    assert_(client.perform, condition)
+    if should_fail:
+        assert_expected_failure(condition)
+    else:
+        assert_(client.perform, condition)
 
 
 @wt(parsers.re('(?P<user>\w+) fails to rename (?P<file1>.*) to '
@@ -201,14 +207,14 @@ def shell_move_base(user, file1, file2, client_node, users, should_fail=False):
     cmd = 'mv {0} {1}'.format(src, dest)
 
     def condition():
-        def fun():
-            ret = client.run_cmd(cmd, error=True)
-            if ret != 0:
-                raise OSError("Command ended with exit code {}".format(ret))
+        ret = client.run_cmd(cmd, error=True)
+        if ret != 0:
+            raise OSError("Command ended with exit code {}".format(ret))
 
-        assert_expected_failure(fun, should_fail)
-
-    assert_(client.perform, condition)
+    if should_fail:
+        assert_expected_failure(condition)
+    else:
+        assert_(client.perform, condition)
 
 
 @wt(parsers.re('(?P<user>\w+) fails to move (?P<file1>.*) to (?P<file2>.*) '
@@ -225,9 +231,12 @@ def delete_file_base(user, files, client_node, users, should_fail=False):
         path = client.absolute_path(file)
 
         def condition():
-            assert_expected_failure(client.rm, should_fail, path)
+            client.rm(path)
 
-        assert_(client.perform, condition)
+        if should_fail:
+            assert_expected_failure(condition)
+        else:
+            assert_(client.perform, condition)
 
 
 @wt(parsers.re('(?P<user>\w+) deletes files (?P<files>.*) on '
