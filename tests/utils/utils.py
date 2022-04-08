@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 
+import pytest
 import re
 import traceback
 import logging
@@ -46,14 +47,18 @@ def assert_false(expression, *args, **kwargs):
     assert not assert_result
 
 
-def assert_expected_failure(fun, should_fail, *args, **kwargs):
-    try:
+def get_fun_name(fun):
+    if 'method' in fun:
+        return fun.split('method ')[1].split(' ')[0]
+    elif 'function' in fun:
+        return fun.split('function ')[1].split('.')[0]
+
+
+def assert_expected_failure(fun, *args, **kwargs):
+    operation = get_fun_name(str(fun))
+    with pytest.raises(OSError, message=f'Operation: {operation}, that should '
+                                        f'failed, did not failed'):
         fun(*args, **kwargs)
-    except OSError:
-        if should_fail:
-            pass
-        else:
-            raise
 
 
 def repeat_failed(attempts=10, timeout=None, interval=0.1,
