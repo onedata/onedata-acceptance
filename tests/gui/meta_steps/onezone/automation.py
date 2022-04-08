@@ -6,8 +6,14 @@ __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+import time
+
+from selenium.common.exceptions import StaleElementReferenceException
+
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
+from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.modal import _wait_for_modal_to_appear, click_modal_button
+from tests.gui.steps.oneprovider.file_browser import _select_files
 from tests.gui.steps.onezone.automation import assert_workflow_exists, \
     go_to_inventory_subpage, upload_workflow_as_json, confirm_workflow_creation, \
     write_text_into_workflow_name_on_main_workflows_page, \
@@ -97,7 +103,11 @@ def choose_file_as_initial_workflow_value(selenium, browser_id, item_list,
 @repeat_failed(interval=1, timeout=90,
                exceptions=(AssertionError, StaleElementReferenceException))
 def wait_for_waiting_workflows_to_start(selenium, browser_id, op_container):
-    assert len(op_container(selenium[browser_id]).automation_page.waiting) == 0, \
+    switch_to_iframe(selenium, browser_id)
+    page = op_container(selenium[browser_id]).automation_page
+    page.navigation_tab['Waiting'].click()
+    time.sleep(0.25)
+    assert len(page.workflow_list_row) == 0, \
         'Waiting workflows did not start'
 
 
@@ -105,13 +115,21 @@ def wait_for_waiting_workflows_to_start(selenium, browser_id, op_container):
 @repeat_failed(interval=1, timeout=180,
                exceptions=(AssertionError, StaleElementReferenceException))
 def wait_for_ongoing_workflows_to_finish(selenium, browser_id, op_container):
-    assert len(op_container(selenium[browser_id]).automation_page.ongoing) == 0, \
+    switch_to_iframe(selenium, browser_id)
+    page = op_container(selenium[browser_id]).automation_page
+    page.navigation_tab['Ongoing'].click()
+    time.sleep(0.25)
+    assert len(page.workflow_list_row) == 0, \
         'Ongoing workflows did not finish'
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on first executed workflow'))
 def expand_workflow_record(selenium, browser_id, op_container):
-    op_container(selenium[browser_id]).automation_page.ended[0].expand()
+    switch_to_iframe(selenium, browser_id)
+    page = op_container(selenium[browser_id]).automation_page
+    page.navigation_tab['Ended'].click()
+    time.sleep(0.25)
+    page.workflow_list_row[0].click()
 
 
 @wt(parsers.parse('user of browser waits for all pods to finish execution in '
@@ -119,5 +137,5 @@ def expand_workflow_record(selenium, browser_id, op_container):
 @repeat_failed(interval=1, timeout=180,
                exceptions=(AssertionError, StaleElementReferenceException))
 def assert_status_in_events_monitor(selenium, browser_id, modals):
-    modal = modals(selenium[browser_id]).pods_activity
+    modal = modals(selenium[browser_id]).function_pods_activity
     assert len(modal.pods_list) == 0, 'Pods has not been terminated'

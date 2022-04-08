@@ -18,26 +18,13 @@ WorkflowStatusList = ['scheduled', 'preparing', 'enqueued', 'active',
 
 
 class ExecutionRecord(PageObject):
-    name = Label('cell-name')
+    name = id = Label('cell-name')
     inventory = Label('cell-inventory')
     status_icon = Icon('.cell-status')
     menu_button = Button('.cell-actions')
 
-    def __init__(self, driver, web_elem, parent, **kwargs):
-        super(ExecutionRecord, self).__init__(driver, web_elem, parent,
-                                              **kwargs)
-        status_class = self.status_icon.get_attribute('class').split()
-        self.status = [x for x in status_class if x in WorkflowStatusList][0]
-
-    def is_expanded(self):
-        return 'expanded-row' in self.web_elem.get_attribute('class')
-
     def expand(self):
         self.web_elem.click()
-
-    def collapse(self):
-        if self.is_expanded():
-            self.web_elem.click()
 
     def __str__(self):
         return 'Workflow row {} in {}'.format(self.name, self.parent)
@@ -61,11 +48,12 @@ class NavigationTab(Element):
 
 
 class Task(Element):
+    name = id = Label('.task-name')
     pods_activity = Button('.view-task-pods-activity-action-trigger')
 
 
 class ParallelBox(Element):
-    task_list = WebItemsSequence('.box-elements .draggable-task', cls=Task)
+    task_list = WebItemsSequence('.box-elements .workflow-visualiser-task', cls=Task)
 
 
 class WorkflowLane(Element):
@@ -97,36 +85,9 @@ class WorkflowExecutionPage(PageObject):
     input_icon = Button('.tag-creator-trigger')
     run_workflow_button = NamedButton('.btn-submit', text='Run Workflow')
 
-    _ended_list = WebItemsSequence('.atm-workflow-executions-table tr.data-row',
-                                   cls=ExecutionRecord)
-    _ongoing_list = WebItemsSequence(
-        '.atm-workflow-executions-table tr.data-row',
-        cls=ExecutionRecord)
-    _waiting_list = WebItemsSequence(
-        '.atm-workflow-executions-table tr.data-row',
-        cls=ExecutionRecord)
+    workflow_list_row = WebItemsSequence('.atm-workflow-executions-table tr.data-row',
+                                         cls=ExecutionRecord)
 
     workflow_visualiser = WebItem('.workflow-visualiser',
                                   cls=WorkflowVisualiser)
 
-    @property
-    def ongoing(self):
-        self['ongoing'].click()
-        return self._ongoing_list
-
-    @property
-    def ended(self):
-        self['ended'].click()
-        return self._ended_list
-
-    @property
-    def waiting(self):
-        self['waiting'].click()
-        return self._waiting_list
-
-    def __getitem__(self, name):
-        for tab in self.navigation_tab:
-            if name in tab.name.lower():
-                return tab
-        else:
-            raise RuntimeError('no tab named {} in automation tab'.format(name))

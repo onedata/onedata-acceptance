@@ -69,7 +69,7 @@ def assert_ended_transfer(selenium, browser_id, desc, hosts,
     _assert_workflow(transfer, desc, 'ended', hosts)
 
 
-@wt(parsers.re('user of {browser_id} sees {status} status in status '
+@wt(parsers.parse('user of {browser_id} sees {status} status in status '
                'bar in workflow visualizer'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_status_in_workflow_visualizer(selenium, browser_id, op_container,
@@ -87,7 +87,7 @@ def click_on_task_in_lane(selenium, browser_id, op_container, lane_name,
                                      task_name):
     switch_to_iframe(selenium, browser_id)
     page = op_container(selenium[browser_id]).automation_page
-    workflow_visualiser = page.workflows_page.workflow_visualiser
+    workflow_visualiser = page.workflow_visualiser
     box = workflow_visualiser.workflow_lanes[lane_name].parallel_box
     box.task_list[task_name].click()
 
@@ -100,7 +100,7 @@ def click_on_link_in_task_box(selenium, browser_id, op_container, lane_name,
                               task_name):
     switch_to_iframe(selenium, browser_id)
     page = op_container(selenium[browser_id]).automation_page
-    workflow_visualiser = page.workflows_page.workflow_visualiser
+    workflow_visualiser = page.workflow_visualiser
     box = workflow_visualiser.workflow_lanes[lane_name].parallel_box
     box.task_list[task_name].pods_activity.click()
 

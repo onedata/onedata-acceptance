@@ -24,10 +24,5 @@ class FilterTab(Element):
 class FunctionPodsActivity(PageObject):
     tabs = WebItemsSequence('.pods-filter-btn-group .btn-sm', cls=FilterTab)
 
-    _pods_list = WebItemsSequence('.scrollable-table-content tr.data-row',
+    pods_list = WebItemsSequence('.scrollable-table-content tr.data-row',
                                   cls=PodsRecordStatus)
-
-    @property
-    def pods_list(self):
-        self['current'].click()
-        return self._pods_list
