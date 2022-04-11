@@ -242,7 +242,8 @@ _Codetag Tracker:
   - checkout: *checkout
   - script: *init-submodules
   - script:
-      <<: *run-selenium-tests
+      interpreter: BINSH_OR_CMDEXE
+      working-dir: onedata-acceptance
       scripts:
       - make codetag-tracker BRANCH=${bamboo.planRepository.branchName}
       description: Codetag Tracker
