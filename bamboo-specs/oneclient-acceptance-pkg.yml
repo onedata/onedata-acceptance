@@ -424,10 +424,9 @@ singleprovider directory CRUD multiclient directio:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
-      - |
-        make SUITE=test_multi_directory_CRUD ENV_FILE=singleprovider_multiclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
+      - make SUITE=test_multi_directory_CRUD ENV_FILE=singleprovider_multiclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -446,10 +445,9 @@ singleprovider regular file CRUD multiclient directio:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
-      - |
-        make SUITE=test_multi_reg_file_CRUD ENV_FILE=singleprovider_multiclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
+      - make SUITE=test_multi_reg_file_CRUD ENV_FILE=singleprovider_multiclient_directio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -552,10 +550,9 @@ singleprovider extended attributes:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
-      - |
-        make SUITE=test_extended_attributes ENV_FILE=singleprovider_singleclient_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
+      - make SUITE=test_extended_attributes ENV_FILE=singleprovider_singleclient_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -843,10 +840,9 @@ singleprovider regular file stat multiclient proxyio:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      interpreter: BINSH_OR_CMDEXE
+      <<: *run-acceptance-tests
       scripts:
-      - |
-        make SUITE=test_multi_reg_file_stat ENV_FILE=singleprovider_multiclient_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
+      - make SUITE=test_multi_reg_file_stat ENV_FILE=singleprovider_multiclient_proxyio IGNORE_XFAIL=1 TIMEOUT=420 test_oneclient_pkg
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
