@@ -79,13 +79,11 @@ def create_lambda_using_gui(selenium, browser_id, oz_page, lambda_name,
     assert_lambda_exists(selenium, browser_id, oz_page, lambda_name)
 
 
-@wt(parsers.parse(
-    'user of {browser_id} chooses "{item_list}" file as initial value '
-    'for workflow in modal "Select files"'))
+@wt(parsers.parse('user of {browser_id} chooses "{item_list}" file '
+                  'as initial value for workflow in modal "Select files"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_file_as_initial_workflow_value(selenium, browser_id, item_list,
-                                          modals,op_container):
-
+                                          modals, op_container):
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
     op_container(driver).automation_page.input_icon.click()
@@ -107,8 +105,7 @@ def wait_for_waiting_workflows_to_start(selenium, browser_id, op_container):
     page = op_container(selenium[browser_id]).automation_page
     page.navigation_tab['Waiting'].click()
     time.sleep(0.25)
-    assert len(page.workflow_list_row) == 0, \
-        'Waiting workflows did not start'
+    assert len(page.workflow_list_row) == 0, 'Waiting workflows did not start'
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) waits for all workflows to finish'))
@@ -119,8 +116,7 @@ def wait_for_ongoing_workflows_to_finish(selenium, browser_id, op_container):
     page = op_container(selenium[browser_id]).automation_page
     page.navigation_tab['Ongoing'].click()
     time.sleep(0.25)
-    assert len(page.workflow_list_row) == 0, \
-        'Ongoing workflows did not finish'
+    assert len(page.workflow_list_row) == 0, 'Ongoing workflows did not finish'
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on first executed workflow'))
@@ -132,10 +128,35 @@ def expand_workflow_record(selenium, browser_id, op_container):
     page.workflow_list_row[0].click()
 
 
-@wt(parsers.parse('user of browser waits for all pods to finish execution in '
-                  'in modal "Function pods activity"'))
+@wt(parsers.parse('user of {browser_id} waits for all pods to '
+                  'finish execution in modal "Function pods activity"'))
 @repeat_failed(interval=1, timeout=180,
                exceptions=(AssertionError, StaleElementReferenceException))
-def assert_status_in_events_monitor(selenium, browser_id, modals):
+def wait_for_ongoing_pods_to_be_terminated(selenium, browser_id, modals):
     modal = modals(selenium[browser_id]).function_pods_activity
+    time.sleep(0.25)
     assert len(modal.pods_list) == 0, 'Pods has not been terminated'
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) adds (?P<option>argument|result) '
+               'named "(?P<name>.*)" of "(?P<type>.*)" type'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def add_argument_result_into_lambda_form(selenium, browser_id, oz_page, modals,
+                                         popups, option, name, type):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['automation'].lambdas_page.form
+    if option == 'argument':
+        subpage = page.argument
+    else:
+        subpage = page.result
+
+    button_name = 'add_' + option
+    button = getattr(subpage, button_name)
+    button.click()
+
+    label_name = option + '_name'
+    label = getattr(subpage, label_name)
+    label.value = name
+
+    subpage.type_dropdown.click()
+    popups(driver).power_select.choose_item(type)

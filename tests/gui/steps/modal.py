@@ -476,13 +476,30 @@ def assert_number_of_item_greater_than_zero(selenium, browser_id, modals):
     assert number > 0, 'Zero items failed'
 
 
-@wt(parsers.parse('user of {browser_id} chooses "{option}" in dropdown menu '
-                  'in modal "{modal}"'))
+@wt(parsers.parse('user of {browser_id} chooses "{option}" in {dropdown_name}'
+                  'in modal "{modal_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_option_in_dropdown_menu_in_modal(selenium, browser_id, modals,
-                                            popups, option, modal):
+                                            dropdown_name, popups, option,
+                                            modal_name):
     driver = selenium[browser_id]
-    modal = transform(modal)
-    getattr(modals(driver), modal).dropdown_menu.click()
+    modal = getattr(modals(driver), transform(modal_name))
+    dropdown_menu = getattr(modal, transform(dropdown_name))
+    dropdown_menu.click()
 
     popups(driver).power_select.choose_item(option)
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>disables|enables) '
+               '(?P<toggle_name>.*) in modal "(?P<modal_name>.*)"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def switch_toggle_in_modal(selenium, browser_id, modals, toggle_name,
+                           option, modal_name):
+    driver = selenium[browser_id]
+    modal = getattr(modals(driver), transform(modal_name))
+    toggle = getattr(modal, transform(toggle_name))
+
+    if option == "enables":
+        toggle.check()
+    else:
+        toggle.uncheck()

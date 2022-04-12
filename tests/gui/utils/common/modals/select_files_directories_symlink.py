@@ -15,3 +15,6 @@ from tests.gui.utils.oneprovider import FileBrowser
 class SelectFilesDirectoriesSymlinks(PageObject):
     file_browser = FileBrowser('.items-select-browser-part.upload-drop-zone-container')
     confirm_button = Button('.submit-selection-btn')
+
+    def __str__(self):
+        return 'Select files, directories or symlinks modal'

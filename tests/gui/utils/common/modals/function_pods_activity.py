@@ -12,7 +12,7 @@ from tests.gui.utils.onezone.generic_page import Element
 
 
 class PodsRecordStatus(PageObject):
-    pod_name = Label('.pod-id')
+    pod_name = id = Label('.pod-id')
     readiness = Label('.pod-readiness')
     status = Label('.pod-status')
 
@@ -26,3 +26,6 @@ class FunctionPodsActivity(PageObject):
 
     pods_list = WebItemsSequence('.scrollable-table-content tr.data-row',
                                   cls=PodsRecordStatus)
+
+    def __str__(self):
+        return 'Function pods activity modal'

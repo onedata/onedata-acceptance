@@ -155,6 +155,18 @@ def write_text_into_lambda_form(selenium, browser_id,
     setattr(label, 'value', text)
 
 
+@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>disables|enables) '
+               'lambdas Mount space toggle'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def switch_toggle_in_lambda_form(selenium, browser_id,oz_page,option):
+    subpage = oz_page(selenium[browser_id])['automation'].lambdas_page.form
+
+    if option == "enables":
+        subpage.mount_space_toggle.check()
+    else:
+        subpage.mount_space_toggle.click()
+
+
 @wt(parsers.re('user of (?P<browser_id>.*) confirms (create new|edition of) '
                '(?P<option>lambda|revision|task) using (Create|Modify) button'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -400,4 +412,18 @@ def insert_text_in_description_of_revision(selenium, browser_id, oz_page, text):
     page = oz_page(selenium[browser_id])['automation']
     page.workflows_page.revision_details.description = text
 
+
+@wt(parsers.parse('user of {browser_id} chooses "{revision_name}" revision of '
+                  '"{lambda_name}" lambda to add to workflow'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def add_lambda_revision_to_workflow(selenium, browser_id, oz_page, lambda_name,revision_name):
+    page = oz_page(selenium[browser_id])['automation'].lambdas_page
+    revision = page.elements_list[lambda_name].revision_list[revision_name]
+
+    try:
+        collapse_revision_list(object)
+    except BaseException:
+        pass
+
+    revision.add_to_workflow.click()
 

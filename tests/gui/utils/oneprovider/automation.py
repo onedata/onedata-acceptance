@@ -12,10 +12,6 @@ from tests.gui.utils.core.web_elements import WebItemsSequence, Label, Icon, \
 from tests.gui.utils.core.web_objects import ButtonWithTextPageObject
 from tests.gui.utils.onezone.generic_page import Element
 
-WorkflowStatusList = ['scheduled', 'preparing', 'enqueued', 'active',
-                      'aborting', 'interrupted', 'cancelled', 'skipped',
-                      'finished', 'failed', 'unknown']
-
 
 class ExecutionRecord(PageObject):
     name = id = Label('cell-name')
@@ -53,7 +49,8 @@ class Task(Element):
 
 
 class ParallelBox(Element):
-    task_list = WebItemsSequence('.box-elements .workflow-visualiser-task', cls=Task)
+    task_list = WebItemsSequence('.box-elements .workflow-visualiser-task',
+                                 cls=Task)
 
 
 class WorkflowLane(Element):
@@ -85,7 +82,8 @@ class WorkflowExecutionPage(PageObject):
     input_icon = Button('.tag-creator-trigger')
     run_workflow_button = NamedButton('.btn-submit', text='Run Workflow')
 
-    workflow_list_row = WebItemsSequence('.atm-workflow-executions-table tr.data-row',
+    workflow_list_row = WebItemsSequence('.atm-workflow-executions-table '
+                                         'tr.data-row',
                                          cls=ExecutionRecord)
 
     workflow_visualiser = WebItem('.workflow-visualiser',
