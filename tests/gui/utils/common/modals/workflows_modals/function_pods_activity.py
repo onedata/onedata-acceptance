@@ -6,6 +6,7 @@ __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import WebItemsSequence, Label
 from tests.gui.utils.onezone.generic_page import Element
@@ -26,7 +27,7 @@ class EventRecord(PageObject):
     reason=Label('.event-reason')
 
 
-class FunctionPodsActivity(PageObject):
+class FunctionPodsActivity(Modal):
     tabs = WebItemsSequence('.pods-filter-btn-group .btn-sm', cls=FilterTab)
 
     pods_list = WebItemsSequence('pods-table.scrollable-table-content '

@@ -18,20 +18,8 @@ from tests.gui.steps.common.miscellaneous import press_enter_on_active_element, 
     switch_to_iframe
 
 
-def _assert_workflow(transfer, desc, sufix, hosts):
-    assert getattr(transfer, 'is_workflow')(), \
-        'Transferred item is not workflow in {}'.format(sufix)
-
-    desc = yaml.load(desc)
-    for key, val in desc.items():
-        transfer_val = getattr(transfer, key.replace(' ', '_'))
-        assert transfer_val == str(val), \
-            'Transfer {} is {} instead of {} in {}'.format(key, transfer_val,
-                                                           val, sufix)
-
-
-@wt(parsers.parse(
-    'user of {browser_id} clicks {tab_name} in the navigation bar'))
+@wt(parsers.parse('user of {browser_id} clicks {tab_name} '
+                  'in the navigation bar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_tab_in_automation_subpage(selenium, browser_id, op_container,
                                      tab_name):
@@ -58,15 +46,6 @@ def choose_workflow_revision_to_run(selenium, browser_id, op_container,
     switch_to_iframe(selenium, browser_id)
     page = op_container(selenium[browser_id]).automation_page
     page.run_workflow_button.click()
-
-
-@wt(parsers.re('user of (?P<browser_id>.*) sees workflow'
-               ' in ended workflows:\n(?P<desc>(.|\s)*)'))
-@repeat_failed(interval=0.5, timeout=90)
-def assert_ended_transfer(selenium, browser_id, desc, hosts,
-                          op_container):
-    transfer = op_container(selenium[browser_id]).automation_page.ended[0]
-    _assert_workflow(transfer, desc, 'ended', hosts)
 
 
 @wt(parsers.parse('user of {browser_id} sees {status} status in status '
