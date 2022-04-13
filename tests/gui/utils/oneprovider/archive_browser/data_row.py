@@ -38,6 +38,8 @@ class DataRow(PageObject, BrowserRow):
     bagit_tag = WebElement('.archive-bagit-tag')
     dip_tag = WebElement('.archive-dip-tag')
     base_archive = Label('.base-archive-name')
+    base_archive_description = Label('.fb-table-col-incremental '
+                                     '.secondary-description')
     menu_button = Button('.file-row-actions-trigger')
 
     def click_and_enter(self):
