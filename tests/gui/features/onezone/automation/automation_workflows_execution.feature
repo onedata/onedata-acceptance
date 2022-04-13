@@ -41,12 +41,14 @@ Feature: Workflows execution
     And user of browser waits for all workflows to finish
     And user of browser clicks on first executed workflow
     Then user of browser sees Finished status in status bar in workflow visualizer
+
     And user of browser clicks on "inout" task in "Lane1" lane in workflow visualizer
     And user of browser clicks on "Pods activity" link in "inout" task in "Lane1" lane in workflow visualizer
     And user of browser waits for all pods to finish execution in in modal "Function pods activity"
-#    And user of browser sees pod in all pods:
-#            readiness: 0/1
-#            status: Terminated
+    And user of browser sees pod in all pods:
+            readiness: 0/1
+            status: Terminated
+    And user of browser sees events with following reasons: Scheduled, Pulling, Running, Killing, Terminated
 
   Scenario: User creates inout workflow through gui and executes it
     When user of browser clicks on Automation in the main menu
@@ -90,16 +92,16 @@ Feature: Workflows execution
     And user of browser clicks on add parallel box button in the middle of "Lane1" lane
     And user of browser clicks create task button in empty parallel box in "Lane1" lane
     And user of browser chooses "inout" revision of "inout" lambda to add to workflow
+    And user of browser chooses "output" in target store dropdown menu in create task page
     And user of browser confirms create new task using Create button
     And user of browser sees task named "inout" in "Lane1" lane
-
 
     # User changes details of workflow revision
     And user of browser changes workflow view to "Details" tab
     And user of browser writes "inout1" in description textfield in workflow Details tab
     And user of browser Saves workflow edition by clicking Save button from menu bar
 
-    #User executes created workflow
+    #User executes created workflow and checks if output value is correct
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Automation of "space1" in the sidebar
     And user of browser clicks Run workflow in the navigation bar
@@ -109,5 +111,5 @@ Feature: Workflows execution
     And user of browser waits for all workflows to start
     And user of browser waits for all workflows to finish
     And user of browser clicks on first executed workflow
-    Then user of browser sees Finished status in status bar in workflow visualizer
-
+    And user of browser sees Finished status in status bar in workflow visualizer
+    Then user of browser compares content of "input" store and "output" store

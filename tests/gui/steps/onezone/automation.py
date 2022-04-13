@@ -158,7 +158,7 @@ def write_text_into_lambda_form(selenium, browser_id,
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>disables|enables) '
                'lambdas Mount space toggle'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def switch_toggle_in_lambda_form(selenium, browser_id,oz_page,option):
+def switch_toggle_in_lambda_form(selenium, browser_id, oz_page, option):
     subpage = oz_page(selenium[browser_id])['automation'].lambdas_page.form
 
     if option == "enables":
@@ -177,6 +177,19 @@ def confirm_lambda_creation_or_edition(selenium, browser_id, oz_page, option):
         page.workflows_page.task_form.create_button.click()
     else:
         page.lambdas_page.form.create_button.click()
+
+
+@wt(parsers.parse('user of {browser_id} chooses "{option}" in {dropdown_name} '
+                  'in create task page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def choose_option_in_dropdown_menu_in_task_page(selenium, browser_id, oz_page,
+                                                dropdown_name, popups, option):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['automation'].workflows_page.task_form
+    dropdown_menu = getattr(page, transform(dropdown_name))
+    dropdown_menu.click()
+
+    popups(driver).power_select.choose_item(option)
 
 
 @wt(parsers.parse('user of {browser_id} sees "{lambda_name}" in lambdas list '
@@ -416,7 +429,8 @@ def insert_text_in_description_of_revision(selenium, browser_id, oz_page, text):
 @wt(parsers.parse('user of {browser_id} chooses "{revision_name}" revision of '
                   '"{lambda_name}" lambda to add to workflow'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def add_lambda_revision_to_workflow(selenium, browser_id, oz_page, lambda_name,revision_name):
+def add_lambda_revision_to_workflow(selenium, browser_id, oz_page, lambda_name,
+                                    revision_name):
     page = oz_page(selenium[browser_id])['automation'].lambdas_page
     revision = page.elements_list[lambda_name].revision_list[revision_name]
 
@@ -426,4 +440,3 @@ def add_lambda_revision_to_workflow(selenium, browser_id, oz_page, lambda_name,r
         pass
 
     revision.add_to_workflow.click()
-

@@ -11,21 +11,30 @@ from tests.gui.utils.core.web_elements import WebItemsSequence, Label
 from tests.gui.utils.onezone.generic_page import Element
 
 
+class FilterTab(Element):
+    name = id = Label('.text')
+
+
 class PodsRecordStatus(PageObject):
     pod_name = id = Label('.pod-id')
     readiness = Label('.pod-readiness')
     status = Label('.pod-status')
 
 
-class FilterTab(Element):
-    name = id = Label('.text')
+class EventRecord(PageObject):
+    type=Label('.event-type')
+    reason=Label('.event-reason')
 
 
 class FunctionPodsActivity(PageObject):
     tabs = WebItemsSequence('.pods-filter-btn-group .btn-sm', cls=FilterTab)
 
-    pods_list = WebItemsSequence('.scrollable-table-content tr.data-row',
-                                  cls=PodsRecordStatus)
+    pods_list = WebItemsSequence('pods-table.scrollable-table-content '
+                                 'tr.data-row', cls=PodsRecordStatus)
+
+    events_list = WebItemsSequence('.events-table-section.scrollable-table'
+                                   '-content tr.data-row',
+                                   cls=EventRecord)
 
     def __str__(self):
         return 'Function pods activity modal'

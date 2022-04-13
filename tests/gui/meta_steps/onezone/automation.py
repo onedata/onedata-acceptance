@@ -120,6 +120,7 @@ def wait_for_ongoing_workflows_to_finish(selenium, browser_id, op_container):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on first executed workflow'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def expand_workflow_record(selenium, browser_id, op_container):
     switch_to_iframe(selenium, browser_id)
     page = op_container(selenium[browser_id]).automation_page
@@ -141,14 +142,11 @@ def wait_for_ongoing_pods_to_be_terminated(selenium, browser_id, modals):
 @wt(parsers.re('user of (?P<browser_id>.*) adds (?P<option>argument|result) '
                'named "(?P<name>.*)" of "(?P<type>.*)" type'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def add_argument_result_into_lambda_form(selenium, browser_id, oz_page, modals,
-                                         popups, option, name, type):
+def add_argument_result_into_lambda_form(selenium, browser_id, oz_page, popups,
+                                         option, name, type):
     driver = selenium[browser_id]
     page = oz_page(driver)['automation'].lambdas_page.form
-    if option == 'argument':
-        subpage = page.argument
-    else:
-        subpage = page.result
+    subpage = getattr(page, transform(option))
 
     button_name = 'add_' + option
     button = getattr(subpage, button_name)
@@ -160,3 +158,26 @@ def add_argument_result_into_lambda_form(selenium, browser_id, oz_page, modals,
 
     subpage.type_dropdown.click()
     popups(driver).power_select.choose_item(type)
+
+
+@wt(parsers.parse('user of {browser_id} compares content of "{store1}" store '
+                  'and "{store2}" store'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def compare_store_contents(selenium, browser_id, op_container, store1,
+                           store2, modals):
+
+    switch_to_iframe(selenium, browser_id)
+    driver = selenium[browser_id]
+
+    page = op_container(driver).automation_page.workflow_visualiser
+    modal = modals(driver).store_details
+
+    page.stores_list[store1].click()
+    store1_value = modal.details_list_row[0].get_content()
+    modal.close.click()
+
+    page.stores_list[store2].click()
+    store2_value = modal.details_list_row[0].get_content()
+
+    assert store1_value == store2_value, (f'Value of {store1} store is not '
+                                          f'equal to value of {store2} store')
