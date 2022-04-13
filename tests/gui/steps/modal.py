@@ -428,13 +428,23 @@ def click_copy_icon_in_rest_api_modal(selenium, browser_id, modals):
 
 @wt(parsers.parse('user of {browser_id} sees {info}: "{text}" in archive '
                   'recall information modal'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def assert_info_in_archive_recall_information_modal(selenium, browser_id,
                                                     modals, info, text):
-    information = getattr(modals(selenium[browser_id]
-                                 ).archive_recall_information, transform(info))
-    assert text in information, (f'{info}: {text} does not match {information} '
-                                 f'in archive recall information modal')
+    info_type = transform(info)
+    recall_modal = modals(selenium[browser_id]).archive_recall_information
+    information = getattr(recall_modal, info_type)
+    if info_type in ['files_recalled', 'data_recalled']:
+        current_progress = recall_modal.get_progress_info(info_type)
+        expected_progress = recall_modal.parse_progress(text)
+        info_equal = current_progress == expected_progress
+        assert info_equal, (f'{info}: {current_progress} progress info does '
+                            f'not match {expected_progress} in archive recall '
+                            f'information modal, raw text content: "{text}"')
+    else:
+        assert text.lower() in information.lower(), (
+            f'{info}: {text} does not match {information} in archive recall '
+            f'information modal')
 
 
 @wt(parsers.parse('user of {browser_id} sees that recall has been finished at '
@@ -459,8 +469,10 @@ def assert_recall_duration_in_archive_recall_information_modal(selenium,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_not_all_files_were_recalled(selenium, browser_id, modals, kind):
     kind = kind + ' recalled'
+    characters = "[\nMiB ]"
     info = getattr(modals(selenium[browser_id]).archive_recall_information,
-                   transform(kind)).replace(' MiB', '').split(' / ')
+                   transform(kind))
+    info = re.sub(characters, "", info).split('/')
     all_data = int(info[1])
     recalled = int(info[0])
     err_msg = f'Number of recalled {kind} is not smaller then all {kind}'

@@ -39,7 +39,7 @@ Feature: Archive recall tests
     And user of browser clicks on "Recall" button in modal "Recall archive"
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser clicks on recalled status tag for "dir1_recalled" in file browser
-    Then user of browser sees status: "Archive recall finished successfully" in archive recall information modal
+    Then user of browser sees status: "Finished successfully" in archive recall information modal
     And user of browser sees files recalled: "1 / 1" in archive recall information modal
     And user of browser sees data recalled: "5 B / 5 B" in archive recall information modal
     And user of browser sees that recall has been finished at the same time or after recall has been started
@@ -67,7 +67,7 @@ Feature: Archive recall tests
     And user of browser clicks on "Recall" button in modal "Recall archive"
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser clicks on recalled status tag for "dir1_recalled" in file browser
-    Then user of browser sees status: "Archive recall finished with errors" in archive recall information modal
+    Then user of browser sees status: "Finished with errors" in archive recall information modal
     And user of browser sees that not all files were recalled
     And user of browser sees that not all data were recalled
     And user of browser sees last error: "No space left on device" in archive recall information modal

@@ -16,6 +16,7 @@ from tests.gui.utils.generic import transform
 from tests.gui.utils.oneprovider.browser_row import BrowserRow
 import re
 
+
 class ArchiveState(PageObject):
     state_type = Label('.archive-state-type')
     state_details = Label('.archive-state-details')
@@ -32,6 +33,7 @@ class ArchiveState(PageObject):
 
 class DataRow(PageObject, BrowserRow):
     name = id = Label('.file-name-inner')
+    description = Label('.secondary-description')
     state = WebItem('.fb-table-col-state .file-item-text', cls=ArchiveState)
     bagit_tag = WebElement('.archive-bagit-tag')
     dip_tag = WebElement('.archive-dip-tag')

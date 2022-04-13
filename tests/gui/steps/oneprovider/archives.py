@@ -38,7 +38,7 @@ def write_description_in_create_archive_modal(selenium, browser_id, modals,
 
 def get_archive_with_description(browser, description):
     for archive in browser.data:
-        if description in archive.name:
+        if description == archive.description:
             return archive
     else:
         raise Exception('failed to load archive from description')
@@ -219,7 +219,7 @@ def assert_description_for_archive(browser_id, tmp_memory, description,
                                    ordinal):
     browser = tmp_memory[browser_id]['archive_browser']
     number = from_ordinal_number_to_int(ordinal)
-    archive_description = browser.data[number - 1].name.split('— ')[1]
+    archive_description = browser.data[number - 1].description
     err_msg = (f'Archive description {archive_description} does not match'
                f' expected description: {description}')
     assert archive_description == description, err_msg
