@@ -262,4 +262,4 @@ def assert_base_archive_for_archive_in_op_gui(browser_id, selenium, item_name,
     archive = get_archive_with_description(browser, description)
     err_msg = (f'Base archive: {archive.base_archive} does not match expected '
                f'archive with description {base_description}')
-    assert base_description in archive.base_archive, err_msg
+    assert base_description in archive.base_archive_description, err_msg
