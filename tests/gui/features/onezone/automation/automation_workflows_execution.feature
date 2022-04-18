@@ -48,6 +48,7 @@ Feature: Workflows execution
     And user of browser sees pod in all pods:
             readiness: 0/1
             status: Terminated
+
     And user of browser sees events with following reasons: Scheduled, Pulling, Running, Killing, Terminated
 
   Scenario: User creates inout workflow through gui and executes it
@@ -113,3 +114,79 @@ Feature: Workflows execution
     And user of browser clicks on first executed workflow
     And user of browser sees Finished status in status bar in workflow visualizer
     Then user of browser compares content of "input" store and "output" store
+
+
+  Scenario: User creates checksum-counting-oneclient workflow through gui and executes it
+    When user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" lambdas subpage
+
+    # User manually creates inout lambda
+    And user of browser uses Add new lambda button from menu bar in lambdas subpage
+    And user of browser writes "checksum-counting-oneclient" into lambda name text field
+    And user of browser writes "docker.onedata.org/checksum-counting-oneclient:v7" into docker image text field
+    And user of browser enables lambdas Mount space toggle
+    And user of browser adds argument named "item" of "Regular file" type
+    And user of browser adds argument named "metadata_key" of "String" type
+    And user of browser adds argument named "algorithm" of "String" type
+    And user of browser adds result named "result" of "Object" type
+    And user of browser confirms create new lambda using Create buttonn
+    And user of browser sees "checksum-counting-oneclient" in lambdas list in inventory lambdas subpage
+
+    # User manually creates workflow using checksum-counting-oneclient lambda
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser creates workflow "Workflow1"
+
+    # User creates input store for workflow
+    And user of browser clicks Add store button in workflow visualizer
+    And user of browser writes "input-files" into store name text field in modal "Create new store"
+    And user of browser chooses "Tree forest" in type dropdown menu in modal "Create new store"
+    And user of browser chooses "Regular file" in data type dropdown menu in modal "Create new store"
+    And user of browser enables User input toggle in modal "Create new store"
+    And user of browser clicks on "Create" button in modal "Create new store"
+
+    #User creates Lane
+    And user of browser clicks on create lane button in the middle of workflow visualizer
+    And user of browser writes "Lane1" into lane name text field in modal "Create new lane"
+    And user of browser clicks on "Create" button in modal "Create new lane"
+
+    #User creates task using previously created lambda
+    And user of browser clicks on add parallel box button in the middle of "Lane1" lane
+    And user of browser clicks create task button in empty parallel box in "Lane1" lane
+    And user of browser chooses "inout" revision of "inout" lambda to add to workflow
+    And user of browser chooses "Itrated item" in value builder dropdown menu in "item" argument
+    And user of browser chooses "Constant value" in value builder dropdown menu in "item" argument
+    And user of browser chooses "Constant value" in value builder dropdown menu in "item" argument
+    And user of browser confirms create new task using Create button
+    And user of browser sees task named "inout" in "Lane1" lane
+
+    #User creates task below using previously created task
+    And user of browser clicks on add parallel box button bellow "Parallel box" in "Lane1" lane
+    And user of browser clicks create task button in empty parallel box in "Lane1" lane
+    And user of browser chooses "inout" revision of "inout" lambda to add to workflow
+    And user of browser chooses "Itrated item" in value builder dropdown menu in "item" argument
+    And user of browser chooses "Constant value" in value builder dropdown menu in "item" argument
+    And user of browser chooses "Constant value" in value builder dropdown menu in "item" argument
+    And user of browser confirms create new task using Create button
+    And user of browser sees task named "inout" in "Lane1" lane
+
+
+
+    # User creates checksums store for workflow
+    And user of browser clicks Add store button in workflow visualizer
+    And user of browser writes "input-files" into store name text field in modal "Create new store"
+    And user of browser chooses "List" in type dropdown menu in modal "Create new store"
+    And user of browser chooses "Object" in data type dropdown menu in modal "Create new store"
+    And user of browser clicks on "Create" button in modal "Create new store"
+
+
+    #User executes created workflow and checks if output value is correct
+    And user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks Automation of "space1" in the sidebar
+    And user of browser clicks Run workflow in the navigation bar
+    And user of browser chooses to run "inout1" revision of "Workflow1" workflow
+    And user of browser chooses "dir1" file as initial value for workflow in modal "Select files"
+    And user of browser confirms Workflow deployment by clicking Run workflow button
+    And user of browser waits for all workflows to start
+    And user of browser waits for all workflows to finish
+    And user of browser clicks on first executed workflow
+    Then user of browser sees Finished status in status bar in workflow visualizer
