@@ -447,21 +447,23 @@ def assert_info_in_archive_recall_information_modal(selenium, browser_id,
             f'information modal')
 
 
-@wt(parsers.parse('user of {browser_id} sees that recall has been finished at '
-                  'the same time or after recall has been started'))
+@wt(parsers.parse('user of {browser_id} sees that recall has been {stop} at '
+                  'the same time or after recall has been {start}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_recall_duration_in_archive_recall_information_modal(selenium,
-                                                               browser_id,
-                                                               modals):
+def assert_recall_duration_in_archive_recall_information_modal(
+        selenium, browser_id, modals, start, stop):
     archive_recall_information = modals(selenium[browser_id]
                                         ).archive_recall_information
-    started_at = archive_recall_information.started_at
-    finished_at = archive_recall_information.finished_at
-    start = datetime.strptime(started_at, '%d %b %Y %H:%M:%S')
+    start = f'{start}_at'
+    stop = f'{stop}_at'
+
+    started_at = getattr(archive_recall_information, start)
+    finished_at = getattr(archive_recall_information, stop)
+    begin = datetime.strptime(started_at, '%d %b %Y %H:%M:%S')
     finish = datetime.strptime(finished_at, '%d %b %Y %H:%M:%S')
 
     err_msg = 'Recall start time is greater than finish time'
-    assert start <= finish, err_msg
+    assert begin <= finish, err_msg
 
 
 @wt(parsers.parse('user of {browser_id} sees that not all {kind} were '
@@ -473,8 +475,8 @@ def assert_not_all_files_were_recalled(selenium, browser_id, modals, kind):
     info = getattr(modals(selenium[browser_id]).archive_recall_information,
                    transform(kind))
     info = re.sub(characters, "", info).split('/')
-    all_data = int(info[1])
-    recalled = int(info[0])
+    all_data = float(info[1])
+    recalled = float(info[0])
     err_msg = f'Number of recalled {kind} is not smaller then all {kind}'
     assert all_data > recalled, err_msg
 
