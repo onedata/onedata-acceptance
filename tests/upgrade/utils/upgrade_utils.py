@@ -39,8 +39,11 @@ class UpgradeTestsController:
         self.__tests_list.append(UpgradeTest(name, setup, verify))
 
     def mount_client(self, username, client_host_alias, client_instance):
-        return self.users[username].mount_client(
-            client_host_alias, client_instance, self.hosts, self.env_desc)
+        client = self.users[username].mount_client(
+            client_host_alias, client_instance, self.hosts, self.env_desc, opts=[])
+        if client:
+            return client
+        raise RuntimeError("Error when mounting oneclient")
 
     def run_tests(self):
         admin_user = self.users['admin']

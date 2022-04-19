@@ -114,7 +114,7 @@ def create_harvester(selenium, browser_id, oz_page, harvester_name, hosts):
                   'dropdown'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def join_space_to_harvester(selenium, browser_id, oz_page, space_name,
-                            harvester_name, tmp_memory):
+                            harvester_name, tmp_memory, popups):
     option = 'Spaces'
     option2 = 'Discovery'
     option3 = 'harvesters'
@@ -140,7 +140,7 @@ def join_space_to_harvester(selenium, browser_id, oz_page, space_name,
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id,
                                                       space_name, modals,
-                                                      element_type)
+                                                      element_type, popups)
     click_modal_button(selenium, browser_id, button_in_modal, modal, modals)
 
 
@@ -165,7 +165,8 @@ def add_group_to_harvester(selenium, browser_id, oz_page, group_name,
                                          where + 's', oz_page, onepanel, popups)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id,
-                                                      group_name, modals, where)
+                                                      group_name, modals, where,
+                                                      popups)
     click_modal_button(selenium, browser_id, button_in_modal, modal, modals)
 
 

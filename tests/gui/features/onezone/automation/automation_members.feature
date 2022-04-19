@@ -276,3 +276,66 @@ Feature: Management of inventories members
     # User1 removes group from inventory
     And user of browser1 removes "group2" group from "inventory1" automation members
     Then user of browser1 does not see group "group2" on groups list
+
+
+  Scenario: User successfully manages lambda with manage lambda privilege
+    # Space-owner-user creates a lambda
+    When user of space_owner_browser creates "Lambda1" lambda from "example_image" docker image in "inventory1" inventory
+    And user of space_owner_browser opens inventory "inventory1" members subpage
+
+    # User1 fails to add new revision
+    And user of browser1 clicks on Automation in the main menu
+    And user of browser1 opens inventory "inventory1" lambdas subpage
+    And user of browser1 clicks on Create new revision in "Lambda1"
+    And user of browser1 writes "Lambda2" into lambda name text field
+    And user of browser1 confirms create new revision using Create button
+    And user of browser1 sees that error popup has appeared
+    And user of browser1 clicks on "Close" button in modal "Error"
+
+    # Space-owner-user changes privileges for group2
+    And user of space_owner_browser clicks "group2" group in "inventory1" automation members groups list
+    And user of space_owner_browser sets following privileges for "group2" group in automation members subpage:
+         Schema management:
+            granted: Partially
+            privilege subtypes:
+              Manage lambdas: True
+
+
+    # User1 adds new revision
+    And user of browser1 opens inventory "inventory1" lambdas subpage
+    And user of browser1 clicks on Create new revision in "Lambda1"
+    And user of browser1 writes "Lambda2" into lambda name text field
+    And user of browser1 confirms create new revision using Create button
+    Then user of browser1 sees "Lambda2" in revision list of "Lambda2" in inventory lambdas subpage
+
+
+  Scenario: User successfully manages workflow with manage workflows schema privilege
+    # Space-owner-user uploads workflow
+    When user of space_owner_browser uploads "Workflow1" workflow from "workflow_upload.json" file to "inventory1" inventory
+    And user of space_owner_browser opens inventory "inventory1" members subpage
+
+    # User1 fails to edit workflow name
+    And user of browser1 clicks on Automation in the main menu
+    And user of browser1 opens inventory "inventory1" workflows subpage
+    And user of browser1 clicks on "Change details" button in workflow "Workflow1" menu in workflows subpage
+    And user of browser1 writes "Workflow Renamed" in name textfield of selected workflow
+    And user of browser1 confirms edition of selected workflow details using Save button
+    And user of browser1 sees that error popup has appeared
+    And user of browser1 clicks on "Close" button in modal "Error"
+
+    # Space-owner-user changes privileges for group2
+    And user of space_owner_browser clicks "group2" group in "inventory1" automation members groups list
+    And user of space_owner_browser sets following privileges for "group2" group in automation members subpage:
+         Schema management:
+            granted: Partially
+            privilege subtypes:
+              Manage workflow schemas: True
+
+
+    # User1 sees edited workflow
+    And user of browser1 clicks on "Change details" button in workflow "Workflow1" menu in workflows subpage
+    And user of browser1 writes "Workflow Renamed" in name textfield of selected workflow
+    And user of browser1 confirms edition of selected workflow details using Save button
+    Then user of browser1 sees "Workflow Renamed" in workflows list in inventory workflows subpage
+
+

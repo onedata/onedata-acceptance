@@ -324,7 +324,7 @@ def wt_leave_users_space_in_onezone_using_rest(hosts, users, user):
                   'dropdown'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_harvester_to_existing_space(selenium, browser_id, oz_page, space_name,
-                                    harvester_name, tmp_memory, modals):
+                                    harvester_name, tmp_memory, modals, popups):
     option = 'Harvesters'
     button_name = 'add one of harvesters'
     button_in_modal = 'Add'
@@ -342,7 +342,7 @@ def add_harvester_to_existing_space(selenium, browser_id, oz_page, space_name,
 
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id,
                                                       harvester_name, modals,
-                                                      element_type)
+                                                      element_type, popups)
     click_modal_button(selenium, browser_id, button_in_modal, modal, modals)
 
 
@@ -375,7 +375,7 @@ def add_group_to_space_or_group(browser_id, group_name, where_name, selenium,
                                          member, oz_page, onepanel, popups)
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id,
                                                       group_name, modals,
-                                                      element)
+                                                      element, popups)
 
     click_modal_button(selenium, browser_id, button_in_modal, modal, modals)
 

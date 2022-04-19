@@ -9,6 +9,7 @@ __license__ = ("This software is released under the MIT license cited in "
 
 import time
 
+from selenium.common.exceptions import TimeoutException
 from tests.gui.meta_steps.onezone.tokens import (
     consume_token_from_copied_token)
 from tests.gui.steps.common.miscellaneous import click_option_in_popup_text_menu
@@ -85,7 +86,7 @@ def change_privilege_config_in_cluster(selenium, browser_id, oz_page,
                   '"{cluster_name}" cluster'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_group_to_cluster(selenium, browser_id, oz_page, onepanel, hosts,
-                         group_name, cluster_name, popups):
+                         group_name, cluster_name, popups, tmp_memory):
     sidebar = 'CLUSTERS'
     menu_option = 'Members'
     sub_item = 'Add one of your groups'
@@ -94,7 +95,7 @@ def add_group_to_cluster(selenium, browser_id, oz_page, onepanel, hosts,
     where = 'cluster'
     member = 'groups'
     element_type = 'group'
-
+    modal_name = 'add one of your groups'
     click_on_option_in_the_sidebar(selenium, browser_id, sidebar, oz_page)
     click_on_record_in_clusters_menu(selenium, browser_id, oz_page,
                                      cluster_name, hosts)
@@ -103,9 +104,19 @@ def add_group_to_cluster(selenium, browser_id, oz_page, onepanel, hosts,
     click_on_option_in_members_list_menu(selenium, browser_id, sub_item,
                                          where, member, oz_page,
                                          onepanel, popups)
+    for _ in range(5):
+        try:
+            wt_wait_for_modal_to_appear(selenium, browser_id, modal_name,
+                                        tmp_memory)
+            break
+        except TimeoutException:
+            click_on_option_in_members_list_menu(selenium, browser_id, sub_item,
+                                                 where, member, oz_page,
+                                                 onepanel, popups)
+
     choose_element_from_dropdown_in_add_element_modal(selenium, browser_id,
                                                       group_name, modals,
-                                                      element_type)
+                                                      element_type, popups)
     click_modal_button(selenium, browser_id, button_name, modal, modals)
 
 

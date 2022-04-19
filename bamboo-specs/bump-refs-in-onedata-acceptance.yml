@@ -1,0 +1,59 @@
+version: 2
+plan:
+  project-key: VFS
+  key: OA
+  name: bump refs in onedata-acceptance
+  description: Automatically updates submodules to develop
+stages:
+- Autocommit:
+    manual: false
+    final: false
+    jobs:
+    - Autocommit
+Autocommit:
+  key: JOB1
+  tasks:
+  - checkout:
+      repository: onedata-acceptance
+      path: onedata-acceptance
+      force-clean-build: true
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - |-
+        git status
+        git submodule init
+        git submodule update
+        ./update_refs.sh "origin/${bamboo.planRepository.branchName}" "origin/develop" "Bamboo Agent" "bamboo@cloud.plgrid.pl"
+        git -c push.default=simple push --set-upstream origin ${bamboo.planRepository.branchName}
+      working-dir: onedata-acceptance
+      description: Autocommit
+  final-tasks:
+  - script:
+      interpreter: SHELL
+      scripts:
+      - rm -rf onedata-acceptance
+      description: Cleanup
+  requirements:
+  - system.docker.executable
+  - onedata
+  artifact-subscriptions: []
+repositories:
+- onedata-acceptance:
+    scope: global
+triggers:
+- cron: 0 15 0 * * ?
+branches:
+  create: manually
+  delete:
+    after-deleted-days: 30
+    after-inactive-days: 30
+  link-to-jira: true
+labels: []
+dependencies:
+  require-all-stages-passing: false
+  enabled-for-branches: true
+  block-strategy: none
+  plans: []
+other:
+  concurrent-build-plugin: system-default

@@ -290,8 +290,8 @@ def wt_clicks_on_btn_in_cease_support_modal(selenium, browser_id,
 def remove_space_instead_of_revoke(selenium, browser_id, modals):
     modals(selenium[browser_id]).cease_support_for_space.space_delete_link()
     time.sleep(2)
-    modals(selenium[browser_id]).remove_space.understand_notice()
-    modals(selenium[browser_id]).remove_space.remove()
+    modals(selenium[browser_id]).remove_modal.understand_notice()
+    modals(selenium[browser_id]).remove_modal.remove()
 
 
 # TODO: delete after space support revoke fixes in 21.02 (VFS-6383)
@@ -305,8 +305,8 @@ def login_and_remove_space_instead_of_revoke(selenium, browser_id, modals, user,
     time.sleep(3)
     wt_login_using_basic_auth(selenium, browser_id, user,
                               login_page, users, 'Onezone')
-    modals(selenium[browser_id]).remove_space.understand_notice()
-    modals(selenium[browser_id]).remove_space.remove()
+    modals(selenium[browser_id]).remove_modal.understand_notice()
+    modals(selenium[browser_id]).remove_modal.remove()
 
 
 @wt(parsers.parse('user of {browser_id} checks the understand notice '

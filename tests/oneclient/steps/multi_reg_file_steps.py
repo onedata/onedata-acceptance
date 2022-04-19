@@ -135,7 +135,7 @@ def cannot_read(user, file, client_node, users):
     file_path = client.absolute_path(file)
 
     def condition():
-        assert_expected_failure(client.read, True, file_path)
+        assert_expected_failure(client.read, file_path)
 
     assert_(client.perform, condition)
 

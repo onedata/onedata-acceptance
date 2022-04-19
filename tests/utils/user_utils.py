@@ -67,7 +67,8 @@ class User:
     def mark_last_operation_succeeded(self):
         self.last_operation_failed = False
 
-    def mount_client(self, client_host_alias, client_id, hosts, env_desc, token=CORRECT_TOKEN):
+    def mount_client(self, client_host_alias, client_id, hosts, env_desc, token=CORRECT_TOKEN,
+                     opts=None):
         rpyc_connection = self.get_rpyc_connection(hosts[client_host_alias])
         client_conf = get_client_conf(client_id, client_host_alias, env_desc)
 
@@ -80,7 +81,7 @@ class User:
         rpyc_connection.modules.os.environ['ONECLIENT_PROVIDER_HOST'] = \
             hosts[client_conf.get('provider')]['hostname']
 
-        ret = client.mount(client_conf.get('mode'))
+        ret = client.mount(client_conf.get('mode'), additional_opts=opts)
         if ret == 0:
             self.mark_last_operation_succeeded()
             return client

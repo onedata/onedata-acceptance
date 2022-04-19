@@ -38,7 +38,7 @@ def write_description_in_create_archive_modal(selenium, browser_id, modals,
 
 def get_archive_with_description(browser, description):
     for archive in browser.data:
-        if description in archive.name:
+        if description == archive.description:
             return archive
     else:
         raise Exception('failed to load archive from description')
@@ -57,18 +57,18 @@ def save_date_of_archive_creation(browser_id, tmp_memory, description):
 @wt(parsers.re('user of (?P<browser_id>.*?) sees that archive with '
                'description: "(?P<description>.*?)" in archive browser '
                'has status: "(?P<status>.*?)", number of files: '
-               '"(?P<number_of_files>.*?)", size: "(?P<size>.*?)"'))
+               '(?P<files_count>\d+), size: "(?P<size>.*?)"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_archive_full_state_status(browser_id, tmp_memory, status,
-                                     number_of_files, size, description):
+                                     files_count, size, description):
     browser = tmp_memory[browser_id]['archive_browser']
     archive = get_archive_with_description(browser, description)
-    item_status = archive.state.replace('\n', ' ').replace(':', ',').split(', ')
-    item_status[0] = item_status[0].replace(' Archived', '').lower()
-    number_of_files += 's' if number_of_files == '1 file' else ''
-    assert_archive_partial_state_status(item_status[0], status)
-    assert_archive_partial_state_status(item_status[1], number_of_files)
-    assert_archive_partial_state_status(item_status[2], size)
+    state_name = archive.state.get_state_name()
+    archive_files_count = archive.state.get_files_count()
+    archive_size = archive.state.get_size()
+    assert_archive_partial_state_status(state_name, status)
+    assert_archive_partial_state_status(archive_files_count, int(files_count))
+    assert_archive_partial_state_status(archive_size, size)
 
 
 def assert_archive_partial_state_status(item_status, expected_status):
@@ -219,7 +219,7 @@ def assert_description_for_archive(browser_id, tmp_memory, description,
                                    ordinal):
     browser = tmp_memory[browser_id]['archive_browser']
     number = from_ordinal_number_to_int(ordinal)
-    archive_description = browser.data[number - 1].name.split('— ')[1]
+    archive_description = browser.data[number - 1].description
     err_msg = (f'Archive description {archive_description} does not match'
                f' expected description: {description}')
     assert archive_description == description, err_msg
@@ -252,14 +252,14 @@ def assert_not_archive_with_description(tmp_memory, browser_id, description):
         pass
 
 
-@wt(parsers.parse('user of {browser_id} sees that error page with text '
-                  '"{text}" appeared in archive browser'))
+@wt(parsers.parse('user of {browser_id} sees message "{text}" in place of '
+                  'archive browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_page_with_error_appeared(browser_id, text, tmp_memory, selenium,
                                     op_container):
-    which_browser = 'archive browser'
+    which_browser = 'archive container'
     assert_browser_in_tab_in_op(selenium, browser_id, op_container, tmp_memory,
                                 item_browser=which_browser)
     browser = tmp_memory[browser_id][transform(which_browser)]
-    assert browser.error_msg == text, f'page with text "{text}" not  found'
+    assert browser.message == text, f'page with text "{text}" not  found'
 

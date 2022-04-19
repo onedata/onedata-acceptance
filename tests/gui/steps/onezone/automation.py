@@ -120,14 +120,19 @@ def upload_workflow_as_json(selenium, browser_id, file_name, oz_page):
     oz_page(driver)['automation'].upload_workflow(upload_file_path(file_name))
 
 
-@wt(parsers.parse('user of {browser_id} sees "{workflow}" in workflows list '
-                  'in inventory workflows subpage'))
+@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>does not see|sees) '
+               '"(?P<workflow>.*)" in workflows list '
+               'in inventory workflows subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_workflow_exists(selenium, browser_id, oz_page, workflow):
+def assert_workflow_exists(selenium, browser_id, oz_page, workflow, option):
     page = oz_page(selenium[browser_id])['automation']
 
-    assert workflow in page.workflows_page.elements_list, \
-        f'Workflow: {workflow} not found '
+    if option == 'does not see':
+        assert workflow not in page.workflows_page.elements_list, \
+            f'Workflow: {workflow} found '
+    else:
+        assert workflow in page.workflows_page.elements_list, \
+            f'Workflow: {workflow} not found '
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) uses '
@@ -142,8 +147,8 @@ def click_add_new_button_in_menu_bar(selenium, browser_id, oz_page, option):
 @wt(parsers.re('user of (?P<browser_id>.*) writes "(?P<text>.*)" into ('
                '?P<text_field>lambda name|docker image) text field'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def write_lambda_name_in_lambda_text_field(selenium, browser_id,
-                                           oz_page, text, text_field):
+def write_text_into_lambda_form(selenium, browser_id,
+                                oz_page, text, text_field):
     page = oz_page(selenium[browser_id])['automation']
     label = getattr(page.lambdas_page.form, transform(text_field))
     setattr(label, 'value', text)
@@ -180,43 +185,53 @@ def click_on_create_new_revision_button(selenium, browser_id, oz_page,
     page.lambdas_page.elements_list[lambda_name].create_new_revision.click()
 
 
-def collapse_revision_list_in_lambda(selenium, browser_id, oz_page,
-                                     lambda_name):
-    page = oz_page(selenium[browser_id])['automation']
-    lambda_box = page.lambdas_page.elements_list[lambda_name]
-    lambda_box.show_revisions_button.click()
+def collapse_revision_list(subpage):
+    subpage.show_revisions_button.click()
 
 
-@wt(parsers.parse('user of {browser_id} sees "{revision_name}" in lambdas '
-                  'revision list of "{lambda_name}" in '
-                  'inventory lambdas subpage'))
+@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>does not see|sees) '
+               '"(?P<revision_name>.*)" in revision list of '
+               '"(?P<object_name>.*)" in inventory '
+               '(?P<page>lambdas|workflows) subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_revision_in_lambda_bracket(selenium, browser_id, oz_page,
-                                      lambda_name, revision_name):
-    page = oz_page(selenium[browser_id])['automation']
-    lambda_box = page.lambdas_page.elements_list[lambda_name]
+def assert_revision_in_object_bracket(selenium, browser_id, oz_page,
+                                      object_name, page, option):
+    page_name = page + '_page'
+    subpage = getattr(oz_page(selenium[browser_id])['automation'], page_name)
+
+    object = subpage.elements_list[object_name]
+
     try:
-        collapse_revision_list_in_lambda(selenium, browser_id, oz_page,
-                                         lambda_name)
-    finally:
-        assert revision_name in lambda_box.revision_list, \
-            f'Lambda revision: {revision_name} not found'
+        collapse_revision_list(object)
+    except BaseException:
+        pass
+    if option == 'does not see':
+        assert object_name not in object.revision_list, \
+            f'Revision: {object_name} found'
+    else:
+        assert object_name in object.revision_list, \
+            f'Revision: {object_name} not found'
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on "(?P<option>Redesign as '
-               'new revision)" button in revision "(?P<revision_name>.*)" '
-               'menu in the "(?P<lambda_name>.*)" revision list'))
+               'new revision|Duplicate to...|Download \(json\)|Remove)" button '
+               'in revision "(?P<revision_name>.*)" menu in the '
+               '"(?P<object_name>.*)" (?P<object_type>lambda|workflow) '
+               'revision list'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_option_in_revision_menu_button(selenium, browser_id, oz_page, option,
-                                         lambda_name, revision_name, popups):
-    page = oz_page(selenium[browser_id])['automation']
-    lambda_box = page.lambdas_page.elements_list[lambda_name]
+                                         object_name, revision_name, popups,
+                                         object_type):
+    page_name = object_type + 's_page'
+    subpage = getattr(oz_page(selenium[browser_id])['automation'], page_name)
+    object = subpage.elements_list[object_name]
+
     try:
-        collapse_revision_list_in_lambda(selenium, browser_id, oz_page,
-                                         lambda_name)
-        lambda_box.revision_list[revision_name].menu_button.click()
+        collapse_revision_list(object)
     except BaseException:
-        lambda_box.revision_list[revision_name].menu_button.click()
+        pass
+
+    object.revision_list[revision_name].menu_button.click()
 
     popups(selenium[browser_id]).menu_popup_with_label.menu[option].click()
 
@@ -331,3 +346,56 @@ def click_option_in_task_menu_button(selenium, browser_id, oz_page, lane_name,
     box.task_list[task_name].menu_button.click()
 
     popups(driver).menu_popup_with_label.menu[option].click()
+
+
+@wt(parsers.parse('user of {browser_id} clicks on "{option}" button in '
+                  'workflow "{workflow}" menu in workflows subpage'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_option_in_workflow_menu_button(selenium, browser_id, oz_page,
+                                         workflow, option, popups):
+    page = oz_page(selenium[browser_id])['automation']
+    page.workflows_page.elements_list[workflow].menu_button.click()
+    popups(selenium[browser_id]).menu_popup_with_label.menu[option].click()
+
+
+@wt(parsers.parse('user of {browser_id} writes "{text}" in name textfield of '
+                  'selected workflow'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def insert_text_in_textfield_of_workflow(selenium, browser_id, oz_page, text):
+    page = oz_page(selenium[browser_id])['automation']
+    page.workflows_page.workflow_name_input.value = text
+
+
+@wt(parsers.parse('user of {browser_id} confirms edition of selected workflow '
+                  'details using Save button'))
+@wt(parsers.parse('user of {browser_id} Saves workflow edition by clicking '
+                  'Save button from menu bar'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_button_in_workflow(selenium, browser_id, oz_page):
+    page = oz_page(selenium[browser_id])['automation']
+    page.workflows_page.workflow_save_button.click()
+
+
+@wt(parsers.parse('user of {browser_id} sees that "{file_name}" '
+                  'has been downloaded'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def has_downloaded_workflow_file_content(browser_id, tmpdir, file_name):
+    downloaded_file = tmpdir.join(browser_id, 'download', file_name)
+    assert downloaded_file.exists(), f'file {file_name} has not been downloaded'
+
+
+@wt(parsers.parse('user of {browser_id} changes workflow view to '
+                  '"{tab_name}" tab'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def change_navigation_tab_in_workflow(selenium, browser_id, oz_page, tab_name):
+    page = oz_page(selenium[browser_id])['automation']
+    page.workflows_page.navigation_tab[tab_name].click()
+
+
+@wt(parsers.parse('user of {browser_id} writes "{text}" in description '
+                  'textfield in workflow Details tab'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def insert_text_in_description_of_revision(selenium, browser_id, oz_page, text):
+    page = oz_page(selenium[browser_id])['automation']
+    page.workflows_page.revision_details.description = text
+

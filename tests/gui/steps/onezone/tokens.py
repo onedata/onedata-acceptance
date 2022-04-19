@@ -97,12 +97,12 @@ def click_on_confirm_button_on_tokens_page(selenium, browser_id, oz_page):
 @wt(parsers.parse('user of {browser_id} chooses "{member_name}" {type} '
                   'from dropdown on tokens page'))
 @repeat_failed(timeout=WAIT_BACKEND)
-def select_member_from_dropdown(selenium, browser_id, member_name, modals,
+def select_member_from_dropdown(selenium, browser_id, member_name, popups,
                                 oz_page):
     driver = selenium[browser_id]
 
     oz_page(driver)['tokens'].expand_dropdown()
-    modals(driver).dropdown.options[member_name].click()
+    popups(driver).dropdown.options[member_name].click()
 
 
 @wt(parsers.parse('user of {browser_id} clicks on "Create token" button '

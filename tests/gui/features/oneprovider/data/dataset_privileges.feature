@@ -222,5 +222,4 @@ Feature: Dataset browser tests using user who is not the owner of a space
     And user of browser_user1 clicks Datasets of "space1" in the sidebar
     And user of browser_user1 sees dataset browser in datasets tab in Oneprovider page
     And user of browser_user1 clicks on dataset for "dir1" in dataset browser
-    Then user of browser_user1 sees that error page with text "OPERATION NOT PERMITTED" appeared in archive browser
-
+    Then user of browser_user1 sees message "Insufficient privileges to browse archives" in place of archive browser
