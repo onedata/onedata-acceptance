@@ -42,14 +42,17 @@ Feature: Workflows execution
     And user of browser clicks on first executed workflow
     Then user of browser sees Finished status in status bar in workflow visualizer
 
+    # User tests Function pods activity modal
     And user of browser clicks on "inout" task in "Lane1" lane in workflow visualizer
     And user of browser clicks on "Pods activity" link in "inout" task in "Lane1" lane in workflow visualizer
-    And user of browser waits for all pods to finish execution in in modal "Function pods activity"
-    And user of browser sees pod in all pods:
+    And user of browser waits for all pods to finish execution in modal "Function pods activity"
+    And user of browser sees pod in all pods in modal "Function pods activity":
             readiness: 0/1
             status: Terminated
 
-    And user of browser sees events with following reasons: Scheduled, Pulling, Running, Killing, Terminated
+    And user of browser clicks on first terminated pod in modal "Function pods activity"
+    And user of browser sees event with following reason: Scheduled in modal "Function pods activity"
+
 
   Scenario: User creates inout workflow through gui and executes it
     When user of browser clicks on Automation in the main menu

@@ -55,7 +55,7 @@ class NavigationTab(Element):
 class TaskAddForm(PageObject):
     task_name = WebItem('.name-field .text-like-field', cls=EditBox)
     create_button = Button('.btn-primary')
-    target_store_menu_dropdown = WebElement('.resultMappings-field '
+    target_store_dropdown_menu = WebElement('.resultMappings-field '
                                             '.dropdown-field-trigger')
 
 
