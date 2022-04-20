@@ -1,5 +1,5 @@
-"""This module contains tests suite for operations on BagIt, plain and DIP
-archives using Oneprovider GUI and single browser instance.
+"""This module contains tests suite for recalling archives using
+Oneprovider GUI and single browser instance.
 """
 
 __author__ = "Katarzyna Such"

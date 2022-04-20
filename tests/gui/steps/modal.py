@@ -452,6 +452,12 @@ def assert_info_in_archive_recall_information_modal(selenium, browser_id,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_recall_duration_in_archive_recall_information_modal(
         selenium, browser_id, modals, start, stop):
+
+    '''
+    start variable could be the time of starting or canceling the recall,
+    stop variable could be the time of canceling or finishing the recall
+    '''
+
     archive_recall_information = modals(selenium[browser_id]
                                         ).archive_recall_information
     start = f'{start}_at'

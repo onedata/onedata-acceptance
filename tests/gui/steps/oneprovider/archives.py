@@ -287,7 +287,7 @@ def wait_for_recalled_status_tag(browser_id, name, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
 
     for _ in range(100):
-        is_visible = browser.data[name].is_tag_visible(transform(status_type))
+        is_visible = browser.data[name].is_tag_visible(status_type)
         if is_visible:
             break
         else:
