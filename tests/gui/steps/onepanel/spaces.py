@@ -425,16 +425,20 @@ def enable_option_in_auto_cleaning(selenium, browser_id, onepanel, option):
 
 @wt(parsers.parse('user of {browser_id} clicks {option} on dropdown '
                   '{rule} rule in auto-cleaning tab in Onepanel'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def click_option_on_dropdown_rule(selenium, browser_id, onepanel, option, rule):
     driver = selenium[browser_id]
     tab = onepanel(driver).content.spaces.space.auto_cleaning
-    for i in range(5):
+    for i in range(20):
+        time.sleep(0.2)
         if tab.selective_cleaning_form[rule].value_limit != option:
             tab.selective_cleaning_form[rule].dropdown_button()
             tab.selective_cleaning_form[rule].dropdown[option].click()
         else:
             break
+    else:
+        err_msg = f'Failed do set {rule} for {option}'
+        assert tab.selective_cleaning_form[rule].value_limit == option, err_msg
 
 
 @wt(parsers.parse('user of {browser_id} clicks change {quota} quota button '
