@@ -12,7 +12,8 @@ from tests.gui.utils.onezone.generic_page import Element, GenericPage
 
 class Provider(Element):
     support_size = Label('.status-toolbar .outer-text')
-    supported_spaces_number = Label('.status-toolbar .oneicon-space')
+    supported_spaces_number = Label('.status-toolbar .oneicon-space '
+                                    '.inner-text')
     home_icon = WebElement('.status-toolbar-icon:first-of-type span')
 
     def is_home_icon(self):

@@ -389,6 +389,7 @@ def assert_home_space_has_appeared_on_provider_on_left_sidebar_menu(selenium,
 
 @wt(parsers.parse('user of {browser_id} sees that spaces counter for '
                   '"{provider}" provider displays {number} in data sidebar'))
+@repeat_failed(timeout=WAIT_BACKEND)
 def assert_number_of_supported_spaces_in_data_sidebar(selenium, browser_id,
                                                       oz_page, provider,
                                                       number, hosts):
