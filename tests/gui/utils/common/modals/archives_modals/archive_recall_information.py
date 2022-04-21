@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 from tests.gui.utils.common.modals.modal import Modal
-from tests.gui.utils.core.web_elements import Label
+from tests.gui.utils.core.web_elements import Label, Button
 
 
 class ArchiveRecallInformation(Modal):
@@ -16,9 +16,11 @@ class ArchiveRecallInformation(Modal):
     files_recalled = Label('.recall-info-row-files .property-value')
     data_recalled = Label('.recall-info-row-bytes .property-value')
     started_at = Label('.recall-info-row-started-at .property-value')
+    cancelled_at = Label('.recall-info-row-cancelled-at .property-value')
     finished_at = Label('.recall-info-row-finished-at .property-value')
     items_failed = Label('.recall-info-row-files-failed .property-value')
     last_error = Label('.recall-info-row-last-error .property-value')
+    cancel_recall = Button('.cancel-recall-btn')
 
     @staticmethod
     def parse_progress(progress_text_content):

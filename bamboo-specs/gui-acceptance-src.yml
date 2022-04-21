@@ -60,6 +60,7 @@ stages:
     - Chrome onezone harvesters basic tests
     - Chrome oneprovider ACL directories privileges create
     - Chrome oneprovider archives incremental and nested
+    - Chrome oneprovider archives recall
     - Chrome oneprovider ACL files metadata
     - Chrome onezone providers basic tests
     - Chrome POSIX tests
@@ -342,6 +343,26 @@ Chrome oneprovider archives incremental and nested:
       <<: *run-selenium-tests
       scripts:
       - make SUITE=test_oneprovider_archives_incremental_and_nested BROWSER=Chrome TIMEOUT=600 test_gui_src
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-and-working-dir
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome oneprovider archives recall:
+  key: COARL
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script:
+      <<: *run-selenium-tests
+      scripts:
+      - make SUITE=test_oneprovider_archives_recall ENV_FILE=1oz_1op_slow_file_operations BROWSER=Chrome TIMEOUT=600 test_gui_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs

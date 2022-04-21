@@ -7,7 +7,9 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
+import time
+
+from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
@@ -262,4 +264,32 @@ def assert_page_with_error_appeared(browser_id, text, tmp_memory, selenium,
                                 item_browser=which_browser)
     browser = tmp_memory[browser_id][transform(which_browser)]
     assert browser.message == text, f'page with text "{text}" not  found'
+
+
+@wt(parsers.parse('user of {browser_id} waits for "{status}" state for archive'
+                  ' with description "{description}" in archive browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def waits_for_preserved_state(browser_id, status, description, tmp_memory):
+    browser = tmp_memory[browser_id]['archive_browser']
+    archive = get_archive_with_description(browser, description)
+    for _ in range(100):
+        if archive.state.state_type == status:
+            break
+        else:
+            time.sleep(2)
+
+
+@wt(parsers.parse('user of {browser_id} waits for recalled status tag for '
+                  '"{name}" in file browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def wait_for_recalled_status_tag(browser_id, name, tmp_memory):
+    status_type = 'recalled'
+    browser = tmp_memory[browser_id]['file_browser']
+
+    for _ in range(100):
+        is_visible = browser.data[name].is_tag_visible(status_type)
+        if is_visible:
+            break
+        else:
+            time.sleep(2)
 
