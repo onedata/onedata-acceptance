@@ -250,13 +250,10 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser opens "share_dir2" single share view of "dir2" using modal icon
 
     And user of browser clicks and presses enter on item named "dir2" in file browser
-    # TODO: VFS-8740 Change steps below to commented steps after figuring out problems with click and enter not working correctly.
-    # After trying to enter "dir2" browser freezes which causes problems with checking if file is located in file browser in click and enter function.
     And user browser is idle for 5 seconds
-    # Click and enter also doesn't work properly while downloading "file1.txt" which probably is caused by clicking on file browser before it
+    # Step below is a quick-fix caused by click and enter not working properly while downloading "file1.txt"
     Then user of browser downloads item "file1" by clicking and pressing enter and then sees that content of downloaded file is equal to: "11111"
-    # And user of browser clicks and presses enter on item named "dir2" in file browser
-    # And user of browser sees that content of downloaded file "file1.txt" is equal to: "11111"
+
 
   Scenario: User can remove share by removing shared directory
     Given using REST, user space-owner-user creates "share_dir2" share of "space1/dir2" supported by "oneprovider-1" provider
