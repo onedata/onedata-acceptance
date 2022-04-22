@@ -50,8 +50,9 @@ from .workflows_modals.upload_workflow import UploadWorkflow
 from .workflows_modals.create_new_store import CreateNewStore
 from .workflows_modals.create_new_lane import CreateNewLane
 from .workflows_modals.duplicate_revision import DuplicateRevision
-from tests.gui.utils.common.modals.workflows_modals.select_files_directories_symlink import SelectFiles
-from tests.gui.utils.common.modals.workflows_modals.function_pods_activity import FunctionPodsActivity
+from .workflows_modals.select_files_directories_symlink import SelectFiles
+from .workflows_modals.function_pods_activity import FunctionPodsActivity
+
 
 class Modals(object):
 

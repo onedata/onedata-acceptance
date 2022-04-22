@@ -80,4 +80,4 @@ def click_on_link_in_task_box(selenium, browser_id, op_container, lane_name,
     page = op_container(selenium[browser_id]).automation_page
     workflow_visualiser = page.workflow_visualiser
     box = workflow_visualiser.workflow_lanes[lane_name].parallel_box
-    box.task_list[task_name].pods_activity.click()
+    getattr(box.task_list[task_name], transform(option)).click()

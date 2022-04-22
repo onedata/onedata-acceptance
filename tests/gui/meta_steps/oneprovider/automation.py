@@ -21,7 +21,7 @@ from tests.utils.utils import repeat_failed
 
 
 @wt(parsers.parse('user of {browser_id} chooses "{item_list}" file '
-                  'as initial value for workflow in modal "Select files"'))
+                  'as initial value for workflow in "Select files" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_file_as_initial_workflow_value(selenium, browser_id, item_list,
                                           modals, op_container):
@@ -38,26 +38,24 @@ def choose_file_as_initial_workflow_value(selenium, browser_id, item_list,
     select_files_modal.confirm_button.click()
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) waits for all workflows to start'))
-@repeat_failed(interval=1, timeout=90,
-               exceptions=(AssertionError, StaleElementReferenceException))
-def wait_for_workflows_to_start(selenium, browser_id, op_container):
-    switch_to_iframe(selenium, browser_id)
-    page = op_container(selenium[browser_id]).automation_page
-    page.navigation_tab['Waiting'].click()
+def change_tab_in_automation_subpage(page, tab_name):
+    page.navigation_tab[tab_name].click()
     time.sleep(0.25)
-    assert len(page.workflow_list_row) == 0, 'Waiting workflows did not start'
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) waits for all workflows to finish'))
+@wt(parsers.re('user of (?P<browser_id>.*) waits for all workflows to '
+               '(?P<option>start|finish)'))
 @repeat_failed(interval=1, timeout=180,
                exceptions=(AssertionError, StaleElementReferenceException))
-def wait_for_ongoing_workflows_to_finish(selenium, browser_id, op_container):
+def wait_for_workflows_in_automation_subpage(selenium, browser_id, op_container, option):
     switch_to_iframe(selenium, browser_id)
     page = op_container(selenium[browser_id]).automation_page
-    page.navigation_tab['Ongoing'].click()
-    time.sleep(0.25)
-    assert len(page.workflow_list_row) == 0, 'Ongoing workflows did not finish'
+    if option == 'start':
+        change_tab_in_automation_subpage(page, 'Waiting')
+    else:
+        change_tab_in_automation_subpage(page, 'Ongoing')
+
+    assert len(page.workflow_list_row) == 0, 'Waiting workflows did not start'
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on first executed workflow'))
@@ -65,8 +63,7 @@ def wait_for_ongoing_workflows_to_finish(selenium, browser_id, op_container):
 def expand_workflow_record(selenium, browser_id, op_container):
     switch_to_iframe(selenium, browser_id)
     page = op_container(selenium[browser_id]).automation_page
-    page.navigation_tab['Ended'].click()
-    time.sleep(0.25)
+    change_tab_in_automation_subpage(page, 'Ended')
     page.workflow_list_row[0].click()
 
 

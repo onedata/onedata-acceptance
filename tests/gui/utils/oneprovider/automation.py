@@ -23,7 +23,7 @@ class ExecutionRecord(PageObject):
         self.web_elem.click()
 
     def __str__(self):
-        return 'Workflow row {} in {}'.format(self.name, self.parent)
+        return f'Workflow row {self.name} in {self.parent}'
 
 
 class Revision(Element):
