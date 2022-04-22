@@ -83,7 +83,7 @@ def add_argument_result_into_lambda_form(selenium, browser_id, oz_page, popups,
                                          option, name, type):
     driver = selenium[browser_id]
     page = oz_page(driver)['automation'].lambdas_page.form
-    subpage = getattr(page, transform(option))
+    subpage = getattr(page, option)
 
     button_name = 'add_' + option
     button = getattr(subpage, button_name)

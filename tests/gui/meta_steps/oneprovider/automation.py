@@ -29,13 +29,13 @@ def choose_file_as_initial_workflow_value(selenium, browser_id, item_list,
     driver = selenium[browser_id]
     op_container(driver).automation_page.input_icon.click()
 
-    modal = modals(selenium[browser_id]).select_files
-    browser = modal.file_browser
+    select_files_modal = modals(driver).select_files
+    browser = select_files_modal.file_browser
 
     with browser.select_files() as selector:
         _select_files(browser, selector, item_list)
 
-    modal.confirm_button.click()
+    select_files_modal.confirm_button.click()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) waits for all workflows to start'))
@@ -70,6 +70,19 @@ def expand_workflow_record(selenium, browser_id, op_container):
     page.workflow_list_row[0].click()
 
 
+def get_store_content(browser_id, driver, page, modals, clipboard, displays,
+                      store_name):
+    page.stores_list[store_name].click()
+    modal = modals(driver).store_details
+    time.sleep(0.25)
+    modal.details_list[0].expander.click()
+    modal.copy_button.click()
+    store1_value = clipboard.paste(display=displays[browser_id])
+    modal.close.click()
+
+    return store1_value
+
+
 @wt(parsers.parse('user of {browser_id} compares content of "{store1}" store '
                   'and "{store2}" store'))
 def compare_store_contents(selenium, browser_id, op_container, store1,
@@ -79,23 +92,15 @@ def compare_store_contents(selenium, browser_id, op_container, store1,
 
     page = op_container(driver).automation_page.workflow_visualiser
 
-    page.stores_list[store1].click()
-    modal = modals(driver).store_details
-    time.sleep(0.25)
-    modal.details_list[0].expander.click()
-    modal.copy_button.click()
-    store1_value = clipboard.paste(display=displays[browser_id])
-    modal.close.click()
+    store1_value = get_store_content(browser_id, driver, page, modals,
+                                     clipboard, displays, store1)
+    store2_value = get_store_content(browser_id, driver, page, modals,
+                                     clipboard, displays, store2)
 
-    page.stores_list[store2].click()
-    modal = modals(driver).store_details
-    time.sleep(0.25)
-    modal.details_list[0].expander.click()
-    modal.copy_button.click()
-    store2_value = clipboard.paste(display=displays[browser_id])
-
-    assert store1_value == store2_value, (f'Value of {store1} store is not '
-                                          f'equal to value of {store2} store')
+    assert store1_value == store2_value, (f'Value of {store1} '
+                                          f'store:{store1_value} \n is not '
+                                          f'equal to value of {store2} '
+                                          f'store:{store2_value}')
 
 
 @wt(parsers.parse('user of {browser_id} waits for all pods to '
@@ -133,7 +138,7 @@ def _assert_event(pod, desc):
     for key, val in desc.items():
         pod_value = getattr(pod, key.replace(' ', '_'))
         assert pod_value == str(val), \
-            'Pod {} is {} instead of {} in list'.format(key, pod_value, val)
+            f'Pod {key} is {pod_value} instead of {val} in list'
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees pod in all pods '

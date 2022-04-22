@@ -30,7 +30,8 @@ class OPLoggedIn(object):
                                               ' .filesystem-browser')
     archive_browser = ArchiveBrowser('.content-space-datasets .archive-browser')
     archive_container = ArchiveContainer('.archive-browser-container')
-    automation_page = WebItem('.content-space-automation', cls=WorkflowExecutionPage)
+    automation_page = WebItem('.content-space-automation',
+                              cls=WorkflowExecutionPage)
 
     def __init__(self, driver):
         self.web_elem = self.driver = driver

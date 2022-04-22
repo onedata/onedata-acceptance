@@ -21,8 +21,8 @@ class StoreDetails(Modal):
     close = NamedButton('.btn-default', text='Close')
     copy_button = Button('.copy-btn-icon')
 
-    details_list= WebItemsSequence('.store-content-table tr.data-row',
-                                         cls=StoreDetailsRow)
+    details_list = WebItemsSequence('.store-content-table tr.data-row',
+                                    cls=StoreDetailsRow)
 
     def __str__(self):
         return 'Store details modal'

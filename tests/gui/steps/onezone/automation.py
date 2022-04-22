@@ -440,3 +440,4 @@ def add_lambda_revision_to_workflow(selenium, browser_id, oz_page, lambda_name,
         pass
 
     revision.add_to_workflow.click()
+

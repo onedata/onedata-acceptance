@@ -16,7 +16,6 @@ from tests.gui.utils.core.web_elements import (Button, NamedButton,
 from tests.gui.utils.onezone.generic_page import Element, GenericPage
 from .common import EditBox, InputBox
 from .members_subpage import MembersPage
-from ..oneprovider.automation import WorkflowExecutionPage
 
 
 class Space(Element):

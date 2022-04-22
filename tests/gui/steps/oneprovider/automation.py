@@ -21,8 +21,8 @@ from tests.gui.steps.common.miscellaneous import press_enter_on_active_element, 
 @wt(parsers.parse('user of {browser_id} clicks {tab_name} '
                   'in the navigation bar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def change_tab_in_automation_subpage(selenium, browser_id, op_container,
-                                     tab_name):
+def click_button_in_navigation_tab(selenium, browser_id, op_container,
+                                   tab_name):
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
     op_container(driver).automation_page.navigation_tab[tab_name].click()
@@ -41,8 +41,7 @@ def choose_workflow_revision_to_run(selenium, browser_id, op_container,
 @wt(parsers.parse('user of {browser_id} confirms Workflow deployment '
                   'by clicking Run workflow button'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def choose_workflow_revision_to_run(selenium, browser_id, op_container,
-                                    revision, workflow):
+def choose_workflow_to_execute(selenium, browser_id, op_container):
     switch_to_iframe(selenium, browser_id)
     page = op_container(selenium[browser_id]).automation_page
     page.run_workflow_button.click()
@@ -59,8 +58,8 @@ def assert_status_in_workflow_visualizer(selenium, browser_id, op_container,
         f'Workflow status is not equal to {status}'
 
 
-@wt(parsers.parse('user of {browser_id} clicks on "{task_name}" task in "{'
-                  'lane_name}" lane in workflow visualizer'))
+@wt(parsers.parse('user of {browser_id} clicks on "{task_name}" task in '
+                  '"{lane_name}" lane in workflow visualizer'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_task_in_lane(selenium, browser_id, op_container, lane_name,
                           task_name):
@@ -76,7 +75,7 @@ def click_on_task_in_lane(selenium, browser_id, op_container, lane_name,
                   'in workflow visualizer'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_link_in_task_box(selenium, browser_id, op_container, lane_name,
-                              task_name):
+                              task_name, option):
     switch_to_iframe(selenium, browser_id)
     page = op_container(selenium[browser_id]).automation_page
     workflow_visualiser = page.workflow_visualiser

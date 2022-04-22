@@ -24,7 +24,7 @@ class PodsRecordStatus(PageObject):
 
 class EventRecord(PageObject):
     type = Label('.event-type')
-    reason = id =Label('.event-reason')
+    reason = id = Label('.event-reason')
 
 
 class FunctionPodsActivity(Modal):

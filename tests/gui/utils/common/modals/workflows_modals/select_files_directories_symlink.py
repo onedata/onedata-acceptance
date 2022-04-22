@@ -13,9 +13,9 @@ from tests.gui.utils.core.web_elements import Button
 from tests.gui.utils.oneprovider import FileBrowser
 
 
-class SelectFilesDirectoriesSymlinks(Modal):
-    file_browser = FileBrowser('.items-select-browser-part.upload-drop-zone'
-                               '-container')
+class SelectFiles(Modal):
+    file_browser = FileBrowser('.items-select-browser-part'
+                               '.upload-drop-zone-container')
     confirm_button = Button('.submit-selection-btn')
 
     def __str__(self):

@@ -18,7 +18,7 @@ class CreateNewStore(Modal):
     type_dropdown_menu = WebElement('.type-field .dropdown-field-trigger')
     data_type_dropdown_menu = WebElement('.dataType-field '
                                          '.dropdown-field-trigger')
-    user_input_toggle = Toggle('.one-way-toggle-track')
+    user_input_toggle = Toggle('.needsUserInput-field .one-way-toggle-track')
 
 
     def __str__(self):

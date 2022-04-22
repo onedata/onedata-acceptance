@@ -26,7 +26,7 @@ Feature: Workflows execution
     And user of browser logged as space-owner-user to Onezone service
 
 
-  Scenario: User executes inout workflow and checks pod statuses in Function pods activity modal
+  Scenario: User executes inout workflow and checks pod statuses in "Function pods activity" modal
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses Upload (json) button from menu bar to upload workflow "workflow_upload.json" to current dir without waiting for upload to finish
@@ -54,7 +54,7 @@ Feature: Workflows execution
     And user of browser sees event with following reason: Scheduled in modal "Function pods activity"
 
 
-  Scenario: User creates inout workflow through gui and executes it
+  Scenario: User creates in-out workflow through GUI and executes it
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" lambdas subpage
 
@@ -80,7 +80,7 @@ Feature: Workflows execution
     And user of browser enables User input toggle in modal "Create new store"
     And user of browser clicks on "Create" button in modal "Create new store"
 
-    #User creates Lane
+    # User creates Lane
     And user of browser clicks on create lane button in the middle of workflow visualizer
     And user of browser writes "Lane1" into lane name text field in modal "Create new lane"
     And user of browser clicks on "Create" button in modal "Create new lane"
@@ -92,7 +92,7 @@ Feature: Workflows execution
     And user of browser chooses "Object" in data type dropdown menu in modal "Create new store"
     And user of browser clicks on "Create" button in modal "Create new store"
 
-    #User creates task using previously created lambda
+    # User creates task using previously created lambda
     And user of browser clicks on add parallel box button in the middle of "Lane1" lane
     And user of browser clicks create task button in empty parallel box in "Lane1" lane
     And user of browser chooses "inout" revision of "inout" lambda to add to workflow
@@ -105,7 +105,7 @@ Feature: Workflows execution
     And user of browser writes "inout1" in description textfield in workflow Details tab
     And user of browser Saves workflow edition by clicking Save button from menu bar
 
-    #User executes created workflow and checks if output value is correct
+    # User executes created workflow and checks if output value is correct
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Automation of "space1" in the sidebar
     And user of browser clicks Run workflow in the navigation bar
@@ -147,23 +147,23 @@ Feature: Workflows execution
     And user of browser enables User input toggle in modal "Create new store"
     And user of browser clicks on "Create" button in modal "Create new store"
 
-    #User creates Lane
+    # User creates Lane
     And user of browser clicks on create lane button in the middle of workflow visualizer
     And user of browser writes "Lane1" into lane name text field in modal "Create new lane"
     And user of browser clicks on "Create" button in modal "Create new lane"
 
-    #User creates task using previously created lambda
+    # User creates task using previously created lambda
     And user of browser clicks on add parallel box button in the middle of "Lane1" lane
     And user of browser clicks create task button in empty parallel box in "Lane1" lane
     And user of browser chooses "inout" revision of "inout" lambda to add to workflow
-    And user of browser chooses "Itrated item" in value builder dropdown menu in "item" argument
-    And user of browser chooses "Constant value" in value builder dropdown menu in "item" argument
-    And user of browser chooses "Constant value" in value builder dropdown menu in "item" argument
+    And user of browser chooses "Itrated item" in value builder dropdown menu in "item" argument  #STEPY do modyfikacji
+    And user of browser chooses "Constant value" in value builder dropdown menu in "item" argument #STEPY do modyfikacji
+    And user of browser chooses "Constant value" in value builder dropdown menu in "item" argument #STEPY do modyfikacji
     And user of browser confirms create new task using Create button
     And user of browser sees task named "inout" in "Lane1" lane
 
-    #User creates task below using previously created task
-    And user of browser clicks on add parallel box button bellow "Parallel box" in "Lane1" lane
+    # User creates task below using previously created task
+    And user of browser clicks on add parallel box button bellow "Parallel box" in "Lane1" lane #STEP do dopisania
     And user of browser clicks create task button in empty parallel box in "Lane1" lane
     And user of browser chooses "inout" revision of "inout" lambda to add to workflow
     And user of browser chooses "Itrated item" in value builder dropdown menu in "item" argument
@@ -171,8 +171,6 @@ Feature: Workflows execution
     And user of browser chooses "Constant value" in value builder dropdown menu in "item" argument
     And user of browser confirms create new task using Create button
     And user of browser sees task named "inout" in "Lane1" lane
-
-
 
     # User creates checksums store for workflow
     And user of browser clicks Add store button in workflow visualizer
@@ -181,8 +179,7 @@ Feature: Workflows execution
     And user of browser chooses "Object" in data type dropdown menu in modal "Create new store"
     And user of browser clicks on "Create" button in modal "Create new store"
 
-
-    #User executes created workflow and checks if output value is correct
+    # User executes created workflow and checks if output value is correct
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Automation of "space1" in the sidebar
     And user of browser clicks Run workflow in the navigation bar
