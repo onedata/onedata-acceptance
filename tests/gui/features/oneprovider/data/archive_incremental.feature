@@ -106,6 +106,7 @@ Feature: Incremental archives operations
     And user of browser sees archive browser in archives tab in Oneprovider page
 
     # create archive
+    And user of browser is idle for 61 seconds
     And user of browser clicks on Create Archive button in archive browser
     And user of browser clicks on "Create" button in modal "Create Archive"
 
