@@ -48,10 +48,13 @@ from tests.gui.steps.oneprovider.spaces import *
 from tests.gui.steps.oneprovider.qos import *
 from tests.gui.steps.oneprovider.permissions import *
 from tests.gui.steps.oneprovider.browser import *
+from tests.gui.steps.oneprovider.archives import *
 from tests.gui.meta_steps.oneprovider.permissions import *
 from tests.gui.meta_steps.oneprovider.metadata import *
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.oneprovider.qos import *
+from tests.gui.meta_steps.oneprovider.dataset import *
+from tests.gui.meta_steps.oneprovider.archives import *
 
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
@@ -66,3 +69,4 @@ def screens():
 
 
 scenarios('../features/oneprovider/data/symlinks.feature')
+scenarios('../features/oneprovider/data/external_symlinks.feature')

@@ -72,9 +72,27 @@ def create_archive(browser_id, selenium, config, item_name, space_name,
                     displays, option, popups)
 
 
+@wt(parsers.parse('user of {browser_id} {option} to create archive for item '
+                  '"{item_name}" in "{space_name}" with following '
+                  'configuration and follow symbolic links set as'
+                  ' {follow_symbolic_links}:\n{config}'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def create_archive(browser_id, selenium, config, item_name, space_name,
+                   oz_page, op_container, tmp_memory, modals, clipboard,
+                   displays, option, popups, follow_symbolic_links):
+    if follow_symbolic_links == 'true':
+        follow_symbolic_links = True
+    elif follow_symbolic_links == 'false':
+        follow_symbolic_links = False
+
+    _create_archive(browser_id, selenium, config, item_name, space_name,
+                    oz_page, op_container, tmp_memory, modals, clipboard,
+                    displays, option, popups, follow_symbolic_links)
+
+
 def _create_archive(browser_id, selenium, config, item_name, space_name,
-                    oz_page, op_container, tmp_memory, modals,
-                    clipboard, displays, option, popups):
+                    oz_page, op_container, tmp_memory, modals, clipboard,
+                    displays, option, popups, follow_symbolic_links=True):
     option_in_data_row_menu = 'Create archive'
     button_name = 'Create'
     try:
@@ -103,9 +121,12 @@ def _create_archive(browser_id, selenium, config, item_name, space_name,
         create_nested_archives = data.get('create nested archives', False)
         incremental = data.get('incremental', False)
         include_dip = data.get('include DIP', False)
+        if follow_symbolic_links:
+            follow_symbolic_links = data.get('follow symbolic links', True)
+
         if description:
-            write_description_in_create_archive_modal(selenium, browser_id, modals,
-                                                      description)
+            write_description_in_create_archive_modal(selenium, browser_id,
+                                                      modals, description)
         if layout == 'BagIt':
             click_modal_button(selenium, browser_id, layout,
                                option_in_data_row_menu, modals)
@@ -116,10 +137,14 @@ def _create_archive(browser_id, selenium, config, item_name, space_name,
         if incremental:
             if incremental['enabled']:
                 option = 'incremental'
-                check_toggle_in_create_archive_modal(browser_id, selenium, modals,
-                                                     option)
+                check_toggle_in_create_archive_modal(browser_id, selenium,
+                                                     modals, option)
         if include_dip:
             option = 'include_dip'
+            check_toggle_in_create_archive_modal(browser_id, selenium, modals,
+                                                 option)
+        if not follow_symbolic_links:
+            option = 'follow_symbolic_links'
             check_toggle_in_create_archive_modal(browser_id, selenium, modals,
                                                  option)
         click_modal_button(selenium, browser_id, button_name,
