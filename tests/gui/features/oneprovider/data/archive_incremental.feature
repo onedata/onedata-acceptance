@@ -103,15 +103,14 @@ Feature: Incremental archives operations
     And user of browser succeeds to create archive for item "dir4" in "space1" with following configuration:
         description: first archive
         layout: plain
-
     And user of browser sees archive browser in archives tab in Oneprovider page
-    And user of browser copies archive with description: "first archive" name in archive browser to clipboard
 
     # create archive
+    And user of browser is idle for 61 seconds
     And user of browser clicks on Create Archive button in archive browser
     And user of browser clicks on "Create" button in modal "Create Archive"
 
-    And user of browser clicks on menu for archive that name was copied to clipboard
+    And user of browser clicks on menu for archive with description: "first archive" in archive browser
     And user of browser clicks "Create incremental archive" option in data row menu in archive browser
     And user of browser clicks on "Create" button in modal "Create Archive"
     And user of browser sees archive browser in archives tab in Oneprovider page
