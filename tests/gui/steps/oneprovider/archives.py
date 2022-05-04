@@ -176,26 +176,6 @@ def assert_name_same_as_latest_created(browser_id, tmp_memory, modals,
     assert latest_created_name == base_archive_name, err_msg
 
 
-@wt(parsers.re(r'user of (?P<browser_id>.*?) copies archive with'
-               r' description: "(?P<description>.*?)" name in archive browser '
-               r'to clipboard'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def copy_archive_name_to_clipboard(browser_id, tmp_memory, description,
-                                   clipboard, displays):
-    browser = tmp_memory[browser_id]['archive_browser']
-    archive = get_archive_with_description(browser, description)
-    clipboard.copy(archive.name, display=displays[browser_id])
-
-
-@wt(parsers.parse('user of {browser_id} clicks on menu for archive that'
-                  ' name was copied to clipboard'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_menu_for_named_archive(browser_id, tmp_memory, clipboard, displays):
-    browser = tmp_memory[browser_id]['archive_browser']
-    item_name = clipboard.paste(display=displays[browser_id])
-    browser.data[item_name].menu_button()
-
-
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on menu for archive '
                'with description: "(?P<description>.*?)" in archive browser'))
 def click_menu_for_archive(browser_id, tmp_memory, description):
