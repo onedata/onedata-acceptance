@@ -34,7 +34,7 @@ Feature: Basic workflows management
   Scenario: User sees new workflow after creating it
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses Add new workflow button from menu bar in workflows subpage
+    And user of browser uses "Add new workflow" button from menu bar in workflows subpage
     And user of browser writes "Workflow1" into workflow name text field
     And user of browser confirms create new workflow using Create button
     And user of browser opens inventory "inventory1" workflows subpage
@@ -72,7 +72,7 @@ Feature: Basic workflows management
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser clicks on add parallel box button in the middle of "Lane1" lane
     And user of browser clicks create task button in empty parallel box in "Lane1" lane
-    And user of browser uses Add new lambda button from menu bar in lambdas subpage
+    And user of browser uses "Add new lambda" button from menu bar in lambdas subpage
     And user of browser writes "Lambda1" into lambda name text field
     And user of browser writes "docker_image_example" into docker image text field
     And user of browser confirms create new lambda using Create button

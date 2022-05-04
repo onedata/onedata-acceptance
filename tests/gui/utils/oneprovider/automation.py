@@ -77,15 +77,14 @@ class WorkflowVisualiser(PageObject):
 class WorkflowExecutionPage(PageObject):
     navigation_tab = WebItemsSequence('.nav-tabs .tab-label', cls=NavigationTab)
 
-    workflow_list = WebItemsSequence('.atm-workflow-schemas-list'
-                                     ' .list-entry', cls=Workflow)
+    available_workflow_list = WebItemsSequence('.atm-workflow-schemas-list'
+                                               ' .list-entry', cls=Workflow)
     input_icon = Button('.tag-creator-trigger')
     run_workflow_button = NamedButton('.btn-submit', text='Run Workflow')
 
-    workflow_list_row = WebItemsSequence('.atm-workflow-executions-table '
-                                         'tr.data-row',
-                                         cls=ExecutionRecord)
+    executed_workflow_list = WebItemsSequence('.atm-workflow-executions-table '
+                                              'tr.data-row',
+                                              cls=ExecutionRecord)
 
     workflow_visualiser = WebItem('.workflow-visualiser',
                                   cls=WorkflowVisualiser)
-

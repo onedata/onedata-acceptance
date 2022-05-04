@@ -28,18 +28,18 @@ def click_button_in_navigation_tab(selenium, browser_id, op_container,
     op_container(driver).automation_page.navigation_tab[tab_name].click()
 
 
-@wt(parsers.parse('user of {browser_id} chooses to run "{revision}" '
-                  'revision of "{workflow}" workflow'))
+@wt(parsers.parse('user of {browser_id} chooses to run revision described '
+                  '"{revision}" of "{workflow}" workflow'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_workflow_revision_to_run(selenium, browser_id, op_container,
                                     revision, workflow):
     switch_to_iframe(selenium, browser_id)
     page = op_container(selenium[browser_id]).automation_page
-    page.workflow_list[workflow].revision_list[revision].click()
+    page.available_workflow_list[workflow].revision_list[revision].click()
 
 
-@wt(parsers.parse('user of {browser_id} confirms Workflow deployment '
-                  'by clicking Run workflow button'))
+@wt(parsers.parse('user of {browser_id} confirms workflow execution '
+                  'by clicking "Run workflow" button'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_workflow_to_execute(selenium, browser_id, op_container):
     switch_to_iframe(selenium, browser_id)
@@ -47,7 +47,7 @@ def choose_workflow_to_execute(selenium, browser_id, op_container):
     page.run_workflow_button.click()
 
 
-@wt(parsers.parse('user of {browser_id} sees {status} status in status '
+@wt(parsers.parse('user of {browser_id} sees "{status}" status in status '
                   'bar in workflow visualizer'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_status_in_workflow_visualizer(selenium, browser_id, op_container,

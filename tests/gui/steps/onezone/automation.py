@@ -137,7 +137,7 @@ def assert_workflow_exists(selenium, browser_id, oz_page, workflow, option):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) uses '
-               '(?P<option>Add new lambda|Add new workflow) button from '
+               '"(?P<option>Add new lambda|Add new workflow)" button from '
                'menu bar in (lambdas|workflows) subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_add_new_button_in_menu_bar(selenium, browser_id, oz_page, option):
@@ -279,7 +279,7 @@ def confirm_workflow_creation(selenium, browser_id, oz_page):
     page.workflows_page.create_button.click()
 
 
-@wt(parsers.parse('user of {browser_id} clicks Add store button '
+@wt(parsers.parse('user of {browser_id} clicks "Add store" button '
                   'in workflow visualizer'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_add_store_button(selenium, browser_id, oz_page):

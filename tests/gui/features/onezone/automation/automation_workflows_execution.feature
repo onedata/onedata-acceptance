@@ -34,13 +34,13 @@ Feature: Workflows execution
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Automation of "space1" in the sidebar
     And user of browser clicks Run workflow in the navigation bar
-    And user of browser chooses to run "Workflow1" revision of "Workflow1" workflow
+    And user of browser chooses to run revision described "Workflow1_revision1" of "Workflow1" workflow
     And user of browser chooses "dir1" file as initial value for workflow in "Select files" modal
-    And user of browser confirms Workflow deployment by clicking Run workflow button
+    And user of browser confirms workflow execution by clicking "Run workflow" button
     And user of browser waits for all workflows to start
     And user of browser waits for all workflows to finish
     And user of browser clicks on first executed workflow
-    Then user of browser sees Finished status in status bar in workflow visualizer
+    Then user of browser sees "Finished" status in status bar in workflow visualizer
 
     # User tests Function pods activity modal
     And user of browser clicks on "inout" task in "Lane1" lane in workflow visualizer
@@ -59,13 +59,13 @@ Feature: Workflows execution
     And user of browser opens inventory "inventory1" lambdas subpage
 
     # User manually creates inout lambda
-    And user of browser uses Add new lambda button from menu bar in lambdas subpage
+    And user of browser uses "Add new lambda" button from menu bar in lambdas subpage
     And user of browser writes "inout" into lambda name text field
     And user of browser writes "docker.onedata.org/in-out:v1" into docker image text field
     And user of browser disables lambdas Mount space toggle
     And user of browser adds argument named "data" of "Object" type
     And user of browser adds result named "data" of "Object" type
-    And user of browser confirms create new lambda using Create buttonn
+    And user of browser confirms create new lambda using Create button
     And user of browser sees "inout" in lambdas list in inventory lambdas subpage
 
     # User manually creates workflow using inout lambda
@@ -73,11 +73,11 @@ Feature: Workflows execution
     And user of browser creates workflow "Workflow1"
 
     # User creates input store for workflow
-    And user of browser clicks Add store button in workflow visualizer
+    And user of browser clicks "Add store" button in workflow visualizer
     And user of browser writes "input" into store name text field in modal "Create new store"
     And user of browser chooses "Tree forest" in type dropdown menu in modal "Create new store"
     And user of browser chooses "Any file" in data type dropdown menu in modal "Create new store"
-    And user of browser enables User input toggle in modal "Create new store"
+    And user of browser enables "User input" toggle in modal "Create new store"
     And user of browser clicks on "Create" button in modal "Create new store"
 
     # User creates Lane
@@ -86,7 +86,7 @@ Feature: Workflows execution
     And user of browser clicks on "Create" button in modal "Create new lane"
 
     # User creates output store for workflow
-    And user of browser clicks Add store button in workflow visualizer
+    And user of browser clicks "Add store" button in workflow visualizer
     And user of browser writes "output" into store name text field in modal "Create new store"
     And user of browser chooses "List" in type dropdown menu in modal "Create new store"
     And user of browser chooses "Object" in data type dropdown menu in modal "Create new store"
@@ -102,19 +102,19 @@ Feature: Workflows execution
 
     # User changes details of workflow revision
     And user of browser changes workflow view to "Details" tab
-    And user of browser writes "inout1" in description textfield in workflow Details tab
+    And user of browser writes "Workflow1_revision1" in description textfield in workflow Details tab
     And user of browser Saves workflow edition by clicking Save button from menu bar
 
     # User executes created workflow and checks if output value is correct
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Automation of "space1" in the sidebar
     And user of browser clicks Run workflow in the navigation bar
-    And user of browser chooses to run "inout1" revision of "Workflow1" workflow
+    And user of browser chooses to run revision described "Workflow1_revision1" of "Workflow1" workflow
     And user of browser chooses "dir1" file as initial value for workflow in "Select files" modal
-    And user of browser confirms Workflow deployment by clicking Run workflow button
+    And user of browser confirms workflow execution by clicking "Run workflow" button
     And user of browser waits for all workflows to start
     And user of browser waits for all workflows to finish
     And user of browser clicks on first executed workflow
-    And user of browser sees Finished status in status bar in workflow visualizer
-    Then user of browser compares content of "input" store and "output" store
+    And user of browser sees "Finished" status in status bar in workflow visualizer
+    Then user of browser sees that content of "input" store is the same as content of "output" store
 

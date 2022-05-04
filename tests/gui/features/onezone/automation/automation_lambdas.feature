@@ -23,7 +23,7 @@ Feature: Basic lambdas management
   Scenario: User sees new lambda after creating it
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" lambdas subpage
-    And user of browser uses Add new lambda button from menu bar in lambdas subpage
+    And user of browser uses "Add new lambda" button from menu bar in lambdas subpage
     And user of browser writes "Lambda1" into lambda name text field
     And user of browser writes "docker_image_example" into docker image text field
     And user of browser confirms create new lambda using Create button
@@ -33,7 +33,7 @@ Feature: Basic lambdas management
   Scenario: User sees new lambda revision after creating it
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" lambdas subpage
-    And user of browser uses Add new lambda button from menu bar in lambdas subpage
+    And user of browser uses "Add new lambda" button from menu bar in lambdas subpage
     And user of browser writes "Lambda1" into lambda name text field
     And user of browser writes "docker_image_example" into docker image text field
     And user of browser confirms create new lambda using Create button
@@ -47,7 +47,7 @@ Feature: Basic lambdas management
   Scenario: User sees new lambda revision after using redesign as new revision
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" lambdas subpage
-    And user of browser uses Add new lambda button from menu bar in lambdas subpage
+    And user of browser uses "Add new lambda" button from menu bar in lambdas subpage
     And user of browser writes "Lambda1" into lambda name text field
     And user of browser writes "docker_image_example" into docker image text field
     And user of browser confirms create new lambda using Create buttonn

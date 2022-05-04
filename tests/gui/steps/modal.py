@@ -503,7 +503,7 @@ def choose_option_in_dropdown_menu_in_modal(selenium, browser_id, modals,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>disables|enables) '
-               '(?P<toggle_name>.*) in modal "(?P<modal_name>.*)"'))
+               '"(?P<toggle_name>.*)" in modal "(?P<modal_name>.*)"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def switch_toggle_in_modal(selenium, browser_id, modals, toggle_name,
                            option, modal_name):

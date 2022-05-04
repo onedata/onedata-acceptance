@@ -91,7 +91,7 @@ class WorkflowsPage(PageObject):
 
     workflow_name = WebItem('.name-field .text-like-field', cls=InputBox)
 
-    create_button = NamedButton('.btn', text='Create')
+    create_button = NamedButton('.btn-primary', text='Create')
 
     task_form = WebItem('.task-form-container', cls=TaskAddForm)
 

@@ -47,7 +47,8 @@ def change_tab_in_automation_subpage(page, tab_name):
                '(?P<option>start|finish)'))
 @repeat_failed(interval=1, timeout=180,
                exceptions=(AssertionError, StaleElementReferenceException))
-def wait_for_workflows_in_automation_subpage(selenium, browser_id, op_container, option):
+def wait_for_workflows_in_automation_subpage(selenium, browser_id, op_container,
+                                             option):
     switch_to_iframe(selenium, browser_id)
     page = op_container(selenium[browser_id]).automation_page
     if option == 'start':
@@ -55,7 +56,7 @@ def wait_for_workflows_in_automation_subpage(selenium, browser_id, op_container,
     else:
         change_tab_in_automation_subpage(page, 'Ongoing')
 
-    assert len(page.workflow_list_row) == 0, 'Waiting workflows did not start'
+    assert len(page.executed_workflow_list) == 0, 'Waiting workflows did not start'
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on first executed workflow'))
@@ -64,7 +65,7 @@ def expand_workflow_record(selenium, browser_id, op_container):
     switch_to_iframe(selenium, browser_id)
     page = op_container(selenium[browser_id]).automation_page
     change_tab_in_automation_subpage(page, 'Ended')
-    page.workflow_list_row[0].click()
+    page.executed_workflow_list[0].click()
 
 
 def get_store_content(browser_id, driver, page, modals, clipboard, displays,
@@ -80,8 +81,8 @@ def get_store_content(browser_id, driver, page, modals, clipboard, displays,
     return store1_value
 
 
-@wt(parsers.parse('user of {browser_id} compares content of "{store1}" store '
-                  'and "{store2}" store'))
+@wt(parsers.parse('user of {browser_id} sees that content of "{store1}" store '
+                  'is the same as content of "{store2}" store'))
 def compare_store_contents(selenium, browser_id, op_container, store1,
                            store2, modals, clipboard, displays, tmp_memory):
     switch_to_iframe(selenium, browser_id)
@@ -100,14 +101,19 @@ def compare_store_contents(selenium, browser_id, op_container, store1,
                                           f'store:{store2_value}')
 
 
+def change_tab_in_function_pods_activity_modal(modal, tab_name):
+    modal.tabs[tab_name].click()
+    time.sleep(0.25)
+
+
 @wt(parsers.parse('user of {browser_id} waits for all pods to '
                   'finish execution in modal "Function pods activity"'))
 @repeat_failed(interval=1, timeout=180,
                exceptions=(AssertionError, StaleElementReferenceException))
 def wait_for_ongoing_pods_to_be_terminated(selenium, browser_id, modals):
     modal = modals(selenium[browser_id]).function_pods_activity
-    time.sleep(0.25)
-    modal.tabs['Current'].click()
+    change_tab_in_function_pods_activity_modal(modal, "Current")
+
     assert len(modal.pods_list) == 0, 'Pods has not been terminated'
 
 
@@ -116,8 +122,8 @@ def wait_for_ongoing_pods_to_be_terminated(selenium, browser_id, modals):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_first_terminated_pod(selenium, browser_id, modals):
     modal = modals(selenium[browser_id]).function_pods_activity
-    time.sleep(0.25)
-    modal.tabs['All'].click()
+    change_tab_in_function_pods_activity_modal(modal, "All")
+
     modal.pods_list[0].click()
 
 
