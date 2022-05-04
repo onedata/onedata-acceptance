@@ -41,7 +41,7 @@ Feature: Onepanel features auto-cleaning
     And user of space_owner_browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir without waiting for upload to finish
     And user of space_owner_browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir without waiting for upload to finish
     And user of space_owner_browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
-    And user of space_owner_browser changes current working directory to home using breadcrumbs
+    And user of space_owner_browser changes current working directory to space root using breadcrumbs
     And user of space_owner_browser is idle for 2 seconds
 
     # replicate data
@@ -118,7 +118,7 @@ Feature: Onepanel features auto-cleaning
     And user of space_owner_browser clicks and presses enter on item named "dir1" in file browser
     And user of space_owner_browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir without waiting for upload to finish
     And user of space_owner_browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
-    And user of space_owner_browser changes current working directory to home using breadcrumbs
+    And user of space_owner_browser changes current working directory to space root using breadcrumbs
     And user of space_owner_browser is idle for 10 seconds
 
     # replicate data
@@ -194,7 +194,7 @@ Feature: Onepanel features auto-cleaning
     And user of space_owner_browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir without waiting for upload to finish
     And user of space_owner_browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
     And user of space_owner_browser is idle for 10 seconds
-    And user of space_owner_browser changes current working directory to home using breadcrumbs
+    And user of space_owner_browser changes current working directory to space root using breadcrumbs
 
     # replicate data
     And user of space_owner_browser replicates "dir1" to provider "oneprovider-2"

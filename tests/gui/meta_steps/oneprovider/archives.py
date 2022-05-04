@@ -77,13 +77,13 @@ def create_archive(browser_id, selenium, config, item_name, space_name,
                   'configuration and follow symbolic links set as'
                   ' {follow_symbolic_links}:\n{config}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def create_archive(browser_id, selenium, config, item_name, space_name,
-                   oz_page, op_container, tmp_memory, modals, clipboard,
-                   displays, option, popups, follow_symbolic_links):
-    if follow_symbolic_links == 'true':
-        follow_symbolic_links = True
-    elif follow_symbolic_links == 'false':
-        follow_symbolic_links = False
+def create_archive_with_follow_symbolic_link(browser_id, selenium, config,
+                                             item_name, space_name, oz_page,
+                                             op_container, tmp_memory, modals,
+                                             clipboard, displays, option,
+                                             popups, follow_symbolic_links):
+
+    follow_symbolic_links = follow_symbolic_links == 'true'
 
     _create_archive(browser_id, selenium, config, item_name, space_name,
                     oz_page, op_container, tmp_memory, modals, clipboard,
