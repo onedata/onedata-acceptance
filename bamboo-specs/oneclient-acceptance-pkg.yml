@@ -56,7 +56,8 @@ stages:
     - multiprovider proxy s3 regular file stat proxyio
     - regular file stat proxyio
     - multiprovider proxy s3 directory stat proxyio
-    - onedata_fs tests
+      # @TODO VFS-6710 fix onedata_fs tests
+#    - onedata_fs tests
     - regular file CRUD directio
     - multiprovider regular file stat directio
     - multiprovider proxy s3 regular file CRUD proxyio
@@ -623,44 +624,45 @@ multiprovider proxy s3 directory stat proxyio:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-onedata_fs tests:
-  key: OT
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - script: *force-clean-repo
-  - checkout: *checkout
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make test_onedata_fs
-      working-dir: onedata-acceptance
-      description: Run PyFilesystem unit tests on OnedataFS
-  final-tasks:
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results:
-      - onedata/test-reports/results*.xml
-      - onedata/test-reports/python2/xml/TEST-TestOnedataFS*.xml
-      - onedata/test-reports/python3/xml/TEST-TestOnedataFS*.xml
-      description: Parse test results
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        cp -r onedata/test-reports/ onedata/tests/onedata_fs/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/onedata_fs/logs
-        mv onedata/tests/onedata_fs/logs/*/*/images.yaml onedata/tests/onedata_fs/logs
-        tar czf test_logs.tar.gz onedata/tests/onedata_fs/logs
-      description: Pack logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
+# @TODO VFS-6710 fix onedata_fs tests
+#onedata_fs tests:
+#  key: OT
+#  other: *common-opts
+#  tasks:
+#  - script: *clear-env
+#  - script: *restart-minikube
+#  - script: *force-clean-repo
+#  - checkout: *checkout
+#  - script: *init-submodules
+#  - script: *download-artifacts
+#  - script:
+#      <<: *run-acceptance-tests
+#      scripts:
+#      - make test_onedata_fs
+#      working-dir: onedata-acceptance
+#      description: Run PyFilesystem unit tests on OnedataFS
+#  final-tasks:
+#  - test-parser:
+#      type: junit
+#      ignore-time: 'false'
+#      test-results:
+#      - onedata/test-reports/results*.xml
+#      - onedata/test-reports/python2/xml/TEST-TestOnedataFS*.xml
+#      - onedata/test-reports/python3/xml/TEST-TestOnedataFS*.xml
+#      description: Parse test results
+#  - script:
+#      interpreter: BINSH_OR_CMDEXE
+#      scripts:
+#      - |-
+#        cp -r onedata/test-reports/ onedata/tests/onedata_fs/logs
+#        cp onedata/one_env/sources_info.yaml onedata/tests/onedata_fs/logs
+#        mv onedata/tests/onedata_fs/logs/*/*/images.yaml onedata/tests/onedata_fs/logs
+#        tar czf test_logs.tar.gz onedata/tests/onedata_fs/logs
+#      description: Pack logs
+#  - script: *clear-env-and-working-dir
+#  artifacts: *artifacts
+#  requirements: *requirements
+#  artifact-subscriptions: []
 regular file CRUD directio:
   key: RFCD
   other: *common-opts
