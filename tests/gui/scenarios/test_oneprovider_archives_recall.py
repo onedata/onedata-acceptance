@@ -74,3 +74,4 @@ def screens():
 
 
 scenarios('../features/oneprovider/data/archive_recall.feature')
+scenarios('../features/oneprovider/multiprovider/cancel_archive_recall.feature')

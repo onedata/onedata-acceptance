@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 import re
+import time
 
 from datetime import datetime
 from selenium.webdriver.support.ui import WebDriverWait as Wait
@@ -442,9 +443,38 @@ def assert_info_in_archive_recall_information_modal(selenium, browser_id,
                             f'not match {expected_progress} in archive recall '
                             f'information modal, raw text content: "{text}"')
     else:
-        assert text.lower() in information.lower(), (
+        assert text.lower() in information.lower().replace('\n', ''), (
             f'{info}: {text} does not match {information} in archive recall '
             f'information modal')
+
+
+@wt(parsers.parse('user of {browser_id} fails to see statistics of {info} '
+                  'in archive recall information modal'))
+def fail_to_see_recalled_data_statistics(selenium, browser_id, modals, info):
+
+    recall_modal = modals(selenium[browser_id]).archive_recall_information
+    information = getattr(recall_modal, transform(info)).split('/')
+    err_msg = f'There is visible statistics of {info}'
+    assert information[0] == '', err_msg
+
+
+@wt(parsers.parse('user of {browser_id} waits for status "{status}" in archive '
+                  'recall information modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def wait_for_status_in_archive_recall_information_modal(selenium, browser_id,
+                                                        modals, status):
+    recall_status = modals(selenium[browser_id]
+                           ).archive_recall_information.status
+    for i in range(100):
+        if recall_status == status:
+            break
+        else:
+            time.sleep(2)
+            recall_status = modals(selenium[browser_id]
+                                   ).archive_recall_information.status
+    else:
+        err_msg = f'Archive status:{recall_status} does not match expected'
+        assert recall_status == status, err_msg
 
 
 @wt(parsers.parse('user of {browser_id} sees that recall has been {stop} at '

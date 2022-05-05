@@ -545,6 +545,7 @@ def choose_provider_in_file_browser(selenium, browser_id, provider, hosts,
 
 @wt(parsers.parse('user of {browser_id} clicks on Choose other Oneprovider '
                   'on file browser page'))
+@repeat_failed(timeout=WAIT_BACKEND)
 def click_choose_other_oneprovider_on_file_browser(selenium, browser_id,
                                                    oz_page):
     driver = selenium[browser_id]
