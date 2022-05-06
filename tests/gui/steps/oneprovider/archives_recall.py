@@ -111,8 +111,12 @@ def assert_not_all_files_were_recalled(selenium, browser_id, modals, kind):
                   ' greater than 0'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_number_of_item_greater_than_zero(selenium, browser_id, modals):
-    number = int(modals(selenium[browser_id]
-                        ).archive_recall_information.items_failed)
+    driver = selenium[browser_id]
+    items_failed = modals(driver).archive_recall_information.items_failed
+    try:
+        number = int(items_failed)
+    except ValueError:
+        number = int(items_failed.split(' ')[0])
     assert number > 0, 'Zero items failed'
 
 
