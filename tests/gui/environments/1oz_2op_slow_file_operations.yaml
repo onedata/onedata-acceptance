@@ -1,5 +1,5 @@
 # Name of the scenario to run
-scenario: "scenario-1oz-1op"
+scenario: "scenario-1oz-2op"
 
 # Determines if onedata components should be started from pre-compiled sources
 # or pre-installed packages inside dockers. When enabled, sources are expected
@@ -39,3 +39,12 @@ oneprovider-1:
           {rename_file_chunk_size, 512}
       ]}
     ].
+
+oneprovider-2:
+  workerOverlayConfig: |-
+    [
+      {op_worker, [
+          {rename_file_chunk_size, 512}
+      ]}
+    ].
+    

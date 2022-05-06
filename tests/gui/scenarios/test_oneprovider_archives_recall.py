@@ -52,6 +52,7 @@ from tests.gui.steps.oneprovider.permissions import *
 from tests.gui.steps.oneprovider.archives import *
 from tests.gui.steps.oneprovider.dataset import *
 from tests.gui.steps.oneprovider.browser import *
+from tests.gui.steps.oneprovider.archives_recall import *
 
 from tests.gui.steps.modal import *
 from tests.gui.steps.oneprovider_common import *
@@ -74,3 +75,5 @@ def screens():
 
 
 scenarios('../features/oneprovider/data/archive_recall.feature')
+scenarios('../features/oneprovider/multiprovider/'
+          'archive_recall_multiple_providers.feature')
