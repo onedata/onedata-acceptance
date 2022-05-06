@@ -259,17 +259,4 @@ def waits_for_preserved_state(browser_id, status, description, tmp_memory):
             time.sleep(2)
 
 
-@wt(parsers.parse('user of {browser_id} waits for recalled status tag for '
-                  '"{name}" in file browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def wait_for_recalled_status_tag(browser_id, name, tmp_memory):
-    status_type = 'recalled'
-    browser = tmp_memory[browser_id]['file_browser']
-
-    for _ in range(100):
-        is_visible = browser.data[name].is_tag_visible(status_type)
-        if is_visible:
-            break
-        else:
-            time.sleep(2)
 

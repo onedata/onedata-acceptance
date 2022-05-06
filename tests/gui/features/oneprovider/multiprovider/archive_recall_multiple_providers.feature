@@ -46,8 +46,8 @@ Feature: Archive recall tests using multiple providers
     And user of browser clicks on "oneprovider-2" provider on file browser page
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser clicks on recalling status tag for "file_recalled.txt" in file browser
-    And user of browser clicks on "Cancel Recall" button in modal "Archive Recall Information"
-    And user of browser clicks on "yes" button in modal "Cancel Recall"
+    And user of browser clicks on "Cancel recall" button in modal "Archive recall information"
+    And user of browser clicks on "Yes" button in modal "Cancel recall"
 
     Then user of browser waits for status "Cancelled" in archive recall information modal
     And user of browser sees status: "Cancelled" in archive recall information modal
