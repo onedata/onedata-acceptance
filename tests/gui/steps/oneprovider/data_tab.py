@@ -128,8 +128,9 @@ def change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, browser_id, path,
         which_browser = 'archive browser'
         breadcrumbs = getattr(op_container(selenium[browser_id]),
                               transform(which_browser)).breadcrumbs
-    if path == 'home':
-        breadcrumbs.home()
+    path = transform(path)
+    if path == 'space_root':
+        breadcrumbs.space_root()
     else:
         breadcrumbs.chdir(path, archive)
 

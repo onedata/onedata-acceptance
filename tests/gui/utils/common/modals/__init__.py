@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 from .archives_modals.archive_recall_information import ArchiveRecallInformation
 from .archives_modals.cancel_recall import CancelRecall
+from .files_modals.external_symbolic_link import ExternalSymbolicLink
 from .management_modals.change_privileges import ChangePrivilegesModal
 from .tokens_modals.clean_up_obsolete_tokens import CleanUpObsoleteTokensModal
 from .files_modals.create_dir import CreateDir
@@ -78,6 +79,8 @@ class Modals(object):
     details_modal = WebItem('.modal-dialog', cls=DetailsModal)
     symbolic_link_details = WebItem('.modal-dialog',
                                     cls=SymbolicLinkDetailsModal)
+    external_symbolic_link = WebItem('.modal-dialog',
+                                     cls=ExternalSymbolicLink)
     edit_permissions = WebItem('.modal-dialog', cls=EditPermissionsModal)
 
     # troubles modals

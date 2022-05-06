@@ -158,7 +158,7 @@ Feature: Basic operations on public shares in file browser
     And user of space_owner_browser clicks "Save" confirmation button in displayed modal
 
     # Space owner user hands over shared directory
-    And user of space_owner_browser changes current working directory to home using breadcrumbs
+    And user of space_owner_browser changes current working directory to space root using breadcrumbs
     And user of space_owner_browser hands "share_dir1" share's URL of "dir1" to user of browser1
 
     # User fails to download file1

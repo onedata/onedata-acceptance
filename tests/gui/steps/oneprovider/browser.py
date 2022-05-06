@@ -10,6 +10,7 @@ from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 from tests.gui.utils.generic import transform, parse_seq
 import time
+import re
 
 
 @wt(parsers.parse('user of {browser_id} clicks and presses enter on item named'
@@ -77,6 +78,10 @@ def is_displayed_breadcrumbs_in_data_tab_in_op_correct(selenium, browser_id,
     driver = selenium[browser_id]
     breadcrumbs = getattr(op_container(driver),
                           transform(which_browser)).breadcrumbs.pwd()
+
+    if which_browser == 'archive file browser':
+        breadcrumbs = re.split('/', breadcrumbs, 2)[-1]
+        path = re.split('/', path, 2)[-1]
 
     assert path == breadcrumbs, (f'expected breadcrumbs {path}; '
                                  f'displayed: {breadcrumbs}')

@@ -104,6 +104,7 @@ def create_file_in_op_with_tokens(client, user, users, space, name, hosts,
                '(?P<host>.*)'))
 def create_dir_in_op(client, user, users, space, abs_path, hosts, tmp_memory,
                      host, selenium, op_container, result, modals, oz_page):
+    cwd = 'space root'
     full_path = '{}/{}'.format(space, abs_path)
     client_lower = client.lower()
     if client_lower == 'web gui':
@@ -117,8 +118,7 @@ def create_dir_in_op(client, user, users, space, abs_path, hosts, tmp_memory,
                                   tmp_memory, op_container, result, space,
                                   modals, oz_page)
             change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, user,
-                                                           'home',
-                                                           op_container)
+                                                           cwd, op_container)
         else:
             create_item_in_op_gui(selenium, user, os.path.dirname(abs_path),
                                   'directory', os.path.basename(abs_path),

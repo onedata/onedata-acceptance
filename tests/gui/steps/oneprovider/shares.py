@@ -176,7 +176,7 @@ def change_cwd_using_breadcrumbs(selenium, browser_id, path, op_container):
                   ' in shares view'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def change_cwd_to_home_using_breadcrumbs(selenium, browser_id, op_container):
-    op_container(selenium[browser_id]).shares_page.breadcrumbs.home()
+    op_container(selenium[browser_id]).shares_page.breadcrumbs.space_root()
 
 
 @wt(parsers.parse('user of {browser_id} sees that share\'s '

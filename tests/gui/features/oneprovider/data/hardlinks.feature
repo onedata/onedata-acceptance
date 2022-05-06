@@ -93,7 +93,7 @@ Feature: Basic files tab operations on hardlinks in file browser
     And user of browser sees hardlink status tag with "2 hard links" text for "file2" in file browser
 
     # second hardlink in space1
-    And user of browser changes current working directory to home using breadcrumbs
+    And user of browser changes current working directory to space root using breadcrumbs
     And user of browser clicks "Place hard link" button from file browser menu bar
     And user of browser sees only items named ["dir1", "file1", "file2"] in file browser
     And user of browser sees hardlink status tag with "3 hard links" text for "file2" in file browser
@@ -216,7 +216,7 @@ Feature: Basic files tab operations on hardlinks in file browser
     And user of browser clicks "Save" confirmation button in displayed modal
 
     # check permission of original file
-    And user of browser changes current working directory to home using breadcrumbs
+    And user of browser changes current working directory to space root using breadcrumbs
     And user of browser clicks on menu for "file1" file in file browser
     And user of browser clicks "Permissions" option in data row menu in file browser
     Then user of browser sees that current permission is "775"
@@ -231,7 +231,7 @@ Feature: Basic files tab operations on hardlinks in file browser
     And user of browser clicks "Place hard link" button from file browser menu bar
 
     # change ACL permission of created hardlink
-    And user of browser changes current working directory to home using breadcrumbs
+    And user of browser changes current working directory to space root using breadcrumbs
     And user of browser clicks on menu for "file1" file in file browser
     And user of browser clicks "Permissions" option in data row menu in file browser
     And user of browser sees that "Edit permissions" modal has appeared

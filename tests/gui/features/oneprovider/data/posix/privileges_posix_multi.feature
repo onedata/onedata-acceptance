@@ -141,7 +141,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     And user of space_owner_browser sees file browser in files tab in Oneprovider page
     And user of space_owner_browser clicks and presses enter on item named "dir1" in file browser
     And user of space_owner_browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
-    And user of space_owner_browser changes current working directory to home using breadcrumbs
+    And user of space_owner_browser changes current working directory to space root using breadcrumbs
 
     # Space-owner-user changes permission code
     And user of space_owner_browser sets dir1 POSIX 753 privileges in "space2"
@@ -165,7 +165,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     And user of space_owner_browser sees file browser in files tab in Oneprovider page
     And user of space_owner_browser clicks and presses enter on item named "dir1" in file browser
     And user of space_owner_browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
-    And user of space_owner_browser changes current working directory to home using breadcrumbs
+    And user of space_owner_browser changes current working directory to space root using breadcrumbs
 
 	# Space-owner-user changes permission code
     And user of space_owner_browser sets dir1 POSIX 753 privileges in "space2"
