@@ -39,7 +39,7 @@ Feature: Oneprovider transfers directories functionality
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
             oneprovider-2: entirely empty
-    And user of browser changes current working directory to home using breadcrumbs
+    And user of browser changes current working directory to space root using breadcrumbs
 
     # Wait to ensure synchronization between providers
     And user of browser is idle for 2 seconds
@@ -75,7 +75,7 @@ Feature: Oneprovider transfers directories functionality
     And user of browser creates directory "dir1"
     And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
-    And user of browser changes current working directory to home using breadcrumbs
+    And user of browser changes current working directory to space root using breadcrumbs
 
     # Wait to ensure synchronization between providers
     And user of browser is idle for 2 seconds
@@ -107,7 +107,7 @@ Feature: Oneprovider transfers directories functionality
     And user of browser creates directory "dir1"
     And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
-    And user of browser changes current working directory to home using breadcrumbs
+    And user of browser changes current working directory to space root using breadcrumbs
 
     # Wait to ensure synchronization between providers
     And user of browser is idle for 2 seconds
@@ -139,7 +139,7 @@ Feature: Oneprovider transfers directories functionality
     And user of browser creates directory "dir1"
     And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
-    And user of browser changes current working directory to home using breadcrumbs
+    And user of browser changes current working directory to space root using breadcrumbs
 
     # Wait to ensure synchronization between providers
     And user of browser is idle for 2 seconds
@@ -174,7 +174,7 @@ Feature: Oneprovider transfers directories functionality
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
             oneprovider-2: entirely empty
-    And user of browser changes current working directory to home using breadcrumbs
+    And user of browser changes current working directory to space root using breadcrumbs
 
     # Wait to ensure synchronization between providers
     And user of browser is idle for 2 seconds

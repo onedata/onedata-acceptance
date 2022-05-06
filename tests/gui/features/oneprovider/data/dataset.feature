@@ -302,11 +302,11 @@ Feature: Basic datasets operations
     And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser clicks on menu for "file1" file in file browser
     And user of browser clicks "Create hard link" option in data row menu in file browser
-    And user of browser changes current working directory to home using breadcrumbs
+    And user of browser changes current working directory to space root using breadcrumbs
 
     And user of browser clicks and presses enter on item named "dir2" in file browser
     And user of browser clicks "Place hard link" button from file browser menu bar
-    And user of browser changes current working directory to home using breadcrumbs
+    And user of browser changes current working directory to space root using breadcrumbs
 
     # mark directory as dataset and set data write protection
     And user of browser clicks on menu for "dir1" directory in file browser
@@ -327,7 +327,7 @@ Feature: Basic datasets operations
     And user of browser clicks on inherited status tag for "file1" in file browser
     Then user of browser sees data protected status tag for "file1" in file browser
     And user of browser sees metadata protected status tag for "file1" in file browser
-    And user of browser changes current working directory to home using breadcrumbs
+    And user of browser changes current working directory to space root using breadcrumbs
 
     And user of browser clicks and presses enter on item named "dir2" in file browser
     And user of browser clicks on inherited status tag for "file1" in file browser

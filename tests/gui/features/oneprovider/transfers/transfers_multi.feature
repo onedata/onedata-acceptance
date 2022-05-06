@@ -79,7 +79,7 @@ Feature: Oneprovider transfers functionality using multiple browsers instances
     # Wait to ensure synchronization between providers
     And user of browser2 is idle for 2 seconds
 
-    And user of browser2 changes current working directory to home using breadcrumbs
+    And user of browser2 changes current working directory to space root using breadcrumbs
     And user of browser2 replicates "dir1" to provider "oneprovider-2"
 
     # Check that transfer appeared in transfer tab
@@ -163,7 +163,7 @@ Feature: Oneprovider transfers functionality using multiple browsers instances
     # Wait to ensure synchronization between providers
     And user of browser2 is idle for 2 seconds
 
-    And user of browser2 changes current working directory to home using breadcrumbs
+    And user of browser2 changes current working directory to space root using breadcrumbs
     And user of browser2 migrates "dir1" from provider "oneprovider-1" to provider "oneprovider-2"
 
     # Check that transfer appeared in transfer tab

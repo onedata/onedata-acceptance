@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 import re
+import time
 
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 from selenium.webdriver.support.expected_conditions import staleness_of
@@ -425,3 +426,27 @@ def click_copy_icon_in_rest_api_modal(selenium, browser_id, modals):
     modals(selenium[browser_id]).rest_api_modal.copy_command_button()
 
 
+@wt(parsers.parse('user of {browser_id} chooses "{option}" in dropdown menu '
+                  'in modal "{modal}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def choose_option_in_dropdown_menu_in_modal(selenium, browser_id, modals,
+                                            popups, option, modal):
+    driver = selenium[browser_id]
+    modal = transform(modal)
+    getattr(modals(driver), modal).dropdown_menu.click()
+
+    popups(driver).power_select.choose_item(option)
+
+
+@wt(parsers.parse('user of {browser_id} sees that path where symbolic link '
+                  'points is "{expected_path}" in {modal} modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_path_where_symbolic_link_points(selenium, browser_id,
+                                           expected_path, modal):
+    driver = selenium[browser_id]
+    modal = transform(modal)
+    modal = getattr(modals(driver), modal)
+    time.sleep(0.1)
+    path = modal.path.replace('\n', '')
+    assert expected_path == path, (f'Expected path: {expected_path} does not '
+                                   f'match path: {path}')

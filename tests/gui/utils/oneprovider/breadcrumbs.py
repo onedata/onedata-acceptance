@@ -23,7 +23,7 @@ class _Breadcrumbs(PageObject):
     _breadcrumbs = WebItemsSequence('.fb-breadcrumbs-dir '
                                     '.fb-breadcrumbs-dir-name',
                                     cls=ButtonWithTextPageObject)
-    home = Button('.fb-breadcrumbs-dir-root')
+    space_root = Button('.fb-breadcrumbs-dir-root')
 
     def __str__(self):
         return 'Breadcrumbs({path}) in {parent}'.format(path=self.pwd(),
@@ -34,7 +34,7 @@ class _Breadcrumbs(PageObject):
 
     def chdir(self, path, archive=False):
         if not path or path == '/':
-            self.home()
+            self.space_root()
         else:
             path = path.split('/')
             breadcrumbs = self._breadcrumbs
