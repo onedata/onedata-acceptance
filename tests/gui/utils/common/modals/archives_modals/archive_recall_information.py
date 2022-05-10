@@ -21,6 +21,10 @@ class ArchiveRecallInformation(Modal):
     items_failed = Label('.recall-info-row-files-failed .property-value')
     last_error = Label('.recall-info-row-last-error .property-value')
     cancel_recall = Button('.cancel-recall-btn')
+    recalling_oneprovider = Label('.recall-info-row-recalling-provider '
+                                  '.property-value')
+    recall_destination = Label('.recall-info-row-target-path .property-value')
+
 
     @staticmethod
     def parse_progress(progress_text_content):
