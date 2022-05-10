@@ -281,29 +281,43 @@ def set_posix_permissions_in_op_rest(path, perm, user, users, host, hosts,
         file_api.set_attr(file_id, attribute={'mode': perm})
 
 
-def assert_files_time_relation_in_op_rest(path, path2, time1_name, time2_name,
-                                          comparator, host, hosts, user,
-                                          users, cdmi):
+def get_time_for_file_in_op_rest(path, user, users, cdmi, host, hosts,
+                                 time_name):
     client = cdmi(hosts[host]['hostname'], users[user].token)
-    metadata1 = client.read_metadata(path)['metadata']
-    metadata2 = client.read_metadata(path2)['metadata']
-    attr1 = time_attr(time1_name, 'cdmi')
-    attr2 = time_attr(time2_name, 'cdmi')
+    metadata = client.read_metadata(path)['metadata']
+    attr = time_attr(time_name, 'cdmi')
     date_fmt = '%Y-%m-%dT%H:%M:%SZ'
 
     try:
-        time1 = datetime.strptime(metadata1[attr1], date_fmt)
-        time2 = datetime.strptime(metadata2[attr2], date_fmt)
+        time = datetime.strptime(metadata[attr], date_fmt)
     except KeyError as ex:
-        assert False, 'File {} has no {} metadata'.format(path, ex.args[0])
+        assert False, f'File {path} has no {ex.args[0]} metadata'
 
-    assert compare(time1, time2, comparator), ('Time comparison failed. \n'
-                                               'Time1: {} = {} \n'
-                                               'Time2: {} = {} \n'
-                                               'Comparator: {}'
-                                               .format(time1_name, time1,
-                                                       time2_name, time2,
-                                                       comparator))
+    return time
+
+
+def compare_file_time_with_copied_time_in_op_rest(path, user, users, cdmi, host,
+                                                  hosts, time_name1, time2,
+                                                  comparator, time_name2):
+    time1 = get_time_for_file_in_op_rest(path, user, users, cdmi, host, hosts,
+                                         time_name1)
+    err_msg = (f'Time comparison failed. \nTime1: {time_name1} = {time1} \n'
+               f'Time2: {time_name2} = {time2} \nComparator: {comparator}')
+    assert compare(time1, time2, comparator), err_msg
+
+
+def assert_files_time_relation_in_op_rest(path, path2, time1_name, time2_name,
+                                          comparator, host, hosts, user,
+                                          users, cdmi):
+    time1 = get_time_for_file_in_op_rest(path, user, users, cdmi, host, hosts,
+                                         time1_name)
+    time2 = get_time_for_file_in_op_rest(path2, user, users, cdmi, host, hosts,
+                                         time2_name)
+
+    err_msg = (f'Time comparison failed. \nTime1: {time1_name} = {time1} \n'
+               f'Time2: {time2_name} = {time2} \nComparator: {comparator}')
+
+    assert compare(time1, time2, comparator), err_msg
 
 
 def assert_time_relation_in_op_rest(path, time1_name, time2_name,

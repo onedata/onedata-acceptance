@@ -38,18 +38,20 @@ Feature: Directories times tests
 
     # call sleep, to be sure that time of above and below operations is different
     And user1 is idle for 2 seconds
+    And using <client1>, user1 copies modification time of item named "dir1" in "space1" space to temporary memory
+    And using <client1>, user1 copies status-change time of item named "dir1/dir2" in "space1" space to temporary memory
     And using <client2>, user1 renames item named "dir1/dir2" to "dir1/dir3" in "space1" in oneprovider-1
-    Then using <client1>, user1 sees that modification time of item named "dir1" in "space1" space is <comparator_times> access time in oneprovider-1
-    And using <client1>, user1 sees that modification time of item named "dir1" in "space1" space is equal to status-change time in oneprovider-1
+    Then using <client1>, user1 sees that modification time of item named "dir1" is greater than modification time copied to temporary memory
+    And using <client1>, user1 sees that status-change time of item named "dir1/dir3" is greater than status-change time copied to temporary memory
     And using <client1>, user1 sees that status-change time of item named "dir1/dir3" in "space1" space is greater than modification time in oneprovider-1
     And using <client1>, user1 sees that status-change time of item named "dir1/dir3" is equal to status-change time of item named "dir1" in "space1" space in oneprovider-1
 
   Examples:
-  | client1    | client2    | comparator_times  |
-  | oneclient1 | REST       | greater than      |
-  | REST       | oneclient1 | greater than      |
-  | oneclient1 | web GUI    | equal to          |
-  | REST       | web GUI    | equal to          |
+  | client1    | client2    |
+  | oneclient1 | REST       |
+  | REST       | oneclient1 |
+  | oneclient1 | web GUI    |
+  | REST       | web GUI    |
 
 
   Scenario Outline: User changes directory using web GUI and using <client1> sees that modification time has changed
