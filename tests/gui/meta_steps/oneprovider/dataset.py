@@ -24,8 +24,7 @@ from tests.gui.steps.oneprovider.browser import (
     assert_items_absence_in_browser, assert_status_tag_for_file_in_browser,
     click_on_state_view_mode_tab)
 from tests.gui.steps.oneprovider.dataset import (
-    click_mark_file_as_dataset_toggle, click_protection_toggle,
-    assert_general_toggle_checked_for_ancestors,
+    click_protection_toggle, assert_general_toggle_checked_for_ancestors,
     fail_to_mark_file_as_dataset_toggle)
 from tests.gui.steps.modal import click_modal_button
 
@@ -79,7 +78,8 @@ def create_dataset(browser_id, tmp_memory, item_name, space_name,
                    option='no flags'):
     option_in_space = 'Files'
     option_in_data_row_menu = 'Datasets'
-    button_name = 'X'
+    create_button = 'Establish dataset here'
+    close_button = 'X'
 
     try:
         op_container(selenium[browser_id]).file_browser.breadcrumbs
@@ -97,12 +97,13 @@ def create_dataset(browser_id, tmp_memory, item_name, space_name,
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
                                              option_in_data_row_menu, popups)
-    click_mark_file_as_dataset_toggle(browser_id, selenium, modals)
+    click_modal_button(selenium, browser_id, create_button,
+                       option_in_data_row_menu, modals)
     flags = [item.replace('_protection', '') for item in get_flags(option)]
     for flag in flags:
         click_protection_toggle(browser_id, selenium, modals, flag,
                                 option_in_data_row_menu)
-    click_modal_button(selenium, browser_id, button_name,
+    click_modal_button(selenium, browser_id, close_button,
                        option_in_data_row_menu, modals)
 
 

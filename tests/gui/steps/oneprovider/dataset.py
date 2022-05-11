@@ -60,14 +60,6 @@ def assert_toggle_unchecked_on_item_in_ancestor_list(browser_id, selenium,
     assert getattr(item, protection_kind).is_unchecked(), err_msg
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) clicks Mark this (directory|file) '
-               'as dataset toggle in Datasets modal'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_mark_file_as_dataset_toggle(browser_id, selenium, modals):
-    driver = selenium[browser_id]
-    modals(driver).datasets.dataset_toggle.check()
-
-
 @wt(parsers.parse('user of {browser_id} clicks {toggle_type} write protection'
                   ' toggle in {modal_name} modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
