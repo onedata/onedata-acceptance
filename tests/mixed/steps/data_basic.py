@@ -500,26 +500,29 @@ def assert_time_relation(user, time1, file_name, space, comparator, time2,
 
 @wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) copies '
                '(?P<time_name>.*) time of item named "(?P<file_name>.*)" in '
-               '"(?P<space>.*)" space to temporary memory'))
+               '"(?P<space>.*)" space'))
 def remember_time_for_file(user, time_name, file_name, space, client, users,
                            host, hosts, cdmi, tmp_memory):
     client_lower = client.lower()
     full_path = '{}/{}'.format(space, file_name)
     if client_lower == 'rest':
-        time1 = get_time_for_file_in_op_rest(full_path, user, users, cdmi, host,
-                                             hosts, time_name)
+        file_time = get_time_for_file_in_op_rest(full_path, user, users, cdmi,
+                                                 host, hosts, time_name)
     elif 'oneclient' in client_lower:
         oneclient_host = change_client_name_to_hostname(client_lower)
-        time1 = get_time_for_file_in_op_oneclient(users, user, oneclient_host,
-                                                  time_name, full_path)
+        file_time = get_time_for_file_in_op_oneclient(users, user,
+                                                      oneclient_host,
+                                                      time_name, full_path)
+    else:
+        raise NoSuchClientException(f'Client: {client} not found')
 
-    tmp_memory[time_name] = time1
+    tmp_memory[time_name] = file_time
 
 
 @wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) sees that '
                '(?P<time_name1>.*) time of item named "(?P<file_name>.*)" is '
-               '(?P<comparator>.*) (than|to) (?P<time_name2>.*) time copied '
-               'to temporary memory'))
+               '(?P<comparator>.*) (than|to) (?P<time_name2>.*) time '
+               'that was copied'))
 def compare_file_time_with_copied_time(user, time_name1, time_name2,  file_name, space,
                                        client, users, host, hosts, cdmi,
                                        tmp_memory, comparator):
@@ -536,6 +539,8 @@ def compare_file_time_with_copied_time(user, time_name1, time_name2,  file_name,
         compare_file_time_with_copied_time_in_op_oneclient(
             users, user, oneclient_host, time_name1, full_path, time2,
             time_name2, comparator)
+    else:
+        raise NoSuchClientException(f'Client: {client} not found')
 
 
 @wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) sees that (?P<time1>.*) '

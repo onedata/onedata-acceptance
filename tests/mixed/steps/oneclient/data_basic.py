@@ -143,8 +143,8 @@ def get_time_for_file_in_op_oneclient(users, user, client_node, time_name,
     attr = time_attr(time_name)
     file_path = client.absolute_path(file)
     stat_result = client.stat(file_path)
-    t1 = getattr(stat_result, attr)
-    return t1
+    file_time = getattr(stat_result, attr)
+    return file_time
 
 
 @repeat_failed(timeout=WAIT_FRONTEND)
