@@ -36,7 +36,7 @@ Feature: Basic datasets operations
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser clicks on menu for "dir1" directory in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks on "Establish dataset here" button in modal "Datasets"
+    And user of browser clicks on "Establish dataset" button in modal "Datasets"
     And user of browser clicks on "X" button in modal "Datasets"
     Then user of browser sees Dataset status tag for "dir1" in file browser
 
@@ -255,7 +255,7 @@ Feature: Basic datasets operations
     # mark file as dataset and set data protection
     And user of browser clicks on menu for "file3" file in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks on "Establish dataset here" button in modal "Datasets"
+    And user of browser clicks on "Establish dataset" button in modal "Datasets"
     And user of browser clicks data write protection toggle in Datasets modal
     And user of browser clicks on "X" button in modal "Datasets"
 
@@ -277,14 +277,14 @@ Feature: Basic datasets operations
     # mark file as dataset and set data write protection
     And user of browser clicks on menu for "file3" file in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks on "Establish dataset here" button in modal "Datasets"
+    And user of browser clicks on "Establish dataset" button in modal "Datasets"
     And user of browser clicks data write protection toggle in Datasets modal
     And user of browser clicks on "X" button in modal "Datasets"
 
     # mark hardlink as dataset and set metadata write protection
     And user of browser clicks on menu for "file3(1)" file in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks on "Establish dataset here" button in modal "Datasets"
+    And user of browser clicks on "Establish dataset" button in modal "Datasets"
     And user of browser clicks metadata write protection toggle in Datasets modal
     And user of browser clicks on "X" button in modal "Datasets"
 
@@ -310,14 +310,14 @@ Feature: Basic datasets operations
     # mark directory as dataset and set data write protection
     And user of browser clicks on menu for "dir1" directory in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks on "Establish dataset here" button in modal "Datasets"
+    And user of browser clicks on "Establish dataset" button in modal "Datasets"
     And user of browser clicks data write protection toggle in Datasets modal
     And user of browser clicks on "X" button in modal "Datasets"
 
     # mark directory as dataset and set metadata write protection
     And user of browser clicks on menu for "dir2" directory in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks on "Establish dataset here" button in modal "Datasets"
+    And user of browser clicks on "Establish dataset" button in modal "Datasets"
     And user of browser clicks metadata write protection toggle in Datasets modal
     And user of browser clicks on "X" button in modal "Datasets"
 

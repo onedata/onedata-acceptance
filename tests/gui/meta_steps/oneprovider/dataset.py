@@ -24,7 +24,8 @@ from tests.gui.steps.oneprovider.browser import (
     assert_items_absence_in_browser, assert_status_tag_for_file_in_browser,
     click_on_state_view_mode_tab)
 from tests.gui.steps.oneprovider.dataset import (
-    click_protection_toggle, assert_general_toggle_checked_for_ancestors)
+    click_protection_toggle, assert_general_toggle_checked_for_ancestors,
+    fail_to_click_button_in_modal)
 from tests.gui.steps.modal import click_modal_button
 
 DATA_PROTECTION = 'data_protection'
@@ -77,7 +78,7 @@ def create_dataset(browser_id, tmp_memory, item_name, space_name,
                    option='no flags'):
     option_in_space = 'Files'
     option_in_data_row_menu = 'Datasets'
-    create_button = 'Establish dataset here'
+    create_button = 'Establish dataset'
     close_button = 'X'
 
     try:
@@ -111,15 +112,14 @@ def fail_to_create_dataset_in_op_gui(browser_id, tmp_memory, item_name,
                                      op_container, modals, popups):
     option_in_space = 'Files'
     option_in_data_row_menu = 'Datasets'
-    create_button = 'Establish dataset here'
+    create_button = 'Establish dataset'
     go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
                              option_in_space, op_container, tmp_memory)
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
                                              option_in_data_row_menu, popups)
-    click_modal_button(selenium, browser_id, create_button,
-                       option_in_data_row_menu, modals)
-    assert_error_popup_has_appeared(selenium, browser_id, modals)
+    fail_to_click_button_in_modal(browser_id, create_button,
+                                  option_in_data_row_menu, selenium, modals)
 
 
 def assert_top_level_dataset_in_space_in_op_gui(selenium, browser_id, oz_page,

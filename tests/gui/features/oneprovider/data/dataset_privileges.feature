@@ -50,9 +50,7 @@ Feature: Dataset browser tests using user who is not the owner of a space
     And user of browser_user1 sees file browser in files tab in Oneprovider page
     And user of browser_user1 clicks on menu for "dir1" file in file browser
     And user of browser_user1 clicks "Datasets" option in data row menu in file browser
-    And user of browser_user1 clicks on "Establish dataset here" button in modal "Datasets"
-    And user of browser_user1 sees that error popup has appeared
-    And user of browser_user1 clicks on "Close" button in modal "Error"
+    Then user of browser_user1 fails to click on "Establish dataset" button in modal "Datasets"
     And user of browser_user1 clicks on "X" button in modal "Datasets"
 
 
@@ -69,8 +67,7 @@ Feature: Dataset browser tests using user who is not the owner of a space
     And user of browser_user1 sees dataset browser in datasets tab in Oneprovider page
     And user of browser_user1 clicks on menu for "dir1" dataset in dataset browser
     And user of browser_user1 clicks "Detach" option in data row menu in dataset browser
-    And user of browser_user1 clicks on "Proceed" button in modal "Detach Dataset"
-    Then user of browser_user1 sees that error modal with text "Changing some dataset(s) state failed!" appeared
+    Then user of browser_user1 sees that "Detach Dataset" modal has not appeared
 
 
   Scenario: User fails to enable write protection for dataset if he does not have manage datasets privilege
@@ -103,8 +100,7 @@ Feature: Dataset browser tests using user who is not the owner of a space
     And user of browser_user1 sees dataset browser in datasets tab in Oneprovider page
     And user of browser_user1 clicks on menu for "dir1" dataset in dataset browser
     And user of browser_user1 clicks "Remove" option in data row menu in dataset browser
-    And user of browser_user1 clicks on "Remove" button in modal "Remove Selected Dataset"
-    Then user of browser_user1 sees that error modal with text "Removing some dataset(s) failed!" appeared
+    Then user of browser_user1 sees that "Remove Selected Dataset" modal has not appeared
 
 
   Scenario: User successfully creates dataset if he has manage datasets privilege

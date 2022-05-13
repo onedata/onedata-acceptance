@@ -8,6 +8,9 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.steps.modal import click_modal_button
+from tests.gui.steps.oneprovider.browser import \
+    click_option_in_data_row_menu_in_browser
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
@@ -147,6 +150,15 @@ def assert_two_identical_root_file_paths(browser_id, tmp_memory, name, path):
     assert paths[0] == path, (
         f'"{paths[0]}" match "{path[1]}" but does not match expected "{path}"')
 
+
+@wt(parsers.parse('user of {browser_id} fails to click on "{button}" button'
+                  ' in modal "{modal}"'))
+def fail_to_click_button_in_modal(browser_id, button, modal, selenium, modals):
+    try:
+        click_modal_button(selenium, browser_id, button, modal, modals)
+        raise Exception(f'User can click on "{button}" in modal "{modal}"')
+    except RuntimeError:
+        pass
 
 
 
