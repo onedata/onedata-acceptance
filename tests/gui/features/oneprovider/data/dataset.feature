@@ -36,7 +36,7 @@ Feature: Basic datasets operations
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser clicks on menu for "dir1" directory in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this file as dataset toggle in Datasets modal
+    And user of browser clicks on "Establish dataset" button in modal "Datasets"
     And user of browser clicks on "X" button in modal "Datasets"
     Then user of browser sees Dataset status tag for "dir1" in file browser
 
@@ -70,7 +70,7 @@ Feature: Basic datasets operations
     And user of browser clicks Datasets of "space1" in the sidebar
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser clicks on menu for "dir1" dataset in dataset browser
-    And user of browser clicks "Remove dataset" option in data row menu in dataset browser
+    And user of browser clicks "Remove" option in data row menu in dataset browser
     And user of browser clicks on "Remove" button in modal "Remove Selected Dataset"
     And user of browser clicks Files of "space1" in the sidebar
     Then user of browser sees file browser in files tab in Oneprovider page
@@ -111,7 +111,6 @@ Feature: Basic datasets operations
     And user of browser clicks "Datasets" option in data row menu in file browser
     And user of browser sees that metadata write protection toggle is checked in Ancestor Datasets row in Datasets modal
     And user of browser sees that data write protection toggle is checked in Ancestor Datasets row in Datasets modal
-    And user of browser expands Ancestor datasets row in Datasets modal
     And user of browser sees that data write protection toggle is checked on "/space1/dir2" in ancestors list
     And user of browser sees that metadata write protection toggle is unchecked on "/space1/dir2" in ancestors list
     And user of browser sees that metadata write protection toggle is checked on "/space1/dir2/dir3/dir4" in ancestors list
@@ -256,7 +255,7 @@ Feature: Basic datasets operations
     # mark file as dataset and set data protection
     And user of browser clicks on menu for "file3" file in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this file as dataset toggle in Datasets modal
+    And user of browser clicks on "Establish dataset" button in modal "Datasets"
     And user of browser clicks data write protection toggle in Datasets modal
     And user of browser clicks on "X" button in modal "Datasets"
 
@@ -278,14 +277,14 @@ Feature: Basic datasets operations
     # mark file as dataset and set data write protection
     And user of browser clicks on menu for "file3" file in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this file as dataset toggle in Datasets modal
+    And user of browser clicks on "Establish dataset" button in modal "Datasets"
     And user of browser clicks data write protection toggle in Datasets modal
     And user of browser clicks on "X" button in modal "Datasets"
 
     # mark hardlink as dataset and set metadata write protection
     And user of browser clicks on menu for "file3(1)" file in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this file as dataset toggle in Datasets modal
+    And user of browser clicks on "Establish dataset" button in modal "Datasets"
     And user of browser clicks metadata write protection toggle in Datasets modal
     And user of browser clicks on "X" button in modal "Datasets"
 
@@ -311,14 +310,14 @@ Feature: Basic datasets operations
     # mark directory as dataset and set data write protection
     And user of browser clicks on menu for "dir1" directory in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this directory as dataset toggle in Datasets modal
+    And user of browser clicks on "Establish dataset" button in modal "Datasets"
     And user of browser clicks data write protection toggle in Datasets modal
     And user of browser clicks on "X" button in modal "Datasets"
 
     # mark directory as dataset and set metadata write protection
     And user of browser clicks on menu for "dir2" directory in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
-    And user of browser clicks Mark this directory as dataset toggle in Datasets modal
+    And user of browser clicks on "Establish dataset" button in modal "Datasets"
     And user of browser clicks metadata write protection toggle in Datasets modal
     And user of browser clicks on "X" button in modal "Datasets"
 

@@ -8,6 +8,9 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.steps.modal import click_modal_button
+from tests.gui.steps.oneprovider.browser import \
+    click_option_in_data_row_menu_in_browser
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
@@ -60,14 +63,6 @@ def assert_toggle_unchecked_on_item_in_ancestor_list(browser_id, selenium,
     assert getattr(item, protection_kind).is_unchecked(), err_msg
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) clicks Mark this (directory|file) '
-               'as dataset toggle in Datasets modal'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_mark_file_as_dataset_toggle(browser_id, selenium, modals):
-    driver = selenium[browser_id]
-    modals(driver).datasets.dataset_toggle.check()
-
-
 @wt(parsers.parse('user of {browser_id} clicks {toggle_type} write protection'
                   ' toggle in {modal_name} modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -87,15 +82,6 @@ def can_not_click_protection_toggle(browser_id, selenium, modals, toggle_type,
     err_msg = f'{toggle_type}_protection_toggle is clickable'
     assert not getattr(getattr(modals(driver), transform(modal_name)),
                        f'{toggle_type}_protection_toggle').check(), err_msg
-
-
-@wt(parsers.parse('user of {browser_id} fails to click Mark this file as '
-                  'dataset toggle in Datasets modal'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def fail_to_mark_file_as_dataset_toggle(browser_id, selenium, modals):
-    driver = selenium[browser_id]
-    err_msg = 'user does not fail to create dataset'
-    assert not modals(driver).datasets.dataset_toggle.check(), err_msg
 
 
 @wt(parsers.parse('user of {browser_id} sees "{text}" label in Datasets modal'))
@@ -164,6 +150,15 @@ def assert_two_identical_root_file_paths(browser_id, tmp_memory, name, path):
     assert paths[0] == path, (
         f'"{paths[0]}" match "{path[1]}" but does not match expected "{path}"')
 
+
+@wt(parsers.parse('user of {browser_id} fails to click on "{button}" button'
+                  ' in modal "{modal}"'))
+def fail_to_click_button_in_modal(browser_id, button, modal, selenium, modals):
+    try:
+        click_modal_button(selenium, browser_id, button, modal, modals)
+        raise Exception(f'User can click on "{button}" in modal "{modal}"')
+    except RuntimeError:
+        pass
 
 
 
