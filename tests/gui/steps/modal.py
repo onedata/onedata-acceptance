@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in " \
 import re
 import time
 
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.common.keys import Keys
@@ -110,6 +111,17 @@ def _find_modal(driver, modal_name):
 def _wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory):
     modal = _find_modal(driver, modal_name)
     tmp_memory[browser_id]['window']['modal'] = modal
+
+
+@wt(parsers.parse('user of {browser_id} sees that "{modal_name}" modal has not '
+                  'appeared'))
+def assert_modal_does_not_appear(selenium, browser_id, modal_name, tmp_memory):
+    driver = selenium[browser_id]
+    try:
+        _wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory)
+        raise Exception(f'Modal {modal_name} has appeared')
+    except TimeoutException:
+        pass
 
 
 @wt(parsers.parse('user of {browser_id} sees that '

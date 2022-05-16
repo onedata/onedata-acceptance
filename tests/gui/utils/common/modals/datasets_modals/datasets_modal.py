@@ -21,7 +21,7 @@ class ParentDatasetItem(Element):
 
 
 class DatasetsModal(Modal):
-    dataset_toggle = Toggle('.toggle-header .one-way-toggle-track')
+    establish_dataset = Button('.one-button.btn-primary')
     x = Button('.close')
     data_protection_toggle = Toggle('.direct-dataset-item .data-flag-toggle'
                                     ' .one-way-toggle-track')
