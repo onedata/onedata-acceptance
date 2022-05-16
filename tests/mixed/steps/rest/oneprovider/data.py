@@ -291,7 +291,7 @@ def get_time_for_file_in_op_rest(path, user, users, cdmi, host, hosts,
     try:
         time = datetime.strptime(metadata[attr], date_fmt)
     except KeyError as ex:
-        assert False, f'File {path} has no {ex.args[0]} metadata'
+        raise Exception(f'File {path} has no {ex.args[0]} metadata')
 
     return time
 
