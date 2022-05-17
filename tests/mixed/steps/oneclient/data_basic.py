@@ -13,13 +13,13 @@ from functools import partial
 
 import yaml
 
-from tests.gui.conftest import WAIT_BACKEND
+from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq
 from tests.mixed.utils.data import (
     check_files_tree, create_content, assert_ace, get_acl_metadata)
 from tests.oneclient.steps import (
     multi_dir_steps, multi_reg_file_steps, multi_file_steps)
-from tests.utils.acceptance_utils import failure
+from tests.utils.acceptance_utils import failure, time_attr, compare
 from tests.utils.bdd_utils import wt, parsers, given
 from tests.utils.utils import repeat_failed
 
@@ -134,6 +134,28 @@ def assert_file_content_in_op_oneclient(path, text, user, users, host):
 
 def ls_dir_in_op_oneclient(path, user, users, host):
     return multi_dir_steps.list_dirs_base(user, path, host, users)
+
+
+def get_time_for_file_in_op_oneclient(users, user, client_node, time_name,
+                                      file):
+    user = users[user]
+    client = user.clients[client_node]
+    attr = time_attr(time_name)
+    file_path = client.absolute_path(file)
+    stat_result = client.stat(file_path)
+    file_time = getattr(stat_result, attr)
+    return file_time
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def compare_file_time_with_copied_time_in_op_oneclient(
+        users, user, client_node, time_name1, file, time2, time_name2,
+        comparator):
+    time1 = get_time_for_file_in_op_oneclient(users, user, client_node,
+                                              time_name1, file)
+    err_msg = (f'Time comparison failed. \nTime1: {time_name1} = {time1} \n'
+               f'Time2: {time_name2} = {time2} \nComparator: {comparator}')
+    assert compare(time1, time2, comparator), err_msg
 
 
 def assert_space_content_in_op_oneclient(config, space_name, user, users,
