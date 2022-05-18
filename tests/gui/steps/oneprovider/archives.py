@@ -259,4 +259,60 @@ def waits_for_preserved_state(browser_id, status, description, tmp_memory):
             time.sleep(2)
 
 
+@wt(parsers.parse('user of {browser_id} sees archive ID in Archive properties '
+                  'modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_archive_id_in_properties_modal(selenium, browser_id, modals):
+    driver = selenium[browser_id]
+    archive_id = modals(driver).archive_properties.archive_id
+    err_msg = 'User does not see archive ID in Archive properties modal'
+    assert archive_id is not None, err_msg
+
+
+@wt(parsers.parse('user of {browser_id} sees archive {info}: '
+                  '"{expected}" in Archive properties modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_archive_description_in_properties_modal(selenium, browser_id, modals,
+                                                   expected, info):
+    driver = selenium[browser_id]
+    text = getattr(modals(driver).archive_properties, transform(info))
+    err_msg = (f'{info}: {text} does not match expected '
+               f'{info} {expected}')
+    assert expected == text, err_msg
+
+
+@wt(parsers.parse('user of {browser_id} sees that {toggle} toggle is checked '
+                  'in Archive properties modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_toggle_checked_in_archive_properties_modal(selenium, browser_id,
+                                                      modals, toggle):
+    driver = selenium[browser_id]
+    is_checked = getattr(modals(driver).archive_properties,
+                         transform(toggle)).is_checked()
+
+    err_msg = f'Toggle {toggle} is not checked in modal Archive properties'
+    assert is_checked, err_msg
+
+
+@wt(parsers.parse('user of {browser_id} copies name of base archive for archive'
+                  ' with description "{description}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def copy_base_archive_for_archive(browser_id, description, tmp_memory):
+    browser = tmp_memory[browser_id]['archive_browser']
+    base_archive = get_archive_with_description(browser,
+                                                description).base_archive
+    tmp_memory['base_archive'] = base_archive
+
+
+@wt(parsers.parse('user of {browser_id} sees that {item} in {modal} modal'
+                  ' is the same as copied'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_item_from_modal_with_copied(browser_id, selenium, item, modal,
+                                       tmp_memory, modals):
+    driver = selenium[browser_id]
+    copied = tmp_memory[transform(item)]
+    text = getattr(getattr(modals(driver), transform(modal)), transform(item))
+    err_msg = f'{item}: {text} is not the same as copied: {copied}'
+    assert text == copied, err_msg
+
 
