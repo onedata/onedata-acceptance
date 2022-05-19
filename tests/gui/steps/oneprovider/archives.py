@@ -185,11 +185,11 @@ def click_menu_for_archive(browser_id, tmp_memory, description):
 
 
 @wt(parsers.parse('user of {browser_id} writes "{text}" into confirmation '
-                  'input in Purge Archive modal'))
+                  'input in Delete Archive modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def write_in_confirmation_input(browser_id, modals, text, selenium):
     driver = selenium[browser_id]
-    modals(driver).purge_archive.confirmation_input = text
+    modals(driver).delete_archive.confirmation_input = text
 
 
 @wt(parsers.re(r'user of (?P<browser_id>.*?) sees that (?P<ordinal>1st|2nd|3rd|'

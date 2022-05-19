@@ -145,14 +145,14 @@ Feature: Archives mixed tests
     Then using REST, user1 sees that preserved callback is "https://archives.org/preserved_archives" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
 
 
-  Scenario: User of REST sees new "purged" callback URL after changing it
+  Scenario: User of REST sees new "deleted" callback URL after changing it
     When using web GUI, user1 creates dataset for item "dir1" in space "space1" in oneprovider-1
     And using web GUI, user1 succeeds to create archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
         description: first archive
         layout: plain
-    And using REST, user1 sees that purged callback is "None" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
-    And using REST, user1 changes archive purged callback to "https://archives.org/purged_archives" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
-    Then using REST, user1 sees that purged callback is "https://archives.org/purged_archives" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
+    And using REST, user1 sees that deleted callback is "None" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
+    And using REST, user1 changes archive deleted callback to "https://archives.org/deleted_archives" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
+    Then using REST, user1 sees that deleted callback is "https://archives.org/deleted_archives" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
 
 
 
