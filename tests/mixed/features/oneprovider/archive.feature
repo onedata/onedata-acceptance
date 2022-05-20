@@ -142,6 +142,7 @@ Feature: Archives mixed tests
         layout: plain
     And using <client_checking>, user1 sees that preserved callback is "None" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
     And using REST, user1 changes archive preserved callback to "https://archives.org/preserved_archives" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
+    And if <client_checking> is web GUI, user1 is idle for 10 seconds
     Then using <client_checking>, user1 sees that preserved callback is "https://archives.org/preserved_archives" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
 
   Examples:
@@ -157,6 +158,7 @@ Feature: Archives mixed tests
         layout: plain
     And using <client_checking>, user1 sees that purged callback is "None" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
     And using REST, user1 changes archive purged callback to "https://archives.org/purged_archives" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
+    And if <client_checking> is web GUI, user1 is idle for 10 seconds
     Then using <client_checking>, user1 sees that purged callback is "https://archives.org/purged_archives" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
 
   Examples:
