@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.common.modals.modal import Modal
-from tests.gui.utils.core.web_elements import Input, Label
+from tests.gui.utils.core.web_elements import Input, Label, Button
 
 
 class ArchiveProperties(Modal):
@@ -20,6 +20,9 @@ class ArchiveProperties(Modal):
     include_dip = Toggle('.includeDip-field .form-control')
     follow_symbolic_link = Toggle('.followSymlinks-field .form-control')
     base_archive = Label('.baseArchiveInfo-field .field-component')
+    preserved_callback_url = Input('.preservedCallback-field .clipboard-input')
+    purged_callback_url = Input('.purgedCallback-field .clipboard-input')
+    close = Button('.close-btn')
 
     def __str__(self):
         return 'Archive properties'

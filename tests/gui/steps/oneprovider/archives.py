@@ -272,13 +272,20 @@ def assert_archive_id_in_properties_modal(selenium, browser_id, modals):
 @wt(parsers.parse('user of {browser_id} sees archive {info}: '
                   '"{expected}" in Archive properties modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_archive_description_in_properties_modal(selenium, browser_id, modals,
-                                                   expected, info):
+def assert_archive_info_in_properties_modal(selenium, browser_id, modals,
+                                            expected, info):
     driver = selenium[browser_id]
-    text = getattr(modals(driver).archive_properties, transform(info))
-    err_msg = (f'{info}: {text} does not match expected '
-               f'{info} {expected}')
-    assert expected == text, err_msg
+    if expected == 'None':
+        try:
+            text = getattr(modals(driver).archive_properties, transform(info))
+            raise Exception(f'{info} is {text} but should be None')
+        except RuntimeError:
+            pass
+    else:
+        text = getattr(modals(driver).archive_properties, transform(info))
+        err_msg = (f'{info}: {text} does not match expected '
+                   f'{info} {expected}')
+        assert expected == text, err_msg
 
 
 @wt(parsers.parse('user of {browser_id} sees that {toggle} toggle is checked '

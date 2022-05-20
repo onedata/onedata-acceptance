@@ -32,7 +32,8 @@ from tests.gui.steps.oneprovider.archives import (
     write_in_confirmation_input,
     assert_number_of_archives_for_item_in_dataset_browser,
     assert_tag_for_archive_in_archive_browser,
-    assert_not_archive_with_description, get_archive_with_description)
+    assert_not_archive_with_description, get_archive_with_description,
+    assert_archive_info_in_properties_modal)
 from tests.gui.steps.modal import click_modal_button
 
 
@@ -288,3 +289,21 @@ def assert_base_archive_for_archive_in_op_gui(browser_id, selenium, item_name,
     err_msg = (f'Base archive: {archive.base_archive} does not match expected '
                f'archive with description {base_description}')
     assert base_description in archive.base_archive_description, err_msg
+
+
+def assert_archive_callback_in_op_gui(browser_id, tmp_memory, description,
+                                      selenium, popups, modals, expected,
+                                      option):
+    modal = 'Archive Properties'
+    option_in_menu = 'Properties'
+    info = f'{option} callback URL'
+    button_name = 'Close'
+
+    time.sleep(10)
+    click_menu_for_archive(browser_id, tmp_memory, description)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id,
+                                             option_in_menu, popups,
+                                             ARCHIVE_BROWSER)
+    assert_archive_info_in_properties_modal(selenium, browser_id, modals,
+                                            expected, info)
+    click_modal_button(selenium, browser_id, button_name, modal, modals)
