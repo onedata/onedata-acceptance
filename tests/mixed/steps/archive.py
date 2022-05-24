@@ -12,7 +12,8 @@ from tests.mixed.steps.rest.oneprovider.archives import (
     create_archive_in_op_rest, assert_archive_in_op_rest,
     remove_archive_in_op_rest, assert_archive_with_option_in_op_rest,
     assert_number_of_archive_in_op_rest,
-    assert_base_archive_for_archive_in_op_rest)
+    assert_base_archive_for_archive_in_op_rest,
+    assert_archive_callback_in_op_rest)
 from tests.mixed.utils.common import NoSuchClientException
 
 
@@ -141,3 +142,23 @@ def assert_base_archive_for_archive_in_op(client, user, item_name, space_name,
     else:
         raise NoSuchClientException(f'Client: {client} not found')
 
+
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) sees that (?P<option>.*) '
+               'callback is "(?P<expected_callback>.*)" for archive with '
+               'description "(?P<description>.*)" for item "(?P<item_name>.*)"'
+               ' in space "(?P<space_name>.*)" in (?P<host>.*)'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_archive_callback(user, users, hosts, host, tmp_memory, description,
+                            option, expected_callback, client, selenium,
+                            popups, modals):
+    client_lower = client.lower()
+    if client_lower == 'web gui':
+        assert_archive_callback_in_op_gui(user, tmp_memory, description,
+                                          selenium, popups, modals,
+                                          expected_callback, option)
+    elif client_lower == 'rest':
+        assert_archive_callback_in_op_rest(user, users, hosts, host, tmp_memory,
+                                           description, option,
+                                           expected_callback)
+    else:
+        raise NoSuchClientException(f'Client: {client} not found')
