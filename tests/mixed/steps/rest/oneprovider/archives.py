@@ -174,13 +174,8 @@ def change_archive_callback(user, users, hosts, host, tmp_memory, description,
     archive_api.update_archive(archive_id, data)
 
 
-@wt(parsers.re('using REST, (?P<user>.+?) sees that (?P<option>.*) callback'
-               ' is "(?P<expected_callback>.*)" for archive with description '
-               '"(?P<description>.*)" for item "(?P<item_name>.*)" '
-               'in space "(?P<space_name>.*)" in (?P<host>.*)'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_archive_callback(user, users, hosts, host, tmp_memory, description,
-                            option, expected_callback):
+def assert_archive_callback_in_op_rest(user, users, hosts, host, tmp_memory,
+                                       description, option, expected_callback):
     info = get_archive_info(user, users, hosts, host, tmp_memory, description)
     callback = f'{option}_callback'
     err_msg = (f'callback {getattr(info, callback)} does '

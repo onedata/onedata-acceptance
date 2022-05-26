@@ -6,6 +6,7 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+from .archives_modals.archive_properties import ArchiveProperties
 from .archives_modals.archive_recall_information import ArchiveRecallInformation
 from .archives_modals.cancel_recall import CancelRecall
 from .files_modals.external_symbolic_link import ExternalSymbolicLink
@@ -104,6 +105,7 @@ class Modals(object):
     delete_archive = WebItem('.modal-dialog', cls=DeleteArchive)
     cancel_recall = WebItem('.cancel-recall-modal .modal-dialog',
                             cls=CancelRecall)
+    archive_properties = WebItem('.modal-dialog', cls=ArchiveProperties)
 
     # datasets modals
     datasets = WebItem('.modal-dialog', cls=DatasetsModal)
