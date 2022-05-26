@@ -12,7 +12,8 @@ import yaml
 
 from selenium.common.exceptions import StaleElementReferenceException
 
-from tests.gui.steps.common.miscellaneous import switch_to_iframe
+from tests.gui.steps.common.miscellaneous import (
+    switch_to_iframe, click_option_in_popup_labeled_menu)
 from tests.gui.utils.common.modals import Modals as modals
 from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed
@@ -29,13 +30,23 @@ def _assert_transfer(transfer, item_type, desc, sufix, hosts):
         if key == 'destination':
             val = hosts[val]['name']
         transfer_val = getattr(transfer, key.replace(' ', '_'))
-        assert transfer_val == str(val), \
-            'Transfer {} is {} instead of {} in {}'.format(key, transfer_val,
-                                                           val, sufix)
+        if '<' in val:
+            val = float(val.split(' ')[1]) if val.split(
+                ' ')[2] == 'MiB' else float(val.split(' ')[1])*1024
+
+            transfer_val = float(transfer_val.split(' ')[0])
+            err_msg = (f'transfered {key}: {transfer_val} MiB is no less than '
+                       f'{val} MiB')
+            assert transfer_val < val, err_msg
+
+        else:
+            assert transfer_val == str(val), (f'Transfer {key} is'
+                                              f' {transfer_val} instead of '
+                                              f'{val} in {sufix}')
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees (?P<item_type>file|directory)'
-               ' in ongoing transfers:\n(?P<desc>(.|\s)*)'))
+               r' in ongoing transfers:\n(?P<desc>(.|\s)*)'))
 @repeat_failed(interval=0.5)
 def assert_ongoing_transfer(selenium, browser_id, item_type, desc, hosts,
                             op_container):
@@ -59,6 +70,26 @@ def assert_waiting_transfer(selenium, browser_id, item_type, desc, hosts,
                             op_container):
     transfer = op_container(selenium[browser_id]).transfers.waiting[0]
     _assert_transfer(transfer, item_type, desc, 'waiting', hosts)
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>cancels|reruns) transfer '
+               'in (?P<state>waiting|ended) transfers'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def cancel_or_rerun_transfer(selenium, browser_id, op_container, popups,
+                             option, state):
+
+    option = 'Cancel transfer' if option == 'cancels' else 'Rerun transfer'
+    try:
+        getattr(op_container(selenium[browser_id]).transfers,
+                state)[0].menu_button()
+    except RuntimeError as e:
+        if option == 'Cancel transfer':
+            op_container(selenium[browser_id]
+                         ).transfers.ongoing[0].menu_button()
+        else:
+            raise e
+
+    click_option_in_popup_labeled_menu(selenium, browser_id, option, popups)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) waits for all transfers to start'))

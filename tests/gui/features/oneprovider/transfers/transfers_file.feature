@@ -9,10 +9,10 @@ Feature: Oneprovider transfers files functionality
             providers:
                 - oneprovider-1:
                     storage: posix
-                    size: 100000000
+                    size: 100000000000
                 - oneprovider-2:
                     storage: posix
-                    size: 100000000
+                    size: 100000000000
         smallSpace:
             owner: space-owner-user
             providers:
@@ -29,7 +29,8 @@ Feature: Oneprovider transfers files functionality
           browser:
             large_file.txt:
               size: 50 MiB
-
+            larger_file.txt:
+              size: 4000 MiB
 
   Scenario: User replicates file to remote provider
     When user of browser opens oneprovider-1 Oneprovider file browser for "space1" space
@@ -182,3 +183,39 @@ Feature: Oneprovider transfers files functionality
     Then user of browser sees file chunks for file "20B-0.txt" as follows:
             oneprovider-1: entirely empty
             oneprovider-2: entirely filled
+
+
+  Scenario: User reruns file transfer to remote provider after canceling it
+    When user of browser opens oneprovider-1 Oneprovider file browser for "space1" space
+    And user of browser uses upload button from file browser menu bar to upload local file "larger_file.txt" to remote current dir
+
+    # Wait to ensure synchronization between providers
+    And user of browser is idle for 2 seconds
+
+    And user of browser sees file chunks for file "larger_file.txt" as follows:
+            oneprovider-1: entirely filled
+            oneprovider-2: entirely empty
+    And user of browser replicates "larger_file.txt" to provider "oneprovider-2"
+
+    # Check that transfer appeared in transfer tab
+    And user of browser opens oneprovider-1 Oneprovider transfers for "space1" space
+    And user of browser cancels transfer in waiting transfers
+    And user of browser waits for all transfers to start
+    And user of browser waits for all transfers to finish
+    And user of browser sees file in ended transfers:
+            name: larger_file.txt
+            destination: oneprovider-2
+            transferred: < 3.9 GB
+            type: replication
+            status: cancelled
+    Then user of browser reruns transfer in ended transfers
+    And user of browser waits for all transfers to start
+    And user of browser waits for all transfers to finish
+    And user of browser sees file in ended transfers:
+            name: larger_file.txt
+            destination: oneprovider-2
+            transferred: < 3.9 GB
+            type: replication
+            status: completed
+
+
