@@ -56,6 +56,7 @@ from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.onezone.common import *
 
 from tests.oneclient.steps.auth_steps import *
+from tests.utils.acceptance_utils import *
 
 
 @pytest.fixture(scope='module')
