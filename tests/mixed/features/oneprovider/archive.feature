@@ -151,15 +151,15 @@ Feature: Archives mixed tests
   | web GUI            |
 
 
-  Scenario Outline: User of <client_checking> sees new "purged" callback URL after changing it using REST
+  Scenario Outline: User of <client_checking> sees new "deleted" callback URL after changing it using REST
     When using web GUI, user1 creates dataset for item "dir1" in space "space1" in oneprovider-1
     And using web GUI, user1 succeeds to create archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
         description: first archive
         layout: plain
-    And using <client_checking>, user1 sees that purged callback is "None" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
-    And using REST, user1 changes archive purged callback to "https://archives.org/purged_archives" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
+    And using <client_checking>, user1 sees that deleted callback is "None" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
+    And using REST, user1 changes archive deleted callback to "https://archives.org/purged_archives" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
     And if <client_checking> is web GUI, user1 is idle for 10 seconds
-    Then using <client_checking>, user1 sees that purged callback is "https://archives.org/purged_archives" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
+    Then using <client_checking>, user1 sees that deleted callback is "https://archives.org/purged_archives" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
 
   Examples:
   | client_checking    |

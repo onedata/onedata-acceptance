@@ -21,7 +21,7 @@ class ArchiveProperties(Modal):
     follow_symbolic_link = Toggle('.followSymlinks-field .form-control')
     base_archive = Label('.baseArchiveInfo-field .field-component')
     preserved_callback_url = Input('.preservedCallback-field .clipboard-input')
-    purged_callback_url = Input('.purgedCallback-field .clipboard-input')
+    deleted_callback_url = Input('.deletedCallback-field .clipboard-input')
     close = Button('.close-btn')
 
     def __str__(self):

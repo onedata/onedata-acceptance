@@ -221,9 +221,9 @@ def assert_archive_in_op_gui(browser_id, selenium, item_name, space_name,
 def remove_archive_in_op_gui(browser_id, selenium, item_name, space_name,
                              oz_page, op_container, tmp_memory, modals,
                              description, option, popups):
-    option_in_menu = 'Purge archive'
+    option_in_menu = 'Delete archive'
     text = 'I understand that data of the archive will be lost'
-    button_name = 'Purge archive'
+    button_name = 'Delete archive'
     go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
                              OPTION_IN_SPACE, op_container, tmp_memory,
                              item_browser=DATASET_BROWSER)

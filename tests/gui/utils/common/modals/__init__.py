@@ -46,7 +46,7 @@ from .datasets_modals.datasets_modal import DatasetsModal
 from .archives_modals.create_archive import CreateArchive
 from .datasets_modals.detach_dataset import DetachDataset
 from .files_modals.write_protection import WriteProtection
-from .archives_modals.purge_archive import PurgeArchive
+from .archives_modals.delete_archive import DeleteArchive
 from .datasets_modals.reattach_dataset import ReattachDataset
 from .workflows_modals.upload_workflow import UploadWorkflow
 from .workflows_modals.create_new_store import CreateNewStore
@@ -102,7 +102,7 @@ class Modals(object):
     recall_archive = WebItem('.modal-dialog', cls=RecallArchive)
     archive_recall_information = WebItem('.modal-dialog',
                                          cls=ArchiveRecallInformation)
-    purge_archive = WebItem('.modal-dialog', cls=PurgeArchive)
+    delete_archive = WebItem('.modal-dialog', cls=DeleteArchive)
     cancel_recall = WebItem('.cancel-recall-modal .modal-dialog',
                             cls=CancelRecall)
     archive_properties = WebItem('.modal-dialog', cls=ArchiveProperties)

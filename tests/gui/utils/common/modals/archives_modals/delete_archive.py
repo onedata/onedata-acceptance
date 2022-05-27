@@ -1,4 +1,4 @@
-"""Utils and fixtures to facilitate operations on purge archive modal.
+"""Utils and fixtures to facilitate operations on delete archive modal.
 """
 
 __author__ = "Katarzyna Such"
@@ -11,12 +11,12 @@ from ..modal import Modal
 from tests.gui.utils.core.web_elements import Input, NamedButton
 
 
-class PurgeArchive(Modal):
+class DeleteArchive(Modal):
     confirmation_input = Input('.form-control')
-    purge_archive = NamedButton('.btn-danger', text='Purge archive')
+    delete_archive = NamedButton('.btn-danger', text='Delete archive')
 
     def __str__(self):
-        return 'Purge archive'
+        return 'Delete archive'
 
 
 
