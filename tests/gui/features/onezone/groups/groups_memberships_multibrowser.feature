@@ -269,7 +269,7 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
             granted: False
 
     And user of browser2 clicks "space1" on the spaces list in the sidebar
-    And user of browser2 clicks Members of "space1" in the sidebar
+    And user of browser2 clicks Members of "space1" space in the sidebar
     And user of browser2 clicks on "Invite group using token" button in groups list menu in "space1" space members view
     Then user of browser2 sees This resource could not be loaded alert in "Invite using token" modal
 
@@ -278,7 +278,7 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
     When user of browser2 creates space "new_space"
     And user of browser2 clicks on Data in the main menu
     And user of browser2 clicks "new_space" on the spaces list in the sidebar
-    And user of browser2 clicks Members of "new_space" in the sidebar
+    And user of browser2 clicks Members of "new_space" space in the sidebar
     And user of browser2 clicks on "Invite group using token" button in groups list menu in "new_space" space members view
     And user of browser2 copies invitation token from modal
     And user of browser2 closes "Invite using token" modal
@@ -286,11 +286,11 @@ Feature: Multi Browser basic management of groups memberships in Onezone GUI
 
     And user of browser1 adds group "group6" to space using copied token
     And user of browser1 clicks "new_space" on the spaces list in the sidebar
-    And user of browser1 clicks Members of "new_space" in the sidebar
+    And user of browser1 clicks Members of "new_space" space in the sidebar
 
     And user of browser2 clicks on Data in the main menu
     And user of browser2 clicks "new_space" on the spaces list in the sidebar
-    And user of browser2 clicks Members of "new_space" in the sidebar
+    And user of browser2 clicks Members of "new_space" space in the sidebar
     And user of browser2 clicks "group6" group in "new_space" space members groups list
     And user of browser2 sees privileges for "group6" group in space members subpage
           Group management:

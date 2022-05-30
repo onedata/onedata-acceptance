@@ -14,8 +14,9 @@ from tests.gui.utils.generic import transform, parse_seq
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 
-SPACE_TABS = ["Overview", "Files", "Shares", "Transfers", "Datasets",
-              "Providers", "Members", "Harvesters"]
+SPACE_TABS = ["Overview", "Files", "Shares Open Data", "Transfers",
+              "Datasets Archives", "Providers", "Members",
+              "Harvesters Discovery"]
 
 
 def _choose_space_from_menu_list(oz_page, driver, name):
@@ -267,21 +268,21 @@ def click_the_map_on_data_page(selenium, browser_id, oz_page, page, space_name):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks '
-               '(?P<option>Overview|Files|Shares|Transfers|Datasets|Providers'
-               '|Members|Harvesters) of "(?P<space_name>.*?)" in the sidebar'))
+               '(?P<option>.*?) of "(?P<space_name>.*?)" space in the sidebar'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
                                                   space_name, option, oz_page):
+    submenu_option = transform(option).replace(',', '')
     driver = selenium[browser_id]
     driver.switch_to.default_content()
     _choose_space_from_menu_list(oz_page, driver, space_name)
     getattr(oz_page(driver)['data'].elements_list[space_name],
-            transform(option)).click()
+            submenu_option).click()
 
 
 def _get_number_of_disabled_elements_on_left_sidebar_menu(space):
-    page_names = ['overview', 'files', 'shares', 'transfers', 'providers',
-                  'members', 'harvesters']
+    page_names = ['overview', 'files', 'shares_open_data', 'transfers',
+                  'providers', 'members', 'harvesters_discovery']
     return len([x for x in page_names if space.is_element_disabled(x)])
 
 

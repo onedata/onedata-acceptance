@@ -84,7 +84,7 @@ Feature: Basic management of spaces
   Scenario: User sees that provider is added to supporters list after supporting space
     When user of space_owner_browser clicks on Data in the main menu
     And user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Providers of "space1" in the sidebar
+    And user of space_owner_browser clicks Providers of "space1" space in the sidebar
     Then user of space_owner_browser sees "oneprovider-1" is on the providers list
     And user of space_owner_browser sees that length of providers list equals number of supporting providers of "space1"
 
@@ -92,7 +92,7 @@ Feature: Basic management of spaces
   Scenario: User successfully copies support token (space has already supported by one provider)
     When user of space_owner_browser clicks on Data in the main menu
     And user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Providers of "space1" in the sidebar
+    And user of space_owner_browser clicks Providers of "space1" space in the sidebar
     And user of space_owner_browser clicks Add support button on providers page
     And user of space_owner_browser clicks Copy button on Add support page
     Then user of space_owner_browser sees copy token and token in support token text field are the same
@@ -100,7 +100,7 @@ Feature: Basic management of spaces
 
 
   Scenario: User can leave the space which was owned by them and was its only user
-    When user of space_owner_browser clicks Members of "space1" in the sidebar
+    When user of space_owner_browser clicks Members of "space1" space in the sidebar
     And user of space_owner_browser clicks show view expand button in space members subpage header
     And user of space_owner_browser clicks effective view mode in space members subpage
     And user of space_owner_browser sees 1 user in space members subpage

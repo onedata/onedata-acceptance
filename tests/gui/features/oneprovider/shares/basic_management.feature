@@ -40,7 +40,7 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser clicks on "Close" button in modal "Share directory"
 
     Then user of browser sees shared status tag for "dir1" in file browser
-    And user of browser clicks Overview of "space1" in the sidebar
+    And user of browser clicks Overview of "space1" space in the sidebar
     And user of browser sees in the INFO section of Overview page that number of shares is 1
 
 
@@ -65,18 +65,18 @@ Feature: Basic share management in Oneprovider GUI
 
     # open shares view
     And user of browser clicks on "Close" button in modal "Share directory"
-    And user of browser clicks Shares of "space1" in the sidebar
+    And user of browser clicks Shares, Open Data of "space1" space in the sidebar
     And user of browser sees shares browser in files tab in Oneprovider page
     Then user of browser sees that there is "share_dir1" share on shares view
     And user of browser sees that there is "share2_dir1" share on shares view
-    And user of browser clicks Overview of "space1" in the sidebar
+    And user of browser clicks Overview of "space1" space in the sidebar
     And user of browser sees in the INFO section of Overview page that number of shares is 2
 
 
   Scenario: User opens share modal using shared status tag
     Given using REST, user space-owner-user creates "share_dir1" share of "space1/dir1" supported by "oneprovider-1" provider
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks Files of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser clicks on shared status tag for "dir1" in file browser
@@ -109,7 +109,7 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser sees that "Remove share" modal has appeared
     And user of browser clicks on "Remove" button in modal "Remove share"
     Then user of browser sees there are no shares on shares view
-    And user of browser clicks Overview of "space1" in the sidebar
+    And user of browser clicks Overview of "space1" space in the sidebar
     And user of browser sees in the INFO section of Overview page that number of shares is 0
 
 
@@ -128,7 +128,7 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser removes current share
     Then user of browser sees that there is no "share2_dir1" share on shares view
     And user of browser sees that there is "share_dir1" share on shares view
-    And user of browser clicks Overview of "space1" in the sidebar
+    And user of browser clicks Overview of "space1" space in the sidebar
     And user of browser sees in the INFO section of Overview page that number of shares is 1
 
 
@@ -151,7 +151,7 @@ Feature: Basic share management in Oneprovider GUI
 
     Then user of browser sees that there is no "share_dir1" share on shares view
     And user of browser sees that there is "share2_dir1" share on shares view
-    And user of browser clicks Overview of "space1" in the sidebar
+    And user of browser clicks Overview of "space1" space in the sidebar
     And user of browser sees in the INFO section of Overview page that number of shares is 1
 
 
@@ -196,7 +196,7 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser sees only items named ["dir3", "file1", "file2"] in file browser
 
      # delete file1
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks Files of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser clicks and presses enter on item named "dir2" in file browser
     And user of browser clicks on menu for "file1" file in file browser
@@ -264,7 +264,7 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser sees that there is "share_dir2" share on shares view
 
     # delete dir2
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks Files of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser clicks on menu for "dir2" directory in file browser
     And user of browser clicks "Delete" option in data row menu in file browser
@@ -272,7 +272,7 @@ Feature: Basic share management in Oneprovider GUI
 
     And user of browser opens shares view of "space1"
     Then user of browser sees there are no shares on shares view
-    And user of browser clicks Overview of "space1" in the sidebar
+    And user of browser clicks Overview of "space1" space in the sidebar
     And user of browser sees in the INFO section of Overview page that number of shares is 0
 
 
@@ -283,7 +283,7 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser sees that there is "share_dir3" share on shares view
 
     # delete dir2
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks Files of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser clicks on menu for "dir2" directory in file browser
     And user of browser clicks "Delete" option in data row menu in file browser
@@ -295,7 +295,7 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser sees file browser on single share view
     And user of browser sees "SHARED FILES HAVE BEEN DELETED" instead of file browser
 
-    And user of browser clicks Overview of "space1" in the sidebar
+    And user of browser clicks Overview of "space1" space in the sidebar
     And user of browser sees in the INFO section of Overview page that number of shares is 1
 
 

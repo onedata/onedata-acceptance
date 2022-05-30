@@ -125,7 +125,7 @@ Feature: Basic management of harvester index that includes metadata in Onezone G
     # change JSON metadata
     And user of browser clicks on Data in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks Files of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser opens metadata modal on JSON tab for "dir1"
     And user of browser cleans JSON textarea in metadata modal
@@ -156,7 +156,7 @@ Feature: Basic management of harvester index that includes metadata in Onezone G
     # change JSON metadata
     And user of browser clicks on Data in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks Files of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser opens metadata modal on JSON tab for "dir1"
     And user of browser cleans JSON textarea in metadata modal

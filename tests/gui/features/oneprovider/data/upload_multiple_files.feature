@@ -32,7 +32,7 @@ Feature: Uploading multiple files at once
 
   Scenario: User uploads 5 files at once
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks Files of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload files from local directory "dir1" to remote current dir
     Then user of browser sees that there are 5 items in file browser
@@ -40,7 +40,7 @@ Feature: Uploading multiple files at once
 
   Scenario: User uploads more than 50 files and uses files list lazy loading
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks Files of "space1" space in the sidebar
 
     # upload 70 files
     And user of browser sees file browser in files tab in Oneprovider page
@@ -54,7 +54,7 @@ Feature: Uploading multiple files at once
 
   Scenario: User can change directory while uploading files
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks Files of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
 
     # create dir1
@@ -77,7 +77,7 @@ Feature: Uploading multiple files at once
 
   Scenario: Files uploaded by user are ordered by name
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks Files of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser uses upload button from file browser menu bar to upload files from local directory "dir3" to remote current dir
@@ -88,7 +88,7 @@ Feature: Uploading multiple files at once
 # TODO: Some uploaded files are not visible in file browser right after upload (VFS-8436)
   Scenario: User successfully uploads 300 files (stress test)
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks Files of "space1" space in the sidebar
 
     # upload 300 files
     And user of browser sees file browser in files tab in Oneprovider page
@@ -100,7 +100,7 @@ Feature: Uploading multiple files at once
   Scenario: User successfully uploads 1 GB file (stress test)
     Given user of browser creates file named "file1GB.txt" sized: 1 GiB in "/dir6" on local file system
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks Files of "space1" space in the sidebar
 
     # upload 1GB file
     And user of browser sees file browser in files tab in Oneprovider page
@@ -114,7 +114,7 @@ Feature: Uploading multiple files at once
 
   Scenario: User with weak connection uploads 1 MB file
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks Files of "space1" space in the sidebar
 
     # upload one larger file
     And user of browser sees file browser in files tab in Oneprovider page

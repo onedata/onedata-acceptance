@@ -30,13 +30,13 @@ Feature: Quality of Service in directory tests for 2 providers with 1 supporting
     And user of browser_unified sees that 1 storage matches condition in modal "Quality of Service"
     And user of browser_unified sees that matching storage is "posix provided by oneprovider-1"
     And user of browser_unified clicks on "Close" button in modal "Quality of Service"
-    And user of browser_unified clicks Overview of "space1" in the sidebar
+    And user of browser_unified clicks Overview of "space1" space in the sidebar
     And user of browser_unified sends support token for "space1" to user of browser_emergency
     And user of browser_emergency supports "space1" space in "oneprovider-2" Oneprovider panel service with following configuration:
         storage: posix
         size: 100
         unit: MiB
-    And user of browser_unified clicks Files of "space1" in the sidebar
+    And user of browser_unified clicks Files of "space1" space in the sidebar
     And user of browser_unified sees file browser in files tab in Oneprovider page
     And user of browser_unified clicks on QoS status tag for "file1" in file browser
     Then user of browser_unified sees that all QoS requirements are fulfilled
