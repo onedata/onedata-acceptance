@@ -662,7 +662,7 @@ Chrome transfers files:
   - script:
       <<: *run-selenium-tests
       scripts:
-      - make SUITE=test_oneprovider_transfers_files ENV_FILE=1oz_2op_slow_operations_deployed BROWSER=Chrome TIMEOUT=600 test_gui_src
+      - make SUITE=test_oneprovider_transfers_files ENV_FILE=1oz_2op_deployed BROWSER=Chrome TIMEOUT=600 test_gui_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -782,7 +782,7 @@ Chrome transfers directories:
   - script:
       <<: *run-selenium-tests
       scripts:
-      - make SUITE=test_oneprovider_transfers_directories ENV_FILE=1oz_2op_slow_operations_deployed BROWSER=Chrome TIMEOUT=600 test_gui_src
+      - make SUITE=test_oneprovider_transfers_directories ENV_FILE=1oz_2op_deployed BROWSER=Chrome TIMEOUT=600 test_gui_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs

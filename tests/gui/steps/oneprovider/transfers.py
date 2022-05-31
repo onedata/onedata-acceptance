@@ -30,14 +30,14 @@ def _assert_transfer(transfer, item_type, desc, sufix, hosts):
         if key == 'destination':
             val = hosts[val]['name']
         transfer_val = getattr(transfer, key.replace(' ', '_'))
-        if '<' in val:
+        if '<=' in val:
             val = float(val.split(' ')[1]) if val.split(
                 ' ')[2] == 'MiB' else float(val.split(' ')[1])*1024
 
             transfer_val = float(transfer_val.split(' ')[0])
             err_msg = (f'transfered {key}: {transfer_val} MiB is no less than '
                        f'{val} MiB')
-            assert transfer_val < val, err_msg
+            assert transfer_val <= val, err_msg
 
         else:
             assert transfer_val == str(val), (f'Transfer {key} is'
