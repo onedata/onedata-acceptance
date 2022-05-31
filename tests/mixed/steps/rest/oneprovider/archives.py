@@ -105,10 +105,10 @@ def remove_archive_in_op_rest(user, users, hosts, host, description,
     archive_id = tmp_memory[description]
     archive_api = ArchiveApi(client)
     if option == 'succeeds':
-        archive_api.purge_archive(archive_id)
+        archive_api.delete_archive(archive_id)
     elif option == 'fails':
         try:
-            archive_api.purge_archive(archive_id)
+            archive_api.delete_archive(archive_id)
             raise Exception(
                 'removing archive worked but it should not')
         except OPException as err:
