@@ -68,7 +68,7 @@ Feature: Nested archives operations
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser clicks and presses enter on item named "dir2" in dataset browser
     Then user of browser sees that item "dir3" has 2 archives
-    And user of browser clicks Datasets, Archives of "space1" space in the sidebar
+    And user of browser clicks "Datasets, Archives" of "space1" space in the sidebar
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser sees that item "dir1" has 1 archive
 

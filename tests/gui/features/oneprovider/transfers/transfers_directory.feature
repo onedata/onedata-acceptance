@@ -62,7 +62,7 @@ Feature: Oneprovider transfers directories functionality
     And user of browser expands first transfer record
     And user of browser sees that there is non-zero throughput in transfer chart
 
-    And user of browser clicks Files of "space1" space in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser sees file chunks for file "large_file.txt" as follows:
@@ -94,7 +94,7 @@ Feature: Oneprovider transfers directories functionality
             type: migration
             status: failed
 
-    And user of browser clicks Files of "smallSpace" space in the sidebar
+    And user of browser clicks "Files" of "smallSpace" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser sees file chunks for file "large_file.txt" as follows:
@@ -126,7 +126,7 @@ Feature: Oneprovider transfers directories functionality
             type: replication
             status: failed
 
-    And user of browser clicks Files of "smallSpace" space in the sidebar
+    And user of browser clicks "Files" of "smallSpace" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser sees file chunks for file "large_file.txt" as follows:
@@ -158,7 +158,7 @@ Feature: Oneprovider transfers directories functionality
             type: replication
             status: completed
 
-    And user of browser clicks Files of "space1" space in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser sees file chunks for file "large_file.txt" as follows:
@@ -193,7 +193,7 @@ Feature: Oneprovider transfers directories functionality
             type: migration
             status: completed
 
-    And user of browser clicks Files of "space1" space in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser sees file chunks for file "large_file.txt" as follows:

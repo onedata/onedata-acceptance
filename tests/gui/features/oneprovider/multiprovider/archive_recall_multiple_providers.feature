@@ -29,7 +29,7 @@ Feature: Archive recall tests using multiple providers
 
   Scenario: User sees that recall has been cancelled after cancelling it on remote provider
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" space in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
     And user of browser creates dataset for item "large_file.txt" in "space1"

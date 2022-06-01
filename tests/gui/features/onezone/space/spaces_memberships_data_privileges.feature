@@ -26,7 +26,7 @@ Feature: Basic management of data privileges for spaces in Onezone GUI
 
   Scenario: Non-space-owner successfully views data if he got Read files privilege
     When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Members of "space1" space in the sidebar
+    And user of space_owner_browser clicks "Members" of "space1" space in the sidebar
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
           Data management:
@@ -45,14 +45,14 @@ Feature: Basic management of data privileges for spaces in Onezone GUI
               Read files: True
 
     # Non-space-owner checks if he can view file in file browser
-    And user of browser_user1 clicks Files of "space1" space in the sidebar
+    And user of browser_user1 clicks "Files" of "space1" space in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
     Then user of browser_user1 sees item(s) named dir1 in file browser
 
 
   Scenario: Non-space-owner successfully creates directory if he got Write files privilege
     When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Members of "space1" space in the sidebar
+    And user of space_owner_browser clicks "Members" of "space1" space in the sidebar
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
           Data management:
@@ -61,7 +61,7 @@ Feature: Basic management of data privileges for spaces in Onezone GUI
               Write files: False
 
     # Non-space-owner fails to create directory in space1
-    And user of browser_user1 clicks Files of "space1" space in the sidebar
+    And user of browser_user1 clicks "Files" of "space1" space in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
     And user of browser_user1 sees that current working directory displayed in breadcrumbs on file browser is space1
     And user of browser_user1 clicks "New directory" button from file browser menu bar
@@ -86,7 +86,7 @@ Feature: Basic management of data privileges for spaces in Onezone GUI
 
   Scenario: Non-space-owner successfully creates share if he got Manage shares privilege
     When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Members of "space1" space in the sidebar
+    And user of space_owner_browser clicks "Members" of "space1" space in the sidebar
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
           Data management:
@@ -95,7 +95,7 @@ Feature: Basic management of data privileges for spaces in Onezone GUI
               Manage shares: False
 
     # Non-space-owner fails to create share in space1
-    And user of browser_user1 clicks Files of "space1" space in the sidebar
+    And user of browser_user1 clicks "Files" of "space1" space in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
     And user of browser_user1 sees that current working directory displayed in breadcrumbs on file browser is space1
     And user of browser_user1 clicks on menu for "dir1" file in file browser

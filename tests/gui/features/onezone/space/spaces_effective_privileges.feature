@@ -59,7 +59,7 @@ Feature: Spaces effective privileges
   Scenario: User sees that group effective privileges are the sum of its direct parent direct privileges and its direct privileges
     When user of browser clicks on Data in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Members of "space1" space in the sidebar
+    And user of browser clicks "Members" of "space1" space in the sidebar
     And user of browser clicks "child_group1" group in "space1" space members groups list
     And user of browser sees following privileges of "child_group1" group in space members subpage:
           QoS management:
@@ -97,7 +97,7 @@ Feature: Spaces effective privileges
   Scenario: User sees that user effective privileges are the sum of its direct parent direct privileges and its direct privileges
     When user of browser clicks on Data in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Members of "space1" space in the sidebar
+    And user of browser clicks "Members" of "space1" space in the sidebar
     And user of browser clicks "parent_group1" group in "space1" space members groups list
     And user of browser sees following privileges of "parent_group1" group in space members subpage:
           QoS management:
@@ -135,7 +135,7 @@ Feature: Spaces effective privileges
   Scenario: User sees that group effective privileges are the sum of its direct parents direct privileges
     When user of browser clicks on Data in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Members of "space1" space in the sidebar
+    And user of browser clicks "Members" of "space1" space in the sidebar
     And user of browser clicks "parent_group1" group in "space1" space members groups list
     And user of browser sees following privileges of "parent_group1" group in space members subpage:
           QoS management:
@@ -173,7 +173,7 @@ Feature: Spaces effective privileges
   Scenario: User sees that user effective privileges are the sum of its direct parents direct privileges
     When user of browser clicks on Data in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Members of "space1" space in the sidebar
+    And user of browser clicks "Members" of "space1" space in the sidebar
     And user of browser clicks "parent_group1" group in "space1" space members groups list
     And user of browser sees following privileges of "parent_group1" group in space members subpage:
           QoS management:

@@ -26,7 +26,7 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
 
   Scenario Outline: Add valid metadata in JSON format
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" space in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
 
     And user of browser opens "<modal>" metadata modal for "<item>"
@@ -46,7 +46,7 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
 
   Scenario Outline: User doesn't see JSON metadata and metadata status tag after deleting JSON metadata
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" space in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
 
     And user of browser adds and saves '{"id": 1}' JSON metadata for "<item>"
@@ -69,7 +69,7 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
 
   Scenario Outline: Discard changes while entering metadata in JSON format
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" space in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
 
     And user of browser opens metadata modal on JSON tab for "<item>"

@@ -23,7 +23,7 @@ Feature: Management of providers on world map in Onezone GUI
   Scenario: Oneprovider-1 circle is placed east of oneprovider-2 circle on world map
     When user of browser clicks on Data in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Providers of "space1" space in the sidebar
+    And user of browser clicks "Providers" of "space1" space in the sidebar
     And user of browser sees "oneprovider-1" is on the providers list
     And user of browser sees "oneprovider-2" is on the providers list
     Then user of browser sees that provider "oneprovider-1" is placed east of "oneprovider-2" on world map

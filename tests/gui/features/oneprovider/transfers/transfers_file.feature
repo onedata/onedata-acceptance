@@ -44,7 +44,7 @@ Feature: Oneprovider transfers files functionality
     And user of browser replicates "large_file.txt" to provider "oneprovider-2"
 
     # Check that transfer appeared in transfer tab
-    And user of browser clicks Transfers of "space1" space in the sidebar
+    And user of browser clicks "Transfers" of "space1" space in the sidebar
     And user of browser waits for Transfers page to load
     Then user of browser waits for all transfers to start
     And user of browser waits for all transfers to finish
@@ -60,7 +60,7 @@ Feature: Oneprovider transfers files functionality
     And user of browser expands first transfer record
     And user of browser sees that there is non-zero throughput in transfer chart
 
-    And user of browser clicks Files of "space1" space in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
@@ -88,7 +88,7 @@ Feature: Oneprovider transfers files functionality
             type: migration
             status: failed
 
-    And user of browser clicks Files of "smallSpace" space in the sidebar
+    And user of browser clicks "Files" of "smallSpace" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
@@ -112,7 +112,7 @@ Feature: Oneprovider transfers files functionality
             type: replication
             status: failed
 
-    And user of browser clicks Files of "smallSpace" space in the sidebar
+    And user of browser clicks "Files" of "smallSpace" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
@@ -147,7 +147,7 @@ Feature: Oneprovider transfers files functionality
     And user of browser expands first transfer record
     And user of browser sees that there is non-zero throughput in transfer chart
 
-    And user of browser clicks Files of "space1" space in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely empty

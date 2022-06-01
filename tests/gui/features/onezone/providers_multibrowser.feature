@@ -50,7 +50,7 @@ Feature: Basic management of providers in Onezone GUI
 
 
   Scenario: User sees provider on the space providers map after supporting
-    When user of space_owner_browser clicks Overview of "space3" space in the sidebar
+    When user of space_owner_browser clicks "Overview" of "space3" space in the sidebar
     And user of space_owner_browser sees no providers on the map on "space3" space overview data page
     And user of space_owner_browser sends support token for "space3" to user of browser_emergency
 
@@ -58,7 +58,7 @@ Feature: Basic management of providers in Onezone GUI
           storage: posix
           size: 10000
 
-    And user of space_owner_browser clicks Overview of "space3" space in the sidebar
+    And user of space_owner_browser clicks "Overview" of "space3" space in the sidebar
     And user of space_owner_browser sees 1 provider on the map on "space3" space overview data page
     And user of space_owner_browser clicks the map on "space3" space overview data page
 
@@ -68,7 +68,7 @@ Feature: Basic management of providers in Onezone GUI
 
 
   Scenario: User sees provider details after choosing appropriate option in provider menu on space providers page
-    When user of space_owner_browser clicks Overview of "space3" space in the sidebar
+    When user of space_owner_browser clicks "Overview" of "space3" space in the sidebar
     And user of space_owner_browser sees no providers on the map on "space3" space overview data page
     And user of space_owner_browser sends support token for "space3" to user of browser_emergency
 
@@ -76,7 +76,7 @@ Feature: Basic management of providers in Onezone GUI
           storage: posix
           size: 10000
 
-    And user of space_owner_browser clicks Overview of "space3" space in the sidebar
+    And user of space_owner_browser clicks "Overview" of "space3" space in the sidebar
     And user of space_owner_browser sees 1 provider on the map on "space3" space overview data page
     And user of space_owner_browser clicks the map on "space3" space overview data page
 

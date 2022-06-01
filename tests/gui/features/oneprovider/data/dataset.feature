@@ -32,7 +32,7 @@ Feature: Basic datasets operations
 
   Scenario: User sees that file has dataset tag set after marking it as dataset
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" space in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser clicks on menu for "dir1" directory in file browser
     And user of browser clicks "Datasets" option in data row menu in file browser
@@ -67,12 +67,12 @@ Feature: Basic datasets operations
 
   Scenario: User does not see dataset tag after removing dataset in dataset browser
     When user of browser creates dataset for item "dir1" in "space1"
-    And user of browser clicks Datasets, Archives of "space1" space in the sidebar
+    And user of browser clicks "Datasets, Archives" of "space1" space in the sidebar
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser clicks on menu for "dir1" dataset in dataset browser
     And user of browser clicks "Remove" option in data row menu in dataset browser
     And user of browser clicks on "Remove" button in modal "Remove Selected Dataset"
-    And user of browser clicks Files of "space1" space in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     Then user of browser sees file browser in files tab in Oneprovider page
     And user of browser does not see Dataset status tag for "dir1" in file browser
 
@@ -84,7 +84,7 @@ Feature: Basic datasets operations
     And user of browser clicks and presses enter on item named "dir4" in file browser
     And user of browser creates dataset for item "dir5" in "space1"
 
-    Then user of browser clicks Datasets, Archives of "space1" space in the sidebar
+    Then user of browser clicks "Datasets, Archives" of "space1" space in the sidebar
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser sees that the item structure in dataset browser is as follow:
           - dir2:
@@ -120,7 +120,7 @@ Feature: Basic datasets operations
 
   Scenario: User does not see dataset tag in file browser and see directory in Detached tab after detaching dataset
     When user of browser creates dataset for item "dir1" in "space1"
-    And user of browser clicks Datasets, Archives of "space1" space in the sidebar
+    And user of browser clicks "Datasets, Archives" of "space1" space in the sidebar
     And user of browser sees dataset browser in datasets tab in Oneprovider page
 
     # detach dataset
@@ -131,7 +131,7 @@ Feature: Basic datasets operations
     And user of browser clicks on detached view mode on dataset browser page
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     Then user of browser sees item(s) named "dir1" in dataset browser
-    And user of browser clicks Files of "space1" space in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser does not see Dataset status tag for "dir1" in file browser
 
@@ -145,7 +145,7 @@ Feature: Basic datasets operations
     And user of browser clicks and presses enter on item named "dir4" in file browser
     And user of browser creates dataset for item "dir5" in "space1"
 
-    And user of browser clicks Datasets, Archives of "space1" space in the sidebar
+    And user of browser clicks "Datasets, Archives" of "space1" space in the sidebar
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser clicks and presses enter on item named "dir2" in dataset browser
 
@@ -174,7 +174,7 @@ Feature: Basic datasets operations
 
   Scenario: User sees dataset in attached tab after reattaching detached dataset
     When user of browser creates dataset for item "dir1" in "space1"
-    And user of browser clicks Datasets, Archives of "space1" space in the sidebar
+    And user of browser clicks "Datasets, Archives" of "space1" space in the sidebar
     And user of browser sees dataset browser in datasets tab in Oneprovider page
 
     # detach dataset
@@ -194,7 +194,7 @@ Feature: Basic datasets operations
 
   Scenario: User fails to reattach dataset after deleting directory
     When user of browser creates dataset for item "dir1" in "space1"
-    And user of browser clicks Datasets, Archives of "space1" space in the sidebar
+    And user of browser clicks "Datasets, Archives" of "space1" space in the sidebar
     And user of browser sees dataset browser in datasets tab in Oneprovider page
 
     # detach dataset
@@ -202,7 +202,7 @@ Feature: Basic datasets operations
     And user of browser clicks "Detach" option in data row menu in dataset browser
     And user of browser clicks on "Proceed" button in modal "Detach Dataset"
 
-    And user of browser clicks Files of "space1" space in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
 
     # delete directory
@@ -210,7 +210,7 @@ Feature: Basic datasets operations
     And user of browser clicks "Delete" option in data row menu in file browser
     And user of browser clicks on "Yes" button in modal "Delete modal"
 
-    And user of browser clicks Datasets, Archives of "space1" space in the sidebar
+    And user of browser clicks "Datasets, Archives" of "space1" space in the sidebar
     And user of browser clicks on detached view mode on dataset browser page
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser clicks on menu for "dir1" dataset in dataset browser
@@ -225,7 +225,7 @@ Feature: Basic datasets operations
     And user of browser clicks "Delete" option in data row menu in file browser
     And user of browser clicks on "Yes" button in modal "Delete modal"
 
-    And user of browser clicks Datasets, Archives of "space1" space in the sidebar
+    And user of browser clicks "Datasets, Archives" of "space1" space in the sidebar
     And user of browser clicks on detached view mode on dataset browser page
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     Then user of browser sees item(s) named "dir1" in dataset browser
@@ -246,7 +246,7 @@ Feature: Basic datasets operations
   Scenario: User sees data protection tag in dataset modal for hardlink of data protected file
     # create hardlink
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" space in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser clicks on menu for "file3" file in file browser
     And user of browser clicks "Create hard link" option in data row menu in file browser
@@ -268,7 +268,7 @@ Feature: Basic datasets operations
   Scenario: User sees both data and metadata protection tags on hardlinks if hardlinked files have these flags separately set
     # create hardlink
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" space in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser clicks on menu for "file3" file in file browser
     And user of browser clicks "Create hard link" option in data row menu in file browser
@@ -296,7 +296,7 @@ Feature: Basic datasets operations
   Scenario: User sees both data and metadata protection tags on hardlinks if hardlinked files inherit these flags from their parents separately
     # create hardlink
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" space in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser clicks on menu for "file1" file in file browser
@@ -337,13 +337,13 @@ Feature: Basic datasets operations
   # checks bugfix from VFS-8739
   Scenario: User sees proper list of datasets when their names have common prefix and end with digit
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" space in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser creates dataset for item "dir1" in "space1"
     And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser creates dataset for item "dir2" in "space1"
     And user of browser creates dataset for item "dir22" in "space1"
-    And user of browser clicks Datasets, Archives of "space1" space in the sidebar
+    And user of browser clicks "Datasets, Archives" of "space1" space in the sidebar
     And user of browser sees dataset browser in files tab in Oneprovider page
     Then user of browser sees that the item structure in dataset browser is as follow:
           - dir1:
@@ -357,7 +357,7 @@ Feature: Basic datasets operations
     When user of browser creates dataset for item "dir2" in "space1"
     And user of browser goes to "/dir2/dir3/dir4" in file browser
     And user of browser creates dataset for item "dir5" in "space1"
-    And user of browser clicks Datasets, Archives of "space1" space in the sidebar
+    And user of browser clicks "Datasets, Archives" of "space1" space in the sidebar
     And user of browser sees dataset browser in files tab in Oneprovider page
     Then user of browser sees path to root file: "/space1/dir2" for "dir2" dataset in dataset browser
     And user of browser clicks and presses enter on item named "dir2" in dataset browser
@@ -369,7 +369,7 @@ Feature: Basic datasets operations
     And user of browser succeeds to remove "dir1" in "space1"
     And user of browser creates directory "dir1"
     And user of browser creates dataset for item "dir1" in "space1"
-    And user of browser clicks Datasets, Archives of "space1" space in the sidebar
+    And user of browser clicks "Datasets, Archives" of "space1" space in the sidebar
     And user of browser sees dataset browser in files tab in Oneprovider page
     And user of browser clicks on menu for "dir1" dataset in dataset browser
     And user of browser clicks "Detach" option in data row menu in dataset browser

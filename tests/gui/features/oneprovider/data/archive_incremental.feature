@@ -31,7 +31,7 @@ Feature: Incremental archives operations
     And user of browser succeeds to create archive for item "dir4" in "space1" with following configuration:
         layout: plain
 
-    And user of browser clicks Files of "space1" space in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser succeeds to upload "20B-0.txt" to "dir4" in "space1"
     And user of browser sees that item named "20B-0.txt" has appeared in file browser

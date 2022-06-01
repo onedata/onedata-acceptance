@@ -14,9 +14,9 @@ from tests.gui.utils.generic import transform, parse_seq
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 
-SPACE_TABS = ["Overview", "Files", "Shares Open Data", "Transfers",
-              "Datasets Archives", "Providers", "Members",
-              "Harvesters Discovery"]
+SPACE_TABS = ["Overview", "Files", "Shares, Open Data", "Transfers",
+              "Datasets, Archives", "Providers", "Members",
+              "Harvesters, Discovery"]
 
 
 def _choose_space_from_menu_list(oz_page, driver, name):
@@ -25,6 +25,14 @@ def _choose_space_from_menu_list(oz_page, driver, name):
         oz_page(driver)[option].spaces_header_list[name]()
     except (RuntimeError, IndexError):
         oz_page(driver)[option].choose_space(name)
+
+
+def _parse_tabs_list(tabs):
+    tabs = tabs.split('"')[1:-1]
+    tabs = [
+        transform(e).replace(',', '') for e in tabs if e != ', '
+    ]
+    return tabs
 
 
 @wt(parsers.parse('user of {browser_id} clicks on Create space button '
@@ -267,8 +275,8 @@ def click_the_map_on_data_page(selenium, browser_id, oz_page, page, space_name):
     getattr(oz_page(driver)['data'], _get_subpage_name(page)).map()
 
 
-@wt(parsers.re('user of (?P<browser_id>.*?) clicks '
-               '(?P<option>.*?) of "(?P<space_name>.*?)" space in the sidebar'))
+@wt(parsers.re('user of (?P<browser_id>.*?) clicks "(?P<option>.*?)" '
+               'of "(?P<space_name>.*?)" space in the sidebar'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
                                                   space_name, option, oz_page):
@@ -291,10 +299,10 @@ def _get_number_of_disabled_elements_on_left_sidebar_menu(space):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_option_of_space_on_left_sidebar_menu_disabled(selenium, browser_id,
                                                          space_name,
-                                                         element_list, oz_page):
+                                                         element_list,
+                                                         oz_page):
     driver = selenium[browser_id]
-    element_list = parse_seq(element_list)
-    element_list = [transform(e) for e in element_list]
+    element_list = _parse_tabs_list(element_list)
     space = oz_page(driver)['data'].elements_list[space_name]
     error_msg = f'Number of disabled elements is incorrect'
     assert _get_number_of_disabled_elements_on_left_sidebar_menu(space) == len(
@@ -583,11 +591,10 @@ def assert_tabs_of_space_enabled(selenium, browser_id, tabs_list, space_name,
     page = oz_page(selenium[browser_id])['data']
     page.spaces_header_list[space_name]()
     space = page.elements_list[space_name]
-
-    tabs = SPACE_TABS if tabs_list == "all" else parse_seq(tabs_list)
+    tabs = SPACE_TABS if tabs_list == "all" else _parse_tabs_list(tabs_list)
 
     for tab in tabs:
-        assert space.is_element_enabled(transform(tab)), (
+        assert space.is_element_enabled(tab), (
             f'Tab {tab} is not enabled for {space}'
         )
 
@@ -601,8 +608,8 @@ def assert_tabs_of_space_disabled(selenium, browser_id, tabs_list, space_name,
     page.spaces_header_list[space_name]()
     space = page.elements_list[space_name]
 
-    for tab in parse_seq(tabs_list):
-        assert space.is_element_disabled(transform(tab)), (
+    for tab in _parse_tabs_list(tabs_list):
+        assert space.is_element_disabled(tab), (
             f'Tab {tab} is not disabled for {space}'
         )
 

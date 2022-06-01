@@ -25,7 +25,7 @@ Feature: Multi Browser invitation group to spaces
   Scenario: User joins a space with group invitation token
     When user of space_owner_browser clicks on Data in the main menu
     And user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Members of "space1" space in the sidebar
+    And user of space_owner_browser clicks "Members" of "space1" space in the sidebar
     And user of space_owner_browser clicks on "Invite group using token" button in groups list menu in "space1" space members view
     And user of space_owner_browser copies invitation token from modal
     And user of space_owner_browser closes "Invite using token" modal
@@ -40,7 +40,7 @@ Feature: Multi Browser invitation group to spaces
     # Space-owner-user invites user1 via group invitation
     When user of space_owner_browser clicks on Data in the main menu
     And user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Members of "space1" space in the sidebar
+    And user of space_owner_browser clicks "Members" of "space1" space in the sidebar
     And user of space_owner_browser clicks on "Invite group using token" button in groups list menu in "space1" space members view
     And user of space_owner_browser copies invitation token from modal
     And user of space_owner_browser closes "Invite using token" modal
