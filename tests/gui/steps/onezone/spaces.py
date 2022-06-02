@@ -14,9 +14,9 @@ from tests.gui.utils.generic import transform, parse_seq
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 
-SPACE_TABS = ["Overview", "Files", "Shares, Open Data", "Transfers",
-              "Datasets, Archives", "Providers", "Members",
-              "Harvesters, Discovery"]
+SPACE_TABS = ["overview", "files", "shares_open_data", "transfers",
+              "datasets_archives", "providers", "members",
+              "harvesters_discovery"]
 
 
 def _choose_space_from_menu_list(oz_page, driver, name):
