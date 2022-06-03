@@ -98,7 +98,7 @@ Feature: Oneprovider transfers functionality using multiple browsers instances
     And user of browser1 expands first transfer record
     And user of browser1 sees that there is non-zero throughput in transfer chart
 
-    And user of browser1 clicks Files of "space1" in the sidebar
+    And user of browser1 clicks "Files" of "space1" space in the sidebar
     And user of browser1 sees file browser in files tab in Oneprovider page
     And user of browser1 clicks and presses enter on item named "dir1" in file browser
     And user of browser1 is idle for 10 seconds
@@ -182,7 +182,7 @@ Feature: Oneprovider transfers functionality using multiple browsers instances
     And user of browser1 expands first transfer record
     And user of browser1 sees that there is non-zero throughput in transfer chart
 
-    And user of browser1 clicks Files of "space1" in the sidebar
+    And user of browser1 clicks "Files" of "space1" space in the sidebar
     And user of browser1 sees file browser in files tab in Oneprovider page
     And user of browser1 clicks and presses enter on item named "dir1" in file browser
     And user of browser1 sees file chunks for file "large_file.txt" as follows:

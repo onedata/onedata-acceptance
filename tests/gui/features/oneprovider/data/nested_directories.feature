@@ -35,7 +35,7 @@ Feature: Basic files tab operations on nested directory structure in file browse
 
   Scenario: User changes directory using breadcrumbs
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees that current working directory displayed in breadcrumbs on file browser is space1
 
@@ -50,7 +50,7 @@ Feature: Basic files tab operations on nested directory structure in file browse
 
   Scenario: User removes directory containing several files
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees that current working directory displayed in breadcrumbs on file browser is space1
 
@@ -63,7 +63,7 @@ Feature: Basic files tab operations on nested directory structure in file browse
 
   Scenario: User enters directory and views files in it
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser clicks and presses enter on item named "dir1" in file browser
