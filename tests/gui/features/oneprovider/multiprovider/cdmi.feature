@@ -20,7 +20,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
 
   Scenario: User uploads file on one provider, sees it's distribution, writes to it using cdmi on other provider and sees it's distribution
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
     And user of browser sees that item named "20B-0.txt" has appeared in file browser
@@ -53,7 +53,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
 
   Scenario: User uploads file, sees it's size, writes to it using cdmi and sees that size has grown
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
     And user of browser sees that item named "20B-0.txt" has appeared in file browser
@@ -81,7 +81,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
 
   Scenario: User uploads file on one provider, sees it's distribution, reads half of file on other provider using cdmi and again sees it's distribution
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
     And user of browser sees that item named "20B-0.txt" has appeared in file browser
@@ -110,7 +110,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
 
   Scenario: User uploads file, sees it's distribution, writes to it beyond the end of file using cdmi and sees it's distribution again
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
     And user of browser sees that item named "20B-0.txt" has appeared in file browser
@@ -136,7 +136,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
 
   Scenario: User uploads file, appends some text to it, downloads it and sees it's content
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
     And user of browser sees that item named "20B-0.txt" has appeared in file browser

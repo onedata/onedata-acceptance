@@ -26,7 +26,7 @@ Feature: Basic data tab operations on directory RDF metadata in file browser
 
   Scenario Outline: Add valid metadata in XML format
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
 
     And user of browser opens "<modal>" metadata modal for "<item>"
@@ -46,7 +46,7 @@ Feature: Basic data tab operations on directory RDF metadata in file browser
 
   Scenario Outline: User doesn't see RDF metadata and metadata status tag after deleting metadata in XML format
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
 
     And user of browser adds and saves '<content>' RDF metadata for "<item>"
@@ -69,7 +69,7 @@ Feature: Basic data tab operations on directory RDF metadata in file browser
 
   Scenario Outline: Discard changes while entering metadata for directory in XML format
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
 
     And user of browser opens metadata modal on RDF tab for "<item>"
