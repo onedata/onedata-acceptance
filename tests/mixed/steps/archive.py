@@ -13,7 +13,8 @@ from tests.mixed.steps.rest.oneprovider.archives import (
     remove_archive_in_op_rest, assert_archive_with_option_in_op_rest,
     assert_number_of_archive_in_op_rest,
     assert_base_archive_for_archive_in_op_rest,
-    assert_archive_callback_in_op_rest)
+    assert_archive_callback_in_op_rest, recall_archive_for_archive_in_op_rest,
+    recalled_archive_details_in_op_rest)
 from tests.mixed.utils.common import NoSuchClientException
 
 
@@ -160,5 +161,47 @@ def assert_archive_callback(user, users, hosts, host, tmp_memory, description,
         assert_archive_callback_in_op_rest(user, users, hosts, host, tmp_memory,
                                            description, option,
                                            expected_callback)
+    else:
+        raise NoSuchClientException(f'Client: {client} not found')
+
+
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) recalls archive to '
+               '"(?P<target_name>.*)" for archive with description '
+               '"(?P<description>.*)" for item "(?P<item_name>.*)" in space '
+               '"(?P<space_name>.*)" in (?P<host>.*)'))
+def recall_archive_for_archive_in_op(client, user, description, target_name,
+                                     space_name, host, tmp_memory, popups,
+                                     selenium, modals, users, hosts, spaces):
+
+    client_lower = client.lower()
+    if client_lower == 'web gui':
+        recall_archive_for_archive_in_op_gui(user, description, tmp_memory,
+                                             popups, selenium, modals,
+                                             target_name)
+    elif client_lower == 'rest':
+        recall_archive_for_archive_in_op_rest(user, users, hosts, host,
+                                              tmp_memory, description,
+                                              target_name, space_name,
+                                              spaces)
+    else:
+        raise NoSuchClientException(f'Client: {client} not found')
+
+
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) sees "(?P<name>.*)" '
+               r'archive recalled details in "(?P<space_name>.*)" in'
+               r' (?P<host>.*):\n(?P<config>(.|\s)*)'))
+def recalled_archive_details_in_op(client, user, config, name, tmp_memory,
+                                   modals, selenium, users, hosts, host,
+                                   space_name, spaces):
+
+    client_lower = client.lower()
+    data = yaml.load(config)
+    if client_lower == 'web gui':
+        recalled_archive_details_in_op_gui(user, name, tmp_memory, data,
+                                           modals, selenium)
+    elif client_lower == 'rest':
+        recalled_archive_details_in_op_rest(user, users, hosts, host, data,
+                                            name, space_name, spaces)
+
     else:
         raise NoSuchClientException(f'Client: {client} not found')

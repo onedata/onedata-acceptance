@@ -13,6 +13,7 @@ from tests.gui.utils.core.web_elements import Label, Button
 
 class ArchiveRecallInformation(Modal):
     status = Label('.recall-info-row-process-status .property-value')
+    dataset = Label('.recall-info-row-dataset .property-value')
     files_recalled = Label('.recall-info-row-files .property-value')
     data_recalled = Label('.recall-info-row-bytes .property-value')
     started_at = Label('.recall-info-row-started-at .property-value')

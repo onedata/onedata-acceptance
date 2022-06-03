@@ -10,6 +10,9 @@ import yaml
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.generic import transform
+from tests.mixed.oneprovider_client.api.basic_file_operations_api import (
+    BasicFileOperationsApi)
+from tests.mixed.steps.rest.oneprovider.data import _lookup_file_id
 from tests.mixed.steps.rest.oneprovider.datasets import get_dataset_id
 from tests.mixed.utils.common import *
 from tests.mixed.oneprovider_client.api.archive_api import ArchiveApi
@@ -184,4 +187,55 @@ def assert_archive_callback_in_op_rest(user, users, hosts, host, tmp_memory,
         assert expected_callback == 'None', err_msg
     else:
         assert getattr(info, callback) == expected_callback, err_msg
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def recall_archive_for_archive_in_op_rest(user, users, hosts, host, tmp_memory,
+                                          description, name, space_name,
+                                          spaces):
+    client = login_to_provider(user, users, hosts[host]['hostname'])
+    archive_id = tmp_memory[description]
+    archive_api = ArchiveApi(client)
+    space_id = spaces[space_name]
+    file_api = BasicFileOperationsApi(client)
+    parent_id = file_api.get_attrs(space_id).file_id
+    data = {"parentDirectoryId": parent_id, "targetFileName": name}
+    archive_api.recall_archive(archive_id, data)
+
+
+def recalled_archive_details_in_op_rest(user, users, hosts, host, data,
+                                        name, space_name, spaces):
+
+    client = login_to_provider(user, users, hosts[host]['hostname'])
+    archive_api = ArchiveApi(client)
+    path = f'{space_name}/{name}'
+    file_id = _lookup_file_id(path, client)
+    recall_details = archive_api.get_archive_recall_details(file_id)
+    dataset_api = DatasetApi(client)
+
+    err_msg = ('{key} for archive recall "{name}" is {value} '
+               'but expected value is {expected_value} ')
+    dataset_id = get_dataset_id(data['dataset'], spaces, space_name,
+                                dataset_api)
+    dataset = recall_details.dataset_id
+    expected_files = int(data["files_recalled"].split(' / ')[0])
+    files = recall_details.total_file_count
+    expected_data = int(data["data_recalled"].split(' / ')[0].replace('B', ''))
+    data = recall_details.total_byte_size
+
+    assert dataset == dataset_id, err_msg.format(
+        key="dataset", name=name, value=dataset, expected_value=dataset_id)
+
+    assert files == expected_files, err_msg.format(
+        key="files recalled", name=name, value=files,
+        expected_value=expected_files)
+
+    assert data == data, err_msg.format(
+        key="data recalled", name=name, value=data,
+        expected_value=expected_data)
+
+    assert recall_details.finish_time >= recall_details.start_time, (
+        f'archive recall "{name}" finish time is not greater or equal recall '
+        f'start time')
+
 

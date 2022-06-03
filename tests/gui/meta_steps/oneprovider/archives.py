@@ -9,12 +9,17 @@ __license__ = ("This software is released under the MIT license cited in "
 
 import yaml
 import time
+import re
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.meta_steps.oneprovider.data import go_to_path_without_last_elem
 from tests.gui.meta_steps.oneprovider.dataset import (
     go_to_and_assert_browser, get_item_name_from_path)
+from tests.gui.steps.oneprovider.archives_recall import (
+    assert_recall_duration_in_archive_recall_information_modal)
 from tests.gui.steps.oneprovider.dataset import click_on_dataset
+from tests.gui.steps.oneprovider.file_browser import (
+    click_on_status_tag_for_file_in_file_browser)
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
@@ -34,8 +39,8 @@ from tests.gui.steps.oneprovider.archives import (
     assert_tag_for_archive_in_archive_browser,
     assert_not_archive_with_description, get_archive_with_description,
     assert_archive_info_in_properties_modal)
-from tests.gui.steps.modal import click_modal_button
-
+from tests.gui.steps.modal import (click_modal_button,
+                                   write_name_into_text_field_in_modal)
 
 OPTION_IN_SPACE = 'Datasets'
 DATASET_BROWSER = 'dataset browser'
@@ -305,3 +310,41 @@ def assert_archive_callback_in_op_gui(browser_id, tmp_memory, description,
     assert_archive_info_in_properties_modal(selenium, browser_id, modals,
                                             expected, info)
     click_modal_button(selenium, browser_id, button_name, modal, modals)
+
+
+def recall_archive_for_archive_in_op_gui(browser_id, description, tmp_memory,
+                                         popups, selenium, modals, name):
+    option_in_menu = 'Recall to...'
+    modal_name = 'Recall archive'
+    name_textfield = 'target name input'
+    button_name = 'Recall'
+    click_menu_for_archive(browser_id, tmp_memory, description)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id,
+                                             option_in_menu, popups,
+                                             ARCHIVE_BROWSER)
+    write_name_into_text_field_in_modal(selenium, browser_id, name, modal_name,
+                                        modals, name_textfield)
+    click_modal_button(selenium, browser_id, button_name, modal_name, modals)
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def recalled_archive_details_in_op_gui(browser_id, item_name, tmp_memory,
+                                       data, modals, selenium):
+
+    status_type = 'recalled'
+    click_on_status_tag_for_file_in_file_browser(browser_id, status_type,
+                                                 item_name, tmp_memory)
+    recall_modal = modals(selenium[browser_id]).archive_recall_information
+
+    for key, expected_value in data.items():
+        if key == 'time':
+            start = 'started'
+            stop = 'finished'
+            assert_recall_duration_in_archive_recall_information_modal(
+                selenium, browser_id, modals, start, stop)
+        else:
+            value = re.sub(r'\s*', '', getattr(recall_modal, key))
+            expected_value = re.sub(r'\s*', '', expected_value)
+            err_msg = (f'{key} for archive recall "{item_name}" is {value} '
+                       f'but expected value is {expected_value} ')
+            assert value == expected_value, err_msg

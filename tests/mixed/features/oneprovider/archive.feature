@@ -17,7 +17,7 @@ Feature: Archives mixed tests
               - dir1:
                 - dir2:
                   - dir4
-                  - file1
+                  - file1: 11111
                 - dir3
 
     And opened browser with user1 signed in to "onezone" service
@@ -165,5 +165,27 @@ Feature: Archives mixed tests
   | client_checking    |
   | REST               |
   | web GUI            |
+
+
+  Scenario Outline: User of <client_checking> sees that archive has been recalled after <client_creating> recalled archive
+    When using <client_creating>, user1 creates dataset for item "dir1" in space "space1" in oneprovider-1
+    And using <client_creating>, user1 succeeds to create archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
+        description: first archive
+        layout: plain
+    And using <client_creating>, user1 recalls archive to "dir1_recalled" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
+    Then using <client_checking>, user1 succeeds to see item named "dir1_recalled" in "space1" in oneprovider-1
+
+    And user1 is idle for 5 seconds
+    And using <client_checking>, user1 sees "dir1_recalled" archive recalled details in "space1" in oneprovider-1:
+        status: Finished successfully
+        dataset: dir1
+        files_recalled: 1 / 1
+        data_recalled: 5 B / 5 B
+        time: finish_time >= start_time
+
+  Examples:
+  | client_creating    | client_checking    |
+  | REST               | web GUI            |
+  | web GUI            | REST               |
 
 
