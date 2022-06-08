@@ -30,7 +30,7 @@ Feature: Basic archives operations
     When user of browser creates dataset for item "dir4" in "space1"
 
     # create archive with description
-    And user of browser clicks Datasets of "space1" in the sidebar
+    And user of browser clicks "Datasets, Archives" of "space1" space in the sidebar
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser sees that item "dir4" has 0 archives
     And user of browser clicks on menu for "dir4" dataset in dataset browser
@@ -91,7 +91,7 @@ Feature: Basic archives operations
            - dir2:
              - dir3:
                - file1: 100
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser succeeds to upload "20B-0.txt" to "/dir1/dir2/dir3" in "space1"
     And user of browser sees that item named "20B-0.txt" has appeared in file browser

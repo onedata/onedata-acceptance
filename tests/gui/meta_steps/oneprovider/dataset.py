@@ -125,7 +125,7 @@ def fail_to_create_dataset_in_op_gui(browser_id, tmp_memory, item_name,
 def assert_top_level_dataset_in_space_in_op_gui(selenium, browser_id, oz_page,
                                                 space_name, op_container,
                                                 tmp_memory, item_name, option):
-    option_in_space = 'Datasets'
+    option_in_space = 'Datasets, Archives'
     item_browser = 'dataset browser'
     go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
                              option_in_space, op_container, tmp_memory,
@@ -141,7 +141,7 @@ def assert_top_level_dataset_in_space_in_op_gui(selenium, browser_id, oz_page,
 def remove_dataset_in_op_gui(selenium, browser_id, oz_page, space_name,
                              op_container, tmp_memory, item_name, modals,
                              popups):
-    option_in_space = 'Datasets'
+    option_in_space = 'Datasets, Archives'
     item_browser = 'dataset browser'
     option_in_data_row_menu = 'Remove'
     modal = 'Remove selected dataset'
@@ -161,7 +161,7 @@ def check_dataset_structure_in_op_gui(selenium, browser_id, oz_page, space_name,
                                       config, op_container, tmpdir, tmp_memory):
     # function checks only if what is in config exists, does not
     # fail if there are more datasets
-    option_in_space = 'Datasets'
+    option_in_space = 'Datasets, Archives'
     item_browser = 'dataset browser'
     go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
                              option_in_space, op_container, tmp_memory,
@@ -205,7 +205,7 @@ def set_protection_flags_for_dataset_in_op_gui(browser_id, selenium, oz_page,
                                                space_name, op_container,
                                                tmp_memory, item_name, modals,
                                                option, popups):
-    option_in_space = 'Datasets'
+    option_in_space = 'Datasets, Archives'
     item_browser = 'dataset browser'
     option_in_data_row_menu = 'Write protection'
     go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
@@ -233,7 +233,7 @@ def set_protection_flags_for_dataset_in_op_gui(browser_id, selenium, oz_page,
 def detach_dataset_in_op_gui(selenium, browser_id, oz_page, space_name,
                              op_container, tmp_memory, item_name, modals,
                              popups):
-    option_in_space = 'Datasets'
+    option_in_space = 'Datasets, Archives'
     item_browser = 'dataset browser'
     option_in_data_row_menu = 'Detach'
     modal = 'Detach Dataset'
@@ -252,7 +252,7 @@ def detach_dataset_in_op_gui(selenium, browser_id, oz_page, space_name,
 
 def assert_dataset_detached_in_op_gui(selenium, browser_id, oz_page, item_name,
                                       space_name, op_container, tmp_memory):
-    option_in_space = 'Datasets'
+    option_in_space = 'Datasets, Archives'
     which = 'dataset'
     state = 'detached'
     item_browser = 'dataset browser'
@@ -270,7 +270,7 @@ def assert_dataset_detached_in_op_gui(selenium, browser_id, oz_page, item_name,
 def reattach_dataset_in_op_gui(selenium, browser_id, oz_page, space_name,
                                op_container, tmp_memory, item_name, modals,
                                popups):
-    option_in_space = 'Datasets'
+    option_in_space = 'Datasets, Archives'
     item_browser = 'dataset browser'
     which = 'dataset'
     state = 'detached'

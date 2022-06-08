@@ -28,7 +28,7 @@ Feature: Basic management of spaces privileges in Onezone GUI with two providers
 
   Scenario: Non-space-owner successfully views Transfers tab in menu if he got View Transfers privilege
     When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Members of "space1" in the sidebar
+    And user of space_owner_browser clicks "Members" of "space1" space in the sidebar
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
           Transfer management:
@@ -44,12 +44,12 @@ Feature: Basic management of spaces privileges in Onezone GUI with two providers
             privilege subtypes:
               View transfers: True
 
-    Then user of browser_user1 clicks Transfers of "space1" in the sidebar
+    Then user of browser_user1 clicks "Transfers" of "space1" space in the sidebar
 
 
   Scenario: Non-space-owner successfully schedules replication if he got Transfer management privileges
     When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Members of "space1" in the sidebar
+    And user of space_owner_browser clicks "Members" of "space1" space in the sidebar
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
           Transfer management:
@@ -59,7 +59,7 @@ Feature: Basic management of spaces privileges in Onezone GUI with two providers
               Schedule replication: False
 
     # Non-space-owner checks if he can replicate file1 from oneprovider-1
-    And user of browser_user1 clicks Files of "space1" in the sidebar
+    And user of browser_user1 clicks "Files" of "space1" space in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
     And user of browser_user1 clicks on menu for "file1" file in file browser
     And user of browser_user1 clicks "Data distribution" option in data row menu in file browser
@@ -86,13 +86,13 @@ Feature: Basic management of spaces privileges in Onezone GUI with two providers
     When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
 
     # Space-owner replicates file1 for non-space-owner to schedule eviction
-    And user of space_owner_browser clicks Files of "space1" in the sidebar
+    And user of space_owner_browser clicks "Files" of "space1" space in the sidebar
     And user of space_owner_browser sees file browser in files tab in Oneprovider page
     And user of space_owner_browser clicks on menu for "file1" file in file browser
     And user of space_owner_browser clicks "Data distribution" option in data row menu in file browser
     And user of space_owner_browser replicates selected item to provider "oneprovider-2"
 
-    And user of space_owner_browser clicks Members of "space1" in the sidebar
+    And user of space_owner_browser clicks "Members" of "space1" space in the sidebar
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
           Transfer management:
@@ -102,7 +102,7 @@ Feature: Basic management of spaces privileges in Onezone GUI with two providers
               Schedule eviction: False
 
     # Non-space-owner checks if he can Evict file1 from oneprovider-1
-    And user of browser_user1 clicks Files of "space1" in the sidebar
+    And user of browser_user1 clicks "Files" of "space1" space in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
     And user of browser_user1 clicks on menu for "file1" file in file browser
     And user of browser_user1 clicks "Data distribution" option in data row menu in file browser

@@ -325,7 +325,7 @@ def wt_leave_users_space_in_onezone_using_rest(hosts, users, user):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_harvester_to_existing_space(selenium, browser_id, oz_page, space_name,
                                     harvester_name, tmp_memory, modals, popups):
-    option = 'Harvesters'
+    option = 'Harvesters, Discovery'
     button_name = 'add one of harvesters'
     button_in_modal = 'Add'
     modal = 'Add one of spaces'

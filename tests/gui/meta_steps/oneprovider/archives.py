@@ -37,7 +37,7 @@ from tests.gui.steps.oneprovider.archives import (
 from tests.gui.steps.modal import click_modal_button
 
 
-OPTION_IN_SPACE = 'Datasets'
+OPTION_IN_SPACE = 'Datasets, Archives'
 DATASET_BROWSER = 'dataset browser'
 ARCHIVE_BROWSER = 'archive browser'
 ARCHIVE_FILE_BROWSER = 'archive file browser'

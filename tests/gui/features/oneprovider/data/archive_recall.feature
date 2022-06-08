@@ -29,7 +29,7 @@ Feature: Archive recall tests
 
 
   Scenario: User successfully recalls archive if there is space on device
-    When user of browser clicks Files of "space1" in the sidebar
+    When user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser creates dataset for item "dir1" in "space1"
     And user of browser succeeds to create archive for item "dir1" in "space1" with following configuration:
@@ -49,7 +49,7 @@ Feature: Archive recall tests
 
   Scenario: User fails to recall archive if there is no space enough on device
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser clicks and presses enter on item named "dir1" in file browser
 
@@ -57,7 +57,7 @@ Feature: Archive recall tests
     # files recalled parallelly (as of 14.03.2022 it's 20 files) to make sure
     # that quota will be exceeded
     And user of browser uses upload button from file browser menu bar to upload 50 local files "file.txt" to remote current dir
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser creates dataset for item "dir1" in "space1"
     And user of browser succeeds to create archive for item "dir1" in "space1" with following configuration:
@@ -80,7 +80,7 @@ Feature: Archive recall tests
 
   Scenario: User sees that recall has been cancelled after cancelling it
     When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
     And user of browser creates dataset for item "large_file.txt" in "space1"
