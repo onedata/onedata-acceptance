@@ -128,8 +128,9 @@ def change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, browser_id, path,
         which_browser = 'archive browser'
         breadcrumbs = getattr(op_container(selenium[browser_id]),
                               transform(which_browser)).breadcrumbs
-    if path == 'home':
-        breadcrumbs.home()
+    path = transform(path)
+    if path == 'space_root':
+        breadcrumbs.space_root()
     else:
         breadcrumbs.chdir(path, archive)
 
@@ -545,6 +546,7 @@ def choose_provider_in_file_browser(selenium, browser_id, provider, hosts,
 
 @wt(parsers.parse('user of {browser_id} clicks on Choose other Oneprovider '
                   'on file browser page'))
+@repeat_failed(timeout=WAIT_BACKEND)
 def click_choose_other_oneprovider_on_file_browser(selenium, browser_id,
                                                    oz_page):
     driver = selenium[browser_id]

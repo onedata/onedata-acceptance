@@ -7,8 +7,9 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 import re
+import time
 
-from datetime import datetime
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait as Wait
 from selenium.webdriver.support.expected_conditions import staleness_of
 from selenium.webdriver.common.keys import Keys
@@ -110,6 +111,17 @@ def _find_modal(driver, modal_name):
 def _wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory):
     modal = _find_modal(driver, modal_name)
     tmp_memory[browser_id]['window']['modal'] = modal
+
+
+@wt(parsers.parse('user of {browser_id} sees that "{modal_name}" modal has not '
+                  'appeared'))
+def assert_modal_does_not_appear(selenium, browser_id, modal_name, tmp_memory):
+    driver = selenium[browser_id]
+    try:
+        _wait_for_modal_to_appear(driver, browser_id, modal_name, tmp_memory)
+        raise Exception(f'Modal {modal_name} has appeared')
+    except TimeoutException:
+        pass
 
 
 @wt(parsers.parse('user of {browser_id} sees that '
@@ -426,70 +438,8 @@ def click_copy_icon_in_rest_api_modal(selenium, browser_id, modals):
     modals(selenium[browser_id]).rest_api_modal.copy_command_button()
 
 
-@wt(parsers.parse('user of {browser_id} sees {info}: "{text}" in archive '
-                  'recall information modal'))
-@repeat_failed(timeout=WAIT_BACKEND)
-def assert_info_in_archive_recall_information_modal(selenium, browser_id,
-                                                    modals, info, text):
-    info_type = transform(info)
-    recall_modal = modals(selenium[browser_id]).archive_recall_information
-    information = getattr(recall_modal, info_type)
-    if info_type in ['files_recalled', 'data_recalled']:
-        current_progress = recall_modal.get_progress_info(info_type)
-        expected_progress = recall_modal.parse_progress(text)
-        info_equal = current_progress == expected_progress
-        assert info_equal, (f'{info}: {current_progress} progress info does '
-                            f'not match {expected_progress} in archive recall '
-                            f'information modal, raw text content: "{text}"')
-    else:
-        assert text.lower() in information.lower(), (
-            f'{info}: {text} does not match {information} in archive recall '
-            f'information modal')
-
-
-@wt(parsers.parse('user of {browser_id} sees that recall has been finished at '
-                  'the same time or after recall has been started'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_recall_duration_in_archive_recall_information_modal(selenium,
-                                                               browser_id,
-                                                               modals):
-    archive_recall_information = modals(selenium[browser_id]
-                                        ).archive_recall_information
-    started_at = archive_recall_information.started_at
-    finished_at = archive_recall_information.finished_at
-    start = datetime.strptime(started_at, '%d %b %Y %H:%M:%S')
-    finish = datetime.strptime(finished_at, '%d %b %Y %H:%M:%S')
-
-    err_msg = 'Recall start time is greater than finish time'
-    assert start <= finish, err_msg
-
-
-@wt(parsers.parse('user of {browser_id} sees that not all {kind} were '
-                  'recalled'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_not_all_files_were_recalled(selenium, browser_id, modals, kind):
-    kind = kind + ' recalled'
-    characters = "[\nMiB ]"
-    info = getattr(modals(selenium[browser_id]).archive_recall_information,
-                   transform(kind))
-    info = re.sub(characters, "", info).split('/')
-    all_data = int(info[1])
-    recalled = int(info[0])
-    err_msg = f'Number of recalled {kind} is not smaller then all {kind}'
-    assert all_data > recalled, err_msg
-
-
-@wt(parsers.parse('user of {browser_id} sees that number of items failed is'
-                  ' greater than 0'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_number_of_item_greater_than_zero(selenium, browser_id, modals):
-    number = int(modals(selenium[browser_id]
-                        ).archive_recall_information.items_failed)
-    assert number > 0, 'Zero items failed'
-
-
-@wt(parsers.parse('user of {browser_id} chooses "{option}" in {dropdown_name}'
-                  'in modal "{modal_name}"'))
+@wt(parsers.parse('user of {browser_id} chooses "{option}" in dropdown menu '
+                  'in modal "{modal}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_option_in_dropdown_menu_in_modal(selenium, browser_id, modals,
                                             dropdown_name, popups, option,
@@ -500,6 +450,20 @@ def choose_option_in_dropdown_menu_in_modal(selenium, browser_id, modals,
     dropdown_menu.click()
 
     popups(driver).power_select.choose_item(option)
+
+
+@wt(parsers.parse('user of {browser_id} sees that path where symbolic link '
+                  'points is "{expected_path}" in {modal} modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_path_where_symbolic_link_points(selenium, browser_id,
+                                           expected_path, modal):
+    driver = selenium[browser_id]
+    modal = transform(modal)
+    modal = getattr(modals(driver), modal)
+    time.sleep(0.1)
+    path = modal.path.replace('\n', '')
+    assert expected_path == path, (f'Expected path: {expected_path} does not '
+                                   f'match path: {path}')
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>disables|enables) '

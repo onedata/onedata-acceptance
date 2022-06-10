@@ -38,6 +38,7 @@ class DataRow(PageObject, BrowserRow):
     no_access_tag = WebElement('.file-status-forbidden')
     hardlink_tag = WebElement('.file-status-hardlinks')
     recalled_tag = WebElement('.file-status-recalled')
+    recalling_tag = WebElement('.file-status-recalling')
     clickable_field = WebElement('.file-name')
     tag_label = Label('.file-status-tag')
 

@@ -104,6 +104,7 @@ def create_file_in_op_with_tokens(client, user, users, space, name, hosts,
                '(?P<host>.*)'))
 def create_dir_in_op(client, user, users, space, abs_path, hosts, tmp_memory,
                      host, selenium, op_container, result, modals, oz_page):
+    cwd = 'space root'
     full_path = '{}/{}'.format(space, abs_path)
     client_lower = client.lower()
     if client_lower == 'web gui':
@@ -117,8 +118,7 @@ def create_dir_in_op(client, user, users, space, abs_path, hosts, tmp_memory,
                                   tmp_memory, op_container, result, space,
                                   modals, oz_page)
             change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, user,
-                                                           'home',
-                                                           op_container)
+                                                           cwd, op_container)
         else:
             create_item_in_op_gui(selenium, user, os.path.dirname(abs_path),
                                   'directory', os.path.basename(abs_path),
@@ -496,6 +496,51 @@ def assert_time_relation(user, time1, file_name, space, comparator, time2,
                                     oneclient_host, users)
     else:
         raise NoSuchClientException('Client: {} not found'.format(client))
+
+
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) copies '
+               '(?P<time_name>.*) time of item named "(?P<file_name>.*)" in '
+               '"(?P<space>.*)" space'))
+def remember_time_for_file(user, time_name, file_name, space, client, users,
+                           host, hosts, cdmi, tmp_memory):
+    client_lower = client.lower()
+    full_path = '{}/{}'.format(space, file_name)
+    if client_lower == 'rest':
+        file_time = get_time_for_file_in_op_rest(full_path, user, users, cdmi,
+                                                 host, hosts, time_name)
+    elif 'oneclient' in client_lower:
+        oneclient_host = change_client_name_to_hostname(client_lower)
+        file_time = get_time_for_file_in_op_oneclient(users, user,
+                                                      oneclient_host,
+                                                      time_name, full_path)
+    else:
+        raise NoSuchClientException(f'Client: {client} not found')
+
+    tmp_memory[time_name] = file_time
+
+
+@wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) sees that '
+               '(?P<time_name1>.*) time of item named "(?P<file_name>.*)" is '
+               '(?P<comparator>.*) (than|to) (?P<time_name2>.*) time '
+               'that was copied'))
+def compare_file_time_with_copied_time(user, time_name1, time_name2,  file_name, space,
+                                       client, users, host, hosts, cdmi,
+                                       tmp_memory, comparator):
+    client_lower = client.lower()
+    full_path = '{}/{}'.format(space, file_name)
+    time2 = tmp_memory[time_name1]
+    if client_lower == 'rest':
+        compare_file_time_with_copied_time_in_op_rest(full_path, user, users,
+                                                      cdmi, host, hosts,
+                                                      time_name1, time2,
+                                                      comparator, time_name2)
+    elif 'oneclient' in client_lower:
+        oneclient_host = change_client_name_to_hostname(client_lower)
+        compare_file_time_with_copied_time_in_op_oneclient(
+            users, user, oneclient_host, time_name1, full_path, time2,
+            time_name2, comparator)
+    else:
+        raise NoSuchClientException(f'Client: {client} not found')
 
 
 @wt(parsers.re(r'using (?P<client>.*), (?P<user>\w+) sees that (?P<time1>.*) '

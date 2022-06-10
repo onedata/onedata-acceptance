@@ -26,7 +26,7 @@ Feature: Basic management of qos privileges for spaces in Onezone GUI
 
   Scenario: Non-space-owner successfully manages QoS if he got Qos management privileges
     When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Members of "space1" in the sidebar
+    And user of space_owner_browser clicks "Members" of "space1" space in the sidebar
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
           QoS management:
@@ -35,7 +35,7 @@ Feature: Basic management of qos privileges for spaces in Onezone GUI
               View QoS: True
               Manage QoS: False
 
-    And user of browser_user1 clicks Files of "space1" in the sidebar
+    And user of browser_user1 clicks "Files" of "space1" space in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
     And user of browser_user1 sees that current working directory displayed in breadcrumbs on file browser is space1
     And user of browser_user1 clicks on menu for "dir1" file in file browser
@@ -53,14 +53,14 @@ Feature: Basic management of qos privileges for spaces in Onezone GUI
 
   Scenario: Non-space-owner successfully views QoS in menu if he got View QoS privilege
     When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Members of "space1" in the sidebar
+    And user of space_owner_browser clicks "Members" of "space1" space in the sidebar
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
     And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
           QoS management:
             granted: False
 
     # Non-space-owner fails to select Quality of Service option of the directory
-    And user of browser_user1 clicks Files of "space1" in the sidebar
+    And user of browser_user1 clicks "Files" of "space1" space in the sidebar
     And user of browser_user1 sees file browser in files tab in Oneprovider page
     And user of browser_user1 sees that current working directory displayed in breadcrumbs on file browser is space1
     And user of browser_user1 clicks on menu for "dir1" file in file browser

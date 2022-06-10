@@ -34,7 +34,6 @@ from tests.gui.steps.onepanel.spaces import *
 from tests.gui.steps.onezone.logged_in_common import *
 from tests.gui.steps.onezone.user_full_name import *
 from tests.gui.steps.onezone.tokens import *
-from tests.gui.steps.onezone.data_space_management import *
 from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.manage_account import *
 from tests.gui.steps.onezone.spaces import *
@@ -75,5 +74,4 @@ def screens():
 
 scenarios('../features/oneprovider/data/archive_basic.feature')
 scenarios('../features/oneprovider/data/archive_bagit_and_dip.feature')
-scenarios('../features/oneprovider/data/archive_recall.feature')
 

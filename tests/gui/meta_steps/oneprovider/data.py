@@ -293,6 +293,7 @@ def see_num_of_items_in_path_in_op_gui(selenium, user, tmp_memory, op_container,
 def assert_file_content_in_op_gui(text, path, space, selenium, user, users,
                                   provider, hosts, oz_page, op_container,
                                   tmp_memory, tmpdir, modals):
+    cwd = 'space root'
     try:
         assert_browser_in_tab_in_op(selenium, user,
                                     op_container, tmp_memory)
@@ -309,7 +310,7 @@ def assert_file_content_in_op_gui(text, path, space, selenium, user, users,
                                              op_container)
     has_downloaded_file_content(user, item_name, text, tmpdir)
     change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, user,
-                                                   'home', op_container)
+                                                   cwd, op_container)
 
 
 @given(parsers.re('directory structure created by (?P<user>\w+) '
@@ -335,6 +336,7 @@ def create_directory_structure_in_op_gui(selenium, user, op_container, config,
 
 def _create_item(selenium, browser_id, name, content, cwd, space, tmp_memory,
                  op_container, modals, oz_page, popups):
+    path = 'space root'
     item_type = 'directory' if name.startswith('dir') else 'file'
     if item_type == 'directory':
         create_item_in_op_gui(selenium, browser_id, cwd, item_type, name,
@@ -344,7 +346,7 @@ def _create_item(selenium, browser_id, name, content, cwd, space, tmp_memory,
         upload_file_to_op_gui(cwd, selenium, browser_id, space, "succeeds",
                               name, op_container, tmp_memory, oz_page, popups)
     change_cwd_using_breadcrumbs_in_data_tab_in_op(selenium, browser_id,
-                                                   'home', op_container)
+                                                   path, op_container)
     if not content:
         return
     cwd += '/' + name

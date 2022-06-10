@@ -123,7 +123,7 @@ Feature: Basic files tab operations on symlinks in file browser
     And user of browser closes "Symbolic link details" modal
 
     # second symlink in space1
-    And user of browser changes current working directory to home using breadcrumbs
+    And user of browser changes current working directory to space root using breadcrumbs
     And user of browser clicks "Place symbolic link" button from file browser menu bar
     And user of browser sees only items named ["dir1", "file1", "file2"] in file browser
     And user of browser sees that item named "file2" is symbolic link in file browser

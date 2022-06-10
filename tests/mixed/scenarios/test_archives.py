@@ -28,7 +28,6 @@ from tests.gui.steps.onepanel.deployment import *
 from tests.gui.steps.onezone.logged_in_common import *
 from tests.gui.steps.onezone.user_full_name import *
 from tests.gui.steps.onezone.tokens import *
-from tests.gui.steps.onezone.data_space_management import *
 from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.manage_account import *
 
@@ -56,6 +55,7 @@ from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.onezone.common import *
 
 from tests.oneclient.steps.auth_steps import *
+from tests.utils.acceptance_utils import *
 
 
 @pytest.fixture(scope='module')

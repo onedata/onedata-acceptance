@@ -30,7 +30,7 @@ Feature: Basic archives operations
     When user of browser creates dataset for item "dir4" in "space1"
 
     # create archive with description
-    And user of browser clicks Datasets of "space1" in the sidebar
+    And user of browser clicks "Datasets, Archives" of "space1" space in the sidebar
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser sees that item "dir4" has 0 archives
     And user of browser clicks on menu for "dir4" dataset in dataset browser
@@ -55,9 +55,9 @@ Feature: Basic archives operations
     And user of browser clicks on dataset for "dir4" in dataset browser
     And user of browser sees archive browser in archives tab in Oneprovider page
     And user of browser clicks on menu for archive with description: "first archive" in archive browser
-    And user of browser clicks "Purge archive" option in data row menu in archive browser
-    And user of browser writes "I understand that data of the archive will be lost" into confirmation input in Purge Archive modal
-    And user of browser clicks on "Purge archive" button in modal "Purge archive"
+    And user of browser clicks "Delete archive" option in data row menu in archive browser
+    And user of browser writes "I understand that data of the archive will be lost" into confirmation input in Delete archive modal
+    And user of browser clicks on "Delete archive" button in modal "Delete archive"
     Then user of browser sees that page with text "NO ARCHIVES" appeared in archive browser
     And user of browser sees dataset browser in datasets tab in Oneprovider page
     And user of browser sees that item "dir4" has 0 archives
@@ -91,7 +91,7 @@ Feature: Basic archives operations
            - dir2:
              - dir3:
                - file1: 100
-    And user of browser clicks Files of "space1" in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser succeeds to upload "20B-0.txt" to "/dir1/dir2/dir3" in "space1"
     And user of browser sees that item named "20B-0.txt" has appeared in file browser
@@ -109,4 +109,27 @@ Feature: Basic archives operations
                - file1: 100
                - 20B-0.txt
 
+
+  Scenario: User sees information about archive in properties modal after creating archive
+    When user of browser creates dataset for item "dir1" in "space1"
+    And user of browser succeeds to create archive for item "dir1" in "space1" with following configuration:
+        layout: plain
+    And user of browser succeeds to create archive for item "dir1" in "space1" with following configuration:
+        description: first archive
+        layout: BagIt
+        include DIP: True
+        incremental:
+                enabled: True
+        create nested archives: True
+    And user of browser copies name of base archive for archive with description "first archive"
+    And user of browser clicks on menu for archive with description: "first archive" in archive browser
+    And user of browser clicks "Properties" option in data row menu in archive browser
+    Then user of browser sees archive ID in Archive properties modal
+    And user of browser sees archive description: "first archive" in Archive properties modal
+    And user of browser sees archive layout: "BagIt" in Archive properties modal
+    And user of browser sees that Create nested archives toggle is checked in Archive properties modal
+    And user of browser sees that Incremental toggle is checked in Archive properties modal
+    And user of browser sees that Include DIP toggle is checked in Archive properties modal
+    And user of browser sees that Follow symbolic link toggle is checked in Archive properties modal
+    And user of browser sees that base archive in Archive properties modal is the same as copied
 

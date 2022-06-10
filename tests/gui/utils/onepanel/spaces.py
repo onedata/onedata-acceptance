@@ -153,6 +153,7 @@ class SelectiveCleaningRecord(PageObject):
     dropdown_button = Button('.ember-power-select-trigger')
     dropdown = WebItemsSequence('li.ember-power-select-option',
                                 cls=ButtonWithTextPageObject)
+    value_limit = Label('.ember-power-select-selected-item')
 
 
 class AutoCleaning(PageObject):

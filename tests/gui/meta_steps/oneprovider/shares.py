@@ -91,7 +91,7 @@ def remove_current_share(selenium, browser_id, op_container, modals,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_shares_view_of_given_space(selenium, browser_id, oz_page, space_name,
                                     op_container, tmp_memory):
-    option = 'Shares'
+    option = 'Shares, Open Data'
     items_browser = 'shares_browser'
 
     click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,

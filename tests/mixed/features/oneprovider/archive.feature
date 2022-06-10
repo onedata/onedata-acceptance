@@ -135,24 +135,35 @@ Feature: Archives mixed tests
     And using web GUI, user1 does not see archive with description: "first archive" for item "dir1" in space "space1" in oneprovider-1
 
 
-  Scenario: User of REST sees new "preserved" callback URL after changing it
+  Scenario Outline: User of <client_checking> sees new "preserved" callback URL after changing it using REST
     When using web GUI, user1 creates dataset for item "dir1" in space "space1" in oneprovider-1
     And using web GUI, user1 succeeds to create archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
         description: first archive
         layout: plain
-    And using REST, user1 sees that preserved callback is "None" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
+    And using <client_checking>, user1 sees that preserved callback is "None" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
     And using REST, user1 changes archive preserved callback to "https://archives.org/preserved_archives" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
-    Then using REST, user1 sees that preserved callback is "https://archives.org/preserved_archives" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
+    And if <client_checking> is web GUI, user1 is idle for 10 seconds
+    Then using <client_checking>, user1 sees that preserved callback is "https://archives.org/preserved_archives" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
+
+  Examples:
+  | client_checking    |
+  | REST               |
+  | web GUI            |
 
 
-  Scenario: User of REST sees new "purged" callback URL after changing it
+  Scenario Outline: User of <client_checking> sees new "deleted" callback URL after changing it using REST
     When using web GUI, user1 creates dataset for item "dir1" in space "space1" in oneprovider-1
     And using web GUI, user1 succeeds to create archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
         description: first archive
         layout: plain
-    And using REST, user1 sees that purged callback is "None" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
-    And using REST, user1 changes archive purged callback to "https://archives.org/purged_archives" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
-    Then using REST, user1 sees that purged callback is "https://archives.org/purged_archives" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
+    And using <client_checking>, user1 sees that deleted callback is "None" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
+    And using REST, user1 changes archive deleted callback to "https://archives.org/purged_archives" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
+    And if <client_checking> is web GUI, user1 is idle for 10 seconds
+    Then using <client_checking>, user1 sees that deleted callback is "https://archives.org/purged_archives" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
 
+  Examples:
+  | client_checking    |
+  | REST               |
+  | web GUI            |
 
 

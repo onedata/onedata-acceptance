@@ -32,11 +32,12 @@ from tests.gui.steps.oneprovider.archives import (
     write_in_confirmation_input,
     assert_number_of_archives_for_item_in_dataset_browser,
     assert_tag_for_archive_in_archive_browser,
-    assert_not_archive_with_description, get_archive_with_description)
+    assert_not_archive_with_description, get_archive_with_description,
+    assert_archive_info_in_properties_modal)
 from tests.gui.steps.modal import click_modal_button
 
 
-OPTION_IN_SPACE = 'Datasets'
+OPTION_IN_SPACE = 'Datasets, Archives'
 DATASET_BROWSER = 'dataset browser'
 ARCHIVE_BROWSER = 'archive browser'
 ARCHIVE_FILE_BROWSER = 'archive file browser'
@@ -72,9 +73,27 @@ def create_archive(browser_id, selenium, config, item_name, space_name,
                     displays, option, popups)
 
 
+@wt(parsers.parse('user of {browser_id} {option} to create archive for item '
+                  '"{item_name}" in "{space_name}" with following '
+                  'configuration and follow symbolic links set as'
+                  ' {follow_symbolic_links}:\n{config}'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def create_archive_with_follow_symbolic_link(browser_id, selenium, config,
+                                             item_name, space_name, oz_page,
+                                             op_container, tmp_memory, modals,
+                                             clipboard, displays, option,
+                                             popups, follow_symbolic_links):
+
+    follow_symbolic_links = follow_symbolic_links == 'true'
+
+    _create_archive(browser_id, selenium, config, item_name, space_name,
+                    oz_page, op_container, tmp_memory, modals, clipboard,
+                    displays, option, popups, follow_symbolic_links)
+
+
 def _create_archive(browser_id, selenium, config, item_name, space_name,
-                    oz_page, op_container, tmp_memory, modals,
-                    clipboard, displays, option, popups):
+                    oz_page, op_container, tmp_memory, modals, clipboard,
+                    displays, option, popups, follow_symbolic_links=True):
     option_in_data_row_menu = 'Create archive'
     button_name = 'Create'
     try:
@@ -103,9 +122,12 @@ def _create_archive(browser_id, selenium, config, item_name, space_name,
         create_nested_archives = data.get('create nested archives', False)
         incremental = data.get('incremental', False)
         include_dip = data.get('include DIP', False)
+        if follow_symbolic_links:
+            follow_symbolic_links = data.get('follow symbolic links', True)
+
         if description:
-            write_description_in_create_archive_modal(selenium, browser_id, modals,
-                                                      description)
+            write_description_in_create_archive_modal(selenium, browser_id,
+                                                      modals, description)
         if layout == 'BagIt':
             click_modal_button(selenium, browser_id, layout,
                                option_in_data_row_menu, modals)
@@ -116,10 +138,14 @@ def _create_archive(browser_id, selenium, config, item_name, space_name,
         if incremental:
             if incremental['enabled']:
                 option = 'incremental'
-                check_toggle_in_create_archive_modal(browser_id, selenium, modals,
-                                                     option)
+                check_toggle_in_create_archive_modal(browser_id, selenium,
+                                                     modals, option)
         if include_dip:
             option = 'include_dip'
+            check_toggle_in_create_archive_modal(browser_id, selenium, modals,
+                                                 option)
+        if not follow_symbolic_links:
+            option = 'follow_symbolic_links'
             check_toggle_in_create_archive_modal(browser_id, selenium, modals,
                                                  option)
         click_modal_button(selenium, browser_id, button_name,
@@ -195,9 +221,9 @@ def assert_archive_in_op_gui(browser_id, selenium, item_name, space_name,
 def remove_archive_in_op_gui(browser_id, selenium, item_name, space_name,
                              oz_page, op_container, tmp_memory, modals,
                              description, option, popups):
-    option_in_menu = 'Purge archive'
+    option_in_menu = 'Delete archive'
     text = 'I understand that data of the archive will be lost'
-    button_name = 'Purge archive'
+    button_name = 'Delete archive'
     go_to_and_assert_browser(selenium, browser_id, oz_page, space_name,
                              OPTION_IN_SPACE, op_container, tmp_memory,
                              item_browser=DATASET_BROWSER)
@@ -263,3 +289,19 @@ def assert_base_archive_for_archive_in_op_gui(browser_id, selenium, item_name,
     err_msg = (f'Base archive: {archive.base_archive} does not match expected '
                f'archive with description {base_description}')
     assert base_description in archive.base_archive_description, err_msg
+
+
+def assert_archive_callback_in_op_gui(browser_id, tmp_memory, description,
+                                      selenium, popups, modals, expected,
+                                      option):
+    modal = 'Archive Properties'
+    option_in_menu = 'Properties'
+    info = f'{option} callback URL'
+    button_name = 'Close'
+    click_menu_for_archive(browser_id, tmp_memory, description)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id,
+                                             option_in_menu, popups,
+                                             ARCHIVE_BROWSER)
+    assert_archive_info_in_properties_modal(selenium, browser_id, modals,
+                                            expected, info)
+    click_modal_button(selenium, browser_id, button_name, modal, modals)

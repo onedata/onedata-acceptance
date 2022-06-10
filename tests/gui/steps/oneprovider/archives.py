@@ -7,7 +7,9 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
+import time
+
+from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
@@ -174,26 +176,6 @@ def assert_name_same_as_latest_created(browser_id, tmp_memory, modals,
     assert latest_created_name == base_archive_name, err_msg
 
 
-@wt(parsers.re(r'user of (?P<browser_id>.*?) copies archive with'
-               r' description: "(?P<description>.*?)" name in archive browser '
-               r'to clipboard'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def copy_archive_name_to_clipboard(browser_id, tmp_memory, description,
-                                   clipboard, displays):
-    browser = tmp_memory[browser_id]['archive_browser']
-    archive = get_archive_with_description(browser, description)
-    clipboard.copy(archive.name, display=displays[browser_id])
-
-
-@wt(parsers.parse('user of {browser_id} clicks on menu for archive that'
-                  ' name was copied to clipboard'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_menu_for_named_archive(browser_id, tmp_memory, clipboard, displays):
-    browser = tmp_memory[browser_id]['archive_browser']
-    item_name = clipboard.paste(display=displays[browser_id])
-    browser.data[item_name].menu_button()
-
-
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on menu for archive '
                'with description: "(?P<description>.*?)" in archive browser'))
 def click_menu_for_archive(browser_id, tmp_memory, description):
@@ -203,11 +185,11 @@ def click_menu_for_archive(browser_id, tmp_memory, description):
 
 
 @wt(parsers.parse('user of {browser_id} writes "{text}" into confirmation '
-                  'input in Purge Archive modal'))
+                  'input in Delete Archive modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def write_in_confirmation_input(browser_id, modals, text, selenium):
     driver = selenium[browser_id]
-    modals(driver).purge_archive.confirmation_input = text
+    modals(driver).delete_archive.confirmation_input = text
 
 
 @wt(parsers.re(r'user of (?P<browser_id>.*?) sees that (?P<ordinal>1st|2nd|3rd|'
@@ -262,4 +244,82 @@ def assert_page_with_error_appeared(browser_id, text, tmp_memory, selenium,
                                 item_browser=which_browser)
     browser = tmp_memory[browser_id][transform(which_browser)]
     assert browser.message == text, f'page with text "{text}" not  found'
+
+
+@wt(parsers.parse('user of {browser_id} waits for "{status}" state for archive'
+                  ' with description "{description}" in archive browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def waits_for_preserved_state(browser_id, status, description, tmp_memory):
+    browser = tmp_memory[browser_id]['archive_browser']
+    archive = get_archive_with_description(browser, description)
+    for _ in range(100):
+        if archive.state.state_type == status:
+            break
+        else:
+            time.sleep(2)
+
+
+@wt(parsers.parse('user of {browser_id} sees archive ID in Archive properties '
+                  'modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_archive_id_in_properties_modal(selenium, browser_id, modals):
+    driver = selenium[browser_id]
+    archive_id = modals(driver).archive_properties.archive_id
+    err_msg = 'User does not see archive ID in Archive properties modal'
+    assert archive_id is not None, err_msg
+
+
+@wt(parsers.parse('user of {browser_id} sees archive {info}: '
+                  '"{expected}" in Archive properties modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_archive_info_in_properties_modal(selenium, browser_id, modals,
+                                            expected, info):
+    driver = selenium[browser_id]
+    if expected == 'None':
+        try:
+            text = getattr(modals(driver).archive_properties, transform(info))
+            raise Exception(f'{info} is {text} but should be None')
+        except RuntimeError:
+            pass
+    else:
+        text = getattr(modals(driver).archive_properties, transform(info))
+        err_msg = (f'{info}: {text} does not match expected '
+                   f'{info} {expected}')
+        assert expected == text, err_msg
+
+
+@wt(parsers.parse('user of {browser_id} sees that {toggle} toggle is checked '
+                  'in Archive properties modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_toggle_checked_in_archive_properties_modal(selenium, browser_id,
+                                                      modals, toggle):
+    driver = selenium[browser_id]
+    is_checked = getattr(modals(driver).archive_properties,
+                         transform(toggle)).is_checked()
+
+    err_msg = f'Toggle {toggle} is not checked in modal Archive properties'
+    assert is_checked, err_msg
+
+
+@wt(parsers.parse('user of {browser_id} copies name of base archive for archive'
+                  ' with description "{description}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def copy_base_archive_for_archive(browser_id, description, tmp_memory):
+    browser = tmp_memory[browser_id]['archive_browser']
+    base_archive = get_archive_with_description(browser,
+                                                description).base_archive
+    tmp_memory['base_archive'] = base_archive
+
+
+@wt(parsers.parse('user of {browser_id} sees that {item} in {modal} modal'
+                  ' is the same as copied'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_item_from_modal_with_copied(browser_id, selenium, item, modal,
+                                       tmp_memory, modals):
+    driver = selenium[browser_id]
+    copied = tmp_memory[transform(item)]
+    text = getattr(getattr(modals(driver), transform(modal)), transform(item))
+    err_msg = f'{item}: {text} is not the same as copied: {copied}'
+    assert text == copied, err_msg
+
 

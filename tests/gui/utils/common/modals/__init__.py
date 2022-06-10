@@ -6,7 +6,10 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+from .archives_modals.archive_properties import ArchiveProperties
 from .archives_modals.archive_recall_information import ArchiveRecallInformation
+from .archives_modals.cancel_recall import CancelRecall
+from .files_modals.external_symbolic_link import ExternalSymbolicLink
 from .management_modals.change_privileges import ChangePrivilegesModal
 from .tokens_modals.clean_up_obsolete_tokens import CleanUpObsoleteTokensModal
 from .files_modals.create_dir import CreateDir
@@ -43,7 +46,7 @@ from .datasets_modals.datasets_modal import DatasetsModal
 from .archives_modals.create_archive import CreateArchive
 from .datasets_modals.detach_dataset import DetachDataset
 from .files_modals.write_protection import WriteProtection
-from .archives_modals.purge_archive import PurgeArchive
+from .archives_modals.delete_archive import DeleteArchive
 from .datasets_modals.reattach_dataset import ReattachDataset
 from .workflows_modals.store_details import StoreDetails
 from .workflows_modals.upload_workflow import UploadWorkflow
@@ -80,6 +83,8 @@ class Modals(object):
     details_modal = WebItem('.modal-dialog', cls=DetailsModal)
     symbolic_link_details = WebItem('.modal-dialog',
                                     cls=SymbolicLinkDetailsModal)
+    external_symbolic_link = WebItem('.modal-dialog',
+                                     cls=ExternalSymbolicLink)
     edit_permissions = WebItem('.modal-dialog', cls=EditPermissionsModal)
 
     # troubles modals
@@ -100,7 +105,10 @@ class Modals(object):
     recall_archive = WebItem('.modal-dialog', cls=RecallArchive)
     archive_recall_information = WebItem('.modal-dialog',
                                          cls=ArchiveRecallInformation)
-    purge_archive = WebItem('.modal-dialog', cls=PurgeArchive)
+    delete_archive = WebItem('.modal-dialog', cls=DeleteArchive)
+    cancel_recall = WebItem('.cancel-recall-modal .modal-dialog',
+                            cls=CancelRecall)
+    archive_properties = WebItem('.modal-dialog', cls=ArchiveProperties)
 
     # datasets modals
     datasets = WebItem('.modal-dialog', cls=DatasetsModal)

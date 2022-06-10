@@ -509,7 +509,7 @@ def configure_sync_parameters_for_space_in_op_panel(client, request, user,
 @wt(parsers.re('using (?P<client>.*), (?P<user>.+?) sees that '
                'content for "(?P<space_name>.+?)" in "(?P<host>.+?)" '
                'Oneprovider service is as follow:\n(?P<config>(.|\s)*)'))
-@repeat_failed(timeout=WAIT_BACKEND, interval=1.5)
+@repeat_failed(timeout=4*WAIT_BACKEND, interval=1.5)
 def assert_space_content_in_op(client, request, config, selenium, user,
                                op_container, tmp_memory, tmpdir, users, hosts,
                                space_name, spaces, host, oz_page):

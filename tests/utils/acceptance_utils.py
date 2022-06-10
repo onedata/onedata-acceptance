@@ -83,6 +83,13 @@ def execute_command(cmd, error=None, should_fail=False):
     return output
 
 
+@wt(parsers.re('if (?P<client>.+?) is web GUI, (?P<user>.+?) is idle for '
+               r'(?P<seconds>\d*\.?\d+([eE][-+]?\d+)?) seconds?'))
+def wait_given_time_if_web_gui(client, seconds):
+    if client == 'web GUI':
+        wait_given_time(seconds)
+
+
 @wt(parsers.re('user of (?P<browser_id>.+?) is idle for '
                '(?P<seconds>\d*\.?\d+([eE][-+]?\d+)?) seconds?'))
 @wt(parsers.re('(?P<user>.+?) is idle for '

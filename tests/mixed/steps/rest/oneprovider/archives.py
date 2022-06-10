@@ -105,10 +105,10 @@ def remove_archive_in_op_rest(user, users, hosts, host, description,
     archive_id = tmp_memory[description]
     archive_api = ArchiveApi(client)
     if option == 'succeeds':
-        archive_api.purge_archive(archive_id)
+        archive_api.delete_archive(archive_id)
     elif option == 'fails':
         try:
-            archive_api.purge_archive(archive_id)
+            archive_api.delete_archive(archive_id)
             raise Exception(
                 'removing archive worked but it should not')
         except OPException as err:
@@ -174,13 +174,8 @@ def change_archive_callback(user, users, hosts, host, tmp_memory, description,
     archive_api.update_archive(archive_id, data)
 
 
-@wt(parsers.re('using REST, (?P<user>.+?) sees that (?P<option>.*) callback'
-               ' is "(?P<expected_callback>.*)" for archive with description '
-               '"(?P<description>.*)" for item "(?P<item_name>.*)" '
-               'in space "(?P<space_name>.*)" in (?P<host>.*)'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_archive_callback(user, users, hosts, host, tmp_memory, description,
-                            option, expected_callback):
+def assert_archive_callback_in_op_rest(user, users, hosts, host, tmp_memory,
+                                       description, option, expected_callback):
     info = get_archive_info(user, users, hosts, host, tmp_memory, description)
     callback = f'{option}_callback'
     err_msg = (f'callback {getattr(info, callback)} does '
