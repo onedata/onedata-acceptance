@@ -15,8 +15,8 @@ from tests.gui.utils.core.web_elements import (Label, WebElement,
                                                ButtonWithTextPageObject,
                                                WebItem, Button)
 
-TransferStatusList = ['completed', 'skipped', 'cancelled', 'failed', 'active',
-                      'evicting', 'scheduled', 'enqueued']
+TransferStatusList = ['completed', 'skipped', 'cancelled', 'failed',
+                      'replicating', 'evicting', 'scheduled', 'enqueued']
 TransferTypeList = ['migration', 'replication', 'eviction']
 
 
