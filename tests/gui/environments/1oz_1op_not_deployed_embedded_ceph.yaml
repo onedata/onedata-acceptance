@@ -1,5 +1,10 @@
+# This is basically a copy of the 1oz_1op_not_deployed environment, but the Oneprovider pods
+# are started with "privileged: true" flag to enable creation of devices,
+# required by embedded ceph to work (see one-env scenario scenario-1oz-1op-embedded-ceph).
+# This will no longer be needed when support for embedded ceph is discontinued.
+
 # Name of the scenario to run
-scenario: "scenario-1oz-1op"
+scenario: "scenario-1oz-1op-embedded-ceph"
 
 # Determines if onedata components should be started from pre-compiled sources
 # or pre-installed packages inside dockers. When enabled, sources are expected
