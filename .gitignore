@@ -25,6 +25,9 @@ oneprovider_meta/package
 oneprovider_meta/oneprovider.spec
 oneprovider_meta/oneprovider/DEBIAN/control
 
+artifacts_dir
+sources_info.yaml
+
 .gitmodules
 
 # OSX

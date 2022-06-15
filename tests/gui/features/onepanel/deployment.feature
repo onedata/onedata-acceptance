@@ -69,13 +69,13 @@ Feature: Deployment process using panel of zone and provider
     And user of browser2 selects POSIX from storage selector in step 5 of deployment process in Onepanel
     And user of browser2 types "posix" to Storage name field in POSIX form in step 5 of deployment process in Onepanel
 
-    And user of browser2 types "/volumes/persistence/storage" to Mount point field in POSIX form in step 5 of deployment process in Onepanel
+    And user of browser2 types "/volumes/posix" to Mount point field in POSIX form in step 5 of deployment process in Onepanel
     And user of browser2 clicks on Add button in add storage form in step 5 of deployment process in Onepanel
     And user of browser2 sees an info notify with text matching to: .*[Ss]torage.*added.*
 
     And user of browser2 expands "posix" record on storages list in step 5 of deployment process in Onepanel
     And user of browser2 sees that "posix" Storage type is posix in step 5 of deployment process in Onepanel
-    And user of browser2 sees that "posix" Mount point is /volumes/persistence/storage in step 5 of deployment process in Onepanel
+    And user of browser2 sees that "posix" Mount point is /volumes/posix in step 5 of deployment process in Onepanel
 
     And user of browser2 clicks on Finish button in step 5 of deployment process in Onepanel
     And user of browser2 clicks on link to go to Emergency Onepanel interface in last step of deployment process in Onepanel
