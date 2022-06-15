@@ -1,0 +1,16 @@
+version: 2
+plan:
+  key: VFS-MAOST
+plan-permissions:
+- users:
+  - plgjliput
+  - plglopiola
+  - plgdutka
+  groups:
+  - plggveildev
+  permissions:
+  - view
+  - edit
+  - build
+  - clone
+  - admin
