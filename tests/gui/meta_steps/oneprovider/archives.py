@@ -339,7 +339,13 @@ def recalled_archive_details_in_op_gui(browser_id, item_name, tmp_memory,
     for key, expected_value in data.items():
         if key == 'time':
             start = 'started'
+            cancelled = 'cancelled'
             stop = 'finished'
+            if 'cancelled' in expected_value:
+                assert_recall_duration_in_archive_recall_information_modal(
+                    selenium, browser_id, modals, start, cancelled)
+                assert_recall_duration_in_archive_recall_information_modal(
+                    selenium, browser_id, modals, cancelled, stop)
             assert_recall_duration_in_archive_recall_information_modal(
                 selenium, browser_id, modals, start, stop)
         else:
@@ -347,4 +353,16 @@ def recalled_archive_details_in_op_gui(browser_id, item_name, tmp_memory,
             expected_value = re.sub(r'\s*', '', expected_value)
             err_msg = (f'{key} for archive recall "{item_name}" is {value} '
                        f'but expected value is {expected_value} ')
-            assert value == expected_value, err_msg
+            if expected_value == 'Cancelled':
+                assert expected_value in value, err_msg
+            elif '<=' in expected_value:
+                characters = "[\nMBGi ]"
+                err_msg = (f'{key} for archive recall "{item_name}" is {value} '
+                           f'and is not lower or equal to expected value: '
+                           f'{expected_value} ')
+                value = int(re.sub(characters, "", value).split('/')[0])
+                expected_value = int(re.sub(characters, "",
+                                            expected_value).split('<=')[-1])
+                assert value <= expected_value, err_msg
+            else:
+                assert value == expected_value, err_msg

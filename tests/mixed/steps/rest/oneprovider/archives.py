@@ -7,6 +7,7 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 import yaml
+import time
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.generic import transform
@@ -238,4 +239,35 @@ def recalled_archive_details_in_op_rest(user, users, hosts, host, data,
         f'archive recall "{name}" finish time is not greater or equal recall '
         f'start time')
 
+
+def assert_progress_of_recall_in_op_rest(user, name, space_name, host,
+                                         hosts, users, config):
+    data = yaml.load(config)
+    client = login_to_provider(user, users, hosts[host]['hostname'])
+    archive_api = ArchiveApi(client)
+    path = f'{space_name}/{name}'
+    file_id = _lookup_file_id(path, client)
+    # waits for recall to start
+    time.sleep(0.01)
+    recall_progress = archive_api.get_archive_recall_progress(file_id)
+    bytes_copied = recall_progress.bytes_copied
+    expected_bytes_copied = int(data['bytes copied'].split()[-1])
+    files_copied = recall_progress.files_copied
+    expected_files_copied = int(data['files copied'].split()[-1])
+    assert bytes_copied <= expected_bytes_copied, (
+        f'Bytes copied:{bytes_copied} are not <= expected bytes '
+        f'copied:{expected_bytes_copied}')
+    assert files_copied <= expected_files_copied, (
+        f'Files copied:{files_copied} are not <= expected files '
+        f'copied:{expected_files_copied}')
+
+
+def cancel_archive_for_archive_in_op_rest(user, users, hosts, host,
+                                          space_name, target_name):
+
+    client = login_to_provider(user, users, hosts[host]['hostname'])
+    archive_api = ArchiveApi(client)
+    path = f'{space_name}/{target_name}'
+    file_id = _lookup_file_id(path, client)
+    archive_api.cancel_archive_recall(file_id)
 

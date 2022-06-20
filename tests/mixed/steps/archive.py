@@ -14,7 +14,8 @@ from tests.mixed.steps.rest.oneprovider.archives import (
     assert_number_of_archive_in_op_rest,
     assert_base_archive_for_archive_in_op_rest,
     assert_archive_callback_in_op_rest, recall_archive_for_archive_in_op_rest,
-    recalled_archive_details_in_op_rest)
+    recalled_archive_details_in_op_rest, cancel_archive_for_archive_in_op_rest,
+    assert_progress_of_recall_in_op_rest)
 from tests.mixed.utils.common import NoSuchClientException
 
 
@@ -190,9 +191,10 @@ def recall_archive_for_archive_in_op(client, user, description, target_name,
 @wt(parsers.re('using (?P<client>.*), (?P<user>.+?) sees "(?P<name>.*)" '
                r'archive recalled details in "(?P<space_name>.*)" in'
                r' (?P<host>.*):\n(?P<config>(.|\s)*)'))
-def recalled_archive_details_in_op(client, user, config, name, tmp_memory,
-                                   modals, selenium, users, hosts, host,
-                                   space_name, spaces):
+@repeat_failed(timeout=WAIT_FRONTEND)
+def recall_archive_details_in_op(client, user, config, name, tmp_memory,
+                                 modals, selenium, users, hosts, host,
+                                 space_name, spaces):
 
     client_lower = client.lower()
     data = yaml.load(config)
@@ -205,3 +207,33 @@ def recalled_archive_details_in_op(client, user, config, name, tmp_memory,
 
     else:
         raise NoSuchClientException(f'Client: {client} not found')
+
+
+@wt(parsers.re('using (?P<client>.+?), (?P<user>.+?) sees progress of archive '
+               'recall for "(?P<name>.*)" in "(?P<space_name>.*)" in'
+               r' (?P<host>.*):\n(?P<config>(.|\s)*)'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_progress_of_recall_in_op(user, name, client, space_name, host, hosts,
+                                    users, config):
+    client_lower = client.lower()
+    if client_lower == 'rest':
+        assert_progress_of_recall_in_op_rest(user, name, space_name, host,
+                                             hosts, users, config)
+    else:
+        raise NoSuchClientException(f'Client: {client} not found')
+
+
+@wt(parsers.re('using (?P<client>.+?), (?P<user>.+?) cancels archive '
+               'recall for "(?P<target_name>.*)" for archive with description'
+               ' "(?P<description>.*)" for item "(?P<name>.*)" in space'
+               ' "(?P<space_name>.*)" in (?P<host>.*)'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def cancel_archive_for_archive_in_op(client, user, users, hosts, host,
+                                     space_name, target_name):
+    client_lower = client.lower()
+    if client_lower == 'rest':
+        cancel_archive_for_archive_in_op_rest(user, users, hosts, host,
+                                              space_name, target_name)
+    else:
+        raise NoSuchClientException(f'Client: {client} not found')
+
