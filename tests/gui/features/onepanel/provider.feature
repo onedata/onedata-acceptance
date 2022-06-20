@@ -87,7 +87,7 @@ Feature: Provider management in Onepanel GUI
     And user of browser_emergency selects POSIX from storage selector in step 5 of deployment process in Onepanel
     And user of browser_emergency types "posix" to Storage name field in POSIX form in step 5 of deployment process in Onepanel
 
-    And user of browser_emergency types "/volumes/persistence/storage" to Mount point field in POSIX form in step 5 of deployment process in Onepanel
+    And user of browser_emergency types "/volumes/posix" to Mount point field in POSIX form in step 5 of deployment process in Onepanel
     And user of browser_emergency clicks on Add button in add storage form in step 5 of deployment process in Onepanel
     And user of browser_emergency sees an info notify with text matching to: .*[Ss]torage.*added.*
     And user of browser_emergency clicks on Finish button in step 5 of deployment process in Onepanel
