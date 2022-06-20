@@ -25,12 +25,12 @@ Feature: Storage management using onepanel
     And user of <browser> clicks on Add storage button in storages page in Onepanel
     And user of <browser> selects POSIX from storage selector in storages page in Onepanel
     And user of <browser> types "<storage_name>" to Storage name field in POSIX form in storages page in Onepanel
-    And user of <browser> types "/volumes/persistence/storage" to Mount point field in POSIX form in storages page in Onepanel
+    And user of <browser> types "/volumes/posix" to Mount point field in POSIX form in storages page in Onepanel
     And user of <browser> clicks on Add button in add storage form in storages page in Onepanel
     And user of <browser> sees an info notify with text matching to: .*[Ss]torage.*added.*
     And user of <browser> expands "<storage_name>" record on storages list in storages page in Onepanel
     And user of <browser> sees that "<storage_name>" Storage type is posix in storages page in Onepanel
-    And user of <browser> sees that "<storage_name>" Mount point is /volumes/persistence/storage in storages page in Onepanel
+    And user of <browser> sees that "<storage_name>" Mount point is /volumes/posix in storages page in Onepanel
 
     And user of browser_unified creates "space1" space in Onezone
     And user of browser_unified is idle for 5 seconds
@@ -71,17 +71,17 @@ Feature: Storage management using onepanel
   Scenario Outline: User modifies newly created storage
     When user of <browser> adds "<storage_name>" storage in "oneprovider-1" Oneprovider panel service with following configuration:
           storage type: POSIX
-          mount point: /volumes/persistence/storage
-    And using docker, admin renames /volumes/persistence/storage path to /volumes/persistence/storage2
+          mount point: /volumes/posix
+    And using docker, admin renames /volumes/posix path to /volumes/posix2
     And user of <browser> is idle for 5 seconds
     And user of <browser> clicks on "Modify" button for "<storage_name>" storage record in Storages page in Onepanel
-    And user of <browser> types "/volumes/persistence/storage2" to Mount point field in POSIX edit form for "<storage_name>" storage in Onepanel
+    And user of <browser> types "/volumes/posix2" to Mount point field in POSIX edit form for "<storage_name>" storage in Onepanel
     And user of <browser> clicks on Save button in edit form for "<storage_name>" storage in Onepanel
     And user of <browser> clicks on "Proceed" button in modal "Modify Storage"
     And user of <browser> expands "<storage_name>" record on storages list in storages page in Onepanel
-    Then user of <browser> sees that "<storage_name>" Mount point is /volumes/persistence/storage2 in storages page in Onepanel
+    Then user of <browser> sees that "<storage_name>" Mount point is /volumes/posix2 in storages page in Onepanel
 
-    And using docker, admin renames /volumes/persistence/storage2 path to /volumes/persistence/storage
+    And using docker, admin renames /volumes/posix2 path to /volumes/posix
 
     Examples:
     | browser           | storage_name |
@@ -92,7 +92,7 @@ Feature: Storage management using onepanel
   Scenario Outline: User removes newly created storage
     When user of <browser> adds "<storage_name>" storage in "oneprovider-1" Oneprovider panel service with following configuration:
           storage type: POSIX
-          mount point: /volumes/persistence/storage
+          mount point: /volumes/posix
     And user of <browser> is idle for 5 seconds
     Then user of <browser> expands toolbar for "<storage_name>" storage record in Storages page in Onepanel
     And user of <browser> clicks on Remove storage option in storage's toolbar in Onepanel
@@ -107,10 +107,10 @@ Feature: Storage management using onepanel
 
   Scenario: User sees that synchronization auto-update still works after changing mount point for storage
     When user of browser_unified creates "space3" space in Onezone
-    And user of browser_unified copies dir1 to /volumes/persistence/storage/dir directory on docker
+    And user of browser_unified copies dir1 to /volumes/posix/dir directory on docker
     And user of browser_unified adds "new_storage7" storage in "oneprovider-1" Oneprovider panel service with following configuration:
           storage type: POSIX
-          mount point: /volumes/persistence/storage/dir
+          mount point: /volumes/posix/dir
           imported storage: true
     And user of browser_unified sends support token for "space3" to user of browser_unified
 
@@ -136,8 +136,8 @@ Feature: Storage management using onepanel
 
     And user of browser_unified sees only items named "dir1" in file browser
 
-    And using docker, admin renames /volumes/persistence/storage/dir path to /volumes/persistence/storage/renamed_dir05
-    And user of browser_unified copies dir2 to /volumes/persistence/storage/renamed_dir05 directory on docker
+    And using docker, admin renames /volumes/posix/dir path to /volumes/posix/renamed_dir05
+    And user of browser_unified copies dir2 to /volumes/posix/renamed_dir05 directory on docker
 
     And user of browser_unified sees file browser in files tab in Oneprovider page
 
@@ -149,7 +149,7 @@ Feature: Storage management using onepanel
     And user of browser_unified is idle for 2 seconds
 
     And user of browser_unified clicks on "Modify" button for "new_storage7" storage record in Storages page in Onepanel
-    And user of browser_unified types "/volumes/persistence/storage/renamed_dir05" to Mount point field in POSIX edit form for "new_storage7" storage in Onepanel
+    And user of browser_unified types "/volumes/posix/renamed_dir05" to Mount point field in POSIX edit form for "new_storage7" storage in Onepanel
     And user of browser_unified clicks on Save button in edit form for "new_storage7" storage in Onepanel
     And user of browser_unified clicks on "Proceed" button in modal "Modify storage"
 
@@ -162,10 +162,10 @@ Feature: Storage management using onepanel
 
   Scenario: User fails to update import in storage that is not import-enabled
     When user of browser_unified creates "space5" space in Onezone
-    And user of browser_unified copies dir1 to /volumes/persistence/storage/dir directory on docker
+    And user of browser_unified copies dir1 to /volumes/posix/dir directory on docker
     And user of browser_unified adds "new_storage8" storage in "oneprovider-1" Oneprovider panel service with following configuration:
           storage type: POSIX
-          mount point: /volumes/persistence/storage/dir
+          mount point: /volumes/posix/dir
     And user of browser_unified sends support token for "space5" to user of browser_unified
 
     And user of browser_unified clicks on Clusters in the main menu

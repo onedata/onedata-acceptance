@@ -16,7 +16,7 @@ from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import given, parsers, wt
 
 PROVIDER_CONTAINER_NAME = 'oneprovider-1'
-MOUNT_POINT = '/volumes/persistence/storage'
+MOUNT_POINT = '/volumes/posix'
 
 
 @given(parsers.parse('there is following users configuration in storage\'s '
