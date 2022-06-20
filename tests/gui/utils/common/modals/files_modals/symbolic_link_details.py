@@ -14,7 +14,7 @@ from tests.gui.utils.generic import transform
 class SymbolicLinkDetailsModal(Modal):
     modal_name = Label('.modal-header h1')
     owner = Label('.file-info-row-owner .property-value')
-    close = NamedButton('.btn-default', text='Close')
+    close = Button('.close')
     symbolic_link_name = Button('.file-info-row-name .property-value '
                                 '.clipboard-btn')
     symbolic_link_location = Button('.file-info-row-path .property-value '

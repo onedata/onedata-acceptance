@@ -13,6 +13,7 @@ from tests.gui.utils.core.web_elements import (Label, NamedButton, WebItem,
                                                Button)
 from tests.gui.utils.generic import strip_path
 
+
 class HardlinkEntry(PageObject):
     name = id = Label('.file-name')
     path = Label('.file-path .anchor-container')
@@ -22,8 +23,7 @@ class HardlinkEntry(PageObject):
 
 
 class HardlinkTab(PageObject):
-    tab_name = Label('a[href="#hardlinks"]')
-    tab = WebElement('a[href="#hardlinks"]')
+    tab = WebElement('.nav-link-hardlinks')
     files = WebItemsSequence('.file-hardlink', cls=HardlinkEntry)
 
     def is_active(self):
@@ -33,7 +33,7 @@ class HardlinkTab(PageObject):
 class DetailsModal(Modal):
     modal_name = Label('.modal-header h1')
     owner = Label('.file-info-row-owner .property-value')
-    close = NamedButton('.btn-default', text='Close')
+    close = Button('.close')
     hardlinks_tab = WebItem('.modal-body', cls=HardlinkTab)
     space_id = Button('.file-info-row-space-id .clipboard-btn')
     file_id = Button('.file-info-row-cdmi-object-id .clipboard-btn ')

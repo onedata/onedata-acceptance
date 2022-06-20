@@ -302,7 +302,7 @@ def check_file_dets_modal_opened_on_hardlinks_tab(selenium, browser_id, modals):
 
 def assert_num_of_hardlinks_in_file_dets_tab_name_modal(selenium, browser_id,
                                                         number, modals):
-    name = modals(selenium[browser_id]).details_modal.hardlinks_tab.tab_name
+    name = modals(selenium[browser_id]).details_modal.hardlinks_tab.tab.text
     actual_num = name.split()[-1].strip('(').strip(')')
     assert number == actual_num, (f'Expected {number}, got {actual_num} in ' 
                                   f'hardlinks tab name')
