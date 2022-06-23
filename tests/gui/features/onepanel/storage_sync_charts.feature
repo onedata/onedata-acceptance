@@ -19,7 +19,7 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And there is no "dir1", "dir2" in provider's storage mount point
     And there is "new_storage" storage in "oneprovider-1" Oneprovider panel service used by user of browser1 with following configuration:
           storage type: POSIX
-          mount point: /volumes/persistence/storage
+          mount point: /volumes/posix
           imported storage: true
 
     When user of browser2 creates "space1" space in Onezone

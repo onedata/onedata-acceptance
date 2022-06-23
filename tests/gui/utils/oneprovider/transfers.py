@@ -16,12 +16,12 @@ from tests.gui.utils.core.web_elements import (Label, WebElement,
                                                WebItem, Button)
 
 TransferStatusList = ['completed', 'skipped', 'cancelled', 'failed',
-                      'replicating','evicting', 'scheduled', 'enqueued']
+                      'replicating', 'evicting', 'scheduled', 'enqueued']
 TransferTypeList = ['migration', 'replication', 'eviction']
 
 
 class TransferRecord(PageObject):
-    name = id = Label('td:first-of-type')
+    name = Label('td:first-of-type')
     username = Label('td:nth-of-type(2)')
     destination = Label('td:nth-of-type(3)')
     status_icon = Icon('.cell-status')

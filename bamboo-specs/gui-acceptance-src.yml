@@ -943,7 +943,7 @@ Chrome onepanel deployment ceph:
   - script:
       <<: *run-selenium-tests
       scripts:
-      - make SUITE=test_onepanel_deployment_ceph ENV_FILE=1oz_1op_not_deployed BROWSER=Chrome TIMEOUT=600 test_gui_src
+      - make SUITE=test_onepanel_deployment_ceph ENV_FILE=1oz_1op_not_deployed_embedded_ceph BROWSER=Chrome TIMEOUT=600 test_gui_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1043,7 +1043,7 @@ Chrome onepanel ceph spaces:
   - script:
       <<: *run-selenium-tests
       scripts:
-      - make SUITE=test_onepanel_ceph_spaces ENV_FILE=1oz_1op_not_deployed BROWSER=Chrome TIMEOUT=600 test_gui_src
+      - make SUITE=test_onepanel_ceph_spaces ENV_FILE=1oz_1op_not_deployed_embedded_ceph BROWSER=Chrome TIMEOUT=600 test_gui_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs

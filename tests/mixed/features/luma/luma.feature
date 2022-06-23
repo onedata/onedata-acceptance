@@ -7,7 +7,7 @@ Feature: LUMA local feed acceptance tests with non-imported storage
             - user2
     And there is "luma_storage" storage in "oneprovider-1" Oneprovider panel service used by admin with following configuration:
           storage type: POSIX
-          mount point: /volumes/persistence/storage
+          mount point: /volumes/posix
           LUMA feed: local
     And initial spaces configuration in "onezone" Onezone service:
         space1:
