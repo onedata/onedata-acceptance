@@ -792,7 +792,7 @@ Chrome transfers directories:
   requirements: *requirements
   artifact-subscriptions: []
 Chrome transfers cancel:
-  key: CTD
+  key: CTC
   other: *common-opts
   tasks:
   - script: *clear-env
