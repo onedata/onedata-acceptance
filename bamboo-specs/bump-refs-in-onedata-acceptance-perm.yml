@@ -1,0 +1,15 @@
+version: 2
+plan:
+  key: VFS-OA
+plan-permissions:
+  - users:
+      - plglopiola
+      - plgdutka
+    groups:
+      - plggveildev
+    permissions:
+      - view
+      - edit
+      - build
+      - clone
+      - admin
