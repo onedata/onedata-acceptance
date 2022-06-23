@@ -46,15 +46,6 @@ def _assert_transfer(transfer, item_type, desc, sufix, hosts):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees (?P<item_type>file|directory)'
-               r' in ongoing transfers:\n(?P<desc>(.|\s)*)'))
-@repeat_failed(interval=0.5)
-def assert_ongoing_transfer(selenium, browser_id, item_type, desc, hosts,
-                            op_container):
-    transfer = op_container(selenium[browser_id]).transfers.ongoing[0]
-    _assert_transfer(transfer, item_type, desc, 'ongoing', hosts)
-
-
-@wt(parsers.re('user of (?P<browser_id>.*) sees (?P<item_type>file|directory)'
                ' in ended transfers:\n(?P<desc>(.|\s)*)'))
 @repeat_failed(interval=0.5, timeout=90)
 def assert_ended_transfer(selenium, browser_id, item_type, desc, hosts,
@@ -73,22 +64,13 @@ def assert_waiting_transfer(selenium, browser_id, item_type, desc, hosts,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>cancels|reruns) transfer '
-               'in (?P<state>waiting|ended) transfers'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+               'in (?P<state>ongoing|ended) transfers'))
+@repeat_failed(timeout=WAIT_BACKEND)
 def cancel_or_rerun_transfer(selenium, browser_id, op_container, popups,
                              option, state):
-
+    getattr(op_container(selenium[browser_id]).transfers,
+            state)[0].menu_button()
     option = 'Cancel transfer' if option == 'cancels' else 'Rerun transfer'
-    try:
-        getattr(op_container(selenium[browser_id]).transfers,
-                state)[0].menu_button()
-    except RuntimeError as e:
-        if option == 'Cancel transfer':
-            op_container(selenium[browser_id]
-                         ).transfers.ongoing[0].menu_button()
-        else:
-            raise e
-
     click_option_in_popup_labeled_menu(selenium, browser_id, option, popups)
 
 

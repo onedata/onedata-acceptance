@@ -22,8 +22,7 @@ class HardlinkEntry(PageObject):
 
 
 class HardlinkTab(PageObject):
-    tab_name = Label('a[href="#hardlinks"]')
-    tab = WebElement('a[href="#hardlinks"]')
+    tab = WebElement('.nav-link-hardlinks')
     files = WebItemsSequence('.file-hardlink', cls=HardlinkEntry)
 
     def is_active(self):
