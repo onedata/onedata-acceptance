@@ -2,23 +2,18 @@ version: 2
 plan:
   key: VFS-GAOT
 plan-permissions:
-- users:
-  - plgagneska
-  permissions:
-  - view
-  - edit
-  - build
-  - clone
-- users:
-  - plglopiola
-  - plgdutka
-  - plgjliput
-  groups:
-  - plggveildev
-  permissions:
-  - view
-  - edit
-  - build
-  - clone
-  - admin
+  - users:
+      - plgjliput
+      - plglopiola
+      - plgmstanisz
+      - plgdutka
+      - plgagneska
+    groups:
+      - plggveildev
+    permissions:
+      - view
+      - edit
+      - build
+      - clone
+      - admin
 

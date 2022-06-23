@@ -54,7 +54,6 @@ stages:
     - Chrome POSIX tests multiuser
     - Chrome onepanel deployment basic tests
     - Chrome oneprovider ACL subdirectories
-    - _Codetag Tracker
     - Chrome onezone automations tests
     - Chrome qos basic
     - Chrome onezone harvesters basic tests
@@ -234,20 +233,6 @@ Chrome oneprovider ACL subdirectories:
   - script: *pack-logs
   - script: *clear-env-and-working-dir
   artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
-_Codetag Tracker:
-  key: CDTR
-  other: *common-opts
-  tasks:
-  - checkout: *checkout
-  - script: *init-submodules
-  - script:
-      interpreter: BINSH_OR_CMDEXE
-      working-dir: onedata-acceptance
-      scripts:
-      - make codetag-tracker BRANCH=${bamboo.planRepository.branchName}
-      description: Codetag Tracker
   requirements: *requirements
   artifact-subscriptions: []
 Chrome onezone automations tests:
