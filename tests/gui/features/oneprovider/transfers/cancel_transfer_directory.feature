@@ -26,7 +26,6 @@ Feature: Oneprovider cancel transfer for directories
     When user of browser opens oneprovider-1 Oneprovider file browser for "space1" space
     And user of browser creates directory "dir1"
     And user of browser clicks and presses enter on item named "dir1" in file browser
-#    And user of browser uses upload button from file browser menu bar to upload 2 local files "larger_file.txt" to remote current dir
     And user of browser uses upload button from file browser menu bar to upload local file "larger_file.txt" to remote current dir
     And user of browser changes current working directory to space root using breadcrumbs
 

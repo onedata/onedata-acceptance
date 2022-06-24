@@ -30,6 +30,7 @@ Feature: Oneprovider transfers directories functionality
             large_file.txt:
               size: 50 MiB
 
+
   Scenario: User replicates directory to remote provider
     When user of browser opens oneprovider-1 Oneprovider file browser for "space1" space
     And user of browser creates directory "dir1"
@@ -198,8 +199,4 @@ Feature: Oneprovider transfers directories functionality
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely empty
             oneprovider-2: entirely filled
-
-
-
-
 
