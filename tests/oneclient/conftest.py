@@ -64,3 +64,23 @@ def purge_spaces(client):
         pass
     except Exception as e:
         print("Error during cleaning up spaces: {}".format(e))
+
+
+def pytest_bdd_before_scenario(request, feature, scenario):
+    print(f"\n=================================================================")
+    print(f"- Executing scenario '{scenario.name}'")
+    print(f"- from feature '{feature.name}'")
+    print(f"-----------------------------------------------------------------")
+
+
+def pytest_bdd_before_step_call(request, feature, scenario, step, step_func, step_func_args):
+    print(f"-- Executing step: '{step}'")
+
+
+def pytest_bdd_step_error(request, feature, scenario, step, step_func, step_func_args, exception):
+    print(f"--- STEP FAILED\n")
+
+
+def pytest_bdd_after_scenario(request, feature, scenario):
+    print(f"=================================================================\n")
+
