@@ -14,7 +14,7 @@ ONEDATA_GIT_URL := $(shell if [ "${ONEDATA_GIT_URL}" = "" ]; then echo ${GIT_URL
 export ONEDATA_GIT_URL
 
 ACCEPTANCE_GUI_IMAGE := onedata/acceptance_gui:v8
-ACCEPTANCE_MIXED_IMAGE := onedata/acceptance_mixed:v8
+ACCEPTANCE_MIXED_IMAGE := onedata/acceptance_mixed:v9
 
 unpack = tar xzf $(1).tar.gz
 
@@ -74,6 +74,7 @@ checkout_getting_started:
 RECORDING_OPTION            ?= failed
 BROWSER                     ?= Chrome
 TIMEOUT			            ?= 300
+REPEATS                     ?= 3
 LOCAL_CHARTS_PATH           ?= ""
 PULL_ONLY_MISSING_IMAGES    ?= ""
 MIXED_TESTS_ROOT := $(shell pwd)/tests/mixed
@@ -95,23 +96,23 @@ test_gui_src:
 
 test_mixed_pkg:
 	PYTHONPATH=${MIXED_TESTS_ROOT} ${TEST_RUN} -t tests/mixed/scenarios/${SUITE}.py --test-type mixed -vvv --driver=${BROWSER} -i ${ACCEPTANCE_MIXED_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} \
-	 --env-file=${ENV_FILE} -k=${KEYWORDS} --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH}  --reruns 1 --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${PULL_IMAGES_OPT}
+	 --env-file=${ENV_FILE} -k=${KEYWORDS} --repeats ${REPEATS} --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH}  --reruns 1 --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${PULL_IMAGES_OPT}
 
 test_mixed_src:
 	PYTHONPATH=${MIXED_TESTS_ROOT} ${TEST_RUN} -t tests/mixed/scenarios/${SUITE}.py --test-type mixed -vvv --driver=${BROWSER} -i ${ACCEPTANCE_MIXED_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} \
-	--env-file=${ENV_FILE} --sources -k=${KEYWORDS} --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} --reruns 1 --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${PULL_IMAGES_OPT}
+	--env-file=${ENV_FILE} --sources -k=${KEYWORDS} --repeats ${REPEATS} --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} --reruns 1 --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${PULL_IMAGES_OPT}
 
 test_oneclient_pkg:
 	${TEST_RUN} --test-type oneclient -vvv --test-dir tests/oneclient/scenarios/${SUITE}.py -i ${ACCEPTANCE_MIXED_IMAGE} -k=${KEYWORDS} \
-	 --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} ${PULL_IMAGES_OPT}
+	 --repeats ${REPEATS} --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} ${PULL_IMAGES_OPT}
 
 test_oneclient_src:
 	${TEST_RUN} --test-type oneclient -vvv --test-dir tests/oneclient/scenarios/${SUITE}.py -i ${ACCEPTANCE_MIXED_IMAGE} -k=${KEYWORDS} \
-	 --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} --sources ${PULL_IMAGES_OPT}
+	 --repeats ${REPEATS} --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} --sources ${PULL_IMAGES_OPT}
 
 test_onedata_fs:
 	${TEST_RUN} --test-type onedata_fs -vvv --test-dir tests/onedata_fs/scenarios/test_unit_tests.py -i ${ACCEPTANCE_MIXED_IMAGE} -k=${KEYWORDS} \
-     --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} ${PULL_IMAGES_OPT}
+     --repeats ${REPEATS} --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} ${PULL_IMAGES_OPT}
 
 test_performance_pkg:
 	${TEST_RUN} --test-type performance -vvv --test-dir tests/performance --image ${ACCEPTANCE_MIXED_IMAGE} -k=${KEYWORDS} --local-charts-path=${LOCAL_CHARTS_PATH} ${PULL_IMAGES_OPT}
