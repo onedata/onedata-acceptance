@@ -74,7 +74,7 @@ checkout_getting_started:
 RECORDING_OPTION            ?= failed
 BROWSER                     ?= Chrome
 TIMEOUT			            ?= 300
-REPEATS                     ?= 3
+REPEATS                     ?= 1
 LOCAL_CHARTS_PATH           ?= ""
 PULL_ONLY_MISSING_IMAGES    ?= ""
 MIXED_TESTS_ROOT := $(shell pwd)/tests/mixed
