@@ -15,6 +15,7 @@ from tests.gui.steps.rest.cdmi import *
 from tests.gui.steps.rest.env_up.users import *
 from tests.gui.steps.rest.env_up.groups import *
 from tests.gui.steps.rest.env_up.spaces import *
+from tests.gui.steps.rest.env_up.storage import *
 
 from tests.gui.steps.common.url import *
 from tests.gui.steps.common.browser_creation import *
@@ -60,4 +61,4 @@ def screens():
     return [0]
 
 
-scenarios('../features/oneprovider/transfers/cancel_transfer_directory.feature')
+scenarios('../features/oneprovider/transfers/cancel_transfer.feature')

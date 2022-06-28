@@ -64,7 +64,7 @@ def assert_waiting_transfer(selenium, browser_id, item_type, desc, hosts,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>cancels|reruns) transfer '
-               'in (?P<state>ongoing|ended) transfers'))
+               'in (?P<state>waiting|ended) transfers'))
 @repeat_failed(timeout=WAIT_BACKEND)
 def cancel_or_rerun_transfer(selenium, browser_id, op_container, popups,
                              option, state):
