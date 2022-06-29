@@ -64,4 +64,5 @@ def screens():
 
 
 scenarios('../features/oneprovider/archive.feature')
+scenarios('../features/oneprovider/archive_recall.feature')
 
