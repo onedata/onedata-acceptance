@@ -47,7 +47,7 @@ def _assert_transfer(transfer, item_type, desc, sufix, hosts):
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees (?P<item_type>file|directory)'
                ' in ended transfers:\n(?P<desc>(.|\s)*)'))
-@repeat_failed(interval=0.5, timeout=90)
+@repeat_failed(interval=0.5, timeout=240)
 def assert_ended_transfer(selenium, browser_id, item_type, desc, hosts,
                           op_container):
     transfer = op_container(selenium[browser_id]).transfers.ended[0]
@@ -75,7 +75,7 @@ def cancel_or_rerun_transfer(selenium, browser_id, op_container, popups,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) waits for all transfers to start'))
-@repeat_failed(interval=1, timeout=90,
+@repeat_failed(interval=1, timeout=240,
                exceptions=(AssertionError, StaleElementReferenceException))
 def wait_for_waiting_tranfers_to_start(selenium, browser_id, op_container):
     assert len(op_container(selenium[browser_id]).transfers.waiting) == 0, \
@@ -83,7 +83,7 @@ def wait_for_waiting_tranfers_to_start(selenium, browser_id, op_container):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) waits for all transfers to finish'))
-@repeat_failed(interval=1, timeout=90,
+@repeat_failed(interval=1, timeout=240,
                exceptions=(AssertionError, StaleElementReferenceException))
 def wait_for_ongoing_tranfers_to_finish(selenium, browser_id, op_container):
     assert len(op_container(selenium[browser_id]).transfers.ongoing) == 0, \
