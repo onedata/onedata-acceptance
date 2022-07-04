@@ -41,6 +41,7 @@ class DataRow(PageObject, BrowserRow):
     recalling_tag = WebElement('.file-status-recalling')
     clickable_field = WebElement('.file-name')
     tag_label = Label('.file-status-tag')
+    size_statistics = WebElement('.dir-size-container .one-icon')
 
     def __str__(self):
         return '{item} in {parent}'.format(item=self.name,

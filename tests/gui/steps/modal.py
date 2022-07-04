@@ -462,3 +462,32 @@ def assert_path_where_symbolic_link_points(selenium, browser_id,
     path = modal.path.replace('\n', '')
     assert expected_path == path, (f'Expected path: {expected_path} does not '
                                    f'match path: {path}')
+
+
+@wt(parsers.parse('user of {browser_id} sees that "{element}" item displayed '
+                  'in modal {modal} is not active'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_button_in_modal_not_active(browser_id, modal, element, modals,
+                                      selenium):
+    driver = selenium[browser_id]
+    modal = getattr(modals(driver), check_modal_name(modal))
+    err_msg = f'"{element}" button is in active state'
+    assert not modal.is_element_active(transform(element)), err_msg
+
+
+@wt(parsers.parse('user of {browser_id} sees that {which_title} is "{title}" '
+                  'in modal "{modal}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_chart_title_in_details_modal(selenium, browser_id, modals, title,
+                                        which_title, modal):
+    modal = check_modal_name(modal)
+    if which_title == 'charts title':
+        charts_title = getattr(modals(selenium[browser_id]), modal).charts_title
+    elif which_title == 'count chart title':
+        charts_title = getattr(modals(selenium[browser_id]),
+                               modal).chart[0].title
+    else:
+        charts_title = getattr(modals(selenium[browser_id]),
+                               modal).chart[1].title
+    assert charts_title == title, (f'Charts title is {charts_title} not '
+                                   f'{title} as expected')
