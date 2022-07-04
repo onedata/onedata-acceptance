@@ -78,4 +78,4 @@ scenarios('../features/oneprovider/data/single_directory.feature')
 scenarios('../features/oneprovider/data/file_management.feature')
 scenarios('../features/oneprovider/data/nested_directories.feature')
 scenarios('../features/oneprovider/data/download_tar_files.feature')
-
+scenarios('../features/oneprovider/data/size_statistics.feature')
