@@ -2,16 +2,18 @@ version: 2
 plan:
   key: ODSRV-OAP
 plan-permissions:
-- users:
-  - plgagneska
-  permissions:
-  - view
-  - edit
-  - build
-  - clone
-  - admin
-- roles:
-  - logged-in
-  - anonymous
-  permissions:
-  - view
+  - users:
+      - plglopiola
+      - plgmstanisz
+      - plgagneska
+    permissions:
+      - view
+      - edit
+      - build
+      - clone
+      - admin
+  - roles:
+      - logged-in
+      - anonymous
+    permissions:
+      - view
