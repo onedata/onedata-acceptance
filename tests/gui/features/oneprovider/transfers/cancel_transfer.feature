@@ -37,7 +37,7 @@ Feature: Cancel transfer test
     And user of browser sees file in ended transfers:
             name: "0"
             destination: oneprovider-2
-            transferred: <= 19.1 GB
+            transferred: < 19.1 GB
             type: replication
             status: cancelled
     Then user of browser reruns transfer in ended transfers

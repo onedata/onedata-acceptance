@@ -30,19 +30,25 @@ def _assert_transfer(transfer, item_type, desc, sufix, hosts):
         if key == 'destination':
             val = hosts[val]['name']
         transfer_val = getattr(transfer, key.replace(' ', '_'))
-        if '<=' in val:
-            val = float(val.split(' ')[1]) if val.split(
-                ' ')[2] == 'MiB' else float(val.split(' ')[1])*1024
-
-            transfer_val = float(transfer_val.split(' ')[0])
-            err_msg = (f'transfered {key}: {transfer_val} MiB is no less than '
-                       f'{val} MiB')
-            assert transfer_val <= val, err_msg
-
-        else:
-            assert transfer_val == str(val), (f'Transfer {key} is'
-                                              f' {transfer_val} instead of '
+        try:
+            assert transfer_val == str(val), (f'Transfer {key} is '
+                                              f'{transfer_val} instead of '
                                               f'{val} in {sufix}')
+        except AssertionError as e:
+            if '<' in val:
+                symbol = val.split(' ')[0]
+                value = float(val.split(' ')[1])
+                unit = val.split(' ')[2]
+                val = value if unit == 'MiB' else value * 1024
+                transfer_val = float(transfer_val.split(' ')[0])
+                if symbol == '<=':
+                    assert transfer_val <= val, (f'{key}: {transfer_val} MiB is'
+                                                 f' greater than {val} MiB')
+                else:
+                    assert transfer_val < val, (f'{key}: {transfer_val} MiB is'
+                                                f' no less than {val} MiB')
+            else:
+                raise e
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees (?P<item_type>file|directory)'
