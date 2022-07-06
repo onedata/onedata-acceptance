@@ -2,9 +2,9 @@ scenarios:  # names of files in `environments/scenarios` directory without .yaml
   - 1op
   - 2op
 initialVersions:
-  onezone: 21.02.0-alpha25
-  oneprovider: 21.02.0-alpha25
-  oneclient: 21.02.0-alpha25
+  onezone: 21.02.0-alpha26
+  oneprovider: 21.02.0-alpha26
+  oneclient: 21.02.0-alpha26
 targetVersions:
   onezone: default
   oneprovider: default
