@@ -41,4 +41,5 @@ Feature: Size statistics tests
     Then user of browser sees that charts title is "DIRECTORY SIZE STATISTICS" in modal "Directory Details"
     And user of browser sees that bytes chart title is "LOGICAL AND PHYSICAL BYTE SIZE" in modal "Directory Details"
     And user of browser sees that count chart title is "FILE COUNT" in modal "Directory Details"
-
+    And user of browser clicks on chart in modal "Directory Details"
+    And user of browser sees that tooltip with size statistics header has date format in modal "Directory Details"

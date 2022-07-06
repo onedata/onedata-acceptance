@@ -6,6 +6,7 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+from selenium.webdriver import ActionChains
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (Label, NamedButton, WebItem,
@@ -32,6 +33,7 @@ class HardlinkTab(PageObject):
 
 class Charts(PageObject):
     title = Label('.title-content')
+    chart = WebElement('.chart')
 
 
 class DetailsModal(Modal):
@@ -51,3 +53,7 @@ class DetailsModal(Modal):
     def is_element_active(self, element_name):
         element = getattr(self, element_name)
         return 'active' in element.web_elem.get_attribute("class")
+
+    def click_on_chart(self):
+        ActionChains(self.driver).move_to_element_with_offset(
+            self.chart[0].chart, 100, 100).click().perform()

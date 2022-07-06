@@ -8,6 +8,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 import re
 import time
+from datetime import datetime
 
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait as Wait
@@ -491,3 +492,24 @@ def assert_chart_title_in_details_modal(selenium, browser_id, modals, title,
                                modal).chart[1].title
     assert charts_title == title, (f'Charts title is {charts_title} not '
                                    f'{title} as expected')
+
+
+@wt(parsers.parse('user of {browser_id} clicks on chart in modal "{modal}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_chart(browser_id, modals, selenium, modal):
+    modal = check_modal_name(modal)
+    getattr(modals(selenium[browser_id]), modal).click_on_chart()
+
+
+@wt(parsers.parse('user of {browser_id} sees that tooltip with size statistics'
+                  ' header has date format in modal "{modal}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_tooltip_on_chart(browser_id, selenium):
+    driver = selenium[browser_id]
+    header = driver.find_elements_by_css_selector('.chart-tooltip '
+                                                  '.tooltip-header')[0].text
+    try:
+        datetime.strptime(header, '%H:%M %d/%m/%Y')
+    except ValueError:
+        raise Exception('Header: {header} of tooltip does not have date format')
+

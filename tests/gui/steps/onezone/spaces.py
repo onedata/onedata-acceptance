@@ -652,3 +652,4 @@ def check_two_providers_places(selenium, browser_id, oz_page, hosts,
     assert provider1_position > provider2_position, (f'Provider "{provider1}" '
                                                      f'appears west of provider'
                                                      f' "{provider2}"')
+
