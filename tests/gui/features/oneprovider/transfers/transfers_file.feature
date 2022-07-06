@@ -182,3 +182,5 @@ Feature: Oneprovider transfers files functionality
     Then user of browser sees file chunks for file "20B-0.txt" as follows:
             oneprovider-1: entirely empty
             oneprovider-2: entirely filled
+
+

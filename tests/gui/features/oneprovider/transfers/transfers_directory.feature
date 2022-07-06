@@ -200,4 +200,3 @@ Feature: Oneprovider transfers directories functionality
             oneprovider-1: entirely empty
             oneprovider-2: entirely filled
 
-
