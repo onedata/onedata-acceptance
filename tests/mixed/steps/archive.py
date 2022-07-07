@@ -166,10 +166,10 @@ def assert_archive_callback(user, users, hosts, host, tmp_memory, description,
         raise NoSuchClientException(f'Client: {client} not found')
 
 
-@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) recalls archive to '
-               '"(?P<target_name>.*)" for archive with description '
-               '"(?P<description>.*)" for item "(?P<item_name>.*)" in space '
-               '"(?P<space_name>.*)" in (?P<host>.*)'))
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) recalls archive with '
+               'description "(?P<description>.*)" into "(?P<item_name>.*)" '
+               'parent directory with target name "(?P<target_name>.*)" in '
+               'space "(?P<space_name>.*)" in (?P<host>.*)'))
 def recall_archive_for_archive_in_op(client, user, description, target_name,
                                      space_name, host, tmp_memory, popups,
                                      selenium, modals, users, hosts, spaces):
@@ -188,9 +188,9 @@ def recall_archive_for_archive_in_op(client, user, description, target_name,
         raise NoSuchClientException(f'Client: {client} not found')
 
 
-@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) sees "(?P<name>.*)" '
+@wt(parsers.re('using (?P<client>.*), (?P<user>.+?) checks "(?P<name>.*)" '
                r'archive recalled details in "(?P<space_name>.*)" in'
-               r' (?P<host>.*):\n(?P<config>(.|\s)*)'))
+               r' (?P<host>.*) and sees following:\n(?P<config>(.|\s)*)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def recall_archive_details_in_op(client, user, config, name, tmp_memory,
                                  modals, selenium, users, hosts, host,

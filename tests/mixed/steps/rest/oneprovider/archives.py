@@ -216,22 +216,23 @@ def recalled_archive_details_in_op_rest(user, users, hosts, host, data,
 
     err_msg = ('{key} for archive recall "{name}" is {value} '
                'but expected value is {expected_value} ')
-    dataset_id = get_dataset_id(data['dataset'], spaces, space_name,
-                                dataset_api)
-    dataset = recall_details.dataset_id
+    expected_dataset_id = get_dataset_id(data['dataset'], spaces, space_name,
+                                         dataset_api)
+    dataset_id = recall_details.dataset_id
     expected_files = int(data["files_recalled"].split(' / ')[0])
     files = recall_details.total_file_count
     expected_data = int(data["data_recalled"].split(' / ')[0].replace('B', ''))
     data = recall_details.total_byte_size
 
-    assert dataset == dataset_id, err_msg.format(
-        key="dataset", name=name, value=dataset, expected_value=dataset_id)
+    assert dataset_id == expected_dataset_id, err_msg.format(
+        key="dataset", name=name, value=dataset_id,
+        expected_value=expected_dataset_id)
 
     assert files == expected_files, err_msg.format(
         key="files recalled", name=name, value=files,
         expected_value=expected_files)
 
-    assert data == data, err_msg.format(
+    assert data == expected_data, err_msg.format(
         key="data recalled", name=name, value=data,
         expected_value=expected_data)
 

@@ -41,16 +41,15 @@ Feature: Archives recall mixed tests
     And using <client_recalling>, user1 succeeds to create archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
         description: first archive
         layout: plain
-    And using <client_recalling>, user1 recalls archive to "dir1_recalled" for archive with description "first archive" for item "dir1" in space "space1" in oneprovider-1
+    And using <client_recalling>, user1 recalls archive with description "first archive" into "dir1" parent directory with target name "dir1_recalled" in space "space1" in oneprovider-1
     Then using <client_checking>, user1 succeeds to see item named "dir1_recalled" in "space1" in oneprovider-1
-
     And user1 is idle for 5 seconds
-    And using <client_checking>, user1 sees "dir1_recalled" archive recalled details in "space1" in oneprovider-1:
+    And using <client_checking>, user1 checks "dir1_recalled" archive recalled details in "space1" in oneprovider-1 and sees following:
         status: Finished successfully
         dataset: dir1
         files_recalled: 1 / 1
         data_recalled: 5 B / 5 B
-        time: finish_time >= start_time
+        time: finished >= started
 
   Examples:
   | client_recalling   | client_checking    |
@@ -58,38 +57,38 @@ Feature: Archives recall mixed tests
   | web GUI            | REST               |
 
 
-  Scenario: Using REST user sees progress of archive recall after using web GUI user recalled archive.
+  Scenario: User of REST sees progress of archive recall after user of web GUI recalled archive
     When using web GUI, user1 creates dataset for item "dir4" in space "space1" in oneprovider-1
     And using web GUI, user1 succeeds to create archive for item "dir4" in space "space1" in oneprovider-1 with following configuration:
         description: first archive
         layout: plain
-    And using web GUI, user1 recalls archive to "dir4_recalled" for archive with description "first archive" for item "dir4" in space "space1" in oneprovider-1
+    And using web GUI, user1 recalls archive with description "first archive" into "dir4" parent directory with target name "dir4_recalled" in space "space1" in oneprovider-1
     Then using REST, user1 sees progress of archive recall for "dir4_recalled" in "space1" in oneprovider-1:
         bytes copied: <= 40
         files copied: <= 8
     And using REST, user1 succeeds to see item named "dir4_recalled" in "space1" in oneprovider-1
     And user1 is idle for 5 seconds
-    And using REST, user1 sees "dir4_recalled" archive recalled details in "space1" in oneprovider-1:
+    And using REST, user1 checks "dir4_recalled" archive recalled details in "space1" in oneprovider-1 and sees following:
         status: Finished successfully
         dataset: dir4
         files_recalled: 8 / 8
         data_recalled: 40 B / 40 B
-        time: finish_time >= start_time
+        time: finished >= started
 
 
-  Scenario: Using REST user cancels archive recall after using <client_recalling> user recalled archive.
+  Scenario: User of REST cancels archive recall after user of web GUI recalled archive
     When using web GUI, user1 uploads local file "large_file.txt" to "space1"
     When using web GUI, user1 creates dataset for item "large_file.txt" in space "space1" in oneprovider-1
     And using web GUI, user1 succeeds to create archive for item "large_file.txt" in space "space1" in oneprovider-1 with following configuration:
         description: first archive
         layout: plain
-    And using web GUI, user1 recalls archive to "large_file_recalled.txt" for archive with description "first archive" for item "large_file.txt" in space "space1" in oneprovider-1
+    And using web GUI, user1 recalls archive with description "first archive" into "large_file.txt" parent directory with target name "large_file_recalled.txt" in space "space1" in oneprovider-1
     And using REST, user1 cancels archive recall for "large_file_recalled.txt" for archive with description "first archive" for item "large_file.txt" in space "space1" in oneprovider-1
     Then using web GUI, user1 succeeds to see item named "large_file_recalled.txt" in "space1" in oneprovider-1
     And user1 is idle for 5 seconds
-    And using web GUI, user1 sees "large_file_recalled.txt" archive recalled details in "space1" in oneprovider-1:
+    And using web GUI, user1 checks "large_file_recalled.txt" archive recalled details in "space1" in oneprovider-1 and sees following:
         status: Cancelled
         dataset: large_file.txt
         files_recalled: <= 1
         data_recalled: <= 40 MiB
-        time: finish_time >= cancelled_time >= start_time
+        time: finished >= cancelled >= started

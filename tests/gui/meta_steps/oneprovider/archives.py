@@ -338,10 +338,11 @@ def recalled_archive_details_in_op_gui(browser_id, item_name, tmp_memory,
 
     for key, expected_value in data.items():
         if key == 'time':
-            start = 'started'
-            cancelled = 'cancelled'
-            stop = 'finished'
+            expected_value = expected_value.split(' >= ')
+            start = expected_value[-1]
+            stop = expected_value[0]
             if 'cancelled' in expected_value:
+                cancelled = expected_value[1]
                 assert_recall_duration_in_archive_recall_information_modal(
                     selenium, browser_id, modals, start, cancelled)
                 assert_recall_duration_in_archive_recall_information_modal(
