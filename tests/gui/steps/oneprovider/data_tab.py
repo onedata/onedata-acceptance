@@ -8,6 +8,7 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 import pytest
+import time
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.conftest import WAIT_NORMAL_UPLOAD, WAIT_EXTENDED_UPLOAD
@@ -275,10 +276,11 @@ def resize_data_tab_sidebar(selenium, browser_id, direction, offset,
 
 @wt(parsers.re('user of (?P<browser_id>.*) waits for file uploads? to '
                'finish'))
-@repeat_failed(timeout=WAIT_NORMAL_UPLOAD)
+@repeat_failed(timeout=WAIT_EXTENDED_UPLOAD)
 def wait_for_file_upload_to_finish(selenium, browser_id, popups):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
+    time.sleep(1)
     assert not popups(driver).is_upload_presenter(), (
         'file upload not finished '
         'within given time')
@@ -359,7 +361,7 @@ def upload_files_to_cwd_in_data_tab_extended_wait(selenium, browser_id,
 @wt(parsers.parse('user of {browser_id} uses upload button from file browser '
                   'menu bar to upload local file "{file_path}" '
                   'to remote current dir'))
-@repeat_failed(timeout=2 * WAIT_BACKEND)
+@repeat_failed(timeout=WAIT_EXTENDED_UPLOAD)
 def upload_file_to_cwd_in_data_tab(selenium, browser_id, file_path, tmpdir,
                                    op_container, popups):
     upload_file_to_cwd_in_data_tab_no_waiting(selenium, browser_id, file_path,

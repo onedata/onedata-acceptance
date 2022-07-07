@@ -12,7 +12,8 @@ import yaml
 
 from selenium.common.exceptions import StaleElementReferenceException
 
-from tests.gui.steps.common.miscellaneous import switch_to_iframe
+from tests.gui.steps.common.miscellaneous import (
+    switch_to_iframe, click_option_in_popup_labeled_menu)
 from tests.gui.utils.common.modals import Modals as modals
 from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed
@@ -29,23 +30,30 @@ def _assert_transfer(transfer, item_type, desc, sufix, hosts):
         if key == 'destination':
             val = hosts[val]['name']
         transfer_val = getattr(transfer, key.replace(' ', '_'))
-        assert transfer_val == str(val), \
-            'Transfer {} is {} instead of {} in {}'.format(key, transfer_val,
-                                                           val, sufix)
-
-
-@wt(parsers.re('user of (?P<browser_id>.*) sees (?P<item_type>file|directory)'
-               ' in ongoing transfers:\n(?P<desc>(.|\s)*)'))
-@repeat_failed(interval=0.5)
-def assert_ongoing_transfer(selenium, browser_id, item_type, desc, hosts,
-                            op_container):
-    transfer = op_container(selenium[browser_id]).transfers.ongoing[0]
-    _assert_transfer(transfer, item_type, desc, 'ongoing', hosts)
+        try:
+            assert transfer_val == str(val), (f'Transfer {key} is '
+                                              f'{transfer_val} instead of '
+                                              f'{val} in {sufix}')
+        except AssertionError as e:
+            if '<' in val:
+                symbol = val.split(' ')[0]
+                value = float(val.split(' ')[1])
+                unit = val.split(' ')[2]
+                val = value if unit == 'MiB' else value * 1024
+                transfer_val = float(transfer_val.split(' ')[0])
+                if symbol == '<=':
+                    assert transfer_val <= val, (f'{key}: {transfer_val} MiB is'
+                                                 f' greater than {val} MiB')
+                else:
+                    assert transfer_val < val, (f'{key}: {transfer_val} MiB is'
+                                                f' no less than {val} MiB')
+            else:
+                raise e
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees (?P<item_type>file|directory)'
                ' in ended transfers:\n(?P<desc>(.|\s)*)'))
-@repeat_failed(interval=0.5, timeout=90)
+@repeat_failed(interval=0.5, timeout=240)
 def assert_ended_transfer(selenium, browser_id, item_type, desc, hosts,
                           op_container):
     transfer = op_container(selenium[browser_id]).transfers.ended[0]
@@ -61,8 +69,19 @@ def assert_waiting_transfer(selenium, browser_id, item_type, desc, hosts,
     _assert_transfer(transfer, item_type, desc, 'waiting', hosts)
 
 
+@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>cancels|reruns) transfer '
+               'in (?P<state>waiting|ended) transfers'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def cancel_or_rerun_transfer(selenium, browser_id, op_container, popups,
+                             option, state):
+    getattr(op_container(selenium[browser_id]).transfers,
+            state)[0].menu_button()
+    option = 'Cancel transfer' if option == 'cancels' else 'Rerun transfer'
+    click_option_in_popup_labeled_menu(selenium, browser_id, option, popups)
+
+
 @wt(parsers.re('user of (?P<browser_id>.*) waits for all transfers to start'))
-@repeat_failed(interval=1, timeout=90,
+@repeat_failed(interval=1, timeout=240,
                exceptions=(AssertionError, StaleElementReferenceException))
 def wait_for_waiting_tranfers_to_start(selenium, browser_id, op_container):
     assert len(op_container(selenium[browser_id]).transfers.waiting) == 0, \
@@ -70,7 +89,7 @@ def wait_for_waiting_tranfers_to_start(selenium, browser_id, op_container):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) waits for all transfers to finish'))
-@repeat_failed(interval=1, timeout=90,
+@repeat_failed(interval=1, timeout=240,
                exceptions=(AssertionError, StaleElementReferenceException))
 def wait_for_ongoing_tranfers_to_finish(selenium, browser_id, op_container):
     assert len(op_container(selenium[browser_id]).transfers.ongoing) == 0, \
