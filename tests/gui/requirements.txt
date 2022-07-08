@@ -50,4 +50,4 @@ timeouts==0.2
 tqdm==4.42.1
 urllib3==1.23
 websocket-client==0.57.0
-git+git://github.com/bwalkowi/pytest-selenium-multi@orig-master
+git+https://github.com/bwalkowi/pytest-selenium-multi.git@orig-master
