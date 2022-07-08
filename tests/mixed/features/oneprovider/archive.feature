@@ -9,16 +9,15 @@ Feature: Archives mixed tests
           providers:
             - oneprovider-1:
                 storage: posix
-                size: 1000000
+                size: 200000000
           storage:
             defaults:
               provider: oneprovider-1
             directory tree:
               - dir1:
                 - dir2:
-                  - dir4
-                  - file1
-                - dir3
+                  - dir3
+                  - file1: 11111
 
     And opened browser with user1 signed in to "onezone" service
 
@@ -69,14 +68,14 @@ Feature: Archives mixed tests
   Scenario Outline: User of <client_checking> sees that dataset has more archives than its parent after user of <client_creating> created nested archive on child dataset
     When using <client_creating>, user1 creates dataset for item "dir1" in space "space1" in oneprovider-1
     And using <client_creating>, user1 creates dataset for item "dir1/dir2" in space "space1" in oneprovider-1
-    And using <client_creating>, user1 creates dataset for item "dir1/dir2/dir4" in space "space1" in oneprovider-1
+    And using <client_creating>, user1 creates dataset for item "dir1/dir2/dir3" in space "space1" in oneprovider-1
     And using <client_creating>, user1 succeeds to create archive for item "dir1" in space "space1" in oneprovider-1 with following configuration:
         description: first archive
         layout: plain
         create nested archives: True
     And using <client_checking>, user1 sees archive with description: "first archive" for item "dir1" in space "space1" in oneprovider-1
     And  using <client_checking>, user1 sees that dataset for item "dir1/dir2" has 1 archive in space "space1" in oneprovider-1
-    And  using <client_checking>, user1 sees that dataset for item "dir1/dir2/dir4" has 1 archive in space "space1" in oneprovider-1
+    And  using <client_checking>, user1 sees that dataset for item "dir1/dir2/dir3" has 1 archive in space "space1" in oneprovider-1
     And using <client_creating>, user1 succeeds to create archive for item "dir1/dir2" in space "space1" in oneprovider-1 with following configuration:
         description: second archive
         layout: plain
@@ -84,7 +83,7 @@ Feature: Archives mixed tests
     Then using <client_checking>, user1 sees that dataset for item "dir1" has 1 archive in space "space1" in oneprovider-1
     And using <client_checking>, user1 sees archive with description: "second archive" for item "dir1/dir2" in space "space1" in oneprovider-1
     And  using <client_checking>, user1 sees that dataset for item "dir1/dir2" has 2 archive in space "space1" in oneprovider-1
-    And  using <client_checking>, user1 sees that dataset for item "dir1/dir2/dir4" has 2 archive in space "space1" in oneprovider-1
+    And  using <client_checking>, user1 sees that dataset for item "dir1/dir2/dir3" has 2 archive in space "space1" in oneprovider-1
 
   Examples:
   | client_creating    | client_checking    |

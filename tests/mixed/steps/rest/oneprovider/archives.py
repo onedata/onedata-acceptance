@@ -7,9 +7,13 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 import yaml
+import time
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.generic import transform
+from tests.mixed.oneprovider_client.api.basic_file_operations_api import (
+    BasicFileOperationsApi)
+from tests.mixed.steps.rest.oneprovider.data import _lookup_file_id
 from tests.mixed.steps.rest.oneprovider.datasets import get_dataset_id
 from tests.mixed.utils.common import *
 from tests.mixed.oneprovider_client.api.archive_api import ArchiveApi
@@ -184,4 +188,87 @@ def assert_archive_callback_in_op_rest(user, users, hosts, host, tmp_memory,
         assert expected_callback == 'None', err_msg
     else:
         assert getattr(info, callback) == expected_callback, err_msg
+
+
+@repeat_failed(timeout=WAIT_FRONTEND)
+def recall_archive_for_archive_in_op_rest(user, users, hosts, host, tmp_memory,
+                                          description, name, space_name,
+                                          spaces):
+    client = login_to_provider(user, users, hosts[host]['hostname'])
+    archive_id = tmp_memory[description]
+    archive_api = ArchiveApi(client)
+    space_id = spaces[space_name]
+    file_api = BasicFileOperationsApi(client)
+    parent_id = file_api.get_attrs(space_id).file_id
+    data = {"parentDirectoryId": parent_id, "targetFileName": name}
+    archive_api.recall_archive(archive_id, data)
+
+
+def recalled_archive_details_in_op_rest(user, users, hosts, host, data,
+                                        name, space_name, spaces):
+
+    client = login_to_provider(user, users, hosts[host]['hostname'])
+    archive_api = ArchiveApi(client)
+    path = f'{space_name}/{name}'
+    file_id = _lookup_file_id(path, client)
+    recall_details = archive_api.get_archive_recall_details(file_id)
+    dataset_api = DatasetApi(client)
+
+    err_msg = ('{key} for archive recall "{name}" is {value} '
+               'but expected value is {expected_value} ')
+    expected_dataset_id = get_dataset_id(data['dataset'], spaces, space_name,
+                                         dataset_api)
+    dataset_id = recall_details.dataset_id
+    expected_files = int(data["files_recalled"].split(' / ')[0])
+    files = recall_details.total_file_count
+    expected_data = int(data["data_recalled"].split(' / ')[0].replace('B', ''))
+    data = recall_details.total_byte_size
+
+    assert dataset_id == expected_dataset_id, err_msg.format(
+        key="dataset", name=name, value=dataset_id,
+        expected_value=expected_dataset_id)
+
+    assert files == expected_files, err_msg.format(
+        key="files recalled", name=name, value=files,
+        expected_value=expected_files)
+
+    assert data == expected_data, err_msg.format(
+        key="data recalled", name=name, value=data,
+        expected_value=expected_data)
+
+    assert recall_details.finish_time >= recall_details.start_time, (
+        f'archive recall "{name}" finish time is not greater or equal recall '
+        f'start time')
+
+
+def assert_progress_of_recall_in_op_rest(user, name, space_name, host,
+                                         hosts, users, config):
+    data = yaml.load(config)
+    client = login_to_provider(user, users, hosts[host]['hostname'])
+    archive_api = ArchiveApi(client)
+    path = f'{space_name}/{name}'
+    file_id = _lookup_file_id(path, client)
+    # waits for recall to start
+    time.sleep(0.01)
+    recall_progress = archive_api.get_archive_recall_progress(file_id)
+    bytes_copied = recall_progress.bytes_copied
+    expected_bytes_copied = int(data['bytes copied'].split()[-1])
+    files_copied = recall_progress.files_copied
+    expected_files_copied = int(data['files copied'].split()[-1])
+    assert bytes_copied <= expected_bytes_copied, (
+        f'Bytes copied:{bytes_copied} are not <= expected bytes '
+        f'copied:{expected_bytes_copied}')
+    assert files_copied <= expected_files_copied, (
+        f'Files copied:{files_copied} are not <= expected files '
+        f'copied:{expected_files_copied}')
+
+
+def cancel_archive_for_archive_in_op_rest(user, users, hosts, host,
+                                          space_name, target_name):
+
+    client = login_to_provider(user, users, hosts[host]['hostname'])
+    archive_api = ArchiveApi(client)
+    path = f'{space_name}/{target_name}'
+    file_id = _lookup_file_id(path, client)
+    archive_api.cancel_archive_recall(file_id)
 
