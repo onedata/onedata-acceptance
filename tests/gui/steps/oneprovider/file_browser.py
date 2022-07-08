@@ -14,7 +14,7 @@ import yaml
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
 from tests.gui.steps.common.url import refresh_site
-from tests.gui.steps.modal import click_modal_button, check_modal_name
+from tests.gui.steps.modals.modal import click_modal_button
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.utils import repeat_failed
@@ -108,21 +108,18 @@ def assert_item_in_file_browser_is_of_size(browser_id, item_name, size,
 
 
 @wt(parsers.parse('user of {browser_id} waits for displayed size in data row '
-                  'of "{item_name}" to be is "{size}"'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def wait_for_size_to_be_displayed(selenium, browser_id, op_container,
-                                  tmp_memory, item_name, size):
-    for _ in range(10):
-        assert_browser_in_tab_in_op(selenium, browser_id, op_container,
-                                    tmp_memory)
-        browser = tmp_memory[browser_id]['file_browser']
-        displayed_size = browser.data[item_name].size
-        if displayed_size == size:
-            break
-        else:
-            time.sleep(0.3)
-            refresh_site(selenium, browser_id)
-
+                  'of "{item_name}" to be "{size}"'))
+@repeat_failed(timeout=WAIT_BACKEND)
+def wait_for_size_to_be_displayed_in_data_row(selenium, browser_id,
+                                              op_container, tmp_memory,
+                                              item_name, size):
+    # refresh site after enabling size statistics to see displayed size
+    # in data row
+    refresh_site(selenium, browser_id)
+    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
+                                tmp_memory)
+    browser = tmp_memory[browser_id]['file_browser']
+    displayed_size = browser.data[item_name].size
     assert displayed_size == size, (
         f'Displayed {item_name} size is {displayed_size}, but expected is '
         f'{size}')

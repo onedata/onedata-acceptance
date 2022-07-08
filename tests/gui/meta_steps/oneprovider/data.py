@@ -6,8 +6,6 @@ __copyright__ = "Copyright (C) 2017 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-import yaml
-
 from selenium.common.exceptions import (NoSuchElementException,
                                         StaleElementReferenceException)
 
@@ -17,11 +15,10 @@ from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.browser import *
 from tests.gui.steps.oneprovider.archives import \
     click_and_press_enter_on_archive
-from tests.gui.steps.common.notifies import notify_visible_with_text
 from tests.gui.steps.common.url import refresh_site
 from tests.gui.meta_steps.oneprovider.common import (
     navigate_to_tab_in_op_using_gui)
-from tests.gui.steps.modal import (
+from tests.gui.steps.modals.modal import (
     assert_error_modal_with_text_appeared, wt_wait_for_modal_to_appear,
     write_name_into_text_field_in_modal, close_modal)
 from tests.gui.steps.onezone.spaces import (

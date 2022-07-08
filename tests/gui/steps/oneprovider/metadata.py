@@ -12,8 +12,7 @@ import time
 
 from tests.gui.steps.common.miscellaneous import (
     press_tab_on_active_element, press_backspace_on_active_element)
-from tests.gui.steps.modal import click_modal_button
-from tests.gui.utils.generic import transform
+from tests.gui.steps.modals.modal import click_modal_button
 from tests.utils.bdd_utils import wt, parsers
 
 from tests.gui.conftest import WAIT_FRONTEND

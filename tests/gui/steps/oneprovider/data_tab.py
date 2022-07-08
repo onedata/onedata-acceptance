@@ -532,8 +532,8 @@ def check_error_in_upload_presenter(selenium, browser_id, popups):
 
 @wt(parsers.parse('user of {browser_id} clicks on "{provider}" provider '
                   'on {which} page'))
-def choose_provider_in_file_browser(selenium, browser_id, provider, hosts,
-                                    oz_page):
+def choose_provider_in_selected_page(selenium, browser_id, provider, hosts,
+                                     oz_page):
     driver = selenium[browser_id]
     provider = hosts[provider]['name']
     driver.switch_to.default_content()

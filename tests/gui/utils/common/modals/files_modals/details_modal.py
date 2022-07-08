@@ -36,6 +36,16 @@ class Charts(PageObject):
     chart = WebElement('.chart')
 
 
+class SizeStatistics(PageObject):
+    charts_title = Label('.title')
+    chart = WebItemsSequence('.one-time-series-chart-plot', cls=Charts)
+    size_statistics_toggle = Button('.nav-link-size')
+
+    def click_on_chart(self):
+        ActionChains(self.driver).move_to_element_with_offset(
+            self.chart[0].chart, 100, 100).click().perform()
+
+
 class DetailsModal(Modal):
     modal_name = Label('.modal-header h1')
     owner = Label('.file-info-row-owner .property-value')
@@ -43,9 +53,7 @@ class DetailsModal(Modal):
     hardlinks_tab = WebItem('.modal-body', cls=HardlinkTab)
     space_id = Button('.file-info-row-space-id .clipboard-btn')
     file_id = Button('.file-info-row-cdmi-object-id .clipboard-btn')
-    charts_title = Label('.title')
-    chart = WebItemsSequence('.one-time-series-chart-plot', cls=Charts)
-    size_statistics = Button('.nav-link-size')
+    size_statistics = WebItem('.modal-body', cls=SizeStatistics)
 
     def __str__(self):
         return 'File details modal'
@@ -54,6 +62,3 @@ class DetailsModal(Modal):
         element = getattr(self, element_name)
         return 'active' in element.web_elem.get_attribute("class")
 
-    def click_on_chart(self):
-        ActionChains(self.driver).move_to_element_with_offset(
-            self.chart[0].chart, 100, 100).click().perform()

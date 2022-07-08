@@ -34,7 +34,7 @@ from tests.gui.steps.oneprovider.archives import (
     assert_tag_for_archive_in_archive_browser,
     assert_not_archive_with_description, get_archive_with_description,
     assert_archive_info_in_properties_modal)
-from tests.gui.steps.modal import click_modal_button
+from tests.gui.steps.modals.modal import click_modal_button
 
 
 OPTION_IN_SPACE = 'Datasets, Archives'

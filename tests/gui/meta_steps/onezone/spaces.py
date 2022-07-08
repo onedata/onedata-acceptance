@@ -13,7 +13,7 @@ from tests.gui.meta_steps.onezone.tokens import (
 from tests.gui.steps.common.copy_paste import *
 from tests.gui.steps.common.notifies import *
 from tests.gui.steps.common.url import refresh_site
-from tests.gui.steps.modal import (close_modal, click_modal_button)
+from tests.gui.steps.modals.modal import (close_modal, click_modal_button)
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
 from tests.gui.steps.onepanel.spaces import *
 from tests.gui.steps.onezone.harvesters.discovery import (

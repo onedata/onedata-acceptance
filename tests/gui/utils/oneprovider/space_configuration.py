@@ -1,5 +1,5 @@
-"""Utils and fixtures to facilitate operations on space configuration in
-Oneprovider web GUI.
+"""Utils and fixtures to facilitate operations on space configuration
+per provider in Oneprovider web GUI.
 """
 
 __author__ = "Katarzyna Such"
@@ -15,8 +15,7 @@ from tests.gui.utils.core.web_elements import WebItem
 
 
 class _SpaceConfiguration(PageObject):
-    size_statistics = Toggle('.dir-size-stats-config-toggle'
-                             ' .one-way-toggle-track')
+    size_statistics = Toggle('.one-way-toggle-track')
 
     def __str__(self):
         return f'space configuration in {self.parent}'

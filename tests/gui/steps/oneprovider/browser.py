@@ -247,7 +247,7 @@ def click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory,
     browser.data[item_name].menu_button()
 
 
-@wt(parsers.parse('user of {browser_id} clicks on {tag} tag for "{item_name}" '
+@wt(parsers.parse('user of {browser_id} clicks on {tag} for "{item_name}" '
                   '{type} in {which_browser}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_tag_for_elem_in_browser(browser_id, item_name, tmp_memory, tag,

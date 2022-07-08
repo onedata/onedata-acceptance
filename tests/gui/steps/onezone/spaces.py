@@ -10,8 +10,8 @@ __license__ = ("This software is released under the MIT license cited in "
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.steps.common.miscellaneous import (press_enter_on_active_element,
                                                   switch_to_iframe)
-from tests.gui.steps.modal import wt_wait_for_modal_to_appear
-from tests.gui.utils.generic import transform, parse_seq
+from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
+from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 
@@ -387,7 +387,8 @@ def assert_providers_list_contains_provider(selenium, browser_id, provider,
 @wt(parsers.parse('user of {browser_id} checks {toggle} toggle on '
                   'space configuration page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_toggle_on_providers_page(browser_id, toggle, selenium, op_container):
+def click_toggle_on_providers_subpage(browser_id, toggle, selenium,
+                                      op_container):
     driver = selenium[browser_id]
     switch_to_iframe(selenium, browser_id)
     getattr(op_container(driver).space_configuration, transform(toggle)).check()

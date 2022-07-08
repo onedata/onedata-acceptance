@@ -9,7 +9,7 @@ from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.steps.onezone.spaces import \
     click_on_option_of_space_on_left_sidebar_menu
-from tests.gui.steps.modal import (
+from tests.gui.steps.modals.modal import (
     wt_wait_for_modal_to_appear, write_name_into_text_field_in_modal,
     click_modal_button, click_share_info_icon_in_share_directory_modal,
     click_icon_in_share_directory_modal)
