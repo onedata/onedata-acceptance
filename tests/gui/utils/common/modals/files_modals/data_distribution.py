@@ -80,7 +80,7 @@ class DataDistributionModal(Modal):
         provider_record = self.providers[0].distribution
         end, unit = provider_record.end.split()
         start, _ = provider_record.start.split()
-        return int(end) - int(start)
+        return float(end) - float(start)
 
 # TODO VFS-7489 fix not working commented code
 # In case when fill color of canvas is changed,
