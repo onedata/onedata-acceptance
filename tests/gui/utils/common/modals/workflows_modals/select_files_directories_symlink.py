@@ -1,4 +1,4 @@
-"""Utils and fixtures to facilitate operations on Select files, direcotires
+"""Utils and fixtures to facilitate operations on Select files, directories
  or symlinks modal.
 """
 

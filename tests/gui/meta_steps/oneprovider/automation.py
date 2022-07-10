@@ -20,10 +20,10 @@ from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.utils import repeat_failed
 
 
-@wt(parsers.parse('user of {browser_id} chooses "{item_list}" file '
+@wt(parsers.parse('user of {browser_id} chooses "{file_name}" file '
                   'as initial value for workflow in "Select files" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def choose_file_as_initial_workflow_value(selenium, browser_id, item_list,
+def choose_file_as_initial_workflow_value(selenium, browser_id, file_name,
                                           modals, op_container):
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
@@ -33,7 +33,7 @@ def choose_file_as_initial_workflow_value(selenium, browser_id, item_list,
     browser = select_files_modal.file_browser
 
     with browser.select_files() as selector:
-        _select_files(browser, selector, item_list)
+        _select_files(browser, selector, file_name)
 
     select_files_modal.confirm_button.click()
 
@@ -53,10 +53,12 @@ def wait_for_workflows_in_automation_subpage(selenium, browser_id, op_container,
     page = op_container(selenium[browser_id]).automation_page
     if option == 'start':
         change_tab_in_automation_subpage(page, 'Waiting')
+        err = 'Waiting workflows did not start'
     else:
         change_tab_in_automation_subpage(page, 'Ongoing')
+        err = 'Ongoing workflows did not finish their run'
 
-    assert len(page.executed_workflow_list) == 0, 'Waiting workflows did not start'
+    assert len(page.executed_workflow_list) == 0, err
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on first executed workflow'))
@@ -75,10 +77,10 @@ def get_store_content(browser_id, driver, page, modals, clipboard, displays,
     time.sleep(0.25)
     modal.details_list[0].expander.click()
     modal.copy_button.click()
-    store1_value = clipboard.paste(display=displays[browser_id])
+    store_value = clipboard.paste(display=displays[browser_id])
     modal.close.click()
 
-    return store1_value
+    return store_value
 
 
 @wt(parsers.parse('user of {browser_id} sees that content of "{store1}" store '

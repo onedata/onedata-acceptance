@@ -8,6 +8,8 @@ __license__ = ("This software is released under the MIT license cited in "
 
 import time
 
+from selenium.common.exceptions import NoSuchElementException
+
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.utils.generic import transform, upload_file_path
 from tests.utils.bdd_utils import wt, parsers
@@ -156,7 +158,7 @@ def write_text_into_lambda_form(selenium, browser_id,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>disables|enables) '
-               'lambdas Mount space toggle'))
+               'lambdas "Mount space" toggle'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def switch_toggle_in_lambda_form(selenium, browser_id, oz_page, option):
     subpage = oz_page(selenium[browser_id])['automation'].lambdas_page.form
@@ -229,7 +231,7 @@ def assert_revision_in_object_bracket(selenium, browser_id, oz_page,
 
     try:
         collapse_revision_list(object)
-    except BaseException:
+    except NoSuchElementException:
         pass
     if option == 'does not see':
         assert object_name not in object.revision_list, \
@@ -254,7 +256,7 @@ def click_option_in_revision_menu_button(selenium, browser_id, oz_page, option,
 
     try:
         collapse_revision_list(object)
-    except BaseException:
+    except NoSuchElementException:
         pass
 
     object.revision_list[revision_name].menu_button.click()
@@ -393,9 +395,9 @@ def insert_text_in_textfield_of_workflow(selenium, browser_id, oz_page, text):
 
 
 @wt(parsers.parse('user of {browser_id} confirms edition of selected workflow '
-                  'details using Save button'))
-@wt(parsers.parse('user of {browser_id} Saves workflow edition by clicking '
-                  'Save button from menu bar'))
+                  'details using "Save" button'))
+@wt(parsers.parse('user of {browser_id} saves workflow edition by clicking '
+                  '"Save" button from menu bar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_in_workflow(selenium, browser_id, oz_page):
     page = oz_page(selenium[browser_id])['automation']
@@ -436,7 +438,7 @@ def add_lambda_revision_to_workflow(selenium, browser_id, oz_page, lambda_name,
 
     try:
         collapse_revision_list(object)
-    except BaseException:
+    except NoSuchElementException:
         pass
 
     revision.add_to_workflow.click()

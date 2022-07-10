@@ -33,8 +33,8 @@ class FunctionPodsActivity(Modal):
     pods_list = WebItemsSequence('pods-table.scrollable-table-content '
                                  'tr.data-row', cls=PodsRecordStatus)
 
-    events_list = WebItemsSequence('.events-table-section.scrollable-table'
-                                   '-content tr.data-row',
+    events_list = WebItemsSequence('.events-table-section.'
+                                   'scrollable-table-content tr.data-row',
                                    cls=EventRecord)
 
     def __str__(self):

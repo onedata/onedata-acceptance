@@ -26,14 +26,14 @@ Feature: Workflows execution
     And user of browser logged as space-owner-user to Onezone service
 
 
-  Scenario: User executes inout workflow and checks pod statuses in "Function pods activity" modal
+  Scenario: User executes uploaded "inout" workflow and checks pod statuses in "Function pods activity" modal
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses Upload (json) button from menu bar to upload workflow "workflow_upload.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Automation of "space1" in the sidebar
-    And user of browser clicks Run workflow in the navigation bar
+    And user of browser clicks "Run workflow" in the automation tab bar
     And user of browser chooses to run revision described "Workflow1_revision1" of "Workflow1" workflow
     And user of browser chooses "dir1" file as initial value for workflow in "Select files" modal
     And user of browser confirms workflow execution by clicking "Run workflow" button
@@ -62,7 +62,7 @@ Feature: Workflows execution
     And user of browser uses "Add new lambda" button from menu bar in lambdas subpage
     And user of browser writes "inout" into lambda name text field
     And user of browser writes "docker.onedata.org/in-out:v1" into docker image text field
-    And user of browser disables lambdas Mount space toggle
+    And user of browser disables lambdas "Mount space" toggle
     And user of browser adds argument named "data" of "Object" type
     And user of browser adds result named "data" of "Object" type
     And user of browser confirms create new lambda using Create button
@@ -103,12 +103,12 @@ Feature: Workflows execution
     # User changes details of workflow revision
     And user of browser changes workflow view to "Details" tab
     And user of browser writes "Workflow1_revision1" in description textfield in workflow Details tab
-    And user of browser Saves workflow edition by clicking Save button from menu bar
+    And user of browser saves workflow edition by clicking "Save" button from menu bar
 
     # User executes created workflow and checks if output value is correct
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks Automation of "space1" in the sidebar
-    And user of browser clicks Run workflow in the navigation bar
+    And user of browser clicks "Run workflow" in the automation tab bar
     And user of browser chooses to run revision described "Workflow1_revision1" of "Workflow1" workflow
     And user of browser chooses "dir1" file as initial value for workflow in "Select files" modal
     And user of browser confirms workflow execution by clicking "Run workflow" button

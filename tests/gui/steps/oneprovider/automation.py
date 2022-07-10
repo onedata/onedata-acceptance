@@ -18,8 +18,8 @@ from tests.gui.steps.common.miscellaneous import press_enter_on_active_element, 
     switch_to_iframe
 
 
-@wt(parsers.parse('user of {browser_id} clicks {tab_name} '
-                  'in the navigation bar'))
+@wt(parsers.parse('user of {browser_id} clicks "{tab_name}" '
+                  'in the automation tab bar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_in_navigation_tab(selenium, browser_id, op_container,
                                    tab_name):
@@ -41,7 +41,7 @@ def choose_workflow_revision_to_run(selenium, browser_id, op_container,
 @wt(parsers.parse('user of {browser_id} confirms workflow execution '
                   'by clicking "Run workflow" button'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def choose_workflow_to_execute(selenium, browser_id, op_container):
+def confirm_workflow_to_execute(selenium, browser_id, op_container):
     switch_to_iframe(selenium, browser_id)
     page = op_container(selenium[browser_id]).automation_page
     page.run_workflow_button.click()
