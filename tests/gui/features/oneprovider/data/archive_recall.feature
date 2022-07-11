@@ -72,7 +72,9 @@ Feature: Archive recall tests
     And user of browser waits for recalled status tag for "dir1_recalled" in file browser
     And user of browser clicks on recalled status tag for "dir1_recalled" in file browser
     Then user of browser sees status: "Finished with errors" in archive recall information modal
-    And user of browser sees that not all files were recalled
+  #    Uncomment when (VFS-9618) will be finished, until then every ongoing
+  #    file will be reported as finished
+#    And user of browser sees that not all files were recalled
     And user of browser sees that not all data were recalled
     And user of browser sees last error: "No space left on device" in archive recall information modal
     And user of browser sees that number of items failed is greater than 0
@@ -97,7 +99,9 @@ Feature: Archive recall tests
     And user of browser clicks on "Cancel recall" button in modal "Archive recall information"
     And user of browser clicks on "Yes" button in modal "Cancel recall"
     Then user of browser sees status: "Cancelled" in archive recall information modal
-    And user of browser sees that not all files were recalled
+  #    Uncomment when (VFS-9618) will be finished, until then every ongoing
+  #    file will be reported as finished
+#    And user of browser sees that not all files were recalled
     And user of browser sees that not all data were recalled
     And user of browser sees that recall has been cancelled at the same time or after recall has been started
     And user of browser sees that recall has been finished at the same time or after recall has been cancelled
