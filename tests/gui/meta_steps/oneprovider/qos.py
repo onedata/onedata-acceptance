@@ -6,7 +6,7 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 from tests.gui.meta_steps.oneprovider.data import go_to_filebrowser
-from tests.gui.steps.modal import (
+from tests.gui.steps.modals.modal import (
     write_name_into_text_field_in_modal, wt_wait_for_modal_to_appear)
 from tests.gui.steps.oneprovider.data_tab import (
     choose_option_from_selection_menu, assert_browser_in_tab_in_op)

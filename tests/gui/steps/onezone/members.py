@@ -11,7 +11,7 @@ import yaml
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.meta_steps.onezone.common import search_for_members
-from tests.gui.steps.modal import wt_wait_for_modal_to_appear
+from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
 from tests.gui.steps.onepanel.common import wt_click_on_subitem_for_item
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.harvesters.discovery import (

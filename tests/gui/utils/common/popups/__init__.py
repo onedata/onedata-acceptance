@@ -22,6 +22,7 @@ from .query_builder import ExpressionBuilderPopup
 from .qos_delete import DeleteQosPopup
 from .selector_popup import SelectorPopup
 from .shares_row_menu import SharesRowMenu
+from .chart_statistics import ChartStatistics
 from .upload_presenter import UploadPresenter
 from .user_account_menu import UserAccountPopup
 from .toolbar import ToolbarPopup
@@ -83,6 +84,7 @@ class Popups(object):
                                        cls=EditPermissionsRecordMenu)
 
     shares_row_menu = WebItem('.share-actions.dropdown-menu', cls=SharesRowMenu)
+    chart_statistics = WebItem('.chart-tooltip', cls=ChartStatistics)
 
     def __init__(self, driver):
         self.driver = self.web_elem = driver

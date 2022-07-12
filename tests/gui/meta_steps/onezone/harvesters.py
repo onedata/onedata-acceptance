@@ -36,7 +36,7 @@ from tests.gui.steps.onezone.harvesters.discovery import (
 from tests.gui.steps.onezone.spaces import (
     click_on_option_in_the_sidebar, click_element_on_lists_on_left_sidebar_menu)
 from tests.gui.steps.common.copy_paste import send_copied_item_to_other_users
-from tests.gui.steps.modal import click_modal_button, close_modal
+from tests.gui.steps.modals.modal import click_modal_button, close_modal
 
 
 @wt(parsers.parse('user of {browser_id} removes "{space_name}" space '

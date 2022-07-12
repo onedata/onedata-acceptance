@@ -12,7 +12,7 @@ import yaml
 from tests.gui.meta_steps.oneprovider.data import (
     _click_menu_for_elem_somewhere_in_file_browser)
 from tests.gui.steps.common.notifies import notify_visible_with_text
-from tests.gui.steps.modal import (
+from tests.gui.steps.modals.modal import (
     assert_error_modal_with_text_appeared, click_modal_button, close_modal)
 from tests.gui.steps.oneprovider.browser import (
     click_option_in_data_row_menu_in_browser)

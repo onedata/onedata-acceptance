@@ -55,7 +55,7 @@ from tests.gui.meta_steps.oneprovider.qos import *
 from tests.gui.meta_steps.oneprovider.dataset import *
 from tests.gui.meta_steps.oneprovider.archives import *
 
-from tests.gui.steps.modal import *
+from tests.gui.steps.modals.modal import *
 from tests.gui.steps.oneprovider_common import *
 from tests.gui.meta_steps.onezone.common import *
 

@@ -5,11 +5,9 @@ __copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-import time
-
 from tests.gui.meta_steps.oneprovider.data import (
     open_modal_for_file_browser_item, go_to_filebrowser)
-from tests.gui.steps.modal import (
+from tests.gui.steps.modals.modal import (
     wt_wait_for_modal_to_appear, assert_error_modal_with_text_appeared)
 from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.browser import (

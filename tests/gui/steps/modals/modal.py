@@ -462,3 +462,6 @@ def assert_path_where_symbolic_link_points(selenium, browser_id,
     path = modal.path.replace('\n', '')
     assert expected_path == path, (f'Expected path: {expected_path} does not '
                                    f'match path: {path}')
+
+
+
