@@ -32,9 +32,9 @@ Feature: Workflows execution
     And user of browser uses Upload (json) button from menu bar to upload workflow "workflow_upload.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Automation of "space1" in the sidebar
+    And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
     And user of browser clicks "Run workflow" in the automation tab bar
-    And user of browser chooses to run revision described "Workflow1_revision1" of "Workflow1" workflow
+    And user of browser chooses to run 1st revision of "Workflow1" workflow
     And user of browser chooses "dir1" file as initial value for workflow in "Select files" modal
     And user of browser confirms workflow execution by clicking "Run workflow" button
     And user of browser waits for all workflows to start
@@ -42,16 +42,16 @@ Feature: Workflows execution
     And user of browser clicks on first executed workflow
     Then user of browser sees "Finished" status in status bar in workflow visualizer
 
-    # User tests Function pods activity modal
+    # User tests openfaas-pods-activity-monitor
     And user of browser clicks on "inout" task in "Lane1" lane in workflow visualizer
     And user of browser clicks on "Pods activity" link in "inout" task in "Lane1" lane in workflow visualizer
-#    And user of browser waits for all pods to finish execution in modal "Function pods activity"
-#    And user of browser sees pod in all pods in modal "Function pods activity":
-#            readiness: 0/1
-#            status: Terminated
-#
-#    And user of browser clicks on first terminated pod in modal "Function pods activity"
-#    And user of browser sees event with following reason: Scheduled in modal "Function pods activity"
+    And user of browser waits for all pods to finish execution in modal "Function pods activity"
+    And user of browser sees pod in all pods in modal "Function pods activity":
+            readiness: 0/1
+            status: Terminated
+
+    And user of browser clicks on first terminated pod in modal "Function pods activity"
+    And user of browser sees event with following reason: Scheduled in modal "Function pods activity"
 
 
   Scenario: User creates in-out workflow through GUI and executes it
@@ -77,7 +77,7 @@ Feature: Workflows execution
     And user of browser writes "input" into store name text field in modal "Create new store"
     And user of browser chooses "Tree forest" in type dropdown menu in modal "Create new store"
     And user of browser chooses "Any file" in data type dropdown menu in modal "Create new store"
-    And user of browser enables "User input" toggle in modal "Create new store"
+    And user of browser checks "User input" toggle in modal "Create new store"
     And user of browser clicks on "Create" button in modal "Create new store"
 
     # User creates Lane
@@ -95,8 +95,8 @@ Feature: Workflows execution
     # User creates task using previously created lambda
     And user of browser clicks on add parallel box button in the middle of "Lane1" lane
     And user of browser clicks create task button in empty parallel box in "Lane1" lane
-    And user of browser chooses "inout" revision of "inout" lambda to add to workflow
-    And user of browser chooses "output" in target store dropdown menu in create task page
+    And user of browser chooses 1st revision of "inout" lambda to add to workflow
+    And user of browser chooses "output" in target store dropdown menu in "data" result in task creation page
     And user of browser confirms create new task using Create button
     And user of browser sees task named "inout" in "Lane1" lane
 
@@ -107,10 +107,9 @@ Feature: Workflows execution
 
     # User executes created workflow and checks if output value is correct
     And user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Automation of "space1" in the sidebar
+    And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
     And user of browser clicks "Run workflow" in the automation tab bar
-    And user of browser chooses to run revision described "Workflow1_revision1" of "Workflow1" workflow
-    And user of browser chooses "dir1" file as initial value for workflow in "Select files" modal
+    And user of browser chooses to run 1st revision of "Workflow1" workflow
     And user of browser confirms workflow execution by clicking "Run workflow" button
     And user of browser waits for all workflows to start
     And user of browser waits for all workflows to finish

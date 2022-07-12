@@ -27,7 +27,8 @@ class ExecutionRecord(PageObject):
 
 
 class Revision(Element):
-    name = id = Label('.description')
+    number = id = Label('.revision-number')
+    name = Label('.description')
 
 
 class Workflow(Element):

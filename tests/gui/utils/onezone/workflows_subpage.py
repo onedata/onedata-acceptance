@@ -55,6 +55,10 @@ class NavigationTab(Element):
 class TaskAddForm(PageObject):
     task_name = WebItem('.name-field .text-like-field', cls=EditBox)
     create_button = Button('.btn-primary')
+
+    arguments = WebItemsSequence
+    results = WebItemsSequence
+
     target_store_dropdown_menu = WebElement('.targetStore-field '
                                             '.resultMappings-field '
                                             '.dropdown-field-trigger')
@@ -77,6 +81,11 @@ class Workflow(Element):
                                      cls=Revision)
 
 
+class WorkflowCreator(PageObject):
+    workflow_name = WebItem('.name-field .text-like-field', cls=InputBox)
+    create_button = NamedButton('.btn-primary', text='Create')
+
+
 class WorkflowsPage(PageObject):
     elements_list = WebItemsSequence('.atm-workflow-schemas-list'
                                      ' .atm-workflow-schemas-list-entry',
@@ -89,15 +98,11 @@ class WorkflowsPage(PageObject):
 
     revision_details = WebItem('.revision-details-form', cls=RevisionDetails)
 
-    workflow_name = WebItem('.name-field .text-like-field', cls=InputBox)
-
-    create_button = NamedButton('.btn-primary', text='Create')
+    workflow_creator = WebItem('.content-atm-inventories-workflows-creator-view',
+                               cls=WorkflowCreator)
 
     task_form = WebItem('.task-form-container', cls=TaskAddForm)
 
     workflow_name_input = WebItem('.name-field .text-like-field', cls=EditBox)
 
     workflow_save_button = Button('.btn-save')
-
-
-

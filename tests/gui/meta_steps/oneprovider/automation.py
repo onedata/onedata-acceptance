@@ -6,6 +6,7 @@ __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+import pdb
 import time
 
 import yaml
@@ -14,6 +15,7 @@ from selenium.common.exceptions import StaleElementReferenceException
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.modal import wt_wait_for_modal_to_appear
+from tests.gui.steps.oneprovider.automation import switch_to_automation_page
 from tests.gui.steps.oneprovider.file_browser import _select_files
 from tests.utils.bdd_utils import wt, parsers
 from tests.gui.utils.generic import parse_seq, transform
@@ -49,8 +51,7 @@ def change_tab_in_automation_subpage(page, tab_name):
                exceptions=(AssertionError, StaleElementReferenceException))
 def wait_for_workflows_in_automation_subpage(selenium, browser_id, op_container,
                                              option):
-    switch_to_iframe(selenium, browser_id)
-    page = op_container(selenium[browser_id]).automation_page
+    page = switch_to_automation_page(selenium, browser_id, op_container)
     if option == 'start':
         change_tab_in_automation_subpage(page, 'Waiting')
         err = 'Waiting workflows did not start'
@@ -64,8 +65,7 @@ def wait_for_workflows_in_automation_subpage(selenium, browser_id, op_container,
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on first executed workflow'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def expand_workflow_record(selenium, browser_id, op_container):
-    switch_to_iframe(selenium, browser_id)
-    page = op_container(selenium[browser_id]).automation_page
+    page = switch_to_automation_page(selenium, browser_id, op_container)
     change_tab_in_automation_subpage(page, 'Ended')
     page.executed_workflow_list[0].click()
 
@@ -113,9 +113,11 @@ def change_tab_in_function_pods_activity_modal(modal, tab_name):
 @repeat_failed(interval=1, timeout=180,
                exceptions=(AssertionError, StaleElementReferenceException))
 def wait_for_ongoing_pods_to_be_terminated(selenium, browser_id, modals):
+    switch_to_iframe(selenium, browser_id)
     modal = modals(selenium[browser_id]).function_pods_activity
-    change_tab_in_function_pods_activity_modal(modal, "Current")
+    modal.tabs[0].click()
 
+    pdb.set_trace()
     assert len(modal.pods_list) == 0, 'Pods has not been terminated'
 
 

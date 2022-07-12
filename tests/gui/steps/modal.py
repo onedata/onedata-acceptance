@@ -438,7 +438,7 @@ def click_copy_icon_in_rest_api_modal(selenium, browser_id, modals):
     modals(selenium[browser_id]).rest_api_modal.copy_command_button()
 
 
-@wt(parsers.parse('user of {browser_id} chooses "{option}" in dropdown menu '
+@wt(parsers.parse('user of {browser_id} chooses "{option}" in {dropdown_name} '
                   'in modal "{modal}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_option_in_dropdown_menu_in_modal(selenium, browser_id, modals,
@@ -466,16 +466,12 @@ def assert_path_where_symbolic_link_points(selenium, browser_id,
                                    f'match path: {path}')
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>disables|enables) '
-               '"(?P<toggle_name>.*)" in modal "(?P<modal_name>.*)"'))
+@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>checks|unchecks) '
+               '"(?P<toggle_name>.*)" toggle in modal "(?P<modal_name>.*)"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def switch_toggle_in_modal(selenium, browser_id, modals, toggle_name,
                            option, modal_name):
     driver = selenium[browser_id]
     modal = getattr(modals(driver), transform(modal_name))
     toggle = getattr(modal, transform(toggle_name))
-
-    if option == "enables":
-        toggle.check()
-    else:
-        toggle.uncheck()
+    getattr(toggle, option[:-1])()

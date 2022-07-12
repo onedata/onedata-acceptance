@@ -40,8 +40,8 @@ class Space(Element):
                           text='Members')
     harvesters_discovery = NamedButton('.one-list-level-2 .item-header',
                                        text='Harvesters, Discovery')
-    automation = NamedButton('.one-list-level-2 .item-header',
-                             text='Automation')
+    automation_workflows = NamedButton('.one-list-level-2 .item-header',
+                                        text='Automation Workflows')
     menu_button = Button('.collapsible-toolbar-toggle')
 
     def click_menu(self):

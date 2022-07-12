@@ -6,6 +6,7 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import pdb
 import time
 
 from selenium.common.exceptions import NoSuchElementException
@@ -166,7 +167,7 @@ def switch_toggle_in_lambda_form(selenium, browser_id, oz_page, option):
     if option == "enables":
         subpage.mount_space_toggle.check()
     else:
-        subpage.mount_space_toggle.click()
+        subpage.mount_space_toggle.uncheck()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) confirms (create new|edition of) '
@@ -182,13 +183,17 @@ def confirm_lambda_creation_or_edition(selenium, browser_id, oz_page, option):
 
 
 @wt(parsers.parse('user of {browser_id} chooses "{option}" in {dropdown_name} '
-                  'in create task page'))
+                  'in "{result_name}" result in task creation page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_option_in_dropdown_menu_in_task_page(selenium, browser_id, oz_page,
-                                                dropdown_name, popups, option):
+                                                dropdown_name, popups, option,
+                                                result_name):
     driver = selenium[browser_id]
     page = oz_page(driver)['automation'].workflows_page.task_form
+    pdb.set_trace()
+
     dropdown_menu = getattr(page, transform(dropdown_name))
+    pdb.set_trace()
     dropdown_menu.click()
 
     popups(driver).power_select.choose_item(option)
@@ -270,7 +275,7 @@ def click_option_in_revision_menu_button(selenium, browser_id, oz_page, option,
 def write_text_into_workflow_name_on_main_workflows_page(selenium, browser_id,
                                                          oz_page, text):
     page = oz_page(selenium[browser_id])['automation']
-    page.workflows_page.workflow_name.value = text
+    page.workflows_page.workflow_creator.workflow_name.value = text
 
 
 @wt(parsers.parse('user of {browser_id} confirms create new workflow using '
@@ -278,7 +283,7 @@ def write_text_into_workflow_name_on_main_workflows_page(selenium, browser_id,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_workflow_creation(selenium, browser_id, oz_page):
     page = oz_page(selenium[browser_id])['automation']
-    page.workflows_page.create_button.click()
+    page.workflows_page.workflow_creator.create_button.click()
 
 
 @wt(parsers.parse('user of {browser_id} clicks "Add store" button '
@@ -428,18 +433,18 @@ def insert_text_in_description_of_revision(selenium, browser_id, oz_page, text):
     page.workflows_page.revision_details.description = text
 
 
-@wt(parsers.parse('user of {browser_id} chooses "{revision_name}" revision of '
-                  '"{lambda_name}" lambda to add to workflow'))
+@wt(parsers.re('user of (?P<browser_id>.*?) chooses '
+               '(?P<ordinal>1st|2nd|3rd|4th) revision of '
+               '"(?P<lambda_name>.*?)" lambda to add to workflow'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_lambda_revision_to_workflow(selenium, browser_id, oz_page, lambda_name,
-                                    revision_name):
+                                    ordinal):
     page = oz_page(selenium[browser_id])['automation'].lambdas_page
-    revision = page.elements_list[lambda_name].revision_list[revision_name]
+    revision = page.elements_list[lambda_name].revision_list[ordinal[:-2]]
 
     try:
         collapse_revision_list(object)
-    except NoSuchElementException:
+    except AttributeError:
         pass
 
     revision.add_to_workflow.click()
-
