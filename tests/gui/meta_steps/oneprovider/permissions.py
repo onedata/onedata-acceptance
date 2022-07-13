@@ -11,16 +11,12 @@ from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.steps.oneprovider.permissions import *
 from tests.gui.meta_steps.oneprovider.data import (
     assert_browser_in_tab_in_op, choose_option_from_selection_menu,
-    _click_menu_for_elem_somewhere_in_file_browser,
     open_modal_for_file_browser_item)
 from tests.gui.steps.oneprovider.file_browser import (
     select_files_from_file_list_using_ctrl)
-from tests.gui.steps.oneprovider.browser import (
-    click_option_in_data_row_menu_in_browser)
-from tests.gui.steps.modal import (
+from tests.gui.steps.modals.modal import (
     wt_wait_for_modal_to_appear, wt_click_on_confirmation_btn_in_modal,
     assert_error_modal_with_text_appeared)
-from tests.gui.steps.common.url import refresh_site
 from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
     click_on_option_of_space_on_left_sidebar_menu,

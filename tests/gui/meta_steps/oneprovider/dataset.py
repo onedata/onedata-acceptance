@@ -16,7 +16,7 @@ from tests.utils.utils import repeat_failed
 from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
     click_on_option_of_space_on_left_sidebar_menu,
-    click_on_option_in_the_sidebar, assert_error_popup_has_appeared)
+    click_on_option_in_the_sidebar)
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.gui.steps.oneprovider.browser import (
     click_option_in_data_row_menu_in_browser,
@@ -26,7 +26,7 @@ from tests.gui.steps.oneprovider.browser import (
 from tests.gui.steps.oneprovider.dataset import (
     click_protection_toggle, assert_general_toggle_checked_for_ancestors,
     fail_to_click_button_in_modal)
-from tests.gui.steps.modal import click_modal_button
+from tests.gui.steps.modals.modal import click_modal_button
 
 DATA_PROTECTION = 'data_protection'
 METADATA_PROTECTION = 'metadata_protection'

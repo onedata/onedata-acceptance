@@ -245,3 +245,12 @@ def click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory,
                                    which_browser='file browser'):
     browser = tmp_memory[browser_id][transform(which_browser)]
     browser.data[item_name].menu_button()
+
+
+@wt(parsers.parse('user of {browser_id} clicks on {tag} for "{item_name}" '
+                  '{type} in {which_browser}'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_tag_for_elem_in_browser(browser_id, item_name, tmp_memory, tag,
+                                  which_browser='file browser'):
+    browser = tmp_memory[browser_id][transform(which_browser)]
+    getattr(browser.data[item_name], transform(tag)).click()
