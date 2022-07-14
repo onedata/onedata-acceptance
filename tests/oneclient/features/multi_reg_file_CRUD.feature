@@ -123,6 +123,7 @@ Feature: Multi_regular_file_CRUD
     And user1 writes "TEST TEXT ONEDATA" to previously opened space1/file1 on client11
     And user2 opens space1/file1 with mode r+ on client21
     And user2 reads "TEST TEXT ONEDATA" from previously opened file space1/file1 on client21
+    And user2 sets current file position on beginning of previously opened space1/file1 on client21
     And user2 writes "NEW LINE" to previously opened space1/file1 on client21
     Then user1 reads "NEW LINET ONEDATA" from previously opened file space1/file1 on client11
 
