@@ -17,6 +17,7 @@ from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.modal import wt_wait_for_modal_to_appear
 from tests.gui.steps.oneprovider.automation import switch_to_automation_page
 from tests.gui.steps.oneprovider.file_browser import _select_files
+from tests.gui.utils.core import scroll_to_css_selector
 from tests.utils.bdd_utils import wt, parsers
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.utils import repeat_failed
@@ -104,7 +105,10 @@ def compare_store_contents(selenium, browser_id, op_container, store1,
 
 
 def change_tab_in_function_pods_activity_modal(modal, tab_name):
-    modal.tabs[tab_name].click()
+    tab_number = 0 if tab_name == 'Current' else 1
+
+    time.sleep(0.25)
+    modal.tabs[tab_number].click()
     time.sleep(0.25)
 
 
@@ -115,9 +119,8 @@ def change_tab_in_function_pods_activity_modal(modal, tab_name):
 def wait_for_ongoing_pods_to_be_terminated(selenium, browser_id, modals):
     switch_to_iframe(selenium, browser_id)
     modal = modals(selenium[browser_id]).function_pods_activity
-    modal.tabs[0].click()
+    change_tab_in_function_pods_activity_modal(modal, 'Current')
 
-    pdb.set_trace()
     assert len(modal.pods_list) == 0, 'Pods has not been terminated'
 
 
@@ -125,32 +128,36 @@ def wait_for_ongoing_pods_to_be_terminated(selenium, browser_id, modals):
                   'modal "Function pods activity"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_first_terminated_pod(selenium, browser_id, modals):
+    switch_to_iframe(selenium, browser_id)
     modal = modals(selenium[browser_id]).function_pods_activity
-    change_tab_in_function_pods_activity_modal(modal, "All")
+    change_tab_in_function_pods_activity_modal(modal, 'All')
 
     modal.pods_list[0].click()
 
 
-@wt(parsers.parse('user of {browser_id} sees event with following reason: '
-                  '{event} in modal "Function pods activity"'))
+def _parse_reasons_list(reasons):
+    reasons = reasons.split('"')[1:-1]
+    reasons = [
+        e.replace(',', '') for e in reasons if e != ', '
+    ]
+    return reasons
+
+
+def scroll_to_event(driver, number, browser):
+    selector = (browser.get_css_selector() + ' ' +
+                f'.data-row:nth-of-type({number})')
+    scroll_to_css_selector(driver, selector)
+
+
+@wt(parsers.parse('user of {browser_id} sees events with following reasons: '
+                  '{reasons} in modal "Function pods activity"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_events_in_pods_monitor(selenium, browser_id, modals, event):
+def assert_events_in_pods_monitor(selenium, browser_id, modals, reasons):
+    switch_to_iframe(selenium, browser_id)
     modal = modals(selenium[browser_id]).function_pods_activity
-    time.sleep(0.25)
-    assert event in modal.events_list
 
+    events_list = modal.events_list
+    reasons_list = _parse_reasons_list(reasons)
 
-def _assert_event(pod, desc):
-    desc = yaml.load(desc)
-    for key, val in desc.items():
-        pod_value = getattr(pod, key.replace(' ', '_'))
-        assert pod_value == str(val), \
-            f'Pod {key} is {pod_value} instead of {val} in list'
-
-
-@wt(parsers.re('user of (?P<browser_id>.*) sees pod in all pods '
-               'in modal "Function pods activity":\n(?P<desc>(.|\s)*)'))
-@repeat_failed(interval=0.5, timeout=90)
-def assert_event_of_pod(selenium, browser_id, desc, modals):
-    pod = modals(selenium[browser_id]).function_pods_activity.pods_list[0]
-    _assert_event(pod, desc)
+    for reason in reasons_list:
+        assert reason in events_list, (f'Reason: {reason} has not been found')

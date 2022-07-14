@@ -30,12 +30,11 @@ class EventRecord(PageObject):
 class FunctionPodsActivity(Modal):
     tabs = WebItemsSequence('.pods-filter-btn-group .btn-sm', cls=FilterTab)
 
-    pods_list = WebItemsSequence('pods-table.scrollable-table-content '
-                                 'tr.data-row', cls=PodsRecordStatus)
+    pods_list = WebItemsSequence('.pods-table-section '
+                                 '.pods-table-pod-row', cls=PodsRecordStatus)
 
-    events_list = WebItemsSequence('.events-table-section.'
-                                   'scrollable-table-content tr.data-row',
-                                   cls=EventRecord)
+    events_list = WebItemsSequence('.events-table-section '
+                                   '.events-table-event-row', cls=EventRecord)
 
     def __str__(self):
         return 'Function pods activity modal'
