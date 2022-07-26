@@ -10,9 +10,10 @@ import json
 
 import yaml
 
-from tests import OP_REST_PORT
+from tests import OP_REST_PORT, OZ_REST_PORT
 from tests.utils.bdd_utils import given, parsers, wt
-from tests.utils.rest_utils import get_provider_rest_path, http_post
+from tests.utils.rest_utils import (get_provider_rest_path, http_post,
+                                    http_get, get_zone_rest_path, http_put)
 
 
 @given(parsers.parse('using REST, user {user} creates "{share_name}" share of '
@@ -66,3 +67,17 @@ def get_file_id_by_rest(file_path, provider_hostname, user, users):
                                                      file_path),
                          headers={'X-Auth-Token': users[user].token}).content
     return json.loads(response)['fileId']
+
+
+@given(parsers.parse('user {user} is added to mock handle service in {host}'))
+def add_user_to_handle_service(user, users, host, hosts):
+    zone_hostname = hosts[host]['hostname']
+    handle_service_id = http_get(ip=zone_hostname, port=OZ_REST_PORT,
+                                 path=get_zone_rest_path('handle_services'),
+                                 headers={'X-Auth-Token': users['admin'].token}
+                                 ).json()['handle_services'][0]
+    http_put(ip=zone_hostname, port=OZ_REST_PORT, path=get_zone_rest_path(
+        'handle_services', handle_service_id, 'users', users[user].user_id),
+             headers={'X-Auth-Token': users['admin'].token})
+
+
