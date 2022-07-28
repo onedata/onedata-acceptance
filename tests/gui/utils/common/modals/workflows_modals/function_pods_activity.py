@@ -48,22 +48,27 @@ class FunctionPodsActivity(Modal):
         css_selector = '.' + css_selector
         return css_selector
 
-    def scroll_to_bottom(self):
+    def scroll_to_bottom_of_modal(self):
         self.driver.execute_script('arguments[0].scrollIntoView();',
                                    self.rows[-1].web_elem)
 
-    def scroll_to_event(self, driver, number, length):
-        if number == 0:
-            tmp_number = number
-        else:
-            tmp_number = number - 1
-
+    def scroll_to_event(self, driver, number):
         selector = (self.get_css_selector() + ' ' +
                     f'.events-table-event-row:nth-of-type({number}) ')
         scroll_to_css_selector(driver, selector)
 
+    def get_event_reason(self, driver, number, length):
+        # This interaction is hacky because scroll in Function pods activity
+        # modal scrolls to the event above the wanted one. This is why
+        # we are skipping the first iteration of loop (first reason would
+        # be doubled) and adding one more scroll and assertion for the last one.
+        if number == 0:
+            return
+        elif number == length:
+            self.scroll_to_bottom_of_modal
+        else:
+            self.scroll_to_event(driver, number)
+
         pom = driver.find_elements_by_css_selector(f'.events-table-event-row')[
-            tmp_number]
-        print(pom.find_elements_by_css_selector('.event-reason')[0].text)
-        pdb.set_trace()
+            number - 1]
         return pom.find_elements_by_css_selector('.event-reason')[0].text

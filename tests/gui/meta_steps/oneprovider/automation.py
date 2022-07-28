@@ -6,6 +6,7 @@ __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+import pdb
 import time
 
 import yaml
@@ -159,8 +160,10 @@ def assert_events_in_pods_monitor(selenium, browser_id, modals, reasons):
     reasons_list = _parse_reasons_list(reasons)
     tmp_list=[]
 
-    for i in range(len(events_list)):
-        reason = modal.scroll_to_event(driver, i, len(events_list))
+    # Loop below creates list of reasons from all the events that happened in
+    # a selected pod
+    for i in range(len(events_list)+1):
+        reason = modal.get_event_reason(driver, i, len(events_list))
         tmp_list.append(reason)
 
     for reason in reasons_list:
