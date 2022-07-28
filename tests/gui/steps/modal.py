@@ -439,7 +439,7 @@ def click_copy_icon_in_rest_api_modal(selenium, browser_id, modals):
 
 
 @wt(parsers.parse('user of {browser_id} chooses "{option}" in {dropdown_name} '
-                  'in modal "{modal}"'))
+                  'in modal "{modal_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_option_in_dropdown_menu_in_modal(selenium, browser_id, modals,
                                             dropdown_name, popups, option,

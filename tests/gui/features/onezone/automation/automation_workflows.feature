@@ -45,7 +45,7 @@ Feature: Basic workflows management
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser creates workflow "Workflow1"
-    And user of browser clicks Add store button in workflow visualizer
+    And user of browser clicks "Add store" button in workflow visualizer
     And user of browser writes "Store1" into store name text field in modal "Create new store"
     And user of browser clicks on "Create" button in modal "Create new store"
     Then user of browser sees "Store1" in the stores list in workflow visualizer
@@ -55,7 +55,7 @@ Feature: Basic workflows management
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser creates workflow "Workflow1"
-    And user of browser clicks Add store button in workflow visualizer
+    And user of browser clicks "Add store" button in workflow visualizer
     And user of browser writes "Store1" into store name text field in modal "Create new store"
     And user of browser clicks on "Create" button in modal "Create new store"
     And user of browser sees "Store1" in the stores list in workflow visualizer
@@ -85,7 +85,7 @@ Feature: Basic workflows management
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses Upload (json) button from menu bar to upload workflow "workflow_upload.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
-    And user of browser clicks on "Modify" button in task "Task1" menu in "Lane1" lane in workflow visualizer
+    And user of browser clicks on "Modify" button in task "inout" menu in "Lane1" lane in workflow visualizer
     And user of browser writes "Task2" into name text field in task creation subpage
     And user of browser confirms edition of task using Modify button
     Then user of browser sees task named "Task2" in "Lane1" lane
@@ -96,7 +96,7 @@ Feature: Basic workflows management
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses Upload (json) button from menu bar to upload workflow "workflow_upload.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
-    And user of browser clicks on "Remove" button in task "Task1" menu in "Lane1" lane in workflow visualizer
+    And user of browser clicks on "Remove" button in task "inout" menu in "Lane1" lane in workflow visualizer
     And user of browser clicks on "Remove" button in modal "Remove task"
     Then user of browser does not see task named "Task1" in "Lane1" lane
 
@@ -112,7 +112,7 @@ Feature: Basic workflows management
     When user of browser uploads "Workflow1" workflow from "workflow_upload.json" file to "inventory1" inventory
     And user of browser clicks on "Change details" button in workflow "Workflow1" menu in workflows subpage
     And user of browser writes "WorkflowRenamed" in name textfield of selected workflow
-    And user of browser confirms edition of selected workflow details using Save button
+    And user of browser confirms edition of selected workflow details using "Save" button
     Then user of browser sees "WorkflowRenamed" in workflows list in inventory workflows subpage
 
 
@@ -134,7 +134,7 @@ Feature: Basic workflows management
     And user of browser clicks on "Redesign as new revision" button in revision "Workflow1" menu in the "Workflow1" workflow revision list
     And user of browser changes workflow view to "Details" tab
     And user of browser writes "Revision1" in description textfield in workflow Details tab
-    And user of browser Saves workflow edition by clicking Save button from menu bar
+    And user of browser Saves workflow edition by clicking "Save" button from menu bar
     And user of browser opens inventory "inventory1" workflows subpage
     Then user of browser sees "Revision1" in revision list of "Workflow1" in inventory workflows subpage
 

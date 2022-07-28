@@ -52,16 +52,22 @@ class NavigationTab(Element):
     name = id = Label('.nav-link')
 
 
+class Arguments(Element):
+    argument_name = id = Label('.control-label')
+    value_builder_dropdown = WebElement('.valueBuilderType-field')
+
+
+class Results(Element):
+    result_name = id = Label('.control-label')
+    target_store_dropdown = WebElement('.targetStore-field')
+
+
 class TaskAddForm(PageObject):
     task_name = WebItem('.name-field .text-like-field', cls=EditBox)
     create_button = Button('.btn-primary')
 
-    arguments = WebItemsSequence
-    results = WebItemsSequence
-
-    target_store_dropdown_menu = WebElement('.targetStore-field '
-                                            '.resultMappings-field '
-                                            '.dropdown-field-trigger')
+    arguments = WebItemsSequence('.argumentMappings-field .argumentMapping-field', cls=Arguments)
+    results = WebItemsSequence('.resultMappings-field .resultMapping-field',cls=Results)
 
 
 class Revision(Element):

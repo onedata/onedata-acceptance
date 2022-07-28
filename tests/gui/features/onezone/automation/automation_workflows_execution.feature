@@ -47,7 +47,7 @@ Feature: Workflows execution
     And user of browser clicks on "Pods activity" link in "inout" task in "Lane1" lane in workflow visualizer
     And user of browser waits for all pods to finish execution in modal "Function pods activity"
     And user of browser clicks on first terminated pod in modal "Function pods activity"
-    And user of browser sees events with following reasons: ["Terminated", "Running"] in modal "Function pods activity"
+    And user of browser sees events with following reasons: ["Terminated", "Running", "Scheduled"] in modal "Function pods activity"
 
 
   Scenario: User creates in-out workflow through GUI and executes it

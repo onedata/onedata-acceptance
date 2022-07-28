@@ -190,11 +190,7 @@ def choose_option_in_dropdown_menu_in_task_page(selenium, browser_id, oz_page,
                                                 result_name):
     driver = selenium[browser_id]
     page = oz_page(driver)['automation'].workflows_page.task_form
-    pdb.set_trace()
-
-    dropdown_menu = getattr(page, transform(dropdown_name))
-    pdb.set_trace()
-    dropdown_menu.click()
+    page.results[result_name+':'].target_store_dropdown.click()
 
     popups(driver).power_select.choose_item(option)
 
@@ -236,7 +232,7 @@ def assert_revision_in_object_bracket(selenium, browser_id, oz_page,
 
     try:
         collapse_revision_list(object)
-    except NoSuchElementException:
+    except AttributeError:
         pass
     if option == 'does not see':
         assert object_name not in object.revision_list, \
@@ -261,7 +257,7 @@ def click_option_in_revision_menu_button(selenium, browser_id, oz_page, option,
 
     try:
         collapse_revision_list(object)
-    except NoSuchElementException:
+    except AttributeError:
         pass
 
     object.revision_list[revision_name].menu_button.click()
