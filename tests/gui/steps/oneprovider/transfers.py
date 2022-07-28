@@ -81,7 +81,7 @@ def cancel_or_rerun_transfer(selenium, browser_id, op_container, popups,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) waits for all transfers to start'))
-@repeat_failed(interval=1, timeout=240,
+@repeat_failed(interval=1, timeout=300,
                exceptions=(AssertionError, StaleElementReferenceException))
 def wait_for_waiting_tranfers_to_start(selenium, browser_id, op_container):
     assert len(op_container(selenium[browser_id]).transfers.waiting) == 0, \

@@ -9,7 +9,7 @@ __license__ = ("This software is released under the MIT license cited in "
 
 import time
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.steps.oneprovider.data_tab import assert_browser_in_tab_in_op
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
@@ -248,15 +248,18 @@ def assert_page_with_error_appeared(browser_id, text, tmp_memory, selenium,
 
 @wt(parsers.parse('user of {browser_id} waits for "{status}" state for archive'
                   ' with description "{description}" in archive browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def waits_for_preserved_state(browser_id, status, description, tmp_memory):
     browser = tmp_memory[browser_id]['archive_browser']
     archive = get_archive_with_description(browser, description)
-    for _ in range(100):
+    for _ in range(150):
         if archive.state.state_type == status:
             break
         else:
             time.sleep(2)
+    else:
+        raise Exception(f'failed to see "{status}" state for archive with '
+                        f'description "{description}"')
 
 
 @wt(parsers.parse('user of {browser_id} sees archive ID in Archive properties '
