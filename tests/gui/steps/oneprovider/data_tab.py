@@ -18,7 +18,6 @@ from tests.gui.steps.oneprovider.browser import \
 from tests.gui.utils.generic import (parse_seq, upload_file_path, transform)
 from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import given, wt, parsers
-from selenium.webdriver.support.ui import WebDriverWait as Wait
 from tests.gui.steps.rest.env_up import GUI_UPLOAD_CHUNK_SIZE, \
     GUI_DOWNLOAD_CHUNK_SIZE, DOWNLOAD_INACTIVITY_PERIOD_SEC
 from tests.gui.steps.rest.env_up import UPLOAD_INACTIVITY_PERIOD_SEC
@@ -534,9 +533,9 @@ def check_error_in_upload_presenter(selenium, browser_id, popups):
 
 
 @wt(parsers.parse('user of {browser_id} clicks on "{provider}" provider '
-                  'on file browser page'))
-def choose_provider_in_file_browser(selenium, browser_id, provider, hosts,
-                                    oz_page):
+                  'on {which} page'))
+def choose_provider_in_selected_page(selenium, browser_id, provider, hosts,
+                                     oz_page):
     driver = selenium[browser_id]
     provider = hosts[provider]['name']
     driver.switch_to.default_content()

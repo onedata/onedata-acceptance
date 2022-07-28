@@ -39,8 +39,9 @@ from tests.gui.steps.oneprovider.archives import (
     assert_tag_for_archive_in_archive_browser,
     assert_not_archive_with_description, get_archive_with_description,
     assert_archive_info_in_properties_modal)
-from tests.gui.steps.modal import (click_modal_button,
-                                   write_name_into_text_field_in_modal)
+from tests.gui.steps.modals.modal import (
+    click_modal_button, write_name_into_text_field_in_modal)
+
 
 OPTION_IN_SPACE = 'Datasets, Archives'
 DATASET_BROWSER = 'dataset browser'

@@ -13,7 +13,7 @@ from tests.gui.steps.onezone.members import (
     assert_member_is_in_parent_members_list)
 from tests.gui.steps.onezone.spaces import (
     click_on_option_of_space_on_left_sidebar_menu)
-from tests.gui.steps.modal import (
+from tests.gui.steps.modals.modal import (
     assert_error_modal_with_text_appeared, assert_alert_text_in_modal)
 
 

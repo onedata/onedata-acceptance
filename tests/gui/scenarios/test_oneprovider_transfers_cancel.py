@@ -27,7 +27,6 @@ from tests.gui.steps.common.login import *
 from tests.gui.steps.common.docker import *
 
 from tests.gui.steps.common import *
-from tests.gui.steps.modal import *
 
 from tests.gui.steps.onezone.logged_in_common import *
 from tests.gui.steps.onezone.user_full_name import *
@@ -47,7 +46,7 @@ from tests.gui.steps.oneprovider.transfers import *
 from tests.gui.steps.oneprovider.browser import *
 from tests.gui.meta_steps.oneprovider.common import *
 
-from tests.gui.steps.modal import *
+from tests.gui.steps.modals.modal import *
 from tests.gui.steps.oneprovider_common import *
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.oneprovider.transfers import *

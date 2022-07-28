@@ -11,24 +11,18 @@ from tests.gui.steps.oneprovider_common import (
     g_click_on_the_given_main_menu_tab,
     wt_click_on_the_given_main_menu_tab)
 from tests.gui.steps.oneprovider.data_tab import (
-    assert_browser_in_tab_in_op,
-    click_tooltip_from_toolbar_in_data_tab_in_op,
     assert_provider_chunk_in_data_distribution_empty,
     assert_provider_chunk_in_data_distribution_filled,
-    assert_nonempty_file_browser_in_files_tab_in_op,
     click_button_from_file_browser_menu_bar)
 from tests.gui.steps.oneprovider.file_browser import (
-    select_files_from_file_list_using_ctrl,
-    deselect_items_from_file_browser,
     confirm_create_new_directory)
 from tests.gui.steps.oneprovider.browser import (
     assert_items_presence_in_browser,
     click_option_in_data_row_menu_in_browser,
     click_menu_for_elem_in_browser)
-from tests.gui.steps.modal import (wt_wait_for_modal_to_appear,
-                                   wt_click_on_confirmation_btn_in_modal,
-                                   wt_wait_for_modal_to_disappear,
-                                   write_name_into_text_field_in_modal)
+from tests.gui.steps.modals.modal import (
+    wt_wait_for_modal_to_appear, wt_click_on_confirmation_btn_in_modal,
+    write_name_into_text_field_in_modal)
 from tests.gui.steps.onezone.clusters import click_on_record_in_clusters_menu
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.utils.bdd_utils import wt, given, parsers

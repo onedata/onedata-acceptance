@@ -8,9 +8,7 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.steps.modal import click_modal_button
-from tests.gui.steps.oneprovider.browser import \
-    click_option_in_data_row_menu_in_browser
+from tests.gui.steps.modals.modal import click_modal_button
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
