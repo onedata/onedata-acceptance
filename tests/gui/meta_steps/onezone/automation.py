@@ -6,7 +6,7 @@ __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-from tests.gui.conftest import WAIT_FRONTEND
+
 from tests.gui.steps.modals.modal import (_wait_for_modal_to_appear,
                                           click_modal_button)
 from tests.gui.steps.onezone.automation import (
@@ -15,18 +15,7 @@ from tests.gui.steps.onezone.automation import (
     write_text_into_workflow_name_on_main_workflows_page,
     click_add_new_button_in_menu_bar, write_text_into_lambda_form,
     assert_lambda_exists, confirm_lambda_creation_or_edition)
-import pdb
-import time
-
-from selenium.common.exceptions import StaleElementReferenceException
-
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
-from tests.gui.steps.modal import _wait_for_modal_to_appear, click_modal_button
-from tests.gui.steps.onezone.automation import assert_workflow_exists, \
-    go_to_inventory_subpage, upload_workflow_as_json, confirm_workflow_creation, \
-    write_text_into_workflow_name_on_main_workflows_page, \
-    click_add_new_button_in_menu_bar, write_text_into_lambda_form, \
-    assert_lambda_exists, confirm_lambda_creation_or_edition
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed

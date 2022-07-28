@@ -6,7 +6,6 @@ __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-import pdb
 import time
 
 import yaml
@@ -14,7 +13,6 @@ from selenium.common.exceptions import StaleElementReferenceException
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
-from tests.gui.steps.modal import wt_wait_for_modal_to_appear
 from tests.gui.steps.oneprovider.automation import switch_to_automation_page
 from tests.gui.steps.oneprovider.file_browser import _select_files
 from tests.gui.utils.core import scroll_to_css_selector

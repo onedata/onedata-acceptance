@@ -66,8 +66,10 @@ class TaskAddForm(PageObject):
     task_name = WebItem('.name-field .text-like-field', cls=EditBox)
     create_button = Button('.btn-primary')
 
-    arguments = WebItemsSequence('.argumentMappings-field .argumentMapping-field', cls=Arguments)
-    results = WebItemsSequence('.resultMappings-field .resultMapping-field',cls=Results)
+    arguments = WebItemsSequence('.argumentMappings-field '
+                                 '.argumentMapping-field', cls=Arguments)
+    results = WebItemsSequence('.resultMappings-field .resultMapping-field',
+                               cls=Results)
 
 
 class Revision(Element):
@@ -104,8 +106,8 @@ class WorkflowsPage(PageObject):
 
     revision_details = WebItem('.revision-details-form', cls=RevisionDetails)
 
-    workflow_creator = WebItem('.content-atm-inventories-workflows-creator-view',
-                               cls=WorkflowCreator)
+    workflow_creator = WebItem('.content-atm-inventories-workflows-creator-view'
+                               ,cls=WorkflowCreator)
 
     task_form = WebItem('.task-form-container', cls=TaskAddForm)
 
