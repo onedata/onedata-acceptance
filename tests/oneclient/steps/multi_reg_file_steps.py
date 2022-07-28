@@ -260,13 +260,12 @@ def close(user, file, client_node, users):
     del client.opened_files[file_path]
 
 
-@wt(parsers.re(r'(?P<user>\w+) sets current file position on (?P<offset>.*) of '
-               'previously opened (?P<file>.*) on (?P<client_node>.*)'))
+@wt(parsers.re(r'(?P<user>\w+) sets current file position at offset '
+               r'(?P<offset>.*) in previously opened (?P<file>.*) on'
+               r' (?P<client_node>.*)'))
 @wt(parsers.re(r'(?P<user>\w+) sets current file position in (?P<file>.*) at '
                'offset (?P<offset>.*) on (?P<client_node>.*)'))
 def set_file_position(user, file, offset, client_node, users):
-    if offset == 'beginning':
-        offset = 0
     user = users[user]
     client = user.clients[client_node]
     file_path = client.absolute_path(file)
