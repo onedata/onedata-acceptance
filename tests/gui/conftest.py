@@ -67,7 +67,7 @@ def pytest_configure(config):
 def pytest_addoption(parser):
     group = parser.getgroup('onedata', description='option specific '
                                                    'to onedata tests')
-    group.addoption('--rm-users', action='store_true',
+    group.addoption('--preserve-users', action='store_true',
                     help='If set users created in previous tests will be '
                          'removed if their names collide with the names '
                          'of users that will be created in current test')
@@ -134,7 +134,7 @@ def clients():
 
 @fixture
 def rm_users(request):
-    return request.config.getoption('--rm-users')
+    return not request.config.getoption('--preserve-users')
 
 
 @fixture(scope='session')
