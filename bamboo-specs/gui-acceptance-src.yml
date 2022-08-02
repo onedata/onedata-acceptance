@@ -81,6 +81,7 @@ stages:
     - Chrome storage sync charts
     - Chrome onezone spaces memberships privileges data
     - Chrome oneprovider data tab tests
+    - Chrome oneprovider jump input
     - Chrome transfers directories
     - Chrome transfers cancel
     - Chrome onezone basic tests
@@ -764,6 +765,19 @@ Chrome oneprovider data tab tests:
       <<: *run-selenium-tests
       scripts:
       - make SUITE=test_oneprovider_data_tab BROWSER=Chrome TIMEOUT=600 test_gui_src
+Chrome oneprovider jump input:
+  key: COJI
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script:
+      <<: *run-selenium-tests
+      scripts:
+      - make SUITE=test_oneprovider_jump_input BROWSER=Chrome TIMEOUT=600 test_gui_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
