@@ -11,7 +11,8 @@ import pdb
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.core.base import PageObject
-from tests.gui.utils.core.web_elements import WebItemsSequence, Label
+from tests.gui.utils.core.web_elements import WebItemsSequence, Label, \
+    WebElement
 from tests.gui.utils.onezone.generic_page import Element
 
 
@@ -39,6 +40,9 @@ class FunctionPodsActivity(Modal):
     events_list = WebItemsSequence('.events-table-section '
                                    '.events-table-event-row', cls=EventRecord)
 
+    events_list_element = WebElement('.events-table-section '
+                                     '.perfect-scrollbar-element')
+
     def __str__(self):
         return 'Function pods activity modal'
 
@@ -49,8 +53,8 @@ class FunctionPodsActivity(Modal):
         return css_selector
 
     def scroll_to_bottom_of_modal(self):
-        self.driver.execute_script('arguments[0].scrollIntoView();',
-                                   self.rows[-1].web_elem)
+        self.driver.execute_script("arguments[0].scrollBy(0,150)",
+                                   self.events_list_element)
 
     def scroll_to_event(self, driver, number):
         selector = (self.get_css_selector() + ' ' +
@@ -65,7 +69,7 @@ class FunctionPodsActivity(Modal):
         if number == 0:
             return
         elif number == length:
-            self.scroll_to_bottom_of_modal
+            self.scroll_to_bottom_of_modal()
         else:
             self.scroll_to_event(driver, number)
 
