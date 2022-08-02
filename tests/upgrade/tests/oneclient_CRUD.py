@@ -29,9 +29,11 @@ def verify(space_name):
         space_path = client.absolute_path(space_name)
         file_path = os.path.join(space_path, 'file_name')
         dir_path = os.path.join(space_path, 'dir_name')
-        assert TEXT == client.read(file_path)
+        read_text = client.read(file_path)
+        assert TEXT == read_text, "Read {} instead of expected {}".format(read_text, TEXT)
         client.write(TEXT2, file_path)
-        assert TEXT2 == client.read(file_path)
+        read_text2 = client.read(file_path)
+        assert TEXT2 == read_text2, "Read {} instead of expected {}".format(read_text, TEXT)
         client.stat(dir_path)
         client.rm(file_path)
     return fun
