@@ -49,6 +49,11 @@ def test_read_write(env_description_file):
     pass
 
 
+@scenario('Write to regular file and assert size after listing')
+def test_assert_size_after_listing(env_description_file):
+    pass
+
+
 @scenario('Append to regular file')
 def test_append(env_description_file):
     pass
