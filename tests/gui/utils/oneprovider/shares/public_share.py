@@ -21,12 +21,9 @@ class URLTypeSelector(PageObject):
 class DublinCoreMetadata(PageObject):
 
     def write_to_last_input(self, val, which):
-        if which == 'title':
-            css_sel = '.form-control[data-dc-element-type="title"]'
-        elif which == 'creator':
-            css_sel = '.form-control[data-dc-element-type="creator"]'
-        elif which == 'description':
-            css_sel = '.form-control[data-dc-element-type="description"]'
+        css_sel = f'.form-control[data-dc-element-type="{which}"]'
+        # WebItemsSequence, WebElementsSequence were not working for this
+        # case (because of weird selectors)
         inputs = self.driver.find_elements_by_css_selector(css_sel)
         inputs[-1].clear()
         inputs[-1].send_keys(val)

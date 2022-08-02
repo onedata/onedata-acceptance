@@ -93,25 +93,26 @@ def no_public_share_view(selenium, browser_id, error_msg, public_share):
         f'displayed error msg does not contain {error_msg}')
 
 
-@wt(parsers.parse('user of {browser_id} opens {tab} on share\'s public '
-                  'interface'))
+@wt(parsers.re('user of (?P<browser_id>.*) opens "(?P<tab>.*)" tab on share\'s'
+               ' (public|private) interface'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_tab_in_public_share(selenium, browser_id, public_share, tab):
+    tab = transform(tab) + '_tab'
     driver = selenium[browser_id]
     _change_iframe_for_public_share_page(selenium, browser_id)
-    getattr(public_share(driver), transform(tab))()
+    getattr(public_share(driver), tab)()
 
 
-@wt(parsers.parse('user of {browser_id} clicks "{button}" button on share\'s'
-                  ' public interface'))
+@wt(parsers.re('user of (?P<browser_id>.*) clicks "(?P<button>.*)" button on '
+               'share\'s (public|private) interface'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_in_public_share(selenium, browser_id, public_share, button):
+def click_button_in_share(selenium, browser_id, public_share, button):
     driver = selenium[browser_id]
     getattr(public_share(driver), transform(button))()
 
 
 @wt(parsers.parse('user of {browser_id} chooses "{option}" in dropdown menu '
-                  'for handle service on share\'s public interface'))
+                  'for handle service on share\'s private interface'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_option_for_publish_as_open_data(browser_id, option, popups,
                                            selenium):
@@ -121,7 +122,7 @@ def choose_option_for_publish_as_open_data(browser_id, option, popups,
 
 @wt(parsers.parse('user of {browser_id} writes "{text}" into last {which_input}'
                   ' input text field in "Dublin Core Metadata" form on '
-                  'share\'s public interface'))
+                  'share\'s private interface'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def write_input_in_form_in_shares_interface(browser_id, text, which_input,
                                             selenium, public_share):
@@ -130,7 +131,7 @@ def write_input_in_form_in_shares_interface(browser_id, text, which_input,
         text, which_input)
 
 
-def check_item_presence(item, data):
+def check_item_presence_in_dublin_core_metadata(item, data):
     for info in data:
         if info.text == item:
             break
@@ -140,7 +141,7 @@ def check_item_presence(item, data):
 
 @wt(parsers.re('user of (?P<browser_id>.*?) sees that (?P<which>.*?) (is|are) '
                '(?P<data>.*?) in "Dublin Core Metadata" on share\'s '
-               'public interface'))
+               '(public|private) interface'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_data_in_dublin_core_metadata(browser_id, data, selenium,
                                         public_share):
@@ -148,11 +149,11 @@ def assert_data_in_dublin_core_metadata(browser_id, data, selenium,
     dublin_core = public_share(driver).dublin_core_metadata_data
 
     for item in parse_seq(data):
-        check_item_presence(item, dublin_core)
+        check_item_presence_in_dublin_core_metadata(item, dublin_core)
 
 
-@wt(parsers.parse('user of {browser_id} clicks "{button}" button in "Dublin'
-                  ' Core Metadata" form on share\'s public interface'))
+@wt(parsers.re('user of (?P<browser_id>.*?) clicks "(?P<button>.*?)" button '
+               'in "Dublin Core Metadata" form on share\'s private interface'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def clicks_button_in_form_in_shares_interface(browser_id, button, selenium,
                                               public_share):
@@ -160,33 +161,33 @@ def clicks_button_in_form_in_shares_interface(browser_id, button, selenium,
     public_share(driver).dublin_core_metadata_form.click_add_button(button)
 
 
-@wt(parsers.parse('user of {browser_id} sees that link on share\'s public '
-                  'interface is "{link}"'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_link_on_shares_interface(browser_id, link, selenium, public_share):
-    driver = selenium[browser_id]
-    err_msg = f'Link on share\'s public interface is not "{link}"'
-    assert public_share(driver).link_name == link, err_msg
-
-
-@wt(parsers.parse('user of {browser_id} copies "{link}" from '
-                  'share\'s public interface'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def copies_link_in_shares_interface(browser_id, selenium, public_share):
-    driver = selenium[browser_id]
-    public_share(driver).copy_link()
-
-
-@wt(parsers.parse('user of {browser_id} clicks "{button}" button in '
-                  '"Description" form on share\'s public interface'))
+@wt(parsers.re('user of (?P<browser_id>.*?) clicks "(?P<button>.*?)" button in'
+               ' "Description" form on share\'s private interface'))
 def click_button_in_description_form(browser_id, selenium, button,
                                      public_share):
     driver = selenium[browser_id]
     getattr(public_share(driver).description_form, transform(button))()
 
 
+@wt(parsers.parse('user of {browser_id} sees that link on share\'s private '
+                  'interface is "{link}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_link_on_shares_interface(browser_id, link, selenium, public_share):
+    driver = selenium[browser_id]
+    err_msg = f'Link on share\'s private interface is not "{link}"'
+    assert public_share(driver).link_name == link, err_msg
+
+
+@wt(parsers.parse('user of {browser_id} copies "{link}" from '
+                  'share\'s private interface'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def copies_link_in_shares_interface(browser_id, selenium, public_share):
+    driver = selenium[browser_id]
+    public_share(driver).copy_link()
+
+
 @wt(parsers.parse('user of {browser_id} types "{text}" into {where} in '
-                  '"Description" form on share\'s public interface'))
+                  '"Description" form on share\'s private interface'))
 def write_description_in_description_form(browser_id, text, where, selenium,
                                           public_share):
     driver = selenium[browser_id]
