@@ -16,7 +16,7 @@ from selenium.webdriver.common.keys import Keys
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (WebElement, WebElementsSequence,
                                                Label, WebItemsSequence, WebItem,
-                                               Button)
+                                               Button, Input)
 from tests.gui.utils.generic import iter_ahead, rm_css_cls
 from .data_row import DataRow
 from ..breadcrumbs import Breadcrumbs
@@ -43,6 +43,7 @@ class _FileBrowser(PageObject):
 
     _upload_input = WebElement('.fb-upload-trigger input')
     header = WebElement('.file-browser-head-container')
+    jump_input = Input('.jump-input')
 
     def __str__(self):
         return 'file browser in {}'.format(self.parent)

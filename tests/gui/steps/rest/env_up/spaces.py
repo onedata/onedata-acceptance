@@ -373,6 +373,23 @@ def _mkfile(create_cdmi_obj, file_path, hosts, owner_credentials,
         create_cdmi_obj(file_path)
 
 
+def create_empty_file(path, users, user, provider, hosts):
+    http_put(ip=hosts[provider]['hostname'], port=OP_REST_PORT,
+             path='/cdmi/' + path, headers={'X-Auth-Token': users[user].token},
+             auth=None, data=None)
+
+
+@given(parsers.parse('using REST, {user} creates {number} empty files in '
+                     '"{path}" with names sorted alphabetically supported by '
+                     '"{provider}" provider'))
+def create_files_names_alphabetically(number, path, users, user, provider,
+                                      hosts):
+    for i in range(int(number)):
+        num = str(i+1).rjust(3, '0')
+        file_path = path + f'/file_{num}'
+        create_empty_file(file_path, users, user, provider, hosts)
+
+
 def _get_users_space_id_list(zone_hostname, owner_username, owner_password):
 
     resp = http_get(ip=zone_hostname, port=OZ_REST_PORT,
