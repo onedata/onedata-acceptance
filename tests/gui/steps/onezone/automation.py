@@ -185,11 +185,10 @@ def confirm_lambda_creation_or_edition(selenium, browser_id, oz_page, option):
                   'in "{result_name}" result in task creation page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_option_in_dropdown_menu_in_task_page(selenium, browser_id, oz_page,
-                                                dropdown_name, popups, option,
-                                                result_name):
+                                                popups, option, result_name):
     driver = selenium[browser_id]
     page = oz_page(driver)['automation'].workflows_page.task_form
-    page.results[result_name+':'].target_store_dropdown.click()
+    page.results[result_name + ':'].target_store_dropdown.click()
 
     popups(driver).power_select.choose_item(option)
 
@@ -217,49 +216,73 @@ def collapse_revision_list(subpage):
     subpage.show_revisions_button.click()
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>does not see|sees) '
-               '"(?P<revision_name>.*)" in revision list of '
-               '"(?P<object_name>.*)" in inventory '
-               '(?P<page>lambdas|workflows) subpage'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_revision_in_object_bracket(selenium, browser_id, oz_page,
-                                      object_name, page, option):
-    page_name = page + '_page'
+def get_lambda_or_workflow_bracket(selenium, browser_id, oz_page, page,
+                                   object_name):
+    page_name = page + 's_page'
     subpage = getattr(oz_page(selenium[browser_id])['automation'], page_name)
 
     object = subpage.elements_list[object_name]
 
     try:
         collapse_revision_list(object)
-    except AttributeError:
+    except (RuntimeError, AttributeError):
         pass
+
+    return object
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>does not see|sees) that '
+               '(?P<ordinal>1st|2nd|3rd|4th) revision of '
+               '"(?P<object_name>.*)" (?P<page>lambda|workflow) '
+               'is described "(?P<description>.*)"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_revision_description_in_object_bracket(selenium, browser_id, oz_page,
+                                                  ordinal, option, object_name,
+                                                  page, description):
+    object = get_lambda_or_workflow_bracket(selenium, browser_id, oz_page,
+                                            page, object_name)
+
+    revision = object.revision_list[ordinal[:-2]]
+
     if option == 'does not see':
-        assert object_name not in object.revision_list, \
+        assert not revision.name == description, \
             f'Revision: {object_name} found'
     else:
-        assert object_name in object.revision_list, \
+        assert revision.name == description, \
             f'Revision: {object_name} not found'
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>does not see|sees) '
+               '(?P<ordinal>1st|2nd|3rd|4th) revision of '
+               '"(?P<object_name>.*)" (?P<page>lambda|workflow)'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_revision_of_object(selenium, browser_id, oz_page,
+                              ordinal, option, object_name,
+                              page):
+    object = get_lambda_or_workflow_bracket(selenium, browser_id, oz_page,
+                                            page, object_name)
+
+    if option == 'does not see':
+        assert ordinal[:-2] not in object.revision_list, \
+            f'{ordinal} revision found'
+    else:
+        assert ordinal[:-2] in object.revision_list, \
+            f'{ordinal} revision not found'
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on "(?P<option>Redesign as '
                'new revision|Duplicate to...|Download \(json\)|Remove)" button '
-               'in revision "(?P<revision_name>.*)" menu in the '
-               '"(?P<object_name>.*)" (?P<object_type>lambda|workflow) '
-               'revision list'))
+               'from (?P<ordinal>1st|2nd|3rd|4th) revision of '
+               '"(?P<object_name>.*)" (?P<page>lambda|workflow) menu'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_option_in_revision_menu_button(selenium, browser_id, oz_page, option,
-                                         object_name, revision_name, popups,
-                                         object_type):
-    page_name = object_type + 's_page'
-    subpage = getattr(oz_page(selenium[browser_id])['automation'], page_name)
-    object = subpage.elements_list[object_name]
+                                         object_name, ordinal, popups,
+                                         page):
+    object = get_lambda_or_workflow_bracket(selenium, browser_id, oz_page,
+                                            page, object_name)
 
-    try:
-        collapse_revision_list(object)
-    except AttributeError:
-        pass
-
-    object.revision_list[revision_name].menu_button.click()
+    revision = object.revision_list[ordinal[:-2]]
+    object.revision_list[ordinal[:-2]].menu_button.click()
 
     popups(selenium[browser_id]).menu_popup_with_label.menu[option].click()
 
@@ -434,12 +457,13 @@ def insert_text_in_description_of_revision(selenium, browser_id, oz_page, text):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_lambda_revision_to_workflow(selenium, browser_id, oz_page, lambda_name,
                                     ordinal):
-    page = oz_page(selenium[browser_id])['automation'].lambdas_page
-    revision = page.elements_list[lambda_name].revision_list[ordinal[:-2]]
+    subpage = oz_page(selenium[browser_id])['automation'].lambdas_page
+    object = subpage.elements_list[lambda_name]
+    revision = object.revision_list[ordinal[:-2]]
 
     try:
         collapse_revision_list(object)
-    except AttributeError:
+    except (RuntimeError, AttributeError):
         pass
 
     revision.add_to_workflow.click()

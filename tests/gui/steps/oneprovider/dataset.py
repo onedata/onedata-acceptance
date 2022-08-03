@@ -61,7 +61,7 @@ def assert_toggle_unchecked_on_item_in_ancestor_list(browser_id, selenium,
     assert getattr(item, protection_kind).is_unchecked(), err_msg
 
 
-@wt(parsers.parse('user of {browser_id} clicks "{toggle_type}" write protection'
+@wt(parsers.parse('user of {browser_id} clicks {toggle_type} write protection'
                   ' toggle in {modal_name} modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_protection_toggle(browser_id, selenium, modals, toggle_type,

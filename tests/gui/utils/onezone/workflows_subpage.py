@@ -73,7 +73,8 @@ class TaskAddForm(PageObject):
 
 
 class Revision(Element):
-    name = id = Label('.description')
+    number = id = Label('.revision-number')
+    name = Label('.description')
     menu_button = Button('.one-menu-toggle')
 
 

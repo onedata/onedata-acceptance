@@ -116,32 +116,32 @@ Feature: Basic workflows management
     Then user of browser sees "WorkflowRenamed" in workflows list in inventory workflows subpage
 
 
-  Scenario: User does not see workflow revision after removing it
-    When user of browser uploads "Workflow1" workflow from "workflow_upload.json" file to "inventory1" inventory
-    And user of browser clicks on "Remove" button in revision "Workflow1" menu in the "Workflow1" workflow revision list
-    And user of browser clicks on "Remove" button in modal "Remove workflow revision"
-    Then user of browser does not see "Workflow1" in revision list of "Workflow1" in inventory workflows subpage
-
-
   Scenario: User downloads revision workflow
     When user of browser uploads "Workflow1" workflow from "workflow_upload.json" file to "inventory1" inventory
-    And user of browser clicks on "Download (json)" button in revision "Workflow1" menu in the "Workflow1" workflow revision list
+    And user of browser clicks on "Download (json)" button from 1st revision of "Workflow1" workflow menu
     Then user of browser sees that "Workflow1.json" has been downloaded
 
 
   Scenario: User sees new workflow revision after using redesign as new revision
     When user of browser uploads "Workflow1" workflow from "workflow_upload.json" file to "inventory1" inventory
-    And user of browser clicks on "Redesign as new revision" button in revision "Workflow1" menu in the "Workflow1" workflow revision list
+    And user of browser clicks on "Redesign as new revision" button from 1st revision of "Workflow1" workflow menu
     And user of browser changes workflow view to "Details" tab
     And user of browser writes "Revision1" in description textfield in workflow Details tab
     And user of browser Saves workflow edition by clicking "Save" button from menu bar
     And user of browser opens inventory "inventory1" workflows subpage
-    Then user of browser sees "Revision1" in revision list of "Workflow1" in inventory workflows subpage
+    Then user of browser sees that 2nd revision of "Workflow1" workflow is described "Revision1"
+
+
+    Scenario: User does not see workflow revision after removing it
+    When user of browser uploads "Workflow1" workflow from "workflow_upload.json" file to "inventory1" inventory
+    And user of browser clicks on "Remove" button from 1st revision of "Workflow1" workflow menu
+    And user of browser clicks on "Remove" button in modal "Remove workflow revision"
+    Then user of browser does not see 1st revision of "Workflow1" workflow
 
 
   Scenario: User sees workflow in second inventory after duplicating it
     When user of browser uploads "Workflow1" workflow from "workflow_upload.json" file to "inventory1" inventory
-    And user of browser clicks on "Duplicate to..." button in revision "Workflow1" menu in the "Workflow1" workflow revision list
+    And user of browser clicks on "Duplicate to..." button from 1st revision of "Workflow1" workflow menu
     And user of browser chooses "inventory2" in dropdown menu in modal "Duplicate revision"
     And user of browser clicks on "Apply" button in modal "Duplicate revision"
     And user of browser opens inventory "inventory2" workflows subpage

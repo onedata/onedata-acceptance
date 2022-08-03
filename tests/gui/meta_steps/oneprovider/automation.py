@@ -142,15 +142,9 @@ def _parse_reasons_list(reasons):
     return reasons
 
 
-# def scroll_to_event(driver, number, modal):
-#     selector = (modal.get_css_selector() + ' ' +
-#                 f'.events-table-event-row:nth-of-type({number})')
-#     scroll_to_css_selector(driver, selector)
-
-
 @wt(parsers.parse('user of {browser_id} sees events with following reasons: '
                   '{reasons} in modal "Function pods activity"'))
-# @repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_events_in_pods_monitor(selenium, browser_id, modals, reasons):
     driver = selenium[browser_id]
     switch_to_iframe(selenium, browser_id)
@@ -158,13 +152,14 @@ def assert_events_in_pods_monitor(selenium, browser_id, modals, reasons):
 
     events_list = modal.events_list
     reasons_list = _parse_reasons_list(reasons)
-    tmp_list=[]
+    gathered_reasons_list = []
 
     # Loop below creates list of reasons from all the events that happened in
     # a selected pod
-    for i in range(len(events_list)+1):
+    for i in range(1, len(events_list) + 1):
         reason = modal.get_event_reason(driver, i, len(events_list))
-        tmp_list.append(reason)
+        gathered_reasons_list.append(reason)
 
     for reason in reasons_list:
-        assert reason in tmp_list, (f'Reason: {reason} has not been found')
+        assert reason in gathered_reasons_list, \
+            f'Reason: {reason} has not been found'
