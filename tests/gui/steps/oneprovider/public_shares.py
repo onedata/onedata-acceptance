@@ -104,11 +104,15 @@ def open_tab_in_public_share(selenium, browser_id, public_share, tab):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks "(?P<button>.*)" button on '
-               'share\'s (public|private) interface'))
+               'share\'s (?P<option>public|private) interface'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_in_share(selenium, browser_id, public_share, button):
+def click_button_in_share(selenium, browser_id, public_share, private_share,
+                          button, option):
     driver = selenium[browser_id]
-    getattr(public_share(driver), transform(button))()
+    if option == 'public' or button == 'XML':
+        getattr(public_share(driver), transform(button))()
+    else:
+        getattr(private_share(driver), transform(button))()
 
 
 def check_item_presence_in_dublin_core_metadata(item, data):
@@ -132,8 +136,16 @@ def assert_data_in_dublin_core_metadata(browser_id, data, selenium,
         check_item_presence_in_dublin_core_metadata(item, dublin_core)
 
 
-@wt(parsers.parse('user of {browser_id} sees that XML data contains {data} on '
-                  'share\'s public interface'))
+@wt(parsers.re('user of (?P<browser_id>.*?) copies "(?P<link>.*?)" from'
+               ' share\'s (public|private) interface'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def copies_link_in_shares_interface(browser_id, selenium, public_share):
+    driver = selenium[browser_id]
+    public_share(driver).copy_link()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*?) sees that XML data contains '
+               '(?P<data>.*?) on share\'s (public|private) interface'))
 def assert_xml_data_in_shares(selenium, browser_id, data, public_share):
     driver = selenium[browser_id]
     xml_data = public_share(driver).xml_data
