@@ -37,7 +37,7 @@ class Client:
         if additional_opts is None:
             additional_opts = ['--message-trace-log']
 
-        print('\nMounting client with {} flag in {}'.format(mode_flag, self._mount_path))
+        print('\nMounting client with {} flag in {}\n'.format(mode_flag, self._mount_path))
 
         logdir = os.path.join(ONECLIENT_LOGS_DIR, self._id)
         self.mkdir(self._mount_path, recursive=True, exist_ok=True)
@@ -56,6 +56,7 @@ class Client:
         return ret
 
     def unmount(self):
+        print("\nUnmounting client from {}\n".format(self._mount_path))
         for opened_file in self.opened_files.keys():
             self.close_file(opened_file)
         self.opened_files.clear()
