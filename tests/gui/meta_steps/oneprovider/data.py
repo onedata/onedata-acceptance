@@ -149,8 +149,7 @@ def create_item_in_op_gui(selenium, browser_id, path, item_type, name,
     def _open_menu_for_item_in_file_browser():
         if path:
             go_to_path(selenium, browser_id, tmp_memory, path, op_container)
-        click_button_from_file_browser_menu_bar(selenium, browser_id,
-                                                button, op_container)
+        click_button_from_file_browser_menu_bar(browser_id, button, tmp_memory)
 
     try:
         _open_menu_for_item_in_file_browser()
