@@ -55,6 +55,7 @@ stages:
     - Chrome onepanel deployment basic tests
     - Chrome oneprovider ACL subdirectories
     - _Codetag Tracker
+    - Chrome oneprovider atm workflow execution tests
     - Chrome onezone automations tests
     - Chrome qos basic
     - Chrome onezone harvesters basic tests
