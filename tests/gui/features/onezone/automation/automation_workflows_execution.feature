@@ -120,10 +120,10 @@ Scenario: User creates checksum-counting-oneclient workflow through gui and exec
     And user of browser opens inventory "inventory1" lambdas subpage
 
     # User manually creates inout lambda
-    And user of browser uses Add new lambda button from menu bar in lambdas subpage
+    And user of browser uses "Add new lambda" button from menu bar in lambdas subpage
     And user of browser writes "checksum-counting-oneclient" into lambda name text field
     And user of browser writes "docker.onedata.org/checksum-counting-oneclient:v7" into docker image text field
-    And user of browser enables lambdas Mount space toggle
+    And user of browser enables lambdas "Mount space" toggle
     And user of browser adds argument named "item" of "Regular file" type
     And user of browser adds argument named "metadata_key" of "String" type
     And user of browser adds argument named "algorithm" of "String" type
@@ -136,11 +136,11 @@ Scenario: User creates checksum-counting-oneclient workflow through gui and exec
     And user of browser creates workflow "Workflow1"
 
     # User creates input store for workflow
-    And user of browser clicks Add store button in workflow visualizer
+    And user of browser clicks "Add store" button in workflow visualizer
     And user of browser writes "input-files" into store name text field in modal "Create new store"
     And user of browser chooses "Tree forest" in type dropdown menu in modal "Create new store"
     And user of browser chooses "Regular file" in data type dropdown menu in modal "Create new store"
-    And user of browser enables User input toggle in modal "Create new store"
+    And user of browser checks "User input" toggle in modal "Create new store"
     And user of browser clicks on "Create" button in modal "Create new store"
 
     # User creates Lane
@@ -151,10 +151,10 @@ Scenario: User creates checksum-counting-oneclient workflow through gui and exec
     # User creates task using previously created lambda
     And user of browser clicks on add parallel box button in the middle of "Lane1" lane
     And user of browser clicks create task button in empty parallel box in "Lane1" lane
-    And user of browser chooses "inout" revision of "inout" lambda to add to workflow
-    And user of browser chooses "Itrated item" in value builder dropdown menu in "item" argument  #STEPY do modyfikacji
-    And user of browser chooses "Constant value" in value builder dropdown menu in "item" argument #STEPY do modyfikacji
-    And user of browser chooses "Constant value" in value builder dropdown menu in "item" argument #STEPY do modyfikacji
+    And user of browser chooses 1st revision of "inout" lambda to add to workflow
+    And user of browser chooses "Itrated item" in target store dropdown menu in "item" argument in task creation page
+    And user of browser chooses "Constant value" in target store dropdown menu in "item" argument in task creation page
+    And user of browser chooses "Constant value" in target store dropdown menu in "item" argument in task creation page
     And user of browser confirms create new task using Create button
     And user of browser sees task named "inout" in "Lane1" lane
 
@@ -169,7 +169,7 @@ Scenario: User creates checksum-counting-oneclient workflow through gui and exec
     And user of browser sees task named "inout" in "Lane1" lane
 
     # User creates checksums store for workflow
-    And user of browser clicks Add store button in workflow visualizer
+    And user of browser clicks "Add store" button in workflow visualizer
     And user of browser writes "input-files" into store name text field in modal "Create new store"
     And user of browser chooses "List" in type dropdown menu in modal "Create new store"
     And user of browser chooses "Object" in data type dropdown menu in modal "Create new store"
@@ -177,12 +177,12 @@ Scenario: User creates checksum-counting-oneclient workflow through gui and exec
 
     # User executes created workflow and checks if output value is correct
     And user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Automation of "space1" in the sidebar
-    And user of browser clicks Run workflow in the navigation bar
-    And user of browser chooses to run "inout1" revision of "Workflow1" workflow
+    And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
+    And user of browser clicks "Run workflow" in the automation tab bar
+    And user of browser chooses to run 1st revision of "Workflow1" workflow
     And user of browser chooses "dir1" file as initial value for workflow in modal "Select files"
-    And user of browser confirms Workflow deployment by clicking Run workflow button
+    And user of browser confirms workflow execution by clicking "Run workflow" button
     And user of browser waits for all workflows to start
     And user of browser waits for all workflows to finish
     And user of browser clicks on first executed workflow
-    Then user of browser sees Finished status in status bar in workflow visualizer
+    Then user of browser sees "Finished" status in status bar in workflow visualizer
