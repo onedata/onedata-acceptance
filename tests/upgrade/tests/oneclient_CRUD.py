@@ -35,10 +35,10 @@ def verify(space_name):
         file_path = os.path.join(space_path, 'file_name')
         dir_path = os.path.join(space_path, 'dir_name')
         read_text = client.read(file_path)
-        assert TEXT == read_text, "Read '{}' instead of expected '{}'".format(read_text, TEXT)
+        assert TEXT == read_text, f"Read '{read_text}' instead of expected '{TEXT}'"
         client.write(TEXT2, file_path)
         read_text2 = client.read(file_path)
-        assert TEXT2 == read_text2, "Read '{}' instead of expected '{}'".format(read_text, TEXT)
+        assert TEXT2 == read_text2, f"Read '{read_text2}' instead of expected '{TEXT2}'"
         client.stat(dir_path)
         client.rm(file_path)
     return fun
