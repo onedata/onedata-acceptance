@@ -36,7 +36,7 @@ Feature: Basic workflows management
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses "Add new workflow" button from menu bar in workflows subpage
     And user of browser writes "Workflow1" into workflow name text field
-    And user of browser confirms create new workflow using Create button
+    And user of browser confirms creating new workflow using "Create" button
     And user of browser opens inventory "inventory1" workflows subpage
     Then user of browser sees "Workflow1" in workflows list in inventory workflows subpage
 
@@ -68,40 +68,40 @@ Feature: Basic workflows management
   Scenario: User sees task after adding it to uploaded workflow
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses Upload (json) button from menu bar to upload workflow "workflow_empty_lane.json" to current dir without waiting for upload to finish
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "workflow_empty_lane.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
-    And user of browser clicks on add parallel box button in the middle of "Lane1" lane
-    And user of browser clicks create task button in empty parallel box in "Lane1" lane
+    And user of browser clicks on "Add parallel box" button in the middle of "Lane1" lane
+    And user of browser clicks "Create task" button in empty parallel box in "Lane1" lane
     And user of browser uses "Add new lambda" button from menu bar in lambdas subpage
     And user of browser writes "Lambda1" into lambda name text field
     And user of browser writes "docker_image_example" into docker image text field
-    And user of browser confirms create new lambda using Create button
-    And user of browser confirms create new task using Create button
+    And user of browser confirms creating new lambda using "Create" button
+    And user of browser confirms creating new task using "Create" button
     Then user of browser sees task named "Lambda1" in "Lane1" lane
 
 
   Scenario: User changes name of task in uploaded workflow
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses Upload (json) button from menu bar to upload workflow "workflow_upload.json" to current dir without waiting for upload to finish
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "workflow_upload.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser clicks on "Modify" button in task "inout" menu in "Lane1" lane in workflow visualizer
     And user of browser writes "Task2" into name text field in task creation subpage
-    And user of browser confirms edition of task using Modify button
+    And user of browser confirms edition of task using "Modify" button
     Then user of browser sees task named "Task2" in "Lane1" lane
 
 
   Scenario: User does not see task in uploaded workflow after removing it
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses Upload (json) button from menu bar to upload workflow "workflow_upload.json" to current dir without waiting for upload to finish
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "workflow_upload.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser clicks on "Remove" button in task "inout" menu in "Lane1" lane in workflow visualizer
     And user of browser clicks on "Remove" button in modal "Remove task"
     Then user of browser does not see task named "Task1" in "Lane1" lane
 
 
-  Scenario: User removes workflow
+  Scenario: User does not see workflow after removing it
     When user of browser uploads "Workflow1" workflow from "workflow_upload.json" file to "inventory1" inventory
     And user of browser clicks on "Remove" button in workflow "Workflow1" menu in workflows subpage
     And user of browser clicks on "Remove" button in modal "Remove workflow"
