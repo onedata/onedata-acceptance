@@ -133,9 +133,9 @@ def read_image_from_artifact(service, fail_on_error=False):
                 return image
     except (FileNotFoundError, KeyError) as e:
         if fail_on_error:
-            print("[ERROR] Error when reading image for {} from sources info file {}: {}.".format(
-                service, sources_info_path, e))
+            print(f"[ERROR] Error when reading image for {service} from sources info file "
+                  f"{sources_info_path}: {e}.")
             raise e
-        print("[WARNING] Could not read image for '{}' from sources info file '{}': {}. Image "
-              "provided in scenario yaml will be used.".format(service, sources_info_path, e))
+        print(f"[WARNING] Could not read image for '{service}' from sources info file "
+              f"'{sources_info_path}': {e}. Image provided in scenario yaml will be used.")
         return None
