@@ -47,6 +47,7 @@ Feature: Basic workflows management
     And user of browser creates workflow "Workflow1"
     And user of browser clicks "Add store" button in workflow visualizer
     And user of browser writes "Store1" into store name text field in modal "Create new store"
+    And user of browser chooses "Any file" in data type dropdown menu in modal "Create new store"
     And user of browser clicks on "Create" button in modal "Create new store"
     Then user of browser sees "Store1" in the stores list in workflow visualizer
 
@@ -57,6 +58,7 @@ Feature: Basic workflows management
     And user of browser creates workflow "Workflow1"
     And user of browser clicks "Add store" button in workflow visualizer
     And user of browser writes "Store1" into store name text field in modal "Create new store"
+    And user of browser chooses "Any file" in data type dropdown menu in modal "Create new store"
     And user of browser clicks on "Create" button in modal "Create new store"
     And user of browser sees "Store1" in the stores list in workflow visualizer
     And user of browser clicks on create lane button in the middle of workflow visualizer

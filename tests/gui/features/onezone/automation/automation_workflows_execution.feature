@@ -71,7 +71,7 @@ Feature: Workflows execution
     # User creates input store for workflow
     And user of browser clicks "Add store" button in workflow visualizer
     And user of browser writes "input" into store name text field in modal "Create new store"
-    And user of browser chooses "Tree forest" in type dropdown menu in modal "Create new store"
+    And user of browser chooses "List" in type dropdown menu in modal "Create new store"
     And user of browser chooses "Any file" in data type dropdown menu in modal "Create new store"
     And user of browser checks "User input" toggle in modal "Create new store"
     And user of browser clicks on "Create" button in modal "Create new store"

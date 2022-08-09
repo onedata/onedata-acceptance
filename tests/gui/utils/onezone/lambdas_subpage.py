@@ -17,13 +17,13 @@ from tests.gui.utils.onezone.generic_page import Element
 class LambdaArguments(PageObject):
     add_argument = Button('.add-field-button')
     argument_name = WebItem('.entryName-field .text-like-field', cls=InputBox)
-    type_dropdown = WebElement('.type-field .dropdown-field-trigger')
+    type_dropdown = WebElement('.entryDataSpec-collapse .dropdown-field-trigger')
 
 
 class LambdaResults(PageObject):
     add_result = Button('.add-field-button')
     result_name = WebItem('.entryName-field .text-like-field', cls=InputBox)
-    type_dropdown = WebElement('.type-field .dropdown-field-trigger')
+    type_dropdown = WebElement('.entryDataSpec-collapse .dropdown-field-trigger')
 
 
 class LambdaAddForm(PageObject):
