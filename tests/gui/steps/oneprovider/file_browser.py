@@ -317,14 +317,14 @@ def check_file_owner_in_file_details_modal(selenium, browser_id, modals, owner):
 @wt(parsers.parse('user of {browser_id} sees that "File details" modal is '
                   'opened on "Hard links" tab'))
 def check_file_dets_modal_opened_on_hardlinks_tab(selenium, browser_id, modals):
-    hardlink_tab = modals(selenium[browser_id]).details_modal.hardlinks_tab
-    assert hardlink_tab.is_active(), ('Hardlink tab is not active in file '
+    hardlinks= modals(selenium[browser_id]).details_modal.hardlinks
+    assert hardlinks.is_active(), ('Hardlink tab is not active in file '
                                       'details modal')
 
 
 def assert_num_of_hardlinks_in_file_dets_tab_name_modal(selenium, browser_id,
                                                         number, modals):
-    name = modals(selenium[browser_id]).details_modal.hardlinks_tab.tab.text
+    name = modals(selenium[browser_id]).details_modal.hardlinks.tab.text
     actual_num = name.split()[-1].strip('(').strip(')')
     assert number == actual_num, (f'Expected {number}, got {actual_num} in ' 
                                   f'hardlinks tab name')
@@ -332,7 +332,7 @@ def assert_num_of_hardlinks_in_file_dets_tab_name_modal(selenium, browser_id,
 
 def assert_num_of_hardlinks_entry_in_file_dets_modal(selenium, browser_id,
                                                      number, modals):
-    entries = modals(selenium[browser_id]).details_modal.hardlinks_tab.files
+    entries = modals(selenium[browser_id]).details_modal.hardlinks.files
     assert len(entries) == int(number), (f'Expected {number} hardlinks '
                                          f'entries, got {len(entries)}')
 
@@ -351,7 +351,7 @@ def assert_num_of_hardlinks_in_file_dets_modal(selenium, browser_id, number,
                   'is "{path}" in "File details" modal'))
 def assert_hardlink_path_in_file_dets_modal(selenium, browser_id, file,
                                             path, modals):
-    entries = modals(selenium[browser_id]).details_modal.hardlinks_tab.files
+    entries = modals(selenium[browser_id]).details_modal.hardlinks.files
     actual_path = entries[file].get_path_string()
     assert path == actual_path, (f'Hardlink {file} path should be {path}, '
                                  f'but is {actual_path}')
@@ -361,7 +361,7 @@ def assert_hardlink_path_in_file_dets_modal(selenium, browser_id, file,
                   'of hardlinks in "File details" modal'))
 def assert_hardlinks_paths_in_file_dets_modal(selenium, browser_id, paths,
                                               modals):
-    entries = modals(selenium[browser_id]).details_modal.hardlinks_tab.files
+    entries = modals(selenium[browser_id]).details_modal.hardlinks.files
     entries_paths = [entry.get_path_string() for entry in entries]
     parsed_paths = parse_seq(paths)
     for path in parsed_paths:
