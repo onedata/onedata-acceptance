@@ -447,27 +447,28 @@ Chrome single directory tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome files set metadata:
-  key: CFSM
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_files_set_metadata TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
+# TODO: VFS-9477 enable metadata tests after reimplement
+# Chrome files set metadata:
+#   key: CFSM
+#   other: *common-opts
+#   tasks:
+#   - script: *clear-env
+#   - script: *restart-minikube
+#   - checkout: *checkout
+#   - script: *init-submodules
+#   - script: *download-artifacts
+#   - script: *build-swaggers
+#   - script:
+#       <<: *run-acceptance-tests
+#       scripts:
+#       - make SUITE=test_files_set_metadata TIMEOUT=600 test_mixed_src
+#   final-tasks:
+#   - test-parser: *parse-test-results
+#   - script: *pack-logs
+#   - script: *clear-env-and-working-dir
+#   artifacts: *artifacts
+#   requirements: *requirements
+#   artifact-subscriptions: []
 Chrome remove file tests:
   key: CRFT
   other: *common-opts
@@ -593,27 +594,28 @@ Chrome archive privileges:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome directories set metadata:
-  key: CDSM
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_directories_set_metadata TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
+# TODO: VFS-9477 enable metadata tests after reimplement
+# Chrome directories set metadata:
+#   key: CDSM
+#   other: *common-opts
+#   tasks:
+#   - script: *clear-env
+#   - script: *restart-minikube
+#   - checkout: *checkout
+#   - script: *init-submodules
+#   - script: *download-artifacts
+#   - script: *build-swaggers
+#   - script:
+#       <<: *run-acceptance-tests
+#       scripts:
+#       - make SUITE=test_directories_set_metadata TIMEOUT=600 test_mixed_src
+#   final-tasks:
+#   - test-parser: *parse-test-results
+#   - script: *pack-logs
+#   - script: *clear-env-and-working-dir
+#   artifacts: *artifacts
+#   requirements: *requirements
+#   artifact-subscriptions: []
 Chrome nested directories remove:
   key: CNDR
   other: *common-opts
@@ -719,27 +721,28 @@ Chrome file content tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome files remove metadata:
-  key: CFRM
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_files_remove_metadata TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
+# TODO: VFS-9477 enable metadata tests after reimplement
+# Chrome files remove metadata:
+#   key: CFRM
+#   other: *common-opts
+#   tasks:
+#   - script: *clear-env
+#   - script: *restart-minikube
+#   - checkout: *checkout
+#   - script: *init-submodules
+#   - script: *download-artifacts
+#   - script: *build-swaggers
+#   - script:
+#       <<: *run-acceptance-tests
+#       scripts:
+#       - make SUITE=test_files_remove_metadata TIMEOUT=600 test_mixed_src
+#   final-tasks:
+#   - test-parser: *parse-test-results
+#   - script: *pack-logs
+#   - script: *clear-env-and-working-dir
+#   artifacts: *artifacts
+#   requirements: *requirements
+#   artifact-subscriptions: []
 Chrome rename file tests:
   key: CRFT1
   other: *common-opts
@@ -845,24 +848,25 @@ Chrome directories times tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome directories remove metadata:
-  key: CDRM
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_directories_remove_metadata TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
+# TODO: VFS-9477 enable metadata tests after reimplement
+# Chrome directories remove metadata:
+#   key: CDRM
+#   other: *common-opts
+#   tasks:
+#   - script: *clear-env
+#   - script: *restart-minikube
+#   - checkout: *checkout
+#   - script: *init-submodules
+#   - script: *download-artifacts
+#   - script: *build-swaggers
+#   - script:
+#       <<: *run-acceptance-tests
+#       scripts:
+#       - make SUITE=test_directories_remove_metadata TIMEOUT=600 test_mixed_src
+#   final-tasks:
+#   - test-parser: *parse-test-results
+#   - script: *pack-logs
+#   - script: *clear-env-and-working-dir
+#   artifacts: *artifacts
+#   requirements: *requirements
+#   artifact-subscriptions: []
