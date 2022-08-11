@@ -25,7 +25,7 @@ Feature: Basic workflows management
   Scenario: User sees that new workflow has been added after uploading it as json file
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
-    And user of browser uses Upload (json) button from menu bar to upload workflow "workflow_upload.json" to current dir without waiting for upload to finish
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "workflow_upload.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser opens inventory "inventory1" workflows subpage
     Then user of browser sees "Workflow1" in workflows list in inventory workflows subpage
@@ -47,7 +47,7 @@ Feature: Basic workflows management
     And user of browser creates workflow "Workflow1"
     And user of browser clicks "Add store" button in workflow visualizer
     And user of browser writes "Store1" into store name text field in modal "Create new store"
-    And user of browser chooses "Any file" in data type dropdown menu in modal "Create new store"
+    And user of browser chooses "Object" in data type dropdown menu in modal "Create new store"
     And user of browser clicks on "Create" button in modal "Create new store"
     Then user of browser sees "Store1" in the stores list in workflow visualizer
 
@@ -58,7 +58,7 @@ Feature: Basic workflows management
     And user of browser creates workflow "Workflow1"
     And user of browser clicks "Add store" button in workflow visualizer
     And user of browser writes "Store1" into store name text field in modal "Create new store"
-    And user of browser chooses "Any file" in data type dropdown menu in modal "Create new store"
+    And user of browser chooses "Object" in data type dropdown menu in modal "Create new store"
     And user of browser clicks on "Create" button in modal "Create new store"
     And user of browser sees "Store1" in the stores list in workflow visualizer
     And user of browser clicks on create lane button in the middle of workflow visualizer

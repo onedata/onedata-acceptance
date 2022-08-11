@@ -37,7 +37,7 @@ class FunctionPodsActivity(Modal):
                                  '.pods-table-pod-row', cls=PodsRecordStatus)
 
     events_list = WebItemsSequence('.events-table-section '
-                                   '.events-table-event-row', cls=EventRecord)
+                                   '.audit-log-table-entry', cls=EventRecord)
 
     events_list_scrollbar = WebElement('.events-table-section '
                                        '.perfect-scrollbar-element')
@@ -57,7 +57,7 @@ class FunctionPodsActivity(Modal):
 
     def scroll_to_event(self, driver, number):
         selector = f'{self.get_css_selector()} ' \
-                   f'.events-table-event-row:nth-of-type({number}) '
+                   f'.audit-log-table-entry:nth-of-type({number}) '
         scroll_to_css_selector(driver, selector)
 
     def get_event_reason(self, driver, number, length):
@@ -70,6 +70,6 @@ class FunctionPodsActivity(Modal):
         else:
             self.scroll_to_event(driver, number)
 
-        element = driver.find_elements_by_css_selector(f'.events-table-event-'
-                                                       f'row')[number - 1]
+        element = driver.find_elements_by_css_selector(f'.audit-log-table-'
+                                                       f'entry')[number - 1]
         return element.find_elements_by_css_selector('.event-reason')[0].text

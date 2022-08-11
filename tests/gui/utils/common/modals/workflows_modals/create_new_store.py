@@ -16,8 +16,8 @@ class CreateNewStore(Modal):
     store_name = Input('.name-field .form-control')
     create = Button('.btn-submit')
     type_dropdown_menu = WebElement('.type-field .dropdown-field-trigger')
-    data_type_dropdown_menu = WebElement('.genericStoreConfig-field '
-                                         '.dropdown-field-trigger')
+    data_type_dropdown_menu = WebElement('.dataSpec-field '
+                                         '.ember-basic-dropdown-trigger')
     user_input = Toggle('.needsUserInput-field .one-way-toggle-track')
 
 
