@@ -114,7 +114,7 @@ def assert_inventory_exists(selenium, browser_ids, oz_page, text):
         assert text in err_msg, f'Error message: {text} not found'
 
 
-@wt(parsers.parse('user of {browser_id} uses Upload (json) button from menu '
+@wt(parsers.parse('user of {browser_id} uses "Upload (json)" button from menu '
                   'bar to upload workflow "{file_name}" to current dir '
                   'without waiting for upload to finish'))
 @repeat_failed(timeout=2 * WAIT_BACKEND)
@@ -157,20 +157,18 @@ def write_text_into_lambda_form(selenium, browser_id,
     setattr(label, 'value', text)
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>disables|enables) '
+@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>checks|unchecks) '
                'lambdas "Mount space" toggle'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def switch_toggle_in_lambda_form(selenium, browser_id, oz_page, option):
     subpage = oz_page(selenium[browser_id])['automation'].lambdas_page.form
 
-    if option == "enables":
-        subpage.mount_space_toggle.check()
-    else:
-        subpage.mount_space_toggle.uncheck()
+    getattr( subpage.mount_space_toggle, option[:-1])
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) confirms (create new|edition of) '
-               '(?P<option>lambda|revision|task) using (Create|Modify) button'))
+@wt(parsers.re('user of (?P<browser_id>.*) confirms (creating new|edition of) '
+               '(?P<option>lambda|revision|task) using '
+               '"(Create|Modify)" button'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_lambda_creation_or_edition(selenium, browser_id, oz_page, option):
     page = oz_page(selenium[browser_id])['automation']
@@ -203,7 +201,7 @@ def assert_lambda_exists(selenium, browser_id, oz_page, lambda_name):
         f'Lambda: {lambda_name} not found '
 
 
-@wt(parsers.parse('user of {browser_id} clicks on Create new revision '
+@wt(parsers.parse('user of {browser_id} clicks on "Create new revision" '
                   'in "{lambda_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_create_new_revision_button(selenium, browser_id, oz_page,
@@ -296,8 +294,8 @@ def write_text_into_workflow_name_on_main_workflows_page(selenium, browser_id,
     page.workflows_page.workflow_creator.workflow_name.value = text
 
 
-@wt(parsers.parse('user of {browser_id} confirms create new workflow using '
-                  'Create button'))
+@wt(parsers.parse('user of {browser_id} confirms creating new workflow using '
+                  '"Create" button'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_workflow_creation(selenium, browser_id, oz_page):
     page = oz_page(selenium[browser_id])['automation']
@@ -341,7 +339,7 @@ def assert_lane_in_workflow_visualizer(selenium, browser_id, oz_page,
     assert lane_name in workflow_visualizer, f'Lane: {lane_name} not found'
 
 
-@wt(parsers.parse('user of {browser_id} clicks on add parallel box button in '
+@wt(parsers.parse('user of {browser_id} clicks on "Add parallel box" button in '
                   'the middle of "{lane_name}" lane'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_parallel_box_to_lane(selenium, browser_id, oz_page, lane_name):
@@ -351,7 +349,7 @@ def add_parallel_box_to_lane(selenium, browser_id, oz_page, lane_name):
         lane_name].add_parallel_box_button.click()
 
 
-@wt(parsers.parse('user of {browser_id} clicks create task button in empty '
+@wt(parsers.parse('user of {browser_id} clicks "Create task" button in empty '
                   'parallel box in "{lane_name}" lane'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_task_to_empty_parallel_box(selenium, browser_id, oz_page, lane_name):

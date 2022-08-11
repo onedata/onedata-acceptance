@@ -26,7 +26,7 @@ Feature: Basic lambdas management
     And user of browser uses "Add new lambda" button from menu bar in lambdas subpage
     And user of browser writes "Lambda1" into lambda name text field
     And user of browser writes "docker_image_example" into docker image text field
-    And user of browser confirms create new lambda using Create button
+    And user of browser confirms creating new lambda using "Create" button
     Then user of browser sees "Lambda1" in lambdas list in inventory lambdas subpage
 
 
@@ -36,11 +36,11 @@ Feature: Basic lambdas management
     And user of browser uses "Add new lambda" button from menu bar in lambdas subpage
     And user of browser writes "Lambda1" into lambda name text field
     And user of browser writes "docker_image_example" into docker image text field
-    And user of browser confirms create new lambda using Create button
+    And user of browser confirms creating new lambda using "Create" button
     And user of browser sees "Lambda1" in lambdas list in inventory lambdas subpage
-    And user of browser clicks on Create new revision in "Lambda1"
+    And user of browser clicks on "Create new revision" in "Lambda1"
     And user of browser writes "Lambda2" into lambda name text field
-    And user of browser confirms create new revision using Create button
+    And user of browser confirms creating new revision using "Create" button
     Then user of browser sees that 2nd revision of "Lambda2" lambda is described "Lambda2"
 
 
@@ -50,10 +50,10 @@ Feature: Basic lambdas management
     And user of browser uses "Add new lambda" button from menu bar in lambdas subpage
     And user of browser writes "Lambda1" into lambda name text field
     And user of browser writes "docker_image_example" into docker image text field
-    And user of browser confirms create new lambda using Create buttonn
+    And user of browser confirms creating new lambda using "Create" buttonn
     And user of browser sees "Lambda1" in lambdas list in inventory lambdas subpage
     And user of browser clicks on "Redesign as new revision" button from 1st revision of "Lambda1" lambda menu
     And user of browser writes "Lambda2" into lambda name text field
-    And user of browser confirms create new revision using Create button
+    And user of browser confirms creating new revision using "Create" button
     Then user of browser sees that 2nd revision of "Lambda2" lambda is described "Lambda2"
 

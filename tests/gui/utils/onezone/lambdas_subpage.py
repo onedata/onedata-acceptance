@@ -8,8 +8,8 @@ __license__ = "This software is released under the MIT license cited in " \
 
 from tests.gui.utils.common.common import Toggle
 from tests.gui.utils.core.base import PageObject
-from tests.gui.utils.core.web_elements import WebItemsSequence, Input, Label, \
-    Button, WebItem, NamedButton, WebElement
+from tests.gui.utils.core.web_elements import WebItemsSequence, Label, \
+    Button, WebItem, WebElement
 from tests.gui.utils.onezone.common import InputBox
 from tests.gui.utils.onezone.generic_page import Element
 
@@ -17,13 +17,15 @@ from tests.gui.utils.onezone.generic_page import Element
 class LambdaArguments(PageObject):
     add_argument = Button('.add-field-button')
     argument_name = WebItem('.entryName-field .text-like-field', cls=InputBox)
-    type_dropdown = WebElement('.type-field .dropdown-field-trigger')
+    type_dropdown = WebElement('.entryDataSpec-field '
+                               '.ember-power-select-trigger')
 
 
 class LambdaResults(PageObject):
     add_result = Button('.add-field-button')
     result_name = WebItem('.entryName-field .text-like-field', cls=InputBox)
-    type_dropdown = WebElement('.type-field .dropdown-field-trigger')
+    type_dropdown = WebElement('.entryDataSpec-field '
+                               '.ember-power-select-trigger')
 
 
 class LambdaAddForm(PageObject):

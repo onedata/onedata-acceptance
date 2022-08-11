@@ -6,7 +6,6 @@ __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-import pdb
 import time
 
 import yaml
@@ -76,9 +75,9 @@ def get_store_content(browser_id, driver, page, modals, clipboard, displays,
     modal = modals(driver).store_details
     time.sleep(0.25)
     modal.details_list[0].expander.click()
-    modal.copy_button.click()
+    modal.copy_button()
     store_value = clipboard.paste(display=displays[browser_id])
-    modal.close.click()
+    modal.close()
 
     return store_value
 
