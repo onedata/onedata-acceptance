@@ -11,6 +11,7 @@ from tests.utils.onenv_utils import run_onenv_command
 from tests.utils.path_utils import read_image_from_artifact
 from tests.utils.environment_utils import (update_etc_hosts, setup_hosts_cfg, configure_os,
                                            get_deployment_status, verify_env_ready)
+from tests.conftest import export_logs
 
 
 class UpgradeTest:
@@ -61,6 +62,7 @@ class UpgradeTestsController:
     def __run_setup(self, test):
         test.run_setup(self)
         self.__unmount_clients()
+        export_logs(self.request, self.env_description_abs_path, 'before_upgrade')
 
     def __run_verify(self, test):
         test.run_verify(self)
@@ -98,7 +100,7 @@ def run_upgrade_command(pod_name, service, version):
 
 def prepare_image_upgrade_command(service, version):
     if version == 'default':
-        image = read_image_from_artifact(service)
+        image = read_image_from_artifact(service, fail_on_error=True)
     else:
         image = "docker.onedata.org/{}-dev:{}".format(service, version)
     pull_docker_image_with_retries(image)

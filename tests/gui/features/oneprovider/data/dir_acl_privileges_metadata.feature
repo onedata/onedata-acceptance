@@ -32,23 +32,25 @@ Feature: ACL directories privileges metadata tests using single browser in Onepr
     And opened [browser_user1, space_owner_browser] with [user1, space-owner-user] signed in to [Onezone, Onezone] service
 
 
-  Scenario Outline: Write metadata to directory
-    When user of space_owner_browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
-    Then user of browser_user1 <result> to write "dir1" directory basic metadata: "attr=val" in "space1"
+  # TODO: VFS-9477 reimplement gui metadata tests after metadata move to file info modal
+  # Scenario Outline: Write metadata to directory
+  #   When user of space_owner_browser sets "dir1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
+  #   Then user of browser_user1 <result> to write "dir1" directory basic metadata: "attr=val" in "space1"
 
-    Examples:
-    | result   |  privileges                                         |
-    | succeeds |  [metadata:read metadata, metadata:write metadata]  |
-    | fails    |  all except [metadata:write metadata]               |
-    | succeeds |  all except [metadata:read metadata]                |
+  #   Examples:
+  #   | result   |  privileges                                         |
+  #   | succeeds |  [metadata:read metadata, metadata:write metadata]  |
+  #   | fails    |  all except [metadata:write metadata]               |
+  #   | succeeds |  all except [metadata:read metadata]                |
 
 
-  Scenario Outline: Read directory metadata
-    When user of space_owner_browser succeeds to write "dir1" directory basic metadata: "attr=val" in "space1"
-    And user of space_owner_browser sets selected items ACL <privileges> privileges for <subject_type> <subject_name>
-    Then user of browser_user1 <result> to read "dir1" directory basic metadata: "attr=val" in "space1"
+  # TODO: VFS-9477 reimplement gui metadata tests after metadata move to file info modal
+  # Scenario Outline: Read directory metadata
+  #   When user of space_owner_browser succeeds to write "dir1" directory basic metadata: "attr=val" in "space1"
+  #   And user of space_owner_browser sets selected items ACL <privileges> privileges for <subject_type> <subject_name>
+  #   Then user of browser_user1 <result> to read "dir1" directory basic metadata: "attr=val" in "space1"
 
-    Examples:
-    | result   |  privileges                            |
-    | succeeds |  [metadata:read metadata]              |
-    | fails    |  all except [metadata:read metadata]   |
+  #   Examples:
+  #   | result   |  privileges                            |
+  #   | succeeds |  [metadata:read metadata]              |
+  #   | fails    |  all except [metadata:read metadata]   |
