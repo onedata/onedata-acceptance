@@ -237,8 +237,8 @@ if {shed_privileges}:
     docker_gid = os.stat('/var/run/docker.sock').st_gid
     os.chmod('/etc/resolv.conf', 0o666)
     os.setgroups([docker_gid])
-    os.setregid({gid}, {gid})
-    os.setreuid({uid}, {uid})
+    os.setegid({gid})
+    os.seteuid({uid})
 
 command = ['python3'] + ['-m'] + ['pytest'] + ['-rs'] + ['-s'] + ['--test-type={test_type}'] + ['{test_dir}'] + {args} + {env_file} + {local_charts_path} + {no_clean} + {pull_only_missing_images} + {repeats} + {timeout} + {images_opt} + ['--junitxml={report_path}'] + ['--add-test-domain']
 
