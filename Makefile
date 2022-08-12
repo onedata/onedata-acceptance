@@ -13,7 +13,8 @@ GIT_URL := $(shell if [ "${GIT_URL}" = "file:/" ]; then echo 'ssh://git@git.plgr
 ONEDATA_GIT_URL := $(shell if [ "${ONEDATA_GIT_URL}" = "" ]; then echo ${GIT_URL}; else echo ${ONEDATA_GIT_URL}; fi)
 export ONEDATA_GIT_URL
 
-ACCEPTANCE_GUI_IMAGE := onedata/acceptance_gui:v8
+# FIXME: experimetnal image
+ACCEPTANCE_GUI_IMAGE := docker.onedata.org/acceptance_gui:chrome-104
 ACCEPTANCE_MIXED_IMAGE := onedata/acceptance_mixed:v9
 
 unpack = tar xzf $(1).tar.gz
