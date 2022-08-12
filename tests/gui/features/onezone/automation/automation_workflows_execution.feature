@@ -107,7 +107,7 @@ Feature: Workflows execution
 #    And user of browser clicks "Run workflow" in the automation tab bar
 #    And user of browser chooses to run 1st revision of "Workflow1" workflow
 #    And user of browser chooses "dir1" file as initial value for workflow in "Select files" modal
-#    And user of browser confirms workflow execution by clicking "Run workflow" button
+#    And user off browser confirms workflow execution by clicking "Run workflow" button
 #    And user of browser waits for all workflows to start
 #    And user of browser waits for all workflows to finish
 #    And user of browser clicks on first executed workflow
@@ -156,17 +156,17 @@ Scenario: User creates checksum-counting-oneclient workflow through gui and exec
 #    And user of browser chooses "Constant value" in target store dropdown menu in "item" argument in task creation page
 #    And user of browser chooses "Constant value" in target store dropdown menu in "item" argument in task creation page
     And user of browser confirms creating new task using "Create" button
-    And user of browser sees task named "inout" in "Lane1" lane
+    And user of browser sees task named "checksum-counting-oneclient" in "Lane1" lane
 
     # User creates task below using previously created task
-    And nd user of browser clicks on "Add parallel box" button in the middle of "Lane1" lane
-    And user of browser clicks create task button in empty parallel box in "Lane1" lane
-    And user of browser chooses "inout" revision of "inout" lambda to add to workflow
-    And user of browser chooses "Itrated item" in value builder dropdown menu in "item" argument
-    And user of browser chooses "Constant value" in value builder dropdown menu in "item" argument
-    And user of browser chooses "Constant value" in value builder dropdown menu in "item" argument
-    And user of browser confirms create new task using Create button
-    And user of browser sees task named "inout" in "Lane1" lane
+    And user of browser clicks on "Add parallel box" button below Parallel box in "Lane1" lane
+    And user of browser clicks "Create task" button in empty parallel box in "Lane1" lane
+    And user of browser chooses 1st revision of "checksum-counting-oneclient" lambda to add to workflow
+    And user of browser chooses "Iterated item" in value builder dropdown menu in "item" argument in task creation page
+    And user of browser chooses "Constant value" in value builder dropdown menu in "item" argument in task creation page
+    And user of browser chooses "Constant value" in value builder dropdown menu in "item" argument in task creation page
+    And user of browser confirms creating new task using "Create" button
+    And user of browser sees task named "checksum-counting-oneclient" in "Lane1" lane
 
     # User creates checksums store for workflow
     And user of browser clicks "Add store" button in workflow visualizer

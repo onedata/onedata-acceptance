@@ -28,6 +28,11 @@ class WorkflowLane(Element):
     parallel_box = WebItem('.workflow-visualiser-parallel-box ',
                            cls=ParallelBox)
 
+    add_parallel_box_above = Button('.space-position-start '
+                                    '.create-parallel-box-action-trigger')
+    add_parallel_box_below = Button('.space-position-end '
+                                     '.create-parallel-box-action-trigger')
+
 
 class Store(Element):
     name = id = Label('.store-name')
@@ -108,7 +113,7 @@ class WorkflowsPage(PageObject):
     revision_details = WebItem('.revision-details-form', cls=RevisionDetails)
 
     workflow_creator = WebItem('.content-atm-inventories-workflows-creator-view'
-                               ,cls=WorkflowCreator)
+                               , cls=WorkflowCreator)
 
     task_form = WebItem('.task-form-container', cls=TaskAddForm)
 
