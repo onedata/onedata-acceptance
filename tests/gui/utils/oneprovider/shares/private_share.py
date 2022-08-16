@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 from tests.gui.utils.core.web_elements import WebItem, Button, Input, Label
+from .share import ShareView
 from ...core import scroll_to_css_selector_bottom
 from ...core.base import PageObject
 
@@ -40,7 +41,7 @@ class Description(PageObject):
     save = Button('.btn-primary')
 
 
-class PrivateShareView(object):
+class PrivateShareView(ShareView):
     dublin_core_metadata_form = WebItem('.opendata-one-carousel',
                                         cls=DublinCoreMetadata)
     description_form = WebItem('.content-space-shares', cls=Description)
@@ -49,9 +50,6 @@ class PrivateShareView(object):
     proceed = Button('.btn-content-info')
     publish_as_open_data = Button('.btn-submit')
     link_name = Label('.ember-power-select-selected-item')
-
-    def __init__(self, driver):
-        self.web_elem = self.driver = driver
 
     def __str__(self):
         return 'Private Share View'

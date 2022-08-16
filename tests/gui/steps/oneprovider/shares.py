@@ -7,7 +7,9 @@ __copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-
+from tests.gui.steps.oneprovider.public_shares import (
+    _change_iframe_for_public_share_page)
+from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import wt, parsers
 
 from tests.gui.conftest import WAIT_FRONTEND
