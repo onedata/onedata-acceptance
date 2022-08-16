@@ -15,12 +15,13 @@ from tests.upgrade.utils.upgrade_utils import UpgradeTestsController
 
 
 @pytest.fixture()
-def tests_controller(test_config, hosts, clients, request, users, env_desc, scenario_abs_path):
+def tests_controller(test_config, hosts, clients, request, users, env_desc, scenario_abs_path,
+                     env_description_abs_path):
     return UpgradeTestsController(**locals())
 
 
 @pytest.fixture(autouse=True, scope='module')
 def finalize(request, env_description_abs_path):
     yield
-    export_logs(request, env_description_abs_path)
+    export_logs(request, env_description_abs_path, 'after_upgrade')
     clean_env()

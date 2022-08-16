@@ -6,6 +6,7 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 import os
+import time
 
 
 TEXT = 'example_text'
@@ -20,6 +21,10 @@ def setup(space_name):
         client.mkdir(os.path.join(space_path, 'dir_name'))
         client.create_file(file_path)
         client.write(TEXT, file_path)
+        # sleep is necessary as events are processed asynchronously and there is possible race
+        # between client unmounting (which is done after the setup) and processing all its events
+        # by provider.
+        time.sleep(10)
     return fun
 
 
@@ -30,10 +35,10 @@ def verify(space_name):
         file_path = os.path.join(space_path, 'file_name')
         dir_path = os.path.join(space_path, 'dir_name')
         read_text = client.read(file_path)
-        assert TEXT == read_text, "Read {} instead of expected {}".format(read_text, TEXT)
+        assert TEXT == read_text, f"Read '{read_text}' instead of expected '{TEXT}'"
         client.write(TEXT2, file_path)
         read_text2 = client.read(file_path)
-        assert TEXT2 == read_text2, "Read {} instead of expected {}".format(read_text, TEXT)
+        assert TEXT2 == read_text2, f"Read '{read_text2}' instead of expected '{TEXT2}'"
         client.stat(dir_path)
         client.rm(file_path)
     return fun
