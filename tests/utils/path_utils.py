@@ -119,7 +119,7 @@ def get_first_path_element(path):
     return next(elem for elem in path.split(os.path.sep) if elem)
 
 
-def read_image_from_artifact(service):
+def read_image_from_artifact(service, fail_on_error=False):
     """Returns service image from artifact downloaded by onenv pull_artifact"""
     sources_info_path = os.path.join(os.getcwd(), 'sources_info.yaml')
     try:
@@ -131,5 +131,11 @@ def read_image_from_artifact(service):
             with open(abs_file_path, 'r') as images_cfg_file:
                 image = json.load(images_cfg_file).get('git-commit')
                 return image
-    except (FileNotFoundError, KeyError):
+    except (FileNotFoundError, KeyError) as e:
+        if fail_on_error:
+            print(f"[ERROR] Error when reading image for {service} from sources info file "
+                  f"{sources_info_path}: {e}.")
+            raise e
+        print(f"[WARNING] Could not read image for '{service}' from sources info file "
+              f"'{sources_info_path}': {e}. Image provided in scenario yaml will be used.")
         return None

@@ -259,7 +259,7 @@ def get_test_type(request):
     return request.config.getoption('test_type')
 
 
-def export_logs(request, env_description_abs_path=None):
+def export_logs(request, env_description_abs_path=None, logdir_prefix=''):
     test_type = get_test_type(request)
     logdir_path = LOGDIRS.get(test_type)
 
@@ -276,6 +276,9 @@ def export_logs(request, env_description_abs_path=None):
         latest_logdir = max(timestamped_logdirs, key=extract_timestamp)
         logdir_path = os.path.join(logdir_path, latest_logdir)
 
+    if logdir_prefix:
+        dirpath, name = os.path.split(logdir_path)
+        logdir_path = os.path.join(dirpath, logdir_prefix + '.' + name)
     run_onenv_command('export', [logdir_path, '-c', CLIENT_POD_LOGS_DIR], fail_with_error=False)
 
 

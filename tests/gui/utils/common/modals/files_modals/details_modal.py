@@ -23,7 +23,7 @@ class HardlinkEntry(PageObject):
         return strip_path(self.path)
 
 
-class HardlinkTab(PageObject):
+class Hardlinks(PageObject):
     tab = WebElement('.nav-link-hardlinks')
     files = WebItemsSequence('.file-hardlink', cls=HardlinkEntry)
 
@@ -37,9 +37,9 @@ class Charts(PageObject):
 
 
 class SizeStatistics(PageObject):
+    tab = Button('.nav-link-size')
     charts_title = Label('.title')
     chart = WebItemsSequence('.one-time-series-chart-plot', cls=Charts)
-    size_statistics_toggle = Button('.nav-link-size')
 
     def click_on_chart(self):
         ActionChains(self.driver).move_to_element_with_offset(
@@ -50,10 +50,10 @@ class DetailsModal(Modal):
     modal_name = Label('.modal-header h1')
     owner = Label('.file-info-row-owner .property-value')
     close = Button('.close')
-    hardlinks_tab = WebItem('.modal-body', cls=HardlinkTab)
     space_id = Button('.file-info-row-space-id .clipboard-btn')
     file_id = Button('.file-info-row-cdmi-object-id .clipboard-btn')
-    size_statistics = WebItem('.modal-body', cls=SizeStatistics)
+    size_statistics = WebItem('.modal-content', cls=SizeStatistics)
+    hardlinks = WebItem('.modal-content', cls=Hardlinks)
 
     def __str__(self):
         return 'File details modal'
