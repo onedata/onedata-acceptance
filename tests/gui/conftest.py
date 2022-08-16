@@ -214,12 +214,6 @@ def op_container():
 
 
 @fixture(scope='session')
-def share():
-    from tests.gui.utils import ShareView
-    return ShareView
-
-
-@fixture(scope='session')
 def public_share():
     from tests.gui.utils import PublicShareView
     return PublicShareView

@@ -7,9 +7,6 @@ __copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-from tests.gui.steps.oneprovider.public_shares import (
-    _change_iframe_for_public_share_page)
-from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import wt, parsers
 
 from tests.gui.conftest import WAIT_FRONTEND
@@ -245,63 +242,3 @@ def append_description(selenium, browser_id, description, op_container):
 def save_description_changes(selenium, browser_id, op_container):
     driver = selenium[browser_id]
     op_container(driver).shares_page.save_description()
-
-
-@wt(parsers.re('user of (?P<browser_id>.*) opens "(?P<tab>.*)" tab on share\'s'
-               ' (public|private) interface'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def open_tab_in_public_share(selenium, browser_id, share, tab):
-    tab = transform(tab) + '_tab'
-    driver = selenium[browser_id]
-    _change_iframe_for_public_share_page(selenium, browser_id)
-    getattr(share(driver), tab)()
-
-
-@wt(parsers.re('user of (?P<browser_id>.*) clicks "(?P<button>.*)" button on '
-               'share\'s (?P<option>public|private) interface'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_in_share(selenium, browser_id, public_share, private_share,
-                          button, option):
-    driver = selenium[browser_id]
-    if option == 'public':
-        getattr(public_share(driver), transform(button))()
-    else:
-        getattr(private_share(driver), transform(button))()
-
-
-def check_item_presence_in_dublin_core_metadata(item, data):
-    for info in data:
-        if info.text == item:
-            break
-    else:
-        raise Exception(f'{item} was not found in "Dublin Core Metadata"')
-
-
-@wt(parsers.re('user of (?P<browser_id>.*?) sees that (?P<which>.*?) (is|are) '
-               '(?P<data>.*?) in "Dublin Core Metadata" on share\'s '
-               '(public|private) interface'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_data_in_dublin_core_metadata(browser_id, data, selenium, share):
-    driver = selenium[browser_id]
-    dublin_core = share(driver).dublin_core_metadata_data
-
-    for item in parse_seq(data):
-        check_item_presence_in_dublin_core_metadata(item, dublin_core)
-
-
-@wt(parsers.re('user of (?P<browser_id>.*?) copies "(?P<link>.*?)" from'
-               ' share\'s (public|private) interface'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def copies_link_in_shares_interface(browser_id, selenium, share):
-    driver = selenium[browser_id]
-    share(driver).copy_link()
-
-
-@wt(parsers.re('user of (?P<browser_id>.*?) sees that XML data contains '
-               '(?P<data>.*?) on share\'s (public|private) interface'))
-def assert_xml_data_in_shares(selenium, browser_id, data, share):
-    driver = selenium[browser_id]
-    xml_data = share(driver).xml_data
-    for item in parse_seq(data):
-        assert item in xml_data, (f'{item} not in XML data on share\'s public '
-                                  f'interface')

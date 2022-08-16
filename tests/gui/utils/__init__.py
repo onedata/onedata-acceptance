@@ -13,7 +13,6 @@ from .onepanel import Onepanel
 from .onezone import OZLoggedIn
 from .onezone.data_discovery_page import DataDiscoveryPage
 from .oneprovider import OPLoggedIn
-from .oneprovider.shares.share import ShareView
 from .oneprovider.shares.public_share import PublicShareView
 from .oneprovider.shares.private_share import PrivateShareView
 from .common.modals import Modals
