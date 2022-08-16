@@ -386,7 +386,7 @@ def create_files_names_alphabetically(number, path, users, user, provider,
                                       hosts):
     for i in range(int(number)):
         num = str(i+1).rjust(3, '0')
-        file_path = path + f'/file_{num}'
+        file_path = f'{path}/file_{num}'
         create_empty_file(file_path, users, user, provider, hosts)
 
 

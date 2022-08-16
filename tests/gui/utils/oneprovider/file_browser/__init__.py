@@ -38,7 +38,7 @@ class _FileBrowser(PageObject):
     browser_msg_header = Label('.content-info-content-container h1')
     empty_dir_msg = Label('.empty-dir-text')
     _empty_dir_icon = WebElement('.empty-dir-image')
-    _bottom = WebElement('.table-bottom-spacing')
+    _bottom_of_visible_fragment = WebElement('.table-bottom-spacing')
     error_dir_msg = Label('.error-dir-text')
 
     _upload_input = WebElement('.fb-upload-trigger input')
@@ -56,9 +56,10 @@ class _FileBrowser(PageObject):
         else:
             return True
 
-    def scroll_to_bottom(self):
+    def scroll_visible_fragment(self):
         self.driver.execute_script('arguments[0].scrollTo(arguments[1]);',
-                                   self.web_elem, self._bottom)
+                                   self.web_elem,
+                                   self._bottom_of_visible_fragment)
 
     def names_of_visible_elems(self):
         files = self._data
