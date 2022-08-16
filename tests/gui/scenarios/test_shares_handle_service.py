@@ -1,5 +1,5 @@
 """This module contains tests suite for shares handle service using
-Oneprovider GUI and single browser instance.
+Oneprovider GUI and multiple browser instance.
 """
 
 __author__ = "Katarzyna Such"
@@ -59,7 +59,7 @@ from tests.utils.acceptance_utils import *
 
 @fixture(scope='module')
 def screens():
-    return [0]
+    return [0, 1]
 
 
 scenarios('../features/oneprovider/shares/mock_handle_service.feature')
