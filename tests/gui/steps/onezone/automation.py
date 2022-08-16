@@ -196,6 +196,21 @@ def choose_option_in_dropdown_menu_in_task_page(selenium, browser_id, oz_page,
     popups(driver).power_select.choose_item(option)
 
 
+@wt(parsers.re('user of (?P<browser_id>.*) writes "(?P<json_text>.*)" into'
+               ' json editor bracket in "(?P<object_name>.*)" '
+               '(?P<object_type>result|argument) in task creation page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def write_text_into_json_editor_bracket(selenium, browser_id, oz_page,
+                                        json_text, object_name,
+                                        object_type):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['automation'].workflows_page.task_form
+    if object_type == 'result':
+        page.results[object_name + ':'].json_editor = json_text
+    else:
+        page.arguments[object_name + ':'].json_editor = json_text
+
+
 @wt(parsers.parse('user of {browser_id} sees "{lambda_name}" in lambdas list '
                   'in inventory lambdas subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -360,7 +375,7 @@ def add_parallel_box_to_lane(selenium, browser_id, oz_page, lane_name):
 def add_task_to_empty_parallel_box(selenium, browser_id, oz_page, lane_name):
     page = oz_page(selenium[browser_id])['automation']
     lane = page.workflows_page.workflow_visualiser.workflow_lanes[lane_name]
-    lane.parallel_box.add_task_button.click()
+    lane.empty_parallel_box.add_task_button.click()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>does not see|sees) task '
@@ -486,4 +501,3 @@ def add_parallel_box_to_lane(selenium, browser_id, oz_page, lane_name,
         lane.add_parallel_box_below.click()
     else:
         lane.add_parallel_box_above.click()
-
