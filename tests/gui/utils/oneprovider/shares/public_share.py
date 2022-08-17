@@ -18,7 +18,6 @@ class URLTypeSelector(PageObject):
 
 
 class PublicShareView(object):
-    name = Label('.fb-breadcrumbs-dir')
     share_name = Label('.share-name')
     link_type_selector = Button('.url-type-selector-trigger')
     url_type_popup = WebItem('.compact-url-type-selector-actions',
