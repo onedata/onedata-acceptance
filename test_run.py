@@ -312,7 +312,9 @@ ALL       ALL = (ALL) NOPASSWD: ALL
             (one_env_data_dir, 'rw'),
             (kube_config_path, 'ro'),
             (minikube_config_path, 'ro'),
-            ('/etc/passwd', 'ro')
+            ('/etc/passwd', 'ro'),
+            # needed by sudo to work
+            ('/etc/shadow', 'ro')
         ]
 
         # Recent Google Chrome versions need ~/.config directory to be present
