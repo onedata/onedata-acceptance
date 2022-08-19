@@ -320,7 +320,7 @@ ALL       ALL = (ALL) NOPASSWD: ALL
         # Recent Google Chrome versions need ~/.config directory to be present
         # and writable. The simplest way to have this directory beside other mounted
         # directories is mounting a temporary dir from the host. It will be removed
-        # on the end of execution.
+        # at the end of execution.
         user_config_dir = os.path.expanduser(os.path.join('~', '.config'))
         tmp_user_config_dir = tempfile.mkdtemp()
 
