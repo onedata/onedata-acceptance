@@ -7,7 +7,6 @@ __copyright__ = "Copyright (C) 2017-2020 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-
 from tests.utils.bdd_utils import wt, parsers
 
 from tests.gui.conftest import WAIT_FRONTEND

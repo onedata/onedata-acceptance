@@ -12,6 +12,7 @@ from .archive_row_menu import ArchiveRowMenu
 from .consumer_caveat import ConsumerCaveat
 from .data_row_menu import DataRowMenu
 from .groups_hierarchy_menu import GroupHierarchyMenu
+from .handle_service import HandleService
 from .matching_storages import MatchingStoragesPopup
 from .membership_relation_menu import MembershipRelationMenu
 from .menu_in_edit_permissions import EditPermissionsRecordMenu
@@ -85,6 +86,7 @@ class Popups(object):
 
     shares_row_menu = WebItem('.share-actions.dropdown-menu', cls=SharesRowMenu)
     chart_statistics = WebItem('.chart-tooltip', cls=ChartStatistics)
+    handle_service = WebItem('.ember-power-select-options', cls=HandleService)
 
     def __init__(self, driver):
         self.driver = self.web_elem = driver
