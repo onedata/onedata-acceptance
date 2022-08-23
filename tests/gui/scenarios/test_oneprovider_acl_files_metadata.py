@@ -44,7 +44,5 @@ def screens():
     return [0, 1]
 
 
-# TODO: VFS-9477 enable metadata tests after reimplement
-scenarios('../features/pass.feature')
-# scenarios('../features/oneprovider/data/file_acl_privileges_metadata.feature')
+scenarios('../features/oneprovider/data/file_acl_privileges_metadata.feature')
 

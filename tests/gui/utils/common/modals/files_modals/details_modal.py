@@ -46,6 +46,10 @@ class SizeStatistics(PageObject):
             self.chart[0].chart, 100, 100).click().perform()
 
 
+class NavigationTab(PageObject):
+    name = id = Label('.nav-link')
+
+
 class DetailsModal(Modal):
     modal_name = Label('.modal-header h1')
     owner = Label('.file-info-row-owner .property-value')
@@ -54,9 +58,11 @@ class DetailsModal(Modal):
     file_id = Button('.file-info-row-cdmi-object-id .clipboard-btn')
     size_statistics = WebItem('.modal-content', cls=SizeStatistics)
     hardlinks = WebItem('.modal-content', cls=Hardlinks)
+    navigation = WebItemsSequence('.nav-tabs-file-info .ember-view',
+                                  cls=NavigationTab)
 
     def __str__(self):
-        return 'File details modal'
+        return 'Details modal'
 
     def is_element_active(self, element_name):
         element = getattr(self, element_name)

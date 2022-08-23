@@ -119,56 +119,55 @@ Feature: Public harvester site
             - space2
 
 
-  # TODO: VFS-9477 reimplement gui metadata tests after metadata move to file info modal
-  # Scenario: Public harvester site is updated after new files are uploaded to space
-  #   Given space "space2" belongs to "harvester1" harvester of user admin
-  #   When user of browser_onedata configures "harvester1" harvester as public
-  #   And user of browser_onedata clicks on copy icon of public harvester URL
-  #   And user of browser_onedata sends copied URL to user of browser_not_signed_in
+   Scenario: Public harvester site is updated after new files are uploaded to space
+     Given space "space2" belongs to "harvester1" harvester of user admin
+     When user of browser_onedata configures "harvester1" harvester as public
+     And user of browser_onedata clicks on copy icon of public harvester URL
+     And user of browser_onedata sends copied URL to user of browser_not_signed_in
 
-  #   And user of browser_not_signed_in opens URL received from user of browser_onedata
-  #   And user of browser_not_signed_in sees public data discovery page
-  #   And user of browser_not_signed_in sees only following files on public data discovery page:
-  #         dir1_2:
-  #           jsonMetadataExists: false
-  #           rdfMetadataExists: false
-  #           xattrsMetadataExists: false
-  #           spaceId: space2
-  #         file_with_json_metadata:
-  #           jsonMetadataExists: true
-  #           rdfMetadataExists: false
-  #           xattrsMetadataExists: false
-  #           spaceId: space2
-  #           author: "\"Samantha Anderson\""
-  #           year: 1998
-  #         spaces:
-  #           - space2
+     And user of browser_not_signed_in opens URL received from user of browser_onedata
+     And user of browser_not_signed_in sees public data discovery page
+     And user of browser_not_signed_in sees only following files on public data discovery page:
+           dir1_2:
+             jsonMetadataExists: false
+             rdfMetadataExists: false
+             xattrsMetadataExists: false
+             spaceId: space2
+           file_with_json_metadata:
+             jsonMetadataExists: true
+             rdfMetadataExists: false
+             xattrsMetadataExists: false
+             spaceId: space2
+             author: "\"Samantha Anderson\""
+             year: 1998
+           spaces:
+             - space2
 
-  #   # upload and add metadata to file in space2
-  #   And user of browser_onedata uploads "20B-0.txt" to the root directory of "space2"
-  #   And user of browser_onedata succeeds to write "20B-0.txt" file basic metadata: "author=John Doe" in "space2"
+     # upload and add metadata to file in space2
+     And user of browser_onedata uploads "20B-0.txt" to the root directory of "space2"
+     And user of browser_onedata succeeds to write "20B-0.txt" file basic metadata: "author=John Doe" in "space2"
 
-  #   Then user of browser_not_signed_in sees only following files on public data discovery page:
-  #         dir1_2:
-  #           jsonMetadataExists: false
-  #           rdfMetadataExists: false
-  #           xattrsMetadataExists: false
-  #           spaceId: space2
-  #         file_with_json_metadata:
-  #           jsonMetadataExists: true
-  #           rdfMetadataExists: false
-  #           xattrsMetadataExists: false
-  #           spaceId: space2
-  #           author: "\"Samantha Anderson\""
-  #           year: 1998
-  #         20B-0.txt:
-  #           jsonMetadataExists: false
-  #           rdfMetadataExists: false
-  #           xattrsMetadataExists: true
-  #           xattrs:
-  #             author: "\"John Doe\""
-  #         spaces:
-  #           - space2
+     Then user of browser_not_signed_in sees only following files on public data discovery page:
+           dir1_2:
+             jsonMetadataExists: false
+             rdfMetadataExists: false
+             xattrsMetadataExists: false
+             spaceId: space2
+           file_with_json_metadata:
+             jsonMetadataExists: true
+             rdfMetadataExists: false
+             xattrsMetadataExists: false
+             spaceId: space2
+             author: "\"Samantha Anderson\""
+             year: 1998
+           20B-0.txt:
+             jsonMetadataExists: false
+             rdfMetadataExists: false
+             xattrsMetadataExists: true
+             xattrs:
+               author: "\"John Doe\""
+           spaces:
+             - space2
 
 
   Scenario: Public harvester site has another GUI after setting it in original harvester configuration
@@ -285,50 +284,49 @@ Feature: Public harvester site
              - space2
 
 
-  # TODO: VFS-9477 reimplement gui metadata tests after metadata move to file info modal
-  # Scenario: Public harvester site is updated when file metadata is updated in space of original harvester
-  #   Given space "space1" belongs to "harvester1" harvester of user admin
-  #   When user of browser_onedata configures "harvester1" harvester as public
-  #   And user of browser_onedata clicks on copy icon of public harvester URL
-  #   And user of browser_onedata sends copied URL to user of browser_not_signed_in
+   Scenario: Public harvester site is updated when file metadata is updated in space of original harvester
+     Given space "space1" belongs to "harvester1" harvester of user admin
+     When user of browser_onedata configures "harvester1" harvester as public
+     And user of browser_onedata clicks on copy icon of public harvester URL
+     And user of browser_onedata sends copied URL to user of browser_not_signed_in
 
-  #   And user of browser_not_signed_in opens URL received from user of browser_onedata
-  #   And user of browser_not_signed_in sees public data discovery page
-  #   And user of browser_not_signed_in sees only following files on public data discovery page:
-  #         dir1_1:
-  #           jsonMetadataExists: false
-  #           rdfMetadataExists: false
-  #           xattrsMetadataExists: false
-  #           spaceId: space1
-  #         file_with_xattrs:
-  #           spaceId: space1
-  #           jsonMetadataExists: false
-  #           rdfMetadataExists: false
-  #           xattrsMetadataExists: true
-  #           xattrs:
-  #             author: "\"John Smith\""
-  #             year: 2020
-  #         spaces:
-  #           - space1
+     And user of browser_not_signed_in opens URL received from user of browser_onedata
+     And user of browser_not_signed_in sees public data discovery page
+     And user of browser_not_signed_in sees only following files on public data discovery page:
+           dir1_1:
+             jsonMetadataExists: false
+             rdfMetadataExists: false
+             xattrsMetadataExists: false
+             spaceId: space1
+           file_with_xattrs:
+             spaceId: space1
+             jsonMetadataExists: false
+             rdfMetadataExists: false
+             xattrsMetadataExists: true
+             xattrs:
+               author: "\"John Smith\""
+               year: 2020
+           spaces:
+             - space1
 
-  #   And user of browser_onedata removes basic metadata entry with key "author" for "dir1_1/file_with_xattrs" file in "space1" space
-  #   Then user of browser_not_signed_in sees only following files on public data discovery page:
-  #          dir1_1:
-  #             jsonMetadataExists: false
-  #             rdfMetadataExists: false
-  #             xattrsMetadataExists: false
-  #             spaceId: space1
-  #          file_with_xattrs:
-  #            spaceId: space1
-  #            jsonMetadataExists: false
-  #            rdfMetadataExists: false
-  #            xattrsMetadataExists: true
-  #            xattrs:
-  #              year: 2020
-  #              unexpected:
-  #                author: "\"John Smith\""
-  #          spaces:
-  #            - space1
+     And user of browser_onedata removes basic metadata entry with key "author" for "dir1_1/file_with_xattrs" file in "space1" space
+     Then user of browser_not_signed_in sees only following files on public data discovery page:
+            dir1_1:
+               jsonMetadataExists: false
+               rdfMetadataExists: false
+               xattrsMetadataExists: false
+               spaceId: space1
+            file_with_xattrs:
+              spaceId: space1
+              jsonMetadataExists: false
+              rdfMetadataExists: false
+              xattrsMetadataExists: true
+              xattrs:
+                year: 2020
+                unexpected:
+                  author: "\"John Smith\""
+            spaces:
+              - space1
 
 
   Scenario: User cannot open harvested file source from public harvester if they does not belong to space

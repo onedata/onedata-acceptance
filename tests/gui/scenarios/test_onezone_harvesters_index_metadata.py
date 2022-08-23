@@ -57,6 +57,7 @@ from tests.gui.steps.oneprovider.dataset import *
 from tests.gui.steps.oneprovider.archives import *
 
 from tests.gui.steps.modals.modal import *
+from tests.gui.steps.modals.details_modal import *
 from tests.gui.steps.oneprovider_common import *
 
 from tests.gui.meta_steps.onezone import *
@@ -81,6 +82,4 @@ def screens():
     return [0]
 
 
-# TODO: VFS-9477 enable metadata tests after reimplement
-scenarios('../features/pass.feature')
-# scenarios('../features/onezone/harvesters/harvesters_index_metadata.feature')
+scenarios('../features/onezone/harvesters/harvesters_index_metadata.feature')

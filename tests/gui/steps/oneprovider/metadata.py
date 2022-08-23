@@ -109,16 +109,6 @@ def click_on_del_metadata_record_button(selenium, browser_id, attr_name,
     entry.remove()
 
 
-@wt(parsers.parse('user of {browser_id} clicks on {tab_name} navigation '
-                  'tab in metadata modal'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_navigation_tab_in_metadata_modal(selenium, browser_id, tab_name,
-                                              modals):
-    modal = modals(selenium[browser_id]).metadata
-    tab = modal.navigation[tab_name]
-    tab.web_elem.click()
-
-
 @wt(parsers.re('user of (?P<browser_id>.+?) types \'(?P<text>.+?)\' '
                'to (?P<tab_name>JSON|RDF) textarea in metadata modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -174,18 +164,21 @@ def clean_tab_textarea_in_metadata_modal(selenium, browser_id, tab_name,
                                          modals):
     modal = modals(selenium[browser_id]).metadata
     tab = getattr(modal, tab_name.lower())
-    while tab.text_area or len(tab.lines) > 1:
-        tab.area.click()
-        with tab.select_lines() as selector:
-            selector.backspace_down()
-            selector.backspace_down()
+    button = 'Save'
+    if tab.text_area or len(tab.lines) > 1:
+        while tab.text_area or len(tab.lines) > 1:
+            tab.area.click()
+            with tab.select_lines() as selector:
+                selector.backspace_down()
+                selector.backspace_down()
 
-    # when deleting all text with backspace button does not activate
-    # so the trick is that last sign is deleted after a moment
-    tab.text_area = ' '
-    time.sleep(0.5)
-    tab.area.click()
-    press_backspace_on_active_element(selenium, browser_id)
+        # when deleting all text with backspace button does not activate
+        # so the trick is that last sign is deleted after a moment
+        tab.text_area = ' '
+        time.sleep(0.5)
+        tab.area.click()
+        press_backspace_on_active_element(selenium, browser_id)
+        click_metadata_modal_button(selenium, browser_id, button, modals)
 
 
 @wt(parsers.parse('user of {browser_id} clicks on "{button}" button in '

@@ -63,3 +63,13 @@ def assert_tooltip_on_chart_in_modal(browser_id, selenium, popups):
     except ValueError:
         raise Exception('Header: {header} of tooltip does not have date format')
 
+
+@wt(parsers.parse('user of {browser_id} clicks on "{tab_name}" navigation '
+                  'tab in "{modal}" modal'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_navigation_tab_in_modal(selenium, browser_id, tab_name, modals,
+                                     modal):
+    modal = getattr(modals(selenium[browser_id]), check_modal_name(
+        transform(modal)))
+    tab = modal.navigation[tab_name]
+    tab.web_elem.click()

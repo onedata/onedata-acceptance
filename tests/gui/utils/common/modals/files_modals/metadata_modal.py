@@ -53,11 +53,11 @@ class AceEditorMetadataPanel(PageObject):
 
 
 class JSONMetadataPanel(AceEditorMetadataPanel):
-    text_area = AceEditor('.fb-metadata-json')
+    text_area = AceEditor('.file-metadata-json')
 
 
 class RDFMetadataPanel(AceEditorMetadataPanel):
-    text_area = AceEditor('.fb-metadata-rdf')
+    text_area = AceEditor('.file-metadata-rdf')
 
 
 class NavigationTab(PageObject):
@@ -70,17 +70,17 @@ class NavigationTab(PageObject):
 
 class MetadataModal(Modal):
     modal_name = Label('.modal-header')
-    navigation = WebItemsSequence('.nav-link', cls=NavigationTab)
+    navigation = WebItemsSequence('.metadata-type-btn', cls=NavigationTab)
     basic = WebItem('.relative', cls=BasicMetadataPanel)
-    json = WebItem('#json.tab-pane', cls=JSONMetadataPanel)
-    rdf = WebItem('#rdf.tab-pane', cls=RDFMetadataPanel)
+    json = WebItem('.tab-pane-metadata-json', cls=JSONMetadataPanel)
+    rdf = WebItem('.tab-pane-metadata-rdf', cls=RDFMetadataPanel)
 
-    close = NamedButton('.btn-default', text='Close')
-    save_all = NamedButton('.btn-primary', text='Save all')
+    close = Button('.close')
+    save = NamedButton('.btn-primary', text='Save')
     discard_changes = NamedButton('.btn-warning', text='Discard changes')
 
     loading_alert = Label('.resource-load-error')
-    editor_disabled = Label('.readonly-tag .label-text')
+    editor_disabled = Label('.editor-disabled-lock-text')
 
     def __str__(self):
         return 'Metadata modal'
