@@ -7,7 +7,7 @@ __copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
-from tests.gui.utils.generic import transform
+from tests.gui.utils.generic import transform, parse_seq
 from tests.utils.bdd_utils import wt, parsers
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
@@ -44,7 +44,7 @@ def _change_iframe_for_public_share_page(selenium, browser_id):
 @repeat_failed(timeout=WAIT_BACKEND, interval=0.5)
 def assert_public_share_named(selenium, browser_id, share_name, public_share):
     _change_iframe_for_public_share_page(selenium, browser_id)
-    displayed_name = public_share(selenium[browser_id]).name
+    displayed_name = public_share(selenium[browser_id]).share_name
     assert displayed_name == share_name, (f'displayed public share name '
                                           f'is "{displayed_name}" instead of '
                                           f'expected "{share_name}"')
@@ -78,11 +78,9 @@ def assert_empty_file_browser_in_public_share(selenium, browser_id, tmp_memory,
     file_browser = public_share(selenium[browser_id]).file_browser
     tmp_memory[browser_id]['file_browser'] = file_browser
 
-    assert expected_msg == file_browser.error_dir_msg, (f'Displayed empty dir '
-                                            f'msg '
-                                            f'"{file_browser.error_dir_msg}" '
-                                            f'does not match '
-                                            f'expected one "{expected_msg}"')
+    assert expected_msg == file_browser.error_dir_msg, (
+        f'Displayed empty dir msg "{file_browser.error_dir_msg}" does not '
+        f'match expected one "{expected_msg}"')
 
 
 @wt(parsers.parse('user of {browser_id} sees "{error_msg}" error'))
@@ -93,15 +91,6 @@ def no_public_share_view(selenium, browser_id, error_msg, public_share):
 
     assert error_msg == public_share(driver).share_not_found, (
         f'displayed error msg does not contain {error_msg}')
-
-
-@wt(parsers.parse('user of {browser_id} opens description tab '
-                  'on share\'s public interface'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def open_description_tab_in_public_share(selenium, browser_id, public_share):
-    driver = selenium[browser_id]
-    _change_iframe_for_public_share_page(selenium, browser_id)
-    public_share(driver).description_tab()
 
 
 @wt(parsers.parse('user of {browser_id} sees "{description}" description '
@@ -148,3 +137,64 @@ def choose_public_share_link_type(selenium, browser_id, url_type, public_share):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def copy_public_share_link(selenium, browser_id, public_share):
     public_share(selenium[browser_id]).copy_icon()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) opens "(?P<tab>.*)" tab on share\'s'
+               ' (public|private) interface'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def open_tab_in_public_share(selenium, browser_id, public_share, tab):
+    tab = transform(tab) + '_tab'
+    driver = selenium[browser_id]
+    _change_iframe_for_public_share_page(selenium, browser_id)
+    getattr(public_share(driver), tab)()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) clicks "(?P<button>.*)" button on '
+               'share\'s (?P<option>public|private) interface'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_button_in_share(selenium, browser_id, public_share, private_share,
+                          button, option):
+    driver = selenium[browser_id]
+    if option == 'public':
+        getattr(public_share(driver), transform(button))()
+    else:
+        getattr(private_share(driver), transform(button))()
+
+
+def check_item_presence_in_dublin_core_metadata(item, data):
+    for info in data:
+        if info.text == item:
+            break
+    else:
+        raise Exception(f'{item} was not found in "Dublin Core Metadata"')
+
+
+@wt(parsers.re('user of (?P<browser_id>.*?) sees that (?P<which>.*?) (is|are) '
+               '(?P<data>.*?) in "Dublin Core Metadata" on share\'s '
+               '(public|private) interface'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_data_in_dublin_core_metadata(browser_id, data, selenium,
+                                        public_share):
+    driver = selenium[browser_id]
+    dublin_core = public_share(driver).dublin_core_metadata_data
+
+    for item in parse_seq(data):
+        check_item_presence_in_dublin_core_metadata(item, dublin_core)
+
+
+@wt(parsers.re('user of (?P<browser_id>.*?) copies "(?P<link>.*?)" from'
+               ' share\'s (public|private) interface'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def copies_link_in_shares_interface(browser_id, selenium, public_share):
+    driver = selenium[browser_id]
+    public_share(driver).copy_link()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*?) sees that XML data contains '
+               '(?P<data>.*?) on share\'s (public|private) interface'))
+def assert_xml_data_in_shares(selenium, browser_id, data, public_share):
+    driver = selenium[browser_id]
+    xml_data = public_share(driver).xml_data
+    for item in parse_seq(data):
+        assert item in xml_data, (f'{item} not in XML data on share\'s public '
+                                  f'interface')
