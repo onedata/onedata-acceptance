@@ -1,5 +1,5 @@
-"""This module contains tests suite for jumping to files using
-Oneprovider GUI.
+"""This module contains tests suite for basic files operations using
+Oneprovider data tab GUI and single browser instance.
 """
 
 __author__ = "Katarzyna Such"
@@ -69,8 +69,10 @@ from tests.utils.acceptance_utils import *
 
 @fixture(scope='module')
 def screens():
-    return [0, 1]
+    return [0]
 
 
-scenarios('../features/oneprovider/data/jump_input.feature')
-scenarios('../features/oneprovider/data/multibrowser_jump_input.feature')
+scenarios('../features/oneprovider/data/single_file.feature')
+scenarios('../features/oneprovider/data/several_files.feature')
+scenarios('../features/oneprovider/data/file_management.feature')
+scenarios('../features/oneprovider/data/download_tar_files.feature')
