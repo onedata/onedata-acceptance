@@ -541,8 +541,6 @@ def choose_provider_in_selected_page(selenium, browser_id, provider, hosts,
     driver.switch_to.default_content()
 
     oz_page(driver)['data'].providers[provider].click()
-    iframe = driver.find_element_by_tag_name('iframe')
-    driver.switch_to.frame(iframe)
 
 
 @wt(parsers.parse('user of {browser_id} clicks on Choose other Oneprovider '
