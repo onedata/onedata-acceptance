@@ -9,15 +9,6 @@ import inspect
 import os
 import sys
 import time
-import json
-import yaml
-
-SERVICE_TO_ARTIFACT_PLAN = {
-    'onezone': ('onezone-pkg', 'docker-build-list.json'),
-    'oneprovider': ('oneprovider-pkg', 'docker-build-list.json'),
-    'oneclient': ('oneclient_docker_build', 'oc-docker-build-list.json'),
-    'rest_cli': ('rest_cli_docker_build', 'rest-cli-docker-build-report.json')
-}
 
 
 def config_file(relative_file_path):
@@ -117,19 +108,3 @@ def escape_path(path):
 def get_first_path_element(path):
     """Returns first element in path"""
     return next(elem for elem in path.split(os.path.sep) if elem)
-
-
-def read_image_from_artifact(service):
-    """Returns service image from artifact downloaded by onenv pull_artifact"""
-    sources_info_path = os.path.join(os.getcwd(), 'sources_info.yaml')
-    try:
-        with open(sources_info_path, 'r') as sources_info_file:
-            sources_info = yaml.load(sources_info_file, yaml.Loader)
-            (plan_name, file_name) = SERVICE_TO_ARTIFACT_PLAN[service]
-            file_path = sources_info[plan_name]['extracted_sources_path']
-            abs_file_path = os.path.join(file_path, file_name)
-            with open(abs_file_path, 'r') as images_cfg_file:
-                image = json.load(images_cfg_file).get('git-commit')
-                return image
-    except (FileNotFoundError, KeyError):
-        return None
