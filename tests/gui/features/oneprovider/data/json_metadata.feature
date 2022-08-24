@@ -55,7 +55,6 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
      # remove JSON metadata
      And user of browser sees that JSON textarea in metadata modal contains '{"id": 1}'
      And user of browser cleans JSON textarea in metadata modal
-     And user of browser clicks on "Save" button in metadata modal
      And user of browser clicks on "Close" button in metadata modal
 
      Then user of browser does not see metadata status tag for "<item>" in file browser

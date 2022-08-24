@@ -55,7 +55,6 @@ Feature: Basic data tab operations on directory RDF metadata in file browser
      # remove RDF metadata
      And user of browser sees that RDF textarea in metadata modal contains '<content>'
      And user of browser cleans RDF textarea in metadata modal
-     And user of browser clicks on "Save" button in metadata modal
      And user of browser clicks on "Close" button in metadata modal
 
      Then user of browser does not see metadata status tag for "<item>" in file browser
