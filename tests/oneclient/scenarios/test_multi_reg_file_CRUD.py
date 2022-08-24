@@ -68,6 +68,11 @@ def test_read_right_after_write(env_description_file):
     pass
 
 
+@scenario('Read right after write by other client while file is open')
+def test_read_right_after_write_while_file_is_open(env_description_file):
+    pass
+
+
 @scenario('Fail to read regular file without read permission')
 def test_read_without_permission(env_description_file):
     pass

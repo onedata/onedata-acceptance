@@ -39,6 +39,14 @@ Feature: Regular_file_CRUD
     Then user1 reads "TEST TEXT ONEDATA" from file space1/file1
     And size of user1's space1/file1 is 17 bytes
 
+
+  Scenario: Write to regular file and assert size after listing
+    When user1 creates directories [space1/dir1]
+    And user1 creates regular files [space1/dir1/file1]
+    And user1 writes "TEST TEXT ONEDATA" to space1/dir1/file1
+    Then user1 sees file1 in space1/dir1
+    And size of user1's space1/dir1/file1 is 17 bytes
+
     
   Scenario: Append to regular file
     When user1 creates regular files [space1/file1]
