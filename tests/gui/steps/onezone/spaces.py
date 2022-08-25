@@ -390,8 +390,8 @@ def assert_providers_list_contains_provider(selenium, browser_id, provider,
 def click_toggle_on_providers_subpage(browser_id, toggle, selenium,
                                       op_container):
     driver = selenium[browser_id]
-    switch_to_iframe(selenium, browser_id)
-    getattr(op_container(driver).space_configuration, transform(toggle)).check()
+    getattr(op_container(driver).provider_configuration,
+            transform(toggle)).check()
 
 
 @wt(parsers.parse('user of {browser_id} sees that length of providers list '
