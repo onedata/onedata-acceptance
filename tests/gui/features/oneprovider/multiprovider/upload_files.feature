@@ -33,6 +33,7 @@ Feature: Uploading files to multiple providers
     And user of browser sees provider named "oneprovider-1" on file browser page
     And user of browser sees provider named "oneprovider-2" on file browser page
     And user of browser clicks on "oneprovider-2" provider on file browser page
+    And user of browser sees file browser in files tab in Oneprovider page
 
     # upload different file to different provider
     And user of browser uses upload button from file browser menu bar to upload file "20B-1.txt" to current dir
