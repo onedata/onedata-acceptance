@@ -51,6 +51,8 @@ stages:
     manual: false
     final: false
     jobs:
+    # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal 
+    # NOTE: cannot comment out this job because it contains common steps
     - Chrome POSIX tests multiuser
     - Chrome onepanel deployment basic tests
     # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
@@ -60,14 +62,15 @@ stages:
     - Chrome onezone automations tests
     - Chrome qos basic
     - Chrome onezone harvesters basic tests
-    # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
+    # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal 
     # - Chrome oneprovider ACL directories privileges create
     - Chrome oneprovider archives incremental and nested
     - Chrome oneprovider archives recall
     # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
     # - Chrome oneprovider ACL files metadata
     - Chrome onezone providers basic tests
-    - Chrome POSIX tests
+    # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal 
+    # - Chrome POSIX tests
     # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
     # - Chrome oneprovider ACL directories privileges metadata
     # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
@@ -136,6 +139,8 @@ stages:
     - Chrome multiprovider multiuser tests
     # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
     # - Chrome oneprovider ACL files
+# TODO: VFS-9761 reimplement gui permissions tests after move to file info modal 
+# NOTE: cannot comment out this job because it contains common steps
 Chrome POSIX tests multiuser:
   key: CPTM
   other: &common-opts
@@ -449,26 +454,27 @@ Chrome onezone providers basic tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome POSIX tests:
-  key: CPT
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script:
-      <<: *run-selenium-tests
-      scripts:
-      - make SUITE=test_oneprovider_posix BROWSER=Chrome TIMEOUT=600 test_gui_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
+# TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
+# Chrome POSIX tests:
+#   key: CPT
+#   other: *common-opts
+#   tasks:
+#   - script: *clear-env
+#   - script: *restart-minikube
+#   - checkout: *checkout
+#   - script: *init-submodules
+#   - script: *download-artifacts
+#   - script:
+#       <<: *run-selenium-tests
+#       scripts:
+#       - make SUITE=test_oneprovider_posix BROWSER=Chrome TIMEOUT=600 test_gui_src
+#   final-tasks:
+#   - test-parser: *parse-test-results
+#   - script: *pack-logs
+#   - script: *clear-env-and-working-dir
+#   artifacts: *artifacts
+#   requirements: *requirements
+#   artifact-subscriptions: []
 # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
 # Chrome oneprovider ACL directories privileges metadata:
 #    key: COADPM
