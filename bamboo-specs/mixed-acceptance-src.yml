@@ -47,11 +47,14 @@ stages:
     - Chrome QoS tests
     - Chrome create file tests
     - Chrome storage sync
-    - Chrome ACL one entry
-    - Chrome permission POSIX multi tests
+    # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
+    # - Chrome ACL one entry
+    # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
+    # - Chrome permission POSIX multi tests
     - Chrome spaces basic tests
     - Chrome onepanel tests
-    - Chrome permission POSIX tests
+    # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
+    # - Chrome permission POSIX tests
     - Chrome files movement tests
     - Chrome directories movement tests
     - Chrome files multi tests
@@ -67,7 +70,8 @@ stages:
     - Chrome archive privileges
     - Chrome directories set metadata
     - Chrome nested directories remove
-    - Chrome ACL two entries
+    # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
+    # - Chrome ACL two entries
     - Chrome tokens tests
     - Chrome access tokens
     - Chrome file content tests
@@ -212,48 +216,50 @@ Chrome storage sync:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome ACL one entry:
-  key: CAOE
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_acl_one_entry TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
-Chrome permission POSIX multi tests:
-  key: CPPMT
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_permission_posix_multi ENV_FILE=1oz_1op_2oc TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
+# TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
+# Chrome ACL one entry:
+#   key: CAOE
+#   other: *common-opts
+#   tasks:
+#   - script: *clear-env
+#   - script: *restart-minikube
+#   - checkout: *checkout
+#   - script: *init-submodules
+#   - script: *download-artifacts
+#   - script: *build-swaggers
+#   - script:
+#       <<: *run-acceptance-tests
+#       scripts:
+#       - make SUITE=test_acl_one_entry TIMEOUT=600 test_mixed_src
+#   final-tasks:
+#   - test-parser: *parse-test-results
+#   - script: *pack-logs
+#   - script: *clear-env-and-working-dir
+#   artifacts: *artifacts
+#   requirements: *requirements
+#   artifact-subscriptions: []
+# TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
+# Chrome permission POSIX multi tests:
+#   key: CPPMT
+#   other: *common-opts
+#   tasks:
+#   - script: *clear-env
+#   - script: *restart-minikube
+#   - checkout: *checkout
+#   - script: *init-submodules
+#   - script: *download-artifacts
+#   - script: *build-swaggers
+#   - script:
+#       <<: *run-acceptance-tests
+#       scripts:
+#       - make SUITE=test_permission_posix_multi ENV_FILE=1oz_1op_2oc TIMEOUT=600 test_mixed_src
+#   final-tasks:
+#   - test-parser: *parse-test-results
+#   - script: *pack-logs
+#   - script: *clear-env-and-working-dir
+#   artifacts: *artifacts
+#   requirements: *requirements
+#   artifact-subscriptions: []
 Chrome spaces basic tests:
   key: STIC
   other: *common-opts
@@ -296,27 +302,28 @@ Chrome onepanel tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome permission POSIX tests:
-  key: CPPT
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_permission_posix TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
+# TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
+# Chrome permission POSIX tests:
+#   key: CPPT
+#   other: *common-opts
+#   tasks:
+#   - script: *clear-env
+#   - script: *restart-minikube
+#   - checkout: *checkout
+#   - script: *init-submodules
+#   - script: *download-artifacts
+#   - script: *build-swaggers
+#   - script:
+#       <<: *run-acceptance-tests
+#       scripts:
+#       - make SUITE=test_permission_posix TIMEOUT=600 test_mixed_src
+#   final-tasks:
+#   - test-parser: *parse-test-results
+#   - script: *pack-logs
+#   - script: *clear-env-and-working-dir
+#   artifacts: *artifacts
+#   requirements: *requirements
+#   artifact-subscriptions: []
 Chrome files movement tests:
   key: CFMT2
   other: *common-opts
@@ -631,27 +638,28 @@ Chrome nested directories remove:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome ACL two entries:
-  key: CATE
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_acl_two_entries TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
+# TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
+# Chrome ACL two entries:
+#   key: CATE
+#   other: *common-opts
+#   tasks:
+#   - script: *clear-env
+#   - script: *restart-minikube
+#   - checkout: *checkout
+#   - script: *init-submodules
+#   - script: *download-artifacts
+#   - script: *build-swaggers
+#   - script:
+#       <<: *run-acceptance-tests
+#       scripts:
+#       - make SUITE=test_acl_two_entries TIMEOUT=600 test_mixed_src
+#   final-tasks:
+#   - test-parser: *parse-test-results
+#   - script: *pack-logs
+#   - script: *clear-env-and-working-dir
+#   artifacts: *artifacts
+#   requirements: *requirements
+#   artifact-subscriptions: []
 Chrome tokens tests:
   key: CTT
   other: *common-opts

@@ -60,4 +60,6 @@ def screens():
     return [0]
 
 
-scenarios('../features/oneprovider/acl_one_entry.feature')
+# TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
+scenarios('../features/pass.feature')
+# scenarios('../features/oneprovider/acl_one_entry.feature')
