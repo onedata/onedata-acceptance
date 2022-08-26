@@ -73,11 +73,10 @@ def click_tooltip_from_toolbar_in_data_tab_in_op(selenium, browser_id, tooltip,
                '"(?P<button>New directory|Upload files|Refresh|Paste)" button '
                'from file browser menu bar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_from_file_browser_menu_bar(selenium, browser_id, button,
-                                            op_container):
-    driver = selenium[browser_id]
+def click_button_from_file_browser_menu_bar(browser_id, button, tmp_memory):
     button = transform(button) + '_button'
-    getattr(op_container(driver).file_browser, transform(button)).click()
+    file_browser = tmp_memory[browser_id]['file_browser']
+    getattr(file_browser, transform(button)).click()
 
 
 @wt(parsers.parse('user of {browser_id} sees that {btn_list} option '
