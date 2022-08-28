@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 from .automation import WorkflowExecutionPage
 from .data_tab import DataTab
-from .space_configuration import SpaceConfiguration
+from .provider_configuration import ProviderConfiguration
 from .user_profile import UserProfile
 from .shares import SharesContentPage
 from .spaces import SpacesContentPage
@@ -31,9 +31,9 @@ class OPLoggedIn(object):
                                               ' .filesystem-browser')
     archive_browser = ArchiveBrowser('.content-space-datasets .archive-browser')
     archive_container = ArchiveContainer('.archive-browser-container')
+    provider_configuration = ProviderConfiguration('.provider-config')
     automation_page = WebItem('.content-space-automation',
                               cls=WorkflowExecutionPage)
-    space_configuration = SpaceConfiguration('.content-space-config')
 
     def __init__(self, driver):
         self.web_elem = self.driver = driver

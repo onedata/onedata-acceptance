@@ -14,6 +14,7 @@ from .onezone import OZLoggedIn
 from .onezone.data_discovery_page import DataDiscoveryPage
 from .oneprovider import OPLoggedIn
 from .oneprovider.shares.public_share import PublicShareView
+from .oneprovider.shares.private_share import PrivateShareView
 from .common.modals import Modals
 from .common.popups import Popups
 from .common.common import LoginPage

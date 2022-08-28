@@ -14,12 +14,12 @@ from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import WebItem
 
 
-class _SpaceConfiguration(PageObject):
-    size_statistics = Toggle('.one-way-toggle-track')
+class _ProviderConfiguration(PageObject):
+    size_statistics = Toggle('.dir-stats-config .one-way-toggle-track')
 
     def __str__(self):
         return f'space configuration in {self.parent}'
 
 
-SpaceConfiguration = partial(WebItem, cls=_SpaceConfiguration)
+ProviderConfiguration = partial(WebItem, cls=_ProviderConfiguration)
 

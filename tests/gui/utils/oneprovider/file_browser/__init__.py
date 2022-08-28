@@ -16,7 +16,7 @@ from selenium.webdriver.common.keys import Keys
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (WebElement, WebElementsSequence,
                                                Label, WebItemsSequence, WebItem,
-                                               Button)
+                                               Button, Input)
 from tests.gui.utils.generic import iter_ahead, rm_css_cls
 from .data_row import DataRow
 from ..breadcrumbs import Breadcrumbs
@@ -38,11 +38,12 @@ class _FileBrowser(PageObject):
     browser_msg_header = Label('.content-info-content-container h1')
     empty_dir_msg = Label('.empty-dir-text')
     _empty_dir_icon = WebElement('.empty-dir-image')
-    _bottom = WebElement('.table-bottom-spacing')
+    _bottom_of_visible_fragment = WebElement('.table-bottom-spacing')
     error_dir_msg = Label('.error-dir-text')
 
     _upload_input = WebElement('.fb-upload-trigger input')
     header = WebElement('.file-browser-head-container')
+    jump_input = Input('.jump-input')
 
     def __str__(self):
         return 'file browser in {}'.format(self.parent)
@@ -55,9 +56,10 @@ class _FileBrowser(PageObject):
         else:
             return True
 
-    def scroll_to_bottom(self):
+    def scroll_visible_fragment(self):
         self.driver.execute_script('arguments[0].scrollTo(arguments[1]);',
-                                   self.web_elem, self._bottom)
+                                   self.web_elem,
+                                   self._bottom_of_visible_fragment)
 
     def names_of_visible_elems(self):
         files = self._data
