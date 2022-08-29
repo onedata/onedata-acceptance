@@ -13,7 +13,9 @@ import sys
 import glob
 import platform
 import argparse
+import shutil
 from subprocess import *
+import tempfile
 import xml.etree.ElementTree as ElementTree
 
 from bamboos.docker.environment import docker
@@ -229,7 +231,7 @@ def main():
     script_dir = os.path.abspath(os.path.join('..', os.path.dirname(os.path.abspath(__file__))))
 
     command = '''
-import os, subprocess, sys, stat, shutil
+import os, subprocess, sys, stat
 
 {additional_code}
 
@@ -240,7 +242,7 @@ if {shed_privileges}:
     os.setregid({gid}, {gid})
     os.setreuid({uid}, {uid})
 
-command = ['python3'] + ['-m'] + ['pytest'] + ['-rs'] + ['-s'] + ['--test-type={test_type}'] + ['{test_dir}'] + {args} + {env_file} + {local_charts_path} + {no_clean} + {pull_only_missing_images} + {repeats} + {timeout} + {images_opt} + ['--junitxml={report_path}'] + ['--add-test-domain']
+command = ['python3', '-m', 'pytest', '-rs', '-s', '--test-type={test_type}'] + ['{test_dir}'] + {args} + {env_file} + {local_charts_path} + {no_clean} + {pull_only_missing_images} + {repeats} + {timeout} + {images_opt} + ['--junitxml={report_path}'] + ['--add-test-domain']
 
 ret = subprocess.call(command)
 sys.exit(ret)
@@ -310,7 +312,20 @@ ALL       ALL = (ALL) NOPASSWD: ALL
             (one_env_data_dir, 'rw'),
             (kube_config_path, 'ro'),
             (minikube_config_path, 'ro'),
-            ('/etc/passwd', 'ro')
+            ('/etc/passwd', 'ro'),
+            # needed by sudo to work
+            ('/etc/shadow', 'ro')
+        ]
+
+        # Recent Google Chrome versions need ~/.config directory to be present
+        # and writable. The simplest way to have this directory beside other mounted
+        # directories is mounting a temporary dir from the host. It will be removed
+        # at the end of execution.
+        user_config_dir = os.path.expanduser(os.path.join('~', '.config'))
+        tmp_user_config_dir = tempfile.mkdtemp()
+
+        volumes = [
+            (tmp_user_config_dir, user_config_dir, 'rw'),
         ]
 
         envs = {'HOME': os.path.expanduser('~')}
@@ -328,6 +343,7 @@ ALL       ALL = (ALL) NOPASSWD: ALL
             image=args.image,
             command=['python', '-c', '{}'.format(command)],
             run_params=run_params,
+            volumes=volumes,
             # setting HOME allows to use k8s and minikube configs
             # from host
             envs=envs
@@ -343,6 +359,8 @@ ALL       ALL = (ALL) NOPASSWD: ALL
     ret = 0
     if env_errors_exists(report):
         ret = 1
+
+    shutil.rmtree(tmp_user_config_dir)
 
     sys.exit(ret)
 
