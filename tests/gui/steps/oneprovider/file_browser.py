@@ -125,12 +125,18 @@ def wait_for_size_to_be_displayed_in_data_row(selenium, browser_id,
         f'{size}')
 
 
-@wt(parsers.parse('user of {browser_id} scrolls to the bottom '
-                  'of file browser'))
+@wt(parsers.parse('user of {browser_id} scrolls to the bottom of file browser'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def scroll_to_bottom_of_file_browser(browser_id, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
-    browser.scroll_to_bottom()
+    visible_files = browser.names_of_visible_elems()
+    detected_files = []
+    new_files = [f for f in visible_files if f]
+    while new_files:
+        detected_files.extend(new_files)
+        browser.scroll_visible_fragment()
+        visible_files = browser.names_of_visible_elems()
+        new_files = [f for f in visible_files if f and f not in detected_files]
 
 
 @wt(parsers.re(r'user of (?P<browser_id>.*?) sees that item named '
@@ -296,13 +302,13 @@ def confirm_rename_directory(selenium, browser_id, option, modals):
 def count_files_while_scrolling(browser_id, count: int, tmp_memory):
     browser = tmp_memory[browser_id]['file_browser']
     detected_files = []
-    tmp_files = browser.names_of_visible_elems()
-    new_files = [f for f in tmp_files if f]
+    visible_files = browser.names_of_visible_elems()
+    new_files = [f for f in visible_files if f]
     while new_files:
         detected_files.extend(new_files)
-        browser.scroll_to_bottom()
-        tmp_files = browser.names_of_visible_elems()
-        new_files = [f for f in tmp_files if f and f not in detected_files]
+        browser.scroll_visible_fragment()
+        visible_files = browser.names_of_visible_elems()
+        new_files = [f for f in visible_files if f and f not in detected_files]
     else:
         err_msg = (f'There are {len(detected_files)} files in file browser '
                    f'when should be {count}')
@@ -441,3 +447,28 @@ def assert_contents_downloaded_tar_file(selenium, browser_id, contents, tmpdir,
                     f'{f} content is different than expected '
                     f'{file_contents}!={configured_dir_contents[f]}')
 
+
+@wt(parsers.re('user of (?P<browser_id>.*?) sees that items? named'
+               ' (?P<item_list>.*?) (?P<option>is|are|is not|are not) '
+               'currently visible in (?P<which>.*?) browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_item_displayed_on_page(browser_id, item_list, tmp_memory, option,
+                                  which):
+    browser = tmp_memory[browser_id][f'{which}_browser']
+    visible_files = browser.names_of_visible_elems()
+    items = parse_seq(item_list)
+    data = [f for f in visible_files if f]
+    for name in items:
+        if 'not' in option:
+            assert name not in data, f'{name} is displayed on page'
+        else:
+            assert name in data, (f'{name} is not displayed on page, '
+                                  f'displayed files: {data}')
+
+
+@wt(parsers.parse('user of {browser_id} writes "{prefix}" to jump input in'
+                  ' file browser'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def write_to_jump_input(browser_id, tmp_memory, prefix):
+    browser = tmp_memory[browser_id]['file_browser']
+    browser.jump_input = prefix

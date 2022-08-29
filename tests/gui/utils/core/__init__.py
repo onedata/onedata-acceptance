@@ -12,3 +12,10 @@ def scroll_to_css_selector(driver, css_sel):
                           f"$('{css_sel}')[0] : "
                           f"document.querySelector('{css_sel}')); "
                           f"el && el.scrollIntoView(true);")
+
+
+def scroll_to_css_selector_bottom(driver, css_sel):
+    driver.execute_script(f"var el = (typeof $ === 'function' ? "
+                          f"$('{css_sel}')[0] : "
+                          f"document.querySelector('{css_sel}')); "
+                          f"el && el.scrollIntoView(false);")

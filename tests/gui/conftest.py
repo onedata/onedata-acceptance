@@ -220,6 +220,12 @@ def public_share():
 
 
 @fixture(scope='session')
+def private_share():
+    from tests.gui.utils import PrivateShareView
+    return PrivateShareView
+
+
+@fixture(scope='session')
 def privacy_policy():
     from tests.gui.utils import PrivacyPolicy
     return PrivacyPolicy
