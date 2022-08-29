@@ -57,10 +57,11 @@ Feature: Onepanel features regarding storage sync (e.g. import/update)
     And user of browser1 sees that number of updated files for "space1" shown on Synchronization files processing charts equals 2 in Spaces page in Onepanel
 
     And user of browser2 removes dir1 from provider's storage mount point
+    And user browser2 is idle for 20 seconds
     And user of browser2 removes dir2 from provider's storage mount point
 
     # check charts after storage cleanup of 800 files and 2 directories
     And user of browser1 sees that number of deleted files for "space1" shown on Synchronization files processing charts equals 802 in Spaces page in Onepanel
-    And user of browser1 sees that number of updated files for "space1" shown on Synchronization files processing charts equals 3 in Spaces page in Onepanel
+    And user of browser1 sees that number of updated files for "space1" shown on Synchronization files processing charts equals 4 in Spaces page in Onepanel
 
     And user of browser1 revokes "space1" space support in "oneprovider-1" provider in Onepanel
