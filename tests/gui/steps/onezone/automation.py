@@ -243,7 +243,7 @@ def assert_revision_description_in_object_bracket(selenium, browser_id, oz_page,
     revision = object.revision_list[ordinal[:-2]]
 
     if option == 'does not see':
-        assert not revision.name == description, \
+        assert revision.name != description, \
             f'Revision: {object_name} found'
     else:
         assert revision.name == description, \
