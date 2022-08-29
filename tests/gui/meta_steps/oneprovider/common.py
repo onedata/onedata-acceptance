@@ -122,9 +122,7 @@ def create_directory(selenium, browser_id, name, tmp_memory,
     modal_header = 'Create new directory:'
     modal_name = 'Create dir'
     option = 'enter'
-
-    click_button_from_file_browser_menu_bar(selenium, browser_id,
-                                            button, op_container)
+    click_button_from_file_browser_menu_bar(browser_id, button, tmp_memory)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_header, tmp_memory)
     write_name_into_text_field_in_modal(selenium, browser_id, name,
                                         modal_name, modals)
