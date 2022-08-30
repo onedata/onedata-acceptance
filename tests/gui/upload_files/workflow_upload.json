@@ -3,7 +3,7 @@
   "schemaFormatVersion": 2,
   "revision": {
     "supplementaryAtmLambdas": {
-      "df04bd95d864dac57fc78c406280cfa9che369": {
+      "bd06b25c5e936acf7ba2e2f508c367fdch5e6b": {
         "1": {
           "schemaFormatVersion": 2,
           "revision": {
@@ -12,7 +12,15 @@
             "atmLambdaRevision": {
               "summary": "",
               "state": "draft",
-              "resultSpecs": [],
+              "resultSpecs": [
+                {
+                  "name": "data",
+                  "dataSpec": {
+                    "valueConstraints": {},
+                    "type": "object"
+                  }
+                }
+              ],
               "resourceSpec": {
                 "memoryRequested": 104857600,
                 "memoryLimit": null,
@@ -24,21 +32,31 @@
               "preferredBatchSize": 100,
               "operationSpec": {
                 "engine": "openfaas",
-                "dockerImage": "Task1",
+                "dockerImage": "docker.onedata.org/in-out:v1",
                 "dockerExecutionOptions": {
                   "readonly": true,
                   "oneclientOptions": "",
                   "oneclientMountPoint": "/mnt/onedata",
-                  "mountOneclient": true
+                  "mountOneclient": false
                 }
               },
-              "name": "Task1",
+              "name": "inout",
               "description": "",
-              "checksum": "63251a9e587344d0a1b4b25338328f8b",
-              "argumentSpecs": []
+              "checksum": "96b0286cddea5661ab269565c810e1b3",
+              "argumentSpecs": [
+                {
+                  "name": "data",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "dataSpec": {
+                    "valueConstraints": {},
+                    "type": "object"
+                  }
+                }
+              ]
             }
           },
-          "originalAtmLambdaId": "df04bd95d864dac57fc78c406280cfa9che369"
+          "originalAtmLambdaId": "bd06b25c5e936acf7ba2e2f508c367fdch5e6b"
         }
       }
     },
@@ -47,16 +65,18 @@
     "atmWorkflowSchemaRevision": {
       "stores": [
         {
-          "type": "list",
-          "requiresInitialContent": false,
-          "name": "Store1",
-          "id": "cb4ce874ba35635a945e62ed3f41775358316a",
+          "type": "treeForest",
+          "requiresInitialContent": true,
+          "name": "input",
+          "id": "b9e1dff4431040b6eb867ab8ad8baf970bad44",
           "description": "",
           "defaultInitialContent": null,
           "config": {
             "itemDataSpec": {
-              "valueConstraints": {},
-              "type": "integer"
+              "valueConstraints": {
+                "fileType": "ANY"
+              },
+              "type": "file"
             }
           }
         }
@@ -65,7 +85,7 @@
       "lanes": [
         {
           "storeIteratorSpec": {
-            "storeSchemaId": "cb4ce874ba35635a945e62ed3f41775358316a",
+            "storeSchemaId": "b9e1dff4431040b6eb867ab8ad8baf970bad44",
             "maxBatchSize": 100
           },
           "parallelBoxes": [
@@ -75,25 +95,33 @@
                   "timeSeriesSchema": null,
                   "resultMappings": [],
                   "resourceSpecOverride": null,
-                  "name": "Task1",
+                  "name": "inout",
                   "lambdaRevisionNumber": 1,
-                  "lambdaId": "df04bd95d864dac57fc78c406280cfa9che369",
-                  "id": "70a564c6ffd83f7adc173ddb1d36909204a5d2",
-                  "argumentMappings": []
+                  "lambdaId": "bd06b25c5e936acf7ba2e2f508c367fdch5e6b",
+                  "id": "73f95d6132f063fe803bb563ab86324ef3c137",
+                  "argumentMappings": [
+                    {
+                      "valueBuilder": {
+                        "valueBuilderType": "iteratedItem",
+                        "valueBuilderRecipe": null
+                      },
+                      "argumentName": "data"
+                    }
+                  ]
                 }
               ],
               "name": "Parallel box",
-              "id": "c91f830fb077163d8d21f1ff06ad7448a71f5c"
+              "id": "6db30c316da17639c6de474f7d2b1074ee955e"
             }
           ],
           "name": "Lane1",
           "maxRetries": 0,
-          "id": "26acab6e06dccbe9d552062499a629bb589865"
+          "id": "c30ce43676ab2f9d75a39f5496f2117ade180b"
         }
       ],
       "description": "Workflow1"
     }
   },
-  "originalAtmWorkflowSchemaId": "3e122e1f05197e72dd8b738038967f30ch749e",
+  "originalAtmWorkflowSchemaId": "75d74b6716848221daa9f87e95f3a1f8ch78e8",
   "name": "Workflow1"
 }

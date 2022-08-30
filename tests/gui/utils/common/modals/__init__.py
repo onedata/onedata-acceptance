@@ -48,10 +48,13 @@ from .datasets_modals.detach_dataset import DetachDataset
 from .files_modals.write_protection import WriteProtection
 from .archives_modals.delete_archive import DeleteArchive
 from .datasets_modals.reattach_dataset import ReattachDataset
+from .workflows_modals.store_details import StoreDetails
 from .workflows_modals.upload_workflow import UploadWorkflow
 from .workflows_modals.create_new_store import CreateNewStore
 from .workflows_modals.create_new_lane import CreateNewLane
 from .workflows_modals.duplicate_revision import DuplicateRevision
+from .workflows_modals.select_files_directories_symlink import SelectFiles
+from .workflows_modals.function_pods_activity import FunctionPodsActivity
 
 
 class Modals(object):
@@ -117,6 +120,9 @@ class Modals(object):
     create_new_store = WebItem('.modal-dialog', cls=CreateNewStore)
     create_new_lane = WebItem('.modal-dialog', cls=CreateNewLane)
     duplicate_revision = WebItem('.modal-dialog', cls=DuplicateRevision)
+    select_files = WebItem('.modal-dialog', cls=SelectFiles)
+    function_pods_activity = WebItem('.modal-dialog', cls=FunctionPodsActivity)
+    store_details = WebItem('.modal-dialog', cls=StoreDetails)
 
     # management modals
     change_privileges = WebItem('.modal-dialog', cls=ChangePrivilegesModal)

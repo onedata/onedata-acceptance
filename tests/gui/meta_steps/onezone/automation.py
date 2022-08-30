@@ -6,7 +6,7 @@ __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-from tests.gui.conftest import WAIT_FRONTEND
+
 from tests.gui.steps.modals.modal import (_wait_for_modal_to_appear,
                                           click_modal_button)
 from tests.gui.steps.onezone.automation import (
@@ -15,6 +15,7 @@ from tests.gui.steps.onezone.automation import (
     write_text_into_workflow_name_on_main_workflows_page,
     click_add_new_button_in_menu_bar, write_text_into_lambda_form,
     assert_lambda_exists, confirm_lambda_creation_or_edition)
+from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
@@ -71,3 +72,25 @@ def create_lambda_using_gui(selenium, browser_id, oz_page, lambda_name,
                             'lambdas', oz_page)
 
     assert_lambda_exists(selenium, browser_id, oz_page, lambda_name)
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) adds (?P<option>argument|result) '
+               'named "(?P<name>.*)" of "(?P<type>.*)" type'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def add_argument_result_into_lambda_form(selenium, browser_id, oz_page, popups,
+                                         option, name, type):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['automation'].lambdas_page.form
+    subpage = getattr(page, option)
+
+    button_name = 'add_' + option
+    button = getattr(subpage, button_name)
+    button.click()
+
+    label_name = option + '_name'
+    label = getattr(subpage, label_name)
+    label.value = name
+
+    subpage.type_dropdown.click()
+    popups(driver).power_select.choose_item(type)
+

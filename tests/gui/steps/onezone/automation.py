@@ -8,12 +8,15 @@ __license__ = ("This software is released under the MIT license cited in "
 
 import time
 
+from selenium.common.exceptions import NoSuchElementException
+
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.utils.generic import transform, upload_file_path
 from tests.utils.bdd_utils import wt, parsers
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.utils import repeat_failed
-from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
+from tests.gui.steps.common.miscellaneous import press_enter_on_active_element, \
+    switch_to_iframe
 
 
 @wt(parsers.parse('user of {browser_id} clicks on Create automation inventory '
@@ -111,7 +114,7 @@ def assert_inventory_exists(selenium, browser_ids, oz_page, text):
         assert text in err_msg, f'Error message: {text} not found'
 
 
-@wt(parsers.parse('user of {browser_id} uses Upload (json) button from menu '
+@wt(parsers.parse('user of {browser_id} uses "Upload (json)" button from menu '
                   'bar to upload workflow "{file_name}" to current dir '
                   'without waiting for upload to finish'))
 @repeat_failed(timeout=2 * WAIT_BACKEND)
@@ -136,7 +139,7 @@ def assert_workflow_exists(selenium, browser_id, oz_page, workflow, option):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) uses '
-               '(?P<option>Add new lambda|Add new workflow) button from '
+               '"(?P<option>Add new lambda|Add new workflow)" button from '
                'menu bar in (lambdas|workflows) subpage'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_add_new_button_in_menu_bar(selenium, browser_id, oz_page, option):
@@ -154,8 +157,18 @@ def write_text_into_lambda_form(selenium, browser_id,
     setattr(label, 'value', text)
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) confirms (create new|edition of) '
-               '(?P<option>lambda|revision|task) using (Create|Modify) button'))
+@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>checks|unchecks) '
+               'lambdas "Mount space" toggle'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def switch_toggle_in_lambda_form(selenium, browser_id, oz_page, option):
+    subpage = oz_page(selenium[browser_id])['automation'].lambdas_page.form
+
+    getattr( subpage.mount_space_toggle, option[:-1])
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) confirms (creating new|edition of) '
+               '(?P<option>lambda|revision|task) using '
+               '"(Create|Modify)" button'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_lambda_creation_or_edition(selenium, browser_id, oz_page, option):
     page = oz_page(selenium[browser_id])['automation']
@@ -164,6 +177,18 @@ def confirm_lambda_creation_or_edition(selenium, browser_id, oz_page, option):
         page.workflows_page.task_form.create_button.click()
     else:
         page.lambdas_page.form.create_button.click()
+
+
+@wt(parsers.parse('user of {browser_id} chooses "{option}" in {dropdown_name} '
+                  'in "{result_name}" result in task creation page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def choose_option_in_dropdown_menu_in_task_page(selenium, browser_id, oz_page,
+                                                popups, option, result_name):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['automation'].workflows_page.task_form
+    page.results[result_name + ':'].target_store_dropdown.click()
+
+    popups(driver).power_select.choose_item(option)
 
 
 @wt(parsers.parse('user of {browser_id} sees "{lambda_name}" in lambdas list '
@@ -176,7 +201,7 @@ def assert_lambda_exists(selenium, browser_id, oz_page, lambda_name):
         f'Lambda: {lambda_name} not found '
 
 
-@wt(parsers.parse('user of {browser_id} clicks on Create new revision '
+@wt(parsers.parse('user of {browser_id} clicks on "Create new revision" '
                   'in "{lambda_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_create_new_revision_button(selenium, browser_id, oz_page,
@@ -189,49 +214,73 @@ def collapse_revision_list(subpage):
     subpage.show_revisions_button.click()
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>does not see|sees) '
-               '"(?P<revision_name>.*)" in revision list of '
-               '"(?P<object_name>.*)" in inventory '
-               '(?P<page>lambdas|workflows) subpage'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def assert_revision_in_object_bracket(selenium, browser_id, oz_page,
-                                      object_name, page, option):
-    page_name = page + '_page'
+def get_lambda_or_workflow_bracket(selenium, browser_id, oz_page, page,
+                                   object_name):
+    page_name = page + 's_page'
     subpage = getattr(oz_page(selenium[browser_id])['automation'], page_name)
 
     object = subpage.elements_list[object_name]
 
     try:
         collapse_revision_list(object)
-    except BaseException:
+    except (RuntimeError, AttributeError):
         pass
+
+    return object
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>does not see|sees) that '
+               '(?P<ordinal>1st|2nd|3rd|4th) revision of '
+               '"(?P<object_name>.*)" (?P<page>lambda|workflow) '
+               'is described "(?P<description>.*)"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_revision_description_in_object_bracket(selenium, browser_id, oz_page,
+                                                  ordinal, option, object_name,
+                                                  page, description):
+    object = get_lambda_or_workflow_bracket(selenium, browser_id, oz_page,
+                                            page, object_name)
+
+    revision = object.revision_list[ordinal[:-2]]
+
     if option == 'does not see':
-        assert object_name not in object.revision_list, \
+        assert revision.name != description, \
             f'Revision: {object_name} found'
     else:
-        assert object_name in object.revision_list, \
+        assert revision.name == description, \
             f'Revision: {object_name} not found'
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>does not see|sees) '
+               '(?P<ordinal>1st|2nd|3rd|4th) revision of '
+               '"(?P<object_name>.*)" (?P<page>lambda|workflow)'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_revision_of_object(selenium, browser_id, oz_page,
+                              ordinal, option, object_name,
+                              page):
+    object = get_lambda_or_workflow_bracket(selenium, browser_id, oz_page,
+                                            page, object_name)
+
+    if option == 'does not see':
+        assert ordinal[:-2] not in object.revision_list, \
+            f'{ordinal} revision found'
+    else:
+        assert ordinal[:-2] in object.revision_list, \
+            f'{ordinal} revision not found'
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on "(?P<option>Redesign as '
                'new revision|Duplicate to...|Download \(json\)|Remove)" button '
-               'in revision "(?P<revision_name>.*)" menu in the '
-               '"(?P<object_name>.*)" (?P<object_type>lambda|workflow) '
-               'revision list'))
+               'from (?P<ordinal>1st|2nd|3rd|4th) revision of '
+               '"(?P<object_name>.*)" (?P<page>lambda|workflow) menu'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_option_in_revision_menu_button(selenium, browser_id, oz_page, option,
-                                         object_name, revision_name, popups,
-                                         object_type):
-    page_name = object_type + 's_page'
-    subpage = getattr(oz_page(selenium[browser_id])['automation'], page_name)
-    object = subpage.elements_list[object_name]
+                                         object_name, ordinal, popups,
+                                         page):
+    object = get_lambda_or_workflow_bracket(selenium, browser_id, oz_page,
+                                            page, object_name)
 
-    try:
-        collapse_revision_list(object)
-    except BaseException:
-        pass
-
-    object.revision_list[revision_name].menu_button.click()
+    revision = object.revision_list[ordinal[:-2]]
+    object.revision_list[ordinal[:-2]].menu_button.click()
 
     popups(selenium[browser_id]).menu_popup_with_label.menu[option].click()
 
@@ -242,18 +291,18 @@ def click_option_in_revision_menu_button(selenium, browser_id, oz_page, option,
 def write_text_into_workflow_name_on_main_workflows_page(selenium, browser_id,
                                                          oz_page, text):
     page = oz_page(selenium[browser_id])['automation']
-    page.workflows_page.workflow_name.value = text
+    page.workflows_page.workflow_creator.workflow_name.value = text
 
 
-@wt(parsers.parse('user of {browser_id} confirms create new workflow using '
-                  'Create button'))
+@wt(parsers.parse('user of {browser_id} confirms creating new workflow using '
+                  '"Create" button'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def confirm_workflow_creation(selenium, browser_id, oz_page):
     page = oz_page(selenium[browser_id])['automation']
-    page.workflows_page.create_button.click()
+    page.workflows_page.workflow_creator.create_button.click()
 
 
-@wt(parsers.parse('user of {browser_id} clicks Add store button '
+@wt(parsers.parse('user of {browser_id} clicks "Add store" button '
                   'in workflow visualizer'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_add_store_button(selenium, browser_id, oz_page):
@@ -290,7 +339,7 @@ def assert_lane_in_workflow_visualizer(selenium, browser_id, oz_page,
     assert lane_name in workflow_visualizer, f'Lane: {lane_name} not found'
 
 
-@wt(parsers.parse('user of {browser_id} clicks on add parallel box button in '
+@wt(parsers.parse('user of {browser_id} clicks on "Add parallel box" button in '
                   'the middle of "{lane_name}" lane'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_parallel_box_to_lane(selenium, browser_id, oz_page, lane_name):
@@ -300,7 +349,7 @@ def add_parallel_box_to_lane(selenium, browser_id, oz_page, lane_name):
         lane_name].add_parallel_box_button.click()
 
 
-@wt(parsers.parse('user of {browser_id} clicks create task button in empty '
+@wt(parsers.parse('user of {browser_id} clicks "Create task" button in empty '
                   'parallel box in "{lane_name}" lane'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_task_to_empty_parallel_box(selenium, browser_id, oz_page, lane_name):
@@ -367,9 +416,9 @@ def insert_text_in_textfield_of_workflow(selenium, browser_id, oz_page, text):
 
 
 @wt(parsers.parse('user of {browser_id} confirms edition of selected workflow '
-                  'details using Save button'))
-@wt(parsers.parse('user of {browser_id} Saves workflow edition by clicking '
-                  'Save button from menu bar'))
+                  'details using "Save" button'))
+@wt(parsers.parse('user of {browser_id} saves workflow edition by clicking '
+                  '"Save" button from menu bar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_button_in_workflow(selenium, browser_id, oz_page):
     page = oz_page(selenium[browser_id])['automation']
@@ -399,3 +448,20 @@ def insert_text_in_description_of_revision(selenium, browser_id, oz_page, text):
     page = oz_page(selenium[browser_id])['automation']
     page.workflows_page.revision_details.description = text
 
+
+@wt(parsers.re('user of (?P<browser_id>.*?) chooses '
+               '(?P<ordinal>1st|2nd|3rd|4th) revision of '
+               '"(?P<lambda_name>.*?)" lambda to add to workflow'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def add_lambda_revision_to_workflow(selenium, browser_id, oz_page, lambda_name,
+                                    ordinal):
+    subpage = oz_page(selenium[browser_id])['automation'].lambdas_page
+    object = subpage.elements_list[lambda_name]
+    revision = object.revision_list[ordinal[:-2]]
+
+    try:
+        collapse_revision_list(object)
+    except (RuntimeError, AttributeError):
+        pass
+
+    revision.add_to_workflow.click()

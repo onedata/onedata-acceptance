@@ -1,9 +1,9 @@
-"""This module contains tests suite for automation management using
-Onezone GUI and multiple browsers instances.
+"""This module contains tests suite for executing workflows using
+Onezone GUI.
 """
 
 __author__ = "Rafał Widziszewski"
-__copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
+__copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
@@ -68,11 +68,7 @@ from tests.gui.steps.rest.env_up.inventory import *
 
 @fixture(scope='module')
 def screens():
-    return [0, 1]
+    return [0]
 
 
-scenarios('../features/onezone/automation/automation_basics.feature')
-scenarios('../features/onezone/automation/automation_members.feature')
-scenarios('../features/onezone/automation/automation_effective_privileges.feature')
-scenarios('../features/onezone/automation/automation_lambdas.feature')
-scenarios('../features/onezone/automation/automation_workflows.feature')
+scenarios('../features/onezone/automation/automation_workflows_execution.feature')
