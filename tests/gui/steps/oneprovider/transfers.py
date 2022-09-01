@@ -74,16 +74,14 @@ def assert_waiting_transfer(selenium, browser_id, item_type, desc, hosts,
 @repeat_failed(timeout=WAIT_BACKEND)
 def cancel_or_rerun_transfer(selenium, browser_id, op_container, popups,
                              option, state):
+    transfers = op_container(selenium[browser_id]).transfers
     if state == 'waiting':
         try:
-            getattr(op_container(selenium[browser_id]).transfers,
-                    state)[0].menu_button()
+            getattr(transfers, state)[0].menu_button()
         except RuntimeError:
-            op_container(selenium[browser_id]
-                         ).transfers.ongoing[0].menu_button()
+            transfers.ongoing[0].menu_button()
     else:
-        getattr(op_container(selenium[browser_id]).transfers,
-                state)[0].menu_button()
+        getattr(transfers, state)[0].menu_button()
 
     option = 'Cancel transfer' if option == 'cancels' else 'Rerun transfer'
     click_option_in_popup_labeled_menu(selenium, browser_id, option, popups)
