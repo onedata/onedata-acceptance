@@ -33,10 +33,8 @@ ENV_READY_TIMEOUT_SECONDS = 300
 
 def start_environment(scenario_path, request, hosts, patch_path, users, test_config):
     attempts = 0
-    clean = not request.config.getoption('--no-clean')
     local = request.config.getoption('--local')
     up_args = parse_up_args(request, test_config)
-    up_args.append('--rsync')
     up_args.extend(['{}'.format(scenario_path)])
     wait_args = parse_wait_args(request)
     patch_args = parse_patch_args(request, patch_path) if patch_path else []
@@ -47,9 +45,8 @@ def start_environment(scenario_path, request, hosts, patch_path, users, test_con
         try:
             maybe_setup_helm()
             run_onenv_command('init', cwd=None, onenv_path='one_env/onenv')
-            if clean:
-                run_onenv_command('up', up_args)
-                run_onenv_command('wait', wait_args)
+            run_onenv_command('up', up_args)
+            run_onenv_command('wait', wait_args)
             dep_status = get_deployment_status()
             check_deployment(dep_status)
 
@@ -59,7 +56,7 @@ def start_environment(scenario_path, request, hosts, patch_path, users, test_con
             zone_hostname = hosts['onezone']['hostname']
             users['admin'] = AdminUser(zone_hostname, 'admin', 'password')
 
-            if patch_path and clean:
+            if patch_path and not request.config.getoption('--no-clean'):
                 run_onenv_command('patch', patch_args)
                 wait_args = parse_wait_args(request)
                 run_onenv_command('wait', wait_args)
@@ -117,7 +114,7 @@ def update_etc_hosts():
     copies modified /etc/hosts from one-env container to test-runner container.
     """
 
-    run_onenv_command('hosts', sudo=True)
+    run_onenv_command('hosts')
     etc_hosts_path = '/etc/hosts'
     tmp_hosts_path = '/tmp/hosts'
     sp.call(['docker', 'cp', '{}:{}'.format(ONE_ENV_CONTAINER_NAME,

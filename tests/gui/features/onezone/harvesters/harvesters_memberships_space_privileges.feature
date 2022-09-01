@@ -1,5 +1,6 @@
 Feature: Basic management of harvester memberships privileges with spaces in Onezone GUI
 
+
   Background:
     Given initial users configuration in "onezone" Onezone service:
             - user1
@@ -36,7 +37,7 @@ Feature: Basic management of harvester memberships privileges with spaces in One
     And user of browser1 removes "harvester20" harvester in Onezone page
 
 
-  Scenario: User successfully removes space with remove space privilege
+  Scenario: User successfully removes space from harvester with remove space privilege
     Given admin user does not have access to any space
     When user of browser1 creates "space2" space in Onezone
     And user of browser1 creates "harvester21" harvester in Onezone page

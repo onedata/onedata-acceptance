@@ -167,7 +167,7 @@ Feature: Testing features other than browsing results for query in Discovery Pag
 
     And user of browser clicks "REST API" button on data discovery page
     And user of browser clicks copy command icon in REST API modal
-    And user of browser runs copied curl command
+    And user of browser runs curl command copied from data discovery page
     Then user of browser sees that querying curl result matches following files:
           file_with_json4:
             year: 1998

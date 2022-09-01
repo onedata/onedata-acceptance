@@ -116,6 +116,7 @@ def read_opened(user, text, file, client_node, users):
     client = user.clients[client_node]
 
     def condition():
+        client.seek(client.absolute_path(file), 0)
         read_text = client.read_from_opened_file(client.absolute_path(file))
         assert read_text == text, "Read {} instead of expected {} on {}".format(
             read_text, text, client_node)
@@ -135,7 +136,7 @@ def cannot_read(user, file, client_node, users):
     file_path = client.absolute_path(file)
 
     def condition():
-        assert_expected_failure(client.read, True, file_path)
+        assert_expected_failure(client.read, file_path)
 
     assert_(client.perform, condition)
 
@@ -259,7 +260,10 @@ def close(user, file, client_node, users):
     del client.opened_files[file_path]
 
 
-@wt(parsers.re('(?P<user>\w+) sets current file position in (?P<file>.*) at '
+@wt(parsers.re(r'(?P<user>\w+) sets current file position at offset '
+               r'(?P<offset>.*) in previously opened (?P<file>.*) on'
+               r' (?P<client_node>.*)'))
+@wt(parsers.re(r'(?P<user>\w+) sets current file position in (?P<file>.*) at '
                'offset (?P<offset>.*) on (?P<client_node>.*)'))
 def set_file_position(user, file, offset, client_node, users):
     user = users[user]

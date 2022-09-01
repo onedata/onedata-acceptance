@@ -11,6 +11,7 @@ import json
 import yaml
 
 from tests import OZ_REST_PORT, PANEL_REST_PORT, OP_REST_PORT
+from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.rest.shares import get_file_id_by_rest
 from tests.utils.bdd_utils import given, parsers
 from tests.utils.http_exceptions import (
@@ -372,6 +373,23 @@ def _mkfile(create_cdmi_obj, file_path, hosts, owner_credentials,
         create_cdmi_obj(file_path)
 
 
+def create_empty_file(path, users, user, provider, hosts):
+    http_put(ip=hosts[provider]['hostname'], port=OP_REST_PORT,
+             path='/cdmi/' + path, headers={'X-Auth-Token': users[user].token},
+             auth=None, data=None)
+
+
+@given(parsers.parse('using REST, {user} creates {number} empty files in '
+                     '"{path}" with names sorted alphabetically supported by '
+                     '"{provider}" provider'))
+def create_files_names_alphabetically(number, path, users, user, provider,
+                                      hosts):
+    for i in range(int(number)):
+        num = str(i+1).rjust(3, '0')
+        file_path = f'{path}/file_{num}'
+        create_empty_file(file_path, users, user, provider, hosts)
+
+
 def _get_users_space_id_list(zone_hostname, owner_username, owner_password):
 
     resp = http_get(ip=zone_hostname, port=OZ_REST_PORT,
@@ -400,3 +418,20 @@ def _rm_all_spaces_for_users_list(zone_hostname, users_db):
                                 user_credentials.password)
 
 
+@given(parsers.parse('there are no spaces of {user} in "{zone_host}" Onezone '
+                     'service'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def g_remove_all_space_supports_using_rest(hosts, users, user, zone_host):
+    zone_hostname = hosts[zone_host]['hostname']
+    user = users[user]
+    _rm_all_spaces_for_user(zone_hostname, user.username, user.password)
+
+
+def force_start_storage_scan(space_id, provider, hosts, onepanel_credentials):
+    provider_hostname = hosts[provider]['hostname']
+    onepanel_username = onepanel_credentials.username
+    onepanel_password = onepanel_credentials.password
+    http_post(ip=provider_hostname, port=PANEL_REST_PORT,
+              path=get_panel_rest_path('provider', 'spaces', space_id,
+                                       'storage-import', 'auto', 'force-start'),
+              auth=(onepanel_username, onepanel_password))

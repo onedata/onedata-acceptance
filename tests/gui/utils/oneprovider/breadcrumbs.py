@@ -23,7 +23,7 @@ class _Breadcrumbs(PageObject):
     _breadcrumbs = WebItemsSequence('.fb-breadcrumbs-dir '
                                     '.fb-breadcrumbs-dir-name',
                                     cls=ButtonWithTextPageObject)
-    home = Button('.fb-breadcrumbs-dir-root')
+    space_root = Button('.fb-breadcrumbs-dir-root')
 
     def __str__(self):
         return 'Breadcrumbs({path}) in {parent}'.format(path=self.pwd(),
@@ -32,9 +32,9 @@ class _Breadcrumbs(PageObject):
     def pwd(self):
         return '/'.join(directory.text for directory in self._breadcrumbs)
 
-    def chdir(self, path):
+    def chdir(self, path, archive=False):
         if not path or path == '/':
-            self.home()
+            self.space_root()
         else:
             path = path.split('/')
             breadcrumbs = self._breadcrumbs
@@ -44,11 +44,28 @@ class _Breadcrumbs(PageObject):
 
             i, dir1, dir2 = None, None, None
             err_msg = '{dir} not found on {idx}th position in {item}'
+            if archive:
+                breadcrumbs = [elem for i, elem in enumerate(breadcrumbs)
+                               if i != 1]
 
-            for i, (dir1, dir2) in enumerate(izip(path, breadcrumbs)):
-                assert dir1 == dir2.text, err_msg.format(dir=dir1, idx=i, item=self)
+            breadcrumbs_name = [item.text for item in breadcrumbs]
 
-            dir2.click()
+            # works only if '...' is after archive name in path
+            if '...' in breadcrumbs_name:
+                path[1] = '...'
+                if len(breadcrumbs_name) < len(path):
+                    for i in range(2, 2+(len(path)-len(breadcrumbs))):
+                        path.remove(path[i])
+
+                for i, (dir1, dir2) in enumerate(izip(path, breadcrumbs_name)):
+                    assert dir1 == dir2, err_msg.format(dir=dir1, idx=i,
+                                                        item=self)
+                breadcrumbs[breadcrumbs_name.index(dir2)-1].click()
+            else:
+                for i, (dir1, dir2) in enumerate(izip(path, breadcrumbs)):
+                    assert dir1 == dir2.text, err_msg.format(dir=dir1, idx=i,
+                                                             item=self)
+                dir2.click()
 
 
 Breadcrumbs = partial(WebItem, cls=_Breadcrumbs)

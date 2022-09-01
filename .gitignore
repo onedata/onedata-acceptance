@@ -35,3 +35,6 @@ sources_info.yaml
 
 # VSCode
 .vscode
+
+# Emacs
+*~

@@ -35,7 +35,6 @@ from tests.gui.steps.onezone.logged_in_common import *
 from tests.gui.steps.onezone.user_full_name import *
 
 from tests.gui.steps.onezone.tokens import *
-from tests.gui.steps.onezone.data_space_management import *
 from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.manage_account import *
 from tests.gui.steps.onezone.groups import *
@@ -52,8 +51,9 @@ from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
+from tests.gui.steps.oneprovider.browser import *
 
-from tests.gui.steps.modal import *
+from tests.gui.steps.modals.modal import *
 from tests.gui.steps.oneprovider_common import *
 
 from tests.gui.meta_steps.onezone import *
@@ -69,6 +69,7 @@ from tests.gui.meta_steps.onepanel.spaces import *
 from tests.gui.meta_steps.onezone.spaces import *
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.oneprovider.common import *
+from tests.gui.meta_steps.onezone.groups import *
 
 from tests.utils.acceptance_utils import *
 from tests.mixed.steps.space_basic import *
@@ -83,6 +84,7 @@ scenarios('../features/onezone/login_page.feature')
 scenarios('../features/onezone/user_account_manage.feature')
 scenarios('../features/onezone/full_name.feature')
 scenarios('../features/onezone/default_privileges.feature')
+scenarios('../features/onezone/clusters_effective_privileges.feature')
 
 # THIS SCENARIO HAS TO BE EXECUTED IN THE END
 scenarios('../features/onezone/delete_account.feature')

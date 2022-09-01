@@ -54,16 +54,20 @@ stages:
     - Chrome POSIX tests multiuser
     - Chrome onepanel deployment basic tests
     - Chrome oneprovider ACL subdirectories
+    - _Codetag Tracker
+    - Chrome oneprovider atm workflow execution tests
     - Chrome onezone automations tests
     - Chrome qos basic
     - Chrome onezone harvesters basic tests
     - Chrome oneprovider ACL directories privileges create
     - Chrome oneprovider archives incremental and nested
     - Chrome oneprovider archives recall
-    - Chrome oneprovider ACL files metadata
+    # TODO: VFS-9477 enable metadata tests after reimplement
+    # - Chrome oneprovider ACL files metadata
     - Chrome onezone providers basic tests
     - Chrome POSIX tests
-    - Chrome oneprovider ACL directories privileges metadata
+    # TODO: VFS-9477 enable metadata tests after reimplement
+    # - Chrome oneprovider ACL directories privileges metadata
     - Chrome oneprovider ACL directories privileges remove
     - Chrome onezone spaces memberships privileges
     - Chrome oneprovider ACL remove file
@@ -80,7 +84,9 @@ stages:
     - Chrome storage sync charts
     - Chrome onezone spaces memberships privileges data
     - Chrome oneprovider data tab tests
+    - Chrome oneprovider data tab files
     - Chrome transfers directories
+    - Chrome transfers cancel
     - Chrome onezone basic tests
     - Chrome onezone data discovery helpers
     - Chrome storage sync tests
@@ -99,8 +105,10 @@ stages:
     - Chrome onepanel login tests
     - Chrome oneprovider datasets privileges
     - Chrome onezone tokens tests
-    - Chrome onezone harvesters index
-    - Chrome onezone harversters index metadata
+    # TODO: VFS-9477 enable metadata tests after reimplement
+    # - Chrome onezone harvesters index
+    # TODO: VFS-9477 enable metadata tests after reimplement
+    # - Chrome onezone harversters index metadata
     - Chrome onezone harvesters memberships privileges
     - Chrome onezone harvesters effective privileges
     - Chrome onepanel two hosts deployment tests
@@ -109,13 +117,15 @@ stages:
     - Chrome oneprovider datasets tests
     - Chrome onezone invite tokens
     - Chrome public shares tests
+    - Chrome shares handle service tests
     - Chrome onezone groups multiuser tests
     - Chrome oneprovider ACL directories privileges
     - Chrome multiprovider QoS storage
     - Chrome oneprovider ACL basic
     - Chrome multiprovider QoS tests
     - Chrome QoS storage
-    - Chrome metadata test
+    # TODO: VFS-9477 enable metadata tests after reimplement
+    # - Chrome metadata test
     - Chrome onepanel members tests
     - Chrome multiprovider multiuser tests
     - Chrome oneprovider ACL files
@@ -235,6 +245,20 @@ Chrome oneprovider ACL subdirectories:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
+_Codetag Tracker:
+  key: CDTR
+  other: *common-opts
+  tasks:
+  - checkout: *checkout
+  - script: *init-submodules
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      working-dir: onedata-acceptance
+      scripts:
+      - make codetag-tracker BRANCH=${bamboo.planRepository.branchName}
+      description: Codetag Tracker
+  requirements: *requirements
+  artifact-subscriptions: []
 Chrome onezone automations tests:
   key: COAT
   other: *common-opts
@@ -248,6 +272,26 @@ Chrome onezone automations tests:
       <<: *run-selenium-tests
       scripts:
       - make SUITE=test_onezone_automation BROWSER=Chrome TIMEOUT=600 test_gui_src
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-and-working-dir
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome oneprovider atm workflow execution tests:
+  key: COAWET
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script:
+      <<: *run-selenium-tests
+      scripts:
+      - make ENV_FILE=1oz_1op_openfaas SUITE=test_oneprovider_atm_workflows_execution BROWSER=Chrome TIMEOUT=600 test_gui_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -355,26 +399,27 @@ Chrome oneprovider archives recall:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome oneprovider ACL files metadata:
-  key: COAFM2
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script:
-      <<: *run-selenium-tests
-      scripts:
-      - make SUITE=test_oneprovider_acl_files_metadata BROWSER=Chrome TIMEOUT=600 test_gui_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
+# TODO: VFS-9477 enable metadata tests after reimplement
+# Chrome oneprovider ACL files metadata:
+#   key: COAFM2
+#   other: *common-opts
+#   tasks:
+#   - script: *clear-env
+#   - script: *restart-minikube
+#   - checkout: *checkout
+#   - script: *init-submodules
+#   - script: *download-artifacts
+#   - script:
+#       <<: *run-selenium-tests
+#       scripts:
+#       - make SUITE=test_oneprovider_acl_files_metadata BROWSER=Chrome TIMEOUT=600 test_gui_src
+#   final-tasks:
+#   - test-parser: *parse-test-results
+#   - script: *pack-logs
+#   - script: *clear-env-and-working-dir
+#   artifacts: *artifacts
+#   requirements: *requirements
+#   artifact-subscriptions: []
 Chrome onezone providers basic tests:
   key: COPBT
   other: *common-opts
@@ -415,26 +460,27 @@ Chrome POSIX tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome oneprovider ACL directories privileges metadata:
-  key: COADPM
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script:
-      <<: *run-selenium-tests
-      scripts:
-      - make SUITE=test_oneprovider_acl_dir_privileges_metadata BROWSER=Chrome TIMEOUT=600 test_gui_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
+# TODO: VFS-9477 enable metadata tests after reimplement
+# Chrome oneprovider ACL directories privileges metadata:
+#   key: COADPM
+#   other: *common-opts
+#   tasks:
+#   - script: *clear-env
+#   - script: *restart-minikube
+#   - checkout: *checkout
+#   - script: *init-submodules
+#   - script: *download-artifacts
+#   - script:
+#       <<: *run-selenium-tests
+#       scripts:
+#       - make SUITE=test_oneprovider_acl_dir_privileges_metadata BROWSER=Chrome TIMEOUT=600 test_gui_src
+#   final-tasks:
+#   - test-parser: *parse-test-results
+#   - script: *pack-logs
+#   - script: *clear-env-and-working-dir
+#   artifacts: *artifacts
+#   requirements: *requirements
+#   artifact-subscriptions: []
 Chrome oneprovider ACL directories privileges remove:
   key: COADPR
   other: *common-opts
@@ -755,6 +801,26 @@ Chrome oneprovider data tab tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
+Chrome oneprovider data tab files:
+  key: CODTF
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script:
+      <<: *run-selenium-tests
+      scripts:
+      - make SUITE=test_oneprovider_data_tab_files BROWSER=Chrome TIMEOUT=600 test_gui_src
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-and-working-dir
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
 Chrome transfers directories:
   key: CTD
   other: *common-opts
@@ -768,6 +834,26 @@ Chrome transfers directories:
       <<: *run-selenium-tests
       scripts:
       - make SUITE=test_oneprovider_transfers_directories ENV_FILE=1oz_2op_deployed BROWSER=Chrome TIMEOUT=600 test_gui_src
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-and-working-dir
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome transfers cancel:
+  key: CTC
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script:
+      <<: *run-selenium-tests
+      scripts:
+      - make SUITE=test_oneprovider_transfers_cancel ENV_FILE=1oz_2op_slow_deployed BROWSER=Chrome TIMEOUT=600 test_gui_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1135,46 +1221,48 @@ Chrome onezone tokens tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome onezone harvesters index:
-  key: COHI
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script:
-      <<: *run-selenium-tests
-      scripts:
-      - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_index BROWSER=Chrome TIMEOUT=600 test_gui_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
-Chrome onezone harversters index metadata:
-  key: COHIM
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script:
-      <<: *run-selenium-tests
-      scripts:
-      - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_index_metadata BROWSER=Chrome TIMEOUT=600 test_gui_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
+# TODO: VFS-9477 enable metadata tests after reimplement
+# Chrome onezone harvesters index:
+#   key: COHI
+#   other: *common-opts
+#   tasks:
+#   - script: *clear-env
+#   - script: *restart-minikube
+#   - checkout: *checkout
+#   - script: *init-submodules
+#   - script: *download-artifacts
+#   - script:
+#       <<: *run-selenium-tests
+#       scripts:
+#       - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_index BROWSER=Chrome TIMEOUT=600 test_gui_src
+#   final-tasks:
+#   - test-parser: *parse-test-results
+#   - script: *pack-logs
+#   - script: *clear-env-and-working-dir
+#   artifacts: *artifacts
+#   requirements: *requirements
+#   artifact-subscriptions: []
+# TODO: VFS-9477 enable metadata tests after reimplement
+# Chrome onezone harversters index metadata:
+#   key: COHIM
+#   other: *common-opts
+#   tasks:
+#   - script: *clear-env
+#   - script: *restart-minikube
+#   - checkout: *checkout
+#   - script: *init-submodules
+#   - script: *download-artifacts
+#   - script:
+#       <<: *run-selenium-tests
+#       scripts:
+#       - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_index_metadata BROWSER=Chrome TIMEOUT=600 test_gui_src
+#   final-tasks:
+#   - test-parser: *parse-test-results
+#   - script: *pack-logs
+#   - script: *clear-env-and-working-dir
+#   artifacts: *artifacts
+#   requirements: *requirements
+#   artifact-subscriptions: []
 Chrome onezone harvesters memberships privileges:
   key: COHMP
   other: *common-opts
@@ -1335,6 +1423,26 @@ Chrome public shares tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
+Chrome shares handle service tests:
+  key: CSHS
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script:
+      <<: *run-selenium-tests
+      scripts:
+      - make ENV_FILE=1oz_1op_handle_proxy_mock SUITE=test_shares_handle_service BROWSER=Chrome TIMEOUT=600 test_gui_src
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-and-working-dir
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
 Chrome onezone groups multiuser tests:
   key: COGMUT
   other: *common-opts
@@ -1455,26 +1563,27 @@ Chrome QoS storage:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome metadata test:
-  key: CMT
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script:
-      <<: *run-selenium-tests
-      scripts:
-      - make SUITE=test_metadata BROWSER=Chrome TIMEOUT=600 test_gui_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
+# TODO: VFS-9477 enable metadata tests after reimplement
+# Chrome metadata test:
+#   key: CMT
+#   other: *common-opts
+#   tasks:
+#   - script: *clear-env
+#   - script: *restart-minikube
+#   - checkout: *checkout
+#   - script: *init-submodules
+#   - script: *download-artifacts
+#   - script:
+#       <<: *run-selenium-tests
+#       scripts:
+#       - make SUITE=test_metadata BROWSER=Chrome TIMEOUT=600 test_gui_src
+#   final-tasks:
+#   - test-parser: *parse-test-results
+#   - script: *pack-logs
+#   - script: *clear-env-and-working-dir
+#   artifacts: *artifacts
+#   requirements: *requirements
+#   artifact-subscriptions: []
 Chrome onepanel members tests:
   key: COMT
   other: *common-opts

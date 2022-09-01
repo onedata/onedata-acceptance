@@ -3,7 +3,7 @@
 """
 
 __author__ = "Katarzyna Such"
-__copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
+__copyright__ = "Copyright (C) 2021 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
@@ -21,10 +21,13 @@ from tests.gui.meta_steps.oneprovider.data import *
 from tests.mixed.steps.data_basic import *
 from tests.mixed.steps.onepanel_basic import *
 from tests.mixed.steps.tokens_basic import *
+from tests.mixed.steps.group_basic import *
+from tests.mixed.steps.rest.onezone.group_management import *
 from tests.mixed.steps.rest.onezone.tokens import *
 from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.onezone.tokens import *
+from tests.utils.acceptance_utils import *
 
 from tests.mixed.utils.common import *
 

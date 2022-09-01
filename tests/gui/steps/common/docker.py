@@ -10,11 +10,63 @@ __license__ = ("This software is released under the MIT license cited in "
 import os.path
 import subprocess
 
+import yaml
+
 from tests.gui.utils.generic import parse_seq
 from tests.utils.bdd_utils import given, parsers, wt
 
 PROVIDER_CONTAINER_NAME = 'oneprovider-1'
 MOUNT_POINT = '/volumes/posix'
+
+
+@given(parsers.parse('there is following users configuration in storage\'s '
+                     'mount point:\n{config}'))
+def docker_configure_users(config, hosts):
+    """
+        unix_group_name:
+          GID: gid
+          users:
+            unix_user_name1: uid
+            unix_user_name2: uid
+            ...
+    """
+    _docker_configure_users(config, hosts)
+
+
+def _docker_configure_users(config, hosts):
+    groups_cfg = yaml.load(config)
+    for group, group_cfg in groups_cfg.items():
+        gid = group_cfg['GID']
+        try:
+            docker_create_group(group, gid, hosts)
+        except subprocess.CalledProcessError as e:
+            # if group exists
+            if e.returncode == 9:
+                pass
+            else:
+                raise e
+        users_cfg = group_cfg['users']
+        for user, uid in users_cfg.items():
+            try:
+                docker_create_user_with_group(user, uid, group, hosts)
+            except subprocess.CalledProcessError as e:
+                # if user exists
+                if e.returncode == 9:
+                    pass
+                else:
+                    raise e
+
+
+def docker_create_group(group_name, gid, hosts):
+    cmd = ['docker', 'exec', hosts[PROVIDER_CONTAINER_NAME]['container-id'],
+           'groupadd', group_name, '-g', str(gid)]
+    subprocess.check_call(cmd)
+
+
+def docker_create_user_with_group(user_name, uid, group_name, hosts):
+    cmd = ['docker', 'exec', hosts[PROVIDER_CONTAINER_NAME]['container-id'],
+           'useradd', '-u', str(uid), user_name, '-G', group_name]
+    subprocess.check_call(cmd)
 
 
 def _docker_cp(tmpdir, browser_id, src_path, hosts, dst_path=None):
@@ -47,6 +99,24 @@ def _docker_append_text_to_file(text, path, hosts):
     subprocess.check_call(cmd)
 
 
+@wt(parsers.parse('user {user} sets {ownership} as {file} owner on '
+                  'provider\'s storage mount point'))
+def docker_set_file_uid(hosts, file, ownership):
+    cmd = ['docker', 'exec', hosts[PROVIDER_CONTAINER_NAME]['container-id'],
+           'chown', ownership, os.path.join(MOUNT_POINT, file)]
+    subprocess.check_call(cmd)
+
+
+@given(parsers.parse('ownership "{ownership}" is granted for storage\'s mount '
+                     'point'))
+def docker_set_mount_point_ownership(ownership, hosts):
+    cmd = ['docker', 'exec', hosts[PROVIDER_CONTAINER_NAME]['container-id'],
+           'chown', ownership, MOUNT_POINT]
+    subprocess.check_call(cmd)
+
+
+@wt(parsers.parse('user {browser_id} copies {src_path} to '
+                  'provider\'s storage mount point'))
 @wt(parsers.parse('user of {browser_id} copies {src_path} '
                   'to provider\'s storage mount point'))
 def wt_cp_files_to_storage_mount_point(browser_id, src_path, tmpdir, hosts):

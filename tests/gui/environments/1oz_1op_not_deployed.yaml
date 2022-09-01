@@ -11,11 +11,11 @@ spaces: false
 # Onezone image to use. Note that if 'sources' option is enabled, it must
 # be based off onedata/worker image (it contains all the machinery to run the
 # application from sources).
-onezoneImage: "docker.onedata.org/onezone-dev:20.02.16"
+onezoneImage: "docker.onedata.org/onezone-dev:develop"
 
 # Oneprovider image to use. Note that if 'sources' option is enabled, it must
 # be based off onedata/worker image.
-oneproviderImage: "docker.onedata.org/oneprovider-dev:20.02.16"
+oneproviderImage: "docker.onedata.org/oneprovider-dev:develop"
 
 # When enabled, onezoneImage and oneproviderImage will be pulled before every
 # deployment. If disabled, they will only be pulled if not existent.

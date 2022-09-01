@@ -13,6 +13,7 @@ import re
 import json
 import stat as stat_lib
 import subprocess as sp
+import time
 
 import jsondiff
 
@@ -126,9 +127,12 @@ def mv_base(user, file1, file2, client_node, users, should_fail=False):
     dest = client.absolute_path(file2)
 
     def condition():
-        assert_expected_failure(client.mv, should_fail, src, dest)
+        client.mv(src, dest)
 
-    assert_(client.perform, condition)
+    if should_fail:
+        assert_expected_failure(condition)
+    else:
+        assert_(client.perform, condition)
 
 
 @wt(parsers.re('(?P<user>\w+) renames (?P<file1>.*) to (?P<file2>.*)'
@@ -144,9 +148,12 @@ def rename_base(user, file1, file2, client_node, users, should_fail=False):
     dest = client.absolute_path(file2)
 
     def condition():
-        assert_expected_failure(client.osrename, should_fail, src, dest)
+        client.osrename(src, dest)
 
-    assert_(client.perform, condition)
+    if should_fail:
+        assert_expected_failure(condition)
+    else:
+        assert_(client.perform, condition)
 
 
 @wt(parsers.re('(?P<user>\w+) fails to rename (?P<file1>.*) to '
@@ -168,6 +175,7 @@ def stat_absent(user, path, files, client_node, users):
             p = os.path.join(path, f)
             try:
                 client.stat(p)
+                raise Exception(f'Failed: There is item {f}')
             except FileNotFoundError as exc_info:
                 assert p in exc_info.filename
 
@@ -183,6 +191,7 @@ def ls_absent(user, files, path, client_node, users):
     files = list_parser(files)
 
     def condition():
+        time.sleep(1)
         listed_files = client.ls(path)
         for file in files:
             assert file not in listed_files, "File {} is in files list".format(file)
@@ -198,14 +207,14 @@ def shell_move_base(user, file1, file2, client_node, users, should_fail=False):
     cmd = 'mv {0} {1}'.format(src, dest)
 
     def condition():
-        def fun():
-            ret = client.run_cmd(cmd, error=True)
-            if ret != 0:
-                raise OSError("Command ended with exit code {}".format(ret))
+        ret = client.run_cmd(cmd, error=True)
+        if ret != 0:
+            raise OSError("Command ended with exit code {}".format(ret))
 
-        assert_expected_failure(fun, should_fail)
-
-    assert_(client.perform, condition)
+    if should_fail:
+        assert_expected_failure(condition)
+    else:
+        assert_(client.perform, condition)
 
 
 @wt(parsers.re('(?P<user>\w+) fails to move (?P<file1>.*) to (?P<file2>.*) '
@@ -222,9 +231,12 @@ def delete_file_base(user, files, client_node, users, should_fail=False):
         path = client.absolute_path(file)
 
         def condition():
-            assert_expected_failure(client.rm, should_fail, path)
+            client.rm(path)
 
-        assert_(client.perform, condition)
+        if should_fail:
+            assert_expected_failure(condition)
+        else:
+            assert_(client.perform, condition)
 
 
 @wt(parsers.re('(?P<user>\w+) deletes files (?P<files>.*) on '
@@ -290,7 +302,7 @@ def shell_check_type(user, file, file_type, client_node, users):
 
 @wt(parsers.re('mode of (?P<user>\w+)\'s (?P<file>.*) is (?P<mode>.*) on '
                '(?P<client_node>.*)'))
-@repeat_failed(interval=1, timeout=180, exceptions=AssertionError)
+@repeat_failed(interval=1, timeout=30, exceptions=AssertionError)
 def check_mode(user, file, mode, client_node, users):
     user = users[user]
     client = user.clients[client_node]

@@ -10,16 +10,13 @@ from selenium.common.exceptions import StaleElementReferenceException
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.steps.oneprovider.permissions import *
 from tests.gui.meta_steps.oneprovider.data import (
-    assert_file_browser_in_data_tab_in_op, choose_option_from_selection_menu,
-    _click_menu_for_elem_somewhere_in_file_browser,
+    assert_browser_in_tab_in_op, choose_option_from_selection_menu,
     open_modal_for_file_browser_item)
 from tests.gui.steps.oneprovider.file_browser import (
-    click_option_in_data_row_menu_in_file_browser,
     select_files_from_file_list_using_ctrl)
-from tests.gui.steps.modal import (
+from tests.gui.steps.modals.modal import (
     wt_wait_for_modal_to_appear, wt_click_on_confirmation_btn_in_modal,
     assert_error_modal_with_text_appeared)
-from tests.gui.steps.common.url import refresh_site
 from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
     click_on_option_of_space_on_left_sidebar_menu,
@@ -27,11 +24,11 @@ from tests.gui.steps.onezone.spaces import (
 
 
 def open_permission_modal(selenium, browser_id, path, space, tmp_memory, modals,
-                          oz_page, op_container, permission_type):
+                          oz_page, op_container, permission_type, popups):
     option = 'Permissions'
     modal_name = 'Edit Permissions'
 
-    open_modal_for_file_browser_item(selenium, browser_id, modals, modal_name,
+    open_modal_for_file_browser_item(selenium, browser_id, popups, modal_name,
                                      path, tmp_memory, option, space,
                                      oz_page, op_container)
 
@@ -40,9 +37,9 @@ def open_permission_modal(selenium, browser_id, path, space, tmp_memory, modals,
 
 def _assert_posix_permissions(selenium, browser_id, space, path, perm,
                               oz_page, op_container, tmp_memory,
-                              modals):
+                              modals, popups):
     open_permission_modal(selenium, browser_id, path, space, tmp_memory, modals,
-                          oz_page, op_container, 'posix')
+                          oz_page, op_container, 'posix', popups)
     check_permission(selenium, browser_id, perm, modals)
     wt_click_on_confirmation_btn_in_modal(selenium, browser_id, "Cancel",
                                           tmp_memory)
@@ -51,25 +48,26 @@ def _assert_posix_permissions(selenium, browser_id, space, path, perm,
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_posix_permissions_in_op_gui(selenium, browser_id, space, path, perm,
                                        oz_page, op_container, tmp_memory,
-                                       modals):
+                                       modals, popups):
     try:
         wt_click_on_confirmation_btn_in_modal(selenium, browser_id, "Cancel",
                                               tmp_memory)
         _assert_posix_permissions(selenium, browser_id, space, path, perm,
                                   oz_page, op_container, tmp_memory,
-                                  modals)
+                                  modals, popups)
     except (AttributeError, StaleElementReferenceException):
         _assert_posix_permissions(selenium, browser_id, space, path, perm,
                                   oz_page, op_container, tmp_memory,
-                                  modals)
+                                  modals, popups)
 
 
 @wt(parsers.re(r'user of (?P<browser_id>\w+) sets (?P<path>.*) POSIX '
                '(?P<perm>.*) privileges in "(?P<space>.*)"'))
 def set_posix_permissions_in_op_gui(selenium, browser_id, space, path, perm,
-                                    op_container, tmp_memory, modals, oz_page):
+                                    op_container, tmp_memory, modals, oz_page,
+                                    popups):
     open_permission_modal(selenium, browser_id, path, space, tmp_memory, modals,
-                          oz_page, op_container, 'posix')
+                          oz_page, op_container, 'posix', popups)
     set_posix_permission(selenium, browser_id, perm, modals)
     wt_click_on_confirmation_btn_in_modal(selenium, browser_id, 'Save',
                                           tmp_memory)
@@ -77,11 +75,11 @@ def set_posix_permissions_in_op_gui(selenium, browser_id, space, path, perm,
 
 @wt(parsers.re('user of (?P<browser_id>\w+) adds ACE with (?P<priv>.*) '
                  'privileges? set for (?P<type>.*?) (?P<name>.*)'))
-def set_acl_entry_in_op_gui(selenium, browser_id, priv, name, modals):
+def set_acl_entry_in_op_gui(selenium, browser_id, priv, name, modals, popups):
     permission_type = 'acl'
 
     select_permission_type(selenium, browser_id, permission_type, modals)
-    select_acl_subject(selenium, browser_id, name, modals)
+    select_acl_subject(selenium, browser_id, name, modals, popups)
     expand_subject_record_in_edit_permissions_modal(selenium, browser_id,
                                                     modals, name)
     select_acl_options(selenium, browser_id, priv, modals, name)
@@ -96,7 +94,7 @@ def _set_acl_privilages_for_selected(browser_id, selenium, popups, tmp_memory,
                                       tmp_memory)
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
 
-    set_acl_entry_in_op_gui(selenium, browser_id, priv, name, modals)
+    set_acl_entry_in_op_gui(selenium, browser_id, priv, name, modals, popups)
     wt_click_on_confirmation_btn_in_modal(selenium, browser_id, 'Save',
                                           tmp_memory)
 
@@ -107,8 +105,8 @@ def grant_acl_privileges_to_selected_in_filebrowser(selenium, browser_id, priv,
                                                     name, op_container,
                                                     tmp_memory, popups, oz_page,
                                                     modals):
-    assert_file_browser_in_data_tab_in_op(selenium, browser_id, op_container,
-                                          tmp_memory)
+    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
+                                tmp_memory)
     _set_acl_privilages_for_selected(browser_id, selenium, popups, tmp_memory,
                                      priv, name, modals)
 
@@ -121,7 +119,7 @@ def grant_acl_privileges_in_op_gui(selenium, browser_id, item_list, priv, name,
                                    oz_page, modals):
     option_in_menu = 'Data'
     option = 'spaces'
-    option_in_submenu = 'Data'
+    option_in_submenu = 'Files'
     path = item_list.replace('"', '')
 
     click_on_option_in_the_sidebar(selenium, browser_id, option_in_menu,
@@ -130,8 +128,8 @@ def grant_acl_privileges_in_op_gui(selenium, browser_id, item_list, priv, name,
                                                 space, oz_page)
     click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id, space,
                                                   option_in_submenu, oz_page)
-    assert_file_browser_in_data_tab_in_op(selenium, browser_id, op_container,
-                                          tmp_memory)
+    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
+                                tmp_memory)
     select_files_from_file_list_using_ctrl(browser_id, path, tmp_memory)
     _set_acl_privilages_for_selected(browser_id, selenium, popups, tmp_memory,
                                      priv, name, modals)
@@ -140,9 +138,9 @@ def grant_acl_privileges_in_op_gui(selenium, browser_id, item_list, priv, name,
 @wt(parsers.re(r'user of (?P<browser_id>\w+) (?P<res>.*) to read "(?P<path>.*)"'
                ' ACL in "(?P<space>.*)"'))
 def read_items_acl(selenium, browser_id, path, tmp_memory, res, space, modals,
-                   oz_page, op_container):
+                   oz_page, op_container, popups):
     open_permission_modal(selenium, browser_id, path, space, tmp_memory, modals,
-                          oz_page, op_container, 'acl')
+                          oz_page, op_container, 'acl', popups)
 
     if res == "fails":
         check_permission_denied_alert_in_edit_permissions_modal(selenium,
@@ -160,9 +158,9 @@ def read_items_acl(selenium, browser_id, path, tmp_memory, res, space, modals,
                '(?P<type>.*?) (?P<name>.*) in (?P<num>.*) ACL record'))
 def assert_ace_in_op_gui(selenium, browser_id, priv, type, name, num, space,
                          path, tmp_memory, modals, numerals, oz_page,
-                         op_container):
+                         op_container, popups):
     open_permission_modal(selenium, browser_id, path, space, tmp_memory, modals,
-                          oz_page, op_container, 'acl')
+                          oz_page, op_container, 'acl', popups)
     assert_acl_subject(selenium, browser_id, modals, num, numerals, type, name)
     assert_set_acl_privileges(selenium, browser_id, modals, num, numerals, priv)
     wt_click_on_confirmation_btn_in_modal(selenium, browser_id, "Cancel",
@@ -172,13 +170,13 @@ def assert_ace_in_op_gui(selenium, browser_id, priv, type, name, num, space,
 @wt(parsers.re(r'user of (?P<browser_id>\w+) (?P<res>.*) to change '
                '"(?P<path>.*)" ACL for (?P<name>.*) in "(?P<space>.*)"'))
 def change_acl_privileges(selenium, browser_id, path, tmp_memory, res, space,
-                          modals, op_container, oz_page, name):
+                          modals, op_container, oz_page, name, popups):
     privileges_option_list = (
         '[attributes]' if res == 'succeeds' else '[acl:change acl]')
     text = 'Modifying permissions failed'
 
     open_permission_modal(selenium, browser_id, path, space, tmp_memory, modals,
-                          oz_page, op_container, 'acl')
+                          oz_page, op_container, 'acl', popups)
     expand_subject_record_in_edit_permissions_modal(selenium, browser_id,
                                                     modals, name)
     select_acl_options(selenium, browser_id, privileges_option_list, modals,
@@ -191,6 +189,6 @@ def change_acl_privileges(selenium, browser_id, path, tmp_memory, res, space,
 
     else:
         open_permission_modal(selenium, browser_id, path, space, tmp_memory,
-                              modals, oz_page, op_container, 'acl')
+                              modals, oz_page, op_container, 'acl', popups)
         check_permissions_list_in_edit_permissions_modal(selenium, browser_id,
                                                          modals)

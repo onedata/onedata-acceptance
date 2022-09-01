@@ -1,4 +1,4 @@
-Feature: Operations on newly created Local Ceph
+Feature: Operations on newly created Embedded Ceph
 
 
   Background:
@@ -12,7 +12,7 @@ Feature: Operations on newly created Local Ceph
                 content: 22222
 
 
-  Scenario: User supports space with newly created Local Ceph with 2 pools
+  Scenario: User supports space with newly created Embedded Ceph with 2 pools
     Given users opened [browser_oz_panel, browser_op_panel] browsers' windows
     And users of [browser_oz_panel, browser_op_panel] opened [onezone zone panel, oneprovider-1 provider panel] page
     And users of [browser_oz_panel, browser_op_panel] created admin accounts "admin:password"
@@ -81,11 +81,11 @@ Feature: Operations on newly created Local Ceph
     And user of browser_op_panel clicks on Next step button in web cert step of deployment process in Onepanel
 
     And user of browser_op_panel adds storage in step 5 of deployment process in Onepanel with following config:
-          storage type: Local Ceph
+          storage type: Embedded Ceph
           name: test_ceph
 
     And user of browser_op_panel expands "test_ceph" record on storages list in step 5 of deployment process in Onepanel
-    And user of browser_op_panel sees that "test_ceph" Storage type is Local Ceph in step 5 of deployment process in Onepanel
+    And user of browser_op_panel sees that "test_ceph" Storage type is Embedded Ceph in step 5 of deployment process in Onepanel
 
     And user of browser_op_panel clicks on Finish button in step 5 of deployment process in Onepanel
     And user of browser_op_panel clicks on link to go to Emergency Onepanel interface in last step of deployment process in Onepanel
@@ -96,7 +96,7 @@ Feature: Operations on newly created Local Ceph
     And user of browser_op_panel clicks on Pools tab on Ceph page
 
     And user of browser_op_panel clicks on "Create pool" button on Ceph page
-    And user of browser_op_panel types "test_ceph2" to Storage name field in Local Ceph form in storages page in Onepanel
+    And user of browser_op_panel types "test_ceph2" to Storage name field in Embedded Ceph form in storages page in Onepanel
     And user of browser_op_panel clicks on Add button in add storage form in storages page in Onepanel
 
     And user of browser_op_panel clicks on "test_ceph" on pools list on Ceph page
@@ -127,13 +127,13 @@ Feature: Operations on newly created Local Ceph
     And user of browser_oz_panel opens file browser for "space1" space
     And user of browser_oz_panel uses upload button from file browser menu bar to upload local file "file1.txt" to remote current dir
     And user of browser_oz_panel uses upload button from file browser menu bar to upload local file "file50mb.txt" to remote current dir
-    And user of browser_oz_panel double clicks on item named "file1.txt" in file browser
+    And user of browser_oz_panel clicks and presses enter on item named "file1.txt" in file browser
     And user of browser_oz_panel sees that content of downloaded file "file1.txt" is equal to: "11111"
 
     And user of browser_oz_panel opens file browser for "space2" space
     And user of browser_oz_panel uses upload button from file browser menu bar to upload local file "file2.txt" to remote current dir
     And user of browser_oz_panel uses upload button from file browser menu bar to upload local file "file50mb.txt" to remote current dir
-    And user of browser_oz_panel double clicks on item named "file2.txt" in file browser
+    And user of browser_oz_panel clicks and presses enter on item named "file2.txt" in file browser
     And user of browser_oz_panel sees that content of downloaded file "file2.txt" is equal to: "22222"
 
     # check storage occupation

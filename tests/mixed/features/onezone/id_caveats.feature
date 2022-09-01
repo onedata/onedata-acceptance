@@ -36,7 +36,7 @@ Feature: Access tokens with caveats set for object ID tests
     | oneclient1  |
 
 
-  Scenario Outline: Using <client1>, user can rename file after getting token with caveat set for object ID, created by web GUI
+   Scenario Outline: Using <client1>, user can rename file after getting token with caveat set for object ID, created by web GUI
     When using <client1>, user2 renames item named "dir1/dir2/file2" to "dir1/dir2/file3" using received access token in "space1" in oneprovider-1
     Then using web GUI, user1 succeeds to see item named "dir1/dir2/file3" in "space1" in oneprovider-1
     And using web GUI, user1 fails to see item named "dir1/dir2/file2" in "space1" in oneprovider-1

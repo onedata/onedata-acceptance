@@ -141,13 +141,11 @@ Feature: Management of invite tokens in Onezone GUI
 
     Then user of browser1 succeeds to consume token for "harvester1" harvester
     And user of browser2 refreshes site
-    And user of browser2 is idle for 2 seconds
     And user of browser2 sees that token usage count is "1/2"
     And user of browser1 sees that "space2" has appeared on the spaces list of "harvester1" harvester
 
     Then user of browser1 succeeds to consume token for "harvester2" harvester
     And user of browser2 refreshes site
-    And user of browser2 is idle for 2 seconds
     And user of browser2 sees that token usage count is "2/2"
     And user of browser1 sees that "space2" has appeared on the spaces list of "harvester1" harvester
 
@@ -223,7 +221,6 @@ Feature: Management of invite tokens in Onezone GUI
 
     And user of browser2 succeeds to consume token for "group1" group
 
-    And user of browser1 is idle for 3 seconds
     And user of browser1 sees exactly 2 item(s) on tokens list in tokens sidebar
     And user of browser1 clicks on "Clean up obsolete tokens" button in tokens sidebar
     And user of browser1 sees that "Clean up obsolete tokens" modal has appeared
@@ -251,7 +248,7 @@ Feature: Management of invite tokens in Onezone GUI
           revoked: True
     And user of browser1 clicks on copy button in token view
     And user of browser1 sends copied token to user of browser2
-    Then user of browser2 fails to consume token for "group1" group
+    Then user of browser2 sees alert with text: "Provided token has been revoked." on tokens page while trying to consume token
 
     And user of browser1 removes all tokens
 
@@ -267,7 +264,7 @@ Feature: Management of invite tokens in Onezone GUI
     And user of browser1 clicks on copy button in token view
     And user of browser1 sends copied token to user of browser2
     And user of browser1 removes token named "token2"
-    Then user of browser2 fails to consume token for "group1" group
+    Then user of browser2 sees alert with text: "This resource could not be loaded" on tokens page while trying to consume token
 
     And user of browser1 removes all tokens
 
@@ -364,6 +361,7 @@ Feature: Management of invite tokens in Onezone GUI
                 granted: False
 
     And user of browser1 removes all tokens
+
 
 
   Scenario: User sees right Invite tokens after filtering them

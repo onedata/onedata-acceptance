@@ -29,7 +29,7 @@ Feature: Basic management of providers in Onezone GUI
     And user of browser sees that provider popup for provider "oneprovider-1" has appeared on world map
 
     Then user of browser clicks on Visit provider button on provider popover
-    And user of browser sees file browser in data tab in Oneprovider page
+    And user of browser sees file browser in files tab in Oneprovider page
     And user of browser sees current provider named "oneprovider-1" on file browser page
 
 
@@ -46,7 +46,7 @@ Feature: Basic management of providers in Onezone GUI
     And user of browser sees "space1" is on the spaces list on provider popover
     And user of browser clicks on Data in the main menu
     And user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks Providers of "space1" in the sidebar
+    And user of browser clicks "Providers" of "space1" space in the sidebar
     Then user of browser sees "oneprovider-1" is on the providers list
 
 
@@ -54,8 +54,8 @@ Feature: Basic management of providers in Onezone GUI
 #  Scenario: User sees that if space is unsupported by provider, the provider is not displayed in that space providers list
 #    When user of browser clicks on Data in the main menu
 #    And user of browser clicks "space1" on the spaces list in the sidebar
-#    And user of browser clicks Providers of "space1" in the sidebar
+#    And user of browser clicks "Providers" of "space1" space in the sidebar
 #    And user of browser revokes space support of "oneprovider-1" provider in oneproviders list in data sidebar
 #    Then user of browser clicks "space1" on the spaces list in the sidebar
-#    And user of browser clicks Providers of "space1" in the sidebar
+#    And user of browser clicks "Providers" of "space1" space in the sidebar
 #    And user of browser sees that length of providers list of "space1" equals "0"

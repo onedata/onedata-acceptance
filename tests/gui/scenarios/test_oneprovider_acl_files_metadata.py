@@ -7,6 +7,7 @@ __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+
 from pytest import fixture
 from pytest_bdd import scenario, scenarios
 
@@ -43,4 +44,7 @@ def screens():
     return [0, 1]
 
 
-scenarios('../features/oneprovider/data/file_acl_privileges_metadata.feature')
+# TODO: VFS-9477 enable metadata tests after reimplement
+scenarios('../features/pass.feature')
+# scenarios('../features/oneprovider/data/file_acl_privileges_metadata.feature')
+

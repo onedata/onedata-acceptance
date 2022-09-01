@@ -1,5 +1,6 @@
 Feature: Basic management of harvester memberships privileges with groups in Onezone GUI
 
+
   Background:
     Given initial users configuration in "onezone" Onezone service:
             - user1

@@ -28,7 +28,6 @@ from tests.gui.steps.onepanel.deployment import *
 from tests.gui.steps.onezone.logged_in_common import *
 from tests.gui.steps.onezone.user_full_name import *
 from tests.gui.steps.onezone.tokens import *
-from tests.gui.steps.onezone.data_space_management import *
 from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.manage_account import *
 
@@ -40,7 +39,7 @@ from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
 
-from tests.gui.steps.modal import *
+from tests.gui.steps.modals.modal import *
 from tests.gui.steps.oneprovider_common import *
 from tests.gui.meta_steps.onezone import *
 
@@ -56,7 +55,7 @@ from tests.oneclient.steps.multi_auth_steps import *
 
 @pytest.fixture(scope='module')
 def screens():
-    return [0]
+    return [0, 1]
 
 
 scenarios('../features/oneprovider/directories_multi.feature')

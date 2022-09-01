@@ -29,13 +29,15 @@ class Client:
         self.opened_files = {}
         self.file_stats = {}
 
-    def mount(self, mode, gdb=False):
+    def mount(self, mode, gdb=False, additional_opts=None):
         if 'proxy' in mode:
             mode_flag = '--force-proxy-io'
         else:
             mode_flag = '--force-direct-io'
+        if additional_opts is None:
+            additional_opts = ['--message-trace-log']
 
-        print('\nMounting client with {} flag in {}'.format(mode_flag, self._mount_path))
+        print(f'\nMounting client with {mode_flag} flag in {self._mount_path}\n')
 
         logdir = os.path.join(ONECLIENT_LOGS_DIR, self._id)
         self.mkdir(self._mount_path, recursive=True, exist_ok=True)
@@ -46,14 +48,15 @@ class Client:
                    ' \'run --log-dir /tmp/oc_logs {mode} --insecure {mount_path}'
                    ' \' -ex \'bt\'').format(mount_path=self._mount_path, mode=mode_flag)
         else:
-            cmd = " ".join(['oneclient', '--log-dir', logdir, mode_flag, '-v2',
-                            '--insecure', self._mount_path])
+            cmd = " ".join(['oneclient', '--log-dir', logdir, mode_flag, '-v2', '--insecure']
+                           + additional_opts + [self._mount_path])
 
         ret = self.run_cmd(cmd, verbose=True)
 
         return ret
 
     def unmount(self):
+        print(f"\nUnmounting client from {self._mount_path}\n")
         for opened_file in self.opened_files.keys():
             self.close_file(opened_file)
         self.opened_files.clear()

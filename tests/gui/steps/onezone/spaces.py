@@ -8,14 +8,32 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
-from tests.gui.steps.common.miscellaneous import press_enter_on_active_element
-from tests.gui.steps.modal import wt_wait_for_modal_to_appear
-from tests.gui.utils.generic import transform, parse_seq
+from tests.gui.steps.common.miscellaneous import (press_enter_on_active_element,
+                                                  switch_to_iframe)
+from tests.gui.steps.modals.modal import wt_wait_for_modal_to_appear
+from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 
-SPACE_TABS = ["Overview", "Data", "Shares", "Transfers", "Providers",
-              "Members", "Harvesters"]
+SPACE_TABS = ["overview", "files", "shares_open_data", "transfers",
+              "datasets_archives", "providers", "members",
+              "harvesters_discovery", "automation_workflows"]
+
+
+def _choose_space_from_menu_list(oz_page, driver, name):
+    option = 'data'
+    try:
+        oz_page(driver)[option].spaces_header_list[name]()
+    except (RuntimeError, IndexError):
+        oz_page(driver)[option].choose_space(name)
+
+
+def _parse_tabs_list(tabs):
+    tabs = tabs.split('"')[1:-1]
+    tabs = [
+        transform(e).replace(',', '') for e in tabs if e != ', '
+    ]
+    return tabs
 
 
 @wt(parsers.parse('user of {browser_id} clicks on Create space button '
@@ -92,9 +110,9 @@ def assert_new_created_space_has_appeared_on_spaces(selenium, browser_id,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
-               '(?P<option>Data|Providers|Groups|Tokens|Discovery|Clusters) '
-               'in the main menu'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+               '(?P<option>Data|Providers|Groups|Tokens|Discovery|Automation'
+               '|Clusters) in the main menu'))
+@repeat_failed(timeout=WAIT_BACKEND)
 def click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page):
     driver = selenium[browser_id]
     driver.switch_to.default_content()
@@ -111,8 +129,7 @@ def click_element_on_lists_on_left_sidebar_menu(selenium, browser_id, option,
         option = 'discovery'
 
     if option == 'spaces':
-        option = 'data'
-        oz_page(driver)[option].spaces_header_list[name]()
+        _choose_space_from_menu_list(oz_page, driver, name)
     else:
         oz_page(driver)[option].elements_list[name].click()
 
@@ -153,7 +170,7 @@ def click_on_option_in_space_menu(selenium, browser_id, space_name, button,
                                   oz_page, popups):
     driver = selenium[browser_id]
     oz_page(driver)['data'].spaces_header_list[space_name].click_menu()
-    popups(driver).popover_menu.menu[button]()
+    popups(driver).menu_popup_with_text.menu[button]()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on '
@@ -163,7 +180,7 @@ def click_on_option_in_menu(selenium, browser_id, button, oz_page, popups):
     driver = selenium[browser_id]
     page = oz_page(driver)['data']
     page.menu_button()
-    popups(driver).popover_menu.menu[button]()
+    popups(driver).menu_popup_with_text.menu[button]()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
@@ -171,21 +188,21 @@ def click_on_option_in_menu(selenium, browser_id, button, oz_page, popups):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_confirm_or_cancel_button_on_leave_space_page(selenium, browser_id,
                                                        button_name, modals):
-    getattr(modals(selenium[browser_id]).leave_space, button_name.lower())()
+    getattr(modals(selenium[browser_id]).leave_modal, button_name.lower())()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
                'understand notice checkbox in "Remove space" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_remove_space_understand_notice(selenium, browser_id, modals):
-    modals(selenium[browser_id]).remove_space.understand_notice()
+    modals(selenium[browser_id]).remove_modal.understand_notice()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on '
                '"Remove" button in "Remove space" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_remove_space_button(selenium, browser_id, modals):
-    modals(selenium[browser_id]).remove_space.remove()
+    modals(selenium[browser_id]).remove_modal.remove()
 
 
 @wt(parsers.parse('user of {browser_id} sees that "{space_name}" '
@@ -240,6 +257,17 @@ def click_provider_on_the_map_on_data_page(selenium, browser_id, provider,
     current_page.map.click_provider(provider_name, driver)
 
 
+@wt(parsers.re('user of (?P<browser_id>.*) hovers over '
+               'provider icon on the map on (?P<page>overview|providers) data '
+               'page and sees that provider name is "(?P<provider>.*)"'))
+def hover_provider_on_the_map_on_data_page(selenium, browser_id, provider,
+                                           oz_page, page, hosts):
+    driver = selenium[browser_id]
+    current_page = getattr(oz_page(driver)['data'], _get_subpage_name(page))
+    provider_name = hosts[provider]['name']
+    current_page.map.hover_and_check_provider(provider_name, driver)
+
+
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks the map on '
                '(?P<space_name>.*) space (?P<page>overview|providers) data '
                'page'))
@@ -248,22 +276,22 @@ def click_the_map_on_data_page(selenium, browser_id, oz_page, page, space_name):
     getattr(oz_page(driver)['data'], _get_subpage_name(page)).map()
 
 
-@wt(parsers.re('user of (?P<browser_id>.*?) clicks '
-               '(?P<option>Overview|Data|Shares|Transfers|Providers|Members|'
-               'Harvesters) of "(?P<space_name>.*?)" in the sidebar'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@wt(parsers.re('user of (?P<browser_id>.*?) clicks "(?P<option>.*?)" '
+               'of "(?P<space_name>.*?)" space in the sidebar'))
+@repeat_failed(timeout=WAIT_BACKEND)
 def click_on_option_of_space_on_left_sidebar_menu(selenium, browser_id,
                                                   space_name, option, oz_page):
+    submenu_option = transform(option).replace(',', '')
     driver = selenium[browser_id]
     driver.switch_to.default_content()
-    oz_page(driver)['data'].spaces_header_list[space_name].click()
+    _choose_space_from_menu_list(oz_page, driver, space_name)
     getattr(oz_page(driver)['data'].elements_list[space_name],
-            transform(option)).click()
+            submenu_option).click()
 
 
 def _get_number_of_disabled_elements_on_left_sidebar_menu(space):
-    page_names = ['overview', 'data', 'shares', 'transfers', 'providers',
-                  'members', 'harvesters']
+    page_names = ['overview', 'files', 'shares_open_data', 'transfers',
+                  'providers', 'members', 'harvesters_discovery']
     return len([x for x in page_names if space.is_element_disabled(x)])
 
 
@@ -272,10 +300,10 @@ def _get_number_of_disabled_elements_on_left_sidebar_menu(space):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_option_of_space_on_left_sidebar_menu_disabled(selenium, browser_id,
                                                          space_name,
-                                                         element_list, oz_page):
+                                                         element_list,
+                                                         oz_page):
     driver = selenium[browser_id]
-    element_list = parse_seq(element_list)
-    element_list = [transform(e) for e in element_list]
+    element_list = _parse_tabs_list(element_list)
     space = oz_page(driver)['data'].elements_list[space_name]
     error_msg = f'Number of disabled elements is incorrect'
     assert _get_number_of_disabled_elements_on_left_sidebar_menu(space) == len(
@@ -356,6 +384,16 @@ def assert_providers_list_contains_provider(selenium, browser_id, provider,
         provider)
 
 
+@wt(parsers.parse('user of {browser_id} checks {toggle} toggle on '
+                  'space configuration page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_toggle_on_providers_subpage(browser_id, toggle, selenium,
+                                      op_container):
+    driver = selenium[browser_id]
+    getattr(op_container(driver).provider_configuration,
+            transform(toggle)).check()
+
+
 @wt(parsers.parse('user of {browser_id} sees that length of providers list '
                   'equals number of supporting providers of "{space_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -390,17 +428,15 @@ def click_get_support_button_on_providers_page(selenium, browser_id, oz_page):
     oz_page(driver)['data'].providers_page.add_support()
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) sees (?P<alert_text>.*) alert '
-               'on providers page'))
+@wt(parsers.parse('user of {browser_id} sees {text} alert on providers page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def see_insufficient_permissions_alert_on_providers_page(selenium, browser_id,
-                                                         oz_page, alert_text):
+def see_insufficient_privileges_label_on_providers_page(selenium, browser_id,
+                                                        oz_page, text):
     driver = selenium[browser_id]
-
-    forbidden_alert = (oz_page(driver)['data'].providers_page.get_support_page
-                       .insufficient_privileges)
-    assert alert_text in forbidden_alert, ('alert with text "{}" not found'
-                                           .format(alert_text))
+    item_text = (oz_page(driver)['data'].providers_page.get_support_page
+                 .insufficient_privileges)
+    assert item_text == text, f'found {item_text} alert instead of expected' \
+                              f' {text}'
 
 
 @wt(parsers.parse('user of {browser_id} clicks Deploy your own provider tab '
@@ -436,9 +472,9 @@ def remove_harvester_from_harvesters_list(selenium, browser_id, oz_page,
     driver = selenium[browser_id]
     harvesters_list = oz_page(driver)['data'].harvesters_page.harvesters_list
     harvesters_list[harvester_name].click_harvester_menu_button(driver)
-    popups(driver).popover_menu.menu[popup_name]()
+    popups(driver).menu_popup_with_text.menu[popup_name]()
     wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    modals(driver).remove_harvester.remove()
+    modals(driver).remove_modal.remove()
 
 
 @wt(parsers.parse('user of {browser_id} clicks '
@@ -534,8 +570,7 @@ def confirm_rename_the_space(selenium, browser_id, option, oz_page):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_tab_name_label(selenium, browser_id, tab_name, oz_page):
     driver = selenium[browser_id]
-    driver.switch_to.window(window_name=driver.window_handles[1])
-    label = oz_page(selenium[browser_id])['data'].tab_name
+    label = oz_page(driver)['data'].tab_name
     assert label.lower() == tab_name, f'User not on {tab_name} page'
 
 
@@ -567,11 +602,10 @@ def assert_tabs_of_space_enabled(selenium, browser_id, tabs_list, space_name,
     page = oz_page(selenium[browser_id])['data']
     page.spaces_header_list[space_name]()
     space = page.elements_list[space_name]
-
-    tabs = SPACE_TABS if tabs_list == "all" else parse_seq(tabs_list)
+    tabs = SPACE_TABS if tabs_list == "all" else _parse_tabs_list(tabs_list)
 
     for tab in tabs:
-        assert space.is_element_enabled(transform(tab)), (
+        assert space.is_element_enabled(tab), (
             f'Tab {tab} is not enabled for {space}'
         )
 
@@ -585,8 +619,8 @@ def assert_tabs_of_space_disabled(selenium, browser_id, tabs_list, space_name,
     page.spaces_header_list[space_name]()
     space = page.elements_list[space_name]
 
-    for tab in parse_seq(tabs_list):
-        assert space.is_element_disabled(transform(tab)), (
+    for tab in _parse_tabs_list(tabs_list):
+        assert space.is_element_disabled(tab), (
             f'Tab {tab} is not disabled for {space}'
         )
 
@@ -596,3 +630,27 @@ def assert_tabs_of_space_disabled(selenium, browser_id, tabs_list, space_name,
 def assert_error_detail_text_spaces(selenium, browser_id, oz_page, text):
     page = oz_page(selenium[browser_id])['data']
     assert text in page.error_header, f'page with text "{text}" not found'
+
+
+@wt(parsers.parse('user of {browser_id} sees that provider "{provider1}" is '
+                  'placed east of "{provider2}" on world map'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def check_two_providers_places(selenium, browser_id, oz_page, hosts,
+                               provider1, provider2):
+    driver = selenium[browser_id]
+    page = 'providers'
+    current_page = getattr(oz_page(driver)['data'], _get_subpage_name(page))
+
+    provider1_name = hosts[provider1]['name']
+    provider2_name = hosts[provider2]['name']
+
+    provider1_position = current_page.map.get_provider_horizontal_position(
+        provider1_name, driver)
+    provider2_position = current_page.map.get_provider_horizontal_position(
+        provider2_name, driver)
+
+    # the higher value of position the further on the east provider appears
+    assert provider1_position > provider2_position, (f'Provider "{provider1}" '
+                                                     f'appears west of provider'
+                                                     f' "{provider2}"')
+

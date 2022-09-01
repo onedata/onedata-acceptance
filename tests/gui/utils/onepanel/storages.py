@@ -11,11 +11,13 @@ import re
 from selenium.webdriver import ActionChains
 
 from tests.gui.utils.common.common import Toggle, DropdownSelector
+from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.core.base import PageObject, ExpandableMixin
-from tests.gui.utils.core.web_elements import (WebItemsSequence, Label,
-                                               NamedButton, Input,
-                                               WebItem, WebElement, Button)
+from tests.gui.utils.core.web_elements import (
+    WebItemsSequence, Label, NamedButton, Input, WebItem, WebElement, Button,
+    WebElementsSequence)
 from tests.gui.utils.onezone.common import InputBox
+from tests.utils.utils import repeat_failed
 
 
 class POSIX(PageObject):
@@ -26,7 +28,7 @@ class POSIX(PageObject):
     read_only = Toggle('.toggle-field-posix-readonly')
 
 
-class LocalCeph(PageObject):
+class EmbeddedCeph(PageObject):
     storage_name = Input('input.field-generic-name')
     imported_storage = Toggle('.toggle-field-generic-importedStorage')
     number_of_copies = Input('input.field-localceph-copiesNumber')
@@ -38,7 +40,7 @@ class StorageAddForm(PageObject):
     skip_storage_detection = Toggle('.toggle-field-generic-skipStorageDetection')
     add = Button('.submit-group button')
     posix = WebItem('form', cls=POSIX)
-    local_ceph = WebItem('form', cls=LocalCeph)
+    embedded_ceph = WebItem('form', cls=EmbeddedCeph)
 
 
 class POSIXEditorKeyValue(PageObject):
@@ -53,6 +55,7 @@ class QOSParams(PageObject):
                                   cls=POSIXEditorKeyValue)
     last_key = WebItem('.text-input.group-with-tip.last-record .text-left',
                        cls=InputBox)
+    enabled_remove_icons = WebElementsSequence('.remove-param')
 
     def set_last_key(self, key):
         self.last_key.value = key
@@ -66,11 +69,10 @@ class QOSParams(PageObject):
         return len(self.key_values) - 1
 
     def delete_first_additional_param(self):
-        for key_val in self.key_values:
-            if (key_val.key_name != 'storageId' and
-                    key_val.key_name != 'providerId'):
-                key_val.delete.click()
-                return
+        if self.enabled_remove_icons:
+            css_sel = '.remove-param'
+            scroll_to_css_selector(self.driver, css_sel)
+            self.enabled_remove_icons[0].click()
 
 
 class POSIXEditor(PageObject):
@@ -93,7 +95,6 @@ class StorageRecord(PageObject, ExpandableMixin):
     name = id = Label('.item-icon-container + .one-label')
     edit_form = WebItem('.storage-info .cluster-storage-add-form'
                         ':not(.form-static)', cls=StorageEditForm)
-    # TODO: add classes in GUI code or match by label text in tests
     storage_type = Label('.item-table .field-type_static-type')
     mount_point = Label('.item-table .field-posix_static-mountPoint')
     _toggle = WebElement('.one-collapsible-list-item-header')
@@ -118,8 +119,11 @@ class StorageContentPage(PageObject):
     add_storage = NamedButton('button', text='Add storage')
     cancel = NamedButton('button', text='Cancel')
 
+    @repeat_failed(timeout=15)
     def click_modify_button_of_storage(self, driver, storage_name):
         for index, record in enumerate(self.storages):
             if record.name == storage_name:
                 driver.execute_script(f'$(".btn-default")[{index}].click();')
+                err_msg = f'{record.name} is not expanded after being clicked'
+                assert record.is_expanded(), err_msg
 

@@ -52,6 +52,16 @@ class OnePage(object):
         return self.service
 
 
+class PublicOnePage(object):
+    loading_error = Label('.application-error-message')
+
+    def __init__(self, driver):
+        self.driver = self.web_elem = driver
+
+    def __str__(self):
+        return 'public onedata page'
+
+
 class _Toggle(PageObject):
     _lock = WebElement('.one-way-toggle-readonly-icon')
 
@@ -111,9 +121,10 @@ class LoginPage(object):
     username = Input('input[placeholder="Username"]')
     password = Input('input[placeholder="Password"]')
     passphrase = Input('input[placeholder="Passphrase"]')
-    sign_in = NamedButton('button .spin-button-label', text='Sign in')
+    sign_in = NamedButton('button', text='Sign in')
     err_msg = Label('.login-error-message')
     open_in_onezone = Button('.btn-login-onezone')
+    login_notification_message = WebElement('.login-notification')
 
     def __init__(self, driver):
         self.web_elem = self.driver = driver

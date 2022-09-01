@@ -44,6 +44,15 @@ WAIT_FRONTEND = 4
 # when waiting for backend changes
 WAIT_BACKEND = 15
 
+# use this const when using: WebDriverWait(selenium, WAIT_NORMAL_UPLOAD).until(lambda s: ...)
+# when waiting for normal uploads to finish
+WAIT_NORMAL_UPLOAD = 60
+
+# use this const when using: WebDriverWait(selenium, WAIT_EXTENDED_UPLOAD).until(lambda s: ...)
+# when waiting for extended uploads to finish
+WAIT_EXTENDED_UPLOAD = 1500
+
+
 
 def pytest_configure(config):
     """Set default path for Selenium HTML report if explicit '--html=' not specified"""
@@ -58,10 +67,11 @@ def pytest_configure(config):
 def pytest_addoption(parser):
     group = parser.getgroup('onedata', description='option specific '
                                                    'to onedata tests')
-    group.addoption('--rm-users', action='store_true',
-                    help='If set users created in previous tests will be '
+    group.addoption('--preserve-users', action='store_true',
+                    help='If set users created in previous tests will not be '
                          'removed if their names collide with the names '
-                         'of users that will be created in current test')
+                         'of users that will be created in current test. '
+                         'Instead such a test will be skipped.')
     group.addoption('--admin', default=['admin', 'password'], nargs=2,
                     help='admin credentials in form: -u username password',
                     metavar=('username', 'password'), dest='admin')
@@ -125,7 +135,7 @@ def clients():
 
 @fixture
 def rm_users(request):
-    return request.config.getoption('--rm-users')
+    return not request.config.getoption('--preserve-users')
 
 
 @fixture(scope='session')
@@ -154,6 +164,11 @@ def driver_type(request):
 
 
 @fixture(scope='session')
+def test_type(request):
+    return request.config.getoption('--test-type')
+
+
+@fixture(scope='session')
 def firefox_logging(request, driver_type):
     enabled = request.config.getoption('--firefox-logs')
     if enabled and driver_type.lower() != 'firefox':
@@ -172,6 +187,12 @@ def cdmi():
 def onepage():
     from tests.gui.utils import OnePage
     return OnePage
+
+
+@fixture(scope='session')
+def public_onepage():
+    from tests.gui.utils import PublicOnePage
+    return PublicOnePage
 
 
 @fixture(scope='session')
@@ -202,6 +223,24 @@ def op_container():
 def public_share():
     from tests.gui.utils import PublicShareView
     return PublicShareView
+
+
+@fixture(scope='session')
+def private_share():
+    from tests.gui.utils import PrivateShareView
+    return PrivateShareView
+
+
+@fixture(scope='session')
+def privacy_policy():
+    from tests.gui.utils import PrivacyPolicy
+    return PrivacyPolicy
+
+
+@fixture(scope='session')
+def terms_of_use():
+    from tests.gui.utils import TermsOfUse
+    return TermsOfUse
 
 
 @fixture(scope='session')
@@ -277,7 +316,7 @@ def xvfb(request, screens, screen_width, screen_height, screen_depth):
         finally:
             xvfb_utils.stop_session(xvfb_proc)
     else:
-        yield [os.environ.get('DISPLAY', None)]
+        yield [os.environ.get('DISPLAY', 'DUMMY_DISPLAY')]
 
 
 @fixture(scope='function')

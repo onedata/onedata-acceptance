@@ -9,7 +9,6 @@ __license__ = ("This software is released under the MIT license cited in "
 
 
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.utils.common.popups import Popups as popups
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 
@@ -26,7 +25,8 @@ def expand_account_settings_in_oz(selenium, browser_id, oz_page):
                r'(?P<option>Logout|Manage account) item in expanded '
                r'settings dropdown in the sidebar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_on_option_in_account_settings_in_oz(selenium, browser_id, option):
+def click_on_option_in_account_settings_in_oz(selenium, browser_id, option,
+                                              popups):
     driver = selenium[browser_id]
     popups(driver).user_account_menu.options[option].click()
 
@@ -73,3 +73,12 @@ def assert_correct_user_name_in_oz(selenium, browser_id, expected_user_name,
                f'displayed is {displayed_user_name} in USER NAME oz panel')
     assert displayed_user_name == expected_user_name, err_msg
 
+
+@wt(parsers.re('user of (?P<browser_id>.*) sees "(?P<username>.*?)" alias in '
+               'the sidebar panel'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def wt_assert_user_alias_in_sidebar(selenium, browser_id, oz_page, username):
+    driver = selenium[browser_id]
+
+    assert oz_page(driver).profile_username == username, \
+        f'User alias: {username} not found in the sidebar'

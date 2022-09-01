@@ -290,8 +290,8 @@ def wt_clicks_on_btn_in_cease_support_modal(selenium, browser_id,
 def remove_space_instead_of_revoke(selenium, browser_id, modals):
     modals(selenium[browser_id]).cease_support_for_space.space_delete_link()
     time.sleep(2)
-    modals(selenium[browser_id]).remove_space.understand_notice()
-    modals(selenium[browser_id]).remove_space.remove()
+    modals(selenium[browser_id]).remove_modal.understand_notice()
+    modals(selenium[browser_id]).remove_modal.remove()
 
 
 # TODO: delete after space support revoke fixes in 21.02 (VFS-6383)
@@ -305,8 +305,8 @@ def login_and_remove_space_instead_of_revoke(selenium, browser_id, modals, user,
     time.sleep(3)
     wt_login_using_basic_auth(selenium, browser_id, user,
                               login_page, users, 'Onezone')
-    modals(selenium[browser_id]).remove_space.understand_notice()
-    modals(selenium[browser_id]).remove_space.remove()
+    modals(selenium[browser_id]).remove_modal.understand_notice()
+    modals(selenium[browser_id]).remove_modal.remove()
 
 
 @wt(parsers.parse('user of {browser_id} checks the understand notice '
@@ -425,12 +425,20 @@ def enable_option_in_auto_cleaning(selenium, browser_id, onepanel, option):
 
 @wt(parsers.parse('user of {browser_id} clicks {option} on dropdown '
                   '{rule} rule in auto-cleaning tab in Onepanel'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def click_option_on_dropdown_rule(selenium, browser_id, onepanel, option, rule):
     driver = selenium[browser_id]
     tab = onepanel(driver).content.spaces.space.auto_cleaning
-    tab.selective_cleaning_form[rule].dropdown_button()
-    tab.selective_cleaning_form[rule].dropdown[option].click()
+    for i in range(20):
+        time.sleep(0.2)
+        if tab.selective_cleaning_form[rule].value_limit != option:
+            tab.selective_cleaning_form[rule].dropdown_button()
+            tab.selective_cleaning_form[rule].dropdown[option].click()
+        else:
+            break
+    else:
+        err_msg = f'Failed do set {rule} for {option}'
+        assert tab.selective_cleaning_form[rule].value_limit == option, err_msg
 
 
 @wt(parsers.parse('user of {browser_id} clicks change {quota} quota button '

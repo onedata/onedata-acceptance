@@ -1,4 +1,4 @@
-Feature: Basic management of harvester in Onezone GUI
+Feature: Basic management of harvester memberships privileges in Onezone GUI
 
 
   Background:
@@ -11,26 +11,16 @@ Feature: Basic management of harvester in Onezone GUI
     And users of [browser1, browser2] logged as [admin, user1] to [Onezone, Onezone] service
 
 
-  Scenario: User successfully adds user to harvester
-    When user of browser1 creates "harvester10" harvester in Onezone page
-
-    # copy invitation token
-    And user of browser1 clicks on Discovery in the main menu
-    And user of browser1 clicks "harvester10" on the harvesters list in the sidebar
-    And user of browser1 clicks Members of "harvester10" harvester in the sidebar
-    And user of browser1 clicks on "Invite user using token" button in users list menu in "harvester10" harvester members view
-    And user of browser1 copies invitation token from modal
-    And user of browser1 closes "Invite using token" modal
-    And user of browser1 sends copied token to user of browser2
-
-    # join to harvester
-    And user of browser2 joins to harvester in Onezone page
-    Then user of browser2 sees that "harvester10" has appeared on the harvesters list in the sidebar
-    And user of browser1 removes "harvester10" harvester in Onezone page
-
-
   Scenario: User fails to see harvester without view harvester privilege
-    When user of browser1 creates "harvester11" harvester in Onezone page
+    Given initial spaces configuration in "onezone" Onezone service:
+            space1:
+              owner: admin
+              providers:
+                  - oneprovider-1:
+                      storage: posix
+                      size: 1000000
+    And user admin has "harvester11" harvester in "onezone" Onezone service
+    When using REST, user admin adds space "space1" to "harvester11" harvester
     And user of browser1 sends invitation token from "harvester11" harvester to user of browser2
     And user of browser2 joins to harvester in Onezone page
     And user of browser2 sees that "harvester11" has appeared on the harvesters list in the sidebar
@@ -42,12 +32,15 @@ Feature: Basic management of harvester in Onezone GUI
             privilege subtypes:
               View harvester: False
 
+    And user of browser2 refreshes site
     And user of browser2 clicks Members of "harvester11" harvester in the sidebar
     Then user of browser2 sees Insufficient privileges alert in harvester members subpage
     And user of browser2 clicks Spaces of "harvester11" harvester in the sidebar
     And user of browser2 sees Insufficient privileges alert on Spaces subpage
     And user of browser2 clicks Indices of "harvester11" harvester in the sidebar
     And user of browser2 sees Insufficient privileges alert on Indices subpage
+    And user of browser2 clicks Data discovery of "harvester11" harvester in the sidebar
+    And user of browser2 sees "This resource could not be loaded." alert on empty Data discovery page
 
     And user of browser1 removes "harvester11" harvester in Onezone page
 
@@ -133,6 +126,7 @@ Feature: Basic management of harvester in Onezone GUI
             granted: Partially
             privilege subtypes:
               Set privileges: True
+    And user of browser2 refreshes site
     Then user of browser2 sets following privileges for "user1" user in "harvester15" harvester:
           Harvester management:
             granted: True
@@ -142,6 +136,8 @@ Feature: Basic management of harvester in Onezone GUI
             granted: True
 
     And user of browser1 removes "harvester15" harvester in Onezone page
+
+
 
 
 

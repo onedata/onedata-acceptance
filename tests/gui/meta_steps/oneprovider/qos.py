@@ -6,16 +6,22 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 from tests.gui.meta_steps.oneprovider.data import go_to_filebrowser
-from tests.gui.steps.modal import (
+from tests.gui.steps.modals.modal import (
     write_name_into_text_field_in_modal, wt_wait_for_modal_to_appear)
 from tests.gui.steps.oneprovider.data_tab import (
-    choose_option_from_selection_menu)
+    choose_option_from_selection_menu, assert_browser_in_tab_in_op)
 from tests.gui.steps.oneprovider.file_browser import (
-    click_on_item_in_file_browser, click_menu_for_elem_in_file_browser,
-    click_option_in_data_row_menu_in_file_browser)
+    click_on_item_in_file_browser, click_on_status_tag_for_file_in_file_browser)
+from tests.gui.steps.oneprovider.browser import (
+    click_option_in_data_row_menu_in_browser, click_menu_for_elem_in_browser,
+    assert_status_tag_for_file_in_browser,
+    assert_not_status_tag_for_file_in_browser)
 from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.qos import (
-    click_enter_as_text_link, confirm_entering_text)
+    click_enter_as_text_link, confirm_entering_text,
+    delete_all_qualities_of_service)
+from tests.gui.steps.onezone.spaces import (
+    click_on_option_of_space_on_left_sidebar_menu)
 
 
 def _add_qos_requirement_in_modal(selenium, browser_id, modals, item_name,
@@ -105,10 +111,43 @@ def add_no_id_qos_requirement_in_modal(selenium, browser_id, modals, item_name,
 
 @wt(parsers.parse('user of {browser_id} opens "Quality of Service" modal for '
                   '"{filename}" file'))
-def open_qos_modal_for_file(selenium, browser_id, filename, modals, tmp_memory):
+def open_qos_modal_for_file(selenium, browser_id, filename, popups, tmp_memory):
     qos = 'Quality of Service'
 
-    click_menu_for_elem_in_file_browser(browser_id, filename, tmp_memory)
-    click_option_in_data_row_menu_in_file_browser(selenium, browser_id, qos,
-                                                  modals)
+    click_menu_for_elem_in_browser(browser_id, filename, tmp_memory)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, qos, popups)
     wt_wait_for_modal_to_appear(selenium, browser_id, qos, tmp_memory)
+
+
+def assert_qos_file_status_in_op_gui(user, file_name, space_name, tmp_memory,
+                                     selenium, oz_page, op_container, option):
+    option_of_space = 'Files'
+    status_type = 'QoS'
+    click_on_option_of_space_on_left_sidebar_menu(selenium, user,
+                                                  space_name, option_of_space,
+                                                  oz_page)
+    assert_browser_in_tab_in_op(selenium, user, op_container, tmp_memory)
+    if option == 'has some':
+        assert_status_tag_for_file_in_browser(user, status_type,
+                                              file_name, tmp_memory)
+    else:
+        assert_not_status_tag_for_file_in_browser(user, status_type,
+                                                  file_name, tmp_memory)
+
+
+def delete_qos_requirement_in_op_gui(selenium, user, space_name, oz_page,
+                                     modals, popups, file_name, tmp_memory,
+                                     op_container):
+    option1 = 'Files'
+    status_type = 'QoS'
+    button = 'Close'
+    modal = 'Quality of Service'
+    click_on_option_of_space_on_left_sidebar_menu(selenium, user,
+                                                  space_name, option1,
+                                                  oz_page)
+    assert_browser_in_tab_in_op(selenium, user, op_container, tmp_memory)
+    click_on_status_tag_for_file_in_file_browser(user, status_type,
+                                                 file_name, tmp_memory)
+    delete_all_qualities_of_service(selenium, user, modals, popups)
+    click_modal_button(selenium, user, button, modal, modals)
+

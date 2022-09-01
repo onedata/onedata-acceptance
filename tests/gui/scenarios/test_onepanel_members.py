@@ -1,5 +1,5 @@
 """This module contains tests suite for basic cluster members management in
-Onepanel GUI and multiple browser instances.
+Onepanel GUI and multiple browsers instances.
 """
 
 __author__ = "Agnieszka Warchol"
@@ -37,7 +37,6 @@ from tests.gui.steps.onepanel.members import *
 from tests.gui.steps.onezone.logged_in_common import *
 from tests.gui.steps.onezone.user_full_name import *
 from tests.gui.steps.onezone.tokens import *
-from tests.gui.steps.onezone.data_space_management import *
 from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.manage_account import *
 from tests.gui.steps.onezone.spaces import *
@@ -53,8 +52,9 @@ from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
+from tests.gui.steps.oneprovider.browser import *
 
-from tests.gui.steps.modal import *
+from tests.gui.steps.modals.modal import *
 from tests.gui.steps.oneprovider_common import *
 
 from tests.gui.meta_steps.onezone.common import *

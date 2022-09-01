@@ -12,17 +12,17 @@ import yaml
 from tests.gui.meta_steps.oneprovider.data import (
     _click_menu_for_elem_somewhere_in_file_browser)
 from tests.gui.steps.common.notifies import notify_visible_with_text
-from tests.gui.steps.modal import (
+from tests.gui.steps.modals.modal import (
     assert_error_modal_with_text_appeared, click_modal_button, close_modal)
-from tests.gui.steps.oneprovider.file_browser import (
-    click_option_in_data_row_menu_in_file_browser)
+from tests.gui.steps.oneprovider.browser import (
+    click_option_in_data_row_menu_in_browser)
 from tests.gui.steps.onezone.spaces import click_on_option_in_the_sidebar
 from tests.gui.steps.onezone.tokens import *
-from tests.gui.steps.onezone.tokens import click_option_for_token_row_menu
 from tests.utils.bdd_utils import wt, parsers, given
 from tests.utils.utils import repeat_failed
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
 def _paste_token_into_text_field(selenium, browser_id, oz_page, token):
     page = oz_page(selenium[browser_id])['tokens']
     page.input_name = token
@@ -39,6 +39,7 @@ def paste_copied_token_into_text_field(selenium, browser_id, oz_page, clipboard,
 
 @wt(parsers.parse('user of {browser_id} pastes received token '
                   'into token text field'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def paste_received_token_into_text_field(selenium, browser_id,
                                          oz_page, tmp_memory):
     token = tmp_memory[browser_id]['mailbox']['token']
@@ -55,11 +56,12 @@ def consume_received_token(selenium, browser_id, oz_page, tmp_memory):
     click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button)
     paste_received_token_into_text_field(selenium, browser_id, oz_page,
                                          tmp_memory)
-    click_on_join_button_on_tokens_page(selenium, browser_id, oz_page)
+    click_on_confirm_button_on_tokens_page(selenium, browser_id, oz_page)
 
 
 @wt(parsers.parse('user of {browser_id} joins group using copied token'))
 @wt(parsers.parse('user of {browser_id} joins to harvester in Onezone page'))
+@wt(parsers.parse('user of {browser_id} joins to inventory using copied token'))
 def consume_token_from_copied_token(selenium, browser_id, oz_page, clipboard,
                                     displays):
     option = 'Tokens'
@@ -69,17 +71,17 @@ def consume_token_from_copied_token(selenium, browser_id, oz_page, clipboard,
     click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button)
     paste_copied_token_into_text_field(selenium, browser_id, oz_page, clipboard,
                                        displays)
-    click_on_join_button_on_tokens_page(selenium, browser_id, oz_page)
+    click_on_confirm_button_on_tokens_page(selenium, browser_id, oz_page)
 
 
 @wt(parsers.parse('user of {browser_id} adds group "{elem_name}" as subgroup '
                   'using copied token'))
 @wt(parsers.re('user of (?P<browser_id>.*) adds '
                '(space|harvester|group) "(?P<elem_name>.*)" '
-               'to (harvester|space) using copied token'))
+               'to (harvester|space|inventory) using copied token'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_element_with_copied_token(selenium, browser_id, elem_name, oz_page,
-                                  clipboard, displays, modals):
+                                  clipboard, displays, popups):
     option = 'Tokens'
     button = 'Consume token'
 
@@ -87,19 +89,35 @@ def add_element_with_copied_token(selenium, browser_id, elem_name, oz_page,
     click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button)
     paste_copied_token_into_text_field(selenium, browser_id, oz_page, clipboard,
                                        displays)
-    select_member_from_dropdown(selenium, browser_id, elem_name, modals,
+    select_member_from_dropdown(selenium, browser_id, elem_name, popups,
                                 oz_page)
-    click_on_join_button_on_tokens_page(selenium, browser_id, oz_page)
+    click_on_confirm_button_on_tokens_page(selenium, browser_id, oz_page)
 
 
 @wt(parsers.parse('user of {browser_id} {result} to consume token for '
                   '"{elem_name}" {elem}'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def result_to_consume_token_for_elem(selenium, browser_id, oz_page, elem_name,
-                                     result, clipboard, displays, modals):
+                                     result, clipboard, displays, modals,
+                                     popups):
     add_element_with_copied_token(selenium, browser_id, elem_name, oz_page,
-                                  clipboard, displays, modals)
+                                  clipboard, displays, popups)
     _result_to_consume_token(selenium, browser_id, result, modals)
+
+
+@wt(parsers.parse('user of {browser_id} sees alert with text: "{text}" on '
+                  'tokens page while trying to consume token'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_alert_while_consuming_token(selenium, browser_id, oz_page,
+                                       clipboard, displays, text):
+    option = 'Tokens'
+    button = 'Consume token'
+
+    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
+    click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button)
+    paste_copied_token_into_text_field(selenium, browser_id, oz_page, clipboard,
+                                       displays)
+    assert_alert_on_tokens_page(browser_id, text, oz_page, selenium)
 
 
 @wt(parsers.parse('user of {browser_id} {result} to consume token'))
@@ -147,6 +165,7 @@ def _create_token_of_type(selenium, browser_id, token_type, oz_page, popups,
 
 @wt(parsers.re(r'user of (?P<browser_id>.*?) creates (?P<number>\d*?) '
                r'(?P<token_type>.*?) tokens?'))
+@repeat_failed(timeout=WAIT_BACKEND)
 def create_number_of_typed_token(selenium, browser_id, number: int, token_type,
                                  oz_page, popups):
     for i in range(number):
@@ -211,7 +230,9 @@ def create_token_with_config(selenium, browser_id, config, oz_page,
 
 def _create_token_with_config(selenium, browser_id, config, oz_page,
                               popups, users, groups, hosts, tmp_memory):
+    option = 'Tokens'
     button = 'Create new token'
+    click_on_option_in_the_sidebar(selenium, browser_id, option, oz_page)
     click_on_button_in_tokens_sidebar(selenium, browser_id, oz_page, button)
     click_create_custom_token(selenium, browser_id, oz_page)
 
@@ -238,7 +259,7 @@ def _create_token_with_config(selenium, browser_id, config, oz_page,
                                  oz_page)
     if privileges:
         tree = get_privileges_tree(selenium, browser_id, oz_page)
-        tree.set_privileges(privileges)
+        tree.set_privileges(selenium, browser_id, privileges)
     if caveats:
         show_inactive_caveats(selenium, browser_id, oz_page)
         _set_tokens_caveats(selenium, browser_id, oz_page, caveats, popups,
@@ -395,7 +416,7 @@ def _assert_token_configuration(selenium, browser_id, config, oz_page, users,
                                        oz_page)
     if privileges:
         tree = get_privileges_tree(selenium, browser_id, oz_page)
-        tree.assert_privileges(privileges)
+        tree.assert_privileges(selenium, browser_id, privileges)
     if caveats:
         assert_token_caveats(selenium, browser_id, oz_page, caveats, users,
                              groups, hosts, tmp_memory, creation)
@@ -525,9 +546,12 @@ def create_token_with_basic_template(selenium, browser_id, name, template,
                                                    oz_page)
 
 
-def _create_token_using_id(user, selenium, oz_page, popups, users, groups,
-                           hosts, tmp_memory, object_id):
+@wt(parsers.parse('using web GUI, {user} creates access token with caveats '
+                  'set for object which ID was copied to clipboard'))
+def create_token_with_object_id(displays, clipboard, user, selenium, oz_page,
+                                popups, users, groups, hosts, tmp_memory):
     option = 'Tokens'
+    object_id = clipboard.paste(display=displays[user])
     config = (f'name: access_token\ntype: access\ncaveats:\n  '
               f'object ID:\n    -  {object_id}')
     click_on_option_in_the_sidebar(selenium, user, option, oz_page)
@@ -535,19 +559,8 @@ def _create_token_using_id(user, selenium, oz_page, popups, users, groups,
                              users, groups, hosts, tmp_memory)
 
 
-@wt(parsers.parse('using web GUI, {user} creates access token with caveats '
-                  'set for object which ID was copied to clipboard'))
-def create_token_using_copied_object_id(displays, clipboard, user, selenium,
-                                        oz_page, popups, users, groups, hosts,
-                                        tmp_memory):
-    object_id = clipboard.paste(display=displays[user])
-    _create_token_using_id(user, selenium, oz_page, popups, users, groups,
-                           hosts, tmp_memory, object_id)
-
-
-
 def _copy_object_id(displays, clipboard, user, selenium, oz_page, tmp_memory,
-                    modals, name, space, op_container):
+                    modals, name, space, op_container, popups):
     option = 'Information'
     button = 'File ID'
     modal = 'File details'
@@ -555,8 +568,7 @@ def _copy_object_id(displays, clipboard, user, selenium, oz_page, tmp_memory,
     _click_menu_for_elem_somewhere_in_file_browser(selenium, user, name,
                                                    space, tmp_memory, oz_page,
                                                    op_container)
-    click_option_in_data_row_menu_in_file_browser(selenium, user, option,
-                                                  modals)
+    click_option_in_data_row_menu_in_browser(selenium, user, option, popups)
     click_modal_button(selenium, user, button, modal, modals)
     close_modal(selenium, user, modal, modals)
 
@@ -570,12 +582,18 @@ def create_token_with_object_id(displays, clipboard, user, selenium, oz_page,
                                 popups, users, groups, hosts, tmp_memory,
                                 modals, name, space, op_container):
 
+    option = 'Tokens'
+
     _copy_object_id(displays, clipboard, user, selenium, oz_page, tmp_memory,
-                    modals, name, space, op_container)
+                    modals, name, space, op_container, popups)
 
     object_id = tmp_memory["object_id"]
-    _create_token_using_id(user, selenium, oz_page, popups, users, groups,
-                           hosts, tmp_memory, object_id)
+    config = (f'name: access_token\ntype: access\ncaveats:\n  '
+              f'object ID:\n    -  {object_id}')
+
+    click_on_option_in_the_sidebar(selenium, user, option, oz_page)
+    create_token_with_config(selenium, user, config, oz_page, popups,
+                             users, groups, hosts, tmp_memory)
     click_copy_button_in_token_view(selenium, user, oz_page)
     tmp_memory[user]['token'] = clipboard.paste(display=displays[user])
 
@@ -584,8 +602,10 @@ def create_token_with_object_id(displays, clipboard, user, selenium, oz_page,
                      'following configuration:\n{config}'))
 def given_create_token(user, config, selenium, oz_page, popups, users,
                        groups, hosts, tmp_memory, clipboard, displays):
+
     create_token_with_config(selenium, user, config, oz_page, popups,
                              users, groups, hosts, tmp_memory)
 
     click_copy_button_in_token_view(selenium, user, oz_page)
     tmp_memory[user]['token'] = clipboard.paste(display=displays[user])
+

@@ -22,31 +22,6 @@ Feature: Management of invite tokens with consumer caveats in Onezone GUI
     And user of [browser1, browser2] logged as [admin, user1] to [Onezone, Onezone] service
 
 
-  Scenario: User fails to consume group to space invite token with consumer caveat set not for them
-    When user of browser1 creates and checks token with following configuration:
-          type: invite
-          invite type: Invite group to space
-          invite target: space1
-          usage limit: infinity
-          caveats:
-            consumer:
-              - type: user
-                by: id
-                consumer name: user2
-    And user of browser1 clicks on copy button in token view
-    And user of browser1 sends copied token to user of browser2
-
-    # consume invite token
-    And user of browser2 clicks on Tokens in the main menu
-    And user of browser2 clicks on "Consume token" button in tokens sidebar
-    And user of browser2 pastes received token into token text field
-    And user of browser2 chooses "group1" group from dropdown on tokens page
-    And user of browser2 clicks on Join button on consume token page
-    Then user of browser2 sees that error modal with text "Consuming token failed" appeared
-
-    And user of browser1 removes all tokens
-
-
   Scenario: User successfully consumes group to space invite token with consumer caveat set for them
     When user of browser1 creates and checks token with following configuration:
           type: invite
@@ -75,7 +50,7 @@ Feature: Management of invite tokens with consumer caveats in Onezone GUI
     And user of browser2 clicks on "Consume token" button in tokens sidebar
     And user of browser2 pastes received token into token text field
     And user of browser2 chooses "group1" group from dropdown on tokens page
-    And user of browser2 clicks on Join button on consume token page
+    And user of browser2 clicks on Confirm button on consume token page
     Then user of browser2 sees an success notify with text matching to: .*joined.*
     And user of browser2 sees that "space1" has appeared on the spaces list in the sidebar
     And user of browser2 sees that space space1 has following privilege configuration for group group1:
@@ -92,7 +67,30 @@ Feature: Management of invite tokens with consumer caveats in Onezone GUI
     And user of browser1 removes all tokens
 
 
-   Scenario: User successfully consumes group to space invite token with consumer caveat set for Any user
+  Scenario: User fails to consume group to space invite token with consumer caveat set not for them
+    When user of browser1 creates and checks token with following configuration:
+          type: invite
+          invite type: Invite group to space
+          invite target: space1
+          usage limit: infinity
+          caveats:
+            consumer:
+              - type: user
+                by: id
+                consumer name: user2
+    And user of browser1 clicks on copy button in token view
+    And user of browser1 sends copied token to user of browser2
+
+    # fail to consume invite token
+    And user of browser2 clicks on Tokens in the main menu
+    And user of browser2 clicks on "Consume token" button in tokens sidebar
+
+    And user of browser2 pastes received token into token text field
+    Then user of browser2 sees alert with text: "The consumer of provided token must authenticate as one of users (id)" on tokens page
+    And user of browser1 removes all tokens
+
+
+  Scenario: User successfully consumes group to space invite token with consumer caveat set for Any user
     When user of browser1 creates and checks token with following configuration:
           type: invite
           invite type: Invite group to space
@@ -158,7 +156,7 @@ Feature: Management of invite tokens with consumer caveats in Onezone GUI
                 consumer name: group2
     And user of browser1 clicks on copy button in token view
     And user of browser1 sends copied token to user of browser2
-    Then user of browser2 fails to consume token for "group1" group
+    Then user of browser2 sees alert with text: "The consumer of provided token must authenticate as one of groups (id)" on tokens page while trying to consume token
 
     And user of browser1 removes all tokens
 
@@ -263,9 +261,3 @@ Feature: Management of invite tokens with consumer caveats in Onezone GUI
           storage: posix
           size: 1
           unit: GiB
-
-
-
-
-
-

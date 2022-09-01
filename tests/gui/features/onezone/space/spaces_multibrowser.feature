@@ -21,7 +21,7 @@ Feature: Multi Browser basic management of spaces
 
   Scenario: User successfully joins space using invitation token
     When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Members of "space1" in the sidebar
+    And user of space_owner_browser clicks "Members" of "space1" space in the sidebar
     And user of space_owner_browser clicks on "Invite user using token" button in users list menu in "space1" space members view
     And user of space_owner_browser copies invitation token from modal
     And user of space_owner_browser sends invitation token to "browser1"
@@ -33,7 +33,7 @@ Feature: Multi Browser basic management of spaces
 
   Scenario: User successfully joins space using invitation token (with Get started button)
     When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Members of "space1" in the sidebar
+    And user of space_owner_browser clicks "Members" of "space1" space in the sidebar
     And user of space_owner_browser clicks on "Invite user using token" button in users list menu in "space1" space members view
     And user of space_owner_browser copies invitation token from modal
     And user of space_owner_browser sends invitation token to "browser1"
@@ -41,5 +41,5 @@ Feature: Multi Browser basic management of spaces
 
     And user of browser1 clicks join an existing space on Welcome page
     And user of browser1 pastes received token into token text field
-    And user of browser1 clicks on Join button on consume token page
+    And user of browser1 clicks on Confirm button on consume token page
     Then user of browser1 sees that "space1" has appeared on the spaces list in the sidebar

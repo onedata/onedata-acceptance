@@ -1,4 +1,4 @@
-Feature: ACL subfiles privileges tests using multiple browser in Oneprovider GUI
+Feature: ACL subfiles privileges tests using multiple browsers in Oneprovider GUI
 
   Examples:
   | subject_type  | subject_name  |

@@ -25,7 +25,7 @@ Feature: Multi Browser invitation group to spaces
   Scenario: User joins a space with group invitation token
     When user of space_owner_browser clicks on Data in the main menu
     And user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Members of "space1" in the sidebar
+    And user of space_owner_browser clicks "Members" of "space1" space in the sidebar
     And user of space_owner_browser clicks on "Invite group using token" button in groups list menu in "space1" space members view
     And user of space_owner_browser copies invitation token from modal
     And user of space_owner_browser closes "Invite using token" modal
@@ -40,7 +40,7 @@ Feature: Multi Browser invitation group to spaces
     # Space-owner-user invites user1 via group invitation
     When user of space_owner_browser clicks on Data in the main menu
     And user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-    And user of space_owner_browser clicks Members of "space1" in the sidebar
+    And user of space_owner_browser clicks "Members" of "space1" space in the sidebar
     And user of space_owner_browser clicks on "Invite group using token" button in groups list menu in "space1" space members view
     And user of space_owner_browser copies invitation token from modal
     And user of space_owner_browser closes "Invite using token" modal
@@ -54,6 +54,5 @@ Feature: Multi Browser invitation group to spaces
     And user of space_owner_browser clicks on confirmation button on overview page
 
     # User1 sees space has different name
-    And user of space_owner_browser is idle for 4 seconds
     Then user of browser1 sees that "space1" has disappeared on the spaces list in the sidebar
     And user of browser1 sees that "space2" has appeared on the spaces list in the sidebar

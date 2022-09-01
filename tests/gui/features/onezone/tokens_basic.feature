@@ -64,7 +64,6 @@ Feature: Management of tokens basic features in Onezone GUI
   Scenario: User sees right tokens after filtering them
     When user of browser clicks on Tokens in the main menu
     And user of browser creates 2 access tokens
-    And user of browser is idle for 5 seconds
     And user of browser creates 2 identity tokens
     And user of browser creates 2 invite tokens
     And user of browser sees exactly 6 item(s) on tokens list in tokens sidebar
@@ -156,5 +155,7 @@ Feature: Management of tokens basic features in Onezone GUI
                 path: /
             object ID:
               - 0000000000522CB067756964233739396665383433613330383664376465393632636539643462666561313362636835363837233166373864336661623561326166633135373739363737653532656166636231636837653434
+
+
 
 

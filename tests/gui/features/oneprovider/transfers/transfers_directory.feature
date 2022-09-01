@@ -34,12 +34,12 @@ Feature: Oneprovider transfers directories functionality
   Scenario: User replicates directory to remote provider
     When user of browser opens oneprovider-1 Oneprovider file browser for "space1" space
     And user of browser creates directory "dir1"
-    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
-            oneprovider-2: never synchronized
-    And user of browser changes current working directory to home using breadcrumbs
+            oneprovider-2: entirely empty
+    And user of browser changes current working directory to space root using breadcrumbs
 
     # Wait to ensure synchronization between providers
     And user of browser is idle for 2 seconds
@@ -62,9 +62,9 @@ Feature: Oneprovider transfers directories functionality
     And user of browser expands first transfer record
     And user of browser sees that there is non-zero throughput in transfer chart
 
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
-    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks "Files" of "space1" space in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
             oneprovider-2: entirely filled
@@ -73,9 +73,9 @@ Feature: Oneprovider transfers directories functionality
   Scenario: User tries to migrate directory to too small space on remote provider
     When user of browser opens oneprovider-1 Oneprovider file browser for "smallSpace" space
     And user of browser creates directory "dir1"
-    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
-    And user of browser changes current working directory to home using breadcrumbs
+    And user of browser changes current working directory to space root using breadcrumbs
 
     # Wait to ensure synchronization between providers
     And user of browser is idle for 2 seconds
@@ -94,9 +94,9 @@ Feature: Oneprovider transfers directories functionality
             type: migration
             status: failed
 
-    And user of browser clicks Data of "smallSpace" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
-    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks "Files" of "smallSpace" space in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
             oneprovider-2: entirely empty
@@ -105,9 +105,9 @@ Feature: Oneprovider transfers directories functionality
   Scenario: User tries to replicate directory to too small space on remote provider
     When user of browser opens oneprovider-1 Oneprovider file browser for "smallSpace" space
     And user of browser creates directory "dir1"
-    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
-    And user of browser changes current working directory to home using breadcrumbs
+    And user of browser changes current working directory to space root using breadcrumbs
 
     # Wait to ensure synchronization between providers
     And user of browser is idle for 2 seconds
@@ -126,9 +126,9 @@ Feature: Oneprovider transfers directories functionality
             type: replication
             status: failed
 
-    And user of browser clicks Data of "smallSpace" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
-    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks "Files" of "smallSpace" space in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
             oneprovider-2: entirely empty
@@ -137,9 +137,9 @@ Feature: Oneprovider transfers directories functionality
   Scenario: User replicates directory with file on current provider to the same provider
     When user of browser opens oneprovider-1 Oneprovider file browser for "space1" space
     And user of browser creates directory "dir1"
-    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
-    And user of browser changes current working directory to home using breadcrumbs
+    And user of browser changes current working directory to space root using breadcrumbs
 
     # Wait to ensure synchronization between providers
     And user of browser is idle for 2 seconds
@@ -158,23 +158,23 @@ Feature: Oneprovider transfers directories functionality
             type: replication
             status: completed
 
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
-    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks "Files" of "space1" space in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
-            oneprovider-2: never synchronized
+            oneprovider-2: entirely empty
 
 
   Scenario: User migrates directory to remote provider
     When user of browser opens oneprovider-1 Oneprovider file browser for "space1" space
     And user of browser creates directory "dir1"
-    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely filled
-            oneprovider-2: never synchronized
-    And user of browser changes current working directory to home using breadcrumbs
+            oneprovider-2: entirely empty
+    And user of browser changes current working directory to space root using breadcrumbs
 
     # Wait to ensure synchronization between providers
     And user of browser is idle for 2 seconds
@@ -193,11 +193,10 @@ Feature: Oneprovider transfers directories functionality
             type: migration
             status: completed
 
-    And user of browser clicks Data of "space1" in the sidebar
-    And user of browser sees file browser in data tab in Oneprovider page
-    And user of browser double clicks on item named "dir1" in file browser
+    And user of browser clicks "Files" of "space1" space in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+    And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser sees file chunks for file "large_file.txt" as follows:
             oneprovider-1: entirely empty
             oneprovider-2: entirely filled
-
 

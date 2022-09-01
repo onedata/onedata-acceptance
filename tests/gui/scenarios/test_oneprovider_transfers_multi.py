@@ -26,14 +26,13 @@ from tests.gui.steps.common.login import *
 from tests.gui.steps.onezone.spaces import *
 
 from tests.gui.steps.common import *
-from tests.gui.steps.modal import *
 
 from tests.gui.steps.onezone.logged_in_common import *
 from tests.gui.steps.onezone.user_full_name import *
 from tests.gui.steps.onezone.tokens import *
-from tests.gui.steps.onezone.data_space_management import *
 from tests.gui.steps.onezone.providers import *
 from tests.gui.steps.onezone.manage_account import *
+from tests.gui.steps.onezone.members import *
 
 from tests.gui.steps.oneprovider.common import *
 from tests.gui.steps.oneprovider.data_tab import *
@@ -42,11 +41,12 @@ from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.shares import *
 from tests.gui.steps.oneprovider.groups import *
 from tests.gui.steps.oneprovider.spaces import *
+from tests.gui.steps.oneprovider.browser import *
 from tests.gui.steps.oneprovider.transfers import *
 from tests.gui.meta_steps.oneprovider.common import *
 from tests.gui.meta_steps.onezone.common import *
 
-from tests.gui.steps.modal import *
+from tests.gui.steps.modals.modal import *
 from tests.gui.steps.oneprovider_common import *
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.oneprovider.data import *
@@ -61,3 +61,6 @@ def screens():
 
 
 scenarios('../features/oneprovider/transfers/transfers_multi.feature')
+scenarios('../features/onezone/space/'
+          'spaces_memberships_privileges_multiprovider.feature')
+

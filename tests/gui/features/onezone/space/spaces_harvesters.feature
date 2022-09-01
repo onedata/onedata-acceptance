@@ -16,7 +16,7 @@ Feature: Basic management of harvester in Space
   Scenario: User adds two harvesters to space using invitation tokens and removes them from it
     When user of browser1 creates "harvester2" harvester in Onezone page
     And user of browser1 creates "harvester3" harvester in Onezone page
-    And user of space_owner_browser clicks Harvesters of "space1" in the sidebar
+    And user of space_owner_browser clicks "Harvesters, Discovery" of "space1" space in the sidebar
 
     # Invite "harvester2" harvester to "space1" space
     And user of space_owner_browser clicks invite harvester using token button in space harvesters page
