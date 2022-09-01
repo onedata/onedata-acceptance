@@ -60,6 +60,7 @@ class DetailsModal(Modal):
     hardlinks = WebItem('.modal-content', cls=Hardlinks)
     navigation = WebItemsSequence('.nav-tabs-file-info .ember-view',
                                   cls=NavigationTab)
+    active_tab = Label('.nav-link.active')
 
     def __str__(self):
         return 'Details modal'

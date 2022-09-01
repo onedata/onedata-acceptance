@@ -30,7 +30,7 @@ def assert_all_metadata_tabs_marked_empty(selenium, browser_id, modals):
 
 
 @wt(parsers.parse('user of {browser_id} sees {tab_list} navigation tabs in '
-                  'metadata modal'))
+                  'metadata panel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def are_nav_tabs_for_metadata_panel_displayed(selenium, browser_id, tab_list,
                                               modals):
@@ -110,7 +110,7 @@ def click_on_del_metadata_record_button(selenium, browser_id, attr_name,
 
 
 @wt(parsers.re('user of (?P<browser_id>.+?) types \'(?P<text>.+?)\' '
-               'to (?P<tab_name>JSON|RDF) textarea in metadata modal'))
+               'to (?P<tab_name>JSON|RDF) textarea in metadata panel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def type_text_to_metadata_textarea(selenium, browser_id, text, tab_name,
                                    modals):
@@ -120,7 +120,7 @@ def type_text_to_metadata_textarea(selenium, browser_id, text, tab_name,
 
 
 @wt(parsers.re('user of (?P<browser_id>.+?) sees that (?P<tab_name>JSON|RDF) '
-               'textarea in metadata modal '
+               'textarea in metadata panel '
                'contains \'(?P<expected_metadata>.*)\''))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_textarea_contains_record(selenium, browser_id, expected_metadata,
@@ -147,7 +147,7 @@ def assert_textarea_not_contain_record(selenium, browser_id, expected_metadata,
 
 
 @wt(parsers.re('user of (?P<browser_id>.+?) sees that (?P<tab_name>JSON|RDF) '
-               'textarea in metadata modal is empty'))
+               'textarea in metadata panel is empty'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_textarea_is_empty_for_metadata(selenium, browser_id, tab_name,
                                           modals):
@@ -158,13 +158,12 @@ def assert_textarea_is_empty_for_metadata(selenium, browser_id, tab_name,
 
 
 @wt(parsers.re('user of (?P<browser_id>.+?) cleans (?P<tab_name>JSON|RDF) '
-               'textarea in metadata modal'))
+               'textarea in metadata panel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def clean_tab_textarea_in_metadata_modal(selenium, browser_id, tab_name,
                                          modals):
     modal = modals(selenium[browser_id]).metadata
     tab = getattr(modal, tab_name.lower())
-    button = 'Save'
     if tab.text_area or len(tab.lines) > 1:
         while tab.text_area or len(tab.lines) > 1:
             tab.area.click()
@@ -178,18 +177,17 @@ def clean_tab_textarea_in_metadata_modal(selenium, browser_id, tab_name,
         time.sleep(0.5)
         tab.area.click()
         press_backspace_on_active_element(selenium, browser_id)
-        click_metadata_modal_button(selenium, browser_id, button, modals)
 
 
 @wt(parsers.parse('user of {browser_id} clicks on "{button}" button in '
-                  'metadata modal'))
+                  'metadata panel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_metadata_modal_button(selenium, browser_id, button, modals):
     modal_name = "Metadata"
     click_modal_button(selenium, browser_id, button, modal_name, modals)
 
 
-@wt(parsers.parse('user of {browser_id} sees "{text}" label in Metadata modal'))
+@wt(parsers.parse('user of {browser_id} sees "{text}" label in metadata panel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def see_editor_disabled_label(browser_id, selenium, modals, text):
     driver = selenium[browser_id]

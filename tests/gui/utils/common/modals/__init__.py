@@ -21,7 +21,7 @@ from .basic_modals.delete_modal import DeleteModal
 from .files_modals.details_modal import DetailsModal
 from .basic_modals.login import LoginFormModal
 from .management_modals.deploying_cluster import ClusterDeploymentModal
-from .files_modals.metadata_modal import MetadataModal
+from .files_modals.tabs_in_details_modal.metadata_tab import MetadataTab
 from .files_modals.qos import QualityOfServiceModal
 from .archives_modals.recall_archive import RecallArchive
 from .basic_modals.rename_modal import RenameModal
@@ -74,7 +74,7 @@ class Modals(object):
     data_distribution = WebItem('.modal-dialog', cls=DataDistributionModal)
     create_dir = WebItem('.modal-dialog', cls=CreateDir)
     quality_of_service = WebItem('.modal-dialog', cls=QualityOfServiceModal)
-    metadata = WebItem('.modal-dialog', cls=MetadataModal)
+    metadata = WebItem('.modal-dialog', cls=MetadataTab)
     share_directory = WebItem('.modal-dialog', cls=ShareDirectory)
     write_protection = WebItem('.modal-dialog', cls=WriteProtection)
     details_modal = WebItem('.modal-dialog', cls=DetailsModal)

@@ -13,7 +13,7 @@ from selenium.webdriver.common.keys import Keys
 from tests.gui.utils.core.web_elements import (
     NamedButton, Input, Button, Label, WebItemsSequence, WebItem, WebElement,
     WebElementsSequence, AceEditor)
-from ..modal import Modal
+from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.base import PageObject
 
 
@@ -68,7 +68,7 @@ class NavigationTab(PageObject):
         return 'inactive' in self.status.get_attribute('class')
 
 
-class MetadataModal(Modal):
+class MetadataTab(Modal):
     modal_name = Label('.modal-header')
     navigation = WebItemsSequence('.metadata-type-btn', cls=NavigationTab)
     basic = WebItem('.relative', cls=BasicMetadataPanel)
