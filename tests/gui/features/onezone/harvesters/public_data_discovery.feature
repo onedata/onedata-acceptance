@@ -77,7 +77,7 @@ Feature: Public harvester site
     And user of browser_onedata sees that Public toggle is not checked on harvester configuration page
 
     And user of browser_not_signed_in refreshes site
-    Then user of browser_not_signed_in sees "web GUI cannot be loaded" error on Onedata page
+    Then user of browser_not_signed_in sees "web GUI cannot be loaded" error on public Onedata page
 
 
   Scenario: Not signed in user sees data of public harvester in public harvester GUI from given URL

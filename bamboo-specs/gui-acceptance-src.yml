@@ -55,6 +55,7 @@ stages:
     - Chrome onepanel deployment basic tests
     - Chrome oneprovider ACL subdirectories
     - _Codetag Tracker
+    - Chrome oneprovider atm workflow execution tests
     - Chrome onezone automations tests
     - Chrome qos basic
     - Chrome onezone harvesters basic tests
@@ -266,6 +267,26 @@ Chrome onezone automations tests:
       <<: *run-selenium-tests
       scripts:
       - make SUITE=test_onezone_automation BROWSER=Chrome TIMEOUT=600 test_gui_src
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-and-working-dir
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome oneprovider atm workflow execution tests:
+  key: COAWET
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script:
+      <<: *run-selenium-tests
+      scripts:
+      - make ENV_FILE=1oz_1op_openfaas SUITE=test_oneprovider_atm_workflows_execution BROWSER=Chrome TIMEOUT=600 test_gui_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs

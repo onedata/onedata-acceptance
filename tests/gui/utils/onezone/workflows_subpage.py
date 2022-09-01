@@ -8,7 +8,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import WebItemsSequence, Input, Label, \
-    Button, WebItem, NamedButton
+    Button, WebItem, NamedButton, WebElement
 from tests.gui.utils.onezone.common import InputBox, EditBox
 from tests.gui.utils.onezone.generic_page import Element
 
@@ -52,13 +52,29 @@ class NavigationTab(Element):
     name = id = Label('.nav-link')
 
 
+class Arguments(Element):
+    argument_name = id = Label('.control-label')
+    value_builder_dropdown = WebElement('.valueBuilderType-field')
+
+
+class Results(Element):
+    result_name = id = Label('.control-label')
+    target_store_dropdown = WebElement('.targetStore-field')
+
+
 class TaskAddForm(PageObject):
     task_name = WebItem('.name-field .text-like-field', cls=EditBox)
     create_button = Button('.btn-primary')
 
+    arguments = WebItemsSequence('.argumentMappings-field '
+                                 '.argumentMapping-field', cls=Arguments)
+    results = WebItemsSequence('.resultMappings-field .resultMapping-field',
+                               cls=Results)
+
 
 class Revision(Element):
-    name = id = Label('.description')
+    number = id = Label('.revision-number')
+    name = Label('.description')
     menu_button = Button('.one-menu-toggle')
 
 
@@ -74,6 +90,11 @@ class Workflow(Element):
                                      cls=Revision)
 
 
+class WorkflowCreator(PageObject):
+    workflow_name = WebItem('.name-field .text-like-field', cls=InputBox)
+    create_button = NamedButton('.btn-primary', text='Create')
+
+
 class WorkflowsPage(PageObject):
     elements_list = WebItemsSequence('.atm-workflow-schemas-list'
                                      ' .atm-workflow-schemas-list-entry',
@@ -86,15 +107,11 @@ class WorkflowsPage(PageObject):
 
     revision_details = WebItem('.revision-details-form', cls=RevisionDetails)
 
-    workflow_name = WebItem('.name-field .text-like-field', cls=InputBox)
-
-    create_button = NamedButton('.btn', text='Create')
+    workflow_creator = WebItem('.content-atm-inventories-workflows-creator-view'
+                               ,cls=WorkflowCreator)
 
     task_form = WebItem('.task-form-container', cls=TaskAddForm)
 
     workflow_name_input = WebItem('.name-field .text-like-field', cls=EditBox)
 
     workflow_save_button = Button('.btn-save')
-
-
-
