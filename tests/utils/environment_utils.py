@@ -114,7 +114,7 @@ def update_etc_hosts():
     copies modified /etc/hosts from one-env container to test-runner container.
     """
 
-    run_onenv_command('hosts', sudo=True)
+    run_onenv_command('hosts')
     etc_hosts_path = '/etc/hosts'
     tmp_hosts_path = '/tmp/hosts'
     sp.call(['docker', 'cp', '{}:{}'.format(ONE_ENV_CONTAINER_NAME,

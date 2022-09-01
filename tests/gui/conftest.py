@@ -190,6 +190,12 @@ def onepage():
 
 
 @fixture(scope='session')
+def public_onepage():
+    from tests.gui.utils import PublicOnePage
+    return PublicOnePage
+
+
+@fixture(scope='session')
 def onepanel():
     from tests.gui.utils import Onepanel
     return Onepanel
