@@ -74,16 +74,23 @@ def assert_waiting_transfer(selenium, browser_id, item_type, desc, hosts,
 @repeat_failed(timeout=WAIT_BACKEND)
 def cancel_or_rerun_transfer(selenium, browser_id, op_container, popups,
                              option, state):
-    getattr(op_container(selenium[browser_id]).transfers,
-            state)[0].menu_button()
+    transfers = op_container(selenium[browser_id]).transfers
+    if state == 'waiting':
+        try:
+            getattr(transfers, state)[0].menu_button()
+        except RuntimeError:
+            transfers.ongoing[0].menu_button()
+    else:
+        getattr(transfers, state)[0].menu_button()
+
     option = 'Cancel transfer' if option == 'cancels' else 'Rerun transfer'
     click_option_in_popup_labeled_menu(selenium, browser_id, option, popups)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) waits for all transfers to start'))
-@repeat_failed(interval=1, timeout=300,
+@repeat_failed(interval=1, timeout=420,
                exceptions=(AssertionError, StaleElementReferenceException))
-def wait_for_waiting_tranfers_to_start(selenium, browser_id, op_container):
+def wait_for_waiting_transfer_to_start(selenium, browser_id, op_container):
     assert len(op_container(selenium[browser_id]).transfers.waiting) == 0, \
         'Waiting transfers did not start'
 
