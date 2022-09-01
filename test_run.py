@@ -38,12 +38,11 @@ def get_images_option(test_type='oneclient', oz_image=None, op_image=None,
 
 
 def add_image_to_images_cfg(image, service_name, option, images_cfg, pull):
-    if image:
-        print('Using image: {} for {} service'.format(image, service_name))
-        if pull:
-            pull_docker_image_with_retries(image)
-    else:
-        image = get_image_from_branch_config(service_name, pull=pull)
+    if not image:
+        image = get_image_from_branch_config(service_name)
+    print('\n[INFO] Using image {} for service {}'.format(image, service_name))
+    if pull:
+        docker.pull_image_with_retries(image)
     images_cfg.append("['{}={}']".format(option, image))
 
 
@@ -343,10 +342,8 @@ SERVICE_TO_IMAGE = {
     'rest_cli': 'docker.onedata.org/rest-cli'
 }
 
-PULL_DOCKER_IMAGE_RETRIES = 5
 
-
-def get_image_from_branch_config(service, pull=True, fail_on_error=False):
+def get_image_from_branch_config(service):
     """Returns service image based on branch from branchConfig.yaml file"""
     branch_config_path = os.path.join(os.getcwd(), 'branchConfig.yaml')
     try:
@@ -365,40 +362,16 @@ def get_image_from_branch_config(service, pull=True, fail_on_error=False):
 
             image = '{}:{}'.format(SERVICE_TO_IMAGE[service], branch_tag)
             fallback_image = '{}:{}'.format(SERVICE_TO_IMAGE[service], fallback_tag)
-
-            final_image = image if docker.image_exists(image) else fallback_image
-            if pull:
-                print('\n[INFO] Trying to download image {} for service {}'.format(
-                    final_image, service))
-                pull_docker_image_with_retries(final_image)
+            if docker.image_exists(image):
+                return image
             else:
-                print('\n[INFO] Using image {} for service {}'.format(final_image, service))
-            return final_image
+                print('\n[INFO] Image {} for service {} not found. Fallbacking to {}'.format(
+                    image, service, fallback_image))
+                return fallback_image
     except (IOError, KeyError) as e:
-        if fail_on_error:
-            print("[ERROR] Error when reading image for {} from branch config file {}: {}.".format(
-                service, branch_config_path, e))
-            raise e
-        print("[WARNING] Could not read image for '{}' from branch config file '{}': {}. Image "
-              "provided in scenario yaml will be used.".format(service, branch_config_path, e))
-        return None
-
-
-def pull_docker_image_with_retries(image, retries=PULL_DOCKER_IMAGE_RETRIES):
-    attempts = 0
-
-    while attempts < retries:
-        try:
-            docker.pull_image(image)
-        except CalledProcessError as e:
-            attempts += 1
-            if attempts >= retries:
-                print('Could not download image {}. Tried {} times. \n'
-                      'Captured output from last call: {} \n'
-                      .format(image, retries, e.output))
-                raise
-        else:
-            return
+        print("[ERROR] Error when reading image for {} from branch config file {}: {}.".format(
+            service, branch_config_path, e))
+        raise e
 
 
 def cmd(args):
