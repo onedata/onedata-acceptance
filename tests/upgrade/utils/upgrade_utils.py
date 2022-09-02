@@ -7,7 +7,7 @@ __license__ = "This software is released under the MIT license cited in " \
 
 
 from tests.utils.onenv_utils import run_onenv_command
-from bamboos.docker.branch_config import get_image_from_branch_config
+from bamboos.docker.images_branch_config import resolve_image
 from bamboos.docker.environment.docker import pull_image_with_retries
 from tests.utils.environment_utils import (update_etc_hosts, setup_hosts_cfg, configure_os,
                                            get_deployment_status, verify_env_ready)
@@ -95,7 +95,7 @@ def run_upgrade_command(pod_name, service, version):
 
 def prepare_image_upgrade_command(service, version):
     if version == 'default':
-        image = get_image_from_branch_config(service)
+        image = resolve_image(service)
     else:
         image = "docker.onedata.org/{}-dev:{}".format(service, version)
     pull_image_with_retries(image)

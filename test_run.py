@@ -39,7 +39,7 @@ def get_images_option(test_type='oneclient', oz_image=None, op_image=None,
 
 def add_image_to_images_cfg(image, service_name, option, images_cfg, pull):
     if not image:
-        image = get_image_from_branch_config(service_name)
+        image = resolve_image(service_name)
     print('\n[INFO] Using image {} for service {}'.format(image, service_name))
     if pull:
         docker.pull_image_with_retries(image)
@@ -343,7 +343,7 @@ SERVICE_TO_IMAGE = {
 }
 
 
-def get_image_from_branch_config(service):
+def resolve_image(service):
     """Returns service image based on branch from branchConfig.yaml file"""
     branch_config_path = os.path.join(os.getcwd(), 'branchConfig.yaml')
     try:
