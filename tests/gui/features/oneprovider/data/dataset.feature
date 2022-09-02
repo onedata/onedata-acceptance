@@ -41,21 +41,19 @@ Feature: Basic datasets operations
     Then user of browser sees Dataset status tag for "dir1" in file browser
 
 
-  # TODO: VFS-9477 reimplement gui metadata tests after metadata move to file info modal
-  # Scenario: User sees Editor disabled label after marking dataset and metadata write protection
-  #   When user of browser creates dataset for item "dir1" in "space1"
-  #   And user of browser clicks on menu for "dir1" directory in file browser
-  #   And user of browser clicks "Datasets" option in data row menu in file browser
-  #   And user of browser clicks data write protection toggle in Datasets modal
-  #   And user of browser clicks metadata write protection toggle in Datasets modal
-  #   And user of browser clicks on "X" button in modal "Datasets"
+  Scenario: User sees Editor disabled label after marking dataset and metadata write protection
+    When user of browser creates dataset for item "dir1" in "space1"
+    And user of browser clicks on menu for "dir1" directory in file browser
+    And user of browser clicks "Datasets" option in data row menu in file browser
+    And user of browser clicks data write protection toggle in Datasets modal
+    And user of browser clicks metadata write protection toggle in Datasets modal
+    And user of browser clicks on "X" button in modal "Datasets"
 
-  #   Then user of browser sees data protected status tag for "dir1" in file browser
-  #   And user of browser sees metadata protected status tag for "dir1" in file browser
-  #   And user of browser clicks on menu for "dir1" directory in file browser
-  #   And user of browser clicks "Metadata" option in data row menu in file browser
-  #   And user of browser sees "Editor disabled" label in Metadata modal
-  #   And user of browser clicks on "Close" button in metadata modal
+    Then user of browser sees data protected status tag for "dir1" in file browser
+    And user of browser sees metadata protected status tag for "dir1" in file browser
+    And user of browser clicks on menu for "dir1" directory in file browser
+    And user of browser clicks "Metadata" option in data row menu in file browser
+    And user of browser sees "Editor disabled" label in metadata panel
 
 
   Scenario: User sees inherited dataset status tag after marking its parent directory as dataset

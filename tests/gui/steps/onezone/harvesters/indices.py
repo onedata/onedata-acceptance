@@ -7,8 +7,12 @@ __copyright__ = "Copyright (C) 2020 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import time
+
 from datetime import datetime
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
+from tests.gui.steps.onezone.harvesters.data_discovery import (
+    click_button_on_data_disc_page)
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 from tests.gui.utils.generic import parse_seq
@@ -163,7 +167,7 @@ def text_in_result_list(key, value, results_list):
         if value == item.get(key):
             break
     else:
-        raise Exception(f'{key}: {value} not in results list')
+        raise AssertionError(f'{key}: {value} not in results list')
 
 
 @wt(parsers.parse('user of browser sees that rejection is caused by field '
@@ -218,8 +222,16 @@ def assert_info_on_data_discovery_page(selenium, browser_id, data_discovery,
                                        info, text):
     driver = selenium[browser_id]
     key = set_key(text)
-    results_list = data_discovery(driver).results_list
-    text_in_result_list(key, info, results_list)
+    try:
+        results_list = data_discovery(driver).results_list
+        text_in_result_list(key, info, results_list)
+    except AssertionError:
+        button_name = 'Query'
+        click_button_on_data_disc_page(selenium, browser_id, data_discovery,
+                                       button_name)
+        time.sleep(1)
+        results_list = data_discovery(driver).results_list
+        text_in_result_list(key, info, results_list)
 
 
 def set_key(text):

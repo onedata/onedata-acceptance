@@ -174,52 +174,51 @@ Feature: Data harvesting in Discovery Page in Onezone GUI
             - space2
 
 
-  # TODO: VFS-9477 reimplement gui metadata tests after metadata move to file info modal
-  # Scenario: Files uploaded to harvested space are visible in Data discovery page
-  #   Given space "space2" belongs to "harvester1" harvester of user admin
-  #   When user of browser opens Data Discovery page of "harvester1" harvester
-  #   And user of browser sees only following files in Data discovery page:
-  #         dir1_2:
-  #           jsonMetadataExists: false
-  #           rdfMetadataExists: false
-  #           xattrsMetadataExists: false
-  #           spaceId: space2
-  #         file_json:
-  #           jsonMetadataExists: true
-  #           rdfMetadataExists: false
-  #           xattrsMetadataExists: false
-  #           spaceId: space2
-  #           author: "\"Samantha Anderson\""
-  #           year: 1998
-  #         spaces:
-  #           - space2
+  Scenario: Files uploaded to harvested space are visible in Data discovery page
+    Given space "space2" belongs to "harvester1" harvester of user admin
+    When user of browser opens Data Discovery page of "harvester1" harvester
+    And user of browser sees only following files in Data discovery page:
+         dir1_2:
+           jsonMetadataExists: false
+           rdfMetadataExists: false
+           xattrsMetadataExists: false
+           spaceId: space2
+         file_json:
+           jsonMetadataExists: true
+           rdfMetadataExists: false
+           xattrsMetadataExists: false
+           spaceId: space2
+           author: "\"Samantha Anderson\""
+           year: 1998
+         spaces:
+           - space2
 
-  #   # upload and add metadata to file in space2
-  #   And user of browser uploads "20B-0.txt" to the root directory of "space2"
-  #   And user of browser succeeds to write "20B-0.txt" file basic metadata: "author=John Doe" in "space2"
+    # upload and add metadata to file in space2
+    And user of browser uploads "20B-0.txt" to the root directory of "space2"
+    And user of browser succeeds to write "20B-0.txt" file basic metadata: "author=John Doe" in "space2"
 
-  #   And user of browser opens Data Discovery page of "harvester1" harvester
-  #   Then user of browser sees only following files in Data discovery page:
-  #         dir1_2:
-  #           jsonMetadataExists: false
-  #           rdfMetadataExists: false
-  #           xattrsMetadataExists: false
-  #           spaceId: space2
-  #         file_json:
-  #           jsonMetadataExists: true
-  #           rdfMetadataExists: false
-  #           xattrsMetadataExists: false
-  #           spaceId: space2
-  #           author: "\"Samantha Anderson\""
-  #           year: 1998
-  #         20B-0.txt:
-  #           jsonMetadataExists: false
-  #           rdfMetadataExists: false
-  #           xattrsMetadataExists: true
-  #           xattrs:
-  #             author: "\"John Doe\""
-  #         spaces:
-  #           - space2
+    And user of browser opens Data Discovery page of "harvester1" harvester
+    Then user of browser sees only following files in Data discovery page:
+         dir1_2:
+           jsonMetadataExists: false
+           rdfMetadataExists: false
+           xattrsMetadataExists: false
+           spaceId: space2
+         file_json:
+           jsonMetadataExists: true
+           rdfMetadataExists: false
+           xattrsMetadataExists: false
+           spaceId: space2
+           author: "\"Samantha Anderson\""
+           year: 1998
+         20B-0.txt:
+           jsonMetadataExists: false
+           rdfMetadataExists: false
+           xattrsMetadataExists: true
+           xattrs:
+             author: "\"John Doe\""
+         spaces:
+           - space2
 
 
   Scenario: Files deleted from harvested space are no longer visible in Data discovery page
@@ -256,47 +255,46 @@ Feature: Data harvesting in Discovery Page in Onezone GUI
             - space2
 
 
-  # TODO: VFS-9477 reimplement gui metadata tests after metadata move to file info modal
-  # Scenario: Metadata changes of file in harvested space are visible in Data discovery page
-  #   Given space "space1" belongs to "harvester1" harvester of user admin
-  #   When user of browser opens Data Discovery page of "harvester1" harvester
-  #   And user of browser sees only following files in Data discovery page:
-  #         dir1_1:
-  #           jsonMetadataExists: false
-  #           rdfMetadataExists: false
-  #           xattrsMetadataExists: false
-  #           spaceId: space1
-  #         file_xattrs:
-  #           spaceId: space1
-  #           jsonMetadataExists: false
-  #           rdfMetadataExists: false
-  #           xattrsMetadataExists: true
-  #           xattrs:
-  #             author: "\"John Smith\""
-  #             year: 2020
-  #         spaces:
-  #           - space1
+  Scenario: Metadata changes of file in harvested space are visible in Data discovery page
+    Given space "space1" belongs to "harvester1" harvester of user admin
+    When user of browser opens Data Discovery page of "harvester1" harvester
+    And user of browser sees only following files in Data discovery page:
+         dir1_1:
+           jsonMetadataExists: false
+           rdfMetadataExists: false
+           xattrsMetadataExists: false
+           spaceId: space1
+         file_xattrs:
+           spaceId: space1
+           jsonMetadataExists: false
+           rdfMetadataExists: false
+           xattrsMetadataExists: true
+           xattrs:
+             author: "\"John Smith\""
+             year: 2020
+         spaces:
+           - space1
 
-  #   # delete part of metadata
-  #   And user of browser removes basic metadata entry with key "author" for "dir1_1/file_xattrs" file in "space1" space
-  #   And user of browser opens Data Discovery page of "harvester1" harvester
-  #   Then user of browser sees only following files in Data discovery page:
-  #         dir1_1:
-  #           jsonMetadataExists: false
-  #           rdfMetadataExists: false
-  #           xattrsMetadataExists: false
-  #           spaceId: space1
-  #         file_xattrs:
-  #           spaceId: space1
-  #           jsonMetadataExists: false
-  #           rdfMetadataExists: false
-  #           xattrsMetadataExists: true
-  #           xattrs:
-  #             year: 2020
-  #             unexpected:
-  #               author: "\"John Smith\""
-  #         spaces:
-  #           - space1
+    # delete part of metadata
+    And user of browser removes basic metadata entry with key "author" for "dir1_1/file_xattrs" file in "space1" space
+    And user of browser opens Data Discovery page of "harvester1" harvester
+    Then user of browser sees only following files in Data discovery page:
+         dir1_1:
+           jsonMetadataExists: false
+           rdfMetadataExists: false
+           xattrsMetadataExists: false
+           spaceId: space1
+         file_xattrs:
+           spaceId: space1
+           jsonMetadataExists: false
+           rdfMetadataExists: false
+           xattrsMetadataExists: true
+           xattrs:
+             year: 2020
+             unexpected:
+               author: "\"John Smith\""
+         spaces:
+           - space1
 
 
   Scenario: User successfully opens space of harvested file

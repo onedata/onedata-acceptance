@@ -337,11 +337,11 @@ def assert_alert_text_in_modal(selenium, browser_id, modals, modal, text):
 
 
 @wt(parsers.parse('user of {browser_id} clicks on "{button}" button in '
-                  'modal "{modal}"'))
+                  'modal "{modal_name}"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_modal_button(selenium, browser_id, button, modal, modals):
+def click_modal_button(selenium, browser_id, button, modal_name, modals):
     button = transform(button)
-    modal = check_modal_name(modal)
+    modal = check_modal_name(modal_name)
     getattr(getattr(modals(selenium[browser_id]), modal), button)()
 
 

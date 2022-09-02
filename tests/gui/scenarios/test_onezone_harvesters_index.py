@@ -81,6 +81,4 @@ def screens():
     return [0]
 
 
-# TODO: VFS-9477 enable metadata tests after reimplement
-scenarios('../features/pass.feature')
-# scenarios('../features/onezone/harvesters/harvesters_index.feature')
+scenarios('../features/onezone/harvesters/harvesters_index.feature')
