@@ -82,49 +82,51 @@ Feature: Basic file management operations
     Then user of browser sees that error modal with text "Copying some of files failed!" appeared
 
 
-  Scenario: Space owner can copy file to a directory which has 677 permission code
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks "Files" of "space1" space in the sidebar
-    And user of browser sees file browser in files tab in Oneprovider page
+  # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal 
+  # Scenario: Space owner can copy file to a directory which has 677 permission code
+  #   When user of browser clicks "space1" on the spaces list in the sidebar
+  #   And user of browser clicks "Files" of "space1" space in the sidebar
+  #   And user of browser sees file browser in files tab in Oneprovider page
 
-    # change permissions
-    And user of browser clicks on menu for "dir1" directory in file browser
-    And user of browser clicks "Permissions" option in data row menu in file browser
-    And user of browser sees that "Edit permissions" modal has appeared
-    And user of browser selects "POSIX" permission type in edit permissions modal
-    And user of browser sets "677" permission code in edit permissions modal
-    And user of browser clicks "Save" confirmation button in displayed modal
+  #   # change permissions
+  #   And user of browser clicks on menu for "dir1" directory in file browser
+  #   And user of browser clicks "Permissions" option in data row menu in file browser
+  #   And user of browser sees that "Edit permissions" modal has appeared
+  #   And user of browser selects "POSIX" permission type in edit permissions modal
+  #   And user of browser sets "677" permission code in edit permissions modal
+  #   And user of browser clicks "Save" confirmation button in displayed modal
 
-    And user of browser clicks on menu for "file2" directory in file browser
-    And user of browser clicks "Copy" option in data row menu in file browser
+  #   And user of browser clicks on menu for "file2" directory in file browser
+  #   And user of browser clicks "Copy" option in data row menu in file browser
 
-    And user of browser clicks and presses enter on item named "dir1" in file browser
-    And user of browser clicks "Paste" button from file browser menu bar
+  #   And user of browser clicks and presses enter on item named "dir1" in file browser
+  #   And user of browser clicks "Paste" button from file browser menu bar
 
-    Then user of browser sees item(s) named file2 in file browser
-    And user of browser changes current working directory to space root using breadcrumbs
-    And user of browser sees item(s) named file2 in file browser
+  #   Then user of browser sees item(s) named file2 in file browser
+  #   And user of browser changes current working directory to space root using breadcrumbs
+  #   And user of browser sees item(s) named file2 in file browser
 
 
-  Scenario: Space owner can move file to a directory which has 677 permission code
-    When user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks "Files" of "space1" space in the sidebar
-    And user of browser sees file browser in files tab in Oneprovider page
+  # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal 
+  # Scenario: Space owner can move file to a directory which has 677 permission code
+  #   When user of browser clicks "space1" on the spaces list in the sidebar
+  #   And user of browser clicks "Files" of "space1" space in the sidebar
+  #   And user of browser sees file browser in files tab in Oneprovider page
 
-    # change permissions
-    And user of browser clicks on menu for "dir1" directory in file browser
-    And user of browser clicks "Permissions" option in data row menu in file browser
-    And user of browser sees that "Edit permissions" modal has appeared
-    And user of browser selects "POSIX" permission type in edit permissions modal
-    And user of browser sets "677" permission code in edit permissions modal
-    And user of browser clicks "Save" confirmation button in displayed modal
+  #   # change permissions
+  #   And user of browser clicks on menu for "dir1" directory in file browser
+  #   And user of browser clicks "Permissions" option in data row menu in file browser
+  #   And user of browser sees that "Edit permissions" modal has appeared
+  #   And user of browser selects "POSIX" permission type in edit permissions modal
+  #   And user of browser sets "677" permission code in edit permissions modal
+  #   And user of browser clicks "Save" confirmation button in displayed modal
 
-    And user of browser clicks on menu for "file3" directory in file browser
-    And user of browser clicks "Cut" option in data row menu in file browser
+  #   And user of browser clicks on menu for "file3" directory in file browser
+  #   And user of browser clicks "Cut" option in data row menu in file browser
 
-    And user of browser clicks and presses enter on item named "dir1" in file browser
-    And user of browser clicks "Paste" button from file browser menu bar
+  #   And user of browser clicks and presses enter on item named "dir1" in file browser
+  #   And user of browser clicks "Paste" button from file browser menu bar
 
-    Then user of browser sees item(s) named file3 in file browser
-    And user of browser changes current working directory to space root using breadcrumbs
-    And user of browser does not see any item(s) named file3 in file browser
+  #   Then user of browser sees item(s) named file3 in file browser
+  #   And user of browser changes current working directory to space root using breadcrumbs
+  #   And user of browser does not see any item(s) named file3 in file browser
