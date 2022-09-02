@@ -8,7 +8,8 @@ __license__ = ("This software is released under the MIT license cited in "
 from tests.gui.meta_steps.oneprovider.data import (
     open_modal_for_file_browser_item, go_to_filebrowser)
 from tests.gui.steps.modals.details_modal import (
-    click_on_navigation_tab_in_modal, open_modal_on_tab)
+    click_on_navigation_tab_in_modal, click_on_context_menu_item,
+    assert_tab_in_modal)
 from tests.gui.steps.modals.modal import assert_error_modal_with_text_appeared
 from tests.gui.steps.oneprovider.metadata import *
 from tests.gui.steps.oneprovider.browser import (
@@ -44,8 +45,9 @@ def add_json_rdf_metadata_for_item(selenium, browser_id, modals, text,
     tab = 'Metadata'
     close_button = 'Close'
 
-    open_modal_on_tab(selenium, browser_id, popups, modal_name, item_name,
-                      tmp_memory, modals, tab)
+    click_on_context_menu_item(selenium, browser_id, popups, item_name,
+                               tmp_memory, tab)
+    assert_tab_in_modal(selenium, browser_id, tab, modals, modal_name)
     click_on_navigation_tab_in_modal(selenium, browser_id, input_type,
                                      modals, tab)
     type_text_to_metadata_textarea(selenium, browser_id, text, input_type,
@@ -62,9 +64,9 @@ def open_json_rdf_metadata_for_item(selenium, browser_id, tab, item_name,
                                     modals, tmp_memory, popups):
     modal_name = get_modal_name_from_item_name(item_name.lower())
     option = 'Metadata'
-
-    open_modal_on_tab(selenium, browser_id, popups, modal_name, item_name,
-                      tmp_memory, modals, option)
+    click_on_context_menu_item(selenium, browser_id, popups, item_name,
+                               tmp_memory, option)
+    assert_tab_in_modal(selenium, browser_id, option, modals, modal_name)
     click_on_navigation_tab_in_modal(selenium, browser_id, tab, modals,
                                      option)
 

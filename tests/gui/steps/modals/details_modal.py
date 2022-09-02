@@ -90,11 +90,10 @@ def assert_tab_in_modal(selenium, browser_id, tab, modals, modal_name):
     assert tab in active_tab, err_msg
 
 
-@wt(parsers.parse('user of {browser_id} opens "{modal_name}" modal on "{tab}" '
-                  'tab for "{item_name}"'))
-def open_modal_on_tab(selenium, browser_id, popups, modal_name, item_name,
-                      tmp_memory, modals, tab):
+@wt(parsers.parse('user of {browser_id} clicks on "{context_menu_item}" in '
+                  'context menu for "{item_name}"'))
+def click_on_context_menu_item(selenium, browser_id, popups, item_name,
+                               tmp_memory, context_menu_item):
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
-    click_option_in_data_row_menu_in_browser(selenium, browser_id, tab, popups)
-    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-    assert_tab_in_modal(selenium, browser_id, tab, modals, modal_name)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id,
+                                             context_menu_item, popups)

@@ -29,7 +29,8 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser opens "<modal>" modal on "Metadata" tab for "<item>"
+    And user of browser clicks on "Metadata" in context menu for "<item>"
+    And user of browser sees that "<modal>" modal is opened on "Metadata" tab
     And user of browser clicks on "JSON" navigation tab in metadata panel
     And user of browser types '{"id": 1}' to JSON textarea in metadata panel
     And user of browser clicks on "Save" button in metadata panel

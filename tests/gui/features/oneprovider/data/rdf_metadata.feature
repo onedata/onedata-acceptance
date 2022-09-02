@@ -29,7 +29,8 @@ Feature: Basic data tab operations on directory RDF metadata in file browser
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in data tab in Oneprovider page
 
-    And user of browser opens "<modal>" modal on "Metadata" tab for "<item>"
+    And user of browser clicks on "Metadata" in context menu for "<item>"
+    And user of browser sees that "<modal>" modal is opened on "Metadata" tab
     And user of browser clicks on "RDF" navigation tab in metadata panel
     And user of browser types '<content>' to RDF textarea in metadata panel
     And user of browser clicks on "Save" button in metadata panel
@@ -39,7 +40,7 @@ Feature: Basic data tab operations on directory RDF metadata in file browser
     And user of browser sees that RDF textarea in metadata panel contains '<content>'
 
     Examples:
-    | modal              | item  | content                                                                    |
+    | modal              | item  | content                                                                     |
     | File details       | file1 | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML> |
     | Directory details  | dir1  | <rdf:XML xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"></rdf:XML> |
 
