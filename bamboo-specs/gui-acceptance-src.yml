@@ -137,7 +137,8 @@ stages:
     # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
     # - Chrome oneprovider ACL basic
     - Chrome multiprovider QoS tests
-    - Chrome QoS storage
+    # TODO: VFS-9606 reimplement gui QoS tests after move to file info modal
+    # - Chrome QoS storage
     - Chrome metadata test
     - Chrome onepanel members tests
     - Chrome multiprovider multiuser tests
