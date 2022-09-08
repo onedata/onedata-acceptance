@@ -60,7 +60,8 @@ stages:
     - _Codetag Tracker
     - Chrome oneprovider atm workflow execution tests
     - Chrome onezone automations tests
-    - Chrome qos basic
+    # TODO: VFS-9606 reimplement gui QoS tests after move to file info modal
+    # - Chrome qos basic
     - Chrome onezone harvesters basic tests
     # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal 
     # - Chrome oneprovider ACL directories privileges create
@@ -131,7 +132,8 @@ stages:
     - Chrome onezone groups multiuser tests
     # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
     # - Chrome oneprovider ACL directories privileges
-    - Chrome multiprovider QoS storage
+    # TODO: VFS-9606 reimplement gui QoS tests after move to file info modal
+    # - Chrome multiprovider QoS storage
     # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
     # - Chrome oneprovider ACL basic
     - Chrome multiprovider QoS tests
@@ -314,26 +316,27 @@ Chrome oneprovider atm workflow execution tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome qos basic:
-  key: CQB
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script:
-      <<: *run-selenium-tests
-      scripts:
-      - make ENV_FILE=1oz_2op_deployed SUITE=test_qos_basic BROWSER=Chrome TIMEOUT=600 test_gui_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
+# TODO: VFS-9606 reimplement gui QoS tests after move to file info modal
+# Chrome qos basic:
+#   key: CQB
+#   other: *common-opts
+#   tasks:
+#   - script: *clear-env
+#   - script: *restart-minikube
+#   - checkout: *checkout
+#   - script: *init-submodules
+#   - script: *download-artifacts
+#   - script:
+#       <<: *run-selenium-tests
+#       scripts:
+#       - make ENV_FILE=1oz_2op_deployed SUITE=test_qos_basic BROWSER=Chrome TIMEOUT=600 test_gui_src
+#   final-tasks:
+#   - test-parser: *parse-test-results
+#   - script: *pack-logs
+#   - script: *clear-env-and-working-dir
+#   artifacts: *artifacts
+#   requirements: *requirements
+#   artifact-subscriptions: []
 Chrome onezone harvesters basic tests:
   key: COHBT
   other: *common-opts
@@ -1506,26 +1509,27 @@ Chrome onezone groups multiuser tests:
 #   artifacts: *artifacts
 #   requirements: *requirements
 #   artifact-subscriptions: []
-Chrome multiprovider QoS storage:
-  key: CMQS
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script:
-      <<: *run-selenium-tests
-      scripts:
-      - make ENV_FILE=1oz_2op_deployed SUITE=test_multiprovider_qos_storage BROWSER=Chrome TIMEOUT=600 test_gui_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
+# TODO: VFS-9606 reimplement gui QoS tests after move to file info modal
+# Chrome multiprovider QoS storage:
+#   key: CMQS
+#   other: *common-opts
+#   tasks:
+#   - script: *clear-env
+#   - script: *restart-minikube
+#   - checkout: *checkout
+#   - script: *init-submodules
+#   - script: *download-artifacts
+#   - script:
+#       <<: *run-selenium-tests
+#       scripts:
+#       - make ENV_FILE=1oz_2op_deployed SUITE=test_multiprovider_qos_storage BROWSER=Chrome TIMEOUT=600 test_gui_src
+#   final-tasks:
+#   - test-parser: *parse-test-results
+#   - script: *pack-logs
+#   - script: *clear-env-and-working-dir
+#   artifacts: *artifacts
+#   requirements: *requirements
+#   artifact-subscriptions: []
 # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
 # Chrome oneprovider ACL basic:
 #   key: COAB
@@ -1567,26 +1571,27 @@ Chrome multiprovider QoS tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome QoS storage:
-  key: CQS
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script:
-      <<: *run-selenium-tests
-      scripts:
-      - make ENV_FILE=1oz_2op_deployed SUITE=test_qos_storage BROWSER=Chrome TIMEOUT=600 test_gui_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
+# TODO: VFS-9606 reimplement gui QoS tests after move to file info modal
+# Chrome QoS storage:
+#   key: CQS
+#   other: *common-opts
+#   tasks:
+#   - script: *clear-env
+#   - script: *restart-minikube
+#   - checkout: *checkout
+#   - script: *init-submodules
+#   - script: *download-artifacts
+#   - script:
+#       <<: *run-selenium-tests
+#       scripts:
+#       - make ENV_FILE=1oz_2op_deployed SUITE=test_qos_storage BROWSER=Chrome TIMEOUT=600 test_gui_src
+#   final-tasks:
+#   - test-parser: *parse-test-results
+#   - script: *pack-logs
+#   - script: *clear-env-and-working-dir
+#   artifacts: *artifacts
+#   requirements: *requirements
+#   artifact-subscriptions: []
 Chrome metadata test:
    key: CMT
    other: *common-opts
