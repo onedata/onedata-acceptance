@@ -69,7 +69,7 @@ def expand_workflow_record(selenium, browser_id, op_container):
     page.executed_workflow_list[0].click()
 
 
-def get_store_content_(browser_id, driver, page, modals, clipboard,
+def get_store_content(browser_id, driver, page, modals, clipboard,
                        displays, store_name, store_type):
     page.stores_list[store_name].click()
     modal = modals(driver).store_details
@@ -93,9 +93,9 @@ def compare_store_contents(selenium, browser_id, op_container, store1,
 
     page = op_container(driver).automation_page.workflow_visualiser
 
-    store1_value = get_store_content_(browser_id, driver, page, modals,
+    store1_value = get_store_content(browser_id, driver, page, modals,
                                       clipboard, displays, store1, 'list')
-    store2_value = get_store_content_(browser_id, driver, page, modals,
+    store2_value = get_store_content(browser_id, driver, page, modals,
                                       clipboard, displays, store2, 'object')
 
     assert store1_value == store2_value, (f'Value of {store1} '
