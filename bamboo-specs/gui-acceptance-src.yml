@@ -96,7 +96,8 @@ stages:
     - Chrome oneprovider data tab files
     # TODO: VFS-9473 reimplement gui data distribution tests after move to file info modal
     # - Chrome transfers directories
-    - Chrome transfers cancel
+    # TODO: VFS-9473 reimplement gui data distribution tests after move to file info modal
+    # - Chrome transfers cancel
     - Chrome onezone basic tests
     - Chrome onezone data discovery helpers
     - Chrome storage sync tests
