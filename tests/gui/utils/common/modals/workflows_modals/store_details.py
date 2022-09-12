@@ -9,20 +9,32 @@ __license__ = "This software is released under the MIT license cited in " \
 
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import Button, NamedButton, \
-    WebItemsSequence
+    WebItemsSequence, Label
+from tests.gui.utils.onezone.generic_page import Element
 from ..modal import Modal
 
 
-class StoreDetailsRow(PageObject):
-    expander = Button('.oneicon-arrow-down')
+class FilterTab(Element):
+    name = id = Label('.column-name')
+
+
+class StoreDetailsObjectRow(PageObject):
+    name = id = Label('.column-object-property')
+
+
+class StoreDetailsListRow(PageObject):
+    name = id = Label('.column-name')
 
 
 class StoreDetails(Modal):
-    close = NamedButton('.btn-default', text='Close')
-    copy_button = Button('.copy-btn-icon')
+    close = Button('.modal-header .close')
+    copy_button = Button('.copy-link')
 
-    details_list = WebItemsSequence('.store-content-table tr.data-row',
-                                    cls=StoreDetailsRow)
+    tabs = WebItemsSequence('.nav-tabs .ember-view', cls=FilterTab)
+    store_content_list = WebItemsSequence('.entries-table .data-row',
+                                          cls=StoreDetailsListRow)
+    store_content_object = WebItemsSequence('.entries-table .data-row',
+                                            cls=StoreDetailsObjectRow)
 
     def __str__(self):
         return 'Store details modal'
