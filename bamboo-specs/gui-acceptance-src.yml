@@ -86,15 +86,18 @@ stages:
     - Chrome onepanel basic tests
     - Chrome multiprovider basic tests
     - Chrome onezone invite tokens with caveats
-    - Chrome transfers files
+    # TODO: VFS-9473 reimplement gui data distribution tests after move to file info modal
+    # - Chrome transfers files
     - Chrome shares basic tests
     - Chrome onezone spaces multiuser tests
     - Chrome storage sync charts
     - Chrome onezone spaces memberships privileges data
     - Chrome oneprovider data tab tests
     - Chrome oneprovider data tab files
-    - Chrome transfers directories
-    - Chrome transfers cancel
+    # TODO: VFS-9473 reimplement gui data distribution tests after move to file info modal
+    # - Chrome transfers directories
+    # TODO: VFS-9473 reimplement gui data distribution tests after move to file info modal
+    # - Chrome transfers cancel
     - Chrome onezone basic tests
     - Chrome onezone data discovery helpers
     - Chrome storage sync tests
@@ -705,26 +708,27 @@ Chrome onezone invite tokens with caveats:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome transfers files:
-  key: CTF
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script:
-      <<: *run-selenium-tests
-      scripts:
-      - make SUITE=test_oneprovider_transfers_files ENV_FILE=1oz_2op_deployed BROWSER=Chrome TIMEOUT=600 test_gui_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
+# TODO: VFS-9473 reimplement gui data distribution tests after move to file info modal
+# Chrome transfers files:
+#   key: CTF
+#   other: *common-opts
+#   tasks:
+#   - script: *clear-env
+#   - script: *restart-minikube
+#   - checkout: *checkout
+#   - script: *init-submodules
+#   - script: *download-artifacts
+#   - script:
+#       <<: *run-selenium-tests
+#       scripts:
+#       - make SUITE=test_oneprovider_transfers_files ENV_FILE=1oz_2op_deployed BROWSER=Chrome TIMEOUT=600 test_gui_src
+#   final-tasks:
+#   - test-parser: *parse-test-results
+#   - script: *pack-logs
+#   - script: *clear-env-and-working-dir
+#   artifacts: *artifacts
+#   requirements: *requirements
+#   artifact-subscriptions: []
 Chrome shares basic tests:
   key: CSBT
   other: *common-opts
@@ -845,46 +849,48 @@ Chrome oneprovider data tab files:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome transfers directories:
-  key: CTD
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script:
-      <<: *run-selenium-tests
-      scripts:
-      - make SUITE=test_oneprovider_transfers_directories ENV_FILE=1oz_2op_deployed BROWSER=Chrome TIMEOUT=600 test_gui_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
-Chrome transfers cancel:
-  key: CTC
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script:
-      <<: *run-selenium-tests
-      scripts:
-      - make SUITE=test_oneprovider_transfers_cancel ENV_FILE=1oz_2op_slow_deployed BROWSER=Chrome TIMEOUT=600 test_gui_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
+# TODO: VFS-9473 reimplement gui data distribution tests after move to file info modal
+# Chrome transfers directories:
+#   key: CTD
+#   other: *common-opts
+#   tasks:
+#   - script: *clear-env
+#   - script: *restart-minikube
+#   - checkout: *checkout
+#   - script: *init-submodules
+#   - script: *download-artifacts
+#   - script:
+#       <<: *run-selenium-tests
+#       scripts:
+#       - make SUITE=test_oneprovider_transfers_directories ENV_FILE=1oz_2op_deployed BROWSER=Chrome TIMEOUT=600 test_gui_src
+#   final-tasks:
+#   - test-parser: *parse-test-results
+#   - script: *pack-logs
+#   - script: *clear-env-and-working-dir
+#   artifacts: *artifacts
+#   requirements: *requirements
+#   artifact-subscriptions: []
+# TODO: VFS-9473 reimplement gui data distribution tests after move to file info modal
+# Chrome transfers cancel:
+#   key: CTC
+#   other: *common-opts
+#   tasks:
+#   - script: *clear-env
+#   - script: *restart-minikube
+#   - checkout: *checkout
+#   - script: *init-submodules
+#   - script: *download-artifacts
+#   - script:
+#       <<: *run-selenium-tests
+#       scripts:
+#       - make SUITE=test_oneprovider_transfers_cancel ENV_FILE=1oz_2op_slow_deployed BROWSER=Chrome TIMEOUT=600 test_gui_src
+#   final-tasks:
+#   - test-parser: *parse-test-results
+#   - script: *pack-logs
+#   - script: *clear-env-and-working-dir
+#   artifacts: *artifacts
+#   requirements: *requirements
+  # artifact-subscriptions: []
 Chrome onezone basic tests:
   key: COBTT
   other: *common-opts
