@@ -849,6 +849,7 @@ Chrome oneprovider data tab files:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
+# TODO: VFS-9473 reimplement gui data distribution tests after move to file info modal
 # Chrome transfers directories:
 #   key: CTD
 #   other: *common-opts
