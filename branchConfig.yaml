@@ -1,13 +1,14 @@
 # Used when specific branch for given repo does not exist.
 default: release/20.02.18
 
-branches:
-  # Specification of branches from which docker images list will be pulled.
-  onezone-pkg: current_branch
-  oneprovider-pkg: current_branch
-  oneclient_docker_build: current_branch
-  rest_cli_docker_build: release/20.02.18
+images:
+  # Specification of branches from which docker images will be pulled.
+  onezone: current_branch
+  oneprovider: current_branch
+  oneclient: current_branch
+  rest_cli: default
 
+sources:
   # Specification of branches from which sources for components will be pulled.
   oz-worker: current_branch
   op-worker: current_branch

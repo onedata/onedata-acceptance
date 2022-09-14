@@ -13,38 +13,37 @@ import sys
 import glob
 import platform
 import argparse
+import yaml
 from subprocess import *
 import xml.etree.ElementTree as ElementTree
 
 from bamboos.docker.environment import docker
-from tests.utils.path_utils import read_image_from_artifact
-from tests.utils.docker_utils import pull_docker_image_with_retries
 
 TEST_RUNNER_CONTAINER_NAME = 'test-runner'
 
 
 def get_images_option(test_type='oneclient', oz_image=None, op_image=None,
-                      rest_cli_image=None, oc_image=None):
+                      rest_cli_image=None, oc_image=None, pull=True):
     if test_type == 'upgrade':
         # in upgrade tests images are provided in test config and manually set are ignored
         return ''
     images_cfg = []
-    add_image_to_images_cfg(oz_image, 'onezone', '--oz-image', images_cfg)
-    add_image_to_images_cfg(op_image, 'oneprovider', '--op-image', images_cfg)
-    add_image_to_images_cfg(rest_cli_image, 'rest cli', '--rest-cli-image',
-                            images_cfg)
+    add_image_to_images_cfg(oz_image, 'onezone', '--oz-image', images_cfg, pull)
+    add_image_to_images_cfg(op_image, 'oneprovider', '--op-image', images_cfg, pull)
+    add_image_to_images_cfg(rest_cli_image, 'rest_cli', '--rest-cli-image', images_cfg, pull)
 
-    if test_type in ['oneclient', 'mixed', 'onedata_fs', 'performance', 'upgrade']:
-        add_image_to_images_cfg(oc_image, 'oneclient', '--oc-image',
-                                images_cfg)
+    if test_type in ['oneclient', 'mixed', 'onedata_fs', 'performance']:
+        add_image_to_images_cfg(oc_image, 'oneclient', '--oc-image', images_cfg, pull)
     return ' + '.join(images_cfg)
 
 
-def add_image_to_images_cfg(image, service_name, option, images_cfg):
-    if image:
-        print('Using image: {} for {} service'.format(image, service_name))
-        pull_docker_image_with_retries(image)
-        images_cfg.append("['{}={}']".format(option, image))
+def add_image_to_images_cfg(image, service_name, option, images_cfg, pull):
+    if not image:
+        image = resolve_image(service_name)
+    print('\n[INFO] Using image {} for service {}'.format(image, service_name))
+    if pull:
+        docker.pull_image_with_retries(image)
+    images_cfg.append("['{}={}']".format(option, image))
 
 
 def load_test_report(junit_report_path):
@@ -153,28 +152,28 @@ def main():
         '--oz-image', '-zi',
         action='store',
         help='Onezone image to use in tests',
-        default=read_image_from_artifact('onezone'),
+        default=None,
         dest='oz_image')
 
     parser.add_argument(
         '--op-image', '-pi',
         action='store',
         help='Oneprovider image to use in tests',
-        default=read_image_from_artifact('oneprovider'),
+        default=None,
         dest='op_image')
 
     parser.add_argument(
         '--oc-image', '-ci',
         action='store',
         help='Oneclient image to use in tests',
-        default=read_image_from_artifact('oneclient'),
+        default=None,
         dest='oc_image')
 
     parser.add_argument(
         '--rest-cli-image', '-ri',
         action='store',
         help='Rest cli image to use in tests',
-        default=read_image_from_artifact('rest_cli'),
+        default=None,
         dest='rest_cli_image')
 
     parser.add_argument(
@@ -211,12 +210,12 @@ def main():
         dest='timeout')
 
     parser.add_argument(
-        '--pull-only-missing-images',
+        '--no-pull',
         action='store_true',
         help='By default all tests scenarios force pulling docker images '
              'even if they are already present on host machine. When this '
-             'option is passed only missing images will be downloaded.',
-        dest='pull_only_missing_images')
+             'option is passed no images will be downloaded.',
+        dest='no_pull')
 
     [args, pass_args] = parser.parse_known_args()
     script_dir = os.path.abspath(os.path.join('..', os.path.dirname(os.path.abspath(__file__))))
@@ -233,7 +232,7 @@ if {shed_privileges}:
     os.setregid({gid}, {gid})
     os.setreuid({uid}, {uid})
 
-command = ['python3'] + ['-m'] + ['pytest'] + ['-rs'] + ['-s'] + ['--test-type={test_type}'] + ['{test_dir}'] + {args} + {env_file} + {local_charts_path} + {no_clean} + {pull_only_missing_images} + {timeout} + {images_opt} + ['--junitxml={report_path}'] + ['--add-test-domain']
+command = ['python3'] + ['-m'] + ['pytest'] + ['-rs'] + ['-s'] + ['--test-type={test_type}'] + ['{test_dir}'] + {args} + {env_file} + {local_charts_path} + {no_clean} + {timeout} + {images_opt} + ['--junitxml={report_path}'] + ['--add-test-domain']
 
 ret = subprocess.call(command)
 sys.exit(ret)
@@ -245,6 +244,7 @@ sys.exit(ret)
         op_image=args.op_image,
         oc_image=args.oc_image,
         rest_cli_image=args.rest_cli_image,
+        pull=not args.no_pull
     )
 
     if args.update_etc_hosts:
@@ -282,8 +282,7 @@ ALL       ALL = (ALL) NOPASSWD: ALL
             env_file=['--env-file={}'.format(args.env_file)] if args.env_file else [],
             timeout=['--timeout={}'.format(args.timeout)] if args.timeout else [],
             images_opt=images_opt if images_opt else [],
-            home=os.path.expanduser('~'),
-            pull_only_missing_images=['--pull-only-missing-images'] if args.pull_only_missing_images else []
+            home=os.path.expanduser('~')
         )
 
         kube_config_path = os.path.expanduser(args.kube_config_path)
@@ -333,6 +332,84 @@ ALL       ALL = (ALL) NOPASSWD: ALL
         ret = 1
 
     sys.exit(ret)
+
+
+# TODO VFS-9025 - below code copied from bamboos/docker. Remove when imports are working correctly.
+SERVICE_TO_IMAGE = {
+    'onezone': 'docker.onedata.org/onezone-dev',
+    'oneprovider': 'docker.onedata.org/oneprovider-dev',
+    'oneclient': 'docker.onedata.org/oneclient-dev',
+    'rest_cli': 'docker.onedata.org/rest-cli'
+}
+
+
+def resolve_image(service):
+    """Returns service image based on branch from branchConfig.yaml file"""
+    branch_config_path = os.path.join(os.getcwd(), 'branchConfig.yaml')
+    try:
+        with open(branch_config_path, 'r') as branch_config_file:
+            branch_config = yaml.load(branch_config_file, yaml.Loader)
+            fallback_branch = branch_config['default']
+            fallback_tag = get_branch_tag(fallback_branch)
+            service_branch = branch_config['images'][service]
+            if service_branch == 'current_branch':
+                branch = get_current_branch()
+                branch_tag = get_branch_tag(branch)
+            elif service_branch == 'default':
+                branch_tag = fallback_tag
+            else:
+                branch_tag = service_branch
+
+            image = '{}:{}'.format(SERVICE_TO_IMAGE[service], branch_tag)
+            fallback_image = '{}:{}'.format(SERVICE_TO_IMAGE[service], fallback_tag)
+            if docker.image_exists(image):
+                return image
+            else:
+                print('\n[INFO] Image {} for service {} not found. Falling back to {}'.format(
+                    image, service, fallback_image))
+                return fallback_image
+    except (IOError, KeyError) as e:
+        print("[ERROR] Error when reading image for {} from branch config file {}: {}.".format(
+            service, branch_config_path, e))
+        raise e
+
+
+def get_current_branch():
+    if 'bamboo_planRepository_branchName' in os.environ:
+        branch_name = os.environ['bamboo_planRepository_branchName']
+        print('[INFO] ENV variable "bamboo_planRepository_branchName" is set to {} - using it '
+              'as current branch name'.format(branch_name))
+    else:
+        branch_name = cmd(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
+    if branch_name == 'HEAD':
+        raise ValueError('Could not resolve branch name - repository in detached HEAD state. '
+                         'You must run this script on the newest commit of the current branch.')
+    return branch_name
+
+
+def cmd(args):
+    """Executes shell command and returns result without trailing newline.
+    Standard error is redirected to /dev/null."""
+
+    with open('/dev/null', 'w') as dev_null:
+        result = check_output(args, stderr=dev_null)
+    if isinstance(result, bytes):
+        result = result.decode()
+    return result.rstrip('\n')
+
+
+def get_branch_tag(branch):
+    ticket = re.search(r'VFS-\d+.*', branch)
+    if branch.startswith('develop'):
+        return 'develop'
+
+    for prefix in ['feature/', 'bugfix/']:
+        if branch.startswith(prefix) and ticket:
+            return ticket.group(0)
+    for prefix in ['release/', 'hotfix/']:
+        if branch.startswith(prefix):
+            return branch.lstrip(prefix)
+    return branch.replace('/', '_')
 
 
 if __name__ == '__main__':
