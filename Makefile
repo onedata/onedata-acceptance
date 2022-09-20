@@ -75,6 +75,7 @@ RECORDING_OPTION            ?= failed
 BROWSER                     ?= Chrome
 TIMEOUT			            ?= 300
 REPEATS                     ?= 1
+RERUNS                      ?= 0
 LOCAL_CHARTS_PATH           ?= ""
 PULL_ONLY_MISSING_IMAGES    ?= ""
 MIXED_TESTS_ROOT := $(shell pwd)/tests/mixed
@@ -88,19 +89,19 @@ endif
 
 test_gui_pkg:
 	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i ${ACCEPTANCE_GUI_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} \
-	-k=${KEYWORDS} --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} --reruns 1 --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${PULL_IMAGES_OPT}
+	-k=${KEYWORDS} --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} --reruns ${RERUNS} --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${PULL_IMAGES_OPT}
 
 test_gui_src:
 	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i ${ACCEPTANCE_GUI_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} --sources \
-	 -k=${KEYWORDS} --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} --reruns 1 --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${PULL_IMAGES_OPT}
+	 -k=${KEYWORDS} --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} --reruns ${RERUNS} --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${PULL_IMAGES_OPT}
 
 test_mixed_pkg:
 	PYTHONPATH=${MIXED_TESTS_ROOT} ${TEST_RUN} -t tests/mixed/scenarios/${SUITE}.py --test-type mixed -vvv --driver=${BROWSER} -i ${ACCEPTANCE_MIXED_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} \
-	 --env-file=${ENV_FILE} -k=${KEYWORDS} --repeats ${REPEATS} --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH}  --reruns 1 --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${PULL_IMAGES_OPT}
+	 --env-file=${ENV_FILE} -k=${KEYWORDS} --repeats ${REPEATS} --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH}  --reruns ${RERUNS} --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${PULL_IMAGES_OPT}
 
 test_mixed_src:
 	PYTHONPATH=${MIXED_TESTS_ROOT} ${TEST_RUN} -t tests/mixed/scenarios/${SUITE}.py --test-type mixed -vvv --driver=${BROWSER} -i ${ACCEPTANCE_MIXED_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} \
-	--env-file=${ENV_FILE} --sources -k=${KEYWORDS} --repeats ${REPEATS} --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} --reruns 1 --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${PULL_IMAGES_OPT}
+	--env-file=${ENV_FILE} --sources -k=${KEYWORDS} --repeats ${REPEATS} --timeout ${TIMEOUT} --local-charts-path=${LOCAL_CHARTS_PATH} --reruns ${RERUNS} --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${PULL_IMAGES_OPT}
 
 test_oneclient_pkg:
 	${TEST_RUN} --test-type oneclient -vvv --test-dir tests/oneclient/scenarios/${SUITE}.py -i ${ACCEPTANCE_MIXED_IMAGE} -k=${KEYWORDS} \
