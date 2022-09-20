@@ -43,8 +43,6 @@ def pytest_addoption(parser):
                                                         'to use in tests')
     parser.addoption('--oc-image', action='store', help='oneclient image'
                                                         'to use in tests')
-    parser.addoption('--luma-image', action='store', help='luma image'
-                                                          'to use in tests')
     parser.addoption('--rest-cli-image', action='store',
                      help='rest cli image to use in tests')
     parser.addoption('--sources', action='store_true',

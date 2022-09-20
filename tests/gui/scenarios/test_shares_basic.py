@@ -62,4 +62,5 @@ def screens():
 
 
 scenarios('../features/oneprovider/shares/basic_management.feature')
-scenarios('../features/oneprovider/shares/shares_with_symlink.feature')
+# TODO: VFS-9603 reimplement gui shares tests after move to file info modal 
+# scenarios('../features/oneprovider/shares/shares_with_symlink.feature')

@@ -60,4 +60,6 @@ def screens():
     return [0]
 
 
-scenarios('../features/oneprovider/transfers/cancel_transfer.feature')
+# TODO: VFS-9473 reimplement gui data distribution tests after move to file info modal
+scenarios('../features/pass.feature')
+# scenarios('../features/oneprovider/transfers/cancel_transfer.feature')

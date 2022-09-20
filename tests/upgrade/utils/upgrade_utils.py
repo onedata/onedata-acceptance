@@ -6,9 +6,9 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 
-from tests.utils.docker_utils import pull_docker_image_with_retries
 from tests.utils.onenv_utils import run_onenv_command
-from tests.utils.path_utils import read_image_from_artifact
+from bamboos.docker.images_branch_config import resolve_image
+from bamboos.docker.environment.docker import pull_image_with_retries
 from tests.utils.environment_utils import (update_etc_hosts, setup_hosts_cfg, configure_os,
                                            get_deployment_status, verify_env_ready)
 from tests.conftest import export_logs
@@ -100,16 +100,16 @@ def run_upgrade_command(pod_name, service, version):
 
 def prepare_image_upgrade_command(service, version):
     if version == 'default':
-        image = read_image_from_artifact(service, fail_on_error=True)
+        image = resolve_image(service)
     else:
         image = "docker.onedata.org/{}-dev:{}".format(service, version)
-    pull_docker_image_with_retries(image)
+    pull_image_with_retries(image)
     return ['-i', image]
 
 
 def prepare_sources_upgrade_command(service, version):
     image = "docker.onedata.org/{}-dev:{}".format(service, version['sources']['baseImage'])
-    pull_docker_image_with_retries(image)
+    pull_image_with_retries(image)
     components = []
     for component in version['sources']['components']:
         components.append('--{}'.format(component))
