@@ -60,7 +60,7 @@ stages:
     - _Codetag Tracker
     - Chrome oneprovider atm workflow execution tests
     - Chrome onezone automations tests
-    # TODO: VFS-9606 reimplement gui QoS tests after move to file info modal
+    # TODO: VFS-9799 reimplement gui QoS tests after move to file info modal
     # - Chrome qos basic
     - Chrome onezone harvesters basic tests
     # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal 
@@ -86,7 +86,7 @@ stages:
     - Chrome onepanel basic tests
     - Chrome multiprovider basic tests
     - Chrome onezone invite tokens with caveats
-    # TODO: VFS-9473 reimplement gui data distribution tests after move to file info modal
+    # TODO: VFS-9842 reimplement gui data distribution tests after move to file info modal
     # - Chrome transfers files
     - Chrome shares basic tests
     - Chrome onezone spaces multiuser tests
@@ -94,9 +94,9 @@ stages:
     - Chrome onezone spaces memberships privileges data
     - Chrome oneprovider data tab tests
     - Chrome oneprovider data tab files
-    # TODO: VFS-9473 reimplement gui data distribution tests after move to file info modal
+    # TODO: VFS-9842 reimplement gui data distribution tests after move to file info modal
     # - Chrome transfers directories
-    # TODO: VFS-9473 reimplement gui data distribution tests after move to file info modal
+    # TODO: VFS-9842 reimplement gui data distribution tests after move to file info modal
     # - Chrome transfers cancel
     - Chrome onezone basic tests
     - Chrome onezone data discovery helpers
@@ -128,20 +128,20 @@ stages:
     - Chrome onezone invite tokens with consumer caveats
     - Chrome oneprovider datasets tests
     - Chrome onezone invite tokens
-    # TODO: VFS-9603 reimplement gui shares tests after move to file info modal
+    # TODO: VFS-9798 reimplement gui shares tests after move to file info modal
     # - Chrome public shares tests
-    # TODO: VFS-9603 reimplement gui shares tests after move to file info modal 
+    # TODO: VFS-9798 reimplement gui shares tests after move to file info modal
     # - Chrome shares handle service tests
     - Chrome onezone groups multiuser tests
     # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
     # - Chrome oneprovider ACL directories privileges
-    # TODO: VFS-9606 reimplement gui QoS tests after move to file info modal
+    # TODO: VFS-9799 reimplement gui QoS tests after move to file info modal
     # - Chrome multiprovider QoS storage
     # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
     # - Chrome oneprovider ACL basic
-    # TODO: VFS-9606 reimplement gui QoS tests after move to file info modal
+    # TODO: VFS-9799 reimplement gui QoS tests after move to file info modal
     # - Chrome multiprovider QoS tests
-    # TODO: VFS-9606 reimplement gui QoS tests after move to file info modal
+    # TODO: VFS-9799 reimplement gui QoS tests after move to file info modal
     # - Chrome QoS storage
     - Chrome metadata test
     - Chrome onepanel members tests
@@ -321,7 +321,7 @@ Chrome oneprovider atm workflow execution tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-# TODO: VFS-9606 reimplement gui QoS tests after move to file info modal
+# TODO: VFS-9799 reimplement gui QoS tests after move to file info modal
 # Chrome qos basic:
 #   key: CQB
 #   other: *common-opts
@@ -708,7 +708,7 @@ Chrome onezone invite tokens with caveats:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-# TODO: VFS-9473 reimplement gui data distribution tests after move to file info modal
+# TODO: VFS-9842 reimplement gui data distribution tests after move to file info modal
 # Chrome transfers files:
 #   key: CTF
 #   other: *common-opts
@@ -849,7 +849,7 @@ Chrome oneprovider data tab files:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-# TODO: VFS-9473 reimplement gui data distribution tests after move to file info modal
+# TODO: VFS-9842 reimplement gui data distribution tests after move to file info modal
 # Chrome transfers directories:
 #   key: CTD
 #   other: *common-opts
@@ -870,7 +870,7 @@ Chrome oneprovider data tab files:
 #   artifacts: *artifacts
 #   requirements: *requirements
 #   artifact-subscriptions: []
-# TODO: VFS-9473 reimplement gui data distribution tests after move to file info modal
+# TODO: VFS-9842 reimplement gui data distribution tests after move to file info modal
 # Chrome transfers cancel:
 #   key: CTC
 #   other: *common-opts
@@ -1434,7 +1434,7 @@ Chrome onezone invite tokens:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-# TODO: VFS-9603 reimplement gui shares tests after move to file info modal 
+# TODO: VFS-9798 reimplement gui shares tests after move to file info modal
 # Chrome public shares tests:
 #   key: CPST
 #   other: *common-opts
@@ -1455,7 +1455,7 @@ Chrome onezone invite tokens:
 #   artifacts: *artifacts
 #   requirements: *requirements
 #   artifact-subscriptions: []
-# TODO: VFS-9603 reimplement gui shares tests after move to file info modal 
+# TODO: VFS-9798 reimplement gui shares tests after move to file info modal
 # Chrome shares handle service tests:
 #   key: CSHS
 #   other: *common-opts
@@ -1517,7 +1517,7 @@ Chrome onezone groups multiuser tests:
 #   artifacts: *artifacts
 #   requirements: *requirements
 #   artifact-subscriptions: []
-# TODO: VFS-9606 reimplement gui QoS tests after move to file info modal
+# TODO: VFS-9799 reimplement gui QoS tests after move to file info modal
 # Chrome multiprovider QoS storage:
 #   key: CMQS
 #   other: *common-opts
@@ -1559,7 +1559,7 @@ Chrome onezone groups multiuser tests:
 #   artifacts: *artifacts
 #   requirements: *requirements
 #   artifact-subscriptions: []
-# TODO: VFS-9606 reimplement gui QoS tests after move to file info modal
+# TODO: VFS-9799 reimplement gui QoS tests after move to file info modal
 # Chrome multiprovider QoS tests:
 #   key: CMQT
 #   other: *common-opts
@@ -1580,7 +1580,7 @@ Chrome onezone groups multiuser tests:
 #   artifacts: *artifacts
 #   requirements: *requirements
 #   artifact-subscriptions: []
-# TODO: VFS-9606 reimplement gui QoS tests after move to file info modal
+# TODO: VFS-9799 reimplement gui QoS tests after move to file info modal
 # Chrome QoS storage:
 #   key: CQS
 #   other: *common-opts

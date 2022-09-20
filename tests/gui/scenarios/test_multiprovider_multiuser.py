@@ -80,8 +80,8 @@ def screens():
 
 
 scenarios('../features/oneprovider/multiprovider/basic.feature')
-# TODO: VFS-9473 reimplement gui data distribution tests after move to file info modal
+# TODO: VFS-9842 reimplement gui data distribution tests after move to file info modal
 # scenarios('../features/oneprovider/multiprovider/multi_browser.feature')
-# TODO: VFS-9473 reimplement gui data distribution tests after move to file info modal
+# TODO: VFS-9842 reimplement gui data distribution tests after move to file info modal
 # scenarios('../features/oneprovider/multiprovider/auto_cleaning.feature')
 

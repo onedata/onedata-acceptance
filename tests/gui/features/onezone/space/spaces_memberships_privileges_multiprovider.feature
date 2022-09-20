@@ -47,7 +47,7 @@ Feature: Basic management of spaces privileges in Onezone GUI with two providers
     Then user of browser_user1 clicks "Transfers" of "space1" space in the sidebar
 
 
-  # TODO: VFS-9473 reimplement gui data distribution tests after move to file info modal
+  # TODO: VFS-9842 reimplement gui data distribution tests after move to file info modal
   # Scenario: Non-space-owner successfully schedules replication if he got Transfer management privileges
   #   When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
   #   And user of space_owner_browser clicks "Members" of "space1" space in the sidebar
@@ -83,7 +83,7 @@ Feature: Basic management of spaces privileges in Onezone GUI with two providers
   #   Then user of browser_user1 replicates selected item to provider "oneprovider-2"
 
 
-  # TODO: VFS-9473 reimplement gui data distribution tests after move to file info modal
+  # TODO: VFS-9842 reimplement gui data distribution tests after move to file info modal
   # Scenario: Non-space-owner successfully schedules eviction if he got Transfer management privileges
   #   When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
 

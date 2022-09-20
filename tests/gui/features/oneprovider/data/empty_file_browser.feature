@@ -66,7 +66,7 @@ Feature: Files tab operations with empty file browser
     Then user of browser sees that item named "20B-0.txt" is of 20 B size in file browser
 
 
-  # TODO: VFS-9473 reimplement gui data distribution tests after move to file info modal
+  # TODO: VFS-9842 reimplement gui data distribution tests after move to file info modal
   # Scenario: User uploads file and checks if provider name is displayed in the data distribution panel
   #   When user of browser clicks "space1" on the spaces list in the sidebar
   #   And user of browser clicks "Files" of "space1" space in the sidebar

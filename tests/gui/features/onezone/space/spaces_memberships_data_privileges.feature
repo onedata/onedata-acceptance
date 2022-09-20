@@ -84,7 +84,7 @@ Feature: Basic management of data privileges for spaces in Onezone GUI
     Then user of browser_user1 sees that item named "new_directory" has appeared in file browser
 
 
-  # TODO: VFS-9603 reimplement gui shares tests after move to file info modal 
+  # TODO: VFS-9798 reimplement gui shares tests after move to file info modal
   # Scenario: Non-space-owner successfully creates share if he got Manage shares privilege
   #   When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
   #   And user of space_owner_browser clicks "Members" of "space1" space in the sidebar

@@ -60,7 +60,7 @@ def screens():
     return [0, 1]
 
 
-# TODO: VFS-9473 reimplement gui data distribution tests after move to file info modal
+# TODO: VFS-9842 reimplement gui data distribution tests after move to file info modal
 # scenarios('../features/oneprovider/transfers/transfers_multi.feature')
 scenarios('../features/onezone/space/'
           'spaces_memberships_privileges_multiprovider.feature')

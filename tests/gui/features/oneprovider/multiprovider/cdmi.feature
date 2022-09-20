@@ -18,7 +18,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And user of browser logged as space-owner-user to Onezone service
 
 
-  # TODO: VFS-9473 reimplement gui data distribution tests after move to file info modal
+  # TODO: VFS-9842 reimplement gui data distribution tests after move to file info modal
   # Scenario: User uploads file on one provider, sees it's distribution, writes to it using cdmi on other provider and sees it's distribution
   #   When user of browser clicks "space1" on the spaces list in the sidebar
   #   And user of browser clicks "Files" of "space1" space in the sidebar
@@ -52,7 +52,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
   #   And user of browser clicks "Close" confirmation button in displayed modal
 
 
-  # TODO: VFS-9473 reimplement gui data distribution tests after move to file info modal
+  # TODO: VFS-9842 reimplement gui data distribution tests after move to file info modal
   # Scenario: User uploads file, sees it's size, writes to it using cdmi and sees that size has grown
   #   When user of browser clicks "space1" on the spaces list in the sidebar
   #   And user of browser clicks "Files" of "space1" space in the sidebar
@@ -81,7 +81,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
   #   And user of browser sees that chunk bar for provider "oneprovider-1" is entirely filled
 
 
-  # TODO: VFS-9473 reimplement gui data distribution tests after move to file info modal
+  # TODO: VFS-9842 reimplement gui data distribution tests after move to file info modal
   # Scenario: User uploads file on one provider, sees it's distribution, reads half of file on other provider using cdmi and again sees it's distribution
   #   When user of browser clicks "space1" on the spaces list in the sidebar
   #   And user of browser clicks "Files" of "space1" space in the sidebar
@@ -111,7 +111,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
   #   And user of browser clicks "Close" confirmation button in displayed modal
 
 
-  # TODO: VFS-9473 reimplement gui data distribution tests after move to file info modal
+  # TODO: VFS-9842 reimplement gui data distribution tests after move to file info modal
   # Scenario: User uploads file, sees it's distribution, writes to it beyond the end of file using cdmi and sees it's distribution again
   #   When user of browser clicks "space1" on the spaces list in the sidebar
   #   And user of browser clicks "Files" of "space1" space in the sidebar
