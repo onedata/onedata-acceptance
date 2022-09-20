@@ -30,12 +30,11 @@ Feature: Oneprovider POSIX privileges GUI tests
 
 	# Check permission code
     And user of browser_user1 opens file browser for "space1" space
-    And user of browser_user1 clicks on menu for "20B-0.txt" file in file browser
-    And user of browser_user1 clicks "Permissions" option in data row menu in file browser
-    And user of browser_user1 sees that "Edit permissions" modal has appeared
-    And user of browser_user1 selects "POSIX" permission type in edit permissions modal
+    And user of browser_user1 clicks on "Permissions" in context menu for "20B-0.txt"
+    And user of browser_user1 sees that "File details" modal is opened on "Permissions" tab
+    And user of browser_user1 selects "POSIX" permission type in edit permissions panel
     Then user of browser_user1 sees that current permission is "664"
-    And user of browser_user1 clicks "Cancel" button in displayed modal
+    And user of browser_user1 clicks on "Close" button in modal "File details"
 
 
   Scenario: User sees that new directory default permission code is 775
@@ -43,12 +42,11 @@ Feature: Oneprovider POSIX privileges GUI tests
 
 	# Check permission code
     And user of browser_user1 opens file browser for "space1" space
-    And user of browser_user1 clicks on menu for "dir2" directory in file browser
-    And user of browser_user1 clicks "Permissions" option in data row menu in file browser
-    And user of browser_user1 sees that "Edit permissions" modal has appeared
-    And user of browser_user1 selects "POSIX" permission type in edit permissions modal
+    And user of browser_user1 clicks on "Permissions" in context menu for "dir2"
+    And user of browser_user1 sees that "Directory details" modal is opened on "Permissions" tab
+    And user of browser_user1 selects "POSIX" permission type in edit permissions panel
     Then user of browser_user1 sees that current permission is "775"
-    And user of browser_user1 clicks "Cancel" button in displayed modal
+    And user of browser_user1 clicks on "Close" button in modal "Directory details"
 
 
   Scenario: User sees file permission changes made by space owner
@@ -57,21 +55,19 @@ Feature: Oneprovider POSIX privileges GUI tests
     When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
     And user of space_owner_browser clicks "Files" of "space1" space in the sidebar
     And user of space_owner_browser sees file browser in files tab in Oneprovider page
-    And user of space_owner_browser clicks on menu for "file1" file in file browser
-    And user of space_owner_browser clicks "Permissions" option in data row menu in file browser
-    And user of space_owner_browser sees that "Edit permissions" modal has appeared
-    And user of space_owner_browser selects "POSIX" permission type in edit permissions modal
-    And user of space_owner_browser sets "775" permission code in edit permissions modal
-    And user of space_owner_browser clicks "Save" confirmation button in displayed modal
+    And user of space_owner_browser clicks on "Permissions" in context menu for "file1"
+    And user of space_owner_browser sees that "File details" modal is opened on "Permissions" tab
+    And user of space_owner_browser selects "POSIX" permission type in edit permissions panel
+    And user of space_owner_browser sets "775" permission code in edit permissions panel
+    And user of space_owner_browser clicks on "Save" button in edit permissions panel
 
 	# Check permission code
     And user of browser_user1 opens file browser for "space1" space
-    And user of browser_user1 clicks on menu for "file1" file in file browser
-    And user of browser_user1 clicks "Permissions" option in data row menu in file browser
-    And user of browser_user1 sees that "Edit permissions" modal has appeared
-    And user of browser_user1 selects "POSIX" permission type in edit permissions modal
+    And user of browser_user1 clicks on "Permissions" in context menu for "file1"
+    And user of browser_user1 sees that "File details" modal is opened on "Permissions" tab
+    And user of browser_user1 selects "POSIX" permission type in edit permissions panel
     Then user of browser_user1 sees that current permission is "775"
-    And user of browser_user1 clicks "Cancel" button in displayed modal
+    And user of browser_user1 clicks on "Close" button in modal "File details"
 
 
   Scenario: User sees directory permission changes made by space owner
@@ -80,21 +76,19 @@ Feature: Oneprovider POSIX privileges GUI tests
     When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
     And user of space_owner_browser clicks "Files" of "space1" space in the sidebar
     And user of space_owner_browser sees file browser in files tab in Oneprovider page
-    And user of space_owner_browser clicks on menu for "dir1" directory in file browser
-    And user of space_owner_browser clicks "Permissions" option in data row menu in file browser
-    And user of space_owner_browser sees that "Edit permissions" modal has appeared
-    And user of space_owner_browser selects "POSIX" permission type in edit permissions modal
-    And user of space_owner_browser sets "664" permission code in edit permissions modal
-    And user of space_owner_browser clicks "Save" confirmation button in displayed modal
+    And user of space_owner_browser clicks on "Permissions" in context menu for "dir1"
+    And user of space_owner_browser sees that "Directory details" modal is opened on "Permissions" tab
+    And user of space_owner_browser selects "POSIX" permission type in edit permissions panel
+    And user of space_owner_browser sets "664" permission code in edit permissions panel
+    And user of space_owner_browser clicks on "Save" button in edit permissions panel
 
 	# Check permission code
     And user of browser_user1 opens file browser for "space1" space
-    And user of browser_user1 clicks on menu for "dir1" directory in file browser
-    And user of browser_user1 clicks "Permissions" option in data row menu in file browser
-    And user of browser_user1 sees that "Edit permissions" modal has appeared
-    And user of browser_user1 selects "POSIX" permission type in edit permissions modal
+    And user of browser_user1 clicks on "Permissions" in context menu for "dir1"
+    And user of browser_user1 sees that "Directory details" modal is opened on "Permissions" tab
+    And user of browser_user1 selects "POSIX" permission type in edit permissions panel
     Then user of browser_user1 sees that current permission is "664"
-    And user of browser_user1 clicks "Cancel" button in displayed modal
+    And user of browser_user1 clicks on "Close" button in modal "Directory details"
 
 
   Scenario: User fails to download file because of lack in privileges
@@ -182,15 +176,15 @@ Feature: Oneprovider POSIX privileges GUI tests
 
     # Fail to change file permissions
     And user of browser_user1 opens file browser for "space1" space
-    And user of browser_user1 clicks on menu for "<name_of_item>" <item_type> in file browser
-    And user of browser_user1 clicks "Permissions" option in data row menu in file browser
-    And user of browser_user1 sees that "Edit permissions" modal has appeared
-    And user of browser_user1 selects "POSIX" permission type in edit permissions modal
-    And user of browser_user1 sets "775" permission code in edit permissions modal
-    And user of browser_user1 clicks "Save" confirmation button in displayed modal
+    And user of browser_user1 clicks on "Permissions" in context menu for "<name_of_item>"
+    And user of browser_user1 sees that "<modal>" modal is opened on "Permissions" tab
+
+    And user of browser_user1 selects "POSIX" permission type in edit permissions panel
+    And user of browser_user1 sets "775" permission code in edit permissions panel
+    And user of browser_user1 clicks on "Save" button in edit permissions panel
     Then user of browser_user1 sees that error modal with text "Modifying permissions failed!" appeared
 
     Examples:
-      | item_type | name_of_item |
-      | file      | file1        |
-      | directory | dir1         |
+      | modal             | name_of_item |
+      | File details      | file1        |
+      | Directory details | dir1         |

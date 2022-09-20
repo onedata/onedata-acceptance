@@ -45,12 +45,12 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     Then user of browser1 clicks "space1" on the spaces list in the sidebar
     And user of browser1 clicks "Files" of "space1" space in the sidebar
     And user of browser1 sees file browser in files tab in Oneprovider page
-    And user of browser1 clicks on menu for "file1" file in file browser
-    And user of browser1 clicks "Permissions" option in data row menu in file browser
-    And user of browser1 sees that "Edit permissions" modal has appeared
-    And user of browser1 selects "POSIX" permission type in edit permissions modal
+    And user of browser1 clicks on "Permissions" in context menu for "file1"
+    And user of browser1 sees that "File details" modal is opened on "Permissions" tab
+
+    And user of browser1 selects "POSIX" permission type in edit permissions panel
     And user of browser1 sees that current permission is "775"
-    And user of browser1 clicks "Cancel" button in displayed modal
+    And user of browser1 clicks on "Close" button in modal "File details"
 
 
   Scenario: Space-owner-user changes directory permission and user1 sees that it has changed
@@ -60,12 +60,11 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     Then user of browser1 clicks "space1" on the spaces list in the sidebar
     And user of browser1 clicks "Files" of "space1" space in the sidebar
     And user of browser1 sees file browser in files tab in Oneprovider page
-    And user of browser1 clicks on menu for "dir1" file in file browser
-    And user of browser1 clicks "Permissions" option in data row menu in file browser
-    And user of browser1 sees that "Edit permissions" modal has appeared
-    And user of browser1 selects "POSIX" permission type in edit permissions modal
+    And user of browser1 clicks on "Permissions" in context menu for "dir1"
+    And user of browser1 sees that "Directory details" modal is opened on "Permissions" tab
+    And user of browser1 selects "POSIX" permission type in edit permissions panel
     And user of browser1 sees that current permission is "664"
-    And user of browser1 clicks "Cancel" button in displayed modal
+    And user of browser1 clicks on "Close" button in modal "Directory details"
 
 
   Scenario: User1 creates directory and fails to remove it because of change in parent directory permission

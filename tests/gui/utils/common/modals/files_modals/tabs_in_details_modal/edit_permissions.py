@@ -75,6 +75,7 @@ class MemberAclPermission(PageObject):
     allow_option = WebElement('.ace-type-allow')
     deny_option = WebElement('.ace-type-deny')
     _subject_type = WebElement('.item-icon .oneicon')
+    header = WebElement('.one-collapsible-list-item-header')
 
     def expand(self):
         self.click()
@@ -104,18 +105,18 @@ class ACL(PageObject):
             self._toggle.click()
 
 
-class EditPermissionsModal(Modal):
-    posix = WebItem('.modal-body', cls=POSIX)
+class EditPermissionsTab(Modal):
+    posix = Button('.modal-body', cls=POSIX)
     acl = WebItem('.modal-body', cls=ACL)
 
-    posix_button = Button('.permissions-type-posix')
-    acl_button = Button('.permissions-type-acl')
+    posix_button = Button('.permissions-type-btn-posix ')
+    acl_button = Button('.permissions-type-btn-acl')
 
-    cancel_button = NamedButton('button', text='Cancel')
-    save_button = NamedButton('button', text='Save')
+    save = NamedButton('.btn-primary', text='Save')
+    discard_changes = NamedButton('.btn-warning', text='Discard changes')
 
     permission_denied_alert = WebElement('.alert.alert-warning.forbidden')
 
     def __str__(self):
-        return 'Edit permission modal'
+        return 'Edit permission tab'
 
