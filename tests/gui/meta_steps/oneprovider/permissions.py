@@ -18,7 +18,8 @@ from tests.gui.meta_steps.oneprovider.data import (
     _click_menu_for_elem_somewhere_in_file_browser)
 from tests.gui.steps.oneprovider.file_browser import (
     select_files_from_file_list_using_ctrl)
-from tests.gui.steps.modals.modal import assert_error_modal_with_text_appeared
+from tests.gui.steps.modals.modal import (assert_error_modal_with_text_appeared,
+                                          click_modal_button)
 from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
     click_on_option_of_space_on_left_sidebar_menu,
