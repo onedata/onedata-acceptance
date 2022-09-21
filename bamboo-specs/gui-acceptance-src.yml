@@ -536,7 +536,7 @@ Chrome oneprovider ACL remove file:
   - script:
      <<: *run-selenium-tests
      scripts:
-     - make SUITE=test_oneprovider_acl_remove_files BROWSER=Chrome TIMEOUT=600 test_gui_src
+     - make SUITE=test_oneprovider_acl_remove_file BROWSER=Chrome TIMEOUT=600 test_gui_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs

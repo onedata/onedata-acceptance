@@ -212,6 +212,7 @@ def remove_all_metadata_in_op_gui(selenium, browser_id, space, op_container,
 
 def click_save_button_metadata(selenium, browser_id, modals):
     button = 'Save'
+    panel = 'metadata'
     try:
         click_modal_button(selenium, browser_id, button, panel, modals)
     except RuntimeError:
