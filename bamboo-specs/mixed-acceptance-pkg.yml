@@ -51,7 +51,7 @@ stages:
     final: false
     jobs:
     # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
-    # - Chrome ACL one entry
+    - Chrome ACL one entry  # First job cant be commented because it defines anchors
     # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
     # - Chrome ACL two entries
     - Chrome LUMA tests
@@ -141,7 +141,7 @@ Chrome ACL one entry: &acceptance-mixed-tests-in-chrome-job
       scripts:
       - make SUITE=test_acl_one_entry TIMEOUT=600 test_mixed_pkg
       description: Run acceptance mixed tests in Chrome
-  final-tasks: &final-tasks
+  final-tasks: 
   - test-parser:
       type: junit
       ignore-time: 'false'
@@ -158,35 +158,35 @@ Chrome ACL one entry: &acceptance-mixed-tests-in-chrome-job
   - script:
       <<: *clear-env
       working-dir: onedata
-  artifacts: &artifacts
+  artifacts: 
   - name: report
     location: onedata/tests/mixed/logs/
     pattern: '**/*.*'
     shared: false
     required: false
-  requirements: &requirements
+  requirements: 
   - kubeadm
   artifact-subscriptions: []
   
-Chrome ACL two entries:
-  <<: *acceptance-mixed-tests-in-chrome-job
-  key: CATE
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - script: *force-clean-repo
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-mixed-tests-in-chrome
-      scripts:
-      - make SUITE=test_acl_two_entries TIMEOUT=600 test_mixed_pkg
-  final-tasks: *final-tasks
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
+# Chrome ACL two entries:
+#   <<: *acceptance-mixed-tests-in-chrome-job
+#   key: CATE
+#   tasks:
+#   - script: *clear-env
+#   - script: *restart-minikube
+#   - script: *force-clean-repo
+#   - checkout: *checkout-default-repository
+#   - script: *init-submodules
+#   - script: *download-artifacts
+#   - script: *build-swaggers
+#   - script:
+#       <<: *run-acceptance-mixed-tests-in-chrome
+#       scripts:
+#       - make SUITE=test_acl_two_entries TIMEOUT=600 test_mixed_pkg
+#   final-tasks: *final-tasks
+#   artifacts: *artifacts
+#   requirements: *requirements
+#   artifact-subscriptions: []
   
 Chrome LUMA tests:
   <<: *acceptance-mixed-tests-in-chrome-job
@@ -581,37 +581,37 @@ Chrome onepanel tests:
       scripts:
       - make SUITE=test_onepanel_basic TIMEOUT=600 test_mixed_pkg
       
-Chrome permission POSIX multi tests:
-  <<: *acceptance-mixed-tests-in-chrome-job
-  key: CPPMT
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - script: *force-clean-repo
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-mixed-tests-in-chrome
-      scripts:
-      - make SUITE=test_permission_posix_multi ENV_FILE=1oz_1op_2oc TIMEOUT=600 test_mixed_pkg
+# Chrome permission POSIX multi tests:
+#   <<: *acceptance-mixed-tests-in-chrome-job
+#   key: CPPMT
+#   tasks:
+#   - script: *clear-env
+#   - script: *restart-minikube
+#   - script: *force-clean-repo
+#   - checkout: *checkout-default-repository
+#   - script: *init-submodules
+#   - script: *download-artifacts
+#   - script: *build-swaggers
+#   - script:
+#       <<: *run-acceptance-mixed-tests-in-chrome
+#       scripts:
+#       - make SUITE=test_permission_posix_multi ENV_FILE=1oz_1op_2oc TIMEOUT=600 test_mixed_pkg
       
-Chrome permission POSIX tests:
-  <<: *acceptance-mixed-tests-in-chrome-job
-  key: CPPT
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - script: *force-clean-repo
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-mixed-tests-in-chrome
-      scripts:
-      - make SUITE=test_permission_posix TIMEOUT=600 test_mixed_pkg
+# Chrome permission POSIX tests:
+#   <<: *acceptance-mixed-tests-in-chrome-job
+#   key: CPPT
+#   tasks:
+#   - script: *clear-env
+#   - script: *restart-minikube
+#   - script: *force-clean-repo
+#   - checkout: *checkout-default-repository
+#   - script: *init-submodules
+#   - script: *download-artifacts
+#   - script: *build-swaggers
+#   - script:
+#       <<: *run-acceptance-mixed-tests-in-chrome
+#       scripts:
+#       - make SUITE=test_permission_posix TIMEOUT=600 test_mixed_pkg
       
 Chrome remove file tests:
   <<: *acceptance-mixed-tests-in-chrome-job
