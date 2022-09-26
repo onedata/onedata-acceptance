@@ -215,7 +215,7 @@ Feature: Basic files tab operations on hardlinks in file browser
     And user of browser selects "POSIX" permission type in edit permissions panel
     And user of browser sets "775" permission code in edit permissions panel
     And user of browser clicks on "Save" button in edit permissions panel
-    And user of browser clicks on "Close" button in modal "File details"
+    And user of browser clicks on "X" button in modal "File details"
 
     # check permission of original file
     And user of browser changes current working directory to space root using breadcrumbs
@@ -241,7 +241,7 @@ Feature: Basic files tab operations on hardlinks in file browser
     And user of browser adds ACE with "attributes:read attributes" privilege set for group group1
     And user of browser adds ACE with [general:delete, acl:read acl] privileges set for user space-owner-user
     And user of browser clicks on "Save" button in edit permissions panel
-    And user of browser clicks on "Close" button in modal "File details"
+    And user of browser clicks on "X" button in modal "File details"
 
      # check permission of original file
     And user of browser clicks and presses enter on item named "dir1" in file browser

@@ -93,7 +93,7 @@ Feature: Basic file management operations
     And user of browser selects "POSIX" permission type in edit permissions panel
     And user of browser sets "677" permission code in edit permissions panel
     And user of browser clicks on "Save" button in edit permissions panel
-    And user of browser clicks on "Close" button in modal "Directory details"
+    And user of browser clicks on "X" button in modal "Directory details"
 
     And user of browser clicks on menu for "file2" directory in file browser
     And user of browser clicks "Copy" option in data row menu in file browser
@@ -117,7 +117,7 @@ Feature: Basic file management operations
     And user of browser selects "POSIX" permission type in edit permissions panel
     And user of browser sets "677" permission code in edit permissions panel
     And user of browser clicks on "Save" button in edit permissions panel
-    And user of browser clicks on "Close" button in modal "Directory details"
+    And user of browser clicks on "X" button in modal "Directory details"
 
     And user of browser clicks on menu for "file3" directory in file browser
     And user of browser clicks "Cut" option in data row menu in file browser

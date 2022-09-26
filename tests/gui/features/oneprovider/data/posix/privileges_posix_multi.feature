@@ -50,7 +50,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
 
     And user of browser1 selects "POSIX" permission type in edit permissions panel
     And user of browser1 sees that current permission is "775"
-    And user of browser1 clicks on "Close" button in modal "File details"
+    And user of browser1 clicks on "X" button in modal "File details"
 
 
   Scenario: Space-owner-user changes directory permission and user1 sees that it has changed
@@ -64,7 +64,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     And user of browser1 sees that "Directory details" modal is opened on "Permissions" tab
     And user of browser1 selects "POSIX" permission type in edit permissions panel
     And user of browser1 sees that current permission is "664"
-    And user of browser1 clicks on "Close" button in modal "Directory details"
+    And user of browser1 clicks on "X" button in modal "Directory details"
 
 
   Scenario: User1 creates directory and fails to remove it because of change in parent directory permission

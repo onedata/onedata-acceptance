@@ -34,7 +34,7 @@ Feature: Oneprovider POSIX privileges GUI tests
     And user of browser_user1 sees that "File details" modal is opened on "Permissions" tab
     And user of browser_user1 selects "POSIX" permission type in edit permissions panel
     Then user of browser_user1 sees that current permission is "664"
-    And user of browser_user1 clicks on "Close" button in modal "File details"
+    And user of browser_user1 clicks on "X" button in modal "File details"
 
 
   Scenario: User sees that new directory default permission code is 775
@@ -46,7 +46,7 @@ Feature: Oneprovider POSIX privileges GUI tests
     And user of browser_user1 sees that "Directory details" modal is opened on "Permissions" tab
     And user of browser_user1 selects "POSIX" permission type in edit permissions panel
     Then user of browser_user1 sees that current permission is "775"
-    And user of browser_user1 clicks on "Close" button in modal "Directory details"
+    And user of browser_user1 clicks on "X" button in modal "Directory details"
 
 
   Scenario: User sees file permission changes made by space owner
@@ -67,7 +67,7 @@ Feature: Oneprovider POSIX privileges GUI tests
     And user of browser_user1 sees that "File details" modal is opened on "Permissions" tab
     And user of browser_user1 selects "POSIX" permission type in edit permissions panel
     Then user of browser_user1 sees that current permission is "775"
-    And user of browser_user1 clicks on "Close" button in modal "File details"
+    And user of browser_user1 clicks on "X" button in modal "File details"
 
 
   Scenario: User sees directory permission changes made by space owner
@@ -88,7 +88,7 @@ Feature: Oneprovider POSIX privileges GUI tests
     And user of browser_user1 sees that "Directory details" modal is opened on "Permissions" tab
     And user of browser_user1 selects "POSIX" permission type in edit permissions panel
     Then user of browser_user1 sees that current permission is "664"
-    And user of browser_user1 clicks on "Close" button in modal "Directory details"
+    And user of browser_user1 clicks on "X" button in modal "Directory details"
 
 
   Scenario: User fails to download file because of lack in privileges

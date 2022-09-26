@@ -42,17 +42,17 @@ def add_json_rdf_metadata_for_item(selenium, browser_id, modals, text,
 
     modal_name = get_modal_name_from_item_name(item_name.lower())
     button = 'Save'
-    tab = 'Metadata'
-    close_button = 'Close'
+    panel = 'Metadata'
+    close_button = 'X'
 
     click_on_context_menu_item(selenium, browser_id, popups, item_name,
-                               tmp_memory, tab)
-    assert_tab_in_modal(selenium, browser_id, tab, modals, modal_name)
+                               tmp_memory, panel)
+    assert_tab_in_modal(selenium, browser_id, panel, modals, modal_name)
     click_on_navigation_tab_in_modal(selenium, browser_id, input_type,
-                                     modals, tab)
+                                     modals, panel)
     type_text_to_metadata_textarea(selenium, browser_id, text, input_type,
                                    modals)
-    click_modal_button(selenium, browser_id, button, tab, modals)
+    click_modal_button(selenium, browser_id, button, panel, modals)
     click_modal_button(selenium, browser_id, close_button, modal_name, modals)
 
 
@@ -82,10 +82,9 @@ def set_metadata_in_op_gui(selenium, browser_id, path, tmp_memory, op_container,
     modal_name = get_modal_name_from_item_name(item)
     option = 'Metadata'
     button = 'Save'
-    close_button = 'Close'
+    close_button = 'X'
     text = 'Updating metadata failed'
     status_type = 'metadata'
-    modal = 'Metadata'
 
     open_modal_for_file_browser_item(selenium, browser_id, popups, modal_name,
                                      path, tmp_memory, option, space, oz_page,
@@ -98,10 +97,10 @@ def set_metadata_in_op_gui(selenium, browser_id, path, tmp_memory, op_container,
                                                     modals, attr)
     else:
         click_on_navigation_tab_in_modal(selenium, browser_id, tab_name, modals,
-                                         modal)
+                                         option)
         type_text_to_metadata_textarea(selenium, browser_id, val, tab_name,
                                        modals)
-    click_modal_button(selenium, browser_id, button, modal, modals)
+    click_modal_button(selenium, browser_id, button, option, modals)
 
     if res == 'fails':
         assert_error_modal_with_text_appeared(selenium, browser_id, text)
@@ -129,8 +128,7 @@ def assert_metadata_in_op_gui(selenium, browser_id, path, tmp_memory,
                               oz_page, item, popups):
     modal_name = get_modal_name_from_item_name(item)
     option = 'Metadata'
-    close_button = 'Close'
-    modal = 'Metadata'
+    close_button = 'X'
 
     open_modal_for_file_browser_item(selenium, browser_id, popups, modal_name,
                                      path, tmp_memory, option, space, oz_page,
@@ -144,7 +142,7 @@ def assert_metadata_in_op_gui(selenium, browser_id, path, tmp_memory,
                                                    val, modals)
         else:
             click_on_navigation_tab_in_modal(selenium, browser_id, tab_name,
-                                             modals, modal)
+                                             modals, option)
             assert_textarea_contains_record(selenium, browser_id, val, tab_name,
                                             modals)
     click_modal_button(selenium, browser_id, close_button, modal_name, modals)
@@ -212,7 +210,7 @@ def remove_all_metadata_in_op_gui(selenium, browser_id, space, op_container,
 
 def click_save_button_metadata(selenium, browser_id, modals):
     button = 'Save'
-    panel = 'metadata'
+    panel = 'Metadata'
     try:
         click_modal_button(selenium, browser_id, button, panel, modals)
     except RuntimeError:
@@ -222,13 +220,13 @@ def click_save_button_metadata(selenium, browser_id, modals):
 @wt(parsers.parse('user of {browser_id} sees that there is no metadata '
                   'in metadata panel'))
 def assert_no_metadata_in_modal(selenium, browser_id, modals):
-    modal = 'Metadata'
+    panel = 'Metadata'
 
     assert_no_basic_metadata_for_item(selenium, browser_id, modals)
     click_on_navigation_tab_in_modal(selenium, browser_id, 'JSON', modals,
-                                     modal)
+                                     panel)
     assert_textarea_is_empty_for_metadata(selenium, browser_id, 'JSON', modals)
-    click_on_navigation_tab_in_modal(selenium, browser_id, 'RDF', modals, modal)
+    click_on_navigation_tab_in_modal(selenium, browser_id, 'RDF', modals, panel)
     assert_textarea_is_empty_for_metadata(selenium, browser_id, 'RDF', modals)
 
 

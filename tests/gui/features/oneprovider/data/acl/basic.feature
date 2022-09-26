@@ -71,7 +71,7 @@ Feature: ACL basic tests using single browser in Oneprovider GUI
     And user of browser selects "ACL" permission type in edit permissions panel
     And user of browser adds ACE with general:delete privilege set for user space-owner-user
     And user of browser clicks on "Discard changes" button in edit permissions panel
-    And user of browser clicks on "Close" button in modal "Directory details"
+    And user of browser clicks on "X" button in modal "Directory details"
 
     # Check ACL record
     And user of browser clicks on "Permissions" in context menu for "dir1"
@@ -90,7 +90,7 @@ Feature: ACL basic tests using single browser in Oneprovider GUI
     Then user of browser sees exactly 1 ACL record in edit permissions panel
     And user of browser sees that first ACL record in edit permissions panel is set for <subject_type> <subject_name>
     And user of browser sees that only <privileges> privileges are set in first ACL record in edit permissions panel
-    And user of browser clicks on "Close" button in modal "Directory details"
+    And user of browser clicks on "X" button in modal "Directory details"
 
     And user of browser clicks once on item named "dir2" in file browser
     And user of browser clicks on "Permissions" in context menu for "dir2"
@@ -98,7 +98,7 @@ Feature: ACL basic tests using single browser in Oneprovider GUI
     And user of browser sees exactly 1 ACL record in edit permissions panel
     And user of browser sees that first ACL record in edit permissions panel is set for <subject_type> <subject_name>
     And user of browser sees that only <privileges> privileges are set in first ACL record in edit permissions panel
-    And user of browser clicks on "Close" button in modal "Directory details"
+    And user of browser clicks on "X" button in modal "Directory details"
 
     Examples:
     | privileges            | subject_type | subject_name     |
@@ -115,14 +115,14 @@ Feature: ACL basic tests using single browser in Oneprovider GUI
     Then user of browser sees exactly 1 ACL record in edit permissions panel
     And user of browser sees that first ACL record in edit permissions panel is set for <subject_type> <subject_name>
     And user of browser sees that only <privileges> privileges are set in first ACL record in edit permissions panel
-    And user of browser clicks on "Close" button in modal "File details"
+    And user of browser clicks on "X" button in modal "File details"
 
     And user of browser clicks once on item named "file2" in file browser
     And user of browser clicks on "Permissions" in context menu for "file2"
     And user of browser sees that "File details" modal is opened on "Permissions" tab
     And user of browser sees exactly 1 ACL record in edit permissions panel
     And user of browser sees that only <privileges> privileges are set in first ACL record in edit permissions panel
-    And user of browser clicks on "Close" button in modal "File details"
+    And user of browser clicks on "X" button in modal "File details"
 
     Examples:
     | privileges            | subject_type | subject_name     |
@@ -142,7 +142,7 @@ Feature: ACL basic tests using single browser in Oneprovider GUI
     And user of browser adds ACE with "attributes:read attributes" privilege set for group group1
     And user of browser adds ACE with [general:delete, acl:read acl] privileges set for user space-owner-user
     And user of browser clicks on "Save" button in edit permissions panel
-    And user of browser clicks on "Close" button in modal "File details"
+    And user of browser clicks on "X" button in modal "File details"
 
     # Check ACL records
     And user of browser clicks on "Permissions" in context menu for "file1"
@@ -179,7 +179,7 @@ Feature: ACL basic tests using single browser in Oneprovider GUI
     Then user of browser sees that first ACL record in edit permissions panel is set for user space-owner-user
     And user of browser sees that second ACL record in edit permissions panel is set for group group1
     And user of browser clicks on "Save" button in edit permissions panel
-    And user of browser clicks on "Close" button in modal "File details"
+    And user of browser clicks on "X" button in modal "File details"
 
     # check order after close and open modal again
     And user of browser clicks on "Permissions" in context menu for "file1"

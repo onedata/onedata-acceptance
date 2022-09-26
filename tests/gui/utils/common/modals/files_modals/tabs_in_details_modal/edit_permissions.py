@@ -107,7 +107,7 @@ class ACL(PageObject):
 
 class EditPermissionsTab(Modal):
     posix = Button('.modal-body', cls=POSIX)
-    acl = WebItem('.modal-body', cls=ACL)
+    acl = Button('.modal-body', cls=ACL)
 
     posix_button = Button('.permissions-type-btn-posix ')
     acl_button = Button('.permissions-type-btn-acl')

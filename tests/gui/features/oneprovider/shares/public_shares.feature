@@ -155,7 +155,7 @@ Feature: Basic operations on public shares in file browser
     And user of space_owner_browser selects "POSIX" permission type in edit permissions panel
     And user of space_owner_browser sets "000" permission code in edit permissions panel
     And user of space_owner_browser clicks on "Save" button in edit permissions panel
-    And user of space_owner_browser clicks on "Close" button in modal "File details"
+    And user of space_owner_browser clicks on "X" button in modal "File details"
 
     # Space owner user hands over shared directory
     And user of space_owner_browser changes current working directory to space root using breadcrumbs
