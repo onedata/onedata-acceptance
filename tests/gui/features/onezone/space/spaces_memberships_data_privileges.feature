@@ -84,42 +84,39 @@ Feature: Basic management of data privileges for spaces in Onezone GUI
     Then user of browser_user1 sees that item named "new_directory" has appeared in file browser
 
 
-  # TODO: VFS-9798 reimplement gui shares tests after move to file info modal
-  # Scenario: Non-space-owner successfully creates share if he got Manage shares privilege
-  #   When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
-  #   And user of space_owner_browser clicks "Members" of "space1" space in the sidebar
-  #   And user of space_owner_browser clicks "user1" user in "space1" space members users list
-  #   And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
-  #         Data management:
-  #           granted: Partially
-  #           privilege subtypes:
-  #             Manage shares: False
+  Scenario: Non-space-owner successfully creates share if he got Manage shares privilege
+    When user of space_owner_browser clicks "space1" on the spaces list in the sidebar
+    And user of space_owner_browser clicks "Members" of "space1" space in the sidebar
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
+         Data management:
+           granted: Partially
+           privilege subtypes:
+             Manage shares: False
 
-  #   # Non-space-owner fails to create share in space1
-  #   And user of browser_user1 clicks "Files" of "space1" space in the sidebar
-  #   And user of browser_user1 sees file browser in files tab in Oneprovider page
-  #   And user of browser_user1 sees that current working directory displayed in breadcrumbs on file browser is space1
-  #   And user of browser_user1 clicks on menu for "dir1" file in file browser
-  #   And user of browser_user1 clicks "Share" option in data row menu in file browser
-  #   And user of browser_user1 clicks on "Create" button in modal "Share directory"
-  #   And user of browser_user1 sees that error modal with text "Creating share failed" appeared
-  #   And user of browser_user1 closes "Error" modal
-  #   And user of browser_user1 clicks on "Close" button in modal "Share directory"
+    # Non-space-owner fails to create share in space1
+    And user of browser_user1 clicks "Files" of "space1" space in the sidebar
+    And user of browser_user1 sees file browser in files tab in Oneprovider page
+    And user of browser_user1 sees that current working directory displayed in breadcrumbs on file browser is space1
+    And user of browser_user1 clicks on menu for "dir1" file in file browser
+    And user of browser_user1 clicks "Share" option in data row menu in file browser
+    And user of browser_user1 sees that "Share directory" modal has not appeared
 
-  #   And user of space_owner_browser clicks "user1" user in "space1" space members users list
-  #   And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
-  #         Data management:
-  #           granted: Partially
-  #           privilege subtypes:
-  #             Manage shares: True
+    And user of space_owner_browser clicks "user1" user in "space1" space members users list
+    And user of space_owner_browser sets following privileges for "user1" user in space members subpage:
+         Data management:
+           granted: Partially
+           privilege subtypes:
+             Manage shares: True
 
-  #   And user of browser_user1 clicks on menu for "dir1" file in file browser
-  #   And user of browser_user1 clicks "Share" option in data row menu in file browser
-  #   And user of browser_user1 clicks on "Create" button in modal "Share directory"
-  #   And user of browser_user1 clicks on "Close" button in modal "Share directory"
-  #   And user of browser_user1 opens shares view of "space1"
-  #   And user of browser_user1 clicks "dir1" share in shares browser on shares view
-  #   And user of browser_user1 sees file browser on single share view
-  #   Then user of browser_user1 sees that item named "dir1" has appeared in file browser on single share view
-
+    And user of browser_user1 clicks "Files" of "space1" space in the sidebar
+    And user of browser_user1 sees file browser in files tab in Oneprovider page
+    And user of browser_user1 clicks on menu for "dir1" file in file browser
+    And user of browser_user1 clicks "Share" option in data row menu in file browser
+    And user of browser_user1 clicks on "Create" button in modal "Share directory"
+    And user of browser_user1 clicks on "Close" button in modal "Directory details"
+    And user of browser_user1 opens shares view of "space1"
+    And user of browser_user1 clicks "dir1" share in shares browser on shares view
+    And user of browser_user1 sees file browser on single share view
+    Then user of browser_user1 sees that item named "dir1" has appeared in file browser on single share view
 

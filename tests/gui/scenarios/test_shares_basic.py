@@ -50,6 +50,7 @@ from tests.gui.meta_steps.oneprovider.shares import *
 from tests.gui.meta_steps.oneprovider.data import *
 
 from tests.gui.steps.modals.modal import *
+from tests.gui.steps.modals.details_modal import *
 from tests.gui.steps.oneprovider_common import *
 from tests.gui.meta_steps.onezone.common import *
 
@@ -62,5 +63,4 @@ def screens():
 
 
 scenarios('../features/oneprovider/shares/basic_management.feature')
-# TODO: VFS-9798 reimplement gui shares tests after move to file info modal
-# scenarios('../features/oneprovider/shares/shares_with_symlink.feature')
+scenarios('../features/oneprovider/shares/shares_with_symlink.feature')

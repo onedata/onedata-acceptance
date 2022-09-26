@@ -42,7 +42,7 @@ def create_share(selenium, browser_id, share_name, item_name, tmp_memory,
 
 
 @wt(parsers.parse('user of {browser_id} opens "{share_name}" single share '
-                  'view of "{item_name}" using modal icon'))
+                  'view of "{item_name}" using panel icon'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_single_share_view_by_modal(selenium, browser_id, share_name, modals,
                                     op_container, tmp_memory, item_name):
@@ -53,8 +53,8 @@ def open_single_share_view_by_modal(selenium, browser_id, share_name, modals,
                                                  item_name, tmp_memory)
     click_share_info_icon_in_share_directory_modal(selenium, browser_id, modals,
                                                    share_name)
-    assert_browser_in_tab_in_op(selenium, browser_id, op_container,
-                                tmp_memory, items_browser)
+    assert_browser_in_tab_in_op(selenium, browser_id, op_container, tmp_memory,
+                                items_browser)
     is_selected_share_named(selenium, browser_id, share_name, op_container)
 
 
@@ -120,7 +120,7 @@ def open_single_share_view_by_sidebar(selenium, browser_id, share_name,
 def hand_share_url_to_another_user(selenium, browser_id, browser2_id,
                                    share_name, item_name, tmp_memory, modals,
                                    displays, clipboard):
-    modal_name = "Share directory"
+    modal_name = 'Details modal'
     item_type = 'URL'
     button = 'Close'
 
