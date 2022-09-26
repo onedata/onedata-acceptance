@@ -53,7 +53,7 @@ class NavigationTab(PageObject):
 class DetailsModal(Modal):
     modal_name = Label('.modal-header h1')
     owner = Label('.file-info-row-owner .property-value')
-    close = Button('.close')
+    x = Button('.close')
     space_id = Button('.file-info-row-space-id .clipboard-btn')
     file_id = Button('.file-info-row-cdmi-object-id .clipboard-btn')
     size_statistics = WebItem('.modal-content', cls=SizeStatistics)

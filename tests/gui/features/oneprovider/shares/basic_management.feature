@@ -37,7 +37,7 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser clicks on "Create" button in modal "Share modal"
 
     And user of browser sees that item named "dir1" is shared 1 time in modal
-    And user of browser clicks on "Close" button in modal "Directory details"
+    And user of browser clicks on "X" button in modal "Directory details"
 
     Then user of browser sees shared status tag for "dir1" in file browser
     And user of browser clicks "Overview" of "space1" space in the sidebar
@@ -47,7 +47,7 @@ Feature: Basic share management in Oneprovider GUI
   Scenario: User shares a directory and opens its view in full Onezone interface from modal
     When user of browser opens file browser for "space1" space
     And user of browser creates "share_dir1" share of "dir1" directory
-    And user of browser clicks on "share_dir1" share link with icon in tab "Share directory"
+    And user of browser clicks on "share_dir1" share link with icon in panel "Share directory"
     And user of browser sees file browser in files tab in Oneprovider page
     Then user of browser sees that item named "dir1" has appeared in file browser on single share view
     And user of browser sees that selected share is named "share_dir1"
@@ -58,13 +58,13 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser creates "share_dir1" share of "dir1" directory
 
     # create another share
-    And user of browser clicks on "Create another share" button in tab "Share directory"
+    And user of browser clicks on "Create another share" button in panel "Share directory"
     And user of browser writes "share2_dir1" into text field in modal "Share modal"
     And user of browser clicks on "Create" button in modal "Share modal"
     Then user of browser sees that item named "dir1" is shared 2 times in modal
 
     # open shares view
-    And user of browser clicks on "Close" button in modal "Directory details"
+    And user of browser clicks on "X" button in modal "Directory details"
     And user of browser clicks "Shares, Open Data" of "space1" space in the sidebar
     And user of browser sees shares browser in files tab in Oneprovider page
     Then user of browser sees that there is "share_dir1" share on shares view

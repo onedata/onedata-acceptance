@@ -122,7 +122,7 @@ def hand_share_url_to_another_user(selenium, browser_id, browser2_id,
                                    displays, clipboard):
     modal_name = 'Details modal'
     item_type = 'URL'
-    button = 'Close'
+    button = 'X'
 
     copy_url_of_share(selenium, browser_id, share_name, item_name, modals,
                       tmp_memory)

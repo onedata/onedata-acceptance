@@ -43,7 +43,7 @@ def add_json_rdf_metadata_for_item(selenium, browser_id, modals, text,
     modal_name = get_modal_name_from_item_name(item_name.lower())
     button = 'Save'
     tab = 'Metadata'
-    close_button = 'Close'
+    close_button = 'X'
 
     click_on_context_menu_item(selenium, browser_id, popups, item_name,
                                tmp_memory, tab)
@@ -82,7 +82,7 @@ def set_metadata_in_op_gui(selenium, browser_id, path, tmp_memory, op_container,
     modal_name = get_modal_name_from_item_name(item)
     option = 'Metadata'
     button = 'Save'
-    close_button = 'Close'
+    close_button = 'X'
     text = 'Updating metadata failed'
     status_type = 'metadata'
     modal = 'Metadata'
@@ -129,7 +129,7 @@ def assert_metadata_in_op_gui(selenium, browser_id, path, tmp_memory,
                               oz_page, item, popups):
     modal_name = get_modal_name_from_item_name(item)
     option = 'Metadata'
-    close_button = 'Close'
+    close_button = 'X'
     modal = 'Metadata'
 
     open_modal_for_file_browser_item(selenium, browser_id, popups, modal_name,

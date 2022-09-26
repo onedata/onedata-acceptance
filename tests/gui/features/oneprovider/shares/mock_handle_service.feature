@@ -26,7 +26,7 @@ Feature: Public share published with mock handle service
   Scenario: User views files from public interface of share shared from another user on mock handle service
     When user of space_owner_browser opens file browser for "space1" space
     And user of space_owner_browser creates "share_dir1" share of "dir1" directory
-    And user of space_owner_browser clicks on "share_dir1" share link with icon in tab "Share directory"
+    And user of space_owner_browser clicks on "share_dir1" share link with icon in panel "Share directory"
 
     And user of space_owner_browser opens "Description" tab on share's private interface
     And user of space_owner_browser clicks "Create description" button in "Description" form on share's private interface

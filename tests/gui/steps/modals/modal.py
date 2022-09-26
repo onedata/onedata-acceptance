@@ -337,7 +337,7 @@ def assert_alert_text_in_modal(selenium, browser_id, modals, modal, text):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on "(?P<button>.*?)" '
-               'button in (modal|tab) "(?P<modal_name>.*?)"'))
+               'button in (modal|panel) "(?P<modal_name>.*?)"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_modal_button(selenium, browser_id, button, modal_name, modals):
     button = transform(button)
@@ -386,7 +386,7 @@ def _assert_number_of_shares_in_modal(number, links, info):
 
 
 @wt(parsers.parse('user of {browser_id} clicks on "{share_name}" share link '
-                  'with icon in tab "Share directory"'))
+                  'with icon in panel "Share directory"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_share_info_icon_in_share_directory_modal(selenium, browser_id, modals,
                                                    share_name):
