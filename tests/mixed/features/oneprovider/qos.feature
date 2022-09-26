@@ -26,11 +26,11 @@ Feature: Quality of Service mixed tests
   Examples:
   | client1    | client2    |
   | REST       | web GUI    |
-  # TODO: VFS-9606 reimplement gui QoS tests after move to file info modal
+  # TODO: VFS-9799 reimplement gui QoS tests after move to file info modal
   # | web GUI    | REST       |
 
 
-  # TODO: VFS-9606 reimplement gui QoS tests after move to file info modal
+  # TODO: VFS-9799 reimplement gui QoS tests after move to file info modal
   # Scenario Outline: User deletes QoS requirements to file using <client2> and using <client1> sees that there is no QoS requirements to file
   #   When using <client1>, user1 creates "anyStorage" QoS requirement for "file1" in space "space1" in oneprovider-1
   #   And using <client2>, user1 deletes all QoS requirements for "file1" in space "space1" in oneprovider-1

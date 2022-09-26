@@ -67,7 +67,7 @@ Feature: Basic management of providers in Onezone GUI
     And user of space_owner_browser hovers over provider icon on the map on providers data page and sees that provider name is "oneprovider-1"
 
 
-  # TODO: VFS-9473 reimplement gui data distribution tests after move to file info modal
+  # TODO: VFS-9842 reimplement gui data distribution tests after move to file info modal
   # Scenario: User sees provider details after choosing appropriate option in provider menu on space providers page
   #   When user of space_owner_browser clicks "Overview" of "space3" space in the sidebar
   #   And user of space_owner_browser sees no providers on the map on "space3" space overview data page

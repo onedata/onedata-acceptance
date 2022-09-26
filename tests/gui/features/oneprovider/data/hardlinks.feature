@@ -138,7 +138,7 @@ Feature: Basic files tab operations on hardlinks in file browser
     And user of browser sees that path of "file1(2)" hardlink is "space1/file1(2)" in "File details" modal
 
 
-# TODO: VFS-9606 reimplement gui QoS tests after move to file info modal
+# TODO: VFS-9799 reimplement gui QoS tests after move to file info modal
   # Scenario: Newly created hardlink inherits metadata and QoS from original file
   #   When user of browser opens file browser for "space1" space
   #   And user of browser sees only items named ["dir1", "file1"] in file browser
@@ -163,7 +163,7 @@ Feature: Basic files tab operations on hardlinks in file browser
   #   And user of browser sees that JSON textarea in metadata panel contains '{"id": 1}'
 
 
-# TODO: VFS-9606 reimplement gui QoS tests after move to file info modal
+# TODO: VFS-9799 reimplement gui QoS tests after move to file info modal
   # Scenario: New metadata and QoS are inherited by all hardlinks after file browser refresh
   #   When user of browser creates hardlink of "file1" file in space "space1" in file browser
 

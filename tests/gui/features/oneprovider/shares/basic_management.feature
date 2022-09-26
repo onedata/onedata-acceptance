@@ -28,7 +28,7 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser logged as space-owner-user to Onezone service
 
 
-# TODO: VFS-9603 reimplement gui shares tests after move to file info modal 
+# TODO: VFS-9798 reimplement gui shares tests after move to file info modal
 #   Scenario: User sees shared status tag for directory after sharing it
 #     When user of browser opens file browser for "space1" space
 #     And user of browser clicks on menu for "dir1" directory in file browser
@@ -45,7 +45,7 @@ Feature: Basic share management in Oneprovider GUI
 #     And user of browser sees in the INFO section of Overview page that number of shares is 1
 
 
-# TODO: VFS-9603 reimplement gui shares tests after move to file info modal 
+# TODO: VFS-9798 reimplement gui shares tests after move to file info modal
 #   Scenario: User shares a directory and opens its view in full Onezone interface from modal
 #     When user of browser opens file browser for "space1" space
 #     And user of browser creates "share_dir1" share of "dir1" directory
@@ -55,7 +55,7 @@ Feature: Basic share management in Oneprovider GUI
 #     And user of browser sees that selected share is named "share_dir1"
 
 
-# TODO: VFS-9603 reimplement gui shares tests after move to file info modal 
+# TODO: VFS-9798 reimplement gui shares tests after move to file info modal
 #   Scenario: User creates two shares of one directory and sees them in shares view
 #     When user of browser opens file browser for "space1" space
 #     And user of browser creates "share_dir1" share of "dir1" directory
@@ -76,7 +76,7 @@ Feature: Basic share management in Oneprovider GUI
 #     And user of browser sees in the INFO section of Overview page that number of shares is 2
 
 
-# TODO: VFS-9603 reimplement gui shares tests after move to file info modal 
+# TODO: VFS-9798 reimplement gui shares tests after move to file info modal
 #   Scenario: User opens share modal using shared status tag
 #     Given using REST, user space-owner-user creates "share_dir1" share of "space1/dir1" supported by "oneprovider-1" provider
 #     When user of browser clicks "space1" on the spaces list in the sidebar
@@ -88,7 +88,7 @@ Feature: Basic share management in Oneprovider GUI
 #     And user of browser sees that item named "dir1" is shared 1 time in modal
 
 
-# TODO: VFS-9603 reimplement gui shares tests after move to file info modal 
+# TODO: VFS-9798 reimplement gui shares tests after move to file info modal
 #   Scenario: User renames share from single share view
 #     Given using REST, user space-owner-user creates "share_dir1" share of "space1/dir1" supported by "oneprovider-1" provider
 #     When user of browser opens file browser for "space1" space
@@ -103,7 +103,7 @@ Feature: Basic share management in Oneprovider GUI
 #     Then user of browser sees that selected share is named "renamed_share_dir1"
 
 
-# TODO: VFS-9603 reimplement gui shares tests after move to file info modal 
+# TODO: VFS-9798 reimplement gui shares tests after move to file info modal
 #   Scenario: User removes share from single share view
 #     Given using REST, user space-owner-user creates "share_dir1" share of "space1/dir1" supported by "oneprovider-1" provider
 #     When user of browser opens file browser for "space1" space
@@ -119,7 +119,7 @@ Feature: Basic share management in Oneprovider GUI
 #     And user of browser sees in the INFO section of Overview page that number of shares is 0
 
 
-# TODO: VFS-9603 reimplement gui shares tests after move to file info modal 
+# TODO: VFS-9798 reimplement gui shares tests after move to file info modal
 #   Scenario: User removes one of two shares of directory from single share view
 #     Given using REST, user space-owner-user creates following shares:
 #           - name: share_dir1
@@ -195,7 +195,7 @@ Feature: Basic share management in Oneprovider GUI
     Then user of browser sees that item named "20B-0.txt" has appeared in file browser on single share view
 
 
-# TODO: VFS-9603 reimplement gui shares tests after move to file info modal 
+# TODO: VFS-9798 reimplement gui shares tests after move to file info modal
 #   Scenario: User does not see files in single share view in full Onezone interface after removing them from shared directory
 #     Given using REST, user space-owner-user creates "share_dir2" share of "space1/dir2" supported by "oneprovider-1" provider
 #     When user of browser opens file browser for "space1" space
@@ -216,7 +216,7 @@ Feature: Basic share management in Oneprovider GUI
 #     Then user of browser sees only items named ["dir3", "file2"] in file browser
 
 
-# TODO: VFS-9603 reimplement gui shares tests after move to file info modal 
+# TODO: VFS-9798 reimplement gui shares tests after move to file info modal
 #   Scenario: User can change working directory using breadcrumbs
 #     Given using REST, user space-owner-user creates "share_dir2" share of "space1/dir2" supported by "oneprovider-1" provider
 #     When user of browser opens file browser for "space1" space
@@ -236,7 +236,7 @@ Feature: Basic share management in Oneprovider GUI
 #     Then user of browser sees that current working directory path visible in share's file browser is as follows: share_dir2
 
 
-# TODO: VFS-9603 reimplement gui shares tests after move to file info modal 
+# TODO: VFS-9798 reimplement gui shares tests after move to file info modal
 #   Scenario: User can jump to files tab using breadcrumbs in single share view in full Onezone interface
 #     Given using REST, user space-owner-user creates "share_dir2_dir3" share of "space1/dir2/dir3" supported by "oneprovider-1" provider
 #     When user of browser opens file browser for "space1" space
@@ -254,7 +254,7 @@ Feature: Basic share management in Oneprovider GUI
 #     And user of browser sees only items named ["dir3", "file1", "file2"] in file browser
 
 
-# TODO: VFS-9603 reimplement gui shares tests after move to file info modal 
+# TODO: VFS-9798 reimplement gui shares tests after move to file info modal
 #   Scenario: User downloads files from shared directory on single share view in full Onezone interface
 #     Given using REST, user space-owner-user creates "share_dir2" share of "space1/dir2" supported by "oneprovider-1" provider
 #     When user of browser opens file browser for "space1" space
@@ -266,7 +266,7 @@ Feature: Basic share management in Oneprovider GUI
 #     Then user of browser downloads item "file1" by clicking and pressing enter and then sees that content of downloaded file is equal to: "11111"
 
 
-# TODO: VFS-9603 reimplement gui shares tests after move to file info modal 
+# TODO: VFS-9798 reimplement gui shares tests after move to file info modal
 #   Scenario: User can remove share by removing shared directory
 #     Given using REST, user space-owner-user creates "share_dir2" share of "space1/dir2" supported by "oneprovider-1" provider
 #     When user of browser opens file browser for "space1" space
@@ -311,7 +311,7 @@ Feature: Basic share management in Oneprovider GUI
     And user of browser sees in the INFO section of Overview page that number of shares is 1
 
 
-# TODO: VFS-9603 reimplement gui shares tests after move to file info modal 
+# TODO: VFS-9798 reimplement gui shares tests after move to file info modal
 #   Scenario: Share curl command can be used to get valid share info
 #     Given using REST, user space-owner-user creates "share_file1" share of "space1/dir2/file1" supported by "oneprovider-1" provider
 #     When user of browser opens file browser for "space1" space
