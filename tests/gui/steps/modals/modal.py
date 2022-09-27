@@ -427,7 +427,11 @@ def close_modal(selenium, browser_id, modal, modals):
     try:
         getattr(modals(selenium[browser_id]), modal).close()
     except AttributeError:
-        getattr(modals(selenium[browser_id]), modal).cancel()
+        try:
+            getattr(modals(selenium[browser_id]), modal).cancel()
+        except AttributeError:
+            getattr(modals(selenium[browser_id]), modal).x()
+
     _wait_for_named_modal_to_disappear(selenium[browser_id], modal)
 
 

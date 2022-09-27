@@ -30,17 +30,17 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
     And user of browser sees file browser in data tab in Oneprovider page
 
     And user of browser clicks on "Metadata" in context menu for "<item>"
-    And user of browser sees that "<modal>" modal is opened on "Metadata" tab
+    And user of browser sees that "<details_modal>" modal is opened on "Metadata" tab
     And user of browser clicks on "JSON" navigation tab in metadata panel
     And user of browser types '{"id": 1}' to JSON textarea in metadata panel
     And user of browser clicks on "Save" button in metadata panel
-    And user of browser clicks on "Close" button in modal "<modal>"
+    And user of browser clicks on "X" button in modal "<details_modal>"
     Then user of browser sees metadata status tag for "<item>" in file browser
     And user of browser opens metadata panel on JSON tab for "<item>"
     And user of browser sees that JSON textarea in metadata panel contains '{"id": 1}'
 
     Examples:
-    | modal              | item  |
+    | details_modal      | item  |
     | File details       | file1 |
     | Directory details  | dir1  |
 
@@ -57,14 +57,14 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
     And user of browser sees that JSON textarea in metadata panel contains '{"id": 1}'
     And user of browser cleans JSON textarea in metadata panel
     And user of browser clicks on "Save" button in metadata panel
-    And user of browser clicks on "Close" button in modal "<modal>"
+    And user of browser clicks on "X" button in modal "<details_modal>"
 
     Then user of browser does not see metadata status tag for "<item>" in file browser
     And user of browser opens metadata panel on JSON tab for "<item>"
     And user of browser sees that JSON textarea in metadata panel is empty
 
     Examples:
-    | modal              | item  |
+    | details_modal      | item  |
     | File details       | file1 |
     | Directory details  | dir1  |
 
@@ -77,12 +77,12 @@ Feature: Basic data tab operations on directory JSON metadata in file browser
     And user of browser opens metadata panel on JSON tab for "<item>"
     And user of browser types '{"id": 1}' to JSON textarea in metadata panel
     And user of browser clicks on "Discard changes" button in metadata panel
-    And user of browser clicks on "Close" button in modal "<modal>"
+    And user of browser clicks on "X" button in modal "<details_modal>"
 
     And user of browser opens metadata panel on JSON tab for "<item>" directory
     Then user of browser sees that JSON textarea in metadata panel is empty
 
     Examples:
-    | modal              | item  |
+    | details_modal      | item  |
     | File details       | file1 |
     | Directory details  | dir1  |

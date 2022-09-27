@@ -75,7 +75,7 @@ class MetadataTab(Modal):
     json = WebItem('.tab-pane-metadata-json', cls=JSONMetadataPanel)
     rdf = WebItem('.tab-pane-metadata-rdf', cls=RDFMetadataPanel)
 
-    close = Button('.close')
+    x = Button('.close')
     save = NamedButton('.btn-primary', text='Save')
     discard_changes = NamedButton('.btn-warning', text='Discard changes')
 

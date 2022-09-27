@@ -38,7 +38,7 @@ class Charts(PageObject):
 
 class SizeStatistics(PageObject):
     tab = Button('.nav-link-size')
-    charts_title = Label('.title')
+    charts_title = Label('.section-title')
     chart = WebItemsSequence('.one-time-series-chart-plot', cls=Charts)
 
     def click_on_chart(self):
