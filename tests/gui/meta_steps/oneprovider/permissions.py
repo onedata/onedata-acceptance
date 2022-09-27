@@ -94,7 +94,8 @@ def fail_to_set_posix_permissions_in_op_gui(selenium, browser_id, space, path,
     panel = 'Edit permissions'
     text = 'Modifying permissions failed'
     details_modal = 'Details modal'
-    close_button = 'X'
+    close_button = 'Close'
+    x_button = 'X'
     error_modal = 'Error'
     discard_changes = 'Discard changes'
 
@@ -105,7 +106,7 @@ def fail_to_set_posix_permissions_in_op_gui(selenium, browser_id, space, path,
     assert_error_modal_with_text_appeared(selenium, browser_id, text)
     click_modal_button(selenium, browser_id, close_button, error_modal, modals)
     click_button_in_panel(selenium, browser_id, discard_changes, modals, panel)
-    click_modal_button(selenium, browser_id, close_button, details_modal,
+    click_modal_button(selenium, browser_id, x_button, details_modal,
                        modals)
 
 
