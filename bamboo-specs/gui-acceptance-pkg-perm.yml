@@ -1,0 +1,18 @@
+version: 2
+plan:
+  # key: ODSRV-GAPT   # TODO: To be set after reviewing
+  key: BAM-GAPT
+plan-permissions:
+- users:
+  - plgjliput
+  - plglopiola
+  - plgzmuda
+  - plgdutka
+  groups:
+  - plggveildev
+  permissions:
+  - view
+  - edit
+  - build
+  - clone
+  - admin
