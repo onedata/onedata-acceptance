@@ -5,11 +5,12 @@ plan:
   key: GAPT
   name: gui acceptance pkg
   description: GUI acceptance tests using environment deployed from packages.
+# Uncomment and set the following variables when necessary
 variables:
-  GUI_PKG_VERIFICATION: ''
-  OC_IMAGE_OVERRIDE: ''
-  OP_IMAGE_OVERRIDE: ''
-  OZ_IMAGE_OVERRIDE: ''
+  # GUI_PKG_VERIFICATION: ''
+  # OC_IMAGE_OVERRIDE: ''
+  # OP_IMAGE_OVERRIDE: ''
+  # OZ_IMAGE_OVERRIDE: ''
   version_major: '2'
   version_minor: '1'
 repositories:
