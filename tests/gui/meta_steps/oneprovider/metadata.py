@@ -156,6 +156,8 @@ def assert_such_metadata_not_exist_in_op_gui(selenium, browser_id, path,
                                              item, popups):
     modal_name = get_modal_name_from_item_name(item)
     option = 'Metadata'
+    details_modal = 'Details modal'
+    x_button = 'X'
 
     open_modal_for_file_browser_item(selenium, browser_id, popups, modal_name,
                                      path, tmp_memory, option, space, oz_page,
@@ -170,7 +172,7 @@ def assert_such_metadata_not_exist_in_op_gui(selenium, browser_id, path,
                                          option)
         assert_textarea_not_contain_record(selenium, browser_id, val,
                                            tab_name, modals)
-    click_metadata_modal_button(selenium, browser_id, 'Close', modals)
+    click_modal_button(selenium, browser_id, x_button, details_modal, modals)
 
 
 def remove_all_basic_metadata(selenium, browser_id, modals):
