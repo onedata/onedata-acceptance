@@ -327,7 +327,7 @@ Feature: Data harvesting in Discovery Page in Onezone GUI
     And user of browser sees that ["file1_3", "file3_3"] items are not selected in file browser
 
 
-#   TODO: Wait for other way to start and stop elasticsearch VFS-8624 and integrate this in test VFS-9390
+#   TODO: VFS-9390 Wait for other way to start and stop elasticsearch VFS-8624 and integrate this in test
 #   Scenario: Data could not be presented when elasticsearch does not respond
 #    Given space "space2" belongs to "harvester1" harvester of user admin
 #    When user of browser opens Data Discovery page of "harvester1" harvester

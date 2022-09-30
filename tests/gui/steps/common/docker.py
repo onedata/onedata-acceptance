@@ -185,8 +185,8 @@ def wt_mv_file(src_path, new_src_path, hosts):
     _docker_mv(src_path, new_src_path, hosts)
 
 
-# TODO: Don't use! Wait for other way to start and stop elasticsearch VFS-8624
-#  and integrate this in test VFS-9390
+# TODO: VFS-9390 Wait for other way to start and stop elasticsearch VFS-8624
+#  and integrate this in test
 # @wt(parsers.parse('elasticsearch plugin stops working'))
 # def pause_elasticsearch_container(hosts):
 #     pause_cmd = ['docker', 'pause']
@@ -194,8 +194,8 @@ def wt_mv_file(src_path, new_src_path, hosts):
 #     subprocess.call(pause_cmd + [container_id])
 
 
-# TODO: Don't use! Wait for other way to start and stop elasticsearch VFS-8624
-#  and integrate this in test VFS-9390
+# TODO: VFS-9390 Wait for other way to start and stop elasticsearch VFS-8624
+#  and integrate this in test
 # @wt(parsers.parse('elasticsearch plugin starts working'))
 # def unpause_elasticsearch_container(hosts):
 #     unpause_cmd = ['docker', 'unpause']
