@@ -42,7 +42,7 @@ def create_share(selenium, browser_id, share_name, item_name, tmp_memory,
 
 
 @wt(parsers.parse('user of {browser_id} opens "{share_name}" single share '
-                  'view of "{item_name}" using panel icon'))
+                  'view of "{item_name}" using "Shared" tag'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def open_single_share_view_by_modal(selenium, browser_id, share_name, modals,
                                     op_container, tmp_memory, item_name):
@@ -63,7 +63,7 @@ def open_single_share_view_by_modal(selenium, browser_id, share_name, modals,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def create_another_share(selenium, browser_id, share_name, modals):
     button = 'Create another share'
-    modal_name = 'Share directory'
+    modal_name = 'Shares'
     create_button = 'Create'
 
     click_modal_button(selenium, browser_id, button, modal_name, modals)
@@ -135,7 +135,7 @@ def hand_share_url_to_another_user(selenium, browser_id, browser2_id,
                   'share of "{item_name}"'))
 def copy_url_of_share(selenium, browser_id, share_name, item_name, modals,
                       tmp_memory):
-    modal_name = 'Share directory'
+    modal_name = 'Shares'
     icon_name = 'copy'
     status_type = 'shared'
 

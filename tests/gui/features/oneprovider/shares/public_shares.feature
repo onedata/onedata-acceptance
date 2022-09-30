@@ -26,7 +26,7 @@ Feature: Basic operations on public shares in file browser
     And using REST, user space-owner-user creates "share_dir1" share of "space1/dir1" supported by "oneprovider-1" provider
 
 
-  Scenario: User views and downloads files from public interface of share shared from another user from "Share directory" panel
+  Scenario: User views and downloads files from public interface of share shared from another user using "Share directory" modal
     When user of space_owner_browser opens file browser for "space1" space
     And user of space_owner_browser hands "share_dir1" share's URL of "dir1" to user of browser1
 
@@ -48,7 +48,7 @@ Feature: Basic operations on public shares in file browser
   Scenario: User sees public URLs of share are equal
     When user of space_owner_browser opens file browser for "space1" space
     And user of space_owner_browser copies share URL of "share_dir1" share of "dir1"
-    And user of space_owner_browser opens "share_dir1" single share view of "dir1" using panel icon
+    And user of space_owner_browser opens "share_dir1" single share view of "dir1" using "Shared" tag
     Then user of space_owner_browser sees that share's URL is the same as URL from clipboard
 
 

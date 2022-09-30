@@ -78,8 +78,8 @@ class Modals(object):
     create_dir = WebItem('.modal-dialog', cls=CreateDir)
     quality_of_service = WebItem('.modal-dialog', cls=QualityOfServiceModal)
     metadata = WebItem('.modal-dialog', cls=MetadataTab)
-    share_directory = WebItem('.modal-dialog', cls=ShareDirectory)
-    share_modal = WebItem('.share-modal .modal-dialog', cls=ShareDirectory)
+    shares = WebItem('.modal-dialog', cls=ShareDirectory)
+    share_directory = WebItem('.share-modal .modal-dialog', cls=ShareDirectory)
     write_protection = WebItem('.modal-dialog', cls=WriteProtection)
     details_modal = WebItem('.modal-dialog', cls=DetailsModal)
     symbolic_link_details = WebItem('.modal-dialog',
