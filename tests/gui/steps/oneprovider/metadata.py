@@ -179,14 +179,6 @@ def clean_tab_textarea_in_metadata_modal(selenium, browser_id, tab_name,
         press_backspace_on_active_element(selenium, browser_id)
 
 
-@wt(parsers.parse('user of {browser_id} clicks on "{button}" button in '
-                  'metadata panel'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_metadata_modal_button(selenium, browser_id, button, modals):
-    modal_name = "Metadata"
-    click_modal_button(selenium, browser_id, button, modal_name, modals)
-
-
 @wt(parsers.parse('user of {browser_id} sees "{text}" label in metadata panel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def see_editor_disabled_label(browser_id, selenium, modals, text):

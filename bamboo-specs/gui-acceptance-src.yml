@@ -51,34 +51,25 @@ stages:
     manual: false
     final: false
     jobs:
-    # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal 
-    # NOTE: cannot comment out this job because it contains common steps
     - Chrome POSIX tests multiuser
     - Chrome onepanel deployment basic tests
-    # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
-    # - Chrome oneprovider ACL subdirectories
+    - Chrome oneprovider ACL subdirectories
     - _Codetag Tracker
     - Chrome oneprovider atm workflow execution tests
     - Chrome onezone automations tests
     # TODO: VFS-9606 reimplement gui QoS tests after move to file info modal
     # - Chrome qos basic
     - Chrome onezone harvesters basic tests
-    # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal 
-    # - Chrome oneprovider ACL directories privileges create
+    - Chrome oneprovider ACL directories privileges create
     - Chrome oneprovider archives incremental and nested
     - Chrome oneprovider archives recall
-    # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
-    # - Chrome oneprovider ACL files metadata
+    - Chrome oneprovider ACL files metadata
     - Chrome onezone providers basic tests
-    # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal 
-    # - Chrome POSIX tests
-    # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
-    # - Chrome oneprovider ACL directories privileges metadata
-    # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
-    # - Chrome oneprovider ACL directories privileges remove
+    - Chrome POSIX tests
+    - Chrome oneprovider ACL directories privileges metadata
+    - Chrome oneprovider ACL directories privileges remove
     - Chrome onezone spaces memberships privileges
-    # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
-    # - Chrome oneprovider ACL remove file
+    - Chrome oneprovider ACL remove file
     - Chrome oneprovider symlinks
     - Chrome transfers multi browser tests
     - Chrome onezone harversters privileges add and remove
@@ -103,13 +94,10 @@ stages:
     - Chrome storage sync tests
     - Chrome oneprovider hardlinks
     - Chrome onezone data discovery tests
-    # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
-    # - Chrome oneprovider ACL subfiles
+    - Chrome oneprovider ACL subfiles
     - Chrome onepanel deployment ceph
-    # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
-    # - Chrome oneprovider ACL subdirectories remove
-    # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
-    # - Chrome oneprovider ACL subjects
+    - Chrome oneprovider ACL subdirectories remove
+    - Chrome oneprovider ACL subjects
     - Chrome onezone data discovery querying
     - Chrome oneprovider archives tests
     - Chrome onepanel ceph spaces
@@ -130,15 +118,13 @@ stages:
     - Chrome onezone invite tokens
     # TODO: VFS-9603 reimplement gui shares tests after move to file info modal
     # - Chrome public shares tests
-    # TODO: VFS-9603 reimplement gui shares tests after move to file info modal 
+    # TODO: VFS-9603 reimplement gui shares tests after move to file info modal
     # - Chrome shares handle service tests
     - Chrome onezone groups multiuser tests
-    # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
-    # - Chrome oneprovider ACL directories privileges
+    - Chrome oneprovider ACL directories privileges
     # TODO: VFS-9606 reimplement gui QoS tests after move to file info modal
     # - Chrome multiprovider QoS storage
-    # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
-    # - Chrome oneprovider ACL basic
+    - Chrome oneprovider ACL basic
     # TODO: VFS-9606 reimplement gui QoS tests after move to file info modal
     # - Chrome multiprovider QoS tests
     # TODO: VFS-9606 reimplement gui QoS tests after move to file info modal
@@ -146,10 +132,7 @@ stages:
     - Chrome metadata test
     - Chrome onepanel members tests
     - Chrome multiprovider multiuser tests
-    # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
-    # - Chrome oneprovider ACL files
-# TODO: VFS-9761 reimplement gui permissions tests after move to file info modal 
-# NOTE: cannot comment out this job because it contains common steps
+    - Chrome oneprovider ACL files
 Chrome POSIX tests multiuser:
   key: CPTM
   other: &common-opts
@@ -246,27 +229,26 @@ Chrome onepanel deployment basic tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-# TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
-# Chrome oneprovider ACL subdirectories:
-#   key: COAS
-#   other: *common-opts
-#   tasks:
-#   - script: *clear-env
-#   - script: *restart-minikube
-#   - checkout: *checkout
-#   - script: *init-submodules
-#   - script: *download-artifacts
-#   - script:
-#       <<: *run-selenium-tests
-#       scripts:
-#       - make SUITE=test_oneprovider_acl_subdir BROWSER=Chrome TIMEOUT=600 test_gui_src
-#   final-tasks:
-#   - test-parser: *parse-test-results
-#   - script: *pack-logs
-#   - script: *clear-env-and-working-dir
-#   artifacts: *artifacts
-#   requirements: *requirements
-#   artifact-subscriptions: []
+Chrome oneprovider ACL subdirectories:
+  key: COAS
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script:
+     <<: *run-selenium-tests
+     scripts:
+     - make SUITE=test_oneprovider_acl_subdir BROWSER=Chrome TIMEOUT=600 test_gui_src
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-and-working-dir
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
 _Codetag Tracker:
   key: CDTR
   other: *common-opts
@@ -362,27 +344,26 @@ Chrome onezone harvesters basic tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-# TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
-# Chrome oneprovider ACL directories privileges create:
-#   key: COADPC
-#   other: *common-opts
-#   tasks:
-#   - script: *clear-env
-#   - script: *restart-minikube
-#   - checkout: *checkout
-#   - script: *init-submodules
-#   - script: *download-artifacts
-#   - script:
-#       <<: *run-selenium-tests
-#       scripts:
-#       - make SUITE=test_oneprovider_acl_dir_privileges_create BROWSER=Chrome TIMEOUT=600 test_gui_src
-#   final-tasks:
-#   - test-parser: *parse-test-results
-#   - script: *pack-logs
-#   - script: *clear-env-and-working-dir
-#   artifacts: *artifacts
-#   requirements: *requirements
-#   artifact-subscriptions: []
+Chrome oneprovider ACL directories privileges create:
+  key: COADPC
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script:
+     <<: *run-selenium-tests
+     scripts:
+     - make SUITE=test_oneprovider_acl_dir_privileges_create BROWSER=Chrome TIMEOUT=600 test_gui_src
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-and-working-dir
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
 Chrome oneprovider archives incremental and nested:
   key: COAIN
   other: *common-opts
@@ -423,27 +404,26 @@ Chrome oneprovider archives recall:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-# TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
-# Chrome oneprovider ACL files metadata:
-#    key: COAFM2
-#    other: *common-opts
-#    tasks:
-#    - script: *clear-env
-#    - script: *restart-minikube
-#    - checkout: *checkout
-#    - script: *init-submodules
-#    - script: *download-artifacts
-#    - script:
-#        <<: *run-selenium-tests
-#        scripts:
-#        - make SUITE=test_oneprovider_acl_files_metadata BROWSER=Chrome TIMEOUT=600 test_gui_src
-#    final-tasks:
-#    - test-parser: *parse-test-results
-#    - script: *pack-logs
-#    - script: *clear-env-and-working-dir
-#    artifacts: *artifacts
-#    requirements: *requirements
-#    artifact-subscriptions: []
+Chrome oneprovider ACL files metadata:
+  key: COAFM2
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script:
+      <<: *run-selenium-tests
+      scripts:
+      - make SUITE=test_oneprovider_acl_files_metadata BROWSER=Chrome TIMEOUT=600 test_gui_src
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-and-working-dir
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
 Chrome onezone providers basic tests:
   key: COPBT
   other: *common-opts
@@ -464,69 +444,66 @@ Chrome onezone providers basic tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-# TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
-# Chrome POSIX tests:
-#   key: CPT
-#   other: *common-opts
-#   tasks:
-#   - script: *clear-env
-#   - script: *restart-minikube
-#   - checkout: *checkout
-#   - script: *init-submodules
-#   - script: *download-artifacts
-#   - script:
-#       <<: *run-selenium-tests
-#       scripts:
-#       - make SUITE=test_oneprovider_posix BROWSER=Chrome TIMEOUT=600 test_gui_src
-#   final-tasks:
-#   - test-parser: *parse-test-results
-#   - script: *pack-logs
-#   - script: *clear-env-and-working-dir
-#   artifacts: *artifacts
-#   requirements: *requirements
-#   artifact-subscriptions: []
-# TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
-# Chrome oneprovider ACL directories privileges metadata:
-#    key: COADPM
-#    other: *common-opts
-#    tasks:
-#    - script: *clear-env
-#    - script: *restart-minikube
-#    - checkout: *checkout
-#    - script: *init-submodules
-#    - script: *download-artifacts
-#    - script:
-#        <<: *run-selenium-tests
-#        scripts:
-#        - make SUITE=test_oneprovider_acl_dir_privileges_metadata BROWSER=Chrome TIMEOUT=600 test_gui_src
-#    final-tasks:
-#    - test-parser: *parse-test-results
-#    - script: *pack-logs
-#    - script: *clear-env-and-working-dir
-#    artifacts: *artifacts
-#    requirements: *requirements
-#    artifact-subscriptions: []
-# TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
-# Chrome oneprovider ACL directories privileges remove:
-#   key: COADPR
-#   other: *common-opts
-#   tasks:
-#   - script: *clear-env
-#   - script: *restart-minikube
-#   - checkout: *checkout
-#   - script: *init-submodules
-#   - script: *download-artifacts
-#   - script:
-#       <<: *run-selenium-tests
-#       scripts:
-#       - make SUITE=test_oneprovider_acl_dir_privileges_remove BROWSER=Chrome TIMEOUT=600 test_gui_src
-#   final-tasks:
-#   - test-parser: *parse-test-results
-#   - script: *pack-logs
-#   - script: *clear-env-and-working-dir
-#   artifacts: *artifacts
-#   requirements: *requirements
-#   artifact-subscriptions: []
+Chrome POSIX tests:
+  key: CPT
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script:
+     <<: *run-selenium-tests
+     scripts:
+     - make SUITE=test_oneprovider_posix BROWSER=Chrome TIMEOUT=600 test_gui_src
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-and-working-dir
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome oneprovider ACL directories privileges metadata:
+  key: COADPM
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script:
+      <<: *run-selenium-tests
+      scripts:
+      - make SUITE=test_oneprovider_acl_dir_privileges_metadata BROWSER=Chrome TIMEOUT=600 test_gui_src
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-and-working-dir
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome oneprovider ACL directories privileges remove:
+  key: COADPR
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script:
+     <<: *run-selenium-tests
+     scripts:
+     - make SUITE=test_oneprovider_acl_dir_privileges_remove BROWSER=Chrome TIMEOUT=600 test_gui_src
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-and-working-dir
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
 Chrome onezone spaces memberships privileges:
   key: COSMP
   other: *common-opts
@@ -547,27 +524,26 @@ Chrome onezone spaces memberships privileges:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-# TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
-# Chrome oneprovider ACL remove file:
-#   key: COARF
-#   other: *common-opts
-#   tasks:
-#   - script: *clear-env
-#   - script: *restart-minikube
-#   - checkout: *checkout
-#   - script: *init-submodules
-#   - script: *download-artifacts
-#   - script:
-#       <<: *run-selenium-tests
-#       scripts:
-#       - make SUITE=test_oneprovider_acl_files BROWSER=Chrome TIMEOUT=600 test_gui_src
-#   final-tasks:
-#   - test-parser: *parse-test-results
-#   - script: *pack-logs
-#   - script: *clear-env-and-working-dir
-#   artifacts: *artifacts
-#   requirements: *requirements
-#   artifact-subscriptions: []
+Chrome oneprovider ACL remove file:
+  key: COARF
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script:
+     <<: *run-selenium-tests
+     scripts:
+     - make SUITE=test_oneprovider_acl_remove_file BROWSER=Chrome TIMEOUT=600 test_gui_src
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-and-working-dir
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
 Chrome oneprovider symlinks:
   key: COSL
   other: *common-opts
@@ -991,27 +967,26 @@ Chrome onezone data discovery tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-# TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
-# Chrome oneprovider ACL subfiles:
-#   key: COASF
-#   other: *common-opts
-#   tasks:
-#   - script: *clear-env
-#   - script: *restart-minikube
-#   - checkout: *checkout
-#   - script: *init-submodules
-#   - script: *download-artifacts
-#   - script:
-#       <<: *run-selenium-tests
-#       scripts:
-#       - make SUITE=test_oneprovider_acl_subfile BROWSER=Chrome TIMEOUT=600 test_gui_src
-#   final-tasks:
-#   - test-parser: *parse-test-results
-#   - script: *pack-logs
-#   - script: *clear-env-and-working-dir
-#   artifacts: *artifacts
-#   requirements: *requirements
-#   artifact-subscriptions: []
+Chrome oneprovider ACL subfiles:
+  key: COASF
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script:
+     <<: *run-selenium-tests
+     scripts:
+     - make SUITE=test_oneprovider_acl_subfile BROWSER=Chrome TIMEOUT=600 test_gui_src
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-and-working-dir
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
 Chrome onepanel deployment ceph:
   key: CODC
   other: *common-opts
@@ -1032,48 +1007,46 @@ Chrome onepanel deployment ceph:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-# TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
-# Chrome oneprovider ACL subdirectories remove:
-#   key: COASD
-#   other: *common-opts
-#   tasks:
-#   - script: *clear-env
-#   - script: *restart-minikube
-#   - checkout: *checkout
-#   - script: *init-submodules
-#   - script: *download-artifacts
-#   - script:
-#       <<: *run-selenium-tests
-#       scripts:
-#       - make SUITE=test_oneprovider_acl_subdir_remove BROWSER=Chrome TIMEOUT=600 test_gui_src
-#   final-tasks:
-#   - test-parser: *parse-test-results
-#   - script: *pack-logs
-#   - script: *clear-env-and-working-dir
-#   artifacts: *artifacts
-#   requirements: *requirements
-#   artifact-subscriptions: []
-# TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
-# Chrome oneprovider ACL subjects:
-#   key: COABS
-#   other: *common-opts
-#   tasks:
-#   - script: *clear-env
-#   - script: *restart-minikube
-#   - checkout: *checkout
-#   - script: *init-submodules
-#   - script: *download-artifacts
-#   - script:
-#       <<: *run-selenium-tests
-#       scripts:
-#       - make SUITE=test_oneprovider_acl_subjects BROWSER=Chrome TIMEOUT=600 test_gui_src
-#   final-tasks:
-#   - test-parser: *parse-test-results
-#   - script: *pack-logs
-#   - script: *clear-env-and-working-dir
-#   artifacts: *artifacts
-#   requirements: *requirements
-#   artifact-subscriptions: []
+Chrome oneprovider ACL subdirectories remove:
+  key: COASD
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script:
+     <<: *run-selenium-tests
+     scripts:
+     - make SUITE=test_oneprovider_acl_subdir_remove BROWSER=Chrome TIMEOUT=600 test_gui_src
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-and-working-dir
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome oneprovider ACL subjects:
+  key: COABS
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script:
+     <<: *run-selenium-tests
+     scripts:
+     - make SUITE=test_oneprovider_acl_subjects BROWSER=Chrome TIMEOUT=600 test_gui_src
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-and-working-dir
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
 Chrome onezone data discovery querying:
   key: CODDQ
   other: *common-opts
@@ -1434,7 +1407,7 @@ Chrome onezone invite tokens:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-# TODO: VFS-9603 reimplement gui shares tests after move to file info modal 
+# TODO: VFS-9603 reimplement gui shares tests after move to file info modal
 # Chrome public shares tests:
 #   key: CPST
 #   other: *common-opts
@@ -1455,7 +1428,7 @@ Chrome onezone invite tokens:
 #   artifacts: *artifacts
 #   requirements: *requirements
 #   artifact-subscriptions: []
-# TODO: VFS-9603 reimplement gui shares tests after move to file info modal 
+# TODO: VFS-9603 reimplement gui shares tests after move to file info modal
 # Chrome shares handle service tests:
 #   key: CSHS
 #   other: *common-opts
@@ -1496,111 +1469,109 @@ Chrome onezone groups multiuser tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-# TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
-# Chrome oneprovider ACL directories privileges:
-#   key: COADP
-#   other: *common-opts
-#   tasks:
-#   - script: *clear-env
-#   - script: *restart-minikube
-#   - checkout: *checkout
-#   - script: *init-submodules
-#   - script: *download-artifacts
-#   - script:
-#       <<: *run-selenium-tests
-#       scripts:
-#       - make SUITE=test_oneprovider_acl_dir_privileges BROWSER=Chrome TIMEOUT=600 test_gui_src
-#   final-tasks:
-#   - test-parser: *parse-test-results
-#   - script: *pack-logs
-#   - script: *clear-env-and-working-dir
-#   artifacts: *artifacts
-#   requirements: *requirements
-#   artifact-subscriptions: []
+Chrome oneprovider ACL directories privileges:
+  key: COADP
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script:
+     <<: *run-selenium-tests
+     scripts:
+     - make SUITE=test_oneprovider_acl_dir_privileges BROWSER=Chrome TIMEOUT=600 test_gui_src
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-and-working-dir
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
 # TODO: VFS-9606 reimplement gui QoS tests after move to file info modal
-# Chrome multiprovider QoS storage:
-#   key: CMQS
-#   other: *common-opts
-#   tasks:
-#   - script: *clear-env
-#   - script: *restart-minikube
-#   - checkout: *checkout
-#   - script: *init-submodules
-#   - script: *download-artifacts
-#   - script:
-#       <<: *run-selenium-tests
-#       scripts:
-#       - make ENV_FILE=1oz_2op_deployed SUITE=test_multiprovider_qos_storage BROWSER=Chrome TIMEOUT=600 test_gui_src
-#   final-tasks:
-#   - test-parser: *parse-test-results
-#   - script: *pack-logs
-#   - script: *clear-env-and-working-dir
-#   artifacts: *artifacts
-#   requirements: *requirements
-#   artifact-subscriptions: []
-# TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
-# Chrome oneprovider ACL basic:
-#   key: COAB
-#   other: *common-opts
-#   tasks:
-#   - script: *clear-env
-#   - script: *restart-minikube
-#   - checkout: *checkout
-#   - script: *init-submodules
-#   - script: *download-artifacts
-#   - script:
-#       <<: *run-selenium-tests
-#       scripts:
-#       - make SUITE=test_oneprovider_acl_basic BROWSER=Chrome TIMEOUT=600 test_gui_src
-#   final-tasks:
-#   - test-parser: *parse-test-results
-#   - script: *pack-logs
-#   - script: *clear-env-and-working-dir
-#   artifacts: *artifacts
-#   requirements: *requirements
-#   artifact-subscriptions: []
+#Chrome multiprovider QoS storage:
+#  key: CMQS
+#  other: *common-opts
+#  tasks:
+#  - script: *clear-env
+#  - script: *restart-minikube
+#  - checkout: *checkout
+#  - script: *init-submodules
+#  - script: *download-artifacts
+#  - script:
+#      <<: *run-selenium-tests
+#      scripts:
+#      - make ENV_FILE=1oz_2op_deployed SUITE=test_multiprovider_qos_storage BROWSER=Chrome TIMEOUT=600 test_gui_src
+#  final-tasks:
+#  - test-parser: *parse-test-results
+#  - script: *pack-logs
+#  - script: *clear-env-and-working-dir
+#  artifacts: *artifacts
+#  requirements: *requirements
+#  artifact-subscriptions: []
+Chrome oneprovider ACL basic:
+  key: COAB
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script:
+     <<: *run-selenium-tests
+     scripts:
+     - make SUITE=test_oneprovider_acl_basic BROWSER=Chrome TIMEOUT=600 test_gui_src
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-and-working-dir
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
 # TODO: VFS-9606 reimplement gui QoS tests after move to file info modal
-# Chrome multiprovider QoS tests:
-#   key: CMQT
-#   other: *common-opts
-#   tasks:
-#   - script: *clear-env
-#   - script: *restart-minikube
-#   - checkout: *checkout
-#   - script: *init-submodules
-#   - script: *download-artifacts
-#   - script:
-#       <<: *run-selenium-tests
-#       scripts:
-#       - make ENV_FILE=1oz_2op_deployed SUITE=test_multiprovider_qos BROWSER=Chrome TIMEOUT=600 test_gui_src
-#   final-tasks:
-#   - test-parser: *parse-test-results
-#   - script: *pack-logs
-#   - script: *clear-env-and-working-dir
-#   artifacts: *artifacts
-#   requirements: *requirements
-#   artifact-subscriptions: []
+#Chrome multiprovider QoS tests:
+#  key: CMQT
+#  other: *common-opts
+#  tasks:
+#  - script: *clear-env
+#  - script: *restart-minikube
+#  - checkout: *checkout
+#  - script: *init-submodules
+#  - script: *download-artifacts
+#  - script:
+#      <<: *run-selenium-tests
+#      scripts:
+#      - make ENV_FILE=1oz_2op_deployed SUITE=test_multiprovider_qos BROWSER=Chrome TIMEOUT=600 test_gui_src
+#  final-tasks:
+#  - test-parser: *parse-test-results
+#  - script: *pack-logs
+#  - script: *clear-env-and-working-dir
+#  artifacts: *artifacts
+#  requirements: *requirements
+#  artifact-subscriptions: []
 # TODO: VFS-9606 reimplement gui QoS tests after move to file info modal
-# Chrome QoS storage:
-#   key: CQS
-#   other: *common-opts
-#   tasks:
-#   - script: *clear-env
-#   - script: *restart-minikube
-#   - checkout: *checkout
-#   - script: *init-submodules
-#   - script: *download-artifacts
-#   - script:
-#       <<: *run-selenium-tests
-#       scripts:
-#       - make ENV_FILE=1oz_2op_deployed SUITE=test_qos_storage BROWSER=Chrome TIMEOUT=600 test_gui_src
-#   final-tasks:
-#   - test-parser: *parse-test-results
-#   - script: *pack-logs
-#   - script: *clear-env-and-working-dir
-#   artifacts: *artifacts
-#   requirements: *requirements
-#   artifact-subscriptions: []
+#Chrome QoS storage:
+#  key: CQS
+#  other: *common-opts
+#  tasks:
+#  - script: *clear-env
+#  - script: *restart-minikube
+#  - checkout: *checkout
+#  - script: *init-submodules
+#  - script: *download-artifacts
+#  - script:
+#      <<: *run-selenium-tests
+#      scripts:
+#      - make ENV_FILE=1oz_2op_deployed SUITE=test_qos_storage BROWSER=Chrome TIMEOUT=600 test_gui_src
+#  final-tasks:
+#  - test-parser: *parse-test-results
+#  - script: *pack-logs
+#  - script: *clear-env-and-working-dir
+#  artifacts: *artifacts
+#  requirements: *requirements
+#  artifact-subscriptions: []
 Chrome metadata test:
    key: CMT
    other: *common-opts
@@ -1661,24 +1632,23 @@ Chrome multiprovider multiuser tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-# TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
-# Chrome oneprovider ACL files:
-#   key: COAF
-#   other: *common-opts
-#   tasks:
-#   - script: *clear-env
-#   - script: *restart-minikube
-#   - checkout: *checkout
-#   - script: *init-submodules
-#   - script: *download-artifacts
-#   - script:
-#       <<: *run-selenium-tests
-#       scripts:
-#       - make SUITE=test_oneprovider_acl_files BROWSER=Chrome TIMEOUT=600 test_gui_src
-#   final-tasks:
-#   - test-parser: *parse-test-results
-#   - script: *pack-logs
-#   - script: *clear-env-and-working-dir
-#   artifacts: *artifacts
-#   requirements: *requirements
-#   artifact-subscriptions: []
+Chrome oneprovider ACL files:
+  key: COAF
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script:
+     <<: *run-selenium-tests
+     scripts:
+     - make SUITE=test_oneprovider_acl_files BROWSER=Chrome TIMEOUT=600 test_gui_src
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-and-working-dir
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
