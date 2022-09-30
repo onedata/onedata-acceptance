@@ -73,7 +73,7 @@ checkout_getting_started:
 
 RECORDING_OPTION            ?= failed
 BROWSER                     ?= Chrome
-TIMEOUT			            ?= 300
+TIMEOUT			            ?= 600
 REPEATS                     ?= 1
 LOCAL_CHARTS_PATH           ?= ""
 PULL_ONLY_MISSING_IMAGES    ?= ""
@@ -88,7 +88,7 @@ endif
 .PHONY: test_mixed, test_mixed_pkg, test_mixed_src
 .PHONY: test_oneclient, test_oneclient_pkg, test_oneclient_src
 .PHONY: test_performance, test_performance_pkg, test_performance_src
-    
+
 test_gui:
 	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i ${ACCEPTANCE_GUI_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} \
 	-k=${KEYWORDS} --timeout ${TIMEOUT} --reruns 1 --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${SOURCES} ${OPTS}
@@ -100,7 +100,7 @@ test_gui_src: test_gui
 test_mixed:
 	PYTHONPATH=${MIXED_TESTS_ROOT} ${TEST_RUN} -t tests/mixed/scenarios/${SUITE}.py --test-type mixed -vvv --driver=${BROWSER} -i ${ACCEPTANCE_MIXED_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} \
 	 --env-file=${ENV_FILE} -k=${KEYWORDS} --repeats ${REPEATS} --timeout ${TIMEOUT} --reruns 1 --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${SOURCES} ${OPTS}
-	 
+
 test_mixed_pkg: test_mixed
 test_mixed_src: SOURCES = --sources
 test_mixed_src: test_mixed
@@ -108,7 +108,7 @@ test_mixed_src: test_mixed
 test_oneclient:
 	${TEST_RUN} --test-type oneclient -vvv --test-dir tests/oneclient/scenarios/${SUITE}.py -i ${ACCEPTANCE_MIXED_IMAGE} -k=${KEYWORDS} \
 	 --repeats ${REPEATS} --timeout ${TIMEOUT} ${SOURCES} ${OPTS}
-	 
+
 test_oneclient_pkg: test_oneclient
 test_oneclient_src: SOURCES = --sources
 test_oneclient_src: test_oneclient
@@ -119,7 +119,7 @@ test_onedata_fs:
 
 test_performance:
 	${TEST_RUN} --test-type performance -vvv --test-dir tests/performance --image ${ACCEPTANCE_MIXED_IMAGE} -k=${KEYWORDS} ${SOURCES} ${OPTS}
-	
+
 test_performance_pkg: test_performance
 test_performance_src: SOURCES = --sources
 test_performance_src: test_performance

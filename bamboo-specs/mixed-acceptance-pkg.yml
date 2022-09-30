@@ -5,12 +5,9 @@ plan:
   key: MAOPT
   name: mixed acceptance pkg
   description: Acceptance tests using different clients concurrently. Environment deployed from packages.
-variables:
-  version_major: '2'
-  version_minor: '1'
 repositories:
-- onedata-acceptance:
-    scope: global
+  - onedata-acceptance:
+      scope: global
 branches:
   create:
     for-new-branch: release/.*
@@ -19,78 +16,79 @@ branches:
     after-inactive-days: 30
   link-to-jira: true
 notifications:
-- events:
-  - plan-failed
-  recipients:
-  - users:
-    - plgjliput
-labels: []
+  - events:
+      - plan-failed
+    recipients:
+      - users:
+          - plgjliput
+labels: [ ]
+triggers: [ ]
 dependencies:
   require-all-stages-passing: true
   enabled-for-branches: true
   block-strategy: none
-  plans: []
+  plans: [ ]
 other:
-  concurrent-build-plugin: '3'
+  concurrent-build-plugin: "3"
   all-other-apps:
     custom:
       com.atlassian.bamboo.plugin.hungbuildkiller:
-        stopped.enabled: 'true'
-        add_comment_when_hung.enabled: 'false'
-      artifactHandlers.useCustomArtifactHandlers: 'false'
+        stopped.enabled: "true"
+        add_comment_when_hung.enabled: "true"
+      artifactHandlers.useCustomArtifactHandlers: "false"
       buildExpiryConfig:
         period: weeks
-        expiryTypeBuildLog: 'true'
-        enabled: 'true'
-        expiryTypeArtifact: 'true'
-        duration: '1'
+        expiryTypeBuildLog: "true"
+        enabled: "true"
+        expiryTypeArtifact: "true"
+        duration: "1"
 
 stages:
-- Acceptance Test:
-    manual: false
-    final: false
-    jobs:
-    # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
-    - Chrome ACL one entry  # First job cant be commented because it defines anchors
-    # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
-    # - Chrome ACL two entries
-    - Chrome LUMA tests
-    - Chrome QoS tests
-    - Chrome access tokens
-    - Chrome access tokens id caveats
-    - Chrome access tokens path caveats
-    - Chrome archive privileges
-    - Chrome archives tests
-    - Chrome create file tests
-    - Chrome datasets tests
-    - Chrome directories movement tests
-    - Chrome directories multi tests
-    - Chrome directories remove metadata
-    - Chrome directories set metadata
-    - Chrome directories times tests
-    - Chrome file content tests
-    - Chrome files movement tests
-    - Chrome files multi tests
-    - Chrome files remove metadata
-    - Chrome files set metadata
-    - Chrome files times tests
-    - Chrome groups basic tests
-    - Chrome nested directories create
-    - Chrome nested directories remove
-    - Chrome onepanel tests
-    # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
-    # - Chrome permission POSIX multi tests
-    # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
-    # - Chrome permission POSIX tests
-    - Chrome remove file tests
-    - Chrome rename file tests
-    - Chrome single directory tests
-    - Chrome single directory tests 2
-    - Chrome spaces basic tests
-    - Chrome storage sync
-    - Chrome tokens tests
-    
-Chrome ACL one entry: &acceptance-mixed-tests-in-chrome-job
+  - Acceptance Test:
+      manual: false
+      final: false
+      jobs:
+        # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
+        # - Chrome ACL one entry  # First job cant be commented because it defines anchors
+        # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
+        # - Chrome ACL two entries
+        - Chrome LUMA tests
+        - Chrome QoS tests
+        - Chrome access tokens
+        - Chrome access tokens id caveats
+        - Chrome access tokens path caveats
+        - Chrome archive privileges
+        - Chrome archives tests
+        - Chrome create file tests
+        - Chrome datasets tests
+        - Chrome directories movement tests
+        - Chrome directories multi tests
+        - Chrome directories remove metadata
+        - Chrome directories set metadata
+        - Chrome directories times tests
+        - Chrome file content tests
+        - Chrome files movement tests
+        - Chrome files multi tests
+        - Chrome files remove metadata
+        - Chrome files set metadata
+        - Chrome files times tests
+        - Chrome groups basic tests
+        - Chrome nested directories create
+        - Chrome nested directories remove
+        - Chrome onepanel tests
+        # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
+        # - Chrome permission POSIX multi tests
+        # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
+        # - Chrome permission POSIX tests
+        - Chrome remove file tests
+        - Chrome rename file tests
+        - Chrome single directory tests
+        - Chrome single directory tests 2
+        - Chrome spaces basic tests
+        - Chrome storage sync
+        - Chrome tokens tests
+
+Chrome LUMA tests: &acceptance-mixed-tests-in-chrome-job
   key: CAOE
   other:
     clean-working-dir: true
@@ -98,76 +96,94 @@ Chrome ACL one entry: &acceptance-mixed-tests-in-chrome-job
       custom:
         auto: {}
         clover:
-          useLocalLicenseKey: 'true'
-        buildHangingConfig.enabled: 'false'
+          useLocalLicenseKey: "true"
+        buildHangingConfig.enabled: "false"
   tasks:
-  - script: &clear-env
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      description: Clear env
-  - script: &restart-minikube
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
-  - script: &force-clean-repo
-      scripts:
-      - docker run -v $bamboo_build_working_directory:/build alpine sh -c 'rm -rf /build/onedata'
-      description: Force clean repo
-  - checkout: &checkout-default-repository
-      path: onedata
-      force-clean-build: 'false'
-      description: Checkout Default Repository
-  - script: &init-submodules
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata
-      description: Init submodules
-  - script: &download-artifacts
-      working-dir: onedata
-      scripts:
-      - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
-      description: Download artifacts
-# com.atlassian.bamboo.plugins.scripttask:task.builder.script is disabled. This state is not supported at YAML
-  - script: &build-swaggers
-      working-dir: onedata
-      scripts:
-      - make build_swaggers
-      description: Build swaggers
-  - script: &run-acceptance-mixed-tests-in-chrome
-      working-dir: onedata
-      scripts:
-      - make SUITE=test_acl_one_entry TIMEOUT=600 test_mixed_pkg
-      description: Run acceptance mixed tests in Chrome
-  final-tasks: 
-  - test-parser:
-      type: junit
-      ignore-time: 'false'
-      test-results: onedata/test-reports/results*.xml
-      description: Parse test results
-  - script:
-      scripts:
-      - |-
-        cp onedata/test-reports/*.xml onedata/tests/mixed/logs
-        cp onedata/one_env/sources_info.yaml onedata/tests/mixed/logs
-        mv onedata/tests/mixed/logs/report.* onedata/tests/mixed/logs/gui_report
-        mv onedata/tests/mixed/logs/gui_report/images.yaml onedata/tests/mixed/logs
-      description: Pack logs
-  - script:
-      <<: *clear-env
-      working-dir: onedata
-  artifacts: 
-  - name: report
-    location: onedata/tests/mixed/logs/
-    pattern: '**/*.*'
-    shared: false
-    required: false
-  requirements: 
-  - kubeadm
-  artifact-subscriptions: []
-  
+    - script: &clear-env
+        scripts:
+          - curl ${bamboo.OnedataFinalTasksURL} | bash -
+        description: Clear env
+    - script: &restart-minikube
+        scripts:
+          - sudo ${HOME}/restart_minikube.sh
+        description: Restart minikube
+    - script: &force-clean-repo
+        scripts:
+          - docker run -v $bamboo_build_working_directory:/build alpine sh -c 'rm -rf /build/onedata'
+        description: Force clean repo
+    - checkout: &checkout
+        path: onedata-acceptance
+        force-clean-build: "false"
+        description: Checkout Default Repository
+    - script: &init-submodules
+        scripts:
+          - |-
+            git remote set-url origin ${bamboo.repository.git.repositoryUrl}
+            git remote -v
+            make submodules
+        working-dir: onedata-acceptance
+        description: Init submodules
+    - script: &download-artifacts
+        working-dir: onedata-acceptance
+        scripts:
+          - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
+        description: Download artifacts
+    # com.atlassian.bamboo.plugins.scripttask:task.builder.script is disabled. This state is not supported at YAML
+    - script: &build-swaggers
+        working-dir: onedata-acceptance
+        scripts:
+          - make build_swaggers
+        description: Build swaggers
+    - script: &run-acceptance-tests
+        working-dir: onedata-acceptance
+        scripts:
+          - make ENV_FILE=1oz_1op_luma_oneclient SUITE=test_luma TIMEOUT=600 test_mixed_pkg
+        description: Run acceptance mixed tests in Chrome
+  final-tasks:
+    - test-parser:
+        type: junit
+        ignore-time: "false"
+        test-results: onedata-acceptance/test-reports/results*.xml
+        description: Parse test results
+    - script:
+        scripts:
+          - |-
+            cp onedata-acceptance/test-reports/*.xml onedata-acceptance/tests/mixed/logs
+            cp onedata-acceptance/one_env/sources_info.yaml onedata-acceptance/tests/mixed/logs
+            mv onedata-acceptance/tests/mixed/logs/report.* onedata-acceptance/tests/mixed/logs/gui_report
+            mv onedata-acceptance/tests/mixed/logs/gui_report/images.yaml onedata-acceptance/tests/mixed/logs
+        description: Pack logs
+    - script:
+        <<: *clear-env
+        working-dir: onedata-acceptance
+  artifacts:
+    - name: report
+      location: onedata-acceptance/tests/mixed/logs/
+      pattern: "**/*.*"
+      shared: false
+      required: false
+  requirements:
+    - kubeadm
+  artifact-subscriptions: [ ]
+
+# TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
+# Chrome ACL one entry:
+#   <<: *acceptance-mixed-tests-in-chrome-job
+#   key: CLT
+#   tasks:
+#   - script: *clear-env
+#   - script: *restart-minikube
+#   - script: *force-clean-repo
+#   - checkout: *checkout
+#   - script: *init-submodules
+#   - script: *download-artifacts
+#   - script: *build-swaggers
+#   - script:
+#       <<: *run-acceptance-tests
+#       scripts:
+#       - make SUITE=test_acl_one_entry TIMEOUT=600 test_mixed_pkg
+
+# TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
 # Chrome ACL two entries:
 #   <<: *acceptance-mixed-tests-in-chrome-job
 #   key: CATE
@@ -175,412 +191,392 @@ Chrome ACL one entry: &acceptance-mixed-tests-in-chrome-job
 #   - script: *clear-env
 #   - script: *restart-minikube
 #   - script: *force-clean-repo
-#   - checkout: *checkout-default-repository
+#   - checkout: *checkout
 #   - script: *init-submodules
 #   - script: *download-artifacts
 #   - script: *build-swaggers
 #   - script:
-#       <<: *run-acceptance-mixed-tests-in-chrome
+#       <<: *run-acceptance-tests
 #       scripts:
 #       - make SUITE=test_acl_two_entries TIMEOUT=600 test_mixed_pkg
 #   final-tasks: *final-tasks
 #   artifacts: *artifacts
 #   requirements: *requirements
-#   artifact-subscriptions: []
-  
-Chrome LUMA tests:
-  <<: *acceptance-mixed-tests-in-chrome-job
-  key: CLT
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - script: *force-clean-repo
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-mixed-tests-in-chrome
-      scripts:
-      - make ENV_FILE=1oz_1op_luma_oneclient SUITE=test_luma TIMEOUT=600 test_mixed_pkg
-      
+#   artifact-subscriptions: [ ]
+
 Chrome QoS tests:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CQT
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - script: *force-clean-repo
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-# com.atlassian.bamboo.plugins.scripttask:task.builder.script is disabled. This state is not supported at YAML
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-mixed-tests-in-chrome
-      scripts:
-      - make SUITE=test_qos TIMEOUT=600 test_mixed_pkg
-      
+    - script: *clear-env
+    - script: *restart-minikube
+    - script: *force-clean-repo
+    - checkout: *checkout
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_qos TIMEOUT=600 test_mixed_pkg
+
 Chrome access tokens id caveats:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CATIC
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - script: *force-clean-repo
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-# com.atlassian.bamboo.plugins.scripttask:task.builder.script is disabled. This state is not supported at YAML
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-mixed-tests-in-chrome
-      scripts:
-      - make SUITE=test_access_tokens_id_caveats TIMEOUT=600 test_mixed_pkg
-      
+    - script: *clear-env
+    - script: *restart-minikube
+    - script: *force-clean-repo
+    - checkout: *checkout
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_access_tokens_id_caveats TIMEOUT=600 test_mixed_pkg
+
 Chrome access tokens path caveats:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CATPC
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - script: *force-clean-repo
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-# com.atlassian.bamboo.plugins.scripttask:task.builder.script is disabled. This state is not supported at YAML
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-mixed-tests-in-chrome
-      scripts:
-      - make SUITE=test_access_tokens_path_caveats TIMEOUT=600 test_mixed_pkg
-      
+    - script: *clear-env
+    - script: *restart-minikube
+    - script: *force-clean-repo
+    - checkout: *checkout
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_access_tokens_path_caveats TIMEOUT=600 test_mixed_pkg
+
 Chrome access tokens:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CATC
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - script: *force-clean-repo
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-mixed-tests-in-chrome
-      scripts:
-      - make SUITE=test_access_tokens TIMEOUT=600 test_mixed_pkg
-      
+    - script: *clear-env
+    - script: *restart-minikube
+    - script: *force-clean-repo
+    - checkout: *checkout
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_access_tokens TIMEOUT=600 test_mixed_pkg
+
 Chrome archive privileges:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CAP
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - script: *force-clean-repo
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-mixed-tests-in-chrome
-      scripts:
-      - make SUITE=test_archive_privileges TIMEOUT=600 test_mixed_pkg
-      
+    - script: *clear-env
+    - script: *restart-minikube
+    - script: *force-clean-repo
+    - checkout: *checkout
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_archive_privileges TIMEOUT=600 test_mixed_pkg
+
 Chrome archives tests:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CAT3
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - script: *force-clean-repo
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-mixed-tests-in-chrome
-      scripts:
-      - make SUITE=test_archives TIMEOUT=600 test_mixed_pkg
-      
+    - script: *clear-env
+    - script: *restart-minikube
+    - script: *force-clean-repo
+    - checkout: *checkout
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_archives TIMEOUT=600 test_mixed_pkg
+
 Chrome create file tests:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CCFT
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - script: *force-clean-repo
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-mixed-tests-in-chrome
-      scripts:
-      - make SUITE=test_create_file TIMEOUT=600 test_mixed_pkg
-      
+    - script: *clear-env
+    - script: *restart-minikube
+    - script: *force-clean-repo
+    - checkout: *checkout
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_create_file TIMEOUT=600 test_mixed_pkg
+
 Chrome datasets tests:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CDT
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - script: *force-clean-repo
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-mixed-tests-in-chrome
-      scripts:
-      - make SUITE=test_dataset TIMEOUT=600 test_mixed_pkg
-      
+    - script: *clear-env
+    - script: *restart-minikube
+    - script: *force-clean-repo
+    - checkout: *checkout
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_dataset TIMEOUT=600 test_mixed_pkg
+
 Chrome directories movement tests:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CDMT2
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - script: *force-clean-repo
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-mixed-tests-in-chrome
-      scripts:
-      - make SUITE=test_directories_movement TIMEOUT=600 test_mixed_pkg
-      
+    - script: *clear-env
+    - script: *restart-minikube
+    - script: *force-clean-repo
+    - checkout: *checkout
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_directories_movement TIMEOUT=600 test_mixed_pkg
+
 Chrome directories multi tests:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CDMT
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - script: *force-clean-repo
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-mixed-tests-in-chrome
-      scripts:
-      - make SUITE=test_directories_multi ENV_FILE=1oz_1op_2oc TIMEOUT=600 test_mixed_pkg
-      
+    - script: *clear-env
+    - script: *restart-minikube
+    - script: *force-clean-repo
+    - checkout: *checkout
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_directories_multi ENV_FILE=1oz_1op_2oc TIMEOUT=600 test_mixed_pkg
+
 Chrome directories remove metadata:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CDRM
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - script: *restart-minikube
-  - script: *force-clean-repo
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-mixed-tests-in-chrome
-      scripts:
-      - make SUITE=test_directories_remove_metadata TIMEOUT=600 test_mixed_pkg
-      
+    - script: *clear-env
+    - script: *restart-minikube
+    - script: *restart-minikube
+    - script: *force-clean-repo
+    - checkout: *checkout
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_directories_remove_metadata TIMEOUT=600 test_mixed_pkg
+
 Chrome directories set metadata:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CDSM
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - script: *restart-minikube
-  - script: *force-clean-repo
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-mixed-tests-in-chrome
-      scripts:
-      - make SUITE=test_directories_set_metadata TIMEOUT=600 test_mixed_pkg
-      
+    - script: *clear-env
+    - script: *restart-minikube
+    - script: *restart-minikube
+    - script: *force-clean-repo
+    - checkout: *checkout
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_directories_set_metadata TIMEOUT=600 test_mixed_pkg
+
 Chrome directories times tests:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CDTT
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - script: *force-clean-repo
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-mixed-tests-in-chrome
-      scripts:
-      - make SUITE=test_directories_times TIMEOUT=600 test_mixed_pkg
-      
+    - script: *clear-env
+    - script: *restart-minikube
+    - script: *force-clean-repo
+    - checkout: *checkout
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_directories_times TIMEOUT=600 test_mixed_pkg
+
 Chrome file content tests:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CFCT
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - script: *force-clean-repo
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-mixed-tests-in-chrome
-      scripts:
-      - make SUITE=test_file_content TIMEOUT=600 test_mixed_pkg
-      
+    - script: *clear-env
+    - script: *restart-minikube
+    - script: *force-clean-repo
+    - checkout: *checkout
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_file_content TIMEOUT=600 test_mixed_pkg
+
 Chrome files movement tests:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CFMT2
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - script: *force-clean-repo
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-mixed-tests-in-chrome
-      scripts:
-      - make SUITE=test_files_movement TIMEOUT=600 test_mixed_pkg
-      working-dir: onedata
-      description: Run acceptance mixed tests in Chrome
-      
+    - script: *clear-env
+    - script: *restart-minikube
+    - script: *force-clean-repo
+    - checkout: *checkout
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_files_movement TIMEOUT=600 test_mixed_pkg
+
 Chrome files multi tests:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CFMT3
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - script: *force-clean-repo
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-mixed-tests-in-chrome
-      scripts:
-      - make SUITE=test_files_multi ENV_FILE=1oz_1op_2oc TIMEOUT=600 test_mixed_pkg
-      
+    - script: *clear-env
+    - script: *restart-minikube
+    - script: *force-clean-repo
+    - checkout: *checkout
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_files_multi ENV_FILE=1oz_1op_2oc TIMEOUT=600 test_mixed_pkg
+
 Chrome files remove metadata:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CFRM
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - script: *restart-minikube
-  - script: *force-clean-repo
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-mixed-tests-in-chrome
-      scripts:
-      - make SUITE=test_files_remove_metadata TIMEOUT=600 test_mixed_pkg
-      
+    - script: *clear-env
+    - script: *restart-minikube
+    - script: *restart-minikube
+    - script: *force-clean-repo
+    - checkout: *checkout
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_files_remove_metadata TIMEOUT=600 test_mixed_pkg
+
 Chrome files set metadata:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CFSM
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - script: *restart-minikube
-  - script: *force-clean-repo
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-mixed-tests-in-chrome
-      scripts:
-      - make SUITE=test_files_set_metadata TIMEOUT=600 test_mixed_pkg
-      
+    - script: *clear-env
+    - script: *restart-minikube
+    - script: *restart-minikube
+    - script: *force-clean-repo
+    - checkout: *checkout
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_files_set_metadata TIMEOUT=600 test_mixed_pkg
+
 Chrome files times tests:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CFTT
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - script: *force-clean-repo
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-mixed-tests-in-chrome
-      scripts:
-      - make SUITE=test_files_times TIMEOUT=600 test_mixed_pkg
-      
+    - script: *clear-env
+    - script: *restart-minikube
+    - script: *force-clean-repo
+    - checkout: *checkout
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_files_times TIMEOUT=600 test_mixed_pkg
+
 Chrome groups basic tests:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CGBT
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - script: *force-clean-repo
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-mixed-tests-in-chrome
-      scripts:
-      - make SUITE=test_groups_basic TIMEOUT=600 test_mixed_pkg
-      
+    - script: *clear-env
+    - script: *restart-minikube
+    - script: *force-clean-repo
+    - checkout: *checkout
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_groups_basic TIMEOUT=600 test_mixed_pkg
+
 Chrome nested directories create:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CNDC
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - script: *force-clean-repo
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-mixed-tests-in-chrome
-      scripts:
-      - make SUITE=test_nested_directories_create TIMEOUT=600 test_mixed_pkg
-      
+    - script: *clear-env
+    - script: *restart-minikube
+    - script: *force-clean-repo
+    - checkout: *checkout
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_nested_directories_create TIMEOUT=600 test_mixed_pkg
+
 Chrome nested directories remove:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CNDR
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - script: *force-clean-repo
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-mixed-tests-in-chrome
-      scripts:
-      - make SUITE=test_nested_directories_remove TIMEOUT=600 test_mixed_pkg
-      
+    - script: *clear-env
+    - script: *restart-minikube
+    - script: *force-clean-repo
+    - checkout: *checkout
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_nested_directories_remove TIMEOUT=600 test_mixed_pkg
+
 Chrome onepanel tests:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: COT
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - script: *force-clean-repo
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-mixed-tests-in-chrome
-      scripts:
-      - make SUITE=test_onepanel_basic TIMEOUT=600 test_mixed_pkg
-      
+    - script: *clear-env
+    - script: *restart-minikube
+    - script: *force-clean-repo
+    - checkout: *checkout
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_onepanel_basic TIMEOUT=600 test_mixed_pkg
+
+# TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
 # Chrome permission POSIX multi tests:
 #   <<: *acceptance-mixed-tests-in-chrome-job
 #   key: CPPMT
@@ -588,15 +584,16 @@ Chrome onepanel tests:
 #   - script: *clear-env
 #   - script: *restart-minikube
 #   - script: *force-clean-repo
-#   - checkout: *checkout-default-repository
+#   - checkout: *checkout
 #   - script: *init-submodules
 #   - script: *download-artifacts
 #   - script: *build-swaggers
 #   - script:
-#       <<: *run-acceptance-mixed-tests-in-chrome
+#       <<: *run-acceptance-tests
 #       scripts:
 #       - make SUITE=test_permission_posix_multi ENV_FILE=1oz_1op_2oc TIMEOUT=600 test_mixed_pkg
-      
+
+# TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
 # Chrome permission POSIX tests:
 #   <<: *acceptance-mixed-tests-in-chrome-job
 #   key: CPPT
@@ -604,124 +601,123 @@ Chrome onepanel tests:
 #   - script: *clear-env
 #   - script: *restart-minikube
 #   - script: *force-clean-repo
-#   - checkout: *checkout-default-repository
+#   - checkout: *checkout
 #   - script: *init-submodules
 #   - script: *download-artifacts
 #   - script: *build-swaggers
 #   - script:
-#       <<: *run-acceptance-mixed-tests-in-chrome
+#       <<: *run-acceptance-tests
 #       scripts:
 #       - make SUITE=test_permission_posix TIMEOUT=600 test_mixed_pkg
-      
+
 Chrome remove file tests:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CRFT
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - script: *force-clean-repo
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-mixed-tests-in-chrome
-      scripts:
-      - make SUITE=test_remove_file TIMEOUT=600 test_mixed_pkg
-      
+    - script: *clear-env
+    - script: *restart-minikube
+    - script: *force-clean-repo
+    - checkout: *checkout
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_remove_file TIMEOUT=600 test_mixed_pkg
+
 Chrome rename file tests:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CRFT1
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - script: *force-clean-repo
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-mixed-tests-in-chrome
-      scripts:
-      - make SUITE=test_rename_file TIMEOUT=600 test_mixed_pkg
-      
+    - script: *clear-env
+    - script: *restart-minikube
+    - script: *force-clean-repo
+    - checkout: *checkout
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_rename_file TIMEOUT=600 test_mixed_pkg
+
 Chrome single directory tests 2:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CSDT2
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - script: *force-clean-repo
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-mixed-tests-in-chrome
-      scripts:
-      - make SUITE=test_single_directory2 TIMEOUT=600 test_mixed_pkg
-      
+    - script: *clear-env
+    - script: *restart-minikube
+    - script: *force-clean-repo
+    - checkout: *checkout
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_single_directory2 TIMEOUT=600 test_mixed_pkg
+
 Chrome single directory tests:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CDBT2
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - script: *force-clean-repo
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-mixed-tests-in-chrome
-      scripts:
-      - make SUITE=test_single_directory TIMEOUT=600 test_mixed_pkg
-      
+    - script: *clear-env
+    - script: *restart-minikube
+    - script: *force-clean-repo
+    - checkout: *checkout
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_single_directory TIMEOUT=600 test_mixed_pkg
+
 Chrome spaces basic tests:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CSBT
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - script: *force-clean-repo
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-mixed-tests-in-chrome
-      scripts:
-      - make SUITE=test_spaces_basic TIMEOUT=600 test_mixed_pkg
-      
+    - script: *clear-env
+    - script: *restart-minikube
+    - script: *force-clean-repo
+    - checkout: *checkout
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_spaces_basic TIMEOUT=600 test_mixed_pkg
+
 Chrome storage sync:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CSS
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - script: *force-clean-repo
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-mixed-tests-in-chrome
-      scripts:
-      - make SUITE=test_storage_sync TIMEOUT=600 test_mixed_pkg
-      
+    - script: *clear-env
+    - script: *restart-minikube
+    - script: *force-clean-repo
+    - checkout: *checkout
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_storage_sync TIMEOUT=600 test_mixed_pkg
+
 Chrome tokens tests:
   <<: *acceptance-mixed-tests-in-chrome-job
   key: CTT
   tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - script: *force-clean-repo
-  - checkout: *checkout-default-repository
-  - script: *init-submodules
-  - script: *download-artifacts
-# com.atlassian.bamboo.plugins.scripttask:task.builder.script is disabled. This state is not supported at YAML
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-mixed-tests-in-chrome
-      scripts:
-      - make SUITE=test_tokens TIMEOUT=600 test_mixed_pkg
+    - script: *clear-env
+    - script: *restart-minikube
+    - script: *force-clean-repo
+    - checkout: *checkout
+    - script: *init-submodules
+    - script: *download-artifacts
+    - script: *build-swaggers
+    - script:
+        <<: *run-acceptance-tests
+        scripts:
+          - make SUITE=test_tokens TIMEOUT=600 test_mixed_pkg

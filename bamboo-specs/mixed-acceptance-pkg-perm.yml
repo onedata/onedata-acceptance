@@ -3,15 +3,17 @@ plan:
   key: BAM-MAOPT
 #  key: ODSRV-MAOPT  # To be uncommented after reviewers acceptation
 plan-permissions:
-- users:
-  - plgjliput
-  - plglopiola
-  - plgdutka
-  groups:
-  - plggveildev
-  permissions:
-  - view
-  - edit
-  - build
-  - clone
-  - admin
+  - users:
+      - plgjliput
+      - plglopiola
+      - plgmstanisz
+      - plgdutka
+      - plgagneska
+    groups:
+      - plggveildev
+    permissions:
+      - view
+      - edit
+      - build
+      - clone
+      - admin
