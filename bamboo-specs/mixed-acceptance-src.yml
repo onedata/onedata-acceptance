@@ -20,8 +20,7 @@ notifications:
   - users:
     - plgjliput
 labels: []
-triggers: []
-dependencies:
+triggers: []dependencies:
   require-all-stages-passing: true
   enabled-for-branches: true
   block-strategy: none
@@ -45,6 +44,7 @@ stages:
     final: false
     jobs:
     - Chrome QoS tests
+    - Chrome LUMA tests
     - Chrome create file tests
     - Chrome storage sync
     # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
@@ -173,6 +173,27 @@ Chrome QoS tests:
     required: false
   requirements: &requirements
   - minikube
+  artifact-subscriptions: []
+Chrome LUMA tests:
+  key: CCFT
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      <<: *run-acceptance-tests
+      scripts:
+      - make ENV_FILE=1oz_1op_luma_oneclient SUITE=test_luma TIMEOUT=600 test_mixed_src
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-and-working-dir
+  artifacts: *artifacts
+  requirements: *requirements
   artifact-subscriptions: []
 Chrome create file tests:
   key: CCFT

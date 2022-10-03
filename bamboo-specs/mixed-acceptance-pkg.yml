@@ -35,7 +35,6 @@ other:
       com.atlassian.bamboo.plugin.hungbuildkiller:
         stopped.enabled: "true"
         add_comment_when_hung.enabled: "true"
-      artifactHandlers.useCustomArtifactHandlers: "false"
       buildExpiryConfig:
         period: weeks
         expiryTypeBuildLog: "true"
@@ -128,7 +127,6 @@ Chrome LUMA tests: &acceptance-mixed-tests-in-chrome-job
         scripts:
           - one_env/onenv pull_artifacts --hostname ${bamboo.artifactRepoHostname} --port ${bamboo.artifactRepoPort} --packages-only branchConfig.yaml
         description: Download artifacts
-    # com.atlassian.bamboo.plugins.scripttask:task.builder.script is disabled. This state is not supported at YAML
     - script: &build-swaggers
         working-dir: onedata-acceptance
         scripts:
