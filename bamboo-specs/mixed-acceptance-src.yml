@@ -20,7 +20,8 @@ notifications:
   - users:
     - plgjliput
 labels: []
-triggers: []dependencies:
+triggers: []
+dependencies:
   require-all-stages-passing: true
   enabled-for-branches: true
   block-strategy: none
