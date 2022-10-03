@@ -83,7 +83,7 @@ class MetadataTab(Modal):
     editor_disabled = Label('.editor-disabled-lock-text')
 
     def __str__(self):
-        return 'Metadata modal'
+        return 'Metadata tab'
 
 
 

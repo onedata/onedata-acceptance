@@ -27,7 +27,9 @@ in_type_to_id = {'username': 'login-form-username-input',
 
 def check_modal_name(modal_name):
     modal_name = transform(modal_name)
-    if 'remove' in modal_name:
+    if modal_name == 'qos':
+        return 'quality_of_service'
+    elif 'remove' in modal_name:
         return 'remove_modal'
     elif 'leave' in modal_name:
         return 'leave_modal'
@@ -336,8 +338,10 @@ def assert_alert_text_in_modal(selenium, browser_id, modals, modal, text):
         'found {} text instead of {}'.format(forbidden_alert_text, text))
 
 
-@wt(parsers.parse('user of {browser_id} clicks on "{button}" button in '
-                  'modal "{modal_name}"'))
+@wt(parsers.re('user of (?P<browser_id>.*?) clicks on "(?P<button>.*?)" '
+               'button in (?P<modal_name>.*?) panel'))
+@wt(parsers.re('user of (?P<browser_id>.*?) clicks on "(?P<button>.*?)" '
+               'button in (modal|tab) "(?P<modal_name>.*?)"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_modal_button(selenium, browser_id, button, modal_name, modals):
     button = transform(button)
@@ -345,6 +349,9 @@ def click_modal_button(selenium, browser_id, button, modal_name, modals):
     getattr(getattr(modals(selenium[browser_id]), modal), button)()
 
 
+@wt(parsers.re('user of (?P<browser_id>.*?) writes "(?P<item_name>.*?)" '
+               'into(?P<name_textfield>.*?) text field '
+               'in (?P<modal_name>.*?) panel'))
 @wt(parsers.re('user of (?P<browser_id>.*?) writes "(?P<item_name>.*?)" '
                'into(?P<name_textfield>.*?) text field '
                'in modal "(?P<modal_name>.*?)"'))
