@@ -43,6 +43,7 @@ from tests.gui.steps.oneprovider.browser import *
 from tests.gui.steps.onezone.providers import *
 
 from tests.gui.steps.modals.modal import *
+from tests.gui.steps.modals.details_modal import *
 from tests.gui.steps.oneprovider_common import *
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.oneprovider.data import *
@@ -56,7 +57,5 @@ def screens():
     return [0, 1]
 
 
-# TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
-scenarios('../features/pass.feature')
-# scenarios('../features/oneprovider/data/acl/subjects.feature')
+scenarios('../features/oneprovider/data/acl/subjects.feature')
 

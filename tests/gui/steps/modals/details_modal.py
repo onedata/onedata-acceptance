@@ -10,8 +10,7 @@ __license__ = "This software is released under the MIT license cited in " \
 from datetime import datetime
 
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.steps.modals.modal import (check_modal_name,
-                                          wt_wait_for_modal_to_appear)
+from tests.gui.steps.modals.modal import check_modal_name, click_modal_button
 from tests.gui.steps.oneprovider.browser import (
     click_menu_for_elem_in_browser, click_option_in_data_row_menu_in_browser)
 from tests.gui.utils.generic import transform
@@ -97,3 +96,11 @@ def click_on_context_menu_item(selenium, browser_id, popups, item_name,
     click_menu_for_elem_in_browser(browser_id, item_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
                                              context_menu_item, popups)
+
+
+@wt(parsers.re('user of (?P<browser_id>.*?) clicks on "(?P<button>.*?)" button'
+               ' in (?P<panel>metadata|edit permissions) panel'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_button_in_panel(selenium, browser_id, button, modals, panel):
+    click_modal_button(selenium, browser_id, button, panel, modals)
+
