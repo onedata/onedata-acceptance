@@ -175,7 +175,7 @@ Chrome QoS tests:
   - minikube
   artifact-subscriptions: []
 Chrome LUMA tests:
-  key: CCFT
+  key: CAOE
   other: *common-opts
   tasks:
   - script: *clear-env
