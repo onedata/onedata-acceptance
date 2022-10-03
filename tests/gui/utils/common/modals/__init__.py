@@ -27,7 +27,8 @@ from .archives_modals.recall_archive import RecallArchive
 from .basic_modals.rename_modal import RenameModal
 from .management_modals.cease_support_for_space import (
     CeaseSupportForSpaceModal)
-from .files_modals.edit_permissions import EditPermissionsModal
+from .files_modals.tabs_in_details_modal.edit_permissions import (
+    EditPermissionsTab)
 from .configure_web_cert import ConfigureWebCertModal
 from .basic_modals.remove import RemoveModal
 from .troubles_modals.error_modal import ErrorModal
@@ -86,7 +87,7 @@ class Modals(object):
                                     cls=SymbolicLinkDetailsModal)
     external_symbolic_link = WebItem('.modal-dialog',
                                      cls=ExternalSymbolicLink)
-    edit_permissions = WebItem('.modal-dialog', cls=EditPermissionsModal)
+    edit_permissions = WebItem('.modal-dialog', cls=EditPermissionsTab)
 
     # troubles modals
     emergency_interface = WebItem('.modal-dialog', cls=EmergencyInterface)

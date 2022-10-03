@@ -15,6 +15,7 @@ from tests.gui.steps.rest.env_up.spaces import *
 from tests.gui.steps.rest.cdmi import *
 
 from tests.gui.steps.modals.modal import *
+from tests.gui.steps.modals.details_modal import *
 
 from tests.gui.steps.common.url import *
 from tests.gui.steps.common.browser_creation import *
@@ -55,6 +56,5 @@ from tests.utils.acceptance_utils import *
 def screens():
     return [0, 1]
 
-# TODO: VFS-9761 reimplement gui permissions tests after move to file info modal 
-scenarios('../features/pass.feature')
-# scenarios('../features/oneprovider/data/posix/privileges_posix.feature')
+
+scenarios('../features/oneprovider/data/posix/privileges_posix.feature')
