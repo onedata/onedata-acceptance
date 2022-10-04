@@ -157,7 +157,7 @@ Feature: ACL basic tests using single browser in Oneprovider GUI
     When user of browser sets "file1" ACL <privileges> privileges for <subject_type> <subject_name> in "space1"
     And user of browser clicks on "Permissions" in context menu for "file1"
     And user of browser sees that "File details" modal is opened on "Permissions" tab
-    And user of browser clicks on "remove" button in first ACL record in edit permissions panel
+    And user of browser clicks "remove" button in first ACL record in permissions panel
     Then user of browser sees exactly 0 ACL records in edit permissions panel
 
     Examples:
@@ -175,7 +175,7 @@ Feature: ACL basic tests using single browser in Oneprovider GUI
 
     And user of browser adds ACE with "general:delete" privilege set for group group1
     And user of browser adds ACE with "acl:read acl" privilege set for user space-owner-user
-    And user of browser clicks on "<button>" button in <numeral> ACL record in edit permissions panel
+    And user of browser clicks "<button>" button in <numeral> ACL record in permissions panel
     Then user of browser sees that first ACL record in edit permissions panel is set for user space-owner-user
     And user of browser sees that second ACL record in edit permissions panel is set for group group1
     And user of browser clicks on "Save" button in edit permissions panel

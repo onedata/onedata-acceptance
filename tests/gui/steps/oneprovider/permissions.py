@@ -235,8 +235,8 @@ def assert_acl_subject(selenium, browser_id, modals, num, numerals, type, name):
     assert perm.name == name, 'Subject name is not {name} in {num} ACL record'
 
 
-@wt(parsers.re(r'user of (?P<browser_id>\w+) clicks on "(?P<btn>.*)" button '
-               'in (?P<num>.*) ACL record in edit permissions panel'))
+@wt(parsers.re(r'user of (?P<browser_id>\w+) clicks "(?P<btn>.*)" button in '
+               r'(?P<num>.*) ACL record in permissions panel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_btn_in_acl_record(selenium, browser_id, modals, btn, num,
                                numerals, popups):
