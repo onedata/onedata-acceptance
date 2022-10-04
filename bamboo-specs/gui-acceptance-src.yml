@@ -123,10 +123,8 @@ stages:
     - Chrome oneprovider ACL directories privileges
     - Chrome multiprovider QoS storage
     - Chrome oneprovider ACL basic
-    # TODO: VFS-9799 reimplement gui QoS tests after move to file info modal
-    # - Chrome multiprovider QoS tests
-    # TODO: VFS-9799 reimplement gui QoS tests after move to file info modal
-    # - Chrome QoS storage
+    - Chrome multiprovider QoS tests
+    - Chrome QoS storage
     - Chrome metadata test
     - Chrome onepanel members tests
     - Chrome multiprovider multiuser tests
@@ -1526,48 +1524,46 @@ Chrome oneprovider ACL basic:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-# TODO: VFS-9799 reimplement gui QoS tests after move to file info modal
-#Chrome multiprovider QoS tests:
-#  key: CMQT
-#  other: *common-opts
-#  tasks:
-#  - script: *clear-env
-#  - script: *restart-minikube
-#  - checkout: *checkout
-#  - script: *init-submodules
-#  - script: *download-artifacts
-#  - script:
-#      <<: *run-selenium-tests
-#      scripts:
-#      - make ENV_FILE=1oz_2op_deployed SUITE=test_multiprovider_qos BROWSER=Chrome TIMEOUT=600 test_gui_src
-#  final-tasks:
-#  - test-parser: *parse-test-results
-#  - script: *pack-logs
-#  - script: *clear-env-and-working-dir
-#  artifacts: *artifacts
-#  requirements: *requirements
-#  artifact-subscriptions: []
-# TODO: VFS-9799 reimplement gui QoS tests after move to file info modal
-#Chrome QoS storage:
-#  key: CQS
-#  other: *common-opts
-#  tasks:
-#  - script: *clear-env
-#  - script: *restart-minikube
-#  - checkout: *checkout
-#  - script: *init-submodules
-#  - script: *download-artifacts
-#  - script:
-#      <<: *run-selenium-tests
-#      scripts:
-#      - make ENV_FILE=1oz_2op_deployed SUITE=test_qos_storage BROWSER=Chrome TIMEOUT=600 test_gui_src
-#  final-tasks:
-#  - test-parser: *parse-test-results
-#  - script: *pack-logs
-#  - script: *clear-env-and-working-dir
-#  artifacts: *artifacts
-#  requirements: *requirements
-#  artifact-subscriptions: []
+Chrome multiprovider QoS tests:
+  key: CMQT
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script:
+      <<: *run-selenium-tests
+      scripts:
+      - make ENV_FILE=1oz_2op_deployed SUITE=test_multiprovider_qos BROWSER=Chrome TIMEOUT=600 test_gui_src
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-and-working-dir
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome QoS storage:
+  key: CQS
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script:
+      <<: *run-selenium-tests
+      scripts:
+      - make ENV_FILE=1oz_2op_deployed SUITE=test_qos_storage BROWSER=Chrome TIMEOUT=600 test_gui_src
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-and-working-dir
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
 Chrome metadata test:
    key: CMT
    other: *common-opts

@@ -54,7 +54,7 @@ def evict_file(selenium, browser_id, provider, popups, file_name, tmp_memory,
     menu_option = 'Evict'
     driver = selenium[browser_id]
     provider_name = hosts[provider]['name']
-    close_button = 'Close'
+    close_button = 'X'
     details_modal = 'Details modal'
 
     click_menu_for_elem_in_browser(browser_id, file_name, tmp_memory)

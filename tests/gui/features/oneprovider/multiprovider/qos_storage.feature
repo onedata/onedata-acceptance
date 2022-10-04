@@ -35,7 +35,7 @@ Feature: Quality of Service tests for 2 providers using multiple browsers where 
     And user of browser_unified creates QoS requirement with copied storageId for "file1" from file browser
     And user of browser_unified clicks on QoS status tag for "file1" in file browser
     And user of browser_unified sees that all QoS requirements are fulfilled
-    And user of browser_unified clicks on "Close" button in modal "File details"
+    And user of browser_unified clicks on "X" button in modal "File details"
     And user of browser_unified migrates "file1" from provider "oneprovider-1" to provider "oneprovider-2"
     Then user of browser_unified sees file chunks for file "file1" as follows:
           oneprovider-1: entirely filled
@@ -49,7 +49,7 @@ Feature: Quality of Service tests for 2 providers using multiple browsers where 
     And user of browser_unified creates "anyStorage \ storageId=" QoS requirement and pastes storage id from clipboard for "file1" from file browser
     And user of browser_unified clicks on QoS status tag for "file1" in file browser
     And user of browser_unified sees that all QoS requirements are fulfilled
-    And user of browser_unified clicks on "Close" button in modal "File details"
+    And user of browser_unified clicks on "X" button in modal "File details"
     Then user of browser_unified sees file chunks for file "file1" as follows:
           oneprovider-2: entirely filled
 

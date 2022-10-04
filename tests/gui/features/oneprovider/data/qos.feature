@@ -30,7 +30,7 @@ Feature: Quality of Service tests using single storage and single browser in One
     And user of browser confirms entering expression in expression text field in QoS panel
     And user of browser sees that replicas number is equal 1 in QoS panel
     And user of browser clicks on "Save" button in QoS panel
-    And user of browser clicks on "Close" button in modal "File details"
+    And user of browser clicks on "X" button in modal "File details"
     Then user of browser sees QoS status tag for "file1" in file browser
     And user of browser chooses Quality of Service option from selection menu on file browser page
     And user of browser sees [geo = "PL"] QoS requirement in QoS panel
@@ -41,7 +41,7 @@ Feature: Quality of Service tests using single storage and single browser in One
     And user of browser sees QoS status tag for "file1" in file browser
     And user of browser clicks on QoS status tag for "file1" in file browser
     And user of browser deletes all QoS requirements
-    And user of browser clicks on "Close" button in modal "File details"
+    And user of browser clicks on "X" button in modal "File details"
     Then user of browser does not see QoS status tag for "file1" in file browser
     And user of browser doesn't see any QoS requirement in QoS panel
 

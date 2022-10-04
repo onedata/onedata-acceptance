@@ -30,7 +30,7 @@ def _add_qos_requirement_in_modal(selenium, browser_id, modals, item_name,
     qos_option = 'Quality of Service'
     add_button = 'Add Requirement'
     save_button = 'Save'
-    close_button = 'Close'
+    close_button = 'X'
     replicas_field = 'Replicas number'
     expression_field = 'expression'
     details_modal = 'Details modal'
@@ -132,8 +132,8 @@ def delete_qos_requirement_in_op_gui(selenium, user, space_name, oz_page,
                                      op_container):
     option1 = 'Files'
     status_type = 'QoS'
-    button = 'Close'
-    modal = 'Quality of Service'
+    button = 'X'
+    modal = 'Details modal'
     click_on_option_of_space_on_left_sidebar_menu(selenium, user,
                                                   space_name, option1,
                                                   oz_page)
