@@ -115,10 +115,8 @@ stages:
     - Chrome onezone invite tokens with consumer caveats
     - Chrome oneprovider datasets tests
     - Chrome onezone invite tokens
-    # TODO: VFS-9798 reimplement gui shares tests after move to file info modal
-    # - Chrome public shares tests
-    # TODO: VFS-9798 reimplement gui shares tests after move to file info modal
-    # - Chrome shares handle service tests
+    - Chrome public shares tests
+    - Chrome shares handle service tests
     - Chrome onezone groups multiuser tests
     - Chrome oneprovider ACL directories privileges
     - Chrome multiprovider QoS storage
@@ -1402,48 +1400,46 @@ Chrome onezone invite tokens:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-# TODO: VFS-9798 reimplement gui shares tests after move to file info modal
-# Chrome public shares tests:
-#   key: CPST
-#   other: *common-opts
-#   tasks:
-#   - script: *clear-env
-#   - script: *restart-minikube
-#   - checkout: *checkout
-#   - script: *init-submodules
-#   - script: *download-artifacts
-#   - script:
-#       <<: *run-selenium-tests
-#       scripts:
-#       - make SUITE=test_public_shares BROWSER=Chrome TIMEOUT=600 test_gui_src
-#   final-tasks:
-#   - test-parser: *parse-test-results
-#   - script: *pack-logs
-#   - script: *clear-env-and-working-dir
-#   artifacts: *artifacts
-#   requirements: *requirements
-#   artifact-subscriptions: []
-# TODO: VFS-9798 reimplement gui shares tests after move to file info modal
-# Chrome shares handle service tests:
-#   key: CSHS
-#   other: *common-opts
-#   tasks:
-#   - script: *clear-env
-#   - script: *restart-minikube
-#   - checkout: *checkout
-#   - script: *init-submodules
-#   - script: *download-artifacts
-#   - script:
-#       <<: *run-selenium-tests
-#       scripts:
-#       - make ENV_FILE=1oz_1op_handle_proxy_mock SUITE=test_shares_handle_service BROWSER=Chrome TIMEOUT=600 test_gui_src
-#   final-tasks:
-#   - test-parser: *parse-test-results
-#   - script: *pack-logs
-#   - script: *clear-env-and-working-dir
-#   artifacts: *artifacts
-#   requirements: *requirements
-#   artifact-subscriptions: []
+Chrome public shares tests:
+  key: CPST
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script:
+     <<: *run-selenium-tests
+     scripts:
+     - make SUITE=test_public_shares BROWSER=Chrome TIMEOUT=600 test_gui_src
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-and-working-dir
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome shares handle service tests:
+  key: CSHS
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script:
+     <<: *run-selenium-tests
+     scripts:
+     - make ENV_FILE=1oz_1op_handle_proxy_mock SUITE=test_shares_handle_service BROWSER=Chrome TIMEOUT=600 test_gui_src
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-and-working-dir
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
 Chrome onezone groups multiuser tests:
   key: COGMUT
   other: *common-opts
