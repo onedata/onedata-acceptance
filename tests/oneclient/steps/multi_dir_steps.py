@@ -10,6 +10,7 @@ __license__ = "This software is released under the MIT license cited in " \
 import errno
 import subprocess as sp
 
+from tests.oneclient.conftest import purge_spaces
 from tests.utils.onenv_utils import cmd_exec
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import given, when, wt, parsers
@@ -88,6 +89,13 @@ def delete_empty(user, dirs, client_node, users):
                '(?P<dirs>.*) on (?P<client_node>.*)'))
 def fail_to_delete_empty(user, dirs, client_node, users):
     delete_empty_base(user, dirs, client_node, users, should_fail=True)
+
+
+@wt(parsers.re('(?P<user>\w+) purge all spaces on (?P<client_node>.*)'))
+def purge_all_spaces(user, client_node, users):
+    user = users[user]
+    client = user.clients[client_node]
+    purge_spaces(client)
 
 
 @wt(parsers.re('(?P<user>\w+) deletes directories \(rm -rf\) (?P<dirs>.*) on '

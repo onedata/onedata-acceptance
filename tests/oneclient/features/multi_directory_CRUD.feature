@@ -15,6 +15,25 @@ Feature: Multi_directory_CRUD
     And user2 sees [dir1, dir2, dir3] in space1 on client21
 
 
+  Scenario: Clean everything after creating directory and hidden directory
+    When user1 creates directories [space1/dir1, space1/dir2, space1/dir3] on client11
+    And user1 can stat [dir1, dir2, dir3] in space1 on client11
+    And user2 can stat [dir1, dir2, dir3] in space1 on client21
+    And user1 sees [dir1, dir2, dir3] in space1 on client11
+    And user2 sees [dir1, dir2, dir3] in space1 on client21
+    And user2 creates directories [space1/.dir4] on client21
+    And user1 is idle for 10 seconds
+    And user1 purge all spaces on client11
+    Then user1 can't stat [dir1, dir2, dir3] in space1 on client11
+    And user2 can't stat [dir1, dir2, dir3] in space1 on client21
+    And user1 doesn't see [dir1, dir2, dir3] in space1 on client11
+    And user2 doesn't see [dir1, dir2, dir3] in space1 on client21
+    And user1 can't stat [.dir4] in space1 on client11
+    And user2 can't stat [.dir4] in space1 on client21
+    And user1 doesn't see [.dir4] in space1 on client11
+    And user2 doesn't see [.dir4] in space1 on client21
+
+
   Scenario: Fail to rename someone's directory without write permission on parent
     When user1 creates directory and parents [space1/dir1/child1] on client11
     And user1 changes space1/dir1 mode to 755 on client11
