@@ -18,7 +18,7 @@ from .membership_relation_menu import MembershipRelationMenu
 from .menu_in_edit_permissions import EditPermissionsRecordMenu
 from .power_select import PowerSelect
 from .menu_popup import MenuPopupWithLabel
-from .provider_popover import ProviderPopover
+from .provider_popover import ProviderPopover, ProviderDetails
 from .query_builder import ExpressionBuilderPopup
 from .qos_delete import DeleteQosPopup
 from .selector_popup import SelectorPopup
@@ -69,6 +69,8 @@ class Popups(object):
     membership_relation_menu = WebItem('.relation-actions.one-webui-popover',
                                        cls=MembershipRelationMenu)
 
+    provider_details = WebItem('.webui-popover-content .provider-info-content',
+                               cls=ProviderDetails)
     provider_popover = WebItem('.webui-popover .provider-place-drop',
                                cls=ProviderPopover)
     dropdown = DropdownSelector('.ember-basic-dropdown-content')
