@@ -59,6 +59,4 @@ def screens():
     return [0]
 
 
-# TODO: VFS-9842 reimplement gui data distribution tests after move to file info modal
-scenarios('../features/pass.feature')
-# scenarios('../features/oneprovider/transfers/transfers_file.feature')
+scenarios('../features/oneprovider/transfers/transfers_file.feature')

@@ -149,15 +149,12 @@ def migrate_item(selenium, browser_id, source, target, hosts, popups):
 
 @wt(parsers.re('user of (?P<browser_id>.*) replicates selected item'
                ' to provider "(?P<provider>.*)"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def replicate_item(selenium, browser_id, provider, hosts, popups):
     menu_option = 'Replicate here'
     driver = selenium[browser_id]
-
     provider_name = hosts[provider]['name']
-    (modals(driver)
-     .data_distribution
-     .providers[provider_name]
-     .menu_button())
+    modals(driver).data_distribution.providers[provider_name].menu_button()
     popups(driver).data_distribution_popup.menu[menu_option]()
 
 

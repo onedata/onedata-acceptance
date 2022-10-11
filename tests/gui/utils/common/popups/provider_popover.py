@@ -9,12 +9,21 @@ __license__ = ("This software is released under the MIT license cited in "
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (Label, Button,
                                                WebItemsSequence, NamedButton,
-                                               Input)
+                                               Input, WebElementsSequence)
 
 
 class Space(PageObject):
     name = id = Label('.space-label')
     support = Label('.space-size')
+
+
+class Values(PageObject):
+    copy_to_clipboard = Button('.copy-btn-icon')
+
+
+class ProviderDetails(PageObject):
+    values = WebItemsSequence('td:nth-child(2)', cls=Values)
+    labels = WebElementsSequence('td:first-child')
 
 
 class ProviderPopover(PageObject):

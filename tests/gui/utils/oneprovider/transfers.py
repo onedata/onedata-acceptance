@@ -61,7 +61,7 @@ class TransferRecord(PageObject):
 
 
 class TransferRecordHistory(TransferRecord):
-    transferred = Label('td:nth-of-type(6)')
+    replicated = Label('.replicated-bytes')
     total_files = Label('td:nth-of-type(7)')
 
 

@@ -43,11 +43,16 @@ def assert_popup_for_provider_with_name_has_appeared_on_map(selenium,
                   'provider "{provider}" has appeared on world map'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_popup_for_provider_has_appeared_on_map(selenium, browser_id,
-                                                  provider, hosts, popups):
+                                                  provider, hosts, popups,
+                                                  clipboard, displays):
     driver = selenium[browser_id]
     err_msg = 'Popup displayed for provider named "{}" ' \
               'instead of "{}"'
-    prov = popups(driver).provider_popover.provider_name
+    try:
+        prov = popups(driver).provider_popover.provider_name
+    except RuntimeError:
+        popups(driver).provider_details.values[0].copy_to_clipboard()
+        prov = clipboard.paste(display=displays[browser_id])
     provider_name = hosts[provider]['name']
     assert provider_name == prov, err_msg.format(prov, provider_name)
 
@@ -417,10 +422,19 @@ def assert_len_of_spaces_list_in_provider_popover(selenium, browser_id,
 def click_on_menu_button_of_provider_on_providers_list(selenium, browser_id,
                                                        provider, oz_page,
                                                        hosts):
+    button = 'menu button'
+    click_on_button_on_providers_list(selenium, browser_id, provider, oz_page,
+                                      hosts, button)
+
+
+@wt(parsers.parse('user of {browser_id} clicks {button} for "{provider}"'
+                  ' provider on space providers data page'))
+def click_on_button_on_providers_list(selenium, browser_id, provider, oz_page,
+                                      hosts, button):
     driver = selenium[browser_id]
     provider_name = hosts[provider]['name']
-    oz_page(driver)['data'].providers_page.providers_list[
-        provider_name].menu_button()
+    getattr(oz_page(driver)['data'].providers_page.providers_list[
+                provider_name], transform(button))()
 
 
 def click_on_cease_support_in_menu_of_provider_on_providers_list(driver,
