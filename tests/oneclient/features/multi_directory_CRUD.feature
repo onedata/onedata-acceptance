@@ -22,8 +22,9 @@ Feature: Multi_directory_CRUD
     And user1 sees [dir1, dir2, dir3] in space1 on client11
     And user2 sees [dir1, dir2, dir3] in space1 on client21
     And user2 creates directories [space1/.dir4] on client21
+    # waiting for synchronization and not listing directory is intentional
     And user1 is idle for 10 seconds
-    And user1 purge all spaces on client11
+    And user1 purges all spaces on client11
     Then user1 can't stat [dir1, dir2, dir3] in space1 on client11
     And user2 can't stat [dir1, dir2, dir3] in space1 on client21
     And user1 doesn't see [dir1, dir2, dir3] in space1 on client11

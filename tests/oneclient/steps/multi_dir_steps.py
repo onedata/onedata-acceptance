@@ -10,7 +10,6 @@ __license__ = "This software is released under the MIT license cited in " \
 import errno
 import subprocess as sp
 
-from tests.oneclient.conftest import purge_spaces
 from tests.utils.onenv_utils import cmd_exec
 from tests.utils.acceptance_utils import list_parser
 from tests.utils.bdd_utils import given, when, wt, parsers
@@ -91,11 +90,31 @@ def fail_to_delete_empty(user, dirs, client_node, users):
     delete_empty_base(user, dirs, client_node, users, should_fail=True)
 
 
-@wt(parsers.re('(?P<user>\w+) purge all spaces on (?P<client_node>.*)'))
-def purge_all_spaces(user, client_node, users):
+def purge_all_spaces(client):
+    try:
+        spaces = client.list_spaces()
+        for space in spaces:
+            space_path = client.absolute_path(space)
+            try:
+                client.rm(path=space_path, recursive=True)
+            except FileNotFoundError:
+                pass
+            except OSError as e:
+                # ignore EACCES errors during cleaning
+                if e.errno == errno.EACCES:
+                    pass
+    except FileNotFoundError:
+        pass
+    except Exception as e:
+        print("Error during cleaning up spaces: {}".format(e))
+        raise e
+
+
+@wt(parsers.re('(?P<user>\w+) purges all spaces on (?P<client_node>.*)'))
+def purge_all_users_spaces(user, client_node, users):
     user = users[user]
     client = user.clients[client_node]
-    purge_spaces(client)
+    purge_all_spaces(client)
 
 
 @wt(parsers.re('(?P<user>\w+) deletes directories \(rm -rf\) (?P<dirs>.*) on '
