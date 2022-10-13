@@ -155,10 +155,10 @@ Feature: Basic files tab operations on hardlinks in file browser
     # check QoS of hardlink
     And user of browser clicks on QoS status tag for "file1(1)" in file browser
     And user of browser sees [hello = "WORLD"] QoS requirement in QoS panel
-    And user of browser clicks on "X" button in modal "File details"
 
     # check metadata of hardlink
-    And user of browser opens metadata panel on JSON tab for "file1(1)"
+    And user of browser clicks on "Metadata" navigation tab in "File Details" modal
+    And user of browser clicks on "JSON" navigation tab in metadata panel
     And user of browser sees that JSON textarea in metadata panel contains '{"id": 1}'
 
 
@@ -182,20 +182,16 @@ Feature: Basic files tab operations on hardlinks in file browser
     # check QoS of original file
     And user of browser clicks on QoS status tag for "file1" in file browser
     And user of browser sees [hello = "WORLD"] QoS requirement in QoS panel
-    And user of browser clicks on "X" button in modal "File details"
 
     # check QoS of second hardlink
-    And user of browser clicks on QoS status tag for "file1(2)" in file browser
     And user of browser sees [hello = "WORLD"] QoS requirement in QoS panel
-    And user of browser clicks on "X" button in modal "File details"
 
     # check metadata of original file
-    And user of browser opens metadata panel on JSON tab for "file1"
+    And user of browser clicks on "Metadata" navigation tab in "File Details" modal
+    And user of browser clicks on "JSON" navigation tab in metadata panel
     And user of browser sees that JSON textarea in metadata panel contains '{"id": 1}'
-    And user of browser clicks on "X" button in modal "File details"
 
     # check metadata of second hardlink
-    And user of browser opens metadata panel on JSON tab for "file1(2)"
     And user of browser sees that JSON textarea in metadata panel contains '{"id": 1}'
 
 

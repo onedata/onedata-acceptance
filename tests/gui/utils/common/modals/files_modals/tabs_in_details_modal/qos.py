@@ -21,7 +21,7 @@ class Requirement(PageObject):
     replicas_number = Label('.replicas-number')
 
 
-class QualityOfServiceTab(Modal):
+class QoSTab(Modal):
     add_requirement = NamedButton('.btn-primary', text='Add Requirement')
     enter_as_text = Button('.enter-text-link')
     confirm_text = Button('.oneicon-checked')
@@ -38,5 +38,5 @@ class QualityOfServiceTab(Modal):
     privileges_error = Label('.alert-promise-error')
 
     def __str__(self):
-        return 'Quality of Service tab'
+        return 'QoS tab'
 

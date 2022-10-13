@@ -27,9 +27,7 @@ in_type_to_id = {'username': 'login-form-username-input',
 
 def check_modal_name(modal_name):
     modal_name = transform(modal_name)
-    if modal_name == 'qos':
-        return 'quality_of_service'
-    elif 'remove' in modal_name:
+    if 'remove' in modal_name:
         return 'remove_modal'
     elif 'leave' in modal_name:
         return 'leave_modal'

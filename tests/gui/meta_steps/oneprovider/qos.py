@@ -28,6 +28,7 @@ def _add_qos_requirement_in_modal(selenium, browser_id, modals, item_name,
                                   tmp_memory, expression, popups,
                                   replicas_number):
     qos_option = 'Quality of Service'
+    panel = 'qos'
     add_button = 'Add Requirement'
     save_button = 'Save'
     close_button = 'X'
@@ -38,16 +39,16 @@ def _add_qos_requirement_in_modal(selenium, browser_id, modals, item_name,
     click_on_item_in_file_browser(browser_id, item_name, tmp_memory)
     choose_option_from_selection_menu(browser_id, selenium, qos_option, popups,
                                       tmp_memory)
-    click_modal_button(selenium, browser_id, add_button, qos_option, modals)
+    click_modal_button(selenium, browser_id, add_button, panel, modals)
     click_enter_as_text_link(selenium, browser_id, modals)
     write_name_into_text_field_in_modal(selenium, browser_id, expression,
-                                        qos_option, modals, expression_field)
+                                        panel, modals, expression_field)
     confirm_entering_text(selenium, browser_id, modals)
     if replicas_number != 1:
         write_name_into_text_field_in_modal(selenium, browser_id,
                                             replicas_number,
-                                            qos_option, modals, replicas_field)
-    click_modal_button(selenium, browser_id, save_button, qos_option, modals)
+                                            panel, modals, replicas_field)
+    click_modal_button(selenium, browser_id, save_button, panel, modals)
     click_modal_button(selenium, browser_id, close_button, details_modal,
                        modals)
 

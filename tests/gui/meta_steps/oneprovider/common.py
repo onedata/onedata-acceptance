@@ -156,10 +156,11 @@ def open_record_of_clusters_submenu(selenium, browser_id, provider_name,
 
 
 @wt(parsers.parse('user of {browser_id} opens "{modal_name}" modal on '
-                  '"{tab}" tab for "{filename}" file'))
+                  '"{tab}" tab for "{filename}" file using context menu'))
 def open_modal_on_tab(selenium, browser_id, filename, popups, tmp_memory,
                       tab, modals, modal_name):
-    tab_name = "QoS" if tab == "Quality of Service" else tab
+    option = "Quality of Service" if tab == "QoS" else tab
     click_menu_for_elem_in_browser(browser_id, filename, tmp_memory)
-    click_option_in_data_row_menu_in_browser(selenium, browser_id, tab, popups)
-    assert_tab_in_modal(selenium, browser_id, tab_name, modals, modal_name)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
+                                             popups)
+    assert_tab_in_modal(selenium, browser_id, tab, modals, modal_name)

@@ -147,9 +147,6 @@ Feature: Basic files tab operations on directory metadata in file browser
     And user of browser sees that "<modal>" modal is opened on "Metadata" tab
     And user of browser adds basic entry with key "attr" and value "val"
     And user of browser clicks on "Discard changes" button in metadata panel
-    And user of browser clicks on "X" button in modal "<modal>"
-    And user of browser clicks on "Metadata" in context menu for "<item>"
-    And user of browser sees that "<modal>" modal is opened on "Metadata" tab
     Then user of browser does not see basic metadata entry with attribute named "attr"
 
     Examples:

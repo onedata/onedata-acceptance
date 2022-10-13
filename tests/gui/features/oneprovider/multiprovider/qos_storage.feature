@@ -56,7 +56,7 @@ Feature: Quality of Service tests for 2 providers using multiple browsers where 
 
   Scenario: User can select one of storages of supporting providers in QoS graphical editor and it causes to match this storage
     When user of browser_unified opens file browser for "space1" space
-    And user of browser_unified opens "File details" modal on "Quality of Service" tab for "file1" file
+    And user of browser_unified opens "File details" modal on "QoS" tab for "file1" file using context menu
     And user of browser_unified clicks on "Add Requirement" button in QoS panel
 
     And user of browser_unified clicks on add query block icon in QoS panel
@@ -76,7 +76,7 @@ Feature: Quality of Service tests for 2 providers using multiple browsers where 
 
   Scenario: Every possible storage matches when "any storage" condition is chosen
     When user of browser_unified opens file browser for "space1" space
-    And user of browser_unified opens "File details" modal on "Quality of Service" tab for "file1" file
+    And user of browser_unified opens "File details" modal on "QoS" tab for "file1" file using context menu
     And user of browser_unified clicks on "Add Requirement" button in QoS panel
 
     And user of browser_unified clicks on add query block icon in QoS panel
@@ -95,7 +95,7 @@ Feature: Quality of Service tests for 2 providers using multiple browsers where 
           storage type: POSIX
           mount point: /volumes/posix
     And user of browser_unified opens file browser for "space1" space
-    And user of browser_unified opens "File details" modal on "Quality of Service" tab for "file1" file
+    And user of browser_unified opens "File details" modal on "QoS" tab for "file1" file using context menu
     And user of browser_unified clicks on "Add Requirement" button in QoS panel
 
     # (provider is oneprovider-1) AND (storage is posix @oneprovider-2 OR storage is posix @oneprovider-1) AND
