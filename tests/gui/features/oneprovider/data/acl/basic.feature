@@ -73,7 +73,6 @@ Feature: ACL basic tests using single browser in Oneprovider GUI
     And user of browser clicks on "Discard changes" button in edit permissions panel
 
     # Check ACL record
-    And user of browser clicks on "Permissions" navigation tab in "Directory Details" modal
     And user of browser selects "ACL" permission type in edit permissions panel
     Then user of browser sees exactly 0 ACL records in edit permissions panel
 
@@ -89,7 +88,6 @@ Feature: ACL basic tests using single browser in Oneprovider GUI
     And user of browser sees that first ACL record in edit permissions panel is set for <subject_type> <subject_name>
     And user of browser sees that only <privileges> privileges are set in first ACL record in edit permissions panel
 
-    And user of browser clicks on "Permissions" navigation tab in "Directory Details" modal
     And user of browser sees exactly 1 ACL record in edit permissions panel
     And user of browser sees that first ACL record in edit permissions panel is set for <subject_type> <subject_name>
     And user of browser sees that only <privileges> privileges are set in first ACL record in edit permissions panel
@@ -111,7 +109,6 @@ Feature: ACL basic tests using single browser in Oneprovider GUI
     And user of browser sees that first ACL record in edit permissions panel is set for <subject_type> <subject_name>
     And user of browser sees that only <privileges> privileges are set in first ACL record in edit permissions panel
 
-    And user of browser clicks on "Permissions" navigation tab in "File Details" modal
     And user of browser sees exactly 1 ACL record in edit permissions panel
     And user of browser sees that only <privileges> privileges are set in first ACL record in edit permissions panel
     And user of browser clicks on "X" button in modal "File details"
@@ -136,7 +133,6 @@ Feature: ACL basic tests using single browser in Oneprovider GUI
     And user of browser clicks on "Save" button in edit permissions panel
 
     # Check ACL records
-    And user of browser clicks on "Permissions" navigation tab in "File Details" modal
     And user of browser selects "ACL" permission type in edit permissions panel
     Then user of browser sees exactly 2 ACL records in edit permissions panel
     And user of browser sees that first ACL record in edit permissions panel is set for group group1
@@ -171,7 +167,6 @@ Feature: ACL basic tests using single browser in Oneprovider GUI
     And user of browser clicks on "Save" button in edit permissions panel
 
     # check order after close and open modal again
-    And user of browser clicks on "Permissions" navigation tab in "File Details" modal
     And user of browser selects "ACL" permission type in edit permissions panel
     And user of browser sees that first ACL record in edit permissions panel is set for user space-owner-user
     And user of browser sees that second ACL record in edit permissions panel is set for group group1
