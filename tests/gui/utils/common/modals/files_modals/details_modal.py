@@ -7,6 +7,12 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 from selenium.webdriver import ActionChains
+
+from .tabs_in_details_modal.data_distribution import DataDistributionTab
+from .tabs_in_details_modal.edit_permissions import EditPermissionsTab
+from .tabs_in_details_modal.metadata_tab import MetadataTab
+from .tabs_in_details_modal.qos import QoSTab
+from .tabs_in_details_modal.share_directory import ShareDirectory
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (Label, NamedButton, WebItem,
@@ -61,6 +67,12 @@ class DetailsModal(Modal):
     navigation = WebItemsSequence('.nav-tabs-file-info .ember-view',
                                   cls=NavigationTab)
     active_tab = Label('.nav-link.active')
+
+    qos = WebItem('.modal-dialog', cls=QoSTab)
+    metadata = WebItem('.modal-dialog', cls=MetadataTab)
+    shares = WebItem('.modal-dialog', cls=ShareDirectory)
+    edit_permissions = WebItem('.modal-dialog', cls=EditPermissionsTab)
+    data_distribution = WebItem('.modal-dialog', cls=DataDistributionTab)
 
     def __str__(self):
         return 'Details modal'
