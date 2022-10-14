@@ -349,6 +349,9 @@ def click_modal_button(selenium, browser_id, button, modal_name, modals):
 
 @wt(parsers.re('user of (?P<browser_id>.*?) writes "(?P<item_name>.*?)" '
                'into(?P<name_textfield>.*?) text field '
+               'in (?P<modal_name>.*?) panel'))
+@wt(parsers.re('user of (?P<browser_id>.*?) writes "(?P<item_name>.*?)" '
+               'into(?P<name_textfield>.*?) text field '
                'in modal "(?P<modal_name>.*?)"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def write_name_into_text_field_in_modal(selenium, browser_id, item_name,

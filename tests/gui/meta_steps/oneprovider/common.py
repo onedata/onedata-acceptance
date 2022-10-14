@@ -71,20 +71,19 @@ def replicate_file_to_provider(selenium, browser_id, name, tmp_memory, provider,
 
 @wt(parsers.parse('user of {browser_id} waits for "{name}" file eviction '
                   'to finish'))
-def assert_eviction_done(selenium, browser_id, name, tmp_memory, popups):
+def assert_eviction_done(selenium, browser_id, name, tmp_memory, popups,
+                         modals):
     option = 'Data distribution'
-    modal_name = 'Data distribution'
-    close_option = 'Close'
+    details_modal = 'Details modal'
+    close_button = 'X'
 
     click_menu_for_elem_in_browser(browser_id, name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
                                              popups)
-    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-
+    assert_tab_in_modal(selenium, browser_id, option, modals, details_modal)
     assert_see_history_btn_shown(selenium, browser_id)
-
-    wt_click_on_confirmation_btn_in_modal(selenium, browser_id, close_option,
-                                          tmp_memory)
+    click_modal_button(selenium, browser_id, close_button, details_modal,
+                       modals)
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees file chunks for file '
@@ -94,7 +93,6 @@ def wt_assert_file_chunks(selenium, browser_id, file_name, desc, tmp_memory,
     option = 'Data distribution'
     details_modal = 'Details modal'
     close_button = 'X'
-
     click_menu_for_elem_in_browser(browser_id, file_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
                                              popups)
@@ -164,3 +162,13 @@ def open_record_of_clusters_submenu(selenium, browser_id, provider_name,
     click_on_record_in_clusters_menu(selenium, browser_id, oz_page,
                                      provider_name, hosts)
 
+
+@wt(parsers.parse('user of {browser_id} opens "{modal_name}" modal on '
+                  '"{tab}" tab for "{filename}" file using context menu'))
+def open_modal_on_tab(selenium, browser_id, filename, popups, tmp_memory,
+                      tab, modals, modal_name):
+    option = "Quality of Service" if tab == "QoS" else tab
+    click_menu_for_elem_in_browser(browser_id, filename, tmp_memory)
+    click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
+                                             popups)
+    assert_tab_in_modal(selenium, browser_id, tab, modals, modal_name)

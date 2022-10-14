@@ -251,6 +251,7 @@ def click_on_btn_in_acl_record(selenium, browser_id, modals, btn, num,
 
 @wt(parsers.re('user of (?P<browser_id>\w+) sees that (?P<subjects>.*) '
                '(is|are) in subject list in ACL record'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_subject_in_list_in_acl_record(selenium, browser_id, subjects, modals,
                                          tmp_memory, popups):
     driver = selenium[browser_id]
