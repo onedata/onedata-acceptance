@@ -68,11 +68,11 @@ class DetailsModal(Modal):
                                   cls=NavigationTab)
     active_tab = Label('.nav-link.active')
 
-    qos = WebItem('.modal-dialog', cls=QoSTab)
-    metadata = WebItem('.modal-dialog', cls=MetadataTab)
-    shares = WebItem('.modal-dialog', cls=ShareDirectory)
-    edit_permissions = WebItem('.modal-dialog', cls=EditPermissionsTab)
-    data_distribution = WebItem('.modal-dialog', cls=DataDistributionTab)
+    qos = WebItem('.modal-content', cls=QoSTab)
+    metadata = WebItem('.modal-content', cls=MetadataTab)
+    shares = WebItem('.modal-content', cls=ShareDirectory)
+    edit_permissions = WebItem('.modal-content', cls=EditPermissionsTab)
+    data_distribution = WebItem('.modal-content', cls=DataDistributionTab)
 
     def __str__(self):
         return 'Details modal'

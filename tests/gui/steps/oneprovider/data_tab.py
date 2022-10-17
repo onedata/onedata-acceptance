@@ -430,7 +430,8 @@ def assert_provider_chunk_in_data_distribution_size(selenium, browser_id, size,
                                                     provider, modals, hosts):
     driver = selenium[browser_id]
     provider = hosts[provider]['name']
-    prov_rec = modals(driver).data_distribution.providers[provider]
+    prov_rec = modals(driver).details_modal.data_distribution.providers[
+        provider]
     distribution = prov_rec.distribution
     displayed_size = distribution.end
     assert displayed_size == size, 'displayed chunk size {} in data' \
@@ -446,7 +447,7 @@ def assert_provider_chunk_in_data_distribution_filled(selenium, browser_id,
                                                       provider, modals, hosts):
     driver = selenium[browser_id]
     provider = hosts[provider]['name']
-    data_distribution = modals(driver).data_distribution
+    data_distribution = modals(driver).details_modal.data_distribution
     distribution = data_distribution.providers[provider].distribution
     size = data_distribution.size()
     chunks = distribution.chunks(size)
@@ -465,7 +466,7 @@ def assert_provider_chunk_in_data_distribution_empty(selenium, browser_id,
                                                      provider, modals, hosts):
     driver = selenium[browser_id]
     provider = hosts[provider]['name']
-    data_distribution = modals(driver).data_distribution
+    data_distribution = modals(driver).details_modal.data_distribution
     distribution = data_distribution.providers[provider].distribution
     size = data_distribution.size()
     chunks = distribution.chunks(size)
@@ -480,7 +481,7 @@ def assert_provider_chunks_in_data_distribution(selenium, browser_id, chunks,
                                                 provider, modals, hosts):
     driver = selenium[browser_id]
     provider = hosts[provider]['name']
-    data_distribution = modals(driver).data_distribution
+    data_distribution = modals(driver).details_modal.data_distribution
     distribution = data_distribution.providers[provider].distribution
     size = data_distribution.size()
     displayed_chunks = distribution.chunks(size)

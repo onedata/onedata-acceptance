@@ -10,7 +10,8 @@ __license__ = "This software is released under the MIT license cited in " \
 from datetime import datetime
 
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.steps.modals.modal import check_modal_name, click_modal_button
+from tests.gui.steps.modals.modal import (check_modal_name, click_modal_button,
+                                          get_modal)
 from tests.gui.steps.oneprovider.browser import (
     click_menu_for_elem_in_browser, click_option_in_data_row_menu_in_browser)
 from tests.gui.utils.generic import transform
@@ -73,7 +74,8 @@ def assert_tooltip_on_chart_in_modal(browser_id, selenium, popups):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_navigation_tab_in_modal(selenium, browser_id, tab_name, modals,
                                      modal):
-    modal = getattr(modals(selenium[browser_id]), check_modal_name(modal))
+    driver = selenium[browser_id]
+    modal = get_modal(modals, driver, modal)
     tab = modal.navigation[tab_name]
     tab.web_elem.click()
 

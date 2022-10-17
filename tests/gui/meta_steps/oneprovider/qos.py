@@ -100,7 +100,6 @@ def add_id_qos_requirement_in_modal(selenium, browser_id, modals, item_name,
 @wt(parsers.parse('user of {browser_id} creates "anyStorage \ storageId=" QoS '
                   'requirement and pastes storage id from clipboard for '
                   '"{item_name}" from file browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def add_no_id_qos_requirement_in_modal(selenium, browser_id, modals, item_name,
                                        tmp_memory, popups, clipboard, displays):
     expression = ('anyStorage \ storageId=' +

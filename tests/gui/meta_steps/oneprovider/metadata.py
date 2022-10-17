@@ -112,7 +112,7 @@ def set_metadata_in_op_gui(selenium, browser_id, path, tmp_memory, op_container,
 
 
 def _assert_metadata_loading_alert(selenium, browser_id, modals):
-    modal = modals(selenium[browser_id]).metadata
+    modal = modals(selenium[browser_id]).details_modal.metadata
     assert 'Insufficient privileges' in modal.loading_alert, (
         "resource loaded")
 
@@ -176,7 +176,7 @@ def assert_such_metadata_not_exist_in_op_gui(selenium, browser_id, path,
 def remove_all_basic_metadata(selenium, browser_id, modals):
     button = 'Save'
     panel = 'Metadata'
-    modal = modals(selenium[browser_id]).metadata
+    modal = modals(selenium[browser_id]).details_modal.metadata
     if len(modal.basic.entries) > 0:
         while len(modal.basic.entries) > 0:
             modal.basic.entries[0].remove()
