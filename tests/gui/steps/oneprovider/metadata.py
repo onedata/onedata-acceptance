@@ -183,6 +183,6 @@ def clean_tab_textarea_in_metadata_modal(selenium, browser_id, tab_name,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def see_editor_disabled_label(browser_id, selenium, modals, text):
     driver = selenium[browser_id]
-    item_status = modals(driver).metadata.editor_disabled
+    item_status = modals(driver).details_modal.metadata.editor_disabled
     assert item_status == text, f'{item_status} does not match expected {text}'
 
