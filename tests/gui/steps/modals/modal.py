@@ -41,13 +41,6 @@ def check_modal_name(modal_name):
         return modal_name
 
 
-def get_modal(modals, driver, modal):
-    try:
-        return getattr(modals(driver), check_modal_name(modal))
-    except AttributeError:
-        return getattr(modals(driver).details_modal, check_modal_name(modal))
-
-
 @wt(parsers.parse('user of {browser_id} sees that '
                   'modal "Add storage" has appeared'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -344,20 +337,36 @@ def assert_alert_text_in_modal(selenium, browser_id, modals, modal, text):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on "(?P<button>.*?)" '
-               'button in (?P<modal_name>.*?) panel'))
+               'button in (?P<panel_name>.*?) panel'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_panel_button(selenium, browser_id, button, panel_name, modals):
+    modal = getattr(modals(selenium[browser_id]).details_modal,
+                    check_modal_name(panel_name))
+    getattr(modal, transform(button))()
+
+
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on "(?P<button>.*?)" '
                'button in modal "(?P<modal_name>.*?)"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_modal_button(selenium, browser_id, button, modal_name, modals):
-    driver = selenium[browser_id]
-    button = transform(button)
-    modal = get_modal(modals, driver, modal_name)
-    getattr(modal, button)()
+    modal = getattr(modals(selenium[browser_id]), check_modal_name(modal_name))
+    getattr(modal, transform(button))()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) writes "(?P<item_name>.*?)" '
                'into(?P<name_textfield>.*?) text field '
-               'in (?P<modal_name>.*?) panel'))
+               'in (?P<panel_name>.*?) panel'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def write_name_into_text_field_in_panel(selenium, browser_id, item_name,
+                                        panel_name, modals,
+                                        name_textfield='input name'):
+    if name_textfield == '':
+        name_textfield = 'input name'
+    driver = selenium[browser_id]
+    modal = getattr(modals(driver).details_modal, check_modal_name(panel_name))
+    setattr(modal, transform(name_textfield), item_name)
+
+
 @wt(parsers.re('user of (?P<browser_id>.*?) writes "(?P<item_name>.*?)" '
                'into(?P<name_textfield>.*?) text field '
                'in modal "(?P<modal_name>.*?)"'))
@@ -368,7 +377,7 @@ def write_name_into_text_field_in_modal(selenium, browser_id, item_name,
     if name_textfield == '':
         name_textfield = 'input name'
     driver = selenium[browser_id]
-    modal = get_modal(modals, driver, modal_name)
+    modal = getattr(modals(driver), check_modal_name(modal_name))
     setattr(modal, transform(name_textfield), item_name)
 
 

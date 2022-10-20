@@ -80,6 +80,7 @@ Feature: Basic management of spaces privileges in Onezone GUI with two providers
     And user of browser_user1 sees that current working directory displayed in breadcrumbs on file browser is space1
     And user of browser_user1 clicks on menu for "file1" file in file browser
     And user of browser_user1 clicks "Data distribution" option in data row menu in file browser
+    And user of browser_user1 sees that "File details" modal is opened on "Data distribution" tab
     Then user of browser_user1 replicates selected item to provider "oneprovider-2"
 
 
@@ -91,6 +92,7 @@ Feature: Basic management of spaces privileges in Onezone GUI with two providers
      And user of space_owner_browser sees file browser in files tab in Oneprovider page
      And user of space_owner_browser clicks on menu for "file1" file in file browser
      And user of space_owner_browser clicks "Data distribution" option in data row menu in file browser
+     And user of space_owner_browser sees that "File details" modal is opened on "Data distribution" tab
      And user of space_owner_browser replicates selected item to provider "oneprovider-2"
 
      And user of space_owner_browser clicks "Members" of "space1" space in the sidebar

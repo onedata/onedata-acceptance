@@ -35,7 +35,7 @@ def assert_popup_for_provider_with_name_has_appeared_on_map(selenium,
     driver = selenium[browser_id]
     err_msg = 'Popup displayed for provider named "{}" ' \
               'instead of "{}"'
-    prov = popups(driver).provider_popover.provider_name
+    prov = popups(driver).provider_map_popover.provider_name
     assert provider_name == prov, err_msg.format(prov, provider_name)
 
 
@@ -49,7 +49,7 @@ def assert_popup_for_provider_has_appeared_on_map(selenium, browser_id,
     err_msg = 'Popup displayed for provider named "{}" ' \
               'instead of "{}"'
     try:
-        prov = popups(driver).provider_popover.provider_name
+        prov = popups(driver).provider_map_popover.provider_name
     except RuntimeError:
         popups(driver).provider_details.values[0].copy_to_clipboard()
         prov = clipboard.paste(display=displays[browser_id])
@@ -63,7 +63,7 @@ def assert_popup_for_provider_has_appeared_on_map(selenium, browser_id,
 def assert_provider_hostname_matches_known_domain(selenium, browser_id,
                                                   host, hosts, popups):
     driver = selenium[browser_id]
-    displayed_domain = popups(driver).provider_popover.provider_hostname
+    displayed_domain = popups(driver).provider_map_popover.provider_hostname
     domain = hosts[host]['hostname']
     assert displayed_domain == domain, \
         ('displayed {} provider hostname instead of expected {}'
@@ -91,7 +91,7 @@ def assert_provider_hostname_matches_test_hostname(selenium, browser_id,
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def _click_copy_hostname(driver, popups):
-    popups(driver).provider_popover.copy_hostname()
+    popups(driver).provider_map_popover.copy_hostname()
 
 
 def _click_on_btn_in_provider_popup(driver, btn, provider, oz_page, hosts):
@@ -173,7 +173,7 @@ def assert_no_provider_popup_next_to_provider_circle(selenium, browser_id,
 def assert_no_provider_popup_on_world_map(selenium, browser_id, popups):
     driver = selenium[browser_id]
     try:
-        popups(driver).provider_popover
+        popups(driver).provider_map_popover
     except RuntimeError:
         pass
     else:
@@ -365,7 +365,7 @@ def assert_provider_is_not_in_providers_list_in_data_sidebar(selenium,
 def click_on_visit_provider_in_provider_popover(selenium, browser_id, option,
                                                 popups):
     driver = selenium[browser_id]
-    getattr(popups(driver).provider_popover, transform(option)).click()
+    getattr(popups(driver).provider_map_popover, transform(option)).click()
 
 
 @wt(parsers.parse('user of {browser_id} sees "{space_name}" is '
@@ -374,7 +374,7 @@ def click_on_visit_provider_in_provider_popover(selenium, browser_id, option,
 def assert_space_is_in_spaces_list_in_provider_popover(selenium, browser_id,
                                                        space_name, popups):
     driver = selenium[browser_id]
-    spaces_list = popups(driver).provider_popover.spaces_list
+    spaces_list = popups(driver).provider_map_popover.spaces_list
     assert space_name in spaces_list
 
 
@@ -412,7 +412,7 @@ def assert_number_of_supported_spaces_in_data_sidebar(selenium, browser_id,
 def assert_len_of_spaces_list_in_provider_popover(selenium, browser_id,
                                                   number, popups):
     driver = selenium[browser_id]
-    spaces_list = popups(driver).provider_popover.spaces_list
+    spaces_list = popups(driver).provider_map_popover.spaces_list
     assert int(number) == len(spaces_list), ('number of supported spaces '
                                              'is not equal {}'.format(number))
 

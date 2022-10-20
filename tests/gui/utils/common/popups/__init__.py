@@ -18,7 +18,7 @@ from .membership_relation_menu import MembershipRelationMenu
 from .menu_in_edit_permissions import EditPermissionsRecordMenu
 from .power_select import PowerSelect
 from .menu_popup import MenuPopupWithLabel
-from .provider_popover import ProviderPopover, ProviderDetails
+from .provider_details import ProviderMapPopover, ProviderDetails
 from .query_builder import ExpressionBuilderPopup
 from .qos_delete import DeleteQosPopup
 from .selector_popup import SelectorPopup
@@ -71,8 +71,8 @@ class Popups(object):
 
     provider_details = WebItem('.webui-popover-content .provider-info-content',
                                cls=ProviderDetails)
-    provider_popover = WebItem('.webui-popover .provider-place-drop',
-                               cls=ProviderPopover)
+    provider_map_popover = WebItem('.webui-popover .provider-place-drop',
+                                   cls=ProviderMapPopover)
     dropdown = DropdownSelector('.ember-basic-dropdown-content')
     migrate_dropdown = MigrateDropdownSelector('.ember-basic-dropdown-content')
     data_row_menu = WebItem('.file-actions.dropdown-menu',

@@ -26,7 +26,7 @@ class ProviderDetails(PageObject):
     labels = WebElementsSequence('td:first-child')
 
 
-class ProviderPopover(PageObject):
+class ProviderMapPopover(PageObject):
     provider_name = id = Label('.provider-label')
     provider_hostname = Input('.provider-host-text')
     copy_hostname = Button('.provider-host-copy-btn .one-icon')

@@ -8,8 +8,7 @@ __license__ = "This software is released under the MIT license cited in " \
 from selenium.common.exceptions import StaleElementReferenceException
 
 from tests.gui.conftest import WAIT_BACKEND
-from tests.gui.steps.modals.details_modal import (assert_tab_in_modal,
-                                                  click_button_in_panel)
+from tests.gui.steps.modals.details_modal import assert_tab_in_modal
 from tests.gui.steps.oneprovider.browser import (
     click_option_in_data_row_menu_in_browser)
 from tests.gui.steps.oneprovider.permissions import *
@@ -18,8 +17,9 @@ from tests.gui.meta_steps.oneprovider.data import (
     _click_menu_for_elem_somewhere_in_file_browser)
 from tests.gui.steps.oneprovider.file_browser import (
     select_files_from_file_list_using_ctrl)
-from tests.gui.steps.modals.modal import (assert_error_modal_with_text_appeared,
-                                          click_modal_button)
+from tests.gui.steps.modals.modal import (
+    assert_error_modal_with_text_appeared, click_modal_button,
+    click_panel_button)
 from tests.gui.steps.onezone.spaces import (
     click_element_on_lists_on_left_sidebar_menu,
     click_on_option_of_space_on_left_sidebar_menu,
@@ -83,7 +83,8 @@ def set_posix_permissions_in_op_gui(selenium, browser_id, space, path, perm,
     open_permission_modal(selenium, browser_id, path, space, tmp_memory, modals,
                           oz_page, op_container, 'posix', popups)
     set_posix_permission(selenium, browser_id, perm, modals)
-    click_button_in_panel(selenium, browser_id, button, modals, panel)
+
+    click_panel_button(selenium, browser_id, button, panel, modals)
     click_modal_button(selenium, browser_id, close_button, modal_name, modals)
 
 
@@ -102,10 +103,10 @@ def fail_to_set_posix_permissions_in_op_gui(selenium, browser_id, space, path,
     open_permission_modal(selenium, browser_id, path, space, tmp_memory, modals,
                           oz_page, op_container, 'posix', popups)
     set_posix_permission(selenium, browser_id, perm, modals)
-    click_button_in_panel(selenium, browser_id, button, modals, panel)
+    click_panel_button(selenium, browser_id, button, panel, modals)
     assert_error_modal_with_text_appeared(selenium, browser_id, text)
     click_modal_button(selenium, browser_id, close_button, error_modal, modals)
-    click_button_in_panel(selenium, browser_id, discard_changes, modals, panel)
+    click_panel_button(selenium, browser_id, discard_changes, panel, modals)
     click_modal_button(selenium, browser_id, x_button, details_modal,
                        modals)
 
@@ -137,7 +138,7 @@ def _set_acl_privilages_for_selected(browser_id, selenium, popups, tmp_memory,
     assert_tab_in_modal(selenium, browser_id, option, modals, modal_name)
 
     set_acl_entry_in_op_gui(selenium, browser_id, priv, name, modals, popups)
-    click_button_in_panel(selenium, browser_id, button, modals, panel)
+    click_panel_button(selenium, browser_id, button, panel, modals)
     click_modal_button(selenium, browser_id, close_button, modal_name, modals)
 
 
@@ -228,7 +229,7 @@ def change_acl_privileges(selenium, browser_id, path, tmp_memory, res, space,
                                                     modals, name)
     select_acl_options(selenium, browser_id, privileges_option_list, modals,
                        name)
-    click_modal_button(selenium, browser_id, button, panel, modals)
+    click_panel_button(selenium, browser_id, button, panel, modals)
 
     if res == 'fails':
         assert_error_modal_with_text_appeared(selenium, browser_id, text)

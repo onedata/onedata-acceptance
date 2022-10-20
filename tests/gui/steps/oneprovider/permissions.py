@@ -33,7 +33,7 @@ def _get_index(selenium, browser_id, num, modals, numerals):
 def select_permission_type(selenium, browser_id, permission_type, modals):
     driver = selenium[browser_id]
     button_name = f'{permission_type.lower()}_button'
-    getattr(modals(selenium[browser_id]).details_modal.edit_permissions,
+    getattr(modals(driver).details_modal.edit_permissions,
             button_name).click()
 
 
