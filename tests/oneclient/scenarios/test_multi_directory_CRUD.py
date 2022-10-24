@@ -25,6 +25,11 @@ def test_create(env_description_file):
     pass
 
 
+@scenario('Clean everything after creating directory and hidden directory')
+def test_clean(env_description_file):
+    pass
+
+
 @scenario('Fail to rename someone\'s directory without write permission on parent')
 def test_rename_someone_without_write_permission_on_parent(env_description_file):
     pass
