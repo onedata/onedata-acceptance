@@ -51,9 +51,7 @@ Feature: Onepanel features auto-cleaning
     And user of space_owner_browser waits for all transfers to finish
     And user of space_owner_browser sees directory in ended transfers:
             name: dir1
-            destination: oneprovider-2
-            username: space-owner-user
-            transferred: 100 MiB
+            replicated: 100 MiB
             type: replication
             status: completed
 
@@ -128,9 +126,7 @@ Feature: Onepanel features auto-cleaning
     And user of space_owner_browser waits for all transfers to finish
     And user of space_owner_browser sees directory in ended transfers:
             name: dir1
-            destination: oneprovider-2
-            username: space-owner-user
-            transferred: 100 MiB
+            replicated: 100 MiB
             type: replication
             status: completed
 
@@ -203,9 +199,7 @@ Feature: Onepanel features auto-cleaning
     And user of space_owner_browser waits for all transfers to finish
     And user of space_owner_browser sees directory in ended transfers:
             name: dir1
-            destination: oneprovider-2
-            username: space-owner-user
-            transferred: 100 MiB
+            replicated: 100 MiB
             type: replication
             status: completed
 

@@ -48,10 +48,11 @@ def navigate_to_tab_in_op_using_gui(selenium, user, oz_page, provider,
     wt_click_on_the_given_main_menu_tab(selenium, user, main_menu_tab)
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) replicates "(?P<name>.*)" to '
-               'provider "(?P<provider>.*)"'))
+@wt(parsers.re('user of (?P<browser_id>.*) '
+               '(?P<result>replicates|fails to replicate) "(?P<name>.*)"'
+               ' to provider "(?P<provider>.*)"'))
 def replicate_file_to_provider(selenium, browser_id, name, tmp_memory, provider,
-                               hosts, popups, modals):
+                               hosts, popups, modals, result):
     option = 'Data distribution'
     details_modal = 'Details modal'
     close_button = 'X'
@@ -60,9 +61,12 @@ def replicate_file_to_provider(selenium, browser_id, name, tmp_memory, provider,
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
                                              popups)
     assert_tab_in_modal(selenium, browser_id, option, modals, details_modal)
+
     replicate_item(selenium, browser_id, provider, hosts, popups)
-    click_modal_button(selenium, browser_id, close_button, details_modal,
-                       modals)
+
+    if result == 'replicates':
+        click_modal_button(selenium, browser_id, close_button, details_modal,
+                           modals)
 
 
 @wt(parsers.parse('user of {browser_id} waits for "{name}" file eviction '
@@ -129,20 +133,24 @@ def create_directory(selenium, browser_id, name, tmp_memory,
     assert_items_presence_in_browser(selenium, browser_id, name, tmp_memory)
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) migrates "(?P<name>.*)" from '
+@wt(parsers.re('user of (?P<browser_id>.*) '
+               '(?P<result>migrates|fails to migrate) "(?P<name>.*)" from '
                'provider "(?P<source>.*)" to provider "(?P<target>.*)"'))
 def migrate_file_to_provider(selenium, browser_id, name, tmp_memory, source,
-                             target, hosts, popups, modals):
+                             target, hosts, popups, modals, result):
     option = 'Data distribution'
     details_modal = 'Details modal'
     close_button = 'X'
+
     click_menu_for_elem_in_browser(browser_id, name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
                                              popups)
     assert_tab_in_modal(selenium, browser_id, option, modals, details_modal)
     migrate_item(selenium, browser_id, source, target, hosts, popups)
-    click_modal_button(selenium, browser_id, close_button, details_modal,
-                       modals)
+
+    if result == 'migrates':
+        click_modal_button(selenium, browser_id, close_button, details_modal,
+                           modals)
 
 
 @wt(parsers.parse('user of {browser_id} opens "{provider_name}" clusters '

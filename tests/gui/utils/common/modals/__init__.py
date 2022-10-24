@@ -16,19 +16,14 @@ from .files_modals.create_dir import CreateDir
 from .storage_modals.add_storage import AddStorage
 from tests.gui.utils.core.web_elements import WebItem
 from .basic_modals.create_group import CreateGroup
-from .files_modals.data_distribution import DataDistributionModal
 from .basic_modals.delete_modal import DeleteModal
 from .files_modals.details_modal import DetailsModal
 from .basic_modals.login import LoginFormModal
 from .management_modals.deploying_cluster import ClusterDeploymentModal
-from .files_modals.tabs_in_details_modal.metadata_tab import MetadataTab
-from .files_modals.tabs_in_details_modal.qos import QoSTab
 from .archives_modals.recall_archive import RecallArchive
 from .basic_modals.rename_modal import RenameModal
 from .management_modals.cease_support_for_space import (
     CeaseSupportForSpaceModal)
-from .files_modals.tabs_in_details_modal.edit_permissions import (
-    EditPermissionsTab)
 from .configure_web_cert import ConfigureWebCertModal
 from .basic_modals.remove import RemoveModal
 from .troubles_modals.error_modal import ErrorModal
@@ -75,11 +70,7 @@ class Modals(object):
                              cls=ModifyStorage)
 
     # files modals
-    data_distribution = WebItem('.modal-dialog', cls=DataDistributionModal)
     create_dir = WebItem('.modal-dialog', cls=CreateDir)
-    qos = WebItem('.modal-dialog', cls=QoSTab)
-    metadata = WebItem('.modal-dialog', cls=MetadataTab)
-    shares = WebItem('.modal-dialog', cls=ShareDirectory)
     share_directory = WebItem('.share-modal .modal-dialog', cls=ShareDirectory)
     write_protection = WebItem('.modal-dialog', cls=WriteProtection)
     details_modal = WebItem('.modal-dialog', cls=DetailsModal)
@@ -87,7 +78,6 @@ class Modals(object):
                                     cls=SymbolicLinkDetailsModal)
     external_symbolic_link = WebItem('.modal-dialog',
                                      cls=ExternalSymbolicLink)
-    edit_permissions = WebItem('.modal-dialog', cls=EditPermissionsTab)
 
     # troubles modals
     emergency_interface = WebItem('.modal-dialog', cls=EmergencyInterface)

@@ -12,7 +12,8 @@ from tests.gui.steps.onezone.spaces import \
 from tests.gui.steps.modals.modal import (
     wt_wait_for_modal_to_appear, write_name_into_text_field_in_modal,
     click_modal_button, click_share_info_icon_in_share_directory_modal,
-    click_icon_in_share_directory_modal)
+    click_icon_in_share_directory_modal, write_name_into_text_field_in_panel,
+    click_panel_button)
 from tests.gui.steps.oneprovider.file_browser import (
     click_on_status_tag_for_file_in_file_browser)
 from tests.gui.steps.oneprovider.shares import *
@@ -66,10 +67,10 @@ def create_another_share(selenium, browser_id, share_name, modals):
     modal_name = 'Shares'
     create_button = 'Create'
 
-    click_modal_button(selenium, browser_id, button, modal_name, modals)
-    write_name_into_text_field_in_modal(selenium, browser_id, share_name,
+    click_panel_button(selenium, browser_id, button, modal_name, modals)
+    write_name_into_text_field_in_panel(selenium, browser_id, share_name,
                                         modal_name, modals)
-    click_modal_button(selenium, browser_id, create_button, modal_name, modals)
+    click_panel_button(selenium, browser_id, create_button, modal_name, modals)
 
 
 @wt(parsers.parse('user of {browser_id} removes current share'))

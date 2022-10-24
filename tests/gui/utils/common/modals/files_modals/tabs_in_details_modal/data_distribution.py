@@ -10,7 +10,7 @@ from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (WebElement, WebItemsSequence,
                                                WebItem, Label, Button,
                                                NamedButton)
-from ..modal import Modal
+from tests.gui.utils.common.modals.modal import Modal
 
 
 class _Chunk(PageObject):
@@ -66,7 +66,7 @@ class MigrationRecord(PageObject):
         return 'provider record in migration menu in {}'.format(self.parent)
 
 
-class DataDistributionModal(Modal):
+class DataDistributionTab(Modal):
     file_name = Label('.file-name')
     providers = WebItemsSequence('.oneproviders-distribution-item',
                                  cls=_DataDistributionRecord)
