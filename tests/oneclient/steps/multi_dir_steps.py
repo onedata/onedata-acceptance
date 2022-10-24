@@ -111,7 +111,7 @@ def purge_all_spaces(client):
 
 
 @wt(parsers.re('(?P<user>\w+) purges all spaces on (?P<client_node>.*)'))
-def purge_all_users_spaces(user, client_node, users):
+def purge_all_user_spaces(user, client_node, users):
     user = users[user]
     client = user.clients[client_node]
     purge_all_spaces(client)

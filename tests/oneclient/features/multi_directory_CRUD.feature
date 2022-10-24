@@ -23,6 +23,7 @@ Feature: Multi_directory_CRUD
     And user2 sees [dir1, dir2, dir3] in space1 on client21
     And user2 creates directories [space1/.dir4] on client21
     # waiting for synchronization and not listing directory is intentional
+    # we want to purge spaces without listing or stating hidden directory
     And user1 is idle for 10 seconds
     And user1 purges all spaces on client11
     Then user1 can't stat [dir1, dir2, dir3] in space1 on client11
