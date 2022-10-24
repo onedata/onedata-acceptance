@@ -22,7 +22,7 @@ from .files_modals.details_modal import DetailsModal
 from .basic_modals.login import LoginFormModal
 from .management_modals.deploying_cluster import ClusterDeploymentModal
 from .files_modals.tabs_in_details_modal.metadata_tab import MetadataTab
-from .files_modals.qos import QualityOfServiceModal
+from .files_modals.tabs_in_details_modal.qos import QoSTab
 from .archives_modals.recall_archive import RecallArchive
 from .basic_modals.rename_modal import RenameModal
 from .management_modals.cease_support_for_space import (
@@ -77,7 +77,7 @@ class Modals(object):
     # files modals
     data_distribution = WebItem('.modal-dialog', cls=DataDistributionModal)
     create_dir = WebItem('.modal-dialog', cls=CreateDir)
-    quality_of_service = WebItem('.modal-dialog', cls=QualityOfServiceModal)
+    qos = WebItem('.modal-dialog', cls=QoSTab)
     metadata = WebItem('.modal-dialog', cls=MetadataTab)
     shares = WebItem('.modal-dialog', cls=ShareDirectory)
     share_directory = WebItem('.share-modal .modal-dialog', cls=ShareDirectory)
