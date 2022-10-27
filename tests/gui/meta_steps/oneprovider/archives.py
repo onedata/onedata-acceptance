@@ -303,7 +303,7 @@ def assert_archive_callback_in_op_gui(browser_id, tmp_memory, description,
     modal = 'Archive Properties'
     option_in_menu = 'Properties'
     info = f'{option} callback URL'
-    button_name = 'Close'
+    button_name = 'X'
     click_menu_for_archive(browser_id, tmp_memory, description)
     click_option_in_data_row_menu_in_browser(selenium, browser_id,
                                              option_in_menu, popups,
