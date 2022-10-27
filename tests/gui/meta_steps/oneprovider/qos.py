@@ -7,13 +7,12 @@ __license__ = ("This software is released under the MIT license cited in "
 
 from tests.gui.meta_steps.oneprovider.data import go_to_filebrowser
 from tests.gui.steps.modals.modal import (
-    write_name_into_text_field_in_modal, wt_wait_for_modal_to_appear)
+    write_name_into_text_field_in_panel, click_panel_button)
 from tests.gui.steps.oneprovider.data_tab import (
     choose_option_from_selection_menu, assert_browser_in_tab_in_op)
 from tests.gui.steps.oneprovider.file_browser import (
     click_on_item_in_file_browser, click_on_status_tag_for_file_in_file_browser)
 from tests.gui.steps.oneprovider.browser import (
-    click_option_in_data_row_menu_in_browser, click_menu_for_elem_in_browser,
     assert_status_tag_for_file_in_browser,
     assert_not_status_tag_for_file_in_browser)
 from tests.gui.steps.oneprovider.metadata import *
@@ -39,16 +38,16 @@ def _add_qos_requirement_in_modal(selenium, browser_id, modals, item_name,
     click_on_item_in_file_browser(browser_id, item_name, tmp_memory)
     choose_option_from_selection_menu(browser_id, selenium, qos_option, popups,
                                       tmp_memory)
-    click_modal_button(selenium, browser_id, add_button, panel, modals)
+    click_panel_button(selenium, browser_id, add_button, panel, modals)
     click_enter_as_text_link(selenium, browser_id, modals)
-    write_name_into_text_field_in_modal(selenium, browser_id, expression,
+    write_name_into_text_field_in_panel(selenium, browser_id, expression,
                                         panel, modals, expression_field)
     confirm_entering_text(selenium, browser_id, modals)
     if replicas_number != 1:
-        write_name_into_text_field_in_modal(selenium, browser_id,
+        write_name_into_text_field_in_panel(selenium, browser_id,
                                             replicas_number,
                                             panel, modals, replicas_field)
-    click_modal_button(selenium, browser_id, save_button, panel, modals)
+    click_panel_button(selenium, browser_id, save_button, panel, modals)
     click_modal_button(selenium, browser_id, close_button, details_modal,
                        modals)
 
@@ -100,7 +99,6 @@ def add_id_qos_requirement_in_modal(selenium, browser_id, modals, item_name,
 @wt(parsers.parse('user of {browser_id} creates "anyStorage \ storageId=" QoS '
                   'requirement and pastes storage id from clipboard for '
                   '"{item_name}" from file browser'))
-@repeat_failed(timeout=WAIT_FRONTEND)
 def add_no_id_qos_requirement_in_modal(selenium, browser_id, modals, item_name,
                                        tmp_memory, popups, clipboard, displays):
     expression = ('anyStorage \ storageId=' +

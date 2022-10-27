@@ -337,19 +337,36 @@ def assert_alert_text_in_modal(selenium, browser_id, modals, modal, text):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on "(?P<button>.*?)" '
-               'button in (?P<modal_name>.*?) panel'))
+               'button in (?P<panel_name>.*?) panel'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_panel_button(selenium, browser_id, button, panel_name, modals):
+    modal = getattr(modals(selenium[browser_id]).details_modal,
+                    check_modal_name(panel_name))
+    getattr(modal, transform(button))()
+
+
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on "(?P<button>.*?)" '
                'button in modal "(?P<modal_name>.*?)"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_modal_button(selenium, browser_id, button, modal_name, modals):
-    button = transform(button)
-    modal = check_modal_name(modal_name)
-    getattr(getattr(modals(selenium[browser_id]), modal), button)()
+    modal = getattr(modals(selenium[browser_id]), check_modal_name(modal_name))
+    getattr(modal, transform(button))()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) writes "(?P<item_name>.*?)" '
                'into(?P<name_textfield>.*?) text field '
-               'in (?P<modal_name>.*?) panel'))
+               'in (?P<panel_name>.*?) panel'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def write_name_into_text_field_in_panel(selenium, browser_id, item_name,
+                                        panel_name, modals,
+                                        name_textfield='input name'):
+    if name_textfield == '':
+        name_textfield = 'input name'
+    driver = selenium[browser_id]
+    modal = getattr(modals(driver).details_modal, check_modal_name(panel_name))
+    setattr(modal, transform(name_textfield), item_name)
+
+
 @wt(parsers.re('user of (?P<browser_id>.*?) writes "(?P<item_name>.*?)" '
                'into(?P<name_textfield>.*?) text field '
                'in modal "(?P<modal_name>.*?)"'))
@@ -359,8 +376,8 @@ def write_name_into_text_field_in_modal(selenium, browser_id, item_name,
                                         name_textfield='input name'):
     if name_textfield == '':
         name_textfield = 'input name'
-    modal_name = check_modal_name(modal_name)
-    modal = getattr(modals(selenium[browser_id]), modal_name)
+    driver = selenium[browser_id]
+    modal = getattr(modals(driver), check_modal_name(modal_name))
     setattr(modal, transform(name_textfield), item_name)
 
 
@@ -372,7 +389,7 @@ def assert_number_of_shares_in_modal(selenium, browser_id, item_name, number,
                                      modals):
     name = 'Shares'
     driver = selenium[browser_id]
-    modal = modals(driver).shares
+    modal = modals(driver).details_modal.shares
     navigation = modals(driver).details_modal.navigation
     links = modal.share_options
     info = look_for_tab_name(navigation, name)
@@ -395,7 +412,7 @@ def _assert_number_of_shares_in_modal(number, links, info):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_share_info_icon_in_share_directory_modal(selenium, browser_id, modals,
                                                    share_name):
-    modal = modals(selenium[browser_id]).shares
+    modal = modals(selenium[browser_id]).details_modal.shares
 
     icon = modal.share_options[share_name].browser_share_icon
     icon.click()
@@ -407,7 +424,8 @@ def click_share_info_icon_in_share_directory_modal(selenium, browser_id, modals,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_icon_in_share_directory_modal(selenium, browser_id, modal_name,
                                         modals, owner_name, icon_name):
-    elem_groups = modals(selenium[browser_id]).shares.share_options
+    elem_groups = modals(selenium[browser_id]
+                         ).details_modal.shares.share_options
     icon_name = transform(icon_name) + '_icon'
     if owner_name:
         icon = getattr(elem_groups[owner_name], icon_name)

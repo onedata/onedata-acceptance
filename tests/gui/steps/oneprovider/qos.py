@@ -21,7 +21,7 @@ from tests.utils.utils import repeat_failed
 @repeat_failed(timeout=WAIT_FRONTEND)
 def delete_all_qualities_of_service(selenium, browser_id, modals, popups):
     driver = selenium[browser_id]
-    modal = modals(driver).qos
+    modal = modals(driver).details_modal.qos
     while len(modal.requirements):
         modal.requirements[0].delete.click()
         popups(driver).delete_qos_popup.confirm.click()
@@ -34,7 +34,7 @@ def delete_all_qualities_of_service(selenium, browser_id, modals, popups):
 def assert_all_qualities_of_service_are_fulfilled(selenium, browser_id,
                                                   modals, state):
     driver = selenium[browser_id]
-    modal = modals(driver).qos
+    modal = modals(driver).details_modal.qos
     for requirement in modal.requirements:
         assert hasattr(requirement, state), (f'No all QoS requirements are '
                                              f'{state}')
@@ -46,7 +46,7 @@ def assert_all_qualities_of_service_are_fulfilled(selenium, browser_id,
 def assert_replicas_number_in_qualities_of_service_modal(selenium, browser_id,
                                                          modals, number):
     driver = selenium[browser_id]
-    replicas_number = modals(driver).qos.replicas_number
+    replicas_number = modals(driver).details_modal.qos.replicas_number
     assert number == replicas_number, (f'Found {replicas_number} instead '
                                        f'of {number} replicas number')
 
@@ -92,7 +92,7 @@ def process_expression(expression, hosts, users):
 def assert_expression_in_qos_panel(selenium, browser_id, modals, expression,
                                    hosts, users):
     driver = selenium[browser_id]
-    requirements = modals(driver).qos.requirements
+    requirements = modals(driver).details_modal.qos.requirements
     ready_expression = process_expression(expression, hosts, users)
     for requirement in requirements:
         expression_in_modal = requirement.expression.replace('\n', ' ')
@@ -127,7 +127,7 @@ def process_whole_nested_expression(expression, hosts, users):
 def assert_nested_expression_in_qos_panel(selenium, browser_id, modals,
                                           expression, hosts, users):
     driver = selenium[browser_id]
-    requirements = modals(driver).qos.requirements
+    requirements = modals(driver).details_modal.qos.requirements
     ready_expression = process_whole_nested_expression(expression, hosts, users)
 
     for requirement in requirements:
@@ -146,7 +146,7 @@ def assert_no_expression_in_qualities_of_service_modal(selenium, browser_id,
                                                        modals):
     driver = selenium[browser_id]
     try:
-        modals(driver).qos.requirements
+        modals(driver).details_modal.qos.requirements
     except RuntimeError:
         assert True
     else:
@@ -157,21 +157,21 @@ def assert_no_expression_in_qualities_of_service_modal(selenium, browser_id,
                   'QoS panel'))
 def click_enter_as_text_link(selenium, browser_id, modals):
     driver = selenium[browser_id]
-    modals(driver).qos.enter_as_text()
+    modals(driver).details_modal.qos.enter_as_text()
 
 
 @wt(parsers.parse('user of {browser_id} confirms entering expression in '
                   'expression text field in QoS panel'))
 def confirm_entering_text(selenium, browser_id, modals):
     driver = selenium[browser_id]
-    modals(driver).qos.confirm_text()
+    modals(driver).details_modal.qos.confirm_text()
 
 
 @wt(parsers.parse('user of {browser_id} clicks on add query block icon in '
                   'QoS panel'))
 def click_add_query_block(selenium, browser_id, modals):
     driver = selenium[browser_id]
-    modal = modals(driver).qos.query_builder
+    modal = modals(driver).details_modal.qos.query_builder
     modal.another_block_buttons[0].click()
 
 
@@ -181,7 +181,7 @@ def click_add_query_block(selenium, browser_id, modals):
 def start_query_block_no(selenium, browser_id, modals, number):
     driver = selenium[browser_id]
     no = int(number.split()[0])
-    modal = modals(driver).qos.query_builder
+    modal = modals(driver).details_modal.qos.query_builder
     modal.another_block_buttons[no-1].click()
 
 
@@ -263,7 +263,7 @@ def click_add_in_add_cond_popup(selenium, browser_id, popups):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_num_of_matching_storages(selenium, browser_id, number, modals):
     driver = selenium[browser_id]
-    modal = modals(driver).qos
+    modal = modals(driver).details_modal.qos
     if number == 'no':
         actual = modal.no_storage_matching
         number = 'No storages match'
@@ -314,5 +314,5 @@ def choose_operator_in_add_cond_popup(selenium, browser_id, popups, operator):
 def assert_error_label_in_qos_modal(selenium, browser_id, modals, text):
     driver = selenium[browser_id]
 
-    assert text in modals(driver).qos.privileges_error, \
+    assert text in modals(driver).details_modal.qos.privileges_error, \
         f'Label with "{text}" not found '

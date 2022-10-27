@@ -54,14 +54,14 @@ def evict_file(selenium, browser_id, provider, popups, file_name, tmp_memory,
     menu_option = 'Evict'
     driver = selenium[browser_id]
     provider_name = hosts[provider]['name']
-    close_button = 'X'
     details_modal = 'Details modal'
+    close_button = 'X'
 
     click_menu_for_elem_in_browser(browser_id, file_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
                                              popups)
     assert_tab_in_modal(selenium, browser_id, option, modals, details_modal)
-    data_distribution_modal = modals(driver).data_distribution
+    data_distribution_modal = modals(driver).details_modal.data_distribution
     data_distribution_modal.providers[provider_name].menu_button()
     popups(driver).data_distribution_popup.menu[menu_option]()
     click_modal_button(selenium, browser_id, close_button, details_modal,
