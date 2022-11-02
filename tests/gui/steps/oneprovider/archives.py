@@ -262,45 +262,45 @@ def waits_for_preserved_state(browser_id, status, description, tmp_memory):
                         f'description "{description}"')
 
 
-@wt(parsers.parse('user of {browser_id} sees archive ID in Archive properties '
+@wt(parsers.parse('user of {browser_id} sees archive ID in Archive details '
                   'modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_archive_id_in_properties_modal(selenium, browser_id, modals):
     driver = selenium[browser_id]
-    archive_id = modals(driver).archive_properties.archive_id
-    err_msg = 'User does not see archive ID in Archive properties modal'
+    archive_id = modals(driver).archive_details.archive_id
+    err_msg = 'User does not see archive ID in Archive details modal'
     assert archive_id is not None, err_msg
 
 
 @wt(parsers.parse('user of {browser_id} sees archive {info}: '
-                  '"{expected}" in Archive properties modal'))
+                  '"{expected}" in Archive details modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_archive_info_in_properties_modal(selenium, browser_id, modals,
                                             expected, info):
     driver = selenium[browser_id]
     if expected == 'None':
         try:
-            text = getattr(modals(driver).archive_properties, transform(info))
+            text = getattr(modals(driver).archive_details, transform(info))
             raise Exception(f'{info} is {text} but should be None')
         except RuntimeError:
             pass
     else:
-        text = getattr(modals(driver).archive_properties, transform(info))
+        text = getattr(modals(driver).archive_details, transform(info))
         err_msg = (f'{info}: {text} does not match expected '
                    f'{info} {expected}')
         assert expected == text, err_msg
 
 
 @wt(parsers.parse('user of {browser_id} sees that {toggle} toggle is checked '
-                  'in Archive properties modal'))
+                  'in Archive details modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_toggle_checked_in_archive_properties_modal(selenium, browser_id,
-                                                      modals, toggle):
+def assert_toggle_checked_in_archive_details_modal(selenium, browser_id,
+                                                   modals, toggle):
     driver = selenium[browser_id]
-    is_checked = getattr(modals(driver).archive_properties,
+    is_checked = getattr(modals(driver).archive_details,
                          transform(toggle)).is_checked()
 
-    err_msg = f'Toggle {toggle} is not checked in modal Archive properties'
+    err_msg = f'Toggle {toggle} is not checked in modal Archive details'
     assert is_checked, err_msg
 
 

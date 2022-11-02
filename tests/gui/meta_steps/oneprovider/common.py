@@ -54,13 +54,14 @@ def navigate_to_tab_in_op_using_gui(selenium, user, oz_page, provider,
 def replicate_file_to_provider(selenium, browser_id, name, tmp_memory, provider,
                                hosts, popups, modals, result):
     option = 'Data distribution'
+    tab = 'Distribution'
     details_modal = 'Details modal'
     close_button = 'X'
 
     click_menu_for_elem_in_browser(browser_id, name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
                                              popups)
-    assert_tab_in_modal(selenium, browser_id, option, modals, details_modal)
+    assert_tab_in_modal(selenium, browser_id, tab, modals, details_modal)
 
     replicate_item(selenium, browser_id, provider, hosts, popups)
 
@@ -74,13 +75,14 @@ def replicate_file_to_provider(selenium, browser_id, name, tmp_memory, provider,
 def assert_eviction_done(selenium, browser_id, name, tmp_memory, popups,
                          modals):
     option = 'Data distribution'
+    tab = 'Distribution'
     details_modal = 'Details modal'
     close_button = 'X'
 
     click_menu_for_elem_in_browser(browser_id, name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
                                              popups)
-    assert_tab_in_modal(selenium, browser_id, option, modals, details_modal)
+    assert_tab_in_modal(selenium, browser_id, tab, modals, details_modal)
     assert_see_history_btn_shown(selenium, browser_id)
     click_modal_button(selenium, browser_id, close_button, details_modal,
                        modals)
@@ -92,11 +94,12 @@ def wt_assert_file_chunks(selenium, browser_id, file_name, desc, tmp_memory,
                           op_container, hosts, modals, popups):
     option = 'Data distribution'
     details_modal = 'Details modal'
+    tab = 'Distribution'
     close_button = 'X'
     click_menu_for_elem_in_browser(browser_id, file_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
                                              popups)
-    assert_tab_in_modal(selenium, browser_id, option, modals, details_modal)
+    assert_tab_in_modal(selenium, browser_id, tab, modals, details_modal)
     _assert_file_chunks(selenium, browser_id, hosts, desc, modals)
     click_modal_button(selenium, browser_id, close_button, details_modal,
                        modals)
@@ -139,13 +142,14 @@ def create_directory(selenium, browser_id, name, tmp_memory,
 def migrate_file_to_provider(selenium, browser_id, name, tmp_memory, source,
                              target, hosts, popups, modals, result):
     option = 'Data distribution'
+    tab = 'Distribution'
     details_modal = 'Details modal'
     close_button = 'X'
 
     click_menu_for_elem_in_browser(browser_id, name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
                                              popups)
-    assert_tab_in_modal(selenium, browser_id, option, modals, details_modal)
+    assert_tab_in_modal(selenium, browser_id, tab, modals, details_modal)
     migrate_item(selenium, browser_id, source, target, hosts, popups)
 
     if result == 'migrates':
