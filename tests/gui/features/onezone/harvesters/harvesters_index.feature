@@ -23,7 +23,6 @@ Feature: Basic management of harvester index in Onezone GUI
     And user of browser logged as admin to Onezone service
 
 
-
   Scenario: User does not see file name after creating index that does not include file name file detail
     When user of browser succeeds to write "dir1" directory basic metadata: "attr=val" in "space1"
     And user of browser adds "space1" space to "harvester1" harvester using available spaces dropdown
@@ -47,13 +46,13 @@ Feature: Basic management of harvester index in Onezone GUI
     And user of browser sees Data Discovery page
 
     Then user of browser sees only following files in Data discovery page:
-        dir1:
-          xattrs:
-            attr: "\"val\""
-          fileType:
-            "\"DIR\""
-        spaces:
-          - space1
+       dir1:
+         xattrs:
+           attr: "\"val\""
+         fileType:
+           "\"DIR\""
+       spaces:
+         - space1
 
 
   Scenario: User sees space ID after creating index that includes space_id file detail
@@ -66,12 +65,12 @@ Feature: Basic management of harvester index in Onezone GUI
     And user of browser clicks Data discovery of "harvester1" harvester in the sidebar
     And user of browser sees Data Discovery page
     Then user of browser sees only following files in Data discovery page:
-        dir1:
-          xattrs:
-            attr: "\"val\""
-          spaceId: space1
-        spaces:
-          - space1
+       dir1:
+         xattrs:
+           attr: "\"val\""
+         spaceId: space1
+       spaces:
+         - space1
 
 
   Scenario: User sees dataset info after creating index that includes dataset info file detail
@@ -85,20 +84,20 @@ Feature: Basic management of harvester index in Onezone GUI
     And user of browser clicks Data discovery of "harvester1" harvester in the sidebar
     And user of browser sees Data Discovery page
     Then user of browser sees only following files in Data discovery page:
-        dir1:
-          xattrs:
-            attr: "\"val\""
-          isDataset: true
-        spaces:
-          - space1
+       dir1:
+         xattrs:
+           attr: "\"val\""
+         isDataset: true
+       spaces:
+         - space1
 
 
   Scenario: User sees archive info after creating index that includes archive info file detail
     When user of browser succeeds to write "dir1" directory basic metadata: "attr=val" in "space1"
     And  user of browser creates dataset for item "dir1" in "space1"
     And user of browser succeeds to create archive for item "dir1" in "space1" with following configuration:
-        description: first_archive
-        layout: plain
+       description: first_archive
+       layout: plain
 
     # copy archive id
     And user of browser sees archive browser in archives tab in Oneprovider page

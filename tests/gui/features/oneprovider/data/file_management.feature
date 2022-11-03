@@ -88,12 +88,12 @@ Feature: Basic file management operations
     And user of browser sees file browser in files tab in Oneprovider page
 
     # change permissions
-    And user of browser clicks on menu for "dir1" directory in file browser
-    And user of browser clicks "Permissions" option in data row menu in file browser
-    And user of browser sees that "Edit permissions" modal has appeared
-    And user of browser selects "POSIX" permission type in edit permissions modal
-    And user of browser sets "677" permission code in edit permissions modal
-    And user of browser clicks "Save" confirmation button in displayed modal
+    And user of browser clicks on "Permissions" in context menu for "dir1"
+    And user of browser sees that "Directory details" modal is opened on "Permissions" tab
+    And user of browser selects "POSIX" permission type in edit permissions panel
+    And user of browser sets "677" permission code in edit permissions panel
+    And user of browser clicks on "Save" button in edit permissions panel
+    And user of browser clicks on "X" button in modal "Directory details"
 
     And user of browser clicks on menu for "file2" directory in file browser
     And user of browser clicks "Copy" option in data row menu in file browser
@@ -112,12 +112,12 @@ Feature: Basic file management operations
     And user of browser sees file browser in files tab in Oneprovider page
 
     # change permissions
-    And user of browser clicks on menu for "dir1" directory in file browser
-    And user of browser clicks "Permissions" option in data row menu in file browser
-    And user of browser sees that "Edit permissions" modal has appeared
-    And user of browser selects "POSIX" permission type in edit permissions modal
-    And user of browser sets "677" permission code in edit permissions modal
-    And user of browser clicks "Save" confirmation button in displayed modal
+    And user of browser clicks on "Permissions" in context menu for "dir1"
+    And user of browser sees that "Directory details" modal is opened on "Permissions" tab
+    And user of browser selects "POSIX" permission type in edit permissions panel
+    And user of browser sets "677" permission code in edit permissions panel
+    And user of browser clicks on "Save" button in edit permissions panel
+    And user of browser clicks on "X" button in modal "Directory details"
 
     And user of browser clicks on menu for "file3" directory in file browser
     And user of browser clicks "Cut" option in data row menu in file browser

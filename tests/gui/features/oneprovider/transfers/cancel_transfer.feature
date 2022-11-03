@@ -7,7 +7,7 @@ Feature: Cancel transfer test
         type: "nulldevice"
         importedStorage: true
         lumaFeed: "auto"
-        simulatedFilesystemParameters: "0-1:10485760000"
+        simulatedFilesystemParameters: "0-1:20000000000"
         skipStorageDetection: true
         storagePathType: "canonical"
     And initial spaces configuration in "onezone" Onezone service:
@@ -36,8 +36,7 @@ Feature: Cancel transfer test
     And user of browser waits for all transfers to finish
     And user of browser sees file in ended transfers:
             name: "0"
-            destination: oneprovider-2
-            transferred: < 9.8 GB
+            replicated: < 18.6 GB
             type: replication
             status: cancelled
     Then user of browser reruns transfer in ended transfers
@@ -45,7 +44,6 @@ Feature: Cancel transfer test
     And user of browser waits for all transfers to finish
     And user of browser sees file in ended transfers:
             name: "0"
-            destination: oneprovider-2
-            transferred: <= 9.8 GB
+            replicated: <= 18.6 GB
             type: replication
             status: completed

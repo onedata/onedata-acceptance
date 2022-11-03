@@ -45,9 +45,7 @@ Feature: Oneprovider transfers functionality using multiple browsers instances
     And user of browser1 waits for all transfers to finish
     Then user of browser1 sees file in ended transfers:
             name: large_file.txt
-            destination: oneprovider-2
-            username: space-owner-user
-            transferred: 50 MiB
+            replicated: 50 MiB
             type: replication
             status: completed
 
@@ -88,9 +86,7 @@ Feature: Oneprovider transfers functionality using multiple browsers instances
     And user of browser1 waits for all transfers to finish
     Then user of browser1 sees directory in ended transfers:
             name: dir1
-            destination: oneprovider-2
-            username: space-owner-user
-            transferred: 50 MiB
+            replicated: 50 MiB
             type: replication
             status: completed
 
@@ -128,9 +124,7 @@ Feature: Oneprovider transfers functionality using multiple browsers instances
     And user of browser1 waits for all transfers to finish
     Then user of browser1 sees file in ended transfers:
             name: large_file.txt
-            destination: oneprovider-2
-            username: space-owner-user
-            transferred: 50 MiB
+            replicated: 50 MiB
             type: migration
             status: completed
 
@@ -172,9 +166,7 @@ Feature: Oneprovider transfers functionality using multiple browsers instances
     And user of browser1 waits for all transfers to finish
     Then user of browser1 sees directory in ended transfers:
             name: dir1
-            destination: oneprovider-2
-            username: space-owner-user
-            transferred: 50 MiB
+            replicated: 50 MiB
             type: migration
             status: completed
 

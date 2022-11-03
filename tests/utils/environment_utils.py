@@ -114,7 +114,7 @@ def update_etc_hosts():
     copies modified /etc/hosts from one-env container to test-runner container.
     """
 
-    run_onenv_command('hosts', sudo=True)
+    run_onenv_command('hosts')
     etc_hosts_path = '/etc/hosts'
     tmp_hosts_path = '/tmp/hosts'
     sp.call(['docker', 'cp', '{}:{}'.format(ONE_ENV_CONTAINER_NAME,
@@ -244,8 +244,6 @@ def parse_up_args(request, test_config):
     sources = request.config.getoption('--sources')
     timeout = request.config.getoption('--timeout')
     local_charts_path = request.config.getoption('--local-charts-path')
-    pull_only_missing_images = request.config.getoption(
-        '--pull-only-missing-images')
 
     gui_pkg_verification = request.config.getoption('--gui-pkg-verification')
 
@@ -265,8 +263,6 @@ def parse_up_args(request, test_config):
         up_args.extend(['--timeout', timeout])
     if gui_pkg_verification:
         up_args.append('--gui-pkg-verification')
-    if pull_only_missing_images:
-        up_args.append('--no-pull')
 
     if test_config:
         if not oz_image:

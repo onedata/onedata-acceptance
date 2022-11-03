@@ -73,11 +73,10 @@ def click_tooltip_from_toolbar_in_data_tab_in_op(selenium, browser_id, tooltip,
                '"(?P<button>New directory|Upload files|Refresh|Paste)" button '
                'from file browser menu bar'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_button_from_file_browser_menu_bar(selenium, browser_id, button,
-                                            op_container):
-    driver = selenium[browser_id]
+def click_button_from_file_browser_menu_bar(browser_id, button, tmp_memory):
     button = transform(button) + '_button'
-    getattr(op_container(driver).file_browser, transform(button)).click()
+    file_browser = tmp_memory[browser_id]['file_browser']
+    getattr(file_browser, transform(button)).click()
 
 
 @wt(parsers.parse('user of {browser_id} sees that {btn_list} option '
@@ -431,7 +430,8 @@ def assert_provider_chunk_in_data_distribution_size(selenium, browser_id, size,
                                                     provider, modals, hosts):
     driver = selenium[browser_id]
     provider = hosts[provider]['name']
-    prov_rec = modals(driver).data_distribution.providers[provider]
+    prov_rec = modals(driver).details_modal.data_distribution.providers[
+        provider]
     distribution = prov_rec.distribution
     displayed_size = distribution.end
     assert displayed_size == size, 'displayed chunk size {} in data' \
@@ -447,7 +447,7 @@ def assert_provider_chunk_in_data_distribution_filled(selenium, browser_id,
                                                       provider, modals, hosts):
     driver = selenium[browser_id]
     provider = hosts[provider]['name']
-    data_distribution = modals(driver).data_distribution
+    data_distribution = modals(driver).details_modal.data_distribution
     distribution = data_distribution.providers[provider].distribution
     size = data_distribution.size()
     chunks = distribution.chunks(size)
@@ -466,7 +466,7 @@ def assert_provider_chunk_in_data_distribution_empty(selenium, browser_id,
                                                      provider, modals, hosts):
     driver = selenium[browser_id]
     provider = hosts[provider]['name']
-    data_distribution = modals(driver).data_distribution
+    data_distribution = modals(driver).details_modal.data_distribution
     distribution = data_distribution.providers[provider].distribution
     size = data_distribution.size()
     chunks = distribution.chunks(size)
@@ -481,7 +481,7 @@ def assert_provider_chunks_in_data_distribution(selenium, browser_id, chunks,
                                                 provider, modals, hosts):
     driver = selenium[browser_id]
     provider = hosts[provider]['name']
-    data_distribution = modals(driver).data_distribution
+    data_distribution = modals(driver).details_modal.data_distribution
     distribution = data_distribution.providers[provider].distribution
     size = data_distribution.size()
     displayed_chunks = distribution.chunks(size)
@@ -541,8 +541,6 @@ def choose_provider_in_selected_page(selenium, browser_id, provider, hosts,
     driver.switch_to.default_content()
 
     oz_page(driver)['data'].providers[provider].click()
-    iframe = driver.find_element_by_tag_name('iframe')
-    driver.switch_to.frame(iframe)
 
 
 @wt(parsers.parse('user of {browser_id} clicks on Choose other Oneprovider '

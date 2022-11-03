@@ -9,11 +9,13 @@ __license__ = ("This software is released under the MIT license cited in "
 
 from .oneservices.cdmi import CDMIClient
 from .common.common import OnePage
+from .common.common import PublicOnePage
 from .onepanel import Onepanel
 from .onezone import OZLoggedIn
 from .onezone.data_discovery_page import DataDiscoveryPage
 from .oneprovider import OPLoggedIn
 from .oneprovider.shares.public_share import PublicShareView
+from .oneprovider.shares.private_share import PrivateShareView
 from .common.modals import Modals
 from .common.popups import Popups
 from .common.common import LoginPage

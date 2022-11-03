@@ -82,6 +82,7 @@ stages:
     - Chrome storage sync charts
     - Chrome onezone spaces memberships privileges data
     - Chrome oneprovider data tab tests
+    - Chrome oneprovider data tab files
     - Chrome transfers directories
     - Chrome transfers cancel
     - Chrome onezone basic tests
@@ -112,6 +113,7 @@ stages:
     - Chrome oneprovider datasets tests
     - Chrome onezone invite tokens
     - Chrome public shares tests
+    - Chrome shares handle service tests
     - Chrome onezone groups multiuser tests
     - Chrome oneprovider ACL directories privileges
     - Chrome multiprovider QoS storage
@@ -228,9 +230,9 @@ Chrome oneprovider ACL subdirectories:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      <<: *run-selenium-tests
-      scripts:
-      - make SUITE=test_oneprovider_acl_subdir BROWSER=Chrome TIMEOUT=600 test_gui_src
+     <<: *run-selenium-tests
+     scripts:
+     - make SUITE=test_oneprovider_acl_subdir BROWSER=Chrome TIMEOUT=600 test_gui_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -302,9 +304,9 @@ Chrome qos basic:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      <<: *run-selenium-tests
-      scripts:
-      - make ENV_FILE=1oz_2op_deployed SUITE=test_qos_basic BROWSER=Chrome TIMEOUT=600 test_gui_src
+     <<: *run-selenium-tests
+     scripts:
+     - make ENV_FILE=1oz_2op_deployed SUITE=test_qos_basic BROWSER=Chrome TIMEOUT=600 test_gui_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -342,9 +344,9 @@ Chrome oneprovider ACL directories privileges create:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      <<: *run-selenium-tests
-      scripts:
-      - make SUITE=test_oneprovider_acl_dir_privileges_create BROWSER=Chrome TIMEOUT=600 test_gui_src
+     <<: *run-selenium-tests
+     scripts:
+     - make SUITE=test_oneprovider_acl_dir_privileges_create BROWSER=Chrome TIMEOUT=600 test_gui_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -442,9 +444,9 @@ Chrome POSIX tests:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      <<: *run-selenium-tests
-      scripts:
-      - make SUITE=test_oneprovider_posix BROWSER=Chrome TIMEOUT=600 test_gui_src
+     <<: *run-selenium-tests
+     scripts:
+     - make SUITE=test_oneprovider_posix BROWSER=Chrome TIMEOUT=600 test_gui_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -482,9 +484,9 @@ Chrome oneprovider ACL directories privileges remove:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      <<: *run-selenium-tests
-      scripts:
-      - make SUITE=test_oneprovider_acl_dir_privileges_remove BROWSER=Chrome TIMEOUT=600 test_gui_src
+     <<: *run-selenium-tests
+     scripts:
+     - make SUITE=test_oneprovider_acl_dir_privileges_remove BROWSER=Chrome TIMEOUT=600 test_gui_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -522,9 +524,9 @@ Chrome oneprovider ACL remove file:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      <<: *run-selenium-tests
-      scripts:
-      - make SUITE=test_oneprovider_acl_files BROWSER=Chrome TIMEOUT=600 test_gui_src
+     <<: *run-selenium-tests
+     scripts:
+     - make SUITE=test_oneprovider_acl_remove_file BROWSER=Chrome TIMEOUT=600 test_gui_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -682,9 +684,9 @@ Chrome transfers files:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      <<: *run-selenium-tests
-      scripts:
-      - make SUITE=test_oneprovider_transfers_files ENV_FILE=1oz_2op_deployed BROWSER=Chrome TIMEOUT=600 test_gui_src
+     <<: *run-selenium-tests
+     scripts:
+     - make SUITE=test_oneprovider_transfers_files ENV_FILE=1oz_2op_deployed BROWSER=Chrome TIMEOUT=600 test_gui_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -724,7 +726,7 @@ Chrome onezone spaces multiuser tests:
   - script:
       <<: *run-selenium-tests
       scripts:
-      - make SUITE=test_onezone_spaces_multiuser BROWSER=Chrome TIMEOUT=600 test_gui_src
+      - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_spaces_multiuser BROWSER=Chrome TIMEOUT=600 test_gui_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -792,8 +794,8 @@ Chrome oneprovider data tab tests:
   artifacts: *artifacts
   requirements: *requirements
   artifact-subscriptions: []
-Chrome transfers directories:
-  key: CTD
+Chrome oneprovider data tab files:
+  key: CODTF
   other: *common-opts
   tasks:
   - script: *clear-env
@@ -804,7 +806,27 @@ Chrome transfers directories:
   - script:
       <<: *run-selenium-tests
       scripts:
-      - make SUITE=test_oneprovider_transfers_directories ENV_FILE=1oz_2op_deployed BROWSER=Chrome TIMEOUT=600 test_gui_src
+      - make SUITE=test_oneprovider_data_tab_files BROWSER=Chrome TIMEOUT=600 test_gui_src
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-and-working-dir
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome transfers directories:
+  key: CTD
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script:
+     <<: *run-selenium-tests
+     scripts:
+     - make SUITE=test_oneprovider_transfers_directories ENV_FILE=1oz_2op_deployed BROWSER=Chrome TIMEOUT=600 test_gui_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -822,9 +844,9 @@ Chrome transfers cancel:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      <<: *run-selenium-tests
-      scripts:
-      - make SUITE=test_oneprovider_transfers_cancel ENV_FILE=1oz_2op_slow_deployed BROWSER=Chrome TIMEOUT=600 test_gui_src
+     <<: *run-selenium-tests
+     scripts:
+     - make SUITE=test_oneprovider_transfers_cancel ENV_FILE=1oz_2op_slow_deployed BROWSER=Chrome TIMEOUT=600 test_gui_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -844,7 +866,7 @@ Chrome onezone basic tests:
   - script:
       <<: *run-selenium-tests
       scripts:
-      - make SUITE=test_onezone_basic BROWSER=Chrome TIMEOUT=600 test_gui_src
+      - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_basic BROWSER=Chrome TIMEOUT=600 test_gui_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -942,9 +964,9 @@ Chrome oneprovider ACL subfiles:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      <<: *run-selenium-tests
-      scripts:
-      - make SUITE=test_oneprovider_acl_subfile BROWSER=Chrome TIMEOUT=600 test_gui_src
+     <<: *run-selenium-tests
+     scripts:
+     - make SUITE=test_oneprovider_acl_subfile BROWSER=Chrome TIMEOUT=600 test_gui_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -982,9 +1004,9 @@ Chrome oneprovider ACL subdirectories remove:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      <<: *run-selenium-tests
-      scripts:
-      - make SUITE=test_oneprovider_acl_subdir_remove BROWSER=Chrome TIMEOUT=600 test_gui_src
+     <<: *run-selenium-tests
+     scripts:
+     - make SUITE=test_oneprovider_acl_subdir_remove BROWSER=Chrome TIMEOUT=600 test_gui_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1002,9 +1024,9 @@ Chrome oneprovider ACL subjects:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      <<: *run-selenium-tests
-      scripts:
-      - make SUITE=test_oneprovider_acl_subjects BROWSER=Chrome TIMEOUT=600 test_gui_src
+     <<: *run-selenium-tests
+     scripts:
+     - make SUITE=test_oneprovider_acl_subjects BROWSER=Chrome TIMEOUT=600 test_gui_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1193,45 +1215,45 @@ Chrome onezone tokens tests:
   requirements: *requirements
   artifact-subscriptions: []
 Chrome onezone harvesters index:
-  key: COHI
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script:
-      <<: *run-selenium-tests
-      scripts:
-      - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_index BROWSER=Chrome TIMEOUT=600 test_gui_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
+   key: COHI
+   other: *common-opts
+   tasks:
+   - script: *clear-env
+   - script: *restart-minikube
+   - checkout: *checkout
+   - script: *init-submodules
+   - script: *download-artifacts
+   - script:
+       <<: *run-selenium-tests
+       scripts:
+       - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_index BROWSER=Chrome TIMEOUT=600 test_gui_src
+   final-tasks:
+   - test-parser: *parse-test-results
+   - script: *pack-logs
+   - script: *clear-env-and-working-dir
+   artifacts: *artifacts
+   requirements: *requirements
+   artifact-subscriptions: []
 Chrome onezone harversters index metadata:
-  key: COHIM
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script:
-      <<: *run-selenium-tests
-      scripts:
-      - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_index_metadata BROWSER=Chrome TIMEOUT=600 test_gui_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
+   key: COHIM
+   other: *common-opts
+   tasks:
+   - script: *clear-env
+   - script: *restart-minikube
+   - checkout: *checkout
+   - script: *init-submodules
+   - script: *download-artifacts
+   - script:
+       <<: *run-selenium-tests
+       scripts:
+       - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_harvesters_index_metadata BROWSER=Chrome TIMEOUT=600 test_gui_src
+   final-tasks:
+   - test-parser: *parse-test-results
+   - script: *pack-logs
+   - script: *clear-env-and-working-dir
+   artifacts: *artifacts
+   requirements: *requirements
+   artifact-subscriptions: []
 Chrome onezone harvesters memberships privileges:
   key: COHMP
   other: *common-opts
@@ -1382,9 +1404,29 @@ Chrome public shares tests:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      <<: *run-selenium-tests
-      scripts:
-      - make SUITE=test_public_shares BROWSER=Chrome TIMEOUT=600 test_gui_src
+     <<: *run-selenium-tests
+     scripts:
+     - make SUITE=test_public_shares BROWSER=Chrome TIMEOUT=600 test_gui_src
+  final-tasks:
+  - test-parser: *parse-test-results
+  - script: *pack-logs
+  - script: *clear-env-and-working-dir
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
+Chrome shares handle service tests:
+  key: CSHS
+  other: *common-opts
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script:
+     <<: *run-selenium-tests
+     scripts:
+     - make ENV_FILE=1oz_1op_handle_proxy_mock SUITE=test_shares_handle_service BROWSER=Chrome TIMEOUT=600 test_gui_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1422,9 +1464,9 @@ Chrome oneprovider ACL directories privileges:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      <<: *run-selenium-tests
-      scripts:
-      - make SUITE=test_oneprovider_acl_dir_privileges BROWSER=Chrome TIMEOUT=600 test_gui_src
+     <<: *run-selenium-tests
+     scripts:
+     - make SUITE=test_oneprovider_acl_dir_privileges BROWSER=Chrome TIMEOUT=600 test_gui_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1462,9 +1504,9 @@ Chrome oneprovider ACL basic:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      <<: *run-selenium-tests
-      scripts:
-      - make SUITE=test_oneprovider_acl_basic BROWSER=Chrome TIMEOUT=600 test_gui_src
+     <<: *run-selenium-tests
+     scripts:
+     - make SUITE=test_oneprovider_acl_basic BROWSER=Chrome TIMEOUT=600 test_gui_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -1513,25 +1555,25 @@ Chrome QoS storage:
   requirements: *requirements
   artifact-subscriptions: []
 Chrome metadata test:
-  key: CMT
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script:
-      <<: *run-selenium-tests
-      scripts:
-      - make SUITE=test_metadata BROWSER=Chrome TIMEOUT=600 test_gui_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
+   key: CMT
+   other: *common-opts
+   tasks:
+   - script: *clear-env
+   - script: *restart-minikube
+   - checkout: *checkout
+   - script: *init-submodules
+   - script: *download-artifacts
+   - script:
+       <<: *run-selenium-tests
+       scripts:
+       - make SUITE=test_metadata BROWSER=Chrome TIMEOUT=600 test_gui_src
+   final-tasks:
+   - test-parser: *parse-test-results
+   - script: *pack-logs
+   - script: *clear-env-and-working-dir
+   artifacts: *artifacts
+   requirements: *requirements
+   artifact-subscriptions: []
 Chrome onepanel members tests:
   key: COMT
   other: *common-opts
@@ -1582,9 +1624,9 @@ Chrome oneprovider ACL files:
   - script: *init-submodules
   - script: *download-artifacts
   - script:
-      <<: *run-selenium-tests
-      scripts:
-      - make SUITE=test_oneprovider_acl_files BROWSER=Chrome TIMEOUT=600 test_gui_src
+     <<: *run-selenium-tests
+     scripts:
+     - make SUITE=test_oneprovider_acl_files BROWSER=Chrome TIMEOUT=600 test_gui_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs

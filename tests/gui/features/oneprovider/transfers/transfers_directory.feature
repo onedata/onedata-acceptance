@@ -52,9 +52,7 @@ Feature: Oneprovider transfers directories functionality
     And user of browser waits for all transfers to finish
     And user of browser sees directory in ended transfers:
             name: dir1
-            destination: oneprovider-2
-            username: space-owner-user
-            transferred: 50 MiB
+            replicated: 50 MiB
             type: replication
             status: completed
 
@@ -88,9 +86,7 @@ Feature: Oneprovider transfers directories functionality
     And user of browser waits for all transfers to finish
     And user of browser sees directory in ended transfers:
             name: dir1
-            destination: oneprovider-2
-            username: space-owner-user
-            transferred: 0 B
+            replicated: 0 B
             type: migration
             status: failed
 
@@ -120,9 +116,7 @@ Feature: Oneprovider transfers directories functionality
     And user of browser waits for all transfers to finish
     And user of browser sees directory in ended transfers:
             name: dir1
-            destination: oneprovider-2
-            username: space-owner-user
-            transferred: 0 B
+            replicated: 0 B
             type: replication
             status: failed
 
@@ -152,9 +146,7 @@ Feature: Oneprovider transfers directories functionality
     And user of browser waits for all transfers to finish
     And user of browser sees directory in ended transfers:
             name: dir1
-            destination: oneprovider-1
-            username: space-owner-user
-            transferred: 0 B
+            replicated: 0 B
             type: replication
             status: completed
 
@@ -187,9 +179,7 @@ Feature: Oneprovider transfers directories functionality
     And user of browser waits for all transfers to finish
     And user of browser sees directory in ended transfers:
             name: dir1
-            destination: oneprovider-2
-            username: space-owner-user
-            transferred: 50 MiB
+            replicated: 50 MiB
             type: migration
             status: completed
 

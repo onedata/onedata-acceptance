@@ -178,20 +178,20 @@ Feature: Data harvesting in Discovery Page in Onezone GUI
     Given space "space2" belongs to "harvester1" harvester of user admin
     When user of browser opens Data Discovery page of "harvester1" harvester
     And user of browser sees only following files in Data discovery page:
-          dir1_2:
-            jsonMetadataExists: false
-            rdfMetadataExists: false
-            xattrsMetadataExists: false
-            spaceId: space2
-          file_json:
-            jsonMetadataExists: true
-            rdfMetadataExists: false
-            xattrsMetadataExists: false
-            spaceId: space2
-            author: "\"Samantha Anderson\""
-            year: 1998
-          spaces:
-            - space2
+         dir1_2:
+           jsonMetadataExists: false
+           rdfMetadataExists: false
+           xattrsMetadataExists: false
+           spaceId: space2
+         file_json:
+           jsonMetadataExists: true
+           rdfMetadataExists: false
+           xattrsMetadataExists: false
+           spaceId: space2
+           author: "\"Samantha Anderson\""
+           year: 1998
+         spaces:
+           - space2
 
     # upload and add metadata to file in space2
     And user of browser uploads "20B-0.txt" to the root directory of "space2"
@@ -199,26 +199,26 @@ Feature: Data harvesting in Discovery Page in Onezone GUI
 
     And user of browser opens Data Discovery page of "harvester1" harvester
     Then user of browser sees only following files in Data discovery page:
-          dir1_2:
-            jsonMetadataExists: false
-            rdfMetadataExists: false
-            xattrsMetadataExists: false
-            spaceId: space2
-          file_json:
-            jsonMetadataExists: true
-            rdfMetadataExists: false
-            xattrsMetadataExists: false
-            spaceId: space2
-            author: "\"Samantha Anderson\""
-            year: 1998
-          20B-0.txt:
-            jsonMetadataExists: false
-            rdfMetadataExists: false
-            xattrsMetadataExists: true
-            xattrs:
-              author: "\"John Doe\""
-          spaces:
-            - space2
+         dir1_2:
+           jsonMetadataExists: false
+           rdfMetadataExists: false
+           xattrsMetadataExists: false
+           spaceId: space2
+         file_json:
+           jsonMetadataExists: true
+           rdfMetadataExists: false
+           xattrsMetadataExists: false
+           spaceId: space2
+           author: "\"Samantha Anderson\""
+           year: 1998
+         20B-0.txt:
+           jsonMetadataExists: false
+           rdfMetadataExists: false
+           xattrsMetadataExists: true
+           xattrs:
+             author: "\"John Doe\""
+         spaces:
+           - space2
 
 
   Scenario: Files deleted from harvested space are no longer visible in Data discovery page
@@ -259,42 +259,42 @@ Feature: Data harvesting in Discovery Page in Onezone GUI
     Given space "space1" belongs to "harvester1" harvester of user admin
     When user of browser opens Data Discovery page of "harvester1" harvester
     And user of browser sees only following files in Data discovery page:
-          dir1_1:
-            jsonMetadataExists: false
-            rdfMetadataExists: false
-            xattrsMetadataExists: false
-            spaceId: space1
-          file_xattrs:
-            spaceId: space1
-            jsonMetadataExists: false
-            rdfMetadataExists: false
-            xattrsMetadataExists: true
-            xattrs:
-              author: "\"John Smith\""
-              year: 2020
-          spaces:
-            - space1
+         dir1_1:
+           jsonMetadataExists: false
+           rdfMetadataExists: false
+           xattrsMetadataExists: false
+           spaceId: space1
+         file_xattrs:
+           spaceId: space1
+           jsonMetadataExists: false
+           rdfMetadataExists: false
+           xattrsMetadataExists: true
+           xattrs:
+             author: "\"John Smith\""
+             year: 2020
+         spaces:
+           - space1
 
     # delete part of metadata
     And user of browser removes basic metadata entry with key "author" for "dir1_1/file_xattrs" file in "space1" space
     And user of browser opens Data Discovery page of "harvester1" harvester
     Then user of browser sees only following files in Data discovery page:
-          dir1_1:
-            jsonMetadataExists: false
-            rdfMetadataExists: false
-            xattrsMetadataExists: false
-            spaceId: space1
-          file_xattrs:
-            spaceId: space1
-            jsonMetadataExists: false
-            rdfMetadataExists: false
-            xattrsMetadataExists: true
-            xattrs:
-              year: 2020
-              unexpected:
-                author: "\"John Smith\""
-          spaces:
-            - space1
+         dir1_1:
+           jsonMetadataExists: false
+           rdfMetadataExists: false
+           xattrsMetadataExists: false
+           spaceId: space1
+         file_xattrs:
+           spaceId: space1
+           jsonMetadataExists: false
+           rdfMetadataExists: false
+           xattrsMetadataExists: true
+           xattrs:
+             year: 2020
+             unexpected:
+               author: "\"John Smith\""
+         spaces:
+           - space1
 
 
   Scenario: User successfully opens space of harvested file
@@ -327,46 +327,47 @@ Feature: Data harvesting in Discovery Page in Onezone GUI
     And user of browser sees that ["file1_3", "file3_3"] items are not selected in file browser
 
 
-   Scenario: Data could not be presented when elasticsearch does not respond
-    Given space "space2" belongs to "harvester1" harvester of user admin
-    When user of browser opens Data Discovery page of "harvester1" harvester
-    And user of browser sees only following files in Data discovery page:
-          dir1_2:
-            jsonMetadataExists: false
-            rdfMetadataExists: false
-            xattrsMetadataExists: false
-            spaceId: space2
-          file_json:
-            jsonMetadataExists: true
-            rdfMetadataExists: false
-            xattrsMetadataExists: false
-            spaceId: space2
-            author: "\"Samantha Anderson\""
-            year: 1998
-          spaces:
-            - space2
-
-    And elasticsearch plugin stops working
-    And user of browser is idle for 2 seconds
-    And user of browser clicks "Query" button on Data discovery page
-    Then user of browser sees "This resource could not be loaded." alert on Data discovery page
-
-    And elasticsearch plugin starts working
-    And user of browser is idle for 5 seconds
-    And user of browser clicks "Query" button on Data discovery page
-    And user of browser sees Data Discovery page
-    And user of browser sees only following files in Data discovery page:
-          dir1_2:
-            jsonMetadataExists: false
-            rdfMetadataExists: false
-            xattrsMetadataExists: false
-            spaceId: space2
-          file_json:
-            jsonMetadataExists: true
-            rdfMetadataExists: false
-            xattrsMetadataExists: false
-            spaceId: space2
-            author: "\"Samantha Anderson\""
-            year: 1998
-          spaces:
-            - space2
+#   TODO: VFS-9390 Wait for other way to start and stop elasticsearch VFS-8624 and integrate this in test
+#   Scenario: Data could not be presented when elasticsearch does not respond
+#    Given space "space2" belongs to "harvester1" harvester of user admin
+#    When user of browser opens Data Discovery page of "harvester1" harvester
+#    And user of browser sees only following files in Data discovery page:
+#          dir1_2:
+#            jsonMetadataExists: false
+#            rdfMetadataExists: false
+#            xattrsMetadataExists: false
+#            spaceId: space2
+#          file_json:
+#            jsonMetadataExists: true
+#            rdfMetadataExists: false
+#            xattrsMetadataExists: false
+#            spaceId: space2
+#            author: "\"Samantha Anderson\""
+#            year: 1998
+#          spaces:
+#            - space2
+#
+#    And elasticsearch plugin stops working
+#    And user of browser is idle for 2 seconds
+#    And user of browser clicks "Query" button on Data discovery page
+#    Then user of browser sees "This resource could not be loaded." alert on Data discovery page
+#
+#    And elasticsearch plugin starts working
+#    And user of browser is idle for 5 seconds
+#    And user of browser clicks "Query" button on Data discovery page
+#    And user of browser sees Data Discovery page
+#    And user of browser sees only following files in Data discovery page:
+#          dir1_2:
+#            jsonMetadataExists: false
+#            rdfMetadataExists: false
+#            xattrsMetadataExists: false
+#            spaceId: space2
+#          file_json:
+#            jsonMetadataExists: true
+#            rdfMetadataExists: false
+#            xattrsMetadataExists: false
+#            spaceId: space2
+#            author: "\"Samantha Anderson\""
+#            year: 1998
+#          spaces:
+#            - space2

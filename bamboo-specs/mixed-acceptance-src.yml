@@ -223,9 +223,9 @@ Chrome ACL one entry:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_acl_one_entry TIMEOUT=600 test_mixed_src
+     <<: *run-acceptance-tests
+     scripts:
+     - make SUITE=test_acl_one_entry TIMEOUT=600 test_mixed_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -244,9 +244,9 @@ Chrome permission POSIX multi tests:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_permission_posix_multi ENV_FILE=1oz_1op_2oc TIMEOUT=600 test_mixed_src
+     <<: *run-acceptance-tests
+     scripts:
+     - make SUITE=test_permission_posix_multi ENV_FILE=1oz_1op_2oc TIMEOUT=600 test_mixed_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -307,9 +307,9 @@ Chrome permission POSIX tests:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_permission_posix TIMEOUT=600 test_mixed_src
+     <<: *run-acceptance-tests
+     scripts:
+     - make SUITE=test_permission_posix TIMEOUT=600 test_mixed_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -444,26 +444,26 @@ Chrome single directory tests:
   requirements: *requirements
   artifact-subscriptions: []
 Chrome files set metadata:
-  key: CFSM
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_files_set_metadata TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
+   key: CFSM
+   other: *common-opts
+   tasks:
+   - script: *clear-env
+   - script: *restart-minikube
+   - checkout: *checkout
+   - script: *init-submodules
+   - script: *download-artifacts
+   - script: *build-swaggers
+   - script:
+       <<: *run-acceptance-tests
+       scripts:
+       - make SUITE=test_files_set_metadata TIMEOUT=600 test_mixed_src
+   final-tasks:
+   - test-parser: *parse-test-results
+   - script: *pack-logs
+   - script: *clear-env-and-working-dir
+   artifacts: *artifacts
+   requirements: *requirements
+   artifact-subscriptions: []
 Chrome remove file tests:
   key: CRFT
   other: *common-opts
@@ -590,26 +590,26 @@ Chrome archive privileges:
   requirements: *requirements
   artifact-subscriptions: []
 Chrome directories set metadata:
-  key: CDSM
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_directories_set_metadata TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
+   key: CDSM
+   other: *common-opts
+   tasks:
+   - script: *clear-env
+   - script: *restart-minikube
+   - checkout: *checkout
+   - script: *init-submodules
+   - script: *download-artifacts
+   - script: *build-swaggers
+   - script:
+       <<: *run-acceptance-tests
+       scripts:
+       - make SUITE=test_directories_set_metadata TIMEOUT=600 test_mixed_src
+   final-tasks:
+   - test-parser: *parse-test-results
+   - script: *pack-logs
+   - script: *clear-env-and-working-dir
+   artifacts: *artifacts
+   requirements: *requirements
+   artifact-subscriptions: []
 Chrome nested directories remove:
   key: CNDR
   other: *common-opts
@@ -642,9 +642,9 @@ Chrome ACL two entries:
   - script: *download-artifacts
   - script: *build-swaggers
   - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_acl_two_entries TIMEOUT=600 test_mixed_src
+     <<: *run-acceptance-tests
+     scripts:
+     - make SUITE=test_acl_two_entries TIMEOUT=600 test_mixed_src
   final-tasks:
   - test-parser: *parse-test-results
   - script: *pack-logs
@@ -716,26 +716,26 @@ Chrome file content tests:
   requirements: *requirements
   artifact-subscriptions: []
 Chrome files remove metadata:
-  key: CFRM
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_files_remove_metadata TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
+   key: CFRM
+   other: *common-opts
+   tasks:
+   - script: *clear-env
+   - script: *restart-minikube
+   - checkout: *checkout
+   - script: *init-submodules
+   - script: *download-artifacts
+   - script: *build-swaggers
+   - script:
+       <<: *run-acceptance-tests
+       scripts:
+       - make SUITE=test_files_remove_metadata TIMEOUT=600 test_mixed_src
+   final-tasks:
+   - test-parser: *parse-test-results
+   - script: *pack-logs
+   - script: *clear-env-and-working-dir
+   artifacts: *artifacts
+   requirements: *requirements
+   artifact-subscriptions: []
 Chrome rename file tests:
   key: CRFT1
   other: *common-opts
@@ -842,23 +842,23 @@ Chrome directories times tests:
   requirements: *requirements
   artifact-subscriptions: []
 Chrome directories remove metadata:
-  key: CDRM
-  other: *common-opts
-  tasks:
-  - script: *clear-env
-  - script: *restart-minikube
-  - checkout: *checkout
-  - script: *init-submodules
-  - script: *download-artifacts
-  - script: *build-swaggers
-  - script:
-      <<: *run-acceptance-tests
-      scripts:
-      - make SUITE=test_directories_remove_metadata TIMEOUT=600 test_mixed_src
-  final-tasks:
-  - test-parser: *parse-test-results
-  - script: *pack-logs
-  - script: *clear-env-and-working-dir
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
+   key: CDRM
+   other: *common-opts
+   tasks:
+   - script: *clear-env
+   - script: *restart-minikube
+   - checkout: *checkout
+   - script: *init-submodules
+   - script: *download-artifacts
+   - script: *build-swaggers
+   - script:
+       <<: *run-acceptance-tests
+       scripts:
+       - make SUITE=test_directories_remove_metadata TIMEOUT=600 test_mixed_src
+   final-tasks:
+   - test-parser: *parse-test-results
+   - script: *pack-logs
+   - script: *clear-env-and-working-dir
+   artifacts: *artifacts
+   requirements: *requirements
+   artifact-subscriptions: []

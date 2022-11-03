@@ -1,5 +1,5 @@
 """This module contains tests suite for basic operations using
-Oneprovider data tab GUI and single browser instance.
+Oneprovider data tab GUI.
 """
 
 __author__ = "Bartosz Walkowicz"
@@ -69,14 +69,13 @@ from tests.utils.acceptance_utils import *
 
 @fixture(scope='module')
 def screens():
-    return [0]
+    return [0, 1]
 
 
 scenarios('../features/oneprovider/data/empty_file_browser.feature')
-scenarios('../features/oneprovider/data/single_file.feature')
-scenarios('../features/oneprovider/data/several_files.feature')
 scenarios('../features/oneprovider/data/single_directory.feature')
-scenarios('../features/oneprovider/data/file_management.feature')
 scenarios('../features/oneprovider/data/nested_directories.feature')
-scenarios('../features/oneprovider/data/download_tar_files.feature')
 scenarios('../features/oneprovider/data/size_statistics.feature')
+scenarios('../features/oneprovider/data/jump_input.feature')
+scenarios('../features/oneprovider/data/multibrowser_jump_input.feature')
+scenarios('../features/oneprovider/data/download_tar_files.feature')

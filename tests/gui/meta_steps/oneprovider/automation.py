@@ -69,12 +69,14 @@ def expand_workflow_record(selenium, browser_id, op_container):
     page.executed_workflow_list[0].click()
 
 
-def get_store_content(browser_id, driver, page, modals, clipboard, displays,
-                      store_name):
+def get_store_content(browser_id, driver, page, modals, clipboard,
+                       displays, store_name, store_type):
     page.stores_list[store_name].click()
     modal = modals(driver).store_details
     time.sleep(0.25)
-    modal.details_list[0].expander.click()
+    store_content_type = 'store_content_' + store_type
+    store_content_list = getattr(modal, store_content_type)
+    modal.store_content_list[0].click()
     modal.copy_button()
     store_value = clipboard.paste(display=displays[browser_id])
     modal.close()
@@ -85,16 +87,16 @@ def get_store_content(browser_id, driver, page, modals, clipboard, displays,
 @wt(parsers.parse('user of {browser_id} sees that content of "{store1}" store '
                   'is the same as content of "{store2}" store'))
 def compare_store_contents(selenium, browser_id, op_container, store1,
-                           store2, modals, clipboard, displays, tmp_memory):
+                           store2, modals, clipboard, displays):
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
 
     page = op_container(driver).automation_page.workflow_visualiser
 
     store1_value = get_store_content(browser_id, driver, page, modals,
-                                     clipboard, displays, store1)
+                                      clipboard, displays, store1, 'list')
     store2_value = get_store_content(browser_id, driver, page, modals,
-                                     clipboard, displays, store2)
+                                      clipboard, displays, store2, 'object')
 
     assert store1_value == store2_value, (f'Value of {store1} '
                                           f'store:{store1_value} \n is not '
@@ -133,14 +135,6 @@ def click_on_first_terminated_pod(selenium, browser_id, modals):
     modal.pods_list[0].click()
 
 
-def _parse_reasons_list(reasons):
-    reasons = reasons.split('"')[1:-1]
-    reasons = [
-        e.replace(',', '') for e in reasons if e != ', '
-    ]
-    return reasons
-
-
 @wt(parsers.parse('user of {browser_id} sees events with following reasons: '
                   '{reasons} in modal "Function pods activity"'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -150,7 +144,7 @@ def assert_events_in_pods_monitor(selenium, browser_id, modals, reasons):
     modal = modals(driver).function_pods_activity
 
     events_list = modal.events_list
-    reasons_list = _parse_reasons_list(reasons)
+    reasons_list = parse_seq(reasons)
     gathered_reasons_list = []
 
     # Loop below creates list of reasons from all the events that happened in

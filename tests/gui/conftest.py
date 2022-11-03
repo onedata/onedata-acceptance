@@ -190,6 +190,12 @@ def onepage():
 
 
 @fixture(scope='session')
+def public_onepage():
+    from tests.gui.utils import PublicOnePage
+    return PublicOnePage
+
+
+@fixture(scope='session')
 def onepanel():
     from tests.gui.utils import Onepanel
     return Onepanel
@@ -217,6 +223,12 @@ def op_container():
 def public_share():
     from tests.gui.utils import PublicShareView
     return PublicShareView
+
+
+@fixture(scope='session')
+def private_share():
+    from tests.gui.utils import PrivateShareView
+    return PrivateShareView
 
 
 @fixture(scope='session')

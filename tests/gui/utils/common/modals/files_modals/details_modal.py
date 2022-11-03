@@ -7,6 +7,12 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 from selenium.webdriver import ActionChains
+
+from .tabs_in_details_modal.data_distribution import DataDistributionTab
+from .tabs_in_details_modal.edit_permissions import EditPermissionsTab
+from .tabs_in_details_modal.metadata_tab import MetadataTab
+from .tabs_in_details_modal.qos import QoSTab
+from .tabs_in_details_modal.share_directory import ShareDirectory
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import (Label, NamedButton, WebItem,
@@ -23,7 +29,7 @@ class HardlinkEntry(PageObject):
         return strip_path(self.path)
 
 
-class HardlinkTab(PageObject):
+class Hardlinks(PageObject):
     tab = WebElement('.nav-link-hardlinks')
     files = WebItemsSequence('.file-hardlink', cls=HardlinkEntry)
 
@@ -37,26 +43,38 @@ class Charts(PageObject):
 
 
 class SizeStatistics(PageObject):
-    charts_title = Label('.title')
+    tab = Button('.nav-link-size')
+    charts_title = Label('.section-title')
     chart = WebItemsSequence('.one-time-series-chart-plot', cls=Charts)
-    size_statistics_toggle = Button('.nav-link-size')
 
     def click_on_chart(self):
         ActionChains(self.driver).move_to_element_with_offset(
             self.chart[0].chart, 100, 100).click().perform()
 
 
+class NavigationTab(PageObject):
+    name = id = Label('.nav-link')
+
+
 class DetailsModal(Modal):
     modal_name = Label('.modal-header h1')
     owner = Label('.file-info-row-owner .property-value')
-    close = Button('.close')
-    hardlinks_tab = WebItem('.modal-body', cls=HardlinkTab)
+    x = Button('.close')
     space_id = Button('.file-info-row-space-id .clipboard-btn')
     file_id = Button('.file-info-row-cdmi-object-id .clipboard-btn')
-    size_statistics = WebItem('.modal-body', cls=SizeStatistics)
+    size_statistics = WebItem('.modal-content', cls=SizeStatistics)
+    hardlinks = WebItem('.modal-content', cls=Hardlinks)
+    navigation = WebItemsSequence('.nav-tabs-file-info li', cls=NavigationTab)
+    active_tab = Label('.nav-link.active')
+
+    qos = WebItem('.modal-content', cls=QoSTab)
+    metadata = WebItem('.modal-content', cls=MetadataTab)
+    shares = WebItem('.modal-content', cls=ShareDirectory)
+    edit_permissions = WebItem('.modal-content', cls=EditPermissionsTab)
+    data_distribution = WebItem('.modal-content', cls=DataDistributionTab)
 
     def __str__(self):
-        return 'File details modal'
+        return 'Details modal'
 
     def is_element_active(self, element_name):
         element = getattr(self, element_name)

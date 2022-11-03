@@ -90,6 +90,33 @@ def fail_to_delete_empty(user, dirs, client_node, users):
     delete_empty_base(user, dirs, client_node, users, should_fail=True)
 
 
+def purge_all_spaces(client):
+    try:
+        spaces = client.list_spaces()
+        for space in spaces:
+            space_path = client.absolute_path(space)
+            try:
+                client.rm(path=space_path, recursive=True)
+            except FileNotFoundError:
+                pass
+            except OSError as e:
+                # ignore EACCES errors during cleaning
+                if e.errno == errno.EACCES:
+                    pass
+    except FileNotFoundError:
+        pass
+    except Exception as e:
+        print("Error during cleaning up spaces: {}".format(e))
+        raise e
+
+
+@wt(parsers.re('(?P<user>\w+) purges all spaces on (?P<client_node>.*)'))
+def purge_all_user_spaces(user, client_node, users):
+    user = users[user]
+    client = user.clients[client_node]
+    purge_all_spaces(client)
+
+
 @wt(parsers.re('(?P<user>\w+) deletes directories \(rm -rf\) (?P<dirs>.*) on '
                '(?P<client_node>.*)'))
 def delete_non_empty(user, dirs, client_node, users):

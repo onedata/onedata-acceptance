@@ -154,12 +154,12 @@ Feature: Basic files tab operations on hardlinks in file browser
 
     # check QoS of hardlink
     And user of browser clicks on QoS status tag for "file1(1)" in file browser
-    And user of browser sees [hello = "WORLD"] QoS requirement in modal "Quality of Service"
-    And user of browser clicks on "Close" button in modal "Quality of Service"
+    And user of browser sees [hello = "WORLD"] QoS requirement in QoS panel
 
     # check metadata of hardlink
-    And user of browser opens metadata modal on JSON tab for "file1(1)"
-    And user of browser sees that JSON textarea in metadata modal contains '{"id": 1}'
+    And user of browser clicks on "Metadata" navigation tab in "File Details" modal
+    And user of browser clicks on "JSON" navigation tab in metadata panel
+    And user of browser sees that JSON textarea in metadata panel contains '{"id": 1}'
 
 
   Scenario: New metadata and QoS are inherited by all hardlinks after file browser refresh
@@ -181,22 +181,18 @@ Feature: Basic files tab operations on hardlinks in file browser
 
     # check QoS of original file
     And user of browser clicks on QoS status tag for "file1" in file browser
-    And user of browser sees [hello = "WORLD"] QoS requirement in modal "Quality of Service"
-    And user of browser clicks on "Close" button in modal "Quality of Service"
+    And user of browser sees [hello = "WORLD"] QoS requirement in QoS panel
 
     # check QoS of second hardlink
-    And user of browser clicks on QoS status tag for "file1(2)" in file browser
-    And user of browser sees [hello = "WORLD"] QoS requirement in modal "Quality of Service"
-    And user of browser clicks on "Close" button in modal "Quality of Service"
+    And user of browser sees [hello = "WORLD"] QoS requirement in QoS panel
 
     # check metadata of original file
-    And user of browser opens metadata modal on JSON tab for "file1"
-    And user of browser sees that JSON textarea in metadata modal contains '{"id": 1}'
-    And user of browser clicks on "Close" button in modal "Metadata"
+    And user of browser clicks on "Metadata" navigation tab in "File Details" modal
+    And user of browser clicks on "JSON" navigation tab in metadata panel
+    And user of browser sees that JSON textarea in metadata panel contains '{"id": 1}'
 
     # check metadata of second hardlink
-    And user of browser opens metadata modal on JSON tab for "file1(2)"
-    And user of browser sees that JSON textarea in metadata modal contains '{"id": 1}'
+    And user of browser sees that JSON textarea in metadata panel contains '{"id": 1}'
 
 
   Scenario: User sees change of hardlink posix permission after second hardlink permissions change
@@ -208,12 +204,12 @@ Feature: Basic files tab operations on hardlinks in file browser
     And user of browser clicks "Place hard link" button from file browser menu bar
 
     # change POSIX permission of created hardlink
-    And user of browser clicks on menu for "file1" file in file browser
-    And user of browser clicks "Permissions" option in data row menu in file browser
-    And user of browser sees that "Edit permissions" modal has appeared
-    And user of browser selects "POSIX" permission type in edit permissions modal
-    And user of browser sets "775" permission code in edit permissions modal
-    And user of browser clicks "Save" confirmation button in displayed modal
+    And user of browser clicks on "Permissions" in context menu for "file1"
+    And user of browser sees that "File details" modal is opened on "Permissions" tab
+    And user of browser selects "POSIX" permission type in edit permissions panel
+    And user of browser sets "775" permission code in edit permissions panel
+    And user of browser clicks on "Save" button in edit permissions panel
+    And user of browser clicks on "X" button in modal "File details"
 
     # check permission of original file
     And user of browser changes current working directory to space root using breadcrumbs
@@ -232,19 +228,18 @@ Feature: Basic files tab operations on hardlinks in file browser
 
     # change ACL permission of created hardlink
     And user of browser changes current working directory to space root using breadcrumbs
-    And user of browser clicks on menu for "file1" file in file browser
-    And user of browser clicks "Permissions" option in data row menu in file browser
-    And user of browser sees that "Edit permissions" modal has appeared
-    And user of browser selects "ACL" permission type in edit permissions modal
+    And user of browser clicks on "Permissions" in context menu for "file1"
+    And user of browser sees that "File details" modal is opened on "Permissions" tab
+    And user of browser selects "ACL" permission type in edit permissions panel
 
     And user of browser adds ACE with "attributes:read attributes" privilege set for group group1
     And user of browser adds ACE with [general:delete, acl:read acl] privileges set for user space-owner-user
-    And user of browser clicks "Save" confirmation button in displayed modal
+    And user of browser clicks on "Save" button in edit permissions panel
+    And user of browser clicks on "X" button in modal "File details"
 
-    # check permission of original file
+     # check permission of original file
     And user of browser clicks and presses enter on item named "dir1" in file browser
-    And user of browser clicks on menu for "file1" file in file browser
-    And user of browser clicks "Permissions" option in data row menu in file browser
-    And user of browser sees that "Edit permissions" modal has appeared
-    And user of browser selects "ACL" permission type in edit permissions modal
-    Then user of browser sees exactly 2 ACL records in edit permissions modal
+    And user of browser clicks on "Permissions" in context menu for "file1"
+    And user of browser sees that "File details" modal is opened on "Permissions" tab
+    And user of browser selects "ACL" permission type in edit permissions panel
+    Then user of browser sees exactly 2 ACL records in edit permissions panel

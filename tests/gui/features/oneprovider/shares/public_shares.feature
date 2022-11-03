@@ -26,7 +26,7 @@ Feature: Basic operations on public shares in file browser
     And using REST, user space-owner-user creates "share_dir1" share of "space1/dir1" supported by "oneprovider-1" provider
 
 
-  Scenario: User views and downloads files from public interface of share shared from another user from "Share directory" modal
+  Scenario: User views and downloads files from public interface of share shared from another user using "Share directory" modal
     When user of space_owner_browser opens file browser for "space1" space
     And user of space_owner_browser hands "share_dir1" share's URL of "dir1" to user of browser1
 
@@ -48,7 +48,7 @@ Feature: Basic operations on public shares in file browser
   Scenario: User sees public URLs of share are equal
     When user of space_owner_browser opens file browser for "space1" space
     And user of space_owner_browser copies share URL of "share_dir1" share of "dir1"
-    And user of space_owner_browser opens "share_dir1" single share view of "dir1" using modal icon
+    And user of space_owner_browser opens "share_dir1" single share view of "dir1" using "Shared" tag
     Then user of space_owner_browser sees that share's URL is the same as URL from clipboard
 
 
@@ -150,12 +150,12 @@ Feature: Basic operations on public shares in file browser
     And user of space_owner_browser clicks and presses enter on item named "dir1" in file browser
 
     # Space owner user set posix of file1 to 000
-    And user of space_owner_browser clicks on menu for "file1" file in file browser
-    And user of space_owner_browser clicks "Permissions" option in data row menu in file browser
-    And user of space_owner_browser sees that "Edit permissions" modal has appeared
-    And user of space_owner_browser selects "POSIX" permission type in edit permissions modal
-    And user of space_owner_browser sets "000" permission code in edit permissions modal
-    And user of space_owner_browser clicks "Save" confirmation button in displayed modal
+    And user of space_owner_browser clicks on "Permissions" in context menu for "file1"
+    And user of space_owner_browser sees that "File details" modal is opened on "Permissions" tab
+    And user of space_owner_browser selects "POSIX" permission type in edit permissions panel
+    And user of space_owner_browser sets "000" permission code in edit permissions panel
+    And user of space_owner_browser clicks on "Save" button in edit permissions panel
+    And user of space_owner_browser clicks on "X" button in modal "File details"
 
     # Space owner user hands over shared directory
     And user of space_owner_browser changes current working directory to space root using breadcrumbs

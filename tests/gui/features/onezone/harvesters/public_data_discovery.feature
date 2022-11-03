@@ -77,7 +77,7 @@ Feature: Public harvester site
     And user of browser_onedata sees that Public toggle is not checked on harvester configuration page
 
     And user of browser_not_signed_in refreshes site
-    Then user of browser_not_signed_in sees "web GUI cannot be loaded" error on Onedata page
+    Then user of browser_not_signed_in sees "web GUI cannot be loaded" error on public Onedata page
 
 
   Scenario: Not signed in user sees data of public harvester in public harvester GUI from given URL
@@ -128,46 +128,46 @@ Feature: Public harvester site
     And user of browser_not_signed_in opens URL received from user of browser_onedata
     And user of browser_not_signed_in sees public data discovery page
     And user of browser_not_signed_in sees only following files on public data discovery page:
-          dir1_2:
-            jsonMetadataExists: false
-            rdfMetadataExists: false
-            xattrsMetadataExists: false
-            spaceId: space2
-          file_with_json_metadata:
-            jsonMetadataExists: true
-            rdfMetadataExists: false
-            xattrsMetadataExists: false
-            spaceId: space2
-            author: "\"Samantha Anderson\""
-            year: 1998
-          spaces:
-            - space2
+         dir1_2:
+           jsonMetadataExists: false
+           rdfMetadataExists: false
+           xattrsMetadataExists: false
+           spaceId: space2
+         file_with_json_metadata:
+           jsonMetadataExists: true
+           rdfMetadataExists: false
+           xattrsMetadataExists: false
+           spaceId: space2
+           author: "\"Samantha Anderson\""
+           year: 1998
+         spaces:
+           - space2
 
     # upload and add metadata to file in space2
     And user of browser_onedata uploads "20B-0.txt" to the root directory of "space2"
     And user of browser_onedata succeeds to write "20B-0.txt" file basic metadata: "author=John Doe" in "space2"
 
     Then user of browser_not_signed_in sees only following files on public data discovery page:
-          dir1_2:
-            jsonMetadataExists: false
-            rdfMetadataExists: false
-            xattrsMetadataExists: false
-            spaceId: space2
-          file_with_json_metadata:
-            jsonMetadataExists: true
-            rdfMetadataExists: false
-            xattrsMetadataExists: false
-            spaceId: space2
-            author: "\"Samantha Anderson\""
-            year: 1998
-          20B-0.txt:
-            jsonMetadataExists: false
-            rdfMetadataExists: false
-            xattrsMetadataExists: true
-            xattrs:
-              author: "\"John Doe\""
-          spaces:
-            - space2
+         dir1_2:
+           jsonMetadataExists: false
+           rdfMetadataExists: false
+           xattrsMetadataExists: false
+           spaceId: space2
+         file_with_json_metadata:
+           jsonMetadataExists: true
+           rdfMetadataExists: false
+           xattrsMetadataExists: false
+           spaceId: space2
+           author: "\"Samantha Anderson\""
+           year: 1998
+         20B-0.txt:
+           jsonMetadataExists: false
+           rdfMetadataExists: false
+           xattrsMetadataExists: true
+           xattrs:
+             author: "\"John Doe\""
+         spaces:
+           - space2
 
 
   Scenario: Public harvester site has another GUI after setting it in original harvester configuration
@@ -293,40 +293,40 @@ Feature: Public harvester site
     And user of browser_not_signed_in opens URL received from user of browser_onedata
     And user of browser_not_signed_in sees public data discovery page
     And user of browser_not_signed_in sees only following files on public data discovery page:
+         dir1_1:
+           jsonMetadataExists: false
+           rdfMetadataExists: false
+           xattrsMetadataExists: false
+           spaceId: space1
+         file_with_xattrs:
+           spaceId: space1
+           jsonMetadataExists: false
+           rdfMetadataExists: false
+           xattrsMetadataExists: true
+           xattrs:
+             author: "\"John Smith\""
+             year: 2020
+         spaces:
+           - space1
+
+    And user of browser_onedata removes basic metadata entry with key "author" for "dir1_1/file_with_xattrs" file in "space1" space
+    Then user of browser_not_signed_in sees only following files on public data discovery page:
           dir1_1:
-            jsonMetadataExists: false
-            rdfMetadataExists: false
-            xattrsMetadataExists: false
-            spaceId: space1
+             jsonMetadataExists: false
+             rdfMetadataExists: false
+             xattrsMetadataExists: false
+             spaceId: space1
           file_with_xattrs:
             spaceId: space1
             jsonMetadataExists: false
             rdfMetadataExists: false
             xattrsMetadataExists: true
             xattrs:
-              author: "\"John Smith\""
               year: 2020
+              unexpected:
+                author: "\"John Smith\""
           spaces:
             - space1
-
-    And user of browser_onedata removes basic metadata entry with key "author" for "dir1_1/file_with_xattrs" file in "space1" space
-    Then user of browser_not_signed_in sees only following files on public data discovery page:
-           dir1_1:
-              jsonMetadataExists: false
-              rdfMetadataExists: false
-              xattrsMetadataExists: false
-              spaceId: space1
-           file_with_xattrs:
-             spaceId: space1
-             jsonMetadataExists: false
-             rdfMetadataExists: false
-             xattrsMetadataExists: true
-             xattrs:
-               year: 2020
-               unexpected:
-                 author: "\"John Smith\""
-           spaces:
-             - space1
 
 
   Scenario: User cannot open harvested file source from public harvester if they does not belong to space

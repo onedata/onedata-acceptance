@@ -26,7 +26,7 @@ Feature: Directory set metadata tests
             - dir1
 
 
-  Scenario: User sets metadata
+  Scenario Outline: User sets metadata
     When using <client1>, user1 sets new <fmt> metadata: <metadata> for "dir1" directory in space "space1" in oneprovider-1
     Then using <client2>, user1 sees that <fmt> metadata for "dir1" directory is <metadata> in space "space1" in oneprovider-1
 

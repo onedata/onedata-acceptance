@@ -33,11 +33,11 @@ Feature: Basic management of harvester index that includes metadata in Onezone G
     And user of browser clicks Data discovery of "harvester1" harvester in the sidebar
     And user of browser sees Data Discovery page
     Then user of browser sees only following files in Data discovery page:
-          dir1:
-            xattrs:
-              attr: "\"val\""
-          spaces:
-            - space1
+         dir1:
+           xattrs:
+             attr: "\"val\""
+         spaces:
+           - space1
 
 
   Scenario: User sees JSON metadata values and keys after creating index that includes only JSON metadata
@@ -50,10 +50,10 @@ Feature: Basic management of harvester index that includes metadata in Onezone G
     And user of browser clicks Data discovery of "harvester1" harvester in the sidebar
     And user of browser sees Data Discovery page
     Then user of browser sees only following files in Data discovery page:
-          dir1:
-            id: 1
-          spaces:
-            - space1
+         dir1:
+           id: 1
+         spaces:
+           - space1
 
 
   Scenario: User sees RDF metadata values and keys after creating index that includes only RDF metadata
@@ -66,11 +66,11 @@ Feature: Basic management of harvester index that includes metadata in Onezone G
     And user of browser clicks Data discovery of "harvester1" harvester in the sidebar
     And user of browser sees Data Discovery page
     Then user of browser sees only following files in Data discovery page:
-          dir1:
-            rdf:
-              "\"<a>first rdf</a>\""
-          spaces:
-            - space1
+         dir1:
+           rdf:
+             "\"<a>first rdf</a>\""
+         spaces:
+           - space1
 
 
   Scenario: User sees basic, JSON and RDF metadata values and keys after creating index that includes basic, JSON and RDF metadata
@@ -85,14 +85,14 @@ Feature: Basic management of harvester index that includes metadata in Onezone G
     And user of browser clicks Data discovery of "harvester1" harvester in the sidebar
     And user of browser sees Data Discovery page
     Then user of browser sees only following files in Data discovery page:
-          dir1:
-            xattrs:
-              attr: "\"val\""
-            id: 1
-            rdf:
-              "\"<a>first rdf</a>\""
-          spaces:
-            - space1
+         dir1:
+           xattrs:
+             attr: "\"val\""
+           id: 1
+           rdf:
+             "\"<a>first rdf</a>\""
+         spaces:
+           - space1
 
 
   Scenario: User sees metadata existence flags after creating index that includes metadata existence flags info file detail
@@ -105,14 +105,14 @@ Feature: Basic management of harvester index that includes metadata in Onezone G
     And user of browser clicks Data discovery of "harvester1" harvester in the sidebar
     And user of browser sees Data Discovery page
     Then user of browser sees only following files in Data discovery page:
-        dir1:
-          xattrs:
-            attr: "\"val\""
-          jsonMetadataExists: false
-          rdfMetadataExists: false
-          xattrsMetadataExists: true
-        spaces:
-          - space1
+       dir1:
+         xattrs:
+           attr: "\"val\""
+         jsonMetadataExists: false
+         rdfMetadataExists: false
+         xattrsMetadataExists: true
+       spaces:
+         - space1
 
 
   Scenario: User sees rejection reason and what is rejected in Data Discovery page after changing JSON metadata value and creating index that includes "include rejection reason" and "retry on rejection" toggles
@@ -127,16 +127,16 @@ Feature: Basic management of harvester index that includes metadata in Onezone G
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser opens metadata modal on JSON tab for "dir1"
-    And user of browser cleans JSON textarea in metadata modal
-    And user of browser types '{"id": "one"}' to JSON textarea in metadata modal
-    And user of browser clicks on "Save all" button in metadata modal
+    And user of browser opens metadata panel on JSON tab for "dir1"
+    And user of browser cleans JSON textarea in metadata panel
+    And user of browser clicks on "Save" button in metadata panel
+    And user of browser types '{"id": "one"}' to JSON textarea in metadata panel
+    And user of browser clicks on "Save" button in metadata panel
 
     # copy file id to clipboard
-    And user of browser clicks on menu for "dir1" directory in file browser
-    And user of browser clicks "Information" option in data row menu in file browser
+    And user of browser clicks on "General" navigation tab in "Directory Details" modal
     And user of browser clicks on "File ID" button in modal "Directory details"
-    And user of browser clicks on "Close" button in modal "Directory details"
+    And user of browser clicks on "X" button in modal "Directory details"
 
     And user of browser clicks on Discovery in the main menu
     And user of browser clicks "harvester1" on the harvesters list in the sidebar
@@ -158,10 +158,10 @@ Feature: Basic management of harvester index that includes metadata in Onezone G
     And user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
-    And user of browser opens metadata modal on JSON tab for "dir1"
-    And user of browser cleans JSON textarea in metadata modal
-    And user of browser types '{"id": "one"}' to JSON textarea in metadata modal
-    And user of browser clicks on "Save all" button in metadata modal
+    And user of browser opens metadata panel on JSON tab for "dir1"
+    And user of browser cleans JSON textarea in metadata panel
+    And user of browser types '{"id": "one"}' to JSON textarea in metadata panel
+    And user of browser clicks on "Save" button in metadata panel
 
     And user of browser clicks on Discovery in the main menu
     And user of browser clicks "harvester1" on the harvesters list in the sidebar

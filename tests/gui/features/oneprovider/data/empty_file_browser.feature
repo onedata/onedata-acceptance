@@ -78,7 +78,7 @@ Feature: Files tab operations with empty file browser
     And user of browser clicks on menu for "20B-0.txt" file in file browser
     And user of browser clicks "Data distribution" option in data row menu in file browser
 
-    And user of browser sees that "Data distribution" modal has appeared
+    And user of browser sees that "File details" modal is opened on "Data distribution" tab
     Then user of browser sees that chunk bar for provider "oneprovider-1" is entirely filled
-    And user of browser clicks "Close" confirmation button in displayed modal
+    And user of browser clicks on "X" button in modal "Directory details"
 

@@ -390,8 +390,8 @@ def assert_providers_list_contains_provider(selenium, browser_id, provider,
 def click_toggle_on_providers_subpage(browser_id, toggle, selenium,
                                       op_container):
     driver = selenium[browser_id]
-    switch_to_iframe(selenium, browser_id)
-    getattr(op_container(driver).space_configuration, transform(toggle)).check()
+    getattr(op_container(driver).provider_configuration,
+            transform(toggle)).check()
 
 
 @wt(parsers.parse('user of {browser_id} sees that length of providers list '
@@ -570,6 +570,7 @@ def confirm_rename_the_space(selenium, browser_id, option, oz_page):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def check_tab_name_label(selenium, browser_id, tab_name, oz_page):
     driver = selenium[browser_id]
+    driver.switch_to.default_content()
     label = oz_page(driver)['data'].tab_name
     assert label.lower() == tab_name, f'User not on {tab_name} page'
 

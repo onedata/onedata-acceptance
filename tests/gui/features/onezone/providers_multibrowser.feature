@@ -67,19 +67,18 @@ Feature: Basic management of providers in Onezone GUI
     And user of space_owner_browser hovers over provider icon on the map on providers data page and sees that provider name is "oneprovider-1"
 
 
-  Scenario: User sees provider details after choosing appropriate option in provider menu on space providers page
+  Scenario: User sees provider details after clicking on information button in provider menu on space providers page
     When user of space_owner_browser clicks "Overview" of "space3" space in the sidebar
     And user of space_owner_browser sees no providers on the map on "space3" space overview data page
     And user of space_owner_browser sends support token for "space3" to user of browser_emergency
 
     And user of browser_emergency supports "space3" space in "oneprovider-1" Oneprovider panel service with following configuration:
-          storage: posix
-          size: 10000
+         storage: posix
+         size: 10000
 
     And user of space_owner_browser clicks "Overview" of "space3" space in the sidebar
     And user of space_owner_browser sees 1 provider on the map on "space3" space overview data page
     And user of space_owner_browser clicks the map on "space3" space overview data page
 
-    And user of space_owner_browser opens "oneprovider-1" provider menu on space providers data page
-    And user of space_owner_browser clicks "Show details" option in menu popup
+    And user of space_owner_browser clicks information button for "oneprovider-1" provider on space providers data page
     Then user of space_owner_browser sees that provider popup for provider "oneprovider-1" has appeared on world map

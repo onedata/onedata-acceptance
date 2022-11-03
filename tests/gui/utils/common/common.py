@@ -52,6 +52,16 @@ class OnePage(object):
         return self.service
 
 
+class PublicOnePage(object):
+    loading_error = Label('.application-error-message')
+
+    def __init__(self, driver):
+        self.driver = self.web_elem = driver
+
+    def __str__(self):
+        return 'public onedata page'
+
+
 class _Toggle(PageObject):
     _lock = WebElement('.one-way-toggle-readonly-icon')
 

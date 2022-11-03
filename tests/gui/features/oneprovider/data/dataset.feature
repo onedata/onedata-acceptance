@@ -53,8 +53,7 @@ Feature: Basic datasets operations
     And user of browser sees metadata protected status tag for "dir1" in file browser
     And user of browser clicks on menu for "dir1" directory in file browser
     And user of browser clicks "Metadata" option in data row menu in file browser
-    And user of browser sees "Editor disabled" label in Metadata modal
-    And user of browser clicks on "Close" button in metadata modal
+    And user of browser sees "Editor disabled" label in metadata panel
 
 
   Scenario: User sees inherited dataset status tag after marking its parent directory as dataset
