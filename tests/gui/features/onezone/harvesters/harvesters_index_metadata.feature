@@ -134,7 +134,7 @@ Feature: Basic management of harvester index that includes metadata in Onezone G
     And user of browser clicks on "Save" button in metadata panel
 
     # copy file id to clipboard
-    And user of browser clicks on "General" navigation tab in "Directory Details" modal
+    And user of browser clicks on "Info" navigation tab in "Directory Details" modal
     And user of browser clicks on "File ID" button in modal "Directory details"
     And user of browser clicks on "X" button in modal "Directory details"
 
