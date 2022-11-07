@@ -300,7 +300,7 @@ def assert_base_archive_for_archive_in_op_gui(browser_id, selenium, item_name,
 def assert_archive_callback_in_op_gui(browser_id, tmp_memory, description,
                                       selenium, popups, modals, expected,
                                       option):
-    modal = 'Archive Properties'
+    modal = 'Archive Details'
     option_in_menu = 'Properties'
     info = f'{option} callback URL'
     button_name = 'X'

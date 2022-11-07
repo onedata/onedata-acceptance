@@ -63,7 +63,7 @@ Feature: Basic management of spaces privileges in Onezone GUI with two providers
     And user of browser_user1 sees file browser in files tab in Oneprovider page
     And user of browser_user1 clicks on menu for "file1" file in file browser
     And user of browser_user1 clicks "Data distribution" option in data row menu in file browser
-    And user of browser_user1 sees that "File details" modal is opened on "Data distribution" tab
+    And user of browser_user1 sees that "File details" modal is opened on "Distribution" tab
     And user of browser_user1 does not see "Replicate here" options when clicking on provider "oneprovider-2" menu button
     And user of browser_user1 clicks on "X" button in modal "File details"
 
@@ -80,7 +80,7 @@ Feature: Basic management of spaces privileges in Onezone GUI with two providers
     And user of browser_user1 sees that current working directory displayed in breadcrumbs on file browser is space1
     And user of browser_user1 clicks on menu for "file1" file in file browser
     And user of browser_user1 clicks "Data distribution" option in data row menu in file browser
-    And user of browser_user1 sees that "File details" modal is opened on "Data distribution" tab
+    And user of browser_user1 sees that "File details" modal is opened on "Distribution" tab
     Then user of browser_user1 replicates selected item to provider "oneprovider-2"
 
 
@@ -92,7 +92,7 @@ Feature: Basic management of spaces privileges in Onezone GUI with two providers
      And user of space_owner_browser sees file browser in files tab in Oneprovider page
      And user of space_owner_browser clicks on menu for "file1" file in file browser
      And user of space_owner_browser clicks "Data distribution" option in data row menu in file browser
-     And user of space_owner_browser sees that "File details" modal is opened on "Data distribution" tab
+     And user of space_owner_browser sees that "File details" modal is opened on "Distribution" tab
      And user of space_owner_browser replicates selected item to provider "oneprovider-2"
 
      And user of space_owner_browser clicks "Members" of "space1" space in the sidebar
@@ -109,7 +109,7 @@ Feature: Basic management of spaces privileges in Onezone GUI with two providers
      And user of browser_user1 sees file browser in files tab in Oneprovider page
      And user of browser_user1 clicks on menu for "file1" file in file browser
      And user of browser_user1 clicks "Data distribution" option in data row menu in file browser
-     And user of browser_user1 sees that "File details" modal is opened on "Data distribution" tab
+     And user of browser_user1 sees that "File details" modal is opened on "Distribution" tab
      And user of browser_user1 does not see "Evict" options when clicking on provider "oneprovider-2" menu button
 
      And user of space_owner_browser clicks "user1" user in "space1" space members users list

@@ -324,7 +324,7 @@ def get_pods_config():
     for pod in pods_json:
         pod_data = pod['metadata']
         pod_title = pod_data['name']
-        pod_name = pod_data['labels']['app']
+        pod_name = pod_data['labels'].get('app', None)
         pod_service_type = pod_data['labels'].get('component', None)
         pod_service_name = pod_data['labels'].get('chart', None)
         pod_namespace = pod_data['namespace']
