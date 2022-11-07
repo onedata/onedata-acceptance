@@ -73,8 +73,8 @@ def create_lambda_using_gui(selenium, browser_id, oz_page, lambda_name,
     assert_lambda_exists(selenium, browser_id, oz_page, lambda_name)
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) adds (?P<ordinal>1st|2nd|3rd|4th) '
-               '(?P<option>argument|result) '
+@wt(parsers.re('user of (?P<browser_id>.*) adds '
+               '(?P<ordinal>|1st |2nd |3rd |4th )(?P<option>argument|result) '
                'named "(?P<name>.*)" of "(?P<type>.*)" type'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def add_argument_result_into_lambda_form(selenium, browser_id, oz_page, popups,
@@ -87,7 +87,8 @@ def add_argument_result_into_lambda_form(selenium, browser_id, oz_page, popups,
     button = getattr(subpage, button_name)
     button.click()
 
-    bracket_name = 'bracket_' + ordinal
+    ordinal = '1st' if not ordinal else ordinal
+    bracket_name = 'bracket_' + ordinal.strip()
     object_bracket = getattr(subpage, bracket_name)
 
     label_name = option + '_name'

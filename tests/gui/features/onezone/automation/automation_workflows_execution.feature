@@ -9,7 +9,7 @@ Feature: Workflows execution
             owner: space-owner-user
             providers:
                 - oneprovider-1:
-                    storage: posix
+                    storage: s3
                     size: 10000000
             storage:
                 defaults:
@@ -17,6 +17,7 @@ Feature: Workflows execution
                 directory tree:
                     - dir1:
                       - file1: 100
+                    - file2: 100
     And initial inventories configuration in "onezone" Onezone service:
         inventory1:
             owner: space-owner-user
@@ -107,7 +108,7 @@ Feature: Workflows execution
     And user of browser clicks "Run workflow" in the automation tab bar
     And user of browser chooses to run 1st revision of "Workflow1" workflow
     And user of browser chooses "dir1" file as initial value for workflow in "Select files" modal
-    And user off browser confirms workflow execution by clicking "Run workflow" button
+    And user of browser confirms workflow execution by clicking "Run workflow" button
     And user of browser waits for all workflows to start
     And user of browser waits for all workflows to finish
     And user of browser clicks on first executed workflow
@@ -122,9 +123,9 @@ Scenario: User creates checksum-counting-oneclient workflow through gui and exec
     # User manually creates inout lambda
     And user of browser uses "Add new lambda" button from menu bar in lambdas subpage
     And user of browser writes "checksum-counting-oneclient" into lambda name text field
-    And user of browser writes "docker.onedata.org/checksum-counting-oneclient:v7" into docker image text field
-    And user of browser unchecks lambdas "Mount space" toggle
-    And user of browser adds 1st argument named "item" of "File" type
+    And user of browser writes "docker.onedata.org/checksum-counting-oneclient:v8" into docker image text field
+    And user of browser unchecks lambdas "Read only" toggle
+    And user of browser adds 1st argument named "file" of "File" type
     And user of browser adds 2nd argument named "metadata_key" of "String" type
     And user of browser adds 3rd argument named "algorithm" of "String" type
     And user of browser adds 1st result named "result" of "Object" type
@@ -159,7 +160,7 @@ Scenario: User creates checksum-counting-oneclient workflow through gui and exec
     And user of browser clicks on "Add parallel box" button in the middle of "Lane1" lane
     And user of browser clicks "Create task" button in empty parallel box in "Lane1" lane
     And user of browser chooses 1st revision of "checksum-counting-oneclient" lambda to add to workflow
-    And user of browser chooses "Iterated item" in value builder dropdown menu in "item" argument in task creation page
+    And user of browser chooses "Iterated item" in value builder dropdown menu in "file" argument in task creation page
     And user of browser chooses "Constant value" in value builder dropdown menu in "metadata_key" argument in task creation page
     And user of browser writes ""md5_key"" into json editor bracket in "metadata_key" argument in task creation page
     And user of browser chooses "Constant value" in value builder dropdown menu in "algorithm" argument in task creation page
@@ -172,7 +173,8 @@ Scenario: User creates checksum-counting-oneclient workflow through gui and exec
     And user of browser clicks on "Add parallel box" button below Parallel box in "Lane1" lane
     And user of browser clicks "Create task" button in empty parallel box in "Lane1" lane
     And user of browser chooses 1st revision of "checksum-counting-oneclient" lambda to add to workflow
-    And user of browser chooses "Iterated item" in value builder dropdown menu in "item" argument in task creation page
+    And user of browser writes "Second lambda task" into name text field in task creation subpage
+    And user of browser chooses "Iterated item" in value builder dropdown menu in "file" argument in task creation page
     And user of browser chooses "Constant value" in value builder dropdown menu in "metadata_key" argument in task creation page
     And user of browser writes ""sha256_key"" into json editor bracket in "metadata_key" argument in task creation pageF
     And user of browser chooses "Constant value" in value builder dropdown menu in "algorithm" argument in task creation page
@@ -186,7 +188,7 @@ Scenario: User creates checksum-counting-oneclient workflow through gui and exec
     And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
     And user of browser clicks "Run workflow" in the automation tab bar
     And user of browser chooses to run 1st revision of "Workflow1" workflow
-    And user of browser chooses "dir1" file as initial value for workflow in "Select files" modal
+    And user of browser chooses "file2" file as initial value for workflow in "Select files" modal
     And user of browser confirms workflow execution by clicking "Run workflow" button
     And user of browser waits for all workflows to start
     And user of browser waits for all workflows to finish

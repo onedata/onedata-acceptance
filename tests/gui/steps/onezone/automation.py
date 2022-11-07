@@ -158,12 +158,12 @@ def write_text_into_lambda_form(selenium, browser_id,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>checks|unchecks) '
-               'lambdas "Mount space" toggle'))
+               'lambdas "(?P<toggle>Mount space|Read only)" toggle'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def switch_toggle_in_lambda_form(selenium, browser_id, oz_page, option):
+def switch_toggle_in_lambda_form(selenium, browser_id, oz_page, toggle):
     subpage = oz_page(selenium[browser_id])['automation'].lambdas_page.form
-
-    getattr(subpage.mount_space_toggle, option[:-1])
+    toggle = transform(toggle) + "_toggle"
+    getattr(subpage, toggle).click()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) confirms (creating new|edition of) '
