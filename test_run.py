@@ -24,7 +24,7 @@ from bamboos.docker.environment import docker
 TEST_RUNNER_CONTAINER_NAME = 'test-runner'
 
 
-def get_images_option(test_type='oneclient', oz_image=None, op_image=None,
+def get_images_option(test_type='oneclient', env_file_name=None, oz_image=None, op_image=None,
                       rest_cli_image=None, oc_image=None, pull=True):
     if test_type == 'upgrade':
         # in upgrade tests images are provided in test config and manually set are ignored
@@ -36,6 +36,12 @@ def get_images_option(test_type='oneclient', oz_image=None, op_image=None,
 
     if test_type in ['oneclient', 'mixed', 'onedata_fs', 'performance']:
         add_image_to_images_cfg(oc_image, 'oneclient', '--oc-image', images_cfg, pull)
+    elif test_type == 'gui' and env_file_name:
+        env_file_path = f'tests/gui/environments/{env_file_name}.yaml'
+        with open(env_file_path, 'r') as f:
+            if yaml.load(f, yaml.Loader).get('openfaas', False):
+                add_image_to_images_cfg(oc_image, 'oneclient', '--oc-image', images_cfg, pull)
+
     return ' + '.join(images_cfg)
 
 
@@ -249,6 +255,7 @@ sys.exit(ret)
 
     images_opt = get_images_option(
         args.test_type,
+        args.env_file,
         oz_image=args.oz_image,
         op_image=args.op_image,
         oc_image=args.oc_image,
