@@ -46,8 +46,8 @@ class LambdaAddForm(PageObject):
     lambda_name = WebItem('.name-field .text-like-field', cls=InputBox)
     docker_image = WebItem('.dockerImage-field .text-like-field', cls=InputBox)
 
-    mount_space_toggle = Toggle('.mountSpace-field .one-way-toggle-track')
-    read_only_toggle = Toggle('.readonly-field .one-way-toggle-track')
+    mount_space_toggle = Toggle('.mountSpace-field .form-control')
+    read_only_toggle = Toggle('.readonly-field .form-control')
 
     argument = WebItem('.arguments-field ', cls=LambdaArguments)
     result = WebItem('.results-field ', cls=LambdaResults)

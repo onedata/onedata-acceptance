@@ -160,10 +160,10 @@ def write_text_into_lambda_form(selenium, browser_id,
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>checks|unchecks) '
                'lambdas "(?P<toggle>Mount space|Read only)" toggle'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def switch_toggle_in_lambda_form(selenium, browser_id, oz_page, toggle):
+def switch_toggle_in_lambda_form(selenium, browser_id, oz_page, option, toggle):
     subpage = oz_page(selenium[browser_id])['automation'].lambdas_page.form
     toggle = transform(toggle) + "_toggle"
-    getattr(subpage, toggle).click()
+    getattr(getattr(subpage, toggle), option[:-1])()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) confirms (creating new|edition of) '
@@ -491,8 +491,8 @@ def add_lambda_revision_to_workflow(selenium, browser_id, oz_page, lambda_name,
                ' (?P<position>below|above) Parallel box'
                ' in "(?P<lane_name>.*?)" lane'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def add_parallel_box_to_lane(selenium, browser_id, oz_page, lane_name,
-                             position):
+def add_another_parallel_box_to_lane(selenium, browser_id, oz_page, lane_name,
+                                     position):
     page = oz_page(selenium[browser_id])['automation']
     workflow_visualiser = page.workflows_page.workflow_visualiser
     lane = workflow_visualiser.workflow_lanes[lane_name]
