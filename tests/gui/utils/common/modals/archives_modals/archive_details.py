@@ -1,4 +1,4 @@
-"""Utils and fixtures to facilitate operations on archive properties modal.
+"""Utils and fixtures to facilitate operations on archive details modal.
 """
 
 __author__ = "Katarzyna Such"
@@ -11,7 +11,7 @@ from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core.web_elements import Input, Label, Button
 
 
-class ArchiveProperties(Modal):
+class ArchiveDetails(Modal):
     archive_id = Input('.archiveId-field .clipboard-input')
     description = Input('.description-field .form-control')
     layout = Label('.layout-field .field-component')
@@ -22,7 +22,7 @@ class ArchiveProperties(Modal):
     base_archive = Label('.baseArchiveInfo-field .field-component')
     preserved_callback_url = Input('.preservedCallback-field .clipboard-input')
     deleted_callback_url = Input('.deletedCallback-field .clipboard-input')
-    close = Button('.close-btn')
+    x = Button('.close')
 
     def __str__(self):
-        return 'Archive properties'
+        return 'Archive details'

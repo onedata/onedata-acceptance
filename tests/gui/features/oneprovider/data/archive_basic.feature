@@ -124,12 +124,12 @@ Feature: Basic archives operations
     And user of browser copies name of base archive for archive with description "first archive"
     And user of browser clicks on menu for archive with description: "first archive" in archive browser
     And user of browser clicks "Properties" option in data row menu in archive browser
-    Then user of browser sees archive ID in Archive properties modal
-    And user of browser sees archive description: "first archive" in Archive properties modal
-    And user of browser sees archive layout: "BagIt" in Archive properties modal
-    And user of browser sees that Create nested archives toggle is checked in Archive properties modal
-    And user of browser sees that Incremental toggle is checked in Archive properties modal
-    And user of browser sees that Include DIP toggle is checked in Archive properties modal
-    And user of browser sees that Follow symbolic link toggle is checked in Archive properties modal
-    And user of browser sees that base archive in Archive properties modal is the same as copied
+    Then user of browser sees archive ID in Archive details modal
+    And user of browser sees archive description: "first archive" in Archive details modal
+    And user of browser sees archive layout: "BagIt" in Archive details modal
+    And user of browser sees that Create nested archives toggle is checked in Archive details modal
+    And user of browser sees that Incremental toggle is checked in Archive details modal
+    And user of browser sees that Include DIP toggle is checked in Archive details modal
+    And user of browser sees that Follow symbolic link toggle is checked in Archive details modal
+    And user of browser sees that base archive in Archive details modal is the same as copied
 

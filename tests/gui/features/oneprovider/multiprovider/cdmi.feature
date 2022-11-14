@@ -31,7 +31,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And user of browser clicks on menu for "20B-0.txt" file in file browser
     And user of browser clicks "Data distribution" option in data row menu in file browser
 
-    And user of browser sees that "File details" modal is opened on "Data distribution" tab
+    And user of browser sees that "File details" modal is opened on "Distribution" tab
     And user of browser sees that chunk bar for provider "oneprovider-1" is entirely filled
 
     And user of browser sees that chunk bar for provider "oneprovider-2" is entirely empty
@@ -44,7 +44,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
 
     And user of browser clicks on menu for "20B-0.txt" file in file browser
     And user of browser clicks "Data distribution" option in data row menu in file browser
-    And user of browser sees that "File details" modal is opened on "Data distribution" tab
+    And user of browser sees that "File details" modal is opened on "Distribution" tab
     Then user of browser sees (0, 20) chunk(s) for provider "oneprovider-1" in chunk bar
     And user of browser sees (20, 24) chunk(s) for provider "oneprovider-2" in chunk bar
 
@@ -61,7 +61,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And user of browser sees that item named "20B-0.txt" is of 20 B size in file browser
     And user of browser clicks on menu for "20B-0.txt" file in file browser
     And user of browser clicks "Data distribution" option in data row menu in file browser
-    And user of browser sees that "File details" modal is opened on "Data distribution" tab
+    And user of browser sees that "File details" modal is opened on "Distribution" tab
     And user of browser sees that chunk bar for provider "oneprovider-1" is of 20 B size
     And user of browser sees that chunk bar for provider "oneprovider-1" is entirely filled
     And user of browser clicks on "X" button in modal "File details"
@@ -74,7 +74,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And user of browser sees that item named "20B-0.txt" is of 24 B size in file browser
     And user of browser clicks on menu for "20B-0.txt" file in file browser
     And user of browser clicks "Data distribution" option in data row menu in file browser
-    And user of browser sees that "File details" modal is opened on "Data distribution" tab
+    And user of browser sees that "File details" modal is opened on "Distribution" tab
     Then user of browser sees that chunk bar for provider "oneprovider-1" is of 24 B size
     And user of browser sees that chunk bar for provider "oneprovider-1" is entirely filled
 
@@ -89,7 +89,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
     And user of browser sees file browser in files tab in Oneprovider page
     And user of browser clicks on menu for "20B-0.txt" file in file browser
     And user of browser clicks "Data distribution" option in data row menu in file browser
-    And user of browser sees that "File details" modal is opened on "Data distribution" tab
+    And user of browser sees that "File details" modal is opened on "Distribution" tab
     And user of browser sees that chunk bar for provider "oneprovider-1" is entirely filled
     And user of browser sees that chunk bar for provider "oneprovider-2" is entirely empty
     And user of browser clicks on "X" button in modal "File details"
@@ -101,7 +101,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
 
     And user of browser clicks on menu for "20B-0.txt" file in file browser
     And user of browser clicks "Data distribution" option in data row menu in file browser
-    And user of browser sees that "File details" modal is opened on "Data distribution" tab
+    And user of browser sees that "File details" modal is opened on "Distribution" tab
     And user of browser sees that chunk bar for provider "oneprovider-1" is entirely filled
     Then user of browser sees (10, 20) chunk(s) for provider "oneprovider-2" in chunk bar
 
@@ -117,7 +117,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
 
     And user of browser clicks on menu for "20B-0.txt" file in file browser
     And user of browser clicks "Data distribution" option in data row menu in file browser
-    And user of browser sees that "File details" modal is opened on "Data distribution" tab
+    And user of browser sees that "File details" modal is opened on "Distribution" tab
     And user of browser sees that chunk bar for provider "oneprovider-1" is entirely filled
     And user of browser clicks on "X" button in modal "File details"
 
@@ -128,7 +128,7 @@ Feature: Oneprovider functionality using multiple providers and cdmi service
 
     And user of browser clicks on menu for "20B-0.txt" file in file browser
     And user of browser clicks "Data distribution" option in data row menu in file browser
-    And user of browser sees that "File details" modal is opened on "Data distribution" tab
+    And user of browser sees that "File details" modal is opened on "Distribution" tab
     Then user of browser sees [(0, 20), (40, 44)] chunk(s) for provider "oneprovider-1" in chunk bar
 
     And user of browser clicks on "X" button in modal "File details"

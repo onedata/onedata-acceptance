@@ -64,7 +64,8 @@ class DetailsModal(Modal):
     file_id = Button('.file-info-row-cdmi-object-id .clipboard-btn')
     size_statistics = WebItem('.modal-content', cls=SizeStatistics)
     hardlinks = WebItem('.modal-content', cls=Hardlinks)
-    navigation = WebItemsSequence('.nav-tabs-file-info li', cls=NavigationTab)
+    navigation = WebItemsSequence('.nav-tabs-file-info .tab-bar-li',
+                                  cls=NavigationTab)
     active_tab = Label('.nav-link.active')
 
     qos = WebItem('.modal-content', cls=QoSTab)
