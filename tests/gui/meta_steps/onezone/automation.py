@@ -62,6 +62,44 @@ def upload_and_assert_workflow_to_inventory_using_gui(selenium, browser_id,
                   'configuration:\n{config}'))
 def create_lambda_manually(browser_id, config, selenium, oz_page, popups):
 
+    """Create lambda according to given config.
+
+        Config format given in yaml is as follow:
+            name: lambda_name
+            docker image: docker image
+            mount space: True/False                 ---> optional
+            read-only: True/False                   ---> optional
+            arguments:
+              - name: argument_name
+                type: argument_type
+              - name: 2nd_argument_name             ---> optional
+                type: 2nd_argument_type
+            results:                                ---> optional
+              - name: result_name
+                type: result_type
+
+
+        Example configuration:
+
+            name: "checksum-counting-oneclient"
+            docker image: "docker.onedata.org/checksum-counting-oneclient:v8"
+            read-only: False
+            arguments:
+              - name: "file"
+                type: File
+              - name: "metadata_key"
+                type: String
+              - name: "algorithm"
+                type: String
+            results:
+              - name: "result"
+                type: Object
+    """
+    _create_lambda_manually(browser_id, config, selenium, oz_page, popups)
+
+
+def _create_lambda_manually(browser_id, config, selenium, oz_page, popups):
+
     button = 'Add new lambda'
     name_field = 'lambda name'
     docker_field = 'docker image'
@@ -90,17 +128,22 @@ def create_lambda_manually(browser_id, config, selenium, oz_page, popups):
                                  read_only_option, read_only_toggle)
     switch_toggle_in_lambda_form(selenium, browser_id, oz_page,
                                  mount_space_option, mount_space_toggle)
+
+    def ordinal(n):
+        return "%d%s" % (n, "tsnrhtdd"[(n // 10 % 10 != 1) * (n % 10 < 4) * n
+                                       % 10::4])
+
     if arguments:
-        for ordinal, arg in arguments.items():
+        for i in range(len(arguments)):
             add_argument_result_into_lambda_form(
                 selenium, browser_id, oz_page, popups, argument_option,
-                arg['name'], arg['type'], ordinal)
+                arguments[i]['name'], arguments[i]['type'], ordinal(i+1))
 
     if results:
-        for ordinal, arg in results.items():
+        for i in range(len(results)):
             add_argument_result_into_lambda_form(
                 selenium, browser_id, oz_page, popups, result_option,
-                arg['name'], arg['type'], ordinal)
+                results[i]['name'], results[i]['type'], ordinal(i+1))
 
     confirm_lambda_creation_or_edition(selenium, browser_id, oz_page, option)
 
@@ -108,8 +151,28 @@ def create_lambda_manually(browser_id, config, selenium, oz_page, popups):
 @wt(parsers.re('user of (?P<browser_id>.*) creates (input|output) store for '
                'workflow "(?P<workflow>.*)" with following configuration:'
                r'\n(?P<config>(.|\s)*)'))
-def create_input_store_for_workflow(browser_id, config, selenium, oz_page,
-                                    modals, popups):
+def create_store_for_workflow(browser_id, config, selenium, oz_page, modals,
+                              popups):
+    """Create store according to given config.
+
+        Config format given in yaml is as follow:
+            name: store_name
+            type dropdown: type                     ---> optional
+            data type dropdown: data_type
+            user input: True/False                  ---> optional
+
+        Example configuration:
+
+            name: "output"
+            type dropdown: List
+            data type dropdown: Object
+    """
+    _create_store_for_workflow(browser_id, config, selenium, oz_page, modals,
+                               popups)
+
+
+def _create_store_for_workflow(browser_id, config, selenium, oz_page, modals,
+                               popups):
     data = yaml.load(config)
     name = data['name']
 
@@ -147,6 +210,46 @@ def create_task_using_previously_created_lambda(browser_id, config, selenium,
                                                 oz_page, lane_name,
                                                 lambda_name, ordinal, popups,
                                                 which):
+
+    """Create task using lambda according to given config.
+
+        Config format given in yaml is as follow:
+        where parallel box: "below"/"above"         ---> optional
+        task name: task_name                        ---> optional
+        arguments:                                  ---> optional
+            task_arguments
+        results:                                    ---> optional
+            task_results
+
+
+        Example configuration:
+
+            where parallel box: "below"
+            task name: "Second lambda task"
+            arguments:
+                file:
+                  value builder: "Iterated item"
+                metadata_key:
+                  value builder: "Constant value"
+                  value: "sha256_key"
+                algorithm:
+                  value builder: "Constant value"
+                  value: "sha256"
+            results:
+                result:
+                  target store: "output-store"
+    """
+
+    _create_task_using_previously_created_lambda(browser_id, config, selenium,
+                                                 oz_page, lane_name,
+                                                 lambda_name, ordinal, popups,
+                                                 which)
+
+
+def _create_task_using_previously_created_lambda(browser_id, config, selenium,
+                                                 oz_page, lane_name,
+                                                 lambda_name, ordinal, popups,
+                                                 which):
     arg_type = 'argument'
     res_type = 'result'
     option = 'task'
@@ -191,7 +294,8 @@ def create_task_using_previously_created_lambda(browser_id, config, selenium,
 
 @wt(parsers.parse('user of {browser_id} executes {ordinal} revision of '
                   '"{workflow}", using "{item}" as initial value, in '
-                  '"{space}" space'))
+                  '"{space}" space and waits extended time for workflow to '
+                  'finish'))
 def execute_workflow(browser_id, selenium, oz_page, space, op_container,
                      ordinal, workflow, modals, item):
     spaces = 'spaces'

@@ -61,13 +61,11 @@ Feature: Workflows execution
         docker image: "docker.onedata.org/in-out:v1"
         mount space: False
         arguments:
-            1st:
-              name: "data"
-              type: Object
+          - name: "data"
+            type: Object
         results:
-            1st:
-              name: "data"
-              type: Object
+           - name: "data"
+             type: Object
 
     And user of browser sees "inout" in lambdas list in inventory lambdas subpage
 
@@ -102,12 +100,12 @@ Feature: Workflows execution
     And user of browser writes "Workflow1_revision1" in description textfield in workflow Details tab
     And user of browser saves workflow edition by clicking "Save" button from menu bar
 
-    And user of browser executes 1st revision of "Workflow1", using "dir1" as initial value, in "space1" space
+    And user of browser executes 1st revision of "Workflow1", using "dir1" as initial value, in "space1" space and waits extended time for workflow to finish
     And user of browser sees "Finished" status in status bar in workflow visualizer
     Then user of browser sees that content of "input" store is the same as content of "output" store
 
 
-Scenario: User creates checksum-counting-oneclient workflow through gui and executes it
+Scenario: User creates checksum-counting-oneclient workflow through GUI and executes it
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" lambdas subpage
 
@@ -116,19 +114,15 @@ Scenario: User creates checksum-counting-oneclient workflow through gui and exec
         docker image: "docker.onedata.org/checksum-counting-oneclient:v8"
         read-only: False
         arguments:
-            1st:
-              name: "file"
-              type: File
-            2nd:
-              name: "metadata_key"
-              type: String
-            3rd:
-              name: "algorithm"
-              type: String
+          - name: "file"
+            type: File
+          - name: "metadata_key"
+            type: String
+          - name: "algorithm"
+            type: String
         results:
-            1st:
-              name: "result"
-              type: Object
+          - name: "result"
+            type: Object
 
     And user of browser sees "checksum-counting-oneclient" in lambdas list in inventory lambdas subpage
 
@@ -185,5 +179,5 @@ Scenario: User creates checksum-counting-oneclient workflow through gui and exec
               target store: "output-store"
     And user of browser saves workflow edition by clicking "Save" button from menu bar
 
-    And user of browser executes 1st revision of "Workflow1", using "file2" as initial value, in "space1" space
+    And user of browser executes 1st revision of "Workflow1", using "file2" as initial value, in "space1" space and waits extended time for workflow to finish
     Then user of browser sees "Finished" status in status bar in workflow visualizer
