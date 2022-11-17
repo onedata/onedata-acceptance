@@ -366,7 +366,8 @@ ALL       ALL = (ALL) NOPASSWD: ALL
     if env_errors_exists(report):
         ret = 1
 
-    shutil.rmtree(tmp_user_config_dir)
+    if 'tmp_user_config_dir' in locals():
+        shutil.rmtree(tmp_user_config_dir)
 
     sys.exit(ret)
 

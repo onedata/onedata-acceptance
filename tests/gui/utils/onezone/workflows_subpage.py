@@ -18,8 +18,11 @@ class Task(Element):
 
 
 class ParallelBox(Element):
-    add_task_button = Button('.create-task-action-trigger')
     task_list = WebItemsSequence('.box-elements .draggable-task', cls=Task)
+
+
+class EmptyParallelBox(Element):
+    add_task_button = Button('.create-task-action-trigger')
 
 
 class WorkflowLane(Element):
@@ -27,6 +30,14 @@ class WorkflowLane(Element):
     add_parallel_box_button = Button('.create-parallel-box-action-trigger')
     parallel_box = WebItem('.workflow-visualiser-parallel-box ',
                            cls=ParallelBox)
+
+    empty_parallel_box = WebItem('.workflow-visualiser-parallel-box '
+                                 '.space-position-empty', cls=EmptyParallelBox)
+
+    add_parallel_box_above = Button('.space-position-start '
+                                    '.create-parallel-box-action-trigger')
+    add_parallel_box_below = Button('.space-position-end '
+                                    '.create-parallel-box-action-trigger')
 
 
 class Store(Element):
@@ -55,11 +66,13 @@ class NavigationTab(Element):
 class Arguments(Element):
     argument_name = id = Label('.control-label')
     value_builder_dropdown = WebElement('.valueBuilderType-field')
+    json_editor = Input('.json-editor-textarea')
 
 
 class Results(Element):
     result_name = id = Label('.control-label')
     target_store_dropdown = WebElement('.targetStore-field')
+    json_editor = Input('.json-editor-textarea')
 
 
 class TaskAddForm(PageObject):
@@ -108,7 +121,7 @@ class WorkflowsPage(PageObject):
     revision_details = WebItem('.revision-details-form', cls=RevisionDetails)
 
     workflow_creator = WebItem('.content-atm-inventories-workflows-creator-view'
-                               ,cls=WorkflowCreator)
+                               , cls=WorkflowCreator)
 
     task_form = WebItem('.task-form-container', cls=TaskAddForm)
 
