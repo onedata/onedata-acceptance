@@ -1073,7 +1073,7 @@ Chrome shares handle service tests:
       - make ENV_FILE=1oz_1op_handle_proxy_mock SUITE=test_shares_handle_service BROWSER=Chrome TIMEOUT=600 test_gui_pkg
 Chrome storage sync charts:
   <<: *acceptance-tests-in-chrome-job
-  key: CSSC
+  key: CSSCT
   tasks:
   - script: *clear-env
   - script: *restart-minikube
