@@ -5,6 +5,9 @@ spaces: false
 
 openfaas: true
 
+storages:
+  - s3
+
 onezone:
   batchConfig:
     createUsers: false
