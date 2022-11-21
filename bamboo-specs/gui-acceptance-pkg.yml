@@ -11,8 +11,6 @@ variables:
   # OC_IMAGE_OVERRIDE: ''
   # OP_IMAGE_OVERRIDE: ''
   # OZ_IMAGE_OVERRIDE: ''
-  version_major: '2'
-  version_minor: '1'
 repositories:
 - onedata-acceptance:
     scope: global
@@ -30,6 +28,7 @@ notifications:
   - users:
     - plgjliput
 labels: []
+triggers: []
 dependencies:
   require-all-stages-passing: true
   enabled-for-branches: true
@@ -53,6 +52,7 @@ stages:
     manual: false
     final: false
     jobs:
+    - _Codetag Tracker
     - Chrome POSIX tests
     - Chrome POSIX tests multiuser
     - Chrome QoS storage
@@ -69,20 +69,14 @@ stages:
     - Chrome onepanel members tests
     - Chrome onepanel two hosts deployment tests
     - Chrome oneprovider ACL basic
-    # - Chrome oneprovider ACL directories
-    # - Chrome oneprovider ACL directories multi
     - Chrome oneprovider ACL directories privileges
     - Chrome oneprovider ACL directories privileges create
     - Chrome oneprovider ACL directories privileges metadata
     - Chrome oneprovider ACL directories privileges remove
-    # - Chrome oneprovider ACL directories privileges remove or create directory
     - Chrome oneprovider ACL files
     - Chrome oneprovider ACL files metadata
-    # - Chrome oneprovider ACL files multi
-    # - Chrome oneprovider ACL multi metadata
     - Chrome oneprovider ACL remove file
     - Chrome oneprovider ACL subdirectories
-    # - Chrome oneprovider ACL subdirectories multi
     - Chrome oneprovider ACL subdirectories remove
     - Chrome oneprovider ACL subfiles
     - Chrome oneprovider ACL subjects
@@ -90,21 +84,18 @@ stages:
     - Chrome oneprovider archives recall
     - Chrome oneprovider archives tests
     - Chrome oneprovider atm workflow execution tests
+    - Chrome oneprovider data tab files
     - Chrome oneprovider data tab tests
     - Chrome oneprovider datasets privileges
     - Chrome oneprovider datasets tests
-    # - Chrome oneprovider groups multiuser tests
-    # - Chrome oneprovider groups tests
     - Chrome oneprovider hardlinks
-    # - Chrome oneprovider hardlinks and symlinks
-    # - Chrome oneprovider spaces
     - Chrome oneprovider symlinks
     - Chrome oneprovider upload tests
     - Chrome onezone automations tests
     - Chrome onezone basic tests
     - Chrome onezone data discovery helpers
     - Chrome onezone data discovery querying
-    - Chrome onezone data discovery test
+    - Chrome onezone data discovery tests
     - Chrome onezone groups basic tests
     - Chrome onezone groups multiuser single group
     - Chrome onezone groups multiuser tests
@@ -118,7 +109,6 @@ stages:
     - Chrome onezone invite tokens with caveats
     - Chrome onezone invite tokens with consumer caveats
     - Chrome onezone providers basic tests
-    # - Chrome onezone providers sync test
     - Chrome onezone spaces basic tests
     - Chrome onezone spaces memberships privileges
     - Chrome onezone spaces memberships privileges data
@@ -128,17 +118,16 @@ stages:
     - Chrome public shares tests
     - Chrome qos basic
     - Chrome shares basic tests
+    - Chrome shares handle service tests
     - Chrome storage sync charts
-    # - Chrome storage sync charts tests
     - Chrome storage sync tests
     - Chrome transfers cancel
     - Chrome transfers directories
     - Chrome transfers files
     - Chrome transfers multi browser tests
-    # - Chrome transfers tests
-Chrome POSIX tests: &acceptance-tests-in-chrome-job
-  key: CPT
-  other:
+_Codetag Tracker:
+  key: CDTR
+  other: &common-opts
     clean-working-dir: true
     all-other-apps:
       custom:
@@ -147,16 +136,6 @@ Chrome POSIX tests: &acceptance-tests-in-chrome-job
           useLocalLicenseKey: 'true'
         buildHangingConfig.enabled: 'false'
   tasks:
-  - script: &clear-env
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - curl ${bamboo.OnedataFinalTasksURL} | bash -
-      description: Clear env
-  - script: &restart-minikube
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - sudo ${HOME}/restart_minikube.sh
-      description: Restart minikube
   - checkout: &checkout-default-repository
       path: onedata
       force-clean-build: 'true'
@@ -170,6 +149,32 @@ Chrome POSIX tests: &acceptance-tests-in-chrome-job
         make submodules
       working-dir: onedata
       description: Init submodules
+  - script:
+      interpreter: BINSH_OR_CMDEXE
+      working-dir: onedata-acceptance
+      scripts:
+      - make codetag-tracker BRANCH=${bamboo.planRepository.branchName}
+      description: Codetag Tracker
+  requirements: &requirements
+  - kubeadm
+  - onedata
+  artifact-subscriptions: []
+Chrome POSIX tests: &acceptance-tests-in-chrome-job
+  key: CPT
+  other: *common-opts
+  tasks:
+  - script: &clear-env
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - curl ${bamboo.OnedataFinalTasksURL} | bash -
+      description: Clear env
+  - script: &restart-minikube
+      interpreter: BINSH_OR_CMDEXE
+      scripts:
+      - sudo ${HOME}/restart_minikube.sh
+      description: Restart minikube
+  - checkout: *checkout-default-repository
+  - script: *init-submodules
   - script: &download-artifacts
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -219,9 +224,7 @@ Chrome POSIX tests: &acceptance-tests-in-chrome-job
     pattern: docker-dev-build-list.json
     shared: false
     required: false
-  requirements:
-  - kubeadm
-  - onedata
+  requirements: *requirements
   artifact-subscriptions: []
 Chrome POSIX tests multiuser:
   <<: *acceptance-tests-in-chrome-job
@@ -418,32 +421,6 @@ Chrome oneprovider ACL basic:
       <<: *run-selenium-tests
       scripts:
       - make SUITE=test_oneprovider_acl_basic BROWSER=Chrome TIMEOUT=600 test_gui_pkg
-# Chrome oneprovider ACL directories:
-#   <<: *acceptance-tests-in-chrome-job
-#   key: COAD
-#   tasks:
-#   - script: *clear-env
-#   - script: *restart-minikube
-#   - checkout: *checkout-default-repository
-#   - script: *init-submodules
-#   - script: *download-artifacts
-#   - script:
-#       <<: *run-selenium-tests
-#       scripts:
-#       - make SUITE=test_oneprovider_acl_dir BROWSER=Chrome TIMEOUT=600 test_gui_pkg
-# Chrome oneprovider ACL directories multi:
-#   <<: *acceptance-tests-in-chrome-job
-#   key: COADM
-#   tasks:
-#   - script: *clear-env
-#   - script: *restart-minikube
-#   - checkout: *checkout-default-repository
-#   - script: *init-submodules
-#   - script: *download-artifacts
-#   - script:
-#       <<: *run-selenium-tests
-#       scripts:
-#       - make SUITE=test_oneprovider_acl_dir_multi BROWSER=Chrome TIMEOUT=600 test_gui_pkg
 Chrome oneprovider ACL directories privileges create:
   <<: *acceptance-tests-in-chrome-job
   key: COADPC
@@ -470,19 +447,6 @@ Chrome oneprovider ACL directories privileges metadata:
       <<: *run-selenium-tests
       scripts:
       - make SUITE=test_oneprovider_acl_dir_privileges_metadata BROWSER=Chrome TIMEOUT=600 test_gui_pkg
-# Chrome oneprovider ACL directories privileges remove or create directory:
-#   <<: *acceptance-tests-in-chrome-job
-#   key: COADPRCD
-#   tasks:
-#   - script: *clear-env
-#   - script: *restart-minikube
-#   - checkout: *checkout-default-repository
-#   - script: *init-submodules
-#   - script: *download-artifacts
-#   - script:
-#       <<: *run-selenium-tests
-#       scripts:
-#       - make SUITE=test_oneprovider_acl_dir_privileges_remove_create BROWSER=Chrome TIMEOUT=600 test_gui_pkg
 Chrome oneprovider ACL directories privileges remove:
   <<: *acceptance-tests-in-chrome-job
   key: COADPR
@@ -535,32 +499,6 @@ Chrome oneprovider ACL files metadata:
       <<: *run-selenium-tests
       scripts:
       - make SUITE=test_oneprovider_acl_files_metadata BROWSER=Chrome TIMEOUT=600 test_gui_pkg
-# Chrome oneprovider ACL files multi:
-#   <<: *acceptance-tests-in-chrome-job
-#   key: COAFM
-#   tasks:
-#   - script: *clear-env
-#   - script: *restart-minikube
-#   - checkout: *checkout-default-repository
-#   - script: *init-submodules
-#   - script: *download-artifacts
-#   - script:
-#       <<: *run-selenium-tests
-#       scripts:
-#       - make SUITE=test_oneprovider_acl_files_multi BROWSER=Chrome TIMEOUT=600 test_gui_pkg
-# Chrome oneprovider ACL multi metadata:
-#   <<: *acceptance-tests-in-chrome-job
-#   key: COAMM
-#   tasks:
-#   - script: *clear-env
-#   - script: *restart-minikube
-#   - checkout: *checkout-default-repository
-#   - script: *init-submodules
-#   - script: *download-artifacts
-#   - script:
-#       <<: *run-selenium-tests
-#       scripts:
-#       - make SUITE=test_oneprovider_acl_multi_metadata BROWSER=Chrome TIMEOUT=600 test_gui_pkg
 Chrome oneprovider ACL remove file:
   <<: *acceptance-tests-in-chrome-job
   key: COARF
@@ -587,19 +525,6 @@ Chrome oneprovider ACL subdirectories:
       <<: *run-selenium-tests
       scripts:
       - make SUITE=test_oneprovider_acl_subdir BROWSER=Chrome TIMEOUT=600 test_gui_pkg
-# Chrome oneprovider ACL subdirectories multi:
-#   <<: *acceptance-tests-in-chrome-job
-#   key: COASM
-#   tasks:
-#   - script: *clear-env
-#   - script: *restart-minikube
-#   - checkout: *checkout-default-repository
-#   - script: *init-submodules
-#   - script: *download-artifacts
-#   - script:
-#       <<: *run-selenium-tests
-#       scripts:
-#       - make SUITE=test_oneprovider_acl_subdir_multi BROWSER=Chrome TIMEOUT=600 test_gui_pkg
 Chrome oneprovider ACL subdirectories remove:
   <<: *acceptance-tests-in-chrome-job
   key: COASD
@@ -691,6 +616,19 @@ Chrome oneprovider atm workflow execution tests:
       <<: *run-selenium-tests
       scripts:
       - make SUITE=test_oneprovider_atm_workflows_execution ENV_FILE=1oz_1op_openfaas BROWSER=Chrome TIMEOUT=600 test_gui_pkg
+Chrome oneprovider data tab files:
+  <<: *acceptance-tests-in-chrome-job
+  key: CODTF
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout-default-repository
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script:
+      <<: *run-selenium-tests
+      scripts:
+      - make SUITE=test_oneprovider_data_tab_files BROWSER=Chrome TIMEOUT=600 test_gui_pkg
 Chrome oneprovider data tab tests:
   <<: *acceptance-tests-in-chrome-job
   key: CODTT
@@ -730,32 +668,6 @@ Chrome oneprovider datasets tests:
       <<: *run-selenium-tests
       scripts:
       - make SUITE=test_oneprovider_datasets BROWSER=Chrome TIMEOUT=600 test_gui_pkg
-# Chrome oneprovider groups multiuser tests:
-#   <<: *acceptance-tests-in-chrome-job
-#   key: COGMT
-#   tasks:
-#   - script: *clear-env
-#   - script: *restart-minikube
-#   - checkout: *checkout-default-repository
-#   - script: *init-submodules
-#   - script: *download-artifacts
-#   - script:
-#       <<: *run-selenium-tests
-#       scripts:
-#       - make SUITE=test_oneprovider_groups_multiuser BROWSER=Chrome TIMEOUT=600 test_gui_pkg
-# Chrome oneprovider groups tests:
-#   <<: *acceptance-tests-in-chrome-job
-#   key: COGT
-#   tasks:
-#   - script: *clear-env
-#   - script: *restart-minikube
-#   - checkout: *checkout-default-repository
-#   - script: *init-submodules
-#   - script: *download-artifacts
-#   - script:
-#       <<: *run-selenium-tests
-#       scripts:
-#       - make SUITE=test_oneprovider_groups BROWSER=Chrome TIMEOUT=600 test_gui_pkg
 Chrome oneprovider hardlinks:
   <<: *acceptance-tests-in-chrome-job
   key: COH
@@ -769,32 +681,6 @@ Chrome oneprovider hardlinks:
       <<: *run-selenium-tests
       scripts:
       - make SUITE=test_oneprovider_hardlinks BROWSER=Chrome TIMEOUT=600 test_gui_pkg
-# Chrome oneprovider hardlinks and symlinks:
-#   <<: *acceptance-tests-in-chrome-job
-#   key: COHS
-#   tasks:
-#   - script: *clear-env
-#   - script: *restart-minikube
-#   - checkout: *checkout-default-repository
-#   - script: *init-submodules
-#   - script: *download-artifacts
-#   - script:
-#       <<: *run-selenium-tests
-#       scripts:
-#       - make SUITE=test_oneprovider_hardlinks_and_symlinks BROWSER=Chrome TIMEOUT=600 test_gui_pkg
-# Chrome oneprovider spaces:
-#   <<: *acceptance-tests-in-chrome-job
-#   key: COS
-#   tasks:
-#   - script: *clear-env
-#   - script: *restart-minikube
-#   - checkout: *checkout-default-repository
-#   - script: *init-submodules
-#   - script: *download-artifacts
-#   - script:
-#       <<: *run-selenium-tests
-#       scripts:
-#       - make SUITE=test_oneprovider_spaces BROWSER=Chrome TIMEOUT=600 test_gui_pkg
 Chrome oneprovider symlinks:
   <<: *acceptance-tests-in-chrome-job
   key: COSL
@@ -873,7 +759,7 @@ Chrome onezone data discovery querying:
       <<: *run-selenium-tests
       scripts:
       - make ENV_FILE=1oz_1op_elasticsearch SUITE=test_onezone_data_discovery_querying BROWSER=Chrome TIMEOUT=600 test_gui_pkg
-Chrome onezone data discovery test:
+Chrome onezone data discovery tests:
   <<: *acceptance-tests-in-chrome-job
   key: CODDT
   tasks:
@@ -1055,19 +941,6 @@ Chrome onezone providers basic tests:
       <<: *run-selenium-tests
       scripts:
       - make SUITE=test_onezone_providers_basic BROWSER=Chrome TIMEOUT=600 test_gui_pkg
-# Chrome onezone providers sync test:
-#   <<: *acceptance-tests-in-chrome-job
-#   key: COPST
-#   tasks:
-#   - script: *clear-env
-#   - script: *restart-minikube
-#   - checkout: *checkout-default-repository
-#   - script: *init-submodules
-#   - script: *download-artifacts
-#   - script:
-#       <<: *run-selenium-tests
-#       scripts:
-#       - make ENV_FILE=1oz_3op_providers_sync SUITE=test_onezone_providers_sync BROWSER=Chrome TIMEOUT=600 test_gui_pkg
 Chrome onezone spaces basic tests:
   <<: *acceptance-tests-in-chrome-job
   key: COSBT
@@ -1185,6 +1058,19 @@ Chrome shares basic tests:
       <<: *run-selenium-tests
       scripts:
       - make SUITE=test_shares_basic BROWSER=Chrome TIMEOUT=600 test_gui_pkg
+Chrome shares handle service tests:
+  <<: *acceptance-tests-in-chrome-job
+  key: CSSC
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout-default-repository
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script:
+      <<: *run-selenium-tests
+      scripts:
+      - make ENV_FILE=1oz_1op_handle_proxy_mock SUITE=test_shares_handle_service BROWSER=Chrome TIMEOUT=600 test_gui_pkg
 Chrome storage sync charts:
   <<: *acceptance-tests-in-chrome-job
   key: CSSC
@@ -1198,19 +1084,6 @@ Chrome storage sync charts:
       <<: *run-selenium-tests
       scripts:
       - make SUITE=test_storage_sync_charts BROWSER=Chrome TIMEOUT=600 test_gui_pkg
-# Chrome storage sync charts tests:
-#   <<: *acceptance-tests-in-chrome-job
-#   key: CSSCT
-#   tasks:
-#   - script: *clear-env
-#   - script: *restart-minikube
-#   - checkout: *checkout-default-repository
-#   - script: *init-submodules
-#   - script: *download-artifacts
-#   - script:
-#       <<: *run-selenium-tests
-#       scripts:
-#       - make SUITE=test_storage_sync_charts BROWSER=Chrome TIMEOUT=600 test_gui_pkg
 Chrome storage sync tests:
   <<: *acceptance-tests-in-chrome-job
   key: CSST
@@ -1276,16 +1149,3 @@ Chrome transfers multi browser tests:
       <<: *run-selenium-tests
       scripts:
       - make SUITE=test_oneprovider_transfers_multi ENV_FILE=1oz_2op_deployed BROWSER=Chrome TIMEOUT=600 test_gui_pkg
-# Chrome transfers tests:
-#   <<: *acceptance-tests-in-chrome-job
-#   key: CTT
-#   tasks:
-#   - script: *clear-env
-#   - script: *restart-minikube
-#   - checkout: *checkout-default-repository
-#   - script: *init-submodules
-#   - script: *download-artifacts
-#   - script:
-#       <<: *run-selenium-tests
-#       scripts:
-#       - make SUITE=test_oneprovider_transfers ENV_FILE=1oz_2op_deployed BROWSER=Chrome TIMEOUT=600 test_gui_pkg

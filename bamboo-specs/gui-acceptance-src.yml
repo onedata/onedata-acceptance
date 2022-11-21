@@ -171,7 +171,7 @@ Chrome POSIX tests multiuser:
       scripts:
       - sudo ${HOME}/restart_minikube.sh
       description: Restart minikube
-  - checkout: &checkout
+  - checkout: &checkout-default-repository
       path: onedata-acceptance
       force-clean-build: 'true'
       description: Checkout Default Repository
@@ -232,7 +232,7 @@ Chrome onepanel deployment basic tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -253,7 +253,7 @@ Chrome onepanel deployment basic tests:
 #   tasks:
 #   - script: *clear-env
 #   - script: *restart-minikube
-#   - checkout: *checkout
+#   - checkout: *checkout-default-repository
 #   - script: *init-submodules
 #   - script: *download-artifacts
 #   - script:
@@ -271,7 +271,7 @@ _Codetag Tracker:
   key: CDTR
   other: *common-opts
   tasks:
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script:
       interpreter: BINSH_OR_CMDEXE
@@ -287,7 +287,7 @@ Chrome onezone automations tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -307,7 +307,7 @@ Chrome oneprovider atm workflow execution tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -328,7 +328,7 @@ Chrome oneprovider atm workflow execution tests:
 #   tasks:
 #   - script: *clear-env
 #   - script: *restart-minikube
-#   - checkout: *checkout
+#   - checkout: *checkout-default-repository
 #   - script: *init-submodules
 #   - script: *download-artifacts
 #   - script:
@@ -348,7 +348,7 @@ Chrome onezone harvesters basic tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -369,7 +369,7 @@ Chrome onezone harvesters basic tests:
 #   tasks:
 #   - script: *clear-env
 #   - script: *restart-minikube
-#   - checkout: *checkout
+#   - checkout: *checkout-default-repository
 #   - script: *init-submodules
 #   - script: *download-artifacts
 #   - script:
@@ -389,7 +389,7 @@ Chrome oneprovider archives incremental and nested:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -409,7 +409,7 @@ Chrome oneprovider archives recall:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -430,7 +430,7 @@ Chrome oneprovider archives recall:
 #    tasks:
 #    - script: *clear-env
 #    - script: *restart-minikube
-#    - checkout: *checkout
+#    - checkout: *checkout-default-repository
 #    - script: *init-submodules
 #    - script: *download-artifacts
 #    - script:
@@ -450,7 +450,7 @@ Chrome onezone providers basic tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -471,7 +471,7 @@ Chrome onezone providers basic tests:
 #   tasks:
 #   - script: *clear-env
 #   - script: *restart-minikube
-#   - checkout: *checkout
+#   - checkout: *checkout-default-repository
 #   - script: *init-submodules
 #   - script: *download-artifacts
 #   - script:
@@ -492,7 +492,7 @@ Chrome onezone providers basic tests:
 #    tasks:
 #    - script: *clear-env
 #    - script: *restart-minikube
-#    - checkout: *checkout
+#    - checkout: *checkout-default-repository
 #    - script: *init-submodules
 #    - script: *download-artifacts
 #    - script:
@@ -513,7 +513,7 @@ Chrome onezone providers basic tests:
 #   tasks:
 #   - script: *clear-env
 #   - script: *restart-minikube
-#   - checkout: *checkout
+#   - checkout: *checkout-default-repository
 #   - script: *init-submodules
 #   - script: *download-artifacts
 #   - script:
@@ -533,7 +533,7 @@ Chrome onezone spaces memberships privileges:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -554,7 +554,7 @@ Chrome onezone spaces memberships privileges:
 #   tasks:
 #   - script: *clear-env
 #   - script: *restart-minikube
-#   - checkout: *checkout
+#   - checkout: *checkout-default-repository
 #   - script: *init-submodules
 #   - script: *download-artifacts
 #   - script:
@@ -574,7 +574,7 @@ Chrome oneprovider symlinks:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -594,7 +594,7 @@ Chrome transfers multi browser tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -614,7 +614,7 @@ Chrome onezone harversters privileges add and remove:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -634,7 +634,7 @@ Chrome onezone groups multiuser single group:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -654,7 +654,7 @@ Chrome onepanel basic tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -674,7 +674,7 @@ Chrome multiprovider basic tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -694,7 +694,7 @@ Chrome onezone invite tokens with caveats:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -715,7 +715,7 @@ Chrome onezone invite tokens with caveats:
 #   tasks:
 #   - script: *clear-env
 #   - script: *restart-minikube
-#   - checkout: *checkout
+#   - checkout: *checkout-default-repository
 #   - script: *init-submodules
 #   - script: *download-artifacts
 #   - script:
@@ -735,7 +735,7 @@ Chrome shares basic tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -755,7 +755,7 @@ Chrome onezone spaces multiuser tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -775,7 +775,7 @@ Chrome storage sync charts:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -795,7 +795,7 @@ Chrome onezone spaces memberships privileges data:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -815,7 +815,7 @@ Chrome oneprovider data tab tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -835,7 +835,7 @@ Chrome oneprovider data tab files:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -856,7 +856,7 @@ Chrome oneprovider data tab files:
 #   tasks:
 #   - script: *clear-env
 #   - script: *restart-minikube
-#   - checkout: *checkout
+#   - checkout: *checkout-default-repository
 #   - script: *init-submodules
 #   - script: *download-artifacts
 #   - script:
@@ -877,7 +877,7 @@ Chrome oneprovider data tab files:
 #   tasks:
 #   - script: *clear-env
 #   - script: *restart-minikube
-#   - checkout: *checkout
+#   - checkout: *checkout-default-repository
 #   - script: *init-submodules
 #   - script: *download-artifacts
 #   - script:
@@ -897,7 +897,7 @@ Chrome onezone basic tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -917,7 +917,7 @@ Chrome onezone data discovery helpers:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -937,7 +937,7 @@ Chrome storage sync tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -957,7 +957,7 @@ Chrome oneprovider hardlinks:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -977,7 +977,7 @@ Chrome onezone data discovery tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -998,7 +998,7 @@ Chrome onezone data discovery tests:
 #   tasks:
 #   - script: *clear-env
 #   - script: *restart-minikube
-#   - checkout: *checkout
+#   - checkout: *checkout-default-repository
 #   - script: *init-submodules
 #   - script: *download-artifacts
 #   - script:
@@ -1018,7 +1018,7 @@ Chrome onepanel deployment ceph:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -1039,7 +1039,7 @@ Chrome onepanel deployment ceph:
 #   tasks:
 #   - script: *clear-env
 #   - script: *restart-minikube
-#   - checkout: *checkout
+#   - checkout: *checkout-default-repository
 #   - script: *init-submodules
 #   - script: *download-artifacts
 #   - script:
@@ -1060,7 +1060,7 @@ Chrome onepanel deployment ceph:
 #   tasks:
 #   - script: *clear-env
 #   - script: *restart-minikube
-#   - checkout: *checkout
+#   - checkout: *checkout-default-repository
 #   - script: *init-submodules
 #   - script: *download-artifacts
 #   - script:
@@ -1080,7 +1080,7 @@ Chrome onezone data discovery querying:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -1100,7 +1100,7 @@ Chrome oneprovider archives tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -1120,7 +1120,7 @@ Chrome onepanel ceph spaces:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -1140,7 +1140,7 @@ Chrome onezone tokens delete:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -1160,7 +1160,7 @@ Chrome onezone groups basic tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -1180,7 +1180,7 @@ Chrome onezone spaces basic tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -1200,7 +1200,7 @@ Chrome onepanel login tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -1220,7 +1220,7 @@ Chrome oneprovider datasets privileges:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -1240,7 +1240,7 @@ Chrome onezone tokens tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -1260,7 +1260,7 @@ Chrome onezone harvesters index:
    tasks:
    - script: *clear-env
    - script: *restart-minikube
-   - checkout: *checkout
+   - checkout: *checkout-default-repository
    - script: *init-submodules
    - script: *download-artifacts
    - script:
@@ -1280,7 +1280,7 @@ Chrome onezone harversters index metadata:
    tasks:
    - script: *clear-env
    - script: *restart-minikube
-   - checkout: *checkout
+   - checkout: *checkout-default-repository
    - script: *init-submodules
    - script: *download-artifacts
    - script:
@@ -1300,7 +1300,7 @@ Chrome onezone harvesters memberships privileges:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -1320,7 +1320,7 @@ Chrome onezone harvesters effective privileges:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -1340,7 +1340,7 @@ Chrome onepanel two hosts deployment tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -1360,7 +1360,7 @@ Chrome oneprovider upload tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -1380,7 +1380,7 @@ Chrome onezone invite tokens with consumer caveats:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -1400,7 +1400,7 @@ Chrome oneprovider datasets tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -1420,7 +1420,7 @@ Chrome onezone invite tokens:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -1441,7 +1441,7 @@ Chrome onezone invite tokens:
 #   tasks:
 #   - script: *clear-env
 #   - script: *restart-minikube
-#   - checkout: *checkout
+#   - checkout: *checkout-default-repository
 #   - script: *init-submodules
 #   - script: *download-artifacts
 #   - script:
@@ -1462,7 +1462,7 @@ Chrome onezone invite tokens:
 #   tasks:
 #   - script: *clear-env
 #   - script: *restart-minikube
-#   - checkout: *checkout
+#   - checkout: *checkout-default-repository
 #   - script: *init-submodules
 #   - script: *download-artifacts
 #   - script:
@@ -1482,7 +1482,7 @@ Chrome onezone groups multiuser tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -1503,7 +1503,7 @@ Chrome onezone groups multiuser tests:
 #   tasks:
 #   - script: *clear-env
 #   - script: *restart-minikube
-#   - checkout: *checkout
+#   - checkout: *checkout-default-repository
 #   - script: *init-submodules
 #   - script: *download-artifacts
 #   - script:
@@ -1524,7 +1524,7 @@ Chrome onezone groups multiuser tests:
 #   tasks:
 #   - script: *clear-env
 #   - script: *restart-minikube
-#   - checkout: *checkout
+#   - checkout: *checkout-default-repository
 #   - script: *init-submodules
 #   - script: *download-artifacts
 #   - script:
@@ -1545,7 +1545,7 @@ Chrome onezone groups multiuser tests:
 #   tasks:
 #   - script: *clear-env
 #   - script: *restart-minikube
-#   - checkout: *checkout
+#   - checkout: *checkout-default-repository
 #   - script: *init-submodules
 #   - script: *download-artifacts
 #   - script:
@@ -1566,7 +1566,7 @@ Chrome onezone groups multiuser tests:
 #   tasks:
 #   - script: *clear-env
 #   - script: *restart-minikube
-#   - checkout: *checkout
+#   - checkout: *checkout-default-repository
 #   - script: *init-submodules
 #   - script: *download-artifacts
 #   - script:
@@ -1587,7 +1587,7 @@ Chrome onezone groups multiuser tests:
 #   tasks:
 #   - script: *clear-env
 #   - script: *restart-minikube
-#   - checkout: *checkout
+#   - checkout: *checkout-default-repository
 #   - script: *init-submodules
 #   - script: *download-artifacts
 #   - script:
@@ -1607,7 +1607,7 @@ Chrome metadata test:
    tasks:
    - script: *clear-env
    - script: *restart-minikube
-   - checkout: *checkout
+   - checkout: *checkout-default-repository
    - script: *init-submodules
    - script: *download-artifacts
    - script:
@@ -1627,7 +1627,7 @@ Chrome onepanel members tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -1647,7 +1647,7 @@ Chrome multiprovider multiuser tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
@@ -1668,7 +1668,7 @@ Chrome multiprovider multiuser tests:
 #   tasks:
 #   - script: *clear-env
 #   - script: *restart-minikube
-#   - checkout: *checkout
+#   - checkout: *checkout-default-repository
 #   - script: *init-submodules
 #   - script: *download-artifacts
 #   - script:
