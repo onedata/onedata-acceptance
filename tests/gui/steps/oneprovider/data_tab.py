@@ -11,16 +11,16 @@ import pytest
 import time
 
 from tests.gui.conftest import WAIT_BACKEND, WAIT_FRONTEND
-from tests.gui.conftest import WAIT_NORMAL_UPLOAD, WAIT_EXTENDED_UPLOAD
+from tests.gui.conftest import WAIT_EXTENDED_UPLOAD
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.oneprovider.browser import \
     click_and_press_enter_on_item_in_browser
 from tests.gui.utils.generic import (parse_seq, upload_file_path, transform)
 from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import given, wt, parsers
-from tests.gui.steps.rest.env_up import GUI_UPLOAD_CHUNK_SIZE, \
+from tests.utils.environment_setup import GUI_UPLOAD_CHUNK_SIZE, \
     GUI_DOWNLOAD_CHUNK_SIZE, DOWNLOAD_INACTIVITY_PERIOD_SEC
-from tests.gui.steps.rest.env_up import UPLOAD_INACTIVITY_PERIOD_SEC
+from tests.utils.environment_setup import UPLOAD_INACTIVITY_PERIOD_SEC
 
 
 @repeat_failed(timeout=WAIT_BACKEND)

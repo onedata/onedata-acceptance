@@ -24,12 +24,17 @@ from tests.utils.utils import repeat_failed
 
 @given(parsers.parse('initial spaces configuration in "{zone_host}" '
                      'Onezone service:\n{config}'))
-def create_and_configure_spaces(config, zone_host, admin_credentials,
-                                onepanel_credentials, hosts,
+def create_and_configure_spaces_step(config, zone_host, admin_credentials, onepanel_credentials, hosts,
+                                users, groups, storages, spaces):
+    create_and_configure_spaces(yaml.load(config), zone_host, admin_credentials, onepanel_credentials, hosts,
+                                users, groups, storages, spaces)
+
+
+def create_and_configure_spaces(config, zone_host, admin_credentials, onepanel_credentials, hosts,
                                 users, groups, storages, spaces):
     """Create and configure spaces according to given config.
 
-    Config format given in yaml is as follow:
+    Config format given in yaml is as follows:
 
         space_name_1:
             owner: user_name                ---> currently we identify user account with concrete
@@ -106,20 +111,18 @@ def create_and_configure_spaces(config, zone_host, admin_credentials,
 
 @given(parsers.parse('additional spaces configuration in "{zone_host}" '
                      'Onezone service:\n{config}'))
-def add_spaces_configuration(config, zone_host, admin_credentials,
-                             onepanel_credentials, hosts,
+def add_spaces_configuration(config, zone_host, admin_credentials, onepanel_credentials, hosts,
                              users, groups, storages, spaces):
-    _create_and_configure_spaces(config, zone_host, admin_credentials,
+    _create_and_configure_spaces(yaml.load(config), zone_host, admin_credentials,
                                  onepanel_credentials, hosts, users, groups,
                                  storages, spaces)
 
 
-def _create_and_configure_spaces(config, zone_name, admin_credentials,
-                                 onepanel_credentials, hosts,
+def _create_and_configure_spaces(config, zone_name, admin_credentials, onepanel_credentials, hosts,
                                  users_db, groups_db, storages_db, spaces_db):
     zone_hostname = hosts[zone_name]['hostname']
 
-    for space_name, description in yaml.load(config).items():
+    for space_name, description in config.items():
         owner = users_db[description['owner']]
         users_to_add = description.get('users', [])
         spaces_db[space_name] = space_id = _create_space(zone_hostname,
@@ -243,7 +246,7 @@ def _get_support(zone_hostname, onepanel_credentials,
         wait_for_space_support(space_id, provider_hostname, all_members, users)
 
 
-@repeat_failed(attempts=10, interval=0.5,
+@repeat_failed(attempts=30, interval=0.5,
                exceptions=(AssertionError, HTTPError))
 def wait_for_space_support(space_id, provider_hostname, members, users):
     for user in members:
