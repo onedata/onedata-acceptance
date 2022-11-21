@@ -6,7 +6,7 @@ plan:
   name: gui acceptance pkg
   description: GUI acceptance tests using environment deployed from packages.
 # Uncomment and set the following variables when necessary
-variables:
+# variables:
   # GUI_PKG_VERIFICATION: ''
   # OC_IMAGE_OVERRIDE: ''
   # OP_IMAGE_OVERRIDE: ''
