@@ -44,6 +44,4 @@ def screens():
     return [0, 1]
 
 
-# TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
-scenarios('../features/pass.feature')
-# scenarios('../features/oneprovider/data/file_acl_privileges.feature')
+scenarios('../features/oneprovider/data/file_acl_privileges.feature')

@@ -31,10 +31,10 @@ def choose_file_as_initial_workflow_value(selenium, browser_id, file_name,
     op_container(driver).automation_page.input_icon.click()
 
     select_files_modal = modals(driver).select_files
-    browser = select_files_modal.file_browser
 
-    with browser.select_files() as selector:
-        _select_files(browser, selector, file_name)
+    for file in select_files_modal.files:
+        if file.name == file_name:
+            file.clickable_field.click()
 
     select_files_modal.confirm_button.click()
 

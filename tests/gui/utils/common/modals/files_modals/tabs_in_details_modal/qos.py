@@ -14,21 +14,20 @@ from tests.gui.utils.core.web_elements import (
 
 
 class Requirement(PageObject):
-    delete = Button('.oneicon-checkbox-filled-x')
+    delete = Button('.remove-qos-trigger')
     fulfilled = Label('.qos-status-fulfilled')
     impossible = Label('.qos-status-impossible')
     expression = Label('.query-builder-input')
     replicas_number = Label('.replicas-number')
 
 
-class QualityOfServiceModal(Modal):
+class QoSTab(Modal):
     add_requirement = NamedButton('.btn-primary', text='Add Requirement')
     enter_as_text = Button('.enter-text-link')
     confirm_text = Button('.oneicon-checked')
     expression = Input('.qos-info-row-expression .form-control')
     replicas_number = Input('.replicas-number-input')
     save = NamedButton('.btn-primary', text='Save')
-    close = NamedButton('.btn-default', text='Close')
     requirements = WebItemsSequence('.qos-entry', cls=Requirement)
     delete_confirm = NamedButton('.btn-danger', text='Yes, remove')
 
@@ -39,4 +38,5 @@ class QualityOfServiceModal(Modal):
     privileges_error = Label('.alert-promise-error')
 
     def __str__(self):
-        return 'Quality of Service modal'
+        return 'QoS tab'
+

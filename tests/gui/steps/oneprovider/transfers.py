@@ -117,13 +117,13 @@ def assert_non_zero_transfer_speed(selenium, browser_id, op_container):
 
 @repeat_failed(timeout=WAIT_BACKEND)
 def _expand_dropdown_in_migrate_record(driver, popups):
-    data_distribution_modal = modals(driver).data_distribution
+    data_distribution_modal = modals(driver).details_modal.data_distribution
     data_distribution_modal.migrate.expand_dropdown()
     assert len(popups(driver).migrate_dropdown.providers_list) > 0
 
 
 def check_provider_in_migrate_dropdown(driver, provider_name):
-    data_distribution_modal = modals(driver).data_distribution
+    data_distribution_modal = modals(driver).details_modal.data_distribution
     return provider_name == data_distribution_modal.migrate.target_provider
 
 
@@ -136,7 +136,7 @@ def migrate_item(selenium, browser_id, source, target, hosts, popups):
     source_name = hosts[source]['name']
     target_name = hosts[target]['name']
 
-    data_distribution_modal = modals(driver).data_distribution
+    data_distribution_modal = modals(driver).details_modal.data_distribution
     data_distribution_modal.providers[source_name].menu_button()
     popups(driver).data_distribution_popup.menu[menu_option]()
 
@@ -149,15 +149,13 @@ def migrate_item(selenium, browser_id, source, target, hosts, popups):
 
 @wt(parsers.re('user of (?P<browser_id>.*) replicates selected item'
                ' to provider "(?P<provider>.*)"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def replicate_item(selenium, browser_id, provider, hosts, popups):
     menu_option = 'Replicate here'
     driver = selenium[browser_id]
-
     provider_name = hosts[provider]['name']
-    (modals(driver)
-     .data_distribution
-     .providers[provider_name]
-     .menu_button())
+    modals(driver).details_modal.data_distribution.providers[
+        provider_name].menu_button()
     popups(driver).data_distribution_popup.menu[menu_option]()
 
 
@@ -180,7 +178,8 @@ def evict_selected_item(selenium, browser_id, provider, hosts, popups):
 @repeat_failed(interval=1, timeout=90, exceptions=RuntimeError)
 def assert_see_history_btn_shown(selenium, browser_id):
     driver = selenium[browser_id]
-    assert hasattr(modals(driver).data_distribution, 'see_history_btn'), (
+    assert hasattr(modals(driver).details_modal.data_distribution,
+                   'see_history_btn'), (
         'Button "see history" not found in data distribution modal')
 
 
@@ -206,7 +205,8 @@ def assert_option_in_provider_popup_menu(selenium, browser_id, provider, hosts,
     driver = selenium[browser_id]
 
     provider_name = hosts[provider]['name']
-    modals(driver).data_distribution.providers[provider_name].menu_button()
+    modals(driver).details_modal.data_distribution.providers[
+        provider_name].menu_button()
 
     menu = popups(driver).menu_popup_with_text.menu
     for element in parse_seq(options):

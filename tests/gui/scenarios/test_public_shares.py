@@ -51,6 +51,7 @@ from tests.gui.meta_steps.oneprovider.data import *
 from tests.gui.meta_steps.oneprovider.permissions import *
 
 from tests.gui.steps.modals.modal import *
+from tests.gui.steps.modals.details_modal import *
 from tests.gui.steps.oneprovider_common import *
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.onezone.spaces import *
@@ -63,6 +64,4 @@ def screens():
     return [0, 1]
 
 
-# TODO: VFS-9603 reimplement gui shares tests after move to file info modal 
-scenarios('../features/pass.feature')
-# scenarios('../features/oneprovider/shares/public_shares.feature')
+scenarios('../features/oneprovider/shares/public_shares.feature')

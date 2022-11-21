@@ -8,8 +8,8 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.steps.modals.modal import (
-    wt_wait_for_modal_to_appear, wt_click_on_confirmation_btn_in_modal)
+from tests.gui.steps.modals.details_modal import assert_tab_in_modal
+from tests.gui.steps.modals.modal import click_modal_button
 from tests.gui.steps.oneprovider.data_tab import (
     click_choose_other_oneprovider_on_file_browser,
     choose_provider_in_selected_page, check_current_provider_in_space)
@@ -51,19 +51,19 @@ def open_transfers_page(selenium, browser_id, provider, space, hosts, oz_page,
 def evict_file(selenium, browser_id, provider, popups, file_name, tmp_memory,
                modals, hosts):
     option = 'Data distribution'
-    modal_name = 'Data distribution'
+    tab = 'Distribution'
     menu_option = 'Evict'
     driver = selenium[browser_id]
     provider_name = hosts[provider]['name']
-    confirm_button = 'Close'
+    details_modal = 'Details modal'
+    close_button = 'X'
 
     click_menu_for_elem_in_browser(browser_id, file_name, tmp_memory)
     click_option_in_data_row_menu_in_browser(selenium, browser_id, option,
                                              popups)
-    wt_wait_for_modal_to_appear(selenium, browser_id, modal_name, tmp_memory)
-
-    data_distribution_modal = modals(driver).data_distribution
+    assert_tab_in_modal(selenium, browser_id, tab, modals, details_modal)
+    data_distribution_modal = modals(driver).details_modal.data_distribution
     data_distribution_modal.providers[provider_name].menu_button()
     popups(driver).data_distribution_popup.menu[menu_option]()
-    wt_click_on_confirmation_btn_in_modal(selenium, browser_id, confirm_button,
-                                          tmp_memory)
+    click_modal_button(selenium, browser_id, close_button, details_modal,
+                       modals)

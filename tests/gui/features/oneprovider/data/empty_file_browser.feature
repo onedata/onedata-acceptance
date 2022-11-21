@@ -66,20 +66,19 @@ Feature: Files tab operations with empty file browser
     Then user of browser sees that item named "20B-0.txt" is of 20 B size in file browser
 
 
-  # TODO: VFS-9473 reimplement gui data distribution tests after move to file info modal
-  # Scenario: User uploads file and checks if provider name is displayed in the data distribution panel
-  #   When user of browser clicks "space1" on the spaces list in the sidebar
-  #   And user of browser clicks "Files" of "space1" space in the sidebar
-  #   And user of browser sees file browser in files tab in Oneprovider page
+  Scenario: User uploads file and checks if provider name is displayed in the data distribution panel
+    When user of browser clicks "space1" on the spaces list in the sidebar
+    And user of browser clicks "Files" of "space1" space in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
 
-  #   # upload file
-  #   And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
-  #   And user of browser sees that item named "20B-0.txt" has appeared in file browser
+    # upload file
+    And user of browser uses upload button from file browser menu bar to upload file "20B-0.txt" to current dir
+    And user of browser sees that item named "20B-0.txt" has appeared in file browser
 
-  #   And user of browser clicks on menu for "20B-0.txt" file in file browser
-  #   And user of browser clicks "Data distribution" option in data row menu in file browser
+    And user of browser clicks on menu for "20B-0.txt" file in file browser
+    And user of browser clicks "Data distribution" option in data row menu in file browser
 
-  #   And user of browser sees that "Data distribution" modal has appeared
-  #   Then user of browser sees that chunk bar for provider "oneprovider-1" is entirely filled
-  #   And user of browser clicks "Close" confirmation button in displayed modal
+    And user of browser sees that "File details" modal is opened on "Distribution" tab
+    Then user of browser sees that chunk bar for provider "oneprovider-1" is entirely filled
+    And user of browser clicks on "X" button in modal "Directory details"
 

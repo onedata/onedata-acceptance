@@ -10,6 +10,7 @@ import pytest
 import errno
 
 from tests.conftest import export_logs
+from tests.oneclient.steps.multi_dir_steps import purge_all_spaces
 
 
 @pytest.fixture(autouse=True)
@@ -48,22 +49,7 @@ def unmount_all_clients_and_purge_spaces(users):
 
 
 def purge_spaces(client):
-    try:
-        spaces = client.list_spaces()
-        for space in spaces:
-            space_path = client.absolute_path(space)
-            try:
-                client.rm(path=space_path, recursive=True)
-            except FileNotFoundError:
-                pass
-            except OSError as e:
-                # ignore EACCES errors during cleaning
-                if e.errno == errno.EACCES:
-                    pass
-    except FileNotFoundError:
-        pass
-    except Exception as e:
-        print("Error during cleaning up spaces: {}".format(e))
+    purge_all_spaces(client)
 
 
 def pytest_bdd_before_scenario(request, feature, scenario):

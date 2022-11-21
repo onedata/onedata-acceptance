@@ -9,7 +9,7 @@ Feature: Workflows execution
             owner: space-owner-user
             providers:
                 - oneprovider-1:
-                    storage: posix
+                    storage: s3
                     size: 10000000
             storage:
                 defaults:
@@ -17,6 +17,7 @@ Feature: Workflows execution
                 directory tree:
                     - dir1:
                       - file1: 100
+                    - file2: 100
     And initial inventories configuration in "onezone" Onezone service:
         inventory1:
             owner: space-owner-user
@@ -55,13 +56,17 @@ Feature: Workflows execution
     And user of browser opens inventory "inventory1" lambdas subpage
 
     # User manually creates inout lambda
-    And user of browser uses "Add new lambda" button from menu bar in lambdas subpage
-    And user of browser writes "inout" into lambda name text field
-    And user of browser writes "docker.onedata.org/in-out:v1" into docker image text field
-    And user of browser unchecks lambdas "Mount space" toggle
-    And user of browser adds argument named "data" of "Object" type
-    And user of browser adds result named "data" of "Object" type
-    And user of browser confirms creating new lambda using "Create" button
+    And user of browser creates lambda with following configuration:
+        name: "inout"
+        docker image: "docker.onedata.org/in-out:v1"
+        mount space: False
+        arguments:
+          - name: "data"
+            type: Object
+        results:
+           - name: "data"
+             type: Object
+
     And user of browser sees "inout" in lambdas list in inventory lambdas subpage
 
     # User manually creates workflow using inout lambda
@@ -69,48 +74,110 @@ Feature: Workflows execution
     And user of browser creates workflow "Workflow1"
 
     # User creates input store for workflow
-    And user of browser clicks "Add store" button in workflow visualizer
-    And user of browser writes "input" into store name text field in modal "Create new store"
-    And user of browser chooses "List" in type dropdown menu in modal "Create new store"
-    And user of browser chooses "File" in data type dropdown menu in modal "Create new store"
-    And user of browser checks "User input" toggle in modal "Create new store"
-    And user of browser clicks on "Create" button in modal "Create new store"
+    And user of browser creates input store for workflow "Workflow1" with following configuration:
+        name: "input"
+        type dropdown: List
+        data type dropdown: File
+        user input: True
 
     # User creates Lane
     And user of browser clicks on create lane button in the middle of workflow visualizer
     And user of browser writes "Lane1" into lane name text field in modal "Create new lane"
     And user of browser clicks on "Create" button in modal "Create new lane"
 
-    # User creates output store for workflow
-    And user of browser clicks "Add store" button in workflow visualizer
-    And user of browser writes "output" into store name text field in modal "Create new store"
-    And user of browser chooses "List" in type dropdown menu in modal "Create new store"
-    And user of browser chooses "Object" in data type dropdown menu in modal "Create new store"
-    And user of browser clicks on "Create" button in modal "Create new store"
+    And user of browser creates output store for workflow "Workflow1" with following configuration:
+        name: "output"
+        type dropdown: List
+        data type dropdown: Object
 
-    # User creates task using previously created lambda
-    And user of browser clicks on "Add parallel box" button in the middle of "Lane1" lane
-    And user of browser clicks "Create task" button in empty parallel box in "Lane1" lane
-    And user of browser chooses 1st revision of "inout" lambda to add to workflow
-    And user of browser chooses "output" in target store dropdown menu in "data" result in task creation page
-    And user of browser confirms creating new task using "Create" button
-    And user of browser sees task named "inout" in "Lane1" lane
+    And user of browser creates task using 1st revision of "inout" lambda in "Lane1" lane with following configuration:
+        results:
+            data:
+              target store: "output"
 
     # User changes details of workflow revision
     And user of browser changes workflow view to "Details" tab
     And user of browser writes "Workflow1_revision1" in description textfield in workflow Details tab
     And user of browser saves workflow edition by clicking "Save" button from menu bar
 
-    # User executes created workflow and checks if output value is correct
-    And user of browser clicks "space1" on the spaces list in the sidebar
-    And user of browser clicks "Automation Workflows" of "space1" space in the sidebar
-    And user of browser clicks "Run workflow" in the automation tab bar
-    And user of browser chooses to run 1st revision of "Workflow1" workflow
-    And user of browser chooses "dir1" file as initial value for workflow in "Select files" modal
-    And user of browser confirms workflow execution by clicking "Run workflow" button
-    And user of browser waits for all workflows to start
-    And user of browser waits for all workflows to finish
-    And user of browser clicks on first executed workflow
+    And user of browser executes 1st revision of "Workflow1", using "dir1" as initial value, in "space1" space and waits extended time for workflow to finish
     And user of browser sees "Finished" status in status bar in workflow visualizer
     Then user of browser sees that content of "input" store is the same as content of "output" store
 
+
+Scenario: User creates checksum-counting-oneclient workflow through GUI and executes it
+    When user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" lambdas subpage
+
+    And user of browser creates lambda with following configuration:
+        name: "checksum-counting-oneclient"
+        docker image: "docker.onedata.org/checksum-counting-oneclient:v8"
+        read-only: False
+        arguments:
+          - name: "file"
+            type: File
+          - name: "metadata_key"
+            type: String
+          - name: "algorithm"
+            type: String
+        results:
+          - name: "result"
+            type: Object
+
+    And user of browser sees "checksum-counting-oneclient" in lambdas list in inventory lambdas subpage
+
+    # User manually creates workflow using checksum-counting-oneclient lambda
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser creates workflow "Workflow1"
+
+    And user of browser creates input store for workflow "Workflow1" with following configuration:
+        name: "input-files"
+        type dropdown: Tree forest
+        data type dropdown: File
+        user input: True
+
+    And user of browser clicks on create lane button in the middle of workflow visualizer
+    And user of browser writes "Lane1" into lane name text field in modal "Create new lane"
+    And user of browser clicks on "Create" button in modal "Create new lane"
+
+    # User creates checksums output store for workflow
+    And user of browser creates output store for workflow "Workflow1" with following configuration:
+        name: "output-store"
+        type dropdown: List
+        data type dropdown: Object
+
+    # User creates task using previously created lambda
+    And user of browser creates task using 1st revision of "checksum-counting-oneclient" lambda in "Lane1" lane with following configuration:
+        arguments:
+            file:
+              value builder: "Iterated item"
+            metadata_key:
+              value builder: "Constant value"
+              value: "md5_key"
+            algorithm:
+              value builder: "Constant value"
+              value: "md5"
+        results:
+            result:
+              target store: "output-store"
+
+    And user of browser sees task named "checksum-counting-oneclient" in "Lane1" lane
+    And user of browser creates another task using 1st revision of "checksum-counting-oneclient" lambda in "Lane1" lane with following configuration:
+        where parallel box: "below"
+        task name: "Second lambda task"
+        arguments:
+            file:
+              value builder: "Iterated item"
+            metadata_key:
+              value builder: "Constant value"
+              value: "sha256_key"
+            algorithm:
+              value builder: "Constant value"
+              value: "sha256"
+        results:
+            result:
+              target store: "output-store"
+    And user of browser saves workflow edition by clicking "Save" button from menu bar
+
+    And user of browser executes 1st revision of "Workflow1", using "file2" as initial value, in "space1" space and waits extended time for workflow to finish
+    Then user of browser sees "Finished" status in status bar in workflow visualizer

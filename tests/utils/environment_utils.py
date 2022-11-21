@@ -324,13 +324,14 @@ def get_pods_config():
     for pod in pods_json:
         pod_data = pod['metadata']
         pod_title = pod_data['name']
-        pod_name = pod_data['labels']['app']
+        pod_name = pod_data['labels'].get('app', None)
         pod_service_type = pod_data['labels'].get('component', None)
         pod_service_name = pod_data['labels'].get('chart', None)
         pod_namespace = pod_data['namespace']
-        pod_ip = pod['status']['podIP']
-        pod_container_id = pod['status']['containerStatuses'][0]['containerID']
-        pod_container_id = pod_container_id.replace('docker://', '')
+        pod_ip = pod['status'].get('podIP', None)
+        pod_container_id = pod['status']['containerStatuses'][0].get('containerID', None)
+        if pod_container_id:
+            pod_container_id = pod_container_id.replace('docker://', '')
 
         pods[pod_title] = {'name': pod_name, 'ip': pod_ip,
                            'container-id': pod_container_id}

@@ -158,12 +158,12 @@ def write_text_into_lambda_form(selenium, browser_id,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>checks|unchecks) '
-               'lambdas "Mount space" toggle'))
+               'lambdas "(?P<toggle>Mount space|Read only)" toggle'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def switch_toggle_in_lambda_form(selenium, browser_id, oz_page, option):
+def switch_toggle_in_lambda_form(selenium, browser_id, oz_page, option, toggle):
     subpage = oz_page(selenium[browser_id])['automation'].lambdas_page.form
-
-    getattr( subpage.mount_space_toggle, option[:-1])
+    toggle = transform(toggle) + "_toggle"
+    getattr(getattr(subpage, toggle), option[:-1])()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) confirms (creating new|edition of) '
@@ -179,16 +179,36 @@ def confirm_lambda_creation_or_edition(selenium, browser_id, oz_page, option):
         page.lambdas_page.form.create_button.click()
 
 
-@wt(parsers.parse('user of {browser_id} chooses "{option}" in {dropdown_name} '
-                  'in "{result_name}" result in task creation page'))
+@wt(parsers.re('user of (?P<browser_id>.*) chooses "(?P<option>.*)" in '
+               '(?P<dropdown_name>.*) in "(?P<object_name>.*)" '
+               '(?P<object_type>result|argument) in task creation page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_option_in_dropdown_menu_in_task_page(selenium, browser_id, oz_page,
-                                                popups, option, result_name):
+                                                popups, option, object_name,
+                                                object_type):
     driver = selenium[browser_id]
     page = oz_page(driver)['automation'].workflows_page.task_form
-    page.results[result_name + ':'].target_store_dropdown.click()
+    if object_type == 'result':
+        page.results[object_name + ':'].target_store_dropdown.click()
+    else:
+        page.arguments[object_name + ':'].value_builder_dropdown.click()
 
     popups(driver).power_select.choose_item(option)
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) writes "(?P<json_text>.*)" into'
+               ' json editor bracket in "(?P<object_name>.*)" '
+               '(?P<object_type>result|argument) in task creation page'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def write_text_into_json_editor_bracket(selenium, browser_id, oz_page,
+                                        json_text, object_name,
+                                        object_type):
+    driver = selenium[browser_id]
+    page = oz_page(driver)['automation'].workflows_page.task_form
+    if object_type == 'result':
+        page.results[object_name + ':'].json_editor = json_text
+    else:
+        page.arguments[object_name + ':'].json_editor = json_text
 
 
 @wt(parsers.parse('user of {browser_id} sees "{lambda_name}" in lambdas list '
@@ -355,7 +375,7 @@ def add_parallel_box_to_lane(selenium, browser_id, oz_page, lane_name):
 def add_task_to_empty_parallel_box(selenium, browser_id, oz_page, lane_name):
     page = oz_page(selenium[browser_id])['automation']
     lane = page.workflows_page.workflow_visualiser.workflow_lanes[lane_name]
-    lane.parallel_box.add_task_button.click()
+    lane.empty_parallel_box.add_task_button.click()
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>does not see|sees) task '
@@ -465,3 +485,19 @@ def add_lambda_revision_to_workflow(selenium, browser_id, oz_page, lambda_name,
         pass
 
     revision.add_to_workflow.click()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*?) clicks on "Add parallel box" button'
+               ' (?P<position>below|above) Parallel box'
+               ' in "(?P<lane_name>.*?)" lane'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def add_another_parallel_box_to_lane(selenium, browser_id, oz_page, lane_name,
+                                     position):
+    page = oz_page(selenium[browser_id])['automation']
+    workflow_visualiser = page.workflows_page.workflow_visualiser
+    lane = workflow_visualiser.workflow_lanes[lane_name]
+
+    if position == 'below':
+        lane.add_parallel_box_below.click()
+    else:
+        lane.add_parallel_box_above.click()
