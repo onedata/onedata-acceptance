@@ -226,7 +226,7 @@ Chrome oneprovider ACL subdirectories:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script:
