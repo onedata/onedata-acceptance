@@ -151,7 +151,7 @@ _Codetag Tracker:
       description: Init submodules
   - script:
       interpreter: BINSH_OR_CMDEXE
-      working-dir: onedata-acceptance
+      working-dir: onedata
       scripts:
       - make codetag-tracker BRANCH=${bamboo.planRepository.branchName}
       description: Codetag Tracker
