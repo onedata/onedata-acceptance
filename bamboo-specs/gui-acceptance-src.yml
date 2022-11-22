@@ -7,9 +7,9 @@ plan:
 # Uncomment and set the following variables to override docker
 # images to be used
 # variables:
-  # OC_IMAGE_OVERRIDE: null
-  # OP_IMAGE_OVERRIDE: null
-  # OZ_IMAGE_OVERRIDE: null
+  # OC_IMAGE_OVERRIDE: ''
+  # OP_IMAGE_OVERRIDE: ''
+  # OZ_IMAGE_OVERRIDE: ''
 repositories:
 - onedata-acceptance:
     scope: global
