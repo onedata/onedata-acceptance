@@ -1,7 +1,6 @@
 version: 2
 plan:
-  project-key: BAM
-  # project-key: ODSRV   # FIXME: To be set after reviewing
+  project-key: ODSRV   
   key: GAPT
   name: gui acceptance pkg
   description: GUI acceptance tests using environment deployed from packages.

@@ -1,7 +1,6 @@
 version: 2
 plan:
-  # key: ODSRV-GAPT   # TODO: To be set after reviewing
-  key: BAM-GAPT
+  key: ODSRV-GAPT   
 plan-permissions:
   - users:
       - plgjliput
