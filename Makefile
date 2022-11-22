@@ -73,7 +73,7 @@ checkout_getting_started:
 
 RECORDING_OPTION            ?= failed
 BROWSER                     ?= Chrome
-TIMEOUT			            ?= 300
+TIMEOUT			            ?= 600
 REPEATS                     ?= 1
 RERUNS                      ?= 1
 LOCAL_CHARTS_PATH           ?= ""
