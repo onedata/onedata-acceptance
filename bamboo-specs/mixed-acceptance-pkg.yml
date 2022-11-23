@@ -1,7 +1,7 @@
 version: 2
 plan:
   project-key: BAM
-  # project-key: ODSRV  # To be uncommented after reviewers acceptation
+  # project-key: ODSRV  # FIXME: To be uncommented after reviewers acceptation
   key: MAOPT
   name: mixed acceptance pkg
   description: Acceptance tests using different clients concurrently. Environment deployed from packages.
@@ -51,6 +51,7 @@ stages:
         # - Chrome ACL one entry  # First job cant be commented because it defines anchors
         # TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
         # - Chrome ACL two entries
+        - _Codetag Tracker
         - Chrome LUMA tests
         - Chrome QoS tests
         - Chrome access tokens
@@ -87,16 +88,41 @@ stages:
         - Chrome storage sync
         - Chrome tokens tests
 
-Chrome LUMA tests: &acceptance-mixed-tests-in-chrome-job
-  key: CAOE
-  other:
+_Codetag Tracker:
+  key: CDTR
+  other: &common-opts
     clean-working-dir: true
     all-other-apps:
       custom:
         auto: {}
         clover:
-          useLocalLicenseKey: "true"
-        buildHangingConfig.enabled: "false"
+          useLocalLicenseKey: 'true'
+        buildHangingConfig.enabled: 'false'
+  tasks:
+  - checkout: 
+      path: onedata-acceptance
+      force-clean-build: 'true'
+      description: Checkout Default Repository
+  - script: &init-submodules
+      scripts:
+      - |-
+        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
+        git remote -v
+        make submodules
+      working-dir: onedata-acceptance
+      description: Init submodules
+  - script:
+      working-dir: onedata-acceptance
+      scripts:
+      - make codetag-tracker BRANCH=${bamboo.planRepository.branchName}
+      description: Codetag Tracker
+  requirements: &requirements
+  - kubeadm
+  artifact-subscriptions: []
+
+Chrome LUMA tests: &acceptance-mixed-tests-in-chrome-job
+  key: CAOE
+  other: *common-opts
   tasks:
     - script: &clear-env
         scripts:
@@ -106,22 +132,11 @@ Chrome LUMA tests: &acceptance-mixed-tests-in-chrome-job
         scripts:
           - sudo ${HOME}/restart_minikube.sh
         description: Restart minikube
-    - script: &force-clean-repo
-        scripts:
-          - docker run -v $bamboo_build_working_directory:/build alpine sh -c 'rm -rf /build/onedata'
-        description: Force clean repo
-    - checkout: &checkout
+    - checkout: &checkout-default-repository
         path: onedata-acceptance
         force-clean-build: "false"
         description: Checkout Default Repository
-    - script: &init-submodules
-        scripts:
-          - |-
-            git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-            git remote -v
-            make submodules
-        working-dir: onedata-acceptance
-        description: Init submodules
+    - script: *init-submodules
     - script: &download-artifacts
         working-dir: onedata-acceptance
         scripts:
@@ -160,47 +175,42 @@ Chrome LUMA tests: &acceptance-mixed-tests-in-chrome-job
       pattern: "**/*.*"
       shared: false
       required: false
-  requirements:
-    - kubeadm
+  requirements: *requirements
   artifact-subscriptions: []
 
-# TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
-# Chrome ACL one entry:
-#   <<: *acceptance-mixed-tests-in-chrome-job
-#   key: CLT
-#   tasks:
-#   - script: *clear-env
-#   - script: *restart-minikube
-#   - script: *force-clean-repo
-#   - checkout: *checkout
-#   - script: *init-submodules
-#   - script: *download-artifacts
-#   - script: *build-swaggers
-#   - script:
-#       <<: *run-acceptance-tests
-#       scripts:
-#       - make SUITE=test_acl_one_entry test_mixed_pkg
+Chrome ACL one entry:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CLT
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      <<: *run-acceptance-tests
+      scripts:
+      - make SUITE=test_acl_one_entry test_mixed_pkg
 
-# TODO: VFS-9761 reimplement gui permissions tests after move to file info modal
-# Chrome ACL two entries:
-#   <<: *acceptance-mixed-tests-in-chrome-job
-#   key: CATE
-#   tasks:
-#   - script: *clear-env
-#   - script: *restart-minikube
-#   - script: *force-clean-repo
-#   - checkout: *checkout
-#   - script: *init-submodules
-#   - script: *download-artifacts
-#   - script: *build-swaggers
-#   - script:
-#       <<: *run-acceptance-tests
-#       scripts:
-#       - make SUITE=test_acl_two_entries test_mixed_pkg
-#   final-tasks: *final-tasks
-#   artifacts: *artifacts
-#   requirements: *requirements
-#   artifact-subscriptions: []
+Chrome ACL two entries:
+  <<: *acceptance-mixed-tests-in-chrome-job
+  key: CATE
+  tasks:
+  - script: *clear-env
+  - script: *restart-minikube
+  - checkout: *checkout
+  - script: *init-submodules
+  - script: *download-artifacts
+  - script: *build-swaggers
+  - script:
+      <<: *run-acceptance-tests
+      scripts:
+      - make SUITE=test_acl_two_entries test_mixed_pkg
+  final-tasks: *final-tasks
+  artifacts: *artifacts
+  requirements: *requirements
+  artifact-subscriptions: []
 
 Chrome QoS tests:
   <<: *acceptance-mixed-tests-in-chrome-job
@@ -208,7 +218,6 @@ Chrome QoS tests:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
@@ -224,7 +233,6 @@ Chrome access tokens id caveats:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
@@ -240,7 +248,6 @@ Chrome access tokens path caveats:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
@@ -256,7 +263,6 @@ Chrome access tokens:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
@@ -272,7 +278,6 @@ Chrome archive privileges:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
@@ -288,7 +293,6 @@ Chrome archives tests:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
@@ -304,7 +308,6 @@ Chrome create file tests:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
@@ -320,7 +323,6 @@ Chrome datasets tests:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
@@ -336,7 +338,6 @@ Chrome directories movement tests:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
@@ -352,7 +353,6 @@ Chrome directories multi tests:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
@@ -369,7 +369,6 @@ Chrome directories remove metadata:
     - script: *clear-env
     - script: *restart-minikube
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
@@ -386,7 +385,6 @@ Chrome directories set metadata:
     - script: *clear-env
     - script: *restart-minikube
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
@@ -402,7 +400,6 @@ Chrome directories times tests:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
@@ -418,7 +415,6 @@ Chrome file content tests:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
@@ -434,7 +430,6 @@ Chrome files movement tests:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
@@ -450,7 +445,6 @@ Chrome files multi tests:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
@@ -467,7 +461,6 @@ Chrome files remove metadata:
     - script: *clear-env
     - script: *restart-minikube
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
@@ -484,7 +477,6 @@ Chrome files set metadata:
     - script: *clear-env
     - script: *restart-minikube
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
@@ -500,7 +492,6 @@ Chrome files times tests:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
@@ -516,7 +507,6 @@ Chrome groups basic tests:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
@@ -532,7 +522,6 @@ Chrome nested directories create:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
@@ -548,7 +537,6 @@ Chrome nested directories remove:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
@@ -564,7 +552,6 @@ Chrome onepanel tests:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
@@ -581,8 +568,7 @@ Chrome onepanel tests:
 #   tasks:
 #   - script: *clear-env
 #   - script: *restart-minikube
-#   - script: *force-clean-repo
-#   - checkout: *checkout
+# #   - checkout: *checkout
 #   - script: *init-submodules
 #   - script: *download-artifacts
 #   - script: *build-swaggers
@@ -598,8 +584,7 @@ Chrome onepanel tests:
 #   tasks:
 #   - script: *clear-env
 #   - script: *restart-minikube
-#   - script: *force-clean-repo
-#   - checkout: *checkout
+# #   - checkout: *checkout
 #   - script: *init-submodules
 #   - script: *download-artifacts
 #   - script: *build-swaggers
@@ -614,7 +599,6 @@ Chrome remove file tests:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
@@ -630,7 +614,6 @@ Chrome rename file tests:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
@@ -646,7 +629,6 @@ Chrome single directory tests 2:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
@@ -662,7 +644,6 @@ Chrome single directory tests:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
@@ -678,7 +659,6 @@ Chrome spaces basic tests:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
@@ -694,7 +674,6 @@ Chrome storage sync:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
@@ -710,7 +689,6 @@ Chrome tokens tests:
   tasks:
     - script: *clear-env
     - script: *restart-minikube
-    - script: *force-clean-repo
     - checkout: *checkout
     - script: *init-submodules
     - script: *download-artifacts
