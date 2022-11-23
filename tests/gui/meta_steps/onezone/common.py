@@ -61,7 +61,7 @@ def visit_op(selenium, browser_id, oz_page, provider_name, popups):
 
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_visit_provider(driver, popups):
-    popups(driver).provider_popover.visit_provider()
+    popups(driver).provider_map_popover.visit_provider()
 
 
 def g_wt_visit_op(selenium, oz_page, browser_id_list, providers_list, hosts,

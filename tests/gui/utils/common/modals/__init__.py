@@ -6,7 +6,7 @@ __copyright__ = "Copyright (C) 2017-2018 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
-from .archives_modals.archive_properties import ArchiveProperties
+from .archives_modals.archive_details import ArchiveDetails
 from .archives_modals.archive_recall_information import ArchiveRecallInformation
 from .archives_modals.cancel_recall import CancelRecall
 from .files_modals.external_symbolic_link import ExternalSymbolicLink
@@ -16,18 +16,14 @@ from .files_modals.create_dir import CreateDir
 from .storage_modals.add_storage import AddStorage
 from tests.gui.utils.core.web_elements import WebItem
 from .basic_modals.create_group import CreateGroup
-from .files_modals.data_distribution import DataDistributionModal
 from .basic_modals.delete_modal import DeleteModal
 from .files_modals.details_modal import DetailsModal
 from .basic_modals.login import LoginFormModal
 from .management_modals.deploying_cluster import ClusterDeploymentModal
-from .files_modals.tabs_in_details_modal.metadata_tab import MetadataTab
-from .files_modals.qos import QualityOfServiceModal
 from .archives_modals.recall_archive import RecallArchive
 from .basic_modals.rename_modal import RenameModal
 from .management_modals.cease_support_for_space import (
     CeaseSupportForSpaceModal)
-from .files_modals.edit_permissions import EditPermissionsModal
 from .configure_web_cert import ConfigureWebCertModal
 from .basic_modals.remove import RemoveModal
 from .troubles_modals.error_modal import ErrorModal
@@ -39,7 +35,7 @@ from .basic_modals.add_one_of_elements import AddOneOfElementsModal
 from .basic_modals.leave_element import LeaveElementModal
 from .storage_modals.modify_storage import ModifyStorage
 from .rest_api_modal import RESTApiModal
-from .files_modals.share_directory import ShareDirectory
+from .files_modals.tabs_in_details_modal.share_directory import ShareDirectory
 from .management_modals.delete_user_account import DeleteUserAccountModal
 from .files_modals.symbolic_link_details import SymbolicLinkDetailsModal
 from .datasets_modals.datasets_modal import DatasetsModal
@@ -74,18 +70,14 @@ class Modals(object):
                              cls=ModifyStorage)
 
     # files modals
-    data_distribution = WebItem('.modal-dialog', cls=DataDistributionModal)
     create_dir = WebItem('.modal-dialog', cls=CreateDir)
-    quality_of_service = WebItem('.modal-dialog', cls=QualityOfServiceModal)
-    metadata = WebItem('.modal-dialog', cls=MetadataTab)
-    share_directory = WebItem('.modal-dialog', cls=ShareDirectory)
+    share_directory = WebItem('.share-modal .modal-dialog', cls=ShareDirectory)
     write_protection = WebItem('.modal-dialog', cls=WriteProtection)
     details_modal = WebItem('.modal-dialog', cls=DetailsModal)
     symbolic_link_details = WebItem('.modal-dialog',
                                     cls=SymbolicLinkDetailsModal)
     external_symbolic_link = WebItem('.modal-dialog',
                                      cls=ExternalSymbolicLink)
-    edit_permissions = WebItem('.modal-dialog', cls=EditPermissionsModal)
 
     # troubles modals
     emergency_interface = WebItem('.modal-dialog', cls=EmergencyInterface)
@@ -108,7 +100,7 @@ class Modals(object):
     delete_archive = WebItem('.modal-dialog', cls=DeleteArchive)
     cancel_recall = WebItem('.cancel-recall-modal .modal-dialog',
                             cls=CancelRecall)
-    archive_properties = WebItem('.modal-dialog', cls=ArchiveProperties)
+    archive_details = WebItem('.modal-dialog', cls=ArchiveDetails)
 
     # datasets modals
     datasets = WebItem('.modal-dialog', cls=DatasetsModal)

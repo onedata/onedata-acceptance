@@ -75,7 +75,6 @@ class MetadataTab(Modal):
     json = WebItem('.tab-pane-metadata-json', cls=JSONMetadataPanel)
     rdf = WebItem('.tab-pane-metadata-rdf', cls=RDFMetadataPanel)
 
-    close = Button('.close')
     save = NamedButton('.btn-primary', text='Save')
     discard_changes = NamedButton('.btn-warning', text='Discard changes')
 
@@ -83,7 +82,7 @@ class MetadataTab(Modal):
     editor_disabled = Label('.editor-disabled-lock-text')
 
     def __str__(self):
-        return 'Metadata modal'
+        return 'Metadata tab'
 
 
 

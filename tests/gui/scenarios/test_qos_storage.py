@@ -80,6 +80,4 @@ def screens():
     return [0, 1]
 
 
-# TODO: VFS-9606 reimplement gui QoS tests after move to file info modal
-scenarios('../features/pass.feature')
-# scenarios('../features/oneprovider/data/qos_storage_oneprovider.feature')
+scenarios('../features/oneprovider/data/qos_storage_oneprovider.feature')

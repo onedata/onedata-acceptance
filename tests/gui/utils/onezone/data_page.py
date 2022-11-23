@@ -67,6 +67,7 @@ class Provider(Element):
     id = name = Label('.one-label')
     support = Label('.outer-text')
     menu_button = Button('.provider-menu-toggle')
+    information_button = Button('.oneicon-provider')
 
 
 class SpaceInfoTile(PageObject):

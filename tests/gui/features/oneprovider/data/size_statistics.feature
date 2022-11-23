@@ -40,7 +40,7 @@ Feature: Size statistics tests
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser waits for displayed size in data row of "dir1" to be "3 B"
     And user of browser clicks on size statistics icon for "dir1" directory in file browser
-    Then user of browser sees that charts title is "DIRECTORY SIZE STATISTICS" in modal "Directory Details"
+    Then user of browser sees that charts title is "HISTORICAL SIZE STATISTICS" in modal "Directory Details"
     And user of browser sees that bytes chart title is "LOGICAL AND PHYSICAL BYTE SIZE" in modal "Directory Details"
     And user of browser sees that count chart title is "FILE COUNT" in modal "Directory Details"
     And user of browser clicks on chart in modal "Directory Details"

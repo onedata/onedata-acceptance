@@ -47,6 +47,7 @@ from tests.gui.meta_steps.oneprovider.common import *
 from tests.gui.meta_steps.onezone.common import *
 
 from tests.gui.steps.modals.modal import *
+from tests.gui.steps.modals.details_modal import *
 from tests.gui.steps.oneprovider_common import *
 from tests.gui.meta_steps.onezone.common import *
 from tests.gui.meta_steps.oneprovider.data import *
@@ -60,8 +61,7 @@ def screens():
     return [0, 1]
 
 
-# TODO: VFS-9473 reimplement gui data distribution tests after move to file info modal
-# scenarios('../features/oneprovider/transfers/transfers_multi.feature')
+scenarios('../features/oneprovider/transfers/transfers_multi.feature')
 scenarios('../features/onezone/space/'
           'spaces_memberships_privileges_multiprovider.feature')
 

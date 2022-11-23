@@ -75,6 +75,7 @@ RECORDING_OPTION            ?= failed
 BROWSER                     ?= Chrome
 TIMEOUT			            ?= 600
 REPEATS                     ?= 1
+RERUNS                      ?= 1
 LOCAL_CHARTS_PATH           ?= ""
 PULL_ONLY_MISSING_IMAGES    ?= ""
 MIXED_TESTS_ROOT := $(shell pwd)/tests/mixed
@@ -91,7 +92,7 @@ endif
 
 test_gui:
 	${TEST_RUN} -t tests/gui/scenarios/${SUITE}.py --test-type gui -vvv --driver=${BROWSER} -i ${ACCEPTANCE_GUI_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} \
-	-k=${KEYWORDS} --timeout ${TIMEOUT} --reruns 1 --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${SOURCES} ${OPTS}
+	-k=${KEYWORDS} --timeout ${TIMEOUT} --reruns ${RERUNS} --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${SOURCES} ${OPTS}
 
 test_gui_pkg: test_gui
 test_gui_src: SOURCES = --sources
@@ -99,7 +100,7 @@ test_gui_src: test_gui
 
 test_mixed:
 	PYTHONPATH=${MIXED_TESTS_ROOT} ${TEST_RUN} -t tests/mixed/scenarios/${SUITE}.py --test-type mixed -vvv --driver=${BROWSER} -i ${ACCEPTANCE_MIXED_IMAGE} --xvfb --xvfb-recording=${RECORDING_OPTION} \
-	 --env-file=${ENV_FILE} -k=${KEYWORDS} --repeats ${REPEATS} --timeout ${TIMEOUT} --reruns 1 --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${SOURCES} ${OPTS}
+	 --env-file=${ENV_FILE} -k=${KEYWORDS} --repeats ${REPEATS} --timeout ${TIMEOUT} --reruns ${RERUNS} --reruns-delay 10 ${GUI_PKG_VERIFICATION} ${SOURCES} ${OPTS}
 
 test_mixed_pkg: test_mixed
 test_mixed_src: SOURCES = --sources

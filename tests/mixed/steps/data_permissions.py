@@ -12,7 +12,8 @@ import re
 from tests.gui.conftest import WAIT_BACKEND
 from tests.gui.meta_steps.oneprovider.permissions import (
     grant_acl_privileges_in_op_gui, assert_ace_in_op_gui,
-    assert_posix_permissions_in_op_gui, set_posix_permissions_in_op_gui)
+    assert_posix_permissions_in_op_gui, set_posix_permissions_in_op_gui,
+    fail_to_set_posix_permissions_in_op_gui)
 from tests.mixed.steps.data_basic import change_client_name_to_hostname
 from tests.mixed.steps.oneclient.data_basic import (
     grant_acl_privileges_in_op_oneclient, assert_ace_in_op_oneclient,
@@ -121,9 +122,15 @@ def set_posix_permissions_in_op(client, user, item_path, space, mode, result,
     full_path = f'{space}/{item_path}'
     client_lower = client.lower()
     if client_lower == 'web gui':
-        set_posix_permissions_in_op_gui(selenium, user, space, item_path,
-                                        mode, op_container, tmp_memory,
-                                        modals, oz_page, popups)
+        if result == 'fails':
+            fail_to_set_posix_permissions_in_op_gui(selenium, user, space,
+                                                    item_path, mode,
+                                                    op_container, tmp_memory,
+                                                    modals, oz_page, popups)
+        else:
+            set_posix_permissions_in_op_gui(selenium, user, space, item_path,
+                                            mode, op_container, tmp_memory,
+                                            modals, oz_page, popups)
     elif client_lower == 'rest':
         set_posix_permissions_in_op_rest(full_path, mode, user, users, host,
                                          hosts, result)

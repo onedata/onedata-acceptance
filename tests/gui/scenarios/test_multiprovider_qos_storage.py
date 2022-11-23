@@ -79,7 +79,6 @@ from tests.utils.acceptance_utils import *
 def screens():
     return [0, 1]
 
-# TODO: VFS-9606 reimplement gui QoS tests after move to file info modal
-scenarios('../features/pass.feature')
-# scenarios('../features/oneprovider/multiprovider/qos_storage.feature')
+
+scenarios('../features/oneprovider/multiprovider/qos_storage.feature')
 

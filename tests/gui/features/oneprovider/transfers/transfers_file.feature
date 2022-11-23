@@ -50,9 +50,7 @@ Feature: Oneprovider transfers files functionality
     And user of browser waits for all transfers to finish
     And user of browser sees file in ended transfers:
             name: large_file.txt
-            destination: oneprovider-2
-            username: space-owner-user
-            transferred: 50 MiB
+            replicated: 50 MiB
             type: replication
             status: completed
 
@@ -74,19 +72,9 @@ Feature: Oneprovider transfers files functionality
     # Wait to ensure synchronization between providers
     And user of browser is idle for 2 seconds
 
-    And user of browser migrates "large_file.txt" from provider "oneprovider-1" to provider "oneprovider-2"
-
-    # Check that transfer appeared in transfer tab
-    And user of browser opens oneprovider-1 Oneprovider transfers for "smallSpace" space
-    Then user of browser waits for all transfers to start
-    And user of browser waits for all transfers to finish
-    And user of browser sees file in ended transfers:
-            name: large_file.txt
-            destination: oneprovider-2
-            username: space-owner-user
-            transferred: 0 B
-            type: migration
-            status: failed
+    And user of browser fails to migrate "large_file.txt" from provider "oneprovider-1" to provider "oneprovider-2"
+    Then user of browser sees that error modal with text "Starting migration failed!" appeared
+    And user of browser clicks on "Close" button in modal "Error"
 
     And user of browser clicks "Files" of "smallSpace" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
@@ -98,19 +86,10 @@ Feature: Oneprovider transfers files functionality
   Scenario: User tries to replicate file to too small space on remote provider
     When user of browser opens oneprovider-1 Oneprovider file browser for "smallSpace" space
     And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
-    And user of browser replicates "large_file.txt" to provider "oneprovider-2"
+    And user of browser fails to replicate "large_file.txt" to provider "oneprovider-2"
 
-    # Check that transfer appeared in transfer tab
-    And user of browser opens oneprovider-1 Oneprovider transfers for "smallSpace" space
-    Then user of browser waits for all transfers to start
-    And user of browser waits for all transfers to finish
-    And user of browser sees file in ended transfers:
-            name: large_file.txt
-            destination: oneprovider-2
-            username: space-owner-user
-            transferred: 0 B
-            type: replication
-            status: failed
+    Then user of browser sees that error modal with text "Starting replication failed!" appeared
+    And user of browser clicks on "Close" button in modal "Error"
 
     And user of browser clicks "Files" of "smallSpace" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
@@ -137,9 +116,7 @@ Feature: Oneprovider transfers files functionality
     And user of browser waits for all transfers to finish
     And user of browser sees file in ended transfers:
             name: large_file.txt
-            destination: oneprovider-2
-            username: space-owner-user
-            transferred: 50 MiB
+            replicated: 50 MiB
             type: migration
             status: completed
 

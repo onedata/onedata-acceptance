@@ -23,7 +23,7 @@ from tests.utils.utils import repeat_failed
 @wt(parsers.parse('user of {browser_id} sees that all metadata tabs '
                   'are marked as empty'))
 def assert_all_metadata_tabs_marked_empty(selenium, browser_id, modals):
-    modal = modals(selenium[browser_id]).metadata
+    modal = modals(selenium[browser_id]).details_modal.metadata
     tabs = modal.navigation
     for tab in tabs:
         assert tab.is_empty(), f'{tab} metadata tab is not empty'
@@ -34,7 +34,7 @@ def assert_all_metadata_tabs_marked_empty(selenium, browser_id, modals):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def are_nav_tabs_for_metadata_panel_displayed(selenium, browser_id, tab_list,
                                               modals):
-    modal = modals(selenium[browser_id]).metadata
+    modal = modals(selenium[browser_id]).details_modal.metadata
     nav = modal.navigation
     for tab in parse_seq(tab_list):
         assert nav[tab] is not None, (
@@ -45,7 +45,7 @@ def are_nav_tabs_for_metadata_panel_displayed(selenium, browser_id, tab_list,
                'metadata'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_no_basic_metadata_for_item(selenium, browser_id, modals):
-    modal = modals(selenium[browser_id]).metadata
+    modal = modals(selenium[browser_id]).details_modal.metadata
     assert len(modal.basic.entries) == 0, ('There is basic metadata while'
                                            ' should not be')
 
@@ -55,7 +55,7 @@ def assert_no_basic_metadata_for_item(selenium, browser_id, modals):
 @repeat_failed(timeout=WAIT_FRONTEND)
 def type_text_to_attr_input_in_new_basic_entry(selenium, browser_id, text,
                                                modals):
-    modal = modals(selenium[browser_id]).metadata
+    modal = modals(selenium[browser_id]).details_modal.metadata
     modal.basic.new_entry.key = text
     press_tab_on_active_element(selenium, browser_id)
 
@@ -65,7 +65,7 @@ def type_text_to_attr_input_in_new_basic_entry(selenium, browser_id, text,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def type_text_to_val_input_in_new_basic_entry(selenium, browser_id, text,
                                               modals):
-    modal = modals(selenium[browser_id]).metadata
+    modal = modals(selenium[browser_id]).details_modal.metadata
     modal.basic.new_entry.value = text
 
 
@@ -74,7 +74,7 @@ def type_text_to_val_input_in_new_basic_entry(selenium, browser_id, text,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def type_text_to_val_of_attr_in_new_basic_entry(selenium, browser_id, text,
                                                 modals, attribute_name):
-    modal = modals(selenium[browser_id]).metadata
+    modal = modals(selenium[browser_id]).details_modal.metadata
     modal.basic.entries[attribute_name].value = text
 
 
@@ -83,7 +83,7 @@ def type_text_to_val_of_attr_in_new_basic_entry(selenium, browser_id, text,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_there_is_such_basic_meta_record(selenium, browser_id, attr_name,
                                            attr_val, modals):
-    modal = modals(selenium[browser_id]).metadata
+    modal = modals(selenium[browser_id]).details_modal.metadata
     err_msg = f'no metadata entry "{attr_name}" with value "{attr_val}" found'
     assert modal.basic.entries[attr_name].value == attr_val, err_msg
 
@@ -93,7 +93,7 @@ def assert_there_is_such_basic_meta_record(selenium, browser_id, attr_name,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_there_is_no_such_meta_record(selenium, browser_id, attribute_name,
                                         modals):
-    modal = modals(selenium[browser_id]).metadata
+    modal = modals(selenium[browser_id]).details_modal.metadata
     err_msg = f'metadata entry {attribute_name} found while should not be'
     assert attribute_name not in modal.basic.entries, err_msg
 
@@ -104,7 +104,7 @@ def assert_there_is_no_such_meta_record(selenium, browser_id, attribute_name,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_del_metadata_record_button(selenium, browser_id, attr_name,
                                         modals):
-    modal = modals(selenium[browser_id]).metadata
+    modal = modals(selenium[browser_id]).details_modal.metadata
     entry = modal.basic.entries[attr_name]
     entry.remove()
 
@@ -114,7 +114,7 @@ def click_on_del_metadata_record_button(selenium, browser_id, attr_name,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def type_text_to_metadata_textarea(selenium, browser_id, text, tab_name,
                                    modals):
-    modal = modals(selenium[browser_id]).metadata
+    modal = modals(selenium[browser_id]).details_modal.metadata
     tab = getattr(modal, tab_name.lower())
     tab.text_area = text
 
@@ -125,7 +125,7 @@ def type_text_to_metadata_textarea(selenium, browser_id, text, tab_name,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_textarea_contains_record(selenium, browser_id, expected_metadata,
                                     tab_name, modals):
-    modal = modals(selenium[browser_id]).metadata
+    modal = modals(selenium[browser_id]).details_modal.metadata
     tab = getattr(modal, tab_name.lower())
     if tab_name.lower() == 'json':
         expected_metadata = json.loads(expected_metadata)
@@ -141,7 +141,7 @@ def assert_textarea_contains_record(selenium, browser_id, expected_metadata,
 
 def assert_textarea_not_contain_record(selenium, browser_id, expected_metadata,
                                        tab_name, modals):
-    modal = modals(selenium[browser_id]).metadata
+    modal = modals(selenium[browser_id]).details_modal.metadata
     tab = getattr(modal, tab_name.lower())
     assert expected_metadata not in tab.text_area
 
@@ -151,7 +151,7 @@ def assert_textarea_not_contain_record(selenium, browser_id, expected_metadata,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_textarea_is_empty_for_metadata(selenium, browser_id, tab_name,
                                           modals):
-    modal = modals(selenium[browser_id]).metadata
+    modal = modals(selenium[browser_id]).details_modal.metadata
     tab = getattr(modal, tab_name.lower())
     err_msg = f'{tab_name} textarea is not empty'
     assert tab.text_area == '', err_msg
@@ -162,7 +162,7 @@ def assert_textarea_is_empty_for_metadata(selenium, browser_id, tab_name,
 @repeat_failed(timeout=WAIT_FRONTEND)
 def clean_tab_textarea_in_metadata_modal(selenium, browser_id, tab_name,
                                          modals):
-    modal = modals(selenium[browser_id]).metadata
+    modal = modals(selenium[browser_id]).details_modal.metadata
     tab = getattr(modal, tab_name.lower())
     if tab.text_area or len(tab.lines) > 1:
         while tab.text_area or len(tab.lines) > 1:
@@ -179,18 +179,10 @@ def clean_tab_textarea_in_metadata_modal(selenium, browser_id, tab_name,
         press_backspace_on_active_element(selenium, browser_id)
 
 
-@wt(parsers.parse('user of {browser_id} clicks on "{button}" button in '
-                  'metadata panel'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def click_metadata_modal_button(selenium, browser_id, button, modals):
-    modal_name = "Metadata"
-    click_modal_button(selenium, browser_id, button, modal_name, modals)
-
-
 @wt(parsers.parse('user of {browser_id} sees "{text}" label in metadata panel'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def see_editor_disabled_label(browser_id, selenium, modals, text):
     driver = selenium[browser_id]
-    item_status = modals(driver).metadata.editor_disabled
+    item_status = modals(driver).details_modal.metadata.editor_disabled
     assert item_status == text, f'{item_status} does not match expected {text}'
 

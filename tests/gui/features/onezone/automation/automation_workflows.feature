@@ -98,9 +98,10 @@ Feature: Basic workflows management
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses "Upload (json)" button from menu bar to upload workflow "workflow_upload.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
+    And user of browser sees task named "inout" in "Lane1" lane
     And user of browser clicks on "Remove" button in task "inout" menu in "Lane1" lane in workflow visualizer
     And user of browser clicks on "Remove" button in modal "Remove task"
-    Then user of browser does not see task named "Task1" in "Lane1" lane
+    Then user of browser does not see task named "inout" in "Lane1" lane
 
 
   Scenario: User does not see workflow after removing it

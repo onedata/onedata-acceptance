@@ -75,5 +75,4 @@ scenarios('../features/onezone/space/'
           'spaces_memberships_space_privileges.feature')
 scenarios('../features/onezone/space/'
           'spaces_memberships_support_privileges.feature')
-# TODO: VFS-9606 reimplement gui QoS tests after move to file info modal
-# scenarios('../features/onezone/space/spaces_memberships_qos_privileges.feature')
+scenarios('../features/onezone/space/spaces_memberships_qos_privileges.feature')

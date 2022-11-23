@@ -327,46 +327,47 @@ Feature: Data harvesting in Discovery Page in Onezone GUI
     And user of browser sees that ["file1_3", "file3_3"] items are not selected in file browser
 
 
-   Scenario: Data could not be presented when elasticsearch does not respond
-    Given space "space2" belongs to "harvester1" harvester of user admin
-    When user of browser opens Data Discovery page of "harvester1" harvester
-    And user of browser sees only following files in Data discovery page:
-          dir1_2:
-            jsonMetadataExists: false
-            rdfMetadataExists: false
-            xattrsMetadataExists: false
-            spaceId: space2
-          file_json:
-            jsonMetadataExists: true
-            rdfMetadataExists: false
-            xattrsMetadataExists: false
-            spaceId: space2
-            author: "\"Samantha Anderson\""
-            year: 1998
-          spaces:
-            - space2
-
-    And elasticsearch plugin stops working
-    And user of browser is idle for 2 seconds
-    And user of browser clicks "Query" button on Data discovery page
-    Then user of browser sees "This resource could not be loaded." alert on Data discovery page
-
-    And elasticsearch plugin starts working
-    And user of browser is idle for 5 seconds
-    And user of browser clicks "Query" button on Data discovery page
-    And user of browser sees Data Discovery page
-    And user of browser sees only following files in Data discovery page:
-          dir1_2:
-            jsonMetadataExists: false
-            rdfMetadataExists: false
-            xattrsMetadataExists: false
-            spaceId: space2
-          file_json:
-            jsonMetadataExists: true
-            rdfMetadataExists: false
-            xattrsMetadataExists: false
-            spaceId: space2
-            author: "\"Samantha Anderson\""
-            year: 1998
-          spaces:
-            - space2
+#   TODO: VFS-9390 Wait for other way to start and stop elasticsearch VFS-8624 and integrate this in test
+#   Scenario: Data could not be presented when elasticsearch does not respond
+#    Given space "space2" belongs to "harvester1" harvester of user admin
+#    When user of browser opens Data Discovery page of "harvester1" harvester
+#    And user of browser sees only following files in Data discovery page:
+#          dir1_2:
+#            jsonMetadataExists: false
+#            rdfMetadataExists: false
+#            xattrsMetadataExists: false
+#            spaceId: space2
+#          file_json:
+#            jsonMetadataExists: true
+#            rdfMetadataExists: false
+#            xattrsMetadataExists: false
+#            spaceId: space2
+#            author: "\"Samantha Anderson\""
+#            year: 1998
+#          spaces:
+#            - space2
+#
+#    And elasticsearch plugin stops working
+#    And user of browser is idle for 2 seconds
+#    And user of browser clicks "Query" button on Data discovery page
+#    Then user of browser sees "This resource could not be loaded." alert on Data discovery page
+#
+#    And elasticsearch plugin starts working
+#    And user of browser is idle for 5 seconds
+#    And user of browser clicks "Query" button on Data discovery page
+#    And user of browser sees Data Discovery page
+#    And user of browser sees only following files in Data discovery page:
+#          dir1_2:
+#            jsonMetadataExists: false
+#            rdfMetadataExists: false
+#            xattrsMetadataExists: false
+#            spaceId: space2
+#          file_json:
+#            jsonMetadataExists: true
+#            rdfMetadataExists: false
+#            xattrsMetadataExists: false
+#            spaceId: space2
+#            author: "\"Samantha Anderson\""
+#            year: 1998
+#          spaces:
+#            - space2
