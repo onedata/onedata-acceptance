@@ -44,6 +44,7 @@ stages:
     manual: false
     final: false
     jobs:
+    - _Codetag Tracker
     - Chrome QoS tests
     - Chrome LUMA tests
     - Chrome create file tests
@@ -79,8 +80,9 @@ stages:
     - Chrome access tokens id caveats
     - Chrome directories times tests
     - Chrome directories remove metadata
-Chrome QoS tests:
-  key: CQT
+
+_Codetag Tracker:
+  key: CDTR
   other: &common-opts
     clean-working-dir: true
     all-other-apps:
@@ -89,6 +91,31 @@ Chrome QoS tests:
         clover:
           useLocalLicenseKey: 'true'
         buildHangingConfig.enabled: 'false'
+  tasks:
+  - checkout: &checkout-default-repository
+      path: onedata-acceptance
+      force-clean-build: 'true'
+      description: Checkout Default Repository
+  - script: &init-submodules
+      scripts:
+      - |-
+        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
+        git remote -v
+        make submodules
+      working-dir: onedata-acceptance
+      description: Init submodules
+  - script:
+      working-dir: onedata-acceptance
+      scripts:
+      - make codetag-tracker BRANCH=${bamboo.planRepository.branchName}
+      description: Codetag Tracker
+  requirements: &requirements
+  - minikube
+  artifact-subscriptions: []
+
+Chrome QoS tests:
+  key: CQT
+  other: *common-opts
   tasks:
   - script: &clear-env
       interpreter: BINSH_OR_CMDEXE
@@ -100,19 +127,8 @@ Chrome QoS tests:
       scripts:
       - sudo ${HOME}/restart_minikube.sh
       description: Restart minikube
-  - checkout: &checkout
-      path: onedata-acceptance
-      force-clean-build: 'true'
-      description: Checkout Default Repository
-  - script: &init-submodules
-      interpreter: BINSH_OR_CMDEXE
-      scripts:
-      - |-
-        git remote set-url origin ${bamboo.repository.git.repositoryUrl}
-        git remote -v
-        make submodules
-      working-dir: onedata-acceptance
-      description: Init submodules
+  - checkout: *checkout-default-repository
+  - script: *init-submodules
   - script: &download-artifacts
       interpreter: BINSH_OR_CMDEXE
       scripts:
@@ -168,8 +184,7 @@ Chrome QoS tests:
     pattern: docker-dev-build-list.json
     shared: false
     required: false
-  requirements: &requirements
-  - minikube
+  requirements: *requirements
   artifact-subscriptions: []
 Chrome LUMA tests:
   key: CAOE
@@ -177,7 +192,7 @@ Chrome LUMA tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script: *build-swaggers
@@ -198,7 +213,7 @@ Chrome create file tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script: *build-swaggers
@@ -219,7 +234,7 @@ Chrome storage sync:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script: *build-swaggers
@@ -240,7 +255,7 @@ Chrome ACL one entry:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script: *build-swaggers
@@ -261,7 +276,7 @@ Chrome permission POSIX multi tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script: *build-swaggers
@@ -282,7 +297,7 @@ Chrome spaces basic tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script: *build-swaggers
@@ -303,7 +318,7 @@ Chrome onepanel tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script: *build-swaggers
@@ -324,7 +339,7 @@ Chrome permission POSIX tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script: *build-swaggers
@@ -345,7 +360,7 @@ Chrome files movement tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script: *build-swaggers
@@ -366,7 +381,7 @@ Chrome directories movement tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script: *build-swaggers
@@ -387,7 +402,7 @@ Chrome files multi tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script: *build-swaggers
@@ -408,7 +423,7 @@ Chrome access tokens path caveats:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script: *build-swaggers
@@ -429,7 +444,7 @@ Chrome nested directories create:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script: *build-swaggers
@@ -450,7 +465,7 @@ Chrome single directory tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script: *build-swaggers
@@ -471,7 +486,7 @@ Chrome files set metadata:
    tasks:
    - script: *clear-env
    - script: *restart-minikube
-   - checkout: *checkout
+   - checkout: *checkout-default-repository
    - script: *init-submodules
    - script: *download-artifacts
    - script: *build-swaggers
@@ -492,7 +507,7 @@ Chrome remove file tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script: *build-swaggers
@@ -513,7 +528,7 @@ Chrome directories multi tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script: *build-swaggers
@@ -533,7 +548,7 @@ Chrome groups basic tests:
   other: *common-opts
   tasks:
   - script: *clear-env
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script: *build-swaggers
@@ -554,7 +569,7 @@ Chrome single directory tests 2:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script: *build-swaggers
@@ -575,7 +590,7 @@ Chrome archives tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script: *build-swaggers
@@ -596,7 +611,7 @@ Chrome archive privileges:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script: *build-swaggers
@@ -617,7 +632,7 @@ Chrome directories set metadata:
    tasks:
    - script: *clear-env
    - script: *restart-minikube
-   - checkout: *checkout
+   - checkout: *checkout-default-repository
    - script: *init-submodules
    - script: *download-artifacts
    - script: *build-swaggers
@@ -638,7 +653,7 @@ Chrome nested directories remove:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script: *build-swaggers
@@ -659,7 +674,7 @@ Chrome ACL two entries:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script: *build-swaggers
@@ -680,7 +695,7 @@ Chrome tokens tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script: *build-swaggers
@@ -701,7 +716,7 @@ Chrome access tokens:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script: *build-swaggers
@@ -722,7 +737,7 @@ Chrome file content tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script: *build-swaggers
@@ -743,7 +758,7 @@ Chrome files remove metadata:
    tasks:
    - script: *clear-env
    - script: *restart-minikube
-   - checkout: *checkout
+   - checkout: *checkout-default-repository
    - script: *init-submodules
    - script: *download-artifacts
    - script: *build-swaggers
@@ -764,7 +779,7 @@ Chrome rename file tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script: *build-swaggers
@@ -785,7 +800,7 @@ Chrome datasets tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script: *build-swaggers
@@ -806,7 +821,7 @@ Chrome files times tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script: *build-swaggers
@@ -827,7 +842,7 @@ Chrome access tokens id caveats:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script: *build-swaggers
@@ -848,7 +863,7 @@ Chrome directories times tests:
   tasks:
   - script: *clear-env
   - script: *restart-minikube
-  - checkout: *checkout
+  - checkout: *checkout-default-repository
   - script: *init-submodules
   - script: *download-artifacts
   - script: *build-swaggers
@@ -869,7 +884,7 @@ Chrome directories remove metadata:
    tasks:
    - script: *clear-env
    - script: *restart-minikube
-   - checkout: *checkout
+   - checkout: *checkout-default-repository
    - script: *init-submodules
    - script: *download-artifacts
    - script: *build-swaggers
