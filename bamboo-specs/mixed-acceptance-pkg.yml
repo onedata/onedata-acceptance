@@ -176,7 +176,7 @@ Chrome LUMA tests: &acceptance-mixed-tests-in-chrome-job
 
 Chrome ACL one entry:
   <<: *acceptance-mixed-tests-in-chrome-job
-  key: CLT
+  key: CAOE
   tasks:
   - script: *clear-env
   - script: *restart-minikube
