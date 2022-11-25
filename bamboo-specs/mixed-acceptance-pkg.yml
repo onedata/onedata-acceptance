@@ -47,10 +47,10 @@ stages:
       manual: false
       final: false
       jobs:
-        - Chrome ACL one entry  # First job cant be commented because it defines anchors
-        - Chrome ACL two entries
         - _Codetag Tracker
         - Chrome LUMA tests
+        - Chrome ACL one entry  
+        - Chrome ACL two entries
         - Chrome QoS tests
         - Chrome access tokens
         - Chrome access tokens id caveats
@@ -95,7 +95,7 @@ _Codetag Tracker:
           useLocalLicenseKey: 'true'
         buildHangingConfig.enabled: 'false'
   tasks:
-  - checkout: &checkout-default-repository
+  - checkout:
       path: onedata-acceptance
       force-clean-build: 'true'
       description: Checkout Default Repository
@@ -112,8 +112,7 @@ _Codetag Tracker:
       scripts:
       - make codetag-tracker BRANCH=${bamboo.planRepository.branchName}
       description: Codetag Tracker
-  requirements: &requirements
-  - kubeadm
+  requirements: []
   artifact-subscriptions: []
 
 Chrome LUMA tests: &acceptance-mixed-tests-in-chrome-job
@@ -171,7 +170,8 @@ Chrome LUMA tests: &acceptance-mixed-tests-in-chrome-job
       pattern: "**/*.*"
       shared: false
       required: false
-  requirements: *requirements
+  requirements:
+  - kubeadm
   artifact-subscriptions: []
 
 Chrome ACL one entry:
@@ -203,10 +203,6 @@ Chrome ACL two entries:
       <<: *run-acceptance-tests
       scripts:
       - make SUITE=test_acl_two_entries test_mixed_pkg
-  final-tasks: *final-tasks
-  artifacts: *artifacts
-  requirements: *requirements
-  artifact-subscriptions: []
 
 Chrome QoS tests:
   <<: *acceptance-mixed-tests-in-chrome-job
