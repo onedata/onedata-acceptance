@@ -187,7 +187,7 @@ Chrome QoS tests:
   requirements: *requirements
   artifact-subscriptions: []
 Chrome LUMA tests:
-  key: CAOE
+  key: CLT
   other: *common-opts
   tasks:
   - script: *clear-env

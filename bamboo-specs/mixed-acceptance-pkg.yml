@@ -116,7 +116,7 @@ _Codetag Tracker:
   artifact-subscriptions: []
 
 Chrome LUMA tests: &acceptance-mixed-tests-in-chrome-job
-  key: CAOE
+  key: CLT
   other: *common-opts
   tasks:
     - script: &clear-env
