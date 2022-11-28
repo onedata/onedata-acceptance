@@ -1,0 +1,18 @@
+version: 2
+plan:
+  key: ODSRV-GAPT   
+plan-permissions:
+  - users:
+      - plgjliput
+      - plglopiola
+      - plgmstanisz
+      - plgdutka
+      - plgagneska
+    groups:
+      - plggveildev
+    permissions:
+      - view
+      - edit
+      - build
+      - clone
+      - admin
