@@ -8,35 +8,54 @@ __license__ = "This software is released under the MIT license cited in " \
 
 import time
 
-import yaml
 from selenium.common.exceptions import StaleElementReferenceException
 
 from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.meta_steps.oneprovider.data import (
+    get_item_name_and_containing_dir_path)
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.oneprovider.automation import switch_to_automation_page
-from tests.gui.steps.oneprovider.file_browser import _select_files
-from tests.gui.utils.core import scroll_to_css_selector
 from tests.utils.bdd_utils import wt, parsers
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.utils import repeat_failed
 
 
-@wt(parsers.parse('user of {browser_id} chooses "{file_name}" file '
+def go_to_path_and_return_file_name_in_modal(path, modals, driver, modal_name):
+    modal = getattr(modals(driver), transform(modal_name))
+    if '/' in path:
+        file_name, path_list = get_item_name_and_containing_dir_path(path)
+        for item in path_list:
+            for file in modal.files:
+                if file.name == item:
+                    file.click_and_enter()
+        return file_name
+    else:
+        return path
+
+
+@wt(parsers.parse('user of {browser_id} chooses {file_list} file '
                   'as initial value for workflow in "Select files" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def choose_file_as_initial_workflow_value(selenium, browser_id, file_name,
+def choose_file_as_initial_workflow_value(selenium, browser_id, file_list,
                                           modals, op_container):
+    files = parse_seq(file_list)
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
     op_container(driver).automation_page.input_icon.click()
 
-    select_files_modal = modals(driver).select_files
+    for path in files:
+        modal_name = 'select files'
+        file_name = go_to_path_and_return_file_name_in_modal(path, modals,
+                                                             driver, modal_name)
+        select_files_modal = modals(driver).select_files
 
-    for file in select_files_modal.files:
-        if file.name == file_name:
-            file.clickable_field.click()
-
-    select_files_modal.confirm_button.click()
+        for file in select_files_modal.files:
+            if file.name == file_name:
+                file.clickable_field.click()
+                select_files_modal.confirm_button.click()
+                if file_name not in files[-1]:
+                    op_container(driver).automation_page.input_icon.click()
+                break
 
 
 def change_tab_in_automation_subpage(page, tab_name):
@@ -70,7 +89,7 @@ def expand_workflow_record(selenium, browser_id, op_container):
 
 
 def get_store_content(browser_id, driver, page, modals, clipboard,
-                       displays, store_name, store_type):
+                      displays, store_name, store_type):
     page.stores_list[store_name].click()
     modal = modals(driver).store_details
     time.sleep(0.25)

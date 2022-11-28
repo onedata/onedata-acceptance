@@ -1,0 +1,334 @@
+{
+  "summary": "",
+  "schemaFormatVersion": 2,
+  "revision": {
+    "supplementaryAtmLambdas": {
+      "bd1b545183deb0f4f6295f492794c7bech43ff": {
+        "2": {
+          "schemaFormatVersion": 2,
+          "revision": {
+            "schemaFormatVersion": 2,
+            "originalRevisionNumber": 2,
+            "atmLambdaRevision": {
+              "summary": "",
+              "state": "draft",
+              "resultSpecs": [
+                {
+                  "relayMethod": "returnValue",
+                  "name": "result",
+                  "dataSpec": {
+                    "valueConstraints": {},
+                    "type": "object"
+                  }
+                }
+              ],
+              "resourceSpec": {
+                "memoryRequested": 104857600,
+                "memoryLimit": null,
+                "ephemeralStorageRequested": 104857600,
+                "ephemeralStorageLimit": null,
+                "cpuRequested": 0.1,
+                "cpuLimit": null
+              },
+              "preferredBatchSize": 100,
+              "operationSpec": {
+                "engine": "openfaas",
+                "dockerImage": "docker.onedata.org/checksum-counting-oneclient:v7",
+                "dockerExecutionOptions": {
+                  "readonly": false,
+                  "oneclientOptions": "-i",
+                  "oneclientMountPoint": "/mnt/onedata",
+                  "mountOneclient": true
+                }
+              },
+              "name": "counting-different-checksums",
+              "description": "",
+              "checksum": "b912fe441503d9cbad013c02d4856567",
+              "argumentSpecs": [
+                {
+                  "name": "item",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "dataSpec": {
+                    "valueConstraints": {
+                      "fileType": "ANY"
+                    },
+                    "type": "file"
+                  }
+                },
+                {
+                  "name": "metadata_key",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "dataSpec": {
+                    "valueConstraints": {},
+                    "type": "string"
+                  }
+                },
+                {
+                  "name": "algorithm",
+                  "isOptional": false,
+                  "defaultValue": null,
+                  "dataSpec": {
+                    "valueConstraints": {},
+                    "type": "string"
+                  }
+                }
+              ]
+            }
+          },
+          "originalAtmLambdaId": "bd1b545183deb0f4f6295f492794c7bech43ff"
+        }
+      }
+    },
+    "schemaFormatVersion": 2,
+    "originalRevisionNumber": 1,
+    "atmWorkflowSchemaRevision": {
+      "stores": [
+        {
+          "type": "treeForest",
+          "requiresInitialContent": true,
+          "name": "input-files",
+          "id": "06b100f1cdb54fa637be4fde5e86fa9d568f57",
+          "description": "",
+          "defaultInitialContent": null,
+          "config": {
+            "itemDataSpec": {
+              "valueConstraints": {
+                "fileType": "ANY"
+              },
+              "type": "file"
+            }
+          }
+        },
+        {
+          "type": "list",
+          "requiresInitialContent": false,
+          "name": "output-store",
+          "id": "d3db29a555cd445cde95225c7548288e62a484",
+          "description": "",
+          "defaultInitialContent": null,
+          "config": {
+            "itemDataSpec": {
+              "valueConstraints": {},
+              "type": "object"
+            }
+          }
+        }
+      ],
+      "state": "draft",
+      "lanes": [
+        {
+          "storeIteratorSpec": {
+            "storeSchemaId": "06b100f1cdb54fa637be4fde5e86fa9d568f57",
+            "maxBatchSize": 100
+          },
+          "parallelBoxes": [
+            {
+              "tasks": [
+                {
+                  "timeSeriesStoreConfig": null,
+                  "resultMappings": [
+                    {
+                      "storeSchemaId": "d3db29a555cd445cde95225c7548288e62a484",
+                      "storeContentUpdateOptions": {
+                        "type": "listStoreContentUpdateOptions",
+                        "function": "append"
+                      },
+                      "resultName": "result"
+                    }
+                  ],
+                  "resourceSpecOverride": null,
+                  "name": "md5",
+                  "lambdaRevisionNumber": 2,
+                  "lambdaId": "bd1b545183deb0f4f6295f492794c7bech43ff",
+                  "id": "06f031a7ebfac01dd9c4682dd98a0eaab47363",
+                  "argumentMappings": [
+                    {
+                      "valueBuilder": {
+                        "valueBuilderType": "iteratedItem",
+                        "valueBuilderRecipe": null
+                      },
+                      "argumentName": "item"
+                    },
+                    {
+                      "valueBuilder": {
+                        "valueBuilderType": "const",
+                        "valueBuilderRecipe": "md5_key"
+                      },
+                      "argumentName": "metadata_key"
+                    },
+                    {
+                      "valueBuilder": {
+                        "valueBuilderType": "const",
+                        "valueBuilderRecipe": "md5"
+                      },
+                      "argumentName": "algorithm"
+                    }
+                  ]
+                },
+                {
+                  "timeSeriesStoreConfig": null,
+                  "resultMappings": [
+                    {
+                      "storeSchemaId": "d3db29a555cd445cde95225c7548288e62a484",
+                      "storeContentUpdateOptions": {
+                        "type": "listStoreContentUpdateOptions",
+                        "function": "append"
+                      },
+                      "resultName": "result"
+                    }
+                  ],
+                  "resourceSpecOverride": null,
+                  "name": "sha256",
+                  "lambdaRevisionNumber": 2,
+                  "lambdaId": "bd1b545183deb0f4f6295f492794c7bech43ff",
+                  "id": "a1668c76befac8e5e076593c7111f8c24ad31b",
+                  "argumentMappings": [
+                    {
+                      "valueBuilder": {
+                        "valueBuilderType": "iteratedItem",
+                        "valueBuilderRecipe": null
+                      },
+                      "argumentName": "item"
+                    },
+                    {
+                      "valueBuilder": {
+                        "valueBuilderType": "const",
+                        "valueBuilderRecipe": "sha256_key"
+                      },
+                      "argumentName": "metadata_key"
+                    },
+                    {
+                      "valueBuilder": {
+                        "valueBuilderType": "const",
+                        "valueBuilderRecipe": "sha256"
+                      },
+                      "argumentName": "algorithm"
+                    }
+                  ]
+                }
+              ],
+              "name": "Parallel box",
+              "id": "19e8befbd8728df10467361a88756e925e23da"
+            },
+            {
+              "tasks": [
+                {
+                  "timeSeriesStoreConfig": null,
+                  "resultMappings": [
+                    {
+                      "storeSchemaId": "d3db29a555cd445cde95225c7548288e62a484",
+                      "storeContentUpdateOptions": {
+                        "type": "listStoreContentUpdateOptions",
+                        "function": "append"
+                      },
+                      "resultName": "result"
+                    }
+                  ],
+                  "resourceSpecOverride": null,
+                  "name": "adler32",
+                  "lambdaRevisionNumber": 2,
+                  "lambdaId": "bd1b545183deb0f4f6295f492794c7bech43ff",
+                  "id": "32c8db074af0de232ba661aa33edb7ab6c4767",
+                  "argumentMappings": [
+                    {
+                      "valueBuilder": {
+                        "valueBuilderType": "iteratedItem",
+                        "valueBuilderRecipe": null
+                      },
+                      "argumentName": "item"
+                    },
+                    {
+                      "valueBuilder": {
+                        "valueBuilderType": "const",
+                        "valueBuilderRecipe": "adler32_key"
+                      },
+                      "argumentName": "metadata_key"
+                    },
+                    {
+                      "valueBuilder": {
+                        "valueBuilderType": "const",
+                        "valueBuilderRecipe": "adler32"
+                      },
+                      "argumentName": "algorithm"
+                    }
+                  ]
+                }
+              ],
+              "name": "Parallel box",
+              "id": "9793a79ede4d279427d3e06dc93f3dece990b8"
+            }
+          ],
+          "name": "lane1",
+          "maxRetries": 0,
+          "id": "9135929d48d34b10ca1642bcac26392dfa865e",
+          "dashboardSpec": null
+        },
+        {
+          "storeIteratorSpec": {
+            "storeSchemaId": "06b100f1cdb54fa637be4fde5e86fa9d568f57",
+            "maxBatchSize": 100
+          },
+          "parallelBoxes": [
+            {
+              "tasks": [
+                {
+                  "timeSeriesStoreConfig": null,
+                  "resultMappings": [
+                    {
+                      "storeSchemaId": "d3db29a555cd445cde95225c7548288e62a484",
+                      "storeContentUpdateOptions": {
+                        "type": "listStoreContentUpdateOptions",
+                        "function": "append"
+                      },
+                      "resultName": "result"
+                    }
+                  ],
+                  "resourceSpecOverride": null,
+                  "name": "sha512",
+                  "lambdaRevisionNumber": 2,
+                  "lambdaId": "bd1b545183deb0f4f6295f492794c7bech43ff",
+                  "id": "0f7d1cd95e5ec2707dbb282fc01568f0a7ed0e",
+                  "argumentMappings": [
+                    {
+                      "valueBuilder": {
+                        "valueBuilderType": "iteratedItem",
+                        "valueBuilderRecipe": null
+                      },
+                      "argumentName": "item"
+                    },
+                    {
+                      "valueBuilder": {
+                        "valueBuilderType": "const",
+                        "valueBuilderRecipe": "sha512_key"
+                      },
+                      "argumentName": "metadata_key"
+                    },
+                    {
+                      "valueBuilder": {
+                        "valueBuilderType": "const",
+                        "valueBuilderRecipe": "sha512"
+                      },
+                      "argumentName": "algorithm"
+                    }
+                  ]
+                }
+              ],
+              "name": "Parallel box",
+              "id": "4912a1827e74f0c11047ec90933930370d0e4e"
+            }
+          ],
+          "name": "lane2",
+          "maxRetries": 0,
+          "id": "c369e6b1efa38f3d0ac4c0d07837c2aa20cc97",
+          "dashboardSpec": null
+        }
+      ],
+      "description": "",
+      "dashboardSpec": null
+    }
+  },
+  "originalAtmWorkflowSchemaId": "4ed3c92c6bc6822d75274d5955e0837cche9f7",
+  "name": "counting-different-checksums"
+}
