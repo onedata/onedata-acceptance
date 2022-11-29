@@ -1,14 +1,14 @@
-# macOS environment setup
+# macOS Onedata deployment setup
 
-**WARNING:** setting up environment and running tests in macOS is not officially supported.
-Please notice that advises below are unofficial.
+**WARNING:** setting up Onedata deployment and running tests in macOS is not
+officially supported. Please notice that advises below are unofficial.
 
 ## Building sources of op-worker, oz-worker and onepanel (optional)
 
 **Note:** This step is not needed if you want to start one-env using packages or launch
-test on other existing environment.
+test on other existing deployment.
 
-If you wish to build your own sources to launch one-env environment using local build,
+If you wish to build your own sources to launch one-env deployment using local build,
 follow these tips for Docker for Mac:
 - add: `/var/cache/ccache` and `/var/cache/rebar3` to _Resources > File sharing_ directories
 - if you use Docker for Mac version 3.5.x or newer, set Docket context to `default`

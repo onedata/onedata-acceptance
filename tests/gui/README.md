@@ -1,44 +1,36 @@
 # GUI acceptance tests
 
-## Running tests using Makefile
+# Running tests using Makefile
 
 To run GUI test use:
 ```
 make ENV_FILE=$ENV SUITE=$SUITE BROWSER=Chrome TIMEOUT=600 test_gui_pkg
 ```
 
-- `SUITE` - determines tests. File name from [scenarios](scenarios), without extension. 
-- `ENV_FILE` - determines env-file (description of test environment). 
-Path to file from [environments](environments), without extension. If not 
-given default ([1oz_1op_deployed.yaml](environments/1oz_1op_deployed.yaml)) 
-will be used.
-- `OPTS` - optional, any `./test_run.py` parameters
-(see [useful `./test_run.py` parameters](../../README.md#Useful test_run parameters))
-
 Commands for exact tests suites can be found in [bamboo-specs/gui](../../bamboo-specs/gui-acceptance-src.yml).
 
-**Example:**\
+For more information about running tests using `make` see  [README](../../README.md#Running-acceptance-tests)
+
+**Example:**
 QoS basic tests on automatic Onedata deployment using a dockerized testing toolkit
 ```
 make ENV_FILE=1oz_2op_deployed SUITE=test_qos_basic BROWSER=Chrome TIMEOUT=600 OPTS="--no-clean --no-pull" test_gui_pkg
 ```
-**Note:** Onedata deployment does not have to be ready in order to run
-tests using `make` it will start automatically.
+**Note:** Onedata deployment does not have to be started in order to run
+tests using `make` (it will start automatically).
 
 **Note:** flag `--local` won't work, because `make` by default is using 
-`--xvfb` flag, and they need to be mutually exclusive
-<!--- TODO VFS-9881 write about --local option in make after making  --local and --xvfb flags mutually exclusive -->
+`--xvfb` flag, and they need to be mutually exclusive.
+<!--- TODO VFS-9881 delete the above note after making --local and --xvfb flags 
+mutually exclusive in Makefile -->
 
-Makefile is using `./test_run.py` with specified, default parameters. You can use and 
-parameterize `./test_run.py` on your own. Some useful features are described 
-below.
 
-## Running mixed tests using test_run
+# Running GUI tests using test_run
 
 ## Running tests on automatic Onedata deployment using a dockerized testing toolkit
 
 Using this method, the Onedata deployment will be set up automatically with OZ and OP
-(for details see `environments` dir with configurations). Setting up environment can take
+(for details see `environments` dir with configurations). Setting up deployment can take
 some time.
 
 ```
@@ -70,22 +62,32 @@ document: [one-env guide](https://git.onedata.org/projects/VFS/repos/onedev/brow
 ./test_run.py -t tests/gui --test-type gui --driver=Chrome -i onedata/acceptance_gui:latest --no-clean --xvfb --xvfb-recording=failed
 ```
 
-**Note:**  If Onedata deployment is not running, it will start during first 
-calling of above command 
+**Note:**  If Onedata deployment is not running, it will start 
+during the first call of above command 
 
 ### Using a locally installed testing toolkit
+
 Running test this way greatly helps with debug because you see test "live". 
 <!--- TODO VFS-10023 write about automatic setup on local machine -->
 
-**_Starting tests:_**
+Acceptance tests using selenium (GUI, Mixed) can be run with `--local` flag,
+which greatly help with debug, but it is problematic to make it work:
+1. You must install some python libraries:
+    1. Try running: `pip3 install -r onedata-acceptance/tests/gui/requirements.txt`
+    2. On Ubuntu 22.04 this won't work on default python 3.10, a version 3.7 
+       must be installed on the side.
+2. You must have a Chrome driver for Selenium.
+
+**Starting tests:**
 
 **Note:** the one-env environment that is set up should be accessible via hostnames
 (eg. https://dev-onezone.default.svc.cluster.local). Make sure that you can open address
 of Onezone in your browser before starting tests. 
 Command `./onenv hosts` (invoke from repo `one-env` root) add entries 
-in `/etc/hosts`. For more information: [one-env/Starting-Onedata-deployment](https://git.onedata.org/projects/VFS/repos/onedev/browse/guides/one-env.md#Starting-Onedata-deployment)
+in `/etc/hosts`. For more information: 
+[one-env/Starting-Onedata-deployment](https://git.onedata.org/projects/VFS/repos/onedev/browse/guides/one-env.md#Starting-Onedata-deployment)
 
-Example working both on **Linux** and **macOS**: (invoke from onedata-acceptance repo root dir)
+**Example** (invoke from onedata-acceptance repo root dir):
 
 ```bash
 ./test_run.py -t tests/gui --test-type gui --driver=Chrome --local --no-clean
@@ -99,21 +101,15 @@ You can also use this command to run the simplest single test:
 
 **New parameters:**
 
-* `--local` - starts tests on host instead of starting them in pod.
+* `--local` - uses locally installed testing toolkit instead of dockerized one.
 
 **Note:** Onedata deployment have to be ready in order to run tests locally.
 
 **Note:** `--update-etc-hosts` flag add entries in `/etc/hosts` when deployment is ready.
 
 # Known issues
-1. Acceptance tests using selenium (GUI, Mixed) can be run with `--local` flag,
-   which greatly help with debug, but it is problematic to make it work:
-   1. You must install some python libraries:
-       1. Try running: `pip3 install -r onedata-acceptance/tests/gui/requirements.txt`
-       2. On Ubuntu 22.04 this won't work on default python 3.10, a version 3.7 
-          must be installed on the side.
-   2. You must have a Chrome driver for Selenium.
-2. There is a problem with automatic setup for tests which are using local 
+
+1. There is a problem with automatic setup for tests which are using local 
    machine, with `--local` flag, `pytest` is run differently than on docker
    (have different options).
 
