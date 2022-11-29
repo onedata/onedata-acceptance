@@ -21,8 +21,7 @@ tests using `make` (it will start automatically).
 
 **Note:** flag `--local` won't work, because `make` by default is using 
 `--xvfb` flag, and they need to be mutually exclusive.
-<!--- TODO VFS-9881 delete the above note after making --local and --xvfb flags 
-mutually exclusive in Makefile -->
+<!--- TODO VFS-9881 delete the above note after making --local and --xvfb flags mutually exclusive in Makefile -->
 
 
 # Running GUI tests using test_run
@@ -41,7 +40,7 @@ some time.
 current version of tests. For legacy versions of tests, use image defined in `Makefile`.
 
 **Note:** for some tests you should specify `--env-file` - 
-see [bamboo-specs/gui-acceptance-src.yml](../../bamboo-specs/gui-acceptance-src.yml)
+see [bamboo-specs/gui](../../bamboo-specs/gui-acceptance-src.yml)
 
 Example that starts deployment using `1oz_1op_not_deployed_embedded_ceph.yaml`:
 ```
@@ -52,9 +51,6 @@ Example that starts deployment using `1oz_1op_not_deployed_embedded_ceph.yaml`:
 
 Using this method, existing Onedata deployment installation will be used
 if available.
-
-The manual start of the Onedata deployment is described in the following 
-document: [one-env guide](https://git.onedata.org/projects/VFS/repos/onedev/browse/guides/one-env.md)
 
 ### Using a dockerized testing toolkit
 

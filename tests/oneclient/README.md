@@ -15,8 +15,8 @@ For more information about running tests using `make` see  [README](../../README
 ```
 make SUITE=test_luma_provider ENV_FILE=singleprovider_multistorage TIMEOUT=720 IGNORE_XFAIL=1 OPTS="-k="test_posix_storage_operations"" test_oneclient_pkg
 ```
-In `OPTS` any of `./test_run.py` parameters can be use (see 
-[useful parameters](../../README.md#Useful-test_run-parameters)).
+In `OPTS` any of `./test_run.py` parameters can be use (see _Useful test_run parameters_
+in [README](../../README.md)).
 
 Some useful options used mostly in `oneclient` tests:
 * `-k="test_posix_storage_operations"` - used to select specific test

@@ -31,7 +31,7 @@ without extension (if not specified, default
 [1oz_1op_deployed.yaml](tests/gui/environments/1oz_1op_deployed.yaml) 
 will be used).
 - `OPTS` - optional, any of `./test_run.py` parameters
-(see [useful parameters](README.md#Useful-test_run-parameters))
+(see _Useful test_run parameters_ section)
 - `TIMEOUT` - wait timeout
 - `test_type` - type of tests e.g. `test_gui_pkg`
 
@@ -77,7 +77,7 @@ The manual start of Onedata deployment is described in the following
 document: [one-env guide](https://git.onedata.org/projects/VFS/repos/onedev/browse/guides/one-env.md)
 
 To start Onedata deployment navigate to `one-env` directory in 
-[one-env](https://git.onedata.org/projects/VFS/repos/onedev/browse) repository
+[one-env](https://git.onedata.org/projects/VFS/repos/one-env/browse) repository
 or to [one_env](one_env) submodule in this repository and run:
 
  ```
