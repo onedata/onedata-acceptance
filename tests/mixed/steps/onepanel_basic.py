@@ -10,7 +10,7 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 from tests.gui.conftest import WAIT_BACKEND
-from tests.utils.environment_setup.spaces import force_start_storage_scan
+from tests.utils.entities_setup.spaces import force_start_storage_scan
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
 from tests.mixed.utils.common import NoSuchClientException

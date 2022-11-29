@@ -18,9 +18,9 @@ from tests.gui.steps.oneprovider.browser import \
 from tests.gui.utils.generic import (parse_seq, upload_file_path, transform)
 from tests.utils.utils import repeat_failed
 from tests.utils.bdd_utils import given, wt, parsers
-from tests.utils.environment_setup import GUI_UPLOAD_CHUNK_SIZE, \
+from tests.utils.entities_setup import GUI_UPLOAD_CHUNK_SIZE, \
     GUI_DOWNLOAD_CHUNK_SIZE, DOWNLOAD_INACTIVITY_PERIOD_SEC
-from tests.utils.environment_setup import UPLOAD_INACTIVITY_PERIOD_SEC
+from tests.utils.entities_setup import UPLOAD_INACTIVITY_PERIOD_SEC
 
 
 @repeat_failed(timeout=WAIT_BACKEND)

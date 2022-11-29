@@ -13,7 +13,7 @@ from pytest import skip
 from pytest_bdd import given
 
 from tests import OZ_REST_PORT, PANEL_REST_PORT
-from tests.utils.environment_setup.spaces import _rm_all_spaces_for_users_list
+from tests.utils.entities_setup.spaces import _rm_all_spaces_for_users_list
 from tests.utils.bdd_utils import parsers
 from tests.utils.http_exceptions import HTTPError, HTTPNotFound, HTTPBadRequest
 from tests.utils.rest_utils import (

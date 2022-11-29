@@ -10,9 +10,9 @@ import pytest
 
 from tests.conftest import export_logs
 from tests.oneclient.steps.multi_dir_steps import purge_all_spaces
-from tests.utils.environment_setup.users import users_creation_with_cleanup as setup_users
-from tests.utils.environment_setup.groups import groups_creation as setup_groups
-from tests.utils.environment_setup.spaces import create_and_configure_spaces as setup_spaces
+from tests.utils.entities_setup.users import users_creation_with_cleanup as setup_users
+from tests.utils.entities_setup.groups import groups_creation as setup_groups
+from tests.utils.entities_setup.spaces import create_and_configure_spaces as setup_spaces
 from tests.utils.luma_utils import get_local_feed_luma_storages, add_user_luma_mapping, add_spaces_luma_mapping, \
     get_all_spaces_details
 

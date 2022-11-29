@@ -13,9 +13,9 @@ from functools import partial
 from pytest import fixture, mark
 from pytest_bdd import scenario, scenarios
 
-from tests.utils.environment_setup.users import *
-from tests.utils.environment_setup.groups import *
-from tests.utils.environment_setup.spaces import *
+from tests.utils.entities_setup.users import *
+from tests.utils.entities_setup.groups import *
+from tests.utils.entities_setup.spaces import *
 
 from tests.gui.steps.common.url import *
 from tests.gui.steps.common.browser_creation import *
