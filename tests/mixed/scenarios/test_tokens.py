@@ -10,9 +10,9 @@ __license__ = "This software is released under the MIT license cited in " \
 
 from pytest_bdd import scenarios
 
-from tests.gui.steps.rest.env_up.users import *
-from tests.gui.steps.rest.env_up.groups import *
-from tests.gui.steps.rest.env_up.spaces import *
+from tests.utils.entities_setup.users import *
+from tests.utils.entities_setup.groups import *
+from tests.utils.entities_setup.spaces import *
 
 from tests.gui.steps.oneprovider_common import *
 from tests.gui.meta_steps.onezone import *
