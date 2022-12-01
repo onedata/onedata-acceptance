@@ -19,8 +19,11 @@ from tests.utils.http_exceptions import HTTPForbidden
 
 @given(parsers.parse('initial groups configuration in "{service}" '
                      'Onezone service:\n{config}'))
-def groups_creation(config, service, admin_credentials,
-                    users, hosts, groups):
+def groups_creation_step(config, service, admin_credentials, users, hosts, groups):
+    groups_creation(yaml.load(config), service, admin_credentials, users, hosts, groups)
+
+
+def groups_creation(config, service, admin_credentials, users, hosts, groups):
     """Create and configure groups according to given config.
 
     Config format given in yaml is as follow:
@@ -70,8 +73,6 @@ def groups_creation(config, service, admin_credentials,
 def _groups_creation(config, service, admin_credentials,
                      users, hosts, groups):
     zone_hostname = hosts[service]['hostname']
-
-    config = yaml.load(config)
 
     for group_name, description in config.items():
         owner = users[description['owner']]
