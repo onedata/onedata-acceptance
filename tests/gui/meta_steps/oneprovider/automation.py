@@ -14,10 +14,16 @@ from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.meta_steps.oneprovider.data import (
     get_item_name_and_containing_dir_path)
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
+from tests.gui.steps.modals.modal import click_modal_button
 from tests.gui.steps.oneprovider.automation import switch_to_automation_page
+from tests.gui.steps.oneprovider.browser import (
+    click_and_press_enter_on_item_in_browser)
+from tests.gui.steps.oneprovider.file_browser import (
+    click_on_status_tag_for_file_in_file_browser)
 from tests.utils.bdd_utils import wt, parsers
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.utils import repeat_failed
+from tests.gui.steps.common.count_checksums import *
 
 
 def go_to_path_and_return_file_name_in_modal(path, modals, driver, modal_name):
@@ -175,3 +181,55 @@ def assert_events_in_pods_monitor(selenium, browser_id, modals, reasons):
     for reason in reasons_list:
         assert reason in gathered_reasons_list, \
             f'Reason: {reason} has not been found'
+
+
+@wt(parsers.parse('user of {browser_id} counts checksums {checksum_list} for '
+                  '"{file_name}" in "{space}" space'))
+def count_checksums_for_file(browser_id, tmp_memory, file_name, tmpdir,
+                             checksum_list, selenium, op_container):
+
+    click_and_press_enter_on_item_in_browser(selenium, browser_id, file_name,
+                                             tmp_memory, op_container)
+    downloaded_file = tmpdir.join(browser_id, 'download', file_name)
+    checksums = parse_seq(checksum_list)
+    results = {}
+    time.sleep(1)
+
+    for checksum in checksums:
+        sum_name = checksum + '_sum'
+        results[checksum] = globals()[sum_name](downloaded_file)
+
+    tmp_memory["checksums_" + file_name] = results
+
+
+def checksums_counted_in_workflow(metadata_modal):
+    result = {}
+    for item in metadata_modal.basic.entries:
+        result[item.key.replace('_key', '')] = item.value
+    return result
+
+
+@wt(parsers.parse('user of {browser_id} sees that checksums {checksum_list} for'
+                  ' "{file_name}" counted in workflow are alike to '
+                  'those counted earlier by user'))
+def assert_checksums_are_the_same(browser_id, checksum_list, file_name,
+                                  tmp_memory, modals, selenium):
+
+    status_type = 'Metadata'
+    modal_name = 'Details modal'
+    button = 'X'
+    checksums = parse_seq(checksum_list)
+    counted_checksum = tmp_memory["checksums_" + file_name]
+    click_on_status_tag_for_file_in_file_browser(browser_id, status_type,
+                                                 file_name, tmp_memory)
+    metadata_modal = modals(selenium[browser_id]).details_modal.metadata
+    workflow_checksum = checksums_counted_in_workflow(metadata_modal)
+
+    for key in checksums:
+        err_msg = (f'{key} checksum counted by user is {counted_checksum[key]},'
+                   f' and is different from checksum counted in workflow: '
+                   f'{workflow_checksum[key]}')
+        assert workflow_checksum[key] == counted_checksum[key], err_msg
+
+    click_modal_button(selenium, browser_id, button, modal_name, modals)
+

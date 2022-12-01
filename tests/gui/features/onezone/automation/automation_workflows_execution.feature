@@ -199,4 +199,16 @@ Feature: Workflows execution
     And user of browser sees file browser in files tab in Oneprovider page
 
     And user of browser clicks and presses enter on item named "dir2" in file browser
-   # count checksums in python and compare to this from workflow
+
+    And user of browser counts checksums ["md5", "sha512", "sha256", "adler32"] for "file1" in "space1" space
+    And user of browser counts checksums ["md5", "sha512", "sha256", "adler32"] for "file2" in "space1" space
+    And user of browser counts checksums ["md5", "sha512", "sha256", "adler32"] for "file3" in "space1" space
+    And user of browser counts checksums ["md5", "sha512", "sha256", "adler32"] for "file4" in "space1" space
+    And user of browser counts checksums ["md5", "sha512", "sha256", "adler32"] for "file5" in "space1" space
+
+    And user of browser sees that checksums ["md5", "sha512", "sha256", "adler32"] for "file1" counted in workflow are alike to those counted earlier by user
+    And user of browser sees that checksums ["md5", "sha512", "sha256", "adler32"] for "file2" counted in workflow are alike to those counted earlier by user
+    And user of browser sees that checksums ["md5", "sha512", "sha256", "adler32"] for "file3" counted in workflow are alike to those counted earlier by user
+    And user of browser sees that checksums ["md5", "sha512", "sha256", "adler32"] for "file4" counted in workflow are alike to those counted earlier by user
+    And user of browser sees that checksums ["md5", "sha512", "sha256", "adler32"] for "file5" counted in workflow are alike to those counted earlier by user
+
