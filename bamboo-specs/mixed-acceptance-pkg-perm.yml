@@ -1,7 +1,6 @@
 version: 2
 plan:
-  key: BAM-MAOPT
-#  key: ODSRV-MAOPT  # FIXME: To be uncommented after reviewers acceptation
+  key: ODSRV-MAOPT 
 plan-permissions:
   - users:
       - plgjliput

@@ -1,7 +1,6 @@
 version: 2
 plan:
-  project-key: BAM
-  # project-key: ODSRV  # FIXME: To be uncommented after reviewers acceptation
+  project-key: ODSRV
   key: MAOPT
   name: mixed acceptance pkg
   description: Acceptance tests using different clients concurrently. Environment deployed from packages.
