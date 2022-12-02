@@ -36,15 +36,18 @@ def users_creation_with_cleanup_step(host, config, admin_credentials,
     _cleanup_users(zone_hostname, admin_credentials, users_db)
 
 
+@given(parsers.parse('initial user for future delete configuration in "{host}" '
+                     'Onezone service:\n{config}'))
+def users_creation_step(host, config, admin_credentials, onepanel_credentials, hosts, users, rm_users):
+    return users_creation(host, yaml.load(config), admin_credentials, onepanel_credentials, hosts, users, rm_users)
+
+
 def users_creation_with_cleanup(host, config, admin_credentials,
                                 onepanel_credentials, hosts, users, rm_users):
     return users_creation(host, config, admin_credentials, onepanel_credentials, hosts, users, rm_users)
 
 
-@given(parsers.parse('initial user for future delete configuration in "{host}" '
-                     'Onezone service:\n{config}'))
-def users_creation(host, config, admin_credentials, onepanel_credentials, hosts,
-                   users, rm_users):
+def users_creation(host, config, admin_credentials, onepanel_credentials, hosts, users, rm_users):
     zone_hostname = hosts[host]['hostname']
     users_db = {}
     for user_config in config:
