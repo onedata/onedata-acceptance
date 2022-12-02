@@ -64,11 +64,20 @@ class MembersItemRow(PageObject):
         return 'active' in self.web_elem.get_attribute('class')
 
 
+class MembersItemRowUsers(MembersItemRow):
+    name = id = Label('.user-info-with-icon .user-fullname')
+
+
 class MembersList(PageObject):
     header = WebItem('li.list-header-row', cls=MembersHeaderRow)
     items = WebItemsSequence('.one-collapsible-list-item',
                              cls=MembersItemRow)
     generate_token = NamedButton('a', text='generate an invitation token')
+
+
+class MembersUserList(MembersList):
+    items = WebItemsSequence('.one-collapsible-list-item',
+                             cls=MembersItemRowUsers)
 
 
 class MembershipElement(PageObject):
@@ -101,7 +110,7 @@ class InvitationTokenArea(PageObject):
 
 class MembersPage(PageObject):
     groups = WebItem('.group-list', cls=MembersList)
-    users = WebItem('.user-list', cls=MembersList)
+    users = WebItem('.user-list', cls=MembersUserList)
     token = WebItem('.invitation-token-presenter', cls=InvitationTokenArea)
     show_view_option = Button('.view-tools-toggle')
     effective_button = NamedButton('.direct-selector button', text='Effective')
