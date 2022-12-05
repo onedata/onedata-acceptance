@@ -64,7 +64,7 @@ class MembersItemRow(PageObject):
         return 'active' in self.web_elem.get_attribute('class')
 
 
-class MembersItemRowUsers(MembersItemRow):
+class MembersUsersItemRow(MembersItemRow):
     name = id = Label('.user-info-with-icon .user-fullname')
 
 
@@ -77,7 +77,7 @@ class MembersList(PageObject):
 
 class MembersUserList(MembersList):
     items = WebItemsSequence('.one-collapsible-list-item',
-                             cls=MembersItemRowUsers)
+                             cls=MembersUsersItemRow)
 
 
 class MembershipElement(PageObject):
