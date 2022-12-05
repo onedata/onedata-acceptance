@@ -40,7 +40,8 @@ Feature: Basic management of qos privileges for spaces in Onezone GUI
     And user of browser_user1 sees that current working directory displayed in breadcrumbs on file browser is space1
     And user of browser_user1 clicks on menu for "dir1" file in file browser
     And user of browser_user1 clicks "Quality of Service" option in data row menu in file browser
-    And user of browser_user1 sees "Insufficient privileges to access this resource" in QoS panel
+    And user of browser_user1 sees "THERE ARE NO QOS REQUIREMENTS DEFINED FOR THIS DIRECTORY" in QoS panel
+    And user of browser_user1 sees that "Add requirement" button is disabled in QoS panel
     And user of browser_user1 clicks on "X" button in modal "Directory details"
 
     And user of space_owner_browser clicks "user1" user in "space1" space members users list
