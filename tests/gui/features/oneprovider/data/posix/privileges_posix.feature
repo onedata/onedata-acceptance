@@ -32,7 +32,7 @@ Feature: Oneprovider POSIX privileges GUI tests
     And user of browser_user1 opens file browser for "space1" space
     And user of browser_user1 clicks on "Permissions" in context menu for "20B-0.txt"
     And user of browser_user1 sees that "File details" modal is opened on "Permissions" tab
-    And user of browser_user1 selects "POSIX" permission type in edit permissions panel
+    And user of browser_user1 sees that "Permissions" panel is opened on "POSIX" tab in "File details" modal
     Then user of browser_user1 sees that current permission is "664"
     And user of browser_user1 clicks on "X" button in modal "File details"
 
@@ -44,7 +44,7 @@ Feature: Oneprovider POSIX privileges GUI tests
     And user of browser_user1 opens file browser for "space1" space
     And user of browser_user1 clicks on "Permissions" in context menu for "dir2"
     And user of browser_user1 sees that "Directory details" modal is opened on "Permissions" tab
-    And user of browser_user1 selects "POSIX" permission type in edit permissions panel
+    And user of browser_user1 sees that "Permissions" panel is opened on "POSIX" tab in "Directory details" modal
     Then user of browser_user1 sees that current permission is "775"
     And user of browser_user1 clicks on "X" button in modal "Directory details"
 
@@ -65,7 +65,7 @@ Feature: Oneprovider POSIX privileges GUI tests
     And user of browser_user1 opens file browser for "space1" space
     And user of browser_user1 clicks on "Permissions" in context menu for "file1"
     And user of browser_user1 sees that "File details" modal is opened on "Permissions" tab
-    And user of browser_user1 selects "POSIX" permission type in edit permissions panel
+    And user of browser_user1 sees that "Permissions" panel is opened on "POSIX" tab in "File details" modal
     Then user of browser_user1 sees that current permission is "775"
     And user of browser_user1 clicks on "X" button in modal "File details"
 
@@ -86,7 +86,7 @@ Feature: Oneprovider POSIX privileges GUI tests
     And user of browser_user1 opens file browser for "space1" space
     And user of browser_user1 clicks on "Permissions" in context menu for "dir1"
     And user of browser_user1 sees that "Directory details" modal is opened on "Permissions" tab
-    And user of browser_user1 selects "POSIX" permission type in edit permissions panel
+    And user of browser_user1 sees that "Permissions" panel is opened on "POSIX" tab in "Directory details" modal
     Then user of browser_user1 sees that current permission is "664"
     And user of browser_user1 clicks on "X" button in modal "Directory details"
 
@@ -178,11 +178,10 @@ Feature: Oneprovider POSIX privileges GUI tests
     And user of browser_user1 opens file browser for "space1" space
     And user of browser_user1 clicks on "Permissions" in context menu for "<name_of_item>"
     And user of browser_user1 sees that "<modal>" modal is opened on "Permissions" tab
+    And user of browser_user1 sees that "Permissions" panel is opened on "POSIX" tab in "<modal>" modal
 
-    And user of browser_user1 selects "POSIX" permission type in edit permissions panel
-    And user of browser_user1 sets "775" permission code in edit permissions panel
-    And user of browser_user1 clicks on "Save" button in edit permissions panel
-    Then user of browser_user1 sees that error modal with text "Modifying permissions failed!" appeared
+    And user of browser_user1 fails to set "775" permission code in edit permissions panel
+    And user of browser_user1 sees that there is no "Save" button in edit permissions panel
 
     Examples:
       | modal             | name_of_item |
