@@ -38,7 +38,7 @@ class MembersItemHeader(PageObject):
 
 class MembersItemRow(PageObject):
     header = WebItem('.list-header-row', cls=MembersItemHeader)
-    name = id = Label('.user-fullname')
+    name = id = Label('.record-name-general')
     privilege_tree = WebItem('.one-tree', cls=PrivilegeTree)
     forbidden_alert = WebElement('.alert.forbidden')
     status_labels = WebElementsSequence('.label')
