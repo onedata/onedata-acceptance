@@ -345,6 +345,22 @@ def click_panel_button(selenium, browser_id, button, panel_name, modals):
     getattr(modal, transform(button))()
 
 
+@wt(parsers.re('user of (?P<browser_id>.*?) sees that there is no '
+               '"(?P<button>.*?)" button in (?P<panel_name>.*?) panel'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_there_is_no_button_in_panel(selenium, browser_id, button, panel_name,
+                                       modals):
+    modal = getattr(modals(selenium[browser_id]).details_modal,
+                    check_modal_name(panel_name))
+
+    try:
+        getattr(modal, transform(button))
+        raise Exception(f'There is a "{button}" button visible in {panel_name}'
+                        f' panel when it shouldn\'t be')
+    except RuntimeError:
+        pass
+
+
 @wt(parsers.re('user of (?P<browser_id>.*?) clicks on "(?P<button>.*?)" '
                'button in modal "(?P<modal_name>.*?)"'))
 @repeat_failed(timeout=WAIT_FRONTEND)

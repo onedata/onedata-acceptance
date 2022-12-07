@@ -48,7 +48,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     And user of browser1 clicks on "Permissions" in context menu for "file1"
     And user of browser1 sees that "File details" modal is opened on "Permissions" tab
 
-    And user of browser1 selects "POSIX" permission type in edit permissions panel
+    And user of browser1 sees that "Permissions" panel is opened on "POSIX" tab in "File details" modal
     And user of browser1 sees that current permission is "775"
     And user of browser1 clicks on "X" button in modal "File details"
 
@@ -62,7 +62,7 @@ Feature: Oneprovider POSIX privileges GUI tests using multiple browsers
     And user of browser1 sees file browser in files tab in Oneprovider page
     And user of browser1 clicks on "Permissions" in context menu for "dir1"
     And user of browser1 sees that "Directory details" modal is opened on "Permissions" tab
-    And user of browser1 selects "POSIX" permission type in edit permissions panel
+    And user of browser1 sees that "Permissions" panel is opened on "POSIX" tab in "Directory details" modal
     And user of browser1 sees that current permission is "664"
     And user of browser1 clicks on "X" button in modal "Directory details"
 
