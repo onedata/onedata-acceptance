@@ -73,6 +73,7 @@ class Results(Element):
     result_name = id = Label('.control-label')
     target_store_dropdown = WebElement('.targetStore-field')
     json_editor = Input('.json-editor-textarea')
+    add_mapping = Button('.add-field-button')
 
 
 class TaskAddForm(PageObject):
@@ -81,8 +82,8 @@ class TaskAddForm(PageObject):
 
     arguments = WebItemsSequence('.argumentMappings-field '
                                  '.argumentMapping-field', cls=Arguments)
-    results = WebItemsSequence('.resultMappings-field .resultMapping-field',
-                               cls=Results)
+    results = WebItemsSequence('.resultMappings-field '
+                               '.singleResultMappings-field', cls=Results)
 
 
 class Revision(Element):
