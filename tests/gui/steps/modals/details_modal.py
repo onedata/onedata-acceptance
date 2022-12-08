@@ -98,6 +98,17 @@ def assert_tab_in_modal(selenium, browser_id, tab, modals, modal_name):
     assert tab in active_tab, err_msg
 
 
+@wt(parsers.parse('user of {browser_id} sees that "Permissions" panel is opened'
+                  ' on "POSIX" tab in "{modal_name}" modal'))
+def assert_posix_tab_in_panel(selenium, browser_id, modals, modal_name):
+    elem_name = 'posix_permission_edition'
+    posix_hidden = getattr(modals(selenium[browser_id]),
+                           check_modal_name(transform(modal_name))
+                           ).edit_permissions.is_hidden(elem_name)
+    assert not posix_hidden, (f'sees that "Permissions" panel is not'
+                              f' opened on "POSIX" tab')
+
+
 @wt(parsers.parse('user of {browser_id} clicks on "{context_menu_item}" in '
                   'context menu for "{item_name}"'))
 def click_on_context_menu_item(selenium, browser_id, popups, item_name,

@@ -5,8 +5,6 @@ Define fixtures used in web GUI acceptance/behavioral tests.
 import os
 import re
 import errno
-import random
-import string
 from time import time
 import subprocess as sp
 from collections import defaultdict
@@ -14,18 +12,14 @@ from collections import defaultdict
 from py.xml import html
 from selenium import webdriver
 from pytest import fixture, UsageError, skip, hookimpl
-from _pytest.fixtures import FixtureLookupError
 
-from tests import UPLOAD_FILES_DIR, MEGABYTE
 from tests.utils.path_utils import make_logdir
-from tests.utils.user_utils import AdminUser
 from tests import LOGDIRS
 import tests.utils.xvfb_utils as xvfb_utils
 from tests.gui.utils.generic import suppress
 from tests.conftest import export_logs
 from _pytest.fixtures import FixtureLookupError
 from tests.utils.ffmpeg_utils import start_recording, stop_recording
-from tests.utils import onenv_utils
 
 
 __author__ = "Jakub Liput, Bartosz Walkowicz"
@@ -65,17 +59,6 @@ def pytest_configure(config):
 
 
 def pytest_addoption(parser):
-    group = parser.getgroup('onedata', description='option specific '
-                                                   'to onedata tests')
-    group.addoption('--preserve-users', action='store_true',
-                    help='If set users created in previous tests will not be '
-                         'removed if their names collide with the names '
-                         'of users that will be created in current test. '
-                         'Instead such a test will be skipped.')
-    group.addoption('--admin', default=['admin', 'password'], nargs=2,
-                    help='admin credentials in form: -u username password',
-                    metavar=('username', 'password'), dest='admin')
-
     selenium_group = parser.getgroup('selenium', 'selenium')
     selenium_group.addoption('--firefox-logs',
                              action='store_true',
@@ -98,44 +81,6 @@ def pytest_addoption(parser):
 def finalize(request):
     yield
     export_logs(request)
-
-
-@fixture(autouse=True)
-def emergency_passphrase(users, hosts):
-    zone_pod_name = hosts['onezone']['pod-name']
-    zone_pod = onenv_utils.match_pods(zone_pod_name)[0]
-    passphrase = onenv_utils.get_env_variable(zone_pod,
-                                              'ONEPANEL_EMERGENCY_PASSPHRASE')
-    return passphrase
-
-
-@fixture(autouse=True)
-def onepanel_credentials(users, hosts, emergency_passphrase):
-    creds = users['onepanel'] = AdminUser(
-        hosts['onezone']['hostname'], 'onepanel', emergency_passphrase)
-    return creds
-
-
-@fixture(autouse=True)
-def admin_credentials(request, users, hosts):
-    admin_username, admin_password = request.config.getoption('admin')
-    admin_user = users[admin_username] = AdminUser(hosts['onezone']['hostname'], admin_username,
-                                                   admin_password)
-    return admin_user
-
-
-@fixture(scope='session')
-def clients():
-    """Mapping oneclient name to mount point and pod name
-    e.g. {client1: {
-        'mountpoint': /mnt/oneclient/user1/,
-        'pod_name: dev-oneclient-krakow-8545c5fc6d-f5jj8'}}"""
-    return {}
-
-
-@fixture
-def rm_users(request):
-    return not request.config.getoption('--preserve-users')
 
 
 @fixture(scope='session')

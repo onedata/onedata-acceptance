@@ -13,7 +13,7 @@ from pytest import skip
 from pytest_bdd import given
 
 from tests import OZ_REST_PORT, PANEL_REST_PORT
-from tests.gui.steps.rest.env_up.spaces import _rm_all_spaces_for_users_list
+from tests.utils.entities_setup.spaces import _rm_all_spaces_for_users_list
 from tests.utils.bdd_utils import parsers
 from tests.utils.http_exceptions import HTTPError, HTTPNotFound, HTTPBadRequest
 from tests.utils.rest_utils import (
@@ -25,11 +25,10 @@ from tests.utils.utils import repeat_failed
 
 @given(parsers.parse('initial users configuration in "{host}" '
                      'Onezone service:\n{config}'))
-def users_creation_with_cleanup(host, config, admin_credentials,
-                                onepanel_credentials, hosts, users, rm_users):
-    users_db, zone_hostname = users_creation(host, config, admin_credentials,
-                                             onepanel_credentials, hosts,
-                                             users, rm_users)
+def users_creation_with_cleanup_step(host, config, admin_credentials,
+                                     onepanel_credentials, hosts, users, rm_users):
+    users_db, zone_hostname = users_creation_with_cleanup(host, yaml.load(config), admin_credentials,
+                                                          onepanel_credentials, hosts, users, rm_users)
 
     yield
 
@@ -39,11 +38,19 @@ def users_creation_with_cleanup(host, config, admin_credentials,
 
 @given(parsers.parse('initial user for future delete configuration in "{host}" '
                      'Onezone service:\n{config}'))
-def users_creation(host, config, admin_credentials, onepanel_credentials, hosts,
-                   users, rm_users):
+def users_creation_step(host, config, admin_credentials, onepanel_credentials, hosts, users, rm_users):
+    return users_creation(host, yaml.load(config), admin_credentials, onepanel_credentials, hosts, users, rm_users)
+
+
+def users_creation_with_cleanup(host, config, admin_credentials,
+                                onepanel_credentials, hosts, users, rm_users):
+    return users_creation(host, config, admin_credentials, onepanel_credentials, hosts, users, rm_users)
+
+
+def users_creation(host, config, admin_credentials, onepanel_credentials, hosts, users, rm_users):
     zone_hostname = hosts[host]['hostname']
     users_db = {}
-    for user_config in yaml.load(config):
+    for user_config in config:
         username, options = _parse_user_info(user_config)
         try:
             user_cred = _create_user(zone_hostname, onepanel_credentials,
@@ -109,7 +116,7 @@ def _create_user(zone_hostname, onepanel_credentials, admin_credentials,
 
 
 def _configure_user(zone_hostname, admin_credentials, user_cred, options):
-    full_name = options.get('fullName', user_cred.username)
+    full_name = options.get('fullName', user_cred.username.replace('_', ' '))
     http_patch(ip=zone_hostname, port=OZ_REST_PORT,
                path=get_zone_rest_path('user'),
                auth=(user_cred.username, user_cred.password),
