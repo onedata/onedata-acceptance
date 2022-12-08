@@ -4,17 +4,17 @@
 
 To run GUI test use:
 ```
-make ENV_FILE=$ENV SUITE=$SUITE BROWSER=Chrome TIMEOUT=600 test_gui_pkg
+make ENV_FILE=$ENV SUITE=$SUITE BROWSER=Chrome TIMEOUT=600 test_gui
 ```
 
 Commands for exact tests suites can be found in [bamboo-specs/gui](../../bamboo-specs/gui-acceptance-src.yml).
 
-For more information about running tests using `make` see  [README](../../README.md#Running-acceptance-tests)
+For more information about running tests using `make` see  [README](../../README.md#running-acceptance-tests)
 
 **Example:**
 QoS basic tests on automatic Onedata deployment using a dockerized testing toolkit
 ```
-make ENV_FILE=1oz_2op_deployed SUITE=test_qos_basic BROWSER=Chrome TIMEOUT=600 OPTS="--no-clean --no-pull" test_gui_pkg
+make ENV_FILE=1oz_2op_deployed SUITE=test_qos_basic BROWSER=Chrome TIMEOUT=600 OPTS="--no-clean --no-pull" test_gui
 ```
 **Note:** Onedata deployment does not have to be started in order to run
 tests using `make` (it will start automatically).
@@ -66,15 +66,15 @@ during the first call of above command
 Running test this way greatly helps with debug because you see test "live". 
 <!--- TODO VFS-10023 write about automatic setup on local machine -->
 
-Acceptance tests using selenium (GUI, Mixed) can be run with `--local` flag,
-which greatly help with debug, but it is problematic to make it work:
-1. You must install some python libraries:
-    1. Try running: `pip3 install -r onedata-acceptance/tests/gui/requirements.txt`
-    2. On Ubuntu 22.04 this won't work on default python 3.10, a version 3.7 
-       must be installed on the side.
-2. You must have a Chrome driver for Selenium.
+Acceptance tests using selenium (GUI, Mixed) can be run with `--local` flag. 
+To make it work you must install some tools. 
+List of tools: [Testing toolkit](../../README.md#testing-toolkit)
 
 **Starting tests:**
+
+We recommend  reading
+[Some-useful-information-about-starting-Onedata-deployment-to-run-tests](../../README.md#some-useful-information-about-starting-onedata-deployment-to-run-tests)
+before starting tests locally.
 
 **Note:** the one-env environment that is set up should be accessible via hostnames
 (eg. https://dev-onezone.default.svc.cluster.local). Make sure that you can open address
@@ -105,9 +105,9 @@ You can also use this command to run the simplest single test:
 
 # Known issues
 
-1. There is a problem with automatic setup for tests which are using local 
-   machine, with `--local` flag, `pytest` is run differently than on docker
-   (have different options).
+1. There is a problem with automatic Onedata deployment setup for tests which 
+are using local machine. With `--local` flag, `pytest` is run differently than 
+on docker (have different options).
 
 # Test reports
 
@@ -132,7 +132,7 @@ Please read these section before you start writing or modifying GUI tests.
 
 * The default configuration of `pytest-selenium-multi` for sensitive URLs is inverted:
 all tests are considered *non-destructive by default*.
-You can add a `@pytest.mark.destructive` mark to test scenario to mark test as destructive.
+You can add a ```@pytest.mark.destructive``` mark to test scenario to mark test as destructive.
 
 * The `sensitive_url` fixture has module scope, because we start new environment for each module
 (so it could have different `base_url's`)

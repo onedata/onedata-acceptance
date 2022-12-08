@@ -5,18 +5,18 @@
 To run oneclient tests use:
 
 ```
-make SUITE=$SUITE ENV_FILE=$ENV TIMEOUT=$TIMEOUT IGNORE_XFAIL=1 test_oneclient_pkg
+make SUITE=$SUITE ENV_FILE=$ENV TIMEOUT=$TIMEOUT IGNORE_XFAIL=1 test_oneclient
 ```
 Commands for exact tests suites can be found in [bamboo-specs/oneclient](../../bamboo-specs/oneclient-acceptance-pkg.yml).
 
-For more information about running tests using `make` see  [README](../../README.md#Running-acceptance-tests)
+For more information about running tests using `make` see  [README](../../README.md#running-acceptance-tests)
 
 **Example:**
 ```
-make SUITE=test_luma_provider ENV_FILE=singleprovider_multistorage TIMEOUT=720 IGNORE_XFAIL=1 OPTS="-k="test_posix_storage_operations"" test_oneclient_pkg
+make SUITE=test_luma_provider ENV_FILE=singleprovider_multistorage TIMEOUT=720 IGNORE_XFAIL=1 OPTS="-k="test_posix_storage_operations"" test_oneclient
 ```
-In `OPTS` any of `./test_run.py` parameters can be use (see _Useful test_run parameters_
-in [README](../../README.md)).
+In `OPTS` any of `./test_run.py` parameters can be use (see 
+[useful test_run parameters](../../README.md#useful-testrun-parameters)).
 
 Some useful options used mostly in `oneclient` tests:
 * `-k="test_posix_storage_operations"` - used to select specific test
@@ -42,10 +42,13 @@ oneclient tests
 ## Running Oneclient test using sources
 
 To run tests using sources, you need to place sources for `oneclient`, 
-`onepanel`, `oz_worker`, `op-worker`, `cluster-manager` in 
-[one_env](../../one_env) directory.
+`onepanel`, `oz_worker`, `op-worker`, `cluster-manager` in one of these 
+directories: 
+* [one_env](../../one_env) directory,
+* onedata-acceptance repo root dir,
+* your home directory.
 
-To download sources, you neet to go to
+To download sources, you can go to
 [bamboo.onedata.org/allPlans](https://bamboo.onedata.org/allPlans.action) and find 
 certain plan (e.g. [op-worker](https://bamboo.onedata.org/browse/BAM-PROV)). 
 Then from artifacts, in the latest build, you can download compressed file 
