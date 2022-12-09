@@ -30,7 +30,7 @@ Acceptance tests can be run in few ways (which are described in our READMEs):
    [1oz_1op_deployed.yaml](tests/gui/environments/1oz_1op_deployed.yaml) 
    will be used).
    - `OPTS` - optional, any of `./test_run.py` parameters
-   (see [useful test_run parameters](#useful-testrun-parameters) section)
+   (see [useful test_run parameters](#useful-parameters) section)
    - `TIMEOUT` - timeout, that is redirected to `./onenv wait` command, which is 
    used in starting Onedata deployment
    - `test_type_identifier` - determines the type of tests. One of: `test_gui`,   
@@ -118,7 +118,7 @@ Tools that are needed to run test using **dockerized** testing toolkit:
 * required Python packages: **pytest, pytest-bdd**
 
 
-# Useful test_run parameters
+# Useful test_run parameters {#useful-parameters}
 
 * `--test-type gui` - set the test type use by core Onedata test helpers to differ from
 "cucumber" tests etc.
