@@ -9,14 +9,15 @@ make SUITE=$SUITE ENV_FILE=$ENV TIMEOUT=$TIMEOUT IGNORE_XFAIL=1 test_oneclient
 ```
 Commands for exact tests suites can be found in [bamboo-specs/oneclient](../../bamboo-specs/oneclient-acceptance-pkg.yml).
 
-For more information about running tests using `make` see  [README](../../README.md#running-acceptance-tests)
+For more information about running tests using `make` see 
+**Running acceptance tests** section in [README](../../README.md)
 
 **Example:**
 ```
 make SUITE=test_luma_provider ENV_FILE=singleprovider_multistorage TIMEOUT=720 IGNORE_XFAIL=1 OPTS="-k="test_posix_storage_operations"" test_oneclient
 ```
-In `OPTS` any of `./test_run.py` parameters can be use (see 
-[useful test_run parameters](../../README.md#useful-testrun-parameters)).
+In `OPTS` any of `./test_run.py` parameters can be use (see **Useful test_run 
+parameters** section in [README](../../README.md)
 
 Some useful options used mostly in `oneclient` tests:
 * `-k="test_posix_storage_operations"` - used to select specific test

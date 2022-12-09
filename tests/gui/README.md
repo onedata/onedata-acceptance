@@ -7,9 +7,11 @@ To run GUI test use:
 make ENV_FILE=$ENV SUITE=$SUITE BROWSER=Chrome TIMEOUT=600 test_gui
 ```
 
-Commands for exact tests suites can be found in [bamboo-specs/gui](../../bamboo-specs/gui-acceptance-src.yml).
+Commands for exact tests suites can be found in
+[bamboo-specs/gui](../../bamboo-specs/gui-acceptance-src.yml).
 
-For more information about running tests using `make` see  [README](../../README.md#running-acceptance-tests)
+For more information about running tests using `make` see 
+**Running acceptance tests** section in [README](../../README.md)
 
 **Example:**
 QoS basic tests on automatic Onedata deployment using a dockerized testing toolkit
@@ -68,20 +70,20 @@ Running test this way greatly helps with debug because you see test "live".
 
 Acceptance tests using selenium (GUI, Mixed) can be run with `--local` flag. 
 To make it work you must install some tools. 
-List of tools: [Testing toolkit](../../README.md#testing-toolkit)
+List of tools: see **Testing toolkit** section in [README](../../README.md)
 
 **Starting tests:**
 
-We recommend  reading
-[Some-useful-information-about-starting-Onedata-deployment-to-run-tests](../../README.md#some-useful-information-about-starting-onedata-deployment-to-run-tests)
-before starting tests locally.
+We recommend reading **Some useful information about
+starting Onedata deployment to run tests** section in
+[README](../../README.md) before starting tests locally.
 
 **Note:** the one-env environment that is set up should be accessible via hostnames
 (eg. https://dev-onezone.default.svc.cluster.local). Make sure that you can open address
 of Onezone in your browser before starting tests. 
 Command `./onenv hosts` (invoke from repo `one-env` root) add entries 
-in `/etc/hosts`. For more information: 
-[one-env/Starting-Onedata-deployment](https://git.onedata.org/projects/VFS/repos/onedev/browse/guides/one-env.md#Starting-Onedata-deployment)
+in `/etc/hosts`. For more information see **Starting Onedata deployment** section in
+[one-env](https://git.onedata.org/projects/VFS/repos/onedev/browse/guides/one-env.md)
 
 **Example** (invoke from onedata-acceptance repo root dir):
 

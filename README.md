@@ -30,7 +30,7 @@ Acceptance tests can be run in few ways (which are described in our READMEs):
    [1oz_1op_deployed.yaml](tests/gui/environments/1oz_1op_deployed.yaml) 
    will be used).
    - `OPTS` - optional, any of `./test_run.py` parameters
-   (see [useful test_run parameters](#useful-parameters) section)
+   (see **Useful test_run parameters** section)
    - `TIMEOUT` - timeout, that is redirected to `./onenv wait` command, which is 
    used in starting Onedata deployment
    - `test_type_identifier` - determines the type of tests. One of: `test_gui`,   
@@ -118,7 +118,7 @@ Tools that are needed to run test using **dockerized** testing toolkit:
 * required Python packages: **pytest, pytest-bdd**
 
 
-# Useful test_run parameters {#useful-parameters}
+# Useful test_run parameters
 
 * `--test-type gui` - set the test type use by core Onedata test helpers to differ from
 "cucumber" tests etc.
@@ -189,6 +189,6 @@ and stops test between steps.
 
 1. Some of the `test_run.py` flags are outdated and not used. They should be 
 checked and eventually removed. <!--- VFS-10177  remove outdated test-run flags -->
-2. [GUI known issues](tests/gui/README.md#known-issues)
-3. [Mixed known issues](tests/mixed/README.md#known-issues)
-4. [Oneclient known issues](tests/oneclient/README.md#known-issues)
+2. **Known issues** section in [GUI README](tests/gui/README.md)
+3. **Known issues** section in [Mixed README](tests/mixed/README.md)
+4. **Known issues** section in [Oneclient README](tests/oneclient/README.md)
