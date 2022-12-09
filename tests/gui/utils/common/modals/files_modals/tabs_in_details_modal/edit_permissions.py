@@ -117,6 +117,11 @@ class EditPermissionsTab(Modal):
 
     permission_denied_alert = WebElement('.alert.alert-warning.forbidden')
 
+    posix_permission_edition = WebElement('.posix-permissions-editor')
+
     def __str__(self):
         return 'Edit permission tab'
 
+    def is_hidden(self, element_name):
+        element = getattr(self, element_name)
+        return 'hidden' in element.get_attribute("class")

@@ -11,6 +11,7 @@ import random
 import string
 
 import pytest
+from selenium.common.exceptions import InvalidElementStateException
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.utils.generic import parse_seq
@@ -33,8 +34,7 @@ def _get_index(selenium, browser_id, num, modals, numerals):
 def select_permission_type(selenium, browser_id, permission_type, modals):
     driver = selenium[browser_id]
     button_name = f'{permission_type.lower()}_button'
-    getattr(modals(driver).details_modal.edit_permissions,
-            button_name).click()
+    getattr(modals(driver).details_modal.edit_permissions, button_name).click()
 
 
 @wt(parsers.parse('user of {browser_id} sees that current permission is '
@@ -52,6 +52,19 @@ def check_permission(selenium, browser_id, perm, modals):
 def set_posix_permission(selenium, browser_id, perm, modals):
     modals(selenium[browser_id]
            ).details_modal.edit_permissions.posix.value = perm
+
+
+@wt(parsers.parse('user of {browser_id} fails to set "{perm}" permission code '
+                  'in edit permissions panel'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def fail_to_set_posix_permission(selenium, browser_id, perm, modals):
+    try:
+        modals(selenium[browser_id]
+               ).details_modal.edit_permissions.posix.value = perm
+        raise Exception(f'Fail in setting permission code was expected, but it '
+                        f'succeeded')
+    except InvalidElementStateException:
+        pass
 
 
 def _change_acl_options(option_list, subject, change):

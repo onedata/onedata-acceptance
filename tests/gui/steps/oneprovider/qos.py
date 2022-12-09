@@ -12,7 +12,7 @@ from selenium.common.exceptions import NoSuchElementException
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.rest.provider import get_provider_id
 from tests.gui.utils.core import scroll_to_css_selector_bottom
-from tests.gui.utils.generic import parse_seq
+from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import wt
 from tests.utils.utils import repeat_failed
 
@@ -314,5 +314,17 @@ def choose_operator_in_add_cond_popup(selenium, browser_id, popups, operator):
 def assert_error_label_in_qos_modal(selenium, browser_id, modals, text):
     driver = selenium[browser_id]
 
-    assert text in modals(driver).details_modal.qos.privileges_error, \
+    assert text in modals(driver).details_modal.qos.privileges_message, \
         f'Label with "{text}" not found '
+
+
+@wt(parsers.parse('user of {browser_id} sees that "{button}" button is '
+                  'disabled in QoS panel'))
+def assert_button_disabled_in_qos_panel(selenium, browser_id, modals, button):
+
+    driver = selenium[browser_id]
+    enabled = getattr(modals(driver).details_modal.qos,
+                      transform(button)).is_enabled()
+    assert not enabled, f'{button} is not disabled'
+
+
