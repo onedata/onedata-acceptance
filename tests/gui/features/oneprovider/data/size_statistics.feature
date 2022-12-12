@@ -36,6 +36,7 @@ Feature: Size statistics tests
     And user of browser clicks "Providers" of "space1" space in the sidebar
     And user of browser clicks on "oneprovider-1" provider on providers page
     And user of browser checks size statistics toggle on space configuration page
+    And user of browser clicks on "Enable" button in modal "Enable directory statistics"
 
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser waits for displayed size in data row of "dir1" to be "3 B"
