@@ -527,3 +527,20 @@ def switch_toggle_in_modal(selenium, browser_id, modals, toggle_name,
     modal = getattr(modals(driver), transform(modal_name))
     toggle = getattr(modal, transform(toggle_name))
     getattr(toggle, option[:-1])()
+
+
+def go_to_path_and_return_file_name_in_modal(path, modals, driver,
+                                             modal_name):
+    modal = getattr(modals(driver), transform(modal_name))
+    if '/' in path:
+        from tests.gui.meta_steps.oneprovider.data import (
+            get_item_name_and_containing_dir_path)
+        file_name, path_list = get_item_name_and_containing_dir_path(path)
+        for item in path_list:
+            for file in modal.files:
+                if file.name == item:
+                    file.click_and_enter()
+        return file_name
+    else:
+        return path
+

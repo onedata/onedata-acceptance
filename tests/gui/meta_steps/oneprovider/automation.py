@@ -11,36 +11,22 @@ import time
 from selenium.common.exceptions import StaleElementReferenceException
 
 from tests.gui.conftest import WAIT_FRONTEND
-from tests.gui.meta_steps.oneprovider.data import (
-    get_item_name_and_containing_dir_path)
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
-from tests.gui.steps.modals.modal import click_modal_button
+from tests.gui.steps.modals.modal import (
+    click_modal_button, go_to_path_and_return_file_name_in_modal)
 from tests.gui.steps.oneprovider.automation import switch_to_automation_page
 from tests.gui.steps.oneprovider.browser import (
     click_and_press_enter_on_item_in_browser)
 from tests.gui.steps.oneprovider.file_browser import (
     click_on_status_tag_for_file_in_file_browser)
 from tests.utils.bdd_utils import wt, parsers
-from tests.gui.utils.generic import parse_seq, transform
+from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed
-from tests.gui.steps.common.count_checksums import *
+from tests.gui.utils.common.count_checksums import *
 
 
-def go_to_path_and_return_file_name_in_modal(path, modals, driver, modal_name):
-    modal = getattr(modals(driver), transform(modal_name))
-    if '/' in path:
-        file_name, path_list = get_item_name_and_containing_dir_path(path)
-        for item in path_list:
-            for file in modal.files:
-                if file.name == item:
-                    file.click_and_enter()
-        return file_name
-    else:
-        return path
-
-
-@wt(parsers.parse('user of {browser_id} chooses {file_list} file '
-                  'as initial value for workflow in "Select files" modal'))
+@wt(parsers.re('user of (?P<browser_id>.*) chooses (?P<file_list>.*) file(s|) '
+               'as initial value for workflow in "Select files" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def choose_file_as_initial_workflow_value(selenium, browser_id, file_list,
                                           modals, op_container):
@@ -185,6 +171,7 @@ def assert_events_in_pods_monitor(selenium, browser_id, modals, reasons):
 
 @wt(parsers.parse('user of {browser_id} counts checksums {checksum_list} for '
                   '"{file_name}" in "{space}" space'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def count_checksums_for_file(browser_id, tmp_memory, file_name, tmpdir,
                              checksum_list, selenium, op_container):
 
@@ -193,7 +180,6 @@ def count_checksums_for_file(browser_id, tmp_memory, file_name, tmpdir,
     downloaded_file = tmpdir.join(browser_id, 'download', file_name)
     checksums = parse_seq(checksum_list)
     results = {}
-    time.sleep(1)
 
     for checksum in checksums:
         sum_name = checksum + '_sum'
@@ -233,3 +219,14 @@ def assert_checksums_are_the_same(browser_id, checksum_list, file_name,
 
     click_modal_button(selenium, browser_id, button, modal_name, modals)
 
+
+@wt(parsers.parse('user of {browser_id} sees that counted checksums'
+                  ' {checksum_list} for "{file_name}" are alike to those'
+                  ' counted in workflow'))
+def count_checksums_and_compare_them(browser_id, tmp_memory, file_name, tmpdir,
+                                     checksum_list, selenium, op_container,
+                                     modals):
+    count_checksums_for_file(browser_id, tmp_memory, file_name, tmpdir,
+                             checksum_list, selenium, op_container)
+    assert_checksums_are_the_same(browser_id, checksum_list, file_name,
+                                  tmp_memory, modals, selenium)

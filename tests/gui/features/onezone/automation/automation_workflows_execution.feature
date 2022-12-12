@@ -188,7 +188,7 @@ Feature: Workflows execution
     Then user of browser sees "Finished" status in status bar in workflow visualizer
 
 
-  Scenario: User sees that different checksums are well count after execution of uploaded "counting-different-checksums" workflow finishes
+  Scenario: User sees that different checksums are well counted after execution of uploaded "counting-different-checksums" workflow
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses "Upload (json)" button from menu bar to upload workflow "counting-different-checksums.json" to current dir without waiting for upload to finish
@@ -200,15 +200,10 @@ Feature: Workflows execution
 
     And user of browser clicks and presses enter on item named "dir2" in file browser
 
-    And user of browser counts checksums ["md5", "sha512", "sha256", "adler32"] for "file1" in "space1" space
-    And user of browser counts checksums ["md5", "sha512", "sha256", "adler32"] for "file2" in "space1" space
-    And user of browser counts checksums ["md5", "sha512", "sha256", "adler32"] for "file3" in "space1" space
-    And user of browser counts checksums ["md5", "sha512", "sha256", "adler32"] for "file4" in "space1" space
-    And user of browser counts checksums ["md5", "sha512", "sha256", "adler32"] for "file5" in "space1" space
+    Then user of browser sees that counted checksums ["md5", "sha512", "sha256", "adler32"] for "file1" are alike to those counted in workflow
+    And user of browser sees that counted checksums ["md5", "sha512", "sha256", "adler32"] for "file2" are alike to those counted in workflow
+    And user of browser sees that counted checksums ["md5", "sha512", "sha256", "adler32"] for "file3" are alike to those counted in workflow
+    And user of browser sees that counted checksums ["md5", "sha512", "sha256", "adler32"] for "file4" are alike to those counted in workflow
+    And user of browser sees that counted checksums ["md5", "sha512", "sha256", "adler32"] for "file5" are alike to those counted in workflow
 
-    And user of browser sees that checksums ["md5", "sha512", "sha256", "adler32"] for "file1" counted in workflow are alike to those counted earlier by user
-    And user of browser sees that checksums ["md5", "sha512", "sha256", "adler32"] for "file2" counted in workflow are alike to those counted earlier by user
-    And user of browser sees that checksums ["md5", "sha512", "sha256", "adler32"] for "file3" counted in workflow are alike to those counted earlier by user
-    And user of browser sees that checksums ["md5", "sha512", "sha256", "adler32"] for "file4" counted in workflow are alike to those counted earlier by user
-    And user of browser sees that checksums ["md5", "sha512", "sha256", "adler32"] for "file5" counted in workflow are alike to those counted earlier by user
 
