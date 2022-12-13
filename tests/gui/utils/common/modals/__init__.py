@@ -9,6 +9,7 @@ __license__ = "This software is released under the MIT license cited in " \
 from .archives_modals.archive_details import ArchiveDetails
 from .archives_modals.archive_recall_information import ArchiveRecallInformation
 from .archives_modals.cancel_recall import CancelRecall
+from .files_modals.enable_directory_statistics import EnableDirectoryStatistics
 from .files_modals.external_symbolic_link import ExternalSymbolicLink
 from .management_modals.change_privileges import ChangePrivilegesModal
 from .tokens_modals.clean_up_obsolete_tokens import CleanUpObsoleteTokensModal
@@ -127,6 +128,8 @@ class Modals(object):
     rest_api_modal = WebItem('.modal-dialog', cls=RESTApiModal)
     configure_web_cert = WebItem('#configure-web-cert-modal',
                                  cls=ConfigureWebCertModal)
+    enable_directory_statistics = WebItem('.modal-dialog',
+                                          cls=EnableDirectoryStatistics)
 
     def __init__(self, driver):
         self.driver = driver
