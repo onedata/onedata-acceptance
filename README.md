@@ -138,8 +138,8 @@ as movies and save them to `<logdir>/movies`
                         images even if they are already present on host
                         machine.)
 * `-k="test_posix_storage_operations"` - used to select specific test, runs tests 
-which contain names that match given string expression (case-insensitive)
-(can include Python operators).
+which contain names that match given string expression (case-insensitive). For more
+information see: [pytest documentation](https://docs.pytest.org/en/6.2.x/usage.html#specifying-tests-selecting-tests).
 * `--oc-image=docker.onedata.org/oneclient-dev:develop` - used to specify oneclient service docker image
 * `--sources` - optional, if used, Onedata deployment starts using sources. Sources have
 to be located in appropriate directories.
@@ -182,8 +182,8 @@ Some useful debugger commands:
 
 For more information about Python debugger see : [pdb documentation](https://docs.python.org/3/library/pdb.html)
 
-In test scenario you can add `When trace` step, which works exactly the same, 
-and stops test between steps.
+In test scenario you can add `(Given-When-Then) trace`
+step, which works exactly the same, and stops test between steps.
 
 # Known issues
 
