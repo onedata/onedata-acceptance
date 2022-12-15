@@ -384,14 +384,14 @@ def assert_providers_list_contains_provider(selenium, browser_id, provider,
         provider)
 
 
-@wt(parsers.parse('user of {browser_id} checks {toggle} toggle on '
-                  'space configuration page'))
+@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>check|uncheck)s '
+               '(?P<toggle>.*) toggle on space configuration page'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_toggle_on_providers_subpage(browser_id, toggle, selenium,
-                                      op_container):
+                                      op_container, option):
     driver = selenium[browser_id]
-    getattr(op_container(driver).provider_configuration,
-            transform(toggle)).check()
+    getattr(getattr(op_container(driver).provider_configuration,
+                    transform(toggle)), option)()
 
 
 @wt(parsers.parse('user of {browser_id} sees that length of providers list '

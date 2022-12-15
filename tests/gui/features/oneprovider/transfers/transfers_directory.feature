@@ -128,8 +128,32 @@ Feature: Oneprovider transfers directories functionality
             oneprovider-2: entirely empty
 
 
-  Scenario: User replicates directory with file on current provider to the same provider
+  Scenario: User cannot replicates directory to the same provider with directory statistics turn on
     When user of browser opens oneprovider-1 Oneprovider file browser for "space1" space
+    And user of browser creates directory "dir1"
+    And user of browser clicks and presses enter on item named "dir1" in file browser
+    And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
+    And user of browser changes current working directory to space root using breadcrumbs
+
+    # Wait to ensure synchronization between providers
+    And user of browser is idle for 2 seconds
+
+    And user of browser clicks on menu for "dir1" directory in file browser
+    And user of browser clicks "Data distribution" option in data row menu in file browser
+    And user of browser clicks on menu button for "oneprovider-1" provider in "Data distribution" panel
+    Then user of browser cannot click "Replicate here" option in data row menu for "oneprovider-1" provider in "Data distribution" panel
+
+
+  Scenario: User sees that empty transfer is created and finished after replicating directory to the same provider without directory statistics
+    When user of browser opens oneprovider-1 Oneprovider file browser for "space1" space
+
+    And user of browser clicks "Providers" of "space1" space in the sidebar
+    And user of browser clicks on "oneprovider-1" provider on providers page
+    And user of browser unchecks size statistics toggle on space configuration page
+    And user of browser clicks on "Disable" button in modal "Disable directory statistics"
+
+    And user of browser clicks "Files" of "space1" space in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
     And user of browser creates directory "dir1"
     And user of browser clicks and presses enter on item named "dir1" in file browser
     And user of browser uses upload button from file browser menu bar to upload local file "large_file.txt" to remote current dir
