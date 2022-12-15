@@ -36,11 +36,6 @@ def sha512_sum(file_name):
 def adler32_sum(file_name):
     adler_sum = 1
     with open(file_name, "rb") as f:
-        while True:
-            data = f.read(256 * 1024 * 1024)
-            if not data:
-                break
-            adler_sum = adler32(data, adler_sum)
-            if adler_sum < 0:
-                adler_sum += 2 ** 32
+        for chunk in iter(lambda: f.read(4096), b""):
+            adler_sum = adler32(chunk, adler_sum)
     return hex(adler_sum)[2:10].lower()

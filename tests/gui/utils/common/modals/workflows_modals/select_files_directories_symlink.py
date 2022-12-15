@@ -20,7 +20,7 @@ from tests.gui.utils.oneprovider.browser_row import BrowserRow
 
 
 class Files(PageObject, BrowserRow):
-    name = Label('.file-name')
+    name = id = Label('.file-name')
     clickable_field = WebElement('.file-base-name')
 
     def click_and_enter(self):

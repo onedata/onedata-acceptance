@@ -205,6 +205,9 @@ def assert_checksums_are_the_same(browser_id, checksum_list, file_name,
     modal_name = 'Details modal'
     button = 'X'
     checksums = parse_seq(checksum_list)
+
+    # checksums needs to be counted in advance using
+    # count_checksums_for_file function
     counted_checksum = tmp_memory["checksums_" + file_name]
     click_on_status_tag_for_file_in_file_browser(browser_id, status_type,
                                                  file_name, tmp_memory)

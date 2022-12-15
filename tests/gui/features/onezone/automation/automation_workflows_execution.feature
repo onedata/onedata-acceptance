@@ -193,7 +193,7 @@ Feature: Workflows execution
     And user of browser opens inventory "inventory1" workflows subpage
     And user of browser uses "Upload (json)" button from menu bar to upload workflow "counting-different-checksums.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
-    And user of browser executes 1st revision of "counting-different-checksums", using ["dir2/file1", "dir2/file2", "dir2/file3", "dir2/file4", "dir2/file5"] as initial value, in "space1" space and waits extended time for workflow to finish
+    And user of browser executes 1st revision of "counting-different-checksums", using "dir2" as initial value, in "space1" space and waits extended time for workflow to finish
     And user of browser sees "Finished" status in status bar in workflow visualizer
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page

@@ -537,9 +537,7 @@ def go_to_path_and_return_file_name_in_modal(path, modals, driver,
             get_item_name_and_containing_dir_path)
         file_name, path_list = get_item_name_and_containing_dir_path(path)
         for item in path_list:
-            for file in modal.files:
-                if file.name == item:
-                    file.click_and_enter()
+            modal.files[item].click_and_enter()
         return file_name
     else:
         return path
