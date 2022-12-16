@@ -1,32 +1,49 @@
 # Oneclient acceptance tests
 
+Acceptance tests using the Oneclient: a fuse-based Onedata client with POSIX
+interface.
+
+
+# Development
+
+Please read this document before you start writing or modifying any tests.
+
+
 # Running tests using Makefile
 
-To run oneclient tests use:
-
 ```
-make SUITE=$SUITE ENV_FILE=$ENV TIMEOUT=$TIMEOUT IGNORE_XFAIL=1 test_oneclient
+make SUITE=$SUITE ENV_FILE=$ENV IGNORE_XFAIL=1 test_oneclient
 ```
-Commands for exact tests suites can be found in [bamboo-specs/oneclient](../../bamboo-specs/oneclient-acceptance-pkg.yml).
+Commands for exact tests suites can be found in 
+[bamboo-specs/oneclient](../../bamboo-specs/oneclient-acceptance-pkg.yml).
 
-For more information about running tests using `make` see 
-**Running acceptance tests** section in [README](../../README.md)
+For more information about running tests using `make`, see
+**Running acceptance tests** section in the main [README](../../README.md).
 
 **Example:**
 ```
-make SUITE=test_luma_provider ENV_FILE=singleprovider_multistorage TIMEOUT=720 IGNORE_XFAIL=1 OPTS="-k="test_posix_storage_operations"" test_oneclient
+make SUITE=test_luma_provider ENV_FILE=singleprovider_multistorage TIMEOUT=720 \
+    IGNORE_XFAIL=1 OPTS="-k="test_posix_storage_operations"" test_oneclient --no-clean
 ```
-In `OPTS` any of `./test_run.py` parameters can be use (see **Useful test_run 
-parameters** section in [README](../../README.md)
+In `OPTS`, any of `./test_run.py` parameters can be passed (see **Useful test_run 
+parameters** section in the main [README](../../README.md).
 
 Some useful options used mostly in `oneclient` tests:
 * `-k="test_posix_storage_operations"` - used to select specific test
-* `--oc-image=docker.onedata.org/oneclient-dev:develop` - used to specify oneclient service docker image
+* `--oc-image=docker.onedata.org/oneclient-dev:develop` - used to specify oneclient docker image
 
-# Running Oneclient tests using test_run
+
+# Running tests using test_run (advanced)
+
+The test_run.py command is essentially invoked by Makefile, but using it directly
+allows better parameterization and overcoming of some known issues.
+
+Note: all examples use the `--no-clean` option, make sure to remove it if you
+require a fresh deployment every run.
 
 ```
-./test_run.py -t tests/oneclient --test-type oneclient -i onedata/acceptance_mixed:latest --env-file=$ENV
+./test_run.py -t tests/oneclient --test-type oneclient \ 
+    -i onedata/acceptance_mixed:latest --env-file=$ENV --no-clean
 ```
 Where:
 * `-t` - standard `./test_run.py` parameter to set the test cases path to oneclient luma provider tests
@@ -37,7 +54,9 @@ oneclient tests
 
 **Example:**
 ```
-./test_run.py -t tests/oneclient/scenarios/test_luma_provider.py --test-type oneclient -i onedata/acceptance_mixed:latest --env-file=singleprovider_multistorage
+./test_run.py -t tests/oneclient/scenarios/test_luma_provider.py \
+   --test-type oneclient -i onedata/acceptance_mixed:latest \
+   --env-file=singleprovider_multistorage --no-clean
 ```
 
 ## Running Oneclient test using sources
@@ -55,9 +74,11 @@ certain plan (e.g. [op-worker](https://bamboo.onedata.org/browse/BAM-PROV)).
 Then from artifacts, in the latest build, you can download compressed file 
 (which you must unzip).
 
-An example command to run Oneclient Acceptance test suite using sources:
+An example command to run Oneclient acceptance test suite using sources:
 ```
-./test_run.py -t tests/oneclient/scenarios/test_multi_reg_file_CRUD.py --test-type oneclient -i onedata/acceptance_mixed:latest --env-file=multiprovider_proxy --sources
+./test_run.py -t tests/oneclient/scenarios/test_multi_reg_file_CRUD.py \
+   --test-type oneclient -i onedata/acceptance_mixed:latest \
+   --env-file=multiprovider_proxy --sources --no-clean
 ```
 # Known issues
 

@@ -1,18 +1,22 @@
 # Mixed acceptance tests
 
-Mixed tests are tests that use GUI, REST and Oneclient.
+Acceptance tests using the Web GUI, REST and Oneclient.
 
-**Note:** We recommend reading [tests/gui/README.md](../gui/README.md) to 
+
+# Development
+
+Please read this document before you start writing or modifying any tests.
+
+**Note:** we recommend reading [tests/gui/README.md](../gui/README.md) first to 
 better understand mixed tests, which are basing on GUI tests.
+
 
 # Running mixed tests using Makefile 
 
-Running Mixed tests must be preceded by `make build_swaggers`.
-
-To run mixed test use:
+Running Mixed tests must be preceded by `make build_swaggers`. Then:
 
 ```
-make ENV_FILE=$ENV SUITE=$SUITE BROWSER=Chrome TIMEOUT=600 test_mixed
+make ENV_FILE=$ENV SUITE=$SUITE test_mixed
 ```
 **Example:**
 ```
@@ -21,46 +25,49 @@ make SUITE=test_permission_posix_multi ENV_FILE=1oz_1op_2oc OPTS="--no-clean --n
 Commands for exact tests suites can be found in 
 [bamboo-specs/mixed](../../bamboo-specs/mixed-acceptance-src.yml).
 
-For more information about running tests using `make` see 
-**Running acceptance tests** section in [README](../../README.md)
+For more information about running tests using `make`, see
+**Running acceptance tests** section in the main [README](../../README.md).
 
-# Running mixed tests using test_run
 
-## Running tests on automatic Onedata deployment using a dockerized testing toolkit:
+# Running tests using test_run (advanced)
+
+The test_run.py command is essentially invoked by Makefile, but using it directly
+allows better parameterization and overcoming of some known issues.
+
+Note: all examples use the `--no-clean` option, make sure to remove it if you
+require a fresh deployment every run.
+
+## Running tests using a dockerized testing toolkit
 
 ```
-PYTHONPATH=tests/mixed ./test_run.py -t tests/mixed --test-type mixed --driver=Chrome -i onedata/acceptance_mixed:latest --xvfb --xvfb-recording=failed --env-file=$ENV
+PYTHONPATH=tests/mixed ./test_run.py -t tests/mixed --test-type mixed \
+    --driver=Chrome -i onedata/acceptance_mixed:latest --xvfb --xvfb-recording=failed \
+    --env-file=$ENV --no-clean
 ```
-**Example:** running single test suite (from one specified file):
+To run a single test suite:
 ```
-PYTHONPATH=tests/mixed ./test_run.py -t tests/mixed/scenarios/test_permission_posix_multi.py --test-type mixed --driver=Chrome -i onedata/acceptance_mixed:latest --xvfb --xvfb-recording=failed --env-file=1oz_1op_2oc
-```
-
-## Running tests on a preexisting Onedata deployment:
-
-**Note:** You can specify tests file and `env_file` in the same way as in above example.
-
-### Using a dockerized testing toolkit:
-
-for REST, web GUI and oneclient test
-```
-PYTHONPATH=tests/mixed ./test_run.py -t tests/mixed --test-type mixed --driver=Chrome -i onedata/acceptance_mixed:latest --no-clean --xvfb --xvfb-recording=failed
+PYTHONPATH=tests/mixed ./test_run.py -t tests/mixed/scenarios/test_permission_posix_multi.py \
+    --test-type mixed --driver=Chrome -i onedata/acceptance_mixed:latest \
+    --xvfb --xvfb-recording=failed --env-file=1oz_1op_2oc --no-clean
 ```
 
-### Using a locally installed testing toolkit:
+## Running tests using a locally installed testing toolkit
 
-for REST and web GUI test (does not work with oneclient tests):
+**Only for for REST and web GUI test** (does not work with oneclient tests):
 ```
-PYTHONPATH=tests/mixed ./test_run.py -t tests/mixed --test-type mixed --driver=Chrome --local --no-clean -v
+PYTHONPATH=tests/mixed ./test_run.py -t tests/mixed --test-type mixed \
+    --driver=Chrome --local --no-clean -v
 ```
 
-more about starting tests with `--local` flag in **Using a locally installed
-testing toolkit** section in [gui/README.md](../gui/README.md) 
+More about starting tests with `--local` flag can be found in **Running tests using a locally
+installed testing toolkit** section in [tests/gui/README.md](../gui/README.md).
+
 
 # Known issues
 
 1. If you encounter `ImportError`, try to precede running mixed tests by command: 
 `make build_swaggers` (this could be handled automatically when running tests using Makefile). 
 <!--- TODO VFS-10239 build swaggers, if needed, automatically when running tests using Makefile  -->
-2. **Known issues** section in [GUI README](../gui/README.md)
-3. **Known issues** section in [Oneclient README](../oneclient/README.md)
+2. The `--local` flag does not work for suites using Oneclient.
+3. **Known issues** section in [GUI README](../gui/README.md).
+4. **Known issues** section in [Oneclient README](../oneclient/README.md).
