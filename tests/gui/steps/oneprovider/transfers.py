@@ -159,6 +159,31 @@ def replicate_item(selenium, browser_id, provider, hosts, popups):
     popups(driver).data_distribution_popup.menu[menu_option]()
 
 
+@wt(parsers.parse('user of {browser_id} clicks on menu button for '
+                  '"{provider}" provider in "Data distribution" panel'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_menu_button_in_data_distribution_panel(selenium, browser_id,
+                                                 provider, hosts):
+    driver = selenium[browser_id]
+    provider_name = hosts[provider]['name']
+    modals(driver).details_modal.data_distribution.providers[
+        provider_name].menu_button()
+
+
+@wt(parsers.parse('user of {browser_id} cannot click "{option}" option in data'
+                  ' row menu for "{provider}" provider in "Data distribution" '
+                  'panel'))
+def fail_to_click_option_in_data_distribution_popup(browser_id, option,
+                                                    selenium, popups):
+    driver = selenium[browser_id]
+    try:
+        popups(driver).data_distribution_popup.menu[option]()
+        raise Exception('User can click on "{option}" option in in data row '
+                        'menu in "Data distribution" panel')
+    except RuntimeError:
+        pass
+
+
 @wt(parsers.re('user of (?P<browser_id>.*) evicts selected item'
                ' from provider "(?P<provider>.*)"'))
 def evict_selected_item(selenium, browser_id, provider, hosts, popups):
