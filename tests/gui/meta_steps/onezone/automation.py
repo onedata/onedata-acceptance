@@ -293,11 +293,11 @@ def _create_task_using_previously_created_lambda(browser_id, config, selenium,
 
 
 @wt(parsers.parse('user of {browser_id} executes {ordinal} revision of '
-                  '"{workflow}", using "{item}" as initial value, in '
+                  '"{workflow}", using {item_list} as initial value, in '
                   '"{space}" space and waits extended time for workflow to '
                   'finish'))
 def execute_workflow(browser_id, selenium, oz_page, space, op_container,
-                     ordinal, workflow, modals, item):
+                     ordinal, workflow, modals, item_list):
     spaces = 'spaces'
     automation_workflows = 'Automation Workflows'
     tab_name = 'Run workflow'
@@ -312,8 +312,8 @@ def execute_workflow(browser_id, selenium, oz_page, space, op_container,
                                    tab_name)
     choose_workflow_revision_to_run(selenium, browser_id, op_container,
                                     ordinal, workflow)
-    choose_file_as_initial_workflow_value(selenium, browser_id, item, modals,
-                                          op_container)
+    choose_file_as_initial_workflow_value(selenium, browser_id, item_list,
+                                          modals, op_container)
     confirm_workflow_to_execute(selenium, browser_id, op_container)
     wait_for_workflows_in_automation_subpage(selenium, browser_id, op_container,
                                              start)

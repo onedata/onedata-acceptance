@@ -8,35 +8,46 @@ __license__ = "This software is released under the MIT license cited in " \
 
 import time
 
-import yaml
 from selenium.common.exceptions import StaleElementReferenceException
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
+from tests.gui.steps.modals.modal import (
+    click_modal_button, go_to_path_and_return_file_name_in_modal)
 from tests.gui.steps.oneprovider.automation import switch_to_automation_page
-from tests.gui.steps.oneprovider.file_browser import _select_files
-from tests.gui.utils.core import scroll_to_css_selector
+from tests.gui.steps.oneprovider.browser import (
+    click_and_press_enter_on_item_in_browser)
+from tests.gui.steps.oneprovider.file_browser import (
+    click_on_status_tag_for_file_in_file_browser)
 from tests.utils.bdd_utils import wt, parsers
-from tests.gui.utils.generic import parse_seq, transform
+from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed
+from tests.gui.utils.common.count_checksums import *
 
 
-@wt(parsers.parse('user of {browser_id} chooses "{file_name}" file '
-                  'as initial value for workflow in "Select files" modal'))
+@wt(parsers.re('user of (?P<browser_id>.*) chooses (?P<file_list>.*) file(s|) '
+               'as initial value for workflow in "Select files" modal'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def choose_file_as_initial_workflow_value(selenium, browser_id, file_name,
+def choose_file_as_initial_workflow_value(selenium, browser_id, file_list,
                                           modals, op_container):
+    files = parse_seq(file_list)
     switch_to_iframe(selenium, browser_id)
     driver = selenium[browser_id]
     op_container(driver).automation_page.input_icon.click()
 
-    select_files_modal = modals(driver).select_files
+    for path in files:
+        modal_name = 'select files'
+        file_name = go_to_path_and_return_file_name_in_modal(path, modals,
+                                                             driver, modal_name)
+        select_files_modal = modals(driver).select_files
 
-    for file in select_files_modal.files:
-        if file.name == file_name:
-            file.clickable_field.click()
-
-    select_files_modal.confirm_button.click()
+        for file in select_files_modal.files:
+            if file.name == file_name:
+                file.clickable_field.click()
+                select_files_modal.confirm_button.click()
+                if file_name not in files[-1]:
+                    op_container(driver).automation_page.input_icon.click()
+                break
 
 
 def change_tab_in_automation_subpage(page, tab_name):
@@ -70,7 +81,7 @@ def expand_workflow_record(selenium, browser_id, op_container):
 
 
 def get_store_content(browser_id, driver, page, modals, clipboard,
-                       displays, store_name, store_type):
+                      displays, store_name, store_type):
     page.stores_list[store_name].click()
     modal = modals(driver).store_details
     time.sleep(0.25)
@@ -156,3 +167,69 @@ def assert_events_in_pods_monitor(selenium, browser_id, modals, reasons):
     for reason in reasons_list:
         assert reason in gathered_reasons_list, \
             f'Reason: {reason} has not been found'
+
+
+@wt(parsers.parse('user of {browser_id} counts checksums {checksum_list} for '
+                  '"{file_name}" in "{space}" space'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def count_checksums_for_file(browser_id, tmp_memory, file_name, tmpdir,
+                             checksum_list, selenium, op_container):
+
+    click_and_press_enter_on_item_in_browser(selenium, browser_id, file_name,
+                                             tmp_memory, op_container)
+    downloaded_file = tmpdir.join(browser_id, 'download', file_name)
+    checksums = parse_seq(checksum_list)
+    results = {}
+
+    for checksum in checksums:
+        sum_name = checksum + '_sum'
+        results[checksum] = globals()[sum_name](downloaded_file)
+
+    tmp_memory["checksums_" + file_name] = results
+
+
+def checksums_counted_in_workflow(metadata_modal):
+    result = {}
+    for item in metadata_modal.basic.entries:
+        result[item.key.replace('_key', '')] = item.value
+    return result
+
+
+@wt(parsers.parse('user of {browser_id} sees that checksums {checksum_list} for'
+                  ' "{file_name}" counted in workflow are alike to '
+                  'those counted earlier by user'))
+def assert_checksums_are_the_same(browser_id, checksum_list, file_name,
+                                  tmp_memory, modals, selenium):
+
+    status_type = 'Metadata'
+    modal_name = 'Details modal'
+    button = 'X'
+    checksums = parse_seq(checksum_list)
+
+    # checksums needs to be counted in advance using
+    # count_checksums_for_file function
+    counted_checksum = tmp_memory["checksums_" + file_name]
+    click_on_status_tag_for_file_in_file_browser(browser_id, status_type,
+                                                 file_name, tmp_memory)
+    metadata_modal = modals(selenium[browser_id]).details_modal.metadata
+    workflow_checksum = checksums_counted_in_workflow(metadata_modal)
+
+    for key in checksums:
+        err_msg = (f'{key} checksum counted by user is {counted_checksum[key]},'
+                   f' and is different from checksum counted in workflow: '
+                   f'{workflow_checksum[key]}')
+        assert workflow_checksum[key] == counted_checksum[key], err_msg
+
+    click_modal_button(selenium, browser_id, button, modal_name, modals)
+
+
+@wt(parsers.parse('user of {browser_id} sees that counted checksums'
+                  ' {checksum_list} for "{file_name}" are alike to those'
+                  ' counted in workflow'))
+def count_checksums_and_compare_them(browser_id, tmp_memory, file_name, tmpdir,
+                                     checksum_list, selenium, op_container,
+                                     modals):
+    count_checksums_for_file(browser_id, tmp_memory, file_name, tmpdir,
+                             checksum_list, selenium, op_container)
+    assert_checksums_are_the_same(browser_id, checksum_list, file_name,
+                                  tmp_memory, modals, selenium)
