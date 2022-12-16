@@ -36,7 +36,7 @@ Feature: Size statistics tests
     And user of browser sees that tooltip with size statistics header has date format in modal "Directory Details"
 
 
-  Scenario: User sees does not see size statistics after turning them off
+  Scenario: User does not see size statistics after turning them off
     When user of browser clicks "space1" on the spaces list in the sidebar
     And user of browser clicks "Files" of "space1" space in the sidebar
     And user of browser sees file browser in files tab in Oneprovider page
