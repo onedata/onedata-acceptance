@@ -1,6 +1,6 @@
 # GUI acceptance tests
 
-Acceptance tests using a web browser and selenium - automated software that
+Acceptance tests using a web browser and Selenium - automated software that
 simulates user actions performed on a website.
 
 
@@ -39,7 +39,7 @@ tests using `make` (it will start automatically).
 The test_run.py command is essentially invoked by Makefile, but using it directly
 allows better parameterization and overcoming of some known issues.
 
-Note: all examples use the `--no-clean` option, make sure to remove it if you
+**Note:** all examples use the `--no-clean` option, make sure to remove it if you
 require a fresh deployment every run.
 
 ## Running tests using a dockerized testing toolkit
@@ -49,17 +49,17 @@ require a fresh deployment every run.
     --driver=Chrome --xvfb --no-clean
 ```
 
-**Note:**  the Onedata deployment will be set up automatically with a Onezone and Oneprovider
+The Onedata deployment will be set up automatically with a Onezone and Oneprovider
 (for details see `environments` dir with configurations). Setting up the deployment
 can take some time.
 
-**Note:** we recommend using `onedata/acceptance_gui:latest` testing docker image 
+We recommend using `onedata/acceptance_gui:latest` testing docker image 
 when working on branches based on the `develop` branch. To run older versions, 
 use the image defined as default in `Makefile`.
 
-**Note:** for some tests you should specify `--env-file` - 
-see [bamboo-specs/gui](../../bamboo-specs/gui-acceptance-src.yml). Otherwise, the
-default one will be used.
+For some tests you should specify `--env-file` - see 
+[bamboo-specs/gui](../../bamboo-specs/gui-acceptance-src.yml).
+Otherwise, the default one will be used.
 
 Example that starts a deployment using `1oz_1op_not_deployed_embedded_ceph.yaml`
 and then runs tests on it:
@@ -71,7 +71,7 @@ and then runs tests on it:
 
 ## Running tests using a locally installed testing toolkit
 
-Acceptance tests using selenium (GUI, Mixed) can be run with `--local` flag to
+Acceptance tests using Selenium (GUI, Mixed) can be run with `--local` flag to
 use the locally installed testing toolkit.
 
 Running test this way greatly helps with debug because you can observe the test 
@@ -88,7 +88,7 @@ happening "live" in your browser.
    ```
    pip3 install -r tests/gui/requirements.txt
    ```
-  On Ubuntu 22.04 this won't work on default python 3.10, a version 3.8
+  On Ubuntu 22.04 this won't work on default Python 3.10, a version 3.8
   must be installed on the side.
 
 * **Google Chrome:**
@@ -129,7 +129,9 @@ installed testing toolkit.
 ```bash
 ./test_run.py -t tests/gui --test-type gui --driver=Chrome --local --no-clean
 ```
+
 To run a single test case:
+
 ```bash
 ./test_run.py -t tests/gui/scenarios/test_onezone_basic.py --test-type gui -vvv \ 
     --timeout 5 --reruns 0 --reruns-delay 0 --local --no-clean --driver=Chrome \ 

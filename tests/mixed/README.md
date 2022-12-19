@@ -34,7 +34,7 @@ For more information about running tests using `make`, see
 The test_run.py command is essentially invoked by Makefile, but using it directly
 allows better parameterization and overcoming of some known issues.
 
-Note: all examples use the `--no-clean` option, make sure to remove it if you
+**Note:** all examples use the `--no-clean` option, make sure to remove it if you
 require a fresh deployment every run.
 
 ## Running tests using a dockerized testing toolkit
@@ -44,7 +44,9 @@ PYTHONPATH=tests/mixed ./test_run.py -t tests/mixed --test-type mixed \
     --driver=Chrome -i onedata/acceptance_mixed:latest --xvfb --xvfb-recording=failed \
     --env-file=$ENV --no-clean
 ```
+
 To run a single test suite:
+
 ```
 PYTHONPATH=tests/mixed ./test_run.py -t tests/mixed/scenarios/test_permission_posix_multi.py \
     --test-type mixed --driver=Chrome -i onedata/acceptance_mixed:latest \
@@ -53,7 +55,8 @@ PYTHONPATH=tests/mixed ./test_run.py -t tests/mixed/scenarios/test_permission_po
 
 ## Running tests using a locally installed testing toolkit
 
-**Only for for REST and web GUI test** (does not work with oneclient tests):
+**Only for REST and web GUI tests**, because `--local` mode currently does not support Oneclient tests:
+
 ```
 PYTHONPATH=tests/mixed ./test_run.py -t tests/mixed --test-type mixed \
     --driver=Chrome --local --no-clean -v

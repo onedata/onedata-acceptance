@@ -29,8 +29,8 @@ In `OPTS`, any of `./test_run.py` parameters can be passed (see **Useful test_ru
 parameters** section in the main [README](../../README.md).
 
 Some useful options used mostly in `oneclient` tests:
-* `-k="test_posix_storage_operations"` - used to select specific test
-* `--oc-image=docker.onedata.org/oneclient-dev:develop` - used to specify oneclient docker image
+* `-k="test_posix_storage_operations"` - selects a specific test
+* `--oc-image=docker.onedata.org/oneclient-dev:develop` - specifies Oneclient docker image
 
 
 # Running tests using test_run (advanced)
@@ -38,7 +38,7 @@ Some useful options used mostly in `oneclient` tests:
 The test_run.py command is essentially invoked by Makefile, but using it directly
 allows better parameterization and overcoming of some known issues.
 
-Note: all examples use the `--no-clean` option, make sure to remove it if you
+**Note:** all examples use the `--no-clean` option, make sure to remove it if you
 require a fresh deployment every run.
 
 ```
@@ -46,10 +46,9 @@ require a fresh deployment every run.
     -i onedata/acceptance_mixed:latest --env-file=$ENV --no-clean
 ```
 Where:
-* `-t` - standard `./test_run.py` parameter to set the test cases path to oneclient luma provider tests
+* `-t` - standard `./test_run.py` parameter to set the test cases path to Oneclient luma provider tests
 * `--test-type oneclient` - set the test type use by core Onedata test helpers
-* `-i onedata/acceptance_mixed:latest` - use Docker image with dependencies for
-oneclient tests
+* `-i onedata/acceptance_mixed:latest` - use Docker image with dependencies for Oneclient tests
 * `--env-file=$ENV` - path to file from [environments](environments), without extension.
 
 **Example:**
@@ -82,14 +81,14 @@ An example command to run Oneclient acceptance test suite using sources:
 ```
 # Known issues
 
-1. If you encounter problems with tests using oneclient and the logs contain
+1. If you encounter problems with tests using Oneclient and the logs contain
    errors such as "connection refused" or some rpyc connection errors, it is
    probable that you did not provide a `docker.onedata.org/oneclient-dev:*` 
    image. A `dev` image **is required**, the `docker.onedata.org/oneclient:*` 
    image won't work.
 
-2. If there are problems with setting up Onedata deployment for tests that use 
-   oneclient, it is possible that some remnants of previous deployments are
+2. If there are problems with setting up Onedata deployment for tests that use
+   Oneclient, it is possible that some remnants of previous deployments are
    the cause. Try running `onenv clean`, and if it does not help,
    `helm delete dev; helm delete patch-dev`.
 
