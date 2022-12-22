@@ -8,7 +8,7 @@ Acceptance tests using the Web GUI, REST and Oneclient.
 Please read this document before you start writing or modifying any tests.
 
 **Note:** we recommend reading [tests/gui/README.md](../gui/README.md) first to 
-better understand mixed tests, which are basing on GUI tests.
+better understand mixed tests, which are based on GUI tests.
 
 
 # Running mixed tests using Makefile 
