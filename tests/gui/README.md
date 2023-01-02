@@ -110,10 +110,6 @@ are using local machine. With `--local` flag, `pytest` is run differently than
 on docker (have different options). Until this is fixed, *a Onedata deployment 
 has to be ready in order to run tests locally*.
 
-We recommend reading **Some useful information about
-starting Onedata deployment to run tests** section in
-[README](../../README.md) before starting tests locally.
-
 **Note:** the one-env environment that is set up should be accessible via hostnames
 (eg. https://dev-onezone.default.svc.cluster.local). Make sure that you can open address
 of Onezone in your browser before starting tests.
