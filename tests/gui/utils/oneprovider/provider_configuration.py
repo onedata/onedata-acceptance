@@ -15,7 +15,7 @@ from tests.gui.utils.core.web_elements import WebItem
 
 
 class _ProviderConfiguration(PageObject):
-    size_statistics = Toggle('.dir-stats-config .one-way-toggle-track')
+    size_statistics = Toggle('.toggle-field-dir-stats-config')
 
     def __str__(self):
         return f'space configuration in {self.parent}'

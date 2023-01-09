@@ -17,7 +17,12 @@ Feature: Workflows execution
                 directory tree:
                     - dir1:
                       - file1: 100
-                    - file2: 100
+                    - dir2:
+                      - file1: 100
+                      - file2: 1000
+                      - file3: 10000
+                      - file4: 100
+                      - file5: 100000
     And initial inventories configuration in "onezone" Onezone service:
         inventory1:
             owner: space-owner-user
@@ -108,7 +113,7 @@ Feature: Workflows execution
     Then user of browser sees that content of "input" store is the same as content of "output" store
 
 
-Scenario: User creates checksum-counting-oneclient workflow through GUI and executes it
+  Scenario: User creates checksum-counting-oneclient workflow through GUI and executes it
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" lambdas subpage
 
@@ -182,8 +187,29 @@ Scenario: User creates checksum-counting-oneclient workflow through GUI and exec
               target store: "output-store"
     And user of browser saves workflow edition by clicking "Save" button from menu bar
 
-    And user of browser executes 1st revision of "Workflow1", using "file2" as initial value, in "space1" space and waits extended time for workflow to finish
+    And user of browser executes 1st revision of "Workflow1", using "dir1/file1" as initial value, in "space1" space and waits extended time for workflow to finish
     Then user of browser sees "Finished" status in status bar in workflow visualizer
+
+
+  Scenario: User sees that different checksums are well counted after execution of uploaded "counting-different-checksums" workflow
+    When user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "counting-different-checksums.json" to current dir without waiting for upload to finish
+    And user of browser clicks on "Apply" button in modal "Upload workflow"
+    And user of browser executes 1st revision of "counting-different-checksums", using "dir2" as initial value, in "space1" space and waits extended time for workflow to finish
+    And user of browser sees "Finished" status in status bar in workflow visualizer
+    And user of browser clicks "Files" of "space1" space in the sidebar
+    And user of browser sees file browser in files tab in Oneprovider page
+
+    And user of browser clicks and presses enter on item named "dir2" in file browser
+
+    Then user of browser sees that counted checksums ["md5", "sha512", "sha256", "adler32"] for "file1" are alike to those counted in workflow
+    And user of browser sees that counted checksums ["md5", "sha512", "sha256", "adler32"] for "file2" are alike to those counted in workflow
+    And user of browser sees that counted checksums ["md5", "sha512", "sha256", "adler32"] for "file3" are alike to those counted in workflow
+    And user of browser sees that counted checksums ["md5", "sha512", "sha256", "adler32"] for "file4" are alike to those counted in workflow
+    And user of browser sees that counted checksums ["md5", "sha512", "sha256", "adler32"] for "file5" are alike to those counted in workflow
+
+
 
 
   Scenario: User checks "Pods activity" events after checksum-counting-different-lambdas workflow execution
