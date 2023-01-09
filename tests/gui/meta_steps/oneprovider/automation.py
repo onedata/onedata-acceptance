@@ -13,11 +13,10 @@ from selenium.common.exceptions import StaleElementReferenceException
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
-from tests.gui.steps.oneprovider.automation import switch_to_automation_page
-from tests.gui.steps.oneprovider.file_browser import _select_files
-from tests.gui.utils.core import scroll_to_css_selector
+from tests.gui.steps.oneprovider.automation import (
+    switch_to_automation_page, click_on_task_in_lane,
+    click_on_link_in_task_box, close_pods_activity_modal)
 from tests.utils.bdd_utils import wt, parsers
-from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.utils import repeat_failed
 
 
@@ -123,6 +122,28 @@ def wait_for_ongoing_pods_to_be_terminated(selenium, browser_id, modals):
 
     assert len(modal.pods_list) == 0, 'Pods has not been terminated'
 
+@wt(parsers.parse('user of {browser_id} sees that name of first pod in tab '
+                  '"{tab}" in modal "Function pods activity" contains lambda '
+                  'name "{lambda_name}"'))
+def assert_lambda_name_in_tab_name(selenium, browser_id, modals, tab,
+                                   lambda_name):
+    switch_to_iframe(selenium, browser_id)
+    modal = modals(selenium[browser_id]).function_pods_activity
+    change_tab_in_function_pods_activity_modal(modal, tab)
+    pod_name = modal.pods_list[0].pod_name
+    err_msg = (f'Pod name: "{pod_name}" does not contain '
+               f'lambda name: "{lambda_name}"')
+    assert lambda_name in pod_name, err_msg
+
+@wt(parsers.parse('user of {browser_id} clicks on first pod in tab "{tab}" '
+                  'in modal "Function pods activity"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_first_pod(selenium, browser_id, modals, tab):
+    switch_to_iframe(selenium, browser_id)
+    modal = modals(selenium[browser_id]).function_pods_activity
+    change_tab_in_function_pods_activity_modal(modal, tab)
+    modal.pods_list[0].click()
+
 
 @wt(parsers.parse('user of {browser_id} clicks on first terminated pod in '
                   'modal "Function pods activity"'))
@@ -135,24 +156,111 @@ def click_on_first_terminated_pod(selenium, browser_id, modals):
     modal.pods_list[0].click()
 
 
-@wt(parsers.parse('user of {browser_id} sees events with following reasons: '
-                  '{reasons} in modal "Function pods activity"'))
+def gather_events_list(modal, driver, option):
+    gathered_list = []
+    number = modal.get_number_of_data_rows(driver)
+    for i in reversed(range(int(number)+1)):
+        elem = modal.get_elem_by_data_row_id(i, driver, option)
+        gathered_list.append(elem)
+    return gathered_list
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) in modal "Function pods activity" '
+               'sees events with following (?P<option>reason|message)s:'
+               '\n(?P<events>(.|\s)*)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def assert_events_in_pods_monitor(selenium, browser_id, modals, reasons):
+def assert_events_in_pods_monitor(selenium, browser_id, modals, events,
+                                  option):
+
     driver = selenium[browser_id]
     switch_to_iframe(selenium, browser_id)
     modal = modals(driver).function_pods_activity
+    events_list = [event for event in yaml.load(events) if '+' not in event]
+    gathered_list = gather_events_list(modal, driver, option)
 
-    events_list = modal.events_list
-    reasons_list = parse_seq(reasons)
-    gathered_reasons_list = []
+    for event in events_list:
+        assert event in gathered_list, f'{option}: {event} has not been found'
 
-    # Loop below creates list of reasons from all the events that happened in
-    # a selected pod
-    for i in range(1, len(events_list) + 1):
-        reason = modal.get_event_reason(driver, i, len(events_list))
-        gathered_reasons_list.append(reason)
 
-    for reason in reasons_list:
-        assert reason in gathered_reasons_list, \
-            f'Reason: {reason} has not been found'
+
+@wt(parsers.re('user of (?P<browser_id>.*) sees events in modal '
+               '"Function pods activity" that contains in itself lambda name '
+               '"(?P<lambda_name>.*)" and following '
+               '(?P<option>reason|message)s:\n(?P<events>(.|\s)*)'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_events_containing_lambda_name(selenium, browser_id, modals, events,
+                                         option, lambda_name):
+    driver = selenium[browser_id]
+    switch_to_iframe(selenium, browser_id)
+    modal = modals(driver).function_pods_activity
+    events_list = [event.replace('"', '').split(' + ')[1] for event
+                   in yaml.load(events) if '+' in event]
+    if not events_list:
+        events_list = yaml.load(events)
+    gathered_list = gather_events_list(modal, driver, option)
+
+    for event in events_list:
+        matching = []
+        for elem in gathered_list:
+            if event in elem and lambda_name in elem:
+                matching.append(elem)
+
+        err_msg = (f'{option}: {event} that have {lambda_name} in itself'
+                   f' has not been found')
+        assert matching != [], err_msg
+
+
+def get_lambda_name(events):
+    events_list = yaml.load(events)
+    for event in events_list:
+        if '+' in event:
+            lambda_name = event.replace('message that contains: ',
+                                        '').replace('"', '').split(' + ')[0]
+            return lambda_name
+
+@wt(parsers.re('user of (?P<browser_id>.*) see following "(?P<link>.*)" '
+               '(?P<option>reason|message)s for task "(?P<task>.*)" in '
+               '(?P<ordinal>.*) parallel box in "(?P<lane>.*)" lane '
+               '(?P<if_finished>after workflow execution is finished|during '
+               'workflow execution):\n(?P<events>(.|\s)*)'))
+def checks_events_for_task(selenium, browser_id, op_container, lane, task,
+                           ordinal, link, modals, if_finished, option, events):
+    click = 'clicks on'
+    close = 'closes'
+    click_on_task_in_lane(selenium, browser_id, op_container, lane,
+                          task, ordinal, click)
+    click_on_link_in_task_box(selenium, browser_id, op_container, lane, task,
+                              link, ordinal)
+    if 'finished' in if_finished:
+        wait_for_ongoing_pods_to_be_terminated(selenium, browser_id, modals)
+        click_on_first_terminated_pod(selenium, browser_id, modals)
+
+    assert_events_in_pods_monitor(selenium, browser_id, modals, events,
+                                  option)
+    lambda_name =  get_lambda_name(events)
+
+    assert_events_containing_lambda_name(selenium, browser_id, modals, events,
+                                         option, lambda_name)
+    close_pods_activity_modal(selenium, browser_id, op_container)
+    click_on_task_in_lane(selenium, browser_id, op_container, lane, task,
+                          ordinal, close)
+
+
+@wt(parsers.parse('user of {browser_id} sees that name of first pod in tab'
+                  ' "{tab}" for task "{task}" in {ordinal} parallel box in '
+                  '"{lane}" lane contains lambda name "{lambda_name}"'))
+def assert_pod_name_for_task(selenium, browser_id, op_container, lane,
+                          task, ordinal, modals, tab, lambda_name):
+    click = 'clicks on'
+    close = 'closes'
+    link = 'Pods activity'
+    click_on_task_in_lane(selenium, browser_id, op_container, lane,
+                          task, ordinal, click)
+    click_on_link_in_task_box(selenium, browser_id, op_container, lane, task,
+                              link, ordinal)
+    assert_lambda_name_in_tab_name(selenium, browser_id, modals, tab,
+                                   lambda_name)
+    close_pods_activity_modal(selenium, browser_id, op_container)
+    click_on_task_in_lane(selenium, browser_id, op_container, lane, task,
+                          ordinal, close)
+

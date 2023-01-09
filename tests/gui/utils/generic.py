@@ -45,9 +45,12 @@ def go_to_relative_url(selenium, relative_url):
     selenium.get(new_url)
 
 
-def parse_seq(seq, pattern=None, default=str):
+def parse_seq(seq, pattern=None, split=None, default=str):
     if pattern is not None:
         return [default(el.group()) for el in re.finditer(pattern, seq)]
+    elif split is not None:
+        return [default(el.strip().strip('"'))
+                for el in seq.strip('[]').split(split) if el != '']
     else:
         return [default(el.strip().strip('"'))
                 for el in seq.strip('[]').split(',') if el != '']
