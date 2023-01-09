@@ -293,7 +293,7 @@ def _create_task_using_previously_created_lambda(browser_id, config, selenium,
 
 
 @wt(parsers.parse('user of {browser_id} executes {ordinal} revision of '
-                  '"{workflow}", using "{item}" as initial value, in '
+                  '"{workflow}", using "{item_list}" as initial value, in '
                   '"{space}" space'))
 def execute_workflow(browser_id, selenium, oz_page, space, op_container,
                      ordinal, workflow, modals, item_list):

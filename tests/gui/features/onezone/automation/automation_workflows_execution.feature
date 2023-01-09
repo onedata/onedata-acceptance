@@ -210,8 +210,6 @@ Feature: Workflows execution
     And user of browser sees that counted checksums ["md5", "sha512", "sha256", "adler32"] for "file5" are alike to those counted in workflow
 
 
-
-
   Scenario: User checks "Pods activity" events after checksum-counting-different-lambdas workflow execution
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" workflows subpage

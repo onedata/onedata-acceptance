@@ -7,6 +7,7 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 import time
+import yaml
 
 from selenium.common.exceptions import StaleElementReferenceException
 
