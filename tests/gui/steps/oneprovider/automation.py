@@ -82,3 +82,11 @@ def click_on_link_in_task_box(selenium, browser_id, op_container, lane_name,
     workflow_visualiser = page.workflow_visualiser
     box = workflow_visualiser.workflow_lanes[lane_name].parallel_box
     getattr(box.task_list[task_name], transform(option)).click()
+
+
+@wt(parsers.parse('user of {browser_id} sees that chart with processing stats exist'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_elem_on_processing_chart(browser_id, selenium, modals):
+    switch_to_iframe(selenium, browser_id)
+    modal = modals(selenium[browser_id]).task_time_series
+    assert modal.chart, 'chart with processing stats is not visible'

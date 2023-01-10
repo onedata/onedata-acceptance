@@ -207,3 +207,13 @@ Feature: Workflows execution
     And user of browser sees that counted checksums ["md5", "sha512", "sha256", "adler32"] for "file5" are alike to those counted in workflow
 
 
+  Scenario: User checks time series charts after execution of uploaded "counting-different-checksums" workflow
+    When user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "calculate-checksums-rest.json" to current dir without waiting for upload to finish
+    And user of browser clicks on "Apply" button in modal "Upload workflow"
+    And user of browser executes 1st revision of "calculate-checksums-rest", using "dir2" as initial value, in "space1" space and waits extended time for workflow to finish
+    And user of browser sees "Finished" status in status bar in workflow visualizer
+    And user of browser clicks on "md5" task in "calculate-checksums" lane in workflow visualizer
+    And user of browser clicks on "Time series" link in "md5" task in "calculate-checksums" lane in workflow visualizer
+    And user of browser sees that chart with processing stats exist

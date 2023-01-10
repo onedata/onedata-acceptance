@@ -46,6 +46,7 @@ class NavigationTab(Element):
 class Task(Element):
     name = id = Label('.task-name')
     pods_activity = Button('.view-task-pods-activity-action-trigger')
+    time_series = Button('.view-task-time-series-action-trigger')
 
 
 class ParallelBox(Element):

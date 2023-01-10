@@ -15,3 +15,15 @@ onezone:
 oneprovider-1:
   batchConfig:
     createUsers: false
+  workerOverlayConfig: |-
+    [{op_worker, [
+      {openfaas_function_env, #{
+          % Env vars passed to the OpenFaaS service
+          "read_timeout" => "604800s",   % 7 days
+          "write_timeout" => "604800s",  % 7 days
+          "exec_timeout" => "604800s",    % 7 days
+    
+          % Env vars passed to lambdas
+          "VERIFY_SSL_CERTIFICATES" => "false"
+      }}
+    ]}].
