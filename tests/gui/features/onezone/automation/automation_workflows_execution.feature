@@ -53,7 +53,7 @@ Feature: Workflows execution
     And user of browser clicks on link "Pods activity" in "inout" task in 1st parallel box in "Lane1" lane in workflow visualizer
     And user of browser waits for all pods to finish execution in modal "Function pods activity"
     And user of browser clicks on first terminated pod in modal "Function pods activity"
-    And user of browser in modal "Function pods activity" sees events with following reasons:
+    And user of browser sees events in modal "Function pods activity" with following reasons:
          - "Terminated"
          - "Running"
          - "Scheduled"
@@ -217,9 +217,9 @@ Feature: Workflows execution
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser executes 2nd revision of "checksum-counting-different-lambdas", using "dir1" as initial value, in "space1" space
 
-    And user of browser sees that name of first pod in tab "Current" for task "md5" in 1st parallel box in "calculate-checksums" lane contains lambda name "calculate-checksum-rest"
+    Then user of browser sees that name of first pod in tab "Current" for task "md5" in 1st parallel box in "calculate-checksums" lane contains lambda name "calculate-checksum-rest"
 
-    And user of browser see following "Pods activity" messages for task "md5" in 1st parallel box in "calculate-checksums" lane after workflow execution is finished:
+    And user of browser sees following "Pods activity" messages for task "md5" in 1st parallel box in "calculate-checksums" lane after workflow execution is finished:
          - 'Created container result-streamer'
          - 'Started container result-streamer'
          - 'Pod initialized, containers ready'
@@ -229,7 +229,7 @@ Feature: Workflows execution
          - 'message that contains: "calculate-checksum-rest" + "Created container"'
 
     And user of browser sees that name of first pod in tab "All" for task "adler32" in 2nd parallel box in "calculate-checksums" lane contains lambda name "counting-different-checksums"
-    And user of browser see following "Pods activity" messages for task "adler32" in 2nd parallel box in "calculate-checksums" lane after workflow execution is finished:
+    And user of browser sees following "Pods activity" messages for task "adler32" in 2nd parallel box in "calculate-checksums" lane after workflow execution is finished:
          - "Created container oneclient-sidecar"
          - "Started container oneclient-sidecar"
          - "Pod initialized, containers ready"
@@ -239,7 +239,7 @@ Feature: Workflows execution
          - 'message that contains: "counting-different-checksums" + "Created container"'
 
     And user of browser sees that name of first pod in tab "All" for task "sha512" in 1st parallel box in "calculate-checksums-lane2" lane contains lambda name "calculate-checksum-mounted"
-    And user of browser see following "Pods activity" messages for task "sha512" in 1st parallel box in "calculate-checksums-lane2" lane after workflow execution is finished:
+    And user of browser sees following "Pods activity" messages for task "sha512" in 1st parallel box in "calculate-checksums-lane2" lane after workflow execution is finished:
          - "Created container result-streamer"
          - "Started container result-streamer"
          - "Stopping container result-streamer"

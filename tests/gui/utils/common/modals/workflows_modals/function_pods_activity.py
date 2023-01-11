@@ -57,10 +57,10 @@ class FunctionPodsActivity(Modal):
         elem_sel = f'.event-{option}'
         scroll_to_css_selector(driver, selector)
         row = driver.find_elements_by_css_selector(selector)[0]
-        elem =  row.find_elements_by_css_selector(elem_sel)[0].text
-        return elem
+        elem_in_row =  row.find_elements_by_css_selector(elem_sel)[0].text
+        return elem_in_row
 
     def get_number_of_data_rows(self, driver):
-        element = driver.find_elements_by_css_selector(f'.audit-log-table-'
-                                             f'entry')[0]
+        element = driver.find_elements_by_css_selector(
+            f'.audit-log-table-entry')[0]
         return element.get_attribute('data-row-id')

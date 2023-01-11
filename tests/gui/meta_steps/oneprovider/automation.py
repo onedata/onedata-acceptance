@@ -11,11 +11,10 @@ import yaml
 
 from selenium.common.exceptions import StaleElementReferenceException
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.steps.common.miscellaneous import switch_to_iframe
 from tests.gui.steps.modals.modal import (
     click_modal_button, go_to_path_and_return_file_name_in_modal)
-from tests.gui.steps.oneprovider.automation import switch_to_automation_page
 from tests.gui.steps.oneprovider.browser import (
     click_and_press_enter_on_item_in_browser)
 from tests.gui.steps.oneprovider.file_browser import (
@@ -29,9 +28,19 @@ from tests.utils.utils import repeat_failed
 from tests.gui.utils.common.count_checksums import *
 
 
+@repeat_failed(timeout=WAIT_FRONTEND)
+def check_if_files_were_selected(modals, driver, files):
+    try:
+        modals(driver).select_files
+        raise Exception(f'Files: {files} as initial value for workflow was '
+                        f'not selected')
+    except RuntimeError:
+        pass
+
+
 @wt(parsers.re('user of (?P<browser_id>.*) chooses (?P<file_list>.*) file(s|) '
                'as initial value for workflow in "Select files" modal'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def choose_file_as_initial_workflow_value(selenium, browser_id, file_list,
                                           modals, op_container):
     files = parse_seq(file_list)
@@ -52,6 +61,9 @@ def choose_file_as_initial_workflow_value(selenium, browser_id, file_list,
                 if file_name not in files[-1]:
                     op_container(driver).automation_page.input_icon.click()
                 break
+
+    check_if_files_were_selected(modals, driver, files)
+
 
 
 def change_tab_in_automation_subpage(page, tab_name):
@@ -181,9 +193,9 @@ def gather_events_list(modal, driver, option):
     return gathered_list
 
 
-@wt(parsers.re('user of (?P<browser_id>.*) in modal "Function pods activity" '
-               'sees events with following (?P<option>reason|message)s:'
-               '\n(?P<events>(.|\s)*)'))
+@wt(parsers.re('user of (?P<browser_id>.*) sees events in modal '
+               '"Function pods activity" with following '
+               '(?P<option>reason|message)s:\n(?P<events>(.|\s)*)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def assert_events_in_pods_monitor(selenium, browser_id, modals, events,
                                   option):
@@ -200,7 +212,7 @@ def assert_events_in_pods_monitor(selenium, browser_id, modals, events,
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees events in modal '
-               '"Function pods activity" that contains in itself lambda name '
+               '"Function pods activity" that contains lambda name '
                '"(?P<lambda_name>.*)" and following '
                '(?P<option>reason|message)s:\n(?P<events>(.|\s)*)'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -220,9 +232,10 @@ def assert_events_containing_lambda_name(selenium, browser_id, modals, events,
         for elem in gathered_list:
             if event in elem and lambda_name in elem:
                 matching.append(elem)
+                break
 
-        err_msg = (f'{option}: {event} that have {lambda_name} in itself'
-                   f' has not been found')
+        err_msg = (f'{option}: {event} that contains {lambda_name} has not '
+                   f'been found')
         assert matching != [], err_msg
 
 
@@ -234,7 +247,7 @@ def get_lambda_name(events):
                                         '').replace('"', '').split(' + ')[0]
             return lambda_name
 
-@wt(parsers.re('user of (?P<browser_id>.*) see following "(?P<link>.*)" '
+@wt(parsers.re('user of (?P<browser_id>.*) sees following "(?P<link>.*)" '
                '(?P<option>reason|message)s for task "(?P<task>.*)" in '
                '(?P<ordinal>.*) parallel box in "(?P<lane>.*)" lane '
                '(?P<if_finished>after workflow execution is finished|during '
@@ -265,6 +278,7 @@ def checks_events_for_task(selenium, browser_id, op_container, lane, task,
 @wt(parsers.parse('user of {browser_id} sees that name of first pod in tab'
                   ' "{tab}" for task "{task}" in {ordinal} parallel box in '
                   '"{lane}" lane contains lambda name "{lambda_name}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_pod_name_for_task(selenium, browser_id, op_container, lane,
                           task, ordinal, modals, tab, lambda_name):
     click = 'clicks on'

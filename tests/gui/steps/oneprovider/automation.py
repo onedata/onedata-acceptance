@@ -6,6 +6,7 @@ __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
+import time
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
@@ -79,6 +80,8 @@ def click_on_task_in_lane(selenium, browser_id, op_container, lane_name,
     if option == 'closes':
         if check_if_task_is_opened(task):
             task.drag_handle.click()
+        # wait for task to be closed
+        time.sleep(2)
         assert not check_if_task_is_opened(task), (
                 f'Failed to close {task_name} task in parallel box')
     else:
