@@ -45,13 +45,13 @@ def go_to_relative_url(selenium, relative_url):
     selenium.get(new_url)
 
 
-def parse_seq(seq, pattern=None, split=None, default=str):
+def parse_seq(seq, pattern=None, separator=None, default=str):
     if pattern is not None:
         return [default(el.group()) for el in re.finditer(pattern, seq)]
     else:
-        split = ',' if split is None else split
+        separator = ',' if separator is None else separator
         return [default(el.strip().strip('"'))
-                for el in seq.strip('[]').split(split) if el != '']
+                for el in seq.strip('[]').split(separator) if el != '']
 
 
 def upload_file_path(file_name):

@@ -227,6 +227,7 @@ Feature: Workflows execution
          - 'The pod has been terminated'
          - 'message that contains: "calculate-checksum-rest" + "Started container"'
          - 'message that contains: "calculate-checksum-rest" + "Created container"'
+    And user of browser sees that numer of events on "Pods activity" list for task "md5" in 1st parallel box in "calculate-checksums" lane is about 15
 
     And user of browser sees that name of first pod in tab "All" for task "adler32" in 2nd parallel box in "calculate-checksums" lane contains lambda name "counting-different-checksums"
     And user of browser sees following "Pods activity" messages for task "adler32" in 2nd parallel box in "calculate-checksums" lane after workflow execution is finished:
@@ -237,6 +238,7 @@ Feature: Workflows execution
          - "The pod has been terminated"
          - 'message that contains: "counting-different-checksums" + "Started container"'
          - 'message that contains: "counting-different-checksums" + "Created container"'
+    And user of browser sees that numer of events on "Pods activity" list for task "adler32" in 2nd parallel box in "calculate-checksums" lane is about 14
 
     And user of browser sees that name of first pod in tab "All" for task "sha512" in 1st parallel box in "calculate-checksums-lane2" lane contains lambda name "calculate-checksum-mounted"
     And user of browser sees following "Pods activity" messages for task "sha512" in 1st parallel box in "calculate-checksums-lane2" lane after workflow execution is finished:
@@ -250,5 +252,6 @@ Feature: Workflows execution
          - "The pod has been terminated"
          - 'message that contains: "calculate-checksum-mounted" + "Started container"'
          - 'message that contains: "calculate-checksum-mounted" + "Created container"'
+    And user of browser sees that numer of events on "Pods activity" list for task "sha512" in 1st parallel box in "calculate-checksums-lane2" lane is about 18
 
 

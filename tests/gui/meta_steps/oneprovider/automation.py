@@ -360,3 +360,34 @@ def count_checksums_and_compare_them(browser_id, tmp_memory, file_name, tmpdir,
                              checksum_list, selenium, op_container)
     assert_checksums_are_the_same(browser_id, checksum_list, file_name,
                                   tmp_memory, modals, selenium)
+
+
+def check_number_of_events(selenium, browser_id, modals, exp_num, task):
+    driver = selenium[browser_id]
+    actual_num = int(modals(
+        driver).function_pods_activity.get_number_of_data_rows(driver))
+    exp_num = int(exp_num)
+    err_msg = (f'numer of events on "Pods activity" for task "{task}" is not'
+               f' about {exp_num}')
+    assert abs(actual_num - exp_num) < 3, err_msg
+
+
+@wt(parsers.parse('user of {browser_id} sees that numer of events on '
+                  '"Pods activity" list for task "{task}" in {ordinal}'
+                  ' parallel box in "{lane}" lane is about {exp_num}'))
+def assert_number_of_events_in_task(browser_id, task, lane, exp_num, ordinal,
+                                    op_container, selenium, modals):
+    click = 'clicks on'
+    close = 'closes'
+    link = 'Pods activity'
+
+    click_on_task_in_lane(selenium, browser_id, op_container, lane,
+                          task, ordinal, click)
+    click_on_link_in_task_box(selenium, browser_id, op_container, lane, task,
+                              link, ordinal)
+    wait_for_ongoing_pods_to_be_terminated(selenium, browser_id, modals)
+    click_on_first_terminated_pod(selenium, browser_id, modals)
+    check_number_of_events(selenium, browser_id, modals, exp_num, task)
+    close_pods_activity_modal(selenium, browser_id, op_container)
+    click_on_task_in_lane(selenium, browser_id, op_container, lane, task,
+                          ordinal, close)
