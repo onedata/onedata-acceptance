@@ -49,11 +49,14 @@ Feature: Workflows execution
     Then user of browser sees "Finished" status in status bar in workflow visualizer
 
     # User tests openfaas-pods-activity-monitor
-    And user of browser clicks on "inout" task in "Lane1" lane in workflow visualizer
-    And user of browser clicks on "Pods activity" link in "inout" task in "Lane1" lane in workflow visualizer
+    And user of browser clicks on task "inout" in 1st parallel box in "Lane1" lane in workflow visualizer
+    And user of browser clicks on link "Pods activity" in "inout" task in 1st parallel box in "Lane1" lane in workflow visualizer
     And user of browser waits for all pods to finish execution in modal "Function pods activity"
     And user of browser clicks on first terminated pod in modal "Function pods activity"
-    And user of browser sees events with following reasons: ["Terminated", "Running", "Scheduled"] in modal "Function pods activity"
+    And user of browser sees events in modal "Function pods activity" with following reasons:
+         - "Terminated"
+         - "Running"
+         - "Scheduled"
 
 
   Scenario: User sees finished state and output store content of executed "in-out" workflow created using GUI
@@ -205,5 +208,50 @@ Feature: Workflows execution
     And user of browser sees that counted checksums ["md5", "sha512", "sha256", "adler32"] for "file3" are alike to those counted in workflow
     And user of browser sees that counted checksums ["md5", "sha512", "sha256", "adler32"] for "file4" are alike to those counted in workflow
     And user of browser sees that counted checksums ["md5", "sha512", "sha256", "adler32"] for "file5" are alike to those counted in workflow
+
+
+  Scenario: User checks "Pods activity" events after checksum-counting-different-lambdas workflow execution
+    When user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "checksum-counting-different-lambdas.json" to current dir without waiting for upload to finish
+    And user of browser clicks on "Apply" button in modal "Upload workflow"
+    And user of browser executes 2nd revision of "checksum-counting-different-lambdas", using "dir1" as initial value, in "space1" space
+
+    Then user of browser sees that name of first pod in tab "Current" for task "md5" in 1st parallel box in "calculate-checksums" lane contains lambda name "calculate-checksum-rest"
+
+    And user of browser sees following "Pods activity" messages for task "md5" in 1st parallel box in "calculate-checksums" lane after workflow execution is finished:
+         - 'Created container result-streamer'
+         - 'Started container result-streamer'
+         - 'Pod initialized, containers ready'
+         - 'Stopping container result-streamer'
+         - 'The pod has been terminated'
+         - 'message that contains: "calculate-checksum-rest" + "Started container"'
+         - 'message that contains: "calculate-checksum-rest" + "Created container"'
+    And user of browser sees that numer of events on "Pods activity" list for task "md5" in 1st parallel box in "calculate-checksums" lane is about 15
+
+    And user of browser sees that name of first pod in tab "All" for task "adler32" in 2nd parallel box in "calculate-checksums" lane contains lambda name "counting-different-checksums"
+    And user of browser sees following "Pods activity" messages for task "adler32" in 2nd parallel box in "calculate-checksums" lane after workflow execution is finished:
+         - "Created container oneclient-sidecar"
+         - "Started container oneclient-sidecar"
+         - "Pod initialized, containers ready"
+         - "Stopping container oneclient-sidecar"
+         - "The pod has been terminated"
+         - 'message that contains: "counting-different-checksums" + "Started container"'
+         - 'message that contains: "counting-different-checksums" + "Created container"'
+    And user of browser sees that numer of events on "Pods activity" list for task "adler32" in 2nd parallel box in "calculate-checksums" lane is about 14
+
+    And user of browser sees that name of first pod in tab "All" for task "sha512" in 1st parallel box in "calculate-checksums-lane2" lane contains lambda name "calculate-checksum-mounted"
+    And user of browser sees following "Pods activity" messages for task "sha512" in 1st parallel box in "calculate-checksums-lane2" lane after workflow execution is finished:
+         - "Created container result-streamer"
+         - "Started container result-streamer"
+         - "Stopping container result-streamer"
+         - "Created container oneclient-sidecar"
+         - "Started container oneclient-sidecar"
+         - "Pod initialized, containers ready"
+         - "Stopping container oneclient-sidecar"
+         - "The pod has been terminated"
+         - 'message that contains: "calculate-checksum-mounted" + "Started container"'
+         - 'message that contains: "calculate-checksum-mounted" + "Created container"'
+    And user of browser sees that numer of events on "Pods activity" list for task "sha512" in 1st parallel box in "calculate-checksums-lane2" lane is about 18
 
 
