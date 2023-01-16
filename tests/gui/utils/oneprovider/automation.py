@@ -50,6 +50,7 @@ class Task(Element):
     drag_handle = WebElement('.task-drag-handle')
     pods_activity = Button('.view-task-pods-activity-action-trigger')
     instance_id = Label('.instance-id-detail .truncated-string')
+    status = Label('.status-detail .detail-value')
 
 
 class ParallelBox(Element):
@@ -59,6 +60,7 @@ class ParallelBox(Element):
 
 class WorkflowLane(Element):
     name = id = Label('.lane-name')
+    status = Label('.visible-run-status-label')
     parallel_box = WebItemsSequence('.workflow-visualiser-parallel-box ',
                                     cls=ParallelBox)
 

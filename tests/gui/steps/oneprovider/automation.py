@@ -110,3 +110,39 @@ def close_pods_activity_modal(selenium, browser_id, op_container):
     # the background.
     page = switch_to_automation_page(selenium, browser_id, op_container)
     page.click_on_background_in_workflow_visualiser()
+
+
+def assert_task_status_in_parallel_box(selenium, browser_id, op_container,
+                                       ordinal, lane, task, expected_status):
+    page = switch_to_automation_page(selenium, browser_id, op_container)
+    workflow_visualiser = page.workflow_visualiser
+    number = from_ordinal_number_to_int(ordinal) - 1
+    box = workflow_visualiser.workflow_lanes[lane].parallel_box[number]
+    actual_status = box.task_list[task].status
+    assert_status(task, actual_status, expected_status)
+
+
+
+@wt(parsers.parse('user of {browser_id} sees that status of "{lane}" lane in'
+                  ' "{workflow}" is "{expected_status}"'))
+def assert_status_of_lane(selenium, browser_id, op_container, lane,
+                          expected_status):
+    page = switch_to_automation_page(selenium, browser_id, op_container)
+    workflow_visualiser = page.workflow_visualiser
+    actual_status = workflow_visualiser.workflow_lanes[lane].status
+    assert_status(lane, actual_status, expected_status)
+
+
+@wt(parsers.parse('user of {browser_id} sees that status of "{workflow}"'
+                  ' workflow is "{expected_status}"'))
+def assert_status_of_workflow(selenium, browser_id, op_container,
+                              expected_status, workflow):
+    page = switch_to_automation_page(selenium, browser_id, op_container)
+    actual_status = page.workflow_visualiser.status_bar
+    assert_status(workflow, actual_status, expected_status)
+
+
+def assert_status(name, actual_status, expected_status):
+    err_msg = (f'Actual "{name}" status: "{actual_status}" does not '
+               f'match expected: "{expected_status}"')
+    assert actual_status == expected_status, err_msg

@@ -25,7 +25,7 @@ Feature: Workflows execution
     And user of browser logged as space-owner-user to Onezone service
 
 
-  Scenario: User sees workflow status "Finished" after execution of created "inout" workflow finishes
+  Scenario: User sees that workflow, task, lane statuses are "Finished" after execution of created "inout" workflow finishes
     When user of browser clicks on Automation in the main menu
     And user of browser opens inventory "inventory1" lambdas subpage
 
@@ -60,14 +60,15 @@ Feature: Workflows execution
         arguments:
             _config:
               value builder: "Constant value"
-              # sleep do 120s
-              value: {"sleep": 30}
+              value: {"sleep": 10}
             data:
               value builder: "Iterated item"
     And user of browser saves workflow edition by clicking "Save" button from menu bar
     And user of browser executes 1st revision of "Workflow1", using "file1" as initial value, in "space1" space
 
-    And user of browser is idle for 30 seconds
+    # User waits for workflow to finish
+    And user of browser is idle for 20 seconds
 
-    And trace
-
+    Then user of browser sees that status of task "inout" in 1st parallel box in "Lane1" lane is "Finished"
+    And user of browser sees that status of "Lane1" lane in "Workflow1" is "Finished"
+    And user of browser sees that status of "Workflow1" workflow is "Finished"
