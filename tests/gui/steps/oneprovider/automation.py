@@ -55,8 +55,8 @@ def confirm_workflow_to_execute(selenium, browser_id, op_container):
 def assert_status_in_workflow_visualizer(selenium, browser_id, op_container,
                                          status):
     page = switch_to_automation_page(selenium, browser_id, op_container)
-    assert status in page.workflow_visualiser.status_bar, \
-        f'Workflow status is not equal to {status}'
+    assert status in page.workflow_visualiser.status, (f'Workflow status is not'
+                                                       f' equal to {status}')
 
 
 def check_if_task_is_opened(task):
