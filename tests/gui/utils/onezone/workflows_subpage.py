@@ -7,8 +7,9 @@ __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
 from tests.gui.utils.core.base import PageObject
-from tests.gui.utils.core.web_elements import WebItemsSequence, Input, Label, \
-    Button, WebItem, NamedButton, WebElement
+from tests.gui.utils.core.web_elements import (
+    WebItemsSequence, Input, Label, Button, WebItem, NamedButton, WebElement,
+    WebElementsSequence)
 from tests.gui.utils.onezone.common import InputBox, EditBox
 from tests.gui.utils.onezone.generic_page import Element
 
@@ -45,7 +46,7 @@ class Store(Element):
 
 
 class WorkflowVisualiser(PageObject):
-    create_lane_button = Button('.create-lane-action-trigger')
+    create_lane_button = WebElementsSequence('.create-lane-action-trigger')
     workflow_lanes = WebItemsSequence('.visualiser-elements '
                                       '.workflow-visualiser-lane',
                                       cls=WorkflowLane)

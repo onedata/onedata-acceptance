@@ -52,6 +52,10 @@ class Task(Element):
     instance_id = Label('.instance-id-detail .truncated-string')
     status = Label('.status-detail .detail-value')
 
+    def get_css_selector(self):
+        css_selector = self.web_elem.get_attribute('id')
+        return css_selector
+
 
 class ParallelBox(Element):
     task_list = WebItemsSequence('.box-elements .workflow-visualiser-task',
@@ -64,13 +68,19 @@ class WorkflowLane(Element):
     parallel_box = WebItemsSequence('.workflow-visualiser-parallel-box ',
                                     cls=ParallelBox)
 
+    def scroll_to_first_task_in_parallel_box(self, number):
+        from tests.gui.utils.core import scroll_to_css_selector_bottom
+        sel = self.parallel_box[number].task_list[0].get_css_selector()
+        box_sel = f'[id= {sel}] .items-failed-detail'
+        scroll_to_css_selector_bottom(self.driver, box_sel)
+
 
 class Store(Element):
     name = id = Label('.store-name')
 
 
 class WorkflowVisualiser(PageObject):
-    status_bar = Label('.workflow-status-text .workflow-status')
+    status = Label('.workflow-status-text .workflow-status')
     workflow_lanes = WebItemsSequence('.visualiser-elements '
                                       '.workflow-visualiser-lane',
                                       cls=WorkflowLane)
@@ -78,6 +88,7 @@ class WorkflowVisualiser(PageObject):
     add_store_button = Button('.create-store-action-trigger')
     stores_list = WebItemsSequence('.workflow-visualiser-stores-list '
                                    '.tag-item', cls=Store)
+    pause = Button('.pause-resume-atm-workflow-execution-action-trigger')
 
 
 class WorkflowExecutionPage(PageObject):

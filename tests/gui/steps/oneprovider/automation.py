@@ -60,7 +60,7 @@ def assert_status_in_workflow_visualizer(selenium, browser_id, op_container,
 
 
 def check_if_task_is_opened(task):
-    if task.instance_id == '':
+    if task.status == '':
         return False
     else:
         return True
@@ -117,6 +117,8 @@ def assert_task_status_in_parallel_box(selenium, browser_id, op_container,
     page = switch_to_automation_page(selenium, browser_id, op_container)
     workflow_visualiser = page.workflow_visualiser
     number = from_ordinal_number_to_int(ordinal) - 1
+    workflow_visualiser.workflow_lanes[
+        lane].scroll_to_first_task_in_parallel_box(number)
     box = workflow_visualiser.workflow_lanes[lane].parallel_box[number]
     actual_status = box.task_list[task].status
     assert_status(task, actual_status, expected_status)
@@ -138,7 +140,7 @@ def assert_status_of_lane(selenium, browser_id, op_container, lane,
 def assert_status_of_workflow(selenium, browser_id, op_container,
                               expected_status, workflow):
     page = switch_to_automation_page(selenium, browser_id, op_container)
-    actual_status = page.workflow_visualiser.status_bar
+    actual_status = page.workflow_visualiser.status
     assert_status(workflow, actual_status, expected_status)
 
 
@@ -146,3 +148,21 @@ def assert_status(name, actual_status, expected_status):
     err_msg = (f'Actual "{name}" status: "{actual_status}" does not '
                f'match expected: "{expected_status}"')
     assert actual_status == expected_status, err_msg
+
+
+@wt(parsers.parse('user of {browser_id} clicks "{button}" button on '
+                  '"{workflow}" workflow status bar'))
+def click_button_on_status_bar(selenium, browser_id, op_container):
+    page = switch_to_automation_page(selenium, browser_id, op_container)
+    page.workflow_visualiser.pause()
+
+
+@wt(parsers.parse('user of {browser_id} waits for workflow "{workflow}" to be '
+                  'paused'))
+def wait_for_workflow_to_be_paused(selenium, browser_id, op_container):
+    page = switch_to_automation_page(selenium, browser_id, op_container)
+    status =  page.workflow_visualiser.status
+    while status == 'Stopping':
+        time.sleep(1)
+        status = page.workflow_visualiser.status
+
