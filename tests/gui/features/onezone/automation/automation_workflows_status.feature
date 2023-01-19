@@ -150,7 +150,7 @@ Feature: Workflows execution
     And user of browser saves workflow edition by clicking "Save" button from menu bar
     And user of browser executes 1st revision of "temporary-workflow-with-sleep", using "file1" as initial value, in "space1" space
 
-    # User waits for first tasks in to be finished
+    # User waits for first tasks in Lane1 to be finished
     And user of browser is idle for 25 seconds
 
     And user of browser sees that status of "temporary-workflow-with-sleep" workflow is "Active"
@@ -180,6 +180,7 @@ Feature: Workflows execution
 
     # User waits for tasks in Lane1 to be finished
     And user of browser is idle for 60 seconds
+
     And user of browser sees that status of "Lane2" lane in "temporary-workflow-with-sleep" is "Active"
     And user of browser clicks "Pause" button on "temporary-workflow-with-sleep" workflow status bar
     Then user of browser sees that status of "temporary-workflow-with-sleep" workflow is "Stopping"
@@ -194,3 +195,60 @@ Feature: Workflows execution
     And user of browser sees that status of task "10s sleep" in 1st parallel box in "Lane2" lane is "Finished"
     And user of browser sees that status of task "40s sleep" in 2nd parallel box in "Lane2" lane is "Paused"
     And user of browser sees that status of task "50s sleep" in 3rd parallel box in "Lane2" lane is "Paused"
+
+
+  Scenario: User sees status "Cancelled" in "Lane1" and "Unscheduled" in "Lane2" after cancelling execution of uploaded "temporary-workflow-with-sleep" workflow
+    When user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "temporary-workflow-with-sleep.json" to current dir without waiting for upload to finish
+    And user of browser clicks on "Apply" button in modal "Upload workflow"
+
+    And user of browser executes 1st revision of "temporary-workflow-with-sleep", using "file1" as initial value, in "space1" space
+
+    # User waits for first tasks in Lane1 to be finished
+    And user of browser is idle for 20 seconds
+
+    And user of browser sees that status of "temporary-workflow-with-sleep" workflow is "Active"
+    And user of browser clicks "Cancel" button on "temporary-workflow-with-sleep" workflow status bar
+    Then user of browser sees that status of "temporary-workflow-with-sleep" workflow is "Stopping"
+
+    And user of browser waits for workflow "temporary-workflow-with-sleep" to be cancelled
+    And user of browser sees that status of "temporary-workflow-with-sleep" workflow is "Cancelled"
+
+    And user of browser sees that status of "Lane1" lane in "temporary-workflow-with-sleep" is "Cancelled"
+    And user of browser sees that status of "Lane2" lane in "temporary-workflow-with-sleep" is "Unscheduled"
+
+    And user of browser sees that status of task "10s sleep" in 1st parallel box in "Lane1" lane is "Finished"
+    And user of browser sees that status of task "30s sleep" in 2nd parallel box in "Lane1" lane is "Cancelled"
+
+    And user of browser sees that status of task "10s sleep" in 1st parallel box in "Lane2" lane is "Unscheduled"
+    And user of browser sees that status of task "40s sleep" in 2nd parallel box in "Lane2" lane is "Unscheduled"
+    And user of browser sees that status of task "50s sleep" in 3rd parallel box in "Lane2" lane is "Unscheduled"
+
+
+  Scenario: User sees status "Cancelled" in "Lane2" after cancelling execution of uploaded "temporary-workflow-with-sleep" workflow
+    When user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "temporary-workflow-with-sleep.json" to current dir without waiting for upload to finish
+    And user of browser clicks on "Apply" button in modal "Upload workflow"
+    And user of browser executes 1st revision of "temporary-workflow-with-sleep", using "file1" as initial value, in "space1" space
+
+#    User waits for tasks in Lane1 to be finished
+    And user of browser is idle for 60 seconds
+
+    And user of browser sees that status of "Lane2" lane in "temporary-workflow-with-sleep" is "Active"
+    And user of browser clicks "Cancel" button on "temporary-workflow-with-sleep" workflow status bar
+    Then user of browser sees that status of "temporary-workflow-with-sleep" workflow is "Stopping"
+
+    And user of browser waits for workflow "temporary-workflow-with-sleep" to be cancelled
+
+    And user of browser sees that status of "temporary-workflow-with-sleep" workflow is "Cancelled"
+    And user of browser sees that status of "Lane1" lane in "temporary-workflow-with-sleep" is "Finished"
+    And user of browser sees that status of "Lane2" lane in "temporary-workflow-with-sleep" is "Cancelled"
+    And user of browser sees that status of task "10s sleep" in 1st parallel box in "Lane1" lane is "Finished"
+    And user of browser sees that status of task "30s sleep" in 2nd parallel box in "Lane1" lane is "Finished"
+    And user of browser sees that status of task "10s sleep" in 1st parallel box in "Lane2" lane is "Finished"
+    And user of browser sees that status of task "40s sleep" in 2nd parallel box in "Lane2" lane is "Cancelled"
+    And user of browser sees that status of task "50s sleep" in 3rd parallel box in "Lane2" lane is "Cancelled"
+
+

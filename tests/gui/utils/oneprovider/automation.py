@@ -89,6 +89,7 @@ class WorkflowVisualiser(PageObject):
     stores_list = WebItemsSequence('.workflow-visualiser-stores-list '
                                    '.tag-item', cls=Store)
     pause = Button('.pause-resume-atm-workflow-execution-action-trigger')
+    cancel = Button('.cancel-atm-workflow-execution-action-trigger')
 
 
 class WorkflowExecutionPage(PageObject):

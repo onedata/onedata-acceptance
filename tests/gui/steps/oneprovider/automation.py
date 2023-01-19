@@ -124,7 +124,6 @@ def assert_task_status_in_parallel_box(selenium, browser_id, op_container,
     assert_status(task, actual_status, expected_status)
 
 
-
 @wt(parsers.parse('user of {browser_id} sees that status of "{lane}" lane in'
                   ' "{workflow}" is "{expected_status}"'))
 def assert_status_of_lane(selenium, browser_id, op_container, lane,
@@ -135,12 +134,23 @@ def assert_status_of_lane(selenium, browser_id, op_container, lane,
     assert_status(lane, actual_status, expected_status)
 
 
+def wait_for_stopping_status(expected_status, page):
+    for i in range(5):
+        time.sleep(1)
+        actual_status = page.workflow_visualiser.status
+        if actual_status == expected_status:
+            return actual_status
+
+
 @wt(parsers.parse('user of {browser_id} sees that status of "{workflow}"'
                   ' workflow is "{expected_status}"'))
 def assert_status_of_workflow(selenium, browser_id, op_container,
                               expected_status, workflow):
     page = switch_to_automation_page(selenium, browser_id, op_container)
     actual_status = page.workflow_visualiser.status
+    if expected_status == 'Stopping' and  actual_status == 'Active':
+        actual_status = wait_for_stopping_status(expected_status, page)
+
     assert_status(workflow, actual_status, expected_status)
 
 
@@ -152,13 +162,13 @@ def assert_status(name, actual_status, expected_status):
 
 @wt(parsers.parse('user of {browser_id} clicks "{button}" button on '
                   '"{workflow}" workflow status bar'))
-def click_button_on_status_bar(selenium, browser_id, op_container):
+def click_button_on_status_bar(selenium, browser_id, op_container, button):
     page = switch_to_automation_page(selenium, browser_id, op_container)
-    page.workflow_visualiser.pause()
+    getattr(page.workflow_visualiser, transform(button))()
 
 
-@wt(parsers.parse('user of {browser_id} waits for workflow "{workflow}" to be '
-                  'paused'))
+@wt(parsers.re('user of (?P<browser_id>.*) waits for workflow '
+               '"(?P<workflow>.*)" to be (paused|cancelled)'))
 def wait_for_workflow_to_be_paused(selenium, browser_id, op_container):
     page = switch_to_automation_page(selenium, browser_id, op_container)
     status =  page.workflow_visualiser.status
