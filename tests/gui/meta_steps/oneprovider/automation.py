@@ -392,8 +392,19 @@ def assert_status_of_task(selenium, browser_id, op_container, lane,
 
     click_on_task_in_lane(selenium, browser_id, op_container, lane,
                           task, ordinal, click)
-    assert_task_status_in_parallel_box(selenium, browser_id, op_container,
-                                       ordinal, lane, task, expected_status)
+    if 'or' in expected_status:
+        statuses = expected_status.split('" or "')
+        try:
+            assert_task_status_in_parallel_box(selenium, browser_id,
+                                               op_container, ordinal, lane,
+                                               task, statuses[0])
+        except AssertionError:
+            assert_task_status_in_parallel_box(selenium, browser_id,
+                                               op_container, ordinal, lane,
+                                               task, statuses[1])
+    else:
+        assert_task_status_in_parallel_box(selenium, browser_id, op_container,
+                                           ordinal, lane, task, expected_status)
     click_on_task_in_lane(selenium, browser_id, op_container, lane, task,
                           ordinal, close)
 

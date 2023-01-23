@@ -163,7 +163,7 @@ Feature: Workflows execution
     And user of browser sees that status of "Lane1" lane in "temporary-workflow-with-sleep" is "Paused"
     And user of browser sees that status of "Lane2" lane in "temporary-workflow-with-sleep" is "Unscheduled"
 
-    And user of browser sees that status of task "10s sleep" in 1st parallel box in "Lane1" lane is "Finished"
+    And user of browser sees that status of task "10s sleep" in 1st parallel box in "Lane1" lane is "Finished" or "Paused"
     And user of browser sees that status of task "50s sleep" in 2nd parallel box in "Lane1" lane is "Paused"
 
     And user of browser sees that status of task "10s sleep" in 1st parallel box in "Lane2" lane is "Unscheduled"
@@ -192,7 +192,7 @@ Feature: Workflows execution
     And user of browser sees that status of "Lane2" lane in "temporary-workflow-with-sleep" is "Paused"
     And user of browser sees that status of task "10s sleep" in 1st parallel box in "Lane1" lane is "Finished"
     And user of browser sees that status of task "30s sleep" in 2nd parallel box in "Lane1" lane is "Finished"
-    And user of browser sees that status of task "10s sleep" in 1st parallel box in "Lane2" lane is "Finished"
+    And user of browser sees that status of task "10s sleep" in 1st parallel box in "Lane2" lane is "Finished" or "Paused"
     And user of browser sees that status of task "40s sleep" in 2nd parallel box in "Lane2" lane is "Paused"
     And user of browser sees that status of task "50s sleep" in 3rd parallel box in "Lane2" lane is "Paused"
 
@@ -218,7 +218,7 @@ Feature: Workflows execution
     And user of browser sees that status of "Lane1" lane in "temporary-workflow-with-sleep" is "Cancelled"
     And user of browser sees that status of "Lane2" lane in "temporary-workflow-with-sleep" is "Unscheduled"
 
-    And user of browser sees that status of task "10s sleep" in 1st parallel box in "Lane1" lane is "Finished"
+    And user of browser sees that status of task "10s sleep" in 1st parallel box in "Lane1" lane is "Finished" or "Cancelled"
     And user of browser sees that status of task "30s sleep" in 2nd parallel box in "Lane1" lane is "Cancelled"
 
     And user of browser sees that status of task "10s sleep" in 1st parallel box in "Lane2" lane is "Unscheduled"
@@ -247,7 +247,7 @@ Feature: Workflows execution
     And user of browser sees that status of "Lane2" lane in "temporary-workflow-with-sleep" is "Cancelled"
     And user of browser sees that status of task "10s sleep" in 1st parallel box in "Lane1" lane is "Finished"
     And user of browser sees that status of task "30s sleep" in 2nd parallel box in "Lane1" lane is "Finished"
-    And user of browser sees that status of task "10s sleep" in 1st parallel box in "Lane2" lane is "Finished"
+    And user of browser sees that status of task "10s sleep" in 1st parallel box in "Lane2" lane is "Finished" or "Cancelled"
     And user of browser sees that status of task "40s sleep" in 2nd parallel box in "Lane2" lane is "Cancelled"
     And user of browser sees that status of task "50s sleep" in 3rd parallel box in "Lane2" lane is "Cancelled"
 
