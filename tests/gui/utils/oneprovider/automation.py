@@ -15,8 +15,8 @@ from tests.gui.utils.onezone.generic_page import Element
 
 
 class ExecutionRecord(PageObject):
-    name = id = Label('cell-name')
-    inventory = Label('cell-inventory')
+    name = id = Label('.cell-name')
+    inventory = Label('.cell-inventory')
     status_icon = Icon('.cell-status')
     menu_button = Button('.cell-actions')
 
@@ -100,9 +100,8 @@ class WorkflowExecutionPage(PageObject):
     input_icon = Button('.tag-creator-trigger')
     run_workflow_button = NamedButton('.btn-submit', text='Run Workflow')
 
-    executed_workflow_list = WebItemsSequence('.atm-workflow-executions-table '
-                                              'tr.data-row',
-                                              cls=ExecutionRecord)
+    workflow_executions_list = WebItemsSequence(
+        '.atm-workflow-executions-table tr.data-row', cls=ExecutionRecord)
 
     workflow_visualiser = WebItem('.workflow-visualiser',
                                   cls=WorkflowVisualiser)

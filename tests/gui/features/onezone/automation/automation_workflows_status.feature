@@ -252,3 +252,34 @@ Feature: Workflows execution
     And user of browser sees that status of task "50s sleep" in 3rd parallel box in "Lane2" lane is "Cancelled"
 
 
+  Scenario: User does not see workflow on list after removing uploaded "inout" workflow
+    When user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "workflow_upload.json" to current dir without waiting for upload to finish
+    And user of browser clicks on "Apply" button in modal "Upload workflow"
+    And user of browser executes 1st revision of "Workflow1", using "file1" as initial value, in "space1" space and waits extended time for workflow to finish
+
+    And user of browser clicks on "Ended" tab in automation subpage
+    And user of browser sees "Workflow1" on workflow executions list
+    And user of browser clicks on "Workflow1" menu on workflow executions list
+    And user of browser clicks "Remove" option in data row menu in automation workflows page
+    And user of browser clicks on "Remove" button in modal "Remove Workflow Execution"
+    # User waits for workflow to be removed
+    And user of browser is idle for 2 seconds
+    Then user of browser does not see "Workflow1" on workflow executions list
+
+
+  Scenario: User can not remove uploaded "temporary-workflow-with-sleep" workflow while it is still running
+    When user of browser clicks on Automation in the main menu
+    And user of browser opens inventory "inventory1" workflows subpage
+    And user of browser uses "Upload (json)" button from menu bar to upload workflow "temporary-workflow-with-sleep.json" to current dir without waiting for upload to finish
+    And user of browser clicks on "Apply" button in modal "Upload workflow"
+    And user of browser executes 1st revision of "temporary-workflow-with-sleep", using "file1" as initial value, in "space1" space
+
+    And user of browser clicks on "Ongoing" tab in automation subpage
+    And user of browser sees "temporary-workflow-with-sleep" on workflow executions list
+    And user of browser clicks on "temporary-workflow-with-sleep" menu on workflow executions list
+    Then user of browser sees that "Remove" option in data row menu in automation workflows page is disabled
+
+
+

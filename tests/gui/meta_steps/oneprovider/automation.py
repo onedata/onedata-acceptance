@@ -22,7 +22,7 @@ from tests.gui.steps.oneprovider.file_browser import (
 from tests.gui.steps.oneprovider.automation import (
     switch_to_automation_page, click_on_task_in_lane,
     click_on_link_in_task_box, close_pods_activity_modal,
-    assert_task_status_in_parallel_box)
+    assert_task_status_in_parallel_box, change_tab_in_automation_subpage)
 from tests.utils.bdd_utils import wt, parsers
 from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed
@@ -66,12 +66,6 @@ def choose_file_as_initial_workflow_value(selenium, browser_id, file_list,
     check_if_files_were_selected(modals, driver, files)
 
 
-
-def change_tab_in_automation_subpage(page, tab_name):
-    page.navigation_tab[tab_name].click()
-    time.sleep(0.25)
-
-
 @wt(parsers.re('user of (?P<browser_id>.*) waits for all workflows to '
                '(?P<option>start|finish)'))
 @repeat_failed(interval=1, timeout=180,
@@ -80,21 +74,15 @@ def wait_for_workflows_in_automation_subpage(selenium, browser_id, op_container,
                                              option):
     page = switch_to_automation_page(selenium, browser_id, op_container)
     if option == 'start':
-        change_tab_in_automation_subpage(page, 'Waiting')
+        change_tab_in_automation_subpage(selenium, browser_id,
+                                         op_container, 'Waiting')
         err = 'Waiting workflows did not start'
     else:
-        change_tab_in_automation_subpage(page, 'Ongoing')
+        change_tab_in_automation_subpage(selenium, browser_id,
+                                         op_container, 'Ongoing')
         err = 'Ongoing workflows did not finish their run'
 
-    assert len(page.executed_workflow_list) == 0, err
-
-
-@wt(parsers.re('user of (?P<browser_id>.*) clicks on first executed workflow'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def expand_workflow_record(selenium, browser_id, op_container):
-    page = switch_to_automation_page(selenium, browser_id, op_container)
-    change_tab_in_automation_subpage(page, 'Ended')
-    page.executed_workflow_list[0].click()
+    assert len(page.workflow_executions_list) == 0, err
 
 
 def get_store_content(browser_id, driver, page, modals, clipboard,

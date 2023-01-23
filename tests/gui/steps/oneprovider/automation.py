@@ -176,3 +176,56 @@ def wait_for_workflow_to_be_paused(selenium, browser_id, op_container):
         time.sleep(1)
         status = page.workflow_visualiser.status
 
+
+@wt(parsers.parse('user of {browser_id} clicks on "{tab_name}" tab in '
+                  'automation subpage'))
+def change_tab_in_automation_subpage(selenium, browser_id, op_container,
+                                     tab_name):
+    page = switch_to_automation_page(selenium, browser_id, op_container)
+    page.navigation_tab[tab_name].click()
+    time.sleep(0.25)
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) clicks on first executed workflow'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def expand_workflow_record(selenium, browser_id, op_container):
+    page = switch_to_automation_page(selenium, browser_id, op_container)
+    change_tab_in_automation_subpage(selenium, browser_id, op_container,
+                                     'Ended')
+    page.workflow_executions_list[0].click()
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) clicks on "(?P<workflow>.*)" menu '
+               'on workflow executions list'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def click_on_workflow_menu(selenium, browser_id, op_container, workflow):
+    page = switch_to_automation_page(selenium, browser_id, op_container)
+    page.workflow_executions_list[workflow].menu_button()
+
+
+
+@wt(parsers.re('user of (?P<browser_id>.*) (?P<option>does not see|sees)'
+               ' "(?P<workflow>.*)" on workflow executions list'))
+@repeat_failed(timeout=WAIT_FRONTEND)
+def assert_workflow_on_executed_workflows_list(selenium, browser_id,
+                                               op_container, workflow, option):
+
+    page = switch_to_automation_page(selenium, browser_id, op_container)
+
+    workflow_executions_list = page.workflow_executions_list
+    if option == 'does not see':
+        err_msg = f'Workflow: {workflow} is on workflow executions list'
+        assert not workflow in workflow_executions_list, err_msg
+    else:
+        err_msg = f'Workflow: {workflow} is not on workflow executions list'
+        assert workflow in workflow_executions_list, err_msg
+
+
+@wt(parsers.parse('user of {browser_id} sees that "{option}" option in '
+                  'data row menu in automation workflows page is disabled'))
+def assert_option_disabled_in_automation_page(selenium, browser_id, option, popups):
+    err_msg = (f'Option {option} is not disabled in data row menu'
+               f' in automation workflows page')
+    disabled_options =  popups(selenium[browser_id]
+                               ).workflow_menu.disabled_options
+    assert option in disabled_options, err_msg
