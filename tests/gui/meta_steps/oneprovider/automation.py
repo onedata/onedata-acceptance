@@ -21,7 +21,7 @@ from tests.gui.steps.oneprovider.file_browser import (
     click_on_status_tag_for_file_in_file_browser)
 from tests.gui.steps.oneprovider.automation import (
     switch_to_automation_page, click_on_task_in_lane,
-    click_on_link_in_task_box, close_pods_activity_modal)
+    click_on_link_in_task_box)
 from tests.utils.bdd_utils import wt, parsers
 from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed
@@ -256,6 +256,9 @@ def checks_events_for_task(selenium, browser_id, op_container, lane, task,
                            ordinal, link, modals, if_finished, option, events):
     click = 'clicks on'
     close = 'closes'
+    button = 'X'
+    modal =  'Function pods activity'
+
     click_on_task_in_lane(selenium, browser_id, op_container, lane,
                           task, ordinal, click)
     click_on_link_in_task_box(selenium, browser_id, op_container, lane, task,
@@ -270,7 +273,7 @@ def checks_events_for_task(selenium, browser_id, op_container, lane, task,
 
     assert_events_containing_lambda_name(selenium, browser_id, modals, events,
                                          option, lambda_name)
-    close_pods_activity_modal(selenium, browser_id, op_container)
+    click_modal_button(selenium, browser_id, button, modal, modals)
     click_on_task_in_lane(selenium, browser_id, op_container, lane, task,
                           ordinal, close)
 
@@ -284,13 +287,16 @@ def assert_pod_name_for_task(selenium, browser_id, op_container, lane,
     click = 'clicks on'
     close = 'closes'
     link = 'Pods activity'
+    button = 'X'
+    modal = 'Function pods activity'
+
     click_on_task_in_lane(selenium, browser_id, op_container, lane,
                           task, ordinal, click)
     click_on_link_in_task_box(selenium, browser_id, op_container, lane, task,
                               link, ordinal)
     assert_lambda_name_in_tab_name(selenium, browser_id, modals, tab,
                                    lambda_name)
-    close_pods_activity_modal(selenium, browser_id, op_container)
+    click_modal_button(selenium, browser_id, button, modal, modals)
     click_on_task_in_lane(selenium, browser_id, op_container, lane, task,
                           ordinal, close)
 
@@ -380,6 +386,8 @@ def assert_number_of_events_in_task(browser_id, task, lane, exp_num, ordinal,
     click = 'clicks on'
     close = 'closes'
     link = 'Pods activity'
+    button = 'X'
+    modal = 'Function pods activity'
 
     click_on_task_in_lane(selenium, browser_id, op_container, lane,
                           task, ordinal, click)
@@ -388,6 +396,6 @@ def assert_number_of_events_in_task(browser_id, task, lane, exp_num, ordinal,
     wait_for_ongoing_pods_to_be_terminated(selenium, browser_id, modals)
     click_on_first_terminated_pod(selenium, browser_id, modals)
     check_number_of_events(selenium, browser_id, modals, exp_num, task)
-    close_pods_activity_modal(selenium, browser_id, op_container)
+    click_modal_button(selenium, browser_id, button, modal, modals)
     click_on_task_in_lane(selenium, browser_id, op_container, lane, task,
                           ordinal, close)
