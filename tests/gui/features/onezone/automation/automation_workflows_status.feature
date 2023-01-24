@@ -60,7 +60,7 @@ Feature: Workflows execution
         arguments:
             _config:
               value builder: "Constant value"
-              value: {"sleep": 10}
+              value: {"sleep": 1}
             data:
               value builder: "Iterated item"
     And user of browser saves workflow edition by clicking "Save" button from menu bar
@@ -233,7 +233,7 @@ Feature: Workflows execution
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser executes 1st revision of "temporary-workflow-with-sleep", using "file1" as initial value, in "space1" space
 
-#    User waits for tasks in Lane1 to be finished
+    # User waits for tasks in Lane1 to be finished
     And user of browser is idle for 60 seconds
 
     And user of browser sees that status of "Lane2" lane in "temporary-workflow-with-sleep" is "Active"

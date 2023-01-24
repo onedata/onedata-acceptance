@@ -126,6 +126,7 @@ def assert_task_status_in_parallel_box(selenium, browser_id, op_container,
 
 @wt(parsers.parse('user of {browser_id} sees that status of "{lane}" lane in'
                   ' "{workflow}" is "{expected_status}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_status_of_lane(selenium, browser_id, op_container, lane,
                           expected_status):
     page = switch_to_automation_page(selenium, browser_id, op_container)
