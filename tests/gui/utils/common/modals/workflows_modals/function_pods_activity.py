@@ -10,8 +10,8 @@ __license__ = "This software is released under the MIT license cited in " \
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.core.base import PageObject
-from tests.gui.utils.core.web_elements import WebItemsSequence, Label, \
-    WebElement
+from tests.gui.utils.core.web_elements import (WebItemsSequence, Label,
+                                               WebElement, Button)
 from tests.gui.utils.onezone.generic_page import Element
 
 
@@ -42,6 +42,7 @@ class FunctionPodsActivity(Modal):
 
     events_list_scrollbar = WebElement('.events-table-section '
                                        '.perfect-scrollbar-element')
+    x = Button('.close')
 
     def __str__(self):
         return 'Function pods activity modal'

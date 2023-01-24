@@ -101,17 +101,6 @@ def click_on_link_in_task_box(selenium, browser_id, op_container, lane_name,
     getattr(box.task_list[task_name], transform(option)).click()
 
 
-
-@wt(parsers.parse('user of {browser_id} closes modal "Function pods activity"'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def close_pods_activity_modal(selenium, browser_id, op_container):
-    # In modal "Function pods activity" there is no 'X' button (this will be
-    # resolved in VFS-10324) so closing modal is handled by clicking in
-    # the background.
-    page = switch_to_automation_page(selenium, browser_id, op_container)
-    page.click_on_background_in_workflow_visualiser()
-
-
 def assert_task_status_in_parallel_box(selenium, browser_id, op_container,
                                        ordinal, lane, task, expected_status):
     page = switch_to_automation_page(selenium, browser_id, op_container)
