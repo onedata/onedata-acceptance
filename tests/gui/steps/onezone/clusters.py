@@ -179,12 +179,12 @@ def get_old_or_new_cluster_record_from_list(provider, prov_list, age,
 
     selected = [row for row in prov_list if row.name == record_name]
 
-    # conflicted clusters have 4-letter cluster id hash added to label
+    # conflicted clusters have 4-letter cluster id digest added to label
     if age == 'old':
-        new_list = [row for row in selected if row.id_hash.strip('#') ==
+        new_list = [row for row in selected if row.id_hash.strip('@') ==
                     old_id[:4]]
     else:
-        new_list = [row for row in selected if row.id_hash.strip('#') !=
+        new_list = [row for row in selected if row.id_hash.strip('@') !=
                     old_id[:4]]
 
     if new_list:

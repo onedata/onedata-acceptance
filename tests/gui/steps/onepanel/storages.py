@@ -172,8 +172,8 @@ def assert_number_storages_with_same_name(selenium, browser_id, name,
     driver = selenium[browser_id]
     storages_list = onepanel(driver).content.storages.storages
     filtered = [storage for storage in storages_list if
-                storage.name.split('#')[0] == name]
-    ids = [s.name.split('#')[1] for s in filtered]
+                storage.name.split('@')[0] == name]
+    ids = [s.name.split('@')[1] for s in filtered]
     assert len(filtered) == number, (
         f'{name} not visible {number} times on storages list')
     assert check_ids_different(ids), f'IDs are not different, {ids}'

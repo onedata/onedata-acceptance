@@ -21,7 +21,7 @@ class PowerSelect(PageObject):
 
     def choose_item_with_id(self, property_name):
         for item in self.items:
-            if item.text.split('#')[0].strip() == property_name:
+            if item.text.split('@')[0].strip() == property_name:
                 item.click()
                 return
 
