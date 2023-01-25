@@ -25,14 +25,15 @@ TEST_RUNNER_CONTAINER_NAME = 'test-runner'
 
 
 def get_images_option(test_type='oneclient', env_file_name=None, oz_image=None, op_image=None,
-                      rest_cli_image=None, oc_image=None, pull=True):
+                      rest_cli_image=None, openfaas_pod_status_monitor_image=None, oc_image=None, pull=True):
     if test_type == 'upgrade':
         # in upgrade tests images are provided in test config and manually set are ignored
         return ''
     images_cfg = []
     add_image_to_images_cfg(oz_image, 'onezone', '--oz-image', images_cfg, pull)
     add_image_to_images_cfg(op_image, 'oneprovider', '--op-image', images_cfg, pull)
-    add_image_to_images_cfg(rest_cli_image, 'rest_cli', '--rest-cli-image', images_cfg, pull)
+    add_image_to_images_cfg(rest_cli_image, 'rest-cli', '--rest-cli-image', images_cfg, pull)
+    add_image_to_images_cfg(openfaas_pod_status_monitor_image, 'openfaas-pod-status-monitor', '--openfaas-pod-status-monitor-image', images_cfg, pull)
 
     if test_type in ['oneclient', 'mixed', 'onedata_fs', 'performance']:
         add_image_to_images_cfg(oc_image, 'oneclient', '--oc-image', images_cfg, pull)
@@ -183,6 +184,13 @@ def main():
         help='Rest cli image to use in tests',
         default=None,
         dest='rest_cli_image')
+
+    parser.add_argument(
+        '--openfaas-pod-status-monitor-image', '-mi',
+        action='store',
+        help='Openfaas pod status monitor image to use in tests',
+        default=None,
+        dest='openfaas_pod_status_monitor_image')
 
     parser.add_argument(
         '--update-etc-hosts', '-uh',
@@ -377,7 +385,8 @@ SERVICE_TO_IMAGE = {
     'onezone': 'docker.onedata.org/onezone-dev',
     'oneprovider': 'docker.onedata.org/oneprovider-dev',
     'oneclient': 'docker.onedata.org/oneclient-dev',
-    'rest_cli': 'docker.onedata.org/rest-cli'
+    'rest-cli': 'docker.onedata.org/rest-cli',
+    'openfaas-pod-status-monitor': 'docker.onedata.org/openfaas-pod-status-monitor'
 }
 
 

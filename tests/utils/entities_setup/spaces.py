@@ -274,6 +274,9 @@ def _get_storage_id(provider_hostname, onepanel_username,
         if storage_details.json()['name'] == storage_name:
             return storage_id
 
+    raise RuntimeError("Storage with name '{}' was not found in Oneprovider "
+                       "at {}".format(storage_name, provider_hostname))
+
 
 def _init_storage_from_config(owner_credentials, space_name, hosts, users,
                               storage_conf):
