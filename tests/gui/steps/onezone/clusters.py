@@ -11,6 +11,7 @@ import time
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.steps.common.miscellaneous import _enter_text
+from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
@@ -178,13 +179,14 @@ def get_old_or_new_cluster_record_from_list(provider, prov_list, age,
     old_id = tmp_memory[provider]['cluster id']
 
     selected = [row for row in prov_list if row.name == record_name]
+    separator = CONFLICT_NAME_SEPARATOR
 
     # conflicted clusters have 4-letter cluster id digest added to label
     if age == 'old':
-        new_list = [row for row in selected if row.id_hash.strip('@') ==
+        new_list = [row for row in selected if row.id_hash.strip(separator) ==
                     old_id[:4]]
     else:
-        new_list = [row for row in selected if row.id_hash.strip('@') !=
+        new_list = [row for row in selected if row.id_hash.strip(separator) !=
                     old_id[:4]]
 
     if new_list:

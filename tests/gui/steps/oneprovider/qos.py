@@ -11,6 +11,7 @@ from selenium.common.exceptions import NoSuchElementException
 
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.rest.provider import get_provider_id
+from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.core import scroll_to_css_selector_bottom
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import wt
@@ -115,9 +116,11 @@ def process_whole_nested_expression(expression, hosts, users):
     plain_exp = plain_exp.replace('@oneprovider-1', f'@{provider1_name}')
     plain_exp = plain_exp.replace('@oneprovider-2', f'@{provider2_name}')
     plain_exp = plain_exp.replace('oneprovider-1', f'{provider1_name} '
-                                                   f'@{provider1_id}')
+                                                   f'{CONFLICT_NAME_SEPARATOR}'
+                                                   f'{provider1_id}')
     plain_exp = plain_exp.replace('oneprovider-2', f'{provider2_name} '
-                                                   f'@{provider2_id}')
+                                                   f'{CONFLICT_NAME_SEPARATOR}'
+                                                   f'{provider2_id}')
     return plain_exp
 
 
