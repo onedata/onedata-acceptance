@@ -290,7 +290,6 @@ def assert_pod_name_for_task(selenium, browser_id, op_container, lane,
                           ordinal, close)
 
 
-
 @wt(parsers.parse('user of {browser_id} counts checksums {checksum_list} for '
                   '"{file_name}" in "{space}" space'))
 @repeat_failed(timeout=WAIT_FRONTEND)

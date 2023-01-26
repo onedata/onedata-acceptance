@@ -31,7 +31,7 @@ Feature: Workflow execution statuses tests
     And user of browser uses "Upload (json)" button from menu bar to upload workflow "workflow_upload.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser executes 1st revision of "Workflow1", using "file1" as initial value, in "space1" space
-    And user of browser awaits for status of "Workflow1" workflow to be "Finished" maximum of 5 seconds
+    And user of browser awaits for status of "Workflow1" workflow to be "Finished" maximum of 10 seconds
     Then user of browser sees that status of task "inout" in 1st parallel box in "Lane1" lane is "Finished"
     And user of browser sees that status of "Lane1" lane in "Workflow1" is "Finished"
     And user of browser sees that status of "Workflow1" workflow is "Finished"
