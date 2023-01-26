@@ -115,9 +115,9 @@ def process_whole_nested_expression(expression, hosts, users):
     plain_exp = plain_exp.replace('@oneprovider-1', f'@{provider1_name}')
     plain_exp = plain_exp.replace('@oneprovider-2', f'@{provider2_name}')
     plain_exp = plain_exp.replace('oneprovider-1', f'{provider1_name} '
-                                                   f'#{provider1_id}')
+                                                   f'@{provider1_id}')
     plain_exp = plain_exp.replace('oneprovider-2', f'{provider2_name} '
-                                                   f'#{provider2_id}')
+                                                   f'@{provider2_id}')
     return plain_exp
 
 
@@ -216,7 +216,7 @@ def assert_list_of_providers_in_add_cond_popup(selenium, browser_id,
     driver = selenium[browser_id]
     popup = popups(driver).get_query_builder_not_hidden_popup()
     popup.qos_values_choice()
-    actual = [v.text.split(' #')[0] for v in popups(driver).power_select.items]
+    actual = [v.text.split(' @')[0] for v in popups(driver).power_select.items]
     compare_lists(expected, actual)
 
 
