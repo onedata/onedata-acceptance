@@ -15,7 +15,11 @@ from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.core import scroll_to_css_selector_bottom
 from tests.gui.utils.generic import parse_seq, transform
 from tests.utils.bdd_utils import wt
-from tests.utils.utils import repeat_failed
+from tests.utils.utils import repeat_failed 
+
+# Character used to separate provider name from storage name in QoS expressions editor.
+# Eg. "storage is my_posix @provider-krakow"
+PROVIDER_PREFIX_CHAR = '@'
 
 
 @wt(parsers.parse('user of {browser_id} deletes all QoS requirements'))
@@ -53,12 +57,12 @@ def assert_replicas_number_in_qualities_of_service_modal(selenium, browser_id,
 
 
 def process_storage_expression(expression, hosts):
-    split_expression = expression.split('@')
+    split_expression = expression.split(PROVIDER_PREFIX_CHAR)
     if len(split_expression) == 1:
         return expression
     provider = split_expression[1]
     provider_name = hosts[provider]['name']
-    return f'{split_expression[0]}@{provider_name}'
+    return f'{split_expression[0]}{PROVIDER_PREFIX_CHAR}{provider_name}'
 
 
 def process_provider_expression(expression, hosts, users):
@@ -68,7 +72,8 @@ def process_provider_expression(expression, hosts, users):
     provider = split_expression[1]
     provider_name = hosts[provider]['name']
     provider_id = get_provider_short_id(provider, hosts, users)
-    return f'{split_expression[0]} is {provider_name} #{provider_id}'
+    id_separator = CONFLICT_NAME_SEPARATOR
+    return f'{split_expression[0]} is {provider_name} {id_separator}{provider_id}'
 
 
 def get_provider_short_id(provider, hosts, users):
@@ -113,13 +118,16 @@ def process_whole_nested_expression(expression, hosts, users):
     provider1_id = get_provider_short_id(provider1, hosts, users)
     provider2_id = get_provider_short_id(provider2, hosts, users)
 
-    plain_exp = plain_exp.replace('@oneprovider-1', f'@{provider1_name}')
-    plain_exp = plain_exp.replace('@oneprovider-2', f'@{provider2_name}')
+    id_separator = CONFLICT_NAME_SEPARATOR
+    plain_exp = plain_exp.replace(f'{PROVIDER_PREFIX_CHAR}oneprovider-1',
+                                  f'{PROVIDER_PREFIX_CHAR}{provider1_name}')
+    plain_exp = plain_exp.replace(f'{PROVIDER_PREFIX_CHAR}oneprovider-2',
+                                  f'{PROVIDER_PREFIX_CHAR}{provider2_name}')
     plain_exp = plain_exp.replace('oneprovider-1', f'{provider1_name} '
-                                                   f'{CONFLICT_NAME_SEPARATOR}'
+                                                   f'{id_separator}'
                                                    f'{provider1_id}')
     plain_exp = plain_exp.replace('oneprovider-2', f'{provider2_name} '
-                                                   f'{CONFLICT_NAME_SEPARATOR}'
+                                                   f'{id_separator}'
                                                    f'{provider2_id}')
     return plain_exp
 
@@ -207,7 +215,8 @@ def choose_value_of_item_at_provider_in_add_cond_popup(selenium, browser_id,
     driver = selenium[browser_id]
     popup = popups(driver).get_query_builder_not_hidden_popup()
     popup.qos_values_choice()
-    popups(driver).power_select.choose_item(f'{item} @{provider_name}')
+    separator = PROVIDER_PREFIX_CHAR
+    popups(driver).power_select.choose_item(f'{item} {separator}{provider_name}')
 
 
 @wt(parsers.re('user of (?P<browser_id>.*?) sees (?P<providers>.*?) '
@@ -219,7 +228,8 @@ def assert_list_of_providers_in_add_cond_popup(selenium, browser_id,
     driver = selenium[browser_id]
     popup = popups(driver).get_query_builder_not_hidden_popup()
     popup.qos_values_choice()
-    actual = [v.text.split(' @')[0] for v in popups(driver).power_select.items]
+    separator = f' {PROVIDER_PREFIX_CHAR}'
+    actual = [v.text.split(separator)[0] for v in popups(driver).power_select.items]
     compare_lists(expected, actual)
 
 
@@ -229,10 +239,11 @@ def assert_list_of_storages_in_add_cond_popup(selenium, browser_id,
                                               storages, hosts, popups):
     expected_expressions = parse_seq(storages)
     expected = []
+    separator = f' {PROVIDER_PREFIX_CHAR}'
     for expression in expected_expressions:
-        [name, provider] = expression.split(' @')
+        [name, provider] = expression.split(separator)
         provider_name = hosts[provider]['name']
-        expected.append(f'{name} @{provider_name}')
+        expected.append(f'{name} {PROVIDER_PREFIX_CHAR}{provider_name}')
 
     driver = selenium[browser_id]
     popup = popups(driver).get_query_builder_not_hidden_popup()
