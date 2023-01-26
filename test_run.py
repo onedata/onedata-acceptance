@@ -33,12 +33,7 @@ def get_images_option(test_type='oneclient', env_file_name=None, oz_image=None, 
     add_image_to_images_cfg(oz_image, 'onezone', '--oz-image', images_cfg, pull)
     add_image_to_images_cfg(op_image, 'oneprovider', '--op-image', images_cfg, pull)
     add_image_to_images_cfg(rest_cli_image, 'rest-cli', '--rest-cli-image', images_cfg, pull)
-    add_image_to_images_cfg(
-        openfaas_pod_status_monitor_image,
-        'openfaas-pod-status-monitor',
-        '--openfaas-pod-status-monitor-image',
-        images_cfg, pull
-    )
+
 
     if test_type in ['oneclient', 'mixed', 'onedata_fs', 'performance']:
         add_image_to_images_cfg(oc_image, 'oneclient', '--oc-image', images_cfg, pull)
@@ -47,7 +42,12 @@ def get_images_option(test_type='oneclient', env_file_name=None, oz_image=None, 
         with open(env_file_path, 'r') as f:
             if yaml.load(f, yaml.Loader).get('openfaas', False):
                 add_image_to_images_cfg(oc_image, 'oneclient', '--oc-image', images_cfg, pull)
-
+                add_image_to_images_cfg(
+                    openfaas_pod_status_monitor_image,
+                    'openfaas-pod-status-monitor',
+                    '--openfaas-pod-status-monitor-image',
+                    images_cfg, pull
+                )
     return ' + '.join(images_cfg)
 
 

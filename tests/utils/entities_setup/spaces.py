@@ -275,7 +275,7 @@ def _get_storage_id(provider_hostname, onepanel_username,
             return storage_id
 
     raise RuntimeError("Storage with name '{}' was not found in Oneprovider "
-                       "at {}. Make sure you have provided the right environment"
+                       "at {}. Make sure you have provided the right environment "
                        "(env file) for the test.".format(storage_name, provider_hostname))
 
 
