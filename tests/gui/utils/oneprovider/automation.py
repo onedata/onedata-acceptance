@@ -52,9 +52,9 @@ class Task(Element):
     instance_id = Label('.instance-id-detail .truncated-string')
     status = Label('.status-detail .detail-value')
 
-    def get_css_selector(self):
-        css_selector = self.web_elem.get_attribute('id')
-        return css_selector
+    def get_elem_id(self):
+        elem_id = self.web_elem.get_attribute('id')
+        return elem_id
 
 
 class ParallelBox(Element):
@@ -70,8 +70,8 @@ class WorkflowLane(Element):
 
     def scroll_to_first_task_in_parallel_box(self, number):
         from tests.gui.utils.core import scroll_to_css_selector_bottom
-        sel = self.parallel_box[number].task_list[0].get_css_selector()
-        box_sel = f'[id= {sel}] .items-failed-detail'
+        elem_id = self.parallel_box[number].task_list[0].get_elem_id()
+        box_sel = f'[id={elem_id}] .items-failed-detail'
         scroll_to_css_selector_bottom(self.driver, box_sel)
 
 

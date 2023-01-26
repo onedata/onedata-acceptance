@@ -8,7 +8,7 @@ __license__ = ("This software is released under the MIT license cited in "
 
 import time
 
-from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
 from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.utils.bdd_utils import wt, parsers
 from tests.gui.utils.generic import transform
@@ -101,21 +101,40 @@ def click_on_link_in_task_box(selenium, browser_id, op_container, lane_name,
     getattr(box.task_list[task_name], transform(option)).click()
 
 
-def assert_task_status_in_parallel_box(selenium, browser_id, op_container,
-                                       ordinal, lane, task, expected_status):
+def get_parallel_box(selenium, browser_id, op_container, ordinal, lane):
     page = switch_to_automation_page(selenium, browser_id, op_container)
     workflow_visualiser = page.workflow_visualiser
     number = from_ordinal_number_to_int(ordinal) - 1
     workflow_visualiser.workflow_lanes[
         lane].scroll_to_first_task_in_parallel_box(number)
-    box = workflow_visualiser.workflow_lanes[lane].parallel_box[number]
+    return workflow_visualiser.workflow_lanes[lane].parallel_box[number]
+
+@repeat_failed(timeout=WAIT_BACKEND)
+def assert_task_status_in_parallel_box(selenium, browser_id, op_container,
+                                       ordinal, lane, task, expected_status):
+    box = get_parallel_box(selenium, browser_id, op_container, ordinal, lane)
     actual_status = box.task_list[task].status
     assert_status(task, actual_status, expected_status)
 
 
+def await_for_task_status_in_parallel_box(selenium, browser_id, op_container,
+                                          lane, task, ordinal, expected_status,
+                                          seconds):
+    box = get_parallel_box(selenium, browser_id, op_container, ordinal, lane)
+    t_end = time.time() + int(seconds)
+    while time.time() < t_end:
+        actual_status = box.task_list[task].status
+        if actual_status.lower() == expected_status.lower():
+            break
+    else:
+        raise Exception(f'After awaiting for task "{task}" for {seconds} '
+                        f'seconds its status is not {expected_status} as '
+                        f'expected')
+
+
 @wt(parsers.parse('user of {browser_id} sees that status of "{lane}" lane in'
                   ' "{workflow}" is "{expected_status}"'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def assert_status_of_lane(selenium, browser_id, op_container, lane,
                           expected_status):
     page = switch_to_automation_page(selenium, browser_id, op_container)
@@ -123,23 +142,40 @@ def assert_status_of_lane(selenium, browser_id, op_container, lane,
     actual_status = workflow_visualiser.workflow_lanes[lane].status
     assert_status(lane, actual_status, expected_status)
 
+def get_status(page, option, name):
+    if option == 'lane':
+        return page.workflow_visualiser.workflow_lanes[name].status
+    elif option == 'workflow':
+        return page.workflow_visualiser.status
 
-def wait_for_stopping_status(expected_status, page):
-    for i in range(5):
-        time.sleep(1)
-        actual_status = page.workflow_visualiser.status
-        if actual_status == expected_status:
-            return actual_status
-
+@wt(parsers.re('user of (?P<browser_id>.*) awaits for status of "(?P<name>.*)"'
+               ' (?P<option>lane|workflow) to be "(?P<expected_status>.*)"'
+               ' maximum of (?P<seconds>.*) seconds'))
+def await_for_lane_workflow_status(selenium, browser_id, op_container,
+                                   expected_status, name, seconds, option):
+    page = switch_to_automation_page(selenium, browser_id, op_container)
+    t_end = time.time() + int(seconds)
+    while time.time() < t_end:
+        actual_status = get_status(page, option, name)
+        if actual_status.lower() == expected_status.lower():
+            break
+    else:
+        raise Exception(f'After awaiting for {option} "{name}" for'
+                        f' {seconds} seconds its status is not '
+                        f'{expected_status} as expected')
 
 @wt(parsers.parse('user of {browser_id} sees that status of "{workflow}"'
                   ' workflow is "{expected_status}"'))
-def assert_status_of_workflow(selenium, browser_id, op_container,
-                              expected_status, workflow):
+def assert_status_of_workflow_and_wait_for_stopping_status(
+        selenium, browser_id, op_container, expected_status, workflow):
     page = switch_to_automation_page(selenium, browser_id, op_container)
     actual_status = page.workflow_visualiser.status
     if expected_status == 'Stopping' and  actual_status == 'Active':
-        actual_status = wait_for_stopping_status(expected_status, page)
+        seconds = 20
+        option = 'workflow'
+        actual_status = await_for_lane_workflow_status(
+            selenium, browser_id, op_container, expected_status, workflow,
+            seconds, option)
 
     assert_status(workflow, actual_status, expected_status)
 
@@ -147,7 +183,7 @@ def assert_status_of_workflow(selenium, browser_id, op_container,
 def assert_status(name, actual_status, expected_status):
     err_msg = (f'Actual "{name}" status: "{actual_status}" does not '
                f'match expected: "{expected_status}"')
-    assert actual_status == expected_status, err_msg
+    assert actual_status.lower() == expected_status.lower(), err_msg
 
 
 @wt(parsers.parse('user of {browser_id} clicks "{button}" button on '
@@ -158,8 +194,8 @@ def click_button_on_status_bar(selenium, browser_id, op_container, button):
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) waits for workflow '
-               '"(?P<workflow>.*)" to be (paused|cancelled)'))
-def wait_for_workflow_to_be_paused(selenium, browser_id, op_container):
+               '"(?P<workflow>.*)" to be (paused|cancelled|stopped)'))
+def wait_for_workflow_to_be_stopped(selenium, browser_id, op_container):
     page = switch_to_automation_page(selenium, browser_id, op_container)
     status =  page.workflow_visualiser.status
     while status == 'Stopping':
@@ -178,7 +214,7 @@ def change_tab_in_automation_subpage(selenium, browser_id, op_container,
 
 @wt(parsers.re('user of (?P<browser_id>.*) clicks on first executed workflow'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def expand_workflow_record(selenium, browser_id, op_container):
+def expand_first_executed_workflow_record(selenium, browser_id, op_container):
     page = switch_to_automation_page(selenium, browser_id, op_container)
     change_tab_in_automation_subpage(selenium, browser_id, op_container,
                                      'Ended')

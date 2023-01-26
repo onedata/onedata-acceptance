@@ -22,7 +22,7 @@ from tests.gui.steps.oneprovider.file_browser import (
 from tests.gui.steps.oneprovider.automation import (
     switch_to_automation_page, click_on_task_in_lane,
     click_on_link_in_task_box, assert_task_status_in_parallel_box,
-    change_tab_in_automation_subpage)
+    change_tab_in_automation_subpage, await_for_task_status_in_parallel_box)
 from tests.utils.bdd_utils import wt, parsers
 from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed
@@ -391,28 +391,55 @@ def assert_number_of_events_in_task(browser_id, task, lane, exp_num, ordinal,
 
 
 @wt(parsers.parse('user of {browser_id} sees that status of task "{task}" in '
+                  '{ordinal} parallel box in "{lane}" lane is one of '
+                  '"{status1}" or "{status2}"'))
+def assert_status_of_task_is_one_of_two(selenium, browser_id, op_container,
+                                        lane, task, ordinal, status1, status2):
+    click = 'clicks on'
+    close = 'closes'
+    click_on_task_in_lane(selenium, browser_id, op_container, lane,
+                          task, ordinal, click)
+    try:
+        assert_task_status_in_parallel_box(selenium, browser_id,
+                                           op_container, ordinal, lane,
+                                           task, status1)
+    except AssertionError:
+        assert_task_status_in_parallel_box(selenium, browser_id,
+                                           op_container, ordinal, lane,
+                                           task, status2)
+    click_on_task_in_lane(selenium, browser_id, op_container, lane, task,
+                          ordinal, close)
+
+
+@wt(parsers.parse('user of {browser_id} sees that status of task "{task}" in '
                   '{ordinal} parallel box in "{lane}" lane is '
                   '"{expected_status}"'))
 def assert_status_of_task(selenium, browser_id, op_container, lane,
                           task, ordinal, expected_status):
+
     click = 'clicks on'
     close = 'closes'
 
     click_on_task_in_lane(selenium, browser_id, op_container, lane,
                           task, ordinal, click)
-    if 'or' in expected_status:
-        statuses = expected_status.split('" or "')
-        try:
-            assert_task_status_in_parallel_box(selenium, browser_id,
-                                               op_container, ordinal, lane,
-                                               task, statuses[0])
-        except AssertionError:
-            assert_task_status_in_parallel_box(selenium, browser_id,
-                                               op_container, ordinal, lane,
-                                               task, statuses[1])
-    else:
-        assert_task_status_in_parallel_box(selenium, browser_id, op_container,
-                                           ordinal, lane, task, expected_status)
+    assert_task_status_in_parallel_box(selenium, browser_id, op_container,
+                                       ordinal, lane, task, expected_status)
+    click_on_task_in_lane(selenium, browser_id, op_container, lane, task,
+                          ordinal, close)
+
+@wt(parsers.parse('user of {browser_id} awaits for status of task "{task}" in '
+                  '{ordinal} parallel box in "{lane}" lane to be '
+                  '"{expected_status}" maximum of {seconds} seconds'))
+def await_for_task_status(selenium, browser_id, op_container, lane,
+                          task, ordinal, expected_status, seconds):
+    click = 'clicks on'
+    close = 'closes'
+
+    click_on_task_in_lane(selenium, browser_id, op_container, lane,
+                          task, ordinal, click)
+    await_for_task_status_in_parallel_box(selenium, browser_id, op_container,
+                                          lane, task, ordinal, expected_status,
+                                          seconds)
     click_on_task_in_lane(selenium, browser_id, op_container, lane, task,
                           ordinal, close)
 
