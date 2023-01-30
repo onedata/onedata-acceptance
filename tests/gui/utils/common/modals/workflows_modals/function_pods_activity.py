@@ -10,8 +10,8 @@ __license__ = "This software is released under the MIT license cited in " \
 from tests.gui.utils.common.modals.modal import Modal
 from tests.gui.utils.core import scroll_to_css_selector
 from tests.gui.utils.core.base import PageObject
-from tests.gui.utils.core.web_elements import WebItemsSequence, Label, \
-    WebElement
+from tests.gui.utils.core.web_elements import (WebItemsSequence, Label,
+                                               WebElement, Button)
 from tests.gui.utils.onezone.generic_page import Element
 
 
@@ -28,6 +28,7 @@ class PodsRecordStatus(PageObject):
 class EventRecord(PageObject):
     reason = id = Label('.event-reason')
     type = Label('.event-type')
+    message = Label('.event-message')
 
 
 class FunctionPodsActivity(Modal):
@@ -41,6 +42,7 @@ class FunctionPodsActivity(Modal):
 
     events_list_scrollbar = WebElement('.events-table-section '
                                        '.perfect-scrollbar-element')
+    x = Button('.close')
 
     def __str__(self):
         return 'Function pods activity modal'
@@ -51,25 +53,15 @@ class FunctionPodsActivity(Modal):
         css_selector = '.' + css_selector
         return css_selector
 
-    def scroll_to_last_element_of_list(self):
-        self.driver.execute_script("arguments[0].scrollBy(0,150)",
-                                   self.events_list_scrollbar)
-
-    def scroll_to_event(self, driver, number):
-        selector = f'{self.get_css_selector()} ' \
-                   f'.audit-log-table-entry:nth-of-type({number}) '
+    def get_elem_by_data_row_id(self, number, driver, option):
+        selector =  f'{self.get_css_selector()} [data-row-id="{number}"]'
+        elem_sel = f'.event-{option}'
         scroll_to_css_selector(driver, selector)
+        row = driver.find_elements_by_css_selector(selector)[0]
+        elem_in_row =  row.find_elements_by_css_selector(elem_sel)[0].text
+        return elem_in_row
 
-    def get_event_reason(self, driver, number, length):
-        # This interaction is hacky because scroll in Function pods activity
-        # modal scrolls to the event above the wanted one. This is why
-        # we are skipping the first iteration of loop (first reason would
-        # be doubled) and adding one more scroll and assertion for the last one.
-        if number == length:
-            self.scroll_to_last_element_of_list()
-        else:
-            self.scroll_to_event(driver, number)
-
-        element = driver.find_elements_by_css_selector(f'.audit-log-table-'
-                                                       f'entry')[number - 1]
-        return element.find_elements_by_css_selector('.event-reason')[0].text
+    def get_number_of_data_rows(self, driver):
+        element = driver.find_elements_by_css_selector(
+            f'.audit-log-table-entry')[0]
+        return element.get_attribute('data-row-id')

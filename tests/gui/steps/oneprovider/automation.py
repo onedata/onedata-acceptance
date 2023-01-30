@@ -7,15 +7,13 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 import time
-import yaml
 
-from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
-from tests.gui.utils.generic import transform, upload_file_path
+from tests.gui.conftest import WAIT_FRONTEND
+from tests.gui.steps.oneprovider.archives import from_ordinal_number_to_int
 from tests.utils.bdd_utils import wt, parsers
-from tests.gui.utils.generic import parse_seq, transform
+from tests.gui.utils.generic import transform
 from tests.utils.utils import repeat_failed
-from tests.gui.steps.common.miscellaneous import press_enter_on_active_element, \
-    switch_to_iframe
+from tests.gui.steps.common.miscellaneous import switch_to_iframe
 
 
 def switch_to_automation_page(selenium, browser_id, op_container):
@@ -61,26 +59,45 @@ def assert_status_in_workflow_visualizer(selenium, browser_id, op_container,
         f'Workflow status is not equal to {status}'
 
 
-@wt(parsers.parse('user of {browser_id} clicks on "{task_name}" task in '
-                  '"{lane_name}" lane in workflow visualizer'))
+def check_if_task_is_opened(task):
+    if task.instance_id == '':
+        return False
+    else:
+        return True
+
+
+@wt(parsers.re('user of (?P<browser_id>.*?) (?P<option>clicks on|closes) task '
+               '"(?P<task_name>.*?)" in (?P<ordinal>.*?) parallel box in '
+               '"(?P<lane_name>.*?)" lane in workflow visualizer'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_task_in_lane(selenium, browser_id, op_container, lane_name,
-                          task_name):
+                          task_name, ordinal, option):
+    number = from_ordinal_number_to_int(ordinal) - 1
     page = switch_to_automation_page(selenium, browser_id, op_container)
     workflow_visualiser = page.workflow_visualiser
-    box = workflow_visualiser.workflow_lanes[lane_name].parallel_box
-    box.task_list[task_name].click()
+    box = workflow_visualiser.workflow_lanes[lane_name].parallel_box[number]
+    task = box.task_list[task_name]
+    if option == 'closes':
+        if check_if_task_is_opened(task):
+            task.drag_handle.click()
+        # wait for task to be closed
+        time.sleep(2)
+        assert not check_if_task_is_opened(task), (
+                f'Failed to close {task_name} task in parallel box')
+    else:
+        task.drag_handle.click()
 
 
-@wt(parsers.parse('user of {browser_id} clicks on "{option}" link in '
-                  '"{task_name}" task in "{lane_name}" lane '
-                  'in workflow visualizer'))
+@wt(parsers.parse('user of {browser_id} clicks on link "{option}" in '
+                  '"{task_name}" task in {ordinal} parallel box in '
+                  '"{lane_name}" lane in workflow visualizer'))
 @repeat_failed(timeout=WAIT_FRONTEND)
 def click_on_link_in_task_box(selenium, browser_id, op_container, lane_name,
-                              task_name, option):
+                              task_name, option, ordinal):
+    number = from_ordinal_number_to_int(ordinal) - 1
     page = switch_to_automation_page(selenium, browser_id, op_container)
     workflow_visualiser = page.workflow_visualiser
-    box = workflow_visualiser.workflow_lanes[lane_name].parallel_box
+    box = workflow_visualiser.workflow_lanes[lane_name].parallel_box[number]
     getattr(box.task_list[task_name], transform(option)).click()
 
 

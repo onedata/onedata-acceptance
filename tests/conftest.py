@@ -46,6 +46,8 @@ def pytest_addoption(parser):
                                                         'to use in tests')
     parser.addoption('--rest-cli-image', action='store',
                      help='rest cli image to use in tests')
+    parser.addoption('--openfaas-pod-status-monitor-image', action='store',
+                     help='OpenFaaS pod status monitor image to use in tests')
     parser.addoption('--sources', action='store_true',
                      help='If present run environment using sources')
 

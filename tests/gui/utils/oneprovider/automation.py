@@ -6,9 +6,11 @@ __copyright__ = "Copyright (C) 2022 ACK CYFRONET AGH"
 __license__ = "This software is released under the MIT license cited in " \
               "LICENSE.txt"
 
+from selenium.webdriver import ActionChains
+
 from tests.gui.utils.core.base import PageObject
 from tests.gui.utils.core.web_elements import WebItemsSequence, Label, Icon, \
-    Button, NamedButton, WebItem
+    Button, NamedButton, WebItem, WebElement
 from tests.gui.utils.onezone.generic_page import Element
 
 
@@ -45,7 +47,9 @@ class NavigationTab(Element):
 
 class Task(Element):
     name = id = Label('.task-name')
+    drag_handle = WebElement('.task-drag-handle')
     pods_activity = Button('.view-task-pods-activity-action-trigger')
+    instance_id = Label('.instance-id-detail .truncated-string')
     time_series = Button('.view-task-time-series-action-trigger')
 
 
@@ -56,8 +60,8 @@ class ParallelBox(Element):
 
 class WorkflowLane(Element):
     name = id = Label('.lane-name')
-    parallel_box = WebItem('.workflow-visualiser-parallel-box ',
-                           cls=ParallelBox)
+    parallel_box = WebItemsSequence('.workflow-visualiser-parallel-box ',
+                                    cls=ParallelBox)
 
 
 class Store(Element):
@@ -89,3 +93,8 @@ class WorkflowExecutionPage(PageObject):
 
     workflow_visualiser = WebItem('.workflow-visualiser',
                                   cls=WorkflowVisualiser)
+    workflow_header = WebElement('.workflow-visualiser')
+
+    def click_on_background_in_workflow_visualiser(self):
+        ActionChains(self.driver).move_to_element_with_offset(
+            self.workflow_header, 0, 0).click().perform()
