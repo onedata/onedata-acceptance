@@ -181,7 +181,7 @@ Feature: Workflow execution statuses tests
     And user of browser sees that status of "Lane1" lane in "temporary-workflow-with-sleep" is "Cancelled"
     And user of browser sees that status of "Lane2" lane in "temporary-workflow-with-sleep" is "Unscheduled"
 
-    And user of browser sees that status of task "1s sleep" in 1st parallel box in "Lane1" lane is one of "Finished" or "Cancelled"
+    And user of browser sees that status of task "1s sleep" in 1st parallel box in "Lane1" lane is "Finished"
     And user of browser sees that status of task "10s sleep" in 2nd parallel box in "Lane1" lane is "Cancelled"
 
     And user of browser sees that status of task "1s sleep" in 1st parallel box in "Lane2" lane is "Unscheduled"
