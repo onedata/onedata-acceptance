@@ -241,6 +241,7 @@ def parse_up_args(request, test_config):
     op_image = request.config.getoption('--op-image')
     oc_image = request.config.getoption('--oc-image')
     rest_cli_image = request.config.getoption('--rest-cli-image')
+    openfaas_pod_status_monitor_image = request.config.getoption('--openfaas-pod-status-monitor-image')
     sources = request.config.getoption('--sources')
     timeout = request.config.getoption('--timeout')
     local_charts_path = request.config.getoption('--local-charts-path')
@@ -255,6 +256,8 @@ def parse_up_args(request, test_config):
         up_args.extend(['-ci', oc_image])
     if rest_cli_image:
         up_args.extend(['-ri', rest_cli_image])
+    if openfaas_pod_status_monitor_image:
+        up_args.extend(['-mi', openfaas_pod_status_monitor_image])
     if sources:
         up_args.append('-s')
     if local_charts_path:
