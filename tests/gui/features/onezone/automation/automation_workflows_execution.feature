@@ -229,6 +229,16 @@ Feature: Workflows execution
          - 'message that contains: "calculate-checksum-rest" + "Created container"'
     And user of browser sees that numer of events on "Pods activity" list for task "md5" in 1st parallel box in "calculate-checksums" lane is about 15
 
+    And user of browser sees that name of first pod in tab "All" for task "sha256" in 1st parallel box in "calculate-checksums" lane contains lambda name "calculate-checksum-rest-no-stats"
+
+    And user of browser sees following "Pods activity" messages for task "sha256" in 1st parallel box in "calculate-checksums" lane after workflow execution is finished:
+         - 'Pod initialized, containers ready'
+         - 'The pod has been terminated'
+         - 'message that contains: "calculate-checksum-rest-no-stats" + "Started container"'
+         - 'message that contains: "calculate-checksum-rest-no-stats" + "Created container"'
+         - 'message that contains: "calculate-checksum-rest-no-stats" + "Stopping container"'
+    And user of browser sees that numer of events on "Pods activity" list for task "sha256" in 1st parallel box in "calculate-checksums" lane is about 11
+
     And user of browser sees that name of first pod in tab "All" for task "adler32" in 2nd parallel box in "calculate-checksums" lane contains lambda name "counting-different-checksums"
     And user of browser sees following "Pods activity" messages for task "adler32" in 2nd parallel box in "calculate-checksums" lane after workflow execution is finished:
          - "Created container oneclient-sidecar"
