@@ -17,7 +17,7 @@
           "config": {
             "itemDataSpec": {
               "valueConstraints": {},
-              "type": "integer"
+              "type": "number"
             }
           }
         }
