@@ -139,6 +139,7 @@ def wait_for_ongoing_pods_to_be_terminated(selenium, browser_id, modals):
 
     assert len(modal.pods_list) == 0, 'Pods has not been terminated'
 
+
 @wt(parsers.parse('user of {browser_id} sees that name of first pod in tab '
                   '"{tab}" in modal "Function pods activity" contains lambda '
                   'name "{lambda_name}"'))
@@ -151,6 +152,7 @@ def assert_lambda_name_in_tab_name(selenium, browser_id, modals, tab,
     err_msg = (f'Pod name: "{pod_name}" does not contain '
                f'lambda name: "{lambda_name}"')
     assert lambda_name in pod_name, err_msg
+
 
 @wt(parsers.parse('user of {browser_id} clicks on first pod in tab "{tab}" '
                   'in modal "Function pods activity"'))
@@ -199,7 +201,6 @@ def assert_events_in_pods_monitor(selenium, browser_id, modals, events,
         assert event in gathered_list, f'{option}: {event} has not been found'
 
 
-
 @wt(parsers.re('user of (?P<browser_id>.*) sees events in modal '
                '"Function pods activity" that contains lambda name '
                '"(?P<lambda_name>.*)" and following '
@@ -235,6 +236,7 @@ def get_lambda_name(events):
             lambda_name = event.replace('message that contains: ',
                                         '').replace('"', '').split(' + ')[0]
             return lambda_name
+
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees following "(?P<link>.*)" '
                '(?P<option>reason|message)s for task "(?P<task>.*)" in '
@@ -425,6 +427,7 @@ def assert_status_of_task(selenium, browser_id, op_container, lane,
                                        ordinal, lane, task, expected_status)
     click_on_task_in_lane(selenium, browser_id, op_container, lane, task,
                           ordinal, close)
+
 
 @wt(parsers.parse('user of {browser_id} awaits for status of task "{task}" in '
                   '{ordinal} parallel box in "{lane}" lane to be '

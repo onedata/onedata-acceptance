@@ -109,6 +109,7 @@ def get_parallel_box(selenium, browser_id, op_container, ordinal, lane):
         lane].scroll_to_first_task_in_parallel_box(number)
     return workflow_visualiser.workflow_lanes[lane].parallel_box[number]
 
+
 @repeat_failed(timeout=WAIT_BACKEND)
 def assert_task_status_in_parallel_box(selenium, browser_id, op_container,
                                        ordinal, lane, task, expected_status):
@@ -142,11 +143,13 @@ def assert_status_of_lane(selenium, browser_id, op_container, lane,
     actual_status = workflow_visualiser.workflow_lanes[lane].status
     assert_status(lane, actual_status, expected_status)
 
+
 def get_status(page, option, name):
     if option == 'lane':
         return page.workflow_visualiser.workflow_lanes[name].status
     elif option == 'workflow':
         return page.workflow_visualiser.status
+
 
 @wt(parsers.re('user of (?P<browser_id>.*) awaits for status of "(?P<name>.*)"'
                ' (?P<option>lane|workflow) to be "(?P<expected_status>.*)"'
@@ -164,9 +167,10 @@ def await_for_lane_workflow_status(selenium, browser_id, op_container,
                         f' {seconds} seconds its status is not '
                         f'{expected_status} as expected')
 
+
 @wt(parsers.parse('user of {browser_id} sees that status of "{workflow}"'
                   ' workflow is "{expected_status}"'))
-def assert_status_of_workflow_and_wait_for_stopping_status(
+def assert_status_of_workflow_if_needed_wait_for_stopping_status(
         selenium, browser_id, op_container, expected_status, workflow):
     page = switch_to_automation_page(selenium, browser_id, op_container)
     actual_status = page.workflow_visualiser.status
@@ -227,7 +231,6 @@ def expand_first_executed_workflow_record(selenium, browser_id, op_container):
 def click_on_workflow_menu(selenium, browser_id, op_container, workflow):
     page = switch_to_automation_page(selenium, browser_id, op_container)
     page.workflow_executions_list[workflow].menu_button()
-
 
 
 @wt(parsers.re('user of (?P<browser_id>.*) (?P<option>does not see|sees)'
