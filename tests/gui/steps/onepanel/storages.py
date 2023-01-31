@@ -8,6 +8,7 @@ __license__ = ("This software is released under the MIT license cited in "
                "LICENSE.txt")
 
 from tests.gui.conftest import WAIT_FRONTEND, WAIT_BACKEND
+from tests.gui.utils.common.constants import CONFLICT_NAME_SEPARATOR
 from tests.gui.utils.generic import transform
 from tests.utils.bdd_utils import wt, parsers
 from tests.utils.utils import repeat_failed
@@ -172,8 +173,8 @@ def assert_number_storages_with_same_name(selenium, browser_id, name,
     driver = selenium[browser_id]
     storages_list = onepanel(driver).content.storages.storages
     filtered = [storage for storage in storages_list if
-                storage.name.split('#')[0] == name]
-    ids = [s.name.split('#')[1] for s in filtered]
+                storage.name.split(CONFLICT_NAME_SEPARATOR)[0] == name]
+    ids = [s.name.split(CONFLICT_NAME_SEPARATOR)[1] for s in filtered]
     assert len(filtered) == number, (
         f'{name} not visible {number} times on storages list')
     assert check_ids_different(ids), f'IDs are not different, {ids}'

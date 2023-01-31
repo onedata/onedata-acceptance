@@ -43,7 +43,7 @@ class MenuItem(PageObject):
     status_icon = WebElement('.sidebar-item-icon')
     menu_button = Button('.btn-toolbar')
 
-    # conflicted clusters have 4-letter cluster id hash added to label
+    # conflicted clusters have 4-letter cluster id digest added to label
     id_hash = Label('.conflict-label')
 
     def __call__(self):
