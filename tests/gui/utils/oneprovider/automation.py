@@ -15,8 +15,8 @@ from tests.gui.utils.onezone.generic_page import Element
 
 
 class ExecutionRecord(PageObject):
-    name = id = Label('cell-name')
-    inventory = Label('cell-inventory')
+    name = id = Label('.cell-name')
+    inventory = Label('.cell-inventory')
     status_icon = Icon('.cell-status')
     menu_button = Button('.cell-actions')
 
@@ -50,6 +50,11 @@ class Task(Element):
     drag_handle = WebElement('.task-drag-handle')
     pods_activity = Button('.view-task-pods-activity-action-trigger')
     instance_id = Label('.instance-id-detail .truncated-string')
+    status = Label('.status-detail .detail-value')
+
+    def get_elem_id(self):
+        elem_id = self.web_elem.get_attribute('id')
+        return elem_id
 
 
 class ParallelBox(Element):
@@ -59,8 +64,15 @@ class ParallelBox(Element):
 
 class WorkflowLane(Element):
     name = id = Label('.lane-name')
+    status = Label('.visible-run-status-label')
     parallel_box = WebItemsSequence('.workflow-visualiser-parallel-box ',
                                     cls=ParallelBox)
+
+    def scroll_to_first_task_in_parallel_box(self, number):
+        from tests.gui.utils.core import scroll_to_css_selector_bottom
+        elem_id = self.parallel_box[number].task_list[0].get_elem_id()
+        box_sel = f'[id={elem_id}] .items-failed-detail'
+        scroll_to_css_selector_bottom(self.driver, box_sel)
 
 
 class Store(Element):
@@ -68,7 +80,7 @@ class Store(Element):
 
 
 class WorkflowVisualiser(PageObject):
-    status_bar = Label('.workflow-status-text .workflow-status')
+    status = Label('.workflow-status-text .workflow-status')
     workflow_lanes = WebItemsSequence('.visualiser-elements '
                                       '.workflow-visualiser-lane',
                                       cls=WorkflowLane)
@@ -76,6 +88,8 @@ class WorkflowVisualiser(PageObject):
     add_store_button = Button('.create-store-action-trigger')
     stores_list = WebItemsSequence('.workflow-visualiser-stores-list '
                                    '.tag-item', cls=Store)
+    pause = Button('.pause-resume-atm-workflow-execution-action-trigger')
+    cancel = Button('.cancel-atm-workflow-execution-action-trigger')
 
 
 class WorkflowExecutionPage(PageObject):
@@ -86,9 +100,8 @@ class WorkflowExecutionPage(PageObject):
     input_icon = Button('.tag-creator-trigger')
     run_workflow_button = NamedButton('.btn-submit', text='Run Workflow')
 
-    executed_workflow_list = WebItemsSequence('.atm-workflow-executions-table '
-                                              'tr.data-row',
-                                              cls=ExecutionRecord)
+    workflow_executions_list = WebItemsSequence(
+        '.atm-workflow-executions-table tr.data-row', cls=ExecutionRecord)
 
     workflow_visualiser = WebItem('.workflow-visualiser',
                                   cls=WorkflowVisualiser)

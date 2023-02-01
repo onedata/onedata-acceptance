@@ -195,6 +195,8 @@ def _choose_menu(selenium, browser_id, which_browser, popups):
         return popups(selenium[browser_id]).archive_row_menu
     elif which_browser == 'dataset browser':
         return popups(selenium[browser_id]).dataset_row_menu
+    elif which_browser == 'automation workflows page':
+        return popups(selenium[browser_id]).workflow_menu
     else:
         return popups(selenium[browser_id]).data_row_menu
 

@@ -21,7 +21,8 @@ from tests.gui.steps.oneprovider.file_browser import (
     click_on_status_tag_for_file_in_file_browser)
 from tests.gui.steps.oneprovider.automation import (
     switch_to_automation_page, click_on_task_in_lane,
-    click_on_link_in_task_box)
+    click_on_link_in_task_box, assert_task_status_in_parallel_box,
+    change_tab_in_automation_subpage, await_for_task_status_in_parallel_box)
 from tests.utils.bdd_utils import wt, parsers
 from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed
@@ -65,12 +66,6 @@ def choose_file_as_initial_workflow_value(selenium, browser_id, file_list,
     check_if_files_were_selected(modals, driver, files)
 
 
-
-def change_tab_in_automation_subpage(page, tab_name):
-    page.navigation_tab[tab_name].click()
-    time.sleep(0.25)
-
-
 @wt(parsers.re('user of (?P<browser_id>.*) waits for all workflows to '
                '(?P<option>start|finish)'))
 @repeat_failed(interval=1, timeout=180,
@@ -79,21 +74,15 @@ def wait_for_workflows_in_automation_subpage(selenium, browser_id, op_container,
                                              option):
     page = switch_to_automation_page(selenium, browser_id, op_container)
     if option == 'start':
-        change_tab_in_automation_subpage(page, 'Waiting')
+        change_tab_in_automation_subpage(selenium, browser_id,
+                                         op_container, 'Waiting')
         err = 'Waiting workflows did not start'
     else:
-        change_tab_in_automation_subpage(page, 'Ongoing')
+        change_tab_in_automation_subpage(selenium, browser_id,
+                                         op_container, 'Ongoing')
         err = 'Ongoing workflows did not finish their run'
 
-    assert len(page.executed_workflow_list) == 0, err
-
-
-@wt(parsers.re('user of (?P<browser_id>.*) clicks on first executed workflow'))
-@repeat_failed(timeout=WAIT_FRONTEND)
-def expand_workflow_record(selenium, browser_id, op_container):
-    page = switch_to_automation_page(selenium, browser_id, op_container)
-    change_tab_in_automation_subpage(page, 'Ended')
-    page.executed_workflow_list[0].click()
+    assert len(page.workflow_executions_list) == 0, err
 
 
 def get_store_content(browser_id, driver, page, modals, clipboard,
@@ -150,6 +139,7 @@ def wait_for_ongoing_pods_to_be_terminated(selenium, browser_id, modals):
 
     assert len(modal.pods_list) == 0, 'Pods has not been terminated'
 
+
 @wt(parsers.parse('user of {browser_id} sees that name of first pod in tab '
                   '"{tab}" in modal "Function pods activity" contains lambda '
                   'name "{lambda_name}"'))
@@ -162,6 +152,7 @@ def assert_lambda_name_in_tab_name(selenium, browser_id, modals, tab,
     err_msg = (f'Pod name: "{pod_name}" does not contain '
                f'lambda name: "{lambda_name}"')
     assert lambda_name in pod_name, err_msg
+
 
 @wt(parsers.parse('user of {browser_id} clicks on first pod in tab "{tab}" '
                   'in modal "Function pods activity"'))
@@ -210,7 +201,6 @@ def assert_events_in_pods_monitor(selenium, browser_id, modals, events,
         assert event in gathered_list, f'{option}: {event} has not been found'
 
 
-
 @wt(parsers.re('user of (?P<browser_id>.*) sees events in modal '
                '"Function pods activity" that contains lambda name '
                '"(?P<lambda_name>.*)" and following '
@@ -246,6 +236,7 @@ def get_lambda_name(events):
             lambda_name = event.replace('message that contains: ',
                                         '').replace('"', '').split(' + ')[0]
             return lambda_name
+
 
 @wt(parsers.re('user of (?P<browser_id>.*) sees following "(?P<link>.*)" '
                '(?P<option>reason|message)s for task "(?P<task>.*)" in '
@@ -299,7 +290,6 @@ def assert_pod_name_for_task(selenium, browser_id, op_container, lane,
     click_modal_button(selenium, browser_id, button, modal, modals)
     click_on_task_in_lane(selenium, browser_id, op_container, lane, task,
                           ordinal, close)
-
 
 
 @wt(parsers.parse('user of {browser_id} counts checksums {checksum_list} for '
@@ -399,3 +389,59 @@ def assert_number_of_events_in_task(browser_id, task, lane, exp_num, ordinal,
     click_modal_button(selenium, browser_id, button, modal, modals)
     click_on_task_in_lane(selenium, browser_id, op_container, lane, task,
                           ordinal, close)
+
+
+@wt(parsers.parse('user of {browser_id} sees that status of task "{task}" in '
+                  '{ordinal} parallel box in "{lane}" lane is one of '
+                  '"{status1}" or "{status2}"'))
+def assert_status_of_task_is_one_of_two(selenium, browser_id, op_container,
+                                        lane, task, ordinal, status1, status2):
+    click = 'clicks on'
+    close = 'closes'
+    click_on_task_in_lane(selenium, browser_id, op_container, lane,
+                          task, ordinal, click)
+    try:
+        assert_task_status_in_parallel_box(selenium, browser_id,
+                                           op_container, ordinal, lane,
+                                           task, status1)
+    except AssertionError:
+        assert_task_status_in_parallel_box(selenium, browser_id,
+                                           op_container, ordinal, lane,
+                                           task, status2)
+    click_on_task_in_lane(selenium, browser_id, op_container, lane, task,
+                          ordinal, close)
+
+
+@wt(parsers.parse('user of {browser_id} sees that status of task "{task}" in '
+                  '{ordinal} parallel box in "{lane}" lane is '
+                  '"{expected_status}"'))
+def assert_status_of_task(selenium, browser_id, op_container, lane,
+                          task, ordinal, expected_status):
+
+    click = 'clicks on'
+    close = 'closes'
+
+    click_on_task_in_lane(selenium, browser_id, op_container, lane,
+                          task, ordinal, click)
+    assert_task_status_in_parallel_box(selenium, browser_id, op_container,
+                                       ordinal, lane, task, expected_status)
+    click_on_task_in_lane(selenium, browser_id, op_container, lane, task,
+                          ordinal, close)
+
+
+@wt(parsers.parse('user of {browser_id} awaits for status of task "{task}" in '
+                  '{ordinal} parallel box in "{lane}" lane to be '
+                  '"{expected_status}" maximum of {seconds} seconds'))
+def await_for_task_status(selenium, browser_id, op_container, lane,
+                          task, ordinal, expected_status, seconds):
+    click = 'clicks on'
+    close = 'closes'
+
+    click_on_task_in_lane(selenium, browser_id, op_container, lane,
+                          task, ordinal, click)
+    await_for_task_status_in_parallel_box(selenium, browser_id, op_container,
+                                          lane, task, ordinal, expected_status,
+                                          seconds)
+    click_on_task_in_lane(selenium, browser_id, op_container, lane, task,
+                          ordinal, close)
+
