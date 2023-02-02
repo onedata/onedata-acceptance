@@ -262,6 +262,22 @@ Feature: Workflows execution
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser executes 1st revision of "calculate-checksums-rest", using "dir2" as initial value, in "space1" space and waits extended time for workflow to finish
     And user of browser sees "Finished" status in status bar in workflow visualizer
-    And user of browser clicks on "md5" task in "calculate-checksums" lane in workflow visualizer
-    And user of browser clicks on "Time series" link in "md5" task in "calculate-checksums" lane in workflow visualizer
-    And user of browser sees that chart with processing stats exist
+
+    Then user of browser sees chart with processing stats after opening "Time series" link for task "md5" in 1st parallel box in "calculate-checksums" lane
+    And user of browser sees that time in right corner of chart with processing stats is around actual time
+    And user of browser sees that value of last column on chart with processing stats is bigger than zero
+    And user of browser changes time resolution to "1 hr" in modal "Task time series"
+    And user of browser sees that files processing speed is not bigger than 5 per second on chart with processing stats
+    And user of browser sees that bytes processing speed is not bigger than 21 per second on chart with processing stats
+    And user of browser clicks on "X" button in modal "Task time series"
+    And user of browser closes task "md5" in 1st parallel box in "calculate-checksums" lane in workflow visualizer
+
+    And user of browser sees chart with processing stats after opening "Time series" link for task "sha256" in 1st parallel box in "calculate-checksums" lane
+    And user of browser sees that time in right corner of chart with processing stats is around actual time
+    And user of browser sees that value of last column on chart with processing stats is bigger than zero
+    And user of browser changes time resolution to "1 hr" in modal "Task time series"
+    And user of browser sees that files processing speed is not bigger than 5 per second on chart with processing stats
+    And user of browser sees that bytes processing speed is not bigger than 21 per second on chart with processing stats
+
+
+

@@ -21,7 +21,7 @@ from tests.gui.steps.oneprovider.file_browser import (
     click_on_status_tag_for_file_in_file_browser)
 from tests.gui.steps.oneprovider.automation import (
     switch_to_automation_page, click_on_task_in_lane,
-    click_on_link_in_task_box)
+    click_on_link_in_task_box, choose_time_resolution, assert_processing_chart)
 from tests.utils.bdd_utils import wt, parsers
 from tests.gui.utils.generic import parse_seq
 from tests.utils.utils import repeat_failed
@@ -301,7 +301,6 @@ def assert_pod_name_for_task(selenium, browser_id, op_container, lane,
                           ordinal, close)
 
 
-
 @wt(parsers.parse('user of {browser_id} counts checksums {checksum_list} for '
                   '"{file_name}" in "{space}" space'))
 @repeat_failed(timeout=WAIT_FRONTEND)
@@ -399,3 +398,27 @@ def assert_number_of_events_in_task(browser_id, task, lane, exp_num, ordinal,
     click_modal_button(selenium, browser_id, button, modal, modals)
     click_on_task_in_lane(selenium, browser_id, op_container, lane, task,
                           ordinal, close)
+
+
+@wt(parsers.parse('user of {browser_id} changes time resolution to'
+                  ' "{resolution}" in modal "{modal}"'))
+def change_time_resolution_in_modal(selenium, browser_id, modals, popups,
+                                    resolution):
+    button = "Time resolution"
+    modal_name = "Task time series"
+    click_modal_button(selenium, browser_id, button, modal_name, modals)
+    choose_time_resolution(selenium, browser_id, popups, resolution, modal_name)
+
+
+@wt(parsers.parse('user of {browser_id} sees chart with processing stats after'
+                  ' opening "{link}" link for task "{task}" in {ordinal}'
+                  ' parallel box in "{lane}" lane'))
+def open_link_and_assert_processing_stats_chart(selenium, browser_id,
+                                                op_container, lane, task,
+                                                ordinal, link, modals):
+    click = 'clicks on'
+    click_on_task_in_lane(selenium, browser_id, op_container, lane,
+                          task, ordinal, click)
+    click_on_link_in_task_box(selenium, browser_id, op_container, lane, task,
+                              link, ordinal)
+    assert_processing_chart(browser_id, selenium, modals)
