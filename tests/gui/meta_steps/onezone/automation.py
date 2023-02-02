@@ -11,14 +11,14 @@ import json
 
 from tests.gui.meta_steps.oneprovider.automation import (
     choose_file_as_initial_workflow_value,
-    wait_for_workflows_in_automation_subpage, expand_workflow_record)
+    wait_for_workflows_in_automation_subpage)
 from tests.gui.steps.modals.modal import (
     _wait_for_modal_to_appear, click_modal_button,
     write_name_into_text_field_in_modal, switch_toggle_in_modal,
     choose_option_in_dropdown_menu_in_modal)
 from tests.gui.steps.oneprovider.automation import (
     click_button_in_navigation_tab, choose_workflow_revision_to_run,
-    confirm_workflow_to_execute)
+    confirm_workflow_to_execute, expand_first_executed_workflow_record)
 from tests.gui.steps.onezone.automation import *
 from tests.gui.conftest import WAIT_FRONTEND
 from tests.gui.steps.onezone.spaces import (
@@ -328,7 +328,7 @@ def execute_workflow_and_wait(browser_id, selenium, oz_page, space,
                                              start)
     wait_for_workflows_in_automation_subpage(selenium, browser_id, op_container,
                                              finish)
-    expand_workflow_record(selenium, browser_id, op_container)
+    expand_first_executed_workflow_record(selenium, browser_id, op_container)
 
 
 @wt(parsers.parse('user of {browser_id} creates "{lambda_name}" lambda from '

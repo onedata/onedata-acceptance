@@ -35,6 +35,7 @@ from .data_distribution_popup import DataDistributionPopup
 from .cookies import Cookies
 from tests.gui.utils.common.common import (DropdownSelector,
                                            MigrateDropdownSelector)
+from .workflow_menu import WorkflowMenu
 
 
 class Popups(object):
@@ -83,6 +84,7 @@ class Popups(object):
     archive_row_menu = WebItem('.left-top .webui-popover-inner '
                                '.file-actions.dropdown-menu',
                                cls=ArchiveRowMenu)
+    workflow_menu = WebItem('.atm-workflow-execution-actions', cls=WorkflowMenu)
     menu_in_edit_permissions = WebItem('.over-modals .webui-popover-content '
                                        '.one-webui-popover',
                                        cls=EditPermissionsRecordMenu)

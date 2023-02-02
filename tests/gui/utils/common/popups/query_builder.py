@@ -32,15 +32,15 @@ class ExpressionBuilderPopup(PageObject):
     property_choice = Button('.ember-basic-dropdown-trigger')
     properties = WebItemsSequence('.ember-power-select-option', cls=Property)
 
-    comparators = WebItemsSequence('.comparator-selector '
+    comparators = WebItemsSequence('.comparator-selector + div '
                                    '.ember-power-select-option', cls=Item)
-    comparator_choice = Button(
-        '.comparator-selector .ember-basic-dropdown-trigger')
+    comparator_choice = Button('.comparator-selector'
+                               '.ember-basic-dropdown-trigger')
 
-    values = WebItemsSequence('.comparator-value '
+    values = WebItemsSequence('.comparator-value-editor '
                               '.ember-power-select-option', cls=Item)
     values_choice = Button(
-        '.comparator-value .ember-basic-dropdown-trigger')
+        '.comparator-value-editor .ember-basic-dropdown-trigger')
     qos_values_choice = Button(
         '.comparator-value-editor .ember-basic-dropdown-trigger')
 

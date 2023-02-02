@@ -341,12 +341,17 @@ def assert_store_in_store_list(selenium, browser_id, oz_page, store_name):
     assert store_name in stores_list, f'Store: {store_name} not found'
 
 
-@wt(parsers.parse('user of {browser_id} clicks on create lane button in the '
-                  'middle of workflow visualizer'))
+@wt(parsers.re('user of (?P<browser_id>.*?) clicks on create lane button '
+               '(?P<option>in the middle|on the right side of latest created'
+               ' lane) of workflow visualizer'))
 @repeat_failed(timeout=WAIT_FRONTEND)
-def click_add_lane_button_in_workflow_visualizer(selenium, browser_id, oz_page):
+def click_add_lane_button_in_workflow_visualizer(selenium, browser_id, oz_page,
+                                                 option):
     page = oz_page(selenium[browser_id])['automation']
-    page.workflows_page.workflow_visualiser.create_lane_button.click()
+    if "right" in option:
+        page.workflows_page.workflow_visualiser.create_lane_button[-1].click()
+    else:
+        page.workflows_page.workflow_visualiser.create_lane_button[0].click()
 
 
 @wt(parsers.parse('user of {browser_id} sees "{lane_name}" lane in workflow '
