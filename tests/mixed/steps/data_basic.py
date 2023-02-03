@@ -802,7 +802,7 @@ def assert_file_stats(client, user, path, space, users):
         raise NoSuchClientException('Client: {} not found'.format(client))
 
 
-@wt(parsers.parse('using web GUI, {user} sees that {owner} is owner of '
+@wt(parsers.parse('using web GUI, {user} sees that "{owner}" is owner of '
                   '"{file_name}"'))
 def check_file_owner_web_gui(selenium, user, owner, file_name, tmp_memory,
                              modals, popups):

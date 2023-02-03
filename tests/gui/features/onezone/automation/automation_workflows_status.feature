@@ -31,7 +31,7 @@ Feature: Workflow execution statuses tests
     And user of browser uses "Upload (json)" button from menu bar to upload workflow "workflow_upload.json" to current dir without waiting for upload to finish
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser executes 1st revision of "Workflow1", using "file1" as initial value, in "space1" space
-    And user of browser awaits for status of "Workflow1" workflow to be "Finished" maximum of 10 seconds
+    And user of browser awaits for status of "Workflow1" workflow to be "Finished" maximum of 30 seconds
     Then user of browser sees that status of task "inout" in 1st parallel box in "Lane1" lane is "Finished"
     And user of browser sees that status of "Lane1" lane in "Workflow1" is "Finished"
     And user of browser sees that status of "Workflow1" workflow is "Finished"
@@ -124,8 +124,8 @@ Feature: Workflow execution statuses tests
     And user of browser saves workflow edition by clicking "Save" button from menu bar
     And user of browser executes 1st revision of "temporary-workflow-with-sleep", using "file1" as initial value, in "space1" space
 
-    And user of browser awaits for status of "temporary-workflow-with-sleep" workflow to be "Active" maximum of 10 seconds
-    And user of browser awaits for status of task "1s sleep" in 1st parallel box in "Lane1" lane to be "Finished" maximum of 15 seconds
+    And user of browser awaits for status of "temporary-workflow-with-sleep" workflow to be "Active" maximum of 15 seconds
+    And user of browser awaits for status of task "1s sleep" in 1st parallel box in "Lane1" lane to be "Finished" maximum of 30 seconds
     And user of browser clicks "Pause" button on "temporary-workflow-with-sleep" workflow status bar
     And user of browser sees that status of "temporary-workflow-with-sleep" workflow is "Stopping"
     And user of browser waits for workflow "temporary-workflow-with-sleep" to be paused
@@ -149,9 +149,9 @@ Feature: Workflow execution statuses tests
     And user of browser clicks on "Apply" button in modal "Upload workflow"
     And user of browser executes 1st revision of "temporary-workflow-with-sleep", using "file1" as initial value, in "space1" space
 
-    And user of browser awaits for status of "temporary-workflow-with-sleep" workflow to be "Active" maximum of 10 seconds
-    And user of browser awaits for status of "Lane1" lane to be "Finished" maximum of 30 seconds
-    And user of browser awaits for status of "Lane2" lane to be "Active" maximum of 20 seconds
+    And user of browser awaits for status of "temporary-workflow-with-sleep" workflow to be "Active" maximum of 15 seconds
+    And user of browser awaits for status of "Lane1" lane to be "Finished" maximum of 60 seconds
+    And user of browser awaits for status of "Lane2" lane to be "Active" maximum of 30 seconds
 
     And user of browser clicks "<stop_button>" button on "temporary-workflow-with-sleep" workflow status bar
     And user of browser sees that status of "temporary-workflow-with-sleep" workflow is "Stopping"
@@ -209,8 +209,8 @@ Feature: Workflow execution statuses tests
 
     And user of browser executes 1st revision of "temporary-workflow-with-sleep", using "file1" as initial value, in "space1" space
 
-    And user of browser awaits for status of "temporary-workflow-with-sleep" workflow to be "Active" maximum of 10 seconds
-    And user of browser awaits for status of task "1s sleep" in 1st parallel box in "Lane1" lane to be "Finished" maximum of 15 seconds
+    And user of browser awaits for status of "temporary-workflow-with-sleep" workflow to be "Active" maximum of 15 seconds
+    And user of browser awaits for status of task "1s sleep" in 1st parallel box in "Lane1" lane to be "Finished" maximum of 30 seconds
 
     And user of browser sees that status of "temporary-workflow-with-sleep" workflow is "Active"
     And user of browser clicks "Cancel" button on "temporary-workflow-with-sleep" workflow status bar

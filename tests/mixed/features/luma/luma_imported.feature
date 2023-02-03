@@ -64,12 +64,12 @@ Feature: LUMA local feed acceptance tests with imported storage
     And using web GUI, user1 fails to see item named "file_another_user.txt" in "space1" in oneprovider-1
     And using web GUI, user1 uploads local file "upload_file.txt" to "space1"
 
-    Then using web GUI, user1 sees that user1 is owner of "file_user1.txt"
+    Then using web GUI, user1 sees that "user1 (user1)" is owner of "file_user1.txt"
 
     And using web GUI, user2 succeeds to see item named "file_user1.txt" in "space1" in oneprovider-1
     And using web GUI, user2 succeeds to see item named "file_user2.txt" in "space1" in oneprovider-1
     And using web GUI, user2 fails to see item named "file_another_user.txt" in "space1" in oneprovider-1
-    And using web GUI, user2 sees that user2 is owner of "file_user2.txt"
+    And using web GUI, user2 sees that "user2 (user2)" is owner of "file_user2.txt"
 
     And using oneclient1, user1 sees that owner's UID and GID for "file_user1.txt" in space "space1" are equal to 7001 and 3013 respectively
     And using oneclient1, user1 sees that owner's UID and GID for "file_user2.txt" in space "space1" are equal to 7002 and 3013 respectively
