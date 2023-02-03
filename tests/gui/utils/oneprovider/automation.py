@@ -51,6 +51,7 @@ class Task(Element):
     pods_activity = Button('.view-task-pods-activity-action-trigger')
     instance_id = Label('.instance-id-detail .truncated-string')
     status = Label('.status-detail .detail-value')
+    time_series = Button('.view-task-time-series-action-trigger')
 
     def get_elem_id(self):
         elem_id = self.web_elem.get_attribute('id')
