@@ -171,6 +171,7 @@ def await_for_lane_workflow_status(selenium, browser_id, op_container,
 
 @wt(parsers.parse('user of {browser_id} sees that status of "{workflow}"'
                   ' workflow is "{expected_status}"'))
+@repeat_failed(timeout=WAIT_FRONTEND)
 def assert_status_of_workflow_if_needed_wait_for_stopping_status(
         selenium, browser_id, op_container, expected_status, workflow):
     page = switch_to_automation_page(selenium, browser_id, op_container)
