@@ -23,7 +23,7 @@ def switch_to_automation_page(selenium, browser_id, op_container):
 
 @wt(parsers.parse('user of {browser_id} clicks "{tab_name}" '
                   'in the automation tab bar'))
-@repeat_failed(timeout=WAIT_FRONTEND)
+@repeat_failed(timeout=WAIT_BACKEND)
 def click_button_in_navigation_tab(selenium, browser_id, op_container,
                                    tab_name):
     switch_to_iframe(selenium, browser_id)
